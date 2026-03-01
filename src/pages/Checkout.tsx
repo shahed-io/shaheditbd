@@ -44,22 +44,17 @@ const Checkout = () => {
     setCouponLoading(true);
     setCouponError('');
     try {
-      const { data, error } = await supabase
-        .from('coupons')
-        .select('*')
-        .eq('code', couponCode.trim().toUpperCase())
-        .eq('is_active', true)
-        .single();
+      // Use the validate-coupon edge function which uses service role
+      const { data, error } = await supabase.functions.invoke('validate-coupon', {
+        body: { code: couponCode.trim().toUpperCase(), orderTotal: cartTotal },
+      });
 
-      if (error || !data) { setCouponError('কুপন কোড সঠিক নয়'); setCouponDiscount(0); return; }
-      if (data.expires_at && new Date(data.expires_at) < new Date()) { setCouponError('কুপন মেয়াদ শেষ'); setCouponDiscount(0); return; }
-      if (data.min_order_amount && cartTotal < data.min_order_amount) { setCouponError(`ন্যূনতম অর্ডার ৳${data.min_order_amount}`); setCouponDiscount(0); return; }
-      if (data.max_uses && data.uses_count && data.uses_count >= data.max_uses) { setCouponError('কুপন সীমা শেষ'); setCouponDiscount(0); return; }
-
-      const discount = data.discount_type === 'percentage'
-        ? Math.round(cartTotal * data.discount_value / 100)
-        : data.discount_value;
-      setCouponDiscount(discount);
+      if (error || !data?.valid) {
+        setCouponError(data?.message || 'কুপন কোড সঠিক নয়');
+        setCouponDiscount(0);
+        return;
+      }
+      setCouponDiscount(data.discount);
       setCouponError('');
     } catch {
       setCouponError('কুপন চেক করতে সমস্যা হয়েছে');
