@@ -7,6 +7,15 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import CartDrawer from "@/components/store/CartDrawer";
 import Index from "./pages/Index";
+import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
+import TrackOrder from "./pages/TrackOrder";
+import FAQ from "./pages/FAQ";
+import About from "./pages/About";
+import RefundPolicy from "./pages/RefundPolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
+import Support from "./pages/Support";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
@@ -37,30 +46,39 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <CartProvider>
-          <CartDrawer />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="products/new" element={<AdminProducts />} />
-              <Route path="categories" element={<AdminCategories />} />
-              <Route path="categories/new" element={<AdminCategories />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="coupons" element={<AdminCoupons />} />
-              <Route path="settings" element={<AdminSettings />} />
-              <Route path="customers" element={<AdminPlaceholder />} />
-              <Route path="payments" element={<AdminPlaceholder />} />
-              <Route path="tickets" element={<AdminPlaceholder />} />
-              <Route path="reports" element={<AdminPlaceholder />} />
-              <Route path="marketing" element={<AdminPlaceholder />} />
-              <Route path="roles" element={<AdminPlaceholder />} />
-              <Route path="backup" element={<AdminPlaceholder />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+            <CartDrawer />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/product/:slug" element={<ProductDetail />} />
+              <Route path="/track-order" element={<TrackOrder />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/refund-policy" element={<RefundPolicy />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="products/new" element={<AdminProducts />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="categories/new" element={<AdminCategories />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="coupons" element={<AdminCoupons />} />
+                <Route path="settings" element={<AdminSettings />} />
+                <Route path="customers" element={<AdminPlaceholder />} />
+                <Route path="payments" element={<AdminPlaceholder />} />
+                <Route path="tickets" element={<AdminPlaceholder />} />
+                <Route path="reports" element={<AdminPlaceholder />} />
+                <Route path="marketing" element={<AdminPlaceholder />} />
+                <Route path="roles" element={<AdminPlaceholder />} />
+                <Route path="backup" element={<AdminPlaceholder />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </CartProvider>
         </AuthProvider>
       </BrowserRouter>
