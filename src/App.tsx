@@ -15,7 +15,15 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminSettings from "./pages/admin/AdminSettings";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 10,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
