@@ -29,7 +29,6 @@ const TopProducts = () => {
         .from('products')
         .select('*, categories(name)')
         .eq('status', 'active')
-        .not('tags', 'cs', '{"flash-sale"}')
         .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false });
 
