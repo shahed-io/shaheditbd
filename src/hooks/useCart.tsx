@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export interface CartItem {
-  id: number;
+  id: number | string;
   name: string;
   category: string;
   price: number;
@@ -14,12 +14,12 @@ interface CartContextType {
   items: CartItem[];
   wishlist: CartItem[];
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  removeFromCart: (id: number | string) => void;
+  updateQuantity: (id: number | string, quantity: number) => void;
   clearCart: () => void;
   toggleWishlist: (item: Omit<CartItem, 'quantity'>) => void;
-  isWishlisted: (id: number) => boolean;
-  isInCart: (id: number) => boolean;
+  isWishlisted: (id: number | string) => boolean;
+  isInCart: (id: number | string) => boolean;
   cartTotal: number;
   cartCount: number;
   wishlistCount: number;
@@ -53,9 +53,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCartOpen(true);
   };
 
-  const removeFromCart = (id: number) => setItems(prev => prev.filter(i => i.id !== id));
+  const removeFromCart = (id: number | string) => setItems(prev => prev.filter(i => i.id !== id));
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: number | string, quantity: number) => {
     if (quantity <= 0) { removeFromCart(id); return; }
     setItems(prev => prev.map(i => i.id === id ? { ...i, quantity } : i));
   };
@@ -70,8 +70,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const isWishlisted = (id: number) => wishlist.some(i => i.id === id);
-  const isInCart = (id: number) => items.some(i => i.id === id);
+  const isWishlisted = (id: number | string) => wishlist.some(i => i.id === id);
+  const isInCart = (id: number | string) => items.some(i => i.id === id);
   const cartTotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
   const wishlistCount = wishlist.length;
