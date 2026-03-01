@@ -93,9 +93,11 @@ const Footer = () => {
             <ul className="space-y-2">
               {[
                 { label: 'Privacy Policy', href: '/privacy-policy' },
-                { label: 'Terms & Conditions', href: '/terms' },
-                { label: 'Refund Policy', href: '/refund-policy' },
-                { label: 'Support', href: '/support' },
+                { label: 'Terms & Condition', href: '/terms' },
+                { label: 'Refund & Return Policy', href: '/refund-policy' },
+                { label: 'Order & Cancellation', href: '/support' },
+                { label: 'Delivery System', href: '/support' },
+                { label: 'Return Policy', href: '/refund-policy' },
               ].map((link) => (
                 <li key={link.label}>
                   <a href={link.href} className="text-muted-foreground text-sm hover:text-foreground transition-colors">
