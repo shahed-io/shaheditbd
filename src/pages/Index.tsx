@@ -6,14 +6,13 @@ import FlashSale from '@/components/store/FlashSale';
 import WhyChooseUs from '@/components/store/WhyChooseUs';
 import TrustBadges from '@/components/store/TrustBadges';
 import Footer from '@/components/store/Footer';
-import { TickerBanner, WhatsAppButton } from '@/components/store/Extras';
+import { WhatsAppButton } from '@/components/store/Extras';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
       <HeroBanner />
-      <TickerBanner />
       <TrustBadges />
       <Categories />
       <TopProducts />
