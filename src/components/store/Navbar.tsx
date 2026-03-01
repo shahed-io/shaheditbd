@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ShoppingCart, Heart, Search, Menu, X, Phone, ChevronDown, Package, Star, LogOut, User } from 'lucide-react';
+import { ShoppingCart, Heart, Search, Menu, X, Phone, ChevronDown, Star, LogOut, User } from 'lucide-react';
+import logoImg from '@/assets/logo.png';
 import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
@@ -59,15 +60,14 @@ const Navbar = () => {
         <nav className="glass-card border-b border-primary/20 px-4 py-3">
           <div className="max-w-7xl mx-auto flex items-center gap-4">
             {/* Logo */}
-            <a href="#" className="flex items-center gap-2 flex-shrink-0">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center animate-pulse-glow">
-                <Package size={18} className="text-background" />
-              </div>
-              <div>
-                <div className="font-bold text-lg leading-none gradient-text" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-                  SHAHED
-                </div>
-                <div className="text-[10px] text-muted-foreground leading-none tracking-widest">STORE</div>
+            <a href="#" className="flex items-center flex-shrink-0 group">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/40 to-accent/40 blur-md group-hover:blur-lg transition-all duration-300 scale-110" />
+                <img
+                  src={logoImg}
+                  alt="Shahed Store"
+                  className="relative h-10 w-auto rounded-xl shadow-lg group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
             </a>
 
