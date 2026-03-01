@@ -2,7 +2,7 @@ import { Shield, Facebook, Twitter, MessageCircle, Instagram, Linkedin, Phone, M
 
 const Footer = () => {
   return (
-    <footer className="relative mt-8 border-t border-border bg-card/80">
+    <footer className="relative mt-8 border-t border-border bg-card/80 border-b-0">
       {/* Main footer */}
       <div className="py-12 px-4">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
