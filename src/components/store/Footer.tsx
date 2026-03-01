@@ -1,144 +1,143 @@
-import { Package, Facebook, Twitter, MessageCircle, Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Shield, Facebook, Twitter, MessageCircle, Instagram, Linkedin, Phone, Mail } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="relative mt-8 border-t border-border">
-      {/* Newsletter bar */}
-      <div className="glass-card py-10 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-              Subscribe for <span className="gradient-text">Exclusive Deals</span>
-            </h3>
-            <p className="text-muted-foreground text-sm mt-1">Get notified about flash sales & new products</p>
-          </div>
-          <div className="flex w-full max-w-md">
-            <input
-              type="email"
-              placeholder="Enter your email address..."
-              className="flex-1 bg-muted/50 border border-border rounded-l-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-            />
-            <button className="btn-glow px-5 rounded-r-xl flex items-center gap-2">
-              <Send size={16} />
-              <span className="hidden sm:inline">Subscribe</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
+    <footer className="relative mt-8 border-t border-border bg-card/80">
       {/* Main footer */}
-      <div className="py-12 px-4 bg-card/50">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="py-12 px-4">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+
           {/* Brand */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Package size={20} className="text-background" />
-              </div>
-              <div>
-                <div className="font-bold text-xl gradient-text" style={{ fontFamily: 'Orbitron, sans-serif' }}>SHAHED</div>
-                <div className="text-[10px] text-muted-foreground tracking-widest">STORE</div>
-              </div>
+          <div className="space-y-4 lg:col-span-1">
+            <div>
+              <span className="text-2xl font-extrabold" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+                <span className="text-primary">SHAHED</span>{' '}
+                <span className="text-foreground">STORE</span>
+              </span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Bangladesh's most trusted digital software store. Genuine license keys at the best prices since 2020.
+              অরিজিনাল সফটওয়্যার সেরা দামে বিশ্বস্ত প্রতিষ্ঠান
             </p>
-            <div className="flex items-center gap-3">
-              {[
-                { icon: <Facebook size={16} />, href: '#' },
-                { icon: <Twitter size={16} />, href: '#' },
-                { icon: <MessageCircle size={16} />, href: '#' },
-                { icon: <Send size={16} />, href: '#' },
-              ].map((s, i) => (
-                <a
-                  key={i}
-                  href={s.href}
-                  className="w-9 h-9 glass-card rounded-lg flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all"
-                >
-                  {s.icon}
-                </a>
-              ))}
-            </div>
-          </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-bold text-foreground mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              {['Home', 'Windows', 'Office', 'Software', 'Subscription', 'Download Links', 'Terms & Conditions'].map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-muted-foreground text-sm hover:text-primary transition-colors flex items-center gap-1">
-                    → {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Top Products */}
-          <div>
-            <h4 className="font-bold text-foreground mb-4">Top Products</h4>
-            <ul className="space-y-2">
-              {[
-                'Windows 11 Pro Key',
-                'Office 365 Personal',
-                'Adobe Creative Cloud',
-                'Netflix Subscription',
-                'Spotify Premium',
-                'IDM Lifetime Key',
-                'ElevenLabs AI',
-              ].map((p) => (
-                <li key={p}>
-                  <a href="#" className="text-muted-foreground text-sm hover:text-primary transition-colors flex items-center gap-1">
-                    → {p}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="font-bold text-foreground mb-4">Contact Us</h4>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3 text-sm text-muted-foreground">
-                <Phone size={16} className="text-primary flex-shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-medium text-foreground">01840099853</div>
-                  <div className="text-xs">10AM – 10PM (Daily)</div>
+            <div>
+              <p className="text-foreground font-semibold text-sm mb-2">Contact Us</p>
+              <div className="space-y-1.5 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Phone size={13} className="text-primary" />
+                  <span>Hotline: 01840-099853</span>
                 </div>
-              </div>
-              <div className="flex items-start gap-3 text-sm text-muted-foreground">
-                <Mail size={16} className="text-primary flex-shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-medium text-foreground">support@shahedstore.com.bd</div>
-                  <div className="text-xs">Reply within 1 hour</div>
+                <div className="flex items-center gap-2">
+                  <Shield size={13} className="text-primary" />
+                  <span>DBID NO:- 586772174</span>
                 </div>
-              </div>
-              <div className="flex items-start gap-3 text-sm text-muted-foreground">
-                <MapPin size={16} className="text-primary flex-shrink-0 mt-0.5" />
-                <div className="font-medium text-foreground">Bangladesh</div>
+                <div className="flex items-center gap-2">
+                  <Mail size={13} className="text-primary" />
+                  <span>info@shahedstore.com.bd</span>
+                </div>
               </div>
             </div>
 
-            <div className="mt-4 glass-card rounded-xl p-3">
-              <p className="text-xs text-muted-foreground mb-2">Payment Methods</p>
-              <div className="flex flex-wrap gap-2 text-xs font-medium">
-                {['bKash', 'Nagad', 'Rocket', 'VISA', 'MasterCard'].map((pm) => (
-                  <span key={pm} className="bg-muted px-2 py-1 rounded text-foreground">{pm}</span>
+            <div>
+              <p className="text-foreground font-semibold text-sm mb-2">Follow Us:</p>
+              <div className="flex items-center gap-2">
+                {[
+                  { icon: <Facebook size={15} />, href: '#' },
+                  { icon: <Twitter size={15} />, href: '#' },
+                  { icon: <MessageCircle size={15} />, href: '#' },
+                  { icon: <Instagram size={15} />, href: '#' },
+                  { icon: <Linkedin size={15} />, href: '#' },
+                ].map((s, i) => (
+                  <a
+                    key={i}
+                    href={s.href}
+                    className="w-9 h-9 glass-card rounded-lg flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all"
+                  >
+                    {s.icon}
+                  </a>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h4 className="font-bold text-primary text-xs tracking-widest uppercase mb-4">Services</h4>
+            <ul className="space-y-2">
+              {['Confirmation ID', 'Office', 'Windows', 'Top Selling Products', 'Software', 'CID For Reseller'].map((link) => (
+                <li key={link}>
+                  <a href="#" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Information */}
+          <div>
+            <h4 className="font-bold text-primary text-xs tracking-widest uppercase mb-4">Information</h4>
+            <ul className="space-y-2">
+              {['FAQs', 'About Us', 'Software Download Link', 'My Account', 'Contact Us', 'All Product'].map((link) => (
+                <li key={link}>
+                  <a href="#" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Policies */}
+          <div>
+            <h4 className="font-bold text-primary text-xs tracking-widest uppercase mb-4">Policies</h4>
+            <ul className="space-y-2">
+              {['Privacy Policy', 'Terms & Condition', 'Refund & Return Policy', 'Order & Cancellation', 'Delivery System', 'Return Policy'].map((link) => (
+                <li key={link}>
+                  <a href="#" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Trust & Payment */}
+          <div>
+            <h4 className="font-bold text-primary text-xs tracking-widest uppercase mb-4">Trust & Payment</h4>
+
+            {/* Govt Certified badge */}
+            <div className="glass-card rounded-xl p-4 mb-5 border border-border">
+              <div className="flex items-center gap-2 mb-1">
+                <Shield size={18} className="text-primary" />
+                <span className="text-foreground font-bold text-sm">Govt. Certified</span>
+              </div>
+              <p className="text-muted-foreground text-xs mb-1">Digital Business Provider</p>
+              <p className="text-primary text-xs font-semibold">DBID ✓ 586772174</p>
+            </div>
+
+            <p className="text-foreground font-semibold text-sm mb-3">Payment Methods:</p>
+            <div className="flex flex-wrap gap-2">
+              {['bKash', 'নগদ', 'রকেট', 'Binance'].map((pm) => (
+                <span
+                  key={pm}
+                  className="glass-card px-3 py-1.5 rounded-lg text-xs text-foreground font-medium border border-border hover:border-primary/40 transition-colors"
+                >
+                  {pm}
+                </span>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
       {/* Copyright */}
-      <div className="border-t border-border py-5 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-          <span>© 2024 Shahed Store. All rights reserved. | shahedstore.com.bd</span>
-          <span>Designed with ❤️ for Bangladesh</span>
-        </div>
+      <div className="border-t border-border py-4 px-4 text-center text-xs text-muted-foreground">
+        সর্বস্ব সংরক্ষিত{' '}
+        <span className="font-bold">
+          <span className="text-primary">শাহেদ</span>{' '}
+          <span className="text-foreground">স্টোর</span>
+        </span>{' '}
+        কিপারাইট © 2026
       </div>
     </footer>
   );
