@@ -39,7 +39,15 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         onClose();
       }
     } catch (err: any) {
-      toast.error(err.message || 'কিছু একটা ভুল হয়েছে');
+      const msg = err?.message || '';
+      let friendlyMsg = 'কিছু একটা ভুল হয়েছে। আবার চেষ্টা করুন।';
+      if (msg.includes('Invalid login credentials')) friendlyMsg = 'ইমেইল বা পাসওয়ার্ড ভুল';
+      else if (msg.includes('already registered') || msg.includes('already been registered')) friendlyMsg = 'এই ইমেইল দিয়ে আগেই একাউন্ট তৈরি করা হয়েছে';
+      else if (msg.includes('Email not confirmed')) friendlyMsg = 'অনুগ্রহ করে আপনার ইমেইল ভেরিফাই করুন';
+      else if (msg.includes('Password should be')) friendlyMsg = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে';
+      else if (msg.includes('rate limit') || msg.includes('too many')) friendlyMsg = 'অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।';
+      console.error('Auth error (internal):', err);
+      toast.error(friendlyMsg);
     } finally {
       setLoading(false);
     }
