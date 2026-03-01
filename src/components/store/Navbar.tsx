@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Heart, Search, Menu, X, Phone, ChevronDown, Star, LogOut, User } from 'lucide-react';
-import logoImg from '@/assets/logo-new.png';
+import logoIcon from '@/assets/logo-icon.png';
 import SearchBar from './SearchBar';
 import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
@@ -61,15 +61,24 @@ const Navbar = () => {
         <nav className="glass-card border-b border-primary/20 px-4 py-3">
           <div className="max-w-7xl mx-auto flex items-center gap-4">
             {/* Logo */}
-            <a href="#" className="flex items-center flex-shrink-0 group">
+            <a href="#" className="flex items-center gap-2.5 flex-shrink-0 group">
+              {/* Icon */}
               <div className="relative">
-                <div className="absolute inset-0 rounded-lg bg-primary/20 blur-md group-hover:blur-lg transition-all duration-300 scale-105" />
+                <div className="absolute inset-0 rounded-full bg-primary/30 blur-md group-hover:blur-lg scale-110 transition-all duration-300" />
                 <img
-                  src={logoImg}
-                  alt="Shahed Store"
-                  className="relative h-9 w-auto rounded-lg group-hover:scale-105 transition-transform duration-300"
-                  style={{ maxWidth: '160px' }}
+                  src={logoIcon}
+                  alt="Shahed Store Icon"
+                  className="relative w-9 h-9 rounded-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
+              </div>
+              {/* Text */}
+              <div className="leading-none">
+                <div className="font-black text-base tracking-widest gradient-text" style={{ fontFamily: 'Orbitron, sans-serif', letterSpacing: '0.15em' }}>
+                  SHAHED
+                </div>
+                <div className="text-[9px] tracking-[0.35em] text-primary/80 font-semibold uppercase">
+                  STORE
+                </div>
               </div>
             </a>
 
