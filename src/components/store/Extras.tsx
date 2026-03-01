@@ -1,42 +1,60 @@
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Zap } from 'lucide-react';
 
 const tickerItems = [
-  '🔥 Windows 11 Pro — ৳599 (94% OFF)',
-  '⚡ Office 365 Personal — ৳1,999 (88% OFF)',
-  '🎬 Netflix Subscription — ৳499 (81% OFF)',
-  '🎨 Adobe Creative Cloud — ৳599 (70% OFF)',
-  '🎵 Spotify Premium — ৳899 (85% OFF)',
-  '💻 IDM Lifetime — ৳2,625 (20% OFF)',
-  '🤖 ElevenLabs AI — ৳4,449 (63% OFF)',
-  '🪟 Windows 11 Home — ৳549 (93% OFF)',
+  'Windows 11 Pro — ৳599',
+  'Office 365 Personal — ৳1,999',
+  'Netflix Subscription — ৳499',
+  'Adobe Creative Cloud — ৳599',
+  'Spotify Premium — ৳899',
+  'IDM Lifetime — ৳2,625',
+  'ElevenLabs AI — ৳4,449',
+  'Windows 11 Home — ৳549',
 ];
 
 const TickerBanner = () => {
-  // Repeat 4 times for seamless looping
   const items = [...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems];
 
   return (
-    <div
-      className="bg-primary/10 border-y border-primary/20 py-2.5 overflow-hidden relative"
-      style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)' }}
-    >
-      <div
-        className="flex"
-        style={{
-          width: 'max-content',
-          animation: 'ticker-seamless 40s linear infinite',
-          willChange: 'transform',
-        }}
-      >
-        {items.map((item, i) => (
-          <span
-            key={i}
-            className="text-sm font-medium text-foreground whitespace-nowrap flex-shrink-0"
-            style={{ paddingRight: '3.5rem' }}
-          >
-            {item}
-          </span>
-        ))}
+    <div className="relative overflow-hidden" style={{ height: '28px' }}>
+      {/* Gradient bg strip */}
+      <div className="absolute inset-0" style={{
+        background: 'linear-gradient(90deg, hsl(var(--primary)/0.08) 0%, hsl(var(--primary)/0.15) 50%, hsl(var(--primary)/0.08) 100%)',
+        borderTop: '1px solid hsl(var(--primary)/0.2)',
+        borderBottom: '1px solid hsl(var(--primary)/0.2)',
+      }} />
+
+      {/* Edge fades */}
+      <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to right, hsl(var(--background)) 0%, transparent 100%)' }} />
+      <div className="absolute right-0 top-0 h-full w-20 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to left, hsl(var(--background)) 0%, transparent 100%)' }} />
+
+      {/* Live badge */}
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+        <span className="text-[9px] font-bold text-primary tracking-widest uppercase">LIVE</span>
+      </div>
+
+      {/* Scrolling content */}
+      <div className="absolute inset-0 flex items-center pl-16">
+        <div
+          style={{
+            display: 'flex',
+            width: 'max-content',
+            animation: 'ticker-seamless 45s linear infinite',
+            willChange: 'transform',
+          }}
+        >
+          {items.map((item, i) => (
+            <span key={i} className="flex items-center" style={{ paddingRight: '2.5rem' }}>
+              <Zap size={9} className="text-primary mr-1.5 flex-shrink-0" style={{ opacity: 0.7 }} />
+              <span className="text-[11px] font-medium whitespace-nowrap"
+                style={{ color: 'hsl(var(--foreground)/0.75)', letterSpacing: '0.02em' }}>
+                {item}
+              </span>
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
