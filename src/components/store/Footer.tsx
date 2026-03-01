@@ -2,7 +2,7 @@ import { Shield, Facebook, Twitter, MessageCircle, Instagram, Linkedin, Phone, M
 
 const Footer = () => {
   return (
-    <footer className="relative mt-8 border-t border-border bg-card/80 border-b-0">
+    <footer className="relative mt-8 border-t border-border bg-card/80">
       {/* Main footer */}
       <div className="py-12 px-4">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
@@ -91,17 +91,10 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-primary text-xs tracking-widest uppercase mb-4">Policies</h4>
             <ul className="space-y-2">
-              {[
-                { label: 'Privacy Policy', href: '/privacy-policy' },
-                { label: 'Terms & Condition', href: '/terms' },
-                { label: 'Refund & Return Policy', href: '/refund-policy' },
-                { label: 'Order & Cancellation', href: '/support' },
-                { label: 'Delivery System', href: '/support' },
-                { label: 'Return Policy', href: '/refund-policy' },
-              ].map((link) => (
-                <li key={link.label}>
-                  <a href={link.href} className="text-muted-foreground text-sm hover:text-foreground transition-colors">
-                    {link.label}
+              {['Privacy Policy', 'Terms & Condition', 'Refund & Return Policy', 'Order & Cancellation', 'Delivery System', 'Return Policy'].map((link) => (
+                <li key={link}>
+                  <a href="#" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                    {link}
                   </a>
                 </li>
               ))}

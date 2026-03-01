@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Star, Heart, ShoppingCart, Eye, Zap } from 'lucide-react';
 import { Product } from '@/data/products';
-import { useCart } from '@/context/CartContext';
-import { toast } from 'sonner';
 
 interface ProductCardProps {
   product: Product;
@@ -29,19 +27,8 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     return () => observer.disconnect();
   }, []);
 
-  const { addItem } = useCart();
-
   const handleAdd = () => {
-    addItem({
-      id: String(product.id),
-      name: product.name,
-      price: product.price,
-      originalPrice: product.originalPrice,
-      image: product.image,
-      category: product.category,
-    });
     setAdded(true);
-    toast.success(`${product.name} cart-এ যোগ হয়েছে!`);
     setTimeout(() => setAdded(false), 2000);
   };
 

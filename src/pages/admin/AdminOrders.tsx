@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Eye, Check, X, Image, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { Search, Eye, Edit, Check, X, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 
 const statusColor: Record<string, string> = {
@@ -17,10 +17,7 @@ const AdminOrders = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
-  const [paymentProofs, setPaymentProofs] = useState<any[]>([]);
-  const [proofScreenshot, setProofScreenshot] = useState<string | null>(null);
-  const [verifying, setVerifying] = useState(false);
-  const [adminNotes, setAdminNotes] = useState('');
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -39,62 +36,21 @@ const AdminOrders = () => {
     o.customer_email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const openOrder = async (order: any) => {
-    setSelectedOrder(order);
-    setAdminNotes('');
-    setProofScreenshot(null);
-
-    // Fetch payment proofs
-    const { data: proofs } = await supabase
-      .from('payment_proofs')
-      .select('*')
-      .eq('order_id', order.id)
-      .order('submitted_at', { ascending: false });
-    setPaymentProofs(proofs || []);
-
-    // Load screenshot if any
-    if (proofs && proofs[0]?.screenshot_url) {
-      const { data: urlData } = await supabase.storage
-        .from('payment-proofs')
-        .createSignedUrl(proofs[0].screenshot_url, 3600);
-      if (urlData?.signedUrl) setProofScreenshot(urlData.signedUrl);
-    }
+  const updateStatus = async (id: string, status: string) => {
+    setUpdatingStatus(id);
+    const { error } = await supabase.from('orders').update({ status: status as any }).eq('id', id);
+    if (error) toast.error('Failed to update status');
+    else { toast.success('Order status updated!'); fetchOrders(); if (selectedOrder?.id === id) setSelectedOrder({...selectedOrder, status}); }
+    setUpdatingStatus(null);
   };
-
-  const handleVerify = async (action: 'approve' | 'reject') => {
-    if (!selectedOrder) return;
-    setVerifying(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-payment', {
-        body: { orderId: selectedOrder.id, action, adminNotes },
-      });
-      if (error) throw error;
-      toast.success(action === 'approve' ? '✅ Payment Approved! Product Delivered!' : '❌ Payment Rejected');
-      fetchOrders();
-      setSelectedOrder(null);
-    } catch (e: any) {
-      toast.error('সমস্যা হয়েছে: ' + (e.message || 'Unknown error'));
-    }
-    setVerifying(false);
-  };
-
-  const pendingCount = orders.filter(o => o.status === 'pending' || o.status === 'processing').length;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-            Orders <span className="gradient-text">Management</span>
-          </h1>
-          <p className="text-muted-foreground text-sm">{orders.length} total orders</p>
-        </div>
-        {pendingCount > 0 && (
-          <div className="flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 rounded-xl px-4 py-2">
-            <AlertCircle size={16} className="text-yellow-400" />
-            <span className="text-yellow-400 text-sm font-medium">{pendingCount} টি Verify বাকি</span>
-          </div>
-        )}
+      <div>
+        <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+          Orders <span className="gradient-text">Management</span>
+        </h1>
+        <p className="text-muted-foreground text-sm">{orders.length} total orders</p>
       </div>
 
       {/* Filters */}
@@ -117,101 +73,42 @@ const AdminOrders = () => {
       {/* Order Detail Modal */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card rounded-2xl p-6 w-full max-w-xl max-h-[92vh] overflow-y-auto border border-primary/20">
+          <div className="glass-card rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-5">
-              <div>
-                <h2 className="text-lg font-bold text-foreground">#{selectedOrder.order_number}</h2>
-                <p className="text-xs text-muted-foreground">{selectedOrder.customer_name} — {selectedOrder.customer_email}</p>
-              </div>
-              <button onClick={() => setSelectedOrder(null)} className="text-muted-foreground hover:text-foreground text-xl">✕</button>
+              <h2 className="text-lg font-bold text-foreground">Order #{selectedOrder.order_number}</h2>
+              <button onClick={() => setSelectedOrder(null)} className="text-muted-foreground hover:text-foreground">✕</button>
             </div>
-
             <div className="space-y-4">
-              {/* Order info */}
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div><span className="text-muted-foreground block text-xs">Phone</span><span className="text-foreground">{selectedOrder.customer_phone || '-'}</span></div>
-                <div><span className="text-muted-foreground block text-xs">Payment</span><span className="text-foreground capitalize">{selectedOrder.payment_method}</span></div>
-                <div><span className="text-muted-foreground block text-xs">Total</span><span className="font-bold text-primary text-base">৳{Number(selectedOrder.total).toLocaleString()}</span></div>
-                <div><span className="text-muted-foreground block text-xs">Status</span>
-                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium border ${statusColor[selectedOrder.status] || ''}`}>{selectedOrder.status}</span>
-                </div>
-              </div>
-
-              {/* Order Items */}
-              <div>
-                <p className="text-xs text-muted-foreground mb-2">Order Items</p>
-                {selectedOrder.order_items?.map((item: any) => (
-                  <div key={item.id} className="flex justify-between items-center glass-card rounded-xl p-3 text-sm mb-1.5">
-                    <span className="text-foreground">{item.product_name} × {item.quantity}</span>
-                    <span className="font-bold text-primary">৳{Number(item.total).toLocaleString()}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Payment Proofs */}
-              {paymentProofs.length > 0 && (
+                <div><span className="text-muted-foreground">Customer:</span><div className="font-medium text-foreground">{selectedOrder.customer_name}</div></div>
+                <div><span className="text-muted-foreground">Email:</span><div className="font-medium text-foreground">{selectedOrder.customer_email}</div></div>
+                <div><span className="text-muted-foreground">Phone:</span><div className="font-medium text-foreground">{selectedOrder.customer_phone || '-'}</div></div>
+                <div><span className="text-muted-foreground">Payment:</span><div className="font-medium text-foreground capitalize">{selectedOrder.payment_method}</div></div>
+                <div><span className="text-muted-foreground">Total:</span><div className="font-bold text-primary">৳{Number(selectedOrder.total).toLocaleString()}</div></div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-2">Payment Proof</p>
-                  {paymentProofs.map(proof => (
-                    <div key={proof.id} className="glass-card rounded-xl p-4 space-y-2 border border-border">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Transaction ID:</span>
-                        <span className="font-mono font-bold text-foreground">{proof.transaction_id}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Amount:</span>
-                        <span className="text-foreground">৳{Number(proof.amount).toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Submitted:</span>
-                        <span className="text-foreground text-xs">{new Date(proof.submitted_at).toLocaleString('en-BD')}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Proof Status:</span>
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                          proof.status === 'approved' ? 'bg-green-400/10 text-green-400' :
-                          proof.status === 'rejected' ? 'bg-red-400/10 text-red-400' :
-                          'bg-yellow-400/10 text-yellow-400'
-                        }`}>{proof.status}</span>
-                      </div>
-                      {proofScreenshot && (
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1"><Image size={12} /> Screenshot:</p>
-                          <img src={proofScreenshot} alt="payment proof" className="w-full rounded-xl max-h-48 object-contain bg-muted/20" />
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                  <span className="text-muted-foreground">Status:</span>
+                  <select value={selectedOrder.status} onChange={e => updateStatus(selectedOrder.id, e.target.value)}
+                    className="mt-1 bg-muted/30 border border-border rounded-lg px-2 py-1 text-xs text-foreground focus:outline-none focus:border-primary w-full">
+                    {['pending', 'processing', 'completed', 'cancelled', 'refunded'].map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
                 </div>
-              )}
-
-              {/* Admin Notes */}
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Admin Notes (ঐচ্ছিক)</label>
-                <textarea value={adminNotes} onChange={e => setAdminNotes(e.target.value)} rows={2}
-                  placeholder="Rejection reason or delivery notes..."
-                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors resize-none" />
               </div>
-
-              {/* Verify Buttons */}
-              {(selectedOrder.status === 'pending' || selectedOrder.status === 'processing') && (
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <button
-                    onClick={() => handleVerify('approve')}
-                    disabled={verifying}
-                    className="flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm bg-green-500/20 border border-green-500/40 text-green-400 hover:bg-green-500/30 transition-colors disabled:opacity-50"
-                  >
-                    <CheckCircle size={16} />
-                    {verifying ? 'Processing...' : 'Approve ✓'}
-                  </button>
-                  <button
-                    onClick={() => handleVerify('reject')}
-                    disabled={verifying}
-                    className="flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 transition-colors disabled:opacity-50"
-                  >
-                    <XCircle size={16} />
-                    {verifying ? 'Processing...' : 'Reject ✗'}
-                  </button>
+              {selectedOrder.notes && (
+                <div className="glass-card rounded-xl p-3 text-sm text-muted-foreground">{selectedOrder.notes}</div>
+              )}
+              {selectedOrder.order_items?.length > 0 && (
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">Order Items</p>
+                  <div className="space-y-2">
+                    {selectedOrder.order_items.map((item: any) => (
+                      <div key={item.id} className="flex justify-between items-center glass-card rounded-xl p-3 text-sm">
+                        <span className="text-foreground">{item.product_name} × {item.quantity}</span>
+                        <span className="font-bold text-primary">৳{Number(item.total).toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -256,22 +153,21 @@ const AdminOrders = () => {
                     </td>
                     <td className="px-4 py-3 font-bold text-foreground">৳{Number(order.total).toLocaleString()}</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 rounded-lg text-xs font-medium border capitalize ${statusColor[order.status] || ''}`}>
-                        {order.status}
-                      </span>
+                      <select
+                        value={order.status}
+                        onChange={e => updateStatus(order.id, e.target.value)}
+                        disabled={updatingStatus === order.id}
+                        className={`px-2 py-1 rounded-lg text-xs font-medium border capitalize bg-transparent cursor-pointer ${statusColor[order.status] || ''}`}
+                      >
+                        {['pending', 'processing', 'completed', 'cancelled', 'refunded'].map(s => (
+                          <option key={s} value={s} className="bg-card text-foreground">{s}</option>
+                        ))}
+                      </select>
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground text-xs capitalize">{order.payment_method}</td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-1">
-                        {(order.status === 'pending' || order.status === 'processing') && (
-                          <>
-                            <button onClick={() => { openOrder(order); }} title="Approve/Reject"
-                              className="p-1.5 text-green-400 hover:bg-green-400/10 rounded-lg transition-colors">
-                              <Check size={14} />
-                            </button>
-                          </>
-                        )}
-                        <button onClick={() => openOrder(order)} className="p-1.5 text-muted-foreground hover:text-primary transition-colors">
+                      <div className="flex items-center justify-end">
+                        <button onClick={() => setSelectedOrder(order)} className="p-1.5 text-muted-foreground hover:text-primary transition-colors">
                           <Eye size={15} />
                         </button>
                       </div>
