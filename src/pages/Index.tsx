@@ -6,7 +6,7 @@ import FlashSale from '@/components/store/FlashSale';
 import WhyChooseUs from '@/components/store/WhyChooseUs';
 
 import Footer from '@/components/store/Footer';
-import { TickerBanner, WhatsAppButton } from '@/components/store/Extras';
+import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 
 const Index = () => {
   return (
@@ -20,7 +20,7 @@ const Index = () => {
       <WhyChooseUs />
       
       <Footer />
-      <WhatsAppButton />
+      <FloatingButtons />
     </div>
   );
 };
