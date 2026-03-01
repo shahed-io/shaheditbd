@@ -117,7 +117,7 @@ const Footer = () => {
 
             <p className="text-foreground font-semibold text-sm mb-3">Payment Methods:</p>
             <div className="flex flex-wrap gap-2">
-              {['bKash', 'নগদ', 'রকেট', 'Binance'].map((pm) => (
+              {['bKash', 'নগদ', 'রকেট'].map((pm) => (
                 <span
                   key={pm}
                   className="glass-card px-3 py-1.5 rounded-lg text-xs text-foreground font-medium border border-border hover:border-primary/40 transition-colors"
