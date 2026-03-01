@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -14,6 +14,7 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,6 +45,13 @@ const App = () => (
               <Route path="orders" element={<AdminOrders />} />
               <Route path="coupons" element={<AdminCoupons />} />
               <Route path="settings" element={<AdminSettings />} />
+              <Route path="customers" element={<AdminPlaceholder />} />
+              <Route path="payments" element={<AdminPlaceholder />} />
+              <Route path="tickets" element={<AdminPlaceholder />} />
+              <Route path="reports" element={<AdminPlaceholder />} />
+              <Route path="marketing" element={<AdminPlaceholder />} />
+              <Route path="roles" element={<AdminPlaceholder />} />
+              <Route path="backup" element={<AdminPlaceholder />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
