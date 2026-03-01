@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Star, Heart, ShoppingCart, Eye, Zap } from 'lucide-react';
+import { Star, Heart, Eye, ShoppingCart, Zap } from 'lucide-react';
 import { Product } from '@/data/products';
+import { useCart } from '@/hooks/useCart';
 
 interface ProductCardProps {
   product: Product;
@@ -8,28 +9,45 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
-  const [wishlisted, setWishlisted] = useState(false);
-  const [added, setAdded] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [added, setAdded] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
       { threshold: 0.1 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
+  const wishlisted = isWishlisted(product.id);
+  const inCart = isInCart(product.id);
+
   const handleAdd = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.image,
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleWishlist = () => {
+    toggleWishlist({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.image,
+    });
   };
 
   return (
@@ -48,15 +66,13 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           src={product.image}
           alt={product.name}
           className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/0a1628/00b4d8?text=Product';
-          }}
+          onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/0a1628/00b4d8?text=Product'; }}
         />
 
         {/* Overlay actions */}
         <div className="absolute inset-0 bg-background/60 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
           <button
-            onClick={() => setWishlisted(!wishlisted)}
+            onClick={handleWishlist}
             className={`p-3 rounded-full glass-card transition-all hover:scale-110 ${wishlisted ? 'text-red-400' : 'text-foreground'}`}
           >
             <Heart size={16} fill={wishlisted ? 'currentColor' : 'none'} />
@@ -119,13 +135,13 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         <button
           onClick={handleAdd}
           className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-            added
+            added || inCart
               ? 'bg-green-500/20 border border-green-500/50 text-green-400'
               : 'btn-glow'
           }`}
         >
           <ShoppingCart size={15} />
-          {added ? '✓ Added to Cart' : 'Add to Cart'}
+          {added ? '✓ Added to Cart' : inCart ? '✓ In Cart' : 'Add to Cart'}
         </button>
       </div>
     </div>
