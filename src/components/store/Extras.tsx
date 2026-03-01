@@ -1,24 +1,39 @@
 import { MessageCircle } from 'lucide-react';
 
 const tickerItems = [
-  '🔥 Windows 11 Pro - ৳599 (94% OFF)',
-  '⚡ Office 365 Personal - ৳1,999 (88% OFF)',
-  '🎬 Netflix Subscription - ৳499 (81% OFF)',
-  '🎨 Adobe Creative Cloud - ৳599 (70% OFF)',
-  '🎵 Spotify Premium - ৳899 (85% OFF)',
-  '💻 IDM Lifetime - ৳2,625 (20% OFF)',
-  '🤖 ElevenLabs AI - ৳4,449 (63% OFF)',
-  '🪟 Windows 11 Home - ৳549 (93% OFF)',
+  '🔥 Windows 11 Pro — ৳599 (94% OFF)',
+  '⚡ Office 365 Personal — ৳1,999 (88% OFF)',
+  '🎬 Netflix Subscription — ৳499 (81% OFF)',
+  '🎨 Adobe Creative Cloud — ৳599 (70% OFF)',
+  '🎵 Spotify Premium — ৳899 (85% OFF)',
+  '💻 IDM Lifetime — ৳2,625 (20% OFF)',
+  '🤖 ElevenLabs AI — ৳4,449 (63% OFF)',
+  '🪟 Windows 11 Home — ৳549 (93% OFF)',
 ];
 
 const TickerBanner = () => {
-  const items = [...tickerItems, ...tickerItems];
+  // Repeat 4 times for seamless looping
+  const items = [...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems];
 
   return (
-    <div className="bg-primary/10 border-y border-primary/20 py-3 overflow-hidden relative">
-      <div className="flex gap-12 animate-ticker whitespace-nowrap">
+    <div
+      className="bg-primary/10 border-y border-primary/20 py-2.5 overflow-hidden relative"
+      style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)' }}
+    >
+      <div
+        className="flex"
+        style={{
+          width: 'max-content',
+          animation: 'ticker-seamless 40s linear infinite',
+          willChange: 'transform',
+        }}
+      >
         {items.map((item, i) => (
-          <span key={i} className="text-sm font-medium text-foreground flex-shrink-0">
+          <span
+            key={i}
+            className="text-sm font-medium text-foreground whitespace-nowrap flex-shrink-0"
+            style={{ paddingRight: '3.5rem' }}
+          >
             {item}
           </span>
         ))}
