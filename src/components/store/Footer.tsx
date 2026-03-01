@@ -1,4 +1,5 @@
 import { Shield, Facebook, Twitter, MessageCircle, Instagram, Linkedin, Phone, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -77,11 +78,17 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-primary text-xs tracking-widest uppercase mb-4">Information</h4>
             <ul className="space-y-2">
-              {['FAQs', 'About Us', 'Software Download Link', 'My Account', 'Contact Us', 'All Product'].map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
-                    {link}
-                  </a>
+              {[
+                { label: 'FAQ', href: '/faq' },
+                { label: 'আমাদের সম্পর্কে', href: '/about' },
+                { label: 'অর্ডার ট্র্যাক', href: '/track-order' },
+                { label: 'সাপোর্ট', href: '/support' },
+                { label: 'শপ', href: '/shop' },
+              ].map((link) => (
+                <li key={link.label}>
+                  <Link to={link.href} className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -91,11 +98,15 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-primary text-xs tracking-widest uppercase mb-4">Policies</h4>
             <ul className="space-y-2">
-              {['Privacy Policy', 'Terms & Condition', 'Refund & Return Policy', 'Order & Cancellation', 'Delivery System', 'Return Policy'].map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
-                    {link}
-                  </a>
+              {[
+                { label: 'গোপনীয়তা নীতি', href: '/privacy-policy' },
+                { label: 'সেবার শর্তাবলী', href: '/terms' },
+                { label: 'রিফান্ড পলিসি', href: '/refund-policy' },
+              ].map((link) => (
+                <li key={link.label}>
+                  <Link to={link.href} className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
