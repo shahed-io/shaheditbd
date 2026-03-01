@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Search, Menu, X, Phone, ChevronDown, Star, LogOut, User } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
 import logoIcon from '@/assets/logo-icon.png';
 import SearchBar from './SearchBar';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,12 +27,12 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { label: 'হোম', href: '/' },
-    { label: 'শপ', href: '/shop' },
-    { label: 'অর্ডার ট্র্যাক', href: '/track-order' },
-    { label: 'সাপোর্ট', href: '/support' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'আমাদের সম্পর্কে', href: '/about' },
+    { label: 'Home', href: '#' },
+    { label: 'Windows', href: '#windows' },
+    { label: 'Office', href: '#office' },
+    { label: 'Software', href: '#software' },
+    { label: 'Subscription', href: '#subscription' },
+    { label: 'Download Links', href: '#downloads' },
   ];
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
@@ -62,7 +61,7 @@ const Navbar = () => {
         <nav className="glass-card border-b border-primary/20 px-4 py-3">
           <div className="max-w-7xl mx-auto flex items-center gap-4">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 flex-shrink-0 group">
+            <a href="#" className="flex items-center gap-2.5 flex-shrink-0 group">
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-primary/30 blur-md group-hover:blur-lg scale-110 transition-all duration-300" />
                 <img
@@ -79,7 +78,7 @@ const Navbar = () => {
                   STORE
                 </div>
               </div>
-            </Link>
+            </a>
 
             {/* Search bar */}
             <div className="flex-1 hidden md:flex max-w-xl">
@@ -174,21 +173,24 @@ const Navbar = () => {
         <div className="hidden md:block bg-background/80 backdrop-blur-sm border-b border-border/50 px-4">
           <div className="max-w-7xl mx-auto flex items-center gap-1">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.label}
-                to={link.href}
+                href={link.href}
                 className="nav-link px-4 py-3 flex items-center gap-1"
               >
                 {link.label}
-              </Link>
+                {(link.label === 'Windows' || link.label === 'Office') && (
+                  <ChevronDown size={12} />
+                )}
+              </a>
             ))}
-            <Link
-              to="/shop"
+            <a
+              href="#shop"
               className="ml-auto btn-glow px-5 py-2 rounded-lg text-sm my-1.5 flex items-center gap-2"
             >
               <Star size={14} />
               Shop Now
-            </Link>
+            </a>
           </div>
         </div>
 
@@ -197,14 +199,14 @@ const Navbar = () => {
           <div className="md:hidden glass-card border-b border-border">
             <div className="max-w-7xl mx-auto py-3 px-4 flex flex-col gap-1">
               {navLinks.map((link) => (
-                <Link
+                <a
                   key={link.label}
-                  to={link.href}
+                  href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className="nav-link py-2.5 px-3 rounded-lg hover:bg-muted/40"
                 >
                   {link.label}
-                </Link>
+                </a>
               ))}
               {user ? (
                 <button
