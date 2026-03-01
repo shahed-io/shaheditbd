@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
-import { Package, Key, Clock, CheckCircle, XCircle, RefreshCw, Eye, EyeOff, Copy } from 'lucide-react';
+import { Package, Key, Clock, CheckCircle, XCircle, RefreshCw, Eye, EyeOff, Copy, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
@@ -116,6 +116,7 @@ const MyOrders = () => {
                         <p className="font-bold text-primary text-sm">{order.order_number}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {new Date(order.created_at).toLocaleDateString('en-BD', { day: 'numeric', month: 'short', year: 'numeric' })}
+
                         </p>
                       </div>
                       <div className="text-right flex items-center gap-3">
@@ -153,14 +154,23 @@ const MyOrders = () => {
       {selectedOrder && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="glass-card rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto border border-primary/20">
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <h2 className="text-lg font-bold text-foreground">{selectedOrder.order_number}</h2>
-                <p className="text-xs text-muted-foreground capitalize">{selectedOrder.payment_method} payment</p>
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">{selectedOrder.order_number}</h2>
+                  <p className="text-xs text-muted-foreground capitalize">{selectedOrder.payment_method} payment</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Link
+                    to={`/invoice/${selectedOrder.id}`}
+                    className="flex items-center gap-1.5 glass-card border border-border px-3 py-1.5 rounded-xl text-xs text-muted-foreground hover:border-primary/50 hover:text-primary transition-colors"
+                  >
+                    <FileText size={12} />
+                    Invoice
+                  </Link>
+                  <button onClick={() => { setSelectedOrder(null); setLicenseKeys([]); setRevealedKeys(new Set()); }}
+                    className="text-muted-foreground hover:text-foreground text-xl">✕</button>
+                </div>
               </div>
-              <button onClick={() => { setSelectedOrder(null); setLicenseKeys([]); setRevealedKeys(new Set()); }}
-                className="text-muted-foreground hover:text-foreground text-xl">✕</button>
-            </div>
 
             <div className="space-y-4">
               {/* Status */}

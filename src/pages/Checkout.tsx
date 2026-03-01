@@ -4,7 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
-import { ShoppingBag, Tag, Upload, CreditCard, CheckCircle, Copy, AlertCircle, ArrowLeft } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import {
+  ShoppingBag, Tag, Upload, CreditCard, CheckCircle, Copy, AlertCircle,
+  ArrowLeft, Trash2, Plus, Minus, Package
+} from 'lucide-react';
 
 const PAYMENT_METHODS = [
   { id: 'bkash', label: 'bKash', number: '01840-099853', color: 'from-pink-600 to-pink-700', emoji: '🟣' },
@@ -16,8 +20,9 @@ const Checkout = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const productId = searchParams.get('product');
+  const { items: cartItems, clearCart, subtotal: cartSubtotal } = useCart();
 
-  const [product, setProduct] = useState<any>(null);
+  const [directProduct, setDirectProduct] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [step, setStep] = useState<'info' | 'payment' | 'proof' | 'done'>('info');
 
@@ -37,6 +42,15 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [createdOrder, setCreatedOrder] = useState<any>(null);
 
+  // Determine if we're in direct product mode or cart mode
+  const isCartMode = !productId && cartItems.length > 0;
+  const orderItems = directProduct
+    ? [{ id: directProduct.id, name: directProduct.name, price: Number(directProduct.price), quantity: 1, image: directProduct.image_url }]
+    : cartItems.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i.image }));
+
+  const rawSubtotal = directProduct ? Number(directProduct.price) : cartSubtotal;
+  const finalTotal = Math.max(0, rawSubtotal - couponDiscount);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) {
@@ -47,11 +61,9 @@ const Checkout = () => {
     });
     if (productId) {
       supabase.from('products').select('*').eq('id', productId).single()
-        .then(({ data }) => setProduct(data));
+        .then(({ data }) => setDirectProduct(data));
     }
   }, [productId]);
-
-  const finalPrice = product ? Math.max(0, Number(product.price) - couponDiscount) : 0;
 
   const applyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -66,17 +78,17 @@ const Checkout = () => {
     if (!data) { toast.error('অকার্যকর কুপন কোড!'); setCouponLoading(false); return; }
     if (data.expires_at && new Date(data.expires_at) < new Date()) { toast.error('কুপনের মেয়াদ শেষ!'); setCouponLoading(false); return; }
     if (data.max_uses && data.uses_count >= data.max_uses) { toast.error('কুপনের ব্যবহার সীমা শেষ!'); setCouponLoading(false); return; }
-    if (data.min_order_amount && Number(product?.price) < Number(data.min_order_amount)) {
+    if (data.min_order_amount && rawSubtotal < Number(data.min_order_amount)) {
       toast.error(`ন্যূনতম অর্ডার ৳${data.min_order_amount} হতে হবে`); setCouponLoading(false); return;
     }
 
     let discount = 0;
     if (data.discount_type === 'percentage') {
-      discount = (Number(product?.price) * Number(data.discount_value)) / 100;
+      discount = (rawSubtotal * Number(data.discount_value)) / 100;
     } else {
       discount = Number(data.discount_value);
     }
-    setCouponDiscount(Math.min(discount, Number(product?.price)));
+    setCouponDiscount(Math.min(discount, rawSubtotal));
     setCouponId(data.id);
     setCouponApplied(true);
     toast.success(`কুপন প্রয়োগ হয়েছে! ৳${discount.toFixed(0)} ছাড়`);
@@ -92,7 +104,7 @@ const Checkout = () => {
 
   const handleSubmitOrder = async () => {
     if (!name.trim() || !email.trim() || !phone.trim()) { toast.error('সব তথ্য পূরণ করুন'); return; }
-    if (!product) return;
+    if (orderItems.length === 0) { toast.error('কোনো product নেই'); return; }
     setLoading(true);
     try {
       const orderNumber = 'SS-' + Date.now().toString().slice(-8);
@@ -105,23 +117,25 @@ const Checkout = () => {
         payment_method: selectedPayment,
         payment_status: 'pending',
         status: 'pending',
-        subtotal: Number(product.price),
+        subtotal: rawSubtotal,
         discount_amount: couponDiscount,
-        total: finalPrice,
+        total: finalTotal,
         coupon_id: couponId,
         coupon_code: couponApplied ? couponCode.trim().toUpperCase() : null,
       }).select().single();
 
       if (error) throw error;
 
-      await supabase.from('order_items').insert({
+      // Insert all order items
+      const itemInserts = orderItems.map(item => ({
         order_id: order.id,
-        product_id: product.id,
-        product_name: product.name,
-        price: Number(product.price),
-        quantity: 1,
-        total: finalPrice,
-      });
+        product_id: typeof item.id === 'string' && item.id.startsWith('local-') ? null : item.id,
+        product_name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        total: item.price * item.quantity,
+      }));
+      await supabase.from('order_items').insert(itemInserts);
 
       setCreatedOrder(order);
       setStep('payment');
@@ -137,8 +151,9 @@ const Checkout = () => {
     setLoading(true);
     try {
       let screenshotUrl = null;
-      if (screenshot && user) {
-        const path = `${user.id}/${createdOrder.id}/${Date.now()}-${screenshot.name}`;
+      if (screenshot) {
+        const userId = user?.id || 'guest';
+        const path = `${userId}/${createdOrder.id}/${Date.now()}-${screenshot.name}`;
         const { data: uploadData } = await supabase.storage.from('payment-proofs').upload(path, screenshot);
         if (uploadData) screenshotUrl = path;
       }
@@ -149,15 +164,14 @@ const Checkout = () => {
         transaction_id: transactionId.trim(),
         screenshot_url: screenshotUrl,
         payment_method: selectedPayment,
-        amount: finalPrice,
+        amount: finalTotal,
         status: 'pending',
       });
 
       await supabase.from('orders').update({ payment_status: 'proof_submitted', status: 'processing' }).eq('id', createdOrder.id);
 
-      if (couponApplied && couponId) {
-        await supabase.from('coupons').update({ uses_count: supabase.rpc as any }).eq('id', couponId);
-      }
+      // Clear cart after successful order
+      if (isCartMode) clearCart();
 
       setStep('done');
       toast.success('Payment proof জমা হয়েছে! Admin verify করবে।');
@@ -167,13 +181,34 @@ const Checkout = () => {
     setLoading(false);
   };
 
-  if (!product && productId) {
+  if (productId && !directProduct) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="glass-card rounded-2xl p-8 text-center animate-pulse">
           <div className="w-16 h-16 bg-primary/20 rounded-full mx-auto mb-4" />
           <p className="text-muted-foreground">Loading product...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (!productId && cartItems.length === 0 && step === 'info') {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar />
+        <main className="pt-36 pb-16 px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="glass-card rounded-2xl p-12">
+              <ShoppingBag size={48} className="text-muted-foreground mx-auto mb-4 opacity-40" />
+              <h2 className="text-xl font-bold text-foreground mb-2">Cart খালি!</h2>
+              <p className="text-muted-foreground text-sm mb-6">প্রথমে কোনো product cart-এ add করুন।</p>
+              <button onClick={() => navigate('/')} className="btn-glow px-6 py-2.5 rounded-xl text-sm">
+                Shop করুন
+              </button>
+            </div>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
@@ -207,21 +242,41 @@ const Checkout = () => {
             ))}
           </div>
 
-          {/* Product Summary */}
-          {product && step !== 'done' && (
-            <div className="glass-card rounded-2xl p-4 mb-5 flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl overflow-hidden bg-muted/30 flex-shrink-0">
-                {product.image_url ? <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" /> :
-                  <div className="w-full h-full flex items-center justify-center"><ShoppingBag size={22} className="text-muted-foreground" /></div>}
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-foreground">{product.name}</p>
-                {product.original_price && <p className="text-xs text-muted-foreground line-through">৳{Number(product.original_price).toLocaleString()}</p>}
-              </div>
-              <div className="text-right">
-                {couponApplied && <p className="text-xs text-muted-foreground line-through">৳{Number(product.price).toLocaleString()}</p>}
-                <p className="text-xl font-black text-primary">৳{finalPrice.toLocaleString()}</p>
-                {couponApplied && <p className="text-xs text-green-400">-৳{couponDiscount.toFixed(0)} ছাড়</p>}
+          {/* Order Summary */}
+          {step !== 'done' && (
+            <div className="glass-card rounded-2xl p-4 mb-5 space-y-3">
+              <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-1">
+                <Package size={12} />
+                Order Summary ({orderItems.length} item{orderItems.length > 1 ? 's' : ''})
+              </p>
+              {orderItems.map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-muted/30 flex-shrink-0">
+                    {item.image ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" /> :
+                      <div className="w-full h-full flex items-center justify-center"><ShoppingBag size={14} className="text-muted-foreground" /></div>}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground truncate">{item.name}</p>
+                    <p className="text-xs text-muted-foreground">x{item.quantity}</p>
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">৳{(item.price * item.quantity).toLocaleString()}</p>
+                </div>
+              ))}
+              <div className="border-t border-border pt-2 space-y-1">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-foreground">৳{rawSubtotal.toLocaleString()}</span>
+                </div>
+                {couponApplied && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-400">Discount ({couponCode})</span>
+                    <span className="text-green-400">-৳{couponDiscount.toFixed(0)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-bold">
+                  <span className="text-foreground">Total</span>
+                  <span className="text-xl text-primary">৳{finalTotal.toLocaleString()}</span>
+                </div>
               </div>
             </div>
           )}
@@ -307,7 +362,7 @@ const Checkout = () => {
                 })()}
 
                 <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 space-y-2 text-sm text-muted-foreground">
-                  <div className="flex justify-between"><span>পরিমাণ:</span><span className="text-primary font-bold">৳{finalPrice.toLocaleString()}</span></div>
+                  <div className="flex justify-between"><span>পরিমাণ:</span><span className="text-primary font-bold">৳{finalTotal.toLocaleString()}</span></div>
                   <div className="flex justify-between"><span>অর্ডার নম্বর:</span><span className="text-foreground font-medium">{createdOrder.order_number}</span></div>
                   <div className="flex justify-between"><span>Payment Type:</span><span className="text-foreground">Send Money</span></div>
                 </div>
@@ -339,14 +394,15 @@ const Checkout = () => {
               </div>
 
               <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Payment Screenshot (ঐচ্ছিক কিন্তু দিলে verify দ্রুত হয়)</label>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Payment Screenshot (দ্রুত verify হয়)</label>
                 <label className="flex flex-col items-center justify-center border-2 border-dashed border-border hover:border-primary/50 rounded-xl p-6 cursor-pointer transition-colors">
                   {screenshotPreview ? (
                     <img src={screenshotPreview} alt="screenshot" className="max-h-48 rounded-lg object-contain" />
                   ) : (
                     <>
                       <Upload size={28} className="text-muted-foreground mb-2" />
-                      <p className="text-sm text-muted-foreground">ছবি আপলোড করুন (JPG/PNG, max 5MB)</p>
+                      <p className="text-sm text-muted-foreground">Screenshot বেছে নিন</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">JPG, PNG (max 5MB)</p>
                     </>
                   )}
                   <input type="file" accept="image/*" onChange={handleScreenshotChange} className="hidden" />
@@ -355,26 +411,31 @@ const Checkout = () => {
 
               <button onClick={handleSubmitProof} disabled={loading}
                 className="w-full btn-glow py-3 rounded-xl font-semibold text-sm">
-                {loading ? 'জমা হচ্ছে...' : 'Proof জমা দিন ✓'}
+                {loading ? 'জমা হচ্ছে...' : 'Payment Proof জমা দিন ✓'}
               </button>
             </div>
           )}
 
           {/* STEP 4: Done */}
-          {step === 'done' && (
-            <div className="glass-card rounded-2xl p-8 text-center space-y-4">
-              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle size={32} className="text-green-400" />
+          {step === 'done' && createdOrder && (
+            <div className="glass-card rounded-2xl p-8 text-center">
+              <div className="w-20 h-20 rounded-full bg-green-500/20 border-2 border-green-500/50 flex items-center justify-center mx-auto mb-5">
+                <CheckCircle size={40} className="text-green-400" />
               </div>
-              <h2 className="text-xl font-bold text-foreground">অর্ডার সফলভাবে জমা হয়েছে!</h2>
-              <p className="text-muted-foreground text-sm">আপনার Payment Proof আমরা পেয়েছি। Admin verify করলে আপনি ইমেইলে License Key / Credentials পাবেন এবং My Orders-এও দেখতে পাবেন।</p>
-              <div className="glass-card rounded-xl p-4 text-sm">
-                <div className="flex justify-between mb-1"><span className="text-muted-foreground">অর্ডার নম্বর:</span><span className="text-primary font-bold">{createdOrder?.order_number}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Status:</span><span className="text-yellow-400">Verification Pending</span></div>
+              <h2 className="text-2xl font-black gradient-text mb-2" style={{ fontFamily: 'Orbitron, sans-serif' }}>অর্ডার সম্পন্ন!</h2>
+              <p className="text-muted-foreground text-sm mb-4">
+                আপনার payment proof পাওয়া গেছে। Admin verify করার পর আপনার ইমেইল ও My Orders-এ license key পাঠানো হবে।
+              </p>
+              <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 font-mono text-primary font-bold text-lg mb-6">
+                {createdOrder.order_number}
               </div>
-              <div className="flex gap-3">
-                <button onClick={() => navigate('/my-orders')} className="flex-1 btn-glow py-2.5 rounded-xl text-sm font-medium">My Orders দেখুন</button>
-                <button onClick={() => navigate('/')} className="flex-1 glass-card border border-border py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground transition-colors">হোমে ফিরুন</button>
+              <div className="flex flex-col gap-2">
+                <button onClick={() => navigate('/my-orders')} className="btn-glow py-3 rounded-xl font-semibold text-sm">
+                  My Orders দেখুন
+                </button>
+                <button onClick={() => navigate('/')} className="glass-card border border-border text-muted-foreground py-3 rounded-xl text-sm hover:border-primary/50 transition-colors">
+                  আরো কিনুন
+                </button>
               </div>
             </div>
           )}
