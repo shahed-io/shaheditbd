@@ -339,9 +339,11 @@ export type Database = {
         Row: {
           category_id: string | null
           created_at: string
+          delivery_time: string | null
           description: string | null
           discount_percent: number | null
           download_link: string | null
+          faq: Json | null
           id: string
           image_url: string | null
           images: string[] | null
@@ -350,6 +352,8 @@ export type Database = {
           name: string
           original_price: number | null
           price: number
+          seo_description: string | null
+          seo_title: string | null
           short_description: string | null
           sku: string | null
           slug: string
@@ -360,13 +364,17 @@ export type Database = {
           total_sales: number | null
           total_views: number | null
           updated_at: string
+          variants: Json | null
+          what_you_get: string[] | null
         }
         Insert: {
           category_id?: string | null
           created_at?: string
+          delivery_time?: string | null
           description?: string | null
           discount_percent?: number | null
           download_link?: string | null
+          faq?: Json | null
           id?: string
           image_url?: string | null
           images?: string[] | null
@@ -375,6 +383,8 @@ export type Database = {
           name: string
           original_price?: number | null
           price?: number
+          seo_description?: string | null
+          seo_title?: string | null
           short_description?: string | null
           sku?: string | null
           slug: string
@@ -385,13 +395,17 @@ export type Database = {
           total_sales?: number | null
           total_views?: number | null
           updated_at?: string
+          variants?: Json | null
+          what_you_get?: string[] | null
         }
         Update: {
           category_id?: string | null
           created_at?: string
+          delivery_time?: string | null
           description?: string | null
           discount_percent?: number | null
           download_link?: string | null
+          faq?: Json | null
           id?: string
           image_url?: string | null
           images?: string[] | null
@@ -400,6 +414,8 @@ export type Database = {
           name?: string
           original_price?: number | null
           price?: number
+          seo_description?: string | null
+          seo_title?: string | null
           short_description?: string | null
           sku?: string | null
           slug?: string
@@ -410,6 +426,8 @@ export type Database = {
           total_sales?: number | null
           total_views?: number | null
           updated_at?: string
+          variants?: Json | null
+          what_you_get?: string[] | null
         }
         Relationships: [
           {
