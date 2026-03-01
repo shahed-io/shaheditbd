@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, Edit, Trash2, Percent, Tag } from 'lucide-react';
 import { toast } from 'sonner';
+import { handleDbError } from '@/lib/errorHandler';
 
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState<any[]>([]);
@@ -33,10 +34,10 @@ const AdminCoupons = () => {
     };
     if (editing) {
       const { error } = await supabase.from('coupons').update(payload).eq('id', editing.id);
-      if (error) toast.error('Failed'); else { toast.success('Updated!'); setShowForm(false); fetchCoupons(); }
+      if (error) toast.error(handleDbError(error)); else { toast.success('Updated!'); setShowForm(false); fetchCoupons(); }
     } else {
       const { error } = await supabase.from('coupons').insert(payload);
-      if (error) toast.error('Failed: ' + error.message); else { toast.success('Coupon created!'); setShowForm(false); fetchCoupons(); }
+      if (error) toast.error(handleDbError(error)); else { toast.success('Coupon created!'); setShowForm(false); fetchCoupons(); }
     }
     setSaving(false);
   };

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Search, Eye, Edit, Check, X, Filter } from 'lucide-react';
 import { toast } from 'sonner';
+import { handleDbError } from '@/lib/errorHandler';
 
 const statusColor: Record<string, string> = {
   pending: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30',
@@ -39,7 +40,7 @@ const AdminOrders = () => {
   const updateStatus = async (id: string, status: string) => {
     setUpdatingStatus(id);
     const { error } = await supabase.from('orders').update({ status: status as any }).eq('id', id);
-    if (error) toast.error('Failed to update status');
+    if (error) toast.error(handleDbError(error));
     else { toast.success('Order status updated!'); fetchOrders(); if (selectedOrder?.id === id) setSelectedOrder({...selectedOrder, status}); }
     setUpdatingStatus(null);
   };
