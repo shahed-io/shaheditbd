@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Heart, Search, Menu, X, Phone, ChevronDown, Star, LogOut, User } from 'lucide-react';
 import logoImg from '@/assets/logo.png';
+import SearchBar from './SearchBar';
 import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
@@ -72,18 +73,8 @@ const Navbar = () => {
             </a>
 
             {/* Search bar */}
-            <div className="flex-1 hidden md:flex">
-              <div className="w-full max-w-xl relative flex">
-                <input
-                  type="text"
-                  placeholder="Search for software, licenses, subscriptions..."
-                  className="w-full bg-muted/50 border border-border rounded-l-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-                />
-                <button className="btn-glow px-5 rounded-r-xl text-sm flex items-center gap-2">
-                  <Search size={16} />
-                  Search
-                </button>
-              </div>
+            <div className="flex-1 hidden md:flex max-w-xl">
+              <SearchBar className="w-full" />
             </div>
 
             {/* Right icons */}
@@ -149,15 +140,8 @@ const Navbar = () => {
 
           {/* Mobile search */}
           {searchOpen && (
-            <div className="mt-3 flex md:hidden">
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="flex-1 bg-muted/50 border border-border rounded-l-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
-              />
-              <button className="btn-glow px-4 rounded-r-xl">
-                <Search size={16} />
-              </button>
+            <div className="mt-3 md:hidden">
+              <SearchBar />
             </div>
           )}
         </nav>
