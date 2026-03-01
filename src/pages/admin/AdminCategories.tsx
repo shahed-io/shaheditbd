@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, Search, Edit, Trash2, Grid3X3 } from 'lucide-react';
 import { toast } from 'sonner';
+import { handleDbError } from '@/lib/errorHandler';
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
@@ -26,10 +27,10 @@ const AdminCategories = () => {
     const payload = { ...form, sort_order: parseInt(form.sort_order) || 0, slug: form.slug || form.name.toLowerCase().replace(/\s+/g, '-') };
     if (editing) {
       const { error } = await supabase.from('categories').update(payload).eq('id', editing.id);
-      if (error) toast.error('Failed to update'); else { toast.success('Updated!'); setShowForm(false); fetchCategories(); }
+      if (error) toast.error(handleDbError(error)); else { toast.success('Updated!'); setShowForm(false); fetchCategories(); }
     } else {
       const { error } = await supabase.from('categories').insert(payload);
-      if (error) toast.error('Failed to add: ' + error.message); else { toast.success('Category added!'); setShowForm(false); fetchCategories(); }
+      if (error) toast.error(handleDbError(error)); else { toast.success('Category added!'); setShowForm(false); fetchCategories(); }
     }
     setSaving(false);
   };

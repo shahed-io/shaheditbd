@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, Search, Edit, Trash2, Eye, EyeOff, Package } from 'lucide-react';
 import { toast } from 'sonner';
+import { handleDbError } from '@/lib/errorHandler';
 
 interface Product {
   id: string;
@@ -74,11 +75,11 @@ const AdminProducts = () => {
 
     if (editingProduct) {
       const { error } = await supabase.from('products').update(payload).eq('id', editingProduct.id);
-      if (error) toast.error('Failed to update product');
+      if (error) toast.error(handleDbError(error));
       else { toast.success('Product updated!'); setShowForm(false); fetchProducts(); }
     } else {
       const { error } = await supabase.from('products').insert(payload);
-      if (error) toast.error('Failed to add product: ' + error.message);
+      if (error) toast.error(handleDbError(error));
       else { toast.success('Product added!'); setShowForm(false); fetchProducts(); }
     }
     setSaving(false);
