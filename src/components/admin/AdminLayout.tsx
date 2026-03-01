@@ -3,13 +3,15 @@ import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import {
-  LayoutDashboard, Package, ShoppingCart, Users, Tag, Settings,
+  LayoutDashboard, Package, ShoppingCart, Users, Settings,
   LogOut, Menu, X, Package2, BarChart3, Bell, Search, ChevronDown,
-  Grid3X3, Percent, FileText, Star
+  Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
+  Megaphone, Shield, Database, Tag
 } from 'lucide-react';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
+  { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
   {
     icon: Package, label: 'Products', path: '/admin/products',
     children: [
@@ -24,20 +26,15 @@ const menuItems = [
       { label: 'Add New', path: '/admin/categories/new' },
     ]
   },
-  {
-    icon: ShoppingCart, label: 'Orders', path: '/admin/orders',
-    children: [
-      { label: 'All Orders', path: '/admin/orders' },
-      { label: 'Pending', path: '/admin/orders?status=pending' },
-      { label: 'Completed', path: '/admin/orders?status=completed' },
-    ]
-  },
   { icon: Users, label: 'Customers', path: '/admin/customers' },
+  { icon: CreditCard, label: 'Payments', path: '/admin/payments' },
   { icon: Percent, label: 'Coupons', path: '/admin/coupons' },
-  { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
-  { icon: FileText, label: 'Reviews', path: '/admin/reviews' },
-  { icon: Star, label: 'Featured', path: '/admin/featured' },
+  { icon: Headphones, label: 'Tickets', path: '/admin/tickets' },
+  { icon: TrendingUp, label: 'Reports', path: '/admin/reports' },
+  { icon: Megaphone, label: 'Marketing', path: '/admin/marketing' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
+  { icon: Shield, label: 'Admin Roles', path: '/admin/roles' },
+  { icon: Database, label: 'Backup', path: '/admin/backup' },
 ];
 
 const AdminLayout = () => {
