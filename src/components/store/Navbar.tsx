@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Heart, Search, Menu, X, Phone, ChevronDown, Star, LogOut, User } from 'lucide-react';
-import logoImg from '@/assets/logo.png';
+import logoImg from '@/assets/logo-new.png';
 import SearchBar from './SearchBar';
 import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
@@ -63,11 +63,12 @@ const Navbar = () => {
             {/* Logo */}
             <a href="#" className="flex items-center flex-shrink-0 group">
               <div className="relative">
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/40 to-accent/40 blur-md group-hover:blur-lg transition-all duration-300 scale-110" />
+                <div className="absolute inset-0 rounded-lg bg-primary/20 blur-md group-hover:blur-lg transition-all duration-300 scale-105" />
                 <img
                   src={logoImg}
                   alt="Shahed Store"
-                  className="relative h-10 w-auto rounded-xl shadow-lg group-hover:scale-105 transition-transform duration-300"
+                  className="relative h-9 w-auto rounded-lg group-hover:scale-105 transition-transform duration-300"
+                  style={{ maxWidth: '160px' }}
                 />
               </div>
             </a>
