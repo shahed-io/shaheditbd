@@ -51,8 +51,13 @@ const HeroBanner = () => {
         <img
           src={heroBanner}
           alt="Hero Banner"
-          className="w-full h-full object-cover opacity-20"
+          className="w-full h-full object-cover opacity-55 scale-105"
+          style={{ filter: 'saturate(1.3) brightness(0.75)' }}
         />
+        {/* Dark gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
+        <div className={`absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent`} />
+        {/* Slide color tint */}
         <div className={`absolute inset-0 bg-gradient-to-r ${slide.bg} transition-all duration-1000`} />
         {/* Animated orbs */}
         <div className="orb orb-1 top-20 left-1/4" />
@@ -60,7 +65,7 @@ const HeroBanner = () => {
         <div className="orb orb-3 top-1/2 left-2/3" />
         {/* Grid pattern */}
         <div
-          className="absolute inset-0 opacity-5"
+          className="absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage: 'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)',
             backgroundSize: '60px 60px',
