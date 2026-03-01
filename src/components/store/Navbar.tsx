@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
-import { ShoppingCart, Heart, Search, Menu, X, Phone, ChevronDown, Star, LogOut, User, Package } from 'lucide-react';
+import { ShoppingCart, Heart, Search, Menu, X, Phone, ChevronDown, Star, LogOut, User, Package, Headphones } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logoIcon from '@/assets/logo-icon.png';
 import SearchBar from './SearchBar';
 import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
+import CartDrawer from './CartDrawer';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { useCart } from '@/context/CartContext';
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [cartCount] = useState(3);
-  const [wishlistCount] = useState(5);
+  const [cartOpen, setCartOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const { totalItems } = useCart();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
@@ -28,12 +30,12 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { label: 'Home', href: '#' },
+    { label: 'Home', href: '/' },
     { label: 'Windows', href: '#windows' },
     { label: 'Office', href: '#office' },
     { label: 'Software', href: '#software' },
     { label: 'Subscription', href: '#subscription' },
-    { label: 'Download Links', href: '#downloads' },
+    { label: 'Support', href: '/support' },
   ];
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
@@ -41,6 +43,7 @@ const Navbar = () => {
   return (
     <>
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
 
       <header className="fixed top-0 left-0 right-0 z-50">
         {/* Top bar */}
@@ -97,20 +100,14 @@ const Navbar = () => {
                 <Search size={20} />
               </button>
 
-              <button className="relative p-2 text-muted-foreground hover:text-primary transition-colors">
-                <Heart size={20} />
-                {wishlistCount > 0 && (
-                  <span className="absolute top-0 right-0 w-4 h-4 bg-accent text-background text-[10px] rounded-full flex items-center justify-center font-bold">
-                    {wishlistCount}
-                  </span>
-                )}
-              </button>
-
-              <button className="relative p-2 text-muted-foreground hover:text-primary transition-colors">
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
+              >
                 <ShoppingCart size={20} />
-                {cartCount > 0 && (
+                {totalItems > 0 && (
                   <span className="absolute top-0 right-0 w-4 h-4 bg-primary text-background text-[10px] rounded-full flex items-center justify-center font-bold">
-                    {cartCount}
+                    {totalItems}
                   </span>
                 )}
               </button>
