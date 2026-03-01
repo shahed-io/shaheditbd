@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Star, Heart, ShoppingCart, Eye, Zap } from 'lucide-react';
 import { Product } from '@/data/products';
 
@@ -10,6 +10,22 @@ interface ProductCardProps {
 const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const [wishlisted, setWishlisted] = useState(false);
   const [added, setAdded] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
 
   const handleAdd = () => {
     setAdded(true);
@@ -18,8 +34,13 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
 
   return (
     <div
-      className="product-card animate-slide-up"
-      style={{ animationDelay: `${delay}s`, animationFillMode: 'both' }}
+      ref={ref}
+      className="product-card"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.95)',
+        transition: `opacity 0.6s ease-out ${delay}s, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${delay}s`,
+      }}
     >
       {/* Image area */}
       <div className="relative overflow-hidden">
@@ -48,7 +69,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
           {product.discount && (
-            <span className="badge-discount">-{product.discount}%</span>
+            <span className="badge-discount animate-pulse">-{product.discount}%</span>
           )}
           {product.isNew && (
             <span className="bg-accent text-background text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>
@@ -62,7 +83,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-3 relative z-10">
         <div>
           <span className="text-xs text-primary font-medium">{product.category}</span>
           <h3 className="text-sm font-semibold text-foreground mt-0.5 line-clamp-2 leading-snug">

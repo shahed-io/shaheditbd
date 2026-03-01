@@ -179,12 +179,38 @@
 
   /* Product card */
   .product-card {
-    @apply glass-card rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 relative;
+    @apply glass-card rounded-2xl overflow-hidden cursor-pointer relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: card-enter 0.6s ease-out both;
   }
   .product-card:hover {
-    border-color: hsla(199, 100%, 60%, 0.5);
-    box-shadow: 0 8px 40px hsla(199, 100%, 50%, 0.2);
-    transform: translateY(-6px);
+    border-color: hsla(199, 100%, 60%, 0.6);
+    transform: translateY(-8px) scale(1.02);
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+  .product-card:hover img {
+    animation: image-zoom 0.5s ease-out forwards;
+  }
+  /* Shimmer overlay on hover */
+  .product-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      hsla(199, 100%, 70%, 0.06) 50%,
+      transparent 60%
+    );
+    background-size: 200% auto;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 1;
+    animation: shimmer 1.5s linear infinite;
+  }
+  .product-card:hover::before {
+    opacity: 1;
   }
 
   /* Flash sale timer */
@@ -205,6 +231,26 @@
     background: hsl(var(--primary) / 0.5);
     border-radius: 3px;
   }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes card-enter {
+  0% { opacity: 0; transform: translateY(40px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes image-zoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 8px 40px hsla(199, 100%, 50%, 0.15); }
+  50% { box-shadow: 0 8px 60px hsla(199, 100%, 50%, 0.45), 0 0 30px hsla(260, 80%, 60%, 0.2); }
 }
 
 @keyframes float-orb {
