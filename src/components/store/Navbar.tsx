@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ShoppingCart, Heart, Search, Menu, X, Phone, ChevronDown, Star, LogOut, User } from 'lucide-react';
+import { ShoppingCart, Heart, Search, Menu, X, Phone, ChevronDown, Star, LogOut, User, Package } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import logoIcon from '@/assets/logo-icon.png';
 import SearchBar from './SearchBar';
 import { supabase } from '@/integrations/supabase/client';
@@ -116,6 +117,10 @@ const Navbar = () => {
 
               {user ? (
                 <div className="hidden sm:flex items-center gap-2">
+                  <Link to="/my-orders" className="flex items-center gap-1.5 glass-card px-3 py-1.5 rounded-xl border border-border hover:border-primary/40 transition-colors text-muted-foreground hover:text-primary text-sm">
+                    <Package size={14} />
+                    <span className="hidden lg:inline">My Orders</span>
+                  </Link>
                   <div className="flex items-center gap-2 glass-card px-3 py-1.5 rounded-xl border border-primary/30">
                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                       <User size={12} className="text-background" />

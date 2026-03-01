@@ -106,6 +106,57 @@ export type Database = {
         }
         Relationships: []
       }
+      license_keys: {
+        Row: {
+          assigned_at: string | null
+          created_at: string
+          extra_info: string | null
+          id: string
+          key_type: string
+          key_value: string
+          order_item_id: string | null
+          product_id: string | null
+          status: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          created_at?: string
+          extra_info?: string | null
+          id?: string
+          key_type?: string
+          key_value: string
+          order_item_id?: string | null
+          product_id?: string | null
+          status?: string
+        }
+        Update: {
+          assigned_at?: string | null
+          created_at?: string
+          extra_info?: string | null
+          id?: string
+          key_type?: string
+          key_value?: string
+          order_item_id?: string | null
+          product_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "license_keys_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "license_keys_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
@@ -227,6 +278,59 @@ export type Database = {
             columns: ["coupon_id"]
             isOneToOne: false
             referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_proofs: {
+        Row: {
+          admin_notes: string | null
+          amount: number | null
+          id: string
+          order_id: string
+          payment_method: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          screenshot_url: string | null
+          status: string
+          submitted_at: string
+          transaction_id: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount?: number | null
+          id?: string
+          order_id: string
+          payment_method?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          screenshot_url?: string | null
+          status?: string
+          submitted_at?: string
+          transaction_id: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number | null
+          id?: string
+          order_id?: string
+          payment_method?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          screenshot_url?: string | null
+          status?: string
+          submitted_at?: string
+          transaction_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_proofs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
