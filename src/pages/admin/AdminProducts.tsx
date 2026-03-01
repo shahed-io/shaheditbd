@@ -27,7 +27,7 @@ const AdminProducts = () => {
   const [form, setForm] = useState({
     name: '', price: '', original_price: '', discount_percent: '',
     description: '', short_description: '', image_url: '', category_id: '',
-    status: 'active', is_featured: false, is_digital: true, download_link: '', sku: '',
+    status: 'active', is_featured: false, is_digital: true, download_link: '', sku: '', is_flash_sale: false,
   });
   const [saving, setSaving] = useState(false);
 
@@ -71,6 +71,7 @@ const AdminProducts = () => {
       is_digital: form.is_digital,
       download_link: form.download_link,
       sku: form.sku || null,
+      tags: form.is_flash_sale ? ['flash-sale'] : [],
     };
 
     if (editingProduct) {
@@ -99,8 +100,8 @@ const AdminProducts = () => {
       original_price: product.original_price ? String(product.original_price) : '',
       discount_percent: product.discount_percent ? String(product.discount_percent) : '',
       description: '', short_description: '', image_url: product.image_url || '',
-      category_id: '', status: product.status, is_featured: false, is_digital: true,
-      download_link: '', sku: '',
+      category_id: '', status: product.status, is_featured: (product as any).is_featured ?? false, is_digital: true,
+      download_link: '', sku: '', is_flash_sale: (product as any).tags?.includes('flash-sale') ?? false,
     });
     setShowForm(true);
   };
@@ -121,7 +122,7 @@ const AdminProducts = () => {
           <p className="text-muted-foreground text-sm">{products.length} products total</p>
         </div>
         <button
-          onClick={() => { setEditingProduct(null); setForm({ name:'',price:'',original_price:'',discount_percent:'',description:'',short_description:'',image_url:'',category_id:'',status:'active',is_featured:false,is_digital:true,download_link:'',sku:'' }); setShowForm(true); }}
+          onClick={() => { setEditingProduct(null); setForm({ name:'',price:'',original_price:'',discount_percent:'',description:'',short_description:'',image_url:'',category_id:'',status:'active',is_featured:false,is_digital:true,download_link:'',sku:'',is_flash_sale:false }); setShowForm(true); }}
           className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold"
         >
           <Plus size={16} /> Add New Product
@@ -215,14 +216,18 @@ const AdminProducts = () => {
                   <textarea rows={4} value={form.description} onChange={e => setForm({...form, description: e.target.value})}
                     className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors resize-none" />
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-wrap">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" checked={form.is_featured} onChange={e => setForm({...form, is_featured: e.target.checked})} className="w-4 h-4 accent-primary" />
-                    <span className="text-sm text-foreground">Featured Product</span>
+                    <span className="text-sm text-foreground">⭐ Featured Product</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" checked={form.is_digital} onChange={e => setForm({...form, is_digital: e.target.checked})} className="w-4 h-4 accent-primary" />
-                    <span className="text-sm text-foreground">Digital Product</span>
+                    <span className="text-sm text-foreground">💻 Digital Product</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" checked={form.is_flash_sale} onChange={e => setForm({...form, is_flash_sale: e.target.checked})} className="w-4 h-4 accent-primary" />
+                    <span className="text-sm text-foreground">🔥 Flash Sale</span>
                   </label>
                 </div>
               </div>
