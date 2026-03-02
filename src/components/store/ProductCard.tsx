@@ -37,17 +37,11 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   };
 
   const handleAdd = () => {
-    addToCart({
-      id: product.id, name: product.name, category: product.category,
-      price: product.price, originalPrice: product.originalPrice, image: product.image,
-    });
+    addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image });
   };
 
   const handleWishlist = () => {
-    toggleWishlist({
-      id: product.id, name: product.name, category: product.category,
-      price: product.price, originalPrice: product.originalPrice, image: product.image,
-    });
+    toggleWishlist({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image });
   };
 
   return (
@@ -57,67 +51,69 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         className="product-card group"
         style={{
           opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0) scale(1)' : 'translateY(50px) scale(0.92)',
-          transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
+          transform: visible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.94)',
+          transition: `opacity 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
         }}
       >
-        {/* Glow border on hover */}
-        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{ background: 'linear-gradient(135deg, hsla(199,100%,50%,0.12), hsla(260,80%,60%,0.06))', zIndex: 0 }} />
-
-        {/* Image */}
-        <div className="relative overflow-hidden rounded-t-2xl">
-          <div className="aspect-square bg-gradient-to-br from-muted/80 to-muted/40 overflow-hidden">
+        {/* Image area */}
+        <div className="relative overflow-hidden">
+          <div className="aspect-square overflow-hidden bg-muted/30">
             <img
               src={product.image}
               alt={product.name}
               loading="lazy"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/0a1628/00b4d8?text=Product'; }}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/0d1321/3ddc84?text=Product'; }}
             />
           </div>
 
-          {/* Shimmer overlay */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-            style={{ background: 'linear-gradient(105deg, transparent 30%, hsla(199,100%,80%,0.08) 50%, transparent 70%)', backgroundSize: '250% 100%', animation: 'shimmer 2s linear infinite' }} />
+          {/* Gradient overlay on hover */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, transparent 50%, hsla(158,64%,52%,0.08) 100%)' }} />
 
-          {/* Wishlist */}
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
+          {/* Wishlist btn */}
+          <div className="absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
             <button
               onClick={handleWishlist}
               className={`p-2 rounded-xl backdrop-blur-sm border transition-all hover:scale-110 ${
                 wishlisted
-                  ? 'bg-red-500/20 border-red-500/40 text-red-400'
-                  : 'bg-background/40 border-border/60 text-muted-foreground hover:text-red-400'
+                  ? 'bg-red-500/20 border-red-400/40 text-red-400'
+                  : 'bg-background/50 border-border/60 text-muted-foreground hover:text-red-400'
               }`}
             >
-              <Heart size={14} fill={wishlisted ? 'currentColor' : 'none'} />
+              <Heart size={13} fill={wishlisted ? 'currentColor' : 'none'} />
             </button>
           </div>
 
           {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
+          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
             {product.discount && (
-              <span className="badge-discount text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
+              <span className="badge-discount text-[9px] font-black px-2 py-0.5 rounded-full">
                 -{product.discount}%
               </span>
             )}
             {product.isBestseller && (
-              <span className="flex items-center gap-1 bg-primary/20 border border-primary/40 text-primary text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
-                <Zap size={8} fill="currentColor" /> BEST
+              <span className="flex items-center gap-0.5 text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm"
+                style={{ background: 'hsla(158,64%,52%,0.18)', border: '1px solid hsla(158,64%,52%,0.35)', color: 'hsl(var(--primary))' }}>
+                <Zap size={7} fill="currentColor" /> BEST
               </span>
             )}
             {product.isNew && (
-              <span className="bg-accent/20 border border-accent/40 text-accent text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">NEW</span>
+              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm"
+                style={{ background: 'hsla(43,100%,60%,0.18)', border: '1px solid hsla(43,100%,60%,0.35)', color: 'hsl(var(--accent))' }}>
+                NEW
+              </span>
             )}
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-3.5 space-y-2.5 relative z-10">
+        <div className="p-3.5 space-y-2.5">
           <div>
-            <span className="text-[10px] text-primary/80 font-semibold uppercase tracking-wider">{product.category}</span>
-            <h3 className="text-sm font-bold text-foreground mt-0.5 line-clamp-2 leading-snug group-hover:text-primary transition-colors duration-300">
+            <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'hsl(var(--primary))' }}>
+              {product.category}
+            </span>
+            <h3 className="text-sm font-semibold text-foreground/90 mt-0.5 line-clamp-2 leading-snug group-hover:text-primary transition-colors duration-300">
               {product.name}
             </h3>
           </div>
@@ -125,43 +121,45 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           {/* Stars */}
           <div className="flex items-center gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} size={10} className={i < Math.floor(product.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/40'} />
+              <Star key={i} size={10} className={i < Math.floor(product.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'} />
             ))}
             <span className="text-[10px] text-muted-foreground ml-1">({product.reviews})</span>
           </div>
 
           {/* Price */}
           <div className="flex items-end justify-between">
-            <div>
-              <span className="text-primary font-black text-xl" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-primary font-black text-xl" style={{ fontFamily: 'Syne, sans-serif' }}>
                 ৳{product.price.toLocaleString()}
               </span>
               {product.originalPrice && (
-                <span className="text-muted-foreground text-xs line-through ml-1.5">
+                <span className="text-muted-foreground text-xs line-through">
                   ৳{product.originalPrice.toLocaleString()}
                 </span>
               )}
             </div>
             {product.discount && (
-              <span className="text-[10px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-lg">
-                SAVE {product.discount}%
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg"
+                style={{ color: 'hsl(158,64%,60%)', background: 'hsla(158,64%,52%,0.1)', border: '1px solid hsla(158,64%,52%,0.2)' }}>
+                -{product.discount}%
               </span>
             )}
           </div>
 
-          {/* Buttons */}
+          {/* Action buttons */}
           <div className="space-y-1.5 pt-0.5">
             <button
               onClick={() => setShowOrderModal(true)}
-              className="w-full btn-glow py-2.5 rounded-xl text-[13px] font-bold flex items-center justify-center gap-1.5 group/btn"
+              className="w-full btn-glow py-2.5 rounded-xl text-[13px] font-bold flex items-center justify-center gap-1.5"
             >
-              <CreditCard size={13} className="group-hover/btn:scale-110 transition-transform" />
+              <CreditCard size={13} />
               এখনই অর্ডার করুন
             </button>
             <div className="grid grid-cols-2 gap-1.5">
               <button
                 onClick={handleWhatsApp}
-                className="py-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] hover:bg-[#25D366]/20 hover:scale-105 transition-all"
+                className="py-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1 transition-all hover:scale-105"
+                style={{ background: 'hsla(142,69%,40%,0.1)', border: '1px solid hsla(142,69%,40%,0.25)', color: '#25D366' }}
               >
                 <MessageCircle size={11} /> WhatsApp
               </button>
@@ -169,12 +167,12 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
                 onClick={handleAdd}
                 className={`py-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1 transition-all hover:scale-105 border ${
                   inCart
-                    ? 'border-primary/50 bg-primary/15 text-primary'
-                    : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/40 hover:text-primary'
+                    ? 'border-primary/40 bg-primary/10 text-primary'
+                    : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/30 hover:text-primary'
                 }`}
               >
                 <ShoppingCart size={11} />
-                {inCart ? 'In Cart ✓' : 'কার্ট'}
+                {inCart ? 'Added ✓' : 'কার্ট'}
               </button>
             </div>
           </div>
