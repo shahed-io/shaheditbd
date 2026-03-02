@@ -2,7 +2,7 @@ import { Shield, Facebook, Twitter, MessageCircle, Instagram, Linkedin, Phone, M
 
 const Footer = () => {
   return (
-    <footer className="relative mt-8 border-t border-border bg-background">
+    <footer className="relative mt-8 bg-background" style={{ borderTop: '1px solid hsl(var(--border))' }}>
       {/* Main footer */}
       <div className="py-12 px-4">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
@@ -131,7 +131,7 @@ const Footer = () => {
       </div>
 
       {/* Copyright */}
-      <div className="border-t border-border py-4 px-4 text-center text-xs text-muted-foreground">
+      <div className="border-t border-border/40 py-3 px-4 text-center text-xs text-muted-foreground">
         সর্বস্ব সংরক্ষিত{' '}
         <span className="font-bold">
           <span className="text-primary">শাহেদ</span>{' '}
