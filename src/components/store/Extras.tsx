@@ -15,10 +15,10 @@ const TickerBanner = () => {
   const items = [...tickerItems, ...tickerItems];
 
   return (
-    <div className="bg-primary/10 border-y border-primary/20 py-3 overflow-hidden relative">
+    <div className="bg-primary/10 border-y border-primary/20 py-1.5 overflow-hidden relative">
       <div className="flex gap-12 animate-ticker whitespace-nowrap">
         {items.map((item, i) => (
-          <span key={i} className="text-sm font-medium text-foreground flex-shrink-0">
+          <span key={i} className="text-xs font-medium text-foreground/80 flex-shrink-0">
             {item}
           </span>
         ))}
