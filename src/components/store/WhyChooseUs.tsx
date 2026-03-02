@@ -1,4 +1,4 @@
-import { Shield, Zap, Headphones, RotateCcw, Award, Globe, BadgeCheck } from 'lucide-react';
+import { Shield, Zap, Headphones, Award, Globe, BadgeCheck } from 'lucide-react';
 
 const features = [
   {
@@ -20,9 +20,9 @@ const features = [
     color: 'from-blue-500 to-cyan-500',
   },
   {
-    icon: <RotateCcw size={24} />,
-    title: 'Easy Refund',
-    desc: '7-day replacement guarantee if any key doesn\'t work.',
+    icon: <BadgeCheck size={24} />,
+    title: 'DBID: 586772174',
+    desc: 'বাংলাদেশ সরকারের নিবন্ধিত বিশ্বস্ত ডিজিটাল শপ।',
     color: 'from-purple-500 to-violet-600',
   },
   {
