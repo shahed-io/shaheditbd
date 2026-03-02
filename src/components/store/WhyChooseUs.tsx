@@ -73,28 +73,6 @@ const WhyChooseUs = () => {
           ))}
         </div>
 
-        {/* DBID Trust Badge */}
-        <div className="mt-10 glass-card rounded-2xl p-5 border border-primary/20 flex flex-col sm:flex-row items-center gap-5">
-          <div className="flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
-            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)/0.6))' }}>
-            <BadgeCheck size={28} className="text-white" />
-          </div>
-          <div className="flex-1 text-center sm:text-left">
-            <div className="flex items-center gap-2 justify-center sm:justify-start flex-wrap">
-              <h3 className="font-bold text-foreground text-lg">সরকারি নিবন্ধিত ব্যবসা</h3>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/30 font-medium">✔ Verified</span>
-            </div>
-            <p className="text-muted-foreground text-sm mt-1">
-              Shahed Store বাংলাদেশ সরকারের <strong className="text-foreground">DBID নিবন্ধিত</strong> একটি বিশ্বস্ত ডিজিটাল সফটওয়্যার শপ।
-              আপনার প্রতিটি অর্ডার সম্পূর্ণ নিরাপদ ও আইনি সুরক্ষায় সম্পাদিত হয়।
-            </p>
-          </div>
-          <div className="flex-shrink-0 text-center bg-background/50 border border-border/60 rounded-xl px-5 py-3">
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">DBID No.</p>
-            <p className="text-2xl font-bold gradient-text" style={{ fontFamily: 'Orbitron, monospace', letterSpacing: '0.05em' }}>586772174</p>
-          </div>
-        </div>
-
         {/* Stats bar */}
         <div className="mt-6 glass-card rounded-2xl p-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
