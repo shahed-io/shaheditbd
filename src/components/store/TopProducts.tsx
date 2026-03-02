@@ -20,14 +20,14 @@ const mapDbProduct = (p: any): Product => ({
 const TopProducts = () => {
   const [activeTab, setActiveTab] = useState('All Products');
   const [products, setProducts] = useState<Product[]>([]);
-  const [tabs, setTabs] = useState(['All Products']);
+  const [tabs, setTabs] = useState<string[]>(['All Products']);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
       const { data } = await supabase
         .from('products')
-        .select('*, categories(name)')
+        .select('*, categories(name, sort_order)')
         .eq('status', 'active')
         .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false });
@@ -35,8 +35,17 @@ const TopProducts = () => {
       if (data && data.length > 0) {
         const mapped = data.map(mapDbProduct);
         setProducts(mapped);
-        const cats = ['All Products', ...Array.from(new Set(mapped.map(p => p.category)))];
-        setTabs(cats);
+        // Sort categories by their sort_order from DB
+        const catMap = new Map<string, number>();
+        data.forEach(p => {
+          if (p.categories?.name) {
+            catMap.set(p.categories.name, p.categories.sort_order ?? 999);
+          }
+        });
+        const sortedCats = Array.from(catMap.entries())
+          .sort((a, b) => a[1] - b[1])
+          .map(([name]) => name);
+        setTabs(['All Products', ...sortedCats]);
       }
       setLoading(false);
     };
@@ -46,6 +55,9 @@ const TopProducts = () => {
   const filtered = activeTab === 'All Products'
     ? products
     : products.filter(p => p.category === activeTab);
+
+  // For "All Products" view, group by category in order
+  const categoryOrder = tabs.filter(t => t !== 'All Products');
 
   return (
     <section className="py-16 px-4 relative">
@@ -58,7 +70,7 @@ const TopProducts = () => {
               Top <span className="gradient-text">Selling Products</span>
             </h2>
           </div>
-          <a href="#" className="text-primary text-sm hover:underline self-start sm:self-auto">
+          <a href="/shop" className="text-primary text-sm hover:underline self-start sm:self-auto">
             View All Products →
           </a>
         </div>
@@ -83,7 +95,43 @@ const TopProducts = () => {
               <div key={i} className="h-72 glass-card rounded-2xl animate-pulse" />
             ))}
           </div>
+        ) : activeTab === 'All Products' ? (
+          // Grouped by category
+          <div className="space-y-12">
+            {categoryOrder.map(cat => {
+              const catProducts = products.filter(p => p.category === cat);
+              if (catProducts.length === 0) return null;
+              return (
+                <div key={cat}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3
+                      className="text-xl font-bold text-foreground flex items-center gap-2"
+                      style={{ fontFamily: 'Rajdhani, sans-serif' }}
+                    >
+                      <span className="w-1 h-6 rounded-full bg-primary inline-block" />
+                      {cat}
+                      <span className="text-sm text-muted-foreground font-normal">
+                        ({catProducts.length})
+                      </span>
+                    </h3>
+                    <button
+                      onClick={() => setActiveTab(cat)}
+                      className="text-primary text-sm hover:underline"
+                    >
+                      সব দেখুন →
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+                    {catProducts.slice(0, 4).map((product, i) => (
+                      <ProductCard key={product.id} product={product} delay={i * 0.06} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         ) : (
+          // Single category filtered view
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
             {filtered.map((product, i) => (
               <ProductCard key={product.id} product={product} delay={i * 0.06} />
@@ -96,3 +144,4 @@ const TopProducts = () => {
 };
 
 export default TopProducts;
+
