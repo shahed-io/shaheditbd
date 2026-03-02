@@ -26,30 +26,45 @@ const TopProducts = () => {
   const [tabs, setTabs] = useState<string[]>(['All Products']);
   const [loading, setLoading] = useState(true);
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data } = await supabase
-        .from('products')
-        .select('*, categories(name, sort_order)')
-        .eq('status', 'active')
-        .order('sort_order', { ascending: true })
-        .order('created_at', { ascending: false });
+    const fetchProducts = async (attempt = 0) => {
+      setLoading(true);
+      setError(false);
+      try {
+        const { data, error: queryError } = await supabase
+          .from('products')
+          .select('*, categories(name, sort_order)')
+          .eq('status', 'active')
+          .order('sort_order', { ascending: true })
+          .order('created_at', { ascending: false });
 
-      if (data && data.length > 0) {
-        const mapped = data.map(mapDbProduct);
-        setProducts(mapped);
-        const catMap = new Map<string, number>();
-        data.forEach(p => {
-          if (p.categories?.name) catMap.set(p.categories.name, p.categories.sort_order ?? 999);
-        });
-        const sortedCats = Array.from(catMap.entries()).sort((a, b) => a[1] - b[1]).map(([name]) => name);
-        setTabs(['All Products', ...sortedCats]);
+        if (queryError) throw queryError;
+
+        if (data && data.length > 0) {
+          const mapped = data.map(mapDbProduct);
+          setProducts(mapped);
+          const catMap = new Map<string, number>();
+          data.forEach(p => {
+            if (p.categories?.name) catMap.set(p.categories.name, p.categories.sort_order ?? 999);
+          });
+          const sortedCats = Array.from(catMap.entries()).sort((a, b) => a[1] - b[1]).map(([name]) => name);
+          setTabs(['All Products', ...sortedCats]);
+        }
+      } catch (err) {
+        if (attempt < 2) {
+          setTimeout(() => fetchProducts(attempt + 1), 1000 * (attempt + 1));
+          return;
+        }
+        setError(true);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchProducts();
-  }, []);
+  }, [retryCount]);
 
   const filtered = activeTab === 'All Products' ? products : products.filter(p => p.category === activeTab);
   const categoryOrder = tabs.filter(t => t !== 'All Products');
@@ -94,8 +109,21 @@ const TopProducts = () => {
           ))}
         </div>
 
+        {/* Error State */}
+        {error && !loading && (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <p className="text-muted-foreground text-center">প্রোডাক্ট লোড করতে সমস্যা হচ্ছে।</p>
+            <button
+              onClick={() => setRetryCount(c => c + 1)}
+              className="px-6 py-2.5 rounded-xl btn-glow text-sm font-semibold"
+            >
+              পুনরায় চেষ্টা করুন
+            </button>
+          </div>
+        )}
+
         {/* Loading Skeleton */}
-        {loading ? (
+        {!error && loading ? (
           <div className="space-y-10">
             {Array.from({ length: 2 }).map((_, g) => (
               <div key={g}>
