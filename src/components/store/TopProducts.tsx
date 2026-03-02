@@ -58,22 +58,22 @@ const TopProducts = () => {
 
   return (
     <section className="py-16 px-4 relative">
-      <div className="orb orb-2 opacity-10" style={{ top: '20%', right: '-10%' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 50% 30% at 80% 20%, hsla(158,64%,52%,0.04), transparent)' }} />
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
-            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-3">
-              <LayoutGrid size={13} className="text-primary" />
-              <span className="text-primary text-xs font-semibold tracking-widest uppercase">Our Products</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+            <p className="section-label">
+              <span className="inline-block w-5 h-0.5 rounded-full" style={{ background: 'hsl(var(--primary))' }} />
+              Our Products
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: 'Syne, sans-serif' }}>
               Top <span className="gradient-text">Selling Products</span>
             </h2>
           </div>
-          <a href="/shop" className="text-primary text-sm hover:underline self-start sm:self-auto flex items-center gap-1 hover:gap-2 transition-all">
-            View All Products →
+          <a href="/shop" className="text-primary text-sm self-start sm:self-auto flex items-center gap-1.5 hover:gap-2.5 transition-all font-medium">
+            View All <LayoutGrid size={14} />
           </a>
         </div>
 
@@ -85,9 +85,10 @@ const TopProducts = () => {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
                 activeTab === tab
-                  ? 'btn-glow scale-105'
-                  : 'glass-card text-muted-foreground hover:text-primary hover:border-primary/40 hover:scale-105'
+                  ? 'btn-glow'
+                  : 'text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors'
               }`}
+              style={activeTab !== tab ? { background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' } : {}}
             >
               {tab}
             </button>
@@ -102,7 +103,7 @@ const TopProducts = () => {
                 <div className="h-7 w-40 bg-muted/40 rounded-xl animate-pulse mb-4" />
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-80 glass-card rounded-2xl animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
+                    <div key={i} className="h-80 rounded-2xl animate-pulse" style={{ background: 'hsl(var(--muted))', animationDelay: `${i * 0.1}s` }} />
                   ))}
                 </div>
               </div>
@@ -123,7 +124,7 @@ const TopProducts = () => {
                 <div key={cat}>
                   {/* Category heading */}
                   <div className="flex items-center justify-between mb-5">
-                    <h3 className="text-xl font-black text-foreground flex items-center gap-2.5" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+                    <h3 className="text-xl font-bold text-foreground flex items-center gap-2.5" style={{ fontFamily: 'Syne, sans-serif' }}>
                       <span className="w-1 h-7 rounded-full bg-gradient-to-b from-primary to-accent inline-block" />
                       {cat}
                       <span className="text-sm text-muted-foreground font-normal bg-muted/40 border border-border/60 px-2 py-0.5 rounded-lg">
@@ -159,7 +160,10 @@ const TopProducts = () => {
                     <div className="hidden md:flex justify-center mt-5">
                       <button
                         onClick={() => toggleCat(cat)}
-                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl glass-card border border-primary/20 text-primary text-sm font-semibold hover:border-primary/50 hover:bg-primary/10 transition-all"
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-primary text-sm font-semibold transition-all"
+                        style={{ background: 'hsl(var(--card))', border: '1px solid hsla(158,64%,52%,0.25)' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'hsla(158,64%,52%,0.08)'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'hsl(var(--card))'; }}
                       >
                         {isExpanded ? (
                           <><ChevronUp size={16} /> কম দেখুন</>
