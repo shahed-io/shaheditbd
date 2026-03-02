@@ -90,6 +90,9 @@ const UserDashboard = () => {
 
   const handleSaveProfile = async () => {
     if (!user) return;
+    // Optimistic update — close edit mode instantly
+    setEditing(false);
+    toast.success('Profile updated!');
     setSaving(true);
     const { error } = await supabase
       .from('profiles')
@@ -101,10 +104,7 @@ const UserDashboard = () => {
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' });
     if (error) {
-      toast.error('প্রোফাইল আপডেট করা সম্ভব হয়নি');
-    } else {
-      toast.success('প্রোফাইল সফলভাবে আপডেট হয়েছে!');
-      setEditing(false);
+      toast.error('Failed to save — please try again.');
     }
     setSaving(false);
   };
