@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
-import { LayoutGrid, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const mapDbProduct = (p: any): Product => ({
   id: p.id,
@@ -72,36 +72,32 @@ const TopProducts = () => {
   const toggleCat = (cat: string) => setExpandedCats(prev => ({ ...prev, [cat]: !prev[cat] }));
 
   return (
-    <section className="py-16 px-4 relative">
+    <section className="py-20 px-4 relative">
       <div className="orb orb-2 opacity-10" style={{ top: '20%', right: '-10%' }} />
       <div className="max-w-7xl mx-auto">
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-          <div>
-            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-3">
-              <LayoutGrid size={13} className="text-primary" />
-              <span className="text-primary text-xs font-semibold tracking-widest uppercase">Our Products</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-              Top <span className="gradient-text">Selling Products</span>
-            </h2>
+        {/* Section header - shahedit style */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-5 py-2 mb-4">
+            <span className="text-primary text-sm">◈</span>
+            <span className="text-primary text-xs font-semibold tracking-[0.2em] uppercase">Best Sellers</span>
           </div>
-          <a href="/shop" className="text-primary text-sm hover:underline self-start sm:self-auto flex items-center gap-1 hover:gap-2 transition-all">
-            View All Products →
-          </a>
+          <h2 className="text-4xl sm:text-5xl font-bold" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+            Top <span className="gradient-text">Selling Products</span>
+          </h2>
+          <div className="w-16 h-1 bg-gradient-to-r from-primary to-accent rounded-full mx-auto mt-4" />
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
           {tabs.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                 activeTab === tab
-                  ? 'btn-glow scale-105'
-                  : 'glass-card text-muted-foreground hover:text-primary hover:border-primary/40 hover:scale-105'
+                  ? 'bg-gradient-to-r from-primary to-accent text-background shadow-lg shadow-primary/20'
+                  : 'bg-card/50 border border-border/50 text-muted-foreground hover:text-foreground hover:border-primary/30'
               }`}
             >
               {tab}
@@ -115,7 +111,7 @@ const TopProducts = () => {
             <p className="text-muted-foreground text-center">প্রোডাক্ট লোড করতে সমস্যা হচ্ছে।</p>
             <button
               onClick={() => setRetryCount(c => c + 1)}
-              className="px-6 py-2.5 rounded-xl btn-glow text-sm font-semibold"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-background text-sm font-semibold"
             >
               পুনরায় চেষ্টা করুন
             </button>
@@ -130,7 +126,7 @@ const TopProducts = () => {
                 <div className="h-7 w-40 bg-muted/40 rounded-xl animate-pulse mb-4" />
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-80 glass-card rounded-2xl animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
+                    <div key={i} className="h-80 bg-card/50 border border-border/30 rounded-2xl animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
                   ))}
                 </div>
               </div>
@@ -138,8 +134,7 @@ const TopProducts = () => {
           </div>
 
         ) : activeTab === 'All Products' ? (
-          /* Grouped by category - ALL products shown with expand/collapse */
-          <div className="space-y-14">
+          <div className="space-y-16">
             {categoryOrder.map(cat => {
               const catProducts = products.filter(p => p.category === cat);
               if (catProducts.length === 0) return null;
@@ -149,25 +144,24 @@ const TopProducts = () => {
 
               return (
                 <div key={cat}>
-                  {/* Category heading */}
-                  <div className="flex items-center justify-between mb-5">
-                    <h3 className="text-xl font-black text-foreground flex items-center gap-2.5" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-2xl font-bold text-foreground flex items-center gap-3" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
                       <span className="w-1 h-7 rounded-full bg-gradient-to-b from-primary to-accent inline-block" />
                       {cat}
-                      <span className="text-sm text-muted-foreground font-normal bg-muted/40 border border-border/60 px-2 py-0.5 rounded-lg">
+                      <span className="text-sm text-muted-foreground font-normal bg-card border border-border/50 px-3 py-1 rounded-full">
                         {catProducts.length}টি
                       </span>
                     </h3>
                     <button
                       onClick={() => setActiveTab(cat)}
-                      className="text-primary text-sm hover:underline flex items-center gap-1 hover:gap-2 transition-all"
+                      className="text-primary text-sm hover:underline flex items-center gap-1 hover:gap-2 transition-all font-medium"
                     >
                       সব দেখুন →
                     </button>
                   </div>
 
                   {/* Mobile: horizontal scroll */}
-                  <div className="flex gap-3 overflow-x-auto pb-2 md:hidden" style={{ scrollbarWidth: 'none' }}>
+                  <div className="flex gap-3 overflow-x-auto pb-2 md:hidden scrollbar-hide">
                     {catProducts.map((product, i) => (
                       <div key={product.id} className="flex-shrink-0 w-48">
                         <ProductCard product={product} delay={i * 0.05} />
@@ -176,18 +170,17 @@ const TopProducts = () => {
                   </div>
 
                   {/* Desktop: grid */}
-                  <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
+                  <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-5">
                     {visibleProducts.map((product, i) => (
                       <ProductCard key={product.id} product={product} delay={i * 0.05} />
                     ))}
                   </div>
 
-                  {/* Show more / less */}
                   {hasMore && (
-                    <div className="hidden md:flex justify-center mt-5">
+                    <div className="hidden md:flex justify-center mt-6">
                       <button
                         onClick={() => toggleCat(cat)}
-                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl glass-card border border-primary/20 text-primary text-sm font-semibold hover:border-primary/50 hover:bg-primary/10 transition-all"
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-card border border-border/50 text-muted-foreground text-sm font-medium hover:border-primary/40 hover:text-primary transition-all"
                       >
                         {isExpanded ? (
                           <><ChevronUp size={16} /> কম দেখুন</>
@@ -203,10 +196,9 @@ const TopProducts = () => {
           </div>
 
         ) : (
-          /* Single category filtered view - ALL products */
           <div>
             <p className="text-sm text-muted-foreground mb-4">{filtered.length}টি প্রোডাক্ট পাওয়া গেছে</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {filtered.map((product, i) => (
                 <ProductCard key={product.id} product={product} delay={Math.min(i * 0.04, 0.4)} />
               ))}

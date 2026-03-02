@@ -54,20 +54,16 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     <>
       <div
         ref={ref}
-        className="product-card group"
+        className="group rounded-2xl border border-border/40 bg-card/40 overflow-hidden cursor-pointer relative hover:border-primary/30 transition-all duration-500 hover:-translate-y-2"
         style={{
           opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0) scale(1)' : 'translateY(50px) scale(0.92)',
-          transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
+          transform: visible ? 'translateY(0)' : 'translateY(40px)',
+          transition: `opacity 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
         }}
       >
-        {/* Glow border on hover */}
-        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{ background: 'linear-gradient(135deg, hsla(199,100%,50%,0.12), hsla(260,80%,60%,0.06))', zIndex: 0 }} />
-
         {/* Image */}
-        <div className="relative overflow-hidden rounded-t-2xl">
-          <div className="aspect-square bg-gradient-to-br from-muted/80 to-muted/40 overflow-hidden">
+        <div className="relative overflow-hidden">
+          <div className="aspect-square bg-muted/20 overflow-hidden">
             <img
               src={product.image}
               alt={product.name}
@@ -77,18 +73,17 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
             />
           </div>
 
-          {/* Shimmer overlay */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-            style={{ background: 'linear-gradient(105deg, transparent 30%, hsla(199,100%,80%,0.08) 50%, transparent 70%)', backgroundSize: '250% 100%', animation: 'shimmer 2s linear infinite' }} />
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Wishlist */}
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
+          <div className="absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
             <button
               onClick={handleWishlist}
-              className={`p-2 rounded-xl backdrop-blur-sm border transition-all hover:scale-110 ${
+              className={`p-2 rounded-xl backdrop-blur-md border transition-all hover:scale-110 ${
                 wishlisted
-                  ? 'bg-red-500/20 border-red-500/40 text-red-400'
-                  : 'bg-background/40 border-border/60 text-muted-foreground hover:text-red-400'
+                  ? 'bg-red-500/20 border-red-500/30 text-red-400'
+                  : 'bg-background/50 border-border/50 text-muted-foreground hover:text-red-400'
               }`}
             >
               <Heart size={14} fill={wishlisted ? 'currentColor' : 'none'} />
@@ -96,27 +91,27 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           </div>
 
           {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
+          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
             {product.discount && (
-              <span className="badge-discount text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
+              <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg">
                 -{product.discount}%
               </span>
             )}
             {product.isBestseller && (
-              <span className="flex items-center gap-1 bg-primary/20 border border-primary/40 text-primary text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
+              <span className="flex items-center gap-1 bg-primary/20 border border-primary/30 text-primary text-[9px] font-bold px-2 py-0.5 rounded-lg backdrop-blur-sm">
                 <Zap size={8} fill="currentColor" /> BEST
               </span>
             )}
             {product.isNew && (
-              <span className="bg-accent/20 border border-accent/40 text-accent text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">NEW</span>
+              <span className="bg-accent/20 border border-accent/30 text-accent text-[9px] font-bold px-2 py-0.5 rounded-lg backdrop-blur-sm">NEW</span>
             )}
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-3.5 space-y-2.5 relative z-10">
+        <div className="p-4 space-y-3">
           <div>
-            <span className="text-[10px] text-primary/80 font-semibold uppercase tracking-wider">{product.category}</span>
+            <span className="text-[10px] text-primary/70 font-semibold uppercase tracking-wider">{product.category}</span>
             <h3 className="text-sm font-bold text-foreground mt-0.5 line-clamp-2 leading-snug group-hover:text-primary transition-colors duration-300">
               {product.name}
             </h3>
@@ -125,7 +120,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           {/* Stars */}
           <div className="flex items-center gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} size={10} className={i < Math.floor(product.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/40'} />
+              <Star key={i} size={10} className={i < Math.floor(product.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'} />
             ))}
             <span className="text-[10px] text-muted-foreground ml-1">({product.reviews})</span>
           </div>
@@ -150,27 +145,27 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           </div>
 
           {/* Buttons */}
-          <div className="space-y-1.5 pt-0.5">
+          <div className="space-y-2 pt-1">
             <button
               onClick={() => setShowOrderModal(true)}
-              className="w-full btn-glow py-2.5 rounded-xl text-[13px] font-bold flex items-center justify-center gap-1.5 group/btn"
+              className="w-full bg-gradient-to-r from-primary to-accent text-background py-2.5 rounded-xl text-[13px] font-bold flex items-center justify-center gap-1.5 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 group/btn"
             >
               <CreditCard size={13} className="group-hover/btn:scale-110 transition-transform" />
               এখনই অর্ডার করুন
             </button>
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={handleWhatsApp}
-                className="py-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] hover:bg-[#25D366]/20 hover:scale-105 transition-all"
+                className="py-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1 bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366]/20 transition-all"
               >
                 <MessageCircle size={11} /> WhatsApp
               </button>
               <button
                 onClick={handleAdd}
-                className={`py-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1 transition-all hover:scale-105 border ${
+                className={`py-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1 transition-all border ${
                   inCart
-                    ? 'border-primary/50 bg-primary/15 text-primary'
-                    : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/40 hover:text-primary'
+                    ? 'border-primary/40 bg-primary/10 text-primary'
+                    : 'border-border/50 bg-card text-muted-foreground hover:border-primary/30 hover:text-primary'
                 }`}
               >
                 <ShoppingCart size={11} />

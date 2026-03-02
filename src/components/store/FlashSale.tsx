@@ -19,7 +19,7 @@ const mapDbProduct = (p: any): Product => ({
 });
 
 const FlashSale = () => {
-  const [timeLeft, setTimeLeft] = useState({ h: 5, m: 23, s: 47 });
+  const [timeLeft, setTimeLeft] = useState({ d: 6, h: 22, m: 59, s: 59 });
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +28,8 @@ const FlashSale = () => {
       setTimeLeft(prev => {
         if (prev.s > 0) return { ...prev, s: prev.s - 1 };
         if (prev.m > 0) return { ...prev, m: prev.m - 1, s: 59 };
-        if (prev.h > 0) return { h: prev.h - 1, m: 59, s: 59 };
+        if (prev.h > 0) return { ...prev, h: prev.h - 1, m: 59, s: 59 };
+        if (prev.d > 0) return { d: prev.d - 1, h: 23, m: 59, s: 59 };
         return prev;
       });
     }, 1000);
@@ -57,48 +58,49 @@ const FlashSale = () => {
   if (!loading && products.length === 0) return null;
 
   return (
-    <section className="py-16 px-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 pointer-events-none" />
-      <div className="orb orb-1 opacity-8" style={{ bottom: '-20%', left: '-5%' }} />
+    <section className="py-20 px-4 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-accent/[0.03] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto">
-        <div className="glass-card rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg">
-              <Flame size={28} className="text-white" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-widest">Limited Time</p>
-              <h2 className="text-3xl font-bold" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-                <span className="text-orange-400">Flash</span>{' '}
-                <span className="gradient-text">Sale</span>
-              </h2>
-            </div>
+        {/* Header - shahedit countdown style */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 bg-destructive/10 border border-destructive/20 rounded-full px-5 py-2 mb-4">
+            <Flame size={14} className="text-destructive" />
+            <span className="text-destructive text-xs font-semibold tracking-[0.2em] uppercase">Flash Sale</span>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-sm">Ends in:</span>
-            <div className="flex items-center gap-2">
-              <div className="timer-box">{pad(timeLeft.h)}</div>
-              <span className="text-primary font-bold text-xl animate-pulse">:</span>
-              <div className="timer-box">{pad(timeLeft.m)}</div>
-              <span className="text-primary font-bold text-xl animate-pulse">:</span>
-              <div className="timer-box">{pad(timeLeft.s)}</div>
-            </div>
-            <div className="flex flex-col text-[10px] text-muted-foreground">
-              <span>HRS</span>
-              <span className="ml-[18px]">MIN</span>
-            </div>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-6" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+            Special Offer <span className="gradient-text">Ends In</span>
+          </h2>
+
+          {/* Countdown - shahedit style */}
+          <div className="inline-flex items-center gap-3 bg-card/80 border border-border/50 rounded-2xl px-8 py-5">
+            {[
+              { value: pad(timeLeft.d), label: 'DAYS' },
+              { value: pad(timeLeft.h), label: 'HOURS' },
+              { value: pad(timeLeft.m), label: 'MINS' },
+              { value: pad(timeLeft.s), label: 'SECS' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="text-center">
+                  <div className="text-3xl sm:text-4xl font-bold gradient-text" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+                    {item.value}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground tracking-widest mt-1">{item.label}</div>
+                </div>
+                {i < 3 && <span className="text-muted-foreground/30 text-2xl font-light">|</span>}
+              </div>
+            ))}
           </div>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-72 glass-card rounded-2xl animate-pulse" />
+              <div key={i} className="h-72 bg-card/50 border border-border/30 rounded-2xl animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {products.map((product, i) => (
               <ProductCard key={product.id} product={product} delay={i * 0.08} />
             ))}
