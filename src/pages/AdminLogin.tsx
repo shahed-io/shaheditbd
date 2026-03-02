@@ -1,15 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Package, Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
 
 const AdminLogin = () => {
   const { signIn, isAdmin, user, loading } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Redirect once isAdmin is confirmed
+  useEffect(() => {
+    if (!loading && user && isAdmin) {
+      navigate('/admin', { replace: true });
+    }
+  }, [user, isAdmin, loading, navigate]);
 
   if (loading) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -17,7 +25,7 @@ const AdminLogin = () => {
     </div>
   );
 
-  if (user && isAdmin) return <Navigate to="/admin" replace />;
+  if (user && isAdmin) return null; // will redirect via useEffect
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +34,9 @@ const AdminLogin = () => {
     const { error } = await signIn(email, password);
     if (error) {
       setError('Invalid email or password');
+      setSubmitting(false);
     }
-    setSubmitting(false);
+    // Don't setSubmitting(false) on success — keep spinner until redirect
   };
 
   return (
