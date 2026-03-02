@@ -31,10 +31,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     let mounted = true;
+    // Safety timeout — if getSession hangs, unblock the UI after 3s
+    const timeout = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 3000);
 
-    // onAuthStateChange handles both initial session and future changes
+    // Get existing session on mount
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!mounted) return;
+      clearTimeout(timeout);
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        await checkAdminRole(session.user.id);
+      }
+      if (mounted) setLoading(false);
+    }).catch(() => {
+      if (mounted) setLoading(false);
+    });
+
+    // Listen for future auth state changes (login / logout)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
+      // Set loading while we check admin role to prevent premature redirects
+      setLoading(true);
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -47,6 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => {
       mounted = false;
+      clearTimeout(timeout);
       subscription.unsubscribe();
     };
   }, []);
