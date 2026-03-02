@@ -54,7 +54,7 @@ serve(async (req) => {
 - পেমেন্ট: bKash, Nagad গ্রহণ করা হয়
 - ডেলিভারি: পেমেন্ট কনফার্মেশনের পর ১-২৪ ঘণ্টার মধ্যে ইমেইলে পাঠানো হয়
 - WhatsApp: 01840099853
-- ওয়েবসাইট: shahedstore.com
+- ওয়েবসাইট: www.shahedstore.com.bd
 ${productContext}
 
 📋 আপনার দায়িত্ব:
