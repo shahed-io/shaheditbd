@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Star, Heart, ShoppingCart, MessageCircle, CreditCard } from 'lucide-react';
+import { Star, Heart, ShoppingCart, MessageCircle, CreditCard, Zap } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import QuickOrderModal from './QuickOrderModal';
@@ -9,7 +9,7 @@ interface ProductCardProps {
   delay?: number;
 }
 
-const WHATSAPP_NUMBER = '8801840099853'; // configurable
+const WHATSAPP_NUMBER = '8801840099853';
 
 const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const [visible, setVisible] = useState(false);
@@ -20,7 +20,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
-      { threshold: 0.1 }
+      { threshold: 0.08 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -38,23 +38,15 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
 
   const handleAdd = () => {
     addToCart({
-      id: product.id,
-      name: product.name,
-      category: product.category,
-      price: product.price,
-      originalPrice: product.originalPrice,
-      image: product.image,
+      id: product.id, name: product.name, category: product.category,
+      price: product.price, originalPrice: product.originalPrice, image: product.image,
     });
   };
 
   const handleWishlist = () => {
     toggleWishlist({
-      id: product.id,
-      name: product.name,
-      category: product.category,
-      price: product.price,
-      originalPrice: product.originalPrice,
-      image: product.image,
+      id: product.id, name: product.name, category: product.category,
+      price: product.price, originalPrice: product.originalPrice, image: product.image,
     });
   };
 
@@ -65,123 +57,133 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         className="product-card group"
         style={{
           opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.95)',
-          transition: `opacity 0.6s ease-out ${delay}s, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${delay}s`,
+          transform: visible ? 'translateY(0) scale(1)' : 'translateY(50px) scale(0.92)',
+          transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
         }}
       >
-        {/* Image area */}
-        <div className="relative overflow-hidden">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110"
-            onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/0a1628/00b4d8?text=Product'; }}
-          />
+        {/* Glow border on hover */}
+        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          style={{ background: 'linear-gradient(135deg, hsla(199,100%,50%,0.12), hsla(260,80%,60%,0.06))', zIndex: 0 }} />
 
-          {/* Overlay wishlist */}
-          <div className="absolute inset-0 bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-2">
+        {/* Image */}
+        <div className="relative overflow-hidden rounded-t-2xl">
+          <div className="aspect-square bg-gradient-to-br from-muted/80 to-muted/40 overflow-hidden">
+            <img
+              src={product.image}
+              alt={product.name}
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/0a1628/00b4d8?text=Product'; }}
+            />
+          </div>
+
+          {/* Shimmer overlay */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            style={{ background: 'linear-gradient(105deg, transparent 30%, hsla(199,100%,80%,0.08) 50%, transparent 70%)', backgroundSize: '250% 100%', animation: 'shimmer 2s linear infinite' }} />
+
+          {/* Wishlist */}
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
             <button
               onClick={handleWishlist}
-              className={`p-2.5 rounded-full glass-card transition-all hover:scale-110 ${wishlisted ? 'text-red-400' : 'text-foreground'}`}
+              className={`p-2 rounded-xl backdrop-blur-sm border transition-all hover:scale-110 ${
+                wishlisted
+                  ? 'bg-red-500/20 border-red-500/40 text-red-400'
+                  : 'bg-background/40 border-border/60 text-muted-foreground hover:text-red-400'
+              }`}
             >
-              <Heart size={15} fill={wishlisted ? 'currentColor' : 'none'} />
+              <Heart size={14} fill={wishlisted ? 'currentColor' : 'none'} />
             </button>
           </div>
 
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.discount && (
-              <span className="badge-discount animate-pulse">-{product.discount}%</span>
-            )}
-            {product.isNew && (
-              <span className="bg-accent text-background text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>
+              <span className="badge-discount text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
+                -{product.discount}%
+              </span>
             )}
             {product.isBestseller && (
-              <span className="bg-primary text-background text-[10px] font-bold px-2 py-0.5 rounded-full">BEST</span>
+              <span className="flex items-center gap-1 bg-primary/20 border border-primary/40 text-primary text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                <Zap size={8} fill="currentColor" /> BEST
+              </span>
+            )}
+            {product.isNew && (
+              <span className="bg-accent/20 border border-accent/40 text-accent text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">NEW</span>
             )}
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-3 relative z-10">
+        <div className="p-3.5 space-y-2.5 relative z-10">
           <div>
-            <span className="text-xs text-primary font-medium">{product.category}</span>
-            <h3 className="text-sm font-semibold text-foreground mt-0.5 line-clamp-2 leading-snug">
+            <span className="text-[10px] text-primary/80 font-semibold uppercase tracking-wider">{product.category}</span>
+            <h3 className="text-sm font-bold text-foreground mt-0.5 line-clamp-2 leading-snug group-hover:text-primary transition-colors duration-300">
               {product.name}
             </h3>
           </div>
 
-          {/* Rating */}
-          <div className="flex items-center gap-1">
+          {/* Stars */}
+          <div className="flex items-center gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                size={11}
-                className={i < Math.floor(product.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}
-              />
+              <Star key={i} size={10} className={i < Math.floor(product.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/40'} />
             ))}
-            <span className="text-xs text-muted-foreground ml-1">({product.reviews})</span>
+            <span className="text-[10px] text-muted-foreground ml-1">({product.reviews})</span>
           </div>
 
           {/* Price */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-end justify-between">
             <div>
-              <span className="text-primary font-bold text-lg">৳{product.price.toLocaleString()}</span>
+              <span className="text-primary font-black text-xl" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+                ৳{product.price.toLocaleString()}
+              </span>
               {product.originalPrice && (
-                <span className="text-muted-foreground text-xs line-through ml-2">
+                <span className="text-muted-foreground text-xs line-through ml-1.5">
                   ৳{product.originalPrice.toLocaleString()}
                 </span>
               )}
             </div>
+            {product.discount && (
+              <span className="text-[10px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-lg">
+                SAVE {product.discount}%
+              </span>
+            )}
           </div>
 
-          {/* ── Action Buttons ── */}
-          <div className="space-y-2 pt-1">
-            {/* Primary: Quick Payment Order */}
+          {/* Buttons */}
+          <div className="space-y-1.5 pt-0.5">
             <button
               onClick={() => setShowOrderModal(true)}
-              className="w-full btn-glow py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+              className="w-full btn-glow py-2.5 rounded-xl text-[13px] font-bold flex items-center justify-center gap-1.5 group/btn"
             >
-              <CreditCard size={14} />
+              <CreditCard size={13} className="group-hover/btn:scale-110 transition-transform" />
               এখনই অর্ডার করুন
             </button>
-
-            {/* Secondary row: WhatsApp + Cart */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5">
               <button
                 onClick={handleWhatsApp}
-                className="py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] hover:bg-[#25D366]/20 transition-all"
+                className="py-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] hover:bg-[#25D366]/20 hover:scale-105 transition-all"
               >
-                <MessageCircle size={13} />
-                WhatsApp
+                <MessageCircle size={11} /> WhatsApp
               </button>
               <button
                 onClick={handleAdd}
-                className={`py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all border ${
+                className={`py-2 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1 transition-all hover:scale-105 border ${
                   inCart
-                    ? 'border-primary/40 bg-primary/10 text-primary'
-                    : 'border-border bg-muted/20 text-muted-foreground hover:text-foreground hover:border-primary/40'
+                    ? 'border-primary/50 bg-primary/15 text-primary'
+                    : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/40 hover:text-primary'
                 }`}
               >
-                <ShoppingCart size={13} />
-                {inCart ? 'In Cart' : 'কার্টে যোগ'}
+                <ShoppingCart size={11} />
+                {inCart ? 'In Cart ✓' : 'কার্ট'}
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Quick Order Modal */}
       {showOrderModal && (
         <QuickOrderModal
-          product={{
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            originalPrice: product.originalPrice,
-            image: product.image,
-            category: product.category,
-          }}
+          product={{ id: product.id, name: product.name, price: product.price, originalPrice: product.originalPrice, image: product.image, category: product.category }}
           onClose={() => setShowOrderModal(false)}
         />
       )}
