@@ -22,7 +22,7 @@ const features = [
   {
     icon: <BadgeCheck size={24} />,
     title: 'DBID: 586772174',
-    desc: 'বাংলাদেশ সরকারের নিবন্ধিত বিশ্বস্ত ডিজিটাল শপ।',
+    desc: 'Government registered trusted digital shop in Bangladesh.',
     color: 'from-purple-500 to-violet-600',
   },
   {
