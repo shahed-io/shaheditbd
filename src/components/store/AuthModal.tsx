@@ -3,6 +3,7 @@ import { X, Mail, Lock, User, Eye, EyeOff, LogIn } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [name, setName] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
 
@@ -28,6 +30,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         if (error) throw error;
         toast.success('সফলভাবে লগইন হয়েছে!');
         onClose();
+        navigate('/dashboard');
       } else {
         const { error } = await supabase.auth.signUp({
           email,
