@@ -121,7 +121,15 @@ const TopProducts = () => {
                       সব দেখুন →
                     </button>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+                  {/* Mobile: horizontal scroll, Desktop: grid */}
+                  <div className="flex gap-4 overflow-x-auto pb-2 md:hidden scrollbar-hide">
+                    {catProducts.slice(0, 8).map((product, i) => (
+                      <div key={product.id} className="flex-shrink-0 w-44">
+                        <ProductCard product={product} delay={i * 0.06} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
                     {catProducts.slice(0, 4).map((product, i) => (
                       <ProductCard key={product.id} product={product} delay={i * 0.06} />
                     ))}
