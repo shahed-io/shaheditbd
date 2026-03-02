@@ -137,7 +137,7 @@ const Footer = () => {
           <span className="text-primary">শাহেদ</span>{' '}
           <span className="text-foreground">স্টোর</span>
         </span>{' '}
-        কিপারাইট © 2026
+        কপিরাইট © 2026
       </div>
     </footer>
   );
