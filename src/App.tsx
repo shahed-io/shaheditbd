@@ -19,6 +19,7 @@ import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminTickets from "./pages/admin/AdminTickets";
 import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
+import UserDashboard from "./pages/UserDashboard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,6 +61,7 @@ const App = () => (
               <Route path="roles" element={<AdminPlaceholder />} />
               <Route path="backup" element={<AdminPlaceholder />} />
             </Route>
+            <Route path="/dashboard" element={<UserDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           </CartProvider>

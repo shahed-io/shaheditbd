@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Search, Menu, X, Phone, ChevronDown, Star, LogOut, User } from 'lucide-react';
+import { Search, Menu, X, Phone, ChevronDown, Star, LogOut, User, LayoutDashboard } from 'lucide-react';
 import logoIcon from '@/assets/logo-icon.png';
 import SearchBar from './SearchBar';
 import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { useCart } from '@/hooks/useCart';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -13,6 +14,7 @@ const Navbar = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const { cartCount, wishlistCount, setCartOpen, setWishlistOpen } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
@@ -129,12 +131,22 @@ const Navbar = () => {
 
               {user ? (
                 <div className="hidden sm:flex items-center gap-1 ml-1">
-                  <div className="flex items-center gap-2 glass-card px-3 py-1.5 rounded-xl border border-primary/30">
+                  <button
+                    onClick={() => navigate('/dashboard')}
+                    className="flex items-center gap-2 glass-card px-3 py-1.5 rounded-xl border border-primary/30 hover:border-primary/50 transition-colors cursor-pointer"
+                  >
                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                       <User size={12} className="text-background" />
                     </div>
                     <span className="text-sm text-foreground font-medium max-w-[100px] truncate">{displayName}</span>
-                  </div>
+                  </button>
+                  <button
+                    onClick={() => navigate('/dashboard')}
+                    className="p-2 text-muted-foreground hover:text-primary transition-colors"
+                    title="ড্যাশবোর্ড"
+                  >
+                    <LayoutDashboard size={18} />
+                  </button>
                   <button
                     onClick={handleLogout}
                     className="p-2 text-muted-foreground hover:text-destructive transition-colors"
