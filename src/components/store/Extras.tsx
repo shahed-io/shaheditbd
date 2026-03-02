@@ -15,10 +15,10 @@ const TickerBanner = () => {
   const items = [...tickerItems, ...tickerItems];
 
   return (
-    <div className="py-1 overflow-hidden relative" style={{ background: 'hsla(199,100%,10%,0.6)' }}>
-      <div className="flex gap-10 animate-ticker whitespace-nowrap">
+    <div className="py-2 overflow-hidden relative bg-card/50 border-y border-border/30">
+      <div className="flex gap-12 animate-ticker whitespace-nowrap">
         {items.map((item, i) => (
-          <span key={i} className="text-[11px] font-medium text-foreground/70 flex-shrink-0">
+          <span key={i} className="text-xs font-medium text-muted-foreground flex-shrink-0">
             {item}
           </span>
         ))}

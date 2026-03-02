@@ -45,7 +45,7 @@ const HeroBanner = () => {
   const slide = slides[current];
 
   return (
-    <section className="relative min-h-[85vh] flex items-center overflow-hidden pt-36">
+    <section className="relative min-h-[85vh] flex items-center overflow-hidden pt-32">
       {/* Background */}
       <div className="absolute inset-0">
         <img

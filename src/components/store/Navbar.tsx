@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Menu, X, Phone, ChevronDown, Star, LogOut, User, LayoutDashboard } from 'lucide-react';
+import { Search, Menu, X, Phone, Mail, ChevronDown, Star, LogOut, User, LayoutDashboard, Clock } from 'lucide-react';
 import logoIcon from '@/assets/logo-icon.png';
 import SearchBar from './SearchBar';
 import { supabase } from '@/integrations/supabase/client';
@@ -44,24 +44,38 @@ const Navbar = () => {
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
 
       <header className="fixed top-0 left-0 right-0 z-50">
-        {/* Top bar */}
-        <div className="bg-primary/10 backdrop-blur-sm border-b border-primary/20 py-1.5 px-4">
+        {/* Top info bar - shahedit style */}
+        <div className="bg-card/80 backdrop-blur-md border-b border-border/50 py-2 px-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-primary">
-              <Phone size={12} />
-              <span className="font-medium">Hotline: 01840099853 (10AM–10PM)</span>
+            <div className="flex items-center gap-5">
+              <a href="tel:01840099853" className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors">
+                <Phone size={11} className="text-primary" />
+                <span>01840-099853</span>
+              </a>
+              <a href="mailto:info@shahedstore.com.bd" className="hidden sm:flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors">
+                <Mail size={11} className="text-primary" />
+                <span>info@shahedstore.com.bd</span>
+              </a>
             </div>
-            <div className="hidden sm:flex items-center gap-4 text-muted-foreground">
-              <span>✅ Instant Delivery</span>
-              <span>✅ 100% Genuine Keys</span>
-              <span>✅ 24/7 Support</span>
+            <div className="flex items-center gap-4">
+              <span className="hidden sm:flex items-center gap-1.5 text-muted-foreground">
+                <Clock size={11} className="text-primary" />
+                24/7 Support
+              </span>
+              <a href="https://wa.me/8801840099853" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-primary/15 border border-primary/30 text-primary px-3 py-1 rounded-full text-[11px] font-semibold hover:bg-primary/25 transition-colors">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-400"></span>
+                </span>
+                Free Consultation
+              </a>
             </div>
           </div>
         </div>
 
         {/* Main navbar */}
-        <nav className="glass-card border-b border-primary/20 px-4 py-3">
-          <div className="max-w-7xl mx-auto flex items-center gap-4">
+        <nav className="bg-background/90 backdrop-blur-xl border-b border-border/40 px-4 py-3.5">
+          <div className="max-w-7xl mx-auto flex items-center gap-6">
             {/* Logo */}
             <a href="#" className="flex items-center gap-2.5 flex-shrink-0 group">
               <div className="relative">
@@ -82,13 +96,29 @@ const Navbar = () => {
               </div>
             </a>
 
+            {/* Center nav links */}
+            <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="nav-link px-4 py-2 flex items-center gap-1 text-[13px]"
+                >
+                  {link.label}
+                  {(link.label === 'Windows' || link.label === 'Office') && (
+                    <ChevronDown size={11} />
+                  )}
+                </a>
+              ))}
+            </div>
+
             {/* Search bar */}
-            <div className="flex-1 hidden md:flex max-w-xl">
+            <div className="flex-1 lg:flex-none hidden md:flex lg:w-auto md:max-w-xs">
               <SearchBar className="w-full" />
             </div>
 
             {/* Right icons */}
-            <div className="flex items-center gap-1 ml-auto">
+            <div className="flex items-center gap-1 ml-auto lg:ml-0">
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
                 className="md:hidden p-2 text-muted-foreground hover:text-primary transition-colors"
@@ -102,7 +132,7 @@ const Navbar = () => {
                 className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
                 title="Wishlist"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill={wishlistCount > 0 ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={wishlistCount > 0 ? 'text-red-400' : ''}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill={wishlistCount > 0 ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={wishlistCount > 0 ? 'text-red-400' : ''}>
                   <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
                 </svg>
                 {wishlistCount > 0 && (
@@ -118,7 +148,7 @@ const Navbar = () => {
                 className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
                 title="Cart"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
                   <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
                 </svg>
@@ -133,7 +163,7 @@ const Navbar = () => {
                 <div className="hidden sm:flex items-center gap-1 ml-1">
                   <button
                     onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 glass-card px-3 py-1.5 rounded-xl border border-primary/30 hover:border-primary/50 transition-colors cursor-pointer"
+                    className="flex items-center gap-2 bg-card/80 border border-border/60 px-3 py-1.5 rounded-xl hover:border-primary/40 transition-colors cursor-pointer"
                   >
                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                       <User size={12} className="text-background" />
@@ -158,15 +188,16 @@ const Navbar = () => {
               ) : (
                 <button
                   onClick={() => setAuthOpen(true)}
-                  className="hidden sm:flex btn-glow px-4 py-2 rounded-xl text-sm items-center gap-1 ml-1"
+                  className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-primary to-accent text-background px-5 py-2.5 rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 ml-2"
                 >
-                  লগইন
+                  Get Started
+                  <ChevronDown size={14} className="rotate-[-90deg]" />
                 </button>
               )}
 
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="md:hidden p-2 text-muted-foreground hover:text-primary transition-colors"
+                className="lg:hidden p-2 text-muted-foreground hover:text-primary transition-colors"
               >
                 {mobileOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
@@ -181,34 +212,9 @@ const Navbar = () => {
           )}
         </nav>
 
-        {/* Nav links bar */}
-        <div className="hidden md:block bg-background/80 backdrop-blur-sm border-b border-border/50 px-4">
-          <div className="max-w-7xl mx-auto flex items-center gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="nav-link px-4 py-3 flex items-center gap-1"
-              >
-                {link.label}
-                {(link.label === 'Windows' || link.label === 'Office') && (
-                  <ChevronDown size={12} />
-                )}
-              </a>
-            ))}
-            <a
-              href="#shop"
-              className="ml-auto btn-glow px-5 py-2 rounded-lg text-sm my-1.5 flex items-center gap-2"
-            >
-              <Star size={14} />
-              Shop Now
-            </a>
-          </div>
-        </div>
-
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden glass-card border-b border-border">
+          <div className="lg:hidden bg-card/95 backdrop-blur-xl border-b border-border/50">
             <div className="max-w-7xl mx-auto py-3 px-4 flex flex-col gap-1">
               {navLinks.map((link) => (
                 <a
@@ -230,7 +236,7 @@ const Navbar = () => {
               ) : (
                 <button
                   onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                  className="btn-glow py-2.5 px-3 rounded-xl text-sm text-left mt-1"
+                  className="bg-gradient-to-r from-primary to-accent text-background py-2.5 px-4 rounded-xl text-sm font-semibold mt-2"
                 >
                   লগইন / সাইনআপ
                 </button>
