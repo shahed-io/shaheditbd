@@ -107,12 +107,15 @@ const Footer = () => {
 
             {/* Govt Certified badge */}
             <div className="glass-card rounded-xl p-4 mb-5 border border-border">
-              <div className="flex items-center gap-2 mb-1">
-                <Shield size={18} className="text-primary" />
-                <span className="text-foreground font-bold text-sm">Govt. Certified</span>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <Shield size={18} className="text-primary" />
+                </div>
+                <div>
+                  <p className="text-foreground font-bold text-sm">DBID: 586772174</p>
+                  <p className="text-muted-foreground text-[11px]">Government Registered Trusted Digital Shop</p>
+                </div>
               </div>
-              <p className="text-muted-foreground text-xs mb-1">Digital Business Provider</p>
-              <p className="text-primary text-xs font-semibold">DBID ✓ 586772174</p>
             </div>
 
             <p className="text-foreground font-semibold text-sm mb-3">Payment Methods:</p>
@@ -132,12 +135,12 @@ const Footer = () => {
 
       {/* Copyright */}
       <div className="border-t border-border/40 py-3 px-4 text-center text-xs text-muted-foreground">
-        সর্বস্ব সংরক্ষিত{' '}
+        All Rights Reserved{' '}
         <span className="font-bold">
-          <span className="text-primary">শাহেদ</span>{' '}
-          <span className="text-foreground">স্টোর</span>
+          <span className="text-primary">Shahed</span>{' '}
+          <span className="text-foreground">Store</span>
         </span>{' '}
-        কপিরাইট © 2026
+        Copyright © 2026
       </div>
     </footer>
   );
