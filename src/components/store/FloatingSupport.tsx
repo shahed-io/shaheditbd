@@ -111,8 +111,11 @@ const FloatingSupport = () => {
     <>
       {/* ── AI Chat Window ── */}
       {chatOpen && (
-        <div className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-w-sm flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-border/60 bg-background"
-          style={{ animation: 'slideUpIn 0.2s ease-out' }}>
+        <div className="fixed right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-w-sm flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-border/60 bg-background"
+          style={{
+            animation: 'slideUpIn 0.2s ease-out',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 80px)',
+          }}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary to-primary/80">
             <div className="flex items-center gap-3">
@@ -189,7 +192,7 @@ const FloatingSupport = () => {
 
       {/* ── Popup Menu ── */}
       {menuOpen && !chatOpen && (
-        <div className="fixed bottom-24 right-4 sm:right-6 z-50 flex flex-col gap-3" style={{ animation: 'slideUpIn 0.15s ease-out' }}>
+        <div className="fixed right-4 sm:right-6 z-50 flex flex-col gap-3" style={{ animation: 'slideUpIn 0.15s ease-out', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 80px)' }}>
           {/* AI Support */}
           <button onClick={openChat}
             className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/40 shadow-xl hover:border-primary/50 transition-all group w-56">
@@ -224,8 +227,8 @@ const FloatingSupport = () => {
       {/* ── Main FAB ── */}
       <button
         onClick={() => { if (chatOpen) { setChatOpen(false); } else { setMenuOpen(o => !o); } }}
-        className="fixed bottom-6 right-4 sm:right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
-        style={{ background: menuOpen || chatOpen ? 'hsl(var(--muted))' : 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)/0.75))' }}
+        className="fixed right-4 sm:right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)', background: menuOpen || chatOpen ? 'hsl(var(--muted))' : 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)/0.75))' }}
         title="সাপোর্ট"
       >
         {menuOpen || chatOpen
