@@ -1,7 +1,3 @@
-import { useState } from 'react';
-import { MessageCircle, Ticket } from 'lucide-react';
-import { AIChatWidget } from './AIChatWidget';
-import { SupportTicketModal } from './SupportTicketModal';
 import { FloatingSupport } from './FloatingSupport';
 
 const tickerItems = [
@@ -35,7 +31,4 @@ const FloatingButtons = () => {
   return <FloatingSupport />;
 };
 
-// Keep backward compat
-const WhatsAppButton = () => null;
-
-export { TickerBanner, WhatsAppButton, FloatingButtons };
+export { TickerBanner, FloatingButtons };
