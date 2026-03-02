@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,53 +11,92 @@ serve(async (req) => {
 
   try {
     const { messages } = await req.json();
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
+
+    // Fetch products from DB for context
+    let productContext = "";
+    try {
+      const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+      const { data: products } = await supabase
+        .from("products")
+        .select("name, price, original_price, discount_percent, short_description, delivery_time, categories(name)")
+        .eq("status", "active")
+        .order("sort_order", { ascending: true })
+        .limit(80);
+
+      if (products && products.length > 0) {
+        const grouped: Record<string, string[]> = {};
+        for (const p of products) {
+          const cat = (p as any).categories?.name || "অন্যান্য";
+          if (!grouped[cat]) grouped[cat] = [];
+          const disc = p.discount_percent ? ` (${p.discount_percent}% ছাড়)` : "";
+          grouped[cat].push(`• ${p.name}: ৳${p.price}${disc}${p.short_description ? " - " + p.short_description : ""}${p.delivery_time ? " [ডেলিভারি: " + p.delivery_time + "]" : ""}`);
+        }
+        productContext = "\n\n📦 বর্তমান প্রোডাক্ট তালিকা:\n";
+        for (const [cat, items] of Object.entries(grouped)) {
+          productContext += `\n${cat}:\n${items.join("\n")}`;
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch products:", e);
+    }
+
+    const systemPrompt = `আপনি Shahed Store-এর AI সহকারী "Shahed AI"। আপনি বাংলা ও ইংরেজি উভয় ভাষায় সাহায্য করতে পারেন। গ্রাহক যে ভাষায় কথা বলবেন, সেই ভাষায় উত্তর দিন।
+
+🏪 Shahed Store সম্পর্কে:
+- বাংলাদেশের বিশ্বস্ত ডিজিটাল সফটওয়্যার লাইসেন্স ও সাবস্ক্রিপশন স্টোর
+- সম্পূর্ণ অরিজিনাল ও জেনুইন লাইসেন্স প্রদান করা হয়
+- পেমেন্ট: bKash, Nagad গ্রহণ করা হয়
+- ডেলিভারি: পেমেন্ট কনফার্মেশনের পর ১-২৪ ঘণ্টার মধ্যে ইমেইলে পাঠানো হয়
+- WhatsApp: 01840099853
+- ওয়েবসাইট: shahedstore.com
+${productContext}
+
+📋 আপনার দায়িত্ব:
+- প্রোডাক্টের দাম, ছাড়, ফিচার সম্পর্কে বিস্তারিত তথ্য দিন
+- অর্ডার ও পেমেন্ট প্রক্রিয়া ব্যাখ্যা করুন
+- ডেলিভারি সময় জানান
+- কোন প্রোডাক্টটি কাস্টমারের জন্য উপযুক্ত তা সাজেস্ট করুন
+- সমস্যা সমাধান না হলে WhatsApp (01840099853) এ যোগাযোগ করতে বলুন
+- সংক্ষিপ্ত, বন্ধুত্বপূর্ণ ও সহায়ক উত্তর দিন (৩-৫ লাইনের মধ্যে রাখুন)`;
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "google/gemini-3-flash-preview",
         messages: [
-          {
-            role: "system",
-            content: `আপনি Shahed Store-এর AI সাপোর্ট এজেন্ট। আপনি বাংলা ও ইংরেজি দুই ভাষায় সাহায্য করতে পারেন।
-
-Shahed Store সম্পর্কে তথ্য:
-- ডিজিটাল সফটওয়্যার লাইসেন্স বিক্রি করে (Windows, Office, Adobe, Netflix, Spotify ইত্যাদি)
-- বাংলাদেশে সেবা প্রদান করে
-- পেমেন্ট: bKash, Nagad গ্রহণ করা হয়
-- ডেলিভারি: অর্ডার কনফার্মেশনের পর সাথে সাথে ইমেইলে পাঠানো হয়
-- WhatsApp: 01840099853
-
-আপনার কাজ:
-- গ্রাহকদের প্রশ্নের উত্তর দেওয়া
-- অর্ডার সংক্রান্ত সমস্যায় সাহায্য করা
-- প্রোডাক্ট সম্পর্কে তথ্য দেওয়া
-- যদি সমস্যা সমাধান না হয়, support ticket খুলতে বলুন বা WhatsApp-এ যোগাযোগ করতে বলুন
-
-সংক্ষিপ্ত, বন্ধুত্বপূর্ণ এবং সহায়ক উত্তর দিন।`
-          },
+          { role: "system", content: systemPrompt },
           ...messages,
         ],
         stream: true,
-        max_tokens: 500,
+        max_tokens: 600,
       }),
     });
 
     if (!response.ok) {
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
+        return new Response(JSON.stringify({ error: "অনেক বেশি রিকোয়েস্ট। একটু পরে আবার চেষ্টা করুন।" }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "AI সার্ভিস সাময়িক বন্ধ। WhatsApp-এ যোগাযোগ করুন: 01840099853" }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       const t = await response.text();
-      console.error("OpenAI error:", response.status, t);
+      console.error("AI gateway error:", response.status, t);
       return new Response(JSON.stringify({ error: "AI service error" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
