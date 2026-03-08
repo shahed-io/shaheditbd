@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Zap, Star, Shield, Phone, Mail, Sparkles } from 'lucide-react';
 import logoIcon from '@/assets/logo-icon.png';
+import logoFull from '@/assets/logo-new.png';
 import AuthModal from './AuthModal';
 import SearchBar from './SearchBar';
 import { useCart } from '@/hooks/useCart';
@@ -80,24 +81,18 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-[66px] gap-4">
 
             {/* Logo */}
-            <a href="/" className="flex items-center gap-3 flex-shrink-0 group">
-              <div className="relative">
-                <img
-                  src={logoIcon}
-                  alt="ShahedStore"
-                  className="w-[42px] h-[42px] rounded-[14px] object-cover transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_6px_20px_hsla(243,75%,59%,0.35)]"
-                  style={{ boxShadow: '0 3px 12px hsla(243,75%,59%,0.2)' }}
-                />
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className="font-black text-[18px] tracking-tight" style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.6px' }}>
-                  <span className="text-foreground">Shahed</span><span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(15,100%,60%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Store</span>
-                </span>
-                <span className="text-[8.5px] font-semibold tracking-[0.22em] uppercase mt-0.5" style={{ fontFamily: 'Fira Code, monospace', color: 'hsl(230,12%,55%)' }}>
-                  Digital Marketplace
-                </span>
-              </div>
+            <a href="/" className="flex items-center gap-2 flex-shrink-0 group">
+              <img
+                src={logoIcon}
+                alt="ShahedStore"
+                className="w-[38px] h-[38px] rounded-[12px] object-cover transition-all duration-300 group-hover:scale-105 flex-shrink-0"
+                style={{ boxShadow: '0 3px 12px hsla(243,75%,59%,0.2)' }}
+              />
+              <img
+                src={logoFull}
+                alt="Shahed Store"
+                className="hidden sm:block h-[38px] w-auto object-contain transition-opacity duration-300 group-hover:opacity-90"
+              />
             </a>
 
             {/* Search — Desktop */}
