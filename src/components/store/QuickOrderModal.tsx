@@ -23,12 +23,14 @@ const schema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর (01XXXXXXXXX)'),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant';
 
-const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string }[] = [
-  { id: 'bkash', label: 'bKash', color: 'from-pink-600 to-pink-700', number: '01840099853' },
-  { id: 'nagad', label: 'Nagad', color: 'from-orange-500 to-orange-600', number: '01840099853' },
-  { id: 'rocket', label: 'Rocket', color: 'from-purple-600 to-purple-700', number: '018400998538' },
+const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string; type: string }[] = [
+  { id: 'bkash',          label: 'bKash',          color: 'from-pink-600 to-pink-700',     number: '01820060046', type: 'Send Money' },
+  { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600', number: '01840099853', type: 'Send Money' },
+  { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700', number: '01840099853', type: 'Send Money' },
+  { id: 'upay',           label: 'উপায়',           color: 'from-green-600 to-green-700',   number: '01840099853', type: 'Send Money' },
+  { id: 'bkash_merchant', label: 'bKash Merchant', color: 'from-pink-700 to-rose-700',     number: '01840099853', type: 'Merchant Payment' },
 ];
 
 const inputClass = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all";
