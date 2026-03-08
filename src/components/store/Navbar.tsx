@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Menu, X, Phone, Mail, ChevronDown, Star, LogOut, User, LayoutDashboard, Clock } from 'lucide-react';
+import { Search, Menu, X, Phone, Mail, ChevronRight, LogOut, User, LayoutDashboard, ShoppingCart, Heart } from 'lucide-react';
 import logoIcon from '@/assets/logo-icon.png';
 import SearchBar from './SearchBar';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,9 +12,16 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const { cartCount, wishlistCount, setCartOpen, setWishlistOpen } = useCart();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
@@ -24,9 +31,7 @@ const Navbar = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-  };
+  const handleLogout = async () => { await supabase.auth.signOut(); };
 
   const navLinks = [
     { label: 'Home', href: '#' },
@@ -44,116 +49,111 @@ const Navbar = () => {
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
 
       <header className="fixed top-0 left-0 right-0 z-50">
-        {/* Top info bar - shahedit style */}
-        <div className="bg-card/80 backdrop-blur-md border-b border-border/50 py-2 px-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
-            <div className="flex items-center gap-5">
+        {/* Top info bar */}
+        <div className="hidden sm:block border-b border-border/40" style={{ background: 'hsla(228,28%,7%,0.95)' }}>
+          <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-6">
               <a href="tel:01840099853" className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors">
                 <Phone size={11} className="text-primary" />
-                <span>01840-099853</span>
+                01840-099853
               </a>
-              <a href="mailto:info@shahedstore.com.bd" className="hidden sm:flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors">
+              <a href="mailto:info@shahedstore.com.bd" className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors">
                 <Mail size={11} className="text-primary" />
-                <span>info@shahedstore.com.bd</span>
+                info@shahedstore.com.bd
               </a>
             </div>
             <div className="flex items-center gap-4">
-              <span className="hidden sm:flex items-center gap-1.5 text-muted-foreground">
-                <Clock size={11} className="text-primary" />
+              <span className="text-muted-foreground flex items-center gap-1.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
+                </span>
                 24/7 Support
               </span>
-              <a href="https://wa.me/8801840099853" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-primary/15 border border-primary/30 text-primary px-3 py-1 rounded-full text-[11px] font-semibold hover:bg-primary/25 transition-colors">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-400"></span>
-                </span>
-                Free Consultation
+              <a
+                href="https://wa.me/8801840099853"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold transition-all"
+                style={{
+                  background: 'hsla(180,100%,42%,0.12)',
+                  border: '1px solid hsla(180,100%,42%,0.25)',
+                  color: 'hsl(var(--primary))',
+                }}
+              >
+                Free Consultation →
               </a>
             </div>
           </div>
         </div>
 
         {/* Main navbar */}
-        <nav className="bg-background/90 backdrop-blur-xl border-b border-border/40 px-4 py-3.5">
-          <div className="max-w-7xl mx-auto flex items-center gap-6">
+        <nav
+          className="border-b border-border/30 px-4 py-3 transition-all duration-300"
+          style={{
+            background: scrolled
+              ? 'hsla(230,30%,5%,0.97)'
+              : 'hsla(230,30%,6%,0.92)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: scrolled ? '0 4px 30px hsla(180,100%,42%,0.08)' : 'none',
+          }}
+        >
+          <div className="max-w-7xl mx-auto flex items-center gap-5">
             {/* Logo */}
-            <a href="#" className="flex items-center gap-2.5 flex-shrink-0 group">
+            <a href="/" className="flex items-center gap-2.5 flex-shrink-0 group">
               <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-primary/30 blur-md group-hover:blur-lg scale-110 transition-all duration-300" />
-                <img
-                  src={logoIcon}
-                  alt="Shahed Store Icon"
-                  className="relative w-9 h-9 rounded-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
+                <div className="absolute inset-0 rounded-full blur-md scale-110 transition-all duration-300 group-hover:blur-lg"
+                  style={{ background: 'hsla(180,100%,42%,0.3)' }} />
+                <img src={logoIcon} alt="Shahed Store" className="relative w-9 h-9 rounded-full object-cover group-hover:scale-110 transition-transform duration-300" />
               </div>
               <div className="leading-none">
                 <div className="font-black text-base tracking-widest gradient-text" style={{ fontFamily: 'Orbitron, sans-serif', letterSpacing: '0.15em' }}>
                   SHAHED
                 </div>
-                <div className="text-[9px] tracking-[0.35em] text-primary/80 font-semibold uppercase">
+                <div className="text-[9px] tracking-[0.35em] font-semibold uppercase" style={{ color: 'hsl(var(--primary))' }}>
                   STORE
                 </div>
               </div>
             </a>
 
-            {/* Center nav links */}
-            <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+            {/* Nav links - center */}
+            <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
               {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="nav-link px-4 py-2 flex items-center gap-1 text-[13px]"
-                >
+                <a key={link.label} href={link.href} className="nav-link px-4 py-2 text-[13px]">
                   {link.label}
-                  {(link.label === 'Windows' || link.label === 'Office') && (
-                    <ChevronDown size={11} />
-                  )}
                 </a>
               ))}
             </div>
 
-            {/* Search bar */}
+            {/* Search */}
             <div className="flex-1 lg:flex-none hidden md:flex lg:w-auto md:max-w-xs">
               <SearchBar className="w-full" />
             </div>
 
-            {/* Right icons */}
+            {/* Right actions */}
             <div className="flex items-center gap-1 ml-auto lg:ml-0">
-              <button
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="md:hidden p-2 text-muted-foreground hover:text-primary transition-colors"
-              >
+              <button onClick={() => setSearchOpen(!searchOpen)} className="md:hidden p-2 text-muted-foreground hover:text-primary transition-colors">
                 <Search size={20} />
               </button>
 
               {/* Wishlist */}
-              <button
-                onClick={() => setWishlistOpen(true)}
-                className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
-                title="Wishlist"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill={wishlistCount > 0 ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={wishlistCount > 0 ? 'text-red-400' : ''}>
-                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-                </svg>
+              <button onClick={() => setWishlistOpen(true)} className="relative p-2 text-muted-foreground hover:text-primary transition-colors" title="Wishlist">
+                <Heart size={19} fill={wishlistCount > 0 ? 'currentColor' : 'none'} className={wishlistCount > 0 ? 'text-rose-400' : ''} />
                 {wishlistCount > 0 && (
-                  <span className="absolute top-0 right-0 w-4 h-4 bg-accent text-background text-[10px] rounded-full flex items-center justify-center font-bold">
+                  <span className="absolute top-0 right-0 w-4 h-4 text-background text-[10px] rounded-full flex items-center justify-center font-bold"
+                    style={{ background: 'hsl(var(--accent))' }}>
                     {wishlistCount}
                   </span>
                 )}
               </button>
 
               {/* Cart */}
-              <button
-                onClick={() => setCartOpen(true)}
-                className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
-                title="Cart"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
-                  <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-                </svg>
+              <button onClick={() => setCartOpen(true)} className="relative p-2 text-muted-foreground hover:text-primary transition-colors" title="Cart">
+                <ShoppingCart size={19} />
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 w-4 h-4 bg-primary text-background text-[10px] rounded-full flex items-center justify-center font-bold">
+                  <span className="absolute top-0 right-0 w-4 h-4 text-background text-[10px] rounded-full flex items-center justify-center font-bold"
+                    style={{ background: 'hsl(var(--primary))' }}>
                     {cartCount}
                   </span>
                 )}
@@ -163,42 +163,37 @@ const Navbar = () => {
                 <div className="hidden sm:flex items-center gap-1 ml-1">
                   <button
                     onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 bg-card/80 border border-border/60 px-3 py-1.5 rounded-xl hover:border-primary/40 transition-colors cursor-pointer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border/50 transition-all hover:border-primary/40"
+                    style={{ background: 'hsla(228,28%,11%,0.8)' }}
                   >
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center"
+                      style={{ background: 'var(--gradient-primary)' }}>
                       <User size={12} className="text-background" />
                     </div>
-                    <span className="text-sm text-foreground font-medium max-w-[100px] truncate">{displayName}</span>
+                    <span className="text-sm font-medium max-w-[90px] truncate">{displayName}</span>
                   </button>
-                  <button
-                    onClick={() => navigate('/dashboard')}
-                    className="p-2 text-muted-foreground hover:text-primary transition-colors"
-                    title="ড্যাশবোর্ড"
-                  >
+                  <button onClick={() => navigate('/dashboard')} className="p-2 text-muted-foreground hover:text-primary transition-colors" title="Dashboard">
                     <LayoutDashboard size={18} />
                   </button>
-                  <button
-                    onClick={handleLogout}
-                    className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                    title="লগআউট"
-                  >
+                  <button onClick={handleLogout} className="p-2 text-muted-foreground hover:text-destructive transition-colors" title="Logout">
                     <LogOut size={18} />
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => setAuthOpen(true)}
-                  className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-primary to-accent text-background px-5 py-2.5 rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 ml-2"
+                  className="hidden sm:flex items-center gap-1.5 px-5 py-2 rounded-xl text-sm font-bold text-background ml-2 transition-all hover:scale-105 hover:shadow-lg"
+                  style={{
+                    background: 'var(--gradient-primary)',
+                    boxShadow: '0 0 20px hsla(180,100%,42%,0.2)',
+                  }}
                 >
                   Get Started
-                  <ChevronDown size={14} className="rotate-[-90deg]" />
+                  <ChevronRight size={14} />
                 </button>
               )}
 
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden p-2 text-muted-foreground hover:text-primary transition-colors"
-              >
+              <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden p-2 text-muted-foreground hover:text-primary transition-colors">
                 {mobileOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
@@ -214,33 +209,27 @@ const Navbar = () => {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="lg:hidden bg-card/95 backdrop-blur-xl border-b border-border/50">
+          <div className="lg:hidden border-b border-border/40 backdrop-blur-xl" style={{ background: 'hsla(228,28%,8%,0.98)' }}>
             <div className="max-w-7xl mx-auto py-3 px-4 flex flex-col gap-1">
               {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="nav-link py-2.5 px-3 rounded-lg hover:bg-muted/40"
-                >
+                <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
+                  className="nav-link py-3 px-3 rounded-lg hover:bg-muted/30 text-sm">
                   {link.label}
                 </a>
               ))}
-              {user ? (
-                <button
-                  onClick={handleLogout}
-                  className="text-left text-destructive py-2.5 px-3 text-sm"
-                >
-                  লগআউট
-                </button>
-              ) : (
-                <button
-                  onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                  className="bg-gradient-to-r from-primary to-accent text-background py-2.5 px-4 rounded-xl text-sm font-semibold mt-2"
-                >
-                  লগইন / সাইনআপ
-                </button>
-              )}
+              <div className="border-t border-border/30 mt-2 pt-2">
+                {user ? (
+                  <button onClick={handleLogout} className="text-left text-destructive py-2.5 px-3 text-sm w-full">লগআউট</button>
+                ) : (
+                  <button
+                    onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
+                    className="w-full text-background py-2.5 px-4 rounded-xl text-sm font-bold mt-1"
+                    style={{ background: 'var(--gradient-primary)' }}
+                  >
+                    লগইন / সাইনআপ
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}
