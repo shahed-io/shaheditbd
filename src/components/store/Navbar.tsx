@@ -166,9 +166,8 @@ const Navbar = () => {
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
           <div className="border-t border-border bg-white px-4 py-4 space-y-1">
-            <div className="flex items-center gap-2 rounded-2xl border border-border px-4 py-2.5 bg-surface-light mb-3">
-              <Search size={16} className="text-muted-foreground" />
-              <input type="text" placeholder="Search products…" className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
+            <div className="mb-3">
+              <SearchBar variant="navbar" className="w-full" onClose={() => setMobileOpen(false)} />
             </div>
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
