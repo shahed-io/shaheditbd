@@ -26,12 +26,11 @@ const CATEGORY_DROPDOWN = [
 ];
 
 const Navbar = () => {
-  const [mobileOpen,    setMobileOpen]    = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [authOpen,      setAuthOpen]      = useState(false);
-  const [scrolled,      setScrolled]      = useState(false);
-  const [catOpen,       setCatOpen]       = useState(false);
-  const { user } = useAuth(); // reuse global auth — no extra getSession call
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [authOpen,   setAuthOpen]   = useState(false);
+  const [scrolled,   setScrolled]   = useState(false);
+  const [catOpen,    setCatOpen]    = useState(false);
+  const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
 
