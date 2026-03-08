@@ -1,146 +1,132 @@
-import { Shield, Facebook, MessageCircle, Instagram, Phone, Mail, Globe, ExternalLink, ArrowRight } from 'lucide-react';
+import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight } from 'lucide-react';
 import logoIcon from '@/assets/logo-icon.png';
 
-const Footer = () => {
-  return (
-    <footer className="relative mt-8" style={{ borderTop: '1px solid hsla(180,100%,42%,0.1)' }}>
-      {/* Top accent line */}
-      <div className="h-px w-full" style={{ background: 'var(--gradient-primary)', opacity: 0.4 }} />
+const NAV_COL = [
+  { title: 'Services',    links: ['Confirmation ID', 'Office Activation', 'Windows Keys', 'Top Products', 'Software Keys', 'CID Reseller'] },
+  { title: 'Information', links: ['FAQs', 'About Us', 'Download Links', 'My Account', 'Contact Us', 'All Products'] },
+  { title: 'Policies',    links: ['Privacy Policy', 'Terms & Conditions', 'Refund Policy', 'Order Policy', 'Delivery Info', 'Return Policy'] },
+];
 
-      {/* Main footer */}
-      <div className="py-14 px-4" style={{ background: 'hsla(228,28%,7%,0.95)' }}>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
+const Footer = () => (
+  <footer style={{ borderTop: '1px solid hsl(var(--border))', backgroundColor: 'hsl(0,0%,5%)' }}>
 
-          {/* Brand */}
-          <div className="space-y-5 lg:col-span-1">
-            <a href="/" className="flex items-center gap-2.5 group">
-              <img src={logoIcon} alt="Shahed Store" className="w-8 h-8 rounded-full object-cover" />
-              <div className="leading-none">
-                <div className="font-black text-sm tracking-widest gradient-text" style={{ fontFamily: 'Orbitron, sans-serif', letterSpacing: '0.15em' }}>
-                  SHAHED
-                </div>
-                <div className="text-[8px] tracking-[0.35em] font-semibold uppercase" style={{ color: 'hsl(var(--primary))' }}>
-                  STORE
-                </div>
-              </div>
+    {/* Main footer */}
+    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+
+      {/* Brand col */}
+      <div className="lg:col-span-2 space-y-5">
+        <a href="/" className="flex items-center gap-2.5">
+          <img src={logoIcon} alt="Shahed Store" className="w-9 h-9 rounded object-cover" />
+          <div style={{ fontFamily: 'Syne, sans-serif' }}>
+            <span className="font-extrabold text-lg" style={{ color: 'var(--gold)' }}>SHAHED</span>
+            <span className="font-extrabold text-lg text-foreground"> STORE</span>
+          </div>
+        </a>
+
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+          বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।
+        </p>
+
+        {/* Contact */}
+        <div className="space-y-2.5">
+          {[
+            { icon: <Phone size={13} />, href: 'tel:01840099853', label: '01840-099853' },
+            { icon: <Mail size={13} />,  href: 'mailto:info@shahedstore.com.bd', label: 'info@shahedstore.com.bd' },
+            { icon: <Globe size={13} />, href: 'https://www.shahedstore.com.bd', label: 'www.shahedstore.com.bd', external: true },
+          ].map((c, i) => (
+            <a key={i} href={c.href} target={c.external ? '_blank' : undefined} rel={c.external ? 'noopener noreferrer' : undefined}
+              className="flex items-center gap-2 text-sm text-muted-foreground transition-colors"
+              style={{ width: 'fit-content' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--gold)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = ''; }}>
+              <span style={{ color: 'var(--gold)' }}>{c.icon}</span>
+              {c.label}
             </a>
-            <p className="text-sm leading-relaxed" style={{ color: 'hsl(var(--muted-foreground))' }}>
-              অরিজিনাল সফটওয়্যার সেরা দামে — বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল স্টোর
-            </p>
+          ))}
+        </div>
 
-            <div className="space-y-2 text-sm">
-              {[
-                { icon: <Phone size={12} />, href: 'tel:01840099853', text: '01840-099853' },
-                { icon: <Mail size={12} />, href: 'mailto:info@shahedstore.com.bd', text: 'info@shahedstore.com.bd' },
-                { icon: <Globe size={12} />, href: 'https://www.shahedstore.com.bd', text: 'www.shahedstore.com.bd' },
-              ].map((item, i) => (
-                <a key={i} href={item.href} target={i === 2 ? '_blank' : undefined} rel={i === 2 ? 'noopener noreferrer' : undefined}
-                  className="flex items-center gap-2 transition-colors"
-                  style={{ color: 'hsl(var(--muted-foreground))' }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = 'hsl(var(--primary))'; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'hsl(var(--muted-foreground))'; }}
-                >
-                  <span style={{ color: 'hsl(var(--primary))' }}>{item.icon}</span>
-                  {item.text}
-                </a>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-2">
-              {[
-                { icon: <Facebook size={14} />, href: '#', label: 'Facebook' },
-                { icon: <MessageCircle size={14} />, href: 'https://wa.me/8801840099853', label: 'WhatsApp' },
-                { icon: <Instagram size={14} />, href: '#', label: 'Instagram' },
-              ].map((s, i) => (
-                <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" title={s.label}
-                  className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
-                  style={{ background: 'hsla(228,28%,13%,0.7)', border: '1px solid hsla(180,100%,42%,0.12)', color: 'hsl(var(--muted-foreground))' }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(180,100%,42%,0.4)'; (e.currentTarget as HTMLElement).style.color = 'hsl(var(--primary))'; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(180,100%,42%,0.12)'; (e.currentTarget as HTMLElement).style.color = 'hsl(var(--muted-foreground))'; }}
-                >
-                  {s.icon}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Services */}
-          <FooterColumn title="Services" links={['Confirmation ID', 'Office', 'Windows', 'Top Selling Products', 'Software', 'CID For Reseller']} />
-
-          {/* Information */}
-          <FooterColumn title="Information" links={['FAQs', 'About Us', 'Software Download Link', 'My Account', 'Contact Us', 'All Product']} />
-
-          {/* Policies */}
-          <FooterColumn title="Policies" links={['Privacy Policy', 'Terms & Condition', 'Refund & Return Policy', 'Order & Cancellation', 'Delivery System', 'Return Policy']} />
-
-          {/* Trust & Payment */}
-          <div>
-            <h4 className="font-bold text-sm mb-5 flex items-center gap-2" style={{ color: 'hsl(var(--foreground))' }}>
-              <span className="w-1 h-4 rounded-full inline-block" style={{ background: 'var(--gradient-primary)' }} />
-              Trust & Payment
-            </h4>
-
-            <div className="rounded-xl p-4 mb-5"
-              style={{ background: 'hsla(180,100%,42%,0.06)', border: '1px solid hsla(180,100%,42%,0.2)' }}>
-              <div className="flex items-center gap-2 mb-2">
-                <Shield size={15} style={{ color: 'hsl(var(--primary))' }} />
-                <span className="font-bold text-sm" style={{ color: 'hsl(var(--foreground))' }}>Govt. Certified</span>
-              </div>
-              <p className="text-xs mb-1" style={{ color: 'hsl(var(--muted-foreground))' }}>Digital Business Provider</p>
-              <p className="text-xs font-semibold" style={{ color: 'hsl(var(--primary))' }}>DBID ✓ 586772174</p>
-            </div>
-
-            <p className="font-semibold text-xs mb-3 uppercase tracking-wider" style={{ color: 'hsl(var(--foreground))' }}>Payment Methods</p>
-            <div className="flex flex-wrap gap-2">
-              {['bKash', 'নগদ', 'রকেট'].map((pm) => (
-                <span key={pm} className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-default"
-                  style={{ background: 'hsla(228,28%,13%,0.7)', border: '1px solid hsla(228,25%,20%,0.5)', color: 'hsl(var(--muted-foreground))' }}>
-                  {pm}
-                </span>
-              ))}
-            </div>
-          </div>
+        {/* Social */}
+        <div className="flex gap-2">
+          {[
+            { icon: <Facebook size={15} />, href: '#', label: 'Facebook' },
+            { icon: <MessageCircle size={15} />, href: 'https://wa.me/8801840099853', label: 'WhatsApp' },
+            { icon: <Instagram size={15} />, href: '#', label: 'Instagram' },
+          ].map((s, i) => (
+            <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" title={s.label}
+              className="w-9 h-9 rounded flex items-center justify-center text-muted-foreground transition-all"
+              style={{ backgroundColor: 'var(--surface-2)', border: '1px solid hsl(var(--border))' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--gold)'; (e.currentTarget as HTMLElement).style.color = 'var(--gold)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsl(var(--border))'; (e.currentTarget as HTMLElement).style.color = ''; }}>
+              {s.icon}
+            </a>
+          ))}
         </div>
       </div>
 
-      {/* Copyright */}
-      <div className="py-4 px-4" style={{ borderTop: '1px solid hsla(180,100%,42%,0.08)', background: 'hsla(230,30%,5%,0.98)' }}>
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
-          <span>
-            © 2026 <span className="font-semibold" style={{ color: 'hsl(var(--foreground))' }}>Shahed Store</span> — সর্বস্বত্ব সংরক্ষিত
-          </span>
-          <a href="https://www.shahedstore.com.bd" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:underline transition-colors"
-            style={{ color: 'hsl(var(--primary))' }}>
-            www.shahedstore.com.bd <ExternalLink size={10} />
-          </a>
+      {/* Nav columns */}
+      {NAV_COL.map((col, ci) => (
+        <div key={ci}>
+          <h4 className="font-bold text-sm mb-5 flex items-center gap-2" style={{ fontFamily: 'Syne, sans-serif' }}>
+            <span className="inline-block w-1 h-4 rounded-sm" style={{ backgroundColor: 'var(--gold)' }} />
+            {col.title}
+          </h4>
+          <ul className="space-y-2.5">
+            {col.links.map(link => (
+              <li key={link}>
+                <a href="#" className="text-sm text-muted-foreground transition-all inline-flex items-center gap-1"
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--gold)'; (e.currentTarget as HTMLElement).style.paddingLeft = '4px'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = ''; (e.currentTarget as HTMLElement).style.paddingLeft = '0'; }}>
+                  {link}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
-    </footer>
-  );
-};
-
-const FooterColumn = ({ title, links }: { title: string; links: string[] }) => (
-  <div>
-    <h4 className="font-bold text-sm mb-5 flex items-center gap-2" style={{ color: 'hsl(var(--foreground))' }}>
-      <span className="w-1 h-4 rounded-full inline-block" style={{ background: 'var(--gradient-primary)' }} />
-      {title}
-    </h4>
-    <ul className="space-y-2.5">
-      {links.map((link) => (
-        <li key={link}>
-          <a href="#"
-            className="text-sm inline-flex items-center gap-1 group transition-all"
-            style={{ color: 'hsl(var(--muted-foreground))' }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = 'hsl(var(--primary))'; (e.currentTarget as HTMLElement).style.transform = 'translateX(4px)'; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'hsl(var(--muted-foreground))'; (e.currentTarget as HTMLElement).style.transform = 'translateX(0)'; }}
-          >
-            {link}
-          </a>
-        </li>
       ))}
-    </ul>
-  </div>
+    </div>
+
+    {/* Trust + payment bar */}
+    <div style={{ borderTop: '1px solid hsl(var(--border))' }}>
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* DBID */}
+        <div className="flex items-center gap-3 text-sm">
+          <div className="flex items-center justify-center w-9 h-9 rounded"
+            style={{ backgroundColor: 'var(--gold-dim)', border: '1px solid hsla(38,90%,52%,0.3)' }}>
+            <Shield size={16} style={{ color: 'var(--gold)' }} />
+          </div>
+          <div>
+            <p className="font-bold text-xs text-foreground">Govt. Certified Business</p>
+            <p className="text-xs text-muted-foreground" style={{ fontFamily: 'DM Mono, monospace' }}>DBID: 586772174</p>
+          </div>
+        </div>
+
+        {/* Payment methods */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground mr-1">Payment:</span>
+          {['bKash', 'নগদ', 'Rocket'].map(pm => (
+            <span key={pm} className="px-3 py-1.5 rounded text-xs font-semibold"
+              style={{ backgroundColor: 'var(--surface-2)', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
+              {pm}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    {/* Copyright */}
+    <div style={{ borderTop: '1px solid hsl(var(--border))', backgroundColor: 'hsl(0,0%,4%)' }}>
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span>© 2026 <strong className="text-foreground">Shahed Store</strong> · সর্বস্বত্ব সংরক্ষিত</span>
+        <a href="https://www.shahedstore.com.bd" target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-1 transition-colors"
+          style={{ fontFamily: 'DM Mono, monospace' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--gold)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = ''; }}>
+          www.shahedstore.com.bd <ExternalLink size={10} />
+        </a>
+      </div>
+    </div>
+  </footer>
 );
 
 export default Footer;
