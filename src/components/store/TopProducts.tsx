@@ -72,7 +72,14 @@ const TopProducts = () => {
 
   return (
     <section ref={sectionRef} className="py-20 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        style={{
+          opacity:   visible ? 1 : 0,
+          transform: visible ? 'translateY(0)' : 'translateY(32px)',
+          transition: 'opacity 0.7s ease, transform 0.7s ease',
+        }}
+      >
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
@@ -94,14 +101,19 @@ const TopProducts = () => {
 
         {/* Tab Bar */}
         <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border">
-          {tabs.map(tab => (
+          {tabs.map((tab, idx) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+              style={{
+                ...(activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}),
+                opacity: visible ? 1 : 0,
+                transform: visible ? 'translateY(0)' : 'translateY(10px)',
+                transition: `opacity 0.4s ease ${idx * 0.05}s, transform 0.4s ease ${idx * 0.05}s`,
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200 ${
                 activeTab === tab
                   ? 'text-white shadow-indigo'
                   : 'bg-white border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
-              }`}
-              style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}}>
+              }`}>
               {tab}
             </button>
           ))}
@@ -124,7 +136,7 @@ const TopProducts = () => {
         {!error && loading && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[0,1,2,3,4,5,6,7].map(i => (
-              <div key={i} className="rounded-2xl shimmer" style={{ height: '22rem' }} />
+              <div key={i} className="rounded-2xl shimmer" style={{ height: '22rem', animationDelay: `${i * 0.08}s` }} />
             ))}
           </div>
         )}
@@ -132,14 +144,20 @@ const TopProducts = () => {
         {/* All Products grouped */}
         {!error && !loading && activeTab === 'All' && (
           <div className="space-y-14">
-            {catOrder.map(cat => {
-              const items    = products.filter(p => p.category === cat);
+            {catOrder.map((cat, catIdx) => {
+              const items      = products.filter(p => p.category === cat);
               if (!items.length) return null;
-              const expanded = !!expandedCats[cat];
-              const visible  = expanded ? items : items.slice(0, LIMIT);
-              const hasMore  = items.length > LIMIT;
+              const isExpanded = !!expandedCats[cat];
+              const shown      = isExpanded ? items : items.slice(0, LIMIT);
+              const hasMore    = items.length > LIMIT;
               return (
-                <div key={cat}>
+                <div key={cat}
+                  style={{
+                    opacity: visible ? 1 : 0,
+                    transform: visible ? 'translateY(0)' : 'translateY(24px)',
+                    transition: `opacity 0.6s ease ${catIdx * 0.1}s, transform 0.6s ease ${catIdx * 0.1}s`,
+                  }}
+                >
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-sora font-bold text-lg text-foreground flex items-center gap-2">
                       <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(243,75%,59%), hsl(263,70%,58%))' }} />
@@ -151,21 +169,23 @@ const TopProducts = () => {
                       View all <ArrowRight size={13} />
                     </button>
                   </div>
+                  {/* Mobile scroll */}
                   <div className="flex gap-3 overflow-x-auto pb-2 md:hidden scrollbar-hide">
                     {items.map((p, i) => (
                       <div key={p.id} className="flex-shrink-0 w-48">
-                        <ProductCard product={p} delay={i * 0.04} />
+                        <ProductCard product={p} delay={i * 0.05} />
                       </div>
                     ))}
                   </div>
+                  {/* Desktop grid */}
                   <div className="hidden md:grid grid-cols-3 lg:grid-cols-4 gap-4">
-                    {visible.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.04} />)}
+                    {shown.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.05} />)}
                   </div>
                   {hasMore && (
                     <div className="hidden md:flex justify-center mt-6">
                       <button onClick={() => toggleCat(cat)}
                         className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-white border border-border shadow-soft hover:shadow-medium transition-all text-foreground">
-                        {expanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
+                        {isExpanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
                       </button>
                     </div>
                   )}
@@ -175,12 +195,12 @@ const TopProducts = () => {
           </div>
         )}
 
-        {/* Filtered */}
+        {/* Filtered by tab */}
         {!error && !loading && activeTab !== 'All' && (
           <div>
             <p className="text-sm text-muted-foreground mb-6 font-fira">{filtered.length} products in "{activeTab}"</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filtered.map((p, i) => <ProductCard key={p.id} product={p} delay={Math.min(i * 0.035, 0.35)} />)}
+              {filtered.map((p, i) => <ProductCard key={p.id} product={p} delay={Math.min(i * 0.04, 0.4)} />)}
             </div>
           </div>
         )}
@@ -190,4 +210,5 @@ const TopProducts = () => {
 };
 
 export default TopProducts;
+
 
