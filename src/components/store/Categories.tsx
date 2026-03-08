@@ -1,126 +1,62 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { ArrowUpRight, Layers } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 
-const CATEGORY_META: Record<string, { icon: string; sub: string; color: string }> = {
-  windows:      { icon: '🪟', sub: 'Home · Pro · Server',          color: 'var(--cyan)' },
-  office:       { icon: '📊', sub: 'Personal · Family · Business', color: 'var(--purple)' },
-  adobe:        { icon: '🎨', sub: 'Photoshop · Premiere · CC',    color: 'var(--magenta)' },
-  antivirus:    { icon: '🛡️', sub: 'Norton · Kaspersky · ESET',    color: 'hsl(120,80%,50%)' },
-  software:     { icon: '💾', sub: 'IDM · WinRAR · Tools',         color: 'var(--orange)' },
-  subscription: { icon: '♾️', sub: 'Spotify · Canva · Zoom',       color: 'hsl(280,80%,60%)' },
-  vpn:          { icon: '🔐', sub: 'NordVPN · ExpressVPN',         color: 'hsl(200,90%,55%)' },
-  streaming:    { icon: '📺', sub: 'Netflix · YouTube · Disney+',  color: 'hsl(0,85%,60%)' },
-};
+const CATS = [
+  { icon: '🪟', label: 'Windows OS',     desc: 'Win 10 & 11 Pro/Home',  count: 12, colorClass: 'bg-blue-50 border-blue-200',    iconBg: 'bg-blue-100',    badge: 'bg-blue-100 text-blue-700' },
+  { icon: '📦', label: 'Microsoft 365',  desc: 'Office & Personal',     count: 8,  colorClass: 'bg-orange-50 border-orange-200', iconBg: 'bg-orange-100',  badge: 'bg-orange-100 text-orange-700' },
+  { icon: '🎨', label: 'Adobe Creative', desc: 'Photoshop, Illustrator', count: 6,  colorClass: 'bg-red-50 border-red-200',      iconBg: 'bg-red-100',     badge: 'bg-red-100 text-red-700' },
+  { icon: '🛡️', label: 'Antivirus',      desc: 'Norton, Kaspersky',     count: 10, colorClass: 'bg-green-50 border-green-200',  iconBg: 'bg-green-100',   badge: 'bg-green-100 text-green-700' },
+  { icon: '🎬', label: 'Streaming',      desc: 'Netflix, Prime, Disney', count: 9,  colorClass: 'bg-purple-50 border-purple-200', iconBg: 'bg-purple-100', badge: 'bg-purple-100 text-purple-700' },
+  { icon: '🔒', label: 'VPN & Security', desc: 'NordVPN, ExpressVPN',   count: 5,  colorClass: 'bg-cyan-50 border-cyan-200',    iconBg: 'bg-cyan-100',    badge: 'bg-cyan-100 text-cyan-700' },
+  { icon: '🎵', label: 'Music & Audio',  desc: 'Spotify, ElevenLabs',   count: 7,  colorClass: 'bg-pink-50 border-pink-200',    iconBg: 'bg-pink-100',    badge: 'bg-pink-100 text-pink-700' },
+  { icon: '🤖', label: 'AI Tools',       desc: 'ChatGPT, Midjourney',   count: 4,  colorClass: 'bg-yellow-50 border-yellow-200', iconBg: 'bg-yellow-100', badge: 'bg-yellow-100 text-yellow-700' },
+];
 
 const Categories = () => {
-  const [categories, setCategories] = useState<any[]>([]);
-  const [hovered, setHovered] = useState<string | null>(null);
-
-  useEffect(() => {
-    supabase.from('categories').select('id,name,slug,sort_order').eq('is_active', true).order('sort_order')
-      .then(({ data }) => { if (data) setCategories(data); });
-  }, []);
+  const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <section className="py-24 px-4 sm:px-6 relative overflow-hidden"
-      style={{ borderTop: '1px solid hsl(var(--border))' }}>
-
-      {/* Background grid accent */}
-      <div className="absolute inset-0 cyber-grid-dense opacity-40 pointer-events-none" />
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 100%, hsla(185,100%,50%,0.03) 0%, transparent 70%)' }} />
-
-      <div className="max-w-screen-xl mx-auto relative z-10">
-
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+    <section className="py-20 bg-surface-light">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
-            <div className="flex items-center gap-3 mb-3">
-              <Layers size={14} style={{ color: 'var(--cyan)' }} />
-              <span className="section-tag">// Product Categories</span>
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black section-title">
-              <span className="text-foreground">Browse</span>
-              <span className="gradient-text-cyber ml-3">Categories</span>
+            <span className="section-label">Browse Store</span>
+            <h2 className="section-heading text-3xl sm:text-4xl mt-3">
+              Shop by{' '}
+              <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Category
+              </span>
             </h2>
-            <div className="divider-cyber mt-3" />
+            <p className="text-muted-foreground mt-2 max-w-md">
+              Premium digital licenses across all major software categories — all at unbeatable prices.
+            </p>
           </div>
-          <div className="text-sm flex items-center gap-2"
-            style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--muted-foreground))' }}>
-            <span style={{ color: 'var(--cyan)' }}>[</span>
-            {categories.length} modules loaded
-            <span style={{ color: 'var(--cyan)' }}>]</span>
-          </div>
+          <a href="/categories" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-indigo hover:gap-3 transition-all flex-shrink-0">
+            View All <ArrowRight size={15} />
+          </a>
         </div>
 
-        {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categories.map((cat, i) => {
-            const meta = CATEGORY_META[cat.slug] ?? { icon: '📦', sub: 'Digital Products', color: 'var(--cyan)' };
-            const isHovered = hovered === cat.id;
-
-            return (
-              <a key={cat.id}
-                href={`/shop?category=${cat.slug}`}
-                className="group relative rounded-xl overflow-hidden flex flex-col gap-4 p-5 transition-all duration-400 cursor-pointer"
-                style={{
-                  background: isHovered ? 'hsl(220,15%,10%)' : 'hsl(220,18%,7%)',
-                  border: `1px solid ${isHovered ? meta.color : 'hsl(var(--border))'}`,
-                  boxShadow: isHovered ? `0 0 20px ${meta.color}25, inset 0 0 30px ${meta.color}05` : 'none',
-                  transform: isHovered ? 'translateY(-4px)' : 'none',
-                  transition: 'all 0.3s cubic-bezier(0.23,1,0.32,1)',
-                }}
-                onMouseEnter={() => setHovered(cat.id)}
-                onMouseLeave={() => setHovered(null)}
-              >
-                {/* Top glow line */}
-                <div className="absolute top-0 inset-x-0 h-0.5 transition-opacity duration-300"
-                  style={{
-                    background: `linear-gradient(90deg, transparent, ${meta.color}, transparent)`,
-                    opacity: isHovered ? 1 : 0,
-                  }} />
-
-                {/* Corner accent */}
-                <div className="absolute bottom-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{
-                    borderBottom: `2px solid ${meta.color}`,
-                    borderRight: `2px solid ${meta.color}`,
-                  }} />
-
-                {/* Index watermark */}
-                <div className="absolute top-3 right-3 text-xs font-bold select-none pointer-events-none"
-                  style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--border))' }}>
-                  {String(i + 1).padStart(2, '0')}
-                </div>
-
-                {/* Icon */}
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all duration-300"
-                  style={{
-                    background: isHovered ? `${meta.color}15` : 'hsl(220,15%,12%)',
-                    border: `1px solid ${isHovered ? meta.color + '40' : 'hsl(var(--border))'}`,
-                  }}>
-                  {meta.icon}
-                </div>
-
-                <div className="flex-1">
-                  <p className="font-bold text-sm leading-tight transition-all duration-200"
-                    style={{ color: isHovered ? meta.color : 'hsl(var(--foreground))', fontFamily: 'Inter, sans-serif' }}>
-                    {cat.name}
-                  </p>
-                  <p className="text-xs mt-1 leading-relaxed"
-                    style={{ color: 'hsl(var(--muted-foreground))', fontFamily: 'JetBrains Mono, monospace', fontSize: '10px' }}>
-                    {meta.sub}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1 text-[10px] font-bold transition-all duration-200 mt-auto"
-                  style={{ color: meta.color, opacity: isHovered ? 1 : 0.5, fontFamily: 'JetBrains Mono, monospace' }}>
-                  ACCESS <ArrowUpRight size={10} />
-                </div>
-              </a>
-            );
-          })}
+          {CATS.map((cat, i) => (
+            <a key={cat.label} href={`/category/${cat.label.toLowerCase().replace(/\s+/g, '-')}`}
+              className={`cat-card p-5 flex flex-col gap-3 ${cat.colorClass} border-2 anim-rise`}
+              style={{ animationDelay: `${i * 0.06}s` }}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered(null)}>
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon ${cat.iconBg} shadow-soft`}>
+                {cat.icon}
+              </div>
+              <div>
+                <h3 className="font-sora font-bold text-sm text-foreground leading-tight">{cat.label}</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">{cat.desc}</p>
+              </div>
+              <div className="flex items-center justify-between mt-auto">
+                <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${cat.badge}`}>{cat.count} items</span>
+                <ArrowRight size={14}
+                  className={`text-muted-foreground transition-all duration-200 ${hovered === i ? 'translate-x-1 text-brand-indigo' : ''}`} />
+              </div>
+            </a>
+          ))}
         </div>
       </div>
     </section>
@@ -128,3 +64,4 @@ const Categories = () => {
 };
 
 export default Categories;
+

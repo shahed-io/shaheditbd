@@ -1,297 +1,237 @@
-import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Shield, Zap, Star, ChevronRight, Cpu, Globe, Lock } from 'lucide-react';
-import heroBanner from '@/assets/hero-banner.png';
+import { useState, useEffect } from 'react';
+import { ArrowRight, ShoppingBag, Star, Zap, Shield, Clock, Play, Sparkles } from 'lucide-react';
 
 const SLIDES = [
   {
-    tag: '> SYSTEM_BOOT :: DIGITAL_STORE_v2.0',
-    title: 'Next-Gen',
-    titleHL: 'Software Hub',
-    sub: 'বাংলাদেশের সবচেয়ে অ্যাডভান্সড ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল লাইসেন্স, ইনস্ট্যান্ট ডেলিভারি।',
-    cta: 'Explore Products',
-    tag2: 'Flash Sale Active',
+    tag: '🔥 Best Seller',
+    title: 'Windows 11 Pro',
+    subtitle: 'Original License Key',
+    desc: 'Genuine Microsoft Windows 11 Pro — instant digital delivery to your inbox within minutes.',
+    price: '৳599',
+    original: '৳9,999',
+    off: '94%',
+    badge: 'MOST POPULAR',
+    accentFrom: 'hsl(243,75%,59%)',
+    accentTo: 'hsl(263,70%,58%)',
+    bgFrom: 'hsla(243,75%,59%,0.05)',
+    bgTo: 'hsla(263,70%,58%,0.05)',
+    emoji: '🪟',
+    features: ['Lifetime License', 'Instant Delivery', 'All Devices'],
   },
   {
-    tag: '> MODULE :: MICROSOFT_SUITE',
-    title: 'Windows &',
-    titleHL: 'Office 365',
-    sub: 'মাইক্রোসফটের সকল প্রোডাক্ট — সর্বনিম্ন মূল্যে। ৯৪% পর্যন্ত ছাড়! ইনস্ট্যান্ট কি ডেলিভারি।',
-    cta: 'View Microsoft',
-    tag2: 'Up to 94% OFF',
+    tag: '⚡ Flash Deal',
+    title: 'Microsoft 365',
+    subtitle: 'Personal — 1 Year',
+    desc: 'Full Office suite: Word, Excel, PowerPoint, OneDrive 1TB. Premium productivity tools.',
+    price: '৳1,999',
+    original: '৳16,500',
+    off: '88%',
+    badge: 'LIMITED TIME',
+    accentFrom: 'hsl(15,100%,60%)',
+    accentTo: 'hsl(38,100%,55%)',
+    bgFrom: 'hsla(15,100%,60%,0.05)',
+    bgTo: 'hsla(38,100%,55%,0.05)',
+    emoji: '📦',
+    features: ['1TB OneDrive', '5 Devices', '1 Year'],
   },
   {
-    tag: '> MODULE :: STREAMING_ACCESS',
-    title: 'Premium',
-    titleHL: 'Subscriptions',
-    sub: 'Netflix, Spotify, Adobe CC, Disney+ — সব একটাই স্টোরে। বাংলাদেশ প্রাইসে।',
-    cta: 'Shop Subscriptions',
-    tag2: '100% Genuine',
+    tag: '🎬 Streaming',
+    title: 'Netflix Premium',
+    subtitle: '4K Ultra HD',
+    desc: 'Netflix Premium — 4K Ultra HD streaming, download offline, screen sharing supported.',
+    price: '৳499',
+    original: '৳2,600',
+    off: '81%',
+    badge: 'HOT DEAL',
+    accentFrom: 'hsl(158,64%,42%)',
+    accentTo: 'hsl(180,70%,40%)',
+    bgFrom: 'hsla(158,64%,42%,0.05)',
+    bgTo: 'hsla(180,70%,40%,0.05)',
+    emoji: '🎬',
+    features: ['4K Quality', 'Offline Mode', '1 Month'],
   },
-];
-
-const FLOATING_PRODUCTS = [
-  { name: 'Windows 11 Pro', price: '৳599', off: '-94%', color: 'var(--cyan)', img: 'https://shahedstore.com.bd/wp-content/uploads/2024/09/generated_image_5998b250-5afb-4d15-bd7a-5202e8a58235-copy-800x800.png' },
-  { name: 'Adobe CC', price: '৳599', off: '-70%', color: 'var(--purple)', img: 'https://shahedstore.com.bd/wp-content/uploads/2024/10/Adobe-800x800.jpg' },
-  { name: 'Netflix Premium', price: '৳499', off: '-81%', color: 'var(--magenta)', img: 'https://shahedstore.com.bd/wp-content/uploads/2024/09/NETPLX-2.webp' },
-  { name: 'Office 365', price: '৳1,999', off: '-88%', color: 'var(--orange)', img: 'https://shahedstore.com.bd/wp-content/uploads/2024/09/generated_image_cc7c68b2-1de4-4ea4-9049-45200b0f4174-800x800.webp' },
 ];
 
 const STATS = [
-  { n: '5,000+', l: 'Customers', icon: <Globe size={14} /> },
-  { n: '500+',   l: 'Products',  icon: <Cpu size={14} /> },
-  { n: '99.9%',  l: 'Uptime',    icon: <Zap size={14} /> },
-  { n: 'DBID',   l: 'Certified', icon: <Lock size={14} /> },
+  { label: 'Products', value: '500+', icon: '🛍️' },
+  { label: 'Orders Delivered', value: '25K+', icon: '✅' },
+  { label: 'Happy Customers', value: '12K+', icon: '😊' },
+  { label: 'Support Rating', value: '4.9/5', icon: '⭐' },
 ];
 
 const HeroBanner = () => {
   const [active, setActive] = useState(0);
-  const [typed, setTyped] = useState('');
-  const [typingDone, setTypingDone] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [transitioning, setTransitioning] = useState(false);
 
-  const goNext = () => setActive(p => (p + 1) % SLIDES.length);
-
-  // Auto-advance slides
   useEffect(() => {
-    const t = setInterval(goNext, 6000);
-    return () => clearInterval(t);
+    const timer = setInterval(() => {
+      setTransitioning(true);
+      setTimeout(() => { setActive(p => (p + 1) % SLIDES.length); setTransitioning(false); }, 300);
+    }, 5000);
+    return () => clearInterval(timer);
   }, []);
 
-  // Typewriter effect
-  useEffect(() => {
-    setTyped('');
-    setTypingDone(false);
-    const text = SLIDES[active].tag;
-    let i = 0;
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(() => {
-      if (i < text.length) {
-        setTyped(text.slice(0, ++i));
-      } else {
-        setTypingDone(true);
-        clearInterval(intervalRef.current!);
-      }
-    }, 30);
-    return () => clearInterval(intervalRef.current!);
-  }, [active]);
+  const goTo = (i: number) => {
+    setTransitioning(true);
+    setTimeout(() => { setActive(i); setTransitioning(false); }, 300);
+  };
 
-  const s = SLIDES[active];
+  const slide = SLIDES[active];
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden cyber-grid"
-      style={{ paddingTop: '5.5rem' }}>
-
-      {/* Animated background orbs */}
+    <section className="relative overflow-hidden bg-background">
+      {/* Animated bg */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute anim-orb"
-          style={{
-            width: '600px', height: '600px',
-            top: '-200px', left: '-100px',
-            background: 'radial-gradient(circle, hsla(185,100%,50%,0.06) 0%, transparent 70%)',
-            borderRadius: '50%',
-          }} />
-        <div className="absolute anim-orb d-300"
-          style={{
-            width: '500px', height: '500px',
-            bottom: '-150px', right: '-50px',
-            background: 'radial-gradient(circle, hsla(270,80%,60%,0.06) 0%, transparent 70%)',
-            borderRadius: '50%',
-          }} />
-        <div className="absolute anim-orb d-150"
-          style={{
-            width: '300px', height: '300px',
-            top: '30%', right: '25%',
-            background: 'radial-gradient(circle, hsla(320,90%,60%,0.04) 0%, transparent 70%)',
-            borderRadius: '50%',
-          }} />
-      </div>
-
-      {/* Hero background image overlay */}
-      <div className="absolute inset-0">
-        <img src={heroBanner} alt="" className="w-full h-full object-cover"
-          style={{ opacity: 0.08, filter: 'saturate(0) brightness(0.5)' }} />
+        <div className="absolute inset-0 transition-all duration-700"
+          style={{ background: `radial-gradient(ellipse at 70% 50%, ${slide.bgFrom} 0%, transparent 60%), radial-gradient(ellipse at 30% 80%, ${slide.bgTo} 0%, transparent 50%)` }} />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] blob opacity-30"
+          style={{ background: `radial-gradient(circle, ${slide.accentFrom}25, transparent)` }} />
+        <div className="absolute bottom-0 left-0 w-80 h-80 blob opacity-20"
+          style={{ background: `radial-gradient(circle, ${slide.accentTo}20, transparent)`, animationDelay: '4s' }} />
         <div className="absolute inset-0"
-          style={{ background: 'linear-gradient(135deg, hsl(220,20%,4%) 0%, hsla(220,20%,4%,0.8) 60%, hsla(220,20%,4%,0.4) 100%)' }} />
-        {/* Scan line overlay */}
-        <div className="scan-overlay opacity-30" />
+          style={{ backgroundImage: 'radial-gradient(circle, hsl(243,75%,59%) 0.8px, transparent 0.8px)', backgroundSize: '32px 32px', opacity: 0.03 }} />
       </div>
 
-      {/* Bottom gradient */}
-      <div className="absolute inset-x-0 bottom-0 h-48 pointer-events-none"
-        style={{ background: 'linear-gradient(to top, hsl(220,20%,4%), transparent)' }} />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-      <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 w-full py-20">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-
-          {/* ── Left content ── */}
-          <div className="space-y-8">
-
-            {/* Typewriter tag */}
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full anim-neon" style={{ background: 'var(--cyan)' }} />
-              <code className="text-xs"
-                style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--cyan)', opacity: 0.8 }}>
-                {typed}{!typingDone && <span className="opacity-75 animate-pulse">█</span>}
-              </code>
+          {/* Left Content */}
+          <div className={`space-y-7 transition-all duration-300 ${transitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 text-sm font-bold px-4 py-1.5 rounded-full text-white"
+                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
+                {slide.tag}
+              </span>
+              <span className="text-[11px] font-fira font-semibold text-muted-foreground tracking-widest uppercase px-3 py-1.5 bg-muted rounded-full border border-border">
+                {slide.badge}
+              </span>
             </div>
 
-            {/* Main heading */}
-            <div key={active} className="anim-rise space-y-2">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-none section-title">
-                <span className="block text-foreground">{s.title}</span>
-                <span className="block gradient-text-cyber mt-1">{s.titleHL}</span>
+            <div>
+              <h1 className="font-sora font-black text-5xl lg:text-6xl xl:text-7xl leading-[1.05] tracking-tight text-foreground">
+                {slide.title}
               </h1>
+              <h2 className="font-sora font-bold text-2xl lg:text-3xl mt-2 leading-tight"
+                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                {slide.subtitle}
+              </h2>
+            </div>
 
-              {/* Decorative line */}
-              <div className="flex items-center gap-3 pt-2">
-                <div className="h-px flex-1 max-w-[80px]"
-                  style={{ background: 'linear-gradient(90deg, var(--cyan), transparent)' }} />
-                <div className="badge-cyber">{s.tag2}</div>
-                <div className="h-px flex-1 max-w-[80px]"
-                  style={{ background: 'linear-gradient(90deg, transparent, var(--purple))' }} />
+            <p className="text-muted-foreground text-lg leading-relaxed max-w-lg">{slide.desc}</p>
+
+            <div className="flex flex-wrap gap-2">
+              {slide.features.map(f => (
+                <span key={f} className="flex items-center gap-1.5 text-sm font-semibold text-foreground bg-white border border-border px-4 py-2 rounded-full shadow-soft">
+                  <span className="w-2 h-2 rounded-full" style={{ background: slide.accentFrom }} />
+                  {f}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex items-end gap-4">
+              <span className="text-5xl font-sora font-black text-foreground">{slide.price}</span>
+              <div>
+                <div className="text-sm text-muted-foreground line-through">{slide.original}</div>
+                <span className="text-sm font-bold text-white px-2.5 py-0.5 rounded-full"
+                  style={{ background: 'linear-gradient(135deg, hsl(15,100%,60%), hsl(38,100%,55%))' }}>Save {slide.off}</span>
               </div>
             </div>
 
-            <p className="text-muted-foreground text-base leading-relaxed max-w-lg" key={`sub-${active}`}>
-              {s.sub}
-            </p>
-
-            {/* CTA buttons */}
             <div className="flex flex-wrap gap-3">
-              <button className="btn-cyber flex items-center gap-2 px-8 py-3.5 rounded-xl">
-                {s.cta} <ArrowRight size={15} />
+              <button className="flex items-center gap-2 px-7 py-3.5 rounded-2xl text-base font-bold text-white hover:scale-105 transition-transform duration-200 shadow-indigo"
+                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
+                <ShoppingBag size={18} /> Order Now <ArrowRight size={16} />
               </button>
-              <a href="https://wa.me/8801840099853" target="_blank" rel="noopener noreferrer"
-                className="btn-cyber-outline flex items-center gap-2 px-8 py-3.5 rounded-xl">
-                WhatsApp Order
-              </a>
+              <button className="flex items-center gap-2 px-6 py-3.5 rounded-2xl text-base font-semibold bg-white border-2 border-border hover:border-foreground/30 transition-all shadow-soft text-foreground hover:shadow-medium">
+                <Play size={16} fill="currentColor" /> How it works
+              </button>
             </div>
 
-            {/* Trust badges */}
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="flex flex-wrap gap-6 pt-1">
               {[
-                { icon: <Shield size={12} />, l: '100% Genuine' },
-                { icon: <Zap size={12} />,    l: 'Instant Delivery' },
-                { icon: <Star size={12} />,   l: '5★ Rating' },
-              ].map((t, i) => (
-                <div key={i} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg"
-                  style={{ background: 'var(--surface-2)', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
-                  <span style={{ color: 'var(--cyan)' }}>{t.icon}</span>
-                  {t.l}
-                </div>
-              ))}
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-4 gap-4 pt-4 border-t"
-              style={{ borderColor: 'hsl(var(--border))' }}>
-              {STATS.map((stat, i) => (
-                <div key={i} className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1" style={{ color: 'var(--cyan)' }}>
-                    {stat.icon}
-                  </div>
-                  <div className="text-lg font-black gradient-text-cyber" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-                    {stat.n}
-                  </div>
-                  <div className="text-[9px] text-muted-foreground uppercase tracking-wider mt-0.5"
-                    style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-                    {stat.l}
-                  </div>
-                </div>
+                { icon: <Zap size={14} />, text: 'Instant Delivery' },
+                { icon: <Shield size={14} />, text: '100% Genuine' },
+                { icon: <Clock size={14} />, text: '24/7 Support' },
+                { icon: <Star size={14} />, text: '4.9 Rating' },
+              ].map(t => (
+                <span key={t.text} className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                  <span style={{ color: slide.accentFrom }}>{t.icon}</span>
+                  {t.text}
+                </span>
               ))}
             </div>
           </div>
 
-          {/* ── Right — Product Cards ── */}
-          <div className="hidden lg:block relative">
-            {/* Big watermark */}
-            <div className="absolute -top-8 -right-4 select-none pointer-events-none"
-              style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '200px', fontWeight: 900, lineHeight: 1, color: 'hsla(185,100%,50%,0.025)' }}>
-              {String(active + 1).padStart(2, '0')}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 relative z-10">
-              {FLOATING_PRODUCTS.map((card, i) => (
-                <div key={i}
-                  className={`product-card rounded-xl overflow-hidden anim-rise d-${(i + 1) * 100} ${i === 1 ? 'mt-8' : ''}`}
-                  style={{ animationFillMode: 'both' }}>
-                  {/* Glowing top border */}
-                  <div className="h-0.5 w-full"
-                    style={{ background: `linear-gradient(90deg, transparent, ${card.color}, transparent)` }} />
-
-                  <div className="relative overflow-hidden aspect-square bg-surface-2">
-                    <img src={card.img} alt={card.name}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
-                    {/* Overlay */}
-                    <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
-                      style={{ background: `radial-gradient(circle at center, ${card.color}15, transparent)` }} />
-                    {/* Discount badge */}
-                    <div className="absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-black"
-                      style={{ background: card.color, color: 'hsl(220,20%,4%)', fontFamily: 'JetBrains Mono, monospace' }}>
-                      {card.off}
-                    </div>
+          {/* Right Visual */}
+          <div className="relative hidden lg:flex items-center justify-center min-h-[420px]">
+            <div className={`relative w-80 rounded-3xl shadow-strong overflow-hidden transition-all duration-300 anim-float ${transitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+              style={{ background: `linear-gradient(145deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
+              <div className="absolute inset-0"
+                style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 50%)' }} />
+              <div className="relative p-8">
+                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-4xl mb-6 shadow-soft">
+                  {slide.emoji}
+                </div>
+                <Sparkles size={18} className="absolute top-6 right-6 text-white/50 anim-spin-slow" />
+                <div className="text-white/70 text-xs font-fira uppercase tracking-widest mb-2">Featured Deal</div>
+                <div className="text-white font-sora font-black text-2xl leading-tight">{slide.title}</div>
+                <div className="text-white/80 text-sm mt-1">{slide.subtitle}</div>
+                <div className="mt-6 flex items-center justify-between">
+                  <div>
+                    <div className="text-white/60 text-xs line-through">{slide.original}</div>
+                    <div className="text-white font-sora font-black text-3xl">{slide.price}</div>
                   </div>
-
-                  <div className="p-3 space-y-1.5">
-                    <p className="text-xs font-semibold text-foreground truncate" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      {card.name}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="font-black text-sm gradient-text-cyber" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-                        {card.price}
-                      </span>
-                      <button className="text-[9px] px-2 py-1 rounded"
-                        style={{ background: `${card.color}20`, border: `1px solid ${card.color}40`, color: card.color, fontFamily: 'JetBrains Mono, monospace' }}>
-                        ORDER →
-                      </button>
-                    </div>
+                  <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-4 py-2 text-white text-center">
+                    <div className="font-fira font-bold text-lg">-{slide.off}</div>
+                    <div className="text-[10px] opacity-70">OFF</div>
                   </div>
                 </div>
-              ))}
+                <button className="mt-6 w-full py-3 rounded-xl bg-white font-bold text-sm hover:bg-white/90 transition-colors"
+                  style={{ color: slide.accentFrom }}>Order Now →</button>
+              </div>
             </div>
 
-            {/* Floating badge */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 anim-float px-4 py-2 rounded-xl text-xs flex items-center gap-2"
-              style={{
-                background: 'var(--surface-glass)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid var(--cyan-border)',
-                color: 'var(--cyan)',
-                fontFamily: 'JetBrains Mono, monospace',
-                boxShadow: 'var(--cyan-glow)',
-              }}>
-              <Zap size={12} fill="currentColor" /> Flash Sale · Ends Soon
-            </div>
+            {/* Floating badges */}
+            {[
+              { label: 'Orders Today', value: '248+', icon: '📦', top: '5%',  left: '-15%', right: 'auto' },
+              { label: 'Happy Users',  value: '12K+', icon: '😊', top: '45%', left: 'auto',  right: '-15%' },
+              { label: 'Avg Rating',   value: '4.9★', icon: '⭐', top: '80%', left: '-15%', right: 'auto' },
+            ].map((card, i) => (
+              <div key={card.label}
+                className="absolute glass-white rounded-2xl px-4 py-3 shadow-medium anim-float"
+                style={{ animationDelay: `${i * 1.2}s`, top: card.top, left: card.left, right: card.right }}>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl">{card.icon}</span>
+                  <div>
+                    <div className="text-base font-sora font-black text-foreground leading-none">{card.value}</div>
+                    <div className="text-[10px] text-muted-foreground leading-none mt-0.5">{card.label}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── Slide indicators ── */}
-        <div className="flex items-center gap-4 mt-20">
-          <div className="flex items-center gap-2">
-            {SLIDES.map((_, i) => (
-              <button key={i} onClick={() => setActive(i)}
-                className="relative rounded-full transition-all duration-500 overflow-hidden"
-                style={{
-                  height: '3px',
-                  width: i === active ? '3rem' : '0.5rem',
-                  background: i === active ? 'linear-gradient(90deg, var(--cyan), var(--purple))' : 'hsl(var(--border))',
-                }}>
-                {i === active && (
-                  <div className="absolute inset-0 rounded-full animate-pulse"
-                    style={{ background: 'linear-gradient(90deg, var(--cyan), var(--purple))' }} />
-                )}
-              </button>
-            ))}
-          </div>
-          <span className="ml-4 text-[10px]"
-            style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--muted-foreground))' }}>
-            {String(active + 1).padStart(2, '0')} / {String(SLIDES.length).padStart(2, '0')}
-          </span>
-          <button onClick={goNext}
-            className="ml-auto flex items-center gap-2 text-xs transition-all hover:gap-3"
-            style={{ color: 'var(--cyan)', fontFamily: 'JetBrains Mono, monospace' }}>
-            Next <ChevronRight size={14} />
-          </button>
+        {/* Slide Dots */}
+        <div className="flex items-center justify-center gap-2 mt-12">
+          {SLIDES.map((_, i) => (
+            <button key={i} onClick={() => goTo(i)}
+              className={`rounded-full transition-all duration-300 ${i === active ? 'w-8 h-2.5' : 'w-2.5 h-2.5 opacity-25 hover:opacity-50'}`}
+              style={{ background: i === active ? slide.accentFrom : 'hsl(var(--muted-foreground))' }} />
+          ))}
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-12 border-t border-border">
+          {STATS.map((s, i) => (
+            <div key={s.label} className={`text-center anim-rise d-${(i + 1) * 100}`}>
+              <div className="text-3xl mb-2">{s.icon}</div>
+              <div className="text-2xl font-sora font-black" style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                {s.value}
+              </div>
+              <div className="text-xs text-muted-foreground font-medium mt-1">{s.label}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -299,3 +239,4 @@ const HeroBanner = () => {
 };
 
 export default HeroBanner;
+
