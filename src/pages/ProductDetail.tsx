@@ -51,21 +51,32 @@ const ProductDetail = () => {
 
   useEffect(() => {
     if (!slug) return;
+    let cancelled = false;
     const load = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select('*, categories(name, slug)')
-        .eq('slug', slug)
-        .eq('status', 'active')
-        .maybeSingle();
-      if (error || !data) { setNotFound(true); setLoading(false); return; }
-      setProduct(data as any);
-      setLoading(false);
-      // Increment view count
-      supabase.from('products').update({ total_views: (data.total_views || 0) + 1 }).eq('id', data.id).then(() => {});
+      setNotFound(false);
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*, categories(name, slug)')
+          .eq('slug', slug)
+          .eq('status', 'active')
+          .limit(1);
+        if (cancelled) return;
+        if (error) { console.error('Product fetch error:', error); setNotFound(true); setLoading(false); return; }
+        const row = data?.[0];
+        if (!row) { setNotFound(true); setLoading(false); return; }
+        setProduct(row as any);
+        setLoading(false);
+        // Increment view count (fire and forget)
+        supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
+      } catch (e) {
+        console.error('Product load exception:', e);
+        if (!cancelled) { setNotFound(true); setLoading(false); }
+      }
     };
     load();
+    return () => { cancelled = true; };
   }, [slug]);
 
   if (loading) return (
