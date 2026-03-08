@@ -4,7 +4,7 @@ import Categories from '@/components/store/Categories';
 import TopProducts from '@/components/store/TopProducts';
 import FlashSale from '@/components/store/FlashSale';
 import WhyChooseUs from '@/components/store/WhyChooseUs';
-
+import Testimonials from '@/components/store/Testimonials';
 import Footer from '@/components/store/Footer';
 import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 
@@ -18,7 +18,7 @@ const Index = () => {
       <TopProducts />
       <FlashSale />
       <WhyChooseUs />
-      
+      <Testimonials />
       <Footer />
       <FloatingButtons />
     </div>
