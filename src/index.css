@@ -533,6 +533,14 @@
 .text-brand-indigo { color: var(--indigo); }
 .text-brand-coral  { color: var(--coral); }
 
+/* Gradient text via CSS custom properties (avoids inline background+backgroundClip mixing) */
+.gradient-text-slide {
+  background: linear-gradient(135deg, var(--g-from, hsl(243,75%,59%)), var(--g-to, hsl(263,70%,58%)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* Font utilities */
 .font-sora  { font-family: 'Sora', sans-serif; }
 .font-fira  { font-family: 'Fira Code', monospace; }
