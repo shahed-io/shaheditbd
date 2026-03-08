@@ -194,7 +194,7 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
       price: product.price,
       originalPrice: product.original_price ?? undefined,
       image: product.image_url || '',
-      quantity: 1,
+      category: 'Flash Sale',
     });
   };
 
