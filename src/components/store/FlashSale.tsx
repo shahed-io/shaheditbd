@@ -52,7 +52,7 @@ const FlashSale = () => {
   const endTimeRef = useRef(getSaleEndTime());
   const time = useCountdown(endTimeRef.current);
   const navigate = useNavigate();
-  const { addItem } = useCart();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     let cancelled = false;
