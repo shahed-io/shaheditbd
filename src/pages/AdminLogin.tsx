@@ -12,23 +12,32 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect once isAdmin is confirmed
+  // Redirect once isAdmin is confirmed (works on initial load and after login)
   useEffect(() => {
-    if (!loading && user && isAdmin) {
+    if (user && isAdmin) {
       navigate('/admin', { replace: true });
     }
-  }, [user, isAdmin, loading, navigate]);
+  }, [user, isAdmin, navigate]);
 
-  // Only show full-screen spinner while we genuinely don't know if user is admin yet
-  // (i.e. user is logged in but admin check is pending)
-  if (loading && user) return (
+  // Show spinner while loading or after successful login (waiting for admin check)
+  if (loading || (user && submitting)) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
-  // Already confirmed admin — redirect handled by useEffect
-  if (!loading && user && isAdmin) return null;
+  // Non-admin logged-in user trying to access admin
+  if (!loading && user && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="glass-card rounded-3xl p-8 w-full max-w-md text-center space-y-4">
+          <div className="text-destructive text-lg font-semibold">Access Denied</div>
+          <p className="text-muted-foreground text-sm">You do not have admin privileges.</p>
+          <button onClick={() => { signOut(); }} className="btn-glow py-2 px-6 rounded-xl text-sm">Sign Out</button>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,10 +45,10 @@ const AdminLogin = () => {
     setSubmitting(true);
     const { error } = await signIn(email, password);
     if (error) {
-      setError('Invalid email or password');
+      setError('ইমেইল বা পাসওয়ার্ড সঠিক নয়');
       setSubmitting(false);
     }
-    // Don't setSubmitting(false) on success — keep spinner until redirect
+    // On success: onAuthStateChange fires → isAdmin set → useEffect redirects
   };
 
   return (
