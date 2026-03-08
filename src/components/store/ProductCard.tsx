@@ -3,6 +3,7 @@ import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, Eye } from '
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import QuickOrderModal from './QuickOrderModal';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
