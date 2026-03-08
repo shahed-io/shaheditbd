@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Package, Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
 
 const AdminLogin = () => {
-  const { signIn, isAdmin, user, loading } = useAuth();
+  const { signIn, signOut, isAdmin, user, loading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
