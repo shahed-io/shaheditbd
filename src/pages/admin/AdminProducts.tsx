@@ -233,7 +233,7 @@ const AdminProducts = () => {
           <p className="text-muted-foreground text-sm">{products.length} products total</p>
         </div>
         <button
-          onClick={() => { setEditingProduct(null); setForm(emptyForm); setActiveTab('basic'); setShowForm(true); }}
+          onClick={() => { setEditingProduct(null); setForm(emptyForm); setImagePreview(''); setActiveTab('basic'); setShowForm(true); }}
           className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold"
         >
           <Plus size={16} /> Add New Product
