@@ -253,12 +253,12 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
               </div>
 
               {/* Payment method selector */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
                 {paymentMethods.map(pm => (
                   <button
                     key={pm.id}
                     onClick={() => setPaymentMethod(pm.id)}
-                    className={`py-2.5 rounded-xl font-bold text-white text-sm bg-gradient-to-r ${pm.color} transition-all ${paymentMethod === pm.id ? 'ring-2 ring-offset-2 ring-offset-background scale-105 shadow-lg' : 'opacity-60 hover:opacity-90'}`}
+                    className={`py-2 px-1 rounded-xl font-bold text-white text-xs bg-gradient-to-r ${pm.color} transition-all ${paymentMethod === pm.id ? 'ring-2 ring-offset-2 ring-offset-background scale-105 shadow-lg' : 'opacity-60 hover:opacity-90'}`}
                   >
                     {pm.label}
                   </button>
@@ -269,14 +269,14 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
               <div className="bg-muted/20 border border-border rounded-xl p-4 space-y-3">
                 <div className="flex items-center gap-2 text-sm text-foreground font-medium">
                   <Smartphone size={15} className="text-primary" />
-                  {selectedPayment.label} নম্বরে Send Money করুন
+                  {selectedPayment.label} ({selectedPayment.type})
                 </div>
                 <div className="text-center">
-                  <p className="font-mono text-2xl font-bold text-primary tracking-wider">{selectedPayment.number}</p>
+                  <p className="font-mono text-2xl font-bold text-primary tracking-widest">{selectedPayment.number}</p>
                   <p className="text-xs text-muted-foreground mt-1">মোট পাঠান: <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span></p>
                 </div>
                 <div className="bg-primary/5 border border-primary/20 rounded-lg p-2.5 text-xs text-muted-foreground leading-relaxed">
-                  ১. উপরের নম্বরে {selectedPayment.label} থেকে Send Money করুন<br/>
+                  ১. উপরের নম্বরে {selectedPayment.label} থেকে {selectedPayment.type} করুন<br/>
                   ২. Transaction ID কপি করুন<br/>
                   ৩. নিচে TrxID বক্সে পেস্ট করুন
                 </div>
