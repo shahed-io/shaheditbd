@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
-import { Flame, Timer, AlertTriangle } from 'lucide-react';
+import { Flame, Timer, ArrowRight } from 'lucide-react';
 
 const mapProduct = (p: any): Product => ({
   id: p.id, name: p.name, category: p.categories?.name || 'Other',
   price: Number(p.price), originalPrice: p.original_price ? Number(p.original_price) : undefined,
   discount: p.discount_percent || undefined, rating: 4.8,
   reviews: Math.floor(Math.random() * 400) + 80,
-  image: p.image_url || 'https://placehold.co/300x300/0d1117/00d4ff?text=Product',
+  image: p.image_url || 'https://placehold.co/300x300/f8f9ff/6366f1?text=Product',
   isBestseller: p.is_featured,
   isNew: new Date(p.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
 });
@@ -41,88 +41,60 @@ const FlashSale = () => {
   if (!loading && !products.length) return null;
 
   const pad = (n: number) => String(n).padStart(2, '0');
-
   const TIME_UNITS = [
-    { v: pad(time.d), l: 'DAYS' },
-    { v: pad(time.h), l: 'HRS' },
-    { v: pad(time.m), l: 'MIN' },
-    { v: pad(time.s), l: 'SEC' },
+    { v: pad(time.d), l: 'Days' },
+    { v: pad(time.h), l: 'Hours' },
+    { v: pad(time.m), l: 'Min' },
+    { v: pad(time.s), l: 'Sec' },
   ];
 
   return (
-    <section className="py-24 px-4 sm:px-6 relative overflow-hidden"
-      style={{ borderTop: '1px solid hsl(var(--border))', borderBottom: '1px solid hsl(var(--border))' }}>
+    <section className="py-20 relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, hsl(15,100%,98%) 0%, hsl(38,100%,97%) 50%, hsl(15,100%,98%) 100%)' }}>
 
-      {/* BG effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0"
-          style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 50%, hsla(0,100%,55%,0.04) 0%, transparent 70%)' }} />
-        <div className="cyber-grid absolute inset-0 opacity-20" />
-        {/* Animated scan beam */}
-        <div className="absolute inset-x-0 h-px opacity-20"
-          style={{
-            background: 'linear-gradient(90deg, transparent, hsl(0,100%,60%), transparent)',
-            animation: 'scan-y 4s ease-in-out infinite',
-            top: '30%',
-          }} />
-      </div>
+      {/* Decorative blobs */}
+      <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.08), transparent)', filter: 'blur(40px)' }} />
+      <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsla(38,100%,55%,0.08), transparent)', filter: 'blur(40px)' }} />
 
-      <div className="max-w-screen-xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Header row */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-14">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
           <div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-                style={{ background: 'hsla(0,100%,55%,0.1)', border: '1px solid hsla(0,100%,55%,0.3)' }}>
-                <Flame size={12} style={{ color: 'hsl(0,100%,65%)' }} />
-                <span className="text-[10px] font-bold uppercase tracking-widest"
-                  style={{ color: 'hsl(0,100%,65%)', fontFamily: 'JetBrains Mono, monospace' }}>
-                  Flash Sale · Limited Time
-                </span>
-                <AlertTriangle size={10} style={{ color: 'hsl(0,100%,65%)' }} className="animate-pulse" />
-              </div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-flex items-center gap-1.5 text-sm font-bold px-4 py-1.5 rounded-full text-white"
+                style={{ background: 'linear-gradient(135deg, hsl(15,100%,60%), hsl(38,100%,55%))' }}>
+                <Flame size={13} fill="white" /> Flash Sale
+              </span>
+              <span className="text-[11px] font-fira font-semibold text-muted-foreground tracking-widest uppercase px-3 py-1.5 bg-white rounded-full border border-border shadow-soft">
+                LIMITED TIME
+              </span>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black section-title">
-              <span className="text-foreground">Special</span>
-              <span className="gradient-text-warm ml-3">Offer</span>
+            <h2 className="section-heading text-3xl sm:text-4xl">
+              Special{' '}
+              <span style={{ background: 'linear-gradient(135deg, hsl(15,100%,60%), hsl(38,100%,55%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Offers
+              </span>
             </h2>
-            <div className="divider-cyber mt-3" />
+            <p className="text-muted-foreground mt-2">Grab these deals before they expire!</p>
           </div>
 
-          {/* Countdown */}
+          {/* Countdown Timer */}
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-[10px] mb-1"
-              style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--muted-foreground))' }}>
-              <Timer size={11} />
-              <span>OFFER_EXPIRES_IN</span>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground mb-1">
+              <Timer size={13} className="text-brand-coral" /> Offer expires in
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {TIME_UNITS.map((item, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="relative flex flex-col items-center justify-center rounded-xl w-16 h-16"
-                    style={{
-                      background: 'hsl(220,15%,10%)',
-                      border: '1px solid hsla(0,100%,55%,0.3)',
-                      boxShadow: `0 0 15px hsla(0,100%,55%,0.1)`,
-                    }}>
-                    {/* Corner accents */}
-                    <div className="absolute top-1 left-1 w-2 h-2"
-                      style={{ borderTop: '1px solid hsl(0,100%,60%)', borderLeft: '1px solid hsl(0,100%,60%)' }} />
-                    <div className="absolute bottom-1 right-1 w-2 h-2"
-                      style={{ borderBottom: '1px solid hsl(0,100%,60%)', borderRight: '1px solid hsl(0,100%,60%)' }} />
-
-                    <span className="font-black text-xl leading-none"
-                      style={{ fontFamily: 'Orbitron, sans-serif', color: 'hsl(0,100%,70%)' }}>
-                      {item.v}
-                    </span>
-                    <span className="text-[8px] mt-0.5 uppercase tracking-widest"
-                      style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--muted-foreground))' }}>
-                      {item.l}
-                    </span>
+                <div key={i} className="flex items-center gap-2">
+                  <div className="countdown-box">
+                    <div className="countdown-num">{item.v}</div>
+                    <div className="countdown-label">{item.l}</div>
                   </div>
                   {i < TIME_UNITS.length - 1 && (
-                    <span className="font-black text-lg animate-pulse" style={{ color: 'hsl(0,100%,60%)' }}>:</span>
+                    <span className="text-xl font-black countdown-num animate-pulse">:</span>
                   )}
                 </div>
               ))}
@@ -133,28 +105,25 @@ const FlashSale = () => {
         {/* Products */}
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[0,1,2,3].map(i => (
-              <div key={i} className="rounded-xl animate-pulse"
-                style={{ height: '22rem', background: 'hsl(220,15%,10%)', border: '1px solid hsl(var(--border))' }} />
-            ))}
+            {[0,1,2,3].map(i => <div key={i} className="rounded-2xl shimmer" style={{ height: '22rem' }} />)}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.07} />)}
-          </div>
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {products.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.07} />)}
+            </div>
+            <div className="flex justify-center mt-10">
+              <a href="/shop" className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-base font-bold text-white shadow-coral hover:scale-105 transition-transform duration-200"
+                style={{ background: 'linear-gradient(135deg, hsl(15,100%,60%), hsl(38,100%,55%))' }}>
+                View All Deals <ArrowRight size={16} />
+              </a>
+            </div>
+          </>
         )}
       </div>
-
-      <style>{`
-        @keyframes scan-y {
-          0%, 100% { top: 10%; opacity: 0; }
-          20% { opacity: 0.3; }
-          80% { opacity: 0.3; }
-          to { top: 90%; opacity: 0; }
-        }
-      `}</style>
     </section>
   );
 };
 
 export default FlashSale;
+
