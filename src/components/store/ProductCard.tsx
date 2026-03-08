@@ -19,6 +19,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const [hovered,     setHovered]     = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => {
