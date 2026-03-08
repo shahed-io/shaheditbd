@@ -3,6 +3,7 @@ import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, Eye } from '
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import QuickOrderModal from './QuickOrderModal';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -18,6 +19,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const [hovered,     setHovered]     = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => {
@@ -95,7 +97,10 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         <div className="p-4 flex flex-col gap-2.5 flex-1 bg-white">
           <p className="text-[10px] font-fira font-bold uppercase tracking-widest text-brand-indigo">{product.category}</p>
 
-          <h3 className="text-sm font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-indigo transition-colors duration-200">
+          <h3
+            onClick={() => navigate(`/product/${product.slug || product.id}`)}
+            className="text-sm font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-indigo transition-colors duration-200 cursor-pointer hover:underline underline-offset-2"
+          >
             {product.name}
           </h3>
 

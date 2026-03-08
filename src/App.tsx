@@ -8,6 +8,7 @@ import { CartProvider } from "@/hooks/useCart";
 import CartDrawer from "@/components/store/CartDrawer";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
+import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -43,6 +44,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/product/:slug" element={<ProductDetail />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
