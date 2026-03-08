@@ -84,7 +84,7 @@ const Navbar = () => {
               <img
                 src={logoOrig}
                 alt="Shahed Store"
-                className="h-[48px] w-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:opacity-90"
+                className="h-[68px] w-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:opacity-90"
               />
             </a>
 
