@@ -287,8 +287,8 @@ const HeroBanner = () => {
           {STATS.map((s, i) => (
             <div key={s.label} className="group text-center cursor-default">
               <div className="text-3xl mb-2 transition-transform duration-300 group-hover:scale-110">{s.icon}</div>
-              <div className="text-[1.7rem] font-sora font-black leading-none"
-                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <div className="text-[1.7rem] font-sora font-black leading-none gradient-text-slide"
+                style={{ ['--g-from' as any]: slide.accentFrom, ['--g-to' as any]: slide.accentTo } as React.CSSProperties}>
                 {s.value}
               </div>
               <div className="text-[11px] text-muted-foreground font-semibold mt-1.5 uppercase tracking-wider">{s.label}</div>
