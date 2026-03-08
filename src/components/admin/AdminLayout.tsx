@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import logoOrig from '@/assets/logo-orig.png';
+import logoOrig from '@/assets/logo-redesigned.png';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
