@@ -13,12 +13,24 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        syne:    ['Syne', 'sans-serif'],
+        grotesk: ['Space Grotesk', 'sans-serif'],
+        mono:    ['DM Mono', 'monospace'],
+      },
       colors: {
         border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        input:  "hsl(var(--input))",
+        ring:   "hsl(var(--ring))",
         background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        foreground:  "hsl(var(--foreground))",
+        gold:    "hsl(38, 90%, 52%)",
+        crimson: "hsl(358, 72%, 52%)",
+        surface: {
+          1: "hsl(0, 0%, 9%)",
+          2: "hsl(0, 0%, 12%)",
+          3: "hsl(0, 0%, 16%)",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

@@ -2,113 +2,104 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
-import { Flame } from 'lucide-react';
+import { Flame, Timer } from 'lucide-react';
 
-const mapDbProduct = (p: any): Product => ({
-  id: p.id,
-  name: p.name,
-  category: p.categories?.name || 'Other',
-  price: Number(p.price),
-  originalPrice: p.original_price ? Number(p.original_price) : undefined,
-  discount: p.discount_percent || undefined,
-  rating: 4.8,
+const mapProduct = (p: any): Product => ({
+  id: p.id, name: p.name, category: p.categories?.name || 'Other',
+  price: Number(p.price), originalPrice: p.original_price ? Number(p.original_price) : undefined,
+  discount: p.discount_percent || undefined, rating: 4.8,
   reviews: Math.floor(Math.random() * 400) + 80,
-  image: p.image_url || 'https://placehold.co/300x300/0a1020/00d4be?text=Product',
+  image: p.image_url || 'https://placehold.co/300x300/111/D97706?text=Product',
   isBestseller: p.is_featured,
   isNew: new Date(p.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
 });
 
 const FlashSale = () => {
-  const [timeLeft, setTimeLeft] = useState({ d: 6, h: 22, m: 59, s: 59 });
+  const [time,     setTime]     = useState({ d: 6, h: 22, m: 59, s: 59 });
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading,  setLoading]  = useState(true);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.s > 0) return { ...prev, s: prev.s - 1 };
-        if (prev.m > 0) return { ...prev, m: prev.m - 1, s: 59 };
-        if (prev.h > 0) return { ...prev, h: prev.h - 1, m: 59, s: 59 };
-        if (prev.d > 0) return { d: prev.d - 1, h: 23, m: 59, s: 59 };
-        return prev;
+    const t = setInterval(() => {
+      setTime(p => {
+        if (p.s > 0) return { ...p, s: p.s - 1 };
+        if (p.m > 0) return { ...p, m: p.m - 1, s: 59 };
+        if (p.h > 0) return { ...p, h: p.h - 1, m: 59, s: 59 };
+        if (p.d > 0) return { d: p.d - 1, h: 23, m: 59, s: 59 };
+        return p;
       });
     }, 1000);
-    return () => clearInterval(timer);
+    return () => clearInterval(t);
   }, []);
 
   useEffect(() => {
-    const fetchFlashSale = async () => {
-      const { data } = await supabase
-        .from('products')
-        .select('*, categories(name)')
-        .eq('status', 'active')
-        .contains('tags', ['flash-sale'])
-        .order('sort_order', { ascending: true });
-      if (data && data.length > 0) setProducts(data.map(mapDbProduct));
-      setLoading(false);
-    };
-    fetchFlashSale();
+    supabase.from('products').select('*, categories(name)').eq('status', 'active')
+      .contains('tags', ['flash-sale']).order('sort_order', { ascending: true })
+      .then(({ data }) => { if (data?.length) setProducts(data.map(mapProduct)); setLoading(false); });
   }, []);
+
+  if (!loading && !products.length) return null;
 
   const pad = (n: number) => String(n).padStart(2, '0');
 
-  if (!loading && products.length === 0) return null;
-
   return (
-    <section className="py-20 px-4 relative overflow-hidden">
-      {/* Subtle tinted background */}
+    <section className="py-20 px-4 sm:px-6 relative overflow-hidden"
+      style={{ backgroundColor: 'hsl(0,0%,7%)', borderTop: '1px solid hsl(var(--border))', borderBottom: '1px solid hsl(var(--border))' }}>
+
+      {/* Background accent */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ background: 'linear-gradient(to bottom, hsla(180,100%,42%,0.02), transparent, hsla(265,85%,65%,0.02))' }} />
-      <div className="orb orb-1 opacity-[0.06]" style={{ bottom: '-5%', left: '10%' }} />
+        style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 0%, hsla(38,90%,52%,0.05) 0%, transparent 70%)' }} />
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-screen-xl mx-auto relative z-10">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 rounded-full px-5 py-2 mb-4 text-xs font-semibold tracking-[0.2em] uppercase"
-            style={{ background: 'hsla(0,84%,60%,0.1)', border: '1px solid hsla(0,84%,60%,0.25)', color: 'hsl(var(--destructive))' }}>
-            <Flame size={13} />
-            <span>Flash Sale</span>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Flame size={18} style={{ color: 'var(--crimson)' }} />
+              <span className="section-eyebrow" style={{ color: 'var(--crimson)' }}>// Flash Sale · Limited Time</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold" style={{ fontFamily: 'Syne, sans-serif' }}>
+              Special Offer <span style={{ color: 'var(--gold)' }}>Ends In</span>
+            </h2>
+            <span className="divider-gold" />
           </div>
-          <h2 className="text-4xl sm:text-5xl font-bold mb-8" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-            Special Offer <span className="gradient-text">Ends In</span>
-          </h2>
 
-          {/* Countdown — shahedit style */}
-          <div className="inline-flex items-center gap-4 rounded-2xl px-8 py-5"
-            style={{ background: 'hsla(228,28%,10%,0.8)', border: '1px solid hsla(180,100%,42%,0.15)' }}>
-            {[
-              { value: pad(timeLeft.d), label: 'DAYS' },
-              { value: pad(timeLeft.h), label: 'HOURS' },
-              { value: pad(timeLeft.m), label: 'MINS' },
-              { value: pad(timeLeft.s), label: 'SECS' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-4">
-                <div className="text-center">
-                  <div className="text-3xl sm:text-4xl font-bold gradient-text min-w-[2.5rem]" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-                    {item.value}
+          {/* Countdown */}
+          <div className="flex items-center gap-2">
+            <Timer size={16} className="text-muted-foreground hidden sm:block" />
+            <div className="flex items-center gap-2">
+              {[
+                { v: pad(time.d), l: 'Days' },
+                { v: pad(time.h), l: 'Hrs' },
+                { v: pad(time.m), l: 'Min' },
+                { v: pad(time.s), l: 'Sec' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div className="flex flex-col items-center justify-center rounded w-16 h-16"
+                    style={{ backgroundColor: 'var(--surface-1)', border: '1px solid hsl(var(--border))' }}>
+                    <span className="font-extrabold text-xl leading-none" style={{ fontFamily: 'DM Mono, monospace', color: 'var(--gold)' }}>
+                      {item.v}
+                    </span>
+                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider mt-0.5">{item.l}</span>
                   </div>
-                  <div className="text-[10px] text-muted-foreground tracking-widest mt-1">{item.label}</div>
+                  {i < 3 && <span className="text-muted-foreground/50 font-bold text-lg">:</span>}
                 </div>
-                {i < 3 && (
-                  <span className="text-muted-foreground/30 text-2xl font-light mb-4">|</span>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
+        {/* Products */}
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-72 rounded-2xl animate-pulse"
-                style={{ background: 'hsla(228,28%,11%,0.5)', border: '1px solid hsla(180,100%,42%,0.08)' }} />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[0,1,2,3].map(i => (
+              <div key={i} className="rounded-lg animate-pulse"
+                style={{ height: '18rem', backgroundColor: 'var(--surface-1)', border: '1px solid hsl(var(--border))' }} />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {products.map((product, i) => (
-              <ProductCard key={product.id} product={product} delay={i * 0.08} />
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {products.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.07} />)}
           </div>
         )}
       </div>
