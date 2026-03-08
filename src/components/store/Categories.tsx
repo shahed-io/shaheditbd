@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
-const CAT_META: Record<string, { icon: string; colorClass: string; iconBg: string; badge: string }> = {
-  'Windows':      { icon: '🪟', colorClass: 'bg-blue-50 border-blue-200',    iconBg: 'bg-blue-100',    badge: 'bg-blue-100 text-blue-700' },
-  'Office':       { icon: '📦', colorClass: 'bg-orange-50 border-orange-200', iconBg: 'bg-orange-100',  badge: 'bg-orange-100 text-orange-700' },
-  'Software':     { icon: '💻', colorClass: 'bg-violet-50 border-violet-200', iconBg: 'bg-violet-100',  badge: 'bg-violet-100 text-violet-700' },
-  'VPN':          { icon: '🔒', colorClass: 'bg-cyan-50 border-cyan-200',     iconBg: 'bg-cyan-100',    badge: 'bg-cyan-100 text-cyan-700' },
-  'Subscription': { icon: '🎬', colorClass: 'bg-purple-50 border-purple-200', iconBg: 'bg-purple-100',  badge: 'bg-purple-100 text-purple-700' },
-  'Antivirus':    { icon: '🛡️', colorClass: 'bg-green-50 border-green-200',  iconBg: 'bg-green-100',   badge: 'bg-green-100 text-green-700' },
-  'Streaming':    { icon: '📺', colorClass: 'bg-red-50 border-red-200',       iconBg: 'bg-red-100',     badge: 'bg-red-100 text-red-700' },
-  'default':      { icon: '🛒', colorClass: 'bg-gray-50 border-gray-200',     iconBg: 'bg-gray-100',    badge: 'bg-gray-100 text-gray-700' },
+const CAT_META: Record<string, { icon: string; gradient: string; iconBg: string; borderColor: string }> = {
+  'Windows':      { icon: '🪟', gradient: 'from-blue-50 to-sky-50',    iconBg: 'bg-blue-100',    borderColor: 'border-blue-200/80' },
+  'Office':       { icon: '📦', gradient: 'from-orange-50 to-amber-50', iconBg: 'bg-orange-100',  borderColor: 'border-orange-200/80' },
+  'Software':     { icon: '💻', gradient: 'from-violet-50 to-purple-50',iconBg: 'bg-violet-100',  borderColor: 'border-violet-200/80' },
+  'VPN':          { icon: '🔒', gradient: 'from-cyan-50 to-teal-50',    iconBg: 'bg-cyan-100',    borderColor: 'border-cyan-200/80' },
+  'Subscription': { icon: '🎬', gradient: 'from-purple-50 to-fuchsia-50',iconBg:'bg-purple-100',  borderColor: 'border-purple-200/80' },
+  'Antivirus':    { icon: '🛡️', gradient: 'from-green-50 to-emerald-50',iconBg: 'bg-green-100',  borderColor: 'border-green-200/80' },
+  'Streaming':    { icon: '📺', gradient: 'from-red-50 to-rose-50',      iconBg: 'bg-red-100',    borderColor: 'border-red-200/80' },
+  'default':      { icon: '🛒', gradient: 'from-gray-50 to-slate-50',    iconBg: 'bg-gray-100',   borderColor: 'border-gray-200/80' },
 };
 
 interface CatData {
@@ -28,7 +28,6 @@ const Categories = () => {
 
   useEffect(() => {
     const load = async () => {
-      // Single query — join products count via foreign key
       const { data: categories } = await supabase
         .from('categories')
         .select('id, name, slug, description, products!products_category_id_fkey(id)')
@@ -68,9 +67,11 @@ const Categories = () => {
   }
 
   return (
-    <section className="py-20 bg-surface-light">
+    <section className="py-20" style={{ background: 'hsl(230, 25%, 97%)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
           <div>
             <span className="section-label">Browse Store</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-3">
@@ -79,12 +80,15 @@ const Categories = () => {
                 Category
               </span>
             </h2>
-            <p className="text-muted-foreground mt-2 max-w-md">
+            <p className="text-muted-foreground mt-2 text-[14px] max-w-md leading-relaxed">
               Premium digital licenses across all major software categories — all at unbeatable prices.
             </p>
           </div>
-          <a href="/shop" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-indigo hover:gap-3 transition-all flex-shrink-0">
-            View All <ArrowRight size={15} />
+          <a href="/shop" className="inline-flex items-center gap-2 text-sm font-bold text-brand-indigo hover:gap-3 transition-all flex-shrink-0 group">
+            View All
+            <span className="w-7 h-7 rounded-full bg-white border border-border/70 flex items-center justify-center shadow-soft group-hover:shadow-medium transition-all">
+              <ArrowRight size={13} />
+            </span>
           </a>
         </div>
 
@@ -95,24 +99,25 @@ const Categories = () => {
               <a
                 key={cat.id}
                 href={`/shop?category=${cat.slug}`}
-                className={`cat-card p-5 flex flex-col gap-3 ${meta.colorClass} border-2 anim-rise`}
+                className={`cat-card p-5 flex flex-col gap-3.5 bg-gradient-to-br ${meta.gradient} border-2 ${meta.borderColor} anim-rise`}
                 style={{ animationDelay: `${i * 0.06}s` }}
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon ${meta.iconBg} shadow-soft`}>
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon ${meta.iconBg} shadow-soft border border-white/80`}>
                   {meta.icon}
                 </div>
                 <div>
-                  <h3 className="font-sora font-bold text-sm text-foreground leading-tight">{cat.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">{cat.description || 'Digital Licenses'}</p>
+                  <h3 className="font-sora font-bold text-[13px] text-foreground leading-tight">{cat.name}</h3>
+                  <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{cat.description || 'Digital Licenses'}</p>
                 </div>
-                <div className="flex items-center justify-between mt-auto">
-                  <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${meta.badge}`}>{cat.count} items</span>
-                  <ArrowRight
-                    size={14}
-                    className={`text-muted-foreground transition-all duration-200 ${hovered === i ? 'translate-x-1 text-brand-indigo' : ''}`}
-                  />
+                <div className="flex items-center justify-between mt-auto pt-1">
+                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/80 border border-white/60 text-foreground shadow-soft">
+                    {cat.count} items
+                  </span>
+                  <div className={`w-7 h-7 rounded-full bg-white/80 border border-white/60 flex items-center justify-center shadow-soft transition-all duration-200 ${hovered === i ? 'translate-x-0.5 bg-white' : ''}`}>
+                    <ArrowRight size={12} className="text-muted-foreground" />
+                  </div>
                 </div>
               </a>
             );
