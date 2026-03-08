@@ -6,6 +6,7 @@ import { ArrowRight, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 
 const mapProduct = (p: any): Product => ({
   id:            p.id,
+  slug:          p.slug,
   name:          p.name,
   category:      p.categories?.name || 'Other',
   price:         Number(p.price),
