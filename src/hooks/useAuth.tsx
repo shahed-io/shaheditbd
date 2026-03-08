@@ -20,10 +20,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const checkAdminRole = async (userId: string): Promise<boolean> => {
-    // Retry with backoff to handle auth token propagation timing
-    for (let attempt = 0; attempt < 4; attempt++) {
+    for (let attempt = 0; attempt < 3; attempt++) {
       if (attempt > 0) {
-        await new Promise(res => setTimeout(res, 300 * attempt));
+        await new Promise(res => setTimeout(res, 500 * attempt));
       }
       try {
         const { data, error } = await supabase
@@ -32,9 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .eq('user_id', userId)
           .eq('role', 'admin')
           .maybeSingle();
-        if (!error) {
-          return !!data;
-        }
+        if (!error) return !!data;
         console.warn(`Admin check attempt ${attempt + 1} failed:`, error.message);
       } catch (e) {
         console.warn(`Admin check attempt ${attempt + 1} exception:`, e);
@@ -46,26 +43,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+    // IMPORTANT: Do NOT use async/await directly in onAuthStateChange callback
+    // as it can cause Supabase client deadlocks. Use .then() chains instead.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
       if (!mounted) return;
 
       setSession(newSession);
       setUser(newSession?.user ?? null);
 
       if (newSession?.user) {
-        // Small delay ensures Supabase internal session is fully propagated before querying
-        await new Promise(res => setTimeout(res, 150));
-        if (!mounted) return;
-        const adminResult = await checkAdminRole(newSession.user.id);
-        if (mounted) setIsAdmin(adminResult);
+        const userId = newSession.user.id;
+        // Defer the role check outside the callback to avoid deadlock
+        setTimeout(() => {
+          if (!mounted) return;
+          checkAdminRole(userId).then(isAdminResult => {
+            if (mounted) {
+              setIsAdmin(isAdminResult);
+              setLoading(false);
+            }
+          });
+        }, 0);
       } else {
         setIsAdmin(false);
+        setLoading(false);
       }
-
-      if (mounted) setLoading(false);
     });
 
-    // Get initial session — triggers onAuthStateChange if session exists
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
       if (!existingSession && mounted) {
         setLoading(false);
@@ -74,10 +78,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (mounted) setLoading(false);
     });
 
-    // Fallback safety — max 5s
+    // Fallback safety — max 8s
     const timeout = setTimeout(() => {
       if (mounted) setLoading(false);
-    }, 5000);
+    }, 8000);
 
     return () => {
       mounted = false;

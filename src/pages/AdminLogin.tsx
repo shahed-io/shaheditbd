@@ -12,21 +12,23 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect once isAdmin is confirmed (works on initial load and after login)
+  // Redirect as soon as isAdmin confirmed — regardless of submitting state
   useEffect(() => {
-    if (user && isAdmin) {
+    if (!loading && user && isAdmin) {
       navigate('/admin', { replace: true });
     }
-  }, [user, isAdmin, navigate]);
+  }, [user, isAdmin, loading, navigate]);
 
-  // Show spinner while loading or after successful login (waiting for admin check)
-  if (loading || (user && submitting)) return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  // Only show spinner during initial auth load (not during admin check after login)
+  if (loading && !user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
-  // Non-admin logged-in user trying to access admin
+  // Non-admin logged-in user
   if (!loading && user && !isAdmin) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -35,6 +37,15 @@ const AdminLogin = () => {
           <p className="text-muted-foreground text-sm">You do not have admin privileges.</p>
           <button onClick={() => { signOut(); }} className="btn-glow py-2 px-6 rounded-xl text-sm">Sign Out</button>
         </div>
+      </div>
+    );
+  }
+
+  // Show spinner while admin check is in progress after login
+  if (submitting || (user && loading)) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -118,14 +129,8 @@ const AdminLogin = () => {
             disabled={submitting}
             className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2"
           >
-            {submitting ? (
-              <div className="w-5 h-5 border-2 border-background border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <>
-                <ShieldCheck size={18} />
-                Sign In to Dashboard
-              </>
-            )}
+            <ShieldCheck size={18} />
+            Sign In to Dashboard
           </button>
         </form>
 
