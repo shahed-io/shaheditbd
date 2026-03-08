@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Search, Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Zap, Star, Shield, Phone, Mail } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const NAV_LINKS = [
   { label: 'Home',       href: '/' },
@@ -30,7 +30,7 @@ const Navbar = () => {
   const [authOpen,      setAuthOpen]      = useState(false);
   const [scrolled,      setScrolled]      = useState(false);
   const [catOpen,       setCatOpen]       = useState(false);
-  const [user,          setUser]          = useState<SupabaseUser | null>(null);
+  const { user } = useAuth(); // reuse global auth — no extra getSession call
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
 
@@ -38,12 +38,6 @@ const Navbar = () => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setUser(s?.user ?? null));
-    return () => subscription.unsubscribe();
   }, []);
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
@@ -216,4 +210,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

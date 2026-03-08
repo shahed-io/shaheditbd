@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
@@ -28,16 +28,6 @@ const TopProducts = () => {
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
   const [error,        setError]        = useState(false);
   const [retry,        setRetry]        = useState(0);
-  const [visible,      setVisible]      = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
-    }, { threshold: 0.05 });
-    if (sectionRef.current) obs.observe(sectionRef.current);
-    return () => obs.disconnect();
-  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -48,7 +38,7 @@ const TopProducts = () => {
           .from('products')
           .select('*, categories(name, sort_order)')
           .eq('status', 'active')
-          .order('created_at', { ascending: false });
+          .order('sort_order', { ascending: true });
         if (err) throw err;
         const rows = data ?? [];
         setProducts(rows.map(mapProduct));
@@ -69,17 +59,9 @@ const TopProducts = () => {
   const catOrder  = tabs.filter(t => t !== 'All');
   const toggleCat = (c: string) => setExpandedCats(p => ({ ...p, [c]: !p[c] }));
 
-
   return (
-    <section ref={sectionRef} className="py-20 bg-background">
-      <div
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-        style={{
-          opacity:   visible ? 1 : 0,
-          transform: visible ? 'translateY(0)' : 'translateY(32px)',
-          transition: 'opacity 0.7s ease, transform 0.7s ease',
-        }}
-      >
+    <section className="py-20 bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
@@ -101,14 +83,9 @@ const TopProducts = () => {
 
         {/* Tab Bar */}
         <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border">
-          {tabs.map((tab, idx) => (
+          {tabs.map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              style={{
-                ...(activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}),
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(10px)',
-                transition: `opacity 0.4s ease ${idx * 0.05}s, transform 0.4s ease ${idx * 0.05}s`,
-              }}
+              style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}}
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200 ${
                 activeTab === tab
                   ? 'text-white shadow-indigo'
@@ -144,20 +121,14 @@ const TopProducts = () => {
         {/* All Products grouped */}
         {!error && !loading && activeTab === 'All' && (
           <div className="space-y-14">
-            {catOrder.map((cat, catIdx) => {
+            {catOrder.map((cat) => {
               const items      = products.filter(p => p.category === cat);
               if (!items.length) return null;
               const isExpanded = !!expandedCats[cat];
               const shown      = isExpanded ? items : items.slice(0, LIMIT);
               const hasMore    = items.length > LIMIT;
               return (
-                <div key={cat}
-                  style={{
-                    opacity: visible ? 1 : 0,
-                    transform: visible ? 'translateY(0)' : 'translateY(24px)',
-                    transition: `opacity 0.6s ease ${catIdx * 0.1}s, transform 0.6s ease ${catIdx * 0.1}s`,
-                  }}
-                >
+                <div key={cat}>
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-sora font-bold text-lg text-foreground flex items-center gap-2">
                       <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(243,75%,59%), hsl(263,70%,58%))' }} />
@@ -210,5 +181,3 @@ const TopProducts = () => {
 };
 
 export default TopProducts;
-
-

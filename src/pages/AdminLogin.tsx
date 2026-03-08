@@ -19,13 +19,16 @@ const AdminLogin = () => {
     }
   }, [user, isAdmin, loading, navigate]);
 
-  if (loading) return (
+  // Only show full-screen spinner while we genuinely don't know if user is admin yet
+  // (i.e. user is logged in but admin check is pending)
+  if (loading && user) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
-  if (user && isAdmin) return null; // will redirect via useEffect
+  // Already confirmed admin — redirect handled by useEffect
+  if (!loading && user && isAdmin) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
