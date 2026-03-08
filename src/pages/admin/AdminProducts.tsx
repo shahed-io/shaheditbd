@@ -152,6 +152,7 @@ const AdminProducts = () => {
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
+    setImagePreview(product.image_url || '');
     setForm({
       name: product.name,
       price: String(product.price),
