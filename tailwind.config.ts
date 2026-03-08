@@ -12,9 +12,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        orbitron: ['Orbitron', 'sans-serif'],
-        inter:    ['Inter', 'sans-serif'],
-        mono:     ['JetBrains Mono', 'monospace'],
+        sora:    ['Sora', 'sans-serif'],
+        jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+        fira:    ['Fira Code', 'monospace'],
       },
       colors: {
         border:     "hsl(var(--border))",
@@ -22,16 +22,17 @@ export default {
         ring:       "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        cyber: {
-          cyan:    "hsl(185, 100%, 50%)",
-          purple:  "hsl(270, 80%, 60%)",
-          magenta: "hsl(320, 90%, 60%)",
-          orange:  "hsl(25, 100%, 55%)",
+        brand: {
+          indigo:  "hsl(243, 75%, 59%)",
+          coral:   "hsl(15, 100%, 60%)",
+          emerald: "hsl(158, 64%, 42%)",
+          amber:   "hsl(38, 100%, 55%)",
+          violet:  "hsl(263, 70%, 58%)",
         },
         surface: {
-          1: "hsl(220, 18%, 7%)",
-          2: "hsl(220, 15%, 10%)",
-          3: "hsl(220, 12%, 14%)",
+          white: "hsl(0, 0%, 100%)",
+          light: "hsl(230, 20%, 97%)",
+          soft:  "hsl(230, 15%, 94%)",
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -76,6 +77,9 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "2rem",
       },
       keyframes: {
         "accordion-down": {
@@ -90,16 +94,24 @@ export default {
           "0%":   { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        "cyber-glow": {
-          "0%, 100%": { boxShadow: "0 0 5px hsl(185,100%,50%), 0 0 10px hsl(185,100%,50%)" },
-          "50%":       { boxShadow: "0 0 20px hsl(185,100%,50%), 0 0 40px hsl(185,100%,50%), 0 0 80px hsla(185,100%,50%,0.3)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up":   "accordion-up 0.2s ease-out",
         "fade-in":        "fade-in 0.3s ease-out",
-        "cyber-glow":     "cyber-glow 2s ease-in-out infinite",
+      },
+      backgroundImage: {
+        'gradient-hero':    'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%), hsl(283,65%,55%))',
+        'gradient-warm':    'linear-gradient(135deg, hsl(15,100%,60%), hsl(38,100%,55%))',
+        'gradient-cool':    'linear-gradient(135deg, hsl(158,64%,42%), hsl(180,70%,40%))',
+        'gradient-radial':  'radial-gradient(ellipse at center, var(--tw-gradient-stops))',
+      },
+      boxShadow: {
+        'soft':   '0 2px 20px hsla(230,25%,10%,0.06)',
+        'medium': '0 8px 40px hsla(230,25%,10%,0.12)',
+        'strong': '0 20px 60px hsla(230,25%,10%,0.18)',
+        'indigo': '0 8px 32px hsla(243,75%,59%,0.3)',
+        'coral':  '0 8px 32px hsla(15,100%,60%,0.3)',
       },
     },
   },
