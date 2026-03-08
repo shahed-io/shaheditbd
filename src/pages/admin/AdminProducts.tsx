@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Search, Edit, Trash2, Package, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Package, X, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 
@@ -55,6 +55,30 @@ const AdminProducts = () => {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'basic' | 'details' | 'seo'>('basic');
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (file: File) => {
+    if (!file) return;
+    setImageUploading(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const fileName = `product-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { data, error } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(data.path);
+      setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
+      setImagePreview(urlData.publicUrl);
+      toast.success('Image uploaded successfully!');
+    } catch (err: any) {
+      toast.error('Image upload failed: ' + err.message);
+    } finally {
+      setImageUploading(false);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -128,6 +152,7 @@ const AdminProducts = () => {
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
+    setImagePreview(product.image_url || '');
     setForm({
       name: product.name,
       price: String(product.price),
@@ -208,7 +233,7 @@ const AdminProducts = () => {
           <p className="text-muted-foreground text-sm">{products.length} products total</p>
         </div>
         <button
-          onClick={() => { setEditingProduct(null); setForm(emptyForm); setActiveTab('basic'); setShowForm(true); }}
+          onClick={() => { setEditingProduct(null); setForm(emptyForm); setImagePreview(''); setActiveTab('basic'); setShowForm(true); }}
           className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold"
         >
           <Plus size={16} /> Add New Product
@@ -296,9 +321,54 @@ const AdminProducts = () => {
                         </select>
                       </div>
                     </div>
+                    {/* Image Upload */}
                     <div>
-                      <label className={labelClass}>Image URL</label>
-                      <input value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." className={inputClass} />
+                      <label className={labelClass}>Product Image</label>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        className="hidden"
+                        onChange={e => { const file = e.target.files?.[0]; if (file) handleImageUpload(file); }}
+                      />
+                      <div className="flex gap-3 items-start">
+                        {/* Preview */}
+                        <div
+                          className="w-20 h-20 rounded-xl border-2 border-dashed border-border bg-muted/30 flex-shrink-0 overflow-hidden flex items-center justify-center cursor-pointer hover:border-primary transition-colors"
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          {imageUploading ? (
+                            <Loader2 size={22} className="text-primary animate-spin" />
+                          ) : (imagePreview || form.image_url) ? (
+                            <img
+                              src={imagePreview || form.image_url}
+                              alt="Preview"
+                              className="w-full h-full object-cover"
+                              onError={e => { (e.target as any).style.display = 'none'; }}
+                            />
+                          ) : (
+                            <ImageIcon size={22} className="text-muted-foreground" />
+                          )}
+                        </div>
+                        {/* Upload + URL */}
+                        <div className="flex-1 space-y-2">
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={imageUploading}
+                            className="w-full flex items-center justify-center gap-2 bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground hover:border-primary transition-colors disabled:opacity-50"
+                          >
+                            {imageUploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                            {imageUploading ? 'Uploading...' : 'Upload Image'}
+                          </button>
+                          <input
+                            value={form.image_url}
+                            onChange={e => { setForm({ ...form, image_url: e.target.value }); setImagePreview(e.target.value); }}
+                            placeholder="or paste image URL here..."
+                            className={inputClass}
+                          />
+                        </div>
+                      </div>
                     </div>
                     <div>
                       <label className={labelClass}>Short Description</label>
