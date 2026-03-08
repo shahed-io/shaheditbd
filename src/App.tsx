@@ -8,6 +8,7 @@ import { CartProvider } from "@/hooks/useCart";
 import CartDrawer from "@/components/store/CartDrawer";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
+import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
