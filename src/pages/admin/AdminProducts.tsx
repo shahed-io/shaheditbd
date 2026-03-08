@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Search, Edit, Trash2, Package, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Package, X, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 
