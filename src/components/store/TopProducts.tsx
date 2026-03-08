@@ -28,26 +28,39 @@ const TopProducts = () => {
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
   const [error,        setError]        = useState(false);
   const [retry,        setRetry]        = useState(0);
+  const [visible,      setVisible]      = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const load = async (attempt = 0) => {
-      setLoading(true); setError(false);
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
+    }, { threshold: 0.05 });
+    if (sectionRef.current) obs.observe(sectionRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError(false);
       try {
         const { data, error: err } = await supabase
-          .from('products').select('*, categories(name, sort_order)')
-          .eq('status', 'active').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+          .from('products')
+          .select('*, categories(name, sort_order)')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
         if (err) throw err;
-        if (data?.length) {
-          setProducts(data.map(mapProduct));
-          const map = new Map<string, number>();
-          data.forEach(p => { if (p.categories?.name) map.set(p.categories.name, p.categories.sort_order ?? 999); });
-          const sorted = [...map.entries()].sort((a, b) => a[1] - b[1]).map(([n]) => n);
-          setTabs(['All', ...sorted]);
-        }
+        const rows = data ?? [];
+        setProducts(rows.map(mapProduct));
+        const map = new Map<string, number>();
+        rows.forEach(p => { if (p.categories?.name) map.set(p.categories.name, p.categories.sort_order ?? 999); });
+        const sorted = [...map.entries()].sort((a, b) => a[1] - b[1]).map(([n]) => n);
+        setTabs(['All', ...sorted]);
       } catch {
-        if (attempt < 2) { setTimeout(() => load(attempt + 1), 1000 * (attempt + 1)); return; }
         setError(true);
-      } finally { setLoading(false); }
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, [retry]);
