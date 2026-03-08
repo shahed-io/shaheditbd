@@ -155,7 +155,7 @@ const FlashSale = () => {
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {products.map((p, i) => (
-                <FlashCard key={p.id} product={p} delay={i * 0.06} onAddToCart={addItem} onNavigate={() => navigate(`/product/${p.slug}`)} />
+                <FlashCard key={p.id} product={p} delay={i * 0.06} onAddToCart={addToCart} onNavigate={() => navigate(`/product/${p.slug}`)} />
               ))}
             </div>
             <div className="flex justify-center mt-10">
