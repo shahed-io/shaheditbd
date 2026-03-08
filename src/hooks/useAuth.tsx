@@ -19,14 +19,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const checkAdminRole = async (userId: string): Promise<boolean> => {
-    // Retry up to 3 times with small delay to handle auth token propagation
+  const checkAdminRole = async (userId: string, accessToken?: string): Promise<boolean> => {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         if (attempt > 0) {
-          await new Promise(res => setTimeout(res, 300 * attempt));
+          await new Promise(res => setTimeout(res, 400 * attempt));
         }
-        const { data, error } = await supabase
+        // Use explicit auth header if provided to avoid race condition
+        const client = accessToken
+          ? supabase.auth.setSession({ access_token: accessToken, refresh_token: '' }).then(() => supabase)
+          : Promise.resolve(supabase);
+        const sb = await client;
+        const { data, error } = await sb
           .from('user_roles')
           .select('role')
           .eq('user_id', userId)
