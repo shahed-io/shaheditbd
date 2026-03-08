@@ -11,12 +11,14 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant';
 
-const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string }[] = [
-  { id: 'bkash', label: 'bKash', color: 'from-pink-600 to-pink-700', number: '01840099853' },
-  { id: 'nagad', label: 'Nagad', color: 'from-orange-500 to-orange-600', number: '01840099853' },
-  { id: 'rocket', label: 'Rocket', color: 'from-purple-600 to-purple-700', number: '018400998538' },
+const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string; type: string }[] = [
+  { id: 'bkash',          label: 'bKash',             color: 'from-pink-600 to-pink-700',    number: '01820060046', type: 'Send Money' },
+  { id: 'nagad',          label: 'Nagad',             color: 'from-orange-500 to-orange-600', number: '01840099853', type: 'Send Money' },
+  { id: 'rocket',         label: 'Rocket',            color: 'from-purple-600 to-purple-700', number: '01840099853', type: 'Send Money' },
+  { id: 'upay',           label: 'উপায়',              color: 'from-green-600 to-green-700',   number: '01840099853', type: 'Send Money' },
+  { id: 'bkash_merchant', label: 'bKash Merchant',    color: 'from-pink-700 to-rose-700',    number: '01840099853', type: 'Merchant Payment' },
 ];
 
 const Checkout = () => {
@@ -187,14 +189,13 @@ const Checkout = () => {
           {/* Payment Method */}
           <div className="glass-card p-5 rounded-2xl border border-border space-y-4">
             <h2 className="font-bold text-foreground">💳 পেমেন্ট পদ্ধতি</h2>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
               {paymentMethods.map(pm => (
                 <button
                   key={pm.id}
                   type="button"
                   onClick={() => setPaymentMethod(pm.id)}
-                  className={`py-3 rounded-xl font-bold text-white text-sm transition-all bg-gradient-to-r ${pm.color} ${paymentMethod === pm.id ? 'ring-2 ring-offset-2 ring-offset-background scale-105' : 'opacity-70 hover:opacity-90'}`}
-                  
+                  className={`py-2.5 px-1 rounded-xl font-bold text-white text-xs transition-all bg-gradient-to-r ${pm.color} ${paymentMethod === pm.id ? 'ring-2 ring-offset-2 ring-offset-background scale-105' : 'opacity-70 hover:opacity-90'}`}
                 >
                   {pm.label}
                 </button>
@@ -205,12 +206,12 @@ const Checkout = () => {
             <div className="bg-muted/30 border border-border rounded-xl p-4 space-y-2">
               <div className="flex items-center gap-2 text-sm text-foreground font-medium">
                 <Smartphone size={16} className="text-primary" />
-                <span>{selectedPayment.label} নম্বরে পাঠান</span>
+                <span>{selectedPayment.label} ({selectedPayment.type}) নম্বর:</span>
               </div>
-              <div className="font-mono text-xl font-bold text-primary text-center py-2">
+              <div className="font-mono text-xl font-bold text-primary text-center py-2 tracking-widest">
                 {selectedPayment.number}
               </div>
-              <p className="text-xs text-muted-foreground text-center">মোট: <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span> Send Money করুন</p>
+              <p className="text-xs text-muted-foreground text-center">মোট: <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span> পাঠান</p>
             </div>
 
             {/* Transaction ID */}

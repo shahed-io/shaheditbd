@@ -23,12 +23,14 @@ const schema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর (01XXXXXXXXX)'),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant';
 
-const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string }[] = [
-  { id: 'bkash', label: 'bKash', color: 'from-pink-600 to-pink-700', number: '01840099853' },
-  { id: 'nagad', label: 'Nagad', color: 'from-orange-500 to-orange-600', number: '01840099853' },
-  { id: 'rocket', label: 'Rocket', color: 'from-purple-600 to-purple-700', number: '018400998538' },
+const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string; type: string }[] = [
+  { id: 'bkash',          label: 'bKash',          color: 'from-pink-600 to-pink-700',     number: '01820060046', type: 'Send Money' },
+  { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600', number: '01840099853', type: 'Send Money' },
+  { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700', number: '01840099853', type: 'Send Money' },
+  { id: 'upay',           label: 'উপায়',           color: 'from-green-600 to-green-700',   number: '01840099853', type: 'Send Money' },
+  { id: 'bkash_merchant', label: 'bKash Merchant', color: 'from-pink-700 to-rose-700',     number: '01840099853', type: 'Merchant Payment' },
 ];
 
 const inputClass = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all";
@@ -251,12 +253,12 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
               </div>
 
               {/* Payment method selector */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
                 {paymentMethods.map(pm => (
                   <button
                     key={pm.id}
                     onClick={() => setPaymentMethod(pm.id)}
-                    className={`py-2.5 rounded-xl font-bold text-white text-sm bg-gradient-to-r ${pm.color} transition-all ${paymentMethod === pm.id ? 'ring-2 ring-offset-2 ring-offset-background scale-105 shadow-lg' : 'opacity-60 hover:opacity-90'}`}
+                    className={`py-2 px-1 rounded-xl font-bold text-white text-xs bg-gradient-to-r ${pm.color} transition-all ${paymentMethod === pm.id ? 'ring-2 ring-offset-2 ring-offset-background scale-105 shadow-lg' : 'opacity-60 hover:opacity-90'}`}
                   >
                     {pm.label}
                   </button>
@@ -267,14 +269,14 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
               <div className="bg-muted/20 border border-border rounded-xl p-4 space-y-3">
                 <div className="flex items-center gap-2 text-sm text-foreground font-medium">
                   <Smartphone size={15} className="text-primary" />
-                  {selectedPayment.label} নম্বরে Send Money করুন
+                  {selectedPayment.label} ({selectedPayment.type})
                 </div>
                 <div className="text-center">
-                  <p className="font-mono text-2xl font-bold text-primary tracking-wider">{selectedPayment.number}</p>
+                  <p className="font-mono text-2xl font-bold text-primary tracking-widest">{selectedPayment.number}</p>
                   <p className="text-xs text-muted-foreground mt-1">মোট পাঠান: <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span></p>
                 </div>
                 <div className="bg-primary/5 border border-primary/20 rounded-lg p-2.5 text-xs text-muted-foreground leading-relaxed">
-                  ১. উপরের নম্বরে {selectedPayment.label} থেকে Send Money করুন<br/>
+                  ১. উপরের নম্বরে {selectedPayment.label} থেকে {selectedPayment.type} করুন<br/>
                   ২. Transaction ID কপি করুন<br/>
                   ৩. নিচে TrxID বক্সে পেস্ট করুন
                 </div>
