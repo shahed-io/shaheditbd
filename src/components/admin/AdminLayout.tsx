@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import logoIcon from '@/assets/logo-icon.png';
+import logoFull from '@/assets/logo-new.png';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
