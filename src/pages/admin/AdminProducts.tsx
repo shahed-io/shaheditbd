@@ -55,6 +55,30 @@ const AdminProducts = () => {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'basic' | 'details' | 'seo'>('basic');
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (file: File) => {
+    if (!file) return;
+    setImageUploading(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const fileName = `product-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { data, error } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(data.path);
+      setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
+      setImagePreview(urlData.publicUrl);
+      toast.success('Image uploaded successfully!');
+    } catch (err: any) {
+      toast.error('Image upload failed: ' + err.message);
+    } finally {
+      setImageUploading(false);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
