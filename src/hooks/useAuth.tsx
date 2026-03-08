@@ -20,41 +20,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const checkAdminRole = async (userId: string) => {
-    const { data } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .eq('role', 'admin')
-      .single();
-    setIsAdmin(!!data);
+    try {
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .maybeSingle();
+      setIsAdmin(!!data);
+    } catch {
+      setIsAdmin(false);
+    }
   };
 
   useEffect(() => {
     let mounted = true;
-    // Safety timeout — if getSession hangs, unblock the UI after 3s
-    const timeout = setTimeout(() => {
-      if (mounted) setLoading(false);
-    }, 3000);
 
-    // Get existing session on mount
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!mounted) return;
-      clearTimeout(timeout);
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await checkAdminRole(session.user.id);
-      }
-      if (mounted) setLoading(false);
-    }).catch(() => {
-      if (mounted) setLoading(false);
-    });
-
-    // Listen for future auth state changes (login / logout)
+    // Set up auth listener FIRST (before getSession)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
-      // Set loading while we check admin role to prevent premature redirects
-      setLoading(true);
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -64,6 +48,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       if (mounted) setLoading(false);
     });
+
+    // Then get initial session — onAuthStateChange will fire immediately for existing sessions
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      // If onAuthStateChange already fired (session exists), skip to avoid double-set
+      // If no session and listener hasn't fired yet, unblock UI
+      if (!session && mounted) {
+        setLoading(false);
+      }
+    }).catch(() => {
+      if (mounted) setLoading(false);
+    });
+
+    // Fallback safety — max 2s
+    const timeout = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 2000);
 
     return () => {
       mounted = false;

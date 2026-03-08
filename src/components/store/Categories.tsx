@@ -28,25 +28,26 @@ const Categories = () => {
 
   useEffect(() => {
     const load = async () => {
+      // Single query — join products count via foreign key
       const { data: categories } = await supabase
         .from('categories')
-        .select('id, name, slug, description')
+        .select('id, name, slug, description, products!products_category_id_fkey(id)')
         .eq('is_active', true)
         .order('sort_order', { ascending: true });
 
       if (!categories?.length) { setLoading(false); return; }
 
-      const { data: counts } = await supabase
-        .from('products')
-        .select('category_id')
-        .eq('status', 'active');
-
-      const countMap: Record<string, number> = {};
-      counts?.forEach(p => {
-        if (p.category_id) countMap[p.category_id] = (countMap[p.category_id] || 0) + 1;
-      });
-
-      setCats(categories.map(c => ({ ...c, count: countMap[c.id] || 0 })));
+      setCats(
+        categories
+          .map(c => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            description: c.description,
+            count: Array.isArray(c.products) ? c.products.length : 0,
+          }))
+          .filter(c => c.count > 0)
+      );
       setLoading(false);
     };
     load();
@@ -65,8 +66,6 @@ const Categories = () => {
       </section>
     );
   }
-
-  const display = cats.filter(c => c.count > 0);
 
   return (
     <section className="py-20 bg-surface-light">
@@ -90,7 +89,7 @@ const Categories = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {display.map((cat, i) => {
+          {cats.map((cat, i) => {
             const meta = CAT_META[cat.name] || CAT_META['default'];
             return (
               <a
