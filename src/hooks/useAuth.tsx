@@ -20,26 +20,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const checkAdminRole = async (userId: string): Promise<boolean> => {
-    try {
-      // Use RPC function to avoid RLS race conditions
-      const { data, error } = await supabase.rpc('has_role', {
-        _user_id: userId,
-        _role: 'admin',
-      });
-      if (error) {
-        // Fallback: direct table query
-        const { data: roleData } = await supabase
+    // Retry up to 3 times with small delay to handle auth token propagation
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        if (attempt > 0) {
+          await new Promise(res => setTimeout(res, 300 * attempt));
+        }
+        const { data, error } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', userId)
           .eq('role', 'admin')
           .maybeSingle();
-        return !!roleData;
+        if (!error) return !!data;
+      } catch {
+        // continue to retry
       }
-      return !!data;
-    } catch {
-      return false;
     }
+    return false;
   };
 
   useEffect(() => {
