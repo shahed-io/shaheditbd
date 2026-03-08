@@ -82,15 +82,9 @@ const Navbar = () => {
             {/* Logo */}
             <a href="/" className="flex items-center gap-2 flex-shrink-0 group">
               <img
-                src={logoIcon}
-                alt="ShahedStore"
-                className="w-[38px] h-[38px] rounded-[12px] object-cover transition-all duration-300 group-hover:scale-105 flex-shrink-0"
-                style={{ boxShadow: '0 3px 12px hsla(243,75%,59%,0.2)' }}
-              />
-              <img
-                src={logoFull}
+                src={logoOrig}
                 alt="Shahed Store"
-                className="hidden sm:block h-[38px] w-auto object-contain transition-opacity duration-300 group-hover:opacity-90"
+                className="h-[48px] w-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:opacity-90"
               />
             </a>
 
