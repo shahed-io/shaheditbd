@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import logoIcon from '@/assets/logo-icon.png';
-import logoFull from '@/assets/logo-new.png';
+import logoOrig from '@/assets/logo-orig.png';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
@@ -64,17 +63,18 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className={`fixed left-0 top-0 h-full z-40 transition-all duration-300 flex flex-col ${sidebarOpen ? 'w-64' : 'w-16'} glass-card border-r border-border/50`}>
         {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-5 border-b border-border/50">
-          <img
-            src={logoIcon}
-            alt="ShahedStore"
-            className="w-9 h-9 flex-shrink-0 rounded-xl object-cover shadow-md"
-          />
-          {sidebarOpen && (
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-border/50 min-h-[68px]">
+          {sidebarOpen ? (
             <img
-              src={logoFull}
+              src={logoOrig}
               alt="Shahed Store"
-              className="h-8 w-auto object-contain"
+              className="h-10 w-auto object-contain"
+            />
+          ) : (
+            <img
+              src={logoOrig}
+              alt="Shahed Store"
+              className="w-9 h-9 object-contain object-left"
             />
           )}
         </div>

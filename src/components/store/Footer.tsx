@@ -1,5 +1,5 @@
 import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowRight, Zap } from 'lucide-react';
-import logoIcon from '@/assets/logo-icon.png';
+import logoOrig from '@/assets/logo-orig.png';
 
 const NAV_COL = [
   {
@@ -74,16 +74,10 @@ const Footer = () => (
 
       {/* Brand */}
       <div className="lg:col-span-2 space-y-6">
-        <a href="/" className="flex items-center gap-3 group w-fit">
-          <img src={logoIcon} alt="ShahedStore"
-            className="w-12 h-12 rounded-2xl object-cover shadow-[0_4px_16px_hsla(243,75%,59%,0.3)] transition-transform group-hover:scale-105"
+        <a href="/" className="flex items-center group w-fit">
+          <img src={logoOrig} alt="ShahedStore"
+            className="h-14 w-auto object-contain transition-transform group-hover:scale-105"
           />
-          <div>
-            <div className="font-sora font-black text-[18px] text-white tracking-tight">
-              Shahed<span style={{ background: 'linear-gradient(135deg, hsl(243,75%,70%), hsl(15,100%,70%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Store</span>
-            </div>
-            <div className="text-[9px] tracking-[0.22em] uppercase mt-0.5 font-fira" style={{ color: 'hsla(230,20%,100%,0.35)' }}>Digital Marketplace</div>
-          </div>
         </a>
 
         <p className="text-[13px] leading-relaxed max-w-xs" style={{ color: 'hsla(230,20%,100%,0.45)' }}>
