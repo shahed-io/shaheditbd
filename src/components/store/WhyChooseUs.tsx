@@ -59,7 +59,7 @@ const WhyChooseUs = () => {
             {FEATURES.map((f, i) => (
               <div key={i}
                 className={`trust-badge flex-col items-start gap-3 p-5 rounded-2xl border-2 ${f.bg} hover:shadow-medium transition-all duration-300 hover:-translate-y-1`}>
-                <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-soft">{f.emoji}</div>
+                <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-soft">{f.icon}</div>
                 <div>
                   <h3 className="font-sora font-bold text-sm text-foreground">{f.title}</h3>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{f.desc}</p>
