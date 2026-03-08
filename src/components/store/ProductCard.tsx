@@ -39,7 +39,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     <>
       <div
         ref={ref}
-        className="group product-card rounded-xl overflow-hidden flex flex-col"
+        className="group product-card-new flex flex-col"
         style={{
           opacity:   visible ? 1 : 0,
           transform: visible ? 'none' : 'translateY(40px)',
