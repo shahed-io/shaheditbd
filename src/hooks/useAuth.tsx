@@ -19,40 +19,49 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const checkAdminRole = async (userId: string) => {
+  const checkAdminRole = async (userId: string): Promise<boolean> => {
     try {
-      const { data } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .eq('role', 'admin')
-        .maybeSingle();
-      setIsAdmin(!!data);
+      // Use RPC function to avoid RLS race conditions
+      const { data, error } = await supabase.rpc('has_role', {
+        _user_id: userId,
+        _role: 'admin',
+      });
+      if (error) {
+        // Fallback: direct table query
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', userId)
+          .eq('role', 'admin')
+          .maybeSingle();
+        return !!roleData;
+      }
+      return !!data;
     } catch {
-      setIsAdmin(false);
+      return false;
     }
   };
 
   useEffect(() => {
     let mounted = true;
 
-    // Set up auth listener FIRST (before getSession)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
       setSession(session);
       setUser(session?.user ?? null);
+
       if (session?.user) {
-        await checkAdminRole(session.user.id);
+        const adminResult = await checkAdminRole(session.user.id);
+        if (mounted) setIsAdmin(adminResult);
       } else {
         setIsAdmin(false);
       }
+
       if (mounted) setLoading(false);
     });
 
-    // Then get initial session — onAuthStateChange will fire immediately for existing sessions
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      // If onAuthStateChange already fired (session exists), skip to avoid double-set
-      // If no session and listener hasn't fired yet, unblock UI
       if (!session && mounted) {
         setLoading(false);
       }
@@ -60,10 +69,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (mounted) setLoading(false);
     });
 
-    // Fallback safety — max 2s
+    // Fallback safety — max 3s
     const timeout = setTimeout(() => {
       if (mounted) setLoading(false);
-    }, 2000);
+    }, 3000);
 
     return () => {
       mounted = false;
@@ -78,6 +87,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = async () => {
+    setIsAdmin(false);
     await supabase.auth.signOut();
   };
 
