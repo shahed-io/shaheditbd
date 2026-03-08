@@ -71,12 +71,11 @@ const AdminLayout = () => {
             className="w-9 h-9 flex-shrink-0 rounded-xl object-cover shadow-md"
           />
           {sidebarOpen && (
-            <div className="flex flex-col leading-none">
-              <span className="font-black text-[15px] tracking-tight" style={{ fontFamily: 'Sora, sans-serif', background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(15,100%,60%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                ShahedStore
-              </span>
-              <span className="text-[9px] text-muted-foreground tracking-widest uppercase mt-0.5">Admin Panel</span>
-            </div>
+            <img
+              src={logoFull}
+              alt="Shahed Store"
+              className="h-8 w-auto object-contain"
+            />
           )}
         </div>
 
