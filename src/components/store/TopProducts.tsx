@@ -69,9 +69,6 @@ const TopProducts = () => {
   const catOrder  = tabs.filter(t => t !== 'All');
   const toggleCat = (c: string) => setExpandedCats(p => ({ ...p, [c]: !p[c] }));
 
-  const filtered  = activeTab === 'All' ? products : products.filter(p => p.category === activeTab);
-  const catOrder  = tabs.filter(t => t !== 'All');
-  const toggleCat = (c: string) => setExpandedCats(p => ({ ...p, [c]: !p[c] }));
 
   return (
     <section ref={sectionRef} className="py-20 bg-background">
