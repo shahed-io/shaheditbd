@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
-import { Database, ChevronDown, ChevronUp, Terminal } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 
 const mapProduct = (p: any): Product => ({
   id:            p.id,
@@ -13,7 +13,7 @@ const mapProduct = (p: any): Product => ({
   discount:      p.discount_percent || undefined,
   rating:        4.8,
   reviews:       p.total_sales || Math.floor(Math.random() * 300) + 50,
-  image:         p.image_url || 'https://placehold.co/300x300/0d1117/00d4ff?text=Product',
+  image:         p.image_url || 'https://placehold.co/300x300/f8f9ff/6366f1?text=Product',
   isBestseller:  p.is_featured,
   isNew:         new Date(p.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
 });
@@ -34,11 +34,8 @@ const TopProducts = () => {
       setLoading(true); setError(false);
       try {
         const { data, error: err } = await supabase
-          .from('products')
-          .select('*, categories(name, sort_order)')
-          .eq('status', 'active')
-          .order('sort_order', { ascending: true })
-          .order('created_at', { ascending: false });
+          .from('products').select('*, categories(name, sort_order)')
+          .eq('status', 'active').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
         if (err) throw err;
         if (data?.length) {
           setProducts(data.map(mapProduct));
@@ -60,62 +57,37 @@ const TopProducts = () => {
   const toggleCat = (c: string) => setExpandedCats(p => ({ ...p, [c]: !p[c] }));
 
   return (
-    <section className="py-24 px-4 sm:px-6 relative"
-      style={{ borderTop: '1px solid hsl(var(--border))' }}>
-
-      {/* Subtle grid */}
-      <div className="absolute inset-0 cyber-grid opacity-30 pointer-events-none" />
-
-      <div className="max-w-screen-xl mx-auto relative z-10">
+    <section className="py-20 bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
-            <div className="flex items-center gap-3 mb-3">
-              <Database size={14} style={{ color: 'var(--cyan)' }} />
-              <span className="section-tag">// Product Database</span>
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black section-title">
-              <span className="text-foreground">Top</span>
-              <span className="gradient-text-cyber ml-3">Selling</span>
+            <span className="section-label">Featured Products</span>
+            <h2 className="section-heading text-3xl sm:text-4xl mt-3">
+              Top{' '}
+              <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Selling
+              </span>
             </h2>
-            <div className="divider-cyber mt-3" />
+            <p className="text-muted-foreground mt-2 max-w-md">Handpicked bestsellers with guaranteed authenticity.</p>
           </div>
-          <div className="flex items-center gap-2 text-xs"
-            style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--muted-foreground))' }}>
-            <Terminal size={12} style={{ color: 'var(--cyan)' }} />
-            {products.length} products indexed
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Sparkles size={14} className="text-brand-indigo" />
+            {products.length} products available
           </div>
         </div>
 
-        {/* Tab bar */}
-        <div className="flex flex-wrap gap-2 mb-10 pb-6"
-          style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+        {/* Tab Bar */}
+        <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border">
           {tabs.map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className="px-4 py-2 rounded-lg text-xs font-bold transition-all duration-250"
-              style={
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                 activeTab === tab
-                  ? {
-                      background: 'linear-gradient(135deg, hsla(185,100%,50%,0.2), hsla(270,80%,60%,0.2))',
-                      border: '1px solid var(--cyan)',
-                      color: 'var(--cyan)',
-                      fontFamily: 'JetBrains Mono, monospace',
-                      boxShadow: '0 0 10px hsla(185,100%,50%,0.2)',
-                    }
-                  : {
-                      background: 'hsl(220,18%,7%)',
-                      border: '1px solid hsl(var(--border))',
-                      color: 'hsl(var(--muted-foreground))',
-                      fontFamily: 'JetBrains Mono, monospace',
-                    }
-              }
-              onMouseEnter={e => { if (activeTab !== tab) { (e.currentTarget as HTMLElement).style.borderColor = 'var(--cyan-border)'; (e.currentTarget as HTMLElement).style.color = 'var(--cyan)'; } }}
-              onMouseLeave={e => { if (activeTab !== tab) { (e.currentTarget as HTMLElement).style.borderColor = 'hsl(var(--border))'; (e.currentTarget as HTMLElement).style.color = 'hsl(var(--muted-foreground))'; } }}
-            >
-              {activeTab === tab && <span className="mr-1.5" style={{ color: 'var(--cyan)' }}>›</span>}
+                  ? 'text-white shadow-indigo'
+                  : 'bg-white border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
+              }`}
+              style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}}>
               {tab}
             </button>
           ))}
@@ -124,39 +96,28 @@ const TopProducts = () => {
         {/* Error */}
         {error && !loading && (
           <div className="text-center py-20 space-y-4">
-            <div className="text-4xl font-black" style={{ fontFamily: 'Orbitron, sans-serif', color: 'hsl(var(--border))' }}>
-              ERROR_404
-            </div>
-            <p className="text-muted-foreground text-sm" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-              // প্রোডাক্ট লোড করতে সমস্যা হচ্ছে
-            </p>
+            <div className="text-6xl">😕</div>
+            <p className="text-muted-foreground">Failed to load products. Please try again.</p>
             <button onClick={() => setRetry(c => c + 1)}
-              className="btn-cyber px-6 py-2.5 rounded-lg text-xs">
-              RETRY_CONNECTION
+              className="px-6 py-2.5 rounded-2xl text-sm font-bold text-white shadow-indigo"
+              style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+              Retry
             </button>
           </div>
         )}
 
         {/* Loading skeleton */}
         {!error && loading && (
-          <div className="space-y-12">
-            {[0, 1].map(g => (
-              <div key={g}>
-                <div className="h-5 w-28 rounded-lg animate-pulse mb-5" style={{ background: 'hsl(220,15%,12%)' }} />
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {[0,1,2,3].map(i => (
-                    <div key={i} className="rounded-xl animate-pulse"
-                      style={{ height: '22rem', background: 'hsl(220,15%,10%)', border: '1px solid hsl(var(--border))' }} />
-                  ))}
-                </div>
-              </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[0,1,2,3,4,5,6,7].map(i => (
+              <div key={i} className="rounded-2xl shimmer" style={{ height: '22rem' }} />
             ))}
           </div>
         )}
 
-        {/* All Products — grouped */}
+        {/* All Products grouped */}
         {!error && !loading && activeTab === 'All' && (
-          <div className="space-y-16">
+          <div className="space-y-14">
             {catOrder.map(cat => {
               const items    = products.filter(p => p.category === cat);
               if (!items.length) return null;
@@ -166,44 +127,31 @@ const TopProducts = () => {
               return (
                 <div key={cat}>
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold flex items-center gap-3"
-                      style={{ fontFamily: 'Orbitron, sans-serif' }}>
-                      <div className="h-5 w-0.5 rounded-full"
-                        style={{ background: 'linear-gradient(180deg, var(--cyan), var(--purple))' }} />
-                      <span className="text-foreground">{cat}</span>
-                      <span className="text-xs px-2 py-0.5 rounded"
-                        style={{ background: 'hsl(220,15%,12%)', color: 'hsl(var(--muted-foreground))', border: '1px solid hsl(var(--border))', fontFamily: 'JetBrains Mono, monospace' }}>
-                        {items.length}
-                      </span>
+                    <h3 className="font-sora font-bold text-lg text-foreground flex items-center gap-2">
+                      <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(243,75%,59%), hsl(263,70%,58%))' }} />
+                      {cat}
+                      <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border">{items.length}</span>
                     </h3>
                     <button onClick={() => setActiveTab(cat)}
-                      className="text-[10px] font-bold transition-colors"
-                      style={{ color: 'var(--cyan)', fontFamily: 'JetBrains Mono, monospace' }}>
-                      VIEW_ALL →
+                      className="text-xs font-semibold text-brand-indigo flex items-center gap-1 hover:gap-2 transition-all">
+                      View all <ArrowRight size={13} />
                     </button>
                   </div>
-
-                  {/* Mobile scroll */}
                   <div className="flex gap-3 overflow-x-auto pb-2 md:hidden scrollbar-hide">
                     {items.map((p, i) => (
-                      <div key={p.id} className="flex-shrink-0 w-44">
+                      <div key={p.id} className="flex-shrink-0 w-48">
                         <ProductCard product={p} delay={i * 0.04} />
                       </div>
                     ))}
                   </div>
-
-                  {/* Desktop grid */}
                   <div className="hidden md:grid grid-cols-3 lg:grid-cols-4 gap-4">
                     {visible.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.04} />)}
                   </div>
-
                   {hasMore && (
                     <div className="hidden md:flex justify-center mt-6">
                       <button onClick={() => toggleCat(cat)}
-                        className="btn-cyber-outline flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs">
-                        {expanded
-                          ? <><ChevronUp size={13} /> COLLAPSE</>
-                          : <><ChevronDown size={13} /> LOAD_MORE ({items.length - LIMIT})</>}
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-white border border-border shadow-soft hover:shadow-medium transition-all text-foreground">
+                        {expanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
                       </button>
                     </div>
                   )}
@@ -213,12 +161,10 @@ const TopProducts = () => {
           </div>
         )}
 
-        {/* Filtered view */}
+        {/* Filtered */}
         {!error && !loading && activeTab !== 'All' && (
           <div>
-            <p className="text-xs mb-6" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--muted-foreground))' }}>
-              <span style={{ color: 'var(--cyan)' }}>$</span> query --category="{activeTab}" -- {filtered.length} results found
-            </p>
+            <p className="text-sm text-muted-foreground mb-6 font-fira">{filtered.length} products in "{activeTab}"</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filtered.map((p, i) => <ProductCard key={p.id} product={p} delay={Math.min(i * 0.035, 0.35)} />)}
             </div>
@@ -230,3 +176,4 @@ const TopProducts = () => {
 };
 
 export default TopProducts;
+
