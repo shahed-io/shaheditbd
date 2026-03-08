@@ -98,7 +98,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           <p className="text-[10px] font-fira font-bold uppercase tracking-widest text-brand-indigo">{product.category}</p>
 
           <h3
-            onClick={() => navigate(`/product/${product.id}`)}
+            onClick={() => navigate(`/product/${product.slug || product.id}`)}
             className="text-sm font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-indigo transition-colors duration-200 cursor-pointer hover:underline underline-offset-2"
           >
             {product.name}
