@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import logoIcon from '@/assets/logo-icon.png';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
@@ -63,13 +64,17 @@ const AdminLayout = () => {
       <aside className={`fixed left-0 top-0 h-full z-40 transition-all duration-300 flex flex-col ${sidebarOpen ? 'w-64' : 'w-16'} glass-card border-r border-border/50`}>
         {/* Logo */}
         <div className="flex items-center gap-3 px-4 py-5 border-b border-border/50">
-          <div className="w-9 h-9 flex-shrink-0 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center animate-pulse-glow">
-            <Package2 size={18} className="text-background" />
-          </div>
+          <img
+            src={logoIcon}
+            alt="ShahedStore"
+            className="w-9 h-9 flex-shrink-0 rounded-xl object-cover shadow-md"
+          />
           {sidebarOpen && (
-            <div>
-              <div className="font-bold text-sm gradient-text" style={{ fontFamily: 'Orbitron, sans-serif' }}>SHAHED</div>
-              <div className="text-[10px] text-muted-foreground">Admin Panel</div>
+            <div className="flex flex-col leading-none">
+              <span className="font-black text-[15px] tracking-tight" style={{ fontFamily: 'Sora, sans-serif', background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(15,100%,60%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                ShahedStore
+              </span>
+              <span className="text-[9px] text-muted-foreground tracking-widest uppercase mt-0.5">Admin Panel</span>
             </div>
           )}
         </div>
