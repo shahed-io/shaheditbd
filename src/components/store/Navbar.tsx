@@ -73,18 +73,21 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-16 gap-4">
 
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2.5 flex-shrink-0 group">
-              <div className="relative">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-base transition-transform duration-300 group-hover:scale-110"
-                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>S</div>
-                <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white"
-                  style={{ background: 'hsl(15,100%,60%)' }} />
+            <a href="/" className="flex items-center gap-3 flex-shrink-0 group">
+              <div className="relative flex-shrink-0">
+                <img
+                  src={logoIcon}
+                  alt="ShahedStore"
+                  className="w-10 h-10 rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105 shadow-md"
+                />
               </div>
-              <div>
-                <div className="font-sora font-black text-base text-foreground tracking-tight leading-none">
-                  Shahed<span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Store</span>
-                </div>
-                <div className="text-[9px] font-fira text-muted-foreground tracking-widest uppercase leading-none">Digital Marketplace</div>
+              <div className="flex flex-col leading-none">
+                <span className="font-black text-[17px] tracking-tight text-foreground" style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.5px' }}>
+                  Shahed<span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(15,100%,60%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Store</span>
+                </span>
+                <span className="text-[9px] font-semibold tracking-[0.18em] uppercase text-muted-foreground mt-0.5" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                  Digital Marketplace
+                </span>
               </div>
             </a>
 
