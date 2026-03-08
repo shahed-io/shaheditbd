@@ -1,5 +1,5 @@
 import { FloatingSupport } from './FloatingSupport';
-import { Zap } from 'lucide-react';
+import { Zap, Tag } from 'lucide-react';
 
 const TICKER_ITEMS = [
   { label: 'Windows 11 Pro', price: '৳599',   off: '-94%' },
@@ -16,52 +16,33 @@ const TICKER_ITEMS = [
 
 const TickerBanner = () => {
   const items = [...TICKER_ITEMS, ...TICKER_ITEMS];
-
   return (
-    <div className="ticker-wrap relative overflow-hidden"
-      style={{
-        background: 'linear-gradient(90deg, hsl(220,18%,7%) 0%, hsl(220,15%,10%) 50%, hsl(220,18%,7%) 100%)',
-        borderTop: '1px solid hsla(185,100%,50%,0.15)',
-        borderBottom: '1px solid hsla(185,100%,50%,0.15)',
-      }}>
-
-      {/* Glow line top */}
-      <div className="absolute top-0 inset-x-0 h-px"
-        style={{ background: 'linear-gradient(90deg, transparent, var(--cyan), var(--purple), var(--cyan), transparent)' }} />
-
+    <div className="relative overflow-hidden bg-white border-y border-border shadow-soft">
       {/* Edge fades */}
-      <div className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to right, hsl(220,18%,7%), transparent)' }} />
-      <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to left, hsl(220,18%,7%), transparent)' }} />
+      <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to right, white, transparent)' }} />
+      <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to left, white, transparent)' }} />
 
-      {/* Left indicator */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[9px]"
-        style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--cyan)' }}>
-        <Zap size={8} fill="currentColor" />
-        <span>LIVE DEALS</span>
+      {/* LIVE indicator */}
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold text-white px-2.5 py-1 rounded-full"
+        style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+        <Zap size={9} fill="white" />
+        <span>LIVE</span>
       </div>
 
-      <div className="flex anim-ticker whitespace-nowrap py-2.5" style={{ paddingLeft: '120px' }}>
+      <div className="ticker-track whitespace-nowrap py-3" style={{ paddingLeft: '100px' }}>
         {items.map((item, i) => (
-          <span key={i} className="flex items-center flex-shrink-0">
-            <span className="flex items-center gap-2 px-4 text-[11px]"
-              style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-              <span className="text-foreground font-medium">{item.label}</span>
-              <span className="font-bold" style={{ color: 'var(--cyan)' }}>{item.price}</span>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold"
-                style={{ background: 'hsla(185,100%,50%,0.1)', color: 'var(--cyan)', border: '1px solid var(--cyan-border)' }}>
-                {item.off}
-              </span>
+          <span key={i} className="inline-flex items-center flex-shrink-0">
+            <span className="inline-flex items-center gap-2 px-4 text-[12px]">
+              <span className="font-semibold text-foreground">{item.label}</span>
+              <span className="font-bold text-brand-indigo">{item.price}</span>
+              <span className="badge-sale">{item.off}</span>
             </span>
-            <span style={{ color: 'hsla(185,100%,50%,0.3)', fontFamily: 'JetBrains Mono, monospace' }}>◈</span>
+            <span className="text-muted-foreground/40 text-xs">•</span>
           </span>
         ))}
       </div>
-
-      {/* Glow line bottom */}
-      <div className="absolute bottom-0 inset-x-0 h-px"
-        style={{ background: 'linear-gradient(90deg, transparent, var(--purple), var(--cyan), var(--purple), transparent)' }} />
     </div>
   );
 };
@@ -69,3 +50,4 @@ const TickerBanner = () => {
 const FloatingButtons = () => <FloatingSupport />;
 
 export { TickerBanner, FloatingButtons };
+
