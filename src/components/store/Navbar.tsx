@@ -87,14 +87,9 @@ const Navbar = () => {
               </div>
             </a>
 
-            {/* Search */}
-            <div className={`hidden md:flex flex-1 max-w-md items-center gap-2 rounded-2xl border-2 px-4 py-2.5 transition-all duration-300 ${
-              searchFocused ? 'border-brand-indigo shadow-indigo bg-white' : 'border-border bg-surface-light'
-            }`}>
-              <Search size={16} className="text-muted-foreground flex-shrink-0" />
-              <input type="text" placeholder="Search software, licenses…"
-                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
-                onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)} />
+            {/* Search — Desktop */}
+            <div className="hidden md:flex flex-1 max-w-md">
+              <SearchBar variant="navbar" className="w-full" />
             </div>
 
             {/* Desktop Links */}
