@@ -168,13 +168,20 @@ const Footer = () => (
             <p className="text-[10px] font-fira" style={{ color: 'hsla(0,0%,100%,0.35)' }}>DBID: 586772174</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-[10px] font-fira mr-1" style={{ color: 'hsla(0,0%,100%,0.3)' }}>PAYMENTS:</span>
-          {['bKash', 'Nagad', 'Rocket'].map(pm => (
-            <span key={pm}
-              className="px-3 py-1.5 rounded-lg text-[10px] font-bold font-fira"
-              style={{ background: 'hsla(0,0%,100%,0.07)', color: 'hsla(0,0%,100%,0.6)', border: '1px solid hsla(0,0%,100%,0.1)' }}>
-              {pm}
+          {[
+            { name: 'bKash', num: '01820060046' },
+            { name: 'Nagad', num: '01840099853' },
+            { name: 'Rocket', num: '01840099853' },
+            { name: 'উপায়', num: '01840099853' },
+            { name: 'bKash Merchant', num: '01840099853' },
+          ].map(pm => (
+            <span key={pm.name}
+              className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold font-fira"
+              style={{ background: 'hsla(0,0%,100%,0.07)', color: 'hsla(0,0%,100%,0.6)', border: '1px solid hsla(0,0%,100%,0.1)' }}
+              title={pm.num}>
+              {pm.name}
             </span>
           ))}
         </div>
