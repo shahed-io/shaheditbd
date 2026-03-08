@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Zap, Star, Shield, Phone, Mail } from 'lucide-react';
 import AuthModal from './AuthModal';
+import SearchBar from './SearchBar';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
