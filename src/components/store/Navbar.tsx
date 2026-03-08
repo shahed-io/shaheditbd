@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Search, Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Zap, Star, Shield, Phone, Mail } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Zap, Star, Shield, Phone, Mail } from 'lucide-react';
 import AuthModal from './AuthModal';
+import SearchBar from './SearchBar';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -25,12 +26,11 @@ const CATEGORY_DROPDOWN = [
 ];
 
 const Navbar = () => {
-  const [mobileOpen,    setMobileOpen]    = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [authOpen,      setAuthOpen]      = useState(false);
-  const [scrolled,      setScrolled]      = useState(false);
-  const [catOpen,       setCatOpen]       = useState(false);
-  const { user } = useAuth(); // reuse global auth — no extra getSession call
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [authOpen,   setAuthOpen]   = useState(false);
+  const [scrolled,   setScrolled]   = useState(false);
+  const [catOpen,    setCatOpen]    = useState(false);
+  const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
 
@@ -87,14 +87,9 @@ const Navbar = () => {
               </div>
             </a>
 
-            {/* Search */}
-            <div className={`hidden md:flex flex-1 max-w-md items-center gap-2 rounded-2xl border-2 px-4 py-2.5 transition-all duration-300 ${
-              searchFocused ? 'border-brand-indigo shadow-indigo bg-white' : 'border-border bg-surface-light'
-            }`}>
-              <Search size={16} className="text-muted-foreground flex-shrink-0" />
-              <input type="text" placeholder="Search software, licenses…"
-                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
-                onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)} />
+            {/* Search — Desktop */}
+            <div className="hidden md:flex flex-1 max-w-md">
+              <SearchBar variant="navbar" className="w-full" />
             </div>
 
             {/* Desktop Links */}
@@ -171,9 +166,8 @@ const Navbar = () => {
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
           <div className="border-t border-border bg-white px-4 py-4 space-y-1">
-            <div className="flex items-center gap-2 rounded-2xl border border-border px-4 py-2.5 bg-surface-light mb-3">
-              <Search size={16} className="text-muted-foreground" />
-              <input type="text" placeholder="Search products…" className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
+            <div className="mb-3">
+              <SearchBar variant="navbar" className="w-full" onClose={() => setMobileOpen(false)} />
             </div>
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
