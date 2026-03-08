@@ -31,6 +31,7 @@ const TopProducts = () => {
   const [retry,        setRetry]        = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
     const load = async () => {
       setLoading(true);
       setError(false);
@@ -39,21 +40,31 @@ const TopProducts = () => {
           .from('products')
           .select('*, categories(name, sort_order)')
           .eq('status', 'active')
-          .order('sort_order', { ascending: true });
-        if (err) throw err;
+          .order('sort_order', { ascending: true })
+          .limit(200);
+        if (cancelled) return;
+        if (err) {
+          console.error('[TopProducts] Supabase error:', err);
+          throw err;
+        }
         const rows = data ?? [];
+        console.log('[TopProducts] Loaded products:', rows.length);
         setProducts(rows.map(mapProduct));
         const map = new Map<string, number>();
         rows.forEach(p => { if (p.categories?.name) map.set(p.categories.name, p.categories.sort_order ?? 999); });
         const sorted = [...map.entries()].sort((a, b) => a[1] - b[1]).map(([n]) => n);
         setTabs(['All', ...sorted]);
-      } catch {
-        setError(true);
+      } catch (e) {
+        if (!cancelled) {
+          console.error('[TopProducts] Failed to load:', e);
+          setError(true);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
     load();
+    return () => { cancelled = true; };
   }, [retry]);
 
   const filtered  = activeTab === 'All' ? products : products.filter(p => p.category === activeTab);
