@@ -1,5 +1,5 @@
 import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowRight, Zap } from 'lucide-react';
-import logoOrig from '@/assets/logo-redesigned.png';
+import BrandLogo from './BrandLogo';
 
 const NAV_COL = [
   {
