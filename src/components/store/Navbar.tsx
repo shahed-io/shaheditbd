@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Zap, Star, Shield, Phone, Mail, Sparkles } from 'lucide-react';
-import logoOrig from '@/assets/logo-redesigned.png';
+import logoOrig from '@/assets/logo-main.png';
 import AuthModal from './AuthModal';
 import SearchBar from './SearchBar';
 import { useCart } from '@/hooks/useCart';
