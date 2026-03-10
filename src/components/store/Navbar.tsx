@@ -146,10 +146,12 @@ const Navbar = () => {
                 <div className="hidden sm:flex items-center gap-1">
                   <button onClick={() => navigate('/dashboard')}
                     className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all">
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                      {displayName[0].toUpperCase()}
+                    <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                      ) : initials}
                     </div>
-                    <span className="hidden lg:inline max-w-[70px] truncate">{displayName}</span>
+                    <span className="hidden lg:inline max-w-[80px] truncate">{displayName}</span>
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
                     className="p-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-red-50 transition-all">
