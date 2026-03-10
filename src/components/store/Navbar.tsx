@@ -31,6 +31,7 @@ const Navbar = () => {
   const [authOpen,   setAuthOpen]   = useState(false);
   const [scrolled,   setScrolled]   = useState(false);
   const [catOpen,    setCatOpen]    = useState(false);
+  const [avatarUrl,  setAvatarUrl]  = useState<string | null>(null);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
@@ -41,7 +42,16 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!user) { setAvatarUrl(null); return; }
+    supabase.from('profiles').select('avatar_url, display_name').eq('user_id', user.id).single()
+      .then(({ data }) => {
+        if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+      });
+  }, [user]);
+
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
+  const initials = displayName[0].toUpperCase();
 
   return (
     <>
