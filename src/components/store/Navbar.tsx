@@ -87,15 +87,19 @@ const Navbar = () => {
           : 'bg-white/90 backdrop-blur-xl border-b border-border/40'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-[66px] gap-4">
+          <div className="flex items-center justify-between h-[76px] gap-4">
 
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2 flex-shrink-0 group">
-              <img
-                src={logoOrig}
-                alt="Shahed Store"
-                className="h-[68px] w-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:opacity-90"
-              />
+            <a href="/" className="flex items-center flex-shrink-0 group">
+              <div className="relative flex items-center justify-center px-2 py-1 rounded-2xl transition-all duration-300 group-hover:scale-[1.03]"
+                style={{ background: 'linear-gradient(135deg, hsla(243,75%,59%,0.06) 0%, hsla(263,70%,58%,0.04) 100%)', backdropFilter: 'blur(8px)' }}>
+                <img
+                  src={logoOrig}
+                  alt="Shahed Store"
+                  className="h-[80px] w-auto object-contain drop-shadow-sm transition-all duration-300"
+                  style={{ filter: 'drop-shadow(0 2px 8px hsla(243,75%,59%,0.15))' }}
+                />
+              </div>
             </a>
 
             {/* Search — Desktop */}
