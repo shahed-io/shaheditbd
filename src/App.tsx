@@ -20,6 +20,7 @@ import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminTickets from "./pages/admin/AdminTickets";
 import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
+import AdminPayments from "./pages/admin/AdminPayments";
 import UserDashboard from "./pages/UserDashboard";
 
 const queryClient = new QueryClient({
