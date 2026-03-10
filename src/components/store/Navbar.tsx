@@ -140,27 +140,27 @@ const Navbar = () => {
                   onMouseEnter={() => link.label === 'Shop' && setCatOpen(true)}
                   onMouseLeave={() => link.label === 'Shop' && setCatOpen(false)}>
                   <a href={link.href}
-                    className="nav-link-new flex items-center gap-1 px-3.5 py-2 rounded-xl hover:bg-muted/60 transition-colors font-medium text-sm">
+                    className="flex items-center gap-1 px-3.5 py-2 rounded-xl text-white/75 hover:text-white hover:bg-white/10 transition-all font-medium text-sm">
                     {link.label}
                     {link.label === 'Shop' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
                   </a>
                   {link.label === 'Shop' && (
                     <div
-                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 w-68 bg-white/98 backdrop-blur-xl rounded-2xl border border-border/60 shadow-[0_20px_60px_hsla(230,25%,10%,0.14)] transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
-                      style={{ width: '260px' }}
+                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 backdrop-blur-xl rounded-2xl border border-white/10 shadow-[0_20px_60px_hsla(220,30%,5%,0.5)] transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
+                      style={{ width: '260px', background: 'hsl(222,22%,13%)' }}
                       onMouseEnter={() => setCatOpen(true)}
                       onMouseLeave={() => setCatOpen(false)}
                     >
                       <div className="p-2">
                         <div className="px-3 py-2 mb-1">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground" style={{ fontFamily: 'Fira Code, monospace' }}>Categories</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40" style={{ fontFamily: 'Fira Code, monospace' }}>Categories</span>
                         </div>
                         {CATEGORY_DROPDOWN.map(cat => (
                           <a key={cat.label} href={`/category/${cat.label.toLowerCase()}`}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/60 transition-colors group/item">
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors group/item">
                             <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: cat.color }}>{cat.icon}</span>
-                            <span className="text-sm font-semibold text-foreground flex-1 group-hover/item:text-brand-indigo transition-colors">{cat.label}</span>
-                            <span className="text-[11px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{cat.count}</span>
+                            <span className="text-sm font-semibold text-white/80 flex-1 group-hover/item:text-white transition-colors">{cat.label}</span>
+                            <span className="text-[11px] font-bold text-white/40 bg-white/10 px-2 py-0.5 rounded-full">{cat.count}</span>
                           </a>
                         ))}
                       </div>
@@ -175,7 +175,7 @@ const Navbar = () => {
               {user ? (
                 <div className="hidden sm:flex items-center gap-1">
                   <button onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all">
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-white/70 hover:text-white hover:bg-white/10 transition-all">
                     <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
                       {avatarUrl ? (
                         <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
@@ -184,13 +184,13 @@ const Navbar = () => {
                     <span className="hidden lg:inline max-w-[80px] truncate">{displayName}</span>
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
-                    className="p-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-red-50 transition-all">
+                    className="p-2 rounded-xl text-white/50 hover:text-red-400 hover:bg-white/10 transition-all">
                     <LogOut size={15} />
                   </button>
                 </div>
               ) : (
                 <button onClick={() => setAuthOpen(true)}
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all border border-border/60">
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white/70 hover:text-white hover:bg-white/10 transition-all border border-white/15">
                   <User size={16} />
                   <span className="hidden lg:inline">Login</span>
                 </button>
@@ -198,7 +198,7 @@ const Navbar = () => {
 
               <button onClick={() => setCartOpen(true)}
                 className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
-                style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 4px 16px hsla(243,75%,59%,0.35)' }}>
+                style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 4px 16px hsla(243,75%,59%,0.4)' }}>
                 <ShoppingCart size={16} />
                 <span className="hidden sm:inline">Cart</span>
                 {cartCount > 0 && (
@@ -207,7 +207,7 @@ const Navbar = () => {
                 )}
               </button>
 
-              <button className="lg:hidden p-2.5 rounded-xl hover:bg-muted/60 transition-colors"
+              <button className="lg:hidden p-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors"
                 onClick={() => setMobileOpen(!mobileOpen)}>
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
@@ -217,17 +217,17 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
-          <div className="border-t border-border/60 bg-white/98 backdrop-blur-xl px-4 py-4 space-y-1">
+          <div className="border-t border-white/10 px-4 py-4 space-y-1" style={{ background: 'hsl(222,22%,12%)' }}>
             <div className="mb-3">
               <SearchBar variant="navbar" className="w-full" onClose={() => setMobileOpen(false)} />
             </div>
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-foreground hover:bg-muted/60 transition-colors">
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-white/75 hover:text-white hover:bg-white/10 transition-colors">
                 {link.label}
               </a>
             ))}
-            <div className="pt-2 border-t border-border/60">
+            <div className="pt-2 border-t border-white/10">
               {user ? (
                 <div className="flex gap-2">
                   <button onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}
@@ -236,7 +236,7 @@ const Navbar = () => {
                     <LayoutDashboard size={15} /> Dashboard
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
-                    className="px-4 py-3 rounded-2xl text-sm font-semibold text-muted-foreground hover:bg-muted/60 border border-border/60 transition-all">
+                    className="px-4 py-3 rounded-2xl text-sm font-semibold text-white/60 hover:bg-white/10 border border-white/15 transition-all">
                     Logout
                   </button>
                 </div>
