@@ -21,6 +21,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminTickets from "./pages/admin/AdminTickets";
 import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
 import AdminPayments from "./pages/admin/AdminPayments";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 import UserDashboard from "./pages/UserDashboard";
 
 const queryClient = new QueryClient({
