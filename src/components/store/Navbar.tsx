@@ -82,9 +82,9 @@ const Navbar = () => {
       {/* ── Main Navbar ── */}
       <nav className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-white/96 backdrop-blur-2xl shadow-[0_4px_24px_hsla(230,25%,10%,0.08)] border-b border-border/60'
-          : 'bg-white/90 backdrop-blur-xl border-b border-border/40'
-      }`}>
+          ? 'backdrop-blur-2xl shadow-[0_4px_24px_hsla(220,30%,5%,0.5)] border-b border-white/10'
+          : 'border-b border-white/8'
+      }`} style={{ background: 'hsl(222,22%,10%)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[76px] gap-4">
 
