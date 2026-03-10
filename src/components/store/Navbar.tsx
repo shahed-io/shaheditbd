@@ -90,54 +90,39 @@ const Navbar = () => {
 
             {/* Logo */}
             <a href="/" className="flex items-center flex-shrink-0 group select-none">
-              <div className="relative flex items-center gap-3 px-3 py-2 rounded-2xl transition-all duration-300 group-hover:scale-[1.02]">
-                {/* Shield Icon */}
+              <div className="relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 group-hover:scale-[1.03]"
+                style={{ background: 'hsl(220,20%,10%)', boxShadow: '0 2px 16px hsla(38,100%,55%,0.15)' }}>
+                {/* Crown Icon */}
                 <div className="relative flex-shrink-0">
-                  {/* Glow ring */}
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md"
-                    style={{ background: 'radial-gradient(circle, hsla(243,75%,59%,0.5), hsla(15,100%,60%,0.3))' }} />
-                  {/* Shield SVG */}
-                  <svg width="52" height="58" viewBox="0 0 52 58" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    className="relative z-10 drop-shadow-lg transition-all duration-300 group-hover:drop-shadow-2xl">
+                  <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    className="relative z-10 transition-all duration-300">
                     <defs>
-                      <linearGradient id="shieldGrad" x1="0" y1="0" x2="52" y2="58" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stopColor="hsl(243,75%,59%)" />
-                        <stop offset="50%" stopColor="hsl(263,70%,58%)" />
-                        <stop offset="100%" stopColor="hsl(15,100%,60%)" />
-                      </linearGradient>
-                      <linearGradient id="shieldLight" x1="0" y1="0" x2="52" y2="0" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stopColor="white" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="white" stopOpacity="0" />
-                      </linearGradient>
-                      <filter id="glow">
-                        <feGaussianBlur stdDeviation="1.5" result="blur" />
+                      <radialGradient id="circleBg" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stopColor="hsl(38,100%,60%)" />
+                        <stop offset="100%" stopColor="hsl(30,100%,48%)" />
+                      </radialGradient>
+                      <filter id="crownGlow">
+                        <feGaussianBlur stdDeviation="1" result="blur" />
                         <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
                       </filter>
                     </defs>
-                    {/* Shield body */}
-                    <path d="M26 2L4 11V30C4 42.5 13.5 53.5 26 57C38.5 53.5 48 42.5 48 30V11L26 2Z"
-                      fill="url(#shieldGrad)" />
-                    {/* Inner highlight */}
-                    <path d="M26 5L7 13V30C7 41 15.5 51 26 54.2C36.5 51 45 41 45 30V13L26 5Z"
-                      fill="url(#shieldLight)" />
-                    {/* Inner border */}
-                    <path d="M26 2L4 11V30C4 42.5 13.5 53.5 26 57C38.5 53.5 48 42.5 48 30V11L26 2Z"
-                      stroke="white" strokeOpacity="0.2" strokeWidth="0.8" fill="none" />
-                    {/* Letter S */}
-                    <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle"
-                      fill="white" fontSize="22" fontWeight="800" fontFamily="Sora, sans-serif"
-                      filter="url(#glow)" style={{ letterSpacing: '-1px' }}>S</text>
+                    {/* Circle background */}
+                    <circle cx="19" cy="19" r="19" fill="url(#circleBg)" />
+                    {/* Crown */}
+                    <g filter="url(#crownGlow)">
+                      <path d="M9 25H29V27H9V25Z" fill="white" />
+                      <path d="M9 25L11 14L16 20L19 12L22 20L27 14L29 25H9Z" fill="white" />
+                      <circle cx="11" cy="13.5" r="1.8" fill="white" />
+                      <circle cx="19" cy="11" r="1.8" fill="white" />
+                      <circle cx="27" cy="13.5" r="1.8" fill="white" />
+                    </g>
                   </svg>
                 </div>
                 {/* Brand Text */}
-                <div className="flex flex-col leading-tight">
-                  <span className="text-[18px] font-extrabold tracking-tight"
-                    style={{ fontFamily: 'Sora, sans-serif', background: 'linear-gradient(135deg, hsl(243,75%,55%), hsl(263,70%,52%), hsl(15,100%,55%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                    Shahed
-                  </span>
-                  <span className="text-[11px] font-bold tracking-[0.18em] uppercase"
-                    style={{ fontFamily: 'Fira Code, monospace', color: 'hsl(243,75%,59%)', opacity: 0.75 }}>
-                    Store
+                <div className="flex flex-col leading-none">
+                  <span className="text-[19px] font-black tracking-wide uppercase"
+                    style={{ fontFamily: 'Sora, sans-serif', color: 'hsl(38,100%,60%)', letterSpacing: '0.04em' }}>
+                    SHAHED STORE
                   </span>
                 </div>
               </div>
