@@ -89,15 +89,57 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-[76px] gap-4">
 
             {/* Logo */}
-            <a href="/" className="flex items-center flex-shrink-0 group">
-              <div className="relative flex items-center justify-center px-2 py-1 rounded-2xl transition-all duration-300 group-hover:scale-[1.03]"
-                style={{ background: 'linear-gradient(135deg, hsla(243,75%,59%,0.06) 0%, hsla(263,70%,58%,0.04) 100%)', backdropFilter: 'blur(8px)' }}>
-                <img
-                  src={logoOrig}
-                  alt="Shahed Store"
-                  className="h-[80px] w-auto object-contain drop-shadow-sm transition-all duration-300"
-                  style={{ filter: 'drop-shadow(0 2px 8px hsla(243,75%,59%,0.15))' }}
-                />
+            <a href="/" className="flex items-center flex-shrink-0 group select-none">
+              <div className="relative flex items-center gap-3 px-3 py-2 rounded-2xl transition-all duration-300 group-hover:scale-[1.02]">
+                {/* Shield Icon */}
+                <div className="relative flex-shrink-0">
+                  {/* Glow ring */}
+                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md"
+                    style={{ background: 'radial-gradient(circle, hsla(243,75%,59%,0.5), hsla(15,100%,60%,0.3))' }} />
+                  {/* Shield SVG */}
+                  <svg width="52" height="58" viewBox="0 0 52 58" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    className="relative z-10 drop-shadow-lg transition-all duration-300 group-hover:drop-shadow-2xl">
+                    <defs>
+                      <linearGradient id="shieldGrad" x1="0" y1="0" x2="52" y2="58" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="hsl(243,75%,59%)" />
+                        <stop offset="50%" stopColor="hsl(263,70%,58%)" />
+                        <stop offset="100%" stopColor="hsl(15,100%,60%)" />
+                      </linearGradient>
+                      <linearGradient id="shieldLight" x1="0" y1="0" x2="52" y2="0" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="white" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="white" stopOpacity="0" />
+                      </linearGradient>
+                      <filter id="glow">
+                        <feGaussianBlur stdDeviation="1.5" result="blur" />
+                        <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                      </filter>
+                    </defs>
+                    {/* Shield body */}
+                    <path d="M26 2L4 11V30C4 42.5 13.5 53.5 26 57C38.5 53.5 48 42.5 48 30V11L26 2Z"
+                      fill="url(#shieldGrad)" />
+                    {/* Inner highlight */}
+                    <path d="M26 5L7 13V30C7 41 15.5 51 26 54.2C36.5 51 45 41 45 30V13L26 5Z"
+                      fill="url(#shieldLight)" />
+                    {/* Inner border */}
+                    <path d="M26 2L4 11V30C4 42.5 13.5 53.5 26 57C38.5 53.5 48 42.5 48 30V11L26 2Z"
+                      stroke="white" strokeOpacity="0.2" strokeWidth="0.8" fill="none" />
+                    {/* Letter S */}
+                    <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle"
+                      fill="white" fontSize="22" fontWeight="800" fontFamily="Sora, sans-serif"
+                      filter="url(#glow)" style={{ letterSpacing: '-1px' }}>S</text>
+                  </svg>
+                </div>
+                {/* Brand Text */}
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[18px] font-extrabold tracking-tight"
+                    style={{ fontFamily: 'Sora, sans-serif', background: 'linear-gradient(135deg, hsl(243,75%,55%), hsl(263,70%,52%), hsl(15,100%,55%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                    Shahed
+                  </span>
+                  <span className="text-[11px] font-bold tracking-[0.18em] uppercase"
+                    style={{ fontFamily: 'Fira Code, monospace', color: 'hsl(243,75%,59%)', opacity: 0.75 }}>
+                    Store
+                  </span>
+                </div>
               </div>
             </a>
 
