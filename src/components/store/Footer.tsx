@@ -1,5 +1,5 @@
 import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowRight, Zap } from 'lucide-react';
-import logoOrig from '@/assets/logo-redesigned.png';
+import BrandLogo from './BrandLogo';
 
 const NAV_COL = [
   {
@@ -74,10 +74,8 @@ const Footer = () => (
 
       {/* Brand */}
       <div className="lg:col-span-2 space-y-6">
-        <a href="/" className="flex items-center group w-fit">
-          <img src={logoOrig} alt="ShahedStore"
-            className="h-14 w-auto object-contain transition-transform group-hover:scale-105"
-          />
+        <a href="/" className="flex items-center group w-fit transition-transform group-hover:scale-[1.03]">
+          <BrandLogo size="lg" />
         </a>
 
         <p className="text-[13px] leading-relaxed max-w-xs" style={{ color: 'hsla(230,20%,100%,0.45)' }}>

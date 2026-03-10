@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles } from 'lucide-react';
 import AuthModal from './AuthModal';
+import BrandLogo from './BrandLogo';
 import SearchBar from './SearchBar';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
@@ -89,40 +90,10 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-[76px] gap-4">
 
             {/* Logo */}
-            <a href="/" className="flex items-center flex-shrink-0 group select-none">
-              <div className="relative flex items-center gap-3 px-4 py-2.5 rounded-2xl transition-all duration-300 group-hover:scale-[1.04]"
-                style={{ background: 'linear-gradient(135deg, hsla(243,75%,59%,0.12), hsla(38,100%,55%,0.08))', border: '1px solid hsla(255,70%,70%,0.2)' }}>
-                {/* Spark accent dot */}
-                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full opacity-80 group-hover:opacity-100 transition-opacity"
-                  style={{ background: 'hsl(38,100%,58%)', boxShadow: '0 0 8px hsl(38,100%,58%)' }} />
-
-                {/* "S" monogram badge */}
-                <div className="relative w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
-                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 4px 14px hsla(243,75%,59%,0.55)' }}>
-                  <span className="text-white font-black text-[18px] leading-none" style={{ fontFamily: 'Sora, sans-serif', textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>S</span>
-                  {/* shine overlay */}
-                  <div className="absolute inset-0 rounded-xl" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%)' }} />
-                </div>
-
-                {/* Brand name */}
-                <div className="flex flex-col leading-none gap-0.5">
-                  <span className="font-black text-[20px] tracking-tight leading-none"
-                    style={{
-                      fontFamily: 'Sora, sans-serif',
-                      background: 'linear-gradient(90deg, hsl(255,80%,75%) 0%, hsl(220,90%,85%) 40%, hsl(38,100%,62%) 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}>
-                    Shahed
-                  </span>
-                  <span className="font-bold text-[11px] tracking-[0.22em] uppercase leading-none"
-                    style={{ fontFamily: 'Fira Code, monospace', color: 'hsla(255,60%,78%,0.7)' }}>
-                    Store
-                  </span>
-                </div>
-              </div>
+            <a href="/" className="flex items-center flex-shrink-0 group select-none transition-transform duration-300 group-hover:scale-[1.04]">
+              <BrandLogo size="md" />
             </a>
+
 
             {/* Search — Desktop */}
             <div className="hidden md:flex flex-1 max-w-[420px]">
