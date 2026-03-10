@@ -90,39 +90,35 @@ const Navbar = () => {
 
             {/* Logo */}
             <a href="/" className="flex items-center flex-shrink-0 group select-none">
-              <div className="relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 group-hover:scale-[1.03]"
-                style={{ background: 'hsl(220,20%,10%)', boxShadow: '0 2px 16px hsla(38,100%,55%,0.15)' }}>
-                {/* Crown Icon */}
-                <div className="relative flex-shrink-0">
-                  <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    className="relative z-10 transition-all duration-300">
-                    <defs>
-                      <radialGradient id="circleBg" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stopColor="hsl(38,100%,60%)" />
-                        <stop offset="100%" stopColor="hsl(30,100%,48%)" />
-                      </radialGradient>
-                      <filter id="crownGlow">
-                        <feGaussianBlur stdDeviation="1" result="blur" />
-                        <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                      </filter>
-                    </defs>
-                    {/* Circle background */}
-                    <circle cx="19" cy="19" r="19" fill="url(#circleBg)" />
-                    {/* Crown */}
-                    <g filter="url(#crownGlow)">
-                      <path d="M9 25H29V27H9V25Z" fill="white" />
-                      <path d="M9 25L11 14L16 20L19 12L22 20L27 14L29 25H9Z" fill="white" />
-                      <circle cx="11" cy="13.5" r="1.8" fill="white" />
-                      <circle cx="19" cy="11" r="1.8" fill="white" />
-                      <circle cx="27" cy="13.5" r="1.8" fill="white" />
-                    </g>
-                  </svg>
+              <div className="relative flex items-center gap-3 px-4 py-2.5 rounded-2xl transition-all duration-300 group-hover:scale-[1.04]"
+                style={{ background: 'linear-gradient(135deg, hsla(243,75%,59%,0.12), hsla(38,100%,55%,0.08))', border: '1px solid hsla(255,70%,70%,0.2)' }}>
+                {/* Spark accent dot */}
+                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full opacity-80 group-hover:opacity-100 transition-opacity"
+                  style={{ background: 'hsl(38,100%,58%)', boxShadow: '0 0 8px hsl(38,100%,58%)' }} />
+
+                {/* "S" monogram badge */}
+                <div className="relative w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 4px 14px hsla(243,75%,59%,0.55)' }}>
+                  <span className="text-white font-black text-[18px] leading-none" style={{ fontFamily: 'Sora, sans-serif', textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>S</span>
+                  {/* shine overlay */}
+                  <div className="absolute inset-0 rounded-xl" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%)' }} />
                 </div>
-                {/* Brand Text */}
-                <div className="flex flex-col leading-none">
-                  <span className="text-[19px] font-black tracking-wide uppercase"
-                    style={{ fontFamily: 'Sora, sans-serif', color: 'hsl(38,100%,60%)', letterSpacing: '0.04em' }}>
-                    SHAHED STORE
+
+                {/* Brand name */}
+                <div className="flex flex-col leading-none gap-0.5">
+                  <span className="font-black text-[20px] tracking-tight leading-none"
+                    style={{
+                      fontFamily: 'Sora, sans-serif',
+                      background: 'linear-gradient(90deg, hsl(255,80%,75%) 0%, hsl(220,90%,85%) 40%, hsl(38,100%,62%) 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}>
+                    Shahed
+                  </span>
+                  <span className="font-bold text-[11px] tracking-[0.22em] uppercase leading-none"
+                    style={{ fontFamily: 'Fira Code, monospace', color: 'hsla(255,60%,78%,0.7)' }}>
+                    Store
                   </span>
                 </div>
               </div>
