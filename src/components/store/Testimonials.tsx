@@ -204,14 +204,16 @@ const Testimonials = () => {
   const avgRating = (REVIEWS.reduce((s, r) => s + r.rating, 0) / totalReviews).toFixed(1);
 
   return (
-    <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative">
+    <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative" style={{ background: 'hsl(var(--background))' }}>
 
       {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full opacity-[0.04] blur-3xl"
-          style={{ background: 'hsl(var(--primary))' }} />
-        <div className="absolute bottom-1/4 -right-32 w-80 h-80 rounded-full opacity-[0.04] blur-3xl"
-          style={{ background: 'hsl(var(--accent))' }} />
+        <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full blur-3xl"
+          style={{ background: 'hsla(243,75%,62%,0.06)' }} />
+        <div className="absolute bottom-1/4 -right-32 w-80 h-80 rounded-full blur-3xl"
+          style={{ background: 'hsla(15,100%,60%,0.05)' }} />
+        <div className="absolute inset-0"
+          style={{ backgroundImage: 'radial-gradient(circle, hsla(0,0%,100%,0.02) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
