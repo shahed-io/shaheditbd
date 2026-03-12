@@ -103,17 +103,17 @@
 }
 
 /* ══════════════════════════════════════
-   GLASS CARD
+   GLASS CARD (dark)
 ══════════════════════════════════════ */
 .glass-card {
-  background: hsla(0, 0%, 100%, 0.88);
-  backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid hsla(230, 30%, 80%, 0.4);
+  background: hsla(222, 22%, 16%, 0.90);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid hsla(0, 0%, 100%, 0.08);
 }
 
 .glass-dark {
-  background: hsla(230, 30%, 12%, 0.88);
-  backdrop-filter: blur(24px) saturate(200%);
+  background: hsla(222, 22%, 12%, 0.92);
+  backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid hsla(0, 0%, 100%, 0.08);
 }
 
@@ -176,21 +176,21 @@
 }
 
 /* ══════════════════════════════════════
-   PRODUCT CARD
+   PRODUCT CARD (dark)
 ══════════════════════════════════════ */
 .product-card-new {
-  background: white;
+  background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: 1.5rem;
+  border-radius: 1rem;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   box-shadow: var(--shadow-soft);
   position: relative;
 }
 .product-card-new:hover {
-  transform: translateY(-6px) scale(1.01);
-  box-shadow: var(--shadow-strong), 0 0 0 1px hsla(243, 75%, 59%, 0.15);
-  border-color: hsla(243, 75%, 59%, 0.25);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-strong), 0 0 0 1px hsla(243, 75%, 59%, 0.3);
+  border-color: hsla(243, 75%, 59%, 0.4);
 }
 
 /* ══════════════════════════════════════
