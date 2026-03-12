@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
-const CAT_META: Record<string, { icon: string; gradient: string; iconBg: string; borderColor: string }> = {
-  'Windows':      { icon: '🪟', gradient: 'from-blue-50 to-sky-50',    iconBg: 'bg-blue-100',    borderColor: 'border-blue-200/80' },
-  'Office':       { icon: '📦', gradient: 'from-orange-50 to-amber-50', iconBg: 'bg-orange-100',  borderColor: 'border-orange-200/80' },
-  'Software':     { icon: '💻', gradient: 'from-violet-50 to-purple-50',iconBg: 'bg-violet-100',  borderColor: 'border-violet-200/80' },
-  'VPN':          { icon: '🔒', gradient: 'from-cyan-50 to-teal-50',    iconBg: 'bg-cyan-100',    borderColor: 'border-cyan-200/80' },
-  'Subscription': { icon: '🎬', gradient: 'from-purple-50 to-fuchsia-50',iconBg:'bg-purple-100',  borderColor: 'border-purple-200/80' },
-  'Antivirus':    { icon: '🛡️', gradient: 'from-green-50 to-emerald-50',iconBg: 'bg-green-100',  borderColor: 'border-green-200/80' },
-  'Streaming':    { icon: '📺', gradient: 'from-red-50 to-rose-50',      iconBg: 'bg-red-100',    borderColor: 'border-red-200/80' },
-  'default':      { icon: '🛒', gradient: 'from-gray-50 to-slate-50',    iconBg: 'bg-gray-100',   borderColor: 'border-gray-200/80' },
+const CAT_META: Record<string, { icon: string; accent: string }> = {
+  'Windows':       { icon: '🪟', accent: 'hsl(210,90%,55%)' },
+  'Office':        { icon: '📦', accent: 'hsl(25,90%,55%)' },
+  'Software':      { icon: '💻', accent: 'hsl(263,70%,58%)' },
+  'VPN':           { icon: '🔒', accent: 'hsl(190,70%,45%)' },
+  'Subscription':  { icon: '🎬', accent: 'hsl(283,65%,55%)' },
+  'Antivirus':     { icon: '🛡️', accent: 'hsl(158,64%,42%)' },
+  'Streaming':     { icon: '📺', accent: 'hsl(0,80%,55%)' },
+  'default':       { icon: '🛒', accent: 'hsl(243,75%,59%)' },
 };
 
 interface CatData {
@@ -22,7 +22,6 @@ interface CatData {
 }
 
 const Categories = () => {
-  const [hovered, setHovered] = useState<number | null>(null);
   const [cats, setCats] = useState<CatData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,11 +53,11 @@ const Categories = () => {
 
   if (loading) {
     return (
-      <section className="py-20 bg-surface-light">
+      <section className="py-16" style={{ background: 'hsl(222, 22%, 9%)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="rounded-2xl shimmer h-44" />
+              <div key={i} className="rounded-xl shimmer h-36" />
             ))}
           </div>
         </div>
@@ -67,57 +66,53 @@ const Categories = () => {
   }
 
   return (
-    <section className="py-20" style={{ background: 'hsl(230, 25%, 97%)' }}>
+    <section className="py-16" style={{ background: 'hsl(222, 22%, 9%)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
-            <span className="section-label">Browse Store</span>
-            <h2 className="section-heading text-3xl sm:text-4xl mt-3">
-              Shop by{' '}
+            <h2 className="font-sora font-black text-2xl sm:text-3xl text-white">
+              ⭐ Shop by{' '}
               <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Category
               </span>
             </h2>
-            <p className="text-muted-foreground mt-2 text-[14px] max-w-md leading-relaxed">
-              Premium digital licenses across all major software categories — all at unbeatable prices.
+            <p className="mt-1.5 text-sm" style={{ color: 'hsla(0,0%,100%,0.4)' }}>
+              Premium digital licenses — all at unbeatable prices.
             </p>
           </div>
-          <a href="/shop" className="inline-flex items-center gap-2 text-sm font-bold text-brand-indigo hover:gap-3 transition-all flex-shrink-0 group">
-            View All
-            <span className="w-7 h-7 rounded-full bg-white border border-border/70 flex items-center justify-center shadow-soft group-hover:shadow-medium transition-all">
-              <ArrowRight size={13} />
-            </span>
+          <a href="/shop" className="inline-flex items-center gap-2 text-sm font-bold transition-all flex-shrink-0"
+            style={{ color: 'hsl(243,75%,70%)' }}>
+            View All <ArrowRight size={14} />
           </a>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {cats.map((cat, i) => {
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {cats.map((cat) => {
             const meta = CAT_META[cat.name] || CAT_META['default'];
             return (
               <a
                 key={cat.id}
                 href={`/shop?category=${cat.slug}`}
-                className={`cat-card p-5 flex flex-col gap-3.5 bg-gradient-to-br ${meta.gradient} border-2 ${meta.borderColor} anim-rise`}
-                style={{ animationDelay: `${i * 0.06}s` }}
-                onMouseEnter={() => setHovered(i)}
-                onMouseLeave={() => setHovered(null)}
+                className="cat-card group p-5 flex flex-col gap-3"
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon ${meta.iconBg} shadow-soft border border-white/80`}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl cat-icon flex-shrink-0"
+                  style={{ background: `${meta.accent}20`, border: `1px solid ${meta.accent}30` }}>
                   {meta.icon}
                 </div>
                 <div>
-                  <h3 className="font-sora font-bold text-[13px] text-foreground leading-tight">{cat.name}</h3>
-                  <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{cat.description || 'Digital Licenses'}</p>
+                  <h3 className="font-sora font-bold text-[13px] text-white leading-tight">{cat.name}</h3>
+                  <p className="text-[11px] mt-0.5 leading-relaxed line-clamp-1" style={{ color: 'hsla(0,0%,100%,0.4)' }}>
+                    {cat.description || 'Digital Licenses'}
+                  </p>
                 </div>
-                <div className="flex items-center justify-between mt-auto pt-1">
-                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/80 border border-white/60 text-foreground shadow-soft">
+                <div className="flex items-center justify-between mt-auto">
+                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full"
+                    style={{ background: `${meta.accent}20`, color: meta.accent, border: `1px solid ${meta.accent}25` }}>
                     {cat.count} items
                   </span>
-                  <div className={`w-7 h-7 rounded-full bg-white/80 border border-white/60 flex items-center justify-center shadow-soft transition-all duration-200 ${hovered === i ? 'translate-x-0.5 bg-white' : ''}`}>
-                    <ArrowRight size={12} className="text-muted-foreground" />
-                  </div>
+                  <ArrowRight size={13} style={{ color: 'hsla(0,0%,100%,0.3)' }} className="group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </a>
             );

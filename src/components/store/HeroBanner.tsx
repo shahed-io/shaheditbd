@@ -14,11 +14,8 @@ const SLIDES = [
     badge: 'MOST POPULAR',
     accentFrom: 'hsl(243,75%,59%)',
     accentTo: 'hsl(263,70%,58%)',
-    bgFrom: 'hsla(243,75%,59%,0.06)',
-    bgTo: 'hsla(263,70%,58%,0.04)',
     emoji: '🪟',
     features: ['Lifetime License', 'Instant Delivery', 'All Devices'],
-    tag2color: 'hsl(243,75%,59%)',
   },
   {
     tag: '⚡ Flash Deal',
@@ -32,11 +29,8 @@ const SLIDES = [
     badge: 'LIMITED TIME',
     accentFrom: 'hsl(15,100%,60%)',
     accentTo: 'hsl(38,100%,55%)',
-    bgFrom: 'hsla(15,100%,60%,0.06)',
-    bgTo: 'hsla(38,100%,55%,0.04)',
     emoji: '📦',
     features: ['1TB OneDrive', '5 Devices', '1 Year'],
-    tag2color: 'hsl(15,100%,60%)',
   },
   {
     tag: '🎬 Streaming',
@@ -48,21 +42,11 @@ const SLIDES = [
     original: '৳2,600',
     off: '81%',
     badge: 'HOT DEAL',
-    accentFrom: 'hsl(158,64%,42%)',
-    accentTo: 'hsl(180,70%,40%)',
-    bgFrom: 'hsla(158,64%,42%,0.06)',
-    bgTo: 'hsla(180,70%,40%,0.04)',
+    accentFrom: 'hsl(0,80%,50%)',
+    accentTo: 'hsl(0,70%,45%)',
     emoji: '🎬',
     features: ['4K Quality', 'Offline Mode', '1 Month'],
-    tag2color: 'hsl(158,64%,42%)',
   },
-];
-
-const STATS = [
-  { label: 'Products',          value: '500+',  icon: '🛍️', color: 'hsl(243,75%,59%)' },
-  { label: 'Orders Delivered',  value: '25K+',  icon: '✅', color: 'hsl(158,64%,42%)' },
-  { label: 'Happy Customers',   value: '12K+',  icon: '😊', color: 'hsl(15,100%,60%)' },
-  { label: 'Support Rating',    value: '4.9★',  icon: '⭐', color: 'hsl(38,100%,55%)' },
 ];
 
 const HeroBanner = () => {
@@ -70,7 +54,7 @@ const HeroBanner = () => {
   const [dir, setDir] = useState<'in' | 'out'>('in');
 
   useEffect(() => {
-    const timer = setInterval(() => advance(1), 5500);
+    const timer = setInterval(() => advance(1), 6000);
     return () => clearInterval(timer);
   }, [active]);
 
@@ -85,58 +69,57 @@ const HeroBanner = () => {
   const slide = SLIDES[active];
 
   return (
-    <section className="relative overflow-hidden bg-background">
-      {/* Animated background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 transition-all duration-700"
-          style={{ background: `radial-gradient(ellipse at 75% 40%, ${slide.bgFrom} 0%, transparent 55%), radial-gradient(ellipse at 25% 80%, ${slide.bgTo} 0%, transparent 50%)` }} />
-        <div className="absolute top-0 right-0 w-[560px] h-[560px] blob opacity-25"
-          style={{ background: `radial-gradient(circle, ${slide.accentFrom}22, transparent)` }} />
-        <div className="absolute bottom-0 left-[-50px] w-96 h-96 blob opacity-15"
-          style={{ background: `radial-gradient(circle, ${slide.accentTo}1a, transparent)`, animationDelay: '4s' }} />
-        {/* Subtle grid */}
-        <div className="absolute inset-0 dot-grid opacity-40" />
-      </div>
+    <section className="relative overflow-hidden" style={{ background: 'hsl(222, 22%, 8%)' }}>
+      {/* Slide bg image overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-all duration-1000"
+        style={{ background: `radial-gradient(ellipse at 80% 50%, ${slide.accentFrom}18 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, ${slide.accentTo}10 0%, transparent 50%)` }}
+      />
+      {/* Dot grid */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ backgroundImage: 'radial-gradient(circle, hsla(0,0%,100%,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10 lg:pt-20 lg:pb-14">
-        <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10 lg:pt-20 lg:pb-16">
+        <div className="grid lg:grid-cols-[1fr_420px] gap-10 lg:gap-16 items-center">
 
           {/* Left Content */}
-          <div className="space-y-7"
+          <div className="space-y-6"
             style={{
-              opacity:    dir === 'in' ? 1 : 0,
-              transform:  dir === 'in' ? 'none' : 'translateY(12px)',
+              opacity: dir === 'in' ? 1 : 0,
+              transform: dir === 'in' ? 'none' : 'translateY(12px)',
               transition: 'opacity 0.3s ease, transform 0.3s ease',
             }}>
 
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 text-[12px] font-bold px-4 py-1.5 rounded-full text-white"
-                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 4px 16px ${slide.accentFrom}40` }}>
+                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
                 {slide.tag}
               </span>
-              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full border font-fira text-muted-foreground bg-white/80 border-border/60 shadow-soft">
+              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full font-fira"
+                style={{ background: 'hsla(0,0%,100%,0.08)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsla(0,0%,100%,0.5)' }}>
                 {slide.badge}
               </span>
             </div>
 
             {/* Title */}
             <div>
-              <h1 className="font-sora font-black leading-[1.04] tracking-tight text-foreground" style={{ fontSize: 'clamp(2.8rem, 6vw, 4.5rem)' }}>
+              <h1 className="font-sora font-black leading-[1.04] tracking-tight text-white" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)' }}>
                 {slide.title}{' '}
-                <span className="gradient-text-slide" style={{ ['--g-from' as any]: slide.accentFrom, ['--g-to' as any]: slide.accentTo } as React.CSSProperties}>
+                <span style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                   {slide.titleAccent}
                 </span>
               </h1>
-              <p className="font-sora font-semibold text-xl lg:text-2xl mt-2 text-muted-foreground">{slide.subtitle}</p>
+              <p className="font-sora font-semibold text-xl mt-2" style={{ color: 'hsla(0,0%,100%,0.55)' }}>{slide.subtitle}</p>
             </div>
 
-            <p className="text-muted-foreground text-[15px] leading-relaxed max-w-md">{slide.desc}</p>
+            <p className="text-[15px] leading-relaxed max-w-md" style={{ color: 'hsla(0,0%,100%,0.5)' }}>{slide.desc}</p>
 
             {/* Feature pills */}
             <div className="flex flex-wrap gap-2">
               {slide.features.map(f => (
-                <span key={f} className="flex items-center gap-1.5 text-[12px] font-semibold text-foreground bg-white/90 border border-border/70 px-4 py-2 rounded-full shadow-soft backdrop-blur-sm">
+                <span key={f} className="flex items-center gap-1.5 text-[12px] font-semibold px-4 py-2 rounded-full"
+                  style={{ background: 'hsla(0,0%,100%,0.07)', border: '1px solid hsla(0,0%,100%,0.1)', color: 'hsla(0,0%,100%,0.75)' }}>
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: slide.accentFrom }} />
                   {f}
                 </span>
@@ -145,9 +128,9 @@ const HeroBanner = () => {
 
             {/* Price */}
             <div className="flex items-end gap-4">
-              <span className="font-sora font-black text-foreground" style={{ fontSize: 'clamp(2.5rem, 5vw, 3.5rem)' }}>{slide.price}</span>
+              <span className="font-sora font-black text-white" style={{ fontSize: 'clamp(2.4rem, 5vw, 3.5rem)' }}>{slide.price}</span>
               <div className="mb-1">
-                <div className="text-sm text-muted-foreground line-through">{slide.original}</div>
+                <div className="text-sm line-through" style={{ color: 'hsla(0,0%,100%,0.3)' }}>{slide.original}</div>
                 <span className="text-[11px] font-bold text-white px-2.5 py-1 rounded-full"
                   style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
                   Save {slide.off} OFF
@@ -157,12 +140,13 @@ const HeroBanner = () => {
 
             {/* CTA */}
             <div className="flex flex-wrap gap-3">
-              <button className="flex items-center gap-2 px-7 py-4 rounded-2xl text-[14px] font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
-                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 8px 24px ${slide.accentFrom}45` }}>
+              <button className="flex items-center gap-2 px-7 py-4 rounded-xl text-[14px] font-bold text-white transition-all hover:opacity-90"
+                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
                 <ShoppingBag size={17} /> Order Now <ArrowRight size={15} />
               </button>
               <a href="/shop"
-                className="flex items-center gap-2 px-6 py-4 rounded-2xl text-[14px] font-semibold bg-white/90 backdrop-blur-sm border border-border/70 text-foreground hover:border-foreground/25 hover:shadow-medium transition-all">
+                className="flex items-center gap-2 px-6 py-4 rounded-xl text-[14px] font-semibold transition-all border"
+                style={{ background: 'hsla(0,0%,100%,0.07)', borderColor: 'hsla(0,0%,100%,0.12)', color: 'hsla(0,0%,100%,0.8)' }}>
                 <TrendingUp size={15} /> View All Deals
               </a>
             </div>
@@ -175,7 +159,7 @@ const HeroBanner = () => {
                 { icon: <Clock size={13} />, text: '24/7 Support' },
                 { icon: <Star size={13} />, text: '4.9★ Rating' },
               ].map(t => (
-                <span key={t.text} className="flex items-center gap-1.5 text-[12px] font-semibold text-muted-foreground">
+                <span key={t.text} className="flex items-center gap-1.5 text-[12px] font-semibold" style={{ color: 'hsla(0,0%,100%,0.4)' }}>
                   <span style={{ color: slide.accentFrom }}>{t.icon}</span>
                   {t.text}
                 </span>
@@ -183,54 +167,55 @@ const HeroBanner = () => {
             </div>
           </div>
 
-          {/* Right Visual */}
+          {/* Right Visual — Product Card */}
           <div className="relative hidden lg:flex items-center justify-center min-h-[440px]">
-            {/* Main Product Card */}
             <div
-              className="relative w-[300px] rounded-[2rem] overflow-hidden anim-float shadow-[0_32px_80px_hsla(230,25%,10%,0.18)]"
+              className="relative w-[340px] rounded-2xl overflow-hidden"
               style={{
                 background: `linear-gradient(150deg, ${slide.accentFrom}, ${slide.accentTo})`,
-                opacity:    dir === 'in' ? 1 : 0,
-                transform:  dir === 'in' ? 'scale(1)' : 'scale(0.95)',
+                opacity: dir === 'in' ? 1 : 0,
+                transform: dir === 'in' ? 'scale(1)' : 'scale(0.95)',
                 transition: 'opacity 0.3s, transform 0.3s',
+                boxShadow: `0 32px 80px ${slide.accentFrom}40`,
               }}>
               {/* Shimmer overlay */}
               <div className="absolute inset-0 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(ellipse at 15% 15%, rgba(255,255,255,0.18) 0%, transparent 55%)' }} />
-              {/* Dots pattern */}
+                style={{ backgroundImage: 'radial-gradient(ellipse at 15% 15%, rgba(255,255,255,0.15) 0%, transparent 55%)' }} />
               <div className="absolute inset-0 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
 
               <div className="relative p-8">
-                <div className="flex items-start justify-between mb-8">
-                  <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-4xl shadow-soft">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style={{ background: 'rgba(255,255,255,0.2)' }}>
                     {slide.emoji}
                   </div>
-                  <Sparkles size={18} className="text-white/40 anim-spin-slow mt-1" />
+                  <Sparkles size={18} className="opacity-40 mt-1" style={{ color: 'white' }} />
                 </div>
-                <div className="text-white/60 text-[10px] font-fira uppercase tracking-[0.2em] mb-2">Featured Deal</div>
+                <div className="text-white/50 text-[10px] font-fira uppercase tracking-[0.2em] mb-2">Featured Deal</div>
                 <div className="text-white font-sora font-black text-[22px] leading-tight">{slide.title} {slide.titleAccent}</div>
-                <div className="text-white/75 text-sm mt-1 font-medium">{slide.subtitle}</div>
+                <div className="text-white/70 text-sm mt-1 font-medium">{slide.subtitle}</div>
 
-                {/* Feature chips */}
                 <div className="flex flex-wrap gap-1.5 mt-4">
                   {slide.features.map(f => (
-                    <span key={f} className="text-[10px] font-bold text-white/80 bg-white/12 border border-white/20 px-2.5 py-1 rounded-full backdrop-blur-sm">{f}</span>
+                    <span key={f} className="text-[10px] font-bold px-2.5 py-1 rounded-full"
+                      style={{ background: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.2)' }}>
+                      {f}
+                    </span>
                   ))}
                 </div>
 
-                <div className="mt-6 pt-5 border-t border-white/15 flex items-center justify-between">
+                <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.15)' }}>
                   <div>
-                    <div className="text-white/50 text-xs line-through font-fira">{slide.original}</div>
+                    <div className="text-white/40 text-xs line-through font-fira">{slide.original}</div>
                     <div className="text-white font-sora font-black text-[2rem] leading-none mt-0.5">{slide.price}</div>
                   </div>
-                  <div className="bg-white/15 backdrop-blur-sm rounded-2xl px-4 py-3 text-center border border-white/20">
+                  <div className="rounded-xl px-4 py-3 text-center" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)' }}>
                     <div className="font-fira font-black text-[1.25rem] text-white leading-none">-{slide.off}</div>
                     <div className="text-[9px] text-white/60 uppercase tracking-wider mt-0.5">OFF</div>
                   </div>
                 </div>
 
-                <button className="mt-5 w-full py-3.5 rounded-xl bg-white font-bold text-sm hover:bg-white/95 transition-colors"
+                <button className="mt-5 w-full py-3.5 rounded-xl bg-white font-bold text-sm hover:opacity-95 transition-colors"
                   style={{ color: slide.accentFrom }}>
                   Order Now →
                 </button>
@@ -239,18 +224,18 @@ const HeroBanner = () => {
 
             {/* Floating stat cards */}
             {[
-              { label: 'Orders Today', value: '248+', icon: '📦', top: '4%',   left: '-18%', right: 'auto', delay: '0s' },
-              { label: 'Happy Users',  value: '12K+', icon: '😊', top: '46%',  left: 'auto',  right: '-18%', delay: '1.4s' },
-              { label: 'Avg Rating',   value: '4.9★', icon: '⭐', top: '82%',  left: '-16%', right: 'auto', delay: '2.8s' },
+              { label: 'Orders Today', value: '248+', icon: '📦', top: '4%',  left: '-15%', right: 'auto', delay: '0s' },
+              { label: 'Happy Users',  value: '12K+', icon: '😊', top: '50%', left: 'auto', right: '-15%', delay: '1.4s' },
+              { label: 'Avg Rating',   value: '4.9★', icon: '⭐', top: '84%', left: '-13%', right: 'auto', delay: '2.8s' },
             ].map((card) => (
               <div key={card.label}
-                className="absolute glass-white rounded-2xl px-4 py-3 anim-float"
-                style={{ top: card.top, left: card.left, right: card.right, animationDelay: card.delay }}>
+                className="absolute rounded-xl px-4 py-3 anim-float"
+                style={{ top: card.top, left: card.left, right: card.right, animationDelay: card.delay, background: 'hsla(222,22%,18%,0.95)', border: '1px solid hsla(0,0%,100%,0.1)', backdropFilter: 'blur(12px)' }}>
                 <div className="flex items-center gap-2.5">
                   <span className="text-xl">{card.icon}</span>
                   <div>
-                    <div className="text-[15px] font-sora font-black text-foreground leading-none">{card.value}</div>
-                    <div className="text-[10px] text-muted-foreground leading-none mt-0.5 font-medium">{card.label}</div>
+                    <div className="text-[15px] font-sora font-black text-white leading-none">{card.value}</div>
+                    <div className="text-[10px] leading-none mt-0.5 font-medium" style={{ color: 'hsla(0,0%,100%,0.45)' }}>{card.label}</div>
                   </div>
                 </div>
               </div>
@@ -259,9 +244,10 @@ const HeroBanner = () => {
         </div>
 
         {/* Slider Controls */}
-        <div className="flex items-center justify-center gap-4 mt-14">
+        <div className="flex items-center justify-center gap-4 mt-12">
           <button onClick={() => advance(-1)}
-            className="w-9 h-9 rounded-full bg-white border border-border/70 shadow-soft flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground/20 transition-all">
+            className="w-9 h-9 rounded-full flex items-center justify-center transition-all"
+            style={{ background: 'hsla(0,0%,100%,0.08)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsla(0,0%,100%,0.6)' }}>
             <ChevronLeft size={16} />
           </button>
           <div className="flex items-center gap-2">
@@ -269,31 +255,17 @@ const HeroBanner = () => {
               <button key={i} onClick={() => { setDir('out'); setTimeout(() => { setActive(i); setDir('in'); }, 280); }}
                 className="rounded-full transition-all duration-300"
                 style={{
-                  width: i === active ? '28px' : '8px',
-                  height: '8px',
-                  background: i === active ? slide.accentFrom : 'hsl(var(--muted-foreground))',
-                  opacity: i === active ? 1 : 0.28,
+                  width: i === active ? '24px' : '7px',
+                  height: '7px',
+                  background: i === active ? slide.accentFrom : 'hsla(0,0%,100%,0.2)',
                 }} />
             ))}
           </div>
           <button onClick={() => advance(1)}
-            className="w-9 h-9 rounded-full bg-white border border-border/70 shadow-soft flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground/20 transition-all">
+            className="w-9 h-9 rounded-full flex items-center justify-center transition-all"
+            style={{ background: 'hsla(0,0%,100%,0.08)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsla(0,0%,100%,0.6)' }}>
             <ChevronRight size={16} />
           </button>
-        </div>
-
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-12 border-t border-border/50">
-          {STATS.map((s, i) => (
-            <div key={s.label} className="group text-center cursor-default">
-              <div className="text-3xl mb-2 transition-transform duration-300 group-hover:scale-110">{s.icon}</div>
-              <div className="text-[1.7rem] font-sora font-black leading-none gradient-text-slide"
-                style={{ ['--g-from' as any]: slide.accentFrom, ['--g-to' as any]: slide.accentTo } as React.CSSProperties}>
-                {s.value}
-              </div>
-              <div className="text-[11px] text-muted-foreground font-semibold mt-1.5 uppercase tracking-wider">{s.label}</div>
-            </div>
-          ))}
         </div>
       </div>
     </section>

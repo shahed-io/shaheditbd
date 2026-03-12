@@ -87,52 +87,54 @@ const FlashSale = () => {
   ];
 
   return (
-    <section className="py-24 relative overflow-hidden bg-background">
-      {/* Background */}
+    <section className="py-16 relative overflow-hidden" style={{ background: 'hsl(222, 22%, 8%)' }}>
+      {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.07), transparent)', filter: 'blur(60px)' }} />
+          style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.08), transparent)', filter: 'blur(60px)' }} />
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full"
           style={{ background: 'radial-gradient(circle, hsla(38,100%,55%,0.06), transparent)', filter: 'blur(60px)' }} />
-        {/* Subtle pattern */}
-        <div className="absolute inset-0 dot-grid opacity-50" />
+        <div className="absolute inset-0"
+          style={{ backgroundImage: 'radial-gradient(circle, hsla(0,0%,100%,0.025) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-14">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10">
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
+            <div className="flex items-center gap-2.5 mb-3">
               <span className="inline-flex items-center gap-1.5 text-[12px] font-bold px-4 py-1.5 rounded-full text-white"
                 style={{ background: 'linear-gradient(135deg, hsl(15,100%,55%), hsl(38,100%,50%))' }}>
                 <Flame size={13} fill="white" /> Flash Sale
               </span>
-              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 bg-white rounded-full border border-border/60 shadow-soft text-muted-foreground font-fira">
+              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full font-fira"
+                style={{ background: 'hsla(0,0%,100%,0.08)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsla(0,0%,100%,0.45)' }}>
                 LIMITED TIME
               </span>
             </div>
-            <h2 className="font-sora font-black text-foreground leading-tight" style={{ fontSize: 'clamp(1.9rem, 4vw, 2.75rem)' }}>
+            <h2 className="font-sora font-black text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)' }}>
               Biggest{' '}
               <span style={{ background: 'linear-gradient(135deg, hsl(15,100%,55%), hsl(38,100%,50%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Discounts
               </span>{' '}
               Today
             </h2>
-            <p className="text-muted-foreground mt-2 text-[14px]">Top deals sorted by highest savings — grab them before time runs out!</p>
+            <p className="mt-1.5 text-sm" style={{ color: 'hsla(0,0%,100%,0.4)' }}>Top deals sorted by highest savings — grab them before time runs out!</p>
           </div>
 
           {/* Countdown */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-[12px] font-semibold text-muted-foreground">
-              <Timer size={13} className="text-orange-500" /> Sale ends in:
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-[12px] font-semibold" style={{ color: 'hsla(0,0%,100%,0.4)' }}>
+              <Timer size={13} className="text-orange-400" /> Sale ends in:
             </div>
             <div className="flex items-center gap-2">
               {TIME_UNITS.map((item, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <div className="flex flex-col items-center min-w-[54px] bg-white border border-orange-200/80 rounded-2xl px-3 py-2.5 shadow-soft">
-                    <span className="text-[1.4rem] font-fira font-black leading-none text-foreground tabular-nums">{item.v}</span>
-                    <span className="text-[9px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">{item.l}</span>
+                  <div className="flex flex-col items-center min-w-[50px] rounded-xl px-3 py-2"
+                    style={{ background: 'hsla(0,0%,100%,0.07)', border: '1px solid hsla(15,100%,60%,0.25)' }}>
+                    <span className="text-[1.4rem] font-fira font-black leading-none text-white tabular-nums">{item.v}</span>
+                    <span className="text-[9px] font-bold mt-1 uppercase tracking-wider" style={{ color: 'hsla(0,0%,100%,0.4)' }}>{item.l}</span>
                   </div>
                   {i < TIME_UNITS.length - 1 && (
                     <span className="text-xl font-black animate-pulse leading-none mb-1" style={{ color: 'hsl(15,100%,60%)' }}>:</span>
@@ -147,7 +149,7 @@ const FlashSale = () => {
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[0,1,2,3,4,5,6,7].map(i => (
-              <div key={i} className="rounded-2xl shimmer" style={{ height: '22rem', animationDelay: `${i * 0.07}s` }} />
+              <div key={i} className="rounded-xl shimmer" style={{ height: '22rem', animationDelay: `${i * 0.07}s` }} />
             ))}
           </div>
         ) : (
@@ -159,11 +161,11 @@ const FlashSale = () => {
                   onNavigate={() => navigate(`/product/${p.slug}`)} />
               ))}
             </div>
-            <div className="flex justify-center mt-12">
+            <div className="flex justify-center mt-10">
               <button
                 onClick={() => navigate('/shop')}
-                className="flex items-center gap-2.5 px-8 py-4 rounded-2xl text-[14px] font-bold text-white hover:scale-[1.03] active:scale-[0.97] transition-all"
-                style={{ background: 'linear-gradient(135deg, hsl(15,100%,55%), hsl(38,100%,50%)', boxShadow: '0 8px 24px hsla(20,100%,55%,0.28)' }}>
+                className="flex items-center gap-2.5 px-8 py-4 rounded-xl text-[14px] font-bold text-white hover:opacity-90 transition-all"
+                style={{ background: 'linear-gradient(135deg, hsl(15,100%,55%), hsl(38,100%,50%)', boxShadow: '0 8px 24px hsla(20,100%,55%,0.3)' }}>
                 <TrendingDown size={16} /> View All Deals <ArrowRight size={15} />
               </button>
             </div>
@@ -200,20 +202,22 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
   return (
     <div
       onClick={onNavigate}
-      className="group bg-white rounded-2xl border border-border/70 overflow-hidden cursor-pointer transition-all duration-300"
+      className="rounded-xl overflow-hidden cursor-pointer transition-all duration-300"
       style={{
+        background: 'hsl(222,22%,13%)',
+        border: hovered ? '1px solid hsla(15,100%,60%,0.3)' : '1px solid hsla(0,0%,100%,0.07)',
+        transform: hovered ? 'translateY(-4px)' : 'none',
+        boxShadow: hovered ? '0 16px 40px hsla(220,30%,3%,0.4)' : '0 2px 12px hsla(220,30%,3%,0.2)',
+        transition: 'all 0.3s cubic-bezier(0.23,1,0.32,1)',
         animationDelay: `${delay}s`,
-        transform: hovered ? 'translateY(-5px)' : 'none',
-        boxShadow: hovered ? '0 20px 48px hsla(230,25%,10%,0.12), 0 0 0 1px hsla(15,100%,60%,0.15)' : '0 2px 12px hsla(230,25%,10%,0.05)',
-        transition: 'all 0.35s cubic-bezier(0.23,1,0.32,1)',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Image */}
-      <div className="relative aspect-square overflow-hidden" style={{ background: 'hsl(230,20%,97%)' }}>
+      <div className="relative aspect-square overflow-hidden" style={{ background: 'hsl(222,22%,11%)' }}>
         <img
-          src={product.image_url || 'https://placehold.co/300x300/fff5f0/f97316?text=Sale'}
+          src={product.image_url || 'https://placehold.co/300x300/1e2030/f97316?text=Sale'}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500"
           style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)' }}
@@ -221,7 +225,7 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
         />
         {/* Discount Badge */}
         {product.discount_percent && (
-          <div className="absolute top-2.5 left-2.5 text-white text-[11px] font-black px-2.5 py-1 rounded-xl flex items-center gap-1"
+          <div className="absolute top-2.5 left-2.5 text-white text-[11px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1"
             style={{ background: 'linear-gradient(135deg, hsl(15,100%,55%), hsl(38,100%,50%))' }}>
             <Zap size={10} fill="white" />
             -{product.discount_percent}%
@@ -230,13 +234,12 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
         {/* Quick Add */}
         <button
           onClick={handleAddToCart}
-          className="absolute bottom-2.5 right-2.5 w-9 h-9 rounded-xl text-white flex items-center justify-center transition-all duration-200 hover:scale-110"
+          className="absolute bottom-2.5 right-2.5 w-9 h-9 rounded-lg text-white flex items-center justify-center transition-all duration-200 hover:scale-110"
           style={{
             background: 'linear-gradient(135deg, hsl(15,100%,55%), hsl(38,100%,50%))',
             opacity: hovered ? 1 : 0,
             transform: hovered ? 'translateY(0)' : 'translateY(4px)',
           }}
-          title="Add to cart"
         >
           <ShoppingCart size={15} />
         </button>
@@ -244,28 +247,28 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
 
       {/* Info */}
       <div className="p-3.5">
-        <p className="font-semibold text-[13px] text-foreground line-clamp-2 leading-snug mb-2.5 transition-colors duration-200"
-          style={{ color: hovered ? 'hsl(15,100%,55%)' : undefined }}>
+        <p className="font-semibold text-[13px] line-clamp-2 leading-snug mb-2"
+          style={{ color: hovered ? 'hsl(15,100%,65%)' : 'hsla(0,0%,100%,0.82)' }}>
           {product.name}
         </p>
 
         <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-[17px] font-sora font-black text-foreground">৳{product.price.toLocaleString()}</span>
+          <span className="text-[17px] font-sora font-black text-white">৳{product.price.toLocaleString()}</span>
           {product.original_price && (
-            <span className="text-[12px] text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</span>
+            <span className="text-[12px] line-through" style={{ color: 'hsla(0,0%,100%,0.3)' }}>৳{product.original_price.toLocaleString()}</span>
           )}
         </div>
 
         {savings && (
           <div className="mt-2 text-[11px] font-bold rounded-lg px-2.5 py-1 inline-flex items-center gap-1"
-            style={{ color: 'hsl(15,100%,50%)', background: 'hsl(15,100%,97%)' }}>
+            style={{ color: 'hsl(15,100%,65%)', background: 'hsla(15,100%,60%,0.12)', border: '1px solid hsla(15,100%,60%,0.2)' }}>
             <TrendingDown size={10} /> Save ৳{savings.toLocaleString()}
           </div>
         )}
 
         {product.delivery_time && (
-          <p className="mt-1.5 text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
-            <Zap size={9} className="text-emerald-500" />
+          <p className="mt-1.5 text-[10px] flex items-center gap-1 font-medium" style={{ color: 'hsla(0,0%,100%,0.35)' }}>
+            <Zap size={9} className="text-emerald-400" />
             {product.delivery_time}
           </p>
         )}
