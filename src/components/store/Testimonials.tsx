@@ -127,15 +127,24 @@ const AvatarCircle = ({ initials, index }: { initials: string; index: number }) 
 
 const ReviewCard = ({ review, index }: { review: Review; index: number }) => (
   <div
-    className="flex-shrink-0 w-[300px] sm:w-[340px] rounded-2xl p-5 space-y-3 border border-border/60 hover:border-primary/30 transition-all duration-300 group cursor-default"
+    className="flex-shrink-0 w-[300px] sm:w-[340px] rounded-2xl p-5 space-y-3 transition-all duration-300 group cursor-default"
     style={{
-      background: 'hsla(var(--card) / 0.6)',
-      backdropFilter: 'blur(12px)',
-      boxShadow: '0 4px 24px hsla(var(--primary) / 0.05)',
+      background: 'hsla(222,22%,14%,0.82)',
+      border: '1px solid hsla(0,0%,100%,0.07)',
+      backdropFilter: 'blur(16px)',
+      boxShadow: '0 4px 24px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.06)',
+    }}
+    onMouseEnter={e => {
+      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(243,75%,62%,0.25)';
+      (e.currentTarget as HTMLElement).style.boxShadow = '0 16px 48px hsla(220,30%,5%,0.45), 0 0 20px hsla(243,75%,62%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.08)';
+    }}
+    onMouseLeave={e => {
+      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(0,0%,100%,0.07)';
+      (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 24px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.06)';
     }}
   >
     {/* Quote icon */}
-    <Quote size={18} className="text-primary/30 group-hover:text-primary/50 transition-colors" />
+    <Quote size={18} className="text-primary/40 group-hover:text-primary/60 transition-colors" />
 
     {/* Review text */}
     <p className="text-sm leading-relaxed text-muted-foreground line-clamp-4">{review.review}</p>
@@ -143,14 +152,14 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => (
     {/* Rating + Product */}
     <div className="flex items-center justify-between">
       <StarRating rating={review.rating} />
-      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border border-primary/20 text-primary/70"
-        style={{ background: 'hsla(var(--primary) / 0.06)' }}>
+      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+        style={{ background: 'hsla(243,75%,62%,0.12)', border: '1px solid hsla(243,75%,62%,0.2)', color: 'hsl(243,75%,70%)' }}>
         {review.product}
       </span>
     </div>
 
     {/* Author */}
-    <div className="flex items-center gap-3 pt-1 border-t border-border/40">
+    <div className="flex items-center gap-3 pt-1" style={{ borderTop: '1px solid hsla(0,0%,100%,0.07)' }}>
       <AvatarCircle initials={review.avatar} index={index} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
@@ -195,14 +204,16 @@ const Testimonials = () => {
   const avgRating = (REVIEWS.reduce((s, r) => s + r.rating, 0) / totalReviews).toFixed(1);
 
   return (
-    <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative">
+    <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative" style={{ background: 'hsl(var(--background))' }}>
 
       {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full opacity-[0.04] blur-3xl"
-          style={{ background: 'hsl(var(--primary))' }} />
-        <div className="absolute bottom-1/4 -right-32 w-80 h-80 rounded-full opacity-[0.04] blur-3xl"
-          style={{ background: 'hsl(var(--accent))' }} />
+        <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full blur-3xl"
+          style={{ background: 'hsla(243,75%,62%,0.06)' }} />
+        <div className="absolute bottom-1/4 -right-32 w-80 h-80 rounded-full blur-3xl"
+          style={{ background: 'hsla(15,100%,60%,0.05)' }} />
+        <div className="absolute inset-0"
+          style={{ backgroundImage: 'radial-gradient(circle, hsla(0,0%,100%,0.02) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
