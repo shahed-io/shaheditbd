@@ -250,12 +250,12 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.22em;
-  color: var(--indigo);
-  background: var(--indigo-dim);
+  color: hsl(243, 75%, 70%);
+  background: hsla(243, 75%, 62%, 0.12);
   padding: 0.3rem 0.875rem;
   border-radius: 999px;
   display: inline-block;
-  border: 1px solid hsla(243, 75%, 59%, 0.15);
+  border: 1px solid hsla(243, 75%, 62%, 0.2);
 }
 
 .section-heading {
