@@ -17,15 +17,12 @@ const TICKER_ITEMS = [
 const TickerBanner = () => {
   const items = [...TICKER_ITEMS, ...TICKER_ITEMS];
   return (
-    <div
-      className="relative overflow-hidden border-y"
-      style={{ background: 'hsl(222, 22%, 7%)', borderColor: 'hsla(0,0%,100%,0.07)' }}
-    >
+    <div className="relative overflow-hidden bg-white border-y border-border/60" style={{ boxShadow: '0 1px 0 hsla(230,20%,10%,0.04), inset 0 1px 0 rgba(255,255,255,0.8)' }}>
       {/* Edge fades */}
       <div className="absolute left-0 top-0 bottom-0 w-28 z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to right, hsl(222,22%,7%) 0%, transparent 100%)' }} />
+        style={{ background: 'linear-gradient(to right, white 0%, transparent 100%)' }} />
       <div className="absolute right-0 top-0 bottom-0 w-28 z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to left, hsl(222,22%,7%) 0%, transparent 100%)' }} />
+        style={{ background: 'linear-gradient(to left, white 0%, transparent 100%)' }} />
 
       {/* LIVE indicator */}
       <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold text-white px-3 py-1.5 rounded-full"
@@ -35,15 +32,15 @@ const TickerBanner = () => {
         <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse" />
       </div>
 
-      <div className="ticker-track whitespace-nowrap py-3" style={{ paddingLeft: '110px' }}>
+      <div className="ticker-track whitespace-nowrap py-3.5" style={{ paddingLeft: '110px' }}>
         {items.map((item, i) => (
           <span key={i} className="inline-flex items-center flex-shrink-0">
             <span className="inline-flex items-center gap-2 px-5 text-[12px]">
-              <span className="font-semibold" style={{ color: 'hsla(0,0%,100%,0.7)' }}>{item.label}</span>
-              <span className="font-bold" style={{ color: 'hsl(243,75%,65%)' }}>{item.price}</span>
+              <span className="font-semibold text-foreground">{item.label}</span>
+              <span className="font-bold text-brand-indigo">{item.price}</span>
               <span className="badge-sale">{item.off}</span>
             </span>
-            <span style={{ color: 'hsla(0,0%,100%,0.15)' }} className="text-sm">|</span>
+            <span className="text-muted-foreground/30 text-sm">|</span>
           </span>
         ))}
       </div>
