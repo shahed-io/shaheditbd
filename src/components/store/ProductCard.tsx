@@ -44,20 +44,20 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         className="group product-card-new flex flex-col"
         style={{
           opacity:   visible ? 1 : 0,
-          transform: visible ? 'none' : 'translateY(40px)',
-          transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
+          transform: visible ? 'none' : 'translateY(32px)',
+          transition: `opacity 0.5s ease ${delay}s, transform 0.5s ease ${delay}s`,
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
         {/* ── Image ── */}
-        <div className="relative overflow-hidden aspect-square bg-surface-light">
+        <div className="relative overflow-hidden aspect-square" style={{ background: 'hsl(222,22%,11%)' }}>
           <img
             src={product.image}
             alt={product.name}
             loading="lazy"
             onLoad={() => setImageLoaded(true)}
-            onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/f8f9ff/6366f1?text=Product'; }}
+            onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/1e2030/6366f1?text=Product'; }}
             className="w-full h-full object-cover"
             style={{
               opacity: imageLoaded ? 1 : 0,
@@ -77,60 +77,78 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           {/* Wishlist */}
           <button
             onClick={e => { e.stopPropagation(); toggleWishlist({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
-            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-white shadow-soft border border-border"
-            style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(-4px)', transition: 'all 0.25s' }}
+            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-lg flex items-center justify-center transition-all z-10"
+            style={{
+              background: 'hsla(222,22%,18%,0.95)',
+              border: '1px solid hsla(0,0%,100%,0.1)',
+              opacity: hovered ? 1 : 0,
+              transform: hovered ? 'translateY(0)' : 'translateY(-4px)',
+              transition: 'all 0.25s',
+            }}
           >
-            <Heart size={13} fill={wishlisted ? 'hsl(15,100%,60%)' : 'none'} color={wishlisted ? 'hsl(15,100%,60%)' : 'hsl(var(--muted-foreground))'} />
+            <Heart size={13} fill={wishlisted ? 'hsl(15,100%,60%)' : 'none'} color={wishlisted ? 'hsl(15,100%,60%)' : 'hsla(0,0%,100%,0.5)'} />
           </button>
 
           {/* Quick view */}
           <button
             onClick={() => setShowModal(true)}
-            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-white shadow-soft border border-border text-brand-indigo"
-            style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(4px)', transition: 'all 0.25s 0.05s' }}
+            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-lg flex items-center justify-center transition-all z-10"
+            style={{
+              background: 'hsla(222,22%,18%,0.95)',
+              border: '1px solid hsla(0,0%,100%,0.1)',
+              color: 'hsl(243,75%,70%)',
+              opacity: hovered ? 1 : 0,
+              transform: hovered ? 'translateY(0)' : 'translateY(4px)',
+              transition: 'all 0.25s 0.05s',
+            }}
           >
             <Eye size={13} />
           </button>
         </div>
 
         {/* ── Content ── */}
-        <div className="p-4 flex flex-col gap-2.5 flex-1 bg-white">
-          <p className="text-[10px] font-fira font-bold uppercase tracking-widest text-brand-indigo">{product.category}</p>
+        <div className="p-3.5 flex flex-col gap-2 flex-1" style={{ background: 'hsl(var(--card))' }}>
+          <p className="text-[10px] font-fira font-bold uppercase tracking-widest" style={{ color: 'hsl(243,75%,65%)' }}>{product.category}</p>
 
           <h3
             onClick={() => navigate(`/product/${product.slug || product.id}`)}
-            className="text-sm font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-indigo transition-colors duration-200 cursor-pointer hover:underline underline-offset-2"
+            className="text-sm font-semibold leading-snug line-clamp-2 cursor-pointer transition-colors duration-200"
+            style={{ color: hovered ? 'hsl(243,75%,70%)' : 'hsla(0,0%,100%,0.85)' }}
           >
             {product.name}
           </h3>
 
           <div className="flex items-center gap-1">
             {[1,2,3,4,5].map(s => (
-              <Star key={s} size={10} fill={s <= Math.floor(product.rating) ? 'hsl(38,100%,55%)' : 'none'} color={s <= Math.floor(product.rating) ? 'hsl(38,100%,55%)' : 'hsl(var(--border))'} />
+              <Star key={s} size={10} fill={s <= Math.floor(product.rating) ? 'hsl(38,100%,55%)' : 'none'} color={s <= Math.floor(product.rating) ? 'hsl(38,100%,55%)' : 'hsla(0,0%,100%,0.15)'} />
             ))}
-            <span className="text-[10px] text-muted-foreground ml-1">({product.reviews})</span>
+            <span className="text-[10px] ml-1" style={{ color: 'hsla(0,0%,100%,0.3)' }}>({product.reviews})</span>
           </div>
 
           <div className="flex items-baseline gap-2 mt-auto">
-            <span className="text-xl font-sora font-black text-brand-indigo">৳{product.price.toLocaleString()}</span>
+            <span className="text-xl font-sora font-black" style={{ color: 'hsl(243,75%,70%)' }}>৳{product.price.toLocaleString()}</span>
             {product.originalPrice && (
-              <span className="text-xs line-through text-muted-foreground">৳{product.originalPrice.toLocaleString()}</span>
+              <span className="text-xs line-through" style={{ color: 'hsla(0,0%,100%,0.3)' }}>৳{product.originalPrice.toLocaleString()}</span>
             )}
           </div>
 
           <div className="space-y-2">
             <button onClick={() => setShowModal(true)}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02] shadow-indigo"
+              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-[12px] font-bold text-white transition-all hover:opacity-90"
               style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
               <CreditCard size={12} /> Order Now
             </button>
             <div className="grid grid-cols-2 gap-2">
               <button onClick={waMsg}
-                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-colors">
+                className="flex items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-semibold transition-colors"
+                style={{ background: 'hsla(158,64%,42%,0.15)', border: '1px solid hsla(158,64%,42%,0.25)', color: 'hsl(158,64%,55%)' }}>
                 <MessageCircle size={11} /> WhatsApp
               </button>
               <button onClick={() => addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image })}
-                className={`flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-colors ${inCart ? 'bg-indigo-50 border border-indigo-200 text-brand-indigo' : 'bg-muted border border-border text-muted-foreground hover:bg-surface-soft'}`}>
+                className="flex items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-semibold transition-colors"
+                style={inCart
+                  ? { background: 'hsla(243,75%,59%,0.18)', border: '1px solid hsla(243,75%,59%,0.3)', color: 'hsl(243,75%,70%)' }
+                  : { background: 'hsla(0,0%,100%,0.06)', border: '1px solid hsla(0,0%,100%,0.1)', color: 'hsla(0,0%,100%,0.5)' }}>
                 <ShoppingCart size={11} />
                 {inCart ? '✓ Added' : 'Cart'}
               </button>
