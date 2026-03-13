@@ -7,7 +7,7 @@ import Footer from '@/components/store/Footer';
 import {
   ShoppingCart, MessageCircle, CreditCard, Star, Zap, Shield, Clock,
   CheckCircle2, ChevronLeft, ChevronRight, Heart, Package, Tag,
-  Truck, ArrowLeft, Share2, Copy, Check, ChevronDown
+  Truck, ArrowLeft, Share2, Copy, Check, ChevronDown, Info
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
 
@@ -33,9 +33,11 @@ interface ProductFull {
   faq: any;
   categories: { name: string; slug: string } | null;
   created_at: string;
+  warranty_note: string | null;
+  refund_note: string | null;
+  brand: string | null;
 }
 
-// ── Custom hook: trigger reveal when element enters viewport ──
 const useReveal = (threshold = 0.1) => {
   const ref = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
@@ -49,6 +51,12 @@ const useReveal = (threshold = 0.1) => {
   }, [threshold]);
   return { ref, revealed };
 };
+
+// ── Variant option with optional price ──
+interface VariantOption {
+  label: string;
+  price?: number;
+}
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -64,10 +72,13 @@ const ProductDetail = () => {
   const [imgLoaded,   setImgLoaded]   = useState(false);
   const [selectedVar, setSelectedVar] = useState<Record<string, string>>({});
   const [entered,     setEntered]     = useState(false);
+  const [openDesc,    setOpenDesc]    = useState(true);
+  const [openWarranty,setOpenWarranty]= useState(false);
+  const [openRefund,  setOpenRefund]  = useState(false);
+  const [openFaq,     setOpenFaq]     = useState(false);
 
-  // Section reveals
-  const descReveal   = useReveal(0.05);
-  const faqReveal    = useReveal(0.05);
+  const descReveal = useReveal(0.05);
+  const faqReveal  = useReveal(0.05);
 
   useEffect(() => {
     if (!slug) return;
@@ -89,7 +100,6 @@ const ProductDetail = () => {
         if (!row) { setNotFound(true); setLoading(false); return; }
         setProduct(row as any);
         setLoading(false);
-        // Trigger entrance after short delay for smooth feel
         setTimeout(() => setEntered(true), 80);
         supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
       } catch {
@@ -103,19 +113,14 @@ const ProductDetail = () => {
   if (loading) return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid lg:grid-cols-2 gap-12">
-          {/* Skeleton image */}
           <div className="aspect-square rounded-3xl relative overflow-hidden shimmer" />
           <div className="space-y-4 pt-4">
             {[70, 100, 50, 80, 40, 90, 60].map((w, i) => (
               <div key={i} className="rounded-xl shimmer h-5" style={{ width: `${w}%`, animationDelay: `${i * 0.08}s` }} />
             ))}
             <div className="h-14 rounded-2xl shimmer mt-6" />
-            <div className="grid grid-cols-2 gap-3 mt-2">
-              <div className="h-12 rounded-2xl shimmer" />
-              <div className="h-12 rounded-2xl shimmer" />
-            </div>
           </div>
         </div>
       </div>
@@ -142,26 +147,41 @@ const ProductDetail = () => {
   ].filter(Boolean);
   if (images.length === 0) images.push(PLACEHOLDER);
 
-  const variants: { name: string; options: string[] }[] = Array.isArray(product.variants) ? product.variants : [];
+  const variants: { name: string; options: (string | VariantOption)[] }[] = Array.isArray(product.variants) ? product.variants : [];
   const faqs: { q: string; a: string }[] = Array.isArray(product.faq) ? product.faq : [];
+
+  // Compute selected variant price offset
+  const getVariantPrice = (): number => {
+    for (const v of variants) {
+      const sel = selectedVar[v.name] || (typeof v.options?.[0] === 'string' ? v.options[0] : (v.options?.[0] as VariantOption)?.label);
+      for (const opt of v.options || []) {
+        const label = typeof opt === 'string' ? opt : opt.label;
+        const price = typeof opt === 'string' ? null : opt.price;
+        if (label === sel && price != null) return price;
+      }
+    }
+    return product.price;
+  };
+
+  const displayPrice = getVariantPrice();
 
   const wishlisted = isWishlisted(product.id);
   const inCart     = isInCart(product.id);
-  const savings    = product.original_price ? product.original_price - product.price : 0;
+  const savings    = product.original_price ? product.original_price - displayPrice : 0;
   const discount   = product.discount_percent || (product.original_price ? Math.round(savings / product.original_price * 100) : 0);
 
   const cartItem = {
     id: product.id,
     name: product.name,
     category: product.categories?.name || '',
-    price: product.price,
+    price: displayPrice,
     originalPrice: product.original_price || undefined,
     image: product.image_url || PLACEHOLDER,
   };
 
   const waOrder = () => {
     const varStr = Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`).join(', ');
-    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${varStr ? `\n⚙️ ${varStr}` : ''}\n💰 ৳${product.price.toLocaleString()}\n🔗 ${window.location.href}`);
+    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${varStr ? `\n⚙️ ${varStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
@@ -174,14 +194,17 @@ const ProductDetail = () => {
   const prevImg = () => { setImgLoaded(false); setActiveImg(i => (i - 1 + images.length) % images.length); };
   const nextImg = () => { setImgLoaded(false); setActiveImg(i => (i + 1) % images.length); };
 
+  const getOptionLabel = (opt: string | VariantOption) => typeof opt === 'string' ? opt : opt.label;
+  const getOptionPrice = (opt: string | VariantOption) => typeof opt === 'string' ? null : opt.price ?? null;
+
   return (
     <>
       <div className="min-h-screen bg-background">
         <Navbar />
 
-        {/* ── Breadcrumb ── */}
+        {/* Breadcrumb */}
         <div
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6"
+          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-5"
           style={{
             opacity: entered ? 1 : 0,
             transform: entered ? 'none' : 'translateY(-10px)',
@@ -199,34 +222,31 @@ const ProductDetail = () => {
                 <span>/</span>
               </>
             )}
-            <span className="text-foreground font-medium truncate max-w-[200px]">{product.name}</span>
+            <span className="text-foreground font-medium truncate max-w-[220px]">{product.name}</span>
           </nav>
         </div>
 
-        {/* ── Main Content ── */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid lg:grid-cols-2 gap-10 xl:gap-16">
+        {/* ── Main Grid ── */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-8 xl:gap-14">
 
             {/* ═══ LEFT: Image Gallery ═══ */}
-            <div className="space-y-4">
-              {/* Main Image with cinematic entrance */}
+            <div className="space-y-3">
+              {/* Main Image */}
               <div
-                className="relative rounded-3xl overflow-hidden border aspect-square group"
+                className="relative rounded-2xl overflow-hidden border group"
                 style={{
                   background: 'hsl(215,28%,10%)',
-                  borderColor: entered ? 'hsla(271,91%,65%,0.35)' : 'transparent',
-                  boxShadow: entered ? '0 0 60px hsla(271,91%,65%,0.12), 0 32px 80px hsla(215,40%,4%,0.6)' : 'none',
+                  borderColor: entered ? 'hsla(271,91%,65%,0.3)' : 'transparent',
+                  boxShadow: entered ? '0 0 50px hsla(271,91%,65%,0.1), 0 24px 60px hsla(215,40%,4%,0.5)' : 'none',
                   opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'translateX(-40px) scale(0.95)',
+                  transform: entered ? 'none' : 'translateX(-30px) scale(0.97)',
                   transition: 'all 0.8s cubic-bezier(0.22,1,0.36,1)',
+                  aspectRatio: '1/1',
                 }}
               >
-                {/* Neon top border */}
                 <div className="h-[2px] w-full absolute top-0 left-0 z-10"
                   style={{ background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
-
-                {/* Neon sweep effect on load */}
-                {entered && <div className="neon-sweep-line" />}
 
                 {!imgLoaded && <div className="absolute inset-0 shimmer" />}
                 <img
@@ -235,40 +255,30 @@ const ProductDetail = () => {
                   alt={product.name}
                   onLoad={() => setImgLoaded(true)}
                   onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
-                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   style={{ opacity: imgLoaded ? 1 : 0 }}
                 />
-
-                {/* Gradient overlay */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: 'linear-gradient(to bottom, transparent 50%, hsla(215,28%,6%,0.7) 100%)' }} />
+                  style={{ background: 'linear-gradient(to bottom, transparent 55%, hsla(215,28%,6%,0.65) 100%)' }} />
 
                 {/* Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                  {discount > 0 && (
-                    <span className="badge-pop badge-sale" style={{ animationDelay: '0.5s' }}>
-                      -{discount}% OFF
-                    </span>
-                  )}
-                  {product.is_featured && (
-                    <span className="badge-pop badge-hot-item flex items-center gap-1" style={{ animationDelay: '0.65s' }}>
-                      <Zap size={10} fill="white" /> HOT
-                    </span>
-                  )}
+                <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+                  {discount > 0 && <span className="badge-pop badge-sale">-{discount}% OFF</span>}
+                  {product.is_featured && <span className="badge-pop badge-hot-item flex items-center gap-1"><Zap size={10} fill="white" /> HOT</span>}
                 </div>
 
                 {/* Nav arrows */}
                 {images.length > 1 && (
                   <>
                     <button onClick={prevImg}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
                       style={{ background: 'hsla(215,28%,8%,0.9)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)', backdropFilter: 'blur(8px)' }}>
-                      <ChevronLeft size={18} />
+                      <ChevronLeft size={16} />
                     </button>
                     <button onClick={nextImg}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
                       style={{ background: 'hsla(215,28%,8%,0.9)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)', backdropFilter: 'blur(8px)' }}>
-                      <ChevronRight size={18} />
+                      <ChevronRight size={16} />
                     </button>
                   </>
                 )}
@@ -276,29 +286,27 @@ const ProductDetail = () => {
                 {/* Wishlist */}
                 <button
                   onClick={() => toggleWishlist(cartItem)}
-                  className="absolute top-4 right-4 w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-110 z-10"
+                  className="absolute top-3 right-3 w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:scale-110 z-10"
                   style={{
                     background: wishlisted ? 'hsla(320,90%,62%,0.2)' : 'hsla(215,28%,10%,0.85)',
                     border: `1px solid ${wishlisted ? 'hsla(320,90%,62%,0.5)' : 'hsla(271,91%,65%,0.25)'}`,
                     backdropFilter: 'blur(8px)',
                   }}>
-                  <Heart size={16} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
+                  <Heart size={15} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
                 </button>
               </div>
 
               {/* Thumbnails */}
               {images.length > 1 && (
-                <div
-                  className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide"
+                <div className="flex gap-2 overflow-x-auto pb-1"
                   style={{
                     opacity: entered ? 1 : 0,
                     transform: entered ? 'none' : 'translateY(20px)',
                     transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.25s',
-                  }}
-                >
+                  }}>
                   {images.map((img, i) => (
                     <button key={i} onClick={() => { setActiveImg(i); setImgLoaded(false); }}
-                      className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary shadow-[0_0_16px_hsla(271,91%,65%,0.5)]' : 'border-border hover:border-primary/50'}`}>
+                      className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary' : 'border-border hover:border-primary/50'}`}>
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
                   ))}
@@ -306,25 +314,23 @@ const ProductDetail = () => {
               )}
 
               {/* Trust badges */}
-              <div className="grid grid-cols-3 gap-3">
+              <div
+                className="grid grid-cols-3 gap-2"
+                style={{
+                  opacity: entered ? 1 : 0,
+                  transform: entered ? 'none' : 'translateY(20px)',
+                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.5s',
+                }}
+              >
                 {[
-                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0.9s', color: 'hsl(271,91%,65%)' },
-                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '1.05s', color: 'hsl(185,90%,52%)' },
-                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '1.2s', color: 'hsl(158,80%,48%)' },
+                  { icon: <Shield size={15} />, label: '100% Genuine', sub: 'Verified', color: 'hsl(271,91%,65%)' },
+                  { icon: <Truck size={15} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', color: 'hsl(185,90%,52%)' },
+                  { icon: <Clock size={15} />, label: '24/7 Support', sub: 'Always Here', color: 'hsl(158,80%,48%)' },
                 ].map(b => (
-                  <div
-                    key={b.label}
-                    className="rounded-2xl p-3 text-center border"
-                    style={{
-                      background: 'hsla(215,28%,10%,0.8)',
-                      borderColor: `${b.color}25`,
-                      opacity: entered ? 1 : 0,
-                      transform: entered ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.9)',
-                      transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}`,
-                    }}
-                  >
-                    <div className="flex justify-center mb-1.5" style={{ color: b.color }}>{b.icon}</div>
-                    <div className="text-xs font-bold text-foreground">{b.label}</div>
+                  <div key={b.label} className="rounded-xl p-2.5 text-center border"
+                    style={{ background: 'hsla(215,28%,10%,0.8)', borderColor: `${b.color}22` }}>
+                    <div className="flex justify-center mb-1" style={{ color: b.color }}>{b.icon}</div>
+                    <div className="text-[11px] font-bold text-foreground leading-tight">{b.label}</div>
                     <div className="text-[10px] text-muted-foreground">{b.sub}</div>
                   </div>
                 ))}
@@ -332,35 +338,40 @@ const ProductDetail = () => {
             </div>
 
             {/* ═══ RIGHT: Product Info ═══ */}
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4">
 
               {/* Category + Share */}
               <div
                 className="flex items-center justify-between"
                 style={{
                   opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'translateY(20px)',
-                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.15s',
+                  transform: entered ? 'none' : 'translateY(16px)',
+                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.12s',
                 }}
               >
                 <span className="text-xs font-fira font-bold uppercase tracking-widest px-3 py-1.5 rounded-full"
                   style={{ color: 'hsl(185,90%,62%)', background: 'hsla(185,90%,52%,0.12)', border: '1px solid hsla(185,90%,52%,0.25)' }}>
                   {product.categories?.name || 'Digital Product'}
                 </span>
-                <button onClick={handleCopy}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
-                  style={{ color: copied ? 'hsl(158,80%,55%)' : 'hsl(var(--muted-foreground))', background: 'hsla(215,28%,14%,0.8)', border: '1px solid hsl(var(--border))' }}>
-                  {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Share</>}
-                </button>
+                <div className="flex items-center gap-2">
+                  {product.brand && (
+                    <span className="text-xs text-muted-foreground px-2.5 py-1 rounded-lg border border-border">{product.brand}</span>
+                  )}
+                  <button onClick={handleCopy}
+                    className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
+                    style={{ color: copied ? 'hsl(158,80%,55%)' : 'hsl(var(--muted-foreground))', background: 'hsla(215,28%,14%,0.8)', border: '1px solid hsl(var(--border))' }}>
+                    {copied ? <><Check size={11} /> Copied!</> : <><Copy size={11} /> Share</>}
+                  </button>
+                </div>
               </div>
 
-              {/* Title */}
+              {/* Title + Short Desc */}
               <div
                 style={{
                   opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'translateY(24px)',
-                  filter: entered ? 'none' : 'blur(3px)',
-                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.22s',
+                  transform: entered ? 'none' : 'translateY(20px)',
+                  filter: entered ? 'none' : 'blur(2px)',
+                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.2s',
                 }}
               >
                 <h1 className="font-sora font-black text-2xl sm:text-3xl text-foreground leading-tight">
@@ -373,18 +384,16 @@ const ProductDetail = () => {
 
               {/* Rating + Sales */}
               <div
-                className="flex items-center gap-4"
+                className="flex items-center gap-3"
                 style={{
                   opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'translateY(16px)',
-                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.3s',
+                  transform: entered ? 'none' : 'translateY(12px)',
+                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.28s',
                 }}
               >
-                <div className="flex items-center gap-1">
-                  {[1,2,3,4,5].map(s => (
-                    <Star key={s} size={14} fill="hsl(38,100%,55%)" color="hsl(38,100%,55%)" />
-                  ))}
-                  <span className="text-sm font-semibold text-foreground ml-1">4.9</span>
+                <div className="flex items-center gap-0.5">
+                  {[1,2,3,4,5].map(s => <Star key={s} size={13} fill="hsl(38,100%,55%)" color="hsl(38,100%,55%)" />)}
+                  <span className="text-sm font-semibold text-foreground ml-1.5">4.9</span>
                 </div>
                 <span className="w-1 h-1 rounded-full bg-border" />
                 <span className="text-sm text-muted-foreground">{(product.total_sales || 0) + 50}+ sold</span>
@@ -397,76 +406,96 @@ const ProductDetail = () => {
 
               {/* Price */}
               <div
-                className="flex items-end gap-4 py-4 border-y"
+                className="flex items-end gap-4 py-3 border-y"
                 style={{
-                  borderColor: 'hsla(271,91%,65%,0.2)',
+                  borderColor: 'hsla(271,91%,65%,0.18)',
                   opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'scale(0.9) translateX(-16px)',
-                  transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.38s',
+                  transform: entered ? 'none' : 'scale(0.92) translateX(-14px)',
+                  transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.35s',
                 }}
               >
-                <span className="text-4xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)', textShadow: '0 0 30px hsla(271,91%,65%,0.4)' }}>
-                  ৳{product.price.toLocaleString()}
+                <span className="text-4xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)', textShadow: '0 0 28px hsla(271,91%,65%,0.4)' }}>
+                  ৳{displayPrice.toLocaleString()}
                 </span>
-                {product.original_price && (
+                {product.original_price && product.original_price > displayPrice && (
                   <div>
-                    <div className="text-lg text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
-                    <div className="text-sm font-bold" style={{ color: 'hsl(40,100%,58%)' }}>
-                      আপনি বাঁচালেন ৳{savings.toLocaleString()}
+                    <div className="text-base text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
+                    <div className="text-xs font-bold" style={{ color: 'hsl(40,100%,58%)' }}>
+                      সাশ্রয় ৳{(product.original_price - displayPrice).toLocaleString()}
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Variants */}
-              {variants.map((v: any, vi: number) => (
+              {/* ─── VARIANTS (Duration / Plan / Region etc.) ─── */}
+              {variants.length > 0 && (
                 <div
-                  key={v.name}
+                  className="space-y-4"
                   style={{
                     opacity: entered ? 1 : 0,
                     transform: entered ? 'none' : 'translateY(16px)',
-                    transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + vi * 0.08}s`,
+                    transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.42s',
                   }}
                 >
-                  <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
-                    <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} /> {v.name}:
-                    <span style={{ color: 'hsl(271,91%,75%)' }}>{selectedVar[v.name] || v.options?.[0]}</span>
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {v.options?.map((opt: string) => (
-                      <button key={opt}
-                        onClick={() => setSelectedVar(p => ({ ...p, [v.name]: opt }))}
-                        className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105"
-                        style={(selectedVar[v.name] || v.options?.[0]) === opt
-                          ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
-                          : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
-                        }>
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
+                  {variants.map((v: any) => {
+                    const selectedOpt = selectedVar[v.name] || getOptionLabel(v.options?.[0]);
+                    return (
+                      <div key={v.name}>
+                        <p className="text-sm font-bold text-foreground mb-2.5 flex items-center gap-1.5">
+                          <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} />
+                          {v.name}:
+                          <span style={{ color: 'hsl(271,91%,75%)' }}>{selectedOpt}</span>
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {v.options?.map((opt: string | VariantOption) => {
+                            const label = getOptionLabel(opt);
+                            const optPrice = getOptionPrice(opt);
+                            const isSelected = selectedOpt === label;
+                            return (
+                              <button
+                                key={label}
+                                onClick={() => setSelectedVar(p => ({ ...p, [v.name]: label }))}
+                                className="px-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105 flex flex-col items-center gap-0.5 min-w-[80px]"
+                                style={isSelected
+                                  ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,80%)', background: 'hsla(271,91%,65%,0.14)', boxShadow: '0 0 16px hsla(271,91%,65%,0.25)' }
+                                  : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'hsla(215,28%,12%,0.5)' }
+                                }
+                              >
+                                <span>{label}</span>
+                                {optPrice != null && (
+                                  <span className="text-[11px] font-bold" style={{ color: isSelected ? 'hsl(185,90%,62%)' : 'hsl(var(--muted-foreground))' }}>
+                                    ৳{optPrice.toLocaleString()}
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
+              )}
 
               {/* CTA Buttons */}
               <div
-                className="space-y-3"
+                className="space-y-3 pt-1"
                 style={{
                   opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'translateY(28px)',
+                  transform: entered ? 'none' : 'translateY(24px)',
                   transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.5s',
                 }}
               >
                 <button onClick={() => setShowModal(true)}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_hsla(271,91%,65%,0.5)]"
+                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_hsla(271,91%,65%,0.5)] active:scale-[0.99]"
                   style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 4px 24px hsla(271,91%,65%,0.35)' }}>
-                  <CreditCard size={18} /> Order Now — ৳{product.price.toLocaleString()}
+                  <CreditCard size={17} /> এখনই অর্ডার করুন — ৳{displayPrice.toLocaleString()}
                 </button>
                 <div className="grid grid-cols-2 gap-3">
                   <button onClick={waOrder}
                     className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm text-white transition-all hover:scale-[1.02]"
                     style={{ background: 'linear-gradient(135deg, hsl(142,70%,40%), hsl(158,80%,38%))', boxShadow: '0 4px 16px hsla(142,70%,40%,0.3)' }}>
-                    <MessageCircle size={16} /> WhatsApp
+                    <MessageCircle size={15} /> WhatsApp
                   </button>
                   <button onClick={() => addToCart(cartItem)}
                     className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm border-2 transition-all hover:scale-[1.02]"
@@ -474,57 +503,49 @@ const ProductDetail = () => {
                       ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.1)' }
                       : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', background: 'transparent' }
                     }>
-                    <ShoppingCart size={16} />
-                    {inCart ? '✓ In Cart' : 'Add to Cart'}
+                    <ShoppingCart size={15} />
+                    {inCart ? '✓ Cart-এ আছে' : 'Cart-এ যোগ করুন'}
                   </button>
                 </div>
               </div>
 
-              {/* Delivery Time */}
+              {/* Delivery info strip */}
               {product.delivery_time && (
                 <div
-                  className="flex items-center gap-3 rounded-2xl px-4 py-3"
+                  className="flex items-center gap-2.5 rounded-xl px-4 py-2.5"
                   style={{
-                    background: 'hsla(158,80%,48%,0.08)',
-                    border: '1px solid hsla(158,80%,48%,0.2)',
+                    background: 'hsla(158,80%,48%,0.07)',
+                    border: '1px solid hsla(158,80%,48%,0.18)',
                     opacity: entered ? 1 : 0,
-                    transform: entered ? 'none' : 'translateY(16px)',
                     transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s',
                   }}
                 >
-                  <Clock size={18} style={{ color: 'hsl(158,80%,55%)' }} className="flex-shrink-0" />
-                  <div>
-                    <div className="text-sm font-bold text-foreground">Delivery Time</div>
-                    <div className="text-xs text-muted-foreground">{product.delivery_time}</div>
-                  </div>
+                  <Clock size={14} style={{ color: 'hsl(158,80%,55%)' }} className="flex-shrink-0" />
+                  <span className="text-sm text-foreground font-semibold">ডেলিভারি:</span>
+                  <span className="text-sm text-muted-foreground">{product.delivery_time}</span>
                 </div>
               )}
 
               {/* What You Get */}
               {product.what_you_get && product.what_you_get.length > 0 && (
                 <div
-                  className="rounded-2xl p-5 border"
+                  className="rounded-2xl p-4 border"
                   style={{
                     background: 'hsla(215,28%,10%,0.7)',
                     borderColor: 'hsla(271,91%,65%,0.15)',
                     opacity: entered ? 1 : 0,
-                    transform: entered ? 'none' : 'translateY(20px)',
-                    transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.64s',
+                    transform: entered ? 'none' : 'translateY(16px)',
+                    transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.62s',
                   }}
                 >
-                  <h3 className="font-sora font-bold text-base text-foreground flex items-center gap-2 mb-4">
-                    <Package size={16} style={{ color: 'hsl(271,91%,65%)' }} /> What You'll Get
+                  <h3 className="font-sora font-bold text-sm text-foreground flex items-center gap-2 mb-3">
+                    <Package size={14} style={{ color: 'hsl(271,91%,65%)' }} /> আপনি যা পাবেন
                   </h3>
-                  <ul className="space-y-2.5">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {product.what_you_get.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-foreground"
-                        style={{
-                          opacity: entered ? 1 : 0,
-                          transform: entered ? 'none' : 'translateX(-12px)',
-                          transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.7 + i * 0.07}s`,
-                        }}>
-                        <CheckCircle2 size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'hsl(158,80%,55%)' }} />
-                        {item}
+                      <li key={i} className="flex items-start gap-2 text-sm text-foreground">
+                        <CheckCircle2 size={13} className="flex-shrink-0 mt-0.5" style={{ color: 'hsl(158,80%,55%)' }} />
+                        <span className="text-muted-foreground">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -533,74 +554,85 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* ── Bottom: Description + FAQ ── */}
-          <div className="mt-14 grid lg:grid-cols-3 gap-8">
+          {/* ── Bottom: Description Accordions ── */}
+          <div
+            className="mt-10"
+            ref={descReveal.ref}
+            style={{
+              opacity: descReveal.revealed ? 1 : 0,
+              transform: descReveal.revealed ? 'none' : 'translateY(30px)',
+              transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
+            }}
+          >
+            <div className="space-y-3">
 
-            <div
-              className={faqs.length > 0 ? 'lg:col-span-2' : 'lg:col-span-3'}
-              ref={descReveal.ref}
-              style={{
-                opacity: 1,
-                transform: 'none',
-                transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
-              }}
-            >
-              <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
-                <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
-                {product.description ? 'Product Description' : 'Why Choose This Product?'}
-              </h2>
-              <div
-                className="rounded-2xl p-6 text-sm text-muted-foreground leading-relaxed border"
-                style={{ background: 'hsla(215,28%,10%,0.7)', borderColor: 'hsla(271,91%,65%,0.1)' }}
+              {/* Product Description */}
+              <AccordionBlock
+                title="📋 Product Description"
+                open={openDesc}
+                onToggle={() => setOpenDesc(!openDesc)}
               >
                 {product.description ? (
-                  product.description.split('\n').map((line, i) =>
-                    line.trim() ? <p key={i} className="mb-3 last:mb-0">{line}</p> : null
-                  )
+                  <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                    {product.description.split('\n').map((line, i) =>
+                      line.trim() ? <p key={i}>{line}</p> : null
+                    )}
+                  </div>
                 ) : (
-                  <ul className="space-y-3">
+                  <ul className="space-y-2.5">
                     {[
-                      { icon: '✅', text: '100% Genuine & Original License — directly from official source' },
-                      { icon: '⚡', text: 'Instant Digital Delivery — received within 5–30 minutes after payment' },
-                      { icon: '🔒', text: 'Lifetime Activation — one-time purchase, no subscription needed' },
-                      { icon: '🛡️', text: 'After-sales Support — our team is available 24/7 to help you activate' },
-                      { icon: '💳', text: 'Easy Payment — bKash, Nagad, Rocket, Card & more options available' },
+                      { icon: '✅', text: '১০০% অরিজিনাল ও জেনুইন লাইসেন্স — সরাসরি অফিশিয়াল সোর্স থেকে' },
+                      { icon: '⚡', text: 'তাৎক্ষণিক ডিজিটাল ডেলিভারি — পেমেন্টের ৫–৩০ মিনিটের মধ্যে' },
+                      { icon: '🔒', text: 'নিরাপদ একটিভেশন — একবার কিনলে লম্বা মেয়াদে ব্যবহার করুন' },
+                      { icon: '🛡️', text: 'বিক্রয়োত্তর সহায়তা — আমাদের টিম ২৪/৭ আপনার পাশে আছে' },
+                      { icon: '💳', text: 'সহজ পেমেন্ট — bKash, Nagad, Rocket সহ আরও অপশন' },
                     ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3"
-                        style={{
-                          opacity: descReveal.revealed ? 1 : 0,
-                          transform: descReveal.revealed ? 'none' : 'translateX(-12px)',
-                          transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.1 + i * 0.08}s`,
-                        }}>
-                        <span className="text-base">{item.icon}</span>
+                      <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+                        <span className="text-base flex-shrink-0">{item.icon}</span>
                         <span>{item.text}</span>
                       </li>
                     ))}
                   </ul>
                 )}
-              </div>
-            </div>
+              </AccordionBlock>
 
-            {faqs.length > 0 && (
-              <div
-                ref={faqReveal.ref}
-                style={{
-                  opacity: faqReveal.revealed ? 1 : 0,
-                  transform: faqReveal.revealed ? 'none' : 'translateX(30px)',
-                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s',
-                }}
-              >
-                <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
-                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
-                  FAQ
-                </h2>
-                <div className="space-y-3">
-                  {faqs.map((f, i) => (
-                    <FAQItem key={i} q={f.q} a={f.a} delay={i * 0.07} revealed={faqReveal.revealed} />
-                  ))}
-                </div>
-              </div>
-            )}
+              {/* Warranty */}
+              {product.warranty_note && (
+                <AccordionBlock
+                  title="🛡️ Warranty & Guarantee"
+                  open={openWarranty}
+                  onToggle={() => setOpenWarranty(!openWarranty)}
+                >
+                  <p className="text-sm text-muted-foreground leading-relaxed">{product.warranty_note}</p>
+                </AccordionBlock>
+              )}
+
+              {/* Refund Policy */}
+              {product.refund_note && (
+                <AccordionBlock
+                  title="🔄 Refund Policy"
+                  open={openRefund}
+                  onToggle={() => setOpenRefund(!openRefund)}
+                >
+                  <p className="text-sm text-muted-foreground leading-relaxed">{product.refund_note}</p>
+                </AccordionBlock>
+              )}
+
+              {/* FAQ */}
+              {faqs.length > 0 && (
+                <AccordionBlock
+                  title="❓ Frequently Asked Questions"
+                  open={openFaq}
+                  onToggle={() => setOpenFaq(!openFaq)}
+                >
+                  <div className="space-y-2" ref={faqReveal.ref}>
+                    {faqs.map((f, i) => (
+                      <FAQItem key={i} q={f.q} a={f.a} delay={i * 0.06} revealed={faqReveal.revealed} />
+                    ))}
+                  </div>
+                </AccordionBlock>
+              )}
+            </div>
           </div>
         </div>
 
@@ -609,7 +641,7 @@ const ProductDetail = () => {
 
       {showModal && (
         <QuickOrderModal
-          product={{ id: product.id, name: product.name, price: product.price, originalPrice: product.original_price || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '' }}
+          product={{ id: product.id, name: product.name, price: displayPrice, originalPrice: product.original_price || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '' }}
           onClose={() => setShowModal(false)}
         />
       )}
@@ -617,36 +649,64 @@ const ProductDetail = () => {
   );
 };
 
-// ── FAQ accordion item ──
+// ── Reusable accordion block ──
+const AccordionBlock = ({
+  title, open, onToggle, children
+}: { title: string; open: boolean; onToggle: () => void; children: React.ReactNode }) => (
+  <div
+    className="rounded-2xl overflow-hidden border transition-all duration-300"
+    style={{
+      background: 'hsla(215,28%,10%,0.7)',
+      borderColor: open ? 'hsla(271,91%,65%,0.28)' : 'hsla(271,91%,65%,0.1)',
+      boxShadow: open ? '0 0 20px hsla(271,91%,65%,0.06)' : 'none',
+    }}
+  >
+    <button
+      onClick={onToggle}
+      className="w-full flex items-center justify-between px-5 py-4 text-sm font-bold text-foreground text-left gap-3"
+    >
+      <span>{title}</span>
+      <ChevronDown
+        size={16}
+        className="flex-shrink-0 transition-transform duration-300"
+        style={{ color: 'hsl(271,91%,65%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+      />
+    </button>
+    <div
+      className="overflow-hidden transition-all duration-400"
+      style={{ maxHeight: open ? '800px' : '0', opacity: open ? 1 : 0 }}
+    >
+      <div className="px-5 pb-5 border-t" style={{ borderColor: 'hsla(271,91%,65%,0.1)', paddingTop: '14px' }}>
+        {children}
+      </div>
+    </div>
+  </div>
+);
+
+// ── FAQ item ──
 const FAQItem = ({ q, a, delay = 0, revealed = true }: { q: string; a: string; delay?: number; revealed?: boolean }) => {
   const [open, setOpen] = useState(false);
   return (
     <div
-      className="rounded-2xl overflow-hidden border transition-all"
+      className="rounded-xl overflow-hidden border transition-all"
       style={{
-        background: 'hsla(215,28%,10%,0.7)',
-        borderColor: open ? 'hsla(271,91%,65%,0.3)' : 'hsla(271,91%,65%,0.1)',
-        boxShadow: open ? '0 0 24px hsla(271,91%,65%,0.08)' : 'none',
+        background: 'hsla(215,28%,13%,0.6)',
+        borderColor: open ? 'hsla(271,91%,65%,0.25)' : 'hsla(271,91%,65%,0.08)',
         opacity: revealed ? 1 : 0,
-        transform: revealed ? 'none' : 'translateY(16px)',
-        transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s, box-shadow 0.3s`,
+        transform: revealed ? 'none' : 'translateY(12px)',
+        transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s`,
       }}
     >
       <button onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-foreground text-left gap-3">
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-foreground text-left gap-3">
         <span>{q}</span>
-        <ChevronDown
-          size={16}
-          className="flex-shrink-0 transition-transform duration-300"
-          style={{ color: 'hsl(271,91%,65%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
-        />
+        <ChevronDown size={14} className="flex-shrink-0 transition-transform duration-300"
+          style={{ color: 'hsl(271,91%,65%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
-      <div
-        className="overflow-hidden transition-all duration-400"
-        style={{ maxHeight: open ? '300px' : '0', opacity: open ? 1 : 0 }}
-      >
-        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t"
-          style={{ borderColor: 'hsla(271,91%,65%,0.1)', paddingTop: '12px' }}>
+      <div className="overflow-hidden transition-all duration-300"
+        style={{ maxHeight: open ? '300px' : '0', opacity: open ? 1 : 0 }}>
+        <div className="px-4 pb-3 text-sm text-muted-foreground leading-relaxed border-t"
+          style={{ borderColor: 'hsla(271,91%,65%,0.08)', paddingTop: '10px' }}>
           {a}
         </div>
       </div>
