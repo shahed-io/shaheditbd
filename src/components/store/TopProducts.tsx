@@ -101,7 +101,7 @@ const TopProducts = () => {
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200 ${
                 activeTab === tab
                   ? 'text-white shadow-indigo'
-                  : 'bg-white border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
               }`}>
               {tab}
             </button>
@@ -167,7 +167,7 @@ const TopProducts = () => {
                   {hasMore && (
                     <div className="hidden md:flex justify-center mt-6">
                       <button onClick={() => toggleCat(cat)}
-                        className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-white border border-border shadow-soft hover:shadow-medium transition-all text-foreground">
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-card border border-border shadow-soft hover:shadow-medium transition-all text-foreground">
                         {isExpanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
                       </button>
                     </div>
