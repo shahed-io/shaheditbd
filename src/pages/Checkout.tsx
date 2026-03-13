@@ -53,16 +53,18 @@ const Checkout = () => {
   const [summaryOpen, setSummaryOpen] = useState(true);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  // Auto-fill from logged-in user
+  // Auto-fill from logged-in user profile
   useEffect(() => {
-    if (user && profile) {
-      setForm(prev => ({
-        name: prev.name || profile.display_name || '',
-        email: prev.email || profile.email || user.email || '',
-        phone: prev.phone || profile.phone || '',
-      }));
-    }
-  }, [user, profile]);
+    if (!user) return;
+    supabase.from('profiles').select('display_name, email, phone').eq('user_id', user.id).single()
+      .then(({ data }) => {
+        if (data) setForm(prev => ({
+          name: prev.name || data.display_name || '',
+          email: prev.email || data.email || user.email || '',
+          phone: prev.phone || data.phone || '',
+        }));
+      });
+  }, [user?.id]);
 
   // Auto-apply coupon from URL ?coupon=CODE
   useEffect(() => {
