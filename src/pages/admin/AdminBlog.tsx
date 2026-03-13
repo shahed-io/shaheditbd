@@ -465,12 +465,12 @@ const AdminBlog = () => {
                 <button
                   onClick={() => setAiModel('openai')}
                   className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${aiModel === 'openai' ? 'border-primary bg-primary/10' : 'border-border glass-card hover:border-primary/40'}`}>
-                  <div className="w-8 h-8 rounded-lg bg-[#10a37f]/20 flex items-center justify-center text-sm font-bold text-[#10a37f]">G</div>
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-sm font-bold text-emerald-500">G</div>
                   <div className="text-left">
                     <p className="text-xs font-bold text-foreground">ChatGPT</p>
                     <p className="text-[10px] text-muted-foreground">GPT-4o</p>
                   </div>
-                  {aiModel === 'openai' && <div className="ml-auto w-4 h-4 rounded-full bg-primary flex items-center justify-center"><span className="text-[8px] text-white font-bold">✓</span></div>}
+                  {aiModel === 'openai' && <div className="ml-auto w-4 h-4 rounded-full bg-primary flex items-center justify-center"><span className="text-[8px] text-primary-foreground font-bold">✓</span></div>}
                 </button>
                 <button
                   onClick={() => setAiModel('gemini')}
@@ -480,7 +480,7 @@ const AdminBlog = () => {
                     <p className="text-xs font-bold text-foreground">Gemini</p>
                     <p className="text-[10px] text-muted-foreground">Gemini 1.5 Pro</p>
                   </div>
-                  {aiModel === 'gemini' && <div className="ml-auto w-4 h-4 rounded-full bg-primary flex items-center justify-center"><span className="text-[8px] text-white font-bold">✓</span></div>}
+                  {aiModel === 'gemini' && <div className="ml-auto w-4 h-4 rounded-full bg-primary flex items-center justify-center"><span className="text-[8px] text-primary-foreground font-bold">✓</span></div>}
                 </button>
               </div>
             </div>
