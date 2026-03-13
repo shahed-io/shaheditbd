@@ -153,27 +153,27 @@ const Navbar = () => {
                   onMouseEnter={() => link.label === 'Shop' && setCatOpen(true)}
                   onMouseLeave={() => link.label === 'Shop' && setCatOpen(false)}>
                   <a href={link.href}
-                    className="flex items-center gap-1 px-3.5 py-2 rounded-xl text-white/75 hover:text-white hover:bg-white/10 transition-all font-medium text-sm">
+                    className="flex items-center gap-1 px-3.5 py-2 rounded-xl text-foreground/70 hover:text-foreground hover:bg-foreground/8 transition-all font-medium text-sm">
                     {link.label}
                     {link.label === 'Shop' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
                   </a>
                   {link.label === 'Shop' && (
                     <div
-                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 backdrop-blur-xl rounded-2xl border border-white/10 shadow-[0_20px_60px_hsla(220,30%,5%,0.5)] transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
-                      style={{ width: '260px', background: 'hsl(222,22%,13%)' }}
+                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 backdrop-blur-xl rounded-2xl border border-border shadow-lg transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
+                      style={{ width: '260px', background: 'hsl(var(--card))' }}
                       onMouseEnter={() => setCatOpen(true)}
                       onMouseLeave={() => setCatOpen(false)}
                     >
                       <div className="p-2">
                         <div className="px-3 py-2 mb-1">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-white/40" style={{ fontFamily: 'Fira Code, monospace' }}>Categories</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground" style={{ fontFamily: 'Fira Code, monospace' }}>Categories</span>
                         </div>
                         {CATEGORY_DROPDOWN.map(cat => (
                           <a key={cat.label} href={`/category/${cat.label.toLowerCase()}`}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors group/item">
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-foreground/8 transition-colors group/item">
                             <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: cat.color }}>{cat.icon}</span>
-                            <span className="text-sm font-semibold text-white/80 flex-1 group-hover/item:text-white transition-colors">{cat.label}</span>
-                            <span className="text-[11px] font-bold text-white/40 bg-white/10 px-2 py-0.5 rounded-full">{cat.count}</span>
+                            <span className="text-sm font-semibold text-foreground/80 flex-1 group-hover/item:text-foreground transition-colors">{cat.label}</span>
+                            <span className="text-[11px] font-bold text-muted-foreground bg-foreground/10 px-2 py-0.5 rounded-full">{cat.count}</span>
                           </a>
                         ))}
                       </div>
