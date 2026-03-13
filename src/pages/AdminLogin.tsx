@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { Package, Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
+import BrandLogo from '@/components/store/BrandLogo';
 
 const AdminLogin = () => {
   const { signIn, signOut, isAdmin, user, loading } = useAuth();
