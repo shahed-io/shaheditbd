@@ -212,11 +212,11 @@ const ProductDetail = () => {
                 {images.length > 1 && (
                   <>
                     <button onClick={prevImg}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white">
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-card/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-card text-foreground">
                       <ChevronLeft size={18} />
                     </button>
                     <button onClick={nextImg}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white">
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-card/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-card text-foreground">
                       <ChevronRight size={18} />
                     </button>
                   </>
@@ -224,7 +224,7 @@ const ProductDetail = () => {
                 {/* Wishlist */}
                 <button
                   onClick={() => toggleWishlist(cartItem)}
-                  className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-white shadow-medium flex items-center justify-center transition-all hover:scale-110">
+                  className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-card shadow-medium flex items-center justify-center transition-all hover:scale-110">
                   <Heart size={16} fill={wishlisted ? 'hsl(15,100%,60%)' : 'none'} color={wishlisted ? 'hsl(15,100%,60%)' : 'hsl(var(--muted-foreground))'} />
                 </button>
               </div>
@@ -346,7 +346,7 @@ const ProductDetail = () => {
                     className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm border-2 transition-all hover:scale-[1.02] ${
                       inCart
                         ? 'bg-indigo-50 border-brand-indigo text-brand-indigo'
-                        : 'bg-white border-border text-foreground hover:border-brand-indigo/50'
+                        : 'bg-card border-border text-foreground hover:border-brand-indigo/50'
                     }`}>
                     <ShoppingCart size={16} />
                     {inCart ? '✓ In Cart' : 'Add to Cart'}
@@ -356,11 +356,11 @@ const ProductDetail = () => {
 
               {/* Delivery Time */}
               {product.delivery_time && (
-                <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-2xl px-4 py-3">
-                  <Clock size={18} className="text-green-600 flex-shrink-0" />
+                <div className="flex items-center gap-3 bg-emerald/10 border border-emerald/20 rounded-2xl px-4 py-3">
+                  <Clock size={18} className="text-emerald-500 flex-shrink-0" />
                   <div>
-                    <div className="text-sm font-bold text-green-800">Delivery Time</div>
-                    <div className="text-xs text-green-700">{product.delivery_time}</div>
+                    <div className="text-sm font-bold text-foreground">Delivery Time</div>
+                    <div className="text-xs text-muted-foreground">{product.delivery_time}</div>
                   </div>
                 </div>
               )}

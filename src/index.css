@@ -530,7 +530,7 @@
    COUNTDOWN TIMER
 ══════════════════════════════════════ */
 .countdown-box {
-  background: white;
+  background: hsl(var(--card));
   border-radius: 0.75rem;
   padding: 0.5rem 0.875rem;
   box-shadow: var(--shadow-soft);
@@ -567,7 +567,11 @@
    SHIMMER SKELETON
 ══════════════════════════════════════ */
 .shimmer {
-  background: linear-gradient(90deg, hsl(230,20%,95%) 25%, hsl(230,20%,92%) 50%, hsl(230,20%,95%) 75%);
+  background: linear-gradient(90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--secondary)) 50%,
+    hsl(var(--muted)) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
 }
