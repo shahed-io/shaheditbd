@@ -32,6 +32,7 @@ const Navbar = () => {
   const [scrolled,   setScrolled]   = useState(false);
   const [catOpen,    setCatOpen]    = useState(false);
   const [avatarUrl,  setAvatarUrl]  = useState<string | null>(null);
+  const [announcement, setAnnouncement] = useState<string | null>(null);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
@@ -49,6 +50,14 @@ const Navbar = () => {
         if (data?.avatar_url) setAvatarUrl(data.avatar_url);
       });
   }, [user]);
+
+  // Dynamic announcement from site_settings
+  useEffect(() => {
+    supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
+      .then(({ data }) => {
+        if (data?.value) setAnnouncement(data.value);
+      });
+  }, []);
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
   const initials = displayName[0].toUpperCase();
