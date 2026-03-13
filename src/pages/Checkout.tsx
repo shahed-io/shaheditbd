@@ -253,7 +253,7 @@ const Checkout = () => {
           <div className="flex items-center gap-2 text-xs">
             {user ? (
               <span className="flex items-center gap-1 text-primary bg-primary/10 px-2.5 py-1 rounded-full">
-                <User size={11} /> {profile?.display_name || user.email?.split('@')[0]}
+                <User size={11} /> {user.email?.split('@')[0]}
               </span>
             ) : (
               <button onClick={() => navigate('/?auth=login')} className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors">
