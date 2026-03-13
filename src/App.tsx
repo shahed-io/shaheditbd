@@ -29,6 +29,11 @@ import AdminBackup from "./pages/admin/AdminBackup";
 import AdminReferrals from "./pages/admin/AdminReferrals";
 import UserDashboard from "./pages/UserDashboard";
 import ResetPassword from "./pages/ResetPassword";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import HelpCenter from "./pages/HelpCenter";
+import AdminBlog from "./pages/admin/AdminBlog";
+import AdminHelp from "./pages/admin/AdminHelp";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,6 +59,10 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/product/:slug" element={<ProductDetail />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/help" element={<HelpCenter />} />
+                <Route path="/help/:slug" element={<HelpCenter />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin" element={<AdminLayout />}>
@@ -73,6 +82,8 @@ const App = () => (
                   <Route path="roles" element={<AdminRoles />} />
                   <Route path="backup" element={<AdminBackup />} />
                   <Route path="referrals" element={<AdminReferrals />} />
+                  <Route path="blog" element={<AdminBlog />} />
+                  <Route path="help" element={<AdminHelp />} />
                 </Route>
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />

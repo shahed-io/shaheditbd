@@ -16,23 +16,23 @@ const NAV_COL = [
   {
     title: 'Information',
     links: [
-      { label: 'FAQs',             href: '#' },
+      { label: 'Blog',             href: '/blog' },
+      { label: 'Help Center',      href: '/help' },
       { label: 'About Us',         href: '#' },
-      { label: 'My Account',       href: '#' },
+      { label: 'My Account',       href: '/dashboard' },
       { label: 'Contact Us',       href: '#' },
       { label: 'All Products',     href: '#' },
-      { label: 'Download Links',   href: '#' },
     ]
   },
   {
     title: 'Policies',
     links: [
-      { label: 'Privacy Policy',   href: '#' },
-      { label: 'Terms & Conditions',href: '#' },
-      { label: 'Refund Policy',    href: '#' },
-      { label: 'Order Policy',     href: '#' },
-      { label: 'Delivery Info',    href: '#' },
-      { label: 'Return Policy',    href: '#' },
+      { label: 'Privacy Policy',   href: '/help' },
+      { label: 'Terms & Conditions',href: '/help' },
+      { label: 'Refund Policy',    href: '/help' },
+      { label: 'Order Policy',     href: '/help' },
+      { label: 'Delivery Info',    href: '/help' },
+      { label: 'Return Policy',    href: '/help' },
     ]
   },
 ];
