@@ -32,6 +32,7 @@ const Navbar = () => {
   const [scrolled,   setScrolled]   = useState(false);
   const [catOpen,    setCatOpen]    = useState(false);
   const [avatarUrl,  setAvatarUrl]  = useState<string | null>(null);
+  const [announcement, setAnnouncement] = useState<string | null>(null);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
@@ -49,6 +50,14 @@ const Navbar = () => {
         if (data?.avatar_url) setAvatarUrl(data.avatar_url);
       });
   }, [user]);
+
+  // Dynamic announcement from site_settings
+  useEffect(() => {
+    supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
+      .then(({ data }) => {
+        if (data?.value) setAnnouncement(data.value);
+      });
+  }, []);
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
   const initials = displayName[0].toUpperCase();
@@ -69,11 +78,21 @@ const Navbar = () => {
             <Mail size={11} /> info@shahedstore.com.bd
           </a>
         </div>
-        <div className="flex items-center gap-1.5 font-bold text-[11px] relative z-10">
-          <Sparkles size={11} className="text-yellow-300" />
-          <span className="hidden sm:inline">FREE instant delivery on all orders</span>
-          <span className="sm:hidden">⚡ Free delivery</span>
+
+        {/* Dynamic announcement or default text */}
+        <div className="flex items-center gap-1.5 font-bold text-[11px] relative z-10 text-center px-2">
+          <Sparkles size={11} className="text-yellow-300 flex-shrink-0" />
+          {announcement ? (
+            <span className="hidden sm:inline max-w-[480px] truncate">{announcement}</span>
+          ) : (
+            <>
+              <span className="hidden sm:inline">FREE instant delivery on all orders</span>
+              <span className="sm:hidden">⚡ Free delivery</span>
+            </>
+          )}
+          {announcement && <span className="sm:hidden">⚡ Special Offer!</span>}
         </div>
+
         <div className="flex items-center gap-3 text-[11px] relative z-10">
           <span className="hidden md:flex items-center gap-1"><Star size={10} fill="currentColor" /> 4.9/5 Rating</span>
           <span className="flex items-center gap-1 bg-white/15 px-2 py-0.5 rounded-full"><Shield size={10} /> Secured</span>
