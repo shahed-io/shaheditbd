@@ -218,6 +218,10 @@ const AdminBlog = () => {
           <p className="text-muted-foreground text-sm">{posts.length} posts · {categories.length} categories</p>
         </div>
         <div className="flex gap-2">
+          <button onClick={() => setActiveTab('ai-generator')}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity">
+            <Sparkles size={14} /> AI ব্লগ Generator
+          </button>
           <button onClick={() => { setEditPost({ ...EMPTY_POST }); setFormTab('content'); }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold">
             <Plus size={14} /> নতুন পোস্ট
@@ -229,11 +233,11 @@ const AdminBlog = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-border gap-1">
-        {(['posts', 'categories', 'comments'] as const).map(t => (
+      <div className="flex border-b border-border gap-1 overflow-x-auto">
+        {(['posts', 'categories', 'comments', 'ai-generator'] as const).map(t => (
           <button key={t} onClick={() => setActiveTab(t)}
-            className={`px-5 py-2.5 text-xs font-semibold capitalize transition-colors relative ${activeTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-            {t === 'posts' ? `পোস্ট (${posts.length})` : t === 'categories' ? `ক্যাটাগরি (${categories.length})` : `মন্তব্য${pendingComments > 0 ? ` (${pendingComments})` : ''}`}
+            className={`px-5 py-2.5 text-xs font-semibold whitespace-nowrap capitalize transition-colors relative ${activeTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+            {t === 'posts' ? `পোস্ট (${posts.length})` : t === 'categories' ? `ক্যাটাগরি (${categories.length})` : t === 'comments' ? `মন্তব্য${pendingComments > 0 ? ` (${pendingComments})` : ''}` : <span className="flex items-center gap-1"><Sparkles size={11} /> AI Generator</span>}
             {t === 'comments' && pendingComments > 0 && (
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary animate-pulse" />
             )}
