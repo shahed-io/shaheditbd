@@ -19,9 +19,12 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminTickets from "./pages/admin/AdminTickets";
-import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminReports from "./pages/admin/AdminReports";
+import AdminMarketing from "./pages/admin/AdminMarketing";
+import AdminRoles from "./pages/admin/AdminRoles";
+import AdminBackup from "./pages/admin/AdminBackup";
 import UserDashboard from "./pages/UserDashboard";
 
 const queryClient = new QueryClient({
@@ -60,10 +63,10 @@ const App = () => (
               <Route path="customers" element={<AdminCustomers />} />
               <Route path="payments" element={<AdminPayments />} />
               <Route path="tickets" element={<AdminTickets />} />
-              <Route path="reports" element={<AdminPlaceholder />} />
-              <Route path="marketing" element={<AdminPlaceholder />} />
-              <Route path="roles" element={<AdminPlaceholder />} />
-              <Route path="backup" element={<AdminPlaceholder />} />
+              <Route path="reports" element={<AdminReports />} />
+              <Route path="marketing" element={<AdminMarketing />} />
+              <Route path="roles" element={<AdminRoles />} />
+              <Route path="backup" element={<AdminBackup />} />
             </Route>
             <Route path="/dashboard" element={<UserDashboard />} />
             <Route path="*" element={<NotFound />} />
