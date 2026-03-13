@@ -284,9 +284,8 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         {/* ── Content ── */}
         <div className="p-4 flex flex-col gap-2.5 flex-1 relative z-10">
           <h3
-            onClick={() => navigate(`/product/${product.slug || product.id}`)}
+            onClick={e => { e.stopPropagation(); navigate(`/product/${product.slug || product.id}`); }}
             className="text-sm font-semibold leading-snug line-clamp-2 text-foreground cursor-pointer transition-colors duration-200"
-            style={{ ':hover': { color: 'hsl(271,91%,75%)' } } as React.CSSProperties}
             onMouseEnter={e => (e.currentTarget.style.color = 'hsl(271,91%,75%)')}
             onMouseLeave={e => (e.currentTarget.style.color = '')}
           >
@@ -312,7 +311,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setShowModal(true)}
               className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
