@@ -133,6 +133,8 @@ const Footer = () => (
             {col.links.map(link => (
               <li key={link.label}>
                 <a href={link.href}
+                  target={(link as any).ext ? '_blank' : undefined}
+                  rel={(link as any).ext ? 'noopener noreferrer' : undefined}
                   className="text-[13px] transition-colors hover:text-white flex items-center gap-1.5 group"
                   style={{ color: 'hsla(230,20%,100%,0.4)' }}>
                   <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-200">
