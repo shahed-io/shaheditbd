@@ -66,9 +66,8 @@ const ProductDetail = () => {
   const [entered,     setEntered]     = useState(false);
 
   // Section reveals
-  const descReveal   = useReveal(0.1);
-  const faqReveal    = useReveal(0.1);
-  const trustReveal  = useReveal(0.15);
+  const descReveal   = useReveal(0.05);
+  const faqReveal    = useReveal(0.05);
 
   useEffect(() => {
     if (!slug) return;
@@ -307,23 +306,21 @@ const ProductDetail = () => {
               )}
 
               {/* Trust badges */}
-              <div
-                ref={trustReveal.ref}
-                className="grid grid-cols-3 gap-3"
-              >
+              <div className="grid grid-cols-3 gap-3">
                 {[
-                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0s', color: 'hsl(271,91%,65%)' },
-                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '0.12s', color: 'hsl(185,90%,52%)' },
-                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '0.24s', color: 'hsl(158,80%,48%)' },
+                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0.9s', color: 'hsl(271,91%,65%)' },
+                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '1.05s', color: 'hsl(185,90%,52%)' },
+                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '1.2s', color: 'hsl(158,80%,48%)' },
                 ].map(b => (
                   <div
                     key={b.label}
-                    className="trust-enter rounded-2xl p-3 text-center border"
+                    className="rounded-2xl p-3 text-center border"
                     style={{
-                      animationDelay: trustReveal.revealed ? b.delay : '0s',
-                      animationPlayState: trustReveal.revealed ? 'running' : 'paused',
                       background: 'hsla(215,28%,10%,0.8)',
                       borderColor: `${b.color}25`,
+                      opacity: entered ? 1 : 0,
+                      transform: entered ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.9)',
+                      transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}`,
                     }}
                   >
                     <div className="flex justify-center mb-1.5" style={{ color: b.color }}>{b.icon}</div>
@@ -539,34 +536,53 @@ const ProductDetail = () => {
           {/* ── Bottom: Description + FAQ ── */}
           <div className="mt-14 grid lg:grid-cols-3 gap-8">
 
-            {product.description && (
+            <div
+              className={faqs.length > 0 ? 'lg:col-span-2' : 'lg:col-span-3'}
+              ref={descReveal.ref}
+              style={{
+                opacity: 1,
+                transform: 'none',
+                transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
+              }}
+            >
+              <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
+                <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+                {product.description ? 'Product Description' : 'Why Choose This Product?'}
+              </h2>
               <div
-                className="lg:col-span-2"
-                ref={descReveal.ref}
-                style={{
-                  opacity: descReveal.revealed ? 1 : 0,
-                  transform: descReveal.revealed ? 'none' : 'translateY(40px)',
-                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
-                }}
+                className="rounded-2xl p-6 text-sm text-muted-foreground leading-relaxed border"
+                style={{ background: 'hsla(215,28%,10%,0.7)', borderColor: 'hsla(271,91%,65%,0.1)' }}
               >
-                <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
-                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
-                  Product Description
-                </h2>
-                <div
-                  className="rounded-2xl p-6 text-sm text-muted-foreground leading-relaxed border"
-                  style={{ background: 'hsla(215,28%,10%,0.7)', borderColor: 'hsla(271,91%,65%,0.1)' }}
-                >
-                  {product.description.split('\n').map((line, i) =>
+                {product.description ? (
+                  product.description.split('\n').map((line, i) =>
                     line.trim() ? <p key={i} className="mb-3 last:mb-0">{line}</p> : null
-                  )}
-                </div>
+                  )
+                ) : (
+                  <ul className="space-y-3">
+                    {[
+                      { icon: '✅', text: '100% Genuine & Original License — directly from official source' },
+                      { icon: '⚡', text: 'Instant Digital Delivery — received within 5–30 minutes after payment' },
+                      { icon: '🔒', text: 'Lifetime Activation — one-time purchase, no subscription needed' },
+                      { icon: '🛡️', text: 'After-sales Support — our team is available 24/7 to help you activate' },
+                      { icon: '💳', text: 'Easy Payment — bKash, Nagad, Rocket, Card & more options available' },
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3"
+                        style={{
+                          opacity: descReveal.revealed ? 1 : 0,
+                          transform: descReveal.revealed ? 'none' : 'translateX(-12px)',
+                          transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.1 + i * 0.08}s`,
+                        }}>
+                        <span className="text-base">{item.icon}</span>
+                        <span>{item.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-            )}
+            </div>
 
             {faqs.length > 0 && (
               <div
-                className={product.description ? '' : 'lg:col-span-3'}
                 ref={faqReveal.ref}
                 style={{
                   opacity: faqReveal.revealed ? 1 : 0,
