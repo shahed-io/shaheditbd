@@ -101,7 +101,7 @@ const TopProducts = () => {
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200 ${
                 activeTab === tab
                   ? 'text-white shadow-indigo'
-                  : 'bg-white border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
               }`}>
               {tab}
             </button>
