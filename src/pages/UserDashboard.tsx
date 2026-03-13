@@ -464,7 +464,7 @@ const UserDashboard = () => {
                       <div>
                         <p className="text-sm font-semibold text-foreground">প্রোফাইল ছবি</p>
                         <p className="text-xs mb-2 text-muted-foreground">JPG, PNG — সর্বোচ্চ ২MB</p>
-                        <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg" style={{ background: 'hsl(243,75%,97%)', color: 'hsl(var(--primary))' }}>
+                        <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                           <Upload size={12} /> ছবি পরিবর্তন করুন
                         </button>
                       </div>
