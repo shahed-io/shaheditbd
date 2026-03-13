@@ -165,12 +165,54 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4 {
     font-family: 'Sora', sans-serif;
     font-weight: 700;
   }
+}
+
+/* Light mode page sections */
+.light .hero-bg {
+  background: linear-gradient(135deg,
+    hsl(210, 30%, 98%) 0%,
+    hsl(220, 35%, 96%) 40%,
+    hsl(230, 40%, 94%) 100%
+  );
+}
+.light .hero-bg::before {
+  background: radial-gradient(circle, hsla(243,75%,62%,0.08) 0%, transparent 70%);
+}
+.light .hero-bg::after {
+  background: radial-gradient(circle, hsla(15,100%,60%,0.07) 0%, transparent 70%);
+}
+
+.light .product-card-new {
+  background: hsla(0, 0%, 100%, 0.90);
+  border: 1px solid hsla(220, 15%, 88%, 0.8);
+  box-shadow: 0 4px 24px hsla(220,30%,50%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.9);
+}
+.light .product-card-new:hover {
+  box-shadow: 0 24px 64px hsla(220,30%,50%,0.15), 0 0 0 1px hsla(243,75%,55%,0.25);
+  border-color: hsla(243, 75%, 55%, 0.3);
+}
+
+.light .cat-card {
+  background: hsla(0, 0%, 100%, 0.85);
+  border: 1px solid hsla(220, 15%, 88%, 0.7);
+  box-shadow: 0 4px 20px hsla(220,30%,50%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.9);
+}
+.light .cat-card:hover {
+  box-shadow: 0 20px 50px hsla(220,30%,50%,0.12), 0 0 0 1px hsla(243,75%,55%,0.2);
+  border-color: hsla(243, 75%, 55%, 0.3);
+}
+
+.light .glass-white {
+  background: hsla(0, 0%, 100%, 0.90);
+  border: 1px solid hsla(220, 15%, 85%, 0.6);
+  box-shadow: 0 8px 32px hsla(220,30%,50%,0.10), inset 0 1px 0 hsla(0,0%,100%,1);
 }
 
 /* ══════════════════════════════════════
