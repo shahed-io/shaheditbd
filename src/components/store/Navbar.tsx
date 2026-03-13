@@ -184,7 +184,7 @@ const Navbar = () => {
                       style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))' }}>
                       {avatarUrl ? <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" /> : initials}
                     </div>
-                    <span className="hidden lg:inline max-w-[80px] truncate">{displayName}</span>
+                    <span className="hidden lg:inline">Dashboard</span>
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
                     className="p-2 rounded-xl transition-all"
