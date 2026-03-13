@@ -153,7 +153,8 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
       {/* ── Main Card ── */}
       <div
         ref={ref}
-        className="group product-card-new flex flex-col"
+        className="group product-card-new flex flex-col cursor-pointer"
+        onClick={() => navigate(`/product/${product.slug || product.id}`)}
         style={{
           opacity:   visible ? 1 : 0,
           transform: visible
@@ -223,23 +224,6 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
             }}
           >
             <Heart size={13} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
-          </button>
-
-          {/* Quick Preview btn */}
-          <button
-            onClick={() => setShowPreview(true)}
-            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10"
-            style={{
-              opacity: isHovered ? 1 : 0,
-              transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.8)',
-              transition: 'all 0.25s cubic-bezier(0.34,1.56,0.64,1) 0.05s',
-              background: 'hsla(271,91%,65%,0.2)',
-              border: '1px solid hsla(271,91%,65%,0.4)',
-              backdropFilter: 'blur(8px)',
-              color: 'hsl(271,91%,75%)',
-            }}
-          >
-            <Eye size={13} />
           </button>
 
           {/* Bottom hover label */}
