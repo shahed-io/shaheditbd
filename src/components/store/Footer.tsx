@@ -104,9 +104,9 @@ const Footer = () => (
         {/* Social */}
         <div className="flex gap-2">
           {[
-            { icon: <Facebook size={16} />,      href: '#', label: 'Facebook' },
+            { icon: <Facebook size={16} />,      href: 'https://www.facebook.com/shahedstore.com.bd', label: 'Facebook' },
             { icon: <MessageCircle size={16} />, href: 'https://wa.me/8801840099853', label: 'WhatsApp' },
-            { icon: <Instagram size={16} />,     href: '#', label: 'Instagram' },
+            { icon: <Instagram size={16} />,     href: 'https://www.instagram.com/shahedstore/', label: 'Instagram' },
           ].map((s, i) => (
             <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
               className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-105"
