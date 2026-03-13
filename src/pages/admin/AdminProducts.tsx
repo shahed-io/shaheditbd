@@ -314,14 +314,26 @@ const AdminProducts = () => {
     setForm(p => ({ ...p, what_you_get: arr.length ? arr : [''] }));
   };
 
-  const setVariant = (idx: number, key: 'label' | 'price', val: string) => {
-    const arr = form.variants.map((v, i) => i === idx ? { ...v, [key]: val } : v);
+  const setVariantGroupName = (gi: number, val: string) => {
+    const arr = form.variants.map((v, i) => i === gi ? { ...v, name: val } : v);
     setForm(p => ({ ...p, variants: arr }));
   };
-  const addVariant = () => setForm(p => ({ ...p, variants: [...p.variants, { label: '', price: '' }] }));
-  const removeVariant = (idx: number) => {
-    const arr = form.variants.filter((_, i) => i !== idx);
-    setForm(p => ({ ...p, variants: arr.length ? arr : [{ label: '', price: '' }] }));
+  const addVariantGroup = () => setForm(p => ({ ...p, variants: [...p.variants, { name: '', options: [{ label: '', price: '' }] }] }));
+  const removeVariantGroup = (gi: number) => {
+    const arr = form.variants.filter((_, i) => i !== gi);
+    setForm(p => ({ ...p, variants: arr.length ? arr : [{ name: '', options: [{ label: '', price: '' }] }] }));
+  };
+  const setVariantOption = (gi: number, oi: number, key: 'label' | 'price', val: string) => {
+    const arr = form.variants.map((v, i) => i === gi ? { ...v, options: v.options.map((o, j) => j === oi ? { ...o, [key]: val } : o) } : v);
+    setForm(p => ({ ...p, variants: arr }));
+  };
+  const addVariantOption = (gi: number) => {
+    const arr = form.variants.map((v, i) => i === gi ? { ...v, options: [...v.options, { label: '', price: '' }] } : v);
+    setForm(p => ({ ...p, variants: arr }));
+  };
+  const removeVariantOption = (gi: number, oi: number) => {
+    const arr = form.variants.map((v, i) => i === gi ? { ...v, options: v.options.length > 1 ? v.options.filter((_, j) => j !== oi) : v.options } : v);
+    setForm(p => ({ ...p, variants: arr }));
   };
 
   const setAttr = (idx: number, key: 'key' | 'value', val: string) => {
