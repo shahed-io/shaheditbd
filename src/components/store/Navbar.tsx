@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Sun, Moon } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, GraduationCap } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
 import SearchBar from './SearchBar';
@@ -7,24 +7,24 @@ import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useTheme } from 'next-themes';
 
 const NAV_LINKS = [
   { label: 'Home',      href: '/' },
   { label: 'Shop',      href: '/shop' },
   { label: 'Windows',   href: '#windows' },
   { label: 'Office',    href: '#office' },
-  { label: 'Streaming', href: '#streaming' },
+  { label: 'Admission', href: '#admission' },
   { label: 'Support',   href: '#support' },
 ];
 
 const CATEGORY_DROPDOWN = [
-  { icon: '🪟', label: 'Windows',          count: 12, color: 'hsla(210,90%,55%,0.1)' },
-  { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(25,90%,55%,0.1)' },
-  { icon: '🎨', label: 'Adobe',            count: 6,  color: 'hsla(263,70%,58%,0.1)' },
-  { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(158,64%,42%,0.1)' },
-  { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(0,80%,60%,0.1)' },
-  { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(190,70%,45%,0.1)' },
+  { icon: '🪟', label: 'Windows',          count: 12, color: 'hsla(185,90%,52%,0.12)' },
+  { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(40,100%,58%,0.12)' },
+  { icon: '🎨', label: 'Adobe',            count: 6,  color: 'hsla(271,91%,65%,0.12)' },
+  { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(158,80%,48%,0.12)' },
+  { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(320,90%,62%,0.12)' },
+  { icon: '🎓', label: 'School Admission', count: 5,  color: 'hsla(40,100%,58%,0.12)' },
+  { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(185,90%,52%,0.12)' },
 ];
 
 const Navbar = () => {
@@ -34,14 +34,9 @@ const Navbar = () => {
   const [catOpen,    setCatOpen]    = useState(false);
   const [avatarUrl,  setAvatarUrl]  = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
-
-  useEffect(() => { setMounted(true); }, []);
-
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -52,21 +47,16 @@ const Navbar = () => {
   useEffect(() => {
     if (!user) { setAvatarUrl(null); return; }
     supabase.from('profiles').select('avatar_url, display_name').eq('user_id', user.id).single()
-      .then(({ data }) => {
-        if (data?.avatar_url) setAvatarUrl(data.avatar_url);
-      });
+      .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
   }, [user]);
 
-  // Dynamic announcement from site_settings
   useEffect(() => {
     supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
-      .then(({ data }) => {
-        if (data?.value) setAnnouncement(data.value);
-      });
+      .then(({ data }) => { if (data?.value) setAnnouncement(data.value); });
   }, []);
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
-  const initials = displayName[0].toUpperCase();
+  const initials    = displayName[0].toUpperCase();
 
   return (
     <>
@@ -74,10 +64,9 @@ const Navbar = () => {
 
       {/* ── Top Announcement Bar ── */}
       <div className="w-full text-white text-xs font-medium py-2 flex items-center overflow-hidden relative"
-        style={{ background: 'linear-gradient(90deg, hsl(243,75%,52%), hsl(263,70%,52%), hsl(283,65%,50%))' }}>
-        <div className="absolute inset-0 dot-grid opacity-20 pointer-events-none" />
+        style={{ background: 'linear-gradient(90deg, hsl(271,91%,52%), hsl(185,90%,42%), hsl(271,91%,52%))' }}>
+        <div className="absolute inset-0 dot-grid opacity-30 pointer-events-none" />
 
-        {/* Left: Contact info — fixed, no shrink */}
         <div className="flex items-center gap-4 pl-4 flex-shrink-0 relative z-10">
           <a href="tel:01840099853" className="flex items-center gap-1.5 hover:text-white/80 transition-colors">
             <Phone size={11} /> 01840-099853
@@ -87,61 +76,54 @@ const Navbar = () => {
           </a>
         </div>
 
-        {/* Center: Marquee announcement */}
         <div className="flex-1 overflow-hidden mx-3 relative z-10">
           <div className="flex items-center gap-1.5 font-bold text-[11px]"
             style={{ animation: 'marquee 28s linear infinite', whiteSpace: 'nowrap', display: 'inline-flex' }}>
             <Sparkles size={11} className="text-yellow-300 flex-shrink-0" />
             <span>
-              {announcement
-                ? announcement
-                : 'FREE instant delivery on all orders  •  সব অর্ডারে ফ্রি ইনস্ট্যান্ট ডেলিভারি  •  ৫০% পর্যন্ত ছাড়'}
+              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • স্কুল অ্যাডমিশন ফর্ম এখন পাওয়া যাচ্ছে • ৫০% ছাড়'}
             </span>
-            {/* Duplicate for seamless loop */}
             <span className="ml-16">
               <Sparkles size={11} className="text-yellow-300 inline mr-1.5" />
-              {announcement
-                ? announcement
-                : 'FREE instant delivery on all orders  •  সব অর্ডারে ফ্রি ইনস্ট্যান্ট ডেলিভারি  •  ৫০% পর্যন্ত ছাড়'}
+              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • স্কুল অ্যাডমিশন ফর্ম এখন পাওয়া যাচ্ছে • ৫০% ছাড়'}
             </span>
           </div>
         </div>
 
-        {/* Right: Badges — fixed, no shrink */}
         <div className="flex items-center gap-3 text-[11px] pr-4 flex-shrink-0 relative z-10">
-          <span className="hidden md:flex items-center gap-1"><Star size={10} fill="currentColor" /> 4.9/5 Rating</span>
-          <span className="flex items-center gap-1 bg-white/15 px-2 py-0.5 rounded-full"><Shield size={10} /> Secured</span>
+          <span className="hidden md:flex items-center gap-1"><Star size={10} fill="currentColor" /> 4.9/5</span>
+          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: 'hsla(0,0%,100%,0.15)' }}>
+            <Shield size={10} /> Secured
+          </span>
         </div>
       </div>
 
       <style>{`
-        @keyframes marquee {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
       `}</style>
 
       {/* ── Main Navbar ── */}
-      <nav className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'backdrop-blur-2xl' : ''
-      }`} style={{
-        background: theme === 'light' ? 'hsl(0,0%,100%)' : 'hsl(222,25%,6%)',
-        borderBottom: '1.5px solid transparent',
-        borderImage: 'linear-gradient(90deg, hsla(340,100%,50%,0.0) 0%, hsla(340,100%,50%,0.7) 15%, hsla(15,100%,52%,0.9) 30%, hsla(35,100%,55%,0.6) 50%, hsla(210,100%,52%,0.9) 70%, hsla(200,100%,60%,0.7) 85%, hsla(200,100%,60%,0.0) 100%) 1',
-        boxShadow: theme === 'light'
-          ? '0 2px 20px hsla(220,30%,50%,0.1), 0 4px 40px hsla(210,100%,55%,0.06)'
-          : '0 2px 30px hsla(15,100%,55%,0.15), 0 4px 60px hsla(210,100%,55%,0.1)',
-      }}>
+      <nav
+        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'backdrop-blur-2xl' : ''}`}
+        style={{
+          background: scrolled
+            ? 'hsla(215,28%,7%,0.95)'
+            : 'hsl(215,28%,7%)',
+          borderBottom: '1px solid transparent',
+          borderImage: 'linear-gradient(90deg, transparent 0%, hsla(271,91%,65%,0.6) 25%, hsla(185,90%,52%,0.6) 75%, transparent 100%) 1',
+          boxShadow: scrolled
+            ? '0 4px 32px hsla(215,40%,4%,0.7), 0 0 40px hsla(271,91%,65%,0.08)'
+            : '0 2px 20px hsla(215,40%,4%,0.5)',
+        }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[76px] gap-4">
 
             {/* Logo */}
-            <a href="/" className="flex items-center flex-shrink-0 group select-none transition-transform duration-300 group-hover:scale-[1.04]">
+            <a href="/" className="flex items-center flex-shrink-0 group select-none">
               <BrandLogo size="md" />
             </a>
 
-
-            {/* Search — Desktop */}
+            {/* Search */}
             <div className="hidden md:flex flex-1 max-w-[420px]">
               <SearchBar variant="navbar" className="w-full" />
             </div>
@@ -153,27 +135,36 @@ const Navbar = () => {
                   onMouseEnter={() => link.label === 'Shop' && setCatOpen(true)}
                   onMouseLeave={() => link.label === 'Shop' && setCatOpen(false)}>
                   <a href={link.href}
-                    className="flex items-center gap-1 px-3.5 py-2 rounded-xl text-foreground/70 hover:text-foreground hover:bg-foreground/8 transition-all font-medium text-sm">
+                    className="flex items-center gap-1 px-3.5 py-2 rounded-xl transition-all font-medium text-sm"
+                    style={{ color: link.label === 'Admission' ? 'hsl(40,100%,68%)' : 'hsla(210,30%,95%,0.65)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = link.label === 'Admission' ? 'hsl(40,100%,75%)' : 'hsl(210,30%,95%)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = link.label === 'Admission' ? 'hsl(40,100%,68%)' : 'hsla(210,30%,95%,0.65)')}>
+                    {link.label === 'Admission' && <GraduationCap size={13} />}
                     {link.label}
                     {link.label === 'Shop' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
                   </a>
                   {link.label === 'Shop' && (
                     <div
-                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 backdrop-blur-xl rounded-2xl border border-border shadow-lg transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
-                      style={{ width: '260px', background: 'hsl(var(--card))' }}
+                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 rounded-2xl border shadow-lg transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
+                      style={{ width: '280px', background: 'hsl(215,28%,10%)', borderColor: 'hsla(271,91%,65%,0.2)', boxShadow: '0 20px 60px hsla(215,40%,4%,0.7), 0 0 30px hsla(271,91%,65%,0.1)' }}
                       onMouseEnter={() => setCatOpen(true)}
                       onMouseLeave={() => setCatOpen(false)}
                     >
+                      {/* Neon top line */}
+                      <div className="h-[1px] rounded-t-2xl" style={{ background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
                       <div className="p-2">
                         <div className="px-3 py-2 mb-1">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground" style={{ fontFamily: 'Fira Code, monospace' }}>Categories</span>
+                          <span className="text-[10px] font-fira font-bold uppercase tracking-widest" style={{ color: 'hsl(271,91%,75%)' }}>Categories</span>
                         </div>
                         {CATEGORY_DROPDOWN.map(cat => (
                           <a key={cat.label} href={`/category/${cat.label.toLowerCase()}`}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-foreground/8 transition-colors group/item">
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group/item"
+                            style={{ color: 'hsla(210,30%,95%,0.7)' }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'hsla(271,91%,65%,0.08)'; e.currentTarget.style.color = 'hsl(210,30%,95%)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsla(210,30%,95%,0.7)'; }}>
                             <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: cat.color }}>{cat.icon}</span>
-                            <span className="text-sm font-semibold text-foreground/80 flex-1 group-hover/item:text-foreground transition-colors">{cat.label}</span>
-                            <span className="text-[11px] font-bold text-muted-foreground bg-foreground/10 px-2 py-0.5 rounded-full">{cat.count}</span>
+                            <span className="text-sm font-semibold flex-1">{cat.label}</span>
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(271,91%,65%,0.1)', color: 'hsl(271,91%,75%)' }}>{cat.count}</span>
                           </a>
                         ))}
                       </div>
@@ -185,62 +176,57 @@ const Navbar = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-1.5">
-
-              {/* Theme Toggle */}
-              {mounted && (
-                <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="p-2.5 rounded-xl transition-all duration-300 border"
-                  style={{
-                    color: theme === 'dark' ? 'hsl(38,100%,65%)' : 'hsl(243,75%,55%)',
-                    background: theme === 'dark' ? 'hsla(38,100%,55%,0.12)' : 'hsla(243,75%,55%,0.08)',
-                    borderColor: theme === 'dark' ? 'hsla(38,100%,55%,0.25)' : 'hsla(243,75%,55%,0.2)',
-                  }}
-                  title={theme === 'dark' ? 'লাইট মোডে যান' : 'ডার্ক মোডে যান'}
-                >
-                  {theme === 'dark'
-                    ? <Sun size={16} className="transition-transform duration-300 rotate-0 hover:rotate-45" />
-                    : <Moon size={16} className="transition-transform duration-300" />
-                  }
-                </button>
-              )}
-
               {user ? (
                 <div className="hidden sm:flex items-center gap-1">
                   <button onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-foreground/70 hover:text-foreground hover:bg-foreground/10 transition-all">
-                    <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                      {avatarUrl ? (
-                        <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
-                      ) : initials}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
+                    style={{ color: 'hsla(210,30%,95%,0.7)' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'hsla(271,91%,65%,0.1)'; e.currentTarget.style.color = 'hsl(210,30%,95%)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsla(210,30%,95%,0.7)'; }}>
+                    <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                      style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))' }}>
+                      {avatarUrl ? <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" /> : initials}
                     </div>
                     <span className="hidden lg:inline max-w-[80px] truncate">{displayName}</span>
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
-                    className="p-2 rounded-xl text-foreground/50 hover:text-destructive hover:bg-foreground/10 transition-all">
+                    className="p-2 rounded-xl transition-all"
+                    style={{ color: 'hsla(210,30%,95%,0.5)' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = 'hsl(0,84%,65%)'; e.currentTarget.style.background = 'hsla(0,84%,60%,0.1)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = 'hsla(210,30%,95%,0.5)'; e.currentTarget.style.background = ''; }}>
                     <LogOut size={15} />
                   </button>
                 </div>
               ) : (
                 <button onClick={() => setAuthOpen(true)}
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-foreground/70 hover:text-foreground hover:bg-foreground/10 transition-all border border-border">
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border"
+                  style={{ color: 'hsla(210,30%,95%,0.7)', borderColor: 'hsla(271,91%,65%,0.25)', background: 'hsla(271,91%,65%,0.06)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'hsla(271,91%,65%,0.5)'; e.currentTarget.style.background = 'hsla(271,91%,65%,0.12)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'hsla(271,91%,65%,0.25)'; e.currentTarget.style.background = 'hsla(271,91%,65%,0.06)'; }}>
                   <User size={16} />
                   <span className="hidden lg:inline">Login</span>
                 </button>
               )}
 
+              {/* Cart Button — Neon */}
               <button onClick={() => setCartOpen(true)}
                 className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
-                style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 4px 16px hsla(243,75%,59%,0.4)' }}>
+                style={{
+                  background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+                  boxShadow: '0 0 20px hsla(271,91%,65%,0.45)',
+                }}>
                 <ShoppingCart size={16} />
                 <span className="hidden sm:inline">Cart</span>
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center border-2 border-white"
-                    style={{ background: 'hsl(15,100%,60%)' }}>{cartCount}</span>
+                  <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center border-2"
+                    style={{ background: 'hsl(320,90%,62%)', borderColor: 'hsl(215,28%,7%)', boxShadow: '0 0 10px hsla(320,90%,62%,0.6)' }}>
+                    {cartCount}
+                  </span>
                 )}
               </button>
 
-              <button className="lg:hidden p-2.5 rounded-xl text-foreground/70 hover:text-foreground hover:bg-foreground/10 transition-colors"
+              <button className="lg:hidden p-2.5 rounded-xl transition-colors"
+                style={{ color: 'hsla(210,30%,95%,0.7)' }}
                 onClick={() => setMobileOpen(!mobileOpen)}>
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
@@ -250,33 +236,37 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
-          <div className="border-t border-border px-4 py-4 space-y-1" style={{ background: 'hsl(var(--card))' }}>
+          <div className="border-t px-4 py-4 space-y-1"
+            style={{ background: 'hsl(215,28%,9%)', borderColor: 'hsla(271,91%,65%,0.15)' }}>
             <div className="mb-3">
               <SearchBar variant="navbar" className="w-full" onClose={() => setMobileOpen(false)} />
             </div>
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-foreground/75 hover:text-foreground hover:bg-foreground/10 transition-colors">
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-colors"
+                style={{ color: link.label === 'Admission' ? 'hsl(40,100%,68%)' : 'hsla(210,30%,95%,0.7)' }}>
+                {link.label === 'Admission' && <GraduationCap size={14} />}
                 {link.label}
               </a>
             ))}
-            <div className="pt-2 border-t border-border">
+            <div className="pt-2 border-t" style={{ borderColor: 'hsla(271,91%,65%,0.1)' }}>
               {user ? (
                 <div className="flex gap-2">
                   <button onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold text-white"
-                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                    style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))' }}>
                     <LayoutDashboard size={15} /> Dashboard
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
-                    className="px-4 py-3 rounded-2xl text-sm font-semibold text-foreground/60 hover:bg-foreground/10 border border-border transition-all">
+                    className="px-4 py-3 rounded-2xl text-sm font-semibold border transition-all"
+                    style={{ color: 'hsla(210,30%,95%,0.6)', borderColor: 'hsla(271,91%,65%,0.2)' }}>
                     Logout
                   </button>
                 </div>
               ) : (
                 <button onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
                   className="w-full py-3.5 rounded-2xl text-sm font-bold text-white"
-                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 4px 16px hsla(243,75%,59%,0.3)' }}>
+                  style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 0 20px hsla(271,91%,65%,0.3)' }}>
                   Sign In / Register
                 </button>
               )}
