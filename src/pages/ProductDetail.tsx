@@ -66,9 +66,8 @@ const ProductDetail = () => {
   const [entered,     setEntered]     = useState(false);
 
   // Section reveals
-  const descReveal   = useReveal(0.1);
-  const faqReveal    = useReveal(0.1);
-  const trustReveal  = useReveal(0.15);
+  const descReveal   = useReveal(0.05);
+  const faqReveal    = useReveal(0.05);
 
   useEffect(() => {
     if (!slug) return;
