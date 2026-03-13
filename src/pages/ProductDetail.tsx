@@ -307,23 +307,21 @@ const ProductDetail = () => {
               )}
 
               {/* Trust badges */}
-              <div
-                ref={trustReveal.ref}
-                className="grid grid-cols-3 gap-3"
-              >
+              <div className="grid grid-cols-3 gap-3">
                 {[
-                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0s', color: 'hsl(271,91%,65%)' },
-                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '0.12s', color: 'hsl(185,90%,52%)' },
-                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '0.24s', color: 'hsl(158,80%,48%)' },
+                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0.9s', color: 'hsl(271,91%,65%)' },
+                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '1.05s', color: 'hsl(185,90%,52%)' },
+                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '1.2s', color: 'hsl(158,80%,48%)' },
                 ].map(b => (
                   <div
                     key={b.label}
-                    className="trust-enter rounded-2xl p-3 text-center border"
+                    className="rounded-2xl p-3 text-center border"
                     style={{
-                      animationDelay: trustReveal.revealed ? b.delay : '0s',
-                      animationPlayState: trustReveal.revealed ? 'running' : 'paused',
                       background: 'hsla(215,28%,10%,0.8)',
                       borderColor: `${b.color}25`,
+                      opacity: entered ? 1 : 0,
+                      transform: entered ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.9)',
+                      transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}`,
                     }}
                   >
                     <div className="flex justify-center mb-1.5" style={{ color: b.color }}>{b.icon}</div>
