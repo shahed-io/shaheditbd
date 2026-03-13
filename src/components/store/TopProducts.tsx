@@ -84,7 +84,8 @@ const TopProducts = () => {
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 transition-all duration-700"
           style={{
             opacity: headerVisible ? 1 : 0,
-            transform: headerVisible ? 'translateY(0)' : 'translateY(28px)',
+            transform: headerVisible ? 'translateY(0)' : 'translateY(24px)',
+            transition: 'opacity 0.6s ease, transform 0.6s ease',
           }}
         >
           <div>
