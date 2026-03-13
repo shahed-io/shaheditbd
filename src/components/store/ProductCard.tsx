@@ -171,7 +171,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
       {/* ── Main Card ── */}
       <div
         ref={(el) => { (ref as any).current = el; (cardRef as any).current = el; }}
-        className="group product-card-new product-card-tilt flex flex-col cursor-pointer"
+        className="group product-card-new product-card-tilt flex flex-col"
         style={{
           opacity:   visible ? 1 : 0,
           transform: visible
@@ -184,7 +184,6 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
-        onClick={() => setShowPreview(true)}
       >
         {/* ── Image ── */}
         <div className="card-image-wrap relative overflow-hidden aspect-square bg-muted">
@@ -237,23 +236,6 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
             <Heart size={13} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
           </button>
 
-          {/* Quick Preview btn — always visible on hover */}
-          <button
-            onClick={e => { e.stopPropagation(); setShowPreview(true); }}
-            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10"
-            style={{
-              opacity: isHovered ? 1 : 0,
-              transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.8)',
-              transition: 'all 0.25s cubic-bezier(0.34,1.56,0.64,1) 0.05s',
-              background: 'hsla(271,91%,65%,0.2)',
-              border: '1px solid hsla(271,91%,65%,0.4)',
-              backdropFilter: 'blur(8px)',
-              color: 'hsl(271,91%,75%)',
-            }}
-          >
-            <Eye size={13} />
-          </button>
-
           {/* Quick Preview btn */}
           <button
             onClick={() => setShowPreview(true)}
@@ -284,8 +266,9 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         {/* ── Content ── */}
         <div className="p-4 flex flex-col gap-2.5 flex-1 relative z-10">
           <h3
-            onClick={e => { e.stopPropagation(); navigate(`/product/${product.slug || product.id}`); }}
+            onClick={() => navigate(`/product/${product.slug || product.id}`)}
             className="text-sm font-semibold leading-snug line-clamp-2 text-foreground cursor-pointer transition-colors duration-200"
+            style={{ ':hover': { color: 'hsl(271,91%,75%)' } } as React.CSSProperties}
             onMouseEnter={e => (e.currentTarget.style.color = 'hsl(271,91%,75%)')}
             onMouseLeave={e => (e.currentTarget.style.color = '')}
           >
@@ -311,7 +294,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
             )}
           </div>
 
-          <div className="space-y-2" onClick={e => e.stopPropagation()}>
+          <div className="space-y-2">
             <button
               onClick={() => setShowModal(true)}
               className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
