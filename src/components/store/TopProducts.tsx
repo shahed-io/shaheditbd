@@ -30,6 +30,8 @@ const TopProducts = () => {
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
   const [error,        setError]        = useState(false);
   const [retry,        setRetry]        = useState(0);
+  const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
+  const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.05 });
 
   useEffect(() => {
     let cancelled = false;
