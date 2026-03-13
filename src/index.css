@@ -5,8 +5,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 
 @layer base {
+  /* ══════════════════════════════════════
+     DARK MODE (default)
+  ══════════════════════════════════════ */
   :root {
-    /* ── Deep Dark Base ── */
     --background: 222 22% 9%;
     --foreground: 210 20% 92%;
 
@@ -16,7 +18,6 @@
     --popover: 222 22% 13%;
     --popover-foreground: 210 20% 92%;
 
-    /* ── Deep Indigo Primary ── */
     --primary: 243 75% 62%;
     --primary-foreground: 0 0% 100%;
 
@@ -26,7 +27,6 @@
     --muted: 222 20% 16%;
     --muted-foreground: 220 15% 55%;
 
-    /* ── Hot Coral Accent ── */
     --accent: 15 100% 60%;
     --accent-foreground: 0 0% 100%;
 
@@ -38,7 +38,6 @@
     --ring: 243 75% 62%;
     --radius: 1rem;
 
-    /* ── Brand Color Tokens ── */
     --indigo:         hsl(243, 75%, 62%);
     --indigo-light:   hsl(243, 85%, 72%);
     --indigo-dim:     hsla(243, 75%, 62%, 0.12);
@@ -80,6 +79,78 @@
     --sidebar-accent-foreground: 210 20% 85%;
     --sidebar-border: 222 20% 18%;
     --sidebar-ring: 243 75% 62%;
+  }
+
+  /* ══════════════════════════════════════
+     LIGHT MODE
+  ══════════════════════════════════════ */
+  .light {
+    --background: 210 20% 98%;
+    --foreground: 222 30% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 30% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 30% 12%;
+
+    --primary: 243 75% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 93%;
+    --secondary-foreground: 222 30% 20%;
+
+    --muted: 210 20% 92%;
+    --muted-foreground: 220 15% 45%;
+
+    --accent: 15 100% 56%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 56%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 85%;
+    --input: 220 15% 90%;
+    --ring: 243 75% 55%;
+
+    --indigo:         hsl(243, 75%, 55%);
+    --indigo-light:   hsl(243, 85%, 65%);
+    --indigo-dim:     hsla(243, 75%, 55%, 0.10);
+    --indigo-glow:    0 8px 32px hsla(243, 75%, 55%, 0.3);
+
+    --coral:          hsl(15, 100%, 56%);
+    --coral-light:    hsl(15, 100%, 65%);
+    --coral-dim:      hsla(15, 100%, 56%, 0.10);
+
+    --emerald:        hsl(158, 55%, 38%);
+    --emerald-dim:    hsla(158, 55%, 38%, 0.10);
+
+    --amber:          hsl(38, 95%, 50%);
+    --amber-dim:      hsla(38, 95%, 50%, 0.10);
+
+    --violet:         hsl(263, 65%, 55%);
+    --violet-dim:     hsla(263, 65%, 55%, 0.10);
+
+    --surface-white:  hsl(0, 0%, 100%);
+    --surface-light:  hsl(210, 20%, 97%);
+    --surface-soft:   hsl(210, 20%, 93%);
+
+    --gradient-card:  linear-gradient(145deg, hsla(0,0%,100%,0.9) 0%, hsla(210,20%,97%,0.95) 100%);
+
+    --shadow-soft:    0 2px 16px hsla(220,30%,50%,0.08);
+    --shadow-medium:  0 8px 32px hsla(220,30%,50%,0.12);
+    --shadow-strong:  0 24px 64px hsla(220,30%,50%,0.18);
+    --shadow-indigo:  0 8px 28px hsla(243,75%,55%,0.25);
+    --shadow-coral:   0 8px 28px hsla(15,100%,56%,0.25);
+
+    --sidebar-background: 210 20% 96%;
+    --sidebar-foreground: 222 30% 20%;
+    --sidebar-primary: 243 75% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 90%;
+    --sidebar-accent-foreground: 222 30% 20%;
+    --sidebar-border: 220 15% 85%;
+    --sidebar-ring: 243 75% 55%;
   }
 }
 
