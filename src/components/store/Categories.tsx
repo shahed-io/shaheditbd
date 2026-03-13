@@ -26,6 +26,8 @@ const Categories = () => {
   const [hovered, setHovered] = useState<number | null>(null);
   const [cats, setCats] = useState<CatData[]>([]);
   const [loading, setLoading] = useState(true);
+  const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.08 });
+  const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
 
   useEffect(() => {
     const load = async () => {
