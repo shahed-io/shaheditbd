@@ -101,7 +101,7 @@ const UserDashboard = () => {
   const { wishlistItems } = useWishlist();
 
   const [activeTab, setActiveTab] = useState<TabId>('profile');
-  const [profile, setProfile] = useState<Profile>({ display_name: '', email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0 });
+  const [profile, setProfile] = useState<Profile>({ display_name: '', email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
