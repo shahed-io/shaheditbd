@@ -85,6 +85,7 @@ const App = () => (
                   <Route path="referrals" element={<AdminReferrals />} />
                   <Route path="blog" element={<AdminBlog />} />
                   <Route path="help" element={<AdminHelp />} />
+                  <Route path="seo" element={<AdminSEO />} />
                 </Route>
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
