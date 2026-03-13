@@ -202,6 +202,10 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           />
           {!imageLoaded && <div className="absolute inset-0 shimmer" />}
 
+          {/* Watermark cover overlay — top portion */}
+          <div className="absolute top-0 left-0 right-0 pointer-events-none z-[5]"
+            style={{ height: '32%', background: 'linear-gradient(to bottom, hsl(215,28%,8%) 0%, hsl(215,28%,8%) 55%, transparent 100%)' }} />
+
           {/* Gradient overlay on hover */}
           <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 pointer-events-none"
             style={{ background: 'linear-gradient(to bottom, transparent 40%, hsla(215,28%,8%,0.85) 100%)' }} />
