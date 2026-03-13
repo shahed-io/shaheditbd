@@ -178,8 +178,38 @@ const ProductDetail = () => {
   const prevImg = () => { setImgLoaded(false); setActiveImg(i => (i - 1 + images.length) % images.length); };
   const nextImg = () => { setImgLoaded(false); setActiveImg(i => (i + 1) % images.length); };
 
+  // Build SEO schemas
+  const seoSchemas = [
+    productSchema({
+      name: product.name,
+      description: product.short_description || product.description,
+      image: product.image_url,
+      price: product.price,
+      slug: product.slug,
+      category: product.categories?.name,
+    }),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      ...(product.categories ? [{ name: product.categories.name, url: `/?cat=${product.categories.slug}` }] : []),
+      { name: product.name, url: `/product/${product.slug}` },
+    ]),
+    ...(faqs.length > 0 ? [faqSchema(faqs)] : []),
+  ];
+
+  const breadcrumbItems = [
+    ...(product.categories ? [{ label: product.categories.name, href: `/?cat=${product.categories.slug}` }] : []),
+    { label: product.name },
+  ];
+
   return (
     <>
+      <SEOHead
+        title={product.name}
+        description={product.short_description || product.description || `${product.name} — ৳${product.price.toLocaleString()} | Shahed Store থেকে তাৎক্ষণিক ডেলিভারি`}
+        ogImage={product.image_url || undefined}
+        ogType="product"
+        schema={seoSchemas}
+      />
       <div className="min-h-screen bg-background">
         <Navbar />
 
@@ -192,19 +222,7 @@ const ProductDetail = () => {
             transition: 'opacity 0.5s ease, transform 0.5s ease',
           }}
         >
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground">
-            <button onClick={() => navigate('/')} className="hover:text-primary transition-colors">Home</button>
-            <span>/</span>
-            {product.categories && (
-              <>
-                <button onClick={() => navigate(`/?cat=${product.categories!.slug}`)} className="hover:text-primary transition-colors capitalize">
-                  {product.categories.name}
-                </button>
-                <span>/</span>
-              </>
-            )}
-            <span className="text-foreground font-medium truncate max-w-[200px]">{product.name}</span>
-          </nav>
+          <Breadcrumbs items={breadcrumbItems} />
         </div>
 
         {/* ── Main Content ── */}
