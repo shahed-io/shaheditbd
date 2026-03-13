@@ -219,7 +219,7 @@ const AdminBlog = () => {
         </div>
         <div className="flex gap-2">
           <button onClick={() => setActiveTab('ai-generator')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity">
+            className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold hover:opacity-90 transition-opacity">
             <Sparkles size={14} /> AI ব্লগ Generator
           </button>
           <button onClick={() => { setEditPost({ ...EMPTY_POST }); setFormTab('content'); }}
