@@ -14,23 +14,52 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
     <div className={`flex items-center gap-3 ${className}`}>
 
       {/* ── Glossy Icon ── */}
-      <div className={`${iconSize} rounded-2xl flex items-center justify-center relative overflow-hidden flex-shrink-0`}
-        style={{
-          background: 'linear-gradient(145deg, hsl(340,100%,50%) 0%, hsl(15,100%,52%) 40%, hsl(35,100%,55%) 70%, hsl(210,100%,52%) 100%)',
-          boxShadow: '0 0 0 1.5px hsla(0,0%,100%,0.25), 0 4px 20px hsla(10,100%,55%,0.7), 0 8px 40px hsla(210,100%,55%,0.4)',
-        }}>
-        {/* Top shine */}
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(160deg, hsla(0,0%,100%,0.45) 0%, hsla(0,0%,100%,0.08) 40%, transparent 100%)' }} />
-        {/* Bottom inner shadow */}
-        <div className="absolute inset-0 pointer-events-none rounded-2xl"
-          style={{ boxShadow: 'inset 0 -4px 10px hsla(0,0%,0%,0.3)' }} />
-        <img
-          src={logoIcon}
-          alt="Shahed Store"
-          className="w-[78%] h-[78%] object-contain relative z-10"
-          style={{ filter: 'drop-shadow(0 2px 6px hsla(0,0%,0%,0.5)) brightness(1.05)' }}
-        />
+      <div className="relative flex-shrink-0 flex items-center justify-center">
+
+        {/* Outer pulse ring */}
+        <div className={`absolute ${size === 'sm' ? 'inset-[-5px]' : size === 'lg' ? 'inset-[-10px]' : 'inset-[-7px]'} rounded-3xl pointer-events-none`}
+          style={{
+            background: 'linear-gradient(145deg, hsla(340,100%,55%,0.5) 0%, hsla(15,100%,60%,0.5) 35%, hsla(210,100%,60%,0.5) 70%, hsla(200,100%,65%,0.3) 100%)',
+            filter: 'blur(8px)',
+            animation: 'logoPulse 2.8s ease-in-out infinite',
+          }} />
+
+        {/* Hard glow ring */}
+        <div className={`absolute ${size === 'sm' ? 'inset-[-3px]' : size === 'lg' ? 'inset-[-5px]' : 'inset-[-4px]'} rounded-[20px] pointer-events-none`}
+          style={{
+            background: 'linear-gradient(145deg, hsla(340,100%,55%,0.9) 0%, hsla(15,100%,60%,0.8) 40%, hsla(210,100%,60%,0.9) 100%)',
+            padding: '2px',
+            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            WebkitMaskComposite: 'xor',
+            maskComposite: 'exclude',
+          }} />
+
+        {/* Icon container */}
+        <div className={`${iconSize} rounded-2xl flex items-center justify-center relative overflow-hidden`}
+          style={{
+            background: 'linear-gradient(145deg, hsl(340,100%,42%) 0%, hsl(15,100%,48%) 35%, hsl(30,100%,50%) 60%, hsl(210,100%,45%) 100%)',
+            boxShadow: '0 0 0 1.5px hsla(0,0%,100%,0.3) inset, 0 6px 24px hsla(10,100%,55%,0.8), 0 10px 50px hsla(210,100%,55%,0.5), 0 0 0 3px hsla(340,100%,50%,0.4)',
+          }}>
+
+          {/* Top shine sweep */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: 'linear-gradient(150deg, hsla(0,0%,100%,0.55) 0%, hsla(0,0%,100%,0.12) 35%, transparent 60%)' }} />
+
+          {/* Radial center glow */}
+          <div className="absolute inset-0 pointer-events-none rounded-2xl"
+            style={{ background: 'radial-gradient(circle at 50% 60%, hsla(210,100%,70%,0.35) 0%, transparent 70%)' }} />
+
+          {/* Bottom inner shadow */}
+          <div className="absolute inset-0 pointer-events-none rounded-2xl"
+            style={{ boxShadow: 'inset 0 -5px 12px hsla(0,0%,0%,0.4)' }} />
+
+          <img
+            src={logoIcon}
+            alt="Shahed Store"
+            className="w-[78%] h-[78%] object-contain relative z-10"
+            style={{ filter: 'drop-shadow(0 2px 8px hsla(0,0%,0%,0.6)) brightness(1.1) contrast(1.05)' }}
+          />
+        </div>
       </div>
 
       {/* ── Brand Text ── */}
