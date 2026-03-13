@@ -224,7 +224,7 @@ const ProductDetail = () => {
                 {/* Wishlist */}
                 <button
                   onClick={() => toggleWishlist(cartItem)}
-                  className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-white shadow-medium flex items-center justify-center transition-all hover:scale-110">
+                  className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-card shadow-medium flex items-center justify-center transition-all hover:scale-110">
                   <Heart size={16} fill={wishlisted ? 'hsl(15,100%,60%)' : 'none'} color={wishlisted ? 'hsl(15,100%,60%)' : 'hsl(var(--muted-foreground))'} />
                 </button>
               </div>
