@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import CartDrawer from "@/components/store/CartDrawer";
+import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import ProductDetail from "./pages/ProductDetail";
