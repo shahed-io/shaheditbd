@@ -9,12 +9,11 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 const NAV_LINKS = [
-  { label: 'Home',      href: '/' },
-  { label: 'Shop',      href: '/shop' },
-  { label: 'Windows',   href: '#windows' },
-  { label: 'Office',    href: '#office' },
-  { label: 'Admission', href: '#admission' },
-  { label: 'Support',   href: '#support' },
+  { label: 'Home',    href: '/' },
+  { label: 'Shop',    href: '/shop' },
+  { label: 'Windows', href: '#windows' },
+  { label: 'Office',  href: '#office' },
+  { label: 'Support', href: '#support' },
 ];
 
 const CATEGORY_DROPDOWN = [
