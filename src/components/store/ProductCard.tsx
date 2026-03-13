@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, Eye, X, Package, Clock, CheckCircle, ExternalLink } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, Eye, X, Clock, CheckCircle, ExternalLink } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -14,15 +14,13 @@ interface ProductCardProps {
 const WA = '8801840099853';
 
 const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
-  const [visible,      setVisible]      = useState(false);
-  const [showModal,    setShowModal]    = useState(false);
-  const [showPreview,  setShowPreview]  = useState(false);
-  const [imageLoaded,  setImageLoaded]  = useState(false);
-  const [tilt,         setTilt]         = useState({ x: 0, y: 0 });
-  const [isHovered,    setIsHovered]    = useState(false);
-  const ref    = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const { addToCart, isInCart }       = useCart();
+  const [visible,     setVisible]     = useState(false);
+  const [showModal,   setShowModal]   = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isHovered,   setIsHovered]   = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const { addToCart, isInCart }         = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const navigate = useNavigate();
 
@@ -33,22 +31,6 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     }, { threshold: 0.05 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, []);
-
-  // 3D Tilt effect
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect  = cardRef.current.getBoundingClientRect();
-    const cx    = rect.left + rect.width  / 2;
-    const cy    = rect.top  + rect.height / 2;
-    const dx    = (e.clientX - cx) / (rect.width  / 2);
-    const dy    = (e.clientY - cy) / (rect.height / 2);
-    setTilt({ x: dy * -8, y: dx * 8 });
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setTilt({ x: 0, y: 0 });
-    setIsHovered(false);
   }, []);
 
   const wishlisted = isWishlisted(String(product.id));
@@ -170,20 +152,23 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
 
       {/* ── Main Card ── */}
       <div
-        ref={(el) => { (ref as any).current = el; (cardRef as any).current = el; }}
-        className="group product-card-new product-card-tilt flex flex-col"
+        ref={ref}
+        className="group product-card-new flex flex-col"
         style={{
           opacity:   visible ? 1 : 0,
           transform: visible
-            ? `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(0)`
+            ? isHovered ? 'translateY(-6px) scale(1.015)' : 'translateY(0) scale(1)'
             : 'translateY(40px)',
           transition: isHovered
-            ? `opacity 0.1s, transform 0.15s cubic-bezier(0.23,1,0.32,1)`
-            : `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
+            ? `opacity 0.1s, transform 0.35s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.35s ease`
+            : `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s, box-shadow 0.4s ease`,
+          boxShadow: isHovered
+            ? '0 16px 40px hsla(271,91%,65%,0.3), 0 0 0 1px hsla(271,91%,65%,0.4), 0 32px 60px hsla(215,40%,4%,0.5)'
+            : '0 4px 20px hsla(215,40%,4%,0.4)',
+          borderRadius: 'var(--radius)',
         }}
-        onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={handleMouseLeave}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {/* ── Image ── */}
         <div className="card-image-wrap relative overflow-hidden aspect-square bg-muted">
