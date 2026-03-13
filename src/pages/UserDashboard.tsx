@@ -391,10 +391,11 @@ const UserDashboard = () => {
             <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">মেনু</p>
             {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
               <button key={id} onClick={() => setActiveTab(id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${activeTab === id ? 'shadow-sm' : 'hover:bg-muted/40'}`}
-                style={activeTab === id
-                  ? { background: 'hsl(243,75%,97%)', color: 'hsl(var(--primary))', border: '1px solid hsl(243,75%,88%)' }
-                  : { color: 'hsl(var(--muted-foreground))', border: '1px solid transparent' }}>
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${
+                  activeTab === id
+                    ? 'bg-primary/10 text-primary border border-primary/25 shadow-sm'
+                    : 'hover:bg-muted/40 text-muted-foreground border border-transparent'
+                }`}>
                 <Icon size={16} />
                 <span className="flex-1 text-left">{label}</span>
                 {badge !== undefined && badge > 0 && (
