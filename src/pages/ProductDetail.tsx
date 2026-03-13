@@ -146,7 +146,17 @@ const ProductDetail = () => {
   ].filter(Boolean);
   if (images.length === 0) images.push(PLACEHOLDER);
 
-  const variants: { name: string; options: string[] }[] = Array.isArray(product.variants) ? product.variants : [];
+  // Support both new grouped format { name, options: [{label, price}] } and old flat format { name, options: string[] }
+  const rawVariants = Array.isArray(product.variants) ? product.variants : [];
+  // Normalize to grouped format with prices
+  interface VariantOption { label: string; price?: number; }
+  interface VariantGroup { name: string; options: VariantOption[]; }
+  const variants: VariantGroup[] = rawVariants.map((v: any) => ({
+    name: v.name || v.label || 'Options',
+    options: Array.isArray(v.options)
+      ? v.options.map((o: any) => typeof o === 'string' ? { label: o } : { label: o.label, price: o.price ? parseFloat(o.price) : undefined })
+      : [],
+  })).filter((v: VariantGroup) => v.options.length > 0);
   const faqs: { q: string; a: string }[] = Array.isArray(product.faq) ? product.faq : [];
 
   const wishlisted = isWishlisted(product.id);
