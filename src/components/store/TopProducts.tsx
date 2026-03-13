@@ -53,8 +53,11 @@ const TopProducts = () => {
         const rows = data ?? [];
         console.log('[TopProducts] Loaded products:', rows.length);
         setProducts(rows.map(mapProduct));
+        const HIDDEN_CATS = ['Streaming'];
+        const filteredRows = rows.filter((p: any) => !HIDDEN_CATS.includes(p.category?.name));
+        setProducts(filteredRows.map(mapProduct));
         const map = new Map<string, number>();
-        rows.forEach((p: any) => { if (p.category?.name) map.set(p.category.name, p.category.sort_order ?? 999); });
+        filteredRows.forEach((p: any) => { if (p.category?.name) map.set(p.category.name, p.category.sort_order ?? 999); });
         const sorted = [...map.entries()].sort((a, b) => a[1] - b[1]).map(([n]) => n);
         setTabs(['All', ...sorted]);
       } catch (e) {
