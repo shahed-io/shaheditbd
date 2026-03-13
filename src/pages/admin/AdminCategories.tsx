@@ -16,13 +16,16 @@ const AdminCategories = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('categories')
-      .select('*, products(count)')
+      .select(`*, products:products(count)`)
       .order('sort_order');
     if (error) {
       console.error('Categories fetch error:', error);
-      toast.error('ক্যাটাগরি লোড করতে সমস্যা হয়েছে: ' + error.message);
+      // fallback without count
+      const { data: data2 } = await supabase.from('categories').select('*').order('sort_order');
+      setCategories(data2 || []);
+    } else {
+      setCategories(data || []);
     }
-    setCategories(data || []);
     setLoading(false);
   };
 
