@@ -34,9 +34,14 @@ const Navbar = () => {
   const [catOpen,    setCatOpen]    = useState(false);
   const [avatarUrl,  setAvatarUrl]  = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+
+  useEffect(() => { setMounted(true); }, []);
+
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
