@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          address_line: string
+          city: string
+          created_at: string
+          district: string | null
+          id: string
+          is_default: boolean
+          label: string
+          phone: string
+          postal_code: string | null
+          recipient_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_line: string
+          city: string
+          created_at?: string
+          district?: string | null
+          id?: string
+          is_default?: boolean
+          label?: string
+          phone: string
+          postal_code?: string | null
+          recipient_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_line?: string
+          city?: string
+          created_at?: string
+          district?: string | null
+          id?: string
+          is_default?: boolean
+          label?: string
+          phone?: string
+          postal_code?: string | null
+          recipient_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -156,6 +201,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message: string
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       order_items: {
         Row: {
@@ -447,6 +525,9 @@ export type Database = {
           email: string | null
           id: string
           phone: string | null
+          referral_code: string | null
+          referral_earnings: number
+          referred_by: string | null
           updated_at: string
           user_id: string
         }
@@ -457,6 +538,9 @@ export type Database = {
           email?: string | null
           id?: string
           phone?: string | null
+          referral_code?: string | null
+          referral_earnings?: number
+          referred_by?: string | null
           updated_at?: string
           user_id: string
         }
@@ -467,8 +551,77 @@ export type Database = {
           email?: string | null
           id?: string
           phone?: string | null
+          referral_code?: string | null
+          referral_earnings?: number
+          referred_by?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      recently_viewed: {
+        Row: {
+          id: string
+          product_id: string
+          product_image: string | null
+          product_name: string
+          product_price: number
+          product_slug: string | null
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          product_id: string
+          product_image?: string | null
+          product_name: string
+          product_price: number
+          product_slug?: string | null
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          product_id?: string
+          product_image?: string | null
+          product_name?: string
+          product_price?: number
+          product_slug?: string | null
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string
+          id: string
+          referral_code: string
+          referred_id: string | null
+          referrer_id: string
+          reward_amount: number
+          reward_paid: boolean
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referral_code: string
+          referred_id?: string | null
+          referrer_id: string
+          reward_amount?: number
+          reward_paid?: boolean
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referred_id?: string | null
+          referrer_id?: string
+          reward_amount?: number
+          reward_paid?: boolean
+          status?: string
         }
         Relationships: []
       }
@@ -596,6 +749,36 @@ export type Database = {
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wishlists: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          product_image: string | null
+          product_name: string
+          product_price: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          product_image?: string | null
+          product_name: string
+          product_price: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          product_image?: string | null
+          product_name?: string
+          product_price?: number
           user_id?: string
         }
         Relationships: []
