@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, Eye, X, Clock, CheckCircle, ExternalLink } from 'lucide-react';
+import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, X, Clock, CheckCircle } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
