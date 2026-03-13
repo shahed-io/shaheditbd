@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
+import { WishlistProvider } from "@/hooks/useWishlist";
 import CartDrawer from "@/components/store/CartDrawer";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
@@ -27,6 +28,7 @@ import AdminMarketing from "./pages/admin/AdminMarketing";
 import AdminRoles from "./pages/admin/AdminRoles";
 import AdminBackup from "./pages/admin/AdminBackup";
 import UserDashboard from "./pages/UserDashboard";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,37 +49,40 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <CartProvider>
-            <CartDrawer />
-            <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/product/:slug" element={<ProductDetail />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="products/new" element={<AdminProducts />} />
-              <Route path="categories" element={<AdminCategories />} />
-              <Route path="categories/new" element={<AdminCategories />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="coupons" element={<AdminCoupons />} />
-              <Route path="settings" element={<AdminSettings />} />
-              <Route path="customers" element={<AdminCustomers />} />
-              <Route path="payments" element={<AdminPayments />} />
-              <Route path="tickets" element={<AdminTickets />} />
-              <Route path="reports" element={<AdminReports />} />
-              <Route path="marketing" element={<AdminMarketing />} />
-              <Route path="roles" element={<AdminRoles />} />
-              <Route path="backup" element={<AdminBackup />} />
-            </Route>
-            <Route path="/dashboard" element={<UserDashboard />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          </CartProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+              <WishlistProvider>
+                <CartDrawer />
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/product/:slug" element={<ProductDetail />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/admin/login" element={<AdminLogin />} />
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="products" element={<AdminProducts />} />
+                    <Route path="products/new" element={<AdminProducts />} />
+                    <Route path="categories" element={<AdminCategories />} />
+                    <Route path="categories/new" element={<AdminCategories />} />
+                    <Route path="orders" element={<AdminOrders />} />
+                    <Route path="coupons" element={<AdminCoupons />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                    <Route path="customers" element={<AdminCustomers />} />
+                    <Route path="payments" element={<AdminPayments />} />
+                    <Route path="tickets" element={<AdminTickets />} />
+                    <Route path="reports" element={<AdminReports />} />
+                    <Route path="marketing" element={<AdminMarketing />} />
+                    <Route path="roles" element={<AdminRoles />} />
+                    <Route path="backup" element={<AdminBackup />} />
+                  </Route>
+                  <Route path="/dashboard" element={<UserDashboard />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   </ThemeProvider>
 );
 
