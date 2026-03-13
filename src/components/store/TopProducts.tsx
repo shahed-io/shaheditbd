@@ -8,7 +8,7 @@ const mapProduct = (p: any): Product => ({
   id:            p.id,
   slug:          p.slug,
   name:          p.name,
-  category:      p.categories?.name || 'Other',
+  category:      p.category?.name || 'Other',
   price:         Number(p.price),
   originalPrice: p.original_price ? Number(p.original_price) : undefined,
   discount:      p.discount_percent || undefined,
