@@ -29,6 +29,11 @@ import AdminBackup from "./pages/admin/AdminBackup";
 import AdminReferrals from "./pages/admin/AdminReferrals";
 import UserDashboard from "./pages/UserDashboard";
 import ResetPassword from "./pages/ResetPassword";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import HelpCenter from "./pages/HelpCenter";
+import AdminBlog from "./pages/admin/AdminBlog";
+import AdminHelp from "./pages/admin/AdminHelp";
 
 const queryClient = new QueryClient({
   defaultOptions: {
