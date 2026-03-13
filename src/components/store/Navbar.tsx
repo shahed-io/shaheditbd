@@ -67,10 +67,12 @@ const Navbar = () => {
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
 
       {/* ── Top Announcement Bar ── */}
-      <div className="w-full text-white text-xs font-medium py-2 px-4 flex items-center justify-between overflow-hidden relative"
+      <div className="w-full text-white text-xs font-medium py-2 flex items-center overflow-hidden relative"
         style={{ background: 'linear-gradient(90deg, hsl(243,75%,52%), hsl(263,70%,52%), hsl(283,65%,50%))' }}>
         <div className="absolute inset-0 dot-grid opacity-20 pointer-events-none" />
-        <div className="flex items-center gap-4 relative z-10">
+
+        {/* Left: Contact info — fixed, no shrink */}
+        <div className="flex items-center gap-4 pl-4 flex-shrink-0 relative z-10">
           <a href="tel:01840099853" className="flex items-center gap-1.5 hover:text-white/80 transition-colors">
             <Phone size={11} /> 01840-099853
           </a>
@@ -79,25 +81,39 @@ const Navbar = () => {
           </a>
         </div>
 
-        {/* Dynamic announcement or default text */}
-        <div className="flex items-center gap-1.5 font-bold text-[11px] relative z-10 text-center px-2">
-          <Sparkles size={11} className="text-yellow-300 flex-shrink-0" />
-          {announcement ? (
-            <span className="hidden sm:inline max-w-[480px] truncate">{announcement}</span>
-          ) : (
-            <>
-              <span className="hidden sm:inline">FREE instant delivery on all orders</span>
-              <span className="sm:hidden">⚡ Free delivery</span>
-            </>
-          )}
-          {announcement && <span className="sm:hidden">⚡ Special Offer!</span>}
+        {/* Center: Marquee announcement */}
+        <div className="flex-1 overflow-hidden mx-3 relative z-10">
+          <div className="flex items-center gap-1.5 font-bold text-[11px]"
+            style={{ animation: 'marquee 28s linear infinite', whiteSpace: 'nowrap', display: 'inline-flex' }}>
+            <Sparkles size={11} className="text-yellow-300 flex-shrink-0" />
+            <span>
+              {announcement
+                ? announcement
+                : 'FREE instant delivery on all orders  •  সব অর্ডারে ফ্রি ইনস্ট্যান্ট ডেলিভারি  •  ৫০% পর্যন্ত ছাড়'}
+            </span>
+            {/* Duplicate for seamless loop */}
+            <span className="ml-16">
+              <Sparkles size={11} className="text-yellow-300 inline mr-1.5" />
+              {announcement
+                ? announcement
+                : 'FREE instant delivery on all orders  •  সব অর্ডারে ফ্রি ইনস্ট্যান্ট ডেলিভারি  •  ৫০% পর্যন্ত ছাড়'}
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 text-[11px] relative z-10">
+        {/* Right: Badges — fixed, no shrink */}
+        <div className="flex items-center gap-3 text-[11px] pr-4 flex-shrink-0 relative z-10">
           <span className="hidden md:flex items-center gap-1"><Star size={10} fill="currentColor" /> 4.9/5 Rating</span>
           <span className="flex items-center gap-1 bg-white/15 px-2 py-0.5 rounded-full"><Shield size={10} /> Secured</span>
         </div>
       </div>
+
+      <style>{`
+        @keyframes marquee {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
 
       {/* ── Main Navbar ── */}
       <nav className={`sticky top-0 z-50 transition-all duration-300 ${
