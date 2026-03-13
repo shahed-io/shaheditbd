@@ -97,6 +97,9 @@ const AdminReferrals = () => {
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     setUpdatingId(id);
+    const referral = referrals.find(r => r.id === id);
+    const oldStatus = referral?.status;
+
     const { error } = await supabase
       .from('referrals')
       .update({ status: newStatus })
@@ -104,10 +107,63 @@ const AdminReferrals = () => {
 
     if (error) {
       toast.error('আপডেট ব্যর্থ হয়েছে');
+      setUpdatingId(null);
+      return;
+    }
+
+    // Auto credit: pending → completed = add credit to referrer's profile
+    if (oldStatus !== 'completed' && newStatus === 'completed' && referral) {
+      const rewardAmount = referral.reward_amount;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('referral_credit, referral_earnings')
+        .eq('user_id', referral.referrer_id)
+        .maybeSingle();
+
+      if (profile) {
+        await supabase
+          .from('profiles')
+          .update({
+            referral_credit: Number(profile.referral_credit) + rewardAmount,
+            referral_earnings: Number(profile.referral_earnings) + rewardAmount,
+          })
+          .eq('user_id', referral.referrer_id);
+        toast.success(`✅ স্ট্যাটাস "সফল" — ৳${rewardAmount} ক্রেডিট স্বয়ংক্রিয়ভাবে যোগ হয়েছে`);
+      }
+    } else if (oldStatus === 'completed' && newStatus !== 'completed' && referral) {
+      // Reverse credit if moving away from completed
+      const rewardAmount = referral.reward_amount;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('referral_credit, referral_earnings')
+        .eq('user_id', referral.referrer_id)
+        .maybeSingle();
+
+      if (profile) {
+        await supabase
+          .from('profiles')
+          .update({
+            referral_credit: Math.max(0, Number(profile.referral_credit) - rewardAmount),
+            referral_earnings: Math.max(0, Number(profile.referral_earnings) - rewardAmount),
+          })
+          .eq('user_id', referral.referrer_id);
+        toast.success(`স্ট্যাটাস "${STATUS_LABELS[newStatus]?.label}" — ৳${rewardAmount} ক্রেডিট কাটা হয়েছে`);
+      }
     } else {
       toast.success(`স্ট্যাটাস "${STATUS_LABELS[newStatus]?.label}" তে পরিবর্তন হয়েছে`);
-      setReferrals(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
     }
+
+    setReferrals(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
+    // Refresh stats
+    setStats(prev => ({
+      ...prev,
+      completed: newStatus === 'completed'
+        ? prev.completed + (oldStatus !== 'completed' ? 1 : 0)
+        : prev.completed - (oldStatus === 'completed' ? 1 : 0),
+      pending: newStatus === 'pending'
+        ? prev.pending + (oldStatus !== 'pending' ? 1 : 0)
+        : prev.pending - (oldStatus === 'pending' ? 1 : 0),
+    }));
     setUpdatingId(null);
   };
 
