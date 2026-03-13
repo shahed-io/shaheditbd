@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import CartDrawer from "@/components/store/CartDrawer";
+import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import ProductDetail from "./pages/ProductDetail";
@@ -34,6 +35,7 @@ import BlogPost from "./pages/BlogPost";
 import HelpCenter from "./pages/HelpCenter";
 import AdminBlog from "./pages/admin/AdminBlog";
 import AdminHelp from "./pages/admin/AdminHelp";
+import AdminSEO from "./pages/admin/AdminSEO";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,6 +57,7 @@ const App = () => (
           <CartProvider>
             <WishlistProvider>
               <CartDrawer />
+              <RedirectEnforcer />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/checkout" element={<Checkout />} />
@@ -84,6 +87,7 @@ const App = () => (
                   <Route path="referrals" element={<AdminReferrals />} />
                   <Route path="blog" element={<AdminBlog />} />
                   <Route path="help" element={<AdminHelp />} />
+                  <Route path="seo" element={<AdminSEO />} />
                 </Route>
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />

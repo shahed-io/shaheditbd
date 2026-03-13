@@ -8,6 +8,8 @@ import {
   MessageCircle, ThumbsUp, Send, BookOpen, ChevronRight, Share2, Copy, Check, List
 } from 'lucide-react';
 import { toast } from 'sonner';
+import SEOHead from '@/components/seo/SEOHead';
+import { articleSchema, breadcrumbSchema } from '@/components/seo/schemas';
 
 // ── Table of Contents Generator ──────────────────────────────────────────────
 const generateTOC = (content: string) => {
@@ -239,26 +241,33 @@ const BlogPost = () => {
   const toc = generateTOC(post.content || '');
   const htmlContent = renderMarkdown(post.content || '');
 
-  // JSON-LD Schema
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": post.seo_title || post.title,
-    "description": post.seo_description || post.excerpt,
-    "image": post.featured_image,
-    "author": { "@type": "Person", "name": post.author_name },
-    "publisher": { "@type": "Organization", "name": "Shahed Store" },
-    "datePublished": post.published_at || post.created_at,
-    "dateModified": post.updated_at,
-    "url": window.location.href,
-  };
+  const seoSchemas = [
+    articleSchema({
+      title: post.seo_title || post.title,
+      description: post.seo_description || post.excerpt,
+      image: post.featured_image,
+      slug: post.slug,
+      publishedAt: post.published_at || post.created_at,
+      updatedAt: post.updated_at,
+      authorName: post.author_name,
+    }),
+    breadcrumbSchema([
+      { name: 'হোম', url: '/' },
+      { name: 'ব্লগ', url: '/blog' },
+      ...(post.blog_categories ? [{ name: post.blog_categories.name, url: `/blog?cat=${post.category_id}` }] : []),
+      { name: post.title, url: `/blog/${post.slug}` },
+    ]),
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <title>{post.seo_title || post.title}</title>
-      <meta name="description" content={post.seo_description || post.excerpt || ''} />
-
+      <SEOHead
+        title={post.seo_title || post.title}
+        description={post.seo_description || post.excerpt || ''}
+        ogImage={post.featured_image || undefined}
+        ogType="article"
+        schema={seoSchemas}
+      />
       <Navbar />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-20">
