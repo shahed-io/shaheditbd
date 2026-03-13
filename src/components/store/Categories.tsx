@@ -70,7 +70,11 @@ const Categories = () => {
   }
 
   return (
-    <section className="py-20 relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
+    <section
+      ref={sectionRef as React.RefObject<HTMLElement>}
+      className="py-20 relative overflow-hidden"
+      style={{ background: 'hsl(var(--background))' }}
+    >
       {/* Background blobs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.06), transparent)', filter: 'blur(80px)' }} />
@@ -80,7 +84,14 @@ const Categories = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
+        <div
+          ref={headerRef as React.RefObject<HTMLDivElement>}
+          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12 transition-all duration-700"
+          style={{
+            opacity: headerVisible ? 1 : 0,
+            transform: headerVisible ? 'translateY(0)' : 'translateY(32px)',
+          }}
+        >
           <div>
             <span className="section-label">Browse Store</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-3 text-foreground">
