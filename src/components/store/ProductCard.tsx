@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, Eye } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, Eye, X, Package, Clock, CheckCircle, ExternalLink } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -14,21 +14,41 @@ interface ProductCardProps {
 const WA = '8801840099853';
 
 const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
-  const [visible,     setVisible]     = useState(false);
-  const [showModal,   setShowModal]   = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [hovered,     setHovered]     = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const { addToCart, isInCart } = useCart();
+  const [visible,      setVisible]      = useState(false);
+  const [showModal,    setShowModal]    = useState(false);
+  const [showPreview,  setShowPreview]  = useState(false);
+  const [imageLoaded,  setImageLoaded]  = useState(false);
+  const [tilt,         setTilt]         = useState({ x: 0, y: 0 });
+  const [isHovered,    setIsHovered]    = useState(false);
+  const ref    = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { addToCart, isInCart }       = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const navigate = useNavigate();
 
+  // Intersection observer for staggered entry
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
     }, { threshold: 0.05 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
+  }, []);
+
+  // 3D Tilt effect
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect  = cardRef.current.getBoundingClientRect();
+    const cx    = rect.left + rect.width  / 2;
+    const cy    = rect.top  + rect.height / 2;
+    const dx    = (e.clientX - cx) / (rect.width  / 2);
+    const dy    = (e.clientY - cy) / (rect.height / 2);
+    setTilt({ x: dy * -8, y: dx * 8 });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setTilt({ x: 0, y: 0 });
+    setIsHovered(false);
   }, []);
 
   const wishlisted = isWishlisted(String(product.id));
@@ -41,99 +61,268 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
 
   return (
     <>
+      {/* ── Quick Preview Modal ── */}
+      {showPreview && (
+        <div
+          className="fixed inset-0 z-[999] flex items-center justify-center p-4"
+          style={{ background: 'hsla(215,28%,4%,0.85)', backdropFilter: 'blur(20px)' }}
+          onClick={() => setShowPreview(false)}
+        >
+          <div
+            className="quick-preview-enter relative rounded-3xl overflow-hidden max-w-lg w-full border"
+            style={{
+              background: 'hsl(215,28%,10%)',
+              borderColor: 'hsla(271,91%,65%,0.35)',
+              boxShadow: '0 0 60px hsla(271,91%,65%,0.25), 0 32px 80px hsla(215,40%,4%,0.8)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Neon top border */}
+            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+
+            <button
+              onClick={() => setShowPreview(false)}
+              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:scale-110"
+              style={{ background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)' }}
+            >
+              <X size={16} />
+            </button>
+
+            <div className="flex gap-0">
+              {/* Image */}
+              <div className="w-48 flex-shrink-0 relative overflow-hidden">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  style={{ minHeight: '280px' }}
+                  onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/13131f/a855f7?text=Product'; }}
+                />
+                {/* Scan line animation */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  <div className="absolute left-0 right-0 h-[2px] anim-scan"
+                    style={{ background: 'linear-gradient(90deg, transparent, hsl(271,91%,65%), transparent)', opacity: 0.7 }} />
+                </div>
+                {product.discount && (
+                  <div className="absolute top-3 left-3 badge-sale text-[11px] px-2.5 py-1">-{product.discount}%</div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 p-6 flex flex-col gap-3">
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className="text-[10px] font-fira font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
+                      style={{ color: 'hsl(185,90%,62%)', background: 'hsla(185,90%,52%,0.12)', border: '1px solid hsla(185,90%,52%,0.2)' }}>
+                      {product.category}
+                    </span>
+                  </div>
+                  <h3 className="font-sora font-black text-[17px] leading-snug text-foreground">{product.name}</h3>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  {[1,2,3,4,5].map(s => (
+                    <Star key={s} size={11} fill={s <= Math.floor(product.rating) ? 'hsl(40,100%,58%)' : 'none'} color={s <= Math.floor(product.rating) ? 'hsl(40,100%,58%)' : 'hsl(var(--border))'} />
+                  ))}
+                  <span className="text-[11px] text-muted-foreground ml-1">({product.reviews})</span>
+                </div>
+
+                <div className="flex items-baseline gap-2">
+                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(271,91%,75%)' }}>৳{product.price.toLocaleString()}</span>
+                  {product.originalPrice && (
+                    <span className="text-sm line-through text-muted-foreground">৳{product.originalPrice.toLocaleString()}</span>
+                  )}
+                </div>
+
+                {/* Feature pills */}
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { icon: <Zap size={10} />, text: 'Instant Delivery' },
+                    { icon: <CheckCircle size={10} />, text: 'Genuine' },
+                    { icon: <Clock size={10} />, text: '24/7 Support' },
+                  ].map(f => (
+                    <span key={f.text} className="flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full"
+                      style={{ background: 'hsla(271,91%,65%,0.1)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
+                      {f.icon} {f.text}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex flex-col gap-2 mt-auto pt-2">
+                  <button
+                    onClick={() => { setShowPreview(false); setShowModal(true); }}
+                    className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.02]"
+                    style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 0 20px hsla(271,91%,65%,0.4)' }}>
+                    <CreditCard size={13} className="inline mr-1.5" /> Order Now
+                  </button>
+                  <button
+                    onClick={() => { setShowPreview(false); navigate(`/product/${product.slug || product.id}`); }}
+                    className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01] flex items-center justify-center gap-1.5"
+                    style={{ background: 'hsla(271,91%,65%,0.08)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
+                    <ExternalLink size={12} /> View Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Main Card ── */}
       <div
         ref={ref}
-        className="group product-card-new flex flex-col"
+        className="group product-card-new product-card-tilt flex flex-col"
         style={{
           opacity:   visible ? 1 : 0,
-          transform: visible ? 'none' : 'translateY(40px)',
-          transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
+          transform: visible
+            ? `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(0)`
+            : 'translateY(40px)',
+          transition: isHovered
+            ? `opacity 0.1s, transform 0.15s cubic-bezier(0.23,1,0.32,1)`
+            : `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
         }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={handleMouseLeave}
+        ref={cardRef as any}
       >
         {/* ── Image ── */}
-        <div className="relative overflow-hidden aspect-square bg-surface-light">
+        <div className="card-image-wrap relative overflow-hidden aspect-square bg-muted">
+
+          {/* Scan line on hover */}
+          <div className="card-scan-line" />
+
           <img
             src={product.image}
             alt={product.name}
             loading="lazy"
             onLoad={() => setImageLoaded(true)}
-            onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/f8f9ff/6366f1?text=Product'; }}
+            onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/13131f/a855f7?text=Product'; }}
             className="w-full h-full object-cover"
-            style={{
-              opacity: imageLoaded ? 1 : 0,
-              transform: hovered ? 'scale(1.07)' : 'scale(1)',
-              transition: 'opacity 0.3s, transform 0.6s cubic-bezier(0.23,1,0.32,1)',
-            }}
+            style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s' }}
           />
           {!imageLoaded && <div className="absolute inset-0 shimmer" />}
 
+          {/* Gradient overlay on hover */}
+          <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, transparent 40%, hsla(215,28%,8%,0.85) 100%)' }} />
+
           {/* Badges */}
           <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
-            {product.discount && <span className="badge-sale">-{product.discount}%</span>}
-            {product.isBestseller && <span className="badge-hot-item flex items-center gap-0.5"><Zap size={8} fill="white" /> HOT</span>}
+            {product.discount && (
+              <span className="badge-sale">-{product.discount}%</span>
+            )}
+            {product.isBestseller && (
+              <span className="badge-hot-item flex items-center gap-0.5"><Zap size={8} fill="white" /> HOT</span>
+            )}
             {product.isNew && <span className="badge-new-item">NEW</span>}
           </div>
 
-          {/* Wishlist */}
+          {/* Wishlist btn */}
           <button
             onClick={e => {
               e.stopPropagation();
               toggleWishlist({ id: String(product.id), name: product.name, price: product.price, image: product.image });
             }}
-            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-card shadow-soft border border-border"
-            style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(-4px)', transition: 'all 0.25s' }}
+            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10"
+            style={{
+              opacity: isHovered ? 1 : 0,
+              transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(-6px) scale(0.8)',
+              transition: 'all 0.25s cubic-bezier(0.34,1.56,0.64,1)',
+              background: wishlisted ? 'hsla(320,90%,62%,0.2)' : 'hsla(215,28%,14%,0.9)',
+              border: `1px solid ${wishlisted ? 'hsla(320,90%,62%,0.5)' : 'hsla(271,91%,65%,0.2)'}`,
+              backdropFilter: 'blur(8px)',
+            }}
           >
-            <Heart size={13} fill={wishlisted ? 'hsl(15,100%,60%)' : 'none'} color={wishlisted ? 'hsl(15,100%,60%)' : 'hsl(var(--muted-foreground))'} />
+            <Heart size={13} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
           </button>
 
-          {/* Quick view */}
+          {/* Quick Preview btn */}
           <button
-            onClick={() => setShowModal(true)}
-            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-card shadow-soft border border-border text-primary"
-            style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(4px)', transition: 'all 0.25s 0.05s' }}
+            onClick={() => setShowPreview(true)}
+            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10"
+            style={{
+              opacity: isHovered ? 1 : 0,
+              transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.8)',
+              transition: 'all 0.25s cubic-bezier(0.34,1.56,0.64,1) 0.05s',
+              background: 'hsla(271,91%,65%,0.2)',
+              border: '1px solid hsla(271,91%,65%,0.4)',
+              backdropFilter: 'blur(8px)',
+              color: 'hsl(271,91%,75%)',
+            }}
           >
             <Eye size={13} />
           </button>
+
+          {/* Bottom hover label */}
+          <div className="absolute bottom-2.5 left-2.5 z-10 transition-all duration-300"
+            style={{ opacity: isHovered ? 1 : 0, transform: isHovered ? 'translateY(0)' : 'translateY(6px)' }}>
+            <span className="text-[10px] font-fira font-bold px-2 py-1 rounded-lg"
+              style={{ background: 'hsla(215,28%,8%,0.9)', color: 'hsl(185,90%,62%)', border: '1px solid hsla(185,90%,52%,0.3)', backdropFilter: 'blur(8px)' }}>
+              ⚡ Instant Delivery
+            </span>
+          </div>
         </div>
 
         {/* ── Content ── */}
-        <div className="p-4 flex flex-col gap-2.5 flex-1 bg-card">
+        <div className="p-4 flex flex-col gap-2.5 flex-1 relative z-10">
           <h3
             onClick={() => navigate(`/product/${product.slug || product.id}`)}
-            className="text-sm font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-indigo transition-colors duration-200 cursor-pointer hover:underline underline-offset-2"
+            className="text-sm font-semibold leading-snug line-clamp-2 text-foreground cursor-pointer transition-colors duration-200"
+            style={{ ':hover': { color: 'hsl(271,91%,75%)' } } as React.CSSProperties}
+            onMouseEnter={e => (e.currentTarget.style.color = 'hsl(271,91%,75%)')}
+            onMouseLeave={e => (e.currentTarget.style.color = '')}
           >
             {product.name}
           </h3>
 
           <div className="flex items-center gap-1">
             {[1,2,3,4,5].map(s => (
-              <Star key={s} size={10} fill={s <= Math.floor(product.rating) ? 'hsl(38,100%,55%)' : 'none'} color={s <= Math.floor(product.rating) ? 'hsl(38,100%,55%)' : 'hsl(var(--border))'} />
+              <Star key={s} size={10}
+                fill={s <= Math.floor(product.rating) ? 'hsl(40,100%,58%)' : 'none'}
+                color={s <= Math.floor(product.rating) ? 'hsl(40,100%,58%)' : 'hsl(var(--border))'}
+              />
             ))}
             <span className="text-[10px] text-muted-foreground ml-1">({product.reviews})</span>
           </div>
 
           <div className="flex items-baseline gap-2 mt-auto">
-            <span className="text-xl font-sora font-black text-brand-indigo">৳{product.price.toLocaleString()}</span>
+            <span className="text-xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)' }}>
+              ৳{product.price.toLocaleString()}
+            </span>
             {product.originalPrice && (
               <span className="text-xs line-through text-muted-foreground">৳{product.originalPrice.toLocaleString()}</span>
             )}
           </div>
 
           <div className="space-y-2">
-            <button onClick={() => setShowModal(true)}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02] shadow-indigo"
-              style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+            <button
+              onClick={() => setShowModal(true)}
+              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+              style={{
+                background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+                boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
+              }}>
               <CreditCard size={12} /> Order Now
             </button>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={waMsg}
-                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold bg-emerald/10 border border-border text-foreground hover:bg-emerald/20 transition-colors">
+              <button
+                onClick={waMsg}
+                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
+                style={{
+                  background: 'hsla(158,80%,48%,0.1)',
+                  border: '1px solid hsla(158,80%,48%,0.25)',
+                  color: 'hsl(158,80%,58%)',
+                }}>
                 <MessageCircle size={11} /> WhatsApp
               </button>
-              <button onClick={() => addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image })}
-                className={`flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-colors ${inCart ? 'bg-primary/10 border border-primary/30 text-primary' : 'bg-muted border border-border text-muted-foreground hover:bg-secondary'}`}>
+              <button
+                onClick={() => addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image })}
+                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
+                style={inCart
+                  ? { background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.4)', color: 'hsl(271,91%,75%)' }
+                  : { background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }
+                }>
                 <ShoppingCart size={11} />
                 {inCart ? '✓ Added' : 'Cart'}
               </button>
