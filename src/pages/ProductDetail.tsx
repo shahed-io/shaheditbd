@@ -517,7 +517,7 @@ const ProductDetail = () => {
                 <button onClick={() => setShowModal(true)}
                   className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_hsla(271,91%,65%,0.5)]"
                   style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 4px 24px hsla(271,91%,65%,0.35)' }}>
-                  <CreditCard size={18} /> Order Now — ৳{product.price.toLocaleString()}
+                  <CreditCard size={18} /> Order Now — ৳{displayPrice.toLocaleString()}
                 </button>
                 <div className="grid grid-cols-2 gap-3">
                   <button onClick={waOrder}
