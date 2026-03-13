@@ -38,6 +38,7 @@ const AdminBlog = () => {
   const [autoPublish, setAutoPublish] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [aiMode, setAiMode] = useState<'bulk' | 'single'>('bulk');
+  const [aiModel, setAiModel] = useState<'openai' | 'gemini'>('openai');
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
@@ -148,7 +149,7 @@ const AdminBlog = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ bulk: true, auto_publish: autoPublish }),
+        body: JSON.stringify({ bulk: true, auto_publish: autoPublish, ai_model: aiModel }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -182,7 +183,7 @@ const AdminBlog = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ product_id: productId, bulk: false, auto_publish: autoPublish }),
+        body: JSON.stringify({ product_id: productId, bulk: false, auto_publish: autoPublish, ai_model: aiModel }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -456,6 +457,34 @@ const AdminBlog = () => {
           {/* Controls */}
           <div className="glass-card rounded-2xl p-5 space-y-4">
             <h3 className="font-bold text-foreground text-sm">⚙️ সেটিংস</h3>
+
+            {/* AI Model Selector */}
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">AI মডেল বেছে নিন</p>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setAiModel('openai')}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${aiModel === 'openai' ? 'border-primary bg-primary/10' : 'border-border glass-card hover:border-primary/40'}`}>
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-sm font-bold text-emerald-500">G</div>
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-foreground">ChatGPT</p>
+                    <p className="text-[10px] text-muted-foreground">GPT-4o</p>
+                  </div>
+                  {aiModel === 'openai' && <div className="ml-auto w-4 h-4 rounded-full bg-primary flex items-center justify-center"><span className="text-[8px] text-primary-foreground font-bold">✓</span></div>}
+                </button>
+                <button
+                  onClick={() => setAiModel('gemini')}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${aiModel === 'gemini' ? 'border-primary bg-primary/10' : 'border-border glass-card hover:border-primary/40'}`}>
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-sm font-bold text-blue-400">✦</div>
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-foreground">Gemini</p>
+                    <p className="text-[10px] text-muted-foreground">Gemini 1.5 Pro</p>
+                  </div>
+                  {aiModel === 'gemini' && <div className="ml-auto w-4 h-4 rounded-full bg-primary flex items-center justify-center"><span className="text-[8px] text-primary-foreground font-bold">✓</span></div>}
+                </button>
+              </div>
+            </div>
+
             <label className="flex items-center gap-3 cursor-pointer">
               <div onClick={() => setAutoPublish(p => !p)}
                 className={`w-11 h-6 rounded-full transition-colors relative ${autoPublish ? 'bg-primary' : 'bg-muted'}`}>
@@ -468,7 +497,7 @@ const AdminBlog = () => {
             <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/10">
               <div>
                 <p className="font-semibold text-foreground text-sm">🚀 সব প্রোডাক্টের জন্য ব্লগ তৈরি করুন</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{products.length}টি প্রোডাক্ট পাওয়া গেছে। যেগুলোর ব্লগ আছে সেগুলো skip হবে।</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{products.length}টি প্রোডাক্ট · {aiModel === 'openai' ? 'GPT-4o' : 'Gemini 1.5 Pro'} দিয়ে লেখা হবে</p>
               </div>
               <button
                 onClick={handleGenerateBulk}
