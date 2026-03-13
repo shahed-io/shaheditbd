@@ -25,16 +25,16 @@ serve(async (req) => {
     if (bulk) {
       const { data } = await supabase
         .from("products")
-        .select("*, categories(name)")
+        .select("*, categories!products_category_id_fkey(name)")
         .eq("status", "active")
         .order("sort_order");
       products = data || [];
     } else {
       const { data } = await supabase
         .from("products")
-        .select("*, categories(name)")
+        .select("*, categories!products_category_id_fkey(name)")
         .eq("id", product_id)
-        .single();
+        .maybeSingle();
       if (data) products = [data];
     }
 
