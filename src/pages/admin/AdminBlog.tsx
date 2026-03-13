@@ -473,7 +473,7 @@ const AdminBlog = () => {
               <button
                 onClick={handleGenerateBulk}
                 disabled={aiGenerating}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap">
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl btn-glow text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap">
                 {aiGenerating && aiMode === 'bulk' ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
                 {aiGenerating && aiMode === 'bulk' ? 'তৈরি হচ্ছে...' : 'সব জেনারেট করুন'}
               </button>
