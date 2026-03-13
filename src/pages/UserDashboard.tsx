@@ -361,11 +361,11 @@ const UserDashboard = () => {
                   <h1 className="text-xl sm:text-2xl font-black text-foreground">{displayName}</h1>
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
                   <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border" style={{ color: 'hsl(158,64%,38%)', background: 'hsl(158,64%,96%)', borderColor: 'hsl(158,64%,85%)' }}>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald/30 bg-emerald/10 text-emerald">
                       <ShieldCheck size={11} /> Verified
                     </span>
                     {completedOrders > 0 && (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border" style={{ color: 'hsl(var(--primary))', background: 'hsl(243,75%,97%)', borderColor: 'hsl(243,75%,88%)' }}>
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-primary/25 bg-primary/10 text-primary">
                         <Star size={10} fill="currentColor" /> {completedOrders} অর্ডার
                       </span>
                     )}
