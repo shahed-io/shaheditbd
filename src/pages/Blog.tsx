@@ -6,6 +6,8 @@ import Footer from '@/components/store/Footer';
 import {
   Search, Calendar, Clock, Tag, ChevronRight, Star, BookOpen, ArrowRight, User
 } from 'lucide-react';
+import SEOHead from '@/components/seo/SEOHead';
+import { SITE_URL } from '@/components/seo/SEOHead';
 
 const Blog = () => {
   const [posts, setPosts] = useState<any[]>([]);
