@@ -133,6 +133,80 @@ const AdminBlog = () => {
 
   const pendingComments = comments.filter(c => c.status === 'pending').length;
 
+  // AI Blog Generator
+  const handleGenerateBulk = async () => {
+    if (!confirm(`সব প্রোডাক্টের জন্য AI ব্লগ তৈরি করবেন? (${products.length}টি প্রোডাক্ট)\nনতুন ব্লগ তৈরি হবে, যেগুলোর ব্লগ আছে সেগুলো skip হবে।`)) return;
+    setAiGenerating(true);
+    setAiProgress([]);
+    setAiMode('bulk');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/generate-product-blog`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ bulk: true, auto_publish: autoPublish }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        if (res.status === 429) toast.error('Rate limit exceeded. একটু পরে আবার চেষ্টা করুন।');
+        else if (res.status === 402) toast.error('AI credits শেষ। Workspace settings-এ credits যোগ করুন।');
+        else toast.error('Error: ' + (err.error || 'Unknown error'));
+        return;
+      }
+      const data = await res.json();
+      setAiProgress(data.results || []);
+      const { summary } = data;
+      toast.success(`✅ সম্পন্ন! ${summary.success} নতুন ব্লগ, ${summary.skipped} skip, ${summary.errors} error`);
+      fetchAll();
+    } catch (e: any) {
+      toast.error('Error: ' + e.message);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
+  const handleGenerateSingle = async (productId: string, productName: string) => {
+    setAiGenerating(true);
+    setAiProgress([{ product_id: productId, name: productName, status: 'generating' }]);
+    setAiMode('single');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/generate-product-blog`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ product_id: productId, bulk: false, auto_publish: autoPublish }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        if (res.status === 429) toast.error('Rate limit exceeded. একটু পরে আবার চেষ্টা করুন।');
+        else if (res.status === 402) toast.error('AI credits শেষ।');
+        else toast.error('Error: ' + (err.error || 'Unknown error'));
+        setAiProgress([{ product_id: productId, name: productName, status: 'error', message: 'Failed' }]);
+        return;
+      }
+      const data = await res.json();
+      setAiProgress(data.results || []);
+      const r = data.results?.[0];
+      if (r?.status === 'success') toast.success(`✅ "${productName}" এর ব্লগ তৈরি হয়েছে!`);
+      else if (r?.status === 'skipped') toast.info(`"${productName}" এর ব্লগ ইতিমধ্যে আছে`);
+      else toast.error('ব্লগ তৈরি হয়নি');
+      fetchAll();
+    } catch (e: any) {
+      toast.error('Error: ' + e.message);
+      setAiProgress([{ product_id: productId, name: productName, status: 'error', message: e.message }]);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   return (
     <div className="space-y-5">
       {/* Header */}
