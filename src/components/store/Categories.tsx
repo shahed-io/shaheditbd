@@ -48,7 +48,7 @@ const Categories = () => {
             description: c.description,
             count: Array.isArray(c.products) ? c.products.length : 0,
           }))
-          .filter(c => c.count > 0)
+          .filter(c => c.count > 0 && c.name.toLowerCase() !== 'adobe')
       );
       setLoading(false);
     };
