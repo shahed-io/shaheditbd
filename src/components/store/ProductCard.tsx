@@ -304,6 +304,28 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
               }}>
               <CreditCard size={12} /> Order Now
             </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={waMsg}
+                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
+                style={{
+                  background: 'hsla(158,80%,48%,0.1)',
+                  border: '1px solid hsla(158,80%,48%,0.25)',
+                  color: 'hsl(158,80%,58%)',
+                }}>
+                <MessageCircle size={11} /> WhatsApp
+              </button>
+              <button
+                onClick={() => addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image })}
+                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
+                style={inCart
+                  ? { background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.4)', color: 'hsl(271,91%,75%)' }
+                  : { background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }
+                }>
+                <ShoppingCart size={11} />
+                {inCart ? '✓ Added' : 'Cart'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
