@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, Eye, X, Clock, CheckCircle, ExternalLink } from 'lucide-react';
+import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, X, Clock, CheckCircle } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -141,7 +141,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
                     onClick={() => { setShowPreview(false); navigate(`/product/${product.slug || product.id}`); }}
                     className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01] flex items-center justify-center gap-1.5"
                     style={{ background: 'hsla(271,91%,65%,0.08)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
-                    <ExternalLink size={12} /> View Details
+                    View Details →
                   </button>
                 </div>
               </div>
@@ -153,7 +153,8 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
       {/* ── Main Card ── */}
       <div
         ref={ref}
-        className="group product-card-new flex flex-col"
+        className="group product-card-new flex flex-col cursor-pointer"
+        onClick={() => navigate(`/product/${product.slug || product.id}`)}
         style={{
           opacity:   visible ? 1 : 0,
           transform: visible
@@ -225,23 +226,6 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
             <Heart size={13} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
           </button>
 
-          {/* Quick Preview btn */}
-          <button
-            onClick={() => setShowPreview(true)}
-            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10"
-            style={{
-              opacity: isHovered ? 1 : 0,
-              transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.8)',
-              transition: 'all 0.25s cubic-bezier(0.34,1.56,0.64,1) 0.05s',
-              background: 'hsla(271,91%,65%,0.2)',
-              border: '1px solid hsla(271,91%,65%,0.4)',
-              backdropFilter: 'blur(8px)',
-              color: 'hsl(271,91%,75%)',
-            }}
-          >
-            <Eye size={13} />
-          </button>
-
           {/* Bottom hover label */}
           <div className="absolute bottom-2.5 left-2.5 z-10 transition-all duration-300"
             style={{ opacity: isHovered ? 1 : 0, transform: isHovered ? 'translateY(0)' : 'translateY(6px)' }}>
@@ -255,9 +239,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         {/* ── Content ── */}
         <div className="p-4 flex flex-col gap-2.5 flex-1 relative z-10">
           <h3
-            onClick={() => navigate(`/product/${product.slug || product.id}`)}
-            className="text-sm font-semibold leading-snug line-clamp-2 text-foreground cursor-pointer transition-colors duration-200"
-            style={{ ':hover': { color: 'hsl(271,91%,75%)' } } as React.CSSProperties}
+            className="text-sm font-semibold leading-snug line-clamp-2 text-foreground transition-colors duration-200"
             onMouseEnter={e => (e.currentTarget.style.color = 'hsl(271,91%,75%)')}
             onMouseLeave={e => (e.currentTarget.style.color = '')}
           >
@@ -285,7 +267,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
 
           <div className="space-y-2">
             <button
-              onClick={() => setShowModal(true)}
+              onClick={e => { e.stopPropagation(); setShowModal(true); }}
               className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
               style={{
                 background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
@@ -295,7 +277,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
             </button>
             <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={waMsg}
+                onClick={e => { e.stopPropagation(); waMsg(); }}
                 className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
                 style={{
                   background: 'hsla(158,80%,48%,0.1)',
@@ -305,7 +287,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
                 <MessageCircle size={11} /> WhatsApp
               </button>
               <button
-                onClick={() => addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image })}
+                onClick={e => { e.stopPropagation(); addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
                 className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
                 style={inCart
                   ? { background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.4)', color: 'hsl(271,91%,75%)' }
