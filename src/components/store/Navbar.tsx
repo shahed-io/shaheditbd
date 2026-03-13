@@ -185,10 +185,30 @@ const Navbar = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-1.5">
+
+              {/* Theme Toggle */}
+              {mounted && (
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="p-2.5 rounded-xl transition-all duration-300 border"
+                  style={{
+                    color: theme === 'dark' ? 'hsl(38,100%,65%)' : 'hsl(243,75%,55%)',
+                    background: theme === 'dark' ? 'hsla(38,100%,55%,0.12)' : 'hsla(243,75%,55%,0.08)',
+                    borderColor: theme === 'dark' ? 'hsla(38,100%,55%,0.25)' : 'hsla(243,75%,55%,0.2)',
+                  }}
+                  title={theme === 'dark' ? 'লাইট মোডে যান' : 'ডার্ক মোডে যান'}
+                >
+                  {theme === 'dark'
+                    ? <Sun size={16} className="transition-transform duration-300 rotate-0 hover:rotate-45" />
+                    : <Moon size={16} className="transition-transform duration-300" />
+                  }
+                </button>
+              )}
+
               {user ? (
                 <div className="hidden sm:flex items-center gap-1">
                   <button onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-white/70 hover:text-white hover:bg-white/10 transition-all">
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-foreground/70 hover:text-foreground hover:bg-foreground/10 transition-all">
                     <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
                       {avatarUrl ? (
                         <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
@@ -197,13 +217,13 @@ const Navbar = () => {
                     <span className="hidden lg:inline max-w-[80px] truncate">{displayName}</span>
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
-                    className="p-2 rounded-xl text-white/50 hover:text-red-400 hover:bg-white/10 transition-all">
+                    className="p-2 rounded-xl text-foreground/50 hover:text-destructive hover:bg-foreground/10 transition-all">
                     <LogOut size={15} />
                   </button>
                 </div>
               ) : (
                 <button onClick={() => setAuthOpen(true)}
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white/70 hover:text-white hover:bg-white/10 transition-all border border-white/15">
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-foreground/70 hover:text-foreground hover:bg-foreground/10 transition-all border border-border">
                   <User size={16} />
                   <span className="hidden lg:inline">Login</span>
                 </button>
@@ -220,7 +240,7 @@ const Navbar = () => {
                 )}
               </button>
 
-              <button className="lg:hidden p-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+              <button className="lg:hidden p-2.5 rounded-xl text-foreground/70 hover:text-foreground hover:bg-foreground/10 transition-colors"
                 onClick={() => setMobileOpen(!mobileOpen)}>
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
