@@ -26,6 +26,7 @@ import AdminReports from "./pages/admin/AdminReports";
 import AdminMarketing from "./pages/admin/AdminMarketing";
 import AdminRoles from "./pages/admin/AdminRoles";
 import AdminBackup from "./pages/admin/AdminBackup";
+import AdminReferrals from "./pages/admin/AdminReferrals";
 import UserDashboard from "./pages/UserDashboard";
 import ResetPassword from "./pages/ResetPassword";
 
