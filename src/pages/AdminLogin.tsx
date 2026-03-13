@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { Package, Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
+import BrandLogo from '@/components/store/BrandLogo';
 
 const AdminLogin = () => {
   const { signIn, signOut, isAdmin, user, loading } = useAuth();
@@ -70,17 +71,12 @@ const AdminLogin = () => {
 
       <div className="glass-card rounded-3xl p-8 w-full max-w-md space-y-8 animate-slide-up">
         {/* Logo */}
-        <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-            <Package size={30} className="text-background" />
-          </div>
-          <h1 className="text-2xl font-bold gradient-text" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-            SHAHED STORE
-          </h1>
-          <div className="flex items-center justify-center gap-2 mt-2 text-muted-foreground text-sm">
-            <ShieldCheck size={14} className="text-primary" />
-            Admin Dashboard Login
-          </div>
+        <div className="flex justify-center mb-2">
+          <BrandLogo size="md" />
+        </div>
+        <div className="flex items-center justify-center gap-2 mt-3 text-muted-foreground text-sm">
+          <ShieldCheck size={14} className="text-primary" />
+          Admin Dashboard Login
         </div>
 
         {/* Form */}

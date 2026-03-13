@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import logoOrig from '@/assets/logo-redesigned.png';
+import BrandLogo from '@/components/store/BrandLogo';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
@@ -63,19 +63,14 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className={`fixed left-0 top-0 h-full z-40 transition-all duration-300 flex flex-col ${sidebarOpen ? 'w-64' : 'w-16'} glass-card border-r border-border/50`}>
         {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-border/50 min-h-[68px]">
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-border/50 min-h-[68px] overflow-hidden">
           {sidebarOpen ? (
-            <img
-              src={logoOrig}
-              alt="Shahed Store"
-              className="h-10 w-auto object-contain"
-            />
+            <BrandLogo size="sm" />
           ) : (
-            <img
-              src={logoOrig}
-              alt="Shahed Store"
-              className="w-9 h-9 object-contain object-left"
-            />
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,50%), hsl(340,100%,40%) 60%, hsl(222,30%,14%))' }}>
+              <span className="text-white text-xs font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
+            </div>
           )}
         </div>
 
