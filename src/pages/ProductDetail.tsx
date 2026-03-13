@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useCart } from '@/hooks/useCart';
@@ -7,12 +7,12 @@ import Footer from '@/components/store/Footer';
 import {
   ShoppingCart, MessageCircle, CreditCard, Star, Zap, Shield, Clock,
   CheckCircle2, ChevronLeft, ChevronRight, Heart, Package, Tag,
-  Truck, ArrowLeft, Share2, Copy, Check
+  Truck, ArrowLeft, Share2, Copy, Check, ChevronDown
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
 
 const WA = '8801840099853';
-const PLACEHOLDER = 'https://placehold.co/600x600/f8f9ff/6366f1?text=Product';
+const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
 
 interface ProductFull {
   id: string;
@@ -35,6 +35,21 @@ interface ProductFull {
   created_at: string;
 }
 
+// ── Custom hook: trigger reveal when element enters viewport ──
+const useReveal = (threshold = 0.1) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setRevealed(true); obs.disconnect(); } },
+      { threshold }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, revealed };
+};
+
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -48,6 +63,12 @@ const ProductDetail = () => {
   const [copied,      setCopied]      = useState(false);
   const [imgLoaded,   setImgLoaded]   = useState(false);
   const [selectedVar, setSelectedVar] = useState<Record<string, string>>({});
+  const [entered,     setEntered]     = useState(false);
+
+  // Section reveals
+  const descReveal   = useReveal(0.1);
+  const faqReveal    = useReveal(0.1);
+  const trustReveal  = useReveal(0.15);
 
   useEffect(() => {
     if (!slug) return;
@@ -55,6 +76,7 @@ const ProductDetail = () => {
     const load = async () => {
       setLoading(true);
       setNotFound(false);
+      setEntered(false);
       try {
         const { data, error } = await supabase
           .from('products')
@@ -63,15 +85,15 @@ const ProductDetail = () => {
           .eq('status', 'active')
           .limit(1);
         if (cancelled) return;
-        if (error) { console.error('Product fetch error:', error); setNotFound(true); setLoading(false); return; }
+        if (error) { setNotFound(true); setLoading(false); return; }
         const row = data?.[0];
         if (!row) { setNotFound(true); setLoading(false); return; }
         setProduct(row as any);
         setLoading(false);
-        // Increment view count (fire and forget)
+        // Trigger entrance after short delay for smooth feel
+        setTimeout(() => setEntered(true), 80);
         supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
-      } catch (e) {
-        console.error('Product load exception:', e);
+      } catch {
         if (!cancelled) { setNotFound(true); setLoading(false); }
       }
     };
@@ -84,11 +106,17 @@ const ProductDetail = () => {
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid lg:grid-cols-2 gap-12">
-          <div className="aspect-square rounded-3xl shimmer" />
-          <div className="space-y-4">
-            {[80, 50, 30, 60, 40, 60, 40].map((w, i) => (
-              <div key={i} className="rounded-xl shimmer h-6" style={{ width: `${w}%` }} />
+          {/* Skeleton image */}
+          <div className="aspect-square rounded-3xl relative overflow-hidden shimmer" />
+          <div className="space-y-4 pt-4">
+            {[70, 100, 50, 80, 40, 90, 60].map((w, i) => (
+              <div key={i} className="rounded-xl shimmer h-5" style={{ width: `${w}%`, animationDelay: `${i * 0.08}s` }} />
             ))}
+            <div className="h-14 rounded-2xl shimmer mt-6" />
+            <div className="grid grid-cols-2 gap-3 mt-2">
+              <div className="h-12 rounded-2xl shimmer" />
+              <div className="h-12 rounded-2xl shimmer" />
+            </div>
           </div>
         </div>
       </div>
@@ -102,30 +130,26 @@ const ProductDetail = () => {
         <div className="text-7xl">😕</div>
         <h2 className="text-2xl font-sora font-bold text-foreground">Product Not Found</h2>
         <p className="text-muted-foreground">This product doesn't exist or has been removed.</p>
-        <button onClick={() => navigate('/')} className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white"
-          style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+        <button onClick={() => navigate('/')} className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white btn-primary-new">
           <ArrowLeft size={16} /> Back to Store
         </button>
       </div>
     </div>
   );
 
-  // Build image list
   const images = [
     product.image_url || PLACEHOLDER,
     ...(product.images || []).filter(img => img !== product.image_url),
   ].filter(Boolean);
   if (images.length === 0) images.push(PLACEHOLDER);
 
-  // Variants
   const variants: { name: string; options: string[] }[] = Array.isArray(product.variants) ? product.variants : [];
-
-  // FAQ
   const faqs: { q: string; a: string }[] = Array.isArray(product.faq) ? product.faq : [];
 
   const wishlisted = isWishlisted(product.id);
   const inCart     = isInCart(product.id);
   const savings    = product.original_price ? product.original_price - product.price : 0;
+  const discount   = product.discount_percent || (product.original_price ? Math.round(savings / product.original_price * 100) : 0);
 
   const cartItem = {
     id: product.id,
@@ -138,9 +162,7 @@ const ProductDetail = () => {
 
   const waOrder = () => {
     const varStr = Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`).join(', ');
-    const msg = encodeURIComponent(
-      `অর্ডার করতে চাই:\n📦 ${product.name}${varStr ? `\n⚙️ ${varStr}` : ''}\n💰 ৳${product.price.toLocaleString()}\n🔗 ${window.location.href}`
-    );
+    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${varStr ? `\n⚙️ ${varStr}` : ''}\n💰 ৳${product.price.toLocaleString()}\n🔗 ${window.location.href}`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
@@ -150,22 +172,29 @@ const ProductDetail = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const prevImg = () => setActiveImg(i => (i - 1 + images.length) % images.length);
-  const nextImg = () => setActiveImg(i => (i + 1) % images.length);
+  const prevImg = () => { setImgLoaded(false); setActiveImg(i => (i - 1 + images.length) % images.length); };
+  const nextImg = () => { setImgLoaded(false); setActiveImg(i => (i + 1) % images.length); };
 
   return (
     <>
       <div className="min-h-screen bg-background">
         <Navbar />
 
-        {/* Breadcrumb */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        {/* ── Breadcrumb ── */}
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6"
+          style={{
+            opacity: entered ? 1 : 0,
+            transform: entered ? 'none' : 'translateY(-10px)',
+            transition: 'opacity 0.5s ease, transform 0.5s ease',
+          }}
+        >
           <nav className="flex items-center gap-2 text-sm text-muted-foreground">
-            <button onClick={() => navigate('/')} className="hover:text-brand-indigo transition-colors">Home</button>
+            <button onClick={() => navigate('/')} className="hover:text-primary transition-colors">Home</button>
             <span>/</span>
             {product.categories && (
               <>
-                <button onClick={() => navigate(`/?cat=${product.categories!.slug}`)} className="hover:text-brand-indigo transition-colors capitalize">
+                <button onClick={() => navigate(`/?cat=${product.categories!.slug}`)} className="hover:text-primary transition-colors capitalize">
                   {product.categories.name}
                 </button>
                 <span>/</span>
@@ -175,14 +204,31 @@ const ProductDetail = () => {
           </nav>
         </div>
 
-        {/* Main Content */}
+        {/* ── Main Content ── */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid lg:grid-cols-2 gap-10 xl:gap-16">
 
-            {/* ── LEFT: Image Gallery ── */}
+            {/* ═══ LEFT: Image Gallery ═══ */}
             <div className="space-y-4">
-              {/* Main Image */}
-              <div className="relative rounded-3xl overflow-hidden bg-surface-light border border-border aspect-square group">
+              {/* Main Image with cinematic entrance */}
+              <div
+                className="relative rounded-3xl overflow-hidden border aspect-square group"
+                style={{
+                  background: 'hsl(215,28%,10%)',
+                  borderColor: entered ? 'hsla(271,91%,65%,0.35)' : 'transparent',
+                  boxShadow: entered ? '0 0 60px hsla(271,91%,65%,0.12), 0 32px 80px hsla(215,40%,4%,0.6)' : 'none',
+                  opacity: entered ? 1 : 0,
+                  transform: entered ? 'none' : 'translateX(-40px) scale(0.95)',
+                  transition: 'all 0.8s cubic-bezier(0.22,1,0.36,1)',
+                }}
+              >
+                {/* Neon top border */}
+                <div className="h-[2px] w-full absolute top-0 left-0 z-10"
+                  style={{ background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+
+                {/* Neon sweep effect on load */}
+                {entered && <div className="neon-sweep-line" />}
+
                 {!imgLoaded && <div className="absolute inset-0 shimmer" />}
                 <img
                   key={images[activeImg]}
@@ -190,51 +236,70 @@ const ProductDetail = () => {
                   alt={product.name}
                   onLoad={() => setImgLoaded(true)}
                   onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
-                  className="w-full h-full object-cover transition-all duration-500"
+                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                   style={{ opacity: imgLoaded ? 1 : 0 }}
                 />
+
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: 'linear-gradient(to bottom, transparent 50%, hsla(215,28%,6%,0.7) 100%)' }} />
+
                 {/* Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                  {product.discount_percent && (
-                    <span className="px-3 py-1 rounded-full text-xs font-bold text-white"
-                      style={{ background: 'linear-gradient(135deg, hsl(15,100%,60%), hsl(38,100%,55%))' }}>
-                      -{product.discount_percent}% OFF
+                <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                  {discount > 0 && (
+                    <span className="badge-pop badge-sale" style={{ animationDelay: '0.5s' }}>
+                      -{discount}% OFF
                     </span>
                   )}
                   {product.is_featured && (
-                    <span className="px-3 py-1 rounded-full text-xs font-bold text-white flex items-center gap-1"
-                      style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                    <span className="badge-pop badge-hot-item flex items-center gap-1" style={{ animationDelay: '0.65s' }}>
                       <Zap size={10} fill="white" /> HOT
                     </span>
                   )}
                 </div>
+
                 {/* Nav arrows */}
                 {images.length > 1 && (
                   <>
                     <button onClick={prevImg}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-card/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-card text-foreground">
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
+                      style={{ background: 'hsla(215,28%,8%,0.9)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)', backdropFilter: 'blur(8px)' }}>
                       <ChevronLeft size={18} />
                     </button>
                     <button onClick={nextImg}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-card/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-card text-foreground">
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
+                      style={{ background: 'hsla(215,28%,8%,0.9)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)', backdropFilter: 'blur(8px)' }}>
                       <ChevronRight size={18} />
                     </button>
                   </>
                 )}
+
                 {/* Wishlist */}
                 <button
                   onClick={() => toggleWishlist(cartItem)}
-                  className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-card shadow-medium flex items-center justify-center transition-all hover:scale-110">
-                  <Heart size={16} fill={wishlisted ? 'hsl(15,100%,60%)' : 'none'} color={wishlisted ? 'hsl(15,100%,60%)' : 'hsl(var(--muted-foreground))'} />
+                  className="absolute top-4 right-4 w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-110 z-10"
+                  style={{
+                    background: wishlisted ? 'hsla(320,90%,62%,0.2)' : 'hsla(215,28%,10%,0.85)',
+                    border: `1px solid ${wishlisted ? 'hsla(320,90%,62%,0.5)' : 'hsla(271,91%,65%,0.25)'}`,
+                    backdropFilter: 'blur(8px)',
+                  }}>
+                  <Heart size={16} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
                 </button>
               </div>
 
               {/* Thumbnails */}
               {images.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
+                <div
+                  className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide"
+                  style={{
+                    opacity: entered ? 1 : 0,
+                    transform: entered ? 'none' : 'translateY(20px)',
+                    transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.25s',
+                  }}
+                >
                   {images.map((img, i) => (
                     <button key={i} onClick={() => { setActiveImg(i); setImgLoaded(false); }}
-                      className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all ${activeImg === i ? 'border-brand-indigo shadow-indigo' : 'border-border hover:border-brand-indigo/50'}`}>
+                      className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary shadow-[0_0_16px_hsla(271,91%,65%,0.5)]' : 'border-border hover:border-primary/50'}`}>
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
                   ))}
@@ -242,14 +307,26 @@ const ProductDetail = () => {
               )}
 
               {/* Trust badges */}
-              <div className="grid grid-cols-3 gap-3">
+              <div
+                ref={trustReveal.ref}
+                className="grid grid-cols-3 gap-3"
+              >
                 {[
-                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product' },
-                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min' },
-                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available' },
+                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0s', color: 'hsl(271,91%,65%)' },
+                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '0.12s', color: 'hsl(185,90%,52%)' },
+                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '0.24s', color: 'hsl(158,80%,48%)' },
                 ].map(b => (
-                  <div key={b.label} className="bg-surface-light border border-border rounded-2xl p-3 text-center">
-                    <div className="flex justify-center text-brand-indigo mb-1">{b.icon}</div>
+                  <div
+                    key={b.label}
+                    className="trust-enter rounded-2xl p-3 text-center border"
+                    style={{
+                      animationDelay: trustReveal.revealed ? b.delay : '0s',
+                      animationPlayState: trustReveal.revealed ? 'running' : 'paused',
+                      background: 'hsla(215,28%,10%,0.8)',
+                      borderColor: `${b.color}25`,
+                    }}
+                  >
+                    <div className="flex justify-center mb-1.5" style={{ color: b.color }}>{b.icon}</div>
                     <div className="text-xs font-bold text-foreground">{b.label}</div>
                     <div className="text-[10px] text-muted-foreground">{b.sub}</div>
                   </div>
@@ -257,72 +334,116 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* ── RIGHT: Info ── */}
-            <div className="flex flex-col gap-6">
+            {/* ═══ RIGHT: Product Info ═══ */}
+            <div className="flex flex-col gap-5">
+
               {/* Category + Share */}
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-fira font-bold uppercase tracking-widest text-brand-indigo bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full">
+              <div
+                className="flex items-center justify-between"
+                style={{
+                  opacity: entered ? 1 : 0,
+                  transform: entered ? 'none' : 'translateY(20px)',
+                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.15s',
+                }}
+              >
+                <span className="text-xs font-fira font-bold uppercase tracking-widest px-3 py-1.5 rounded-full"
+                  style={{ color: 'hsl(185,90%,62%)', background: 'hsla(185,90%,52%,0.12)', border: '1px solid hsla(185,90%,52%,0.25)' }}>
                   {product.categories?.name || 'Digital Product'}
                 </span>
-                <div className="flex gap-2">
-                  <button onClick={handleCopy}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-brand-indigo px-3 py-1.5 rounded-xl bg-surface-light border border-border transition-all">
-                    {copied ? <><Check size={12} className="text-green-500" /> Copied!</> : <><Copy size={12} /> Share</>}
-                  </button>
-                </div>
+                <button onClick={handleCopy}
+                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
+                  style={{ color: copied ? 'hsl(158,80%,55%)' : 'hsl(var(--muted-foreground))', background: 'hsla(215,28%,14%,0.8)', border: '1px solid hsl(var(--border))' }}>
+                  {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Share</>}
+                </button>
               </div>
 
               {/* Title */}
-              <div>
-                <h1 className="font-sora font-black text-2xl sm:text-3xl text-foreground leading-tight">{product.name}</h1>
+              <div
+                style={{
+                  opacity: entered ? 1 : 0,
+                  transform: entered ? 'none' : 'translateY(24px)',
+                  filter: entered ? 'none' : 'blur(3px)',
+                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.22s',
+                }}
+              >
+                <h1 className="font-sora font-black text-2xl sm:text-3xl text-foreground leading-tight">
+                  {product.name}
+                </h1>
                 {product.short_description && (
                   <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{product.short_description}</p>
                 )}
               </div>
 
               {/* Rating + Sales */}
-              <div className="flex items-center gap-4">
+              <div
+                className="flex items-center gap-4"
+                style={{
+                  opacity: entered ? 1 : 0,
+                  transform: entered ? 'none' : 'translateY(16px)',
+                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.3s',
+                }}
+              >
                 <div className="flex items-center gap-1">
                   {[1,2,3,4,5].map(s => (
-                    <Star key={s} size={14} fill={s <= 5 ? 'hsl(38,100%,55%)' : 'none'} color="hsl(38,100%,55%)" />
+                    <Star key={s} size={14} fill="hsl(38,100%,55%)" color="hsl(38,100%,55%)" />
                   ))}
                   <span className="text-sm font-semibold text-foreground ml-1">4.9</span>
                 </div>
                 <span className="w-1 h-1 rounded-full bg-border" />
                 <span className="text-sm text-muted-foreground">{(product.total_sales || 0) + 50}+ sold</span>
                 <span className="w-1 h-1 rounded-full bg-border" />
-                <span className="text-xs font-semibold text-green-600 bg-green-50 border border-green-100 px-2.5 py-1 rounded-full flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" /> In Stock
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
+                  style={{ color: 'hsl(158,80%,55%)', background: 'hsla(158,80%,48%,0.12)', border: '1px solid hsla(158,80%,48%,0.25)' }}>
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> In Stock
                 </span>
               </div>
 
               {/* Price */}
-              <div className="flex items-end gap-4 py-4 border-y border-border">
-                <span className="text-4xl font-sora font-black text-brand-indigo">৳{product.price.toLocaleString()}</span>
+              <div
+                className="flex items-end gap-4 py-4 border-y"
+                style={{
+                  borderColor: 'hsla(271,91%,65%,0.2)',
+                  opacity: entered ? 1 : 0,
+                  transform: entered ? 'none' : 'scale(0.9) translateX(-16px)',
+                  transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.38s',
+                }}
+              >
+                <span className="text-4xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)', textShadow: '0 0 30px hsla(271,91%,65%,0.4)' }}>
+                  ৳{product.price.toLocaleString()}
+                </span>
                 {product.original_price && (
                   <div>
                     <div className="text-lg text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
-                    <div className="text-sm font-bold text-orange-600">You save ৳{savings.toLocaleString()}</div>
+                    <div className="text-sm font-bold" style={{ color: 'hsl(40,100%,58%)' }}>
+                      আপনি বাঁচালেন ৳{savings.toLocaleString()}
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* Variants */}
-              {variants.map((v: any) => (
-                <div key={v.name}>
+              {variants.map((v: any, vi: number) => (
+                <div
+                  key={v.name}
+                  style={{
+                    opacity: entered ? 1 : 0,
+                    transform: entered ? 'none' : 'translateY(16px)',
+                    transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + vi * 0.08}s`,
+                  }}
+                >
                   <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
-                    <Tag size={12} className="text-brand-indigo" /> {v.name}:
-                    <span className="text-brand-indigo">{selectedVar[v.name] || v.options?.[0]}</span>
+                    <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} /> {v.name}:
+                    <span style={{ color: 'hsl(271,91%,75%)' }}>{selectedVar[v.name] || v.options?.[0]}</span>
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {v.options?.map((opt: string) => (
                       <button key={opt}
                         onClick={() => setSelectedVar(p => ({ ...p, [v.name]: opt }))}
-                        className={`px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${
-                          (selectedVar[v.name] || v.options?.[0]) === opt
-                            ? 'border-brand-indigo text-brand-indigo bg-indigo-50'
-                            : 'border-border text-muted-foreground hover:border-brand-indigo/40'
-                        }`}>
+                        className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105"
+                        style={(selectedVar[v.name] || v.options?.[0]) === opt
+                          ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
+                          : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
+                        }>
                         {opt}
                       </button>
                     ))}
@@ -331,23 +452,31 @@ const ProductDetail = () => {
               ))}
 
               {/* CTA Buttons */}
-              <div className="space-y-3">
+              <div
+                className="space-y-3"
+                style={{
+                  opacity: entered ? 1 : 0,
+                  transform: entered ? 'none' : 'translateY(28px)',
+                  transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.5s',
+                }}
+              >
                 <button onClick={() => setShowModal(true)}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base text-white hover:scale-[1.02] transition-transform shadow-indigo"
-                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_hsla(271,91%,65%,0.5)]"
+                  style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 4px 24px hsla(271,91%,65%,0.35)' }}>
                   <CreditCard size={18} /> Order Now — ৳{product.price.toLocaleString()}
                 </button>
                 <div className="grid grid-cols-2 gap-3">
                   <button onClick={waOrder}
-                    className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm bg-green-500 hover:bg-green-600 text-white transition-all hover:scale-[1.02] shadow-sm">
-                    <MessageCircle size={16} /> WhatsApp Order
+                    className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm text-white transition-all hover:scale-[1.02]"
+                    style={{ background: 'linear-gradient(135deg, hsl(142,70%,40%), hsl(158,80%,38%))', boxShadow: '0 4px 16px hsla(142,70%,40%,0.3)' }}>
+                    <MessageCircle size={16} /> WhatsApp
                   </button>
                   <button onClick={() => addToCart(cartItem)}
-                    className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm border-2 transition-all hover:scale-[1.02] ${
-                      inCart
-                        ? 'bg-indigo-50 border-brand-indigo text-brand-indigo'
-                        : 'bg-card border-border text-foreground hover:border-brand-indigo/50'
-                    }`}>
+                    className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm border-2 transition-all hover:scale-[1.02]"
+                    style={inCart
+                      ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.1)' }
+                      : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', background: 'transparent' }
+                    }>
                     <ShoppingCart size={16} />
                     {inCart ? '✓ In Cart' : 'Add to Cart'}
                   </button>
@@ -356,8 +485,17 @@ const ProductDetail = () => {
 
               {/* Delivery Time */}
               {product.delivery_time && (
-                <div className="flex items-center gap-3 bg-emerald/10 border border-emerald/20 rounded-2xl px-4 py-3">
-                  <Clock size={18} className="text-emerald-500 flex-shrink-0" />
+                <div
+                  className="flex items-center gap-3 rounded-2xl px-4 py-3"
+                  style={{
+                    background: 'hsla(158,80%,48%,0.08)',
+                    border: '1px solid hsla(158,80%,48%,0.2)',
+                    opacity: entered ? 1 : 0,
+                    transform: entered ? 'none' : 'translateY(16px)',
+                    transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s',
+                  }}
+                >
+                  <Clock size={18} style={{ color: 'hsl(158,80%,55%)' }} className="flex-shrink-0" />
                   <div>
                     <div className="text-sm font-bold text-foreground">Delivery Time</div>
                     <div className="text-xs text-muted-foreground">{product.delivery_time}</div>
@@ -367,14 +505,28 @@ const ProductDetail = () => {
 
               {/* What You Get */}
               {product.what_you_get && product.what_you_get.length > 0 && (
-                <div className="bg-surface-light border border-border rounded-2xl p-5">
+                <div
+                  className="rounded-2xl p-5 border"
+                  style={{
+                    background: 'hsla(215,28%,10%,0.7)',
+                    borderColor: 'hsla(271,91%,65%,0.15)',
+                    opacity: entered ? 1 : 0,
+                    transform: entered ? 'none' : 'translateY(20px)',
+                    transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.64s',
+                  }}
+                >
                   <h3 className="font-sora font-bold text-base text-foreground flex items-center gap-2 mb-4">
-                    <Package size={16} className="text-brand-indigo" /> What You'll Get
+                    <Package size={16} style={{ color: 'hsl(271,91%,65%)' }} /> What You'll Get
                   </h3>
                   <ul className="space-y-2.5">
                     {product.what_you_get.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-foreground">
-                        <CheckCircle2 size={15} className="text-green-500 flex-shrink-0 mt-0.5" />
+                      <li key={i} className="flex items-start gap-3 text-sm text-foreground"
+                        style={{
+                          opacity: entered ? 1 : 0,
+                          transform: entered ? 'none' : 'translateX(-12px)',
+                          transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.7 + i * 0.07}s`,
+                        }}>
+                        <CheckCircle2 size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'hsl(158,80%,55%)' }} />
                         {item}
                       </li>
                     ))}
@@ -387,14 +539,24 @@ const ProductDetail = () => {
           {/* ── Bottom: Description + FAQ ── */}
           <div className="mt-14 grid lg:grid-cols-3 gap-8">
 
-            {/* Description */}
             {product.description && (
-              <div className="lg:col-span-2">
+              <div
+                className="lg:col-span-2"
+                ref={descReveal.ref}
+                style={{
+                  opacity: descReveal.revealed ? 1 : 0,
+                  transform: descReveal.revealed ? 'none' : 'translateY(40px)',
+                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
+                }}
+              >
                 <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
-                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(243,75%,59%), hsl(263,70%,58%))' }} />
+                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
                   Product Description
                 </h2>
-                <div className="prose prose-sm max-w-none text-muted-foreground leading-relaxed bg-surface-light border border-border rounded-2xl p-6">
+                <div
+                  className="rounded-2xl p-6 text-sm text-muted-foreground leading-relaxed border"
+                  style={{ background: 'hsla(215,28%,10%,0.7)', borderColor: 'hsla(271,91%,65%,0.1)' }}
+                >
                   {product.description.split('\n').map((line, i) =>
                     line.trim() ? <p key={i} className="mb-3 last:mb-0">{line}</p> : null
                   )}
@@ -402,16 +564,23 @@ const ProductDetail = () => {
               </div>
             )}
 
-            {/* FAQ */}
             {faqs.length > 0 && (
-              <div className={product.description ? '' : 'lg:col-span-3'}>
+              <div
+                className={product.description ? '' : 'lg:col-span-3'}
+                ref={faqReveal.ref}
+                style={{
+                  opacity: faqReveal.revealed ? 1 : 0,
+                  transform: faqReveal.revealed ? 'none' : 'translateX(30px)',
+                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s',
+                }}
+              >
                 <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
-                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(243,75%,59%), hsl(263,70%,58%))' }} />
+                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
                   FAQ
                 </h2>
                 <div className="space-y-3">
                   {faqs.map((f, i) => (
-                    <FAQItem key={i} q={f.q} a={f.a} />
+                    <FAQItem key={i} q={f.q} a={f.a} delay={i * 0.07} revealed={faqReveal.revealed} />
                   ))}
                 </div>
               </div>
@@ -433,20 +602,38 @@ const ProductDetail = () => {
 };
 
 // ── FAQ accordion item ──
-const FAQItem = ({ q, a }: { q: string; a: string }) => {
+const FAQItem = ({ q, a, delay = 0, revealed = true }: { q: string; a: string; delay?: number; revealed?: boolean }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="bg-surface-light border border-border rounded-2xl overflow-hidden">
+    <div
+      className="rounded-2xl overflow-hidden border transition-all"
+      style={{
+        background: 'hsla(215,28%,10%,0.7)',
+        borderColor: open ? 'hsla(271,91%,65%,0.3)' : 'hsla(271,91%,65%,0.1)',
+        boxShadow: open ? '0 0 24px hsla(271,91%,65%,0.08)' : 'none',
+        opacity: revealed ? 1 : 0,
+        transform: revealed ? 'none' : 'translateY(16px)',
+        transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s, box-shadow 0.3s`,
+      }}
+    >
       <button onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-foreground text-left">
-        {q}
-        <ChevronRight size={14} className={`flex-shrink-0 text-muted-foreground transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
+        className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-foreground text-left gap-3">
+        <span>{q}</span>
+        <ChevronDown
+          size={16}
+          className="flex-shrink-0 transition-transform duration-300"
+          style={{ color: 'hsl(271,91%,65%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+        />
       </button>
-      {open && (
-        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
+      <div
+        className="overflow-hidden transition-all duration-400"
+        style={{ maxHeight: open ? '300px' : '0', opacity: open ? 1 : 0 }}
+      >
+        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t"
+          style={{ borderColor: 'hsla(271,91%,65%,0.1)', paddingTop: '12px' }}>
           {a}
         </div>
-      )}
+      </div>
     </div>
   );
 };
