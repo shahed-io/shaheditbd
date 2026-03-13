@@ -26,6 +26,7 @@ import AdminReports from "./pages/admin/AdminReports";
 import AdminMarketing from "./pages/admin/AdminMarketing";
 import AdminRoles from "./pages/admin/AdminRoles";
 import AdminBackup from "./pages/admin/AdminBackup";
+import AdminReferrals from "./pages/admin/AdminReferrals";
 import UserDashboard from "./pages/UserDashboard";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -71,6 +72,7 @@ const App = () => (
                   <Route path="marketing" element={<AdminMarketing />} />
                   <Route path="roles" element={<AdminRoles />} />
                   <Route path="backup" element={<AdminBackup />} />
+                  <Route path="referrals" element={<AdminReferrals />} />
                 </Route>
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
