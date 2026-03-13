@@ -462,34 +462,48 @@ const ProductDetail = () => {
               </div>
 
               {/* Variants */}
-              {variants.map((v: any, vi: number) => (
-                <div
-                  key={v.name}
-                  style={{
-                    opacity: entered ? 1 : 0,
-                    transform: entered ? 'none' : 'translateY(16px)',
-                    transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + vi * 0.08}s`,
-                  }}
-                >
-                  <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
-                    <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} /> {v.name}:
-                    <span style={{ color: 'hsl(271,91%,75%)' }}>{selectedVar[v.name] || v.options?.[0]}</span>
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {v.options?.map((opt: string) => (
-                      <button key={opt}
-                        onClick={() => setSelectedVar(p => ({ ...p, [v.name]: opt }))}
-                        className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105"
-                        style={(selectedVar[v.name] || v.options?.[0]) === opt
-                          ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
-                          : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
-                        }>
-                        {opt}
-                      </button>
-                    ))}
+              {variants.map((group, vi) => {
+                const selectedLabel = selectedVar[group.name] || group.options[0]?.label;
+                return (
+                  <div
+                    key={group.name + vi}
+                    style={{
+                      opacity: entered ? 1 : 0,
+                      transform: entered ? 'none' : 'translateY(16px)',
+                      transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + vi * 0.08}s`,
+                    }}
+                  >
+                    <p className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-1.5">
+                      <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} />
+                      {group.name}:
+                      <span style={{ color: 'hsl(271,91%,75%)' }}>{selectedLabel}</span>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {group.options.map((opt) => {
+                        const isSelected = selectedLabel === opt.label;
+                        return (
+                          <button
+                            key={opt.label}
+                            onClick={() => setSelectedVar(p => ({ ...p, [group.name]: opt.label }))}
+                            className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105 flex flex-col items-center"
+                            style={isSelected
+                              ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
+                              : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
+                            }
+                          >
+                            <span>{opt.label}</span>
+                            {opt.price !== undefined && opt.price > 0 && (
+                              <span className="text-xs font-bold mt-0.5" style={{ color: isSelected ? 'hsl(271,91%,80%)' : 'hsl(var(--muted-foreground))' }}>
+                                ৳{opt.price.toLocaleString()}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {/* CTA Buttons */}
               <div
