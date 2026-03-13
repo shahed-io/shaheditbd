@@ -7,9 +7,9 @@ interface UseRevealOptions {
 }
 
 export const useReveal = (options: UseRevealOptions = {}) => {
-  const { threshold = 0.12, rootMargin = '0px 0px -60px 0px', once = true } = options;
+  const { threshold = 0.05, rootMargin = '0px 0px -20px 0px', once = true } = options;
   const ref = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true); // START VISIBLE by default
 
   useEffect(() => {
     const el = ref.current;

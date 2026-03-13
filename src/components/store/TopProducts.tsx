@@ -79,14 +79,7 @@ const TopProducts = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div
-          ref={headerRef as React.RefObject<HTMLDivElement>}
-          className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 transition-all duration-700"
-          style={{
-            opacity: headerVisible ? 1 : 0,
-            transform: headerVisible ? 'translateY(0)' : 'translateY(28px)',
-          }}
-        >
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
             <span className="section-label">Featured Products</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-3">
