@@ -133,7 +133,7 @@ const AdminCategories = () => {
                 {cat.is_active ? 'Active' : 'Inactive'}
               </span>
               <span className="text-xs text-muted-foreground">Order: {cat.sort_order}</span>
-              {cat.products && <span className="text-xs text-primary ml-auto">{(cat.products as any)[0]?.count ?? 0} Products</span>}
+              {cat.products && <span className="text-xs text-primary ml-auto">{Array.isArray(cat.products) ? (cat.products[0]?.count ?? 0) : 0} Products</span>}
             </div>
             {cat.description && <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{cat.description}</p>}
           </div>
