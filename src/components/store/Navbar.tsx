@@ -242,8 +242,7 @@ const Navbar = () => {
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-colors"
-                style={{ color: link.label === 'Admission' ? 'hsl(40,100%,68%)' : 'hsla(210,30%,95%,0.7)' }}>
-                {link.label === 'Admission' && <GraduationCap size={14} />}
+                style={{ color: 'hsla(210,30%,95%,0.7)' }}>
                 {link.label}
               </a>
             ))}
