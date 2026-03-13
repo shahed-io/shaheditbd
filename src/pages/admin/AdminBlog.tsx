@@ -38,6 +38,7 @@ const AdminBlog = () => {
   const [autoPublish, setAutoPublish] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [aiMode, setAiMode] = useState<'bulk' | 'single'>('bulk');
+  const [aiModel, setAiModel] = useState<'openai' | 'gemini'>('openai');
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
