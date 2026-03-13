@@ -286,6 +286,41 @@ export type Database = {
           },
         ]
       }
+      order_timeline: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          order_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          order_id: string
+          status: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          order_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_timeline_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           admin_notes: string | null
@@ -855,6 +890,8 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "refunded"
+        | "delivered"
+        | "failed"
       product_status: "active" | "draft" | "out_of_stock"
     }
     CompositeTypes: {
@@ -990,6 +1027,8 @@ export const Constants = {
         "completed",
         "cancelled",
         "refunded",
+        "delivered",
+        "failed",
       ],
       product_status: ["active", "draft", "out_of_stock"],
     },
