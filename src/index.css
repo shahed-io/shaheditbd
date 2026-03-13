@@ -5,8 +5,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 
 @layer base {
+  /* ══════════════════════════════════════
+     DARK MODE (default)
+  ══════════════════════════════════════ */
   :root {
-    /* ── Deep Dark Base ── */
     --background: 222 22% 9%;
     --foreground: 210 20% 92%;
 
@@ -16,7 +18,6 @@
     --popover: 222 22% 13%;
     --popover-foreground: 210 20% 92%;
 
-    /* ── Deep Indigo Primary ── */
     --primary: 243 75% 62%;
     --primary-foreground: 0 0% 100%;
 
@@ -26,7 +27,6 @@
     --muted: 222 20% 16%;
     --muted-foreground: 220 15% 55%;
 
-    /* ── Hot Coral Accent ── */
     --accent: 15 100% 60%;
     --accent-foreground: 0 0% 100%;
 
@@ -38,7 +38,6 @@
     --ring: 243 75% 62%;
     --radius: 1rem;
 
-    /* ── Brand Color Tokens ── */
     --indigo:         hsl(243, 75%, 62%);
     --indigo-light:   hsl(243, 85%, 72%);
     --indigo-dim:     hsla(243, 75%, 62%, 0.12);
@@ -81,6 +80,78 @@
     --sidebar-border: 222 20% 18%;
     --sidebar-ring: 243 75% 62%;
   }
+
+  /* ══════════════════════════════════════
+     LIGHT MODE
+  ══════════════════════════════════════ */
+  .light {
+    --background: 210 20% 98%;
+    --foreground: 222 30% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 30% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 30% 12%;
+
+    --primary: 243 75% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 93%;
+    --secondary-foreground: 222 30% 20%;
+
+    --muted: 210 20% 92%;
+    --muted-foreground: 220 15% 45%;
+
+    --accent: 15 100% 56%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 56%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 85%;
+    --input: 220 15% 90%;
+    --ring: 243 75% 55%;
+
+    --indigo:         hsl(243, 75%, 55%);
+    --indigo-light:   hsl(243, 85%, 65%);
+    --indigo-dim:     hsla(243, 75%, 55%, 0.10);
+    --indigo-glow:    0 8px 32px hsla(243, 75%, 55%, 0.3);
+
+    --coral:          hsl(15, 100%, 56%);
+    --coral-light:    hsl(15, 100%, 65%);
+    --coral-dim:      hsla(15, 100%, 56%, 0.10);
+
+    --emerald:        hsl(158, 55%, 38%);
+    --emerald-dim:    hsla(158, 55%, 38%, 0.10);
+
+    --amber:          hsl(38, 95%, 50%);
+    --amber-dim:      hsla(38, 95%, 50%, 0.10);
+
+    --violet:         hsl(263, 65%, 55%);
+    --violet-dim:     hsla(263, 65%, 55%, 0.10);
+
+    --surface-white:  hsl(0, 0%, 100%);
+    --surface-light:  hsl(210, 20%, 97%);
+    --surface-soft:   hsl(210, 20%, 93%);
+
+    --gradient-card:  linear-gradient(145deg, hsla(0,0%,100%,0.9) 0%, hsla(210,20%,97%,0.95) 100%);
+
+    --shadow-soft:    0 2px 16px hsla(220,30%,50%,0.08);
+    --shadow-medium:  0 8px 32px hsla(220,30%,50%,0.12);
+    --shadow-strong:  0 24px 64px hsla(220,30%,50%,0.18);
+    --shadow-indigo:  0 8px 28px hsla(243,75%,55%,0.25);
+    --shadow-coral:   0 8px 28px hsla(15,100%,56%,0.25);
+
+    --sidebar-background: 210 20% 96%;
+    --sidebar-foreground: 222 30% 20%;
+    --sidebar-primary: 243 75% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 90%;
+    --sidebar-accent-foreground: 222 30% 20%;
+    --sidebar-border: 220 15% 85%;
+    --sidebar-ring: 243 75% 55%;
+  }
 }
 
 @layer base {
@@ -94,6 +165,7 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4 {
@@ -102,8 +174,49 @@
   }
 }
 
+/* Light mode page sections */
+.light .hero-bg {
+  background: linear-gradient(135deg,
+    hsl(210, 30%, 98%) 0%,
+    hsl(220, 35%, 96%) 40%,
+    hsl(230, 40%, 94%) 100%
+  );
+}
+.light .hero-bg::before {
+  background: radial-gradient(circle, hsla(243,75%,62%,0.08) 0%, transparent 70%);
+}
+.light .hero-bg::after {
+  background: radial-gradient(circle, hsla(15,100%,60%,0.07) 0%, transparent 70%);
+}
+
+.light .product-card-new {
+  background: hsla(0, 0%, 100%, 0.90);
+  border: 1px solid hsla(220, 15%, 88%, 0.8);
+  box-shadow: 0 4px 24px hsla(220,30%,50%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.9);
+}
+.light .product-card-new:hover {
+  box-shadow: 0 24px 64px hsla(220,30%,50%,0.15), 0 0 0 1px hsla(243,75%,55%,0.25);
+  border-color: hsla(243, 75%, 55%, 0.3);
+}
+
+.light .cat-card {
+  background: hsla(0, 0%, 100%, 0.85);
+  border: 1px solid hsla(220, 15%, 88%, 0.7);
+  box-shadow: 0 4px 20px hsla(220,30%,50%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.9);
+}
+.light .cat-card:hover {
+  box-shadow: 0 20px 50px hsla(220,30%,50%,0.12), 0 0 0 1px hsla(243,75%,55%,0.2);
+  border-color: hsla(243, 75%, 55%, 0.3);
+}
+
+.light .glass-white {
+  background: hsla(0, 0%, 100%, 0.90);
+  border: 1px solid hsla(220, 15%, 85%, 0.6);
+  box-shadow: 0 8px 32px hsla(220,30%,50%,0.10), inset 0 1px 0 hsla(0,0%,100%,1);
+}
+
 /* ══════════════════════════════════════
-   GLASS CARD — Dark Glassmorphism
+   GLASS CARD
 ══════════════════════════════════════ */
 .glass-card {
   background: hsla(222, 22%, 15%, 0.75);
@@ -111,12 +224,35 @@
   border: 1px solid hsla(0, 0%, 100%, 0.08);
   box-shadow: 0 8px 32px hsla(220, 30%, 5%, 0.4), inset 0 1px 0 hsla(0,0%,100%,0.06);
 }
+.light .glass-card {
+  background: hsla(0, 0%, 100%, 0.80);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid hsla(220, 15%, 80%, 0.5);
+  box-shadow: 0 8px 32px hsla(220, 30%, 50%, 0.10), inset 0 1px 0 hsla(0,0%,100%,0.9);
+}
+
+.glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 48px hsla(220, 30%, 5%, 0.5);
+}
+.light .glass-card-hover:hover {
+  box-shadow: 0 16px 48px hsla(220, 30%, 50%, 0.15);
+}
 
 .glass-dark {
   background: hsla(222, 25%, 10%, 0.88);
   backdrop-filter: blur(32px) saturate(200%);
   border: 1px solid hsla(0, 0%, 100%, 0.07);
   box-shadow: 0 16px 48px hsla(220, 30%, 5%, 0.55), inset 0 1px 0 hsla(0,0%,100%,0.05);
+}
+.light .glass-dark {
+  background: hsla(210, 20%, 97%, 0.90);
+  backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid hsla(220, 15%, 82%, 0.6);
+  box-shadow: 0 16px 48px hsla(220, 30%, 50%, 0.12), inset 0 1px 0 hsla(0,0%,100%,0.9);
 }
 
 /* ══════════════════════════════════════
