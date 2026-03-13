@@ -123,14 +123,14 @@ const Navbar = () => {
 
       {/* ── Main Navbar ── */}
       <nav className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'backdrop-blur-2xl shadow-[0_8px_32px_hsla(220,30%,3%,0.8)]'
-          : ''
+        scrolled ? 'backdrop-blur-2xl' : ''
       }`} style={{
-        background: 'hsl(222,25%,6%)',
+        background: theme === 'light' ? 'hsl(0,0%,100%)' : 'hsl(222,25%,6%)',
         borderBottom: '1.5px solid transparent',
         borderImage: 'linear-gradient(90deg, hsla(340,100%,50%,0.0) 0%, hsla(340,100%,50%,0.7) 15%, hsla(15,100%,52%,0.9) 30%, hsla(35,100%,55%,0.6) 50%, hsla(210,100%,52%,0.9) 70%, hsla(200,100%,60%,0.7) 85%, hsla(200,100%,60%,0.0) 100%) 1',
-        boxShadow: '0 2px 30px hsla(15,100%,55%,0.15), 0 4px 60px hsla(210,100%,55%,0.1)',
+        boxShadow: theme === 'light'
+          ? '0 2px 20px hsla(220,30%,50%,0.1), 0 4px 40px hsla(210,100%,55%,0.06)'
+          : '0 2px 30px hsla(15,100%,55%,0.15), 0 4px 60px hsla(210,100%,55%,0.1)',
       }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[76px] gap-4">
