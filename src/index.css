@@ -530,7 +530,7 @@
    COUNTDOWN TIMER
 ══════════════════════════════════════ */
 .countdown-box {
-  background: white;
+  background: hsl(var(--card));
   border-radius: 0.75rem;
   padding: 0.5rem 0.875rem;
   box-shadow: var(--shadow-soft);
