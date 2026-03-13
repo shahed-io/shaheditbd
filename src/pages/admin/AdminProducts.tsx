@@ -20,7 +20,7 @@ interface Product {
   subcategory_id?: string | null; brand?: string | null; delivery_time: string | null;
   delivery_type?: string | null; what_you_get: string[] | null;
   faq: { q: string; a: string }[] | null; seo_title: string | null;
-  seo_description: string | null; variants: { label: string; price: string }[] | null;
+  seo_description: string | null; variants: { name: string; options: { label: string; price: string }[] }[] | null;
   badge?: string | null; demo_url?: string | null; warranty_note?: string | null;
   refund_note?: string | null; product_type?: string | null;
   attributes?: { key: string; value: string }[] | null;
@@ -48,7 +48,7 @@ const emptyForm = {
   warranty_note: '', refund_note: '',
   // Lists
   what_you_get: [''] as string[],
-  variants: [{ label: '', price: '' }] as { label: string; price: string }[],
+  variants: [{ name: '', options: [{ label: '', price: '' }] }] as { name: string; options: { label: string; price: string }[] }[],
   attributes: [{ key: '', value: '' }] as { key: string; value: string }[],
   faq: [{ q: '', a: '' }] as { q: string; a: string }[],
   tags: '' as string,
@@ -180,7 +180,7 @@ const AdminProducts = () => {
     const baseSlug = form.slug || generateSlug(form.name);
     const finalSlug = editingProduct ? (form.slug || editingProduct.id) : `${baseSlug}-${Date.now()}`;
 
-    const cleanVariants = form.variants.filter(v => v.label.trim());
+    const cleanVariants = form.variants.filter(v => v.name.trim() && v.options.some(o => o.label.trim()));
     const cleanWYG = form.what_you_get.filter(w => w.trim());
     const cleanFaq = form.faq.filter(f => f.q.trim());
     const cleanAttrs = form.attributes.filter(a => a.key.trim());
@@ -285,7 +285,15 @@ const AdminProducts = () => {
       refund_note: product.refund_note || '',
       tags: tagStr,
       what_you_get: product.what_you_get?.length ? product.what_you_get : [''],
-      variants: (product.variants as any)?.length ? (product.variants as any) : [{ label: '', price: '' }],
+      variants: (() => {
+        const raw = product.variants as any;
+        if (!raw?.length) return [{ name: '', options: [{ label: '', price: '' }] }];
+        // Migrate old flat format { label, price } → new grouped format
+        if (raw[0]?.label !== undefined && raw[0]?.name === undefined) {
+          return [{ name: 'Options', options: raw.map((v: any) => ({ label: v.label, price: v.price })) }];
+        }
+        return raw;
+      })(),
       attributes: (product.attributes as any)?.length ? (product.attributes as any) : [{ key: '', value: '' }],
       faq: (product.faq as any)?.length ? (product.faq as any) : [{ q: '', a: '' }],
       seo_title: product.seo_title || '',
@@ -306,14 +314,26 @@ const AdminProducts = () => {
     setForm(p => ({ ...p, what_you_get: arr.length ? arr : [''] }));
   };
 
-  const setVariant = (idx: number, key: 'label' | 'price', val: string) => {
-    const arr = form.variants.map((v, i) => i === idx ? { ...v, [key]: val } : v);
+  const setVariantGroupName = (gi: number, val: string) => {
+    const arr = form.variants.map((v, i) => i === gi ? { ...v, name: val } : v);
     setForm(p => ({ ...p, variants: arr }));
   };
-  const addVariant = () => setForm(p => ({ ...p, variants: [...p.variants, { label: '', price: '' }] }));
-  const removeVariant = (idx: number) => {
-    const arr = form.variants.filter((_, i) => i !== idx);
-    setForm(p => ({ ...p, variants: arr.length ? arr : [{ label: '', price: '' }] }));
+  const addVariantGroup = () => setForm(p => ({ ...p, variants: [...p.variants, { name: '', options: [{ label: '', price: '' }] }] }));
+  const removeVariantGroup = (gi: number) => {
+    const arr = form.variants.filter((_, i) => i !== gi);
+    setForm(p => ({ ...p, variants: arr.length ? arr : [{ name: '', options: [{ label: '', price: '' }] }] }));
+  };
+  const setVariantOption = (gi: number, oi: number, key: 'label' | 'price', val: string) => {
+    const arr = form.variants.map((v, i) => i === gi ? { ...v, options: v.options.map((o, j) => j === oi ? { ...o, [key]: val } : o) } : v);
+    setForm(p => ({ ...p, variants: arr }));
+  };
+  const addVariantOption = (gi: number) => {
+    const arr = form.variants.map((v, i) => i === gi ? { ...v, options: [...v.options, { label: '', price: '' }] } : v);
+    setForm(p => ({ ...p, variants: arr }));
+  };
+  const removeVariantOption = (gi: number, oi: number) => {
+    const arr = form.variants.map((v, i) => i === gi ? { ...v, options: v.options.length > 1 ? v.options.filter((_, j) => j !== oi) : v.options } : v);
+    setForm(p => ({ ...p, variants: arr }));
   };
 
   const setAttr = (idx: number, key: 'key' | 'value', val: string) => {
@@ -589,21 +609,44 @@ const AdminProducts = () => {
                     </div>
 
                     <div className="pt-2 border-t border-border">
-                      <p className="text-xs font-medium text-foreground mb-3">Variants (Size / Duration / Plan)</p>
-                      <div className="space-y-2">
-                        {form.variants.map((v, i) => (
-                          <div key={i} className="flex gap-2 items-center">
-                            <input value={v.label} onChange={e => setVariant(i, 'label', e.target.value)}
-                              placeholder="e.g. 1 Year / 1 Device" className={`${ic} flex-1`} />
-                            <input value={v.price} onChange={e => setVariant(i, 'price', e.target.value)}
-                              placeholder="৳" className={`${ic} w-24`} />
-                            <button type="button" onClick={() => removeVariant(i)} className="text-muted-foreground hover:text-destructive"><X size={14} /></button>
-                          </div>
-                        ))}
-                        <button type="button" onClick={addVariant} className="text-xs text-primary hover:underline flex items-center gap-1">
-                          <Plus size={12} /> Add Variant
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-xs font-medium text-foreground">📦 Variant Groups (Duration / Account Type / Plan)</p>
+                        <button type="button" onClick={addVariantGroup} className="text-xs text-primary hover:underline flex items-center gap-1">
+                          <Plus size={12} /> Add Group
                         </button>
                       </div>
+                      <div className="space-y-4">
+                        {form.variants.map((group, gi) => (
+                          <div key={gi} className="border border-border rounded-xl p-3 space-y-2 bg-muted/20">
+                            <div className="flex gap-2 items-center">
+                              <input value={group.name}
+                                onChange={e => setVariantGroupName(gi, e.target.value)}
+                                placeholder="Group name (e.g. Duration, Account Type)"
+                                className={`${ic} flex-1 font-medium`} />
+                              {form.variants.length > 1 && (
+                                <button type="button" onClick={() => removeVariantGroup(gi)} className="text-muted-foreground hover:text-destructive flex-shrink-0"><X size={14} /></button>
+                              )}
+                            </div>
+                            <div className="space-y-1.5 pl-2">
+                              {group.options.map((opt, oi) => (
+                                <div key={oi} className="flex gap-2 items-center">
+                                  <input value={opt.label}
+                                    onChange={e => setVariantOption(gi, oi, 'label', e.target.value)}
+                                    placeholder="Option label (e.g. 1 Month, Personal)" className={`${ic} flex-1`} />
+                                  <input value={opt.price}
+                                    onChange={e => setVariantOption(gi, oi, 'price', e.target.value)}
+                                    placeholder="Price ৳" type="number" className={`${ic} w-28`} />
+                                  <button type="button" onClick={() => removeVariantOption(gi, oi)} className="text-muted-foreground hover:text-destructive"><X size={12} /></button>
+                                </div>
+                              ))}
+                              <button type="button" onClick={() => addVariantOption(gi)} className="text-xs text-primary/80 hover:text-primary flex items-center gap-1 mt-1">
+                                <Plus size={11} /> Add Option
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">💡 Customer যখন একটি option select করবে, তখন সেই option-এর price দেখাবে</p>
                     </div>
                   </div>
                 )}

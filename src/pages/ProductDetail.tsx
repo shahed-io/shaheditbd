@@ -146,26 +146,47 @@ const ProductDetail = () => {
   ].filter(Boolean);
   if (images.length === 0) images.push(PLACEHOLDER);
 
-  const variants: { name: string; options: string[] }[] = Array.isArray(product.variants) ? product.variants : [];
+  // Support both new grouped format { name, options: [{label, price}] } and old flat format { name, options: string[] }
+  const rawVariants = Array.isArray(product.variants) ? product.variants : [];
+  // Normalize to grouped format with prices
+  interface VariantOption { label: string; price?: number; }
+  interface VariantGroup { name: string; options: VariantOption[]; }
+  const variants: VariantGroup[] = rawVariants.map((v: any) => ({
+    name: v.name || v.label || 'Options',
+    options: Array.isArray(v.options)
+      ? v.options.map((o: any) => typeof o === 'string' ? { label: o } : { label: o.label, price: o.price ? parseFloat(o.price) : undefined })
+      : [],
+  })).filter((v: VariantGroup) => v.options.length > 0);
   const faqs: { q: string; a: string }[] = Array.isArray(product.faq) ? product.faq : [];
 
   const wishlisted = isWishlisted(product.id);
   const inCart     = isInCart(product.id);
-  const savings    = product.original_price ? product.original_price - product.price : 0;
+
+  // Compute displayed price based on selected variant options
+  const getSelectedPrice = (): number => {
+    for (const group of variants) {
+      const selectedLabel = selectedVar[group.name] || group.options[0]?.label;
+      const opt = group.options.find(o => o.label === selectedLabel);
+      if (opt?.price !== undefined && opt.price > 0) return opt.price;
+    }
+    return product.price;
+  };
+  const displayPrice = getSelectedPrice();
+  const savings    = product.original_price ? product.original_price - displayPrice : 0;
   const discount   = product.discount_percent || (product.original_price ? Math.round(savings / product.original_price * 100) : 0);
 
   const cartItem = {
     id: product.id,
     name: product.name,
     category: product.categories?.name || '',
-    price: product.price,
+    price: displayPrice,
     originalPrice: product.original_price || undefined,
     image: product.image_url || PLACEHOLDER,
   };
 
   const waOrder = () => {
     const varStr = Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`).join(', ');
-    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${varStr ? `\n⚙️ ${varStr}` : ''}\n💰 ৳${product.price.toLocaleString()}\n🔗 ${window.location.href}`);
+    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${varStr ? `\n⚙️ ${varStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
@@ -428,7 +449,7 @@ const ProductDetail = () => {
                 }}
               >
                 <span className="text-4xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)', textShadow: '0 0 30px hsla(271,91%,65%,0.4)' }}>
-                  ৳{product.price.toLocaleString()}
+                  ৳{displayPrice.toLocaleString()}
                 </span>
                 {product.original_price && (
                   <div>
@@ -441,34 +462,48 @@ const ProductDetail = () => {
               </div>
 
               {/* Variants */}
-              {variants.map((v: any, vi: number) => (
-                <div
-                  key={v.name}
-                  style={{
-                    opacity: entered ? 1 : 0,
-                    transform: entered ? 'none' : 'translateY(16px)',
-                    transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + vi * 0.08}s`,
-                  }}
-                >
-                  <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5">
-                    <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} /> {v.name}:
-                    <span style={{ color: 'hsl(271,91%,75%)' }}>{selectedVar[v.name] || v.options?.[0]}</span>
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {v.options?.map((opt: string) => (
-                      <button key={opt}
-                        onClick={() => setSelectedVar(p => ({ ...p, [v.name]: opt }))}
-                        className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105"
-                        style={(selectedVar[v.name] || v.options?.[0]) === opt
-                          ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
-                          : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
-                        }>
-                        {opt}
-                      </button>
-                    ))}
+              {variants.map((group, vi) => {
+                const selectedLabel = selectedVar[group.name] || group.options[0]?.label;
+                return (
+                  <div
+                    key={group.name + vi}
+                    style={{
+                      opacity: entered ? 1 : 0,
+                      transform: entered ? 'none' : 'translateY(16px)',
+                      transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + vi * 0.08}s`,
+                    }}
+                  >
+                    <p className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-1.5">
+                      <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} />
+                      {group.name}:
+                      <span style={{ color: 'hsl(271,91%,75%)' }}>{selectedLabel}</span>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {group.options.map((opt) => {
+                        const isSelected = selectedLabel === opt.label;
+                        return (
+                          <button
+                            key={opt.label}
+                            onClick={() => setSelectedVar(p => ({ ...p, [group.name]: opt.label }))}
+                            className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105 flex flex-col items-center"
+                            style={isSelected
+                              ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
+                              : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
+                            }
+                          >
+                            <span>{opt.label}</span>
+                            {opt.price !== undefined && opt.price > 0 && (
+                              <span className="text-xs font-bold mt-0.5" style={{ color: isSelected ? 'hsl(271,91%,80%)' : 'hsl(var(--muted-foreground))' }}>
+                                ৳{opt.price.toLocaleString()}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {/* CTA Buttons */}
               <div
@@ -482,7 +517,7 @@ const ProductDetail = () => {
                 <button onClick={() => setShowModal(true)}
                   className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_hsla(271,91%,65%,0.5)]"
                   style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 4px 24px hsla(271,91%,65%,0.35)' }}>
-                  <CreditCard size={18} /> Order Now — ৳{product.price.toLocaleString()}
+                  <CreditCard size={18} /> Order Now — ৳{displayPrice.toLocaleString()}
                 </button>
                 <div className="grid grid-cols-2 gap-3">
                   <button onClick={waOrder}
