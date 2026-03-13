@@ -212,11 +212,11 @@ const ProductDetail = () => {
                 {images.length > 1 && (
                   <>
                     <button onClick={prevImg}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white">
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-card/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-card text-foreground">
                       <ChevronLeft size={18} />
                     </button>
                     <button onClick={nextImg}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white">
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-card/90 shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-card text-foreground">
                       <ChevronRight size={18} />
                     </button>
                   </>
