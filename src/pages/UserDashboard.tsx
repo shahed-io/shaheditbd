@@ -660,7 +660,7 @@ const UserDashboard = () => {
                                 className="p-2 rounded-xl hover:bg-muted/40 text-muted-foreground">
                                 <Edit3 size={14} />
                               </button>
-                              <button onClick={() => handleDeleteAddress(addr.id)} className="p-2 rounded-xl hover:bg-red-50 text-destructive">
+                              <button onClick={() => handleDeleteAddress(addr.id)} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive">
                                 <Trash2 size={14} />
                               </button>
                             </div>
