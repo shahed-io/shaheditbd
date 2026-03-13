@@ -405,7 +405,7 @@ const UserDashboard = () => {
               </button>
             ))}
             <div className="h-px my-2 bg-border" />
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-red-50 text-destructive">
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive">
               <LogOut size={16} /> লগআউট
             </button>
           </div>
