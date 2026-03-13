@@ -62,11 +62,11 @@ interface Referral {
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  pending:    { label: 'পেন্ডিং',     color: 'text-amber-600 bg-amber-50 border-amber-200',    icon: <Clock size={11} /> },
-  processing: { label: 'প্রসেসিং',    color: 'text-blue-600 bg-blue-50 border-blue-200',       icon: <RefreshCw size={11} /> },
-  completed:  { label: 'সম্পন্ন',     color: 'text-emerald-600 bg-emerald-50 border-emerald-200', icon: <CheckCircle2 size={11} /> },
-  cancelled:  { label: 'বাতিল',       color: 'text-red-600 bg-red-50 border-red-200',          icon: <X size={11} /> },
-  refunded:   { label: 'রিফান্ড',     color: 'text-purple-600 bg-purple-50 border-purple-200', icon: <AlertCircle size={11} /> },
+  pending:    { label: 'পেন্ডিং',     color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',    icon: <Clock size={11} /> },
+  processing: { label: 'প্রসেসিং',    color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',       icon: <RefreshCw size={11} /> },
+  completed:  { label: 'সম্পন্ন',     color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
+  cancelled:  { label: 'বাতিল',       color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
+  refunded:   { label: 'রিফান্ড',     color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
 };
 
 type TabId = 'profile' | 'orders' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security';
@@ -328,7 +328,7 @@ const UserDashboard = () => {
               <span className="text-sm font-semibold max-w-[120px] truncate hidden sm:block text-foreground">{displayName}</span>
               {unreadCount > 0 && <span className="w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center" style={{ background: 'hsl(var(--destructive))' }}>{unreadCount}</span>}
             </div>
-            <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-all hover:bg-red-50 text-muted-foreground">
+            <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-all hover:bg-destructive/10 text-muted-foreground">
               <LogOut size={14} /><span className="hidden sm:inline">লগআউট</span>
             </button>
           </div>
@@ -361,11 +361,11 @@ const UserDashboard = () => {
                   <h1 className="text-xl sm:text-2xl font-black text-foreground">{displayName}</h1>
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
                   <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border" style={{ color: 'hsl(158,64%,38%)', background: 'hsl(158,64%,96%)', borderColor: 'hsl(158,64%,85%)' }}>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald/30 bg-emerald/10 text-emerald">
                       <ShieldCheck size={11} /> Verified
                     </span>
                     {completedOrders > 0 && (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border" style={{ color: 'hsl(var(--primary))', background: 'hsl(243,75%,97%)', borderColor: 'hsl(243,75%,88%)' }}>
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-primary/25 bg-primary/10 text-primary">
                         <Star size={10} fill="currentColor" /> {completedOrders} অর্ডার
                       </span>
                     )}
@@ -391,10 +391,11 @@ const UserDashboard = () => {
             <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">মেনু</p>
             {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
               <button key={id} onClick={() => setActiveTab(id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${activeTab === id ? 'shadow-sm' : 'hover:bg-muted/40'}`}
-                style={activeTab === id
-                  ? { background: 'hsl(243,75%,97%)', color: 'hsl(var(--primary))', border: '1px solid hsl(243,75%,88%)' }
-                  : { color: 'hsl(var(--muted-foreground))', border: '1px solid transparent' }}>
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${
+                  activeTab === id
+                    ? 'bg-primary/10 text-primary border border-primary/25 shadow-sm'
+                    : 'hover:bg-muted/40 text-muted-foreground border border-transparent'
+                }`}>
                 <Icon size={16} />
                 <span className="flex-1 text-left">{label}</span>
                 {badge !== undefined && badge > 0 && (
@@ -404,7 +405,7 @@ const UserDashboard = () => {
               </button>
             ))}
             <div className="h-px my-2 bg-border" />
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-red-50 text-destructive">
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive">
               <LogOut size={16} /> লগআউট
             </button>
           </div>
@@ -463,7 +464,7 @@ const UserDashboard = () => {
                       <div>
                         <p className="text-sm font-semibold text-foreground">প্রোফাইল ছবি</p>
                         <p className="text-xs mb-2 text-muted-foreground">JPG, PNG — সর্বোচ্চ ২MB</p>
-                        <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg" style={{ background: 'hsl(243,75%,97%)', color: 'hsl(var(--primary))' }}>
+                        <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                           <Upload size={12} /> ছবি পরিবর্তন করুন
                         </button>
                       </div>
@@ -488,7 +489,7 @@ const UserDashboard = () => {
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-muted/20">
                       <Mail size={15} className="text-muted-foreground" />
                       <span className="text-sm font-medium flex-1 text-foreground">{user?.email}</span>
-                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full" style={{ color: 'hsl(158,64%,38%)', background: 'hsl(158,64%,94%)' }}>✓ Verified</span>
+                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald/10 text-emerald border border-emerald/20">✓ Verified</span>
                     </div>
                   </div>
                   <div>
@@ -659,7 +660,7 @@ const UserDashboard = () => {
                                 className="p-2 rounded-xl hover:bg-muted/40 text-muted-foreground">
                                 <Edit3 size={14} />
                               </button>
-                              <button onClick={() => handleDeleteAddress(addr.id)} className="p-2 rounded-xl hover:bg-red-50 text-destructive">
+                              <button onClick={() => handleDeleteAddress(addr.id)} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive">
                                 <Trash2 size={14} />
                               </button>
                             </div>

@@ -82,7 +82,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
               e.stopPropagation();
               toggleWishlist({ id: String(product.id), name: product.name, price: product.price, image: product.image });
             }}
-            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-white shadow-soft border border-border"
+            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-card shadow-soft border border-border"
             style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(-4px)', transition: 'all 0.25s' }}
           >
             <Heart size={13} fill={wishlisted ? 'hsl(15,100%,60%)' : 'none'} color={wishlisted ? 'hsl(15,100%,60%)' : 'hsl(var(--muted-foreground))'} />
@@ -91,7 +91,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           {/* Quick view */}
           <button
             onClick={() => setShowModal(true)}
-            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-white shadow-soft border border-border text-brand-indigo"
+            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-card shadow-soft border border-border text-primary"
             style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(4px)', transition: 'all 0.25s 0.05s' }}
           >
             <Eye size={13} />
@@ -129,11 +129,11 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
             </button>
             <div className="grid grid-cols-2 gap-2">
               <button onClick={waMsg}
-                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-colors">
+                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold bg-emerald/10 border border-border text-foreground hover:bg-emerald/20 transition-colors">
                 <MessageCircle size={11} /> WhatsApp
               </button>
               <button onClick={() => addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image })}
-                className={`flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-colors ${inCart ? 'bg-indigo-50 border border-indigo-200 text-brand-indigo' : 'bg-muted border border-border text-muted-foreground hover:bg-surface-soft'}`}>
+                className={`flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-colors ${inCart ? 'bg-primary/10 border border-primary/30 text-primary' : 'bg-muted border border-border text-muted-foreground hover:bg-secondary'}`}>
                 <ShoppingCart size={11} />
                 {inCart ? '✓ Added' : 'Cart'}
               </button>
