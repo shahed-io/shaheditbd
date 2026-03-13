@@ -83,7 +83,7 @@ const Navbar = () => {
             </span>
             <span className="ml-16">
               <Sparkles size={11} className="text-yellow-300 inline mr-1.5" />
-              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • স্কুল অ্যাডমিশন ফর্ম এখন পাওয়া যাচ্ছে • ৫০% ছাড়'}
+              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • ৫০% ছাড় সীমিত সময়ের জন্য'}
             </span>
           </div>
         </div>
