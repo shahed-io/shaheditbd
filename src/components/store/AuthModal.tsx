@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft } from 'lucide-react';
+import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft, Gift } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { toast } from 'sonner';
@@ -17,6 +17,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [forgotSent, setForgotSent] = useState(false);
@@ -42,13 +43,27 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         onClose();
         navigate('/dashboard');
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { data: { display_name: name }, emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        toast.success('অ্যাকাউন্ট তৈরি হয়েছে! ইমেইল ভেরিফাই করুন।');
+
+        // Process referral if code provided
+        if (referralCode.trim() && data.user) {
+          const { data: refResult } = await supabase.rpc('process_referral', {
+            p_referral_code: referralCode.trim().toUpperCase(),
+            p_referred_user_id: data.user.id,
+          });
+          if ((refResult as any)?.success) {
+            toast.success('রেফারেল কোড সফলভাবে প্রয়োগ হয়েছে! আপনি ৳10 ক্রেডিট ও 10% স্থায়ী ছাড় পেয়েছেন 🎉');
+          } else if ((refResult as any)?.error) {
+            toast.warning('রেফারেল কোড সঠিক নয়, তবে অ্যাকাউন্ট তৈরি হয়েছে।');
+          }
+        } else {
+          toast.success('অ্যাকাউন্ট তৈরি হয়েছে! ইমেইল ভেরিফাই করুন।');
+        }
         onClose();
       }
     } catch (err: any) {
@@ -80,6 +95,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     setMode(m);
     setForgotSent(false);
     setPassword('');
+    setReferralCode('');
   };
 
   return (
@@ -174,6 +190,25 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
+                </div>
+              )}
+
+              {/* Referral code field — signup only */}
+              {mode === 'signup' && (
+                <div className="relative">
+                  <Gift size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="রেফারেল কোড (ঐচ্ছিক)"
+                    value={referralCode}
+                    onChange={e => setReferralCode(e.target.value.toUpperCase())}
+                    className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors uppercase"
+                  />
+                  {referralCode && (
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'hsl(158,80%,48%)' }}>
+                      <span>✓</span> কোড প্রয়োগ হলে ৳10 ক্রেডিট + 10% স্থায়ী ছাড় পাবেন!
+                    </div>
+                  )}
                 </div>
               )}
 
