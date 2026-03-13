@@ -167,7 +167,7 @@ const TopProducts = () => {
                   {hasMore && (
                     <div className="hidden md:flex justify-center mt-6">
                       <button onClick={() => toggleCat(cat)}
-                        className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-white border border-border shadow-soft hover:shadow-medium transition-all text-foreground">
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-card border border-border shadow-soft hover:shadow-medium transition-all text-foreground">
                         {isExpanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
                       </button>
                     </div>
