@@ -161,7 +161,18 @@ const ProductDetail = () => {
 
   const wishlisted = isWishlisted(product.id);
   const inCart     = isInCart(product.id);
-  const savings    = product.original_price ? product.original_price - product.price : 0;
+
+  // Compute displayed price based on selected variant options
+  const getSelectedPrice = (): number => {
+    for (const group of variants) {
+      const selectedLabel = selectedVar[group.name] || group.options[0]?.label;
+      const opt = group.options.find(o => o.label === selectedLabel);
+      if (opt?.price !== undefined && opt.price > 0) return opt.price;
+    }
+    return product.price;
+  };
+  const displayPrice = getSelectedPrice();
+  const savings    = product.original_price ? product.original_price - displayPrice : 0;
   const discount   = product.discount_percent || (product.original_price ? Math.round(savings / product.original_price * 100) : 0);
 
   const cartItem = {
