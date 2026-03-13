@@ -52,7 +52,9 @@ const TopProducts = () => {
         }
         const rows = data ?? [];
         console.log('[TopProducts] Loaded products:', rows.length);
-        setProducts(rows.map(mapProduct));
+        const HIDDEN_CATS = ['Streaming'];
+        const filteredRows = rows.filter((p: any) => !HIDDEN_CATS.includes(p.category?.name));
+        setProducts(filteredRows.map(mapProduct));
         const HIDDEN_CATS = ['Streaming'];
         const filteredRows = rows.filter((p: any) => !HIDDEN_CATS.includes(p.category?.name));
         setProducts(filteredRows.map(mapProduct));
