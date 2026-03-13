@@ -122,9 +122,12 @@ const Categories = () => {
               <a
                 key={cat.id}
                 href={`/shop?category=${cat.slug}`}
-                className="cat-card p-5 flex flex-col gap-3.5 anim-rise"
+                className="cat-card p-5 flex flex-col gap-3.5"
                 style={{
                   animationDelay: `${i * 0.06}s`,
+                  opacity: sectionVisible ? 1 : 0,
+                  transform: sectionVisible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.96)',
+                  transition: `opacity 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s, transform 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s`,
                   boxShadow: isHov
                     ? `0 20px 50px hsla(220,30%,5%,0.5), 0 0 0 1px ${meta.accent}40, 0 0 32px ${meta.glow}`
                     : undefined,
