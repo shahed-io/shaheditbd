@@ -38,7 +38,7 @@ const TopProducts = () => {
       try {
         const { data, error: err } = await supabase
           .from('products')
-          .select('*, categories(name, sort_order)')
+          .select('*, category:category_id(name, sort_order)')
           .eq('status', 'active')
           .order('sort_order', { ascending: true })
           .limit(200);
