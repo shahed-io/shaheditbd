@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, Eye } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
 import QuickOrderModal from './QuickOrderModal';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,7 +19,8 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [hovered,     setHovered]     = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
+  const { addToCart, isInCart } = useCart();
+  const { toggleWishlist, isWishlisted } = useWishlist();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +31,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     return () => obs.disconnect();
   }, []);
 
-  const wishlisted = isWishlisted(product.id);
+  const wishlisted = isWishlisted(String(product.id));
   const inCart     = isInCart(product.id);
 
   const waMsg = () => {
@@ -76,7 +78,10 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
 
           {/* Wishlist */}
           <button
-            onClick={e => { e.stopPropagation(); toggleWishlist({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
+            onClick={e => {
+              e.stopPropagation();
+              toggleWishlist({ id: String(product.id), name: product.name, price: product.price, image: product.image });
+            }}
             className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-white shadow-soft border border-border"
             style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(-4px)', transition: 'all 0.25s' }}
           >
