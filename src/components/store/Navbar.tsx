@@ -22,7 +22,6 @@ const CATEGORY_DROPDOWN = [
   { icon: '🎨', label: 'Adobe',            count: 6,  color: 'hsla(271,91%,65%,0.12)' },
   { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(158,80%,48%,0.12)' },
   { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(320,90%,62%,0.12)' },
-  { icon: '🎓', label: 'School Admission', count: 5,  color: 'hsla(40,100%,58%,0.12)' },
   { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(185,90%,52%,0.12)' },
 ];
 
