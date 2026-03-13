@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Plus, Edit3, Trash2, Eye, EyeOff, Search, Tag, Star, StarOff,
-  RefreshCw, X, Save, Loader2, ChevronDown, BookOpen, Image, Globe
+  RefreshCw, X, Save, Loader2, BookOpen, Globe, Sparkles, Zap, CheckCircle2, AlertCircle, SkipForward
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -24,12 +24,20 @@ const AdminBlog = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [editPost, setEditPost] = useState<any>(null);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'posts' | 'categories' | 'comments'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'categories' | 'comments' | 'ai-generator'>('posts');
   const [tagInput, setTagInput] = useState('');
   const [comments, setComments] = useState<any[]>([]);
   const [catForm, setCatForm] = useState({ name: '', slug: '', description: '', color: '#7c3aed' });
   const [editCat, setEditCat] = useState<any>(null);
   const [formTab, setFormTab] = useState<'content' | 'seo' | 'settings'>('content');
+
+  // AI Generator state
+  const [products, setProducts] = useState<any[]>([]);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiProgress, setAiProgress] = useState<any[]>([]);
+  const [autoPublish, setAutoPublish] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [aiMode, setAiMode] = useState<'bulk' | 'single'>('bulk');
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
