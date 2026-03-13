@@ -285,7 +285,15 @@ const AdminProducts = () => {
       refund_note: product.refund_note || '',
       tags: tagStr,
       what_you_get: product.what_you_get?.length ? product.what_you_get : [''],
-      variants: (product.variants as any)?.length ? (product.variants as any) : [{ label: '', price: '' }],
+      variants: (() => {
+        const raw = product.variants as any;
+        if (!raw?.length) return [{ name: '', options: [{ label: '', price: '' }] }];
+        // Migrate old flat format { label, price } → new grouped format
+        if (raw[0]?.label !== undefined && raw[0]?.name === undefined) {
+          return [{ name: 'Options', options: raw.map((v: any) => ({ label: v.label, price: v.price })) }];
+        }
+        return raw;
+      })(),
       attributes: (product.attributes as any)?.length ? (product.attributes as any) : [{ key: '', value: '' }],
       faq: (product.faq as any)?.length ? (product.faq as any) : [{ q: '', a: '' }],
       seo_title: product.seo_title || '',
