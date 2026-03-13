@@ -20,7 +20,7 @@ interface Product {
   subcategory_id?: string | null; brand?: string | null; delivery_time: string | null;
   delivery_type?: string | null; what_you_get: string[] | null;
   faq: { q: string; a: string }[] | null; seo_title: string | null;
-  seo_description: string | null; variants: { label: string; price: string }[] | null;
+  seo_description: string | null; variants: { name: string; options: { label: string; price: string }[] }[] | null;
   badge?: string | null; demo_url?: string | null; warranty_note?: string | null;
   refund_note?: string | null; product_type?: string | null;
   attributes?: { key: string; value: string }[] | null;
