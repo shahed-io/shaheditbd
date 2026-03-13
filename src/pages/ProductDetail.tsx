@@ -449,7 +449,7 @@ const ProductDetail = () => {
                 }}
               >
                 <span className="text-4xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)', textShadow: '0 0 30px hsla(271,91%,65%,0.4)' }}>
-                  ৳{product.price.toLocaleString()}
+                  ৳{displayPrice.toLocaleString()}
                 </span>
                 {product.original_price && (
                   <div>
