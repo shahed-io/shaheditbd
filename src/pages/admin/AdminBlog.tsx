@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Plus, Edit3, Trash2, Eye, EyeOff, Search, Tag, Star, StarOff,
-  RefreshCw, X, Save, Loader2, ChevronDown, BookOpen, Image, Globe
+  RefreshCw, X, Save, Loader2, BookOpen, Globe, Sparkles, Zap, CheckCircle2, AlertCircle, SkipForward
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -24,23 +24,33 @@ const AdminBlog = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [editPost, setEditPost] = useState<any>(null);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'posts' | 'categories' | 'comments'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'categories' | 'comments' | 'ai-generator'>('posts');
   const [tagInput, setTagInput] = useState('');
   const [comments, setComments] = useState<any[]>([]);
   const [catForm, setCatForm] = useState({ name: '', slug: '', description: '', color: '#7c3aed' });
   const [editCat, setEditCat] = useState<any>(null);
   const [formTab, setFormTab] = useState<'content' | 'seo' | 'settings'>('content');
 
+  // AI Generator state
+  const [products, setProducts] = useState<any[]>([]);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiProgress, setAiProgress] = useState<any[]>([]);
+  const [autoPublish, setAutoPublish] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [aiMode, setAiMode] = useState<'bulk' | 'single'>('bulk');
+
   const fetchAll = useCallback(async () => {
     setLoading(true);
-    const [{ data: p }, { data: c }, { data: cm }] = await Promise.all([
+    const [{ data: p }, { data: c }, { data: cm }, { data: prods }] = await Promise.all([
       supabase.from('blog_posts').select('*, blog_categories(name, color)').order('created_at', { ascending: false }),
       supabase.from('blog_categories').select('*').order('sort_order'),
       supabase.from('blog_comments').select('*, blog_posts(title)').order('created_at', { ascending: false }),
+      supabase.from('products').select('id, name, slug, image_url, categories(name)').eq('status', 'active').order('sort_order'),
     ]);
     setPosts(p || []);
     setCategories(c || []);
     setComments(cm || []);
+    setProducts(prods || []);
     setLoading(false);
   }, []);
 
@@ -123,6 +133,80 @@ const AdminBlog = () => {
 
   const pendingComments = comments.filter(c => c.status === 'pending').length;
 
+  // AI Blog Generator
+  const handleGenerateBulk = async () => {
+    if (!confirm(`সব প্রোডাক্টের জন্য AI ব্লগ তৈরি করবেন? (${products.length}টি প্রোডাক্ট)\nনতুন ব্লগ তৈরি হবে, যেগুলোর ব্লগ আছে সেগুলো skip হবে।`)) return;
+    setAiGenerating(true);
+    setAiProgress([]);
+    setAiMode('bulk');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/generate-product-blog`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ bulk: true, auto_publish: autoPublish }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        if (res.status === 429) toast.error('Rate limit exceeded. একটু পরে আবার চেষ্টা করুন।');
+        else if (res.status === 402) toast.error('AI credits শেষ। Workspace settings-এ credits যোগ করুন।');
+        else toast.error('Error: ' + (err.error || 'Unknown error'));
+        return;
+      }
+      const data = await res.json();
+      setAiProgress(data.results || []);
+      const { summary } = data;
+      toast.success(`✅ সম্পন্ন! ${summary.success} নতুন ব্লগ, ${summary.skipped} skip, ${summary.errors} error`);
+      fetchAll();
+    } catch (e: any) {
+      toast.error('Error: ' + e.message);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
+  const handleGenerateSingle = async (productId: string, productName: string) => {
+    setAiGenerating(true);
+    setAiProgress([{ product_id: productId, name: productName, status: 'generating' }]);
+    setAiMode('single');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/generate-product-blog`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ product_id: productId, bulk: false, auto_publish: autoPublish }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        if (res.status === 429) toast.error('Rate limit exceeded. একটু পরে আবার চেষ্টা করুন।');
+        else if (res.status === 402) toast.error('AI credits শেষ।');
+        else toast.error('Error: ' + (err.error || 'Unknown error'));
+        setAiProgress([{ product_id: productId, name: productName, status: 'error', message: 'Failed' }]);
+        return;
+      }
+      const data = await res.json();
+      setAiProgress(data.results || []);
+      const r = data.results?.[0];
+      if (r?.status === 'success') toast.success(`✅ "${productName}" এর ব্লগ তৈরি হয়েছে!`);
+      else if (r?.status === 'skipped') toast.info(`"${productName}" এর ব্লগ ইতিমধ্যে আছে`);
+      else toast.error('ব্লগ তৈরি হয়নি');
+      fetchAll();
+    } catch (e: any) {
+      toast.error('Error: ' + e.message);
+      setAiProgress([{ product_id: productId, name: productName, status: 'error', message: e.message }]);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   return (
     <div className="space-y-5">
       {/* Header */}
@@ -134,6 +218,10 @@ const AdminBlog = () => {
           <p className="text-muted-foreground text-sm">{posts.length} posts · {categories.length} categories</p>
         </div>
         <div className="flex gap-2">
+          <button onClick={() => setActiveTab('ai-generator')}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold hover:opacity-90 transition-opacity">
+            <Sparkles size={14} /> AI ব্লগ Generator
+          </button>
           <button onClick={() => { setEditPost({ ...EMPTY_POST }); setFormTab('content'); }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold">
             <Plus size={14} /> নতুন পোস্ট
@@ -145,11 +233,11 @@ const AdminBlog = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-border gap-1">
-        {(['posts', 'categories', 'comments'] as const).map(t => (
+      <div className="flex border-b border-border gap-1 overflow-x-auto">
+        {(['posts', 'categories', 'comments', 'ai-generator'] as const).map(t => (
           <button key={t} onClick={() => setActiveTab(t)}
-            className={`px-5 py-2.5 text-xs font-semibold capitalize transition-colors relative ${activeTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-            {t === 'posts' ? `পোস্ট (${posts.length})` : t === 'categories' ? `ক্যাটাগরি (${categories.length})` : `মন্তব্য${pendingComments > 0 ? ` (${pendingComments})` : ''}`}
+            className={`px-5 py-2.5 text-xs font-semibold whitespace-nowrap capitalize transition-colors relative ${activeTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+            {t === 'posts' ? `পোস্ট (${posts.length})` : t === 'categories' ? `ক্যাটাগরি (${categories.length})` : t === 'comments' ? `মন্তব্য${pendingComments > 0 ? ` (${pendingComments})` : ''}` : <span className="flex items-center gap-1"><Sparkles size={11} /> AI Generator</span>}
             {t === 'comments' && pendingComments > 0 && (
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary animate-pulse" />
             )}
@@ -346,6 +434,116 @@ const AdminBlog = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ── AI GENERATOR TAB ── */}
+      {activeTab === 'ai-generator' && (
+        <div className="space-y-5">
+          {/* Info Banner */}
+          <div className="glass-card rounded-2xl p-5 border border-primary/20 bg-primary/5">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <Sparkles size={20} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">AI Blog Generator</h3>
+                <p className="text-sm text-muted-foreground mt-1">Lovable AI ব্যবহার করে প্রতিটি প্রোডাক্টের জন্য SEO-অপ্টিমাইজড ইংরেজি ব্লগ পোস্ট তৈরি করুন। ব্লগে থাকবে: পণ্যের বিস্তারিত, সুবিধা, FAQ এবং বাংলাদেশে কেনার গাইড।</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="glass-card rounded-2xl p-5 space-y-4">
+            <h3 className="font-bold text-foreground text-sm">⚙️ সেটিংস</h3>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div onClick={() => setAutoPublish(p => !p)}
+                className={`w-11 h-6 rounded-full transition-colors relative ${autoPublish ? 'bg-primary' : 'bg-muted'}`}>
+                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${autoPublish ? 'translate-x-6' : 'translate-x-1'}`} />
+              </div>
+              <span className="text-sm text-foreground">সাথে সাথে Publish করুন <span className="text-muted-foreground">(off রাখলে Draft হবে)</span></span>
+            </label>
+
+            {/* Bulk Generate */}
+            <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/10">
+              <div>
+                <p className="font-semibold text-foreground text-sm">🚀 সব প্রোডাক্টের জন্য ব্লগ তৈরি করুন</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{products.length}টি প্রোডাক্ট পাওয়া গেছে। যেগুলোর ব্লগ আছে সেগুলো skip হবে।</p>
+              </div>
+              <button
+                onClick={handleGenerateBulk}
+                disabled={aiGenerating}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl btn-glow text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap">
+                {aiGenerating && aiMode === 'bulk' ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
+                {aiGenerating && aiMode === 'bulk' ? 'তৈরি হচ্ছে...' : 'সব জেনারেট করুন'}
+              </button>
+            </div>
+          </div>
+
+          {/* Progress / Results */}
+          {aiProgress.length > 0 && (
+            <div className="glass-card rounded-2xl p-5 space-y-3">
+              <h3 className="font-bold text-foreground text-sm">📊 ফলাফল</h3>
+              <div className="space-y-2 max-h-80 overflow-y-auto">
+                {aiProgress.map((r: any, i: number) => (
+                  <div key={i} className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-muted/10 border border-border/50">
+                    {r.status === 'success' && <CheckCircle2 size={14} className="text-emerald-500 flex-shrink-0" />}
+                    {r.status === 'skipped' && <SkipForward size={14} className="text-amber-500 flex-shrink-0" />}
+                    {r.status === 'error' && <AlertCircle size={14} className="text-destructive flex-shrink-0" />}
+                    {r.status === 'generating' && <Loader2 size={14} className="text-primary animate-spin flex-shrink-0" />}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-foreground truncate">{r.name}</p>
+                      {r.message && <p className="text-[10px] text-muted-foreground">{r.message}</p>}
+                      {r.blog_slug && <p className="text-[10px] text-primary font-mono">/blog/{r.blog_slug}</p>}
+                    </div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      r.status === 'success' ? 'bg-emerald-500/10 text-emerald-500' :
+                      r.status === 'skipped' ? 'bg-amber-500/10 text-amber-500' :
+                      r.status === 'generating' ? 'bg-primary/10 text-primary' :
+                      'bg-destructive/10 text-destructive'
+                    }`}>{r.status === 'success' ? '✓ তৈরি' : r.status === 'skipped' ? '↷ skip' : r.status === 'generating' ? '⟳ চলছে' : '✗ error'}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Per-Product List */}
+          <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-border bg-muted/10 flex items-center justify-between">
+              <h3 className="font-bold text-foreground text-sm">প্রোডাক্ট তালিকা — এককভাবে ব্লগ তৈরি করুন</h3>
+              <span className="text-xs text-muted-foreground">{products.length}টি প্রোডাক্ট</span>
+            </div>
+            <div className="divide-y divide-border/30 max-h-[500px] overflow-y-auto">
+              {products.map((prod) => {
+                const hasBlog = posts.some(p => p.slug?.includes(prod.slug) || p.slug?.includes(prod.id));
+                return (
+                  <div key={prod.id} className="flex items-center gap-3 px-5 py-3 hover:bg-muted/10 transition-colors">
+                    {prod.image_url ? (
+                      <img src={prod.image_url} alt={prod.name} className="w-9 h-9 rounded-lg object-cover flex-shrink-0" />
+                    ) : (
+                      <div className="w-9 h-9 rounded-lg bg-muted/30 flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-foreground truncate">{prod.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{(prod.categories as any)?.name || '—'}</p>
+                    </div>
+                    {hasBlog ? (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold whitespace-nowrap">✓ ব্লগ আছে</span>
+                    ) : (
+                      <button
+                        onClick={() => handleGenerateSingle(prod.id, prod.name)}
+                        disabled={aiGenerating}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 whitespace-nowrap">
+                        {aiGenerating ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />}
+                        AI ব্লগ
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
 
