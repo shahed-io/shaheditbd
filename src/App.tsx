@@ -34,6 +34,7 @@ import BlogPost from "./pages/BlogPost";
 import HelpCenter from "./pages/HelpCenter";
 import AdminBlog from "./pages/admin/AdminBlog";
 import AdminHelp from "./pages/admin/AdminHelp";
+import AdminSEO from "./pages/admin/AdminSEO";
 
 const queryClient = new QueryClient({
   defaultOptions: {
