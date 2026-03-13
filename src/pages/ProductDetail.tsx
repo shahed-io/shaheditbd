@@ -540,8 +540,8 @@ const ProductDetail = () => {
               className={faqs.length > 0 ? 'lg:col-span-2' : 'lg:col-span-3'}
               ref={descReveal.ref}
               style={{
-                opacity: descReveal.revealed ? 1 : 0,
-                transform: descReveal.revealed ? 'none' : 'translateY(40px)',
+                opacity: 1,
+                transform: 'none',
                 transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
               }}
             >
