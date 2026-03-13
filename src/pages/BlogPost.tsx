@@ -8,6 +8,8 @@ import {
   MessageCircle, ThumbsUp, Send, BookOpen, ChevronRight, Share2, Copy, Check, List
 } from 'lucide-react';
 import { toast } from 'sonner';
+import SEOHead from '@/components/seo/SEOHead';
+import { articleSchema, breadcrumbSchema } from '@/components/seo/schemas';
 
 // ── Table of Contents Generator ──────────────────────────────────────────────
 const generateTOC = (content: string) => {

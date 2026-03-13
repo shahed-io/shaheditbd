@@ -10,6 +10,10 @@ import {
   Truck, ArrowLeft, Share2, Copy, Check, ChevronDown
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
+import SEOHead from '@/components/seo/SEOHead';
+import Breadcrumbs from '@/components/seo/Breadcrumbs';
+import { productSchema, breadcrumbSchema, faqSchema } from '@/components/seo/schemas';
+import { SITE_URL } from '@/components/seo/SEOHead';
 
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
