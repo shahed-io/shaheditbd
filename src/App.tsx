@@ -57,6 +57,7 @@ const App = () => (
           <CartProvider>
             <WishlistProvider>
               <CartDrawer />
+              <RedirectEnforcer />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/checkout" element={<Checkout />} />
