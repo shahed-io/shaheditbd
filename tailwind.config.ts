@@ -29,10 +29,11 @@ export default {
           amber:   "hsl(38, 100%, 55%)",
           violet:  "hsl(263, 70%, 58%)",
         },
+        emerald: "hsl(var(--emerald))",
         surface: {
-          white: "hsl(0, 0%, 100%)",
-          light: "hsl(230, 20%, 97%)",
-          soft:  "hsl(230, 15%, 94%)",
+          white: "hsl(var(--surface-white))",
+          light: "hsl(var(--surface-light))",
+          soft:  "hsl(var(--surface-soft))",
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
