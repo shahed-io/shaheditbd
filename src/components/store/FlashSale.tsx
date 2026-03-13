@@ -172,14 +172,33 @@ const FlashSale = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div
+              ref={gridRef as React.RefObject<HTMLDivElement>}
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+            >
               {products.map((p, i) => (
-                <FlashCard key={p.id} product={p} delay={i * 0.06}
-                  onAddToCart={addToCart}
-                  onNavigate={() => navigate(`/product/${p.slug}`)} />
+                <div
+                  key={p.id}
+                  style={{
+                    opacity: gridVisible ? 1 : 0,
+                    transform: gridVisible ? 'translateY(0) scale(1)' : 'translateY(48px) scale(0.95)',
+                    transition: `opacity 0.65s cubic-bezier(0.23,1,0.32,1) ${i * 0.08}s, transform 0.65s cubic-bezier(0.23,1,0.32,1) ${i * 0.08}s`,
+                  }}
+                >
+                  <FlashCard product={p} delay={i * 0.06}
+                    onAddToCart={addToCart}
+                    onNavigate={() => navigate(`/product/${p.slug}`)} />
+                </div>
               ))}
             </div>
-            <div className="flex justify-center mt-12">
+            <div
+              className="flex justify-center mt-12 transition-all duration-700"
+              style={{
+                opacity: gridVisible ? 1 : 0,
+                transform: gridVisible ? 'translateY(0)' : 'translateY(24px)',
+                transitionDelay: '0.55s',
+              }}
+            >
               <button
                 onClick={() => navigate('/shop')}
                 className="flex items-center gap-2.5 px-8 py-4 rounded-2xl text-[14px] font-bold text-white hover:scale-[1.03] active:scale-[0.97] transition-all"
