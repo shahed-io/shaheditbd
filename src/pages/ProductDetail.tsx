@@ -58,7 +58,7 @@ const ProductDetail = () => {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('*, categories(name, slug)')
+          .select('*, category:category_id(name, slug)')
           .eq('slug', slug)
           .eq('status', 'active')
           .limit(1);
