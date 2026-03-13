@@ -141,7 +141,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
                     onClick={() => { setShowPreview(false); navigate(`/product/${product.slug || product.id}`); }}
                     className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01] flex items-center justify-center gap-1.5"
                     style={{ background: 'hsla(271,91%,65%,0.08)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
-                    <ExternalLink size={12} /> View Details
+                    View Details →
                   </button>
                 </div>
               </div>
