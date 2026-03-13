@@ -346,7 +346,7 @@ const ProductDetail = () => {
                     className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm border-2 transition-all hover:scale-[1.02] ${
                       inCart
                         ? 'bg-indigo-50 border-brand-indigo text-brand-indigo'
-                        : 'bg-white border-border text-foreground hover:border-brand-indigo/50'
+                        : 'bg-card border-border text-foreground hover:border-brand-indigo/50'
                     }`}>
                     <ShoppingCart size={16} />
                     {inCart ? '✓ In Cart' : 'Add to Cart'}
