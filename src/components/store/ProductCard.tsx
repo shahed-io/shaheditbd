@@ -170,7 +170,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
 
       {/* ── Main Card ── */}
       <div
-        ref={ref}
+        ref={(el) => { (ref as any).current = el; (cardRef as any).current = el; }}
         className="group product-card-new product-card-tilt flex flex-col"
         style={{
           opacity:   visible ? 1 : 0,
@@ -184,7 +184,6 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
-        ref={cardRef as any}
       >
         {/* ── Image ── */}
         <div className="card-image-wrap relative overflow-hidden aspect-square bg-muted">
