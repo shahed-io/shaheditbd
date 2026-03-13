@@ -59,6 +59,10 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/product/:slug" element={<ProductDetail />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/help" element={<HelpCenter />} />
+                <Route path="/help/:slug" element={<HelpCenter />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin" element={<AdminLayout />}>
@@ -78,6 +82,8 @@ const App = () => (
                   <Route path="roles" element={<AdminRoles />} />
                   <Route path="backup" element={<AdminBackup />} />
                   <Route path="referrals" element={<AdminReferrals />} />
+                  <Route path="blog" element={<AdminBlog />} />
+                  <Route path="help" element={<AdminHelp />} />
                 </Route>
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
