@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
   LogOut, Menu, X, Package2, BarChart3, Bell, Search, ChevronDown,
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
-  Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle
+  Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe
 } from 'lucide-react';
 
 const menuItems = [
@@ -34,6 +34,7 @@ const menuItems = [
   { icon: Headphones, label: 'Tickets', path: '/admin/tickets' },
   { icon: BookOpen, label: 'Blog', path: '/admin/blog' },
   { icon: HelpCircle, label: 'Help Center', path: '/admin/help' },
+  { icon: Globe, label: 'SEO', path: '/admin/seo' },
   { icon: TrendingUp, label: 'Reports', path: '/admin/reports' },
   { icon: Megaphone, label: 'Marketing', path: '/admin/marketing' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
