@@ -193,6 +193,25 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </div>
               )}
 
+              {/* Referral code field — signup only */}
+              {mode === 'signup' && (
+                <div className="relative">
+                  <Gift size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="রেফারেল কোড (ঐচ্ছিক)"
+                    value={referralCode}
+                    onChange={e => setReferralCode(e.target.value.toUpperCase())}
+                    className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors uppercase"
+                  />
+                  {referralCode && (
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'hsl(158,80%,48%)' }}>
+                      <span>✓</span> কোড প্রয়োগ হলে ৳10 ক্রেডিট + 10% স্থায়ী ছাড় পাবেন!
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Forgot password link */}
               {mode === 'login' && (
                 <div className="text-right -mt-2">
