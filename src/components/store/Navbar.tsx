@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, GraduationCap } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
 import SearchBar from './SearchBar';
@@ -9,12 +9,11 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 const NAV_LINKS = [
-  { label: 'Home',      href: '/' },
-  { label: 'Shop',      href: '/shop' },
-  { label: 'Windows',   href: '#windows' },
-  { label: 'Office',    href: '#office' },
-  { label: 'Admission', href: '#admission' },
-  { label: 'Support',   href: '#support' },
+  { label: 'Home',    href: '/' },
+  { label: 'Shop',    href: '/shop' },
+  { label: 'Windows', href: '#windows' },
+  { label: 'Office',  href: '#office' },
+  { label: 'Support', href: '#support' },
 ];
 
 const CATEGORY_DROPDOWN = [
@@ -23,7 +22,6 @@ const CATEGORY_DROPDOWN = [
   { icon: '🎨', label: 'Adobe',            count: 6,  color: 'hsla(271,91%,65%,0.12)' },
   { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(158,80%,48%,0.12)' },
   { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(320,90%,62%,0.12)' },
-  { icon: '🎓', label: 'School Admission', count: 5,  color: 'hsla(40,100%,58%,0.12)' },
   { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(185,90%,52%,0.12)' },
 ];
 
@@ -81,11 +79,11 @@ const Navbar = () => {
             style={{ animation: 'marquee 28s linear infinite', whiteSpace: 'nowrap', display: 'inline-flex' }}>
             <Sparkles size={11} className="text-yellow-300 flex-shrink-0" />
             <span>
-              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • স্কুল অ্যাডমিশন ফর্ম এখন পাওয়া যাচ্ছে • ৫০% ছাড়'}
+              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • ৫০% ছাড় সীমিত সময়ের জন্য'}
             </span>
             <span className="ml-16">
               <Sparkles size={11} className="text-yellow-300 inline mr-1.5" />
-              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • স্কুল অ্যাডমিশন ফর্ম এখন পাওয়া যাচ্ছে • ৫০% ছাড়'}
+              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • ৫০% ছাড় সীমিত সময়ের জন্য'}
             </span>
           </div>
         </div>
@@ -136,10 +134,9 @@ const Navbar = () => {
                   onMouseLeave={() => link.label === 'Shop' && setCatOpen(false)}>
                   <a href={link.href}
                     className="flex items-center gap-1 px-3.5 py-2 rounded-xl transition-all font-medium text-sm"
-                    style={{ color: link.label === 'Admission' ? 'hsl(40,100%,68%)' : 'hsla(210,30%,95%,0.65)' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = link.label === 'Admission' ? 'hsl(40,100%,75%)' : 'hsl(210,30%,95%)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = link.label === 'Admission' ? 'hsl(40,100%,68%)' : 'hsla(210,30%,95%,0.65)')}>
-                    {link.label === 'Admission' && <GraduationCap size={13} />}
+                    style={{ color: 'hsla(210,30%,95%,0.65)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'hsl(210,30%,95%)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'hsla(210,30%,95%,0.65)')}>
                     {link.label}
                     {link.label === 'Shop' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
                   </a>
@@ -244,8 +241,7 @@ const Navbar = () => {
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-colors"
-                style={{ color: link.label === 'Admission' ? 'hsl(40,100%,68%)' : 'hsla(210,30%,95%,0.7)' }}>
-                {link.label === 'Admission' && <GraduationCap size={14} />}
+                style={{ color: 'hsla(210,30%,95%,0.7)' }}>
                 {link.label}
               </a>
             ))}

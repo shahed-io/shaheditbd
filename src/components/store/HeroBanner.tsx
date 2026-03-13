@@ -36,23 +36,6 @@ const SLIDES = [
     emoji: '📦',
     features: ['1TB OneDrive', '5 Devices', '1 Year'],
   },
-  {
-    tag: '🎓 School Admission',
-    title: 'ভর্তি পরীক্ষার',
-    titleAccent: 'প্রস্তুতি',
-    subtitle: 'Digital Study Materials & Forms',
-    desc: 'Class 6–12 admission forms, model test papers, previous year questions — all in one digital package.',
-    price: '৳299',
-    original: '৳2,500',
-    off: '88%',
-    badge: 'ADMISSION 2025',
-    accentFrom: 'hsl(40,100%,58%)',
-    accentTo:   'hsl(158,80%,48%)',
-    glowFrom:   'hsla(40,100%,58%,0.2)',
-    glowTo:     'hsla(158,80%,48%,0.12)',
-    emoji: '🎓',
-    features: ['Class 6–12', 'Model Tests', 'Instant PDF'],
-  },
 ];
 
 const STATS = [
