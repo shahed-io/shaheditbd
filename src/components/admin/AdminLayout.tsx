@@ -30,6 +30,7 @@ const menuItems = [
   { icon: Users, label: 'Customers', path: '/admin/customers' },
   { icon: CreditCard, label: 'Payments', path: '/admin/payments' },
   { icon: Percent, label: 'Coupons', path: '/admin/coupons' },
+  { icon: Gift, label: 'Referrals', path: '/admin/referrals' },
   { icon: Headphones, label: 'Tickets', path: '/admin/tickets' },
   { icon: TrendingUp, label: 'Reports', path: '/admin/reports' },
   { icon: Megaphone, label: 'Marketing', path: '/admin/marketing' },
