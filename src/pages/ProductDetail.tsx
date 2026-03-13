@@ -179,7 +179,7 @@ const ProductDetail = () => {
     id: product.id,
     name: product.name,
     category: product.categories?.name || '',
-    price: product.price,
+    price: displayPrice,
     originalPrice: product.original_price || undefined,
     image: product.image_url || PLACEHOLDER,
   };
