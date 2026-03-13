@@ -181,7 +181,7 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
         </div>
 
         {open && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-border rounded-2xl shadow-[0_8px_40px_hsl(var(--foreground)/0.12)] overflow-hidden z-[200]">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-2xl shadow-[0_8px_40px_hsl(var(--foreground)/0.12)] overflow-hidden z-[200]">
             <SearchDropdown
               query={query}
               results={results}
