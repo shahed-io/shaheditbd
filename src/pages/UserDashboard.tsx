@@ -62,11 +62,11 @@ interface Referral {
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  pending:    { label: 'পেন্ডিং',     color: 'text-amber-600 bg-amber-50 border-amber-200',    icon: <Clock size={11} /> },
-  processing: { label: 'প্রসেসিং',    color: 'text-blue-600 bg-blue-50 border-blue-200',       icon: <RefreshCw size={11} /> },
-  completed:  { label: 'সম্পন্ন',     color: 'text-emerald-600 bg-emerald-50 border-emerald-200', icon: <CheckCircle2 size={11} /> },
-  cancelled:  { label: 'বাতিল',       color: 'text-red-600 bg-red-50 border-red-200',          icon: <X size={11} /> },
-  refunded:   { label: 'রিফান্ড',     color: 'text-purple-600 bg-purple-50 border-purple-200', icon: <AlertCircle size={11} /> },
+  pending:    { label: 'পেন্ডিং',     color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',    icon: <Clock size={11} /> },
+  processing: { label: 'প্রসেসিং',    color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',       icon: <RefreshCw size={11} /> },
+  completed:  { label: 'সম্পন্ন',     color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
+  cancelled:  { label: 'বাতিল',       color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
+  refunded:   { label: 'রিফান্ড',     color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
 };
 
 type TabId = 'profile' | 'orders' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security';
