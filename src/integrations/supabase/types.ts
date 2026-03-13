@@ -415,9 +415,15 @@ export type Database = {
       }
       products: {
         Row: {
+          attributes: Json | null
+          badge: string | null
+          brand: string | null
           category_id: string | null
+          cost_price: number | null
           created_at: string
           delivery_time: string | null
+          delivery_type: string | null
+          demo_url: string | null
           description: string | null
           discount_percent: number | null
           download_link: string | null
@@ -430,6 +436,8 @@ export type Database = {
           name: string
           original_price: number | null
           price: number
+          product_type: string | null
+          refund_note: string | null
           seo_description: string | null
           seo_title: string | null
           short_description: string | null
@@ -438,17 +446,26 @@ export type Database = {
           sort_order: number | null
           status: Database["public"]["Enums"]["product_status"]
           stock_quantity: number | null
+          subcategory_id: string | null
           tags: string[] | null
           total_sales: number | null
           total_views: number | null
           updated_at: string
           variants: Json | null
+          video_url: string | null
+          warranty_note: string | null
           what_you_get: string[] | null
         }
         Insert: {
+          attributes?: Json | null
+          badge?: string | null
+          brand?: string | null
           category_id?: string | null
+          cost_price?: number | null
           created_at?: string
           delivery_time?: string | null
+          delivery_type?: string | null
+          demo_url?: string | null
           description?: string | null
           discount_percent?: number | null
           download_link?: string | null
@@ -461,6 +478,8 @@ export type Database = {
           name: string
           original_price?: number | null
           price?: number
+          product_type?: string | null
+          refund_note?: string | null
           seo_description?: string | null
           seo_title?: string | null
           short_description?: string | null
@@ -469,17 +488,26 @@ export type Database = {
           sort_order?: number | null
           status?: Database["public"]["Enums"]["product_status"]
           stock_quantity?: number | null
+          subcategory_id?: string | null
           tags?: string[] | null
           total_sales?: number | null
           total_views?: number | null
           updated_at?: string
           variants?: Json | null
+          video_url?: string | null
+          warranty_note?: string | null
           what_you_get?: string[] | null
         }
         Update: {
+          attributes?: Json | null
+          badge?: string | null
+          brand?: string | null
           category_id?: string | null
+          cost_price?: number | null
           created_at?: string
           delivery_time?: string | null
+          delivery_type?: string | null
+          demo_url?: string | null
           description?: string | null
           discount_percent?: number | null
           download_link?: string | null
@@ -492,6 +520,8 @@ export type Database = {
           name?: string
           original_price?: number | null
           price?: number
+          product_type?: string | null
+          refund_note?: string | null
           seo_description?: string | null
           seo_title?: string | null
           short_description?: string | null
@@ -500,17 +530,27 @@ export type Database = {
           sort_order?: number | null
           status?: Database["public"]["Enums"]["product_status"]
           stock_quantity?: number | null
+          subcategory_id?: string | null
           tags?: string[] | null
           total_sales?: number | null
           total_views?: number | null
           updated_at?: string
           variants?: Json | null
+          video_url?: string | null
+          warranty_note?: string | null
           what_you_get?: string[] | null
         }
         Relationships: [
           {
             foreignKeyName: "products_category_id_fkey"
             columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_subcategory_id_fkey"
+            columns: ["subcategory_id"]
             isOneToOne: false
             referencedRelation: "categories"
             referencedColumns: ["id"]
