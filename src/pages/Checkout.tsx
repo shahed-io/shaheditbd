@@ -183,8 +183,10 @@ const Checkout = () => {
 
       // Increment coupon uses_count
       if (couponId) {
-        await supabase.rpc('validate_coupon' as any, {}).catch(() => {});
-        await supabase.from('coupons').update({ uses_count: (await supabase.from('coupons').select('uses_count').eq('id', couponId).single()).data?.uses_count + 1 || 1 }).eq('id', couponId);
+        try {
+          const { data: couponRow } = await supabase.from('coupons').select('uses_count').eq('id', couponId).single();
+          await supabase.from('coupons').update({ uses_count: (couponRow?.uses_count || 0) + 1 }).eq('id', couponId);
+        } catch { /* silent */ }
       }
 
       clearCart();
