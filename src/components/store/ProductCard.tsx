@@ -82,7 +82,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
               e.stopPropagation();
               toggleWishlist({ id: String(product.id), name: product.name, price: product.price, image: product.image });
             }}
-            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-white shadow-soft border border-border"
+            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-card shadow-soft border border-border"
             style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(-4px)', transition: 'all 0.25s' }}
           >
             <Heart size={13} fill={wishlisted ? 'hsl(15,100%,60%)' : 'none'} color={wishlisted ? 'hsl(15,100%,60%)' : 'hsl(var(--muted-foreground))'} />
@@ -91,7 +91,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           {/* Quick view */}
           <button
             onClick={() => setShowModal(true)}
-            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-white shadow-soft border border-border text-brand-indigo"
+            className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10 bg-card shadow-soft border border-border text-primary"
             style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'translateY(0)' : 'translateY(4px)', transition: 'all 0.25s 0.05s' }}
           >
             <Eye size={13} />
