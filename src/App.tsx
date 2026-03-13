@@ -19,9 +19,12 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminTickets from "./pages/admin/AdminTickets";
-import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminReports from "./pages/admin/AdminReports";
+import AdminMarketing from "./pages/admin/AdminMarketing";
+import AdminRoles from "./pages/admin/AdminRoles";
+import AdminBackup from "./pages/admin/AdminBackup";
 import UserDashboard from "./pages/UserDashboard";
 
 const queryClient = new QueryClient({
