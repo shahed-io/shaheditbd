@@ -142,7 +142,7 @@ const UserDashboard = () => {
     if (!user) return;
     const { data } = await supabase
       .from('profiles')
-      .select('display_name, email, phone, avatar_url, referral_code, referral_earnings')
+      .select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount')
       .eq('user_id', user.id)
       .single();
     if (data) {
@@ -153,9 +153,11 @@ const UserDashboard = () => {
         avatar_url: data.avatar_url,
         referral_code: (data as any).referral_code || null,
         referral_earnings: (data as any).referral_earnings || 0,
+        referral_credit: (data as any).referral_credit || 0,
+        referral_discount: (data as any).referral_discount || 0,
       });
     } else {
-      setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0 });
+      setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
     }
   };
 
