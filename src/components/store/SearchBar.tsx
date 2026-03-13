@@ -206,7 +206,7 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
     <div ref={containerRef} className={`relative ${className}`}>
       <div className="w-full flex gap-2">
         <div className={`relative flex-1 flex items-center gap-2 rounded-xl border-2 px-4 py-3 transition-all duration-200 ${
-          open ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.1)] bg-white' : 'border-border bg-muted/30'
+          open ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.1)] bg-card' : 'border-border bg-muted/30'
         }`}>
           {loading
             ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
