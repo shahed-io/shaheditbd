@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useReveal } from '@/hooks/useReveal';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
 import { ArrowRight, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
@@ -29,6 +30,8 @@ const TopProducts = () => {
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
   const [error,        setError]        = useState(false);
   const [retry,        setRetry]        = useState(0);
+  const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
+  const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.05 });
 
   useEffect(() => {
     let cancelled = false;
@@ -72,11 +75,18 @@ const TopProducts = () => {
   const toggleCat = (c: string) => setExpandedCats(p => ({ ...p, [c]: !p[c] }));
 
   return (
-    <section className="py-20 bg-background">
+    <section ref={sectionRef as React.RefObject<HTMLElement>} className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        <div
+          ref={headerRef as React.RefObject<HTMLDivElement>}
+          className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 transition-all duration-700"
+          style={{
+            opacity: headerVisible ? 1 : 0,
+            transform: headerVisible ? 'translateY(0)' : 'translateY(28px)',
+          }}
+        >
           <div>
             <span className="section-label">Featured Products</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-3">
@@ -94,7 +104,14 @@ const TopProducts = () => {
         </div>
 
         {/* Tab Bar */}
-        <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border">
+        <div
+          className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border transition-all duration-700"
+          style={{
+            opacity: headerVisible ? 1 : 0,
+            transform: headerVisible ? 'translateY(0)' : 'translateY(20px)',
+            transitionDelay: '0.18s',
+          }}
+        >
           {tabs.map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}}
@@ -133,14 +150,14 @@ const TopProducts = () => {
         {/* All Products grouped */}
         {!error && !loading && activeTab === 'All' && (
           <div className="space-y-14">
-            {catOrder.map((cat) => {
+            {catOrder.map((cat, catIdx) => {
               const items      = products.filter(p => p.category === cat);
               if (!items.length) return null;
               const isExpanded = !!expandedCats[cat];
               const shown      = isExpanded ? items : items.slice(0, LIMIT);
               const hasMore    = items.length > LIMIT;
               return (
-                <div key={cat}>
+                <CategoryRevealBlock key={cat} catIdx={catIdx}>
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-sora font-bold text-lg text-foreground flex items-center gap-2">
                       <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(243,75%,59%), hsl(263,70%,58%))' }} />
@@ -172,7 +189,7 @@ const TopProducts = () => {
                       </button>
                     </div>
                   )}
-                </div>
+                </CategoryRevealBlock>
               );
             })}
           </div>
@@ -189,6 +206,23 @@ const TopProducts = () => {
         )}
       </div>
     </section>
+  );
+};
+
+/* Helper: each category block reveals when it enters viewport */
+const CategoryRevealBlock = ({ children, catIdx }: { children: React.ReactNode; catIdx: number }) => {
+  const { ref, visible } = useReveal({ threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  return (
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(40px)',
+        transition: `opacity 0.7s cubic-bezier(0.23,1,0.32,1) ${catIdx * 0.05}s, transform 0.7s cubic-bezier(0.23,1,0.32,1) ${catIdx * 0.05}s`,
+      }}
+    >
+      {children}
+    </div>
   );
 };
 

@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useReveal } from '@/hooks/useReveal';
 
 const CAT_META: Record<string, { icon: string; glow: string; accent: string }> = {
   'Windows':      { icon: '🪟', glow: 'hsla(210,90%,60%,0.18)', accent: 'hsl(210,90%,60%)' },
@@ -25,6 +26,8 @@ const Categories = () => {
   const [hovered, setHovered] = useState<number | null>(null);
   const [cats, setCats] = useState<CatData[]>([]);
   const [loading, setLoading] = useState(true);
+  const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.08 });
+  const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
 
   useEffect(() => {
     const load = async () => {
@@ -67,7 +70,11 @@ const Categories = () => {
   }
 
   return (
-    <section className="py-20 relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
+    <section
+      ref={sectionRef as React.RefObject<HTMLElement>}
+      className="py-20 relative overflow-hidden"
+      style={{ background: 'hsl(var(--background))' }}
+    >
       {/* Background blobs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.06), transparent)', filter: 'blur(80px)' }} />
@@ -77,7 +84,14 @@ const Categories = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
+        <div
+          ref={headerRef as React.RefObject<HTMLDivElement>}
+          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12 transition-all duration-700"
+          style={{
+            opacity: headerVisible ? 1 : 0,
+            transform: headerVisible ? 'translateY(0)' : 'translateY(32px)',
+          }}
+        >
           <div>
             <span className="section-label">Browse Store</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-3 text-foreground">
@@ -108,9 +122,12 @@ const Categories = () => {
               <a
                 key={cat.id}
                 href={`/shop?category=${cat.slug}`}
-                className="cat-card p-5 flex flex-col gap-3.5 anim-rise"
+                className="cat-card p-5 flex flex-col gap-3.5"
                 style={{
                   animationDelay: `${i * 0.06}s`,
+                  opacity: sectionVisible ? 1 : 0,
+                  transform: sectionVisible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.96)',
+                  transition: `opacity 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s, transform 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s`,
                   boxShadow: isHov
                     ? `0 20px 50px hsla(220,30%,5%,0.5), 0 0 0 1px ${meta.accent}40, 0 0 32px ${meta.glow}`
                     : undefined,

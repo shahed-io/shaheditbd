@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useReveal } from '@/hooks/useReveal';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Flame, Timer, ArrowRight, ShoppingCart, Zap, TrendingDown } from 'lucide-react';
@@ -52,6 +53,8 @@ const FlashSale = () => {
   const time = useCountdown(endTimeRef.current);
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
+  const { ref: gridRef, visible: gridVisible } = useReveal({ threshold: 0.05 });
 
   useEffect(() => {
     let cancelled = false;
@@ -104,7 +107,14 @@ const FlashSale = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-14">
+        <div
+          ref={headerRef as React.RefObject<HTMLDivElement>}
+          className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-14 transition-all duration-700"
+          style={{
+            opacity: headerVisible ? 1 : 0,
+            transform: headerVisible ? 'translateY(0)' : 'translateY(32px)',
+          }}
+        >
           <div>
             <div className="flex items-center gap-2.5 mb-4">
               <span className="inline-flex items-center gap-1.5 text-[12px] font-bold px-4 py-1.5 rounded-full text-white"
@@ -162,14 +172,33 @@ const FlashSale = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div
+              ref={gridRef as React.RefObject<HTMLDivElement>}
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+            >
               {products.map((p, i) => (
-                <FlashCard key={p.id} product={p} delay={i * 0.06}
-                  onAddToCart={addToCart}
-                  onNavigate={() => navigate(`/product/${p.slug}`)} />
+                <div
+                  key={p.id}
+                  style={{
+                    opacity: gridVisible ? 1 : 0,
+                    transform: gridVisible ? 'translateY(0) scale(1)' : 'translateY(48px) scale(0.95)',
+                    transition: `opacity 0.65s cubic-bezier(0.23,1,0.32,1) ${i * 0.08}s, transform 0.65s cubic-bezier(0.23,1,0.32,1) ${i * 0.08}s`,
+                  }}
+                >
+                  <FlashCard product={p} delay={i * 0.06}
+                    onAddToCart={addToCart}
+                    onNavigate={() => navigate(`/product/${p.slug}`)} />
+                </div>
               ))}
             </div>
-            <div className="flex justify-center mt-12">
+            <div
+              className="flex justify-center mt-12 transition-all duration-700"
+              style={{
+                opacity: gridVisible ? 1 : 0,
+                transform: gridVisible ? 'translateY(0)' : 'translateY(24px)',
+                transitionDelay: '0.55s',
+              }}
+            >
               <button
                 onClick={() => navigate('/shop')}
                 className="flex items-center gap-2.5 px-8 py-4 rounded-2xl text-[14px] font-bold text-white hover:scale-[1.03] active:scale-[0.97] transition-all"
