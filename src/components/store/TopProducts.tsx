@@ -8,7 +8,7 @@ const mapProduct = (p: any): Product => ({
   id:            p.id,
   slug:          p.slug,
   name:          p.name,
-  category:      p.categories?.name || 'Other',
+  category:      p.category?.name || 'Other',
   price:         Number(p.price),
   originalPrice: p.original_price ? Number(p.original_price) : undefined,
   discount:      p.discount_percent || undefined,
@@ -38,7 +38,7 @@ const TopProducts = () => {
       try {
         const { data, error: err } = await supabase
           .from('products')
-          .select('*, categories(name, sort_order)')
+          .select('*, category:category_id(name, sort_order)')
           .eq('status', 'active')
           .order('sort_order', { ascending: true })
           .limit(200);
@@ -51,7 +51,7 @@ const TopProducts = () => {
         console.log('[TopProducts] Loaded products:', rows.length);
         setProducts(rows.map(mapProduct));
         const map = new Map<string, number>();
-        rows.forEach(p => { if (p.categories?.name) map.set(p.categories.name, p.categories.sort_order ?? 999); });
+        rows.forEach((p: any) => { if (p.category?.name) map.set(p.category.name, p.category.sort_order ?? 999); });
         const sorted = [...map.entries()].sort((a, b) => a[1] - b[1]).map(([n]) => n);
         setTabs(['All', ...sorted]);
       } catch (e) {
