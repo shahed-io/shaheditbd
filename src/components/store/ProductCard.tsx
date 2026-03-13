@@ -129,11 +129,11 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
             </button>
             <div className="grid grid-cols-2 gap-2">
               <button onClick={waMsg}
-                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-colors">
+                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold bg-emerald/10 border border-border text-foreground hover:bg-emerald/20 transition-colors">
                 <MessageCircle size={11} /> WhatsApp
               </button>
               <button onClick={() => addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image })}
-                className={`flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-colors ${inCart ? 'bg-indigo-50 border border-indigo-200 text-brand-indigo' : 'bg-muted border border-border text-muted-foreground hover:bg-surface-soft'}`}>
+                className={`flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-colors ${inCart ? 'bg-primary/10 border border-primary/30 text-primary' : 'bg-muted border border-border text-muted-foreground hover:bg-secondary'}`}>
                 <ShoppingCart size={11} />
                 {inCart ? '✓ Added' : 'Cart'}
               </button>
