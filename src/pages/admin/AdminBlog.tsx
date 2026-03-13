@@ -437,6 +437,116 @@ const AdminBlog = () => {
         </div>
       )}
 
+      {/* ── AI GENERATOR TAB ── */}
+      {activeTab === 'ai-generator' && (
+        <div className="space-y-5">
+          {/* Info Banner */}
+          <div className="glass-card rounded-2xl p-5 border border-primary/20 bg-primary/5">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <Sparkles size={20} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">AI Blog Generator</h3>
+                <p className="text-sm text-muted-foreground mt-1">Lovable AI ব্যবহার করে প্রতিটি প্রোডাক্টের জন্য SEO-অপ্টিমাইজড ইংরেজি ব্লগ পোস্ট তৈরি করুন। ব্লগে থাকবে: পণ্যের বিস্তারিত, সুবিধা, FAQ এবং বাংলাদেশে কেনার গাইড।</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="glass-card rounded-2xl p-5 space-y-4">
+            <h3 className="font-bold text-foreground text-sm">⚙️ সেটিংস</h3>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div onClick={() => setAutoPublish(p => !p)}
+                className={`w-11 h-6 rounded-full transition-colors relative ${autoPublish ? 'bg-primary' : 'bg-muted'}`}>
+                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${autoPublish ? 'translate-x-6' : 'translate-x-1'}`} />
+              </div>
+              <span className="text-sm text-foreground">সাথে সাথে Publish করুন <span className="text-muted-foreground">(off রাখলে Draft হবে)</span></span>
+            </label>
+
+            {/* Bulk Generate */}
+            <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/10">
+              <div>
+                <p className="font-semibold text-foreground text-sm">🚀 সব প্রোডাক্টের জন্য ব্লগ তৈরি করুন</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{products.length}টি প্রোডাক্ট পাওয়া গেছে। যেগুলোর ব্লগ আছে সেগুলো skip হবে।</p>
+              </div>
+              <button
+                onClick={handleGenerateBulk}
+                disabled={aiGenerating}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap">
+                {aiGenerating && aiMode === 'bulk' ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
+                {aiGenerating && aiMode === 'bulk' ? 'তৈরি হচ্ছে...' : 'সব জেনারেট করুন'}
+              </button>
+            </div>
+          </div>
+
+          {/* Progress / Results */}
+          {aiProgress.length > 0 && (
+            <div className="glass-card rounded-2xl p-5 space-y-3">
+              <h3 className="font-bold text-foreground text-sm">📊 ফলাফল</h3>
+              <div className="space-y-2 max-h-80 overflow-y-auto">
+                {aiProgress.map((r: any, i: number) => (
+                  <div key={i} className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-muted/10 border border-border/50">
+                    {r.status === 'success' && <CheckCircle2 size={14} className="text-emerald-500 flex-shrink-0" />}
+                    {r.status === 'skipped' && <SkipForward size={14} className="text-amber-500 flex-shrink-0" />}
+                    {r.status === 'error' && <AlertCircle size={14} className="text-destructive flex-shrink-0" />}
+                    {r.status === 'generating' && <Loader2 size={14} className="text-primary animate-spin flex-shrink-0" />}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-foreground truncate">{r.name}</p>
+                      {r.message && <p className="text-[10px] text-muted-foreground">{r.message}</p>}
+                      {r.blog_slug && <p className="text-[10px] text-primary font-mono">/blog/{r.blog_slug}</p>}
+                    </div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      r.status === 'success' ? 'bg-emerald-500/10 text-emerald-500' :
+                      r.status === 'skipped' ? 'bg-amber-500/10 text-amber-500' :
+                      r.status === 'generating' ? 'bg-primary/10 text-primary' :
+                      'bg-destructive/10 text-destructive'
+                    }`}>{r.status === 'success' ? '✓ তৈরি' : r.status === 'skipped' ? '↷ skip' : r.status === 'generating' ? '⟳ চলছে' : '✗ error'}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Per-Product List */}
+          <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-border bg-muted/10 flex items-center justify-between">
+              <h3 className="font-bold text-foreground text-sm">প্রোডাক্ট তালিকা — এককভাবে ব্লগ তৈরি করুন</h3>
+              <span className="text-xs text-muted-foreground">{products.length}টি প্রোডাক্ট</span>
+            </div>
+            <div className="divide-y divide-border/30 max-h-[500px] overflow-y-auto">
+              {products.map((prod) => {
+                const hasBlog = posts.some(p => p.slug?.includes(prod.slug) || p.slug?.includes(prod.id));
+                return (
+                  <div key={prod.id} className="flex items-center gap-3 px-5 py-3 hover:bg-muted/10 transition-colors">
+                    {prod.image_url ? (
+                      <img src={prod.image_url} alt={prod.name} className="w-9 h-9 rounded-lg object-cover flex-shrink-0" />
+                    ) : (
+                      <div className="w-9 h-9 rounded-lg bg-muted/30 flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-foreground truncate">{prod.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{(prod.categories as any)?.name || '—'}</p>
+                    </div>
+                    {hasBlog ? (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold whitespace-nowrap">✓ ব্লগ আছে</span>
+                    ) : (
+                      <button
+                        onClick={() => handleGenerateSingle(prod.id, prod.name)}
+                        disabled={aiGenerating}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 whitespace-nowrap">
+                        {aiGenerating ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />}
+                        AI ব্লগ
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── POST EDIT MODAL ── */}
       {editPost && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
