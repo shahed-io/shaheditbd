@@ -489,7 +489,7 @@ const UserDashboard = () => {
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-muted/20">
                       <Mail size={15} className="text-muted-foreground" />
                       <span className="text-sm font-medium flex-1 text-foreground">{user?.email}</span>
-                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full" style={{ color: 'hsl(158,64%,38%)', background: 'hsl(158,64%,94%)' }}>✓ Verified</span>
+                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald/10 text-emerald border border-emerald/20">✓ Verified</span>
                     </div>
                   </div>
                   <div>
