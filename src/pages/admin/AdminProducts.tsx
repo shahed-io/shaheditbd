@@ -180,7 +180,7 @@ const AdminProducts = () => {
     const baseSlug = form.slug || generateSlug(form.name);
     const finalSlug = editingProduct ? (form.slug || editingProduct.id) : `${baseSlug}-${Date.now()}`;
 
-    const cleanVariants = form.variants.filter(v => v.label.trim());
+    const cleanVariants = form.variants.filter(v => v.name.trim() && v.options.some(o => o.label.trim()));
     const cleanWYG = form.what_you_get.filter(w => w.trim());
     const cleanFaq = form.faq.filter(f => f.q.trim());
     const cleanAttrs = form.attributes.filter(a => a.key.trim());
