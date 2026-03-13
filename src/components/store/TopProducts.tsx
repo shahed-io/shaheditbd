@@ -52,7 +52,7 @@ const TopProducts = () => {
         }
         const rows = data ?? [];
         console.log('[TopProducts] Loaded products:', rows.length);
-        const hiddenCats = ['Streaming', 'Adobe'];
+        const hiddenCats = ['Streaming', 'Adobe', 'Antivirus'];
         const filteredRows = rows.filter((p: any) => !hiddenCats.includes(p.category?.name));
         setProducts(filteredRows.map(mapProduct));
         const map = new Map<string, number>();
