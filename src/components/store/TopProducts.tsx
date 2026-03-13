@@ -150,14 +150,14 @@ const TopProducts = () => {
         {/* All Products grouped */}
         {!error && !loading && activeTab === 'All' && (
           <div className="space-y-14">
-            {catOrder.map((cat) => {
+            {catOrder.map((cat, catIdx) => {
               const items      = products.filter(p => p.category === cat);
               if (!items.length) return null;
               const isExpanded = !!expandedCats[cat];
               const shown      = isExpanded ? items : items.slice(0, LIMIT);
               const hasMore    = items.length > LIMIT;
               return (
-                <div key={cat}>
+                <CategoryRevealBlock key={cat} catIdx={catIdx}>
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-sora font-bold text-lg text-foreground flex items-center gap-2">
                       <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(243,75%,59%), hsl(263,70%,58%))' }} />
@@ -189,7 +189,7 @@ const TopProducts = () => {
                       </button>
                     </div>
                   )}
-                </div>
+                </CategoryRevealBlock>
               );
             })}
           </div>
@@ -206,6 +206,23 @@ const TopProducts = () => {
         )}
       </div>
     </section>
+  );
+};
+
+/* Helper: each category block reveals when it enters viewport */
+const CategoryRevealBlock = ({ children, catIdx }: { children: React.ReactNode; catIdx: number }) => {
+  const { ref, visible } = useReveal({ threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  return (
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(40px)',
+        transition: `opacity 0.7s cubic-bezier(0.23,1,0.32,1) ${catIdx * 0.05}s, transform 0.7s cubic-bezier(0.23,1,0.32,1) ${catIdx * 0.05}s`,
+      }}
+    >
+      {children}
+    </div>
   );
 };
 
