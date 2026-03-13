@@ -515,6 +515,11 @@
   100% { transform: rotate(0deg); }
 }
 
+@keyframes logoPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); filter: blur(8px); }
+  50%       { opacity: 0.9;  transform: scale(1.12); filter: blur(10px); }
+}
+
 /* ══════════════════════════════════════
    ANIMATION UTILITIES
 ══════════════════════════════════════ */
