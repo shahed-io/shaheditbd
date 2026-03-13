@@ -250,17 +250,17 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
-          <div className="border-t border-white/10 px-4 py-4 space-y-1" style={{ background: 'hsl(222,22%,12%)' }}>
+          <div className="border-t border-border px-4 py-4 space-y-1" style={{ background: 'hsl(var(--card))' }}>
             <div className="mb-3">
               <SearchBar variant="navbar" className="w-full" onClose={() => setMobileOpen(false)} />
             </div>
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-white/75 hover:text-white hover:bg-white/10 transition-colors">
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-foreground/75 hover:text-foreground hover:bg-foreground/10 transition-colors">
                 {link.label}
               </a>
             ))}
-            <div className="pt-2 border-t border-white/10">
+            <div className="pt-2 border-t border-border">
               {user ? (
                 <div className="flex gap-2">
                   <button onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}
@@ -269,7 +269,7 @@ const Navbar = () => {
                     <LayoutDashboard size={15} /> Dashboard
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
-                    className="px-4 py-3 rounded-2xl text-sm font-semibold text-white/60 hover:bg-white/10 border border-white/15 transition-all">
+                    className="px-4 py-3 rounded-2xl text-sm font-semibold text-foreground/60 hover:bg-foreground/10 border border-border transition-all">
                     Logout
                   </button>
                 </div>
