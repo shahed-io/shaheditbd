@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useReveal } from '@/hooks/useReveal';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
 import { ArrowRight, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';

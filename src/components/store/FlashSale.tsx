@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useReveal } from '@/hooks/useReveal';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Flame, Timer, ArrowRight, ShoppingCart, Zap, TrendingDown } from 'lucide-react';
