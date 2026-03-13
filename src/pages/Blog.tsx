@@ -49,15 +49,18 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* SEO Schema */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "Blog",
-        "name": "Shahed Store Blog",
-        "description": "Tips, guides and news about digital products",
-        "url": window.location.origin + "/blog",
-      })}} />
-
+      <SEOHead
+        title="ব্লগ"
+        description="Shahed Store Blog — ডিজিটাল প্রোডাক্ট, সফটওয়্যার টিপস, গাইড এবং সর্বশেষ আপডেট পড়ুন।"
+        ogType="website"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'Blog',
+          name: 'Shahed Store Blog',
+          description: 'Tips, guides and news about digital products',
+          url: `${SITE_URL}/blog`,
+        }}
+      />
       <Navbar />
 
       {/* Hero */}
