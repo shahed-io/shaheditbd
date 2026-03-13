@@ -526,6 +526,8 @@ export type Database = {
           id: string
           phone: string | null
           referral_code: string | null
+          referral_credit: number
+          referral_discount: number
           referral_earnings: number
           referred_by: string | null
           updated_at: string
@@ -539,6 +541,8 @@ export type Database = {
           id?: string
           phone?: string | null
           referral_code?: string | null
+          referral_credit?: number
+          referral_discount?: number
           referral_earnings?: number
           referred_by?: string | null
           updated_at?: string
@@ -552,6 +556,8 @@ export type Database = {
           id?: string
           phone?: string | null
           referral_code?: string | null
+          referral_credit?: number
+          referral_discount?: number
           referral_earnings?: number
           referred_by?: string | null
           updated_at?: string
@@ -788,12 +794,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_referral_tier: { Args: { referral_count: number }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      process_referral: {
+        Args: { p_referral_code: string; p_referred_user_id: string }
+        Returns: Json
       }
     }
     Enums: {
