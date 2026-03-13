@@ -149,7 +149,7 @@ const AdminBlog = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ bulk: true, auto_publish: autoPublish }),
+        body: JSON.stringify({ bulk: true, auto_publish: autoPublish, ai_model: aiModel }),
       });
       if (!res.ok) {
         const err = await res.json();
