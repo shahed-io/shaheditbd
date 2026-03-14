@@ -249,13 +249,15 @@ const AdminBackup = () => {
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex border-b border-border gap-1">
-        {(['export', 'import'] as const).map(t => (
-          <button key={t} onClick={() => setRestoreTab(t)}
-            className={`px-5 py-2.5 text-xs font-semibold capitalize transition-colors ${restoreTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-            {t === 'export' ? '📥 Export / ব্যাকআপ' : '📤 Import / রিস্টোর'}
-          </button>
-        ))}
+      <div className="flex gap-3">
+        <button onClick={() => setRestoreTab('export')}
+          className={`flex-1 py-3 px-5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${restoreTab === 'export' ? 'btn-glow' : 'glass-card text-muted-foreground hover:text-foreground'}`}>
+          <Download size={15} /> ব্যাকআপ / Export
+        </button>
+        <button onClick={() => setRestoreTab('import')}
+          className={`flex-1 py-3 px-5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${restoreTab === 'import' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'glass-card text-muted-foreground hover:text-foreground'}`}>
+          <RotateCcw size={15} /> রিস্টোর / Import
+        </button>
       </div>
 
       {/* ── EXPORT TAB ── */}
@@ -289,119 +291,176 @@ const AdminBackup = () => {
 
       {/* ── IMPORT / RESTORE TAB ── */}
       {restoreTab === 'import' && (
-        <div className="space-y-4">
-          {/* Warning */}
-          <div className="glass-card rounded-2xl p-4 border border-amber-500/20 bg-amber-500/5 flex items-start gap-3">
-            <AlertTriangle size={16} className="text-amber-500 mt-0.5 flex-shrink-0" />
+        <div className="space-y-5">
+          {/* Warning Banner */}
+          <div className="glass-card rounded-2xl p-4 border border-amber-500/30 flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle size={16} className="text-amber-400" />
+            </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">⚠️ সতর্কতা</p>
-              <p className="text-xs text-muted-foreground mt-1">রিস্টোর করলে বিদ্যমান ডেটা <strong className="text-foreground">upsert</strong> হবে (একই ID হলে overwrite)। রিস্টোরের আগে একটি Full Backup নিয়ে রাখুন।</p>
+              <p className="text-sm font-bold text-foreground">⚠️ রিস্টোর করার আগে সতর্কতা</p>
+              <p className="text-xs text-muted-foreground mt-1">রিস্টোর করলে বিদ্যমান ডেটা <strong className="text-foreground">upsert</strong> হবে — একই ID থাকলে overwrite হবে। রিস্টোরের আগে অবশ্যই একটি <strong className="text-foreground">Full Backup</strong> নিয়ে রাখুন।</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Single Table Restore */}
-            <div className="glass-card rounded-2xl p-5 space-y-3">
-              <h3 className="font-bold text-foreground flex items-center gap-2">
-                <RotateCcw size={14} className="text-primary" /> একটি টেবিল রিস্টোর
-              </h3>
-              <p className="text-xs text-muted-foreground">একটি টেবিলের JSON ব্যাকআপ ফাইল আপলোড করুন।</p>
-              <div className="space-y-2">
-                <label className="block text-xs text-muted-foreground mb-1">টেবিল সিলেক্ট করুন (ঐচ্ছিক — ফাইল থেকে অটো-ডিটেক্ট)</label>
-                {importPreview && importPreview.table !== '__full__' && (
-                  <select
-                    value={importPreview.table}
-                    onChange={e => setImportPreview(p => p ? { ...p, table: e.target.value } : null)}
-                    className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors">
-                    <option value="">— টেবিল বাছুন —</option>
-                    {TABLES.map(t => <option key={t.table} value={t.table}>{t.label} ({t.table})</option>)}
-                  </select>
-                )}
-                <button onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-3 rounded-xl border-2 border-dashed border-border hover:border-primary/40 text-xs text-muted-foreground hover:text-foreground transition-all flex items-center justify-center gap-2">
-                  <Upload size={14} /> JSON ফাইল আপলোড করুন
-                </button>
-                <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={e => handleFileSelect(e, 'single')} />
+          {/* Two column layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+            {/* ── Single Table Restore ── */}
+            <div className="glass-card rounded-2xl p-5 space-y-4">
+              <div className="flex items-center gap-2 pb-3 border-b border-border/40">
+                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <RotateCcw size={14} className="text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-foreground text-sm">একটি টেবিল রিস্টোর</h3>
+                  <p className="text-[10px] text-muted-foreground">একক JSON ব্যাকআপ ফাইল আপলোড করুন</p>
+                </div>
               </div>
+
+              {/* Upload Button */}
+              <button onClick={() => fileInputRef.current?.click()}
+                className="w-full py-4 rounded-xl border-2 border-dashed border-border hover:border-primary/50 text-sm text-muted-foreground hover:text-foreground transition-all flex flex-col items-center justify-center gap-2 group">
+                <div className="w-10 h-10 rounded-xl bg-muted/30 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+                  <Upload size={18} className="group-hover:text-primary transition-colors" />
+                </div>
+                <span className="font-medium">JSON ফাইল আপলোড করুন</span>
+                <span className="text-[10px] text-muted-foreground/70">products_backup.json, orders_backup.json ইত্যাদি</span>
+              </button>
+              <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={e => handleFileSelect(e, 'single')} />
+
+              {/* Preview after file load */}
               {importPreview && importPreview.table !== '__full__' && (
-                <div className="glass-card rounded-xl p-3 space-y-2">
-                  <p className="text-xs font-semibold text-foreground">প্রিভিউ:</p>
-                  <p className="text-xs text-muted-foreground">{importPreview.data.length} রেকর্ড পাওয়া গেছে</p>
-                  <p className="text-xs text-primary font-mono">টেবিল: {importPreview.table || 'নির্বাচিত নয়'}</p>
-                  {importPreview.data.slice(0, 2).map((row: any, i: number) => (
-                    <div key={i} className="text-[10px] font-mono text-muted-foreground bg-muted/20 rounded-lg p-2 truncate">
-                      {JSON.stringify(row).slice(0, 100)}...
+                <div className="space-y-3">
+                  <div className="glass-card rounded-xl p-4 space-y-3 border border-primary/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-foreground">📋 ফাইল প্রিভিউ</span>
+                      <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-semibold">{importPreview.data.length} রেকর্ড</span>
                     </div>
-                  ))}
-                  <label className="flex items-center gap-2 cursor-pointer mt-2">
-                    <input type="checkbox" checked={confirmRestore} onChange={e => setConfirmRestore(e.target.checked)} className="w-3.5 h-3.5 accent-primary" />
-                    <span className="text-xs text-foreground">আমি বুঝেছি, ডেটা overwrite হতে পারে</span>
-                  </label>
-                  <button
-                    onClick={restoreTable}
-                    disabled={!confirmRestore || restoring || !importPreview.table}
-                    className="w-full py-2 rounded-xl btn-glow text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-40">
-                    {restoring ? <><Loader2 size={12} className="animate-spin" /> রিস্টোর হচ্ছে...</> : <><RotateCcw size={12} /> রিস্টোর করুন</>}
-                  </button>
+                    {/* Table selector */}
+                    <div>
+                      <label className="text-[10px] text-muted-foreground mb-1 block">টেবিল নির্বাচন করুন *</label>
+                      <select
+                        value={importPreview.table}
+                        onChange={e => setImportPreview(p => p ? { ...p, table: e.target.value } : null)}
+                        className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors">
+                        <option value="">— টেবিল বাছুন —</option>
+                        {TABLES.map(t => <option key={t.table} value={t.table}>{t.label} ({t.table})</option>)}
+                      </select>
+                    </div>
+                    {/* Sample rows */}
+                    {importPreview.data.slice(0, 2).map((row: any, i: number) => (
+                      <div key={i} className="text-[10px] font-mono text-muted-foreground bg-muted/20 rounded-lg p-2 truncate">
+                        {JSON.stringify(row).slice(0, 120)}…
+                      </div>
+                    ))}
+                    {/* Confirm checkbox */}
+                    <label className="flex items-start gap-2 cursor-pointer p-2 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                      <input type="checkbox" checked={confirmRestore} onChange={e => setConfirmRestore(e.target.checked)} className="w-4 h-4 accent-primary mt-0.5" />
+                      <span className="text-xs text-foreground">আমি বুঝেছি — ডেটা overwrite হতে পারে, তবুও রিস্টোর করতে চাই</span>
+                    </label>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={restoreTable}
+                      disabled={!confirmRestore || restoring || !importPreview.table}
+                      className="flex-1 py-2.5 rounded-xl btn-glow text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                      {restoring ? <><Loader2 size={14} className="animate-spin" /> রিস্টোর হচ্ছে...</> : <><RotateCcw size={14} /> রিস্টোর করুন</>}
+                    </button>
+                    <button onClick={() => { setImportPreview(null); setConfirmRestore(false); }}
+                      className="px-4 py-2.5 rounded-xl glass-card text-sm text-muted-foreground hover:text-destructive transition-colors">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Full Restore */}
-            <div className="glass-card rounded-2xl p-5 space-y-3">
-              <h3 className="font-bold text-foreground flex items-center gap-2">
-                <Database size={14} className="text-primary" /> Full Backup রিস্টোর
-              </h3>
-              <p className="text-xs text-muted-foreground">Full Backup JSON ফাইল আপলোড করলে সব টেবিল রিস্টোর হবে।</p>
+            {/* ── Full Backup Restore ── */}
+            <div className="glass-card rounded-2xl p-5 space-y-4">
+              <div className="flex items-center gap-2 pb-3 border-b border-border/40">
+                <div className="w-8 h-8 rounded-xl bg-emerald-400/10 flex items-center justify-center">
+                  <Database size={14} className="text-emerald-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-foreground text-sm">Full Backup রিস্টোর</h3>
+                  <p className="text-[10px] text-muted-foreground">সব টেবিল একসাথে রিস্টোর করুন</p>
+                </div>
+              </div>
+
+              {/* Upload Button */}
               <button onClick={() => fullFileInputRef.current?.click()}
-                className="w-full py-3 rounded-xl border-2 border-dashed border-border hover:border-primary/40 text-xs text-muted-foreground hover:text-foreground transition-all flex items-center justify-center gap-2">
-                <Upload size={14} /> Full Backup JSON আপলোড
+                className="w-full py-4 rounded-xl border-2 border-dashed border-border hover:border-emerald-400/50 text-sm text-muted-foreground hover:text-foreground transition-all flex flex-col items-center justify-center gap-2 group">
+                <div className="w-10 h-10 rounded-xl bg-muted/30 group-hover:bg-emerald-400/10 flex items-center justify-center transition-colors">
+                  <Upload size={18} className="group-hover:text-emerald-400 transition-colors" />
+                </div>
+                <span className="font-medium">Full Backup JSON আপলোড</span>
+                <span className="text-[10px] text-muted-foreground/70">shahed_store_full_backup_XXXX.json</span>
               </button>
               <input ref={fullFileInputRef} type="file" accept=".json" className="hidden" onChange={e => handleFileSelect(e, 'full')} />
-              {importPreview && importPreview.table === '__full__' && (
-                <div className="glass-card rounded-xl p-3 space-y-2">
-                  <p className="text-xs font-semibold text-foreground">ব্যাকআপ সারসংক্ষেপ:</p>
-                  <div className="space-y-1 max-h-36 overflow-y-auto">
-                    {(importPreview.data as any[]).map((row: any) => (
-                      <div key={row.table} className="flex items-center justify-between text-[10px]">
-                        <span className="text-muted-foreground font-mono">{row.table}</span>
-                        <span className="text-foreground">{row.count} rows</span>
-                      </div>
-                    ))}
-                  </div>
-                  <label className="flex items-center gap-2 cursor-pointer mt-2">
-                    <input type="checkbox" checked={confirmRestore} onChange={e => setConfirmRestore(e.target.checked)} className="w-3.5 h-3.5 accent-primary" />
-                    <span className="text-xs text-foreground">সব টেবিল রিস্টোর করব, বুঝেছি</span>
-                  </label>
-                  <button
-                    onClick={restoreTable}
-                    disabled={!confirmRestore || restoring}
-                    className="w-full py-2 rounded-xl btn-glow text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-40">
-                    {restoring ? <><Loader2 size={12} className="animate-spin" /> রিস্টোর হচ্ছে...</> : <><Database size={12} /> Full Restore করুন</>}
-                  </button>
-                </div>
-              )}
 
-              {/* Cancel preview */}
-              {importPreview && (
-                <button onClick={() => { setImportPreview(null); setConfirmRestore(false); }}
-                  className="w-full py-2 rounded-xl glass-card text-xs text-muted-foreground hover:text-destructive transition-colors flex items-center justify-center gap-1.5">
-                  <Trash2 size={11} /> বাতিল করুন
-                </button>
+              {/* Preview after file load */}
+              {importPreview && importPreview.table === '__full__' && (
+                <div className="space-y-3">
+                  <div className="glass-card rounded-xl p-4 space-y-3 border border-emerald-400/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-foreground">📋 ব্যাকআপ সারসংক্ষেপ</span>
+                      <span className="text-[10px] bg-emerald-400/10 text-emerald-400 px-2 py-0.5 rounded-full font-semibold">{(importPreview.data as any[]).reduce((s: number, r: any) => s + r.count, 0)} মোট</span>
+                    </div>
+                    <div className="divide-y divide-border/30 max-h-40 overflow-y-auto rounded-lg bg-muted/10">
+                      {(importPreview.data as any[]).map((row: any) => {
+                        const t = TABLES.find(t => t.table === row.table);
+                        return (
+                          <div key={row.table} className="flex items-center justify-between px-3 py-2 text-xs">
+                            <span className="text-muted-foreground font-mono">{t?.label || row.table}</span>
+                            <span className="text-foreground font-semibold">{row.count} rows</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {/* Confirm */}
+                    <label className="flex items-start gap-2 cursor-pointer p-2 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                      <input type="checkbox" checked={confirmRestore} onChange={e => setConfirmRestore(e.target.checked)} className="w-4 h-4 accent-primary mt-0.5" />
+                      <span className="text-xs text-foreground">সব টেবিল রিস্টোর করব — আমি নিশ্চিত</span>
+                    </label>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={restoreTable}
+                      disabled={!confirmRestore || restoring}
+                      className="flex-1 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                      {restoring ? <><Loader2 size={14} className="animate-spin" /> রিস্টোর হচ্ছে...</> : <><Database size={14} /> Full Restore করুন</>}
+                    </button>
+                    <button onClick={() => { setImportPreview(null); setConfirmRestore(false); }}
+                      className="px-4 py-2.5 rounded-xl glass-card text-sm text-muted-foreground hover:text-destructive transition-colors">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
 
           {/* Restore Guide */}
-          <div className="glass-card rounded-2xl p-4">
-            <h4 className="text-sm font-semibold text-foreground mb-3">📖 রিস্টোর গাইড</h4>
-            <ol className="space-y-2 text-xs text-muted-foreground">
-              <li className="flex gap-2"><span className="text-primary font-bold">১.</span> আগে Export ট্যাব থেকে একটি Full Backup নিন।</li>
-              <li className="flex gap-2"><span className="text-primary font-bold">২.</span> যে ব্যাকআপ ফাইলটি রিস্টোর করতে চান সেটি আপলোড করুন।</li>
-              <li className="flex gap-2"><span className="text-primary font-bold">৩.</span> একক টেবিলের জন্য সঠিক টেবিল সিলেক্ট করুন।</li>
-              <li className="flex gap-2"><span className="text-primary font-bold">৪.</span> Checkbox চেক করে নিশ্চিত করুন এবং রিস্টোর করুন।</li>
-              <li className="flex gap-2"><span className="text-primary font-bold">৫.</span> একই ID-র রেকর্ড আপডেট হবে, নতুন রেকর্ড যোগ হবে।</li>
-            </ol>
+          <div className="glass-card rounded-2xl p-5">
+            <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+              <Shield size={14} className="text-primary" /> রিস্টোর গাইড
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { n: '১', text: 'Export ট্যাব থেকে Full Backup ডাউনলোড করুন (সেফটির জন্য)' },
+                { n: '২', text: 'রিস্টোর করতে চান সেই JSON ফাইলটি আপলোড করুন' },
+                { n: '৩', text: 'একক টেবিলের জন্য dropdown থেকে সঠিক টেবিল বাছুন' },
+                { n: '৪', text: 'Checkbox চেক করে নিশ্চিত করুন, তারপর রিস্টোর করুন' },
+                { n: '৫', text: 'একই ID থাকলে রেকর্ড আপডেট হবে, নতুন ID যুক্ত হবে' },
+                { n: '৬', text: 'রিস্টোরের পর পেজ রিফ্রেশ করে ডেটা যাচাই করুন' },
+              ].map(({ n, text }) => (
+                <div key={n} className="flex items-start gap-3 p-3 rounded-xl bg-muted/10">
+                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">{n}</span>
+                  <span className="text-xs text-muted-foreground">{text}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
