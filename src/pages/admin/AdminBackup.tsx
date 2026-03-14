@@ -249,13 +249,15 @@ const AdminBackup = () => {
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex border-b border-border gap-1">
-        {(['export', 'import'] as const).map(t => (
-          <button key={t} onClick={() => setRestoreTab(t)}
-            className={`px-5 py-2.5 text-xs font-semibold capitalize transition-colors ${restoreTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
-            {t === 'export' ? '📥 Export / ব্যাকআপ' : '📤 Import / রিস্টোর'}
-          </button>
-        ))}
+      <div className="flex gap-3">
+        <button onClick={() => setRestoreTab('export')}
+          className={`flex-1 py-3 px-5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${restoreTab === 'export' ? 'btn-glow' : 'glass-card text-muted-foreground hover:text-foreground'}`}>
+          <Download size={15} /> ব্যাকআপ / Export
+        </button>
+        <button onClick={() => setRestoreTab('import')}
+          className={`flex-1 py-3 px-5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${restoreTab === 'import' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'glass-card text-muted-foreground hover:text-foreground'}`}>
+          <RotateCcw size={15} /> রিস্টোর / Import
+        </button>
       </div>
 
       {/* ── EXPORT TAB ── */}
