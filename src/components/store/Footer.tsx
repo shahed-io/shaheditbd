@@ -10,7 +10,7 @@ const NAV_COL = [
       { label: 'Windows Keys',   href: '#' },
       { label: 'Office 365',     href: '#' },
       { label: 'Adobe Creative', href: '#' },
-      { label: 'Streaming',      href: '#' },
+      { label: 'CID For Reseller', href: '#' },
       { label: 'VPN & Security', href: '#' },
       { label: 'AI Tools',       href: '#' },
     ]
