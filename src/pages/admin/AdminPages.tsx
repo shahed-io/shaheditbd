@@ -19,19 +19,19 @@ interface PageLink {
 /* ─── Default data (Information + Policies from footer) ──────── */
 const DEFAULT_LINKS: Omit<PageLink, 'id'>[] = [
   // Information
-  { section: 'information', label: 'FAQs',          href: '/help',      sort_order: 1, is_active: true },
-  { section: 'information', label: 'Help Center',   href: '/help',      sort_order: 2, is_active: true },
-  { section: 'information', label: 'About Us',      href: '/about',     sort_order: 3, is_active: true },
-  { section: 'information', label: 'My Account',    href: '/dashboard', sort_order: 4, is_active: true },
-  { section: 'information', label: 'Contact Us',    href: '/contact',   sort_order: 5, is_active: true },
-  { section: 'information', label: 'All Products',  href: '/shop',      sort_order: 6, is_active: true },
+  { section: 'information', label: 'Blog',         href: '/blog',      sort_order: 1,  is_active: true },
+  { section: 'information', label: 'Help Center',  href: '/help',      sort_order: 2,  is_active: true },
+  { section: 'information', label: 'About Us',     href: '/about',     sort_order: 3,  is_active: true },
+  { section: 'information', label: 'My Account',   href: '/dashboard', sort_order: 4,  is_active: true },
+  { section: 'information', label: 'Contact Us',   href: '/contact',   sort_order: 5,  is_active: true },
+  { section: 'information', label: 'All Products', href: '/shop',      sort_order: 6,  is_active: true },
   // Policies
-  { section: 'policies', label: 'Privacy Policy',        href: '/privacy-policy',   sort_order: 1, is_active: true },
-  { section: 'policies', label: 'Terms & Conditions',    href: '/terms-conditions', sort_order: 2, is_active: true },
-  { section: 'policies', label: 'Refund & Return Policy',href: '/refund-policy',    sort_order: 3, is_active: true },
-  { section: 'policies', label: 'Order & Cancellation',  href: '/order-policy',     sort_order: 4, is_active: true },
-  { section: 'policies', label: 'Delivery Info',         href: '/delivery-info',    sort_order: 5, is_active: true },
-  { section: 'policies', label: 'Return Policy',         href: '/return-policy',    sort_order: 6, is_active: true },
+  { section: 'policies',    label: 'Privacy Policy',     href: '/help', sort_order: 1, is_active: true },
+  { section: 'policies',    label: 'Terms & Conditions', href: '/help', sort_order: 2, is_active: true },
+  { section: 'policies',    label: 'Refund Policy',      href: '/help', sort_order: 3, is_active: true },
+  { section: 'policies',    label: 'Order Policy',       href: '/help', sort_order: 4, is_active: true },
+  { section: 'policies',    label: 'Delivery Info',      href: '/help', sort_order: 5, is_active: true },
+  { section: 'policies',    label: 'Return Policy',      href: '/help', sort_order: 6, is_active: true },
 ];
 
 /* ─── Inline edit row ─────────────────────────────────────────── */
@@ -215,12 +215,11 @@ const AdminPages = () => {
         .eq('key', SETTINGS_KEY)
         .maybeSingle();
       if (data?.value) return JSON.parse(data.value) as PageLink[];
-      // auto-seed defaults into DB
-      const seeded: PageLink[] = DEFAULT_LINKS.map((l, i) => ({ ...l, id: `default-${i}` }));
-      await supabase.from('site_settings').upsert(
-        { key: SETTINGS_KEY, value: JSON.stringify(seeded), category: 'pages' },
-        { onConflict: 'key' }
-      );
+      // seed defaults
+      const seeded: PageLink[] = DEFAULT_LINKS.map((l, i) => ({
+        ...l,
+        id: `default-${i}`,
+      }));
       return seeded;
     },
   });
@@ -234,19 +233,12 @@ const AdminPages = () => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin-pages'] });
-      qc.invalidateQueries({ queryKey: ['footer-pages'] });
-      toast.success('সেভ হয়েছে!');
+      toast.success('Pages saved successfully!');
     },
-    onError: () => toast.error('সেভ করতে ব্যর্থ।'),
+    onError: () => toast.error('Failed to save.'),
   });
 
   const persist = (updated: PageLink[]) => save.mutate(updated);
-
-  const handleReset = () => {
-    if (!confirm('সকল লিঙ্ক ডিফল্টে রিসেট করবেন?')) return;
-    const seeded: PageLink[] = DEFAULT_LINKS.map((l, i) => ({ ...l, id: `default-${i}` }));
-    persist(seeded);
-  };
 
   // editing state
   const [adding, setAdding]   = useState<PageSection | null>(null);
@@ -308,19 +300,10 @@ const AdminPages = () => {
             Manage footer navigation links for Information & Policies sections.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl"
-            style={{ background: 'hsla(243,75%,65%,0.08)', border: '1px solid hsla(243,75%,65%,0.18)' }}>
-            <span className="text-xs font-medium text-muted-foreground">মোট লিঙ্ক:</span>
-            <span className="text-sm font-bold" style={{ color: 'hsl(243,75%,65%)' }}>{links.length}</span>
-          </div>
-          <button
-            onClick={handleReset}
-            className="px-3.5 py-2 rounded-xl text-xs font-bold border transition-all hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
-            style={{ borderColor: 'hsla(0,0%,0%,0.12)', color: 'hsl(226,25%,45%)' }}
-          >
-            ↺ Reset to Default
-          </button>
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl"
+          style={{ background: 'hsla(243,75%,65%,0.08)', border: '1px solid hsla(243,75%,65%,0.18)' }}>
+          <span className="text-xs font-medium text-muted-foreground">Total links:</span>
+          <span className="text-sm font-bold" style={{ color: 'hsl(243,75%,65%)' }}>{links.length}</span>
         </div>
       </div>
 
