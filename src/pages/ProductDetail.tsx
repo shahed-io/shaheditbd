@@ -921,14 +921,23 @@ const ProductDetail = () => {
 const FAQItem = ({ q, a, delay = 0, revealed = true }: { q: string; a: string; delay?: number; revealed?: boolean }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-2xl overflow-hidden border transition-all"
-      style={{ background: 'hsla(215,28%,10%,0.7)', borderColor: open ? 'hsla(271,91%,65%,0.3)' : 'hsla(271,91%,65%,0.1)', boxShadow: open ? '0 0 24px hsla(271,91%,65%,0.08)' : 'none', opacity: revealed ? 1 : 0, transform: revealed ? 'none' : 'translateY(16px)', transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s, box-shadow 0.3s` }}>
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-foreground text-left gap-3">
+    <div className="rounded-2xl overflow-hidden transition-all"
+      style={{
+        background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: `1px solid ${open ? 'hsla(258,78%,60%,0.35)' : 'hsla(258,78%,75%,0.22)'}`,
+        boxShadow: open ? '0 4px 24px hsla(258,78%,55%,0.12)' : '0 2px 12px hsla(258,78%,55%,0.06)',
+        opacity: revealed ? 1 : 0,
+        transform: revealed ? 'none' : 'translateY(16px)',
+        transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s, box-shadow 0.3s`,
+      }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-left gap-3" style={{ color: 'hsl(226,35%,18%)' }}>
         <span>{q}</span>
-        <ChevronDown size={16} className="flex-shrink-0 transition-transform duration-300" style={{ color: 'hsl(271,91%,65%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+        <ChevronDown size={16} className="flex-shrink-0 transition-transform duration-300" style={{ color: 'hsl(258,78%,55%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
       <div className="overflow-hidden transition-all duration-400" style={{ maxHeight: open ? '300px' : '0', opacity: open ? 1 : 0 }}>
-        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t" style={{ borderColor: 'hsla(271,91%,65%,0.1)', paddingTop: '12px' }}>{a}</div>
+        <div className="px-5 pb-4 text-sm leading-relaxed border-t" style={{ borderColor: 'hsla(258,78%,75%,0.18)', paddingTop: '12px', color: 'hsl(226,25%,42%)' }}>{a}</div>
       </div>
     </div>
   );
