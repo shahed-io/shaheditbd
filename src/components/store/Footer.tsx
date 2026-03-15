@@ -1,38 +1,44 @@
-import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowRight } from 'lucide-react';
+import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 
 const NAV_COL = [
   {
     title: 'Products',
+    icon: <Package size={14} />,
+    accent: 'hsl(258,78%,55%)',
     links: [
-      { label: 'Windows Keys',     href: '#' },
-      { label: 'Office 365',       href: '#' },
-      { label: 'Adobe Creative',   href: '#' },
-      { label: 'Streaming',        href: '#' },
-      { label: 'VPN & Security',   href: '#' },
-      { label: 'AI Tools',         href: '#' },
+      { label: 'Windows Keys',   href: '#' },
+      { label: 'Office 365',     href: '#' },
+      { label: 'Adobe Creative', href: '#' },
+      { label: 'Streaming',      href: '#' },
+      { label: 'VPN & Security', href: '#' },
+      { label: 'AI Tools',       href: '#' },
     ]
   },
   {
     title: 'Information',
+    icon: <Info size={14} />,
+    accent: 'hsl(200,90%,45%)',
     links: [
-      { label: 'FAQs',             href: '/faqs' },
-      { label: 'About Us',         href: '/about' },
-      { label: 'My Account',       href: '/dashboard' },
-      { label: 'Contact Us',       href: '/contact' },
-      { label: 'All Products',     href: '/shop' },
-      { label: 'Software Download Link', href: '/help' },
+      { label: 'FAQs',           href: '/faqs' },
+      { label: 'About Us',       href: '/about' },
+      { label: 'My Account',     href: '/dashboard' },
+      { label: 'Contact Us',     href: '/contact' },
+      { label: 'All Products',   href: '/shop' },
+      { label: 'Software Download Link', href: '/help', highlight: true },
     ]
   },
   {
     title: 'Policies',
+    icon: <FileText size={14} />,
+    accent: 'hsl(162,72%,38%)',
     links: [
-      { label: 'Privacy Policy',       href: '/privacy-policy' },
-      { label: 'Terms & Conditions',   href: '/terms-conditions' },
+      { label: 'Privacy Policy',         href: '/privacy-policy' },
+      { label: 'Terms & Conditions',     href: '/terms-conditions' },
       { label: 'Refund & Return Policy', href: '/refund-policy' },
-      { label: 'Order & Cancellation', href: '/order-policy' },
-      { label: 'Delivery Info',        href: '/delivery-info' },
-      { label: 'Return Policy',        href: '/return-policy' },
+      { label: 'Order & Cancellation',   href: '/order-policy' },
+      { label: 'Delivery Info',          href: '/delivery-info' },
+      { label: 'Return Policy',          href: '/return-policy' },
     ]
   },
 ];
@@ -40,160 +46,217 @@ const NAV_COL = [
 const Footer = () => (
   <footer className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
 
-    {/* Decorative blobs */}
-    <div className="absolute top-0 right-0 w-[500px] h-[400px] pointer-events-none"
-      style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(258,78%,55%,0.06), transparent 60%)' }} />
-    <div className="absolute bottom-0 left-0 w-[400px] h-[300px] pointer-events-none"
-      style={{ background: 'radial-gradient(ellipse at 0% 100%, hsla(200,90%,45%,0.05), transparent 60%)' }} />
-    <div className="absolute inset-0 pointer-events-none"
-      style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.04) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+    {/* Decorative background */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute top-0 right-0 w-[600px] h-[500px]"
+        style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(258,78%,55%,0.07), transparent 65%)' }} />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[400px]"
+        style={{ background: 'radial-gradient(ellipse at 0% 100%, hsla(200,90%,45%,0.06), transparent 65%)' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px]"
+        style={{ background: 'radial-gradient(ellipse, hsla(162,72%,38%,0.03), transparent 70%)' }} />
+      <div className="absolute inset-0"
+        style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.035) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+    </div>
 
-    {/* CTA Strip — glassmorphism */}
+    {/* CTA Strip */}
     <div className="relative z-10 border-b" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-5"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7"
         style={{
           background: 'hsla(0,0%,100%,0.50)',
-          backdropFilter: 'blur(20px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          backdropFilter: 'blur(24px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         }}>
-        <div>
-          <h3 className="font-sora font-black text-xl" style={{ color: 'hsl(226,35%,12%)' }}>Need help choosing a product?</h3>
-          <p className="text-sm mt-1" style={{ color: 'hsl(226,35%,45%)' }}>Our experts are available 24/7 to assist you</p>
-        </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <a href="https://wa.me/8801840099853" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all"
-            style={{
-              color: 'hsl(226,35%,28%)',
-              background: 'hsla(0,0%,100%,0.70)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid hsla(258,78%,75%,0.22)',
-              boxShadow: '0 2px 12px hsla(226,35%,12%,0.06)',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,55%,0.40)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,75%,0.22)'; }}>
-            <MessageCircle size={15} /> WhatsApp
-          </a>
-          <a href="/shop"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold text-white hover:opacity-90 transition-all"
-            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.28)' }}>
-            Shop Now <ArrowRight size={15} />
-          </a>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
+              <Zap size={18} className="text-white" />
+            </div>
+            <div>
+              <h3 className="font-sora font-black text-xl" style={{ color: 'hsl(226,35%,12%)' }}>Need help choosing a product?</h3>
+              <p className="text-sm mt-0.5" style={{ color: 'hsl(226,35%,45%)' }}>Our experts are available 24/7 to assist you</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <a href="https://wa.me/8801840099853" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all hover:scale-105"
+              style={{
+                color: 'hsl(226,35%,28%)',
+                background: 'hsla(0,0%,100%,0.75)',
+                backdropFilter: 'blur(12px)',
+                border: '1.5px solid hsla(258,78%,75%,0.25)',
+                boxShadow: '0 2px 12px hsla(226,35%,12%,0.06)',
+              }}>
+              <MessageCircle size={15} /> WhatsApp
+            </a>
+            <a href="/shop"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold text-white transition-all hover:scale-105"
+              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
+              Shop Now <ArrowUpRight size={15} />
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
     {/* ── Main footer ── */}
-    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
 
-      {/* Brand */}
-      <div className="lg:col-span-2 space-y-6">
-        <a href="/" className="flex items-center group w-fit transition-transform group-hover:scale-[1.03]">
-          <BrandLogo size="lg" />
-        </a>
+        {/* Brand column */}
+        <div className="lg:col-span-2 space-y-7">
+          <a href="/" className="flex items-center w-fit">
+            <BrandLogo size="lg" />
+          </a>
 
-        <p className="text-[13px] leading-relaxed max-w-xs" style={{ color: 'hsl(226,35%,42%)' }}>
-          বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।
-        </p>
+          <p className="text-[13.5px] leading-relaxed max-w-xs" style={{ color: 'hsl(226,35%,42%)' }}>
+            বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।
+          </p>
 
-        {/* Contact */}
-        <div className="space-y-2.5">
-          {[
-            { icon: <Phone size={12} />, href: 'tel:01840099853', label: '01840-099853' },
-            { icon: <Mail size={12} />,  href: 'mailto:info@shahedstore.com.bd', label: 'info@shahedstore.com.bd' },
-            { icon: <Globe size={12} />, href: 'https://www.shahedstore.com.bd', label: 'www.shahedstore.com.bd', ext: true },
-          ].map((c, i) => (
-            <a key={i} href={c.href} target={c.ext ? '_blank' : undefined} rel={c.ext ? 'noopener noreferrer' : undefined}
-              className="flex items-center gap-2.5 text-sm transition-colors w-fit group"
-              style={{ color: 'hsl(226,35%,42%)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; }}>
-              <span className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-105"
+          {/* Contact */}
+          <div className="space-y-2">
+            {[
+              { icon: <Phone size={13} />, href: 'tel:01840099853',                      label: '01840-099853',           color: 'hsl(258,78%,55%)' },
+              { icon: <Mail size={13} />,  href: 'mailto:info@shahedstore.com.bd',        label: 'info@shahedstore.com.bd', color: 'hsl(200,90%,45%)' },
+              { icon: <Globe size={13} />, href: 'https://www.shahedstore.com.bd',        label: 'www.shahedstore.com.bd',  color: 'hsl(162,72%,38%)', ext: true },
+            ].map((c, i) => (
+              <a key={i} href={c.href} target={c.ext ? '_blank' : undefined} rel={c.ext ? 'noopener noreferrer' : undefined}
+                className="flex items-center gap-3 text-sm transition-all w-fit group hover:translate-x-1"
+                style={{ color: 'hsl(226,35%,42%)' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = c.color; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; }}>
+                <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                  style={{
+                    background: `hsla(${c.color.replace('hsl(','').replace(')','')},0.08)`,
+                    border: `1.5px solid hsla(${c.color.replace('hsl(','').replace(')','')},0.20)`,
+                    color: c.color,
+                  }}>
+                  {c.icon}
+                </span>
+                <span className="font-fira text-[12px]">{c.label}</span>
+              </a>
+            ))}
+          </div>
+
+          {/* Social */}
+          <div className="flex gap-2.5">
+            {[
+              { icon: <Facebook size={17} />,      href: '#',                           label: 'Facebook',  color: 'hsl(258,78%,55%)' },
+              { icon: <MessageCircle size={17} />, href: 'https://wa.me/8801840099853', label: 'WhatsApp',  color: 'hsl(162,72%,38%)' },
+              { icon: <Instagram size={17} />,     href: '#',                           label: 'Instagram', color: 'hsl(330,85%,55%)' },
+            ].map((s, i) => (
+              <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5"
                 style={{
                   background: 'hsla(0,0%,100%,0.65)',
                   backdropFilter: 'blur(12px)',
-                  border: '1px solid hsla(258,78%,75%,0.20)',
+                  border: '1.5px solid hsla(258,78%,75%,0.22)',
+                  color: 'hsl(226,35%,42%)',
+                  boxShadow: '0 2px 8px hsla(226,35%,12%,0.06)',
+                }}
+                title={s.label}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.color = s.color;
+                  (e.currentTarget as HTMLElement).style.borderColor = s.color.replace(')', ',0.45)').replace('hsl', 'hsla');
+                  (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 16px ${s.color.replace(')', ',0.20)').replace('hsl', 'hsla')}`;
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,75%,0.22)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px hsla(226,35%,12%,0.06)';
                 }}>
-                {c.icon}
-              </span>
-              <span className="font-fira text-[12px]">{c.label}</span>
-            </a>
-          ))}
-        </div>
-
-        {/* Social */}
-        <div className="flex gap-2">
-          {[
-            { icon: <Facebook size={16} />,      href: '#', label: 'Facebook' },
-            { icon: <MessageCircle size={16} />, href: 'https://wa.me/8801840099853', label: 'WhatsApp' },
-            { icon: <Instagram size={16} />,     href: '#', label: 'Instagram' },
-          ].map((s, i) => (
-            <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-105"
-              style={{
-                background: 'hsla(0,0%,100%,0.60)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid hsla(258,78%,75%,0.20)',
-                color: 'hsl(226,35%,42%)',
-              }}
-              title={s.label}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,55%,0.40)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,75%,0.20)'; }}>
-              {s.icon}
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* Nav columns */}
-      {NAV_COL.map((col, ci) => (
-        <div key={ci}>
-          <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em] mb-5 flex items-center gap-2"
-            style={{ color: 'hsl(226,35%,20%)' }}>
-            <span className="w-5 h-[2px] rounded-full"
-              style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(200,90%,45%))' }} />
-            {col.title}
-          </h4>
-          <ul className="space-y-2.5">
-            {col.links.map(link => (
-              <li key={link.label}>
-                <a href={link.href}
-                  className="text-[13px] transition-colors flex items-center gap-1.5 group"
-                  style={{ color: 'hsl(226,35%,45%)' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,45%)'; }}>
-                  <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-200">
-                    <ArrowRight size={11} />
-                  </span>
-                  {link.label}
-                </a>
-              </li>
+                {s.icon}
+              </a>
             ))}
-          </ul>
+          </div>
         </div>
-      ))}
+
+        {/* Nav columns */}
+        {NAV_COL.map((col, ci) => (
+          <div key={ci} className="space-y-5">
+            {/* Column header */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{
+                  background: `${col.accent.replace(')', ',0.10)').replace('hsl', 'hsla')}`,
+                  border: `1.5px solid ${col.accent.replace(')', ',0.22)').replace('hsl', 'hsla')}`,
+                  color: col.accent,
+                }}>
+                {col.icon}
+              </div>
+              <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em]"
+                style={{ color: 'hsl(226,35%,20%)' }}>
+                {col.title}
+              </h4>
+            </div>
+
+            {/* Divider */}
+            <div className="h-px rounded-full"
+              style={{ background: `linear-gradient(90deg, ${col.accent.replace(')', ',0.35)').replace('hsl','hsla')}, transparent)` }} />
+
+            {/* Links */}
+            <ul className="space-y-1">
+              {col.links.map((link: any) => (
+                <li key={link.label}>
+                  <a href={link.href}
+                    className="group flex items-center gap-2 px-3 py-2 rounded-xl text-[13px] transition-all"
+                    style={{
+                      color: link.highlight ? col.accent : 'hsl(226,35%,45%)',
+                      background: link.highlight ? col.accent.replace(')', ',0.06)').replace('hsl','hsla') : 'transparent',
+                      border: link.highlight ? `1px solid ${col.accent.replace(')', ',0.18)').replace('hsl','hsla')}` : '1px solid transparent',
+                    }}
+                    onMouseEnter={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.color = col.accent;
+                      el.style.background = col.accent.replace(')', ',0.07)').replace('hsl','hsla');
+                      el.style.borderColor = col.accent.replace(')', ',0.20)').replace('hsl','hsla');
+                      el.style.transform = 'translateX(3px)';
+                    }}
+                    onMouseLeave={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.color = link.highlight ? col.accent : 'hsl(226,35%,45%)';
+                      el.style.background = link.highlight ? col.accent.replace(')', ',0.06)').replace('hsl','hsla') : 'transparent';
+                      el.style.borderColor = link.highlight ? col.accent.replace(')', ',0.18)').replace('hsl','hsla') : 'transparent';
+                      el.style.transform = 'translateX(0)';
+                    }}>
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all group-hover:scale-125"
+                      style={{ background: col.accent.replace(')', ',0.40)').replace('hsl','hsla') }} />
+                    {link.label}
+                    {link.highlight && <Download size={10} className="ml-auto flex-shrink-0" style={{ color: col.accent }} />}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
 
-    {/* ── Trust bar — glassmorphism ── */}
-    <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4"
-        style={{
-          background: 'hsla(0,0%,100%,0.45)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-        }}>
+    {/* ── Trust bar ── */}
+    <div className="relative z-10 mx-4 sm:mx-6 lg:mx-8 mb-6 rounded-2xl overflow-hidden"
+      style={{
+        background: 'hsla(0,0%,100%,0.55)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid hsla(258,78%,75%,0.18)',
+        boxShadow: '0 4px 24px hsla(258,78%,55%,0.06)',
+      }}>
+      <div className="max-w-7xl mx-auto px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* Cert badge */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 12px hsla(258,78%,55%,0.25)' }}>
             <Shield size={16} className="text-white" />
           </div>
           <div>
-            <p className="text-[11px] font-bold font-sora tracking-wide" style={{ color: 'hsl(226,35%,15%)' }}>GOVT. CERTIFIED BUSINESS</p>
-            <p className="text-[10px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>DBID: 586772174</p>
+            <p className="text-[11px] font-black font-sora tracking-widest" style={{ color: 'hsl(226,35%,15%)' }}>GOVT. CERTIFIED BUSINESS</p>
+            <p className="text-[10px] font-fira mt-0.5" style={{ color: 'hsl(226,35%,48%)' }}>DBID: 586772174</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[10px] font-fira mr-1" style={{ color: 'hsl(226,35%,50%)' }}>PAYMENTS:</span>
+
+        {/* Payments */}
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          <span className="text-[10px] font-fira font-bold tracking-widest mr-1" style={{ color: 'hsl(226,35%,50%)' }}>PAYMENTS:</span>
           {[
             { name: 'bKash', num: '01820060046' },
             { name: 'Nagad', num: '01840099853' },
@@ -202,33 +265,37 @@ const Footer = () => (
             { name: 'bKash Merchant', num: '01840099853' },
           ].map(pm => (
             <span key={pm.name}
-              className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold font-fira"
+              className="px-3 py-1.5 rounded-lg text-[10.5px] font-bold font-fira cursor-default transition-all hover:scale-105"
               style={{
-                background: 'hsla(0,0%,100%,0.65)',
+                background: 'hsla(0,0%,100%,0.70)',
                 backdropFilter: 'blur(10px)',
-                color: 'hsl(226,35%,28%)',
-                border: '1px solid hsla(258,78%,75%,0.18)',
+                color: 'hsl(258,78%,45%)',
+                border: '1px solid hsla(258,78%,75%,0.22)',
+                boxShadow: '0 1px 4px hsla(226,35%,12%,0.05)',
               }}
               title={pm.num}>
               {pm.name}
             </span>
           ))}
         </div>
-        <div className="flex items-center gap-2 text-[11px] font-fira" style={{ color: 'hsl(226,35%,50%)' }}>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          All systems operational
+
+        {/* Status */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+          style={{ background: 'hsla(162,72%,38%,0.08)', border: '1px solid hsla(162,72%,38%,0.20)' }}>
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[11px] font-fira font-medium" style={{ color: 'hsl(162,72%,30%)' }}>All systems operational</span>
         </div>
       </div>
     </div>
 
     {/* ── Copyright ── */}
-    <div className="relative z-10 border-t border-border/40">
+    <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.12)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <p className="text-[11px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>
           © 2026 <strong style={{ color: 'hsl(226,35%,20%)' }}>Shahed Store</strong> · All rights reserved.
         </p>
         <a href="https://www.shahedstore.com.bd" target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-1 text-[11px] font-fira transition-colors"
+          className="flex items-center gap-1 text-[11px] font-fira transition-all hover:gap-1.5"
           style={{ color: 'hsl(226,35%,48%)' }}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,48%)'; }}>
