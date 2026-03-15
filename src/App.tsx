@@ -66,6 +66,7 @@ import AdminImageSeo from "./pages/admin/seo/AdminImageSeo";
 import AdminSlugEditor from "./pages/admin/seo/AdminSlugEditor";
 import AdminRedirects from "./pages/admin/seo/AdminRedirects";
 import AdminBrokenLinks from "./pages/admin/seo/AdminBrokenLinks";
+import AdminWallet from "./pages/admin/AdminWallet";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -138,6 +139,7 @@ const App = () => (
                   <Route path="attributes" element={<AdminAttributes />} />
                   <Route path="pages" element={<AdminPages />} />
                   <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
+                  <Route path="wallet" element={<AdminWallet />} />
                 </Route>
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-conditions" element={<TermsConditions />} />

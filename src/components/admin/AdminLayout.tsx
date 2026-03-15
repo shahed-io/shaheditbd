@@ -9,7 +9,7 @@ import {
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
   Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Map, Bot, Code2, KeyRound, FileSearch, PackageSearch, Star, BarChart2,
-  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off
+  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet
 } from 'lucide-react';
 
 const menuItems = [
@@ -31,6 +31,7 @@ const menuItems = [
     ]
   },
   { icon: Users, label: 'Customers', path: '/admin/customers' },
+  { icon: Wallet, label: 'Wallet', path: '/admin/wallet' },
   { icon: CreditCard, label: 'Payments', path: '/admin/payments' },
   { icon: Percent, label: 'Coupons', path: '/admin/coupons' },
   { icon: Gift, label: 'Referrals', path: '/admin/referrals' },

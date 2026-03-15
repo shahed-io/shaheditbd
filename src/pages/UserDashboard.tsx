@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 import {
   User, Mail, Phone, Edit3, Save, X, LogOut, Package,
   ChevronRight, ShieldCheck, Home, Camera, Lock, Eye, EyeOff,
-  Ticket, Star, Clock, TrendingUp, CheckCircle2, AlertCircle,
+  Ticket, Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
-  Trash2, Download, History, BellRing, BellOff, ExternalLink
+  Trash2, Download, History, BellRing, BellOff, ExternalLink, Wallet
 } from 'lucide-react';
 import logoIcon from '@/assets/logo-icon.png';
 
@@ -82,11 +82,12 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   refunded:   { label: 'রিফান্ড',     color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security';
+type TabId = 'profile' | 'orders' | 'wallet' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security';
 
 const TABS: { id: TabId; label: string; icon: any; badge?: number }[] = [
   { id: 'profile',       label: 'প্রোফাইল',      icon: User },
   { id: 'orders',        label: 'আমার অর্ডার',   icon: Package },
+  { id: 'wallet',        label: 'ওয়ালেট',         icon: Wallet },
   { id: 'wishlist',      label: 'উইশলিস্ট',      icon: Heart },
   { id: 'addresses',     label: 'ঠিকানাসমূহ',    icon: MapPin },
   { id: 'notifications', label: 'নোটিফিকেশন',   icon: Bell },
@@ -121,6 +122,12 @@ const UserDashboard = () => {
   const [notiLoading, setNotiLoading] = useState(false);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [referralLoading, setReferralLoading] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [walletTx, setWalletTx] = useState<any[]>([]);
+  const [walletLoading, setWalletLoading] = useState(false);
+  const [topupAmount, setTopupAmount] = useState('');
+  const [topupNote, setTopupNote] = useState('');
+  const [topupProcessing, setTopupProcessing] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate('/');
@@ -136,6 +143,7 @@ const UserDashboard = () => {
     if (activeTab === 'addresses') fetchAddresses();
     if (activeTab === 'notifications') fetchNotifications();
     if (activeTab === 'referral') { fetchReferrals(); }
+    if (activeTab === 'wallet') { fetchWallet(); }
   }, [activeTab, user]);
 
   const fetchProfile = async () => {
@@ -196,6 +204,53 @@ const UserDashboard = () => {
     const { data } = await supabase.from('referrals').select('*').eq('referrer_id', user.id).order('created_at', { ascending: false });
     setReferrals((data || []) as Referral[]);
     setReferralLoading(false);
+  };
+
+  const fetchWallet = async () => {
+    if (!user) return;
+    setWalletLoading(true);
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('wallet_balance')
+      .eq('user_id', user.id)
+      .single();
+    setWalletBalance((profileData as any)?.wallet_balance || 0);
+
+    const { data: txData } = await supabase
+      .from('wallet_transactions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(30);
+    setWalletTx(txData || []);
+    setWalletLoading(false);
+  };
+
+  const handleTopupRequest = async () => {
+    if (!user) return;
+    const amt = parseFloat(topupAmount);
+    if (!amt || amt < 10) { toast.error('কমপক্ষে ৳10 এর টপ-আপ করুন'); return; }
+    setTopupProcessing(true);
+    // Create a support ticket for manual top-up request
+    try {
+      const ticketNum = 'WLT-' + Date.now().toString(36).toUpperCase();
+      await supabase.from('support_tickets').insert({
+        ticket_number: ticketNum,
+        customer_name: profile.display_name || user.email || 'User',
+        customer_email: user.email || '',
+        subject: `ওয়ালেট টপ-আপ অনুরোধ - ৳${amt}`,
+        message: `ওয়ালেট টপ-আপ অনুরোধ:\nপরিমাণ: ৳${amt}\n${topupNote ? `নোট: ${topupNote}` : ''}`,
+        priority: 'normal',
+        status: 'open',
+        user_id: user.id,
+      });
+      toast.success('✅ টপ-আপ অনুরোধ পাঠানো হয়েছে! অ্যাডমিন অনুমোদন করলে ব্যালেন্স যোগ হবে।');
+      setTopupAmount('');
+      setTopupNote('');
+    } catch {
+      toast.error('অনুরোধ পাঠাতে সমস্যা হয়েছে');
+    }
+    setTopupProcessing(false);
   };
 
   const handleSaveProfile = async () => {
@@ -432,7 +487,7 @@ const UserDashboard = () => {
             <div className="px-6 py-5 border-b border-border flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-black text-foreground">
-                  {activeTab === 'profile' ? 'প্রোফাইল তথ্য' : activeTab === 'orders' ? 'আমার অর্ডার' : activeTab === 'wishlist' ? 'উইশলিস্ট' : activeTab === 'addresses' ? 'সংরক্ষিত ঠিকানা' : activeTab === 'notifications' ? 'নোটিফিকেশন' : activeTab === 'referral' ? 'রেফারেল ড্যাশবোর্ড' : 'নিরাপত্তা'}
+                  {activeTab === 'profile' ? 'প্রোফাইল তথ্য' : activeTab === 'orders' ? 'আমার অর্ডার' : activeTab === 'wallet' ? 'আমার ওয়ালেট' : activeTab === 'wishlist' ? 'উইশলিস্ট' : activeTab === 'addresses' ? 'সংরক্ষিত ঠিকানা' : activeTab === 'notifications' ? 'নোটিফিকেশন' : activeTab === 'referral' ? 'রেফারেল ড্যাশবোর্ড' : 'নিরাপত্তা'}
                 </h2>
                 <p className="text-xs mt-0.5 text-muted-foreground">
                   {activeTab === 'orders' ? `মোট ${orders.length}টি অর্ডার` : activeTab === 'wishlist' ? `${wishlistItems.length}টি পণ্য` : activeTab === 'notifications' ? `${unreadCount}টি অপঠিত` : ''}
@@ -952,7 +1007,138 @@ const UserDashboard = () => {
                 </div>
               )}
 
-            </div>
+              {/* ── Wallet Tab ── */}
+              {activeTab === 'wallet' && (
+                <div className="space-y-6">
+                  {/* Balance Card */}
+                  <div className="rounded-2xl p-6 text-white relative overflow-hidden"
+                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,50%), hsl(263,70%,48%))' }}>
+                    <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                        <Wallet size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm opacity-80">আমার ওয়ালেট</p>
+                        <p className="text-xs opacity-60">Shahed Store Wallet</p>
+                      </div>
+                    </div>
+                    <p className="text-4xl font-black tracking-tight">
+                      ৳{walletBalance.toLocaleString()}
+                    </p>
+                    <p className="text-sm opacity-70 mt-1">বর্তমান ব্যালেন্স</p>
+                    {walletLoading && (
+                      <div className="absolute top-4 right-4">
+                        <RefreshCw size={14} className="animate-spin opacity-60" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    {/* Top-up request */}
+                    <div className="rounded-2xl border border-border p-5 space-y-4 bg-card">
+                      <h3 className="font-bold text-foreground flex items-center gap-2">
+                        <Plus size={16} className="text-primary" /> টপ-আপ অনুরোধ
+                      </h3>
+                      <p className="text-xs text-muted-foreground">টাকা পাঠিয়ে অনুরোধ করুন, অ্যাডমিন যাচাই করে ব্যালেন্স যোগ করবে।</p>
+                      <div>
+                        <label className={labelCls}>পরিমাণ (৳)</label>
+                        <input
+                          type="number"
+                          min="10"
+                          value={topupAmount}
+                          onChange={e => setTopupAmount(e.target.value)}
+                          placeholder="যেমন: 500"
+                          className={inputCls.replace('pl-10', 'pl-4')}
+                        />
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {[100, 200, 500, 1000].map(v => (
+                          <button key={v} onClick={() => setTopupAmount(String(v))}
+                            className="px-3 py-1.5 rounded-lg text-xs border border-border hover:border-primary/50 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all">
+                            ৳{v}
+                          </button>
+                        ))}
+                      </div>
+                      <div>
+                        <label className={labelCls}>নোট (ঐচ্ছিক)</label>
+                        <input
+                          value={topupNote}
+                          onChange={e => setTopupNote(e.target.value)}
+                          placeholder="পেমেন্ট পদ্ধতি / TrxID..."
+                          className={inputCls.replace('pl-10', 'pl-4')}
+                        />
+                      </div>
+                      <button
+                        onClick={handleTopupRequest}
+                        disabled={topupProcessing || !topupAmount}
+                        className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                        style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}
+                      >
+                        {topupProcessing ? <><RefreshCw size={14} className="animate-spin" /> পাঠানো হচ্ছে...</> : <><Plus size={14} /> অনুরোধ পাঠান</>}
+                      </button>
+                    </div>
+
+                    {/* Transaction History */}
+                    <div className="rounded-2xl border border-border overflow-hidden bg-card">
+                      <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                        <h3 className="font-bold text-foreground flex items-center gap-2">
+                          <History size={14} className="text-primary" /> লেনদেন ইতিহাস
+                        </h3>
+                        <button onClick={fetchWallet} className="text-muted-foreground hover:text-primary transition-colors">
+                          <RefreshCw size={13} />
+                        </button>
+                      </div>
+                      <div className="divide-y divide-border max-h-[300px] overflow-y-auto">
+                        {walletLoading ? (
+                          <div className="p-6 text-center text-muted-foreground text-sm">লোড হচ্ছে...</div>
+                        ) : walletTx.length === 0 ? (
+                          <div className="p-6 text-center text-muted-foreground text-sm">কোনো লেনদেন নেই</div>
+                        ) : walletTx.map((tx: any) => (
+                          <div key={tx.id} className="flex items-center justify-between px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
+                                {tx.type === 'credit'
+                                  ? <TrendingUp size={12} className="text-green-500" />
+                                  : <TrendingDown size={12} className="text-destructive" />
+                                }
+                              </div>
+                              <div>
+                                <p className="text-xs font-medium text-foreground">{tx.note || (tx.type === 'credit' ? 'ক্রেডিট' : 'ডেবিট')}</p>
+                                <p className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString('bn-BD', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-500' : 'text-destructive'}`}>
+                                {tx.type === 'credit' ? '+' : '-'}৳{tx.amount}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground">৳{tx.balance_after}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* How wallet works */}
+                  <div className="rounded-2xl border border-border p-5 bg-muted/10">
+                    <p className="text-sm font-bold mb-3 text-foreground">ওয়ালেট কিভাবে ব্যবহার করবেন?</p>
+                    {[
+                      { n: '১', t: 'টপ-আপ অনুরোধ পাঠান, অ্যাডমিন যাচাই করে ব্যালেন্স যোগ করবে' },
+                      { n: '২', t: 'চেকআউটে "Wallet" পেমেন্ট অপশন সিলেক্ট করুন' },
+                      { n: '৩', t: 'ওয়ালেট ব্যালেন্স থেকে সরাসরি পেমেন্ট হয়ে যাবে' },
+                    ].map(({ n, t }) => (
+                      <div key={n} className="flex items-start gap-3 mb-2 last:mb-0">
+                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>
+                        <span className="text-sm text-muted-foreground">{t}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+
+            </div>{/* end Content Panel */}
           </div>
         </div>
       </main>

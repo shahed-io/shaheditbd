@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import {
   ArrowLeft, ShoppingCart, Tag, CheckCircle, Smartphone,
-  Minus, Plus, Trash2, X, Loader2, Shield, Info, ChevronDown, User, LogIn, FileText
+  Minus, Plus, Trash2, X, Loader2, Shield, Info, ChevronDown, User, LogIn, FileText, Wallet
 } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
@@ -16,9 +16,10 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'wallet';
 
 const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string; type: string; icon: string }[] = [
+  { id: 'wallet',         label: 'Wallet',        color: 'from-violet-600 to-purple-700',  number: '', type: 'Wallet Balance',    icon: '💰' },
   { id: 'bkash',          label: 'bKash',         color: 'from-pink-600 to-pink-700',     number: '01820060046', type: 'Send Money',       icon: '💳' },
   { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600', number: '01840099853', type: 'Send Money',       icon: '📱' },
   { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700', number: '01840099853', type: 'Send Money',       icon: '🚀' },
@@ -52,17 +53,21 @@ const Checkout = () => {
   const [submitError, setSubmitError] = useState('');
   const [summaryOpen, setSummaryOpen] = useState(true);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
+  const [walletBalance, setWalletBalance] = useState(0);
 
-  // Auto-fill from logged-in user profile
+  // Auto-fill from logged-in user profile + fetch wallet balance
   useEffect(() => {
     if (!user) return;
-    supabase.from('profiles').select('display_name, email, phone').eq('user_id', user.id).single()
+    supabase.from('profiles').select('display_name, email, phone, wallet_balance').eq('user_id', user.id).single()
       .then(({ data }) => {
-        if (data) setForm(prev => ({
-          name: prev.name || data.display_name || '',
-          email: prev.email || data.email || user.email || '',
-          phone: prev.phone || data.phone || '',
-        }));
+        if (data) {
+          setForm(prev => ({
+            name: prev.name || data.display_name || '',
+            email: prev.email || data.email || user.email || '',
+            phone: prev.phone || data.phone || '',
+          }));
+          setWalletBalance((data as any).wallet_balance || 0);
+        }
       });
   }, [user?.id]);
 
@@ -126,8 +131,17 @@ const Checkout = () => {
       return;
     }
 
-    if (!transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
+
+    // Wallet: check balance
+    if (paymentMethod === 'wallet') {
+      if (!user) { setSubmitError('Wallet পেমেন্টের জন্য লগইন করতে হবে'); return; }
+      if (walletBalance < finalTotal) {
+        setSubmitError(`ওয়ালেট ব্যালেন্স অপর্যাপ্ত। বর্তমান ব্যালেন্স: ৳${walletBalance}`);
+        return;
+      }
+    }
 
     setLoading(true);
     try {
@@ -155,11 +169,11 @@ const Checkout = () => {
           discount_amount: discountAmount,
           total: finalTotal,
           payment_method: paymentMethod,
-          transaction_id: transactionId.trim(),
+          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
           coupon_code: coupon.isApplied ? coupon.code : null,
           coupon_id: couponId,
-          status: 'pending',
-          payment_status: 'pending',
+          status: paymentMethod === 'wallet' ? 'processing' : 'pending',
+          payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
           user_id: user?.id || null,
           notes: orderNotes.trim() || null,
         })
@@ -167,6 +181,18 @@ const Checkout = () => {
         .single();
 
       if (orderError) throw orderError;
+
+      // Debit wallet if wallet payment
+      if (paymentMethod === 'wallet' && user) {
+        const { data: walletResult } = await supabase.rpc('wallet_debit' as any, {
+          p_user_id: user.id,
+          p_amount: finalTotal,
+          p_note: `অর্ডার পেমেন্ট - ${orderNum}`,
+          p_reference_id: order.id,
+          p_created_by: 'user',
+        });
+        if (!(walletResult as any)?.success) throw new Error('Wallet debit failed');
+      }
 
       // Insert order items with product_id if available
       const orderItems = items.map(item => ({
@@ -297,7 +323,7 @@ const Checkout = () => {
           {/* Payment Method */}
           <div className="glass-card p-5 rounded-2xl border border-border space-y-4">
             <h2 className="font-bold text-foreground">💳 পেমেন্ট পদ্ধতি</h2>
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
               {paymentMethods.map(pm => (
                 <button
                   key={pm.id}
@@ -311,32 +337,57 @@ const Checkout = () => {
               ))}
             </div>
 
-            {/* Payment Instructions */}
-            <div className="bg-muted/30 border border-border rounded-xl p-4 space-y-2">
-              <div className="flex items-center gap-2 text-sm text-foreground font-medium">
-                <Smartphone size={16} className="text-primary" />
-                <span>{selectedPayment.label} ({selectedPayment.type}):</span>
+            {/* Wallet balance display */}
+            {paymentMethod === 'wallet' && (
+              <div className={`rounded-xl p-4 space-y-2 border ${walletBalance >= finalTotal ? 'bg-green-500/10 border-green-500/30' : 'bg-destructive/10 border-destructive/30'}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                    <Wallet size={16} className="text-primary" />
+                    <span>ওয়ালেট ব্যালেন্স</span>
+                  </div>
+                  <span className={`font-bold text-lg ${walletBalance >= finalTotal ? 'text-green-500' : 'text-destructive'}`}>
+                    ৳{walletBalance.toLocaleString()}
+                  </span>
+                </div>
+                {walletBalance >= finalTotal ? (
+                  <p className="text-xs text-green-500">✅ পর্যাপ্ত ব্যালেন্স আছে। কোনো Transaction ID দরকার নেই।</p>
+                ) : (
+                  <p className="text-xs text-destructive">❌ ব্যালেন্স কম। আরও ৳{(finalTotal - walletBalance).toLocaleString()} দরকার। Dashboard থেকে টপ-আপ করুন।</p>
+                )}
+                {!user && <p className="text-xs text-destructive">⚠️ Wallet পেমেন্টের জন্য লগইন করতে হবে</p>}
               </div>
-              <div className="font-mono text-2xl font-bold text-primary text-center py-2 tracking-widest select-all">
-                {selectedPayment.number}
-              </div>
-              <p className="text-xs text-muted-foreground text-center">
-                মোট <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span> পাঠান → Transaction ID নিচে দিন
-              </p>
-            </div>
+            )}
 
-            {/* Transaction ID */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Transaction ID (TrxID) *</label>
-              <input
-                type="text"
-                value={transactionId}
-                onChange={e => setTransactionId(e.target.value)}
-                placeholder="যেমন: 8F3K2P9X"
-                maxLength={50}
-                className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
-              />
-            </div>
+            {/* Payment Instructions (only for non-wallet) */}
+            {paymentMethod !== 'wallet' && (
+              <>
+                <div className="bg-muted/30 border border-border rounded-xl p-4 space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-foreground font-medium">
+                    <Smartphone size={16} className="text-primary" />
+                    <span>{selectedPayment.label} ({selectedPayment.type}):</span>
+                  </div>
+                  <div className="font-mono text-2xl font-bold text-primary text-center py-2 tracking-widest select-all">
+                    {selectedPayment.number}
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center">
+                    মোট <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span> পাঠান → Transaction ID নিচে দিন
+                  </p>
+                </div>
+
+                {/* Transaction ID */}
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block">Transaction ID (TrxID) *</label>
+                  <input
+                    type="text"
+                    value={transactionId}
+                    onChange={e => setTransactionId(e.target.value)}
+                    placeholder="যেমন: 8F3K2P9X"
+                    maxLength={50}
+                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           {/* Order Notes */}
