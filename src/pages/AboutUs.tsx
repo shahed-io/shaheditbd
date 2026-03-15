@@ -9,9 +9,9 @@ const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
 const STATS = [
-  { icon: '🛒', value: '১০,০০০+', label: 'সফল অর্ডার' },
+  { icon: '🛒', value: '২০,০০,০০০+', label: 'সফল অর্ডার' },
   { icon: '⭐', value: '৪.৯/৫', label: 'গড় রেটিং' },
-  { icon: '👥', value: '৫,০০০+', label: 'সন্তুষ্ট গ্রাহক' },
+  { icon: '📅', value: '২০১৯', label: 'সার্ভিস শুরু' },
   { icon: '⚡', value: '৯৮%', label: 'ডেলিভারি সাফল্য' },
 ];
 
