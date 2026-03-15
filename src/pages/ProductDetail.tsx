@@ -54,20 +54,41 @@ const useReveal = (threshold = 0.1) => {
   return { ref, revealed };
 };
 
+// ── Custom Option types ──────────────────────────────────────
+interface CustomOptionValue {
+  id: string;
+  label: string;
+  price_adjustment: number;
+  is_default: boolean;
+  sort_order: number;
+}
+
+interface CustomOptionGroup {
+  id: string;
+  name: string;
+  display_type: 'button' | 'radio' | 'dropdown';
+  is_required: boolean;
+  sort_order: number;
+  values: CustomOptionValue[];
+}
+
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
 
-  const [product,     setProduct]     = useState<ProductFull | null>(null);
-  const [loading,     setLoading]     = useState(true);
-  const [notFound,    setNotFound]    = useState(false);
-  const [activeImg,   setActiveImg]   = useState(0);
-  const [showModal,   setShowModal]   = useState(false);
-  const [copied,      setCopied]      = useState(false);
-  const [imgLoaded,   setImgLoaded]   = useState(false);
-  const [selectedVar, setSelectedVar] = useState<Record<string, string>>({});
-  const [entered,     setEntered]     = useState(false);
+  const [product,      setProduct]      = useState<ProductFull | null>(null);
+  const [loading,      setLoading]      = useState(true);
+  const [notFound,     setNotFound]     = useState(false);
+  const [activeImg,    setActiveImg]    = useState(0);
+  const [showModal,    setShowModal]    = useState(false);
+  const [copied,       setCopied]       = useState(false);
+  const [imgLoaded,    setImgLoaded]    = useState(false);
+  const [selectedOpts, setSelectedOpts] = useState<Record<string, string>>({});
+  const [customGroups, setCustomGroups] = useState<CustomOptionGroup[]>([]);
+  const [entered,      setEntered]      = useState(false);
+  // Keep selectedVar for legacy variants
+  const [selectedVar,  setSelectedVar]  = useState<Record<string, string>>({});
 
   // Section reveals
   const descReveal   = useReveal(0.05);
