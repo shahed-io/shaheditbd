@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
 
-const SLIDES = [
+type ComboItem = { icon: string; name: string; tag: string; color: string; highlight?: boolean };
+type Slide = {
+  tag: string; title: string; titleAccent: string; subtitle: string; desc: string;
+  price: string; original: string; off: string; badge: string;
+  accentFrom: string; accentTo: string; glowFrom: string; glowTo: string;
+  emoji: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
+};
+
+const SLIDES: Slide[] = [
   {
     tag: '🔥 Best Seller',
     title: 'Windows 11',
@@ -40,26 +48,21 @@ const SLIDES = [
   },
   {
     tag: '🏆 Official Reseller',
-    title: 'Ultimate',
-    titleAccent: 'Bundle',
-    subtitle: 'Windows 11 Pro + Office 365 + IDM Lifetime',
-    desc: 'পান তিনটি পাওয়ারফুল সফটওয়্যার একসাথে — Windows, Office এবং IDM Lifetime। আমরা IDM-এর অফিশিয়াল রিসেলার।',
-    price: '৳2,499',
-    original: '৳29,999',
-    off: '92%',
+    title: 'IDM',
+    titleAccent: 'Lifetime',
+    subtitle: 'Internet Download Manager — Lifetime License',
+    desc: 'আমরা IDM-এর অফিশিয়াল রিসেলার। একবার কিনুন, সারাজীবন ব্যবহার করুন — কোনো বার্ষিক ফি নেই।',
+    price: '৳799',
+    original: '৳6,500',
+    off: '88%',
     badge: 'OFFICIAL RESELLER',
     accentFrom: 'hsl(185,80%,45%)',
     accentTo: 'hsl(210,85%,52%)',
     glowFrom: 'hsla(185,80%,45%,0.22)',
     glowTo: 'hsla(210,85%,52%,0.14)',
-    emoji: '💎',
-    features: ['IDM Official ✓', 'Lifetime License', 'Bundle Savings'],
-    comboSlide: true,
-    combo: [
-      { icon: '🪟', name: 'Windows 11 Pro', tag: 'Lifetime', color: 'hsl(243,75%,65%)' },
-      { icon: '📦', name: 'Microsoft Office 365', tag: '1 Year', color: 'hsl(15,100%,62%)' },
-      { icon: '⚡', name: 'IDM Lifetime', tag: 'Official ★', color: 'hsl(185,80%,45%)', highlight: true },
-    ],
+    emoji: '⚡',
+    features: ['Official Reseller ✓', 'Lifetime License', 'Instant Delivery'],
+    comboSlide: false,
   },
 ];
 
