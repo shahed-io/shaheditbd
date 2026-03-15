@@ -56,7 +56,7 @@ export const SupportTicketModal = ({ open, onClose }: Props) => {
 
     setLoading(true);
     try {
-      const ticket_number = `TKT-${Date.now().toString().slice(-8)}`;
+      const ticket_number = 'TKT-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
       const { error } = await supabase.from('support_tickets').insert([{
         customer_name: result.data.customer_name,
         customer_email: result.data.customer_email,
