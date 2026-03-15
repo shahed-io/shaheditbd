@@ -517,7 +517,7 @@ const ProductDetail = () => {
 
               {/* Price */}
               <div
-                className="flex items-end gap-4 py-4 border-y"
+                className="py-4 border-y"
                 style={{
                   borderColor: 'hsla(271,91%,65%,0.2)',
                   opacity: entered ? 1 : 0,
@@ -525,17 +525,21 @@ const ProductDetail = () => {
                   transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.38s',
                 }}
               >
-                <span className="text-4xl font-sora font-black" style={{ color: 'hsl(271,91%,75%)', textShadow: '0 0 30px hsla(271,91%,65%,0.4)' }}>
-                  ৳{displayPrice.toLocaleString()}
-                </span>
-                {product.original_price && (
-                  <div>
-                    <div className="text-lg text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
-                    <div className="text-sm font-bold" style={{ color: 'hsl(40,100%,58%)' }}>
-                      আপনি বাঁচালেন ৳{savings.toLocaleString()}
+                <div className="flex items-end gap-4">
+                  <span className="text-4xl font-sora font-black" style={{ color: 'hsl(var(--foreground))' }}>
+                    ৳{displayPrice.toLocaleString()}
+                  </span>
+                  {product.original_price && product.original_price > displayPrice && (
+                    <div className="flex flex-col">
+                      <div className="text-lg text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
+                      {savings > 0 && (
+                        <div className="text-xs font-bold" style={{ color: 'hsl(40,100%,58%)' }}>
+                          Save ৳{savings.toLocaleString()}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               {/* ── Custom Option Groups (new DB system) ── */}
@@ -554,11 +558,9 @@ const ProductDetail = () => {
                       transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + gi * 0.08}s`,
                     }}
                   >
-                    <p className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-1.5">
-                      <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} />
+                    {/* Group label */}
+                    <p className="text-sm font-medium text-muted-foreground mb-2.5">
                       {group.name}
-                      {group.is_required && <span className="text-[10px] text-destructive font-bold">*</span>}:
-                      <span style={{ color: 'hsl(271,91%,75%)' }}>{currentVal?.label}</span>
                     </p>
 
                     {/* Dropdown display */}
@@ -570,7 +572,7 @@ const ProductDetail = () => {
                       >
                         {group.values.map(v => (
                           <option key={v.id} value={v.id}>
-                            {v.label}{v.price_adjustment > 0 ? ` — ৳${v.price_adjustment.toLocaleString()}` : ''}
+                            {v.label}
                           </option>
                         ))}
                       </select>
@@ -586,27 +588,22 @@ const ProductDetail = () => {
                               key={v.id}
                               className="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all"
                               style={{
-                                borderColor: isSel ? 'hsl(271,91%,65%)' : 'hsl(var(--border))',
-                                background: isSel ? 'hsla(271,91%,65%,0.08)' : 'transparent',
+                                borderColor: isSel ? 'hsl(var(--foreground))' : 'hsl(var(--border))',
+                                background: isSel ? 'hsla(var(--foreground) / 0.06)' : 'transparent',
                               }}
                             >
-                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${isSel ? 'border-primary' : 'border-border'}`}>
-                                {isSel && <div className="w-2 h-2 rounded-full" style={{ background: 'hsl(271,91%,65%)' }} />}
+                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${isSel ? 'border-foreground' : 'border-border'}`}>
+                                {isSel && <div className="w-2 h-2 rounded-full bg-foreground" />}
                               </div>
                               <input type="radio" className="sr-only" checked={isSel} onChange={() => setSelectedOpts(p => ({ ...p, [group.id]: v.id }))} />
                               <span className="text-sm font-semibold text-foreground flex-1">{v.label}</span>
-                              {v.price_adjustment > 0 && (
-                                <span className="text-sm font-bold" style={{ color: 'hsl(271,91%,75%)' }}>
-                                  ৳{v.price_adjustment.toLocaleString()}
-                                </span>
-                              )}
                             </label>
                           );
                         })}
                       </div>
                     )}
 
-                    {/* Button display (default) */}
+                    {/* Button display (default) — FanFlix style */}
                     {group.display_type === 'button' && (
                       <div className="flex flex-wrap gap-2">
                         {group.values.map(v => {
@@ -615,18 +612,13 @@ const ProductDetail = () => {
                             <button
                               key={v.id}
                               onClick={() => setSelectedOpts(p => ({ ...p, [group.id]: v.id }))}
-                              className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105 flex flex-col items-center"
+                              className="px-5 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-[1.03] active:scale-95"
                               style={isSel
-                                ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
-                                : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
+                                ? { borderColor: 'hsl(var(--foreground))', color: 'hsl(var(--background))', background: 'hsl(var(--foreground))' }
+                                : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', background: 'transparent' }
                               }
                             >
-                              <span>{v.label}</span>
-                              {v.price_adjustment > 0 && (
-                                <span className="text-xs font-bold mt-0.5" style={{ color: isSel ? 'hsl(271,91%,80%)' : 'hsl(var(--muted-foreground))' }}>
-                                  ৳{v.price_adjustment.toLocaleString()}
-                                </span>
-                              )}
+                              {v.label}
                             </button>
                           );
                         })}
@@ -648,11 +640,7 @@ const ProductDetail = () => {
                       transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + vi * 0.08}s`,
                     }}
                   >
-                    <p className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-1.5">
-                      <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} />
-                      {group.name}:
-                      <span style={{ color: 'hsl(271,91%,75%)' }}>{selectedLabel}</span>
-                    </p>
+                    <p className="text-sm font-medium text-muted-foreground mb-2.5">{group.name}</p>
                     <div className="flex flex-wrap gap-2">
                       {group.options.map((opt) => {
                         const isSelected = selectedLabel === opt.label;
@@ -660,18 +648,13 @@ const ProductDetail = () => {
                           <button
                             key={opt.label}
                             onClick={() => setSelectedVar(p => ({ ...p, [group.name]: opt.label }))}
-                            className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105 flex flex-col items-center"
+                            className="px-5 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-[1.03] active:scale-95"
                             style={isSelected
-                              ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
-                              : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
+                              ? { borderColor: 'hsl(var(--foreground))', color: 'hsl(var(--background))', background: 'hsl(var(--foreground))' }
+                              : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', background: 'transparent' }
                             }
                           >
-                            <span>{opt.label}</span>
-                            {opt.price !== undefined && opt.price > 0 && (
-                              <span className="text-xs font-bold mt-0.5" style={{ color: isSelected ? 'hsl(271,91%,80%)' : 'hsl(var(--muted-foreground))' }}>
-                                ৳{opt.price.toLocaleString()}
-                              </span>
-                            )}
+                            {opt.label}
                           </button>
                         );
                       })}
@@ -680,7 +663,12 @@ const ProductDetail = () => {
                 );
               })}
 
-              {/* CTA Buttons */}
+              {/* Quantity selector */}
+              {(customGroups.length > 0 || legacyVariants.length > 0) && (
+                <QuantitySelector />
+              )}
+
+              {/* CTA Buttons — FanFlix style */}
               <div
                 className="space-y-3"
                 style={{
@@ -689,27 +677,34 @@ const ProductDetail = () => {
                   transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.5s',
                 }}
               >
-                <button onClick={() => setShowModal(true)}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_hsla(271,91%,65%,0.5)]"
-                  style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 4px 24px hsla(271,91%,65%,0.35)' }}>
-                  <CreditCard size={18} /> Order Now — ৳{displayPrice.toLocaleString()}
+                {/* Add to cart */}
+                <button
+                  onClick={() => addToCart(cartItem)}
+                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base transition-all hover:scale-[1.02] border-2"
+                  style={inCart
+                    ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.1)' }
+                    : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', background: 'transparent' }
+                  }
+                >
+                  <ShoppingCart size={18} />
+                  {inCart ? '✓ Added to Cart' : 'Add to cart'}
                 </button>
-                <div className="grid grid-cols-2 gap-3">
-                  <button onClick={waOrder}
-                    className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm text-white transition-all hover:scale-[1.02]"
-                    style={{ background: 'linear-gradient(135deg, hsl(142,70%,40%), hsl(158,80%,38%))', boxShadow: '0 4px 16px hsla(142,70%,40%,0.3)' }}>
-                    <MessageCircle size={16} /> WhatsApp
-                  </button>
-                  <button onClick={() => addToCart(cartItem)}
-                    className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm border-2 transition-all hover:scale-[1.02]"
-                    style={inCart
-                      ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.1)' }
-                      : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', background: 'transparent' }
-                    }>
-                    <ShoppingCart size={16} />
-                    {inCart ? '✓ In Cart' : 'Add to Cart'}
-                  </button>
-                </div>
+
+                {/* Buy it now */}
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base transition-all hover:scale-[1.02]"
+                  style={{ background: 'hsl(var(--foreground))', color: 'hsl(var(--background))', boxShadow: '0 4px 20px hsla(215,28%,8%,0.4)' }}
+                >
+                  <CreditCard size={18} /> Buy it now
+                </button>
+
+                {/* WhatsApp */}
+                <button onClick={waOrder}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm text-white transition-all hover:scale-[1.02] hover:opacity-90"
+                  style={{ background: 'linear-gradient(135deg, hsl(142,70%,40%), hsl(158,80%,38%))', boxShadow: '0 4px 16px hsla(142,70%,40%,0.3)' }}>
+                  <MessageCircle size={16} /> Order via WhatsApp
+                </button>
               </div>
 
               {/* Delivery Time */}
