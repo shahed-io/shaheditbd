@@ -34,8 +34,33 @@ interface CatData {
 
 const Categories = () => {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [clicked, setClicked] = useState<number | null>(null);
+  const [particles, setParticles] = useState<(Particle & { catIdx: number })[]>([]);
   const [cats, setCats] = useState<CatData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const handleCatClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, i: number, meta: typeof CAT_META[string]) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    const colors = [meta.accent, 'hsl(var(--accent))', 'hsl(var(--primary))', '#fff'];
+    const newParticles = Array.from({ length: 10 }, (_, j) => {
+      const angle = (j / 10) * Math.PI * 2;
+      const speed = 48 + Math.random() * 52;
+      return {
+        id: Date.now() + j,
+        x: cx, y: cy,
+        dx: Math.cos(angle) * speed,
+        dy: Math.sin(angle) * speed,
+        color: colors[j % colors.length],
+        catIdx: i,
+      };
+    });
+    setParticles(prev => [...prev, ...newParticles]);
+    setClicked(i);
+    setTimeout(() => setClicked(null), 400);
+    setTimeout(() => setParticles(prev => prev.filter(p => p.catIdx !== i || p.id < Date.now() - 700)), 700);
+  }, []);
   const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.08 });
   const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
 
