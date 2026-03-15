@@ -3,36 +3,25 @@ import BrandLogo from './BrandLogo';
 
 const NAV_COL = [
   {
-    title: 'Products',
-    links: [
-      { label: 'Windows Keys',     href: '#' },
-      { label: 'Office 365',       href: '#' },
-      { label: 'Adobe Creative',   href: '#' },
-      { label: 'Streaming',        href: '#' },
-      { label: 'VPN & Security',   href: '#' },
-      { label: 'AI Tools',         href: '#' },
-    ]
-  },
-  {
     title: 'Information',
     links: [
       { label: 'Blog',             href: '/blog' },
       { label: 'Help Center',      href: '/help' },
-      { label: 'About Us',         href: '#' },
+      { label: 'About Us',         href: 'https://www.shahedstore.com.bd/about', ext: true },
       { label: 'My Account',       href: '/dashboard' },
-      { label: 'Contact Us',       href: '#' },
-      { label: 'All Products',     href: '#' },
+      { label: 'Contact Us',       href: 'https://www.shahedstore.com.bd/contact', ext: true },
+      { label: 'All Products',     href: '/shop' },
     ]
   },
   {
     title: 'Policies',
     links: [
-      { label: 'Privacy Policy',   href: '/help' },
-      { label: 'Terms & Conditions',href: '/help' },
-      { label: 'Refund Policy',    href: '/help' },
-      { label: 'Order Policy',     href: '/help' },
-      { label: 'Delivery Info',    href: '/help' },
-      { label: 'Return Policy',    href: '/help' },
+      { label: 'Privacy Policy',      href: 'https://www.shahedstore.com.bd/privacy-policy', ext: true },
+      { label: 'Terms & Conditions',  href: 'https://www.shahedstore.com.bd/terms', ext: true },
+      { label: 'Refund Policy',       href: 'https://www.shahedstore.com.bd/refund-policy', ext: true },
+      { label: 'Order Policy',        href: 'https://www.shahedstore.com.bd/order-policy', ext: true },
+      { label: 'Delivery Info',       href: 'https://www.shahedstore.com.bd/delivery', ext: true },
+      { label: 'Return Policy',       href: 'https://www.shahedstore.com.bd/return-policy', ext: true },
     ]
   },
 ];
