@@ -39,6 +39,7 @@ import AdminSEO from "./pages/admin/AdminSEO";
 import AdminAttributes from "./pages/admin/AdminAttributes";
 import AdminPages from "./pages/admin/AdminPages";
 import Shop from "./pages/Shop";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient({
   defaultOptions: {

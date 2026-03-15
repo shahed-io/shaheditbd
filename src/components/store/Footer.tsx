@@ -27,7 +27,7 @@ const NAV_COL = [
   {
     title: 'Policies',
     links: [
-      { label: 'Privacy Policy',   href: '/help' },
+      { label: 'Privacy Policy',   href: '/privacy-policy' },
       { label: 'Terms & Conditions',href: '/help' },
       { label: 'Refund Policy',    href: '/help' },
       { label: 'Order Policy',     href: '/help' },
