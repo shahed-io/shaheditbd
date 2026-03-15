@@ -101,7 +101,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   refunded:   { label: 'রিফান্ড',     color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'wallet' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security';
+type TabId = 'profile' | 'orders' | 'wallet' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
 
 const TABS: { id: TabId; label: string; icon: any; badge?: number }[] = [
   { id: 'profile',       label: 'প্রোফাইল',      icon: User },
@@ -112,6 +112,7 @@ const TABS: { id: TabId; label: string; icon: any; badge?: number }[] = [
   { id: 'notifications', label: 'নোটিফিকেশন',   icon: Bell },
   { id: 'referral',      label: 'রেফারেল',        icon: Gift },
   { id: 'security',      label: 'নিরাপত্তা',     icon: Lock },
+  { id: 'language',      label: 'ভাষা',           icon: Globe },
 ];
 
 const UserDashboard = () => {
