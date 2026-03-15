@@ -124,15 +124,15 @@
 }
 
 /* ══════════════════════════════════════
-   CYBER GRID BACKGROUND
+   MIDNIGHT ROYAL GRID BACKGROUND
 ══════════════════════════════════════ */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(hsla(271,91%,65%,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, hsla(271,91%,65%,0.03) 1px, transparent 1px);
+    linear-gradient(hsla(42,96%,58%,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(42,96%,58%,0.025) 1px, transparent 1px);
   background-size: 48px 48px;
   pointer-events: none;
   z-index: 0;
@@ -148,11 +148,11 @@ body::before {
 }
 
 /* ══════════════════════════════════════
-   PRODUCT CARD — Cyber Neon
+   PRODUCT CARD — Midnight Royal
 ══════════════════════════════════════ */
 .product-card-new {
-  background: hsla(215, 28%, 11%, 0.9);
-  border: 1px solid hsla(271, 91%, 65%, 0.15);
+  background: hsla(228, 32%, 14%, 0.9);
+  border: 1px solid hsla(42, 96%, 58%, 0.14);
   border-radius: 1.25rem;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
@@ -168,9 +168,9 @@ body::before {
   inset: 0;
   background: linear-gradient(
     135deg,
-    hsla(271,91%,65%,0.04) 0%,
+    hsla(42,96%,58%,0.04) 0%,
     transparent 50%,
-    hsla(185,90%,52%,0.03) 100%
+    hsla(258,78%,68%,0.03) 100%
   );
   pointer-events: none;
   z-index: 0;
@@ -182,7 +182,7 @@ body::before {
   inset: -1px;
   border-radius: 1.25rem;
   padding: 1px;
-  background: linear-gradient(135deg, hsla(271,91%,65%,0), hsla(271,91%,65%,0));
+  background: linear-gradient(135deg, hsla(42,96%,58%,0), hsla(42,96%,58%,0));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -193,15 +193,15 @@ body::before {
 
 .product-card-new:hover {
   transform: translateY(-8px) scale(1.02);
-  border-color: hsla(271, 91%, 65%, 0.5);
+  border-color: hsla(42, 96%, 58%, 0.5);
   box-shadow:
-    0 24px 64px hsla(215, 40%, 4%, 0.7),
-    0 0 0 1px hsla(271, 91%, 65%, 0.4),
-    var(--glow-violet);
+    0 24px 64px hsla(226, 40%, 4%, 0.7),
+    0 0 0 1px hsla(42, 96%, 58%, 0.35),
+    var(--glow-gold);
 }
 
 .product-card-new:hover::after {
-  background: linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%));
+  background: linear-gradient(135deg, hsl(42,96%,58%), hsl(258,78%,68%));
 }
 
 /* 3D Tilt effect via JS */
@@ -235,8 +235,8 @@ body::before {
     0deg,
     transparent,
     transparent 3px,
-    hsla(271,91%,65%,0.02) 3px,
-    hsla(271,91%,65%,0.02) 4px
+    hsla(42,96%,58%,0.02) 3px,
+    hsla(42,96%,58%,0.02) 4px
   );
   opacity: 0;
   transition: opacity 0.4s;
@@ -252,14 +252,14 @@ body::before {
    NEON GLOW PULSE — product badge
 ══════════════════════════════════════ */
 @keyframes neon-pulse {
-  0%, 100% { box-shadow: 0 0 6px hsla(271,91%,65%,0.6), 0 0 20px hsla(271,91%,65%,0.2); }
-  50%       { box-shadow: 0 0 12px hsla(271,91%,65%,0.9), 0 0 40px hsla(271,91%,65%,0.4); }
+  0%, 100% { box-shadow: 0 0 6px hsla(42,96%,58%,0.6), 0 0 20px hsla(42,96%,58%,0.2); }
+  50%       { box-shadow: 0 0 12px hsla(42,96%,58%,0.9), 0 0 40px hsla(42,96%,58%,0.4); }
 }
 .neon-pulse { animation: neon-pulse 2s ease-in-out infinite; }
 
 @keyframes neon-pulse-cyan {
-  0%, 100% { box-shadow: 0 0 6px hsla(185,90%,52%,0.6), 0 0 20px hsla(185,90%,52%,0.2); }
-  50%       { box-shadow: 0 0 12px hsla(185,90%,52%,0.9), 0 0 40px hsla(185,90%,52%,0.4); }
+  0%, 100% { box-shadow: 0 0 6px hsla(186,78%,50%,0.6), 0 0 20px hsla(186,78%,50%,0.2); }
+  50%       { box-shadow: 0 0 12px hsla(186,78%,50%,0.9), 0 0 40px hsla(186,78%,50%,0.4); }
 }
 .neon-pulse-cyan { animation: neon-pulse-cyan 2s ease-in-out infinite; }
 
@@ -267,8 +267,8 @@ body::before {
    CATEGORY CARD
 ══════════════════════════════════════ */
 .cat-card {
-  background: hsla(215, 28%, 11%, 0.85);
-  border: 1px solid hsla(271, 91%, 65%, 0.1);
+  background: hsla(228, 32%, 14%, 0.85);
+  border: 1px solid hsla(42, 96%, 58%, 0.1);
   border-radius: 1.5rem;
   transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
@@ -283,12 +283,12 @@ body::before {
   inset: 0;
   opacity: 0;
   transition: opacity 0.35s;
-  background: linear-gradient(145deg, hsla(271,91%,65%,0.07), hsla(185,90%,52%,0.04));
+  background: linear-gradient(145deg, hsla(42,96%,58%,0.07), hsla(258,78%,68%,0.04));
 }
 .cat-card:hover {
   transform: translateY(-6px);
-  border-color: hsla(271, 91%, 65%, 0.45);
-  box-shadow: 0 20px 50px hsla(215,40%,4%,0.6), var(--glow-violet);
+  border-color: hsla(42, 96%, 58%, 0.45);
+  box-shadow: 0 20px 50px hsla(226,40%,4%,0.6), var(--glow-gold);
 }
 .cat-card:hover::after { opacity: 1; }
 .cat-card:hover .cat-icon { transform: scale(1.15) rotate(-5deg); }
@@ -298,23 +298,23 @@ body::before {
    GLASS CARDS
 ══════════════════════════════════════ */
 .glass-card {
-  background: hsla(215, 28%, 13%, 0.8);
+  background: hsla(228, 32%, 16%, 0.8);
   backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid hsla(271, 91%, 65%, 0.12);
+  border: 1px solid hsla(42, 96%, 58%, 0.1);
   box-shadow: var(--shadow-card);
 }
 
 .glass-dark {
-  background: hsla(215, 32%, 8%, 0.92);
+  background: hsla(228, 35%, 9%, 0.92);
   backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid hsla(0, 0%, 100%, 0.07);
-  box-shadow: 0 16px 48px hsla(215, 40%, 4%, 0.65);
+  border: 1px solid hsla(220, 30%, 100%, 0.06);
+  box-shadow: 0 16px 48px hsla(226, 40%, 4%, 0.65);
 }
 
 .glass-white {
-  background: hsla(215, 28%, 14%, 0.9);
+  background: hsla(228, 32%, 17%, 0.9);
   backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid hsla(271, 91%, 65%, 0.15);
+  border: 1px solid hsla(42, 96%, 58%, 0.12);
   box-shadow: var(--shadow-card);
 }
 
@@ -323,9 +323,9 @@ body::before {
 ══════════════════════════════════════ */
 .hero-bg {
   background: linear-gradient(135deg,
-    hsl(215, 28%, 7%) 0%,
-    hsl(230, 35%, 9%) 40%,
-    hsl(250, 40%, 10%) 100%
+    hsl(226, 35%, 10%) 0%,
+    hsl(232, 38%, 11%) 40%,
+    hsl(242, 40%, 13%) 100%
   );
   position: relative;
   overflow: hidden;
@@ -335,7 +335,7 @@ body::before {
   position: absolute;
   width: 700px; height: 700px;
   border-radius: 50%;
-  background: radial-gradient(circle, hsla(271,91%,65%,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, hsla(42,96%,58%,0.09) 0%, transparent 70%);
   top: -200px; right: -100px;
   pointer-events: none;
 }
@@ -344,7 +344,7 @@ body::before {
   position: absolute;
   width: 500px; height: 500px;
   border-radius: 50%;
-  background: radial-gradient(circle, hsla(185,90%,52%,0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, hsla(258,78%,68%,0.07) 0%, transparent 70%);
   bottom: -100px; left: -50px;
   pointer-events: none;
 }
@@ -369,12 +369,12 @@ body::before {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.22em;
-  color: hsl(271, 91%, 75%);
-  background: hsla(271, 91%, 65%, 0.12);
+  color: hsl(42, 96%, 68%);
+  background: hsla(42, 96%, 58%, 0.12);
   padding: 0.3rem 0.875rem;
   border-radius: 999px;
   display: inline-block;
-  border: 1px solid hsla(271, 91%, 65%, 0.25);
+  border: 1px solid hsla(42, 96%, 58%, 0.28);
 }
 
 .section-heading {
@@ -388,8 +388,8 @@ body::before {
    BUTTONS
 ══════════════════════════════════════ */
 .btn-primary-new {
-  background: linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%));
-  color: white;
+  background: linear-gradient(135deg, hsl(42,96%,55%), hsl(38,100%,48%));
+  color: hsl(226, 35%, 8%);
   font-family: 'Sora', sans-serif;
   font-weight: 700;
   border: none;
@@ -398,16 +398,16 @@ body::before {
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   overflow: hidden;
-  box-shadow: var(--glow-violet);
+  box-shadow: var(--glow-gold);
 }
 .btn-primary-new:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px hsla(271,91%,65%,0.5);
+  box-shadow: 0 14px 40px hsla(42,96%,58%,0.55);
 }
 
 .btn-coral {
-  background: linear-gradient(135deg, hsl(320,90%,62%), hsl(40,100%,58%));
-  color: white;
+  background: linear-gradient(135deg, hsl(330,85%,62%), hsl(42,96%,58%));
+  color: hsl(226, 35%, 8%);
   font-family: 'Sora', sans-serif;
   font-weight: 700;
   border: none;
@@ -417,7 +417,7 @@ body::before {
 }
 .btn-coral:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px hsla(320,90%,62%,0.5);
+  box-shadow: 0 14px 40px hsla(330,85%,62%,0.5);
 }
 
 /* ══════════════════════════════════════
@@ -436,48 +436,48 @@ body::before {
   bottom: -2px;
   left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%));
+  background: linear-gradient(90deg, hsl(42,96%,58%), hsl(258,78%,68%));
   transform: scaleX(0);
   border-radius: 999px;
   transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.nav-link-new:hover { color: hsl(271,91%,75%); }
+.nav-link-new:hover { color: hsl(42,96%,72%); }
 .nav-link-new:hover::after { transform: scaleX(1); }
-.nav-link-new.active { color: hsl(271,91%,75%); font-weight: 600; }
+.nav-link-new.active { color: hsl(42,96%,72%); font-weight: 600; }
 .nav-link-new.active::after { transform: scaleX(1); }
 
 /* ══════════════════════════════════════
    BADGE STYLES
 ══════════════════════════════════════ */
 .badge-sale {
-  background: linear-gradient(135deg, hsl(320,90%,62%), hsl(40,100%,58%));
+  background: linear-gradient(135deg, hsl(4,80%,58%), hsl(38,100%,55%));
   color: white;
   font-size: 0.65rem;
   font-weight: 700;
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
   letter-spacing: 0.05em;
-  box-shadow: 0 0 10px hsla(320,90%,62%,0.5);
+  box-shadow: 0 0 10px hsla(4,80%,58%,0.5);
 }
 
 .badge-new-item {
-  background: linear-gradient(135deg, hsl(158,80%,48%), hsl(185,90%,52%));
-  color: white;
+  background: linear-gradient(135deg, hsl(162,72%,46%), hsl(186,78%,50%));
+  color: hsl(226, 35%, 8%);
   font-size: 0.65rem;
   font-weight: 700;
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
-  box-shadow: 0 0 10px hsla(185,90%,52%,0.5);
+  box-shadow: 0 0 10px hsla(186,78%,50%,0.5);
 }
 
 .badge-hot-item {
-  background: linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%));
-  color: white;
+  background: linear-gradient(135deg, hsl(42,96%,55%), hsl(258,78%,68%));
+  color: hsl(226, 35%, 8%);
   font-size: 0.65rem;
   font-weight: 700;
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
-  box-shadow: 0 0 10px hsla(271,91%,65%,0.5);
+  box-shadow: 0 0 10px hsla(42,96%,58%,0.5);
 }
 
 /* ══════════════════════════════════════
@@ -497,7 +497,7 @@ body::before {
   border-radius: 0.75rem;
   padding: 0.5rem 0.875rem;
   box-shadow: var(--shadow-soft);
-  border: 1px solid hsla(271,91%,65%,0.2);
+  border: 1px solid hsla(42,96%,58%,0.2);
   min-width: 52px;
   text-align: center;
 }
@@ -505,7 +505,7 @@ body::before {
   font-family: 'Fira Code', monospace;
   font-size: 1.5rem;
   font-weight: 700;
-  color: hsl(271,91%,75%);
+  color: hsl(42,96%,70%);
   line-height: 1;
 }
 .countdown-label {
