@@ -185,7 +185,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
       {/* ── Main Card ── */}
       <div
         ref={ref}
-        className="group product-card-new flex flex-col cursor-pointer relative overflow-hidden"
+        className="group product-card-new flex flex-col cursor-pointer relative"
         onClick={handleCardClick}
         style={{
           opacity:   visible ? 1 : 0,
