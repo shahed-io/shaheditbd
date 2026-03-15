@@ -148,11 +148,11 @@ body::before {
 }
 
 /* ══════════════════════════════════════
-   PRODUCT CARD — Midnight Royal
+   PRODUCT CARD — White Theme
 ══════════════════════════════════════ */
 .product-card-new {
-  background: hsla(228, 32%, 14%, 0.9);
-  border: 1px solid hsla(42, 96%, 58%, 0.14);
+  background: hsl(0, 0%, 100%);
+  border: 1px solid hsla(220, 20%, 88%, 1);
   border-radius: 1.25rem;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
@@ -168,9 +168,9 @@ body::before {
   inset: 0;
   background: linear-gradient(
     135deg,
-    hsla(42,96%,58%,0.04) 0%,
+    hsla(258,78%,55%,0.03) 0%,
     transparent 50%,
-    hsla(258,78%,68%,0.03) 100%
+    hsla(42,96%,50%,0.02) 100%
   );
   pointer-events: none;
   z-index: 0;
@@ -182,7 +182,7 @@ body::before {
   inset: -1px;
   border-radius: 1.25rem;
   padding: 1px;
-  background: linear-gradient(135deg, hsla(42,96%,58%,0), hsla(42,96%,58%,0));
+  background: linear-gradient(135deg, hsla(258,78%,55%,0), hsla(258,78%,55%,0));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -193,15 +193,15 @@ body::before {
 
 .product-card-new:hover {
   transform: translateY(-8px) scale(1.02);
-  border-color: hsla(42, 96%, 58%, 0.5);
+  border-color: hsla(258, 78%, 55%, 0.4);
   box-shadow:
-    0 24px 64px hsla(226, 40%, 4%, 0.7),
-    0 0 0 1px hsla(42, 96%, 58%, 0.35),
-    var(--glow-gold);
+    0 20px 50px hsla(226, 35%, 12%, 0.14),
+    0 0 0 1px hsla(258, 78%, 55%, 0.25),
+    var(--glow-violet);
 }
 
 .product-card-new:hover::after {
-  background: linear-gradient(135deg, hsl(42,96%,58%), hsl(258,78%,68%));
+  background: linear-gradient(135deg, hsl(258,78%,55%), hsl(42,96%,50%));
 }
 
 /* 3D Tilt effect via JS */
