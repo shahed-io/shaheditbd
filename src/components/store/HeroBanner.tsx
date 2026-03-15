@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
 
-const SLIDES = [
+type ComboItem = { icon: string; name: string; tag: string; color: string; highlight?: boolean };
+type Slide = {
+  tag: string; title: string; titleAccent: string; subtitle: string; desc: string;
+  price: string; original: string; off: string; badge: string;
+  accentFrom: string; accentTo: string; glowFrom: string; glowTo: string;
+  emoji: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
+};
+
+const SLIDES: Slide[] = [
   {
     tag: '🔥 Best Seller',
     title: 'Windows 11',
