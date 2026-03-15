@@ -22,7 +22,7 @@ const Index = () => {
       <Navbar />
       <HeroBanner />
       <TickerBanner />
-      <Categories />
+      {/* <Categories /> */}
       <TopProducts />
       <FlashSale />
       <WhyChooseUs />
