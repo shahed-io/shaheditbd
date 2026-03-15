@@ -365,12 +365,14 @@ const AdminProducts = () => {
   };
 
   const tabs: { id: TabId; label: string }[] = [
-    { id: 'basic', label: '📦 Basic' },
-    { id: 'pricing', label: '💰 Pricing' },
-    { id: 'media', label: '🖼️ Media' },
-    { id: 'details', label: '📋 Details' },
-    { id: 'seo', label: '🔍 SEO' },
-    { id: 'options', label: '🎛️ Options' },
+    { id: 'basic',      label: '📦 General' },
+    { id: 'pricing',    label: '💰 Inventory' },
+    { id: 'media',      label: '🖼️ Media' },
+    { id: 'details',    label: '📋 Details' },
+    { id: 'attributes', label: '🏷️ Attributes' },
+    { id: 'options',    label: '🎛️ Variations' },
+    { id: 'linked',     label: '🔗 Linked' },
+    { id: 'seo',        label: '🔍 SEO' },
   ];
 
   return (
