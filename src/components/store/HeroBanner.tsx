@@ -7,7 +7,7 @@ type Slide = {
   tag: string; title: string; titleAccent: string; subtitle: string; desc: string;
   price: string; original: string; off: string; badge: string;
   accentFrom: string; accentTo: string; glowFrom: string; glowTo: string;
-  emoji: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
+  emoji: string; logoImg?: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
 };
 
 const SLIDES: Slide[] = [
