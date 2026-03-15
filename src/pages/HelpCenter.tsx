@@ -5,7 +5,7 @@ import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import {
   Search, ChevronRight, ThumbsUp, ThumbsDown, Star, Package,
-  CreditCard, RefreshCw, Shield, Headphones, BookOpen, ArrowLeft, ExternalLink
+  CreditCard, RefreshCw, Shield, Headphones, BookOpen, ArrowLeft, ExternalLink, Download
 } from 'lucide-react';
 import { toast } from 'sonner';
 
