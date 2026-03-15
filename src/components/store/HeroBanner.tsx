@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
+import idmLogo from '@/assets/idm.webp';
 
 type ComboItem = { icon: string; name: string; tag: string; color: string; highlight?: boolean };
 type Slide = {
