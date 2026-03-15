@@ -9,9 +9,28 @@ import {
   ChevronRight, ShieldCheck, Home, Camera, Lock, Eye, EyeOff,
   Ticket, Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
-  Trash2, Download, History, BellRing, BellOff, ExternalLink, Wallet
+  Trash2, Download, History, BellRing, BellOff, ExternalLink, Wallet, Globe
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
+
+// ─── Language System ───────────────────────────────────────────────────────
+const LANGUAGES = [
+  { code: 'bn', name: 'বাংলা', native: 'বাংলা', flag: '🇧🇩', region: 'দক্ষিণ এশিয়া' },
+  { code: 'en', name: 'English', native: 'English', flag: '🇬🇧', region: 'International' },
+  { code: 'ar', name: 'Arabic', native: 'العربية', flag: '🇸🇦', region: 'মধ্যপ্রাচ্য' },
+  { code: 'zh', name: 'Chinese', native: '中文', flag: '🇨🇳', region: 'পূর্ব এশিয়া' },
+  { code: 'hi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳', region: 'দক্ষিণ এশিয়া' },
+  { code: 'es', name: 'Spanish', native: 'Español', flag: '🇪🇸', region: 'ইউরোপ/আমেরিকা' },
+  { code: 'fr', name: 'French', native: 'Français', flag: '🇫🇷', region: 'ইউরোপ' },
+  { code: 'pt', name: 'Portuguese', native: 'Português', flag: '🇧🇷', region: 'দক্ষিণ আমেরিকা' },
+  { code: 'ru', name: 'Russian', native: 'Русский', flag: '🇷🇺', region: 'ইউরোপ/এশিয়া' },
+  { code: 'tr', name: 'Turkish', native: 'Türkçe', flag: '🇹🇷', region: 'মধ্যপ্রাচ্য' },
+  { code: 'ur', name: 'Urdu', native: 'اردو', flag: '🇵🇰', region: 'দক্ষিণ এশিয়া' },
+  { code: 'id', name: 'Indonesian', native: 'Bahasa Indonesia', flag: '🇮🇩', region: 'দক্ষিণ-পূর্ব এশিয়া' },
+];
+
+const getStoredLang = () => localStorage.getItem('preferred_language') || 'bn';
+const setStoredLang = (code: string) => localStorage.setItem('preferred_language', code);
 
 interface Profile {
   display_name: string | null;
@@ -82,7 +101,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   refunded:   { label: 'রিফান্ড',     color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'wallet' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security';
+type TabId = 'profile' | 'orders' | 'wallet' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
 
 const TABS: { id: TabId; label: string; icon: any; badge?: number }[] = [
   { id: 'profile',       label: 'প্রোফাইল',      icon: User },
@@ -93,6 +112,7 @@ const TABS: { id: TabId; label: string; icon: any; badge?: number }[] = [
   { id: 'notifications', label: 'নোটিফিকেশন',   icon: Bell },
   { id: 'referral',      label: 'রেফারেল',        icon: Gift },
   { id: 'security',      label: 'নিরাপত্তা',     icon: Lock },
+  { id: 'language',      label: 'ভাষা',           icon: Globe },
 ];
 
 const UserDashboard = () => {
@@ -128,6 +148,7 @@ const UserDashboard = () => {
   const [topupAmount, setTopupAmount] = useState('');
   const [topupNote, setTopupNote] = useState('');
   const [topupProcessing, setTopupProcessing] = useState(false);
+  const [selectedLang, setSelectedLang] = useState(getStoredLang());
 
   useEffect(() => {
     if (!loading && !user) navigate('/');
@@ -1130,6 +1151,60 @@ const UserDashboard = () => {
                         <span className="text-sm text-muted-foreground">{t}</span>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ── LANGUAGE TAB ── */}
+              {activeTab === 'language' && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2">
+                      <Globe size={18} className="text-primary" /> ভাষা নির্বাচন
+                    </h2>
+                    <p className="text-sm text-muted-foreground">আপনার পছন্দের ভাষা বেছে নিন</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {LANGUAGES.map(lang => {
+                      const isActive = selectedLang === lang.code;
+                      return (
+                        <button
+                          key={lang.code}
+                          onClick={() => {
+                            setSelectedLang(lang.code);
+                            setStoredLang(lang.code);
+                            toast.success(`✅ ভাষা পরিবর্তন হয়েছে: ${lang.native}`);
+                          }}
+                          className={`flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-200 ${
+                            isActive
+                              ? 'border-primary/60 bg-primary/10'
+                              : 'border-border glass-card hover:border-primary/30 hover:bg-muted/20'
+                          }`}
+                        >
+                          <span className="text-3xl leading-none">{lang.flag}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className={`font-bold text-sm ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                              {lang.native}
+                            </p>
+                            <p className="text-xs text-muted-foreground">{lang.name} · {lang.region}</p>
+                          </div>
+                          {isActive && (
+                            <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                              style={{ background: 'hsl(var(--primary))' }}>
+                              <CheckCircle2 size={12} className="text-primary-foreground" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="glass-card rounded-2xl p-4 border border-border">
+                    <p className="text-xs text-muted-foreground flex items-start gap-2">
+                      <AlertCircle size={13} className="text-amber-500 mt-0.5 flex-shrink-0" />
+                      বর্তমানে UI বাংলায় রয়েছে। ভাষা পরিবর্তনের সম্পূর্ণ সাপোর্ট近 শীঘ্রই আসছে। আপনার পছন্দ সংরক্ষিত হবে।
+                    </p>
                   </div>
                 </div>
               )}
