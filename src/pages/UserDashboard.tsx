@@ -487,7 +487,7 @@ const UserDashboard = () => {
             <div className="px-6 py-5 border-b border-border flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-black text-foreground">
-                  {activeTab === 'profile' ? 'প্রোফাইল তথ্য' : activeTab === 'orders' ? 'আমার অর্ডার' : activeTab === 'wishlist' ? 'উইশলিস্ট' : activeTab === 'addresses' ? 'সংরক্ষিত ঠিকানা' : activeTab === 'notifications' ? 'নোটিফিকেশন' : activeTab === 'referral' ? 'রেফারেল ড্যাশবোর্ড' : 'নিরাপত্তা'}
+                  {activeTab === 'profile' ? 'প্রোফাইল তথ্য' : activeTab === 'orders' ? 'আমার অর্ডার' : activeTab === 'wallet' ? 'আমার ওয়ালেট' : activeTab === 'wishlist' ? 'উইশলিস্ট' : activeTab === 'addresses' ? 'সংরক্ষিত ঠিকানা' : activeTab === 'notifications' ? 'নোটিফিকেশন' : activeTab === 'referral' ? 'রেফারেল ড্যাশবোর্ড' : 'নিরাপত্তা'}
                 </h2>
                 <p className="text-xs mt-0.5 text-muted-foreground">
                   {activeTab === 'orders' ? `মোট ${orders.length}টি অর্ডার` : activeTab === 'wishlist' ? `${wishlistItems.length}টি পণ্য` : activeTab === 'notifications' ? `${unreadCount}টি অপঠিত` : ''}
