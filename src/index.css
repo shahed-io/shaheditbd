@@ -369,12 +369,12 @@ body::before {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.22em;
-  color: hsl(42, 96%, 68%);
-  background: hsla(42, 96%, 58%, 0.12);
+  color: hsl(258, 78%, 55%);
+  background: hsla(258, 78%, 55%, 0.10);
   padding: 0.3rem 0.875rem;
   border-radius: 999px;
   display: inline-block;
-  border: 1px solid hsla(42, 96%, 58%, 0.28);
+  border: 1px solid hsla(258, 78%, 55%, 0.22);
 }
 
 .section-heading {
