@@ -153,15 +153,20 @@ const Navbar = () => {
                           <span className="text-[10px] font-fira font-bold uppercase tracking-widest" style={{ color: 'hsl(258,78%,50%)' }}>Categories</span>
                         </div>
                         {CATEGORY_DROPDOWN.map(cat => (
-                          <a key={cat.label} href={`/category/${cat.label.toLowerCase()}`}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group/item"
+                          <button key={cat.label}
+                            onClick={() => {
+                              const slug = cat.label.toLowerCase().replace(/\s+/g, '-');
+                              navigate(`/shop?category=${slug}`);
+                              setCatOpen(false);
+                            }}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-left"
                             style={{ color: 'hsl(226,35%,28%)' }}
                             onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; e.currentTarget.style.color = 'hsl(258,78%,48%)'; }}
                             onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
                             <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: cat.color }}>{cat.icon}</span>
                             <span className="text-sm font-semibold flex-1">{cat.label}</span>
                             <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,50%)' }}>{cat.count}</span>
-                          </a>
+                          </button>
                         ))}
                       </div>
                     </div>
