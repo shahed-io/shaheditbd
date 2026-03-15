@@ -8,7 +8,7 @@
   /* ══════════════════════════════════════
      SHAHED STORE — CLEAN WHITE THEME
      Pure White + Royal Indigo + Electric Gold
-     (Glassmorphism cards on white background)
+     Glassmorphism cards on white background
   ══════════════════════════════════════ */
   :root {
     /* ── Base Surfaces — বিশুদ্ধ সাদা ── */
@@ -18,98 +18,95 @@
     --card:               0 0% 99%;
     --card-foreground:    226 35% 12%;
 
-    --popover:            222 30% 9%;
-    --popover-foreground: 220 20% 92%;
+    --popover:            0 0% 100%;
+    --popover-foreground: 226 35% 12%;
 
-    /* ── Primary — Electric Violet ── */
-    --primary:            258 78% 62%;
+    /* ── Primary — Royal Indigo ── */
+    --primary:            258 78% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary:          220 25% 14%;
-    --secondary-foreground: 220 20% 78%;
+    --secondary:          220 20% 96%;
+    --secondary-foreground: 226 35% 25%;
 
-    --muted:              220 25% 14%;
-    --muted-foreground:   220 15% 52%;
+    --muted:              220 20% 96%;
+    --muted-foreground:   220 15% 50%;
 
     /* ── Accent — Electric Gold ── */
     --accent:             42 96% 58%;
-    --accent-foreground:  220 28% 8%;
+    --accent-foreground:  226 35% 8%;
 
     --destructive:        4 80% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border:             220 25% 18%;
-    --input:              220 25% 16%;
-    --ring:               258 78% 62%;
+    --border:             220 20% 90%;
+    --input:              220 20% 93%;
+    --ring:               258 78% 55%;
     --radius:             1rem;
 
-    /* ── Glass Variables ── */
-    --glass-bg:           hsla(222, 30%, 12%, 0.65);
-    --glass-border:       hsla(220, 60%, 80%, 0.10);
-    --glass-shine:        hsla(220, 60%, 90%, 0.06);
-    --glass-blur:         blur(20px) saturate(160%);
+    /* ── Glass Variables — white glass for light bg ── */
+    --glass-bg:           hsla(0, 0%, 100%, 0.72);
+    --glass-border:       hsla(220, 20%, 88%, 0.80);
+    --glass-shine:        hsla(258, 78%, 55%, 0.05);
+    --glass-blur:         blur(20px) saturate(180%);
 
     /* ── Brand Glow Colors ── */
-    --neon-gold:          hsl(42, 96%, 58%);
-    --neon-violet:        hsl(258, 78%, 62%);
-    --neon-cyan:          hsl(190, 90%, 55%);
-    --neon-pink:          hsl(330, 85%, 62%);
-    --neon-amber:         hsl(38, 100%, 55%);
-    --neon-emerald:       hsl(162, 72%, 48%);
+    --neon-gold:          hsl(42, 96%, 50%);
+    --neon-violet:        hsl(258, 78%, 55%);
+    --neon-cyan:          hsl(200, 90%, 45%);
+    --neon-pink:          hsl(330, 85%, 55%);
+    --neon-amber:         hsl(38, 100%, 50%);
+    --neon-emerald:       hsl(162, 72%, 38%);
 
-    --neon-gold-dim:      hsla(42, 96%, 58%, 0.15);
-    --neon-violet-dim:    hsla(258, 78%, 62%, 0.15);
-    --neon-cyan-dim:      hsla(190, 90%, 55%, 0.12);
-    --neon-pink-dim:      hsla(330, 85%, 62%, 0.12);
+    --neon-gold-dim:      hsla(42, 96%, 50%, 0.12);
+    --neon-violet-dim:    hsla(258, 78%, 55%, 0.10);
+    --neon-cyan-dim:      hsla(200, 90%, 45%, 0.10);
+    --neon-pink-dim:      hsla(330, 85%, 55%, 0.10);
 
-    /* ── Glows ── */
-    --glow-gold:          0 4px 24px hsla(42, 96%, 58%, 0.45), 0 1px 4px hsla(42, 96%, 58%, 0.20);
-    --glow-violet:        0 4px 24px hsla(258, 78%, 62%, 0.45), 0 1px 4px hsla(258, 78%, 62%, 0.20);
-    --glow-cyan:          0 4px 24px hsla(190, 90%, 55%, 0.40), 0 1px 4px hsla(190, 90%, 55%, 0.18);
-    --glow-pink:          0 4px 24px hsla(330, 85%, 62%, 0.40), 0 1px 4px hsla(330, 85%, 62%, 0.18);
-    --shadow-card:        0 8px 32px hsla(220, 30%, 3%, 0.40), 0 2px 8px hsla(220, 30%, 3%, 0.25);
-    --shadow-soft:        0 4px 16px hsla(220, 30%, 3%, 0.30);
-    --shadow-medium:      0 12px 40px hsla(220, 30%, 3%, 0.45);
+    /* ── Shadows — white theme soft ── */
+    --glow-gold:          0 4px 20px hsla(42, 96%, 50%, 0.30), 0 1px 4px hsla(42, 96%, 50%, 0.15);
+    --glow-violet:        0 4px 20px hsla(258, 78%, 55%, 0.25), 0 1px 4px hsla(258, 78%, 55%, 0.12);
+    --glow-cyan:          0 4px 20px hsla(200, 90%, 45%, 0.25), 0 1px 4px hsla(200, 90%, 45%, 0.12);
+    --glow-pink:          0 4px 20px hsla(330, 85%, 55%, 0.25), 0 1px 4px hsla(330, 85%, 55%, 0.12);
+    --shadow-card:        0 2px 16px hsla(226, 35%, 12%, 0.08), 0 1px 4px hsla(226, 35%, 12%, 0.05);
+    --shadow-soft:        0 1px 8px hsla(226, 35%, 12%, 0.06);
+    --shadow-medium:      0 4px 24px hsla(226, 35%, 12%, 0.10);
 
     /* ── Surfaces ── */
-    --surface-white:      hsl(222, 30%, 12%);
-    --surface-light:      hsl(222, 28%, 14%);
-    --surface-soft:       hsl(222, 26%, 16%);
+    --surface-white:      hsl(0, 0%, 100%);
+    --surface-light:      hsl(220, 20%, 98%);
+    --surface-soft:       hsl(220, 20%, 96%);
 
     /* ── Gradients ── */
-    --gradient-hero:      linear-gradient(135deg, hsl(258,78%,45%) 0%, hsl(190,90%,38%) 100%);
+    --gradient-hero:      linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(200,90%,45%) 100%);
     --gradient-warm:      linear-gradient(135deg, hsl(330,85%,55%) 0%, hsl(42,96%,50%) 100%);
-    --gradient-cool:      linear-gradient(135deg, hsl(190,90%,45%) 0%, hsl(162,72%,38%) 100%);
-    --gradient-card:      linear-gradient(145deg, hsla(222,30%,14%,1) 0%, hsla(222,30%,10%,1) 100%);
+    --gradient-cool:      linear-gradient(135deg, hsl(200,90%,45%) 0%, hsl(162,72%,38%) 100%);
+    --gradient-card:      linear-gradient(145deg, hsla(220,20%,100%,1) 0%, hsla(220,20%,97%,1) 100%);
 
     /* ── Legacy ── */
-    --indigo:             hsl(258, 78%, 62%);
+    --indigo:             hsl(258, 78%, 55%);
     --indigo-light:       hsl(258, 80%, 76%);
-    --indigo-dim:         hsla(258, 78%, 68%, 0.18);
-    --indigo-glow:        0 8px 32px hsla(258, 78%, 68%, 0.5);
+    --indigo-dim:         hsla(258, 78%, 68%, 0.15);
+    --indigo-glow:        0 8px 32px hsla(258, 78%, 68%, 0.4);
     --coral:              hsl(330, 85%, 62%);
     --coral-light:        hsl(330, 85%, 72%);
-    --coral-dim:          hsla(330, 85%, 62%, 0.15);
-    --emerald:            hsl(162, 72%, 48%);
-    --emerald-dim:        hsla(162, 72%, 48%, 0.15);
+    --coral-dim:          hsla(330, 85%, 62%, 0.12);
+    --emerald:            hsl(162, 72%, 46%);
+    --emerald-dim:        hsla(162, 72%, 46%, 0.12);
     --amber:              hsl(42, 96%, 58%);
-    --amber-dim:          hsla(42, 96%, 58%, 0.15);
+    --amber-dim:          hsla(42, 96%, 58%, 0.12);
     --violet:             hsl(258, 78%, 68%);
-    --violet-dim:         hsla(258, 78%, 68%, 0.15);
+    --violet-dim:         hsla(258, 78%, 68%, 0.12);
     --shadow-indigo:      var(--glow-violet);
     --shadow-coral:       var(--glow-pink);
 
-    --sidebar-background: 222 30% 8%;
-    --sidebar-foreground: 220 20% 80%;
-    --sidebar-primary:    258 78% 62%;
+    --sidebar-background: 220 20% 98%;
+    --sidebar-foreground: 226 35% 20%;
+    --sidebar-primary:    258 78% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent:     220 25% 14%;
-    --sidebar-accent-foreground: 220 20% 75%;
-    --sidebar-border:     220 25% 16%;
-    --sidebar-ring:       258 78% 62%;
-
-    /* emerald for tailwind class */
-    --emerald-tw: 162 72% 48%;
+    --sidebar-accent:     220 20% 94%;
+    --sidebar-accent-foreground: 226 35% 25%;
+    --sidebar-border:     220 20% 88%;
+    --sidebar-ring:       258 78% 55%;
   }
 }
 
