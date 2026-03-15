@@ -679,20 +679,20 @@ body::before {
 .trust-badge { display: flex; align-items: flex-start; }
 
 .dot-grid {
-  background-image: radial-gradient(circle, hsla(42,96%,58%,0.14) 1px, transparent 1px);
+  background-image: radial-gradient(circle, hsla(258,78%,55%,0.12) 1px, transparent 1px);
   background-size: 28px 28px;
 }
 
 /* ══════════════════════════════════════
-   NEON TEXT GLOW
+   NEON TEXT GLOW — White Theme
 ══════════════════════════════════════ */
 .neon-text-violet {
-  color: hsl(42,96%,72%);
-  text-shadow: 0 0 10px hsla(42,96%,58%,0.8), 0 0 30px hsla(42,96%,58%,0.4);
+  color: hsl(258,78%,48%);
+  text-shadow: 0 2px 12px hsla(258,78%,55%,0.35), 0 0 4px hsla(258,78%,55%,0.15);
 }
 .neon-text-cyan {
-  color: hsl(186,78%,62%);
-  text-shadow: 0 0 10px hsla(186,78%,50%,0.8), 0 0 30px hsla(186,78%,50%,0.4);
+  color: hsl(200,90%,40%);
+  text-shadow: 0 2px 12px hsla(200,90%,45%,0.35), 0 0 4px hsla(200,90%,45%,0.15);
 }
 
 /* ══════════════════════════════════════
@@ -702,8 +702,8 @@ body::before {
   height: 1px;
   background: linear-gradient(90deg,
     transparent 0%,
-    hsla(42,96%,58%,0.5) 30%,
-    hsla(258,78%,68%,0.5) 70%,
+    hsla(258,78%,55%,0.35) 30%,
+    hsla(42,96%,50%,0.35) 70%,
     transparent 100%
   );
 }
