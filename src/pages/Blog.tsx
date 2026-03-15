@@ -17,15 +17,28 @@ const Blog = () => {
   const [selectedCat, setSelectedCat] = useState('all');
   const [selectedTag, setSelectedTag] = useState('');
 
-  useEffect(() => {
-    Promise.all([
+  const fetchPosts = async () => {
+    const [{ data: p }, { data: c }] = await Promise.all([
       supabase.from('blog_posts').select('*, blog_categories(name, slug, color)').eq('status', 'published').order('published_at', { ascending: false }),
       supabase.from('blog_categories').select('*').eq('is_active', true).order('sort_order'),
-    ]).then(([{ data: p }, { data: c }]) => {
-      setPosts(p || []);
-      setCategories(c || []);
-      setLoading(false);
-    });
+    ]);
+    setPosts(p || []);
+    setCategories(c || []);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchPosts();
+
+    // Real-time: নতুন পোস্ট publish হলে অটো আপডেট
+    const channel = supabase
+      .channel('blog_posts_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'blog_posts' }, () => {
+        fetchPosts();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const allTags = [...new Set(posts.flatMap(p => p.tags || []))];
