@@ -7,7 +7,7 @@ import Footer from '@/components/store/Footer';
 import {
   ShoppingCart, MessageCircle, CreditCard, Star, Zap, Shield, Clock,
   CheckCircle2, ChevronLeft, ChevronRight, Heart, Package, Tag,
-  Truck, ArrowLeft, Share2, Copy, Check, ChevronDown
+  Truck, ArrowLeft, Share2, Copy, Check, ChevronDown, AlertCircle
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
 import SEOHead from '@/components/seo/SEOHead';
@@ -54,20 +54,41 @@ const useReveal = (threshold = 0.1) => {
   return { ref, revealed };
 };
 
+// ── Custom Option types ──────────────────────────────────────
+interface CustomOptionValue {
+  id: string;
+  label: string;
+  price_adjustment: number;
+  is_default: boolean;
+  sort_order: number;
+}
+
+interface CustomOptionGroup {
+  id: string;
+  name: string;
+  display_type: 'button' | 'radio' | 'dropdown';
+  is_required: boolean;
+  sort_order: number;
+  values: CustomOptionValue[];
+}
+
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
 
-  const [product,     setProduct]     = useState<ProductFull | null>(null);
-  const [loading,     setLoading]     = useState(true);
-  const [notFound,    setNotFound]    = useState(false);
-  const [activeImg,   setActiveImg]   = useState(0);
-  const [showModal,   setShowModal]   = useState(false);
-  const [copied,      setCopied]      = useState(false);
-  const [imgLoaded,   setImgLoaded]   = useState(false);
-  const [selectedVar, setSelectedVar] = useState<Record<string, string>>({});
-  const [entered,     setEntered]     = useState(false);
+  const [product,      setProduct]      = useState<ProductFull | null>(null);
+  const [loading,      setLoading]      = useState(true);
+  const [notFound,     setNotFound]     = useState(false);
+  const [activeImg,    setActiveImg]    = useState(0);
+  const [showModal,    setShowModal]    = useState(false);
+  const [copied,       setCopied]       = useState(false);
+  const [imgLoaded,    setImgLoaded]    = useState(false);
+  const [selectedOpts, setSelectedOpts] = useState<Record<string, string>>({});
+  const [customGroups, setCustomGroups] = useState<CustomOptionGroup[]>([]);
+  const [entered,      setEntered]      = useState(false);
+  // Keep selectedVar for legacy variants
+  const [selectedVar,  setSelectedVar]  = useState<Record<string, string>>({});
 
   // Section reveals
   const descReveal   = useReveal(0.05);
@@ -92,8 +113,42 @@ const ProductDetail = () => {
         const row = data?.[0];
         if (!row) { setNotFound(true); setLoading(false); return; }
         setProduct(row as any);
+
+        // Fetch custom option groups from new system
+        const { data: groupData } = await supabase
+          .from('product_option_groups' as any)
+          .select('*, product_option_values(*)')
+          .eq('product_id', row.id)
+          .order('sort_order');
+
+        if (!cancelled && groupData && (groupData as any[]).length > 0) {
+          const groups: CustomOptionGroup[] = (groupData as any[]).map((g: any) => ({
+            id: g.id,
+            name: g.name,
+            display_type: g.display_type,
+            is_required: g.is_required,
+            sort_order: g.sort_order,
+            values: (g.product_option_values || [])
+              .sort((a: any, b: any) => a.sort_order - b.sort_order)
+              .map((v: any) => ({
+                id: v.id,
+                label: v.label,
+                price_adjustment: Number(v.price_adjustment),
+                is_default: v.is_default,
+                sort_order: v.sort_order,
+              })),
+          }));
+          setCustomGroups(groups);
+          // Initialize default selections
+          const defaults: Record<string, string> = {};
+          for (const g of groups) {
+            const def = g.values.find(v => v.is_default) || g.values[0];
+            if (def) defaults[g.id] = def.id;
+          }
+          setSelectedOpts(defaults);
+        }
+
         setLoading(false);
-        // Trigger entrance after short delay for smooth feel
         setTimeout(() => setEntered(true), 80);
         supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
       } catch {
@@ -151,7 +206,7 @@ const ProductDetail = () => {
   // Normalize to grouped format with prices
   interface VariantOption { label: string; price?: number; }
   interface VariantGroup { name: string; options: VariantOption[]; }
-  const variants: VariantGroup[] = rawVariants.map((v: any) => ({
+  const legacyVariants: VariantGroup[] = rawVariants.map((v: any) => ({
     name: v.name || v.label || 'Options',
     options: Array.isArray(v.options)
       ? v.options.map((o: any) => typeof o === 'string' ? { label: o } : { label: o.label, price: o.price ? parseFloat(o.price) : undefined })
@@ -162,9 +217,23 @@ const ProductDetail = () => {
   const wishlisted = isWishlisted(product.id);
   const inCart     = isInCart(product.id);
 
-  // Compute displayed price based on selected variant options
+  // Compute displayed price:
+  // 1. Check new custom option groups (DB-driven)
+  // 2. Fall back to legacy variants (JSONB-driven)
+  // 3. Fall back to base price
   const getSelectedPrice = (): number => {
-    for (const group of variants) {
+    // New system: custom option groups
+    if (customGroups.length > 0) {
+      for (const group of customGroups) {
+        const selValueId = selectedOpts[group.id];
+        const val = selValueId
+          ? group.values.find(v => v.id === selValueId)
+          : group.values.find(v => v.is_default) || group.values[0];
+        if (val && val.price_adjustment > 0) return val.price_adjustment;
+      }
+    }
+    // Legacy variant system
+    for (const group of legacyVariants) {
       const selectedLabel = selectedVar[group.name] || group.options[0]?.label;
       const opt = group.options.find(o => o.label === selectedLabel);
       if (opt?.price !== undefined && opt.price > 0) return opt.price;
@@ -174,6 +243,15 @@ const ProductDetail = () => {
   const displayPrice = getSelectedPrice();
   const savings    = product.original_price ? product.original_price - displayPrice : 0;
   const discount   = product.discount_percent || (product.original_price ? Math.round(savings / product.original_price * 100) : 0);
+
+  // Build selected options string for WhatsApp/order
+  const selectedOptsStr = customGroups.length > 0
+    ? customGroups.map(g => {
+        const selId = selectedOpts[g.id];
+        const val = selId ? g.values.find(v => v.id === selId) : g.values.find(v => v.is_default) || g.values[0];
+        return val ? `${g.name}: ${val.label}` : null;
+      }).filter(Boolean).join(', ')
+    : Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`).join(', ');
 
   const cartItem = {
     id: product.id,
@@ -185,8 +263,7 @@ const ProductDetail = () => {
   };
 
   const waOrder = () => {
-    const varStr = Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`).join(', ');
-    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${varStr ? `\n⚙️ ${varStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}`);
+    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${selectedOptsStr ? `\n⚙️ ${selectedOptsStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
@@ -461,8 +538,106 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              {/* Variants */}
-              {variants.map((group, vi) => {
+              {/* ── Custom Option Groups (new DB system) ── */}
+              {customGroups.map((group, gi) => {
+                const selValueId = selectedOpts[group.id];
+                const currentVal = selValueId
+                  ? group.values.find(v => v.id === selValueId)
+                  : group.values.find(v => v.is_default) || group.values[0];
+
+                return (
+                  <div
+                    key={group.id}
+                    style={{
+                      opacity: entered ? 1 : 0,
+                      transform: entered ? 'none' : 'translateY(16px)',
+                      transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + gi * 0.08}s`,
+                    }}
+                  >
+                    <p className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-1.5">
+                      <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} />
+                      {group.name}
+                      {group.is_required && <span className="text-[10px] text-destructive font-bold">*</span>}:
+                      <span style={{ color: 'hsl(271,91%,75%)' }}>{currentVal?.label}</span>
+                    </p>
+
+                    {/* Dropdown display */}
+                    {group.display_type === 'dropdown' && (
+                      <select
+                        value={selValueId || ''}
+                        onChange={e => setSelectedOpts(p => ({ ...p, [group.id]: e.target.value }))}
+                        className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                      >
+                        {group.values.map(v => (
+                          <option key={v.id} value={v.id}>
+                            {v.label}{v.price_adjustment > 0 ? ` — ৳${v.price_adjustment.toLocaleString()}` : ''}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+
+                    {/* Radio display */}
+                    {group.display_type === 'radio' && (
+                      <div className="space-y-2">
+                        {group.values.map(v => {
+                          const isSel = (selValueId || (group.values.find(x => x.is_default) || group.values[0])?.id) === v.id;
+                          return (
+                            <label
+                              key={v.id}
+                              className="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all"
+                              style={{
+                                borderColor: isSel ? 'hsl(271,91%,65%)' : 'hsl(var(--border))',
+                                background: isSel ? 'hsla(271,91%,65%,0.08)' : 'transparent',
+                              }}
+                            >
+                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${isSel ? 'border-primary' : 'border-border'}`}>
+                                {isSel && <div className="w-2 h-2 rounded-full" style={{ background: 'hsl(271,91%,65%)' }} />}
+                              </div>
+                              <input type="radio" className="sr-only" checked={isSel} onChange={() => setSelectedOpts(p => ({ ...p, [group.id]: v.id }))} />
+                              <span className="text-sm font-semibold text-foreground flex-1">{v.label}</span>
+                              {v.price_adjustment > 0 && (
+                                <span className="text-sm font-bold" style={{ color: 'hsl(271,91%,75%)' }}>
+                                  ৳{v.price_adjustment.toLocaleString()}
+                                </span>
+                              )}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Button display (default) */}
+                    {group.display_type === 'button' && (
+                      <div className="flex flex-wrap gap-2">
+                        {group.values.map(v => {
+                          const isSel = (selValueId || (group.values.find(x => x.is_default) || group.values[0])?.id) === v.id;
+                          return (
+                            <button
+                              key={v.id}
+                              onClick={() => setSelectedOpts(p => ({ ...p, [group.id]: v.id }))}
+                              className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105 flex flex-col items-center"
+                              style={isSel
+                                ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
+                                : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
+                              }
+                            >
+                              <span>{v.label}</span>
+                              {v.price_adjustment > 0 && (
+                                <span className="text-xs font-bold mt-0.5" style={{ color: isSel ? 'hsl(271,91%,80%)' : 'hsl(var(--muted-foreground))' }}>
+                                  ৳{v.price_adjustment.toLocaleString()}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* ── Legacy Variants (JSONB fallback) — hidden when new system active ── */}
+              {customGroups.length === 0 && legacyVariants.map((group, vi) => {
                 const selectedLabel = selectedVar[group.name] || group.options[0]?.label;
                 return (
                   <div

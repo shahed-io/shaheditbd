@@ -3,8 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Plus, Search, Edit, Trash2, Package, X, Upload,
   Image as ImageIcon, Loader2, Video, Tag, Star,
-  ExternalLink, RefreshCw, Copy, ChevronDown
+  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders
 } from 'lucide-react';
+import ProductOptionsBuilder from '@/components/admin/ProductOptionsBuilder';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 
@@ -57,7 +58,7 @@ const emptyForm = {
 };
 
 type FormState = typeof emptyForm;
-type TabId = 'basic' | 'pricing' | 'media' | 'details' | 'seo';
+type TabId = 'basic' | 'pricing' | 'media' | 'details' | 'seo' | 'options';
 
 const ic = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground";
 const lc = "text-xs text-muted-foreground mb-1 block font-medium";
@@ -368,6 +369,7 @@ const AdminProducts = () => {
     { id: 'media', label: '🖼️ Media' },
     { id: 'details', label: '📋 Details' },
     { id: 'seo', label: '🔍 SEO' },
+    { id: 'options', label: '🎛️ Options' },
   ];
 
   return (
@@ -874,6 +876,27 @@ const AdminProducts = () => {
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* ======= OPTIONS TAB ======= */}
+                {activeTab === 'options' && (
+                  <div className="space-y-4">
+                    {editingProduct ? (
+                      <ProductOptionsBuilder
+                        productId={editingProduct.id}
+                        basePrice={parseFloat(form.price) || editingProduct.price}
+                      />
+                    ) : (
+                      <div className="rounded-xl border-2 border-dashed border-border py-12 flex flex-col items-center gap-3 text-center px-6">
+                        <Sliders size={32} className="text-muted-foreground opacity-40" />
+                        <p className="text-sm font-semibold text-foreground">Save product first</p>
+                        <p className="text-xs text-muted-foreground">
+                          Custom options can be added after the product is created.<br />
+                          Click "Add Product" then come back to this tab.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
