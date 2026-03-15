@@ -35,12 +35,11 @@ const TickerBanner = () => {
         style={{ background: 'linear-gradient(to left, hsl(220,20%,97%) 0%, transparent 100%)' }} />
 
       {/* LIVE indicator */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold text-white px-3 py-1.5 rounded-full"
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-full"
         style={{
-          background: 'rgba(255,255,255,0.18)',
-          border: '1px solid rgba(255,255,255,0.35)',
-          backdropFilter: 'blur(8px)',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
+          background: 'hsl(258,78%,55%)',
+          color: 'white',
+          boxShadow: '0 2px 10px hsla(258,78%,55%,0.35)',
         }}>
         <Zap size={9} fill="white" />
         <span>LIVE</span>
@@ -51,15 +50,15 @@ const TickerBanner = () => {
         {items.map((item, i) => (
           <span key={i} className="inline-flex items-center flex-shrink-0">
             <span className="inline-flex items-center gap-2 px-5 text-[12.5px]">
-              <span className="font-semibold" style={{ color: 'rgba(255,255,255,0.95)' }}>{item.label}</span>
-              <span className="font-bold" style={{ color: 'hsl(42,96%,78%)' }}>{item.price}</span>
+              <span className="font-semibold" style={{ color: 'hsl(226,35%,18%)' }}>{item.label}</span>
+              <span className="font-bold" style={{ color: 'hsl(258,78%,50%)' }}>{item.price}</span>
               <span className="font-bold text-[11px] px-2.5 py-0.5 rounded-full"
                 style={{
-                  background: 'rgba(255,255,255,0.95)',
-                  color: 'hsl(258,78%,40%)',
+                  background: 'hsl(258,78%,55%)',
+                  color: 'white',
                 }}>{item.off}</span>
             </span>
-            <span className="text-[18px]" style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
+            <span className="text-[18px]" style={{ color: 'hsla(258,78%,55%,0.2)' }}>|</span>
           </span>
         ))}
       </div>
