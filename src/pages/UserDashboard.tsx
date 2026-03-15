@@ -148,6 +148,7 @@ const UserDashboard = () => {
   const [topupAmount, setTopupAmount] = useState('');
   const [topupNote, setTopupNote] = useState('');
   const [topupProcessing, setTopupProcessing] = useState(false);
+  const [selectedLang, setSelectedLang] = useState(getStoredLang());
 
   useEffect(() => {
     if (!loading && !user) navigate('/');
