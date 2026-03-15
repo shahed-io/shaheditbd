@@ -222,25 +222,25 @@ const HeroBanner = () => {
               <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full translate-x-0.5 translate-y-0.5 z-10"
                 style={{ background: slide.accentFrom, boxShadow: `0 0 10px 3px ${slide.accentFrom}` }} />
 
-              {/* Frosted glass inner card — deep dark + accent tinted */}
+              {/* Frosted glass inner card — vivid accent gradient, no black/white */}
               <div className="relative overflow-hidden"
                 style={{
                   borderRadius: 'calc(2rem - 2px)',
-                  background: `linear-gradient(145deg, hsla(230,40%,7%,0.97) 0%, hsla(230,35%,10%,0.95) 100%)`,
-                  backdropFilter: 'blur(32px) saturate(180%)',
+                  background: `linear-gradient(145deg, ${slide.accentFrom}e8 0%, ${slide.accentTo}d0 60%, ${slide.accentFrom}c0 100%)`,
+                  backdropFilter: 'blur(24px) saturate(160%)',
                 }}>
-                {/* Top-left accent radial glow */}
+                {/* Light radial shine top-left */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 10% 0%, ${slide.accentFrom}55 0%, transparent 55%)` }} />
-                {/* Bottom-right secondary glow */}
+                  style={{ backgroundImage: `radial-gradient(ellipse at 15% 10%, rgba(255,255,255,0.28) 0%, transparent 55%)` }} />
+                {/* Soft vignette bottom */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 90% 100%, ${slide.accentTo}40 0%, transparent 50%)` }} />
-                {/* Top shimmer line */}
+                  style={{ backgroundImage: `radial-gradient(ellipse at 80% 95%, rgba(0,0,0,0.18) 0%, transparent 55%)` }} />
+                {/* Top shimmer line — white */}
                 <div className="absolute top-0 left-0 right-0 h-[1.5px]"
-                  style={{ background: `linear-gradient(90deg, transparent 5%, ${slide.accentFrom}ff 40%, ${slide.accentTo}ff 60%, transparent 95%)` }} />
-                {/* Dot grid */}
+                  style={{ background: `linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.5) 60%, transparent 95%)` }} />
+                {/* Dot grid — white subtle */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(circle, ${slide.accentFrom}18 1px, transparent 1px)`, backgroundSize: '22px 22px' }} />
+                  style={{ backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)`, backgroundSize: '22px 22px' }} />
 
                 <div className="relative p-8">
                   {slide.comboSlide && slide.combo ? (
