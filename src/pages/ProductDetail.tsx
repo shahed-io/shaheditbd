@@ -807,8 +807,9 @@ const ProductDetail = () => {
                   </h3>
                   <ul className="space-y-2.5">
                     {product.what_you_get.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm" style={{ color: 'hsl(226,25%,35%)' }}
-                        style2={{
+                      <li key={i} className="flex items-start gap-3 text-sm"
+                        style={{
+                          color: 'hsl(226,25%,35%)',
                           opacity: entered ? 1 : 0,
                           transform: entered ? 'none' : 'translateX(-12px)',
                           transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.7 + i * 0.07}s`,
