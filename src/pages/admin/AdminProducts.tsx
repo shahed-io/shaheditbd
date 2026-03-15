@@ -613,45 +613,12 @@ const AdminProducts = () => {
                       </div>
                     </div>
 
+                    {/* Note: variant pricing is managed in the 🎛️ Options tab */}
                     <div className="pt-2 border-t border-border">
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs font-medium text-foreground">📦 Variant Groups (Duration / Account Type / Plan)</p>
-                        <button type="button" onClick={addVariantGroup} className="text-xs text-primary hover:underline flex items-center gap-1">
-                          <Plus size={12} /> Add Group
-                        </button>
+                      <div className="rounded-xl p-3 text-xs text-muted-foreground flex items-start gap-2" style={{ background: 'hsla(271,91%,65%,0.06)', border: '1px solid hsla(271,91%,65%,0.15)' }}>
+                        <span className="text-base">🎛️</span>
+                        <span>প্রোডাক্টের <strong className="text-foreground">Options &amp; Pricing variants</strong> (Duration, Plan, Account Type, etc.) সেট করতে উপরের <strong className="text-primary">Variations</strong> ট্যাবে যান।</span>
                       </div>
-                      <div className="space-y-4">
-                        {form.variants.map((group, gi) => (
-                          <div key={gi} className="border border-border rounded-xl p-3 space-y-2 bg-muted/20">
-                            <div className="flex gap-2 items-center">
-                              <input value={group.name}
-                                onChange={e => setVariantGroupName(gi, e.target.value)}
-                                placeholder="Group name (e.g. Duration, Account Type)"
-                                className={`${ic} flex-1 font-medium`} />
-                              {form.variants.length > 1 && (
-                                <button type="button" onClick={() => removeVariantGroup(gi)} className="text-muted-foreground hover:text-destructive flex-shrink-0"><X size={14} /></button>
-                              )}
-                            </div>
-                            <div className="space-y-1.5 pl-2">
-                              {group.options.map((opt, oi) => (
-                                <div key={oi} className="flex gap-2 items-center">
-                                  <input value={opt.label}
-                                    onChange={e => setVariantOption(gi, oi, 'label', e.target.value)}
-                                    placeholder="Option label (e.g. 1 Month, Personal)" className={`${ic} flex-1`} />
-                                  <input value={opt.price}
-                                    onChange={e => setVariantOption(gi, oi, 'price', e.target.value)}
-                                    placeholder="Price ৳" type="number" className={`${ic} w-28`} />
-                                  <button type="button" onClick={() => removeVariantOption(gi, oi)} className="text-muted-foreground hover:text-destructive"><X size={12} /></button>
-                                </div>
-                              ))}
-                              <button type="button" onClick={() => addVariantOption(gi)} className="text-xs text-primary/80 hover:text-primary flex items-center gap-1 mt-1">
-                                <Plus size={11} /> Add Option
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-2">💡 Customer যখন একটি option select করবে, তখন সেই option-এর price দেখাবে</p>
                     </div>
                   </div>
                 )}
