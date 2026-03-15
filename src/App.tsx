@@ -139,6 +139,7 @@ const App = () => (
                   <Route path="attributes" element={<AdminAttributes />} />
                   <Route path="pages" element={<AdminPages />} />
                   <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
+                  <Route path="wallet" element={<AdminWallet />} />
                 </Route>
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-conditions" element={<TermsConditions />} />
