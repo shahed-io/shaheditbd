@@ -3,9 +3,10 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Plus, Search, Edit, Trash2, Package, X, Upload,
   Image as ImageIcon, Loader2, Video, Tag, Star,
-  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders
+  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders, Tags, Link2
 } from 'lucide-react';
 import ProductOptionsBuilder from '@/components/admin/ProductOptionsBuilder';
+import ProductAttributesEditor from '@/components/admin/ProductAttributesEditor';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 
