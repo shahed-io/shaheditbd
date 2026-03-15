@@ -874,8 +874,8 @@ body::before {
    FLASH SALE CARD
 ══════════════════════════════════════ */
 .flash-card {
-  background: hsla(215, 28%, 11%, 0.92);
-  border: 1px solid hsla(271,91%,65%,0.15);
+  background: hsla(228, 32%, 14%, 0.92);
+  border: 1px solid hsla(42,96%,58%,0.14);
   border-radius: 1.25rem;
   box-shadow: var(--shadow-card);
   position: relative;
@@ -891,14 +891,14 @@ body::before {
   height: 200%;
   background: conic-gradient(
     transparent 270deg,
-    hsla(271,91%,65%,0.06) 360deg
+    hsla(42,96%,58%,0.06) 360deg
   );
   animation: spin-slow 8s linear infinite;
   pointer-events: none;
 }
 .flash-card:hover {
-  border-color: hsla(271,91%,65%,0.4);
-  box-shadow: 0 16px 48px hsla(215,40%,4%,0.6), var(--glow-violet);
+  border-color: hsla(42,96%,58%,0.4);
+  box-shadow: 0 16px 48px hsla(226,40%,4%,0.6), var(--glow-gold);
   transform: translateY(-4px);
 }
 
