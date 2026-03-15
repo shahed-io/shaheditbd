@@ -690,43 +690,75 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              {/* CTA Buttons — FanFlix style */}
+              {/* CTA Buttons — Glassmorphism Card */}
               <div
-                className="space-y-3"
+                className="rounded-3xl p-4 space-y-3"
                 style={{
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'none' : 'translateY(28px)',
                   transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.5s',
+                  background: 'hsla(0,0%,100%,0.70)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
+                  border: '1.5px solid hsla(258,78%,60%,0.20)',
+                  boxShadow: '0 8px 40px hsla(258,78%,55%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.85)',
                 }}
               >
-                {/* Add to cart */}
-                <button
-                  onClick={() => addToCart(cartItem)}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base transition-all hover:scale-[1.02] border-2"
-                  style={inCart
-                    ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.1)' }
-                    : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', background: 'transparent' }
-                  }
-                >
-                  <ShoppingCart size={18} />
-                  {inCart ? '✓ Added to Cart' : 'Add to cart'}
-                </button>
-
-                {/* Buy it now */}
+                {/* Order Now — primary gradient */}
                 <button
                   onClick={() => setShowModal(true)}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base transition-all hover:scale-[1.02]"
-                  style={{ background: 'hsl(var(--foreground))', color: 'hsl(var(--background))', boxShadow: '0 4px 20px hsla(215,28%,8%,0.4)' }}
+                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
+                    boxShadow: '0 4px 20px hsla(258,78%,55%,0.40), inset 0 1px 0 hsla(0,0%,100%,0.20)',
+                  }}
                 >
-                  <CreditCard size={18} /> Buy it now
+                  <CreditCard size={18} /> Order Now
                 </button>
 
-                {/* WhatsApp */}
-                <button onClick={waOrder}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm text-white transition-all hover:scale-[1.02] hover:opacity-90"
-                  style={{ background: 'linear-gradient(135deg, hsl(142,70%,40%), hsl(158,80%,38%))', boxShadow: '0 4px 16px hsla(142,70%,40%,0.3)' }}>
-                  <MessageCircle size={16} /> Order via WhatsApp
-                </button>
+                {/* WhatsApp + Cart — row */}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* WhatsApp */}
+                  <button onClick={waOrder}
+                    className="flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    style={{
+                      background: 'hsla(142,70%,44%,0.10)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                      border: '1.5px solid hsla(142,70%,44%,0.35)',
+                      color: 'hsl(142,65%,32%)',
+                      boxShadow: '0 2px 12px hsla(142,70%,44%,0.10)',
+                    }}>
+                    <MessageCircle size={15} /> WhatsApp
+                  </button>
+
+                  {/* Cart */}
+                  <button
+                    onClick={() => addToCart(cartItem)}
+                    className="flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    style={inCart
+                      ? {
+                          background: 'hsla(258,78%,55%,0.10)',
+                          backdropFilter: 'blur(16px)',
+                          WebkitBackdropFilter: 'blur(16px)',
+                          border: '1.5px solid hsla(258,78%,55%,0.40)',
+                          color: 'hsl(258,78%,48%)',
+                          boxShadow: '0 2px 12px hsla(258,78%,55%,0.12)',
+                        }
+                      : {
+                          background: 'hsla(0,0%,100%,0.60)',
+                          backdropFilter: 'blur(16px)',
+                          WebkitBackdropFilter: 'blur(16px)',
+                          border: '1.5px solid hsla(220,20%,75%,0.50)',
+                          color: 'hsl(226,35%,30%)',
+                          boxShadow: '0 2px 8px hsla(220,20%,50%,0.08)',
+                        }
+                    }
+                  >
+                    <ShoppingCart size={15} />
+                    {inCart ? '✓ Added' : 'Cart'}
+                  </button>
+                </div>
               </div>
 
               {/* Delivery Time */}
