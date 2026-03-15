@@ -218,46 +218,45 @@ const UserDashboard = () => {
   const fetchWallet = async () => {
     if (!user) return;
     setWalletLoading(true);
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('wallet_balance')
-      .eq('user_id', user.id)
-      .single();
-    setWalletBalance((profileData as any)?.wallet_balance || 0);
-
-    const { data: txData } = await supabase
-      .from('wallet_transactions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(30);
-    setWalletTx(txData || []);
+    const [profileRes, txRes, reqRes] = await Promise.all([
+      supabase.from('profiles').select('wallet_balance').eq('user_id', user.id).single(),
+      supabase.from('wallet_transactions').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30),
+      supabase.from('wallet_topup_requests' as any).select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10),
+    ]);
+    setWalletBalance((profileRes.data as any)?.wallet_balance || 0);
+    setWalletTx(txRes.data || []);
+    setTopupRequests(reqRes.data || []);
     setWalletLoading(false);
   };
 
-  const handleTopupRequest = async () => {
+  const TOPUP_PAYMENT_METHODS = [
+    { id: 'bkash',          label: 'bKash',          number: '01820060046', type: 'Send Money', icon: '💳', color: 'from-pink-600 to-pink-700' },
+    { id: 'nagad',          label: 'Nagad',           number: '01840099853', type: 'Send Money', icon: '📱', color: 'from-orange-500 to-orange-600' },
+    { id: 'rocket',         label: 'Rocket',          number: '01840099853', type: 'Send Money', icon: '🚀', color: 'from-purple-600 to-purple-700' },
+    { id: 'upay',           label: 'উপায়',            number: '01840099853', type: 'Send Money', icon: '💚', color: 'from-green-600 to-green-700' },
+    { id: 'bkash_merchant', label: 'bKash Merchant',  number: '01840099853', type: 'Merchant',  icon: '🏪', color: 'from-pink-700 to-rose-700' },
+  ];
+
+  const handleTopupSubmit = async () => {
     if (!user) return;
     const amt = parseFloat(topupAmount);
-    if (!amt || amt < 10) { toast.error('কমপক্ষে ৳10 এর টপ-আপ করুন'); return; }
+    if (!amt || amt < 10) { toast.error('Minimum ৳10 required'); return; }
+    if (!topupTxId.trim()) { toast.error('Please enter transaction ID'); return; }
     setTopupProcessing(true);
-    // Create a support ticket for manual top-up request
     try {
-      const ticketNum = 'WLT-' + Date.now().toString(36).toUpperCase();
-      await supabase.from('support_tickets').insert({
-        ticket_number: ticketNum,
-        customer_name: profile.display_name || user.email || 'User',
-        customer_email: user.email || '',
-        subject: `ওয়ালেট টপ-আপ অনুরোধ - ৳${amt}`,
-        message: `ওয়ালেট টপ-আপ অনুরোধ:\nপরিমাণ: ৳${amt}\n${topupNote ? `নোট: ${topupNote}` : ''}`,
-        priority: 'normal',
-        status: 'open',
+      const { error } = await (supabase.from('wallet_topup_requests' as any) as any).insert({
         user_id: user.id,
+        amount: amt,
+        payment_method: topupPaymentMethod,
+        transaction_id: topupTxId.trim(),
+        status: 'pending',
       });
-      toast.success('✅ টপ-আপ অনুরোধ পাঠানো হয়েছে! অ্যাডমিন অনুমোদন করলে ব্যালেন্স যোগ হবে।');
-      setTopupAmount('');
-      setTopupNote('');
+      if (error) throw error;
+      toast.success('✅ Top-up request submitted! Admin will verify and credit your wallet.');
+      setTopupStep(2);
+      setTopupTxId('');
     } catch {
-      toast.error('অনুরোধ পাঠাতে সমস্যা হয়েছে');
+      toast.error('Failed to submit request. Please try again.');
     }
     setTopupProcessing(false);
   };
