@@ -19,28 +19,27 @@ const TickerBanner = () => {
   return (
     <div className="relative overflow-hidden"
       style={{
-        background: 'linear-gradient(135deg, hsl(258,78%,38%) 0%, hsl(243,75%,45%) 50%, hsl(220,80%,42%) 100%)',
-        borderTop: '1px solid hsla(258,78%,75%,0.3)',
-        borderBottom: '1px solid hsla(258,78%,75%,0.3)',
-        boxShadow: '0 2px 20px hsla(258,78%,45%,0.35)',
+        background: 'linear-gradient(135deg, hsl(220,20%,97%) 0%, hsl(258,40%,96%) 50%, hsl(220,20%,97%) 100%)',
+        borderTop: '1px solid hsla(258,78%,55%,0.15)',
+        borderBottom: '1px solid hsla(258,78%,55%,0.15)',
+        boxShadow: '0 2px 12px hsla(258,78%,55%,0.08)',
       }}>
       {/* Subtle shimmer overlay */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 65%)' }} />
+        style={{ backgroundImage: 'radial-gradient(ellipse at 50% 0%, hsla(258,78%,55%,0.05) 0%, transparent 65%)' }} />
 
       {/* Edge fades */}
       <div className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to right, hsl(258,78%,38%) 0%, transparent 100%)' }} />
+        style={{ background: 'linear-gradient(to right, hsl(220,20%,97%) 0%, transparent 100%)' }} />
       <div className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to left, hsl(220,80%,42%) 0%, transparent 100%)' }} />
+        style={{ background: 'linear-gradient(to left, hsl(220,20%,97%) 0%, transparent 100%)' }} />
 
       {/* LIVE indicator */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold text-white px-3 py-1.5 rounded-full"
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-full"
         style={{
-          background: 'rgba(255,255,255,0.18)',
-          border: '1px solid rgba(255,255,255,0.35)',
-          backdropFilter: 'blur(8px)',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
+          background: 'hsl(258,78%,55%)',
+          color: 'white',
+          boxShadow: '0 2px 10px hsla(258,78%,55%,0.35)',
         }}>
         <Zap size={9} fill="white" />
         <span>LIVE</span>
@@ -51,15 +50,15 @@ const TickerBanner = () => {
         {items.map((item, i) => (
           <span key={i} className="inline-flex items-center flex-shrink-0">
             <span className="inline-flex items-center gap-2 px-5 text-[12.5px]">
-              <span className="font-semibold" style={{ color: 'rgba(255,255,255,0.95)' }}>{item.label}</span>
-              <span className="font-bold" style={{ color: 'hsl(42,96%,78%)' }}>{item.price}</span>
+              <span className="font-semibold" style={{ color: 'hsl(226,35%,18%)' }}>{item.label}</span>
+              <span className="font-bold" style={{ color: 'hsl(258,78%,50%)' }}>{item.price}</span>
               <span className="font-bold text-[11px] px-2.5 py-0.5 rounded-full"
                 style={{
-                  background: 'rgba(255,255,255,0.95)',
-                  color: 'hsl(258,78%,40%)',
+                  background: 'hsl(258,78%,55%)',
+                  color: 'white',
                 }}>{item.off}</span>
             </span>
-            <span className="text-[18px]" style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
+            <span className="text-[18px]" style={{ color: 'hsla(258,78%,55%,0.2)' }}>|</span>
           </span>
         ))}
       </div>
