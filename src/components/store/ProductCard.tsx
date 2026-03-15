@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, X, Clock, CheckCircle } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
@@ -13,12 +13,17 @@ interface ProductCardProps {
 
 const WA = '8801840099853';
 
+// Ripple particle type
+type Particle = { id: number; x: number; y: number };
+
 const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const [visible,     setVisible]     = useState(false);
   const [showModal,   setShowModal]   = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered,   setIsHovered]   = useState(false);
+  const [clicked,     setClicked]     = useState(false);
+  const [particles,   setParticles]   = useState<Particle[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const { addToCart, isInCart }         = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
@@ -40,6 +45,28 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
+
+  // Click ripple + burst animation
+  const handleCardClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = ref.current!.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Spawn burst particles
+    const newParticles: Particle[] = Array.from({ length: 10 }, (_, i) => ({
+      id: Date.now() + i,
+      x,
+      y,
+    }));
+    setParticles(p => [...p, ...newParticles]);
+    setTimeout(() => setParticles(p => p.filter(pt => !newParticles.find(n => n.id === pt.id))), 700);
+
+    // Card squeeze flash
+    setClicked(true);
+    setTimeout(() => setClicked(false), 180);
+
+    navigate(`/product/${product.slug || product.id}`);
+  }, [navigate, product.slug, product.id]);
 
   return (
     <>
@@ -153,17 +180,23 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
       {/* ── Main Card ── */}
       <div
         ref={ref}
-        className="group product-card-new flex flex-col cursor-pointer"
-        onClick={() => navigate(`/product/${product.slug || product.id}`)}
+        className="group product-card-new flex flex-col cursor-pointer relative overflow-hidden"
+        onClick={handleCardClick}
         style={{
           opacity:   visible ? 1 : 0,
           transform: visible
-            ? isHovered ? 'translateY(-6px) scale(1.015)' : 'translateY(0) scale(1)'
+            ? clicked
+              ? 'translateY(-3px) scale(0.97)'
+              : isHovered ? 'translateY(-6px) scale(1.015)' : 'translateY(0) scale(1)'
             : 'translateY(40px)',
-          transition: isHovered
+          transition: clicked
+            ? 'transform 0.1s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.1s ease'
+            : isHovered
             ? `opacity 0.1s, transform 0.35s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.35s ease`
             : `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s, box-shadow 0.4s ease`,
-          boxShadow: isHovered
+          boxShadow: clicked
+            ? '0 4px 60px hsla(185,90%,52%,0.6), 0 0 0 2px hsla(185,90%,52%,0.6)'
+            : isHovered
             ? '0 16px 40px hsla(271,91%,65%,0.3), 0 0 0 1px hsla(271,91%,65%,0.4), 0 32px 60px hsla(215,40%,4%,0.5)'
             : '0 4px 20px hsla(215,40%,4%,0.4)',
           borderRadius: 'var(--radius)',
@@ -171,9 +204,55 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* ── Ripple burst particles ── */}
+        {particles.map(pt => (
+          <span
+            key={pt.id}
+            className="pointer-events-none absolute z-[100]"
+            style={{ left: pt.x, top: pt.y }}
+          >
+            {Array.from({ length: 8 }).map((_, i) => {
+              const angle = (i / 8) * 360;
+              const dist = 38 + Math.random() * 28;
+              const dx = Math.cos((angle * Math.PI) / 180) * dist;
+              const dy = Math.sin((angle * Math.PI) / 180) * dist;
+              const size = 4 + Math.random() * 5;
+              const colors = ['hsl(271,91%,75%)', 'hsl(185,90%,62%)', 'hsl(320,90%,72%)', 'hsl(40,100%,65%)'];
+              const color = colors[i % colors.length];
+              return (
+                <span
+                  key={i}
+                  className="absolute rounded-full"
+                  style={{
+                    width: size,
+                    height: size,
+                    background: color,
+                    boxShadow: `0 0 6px ${color}`,
+                    transform: 'translate(-50%, -50%)',
+                    animation: `card-burst 0.6s ease-out forwards`,
+                    animationDelay: `${i * 0.02}s`,
+                    '--dx': `${dx}px`,
+                    '--dy': `${dy}px`,
+                  } as React.CSSProperties}
+                />
+              );
+            })}
+          </span>
+        ))}
+
+        {/* Click ripple wave */}
+        {clicked && (
+          <span
+            className="pointer-events-none absolute inset-0 z-50 rounded-[inherit]"
+            style={{
+              background: 'radial-gradient(circle at center, hsla(185,90%,52%,0.18) 0%, transparent 70%)',
+              animation: 'card-ripple-wave 0.35s ease-out forwards',
+            }}
+          />
+        )}
+
         {/* ── Image ── */}
         <div className="card-image-wrap relative overflow-hidden aspect-square bg-muted">
-
           {/* Scan line on hover */}
           <div className="card-scan-line" />
 
