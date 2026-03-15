@@ -241,21 +241,19 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
       className="group rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
       style={{
         animationDelay: `${delay}s`,
-        background: 'hsla(222,22%,13%,0.85)',
-        border: hovered ? '1px solid hsla(15,100%,60%,0.3)' : '1px solid hsla(0,0%,100%,0.07)',
-        backdropFilter: 'blur(16px)',
+        background: 'hsl(var(--card))',
+        border: hovered ? '1px solid hsla(15,100%,60%,0.4)' : '1px solid hsl(var(--border))',
         transform: hovered ? 'translateY(-5px)' : 'none',
         boxShadow: hovered
-          ? '0 24px 56px hsla(220,30%,5%,0.5), 0 0 0 0 transparent, 0 0 24px hsla(15,100%,60%,0.12)'
-          : '0 4px 24px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.05)',
+          ? '0 16px 40px hsla(15,100%,60%,0.15), 0 4px 16px hsla(226,35%,12%,0.1)'
+          : '0 2px 12px hsla(226,35%,12%,0.07)',
         transition: 'all 0.35s cubic-bezier(0.23,1,0.32,1)',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Image */}
-      <div className="relative aspect-square overflow-hidden"
-        style={{ background: 'hsla(222,22%,10%,0.8)' }}>
+      <div className="relative aspect-square overflow-hidden bg-muted">
         <img
           src={product.image_url || 'https://placehold.co/300x300/1a1f2e/f97316?text=Sale'}
           alt={product.name}
