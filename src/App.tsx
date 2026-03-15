@@ -40,6 +40,11 @@ import AdminAttributes from "./pages/admin/AdminAttributes";
 import AdminPages from "./pages/admin/AdminPages";
 import Shop from "./pages/Shop";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
+import RefundPolicy from "./pages/RefundPolicy";
+import OrderPolicy from "./pages/OrderPolicy";
+import DeliveryInfo from "./pages/DeliveryInfo";
+import ReturnPolicy from "./pages/ReturnPolicy";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -97,6 +102,11 @@ const App = () => (
                   <Route path="pages" element={<AdminPages />} />
                 </Route>
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-conditions" element={<TermsConditions />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/order-policy" element={<OrderPolicy />} />
+                <Route path="/delivery-info" element={<DeliveryInfo />} />
+                <Route path="/return-policy" element={<ReturnPolicy />} />
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
