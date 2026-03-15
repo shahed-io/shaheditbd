@@ -45,6 +45,7 @@ import RefundPolicy from "./pages/RefundPolicy";
 import OrderPolicy from "./pages/OrderPolicy";
 import DeliveryInfo from "./pages/DeliveryInfo";
 import ReturnPolicy from "./pages/ReturnPolicy";
+import ContactUs from "./pages/ContactUs";
 
 const queryClient = new QueryClient({
   defaultOptions: {
