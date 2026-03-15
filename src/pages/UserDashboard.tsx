@@ -1155,6 +1155,60 @@ const UserDashboard = () => {
                 </div>
               )}
 
+              {/* ── LANGUAGE TAB ── */}
+              {activeTab === 'language' && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2">
+                      <Globe size={18} className="text-primary" /> ভাষা নির্বাচন
+                    </h2>
+                    <p className="text-sm text-muted-foreground">আপনার পছন্দের ভাষা বেছে নিন</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {LANGUAGES.map(lang => {
+                      const isActive = selectedLang === lang.code;
+                      return (
+                        <button
+                          key={lang.code}
+                          onClick={() => {
+                            setSelectedLang(lang.code);
+                            setStoredLang(lang.code);
+                            toast.success(`✅ ভাষা পরিবর্তন হয়েছে: ${lang.native}`);
+                          }}
+                          className={`flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-200 ${
+                            isActive
+                              ? 'border-primary/60 bg-primary/10'
+                              : 'border-border glass-card hover:border-primary/30 hover:bg-muted/20'
+                          }`}
+                        >
+                          <span className="text-3xl leading-none">{lang.flag}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className={`font-bold text-sm ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                              {lang.native}
+                            </p>
+                            <p className="text-xs text-muted-foreground">{lang.name} · {lang.region}</p>
+                          </div>
+                          {isActive && (
+                            <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                              style={{ background: 'hsl(var(--primary))' }}>
+                              <CheckCircle2 size={12} className="text-primary-foreground" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="glass-card rounded-2xl p-4 border border-border">
+                    <p className="text-xs text-muted-foreground flex items-start gap-2">
+                      <AlertCircle size={13} className="text-amber-500 mt-0.5 flex-shrink-0" />
+                      বর্তমানে UI বাংলায় রয়েছে। ভাষা পরিবর্তনের সম্পূর্ণ সাপোর্ট近 শীঘ্রই আসছে। আপনার পছন্দ সংরক্ষিত হবে।
+                    </p>
+                  </div>
+                </div>
+              )}
+
 
             </div>{/* end Content Panel */}
           </div>
