@@ -39,6 +39,7 @@ const Categories = () => {
 
       if (!categories?.length) { setLoading(false); return; }
 
+      const HIDDEN_CATS = ['Adobe', 'Antivirus', 'Streaming'];
       setCats(
         categories
           .map(c => ({
@@ -48,7 +49,7 @@ const Categories = () => {
             description: c.description,
             count: Array.isArray(c.products) ? c.products.length : 0,
           }))
-          .filter(c => c.count > 0)
+          .filter(c => c.count > 0 && !HIDDEN_CATS.includes(c.name))
       );
       setLoading(false);
     };
