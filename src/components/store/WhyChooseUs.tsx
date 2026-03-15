@@ -159,7 +159,7 @@ const WhyChooseUs = () => {
             <Sparkles size={32} style={{ color: 'hsla(258,78%,55%,0.2)' }} />
           </div>
           <div className="relative z-10">
-            <p className="text-center text-foreground/40 text-[11px] font-semibold mb-10 tracking-[0.25em] uppercase font-fira">
+            <p className="text-center text-muted-foreground/60 text-[11px] font-semibold mb-10 tracking-[0.25em] uppercase font-fira">
               Our Numbers Speak For Themselves
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
