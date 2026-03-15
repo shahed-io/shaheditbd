@@ -16,9 +16,10 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'wallet';
 
 const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string; type: string; icon: string }[] = [
+  { id: 'wallet',         label: 'Wallet',        color: 'from-violet-600 to-purple-700',  number: '', type: 'Wallet Balance',    icon: '💰' },
   { id: 'bkash',          label: 'bKash',         color: 'from-pink-600 to-pink-700',     number: '01820060046', type: 'Send Money',       icon: '💳' },
   { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600', number: '01840099853', type: 'Send Money',       icon: '📱' },
   { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700', number: '01840099853', type: 'Send Money',       icon: '🚀' },
