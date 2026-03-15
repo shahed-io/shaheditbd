@@ -1,7 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useReveal } from '@/hooks/useReveal';
+
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+  dx: number;
+  dy: number;
+  color: string;
+}
+
 
 const CAT_META: Record<string, { icon: string; glow: string; accent: string }> = {
   'Windows':      { icon: '🪟', glow: 'hsla(210,90%,60%,0.18)', accent: 'hsl(210,90%,60%)' },
