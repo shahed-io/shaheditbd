@@ -23,40 +23,13 @@ const DEFAULT_POLICIES = [
   { label: 'Return Policy',          href: '/return-policy' },
 ];
 
-const NAV_COL = [
-  {
-    title: 'Products',
-    links: [
-      { label: 'Windows Keys',     href: '#' },
-      { label: 'Office 365',       href: '#' },
-      { label: 'Adobe Creative',   href: '#' },
-      { label: 'Streaming',        href: '#' },
-      { label: 'VPN & Security',   href: '#' },
-      { label: 'AI Tools',         href: '#' },
-    ]
-  },
-  {
-    title: 'Information',
-    links: [
-      { label: 'FAQs',             href: '/help' },
-      { label: 'Help Center',      href: '/help' },
-      { label: 'About Us',         href: '/about' },
-      { label: 'My Account',       href: '/dashboard' },
-      { label: 'Contact Us',       href: '/contact' },
-      { label: 'All Products',     href: '/shop' },
-    ]
-  },
-  {
-    title: 'Policies',
-    links: [
-      { label: 'Privacy Policy',       href: '/privacy-policy' },
-      { label: 'Terms & Conditions',   href: '/terms-conditions' },
-      { label: 'Refund & Return Policy', href: '/refund-policy' },
-      { label: 'Order & Cancellation', href: '/order-policy' },
-      { label: 'Delivery Info',        href: '/delivery-info' },
-      { label: 'Return Policy',        href: '/return-policy' },
-    ]
-  },
+const PRODUCTS_COL = [
+  { label: 'Windows Keys',   href: '#' },
+  { label: 'Office 365',     href: '#' },
+  { label: 'Adobe Creative', href: '#' },
+  { label: 'Streaming',      href: '#' },
+  { label: 'VPN & Security', href: '#' },
+  { label: 'AI Tools',       href: '#' },
 ];
 
 const Footer = () => (
