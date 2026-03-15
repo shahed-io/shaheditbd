@@ -47,6 +47,7 @@ import DeliveryInfo from "./pages/DeliveryInfo";
 import ReturnPolicy from "./pages/ReturnPolicy";
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
+import FAQs from "./pages/FAQs";
 
 const queryClient = new QueryClient({
   defaultOptions: {
