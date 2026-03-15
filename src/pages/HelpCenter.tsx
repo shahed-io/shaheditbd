@@ -45,6 +45,7 @@ const HelpCenter = () => {
   const { slug } = useParams<{ slug?: string }>();
   const navigate = useNavigate();
   const [articles, setArticles] = useState<any[]>([]);
+  const [softwareDownloads, setSoftwareDownloads] = useState<any[]>([]);
   const [currentArticle, setCurrentArticle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -52,11 +53,14 @@ const HelpCenter = () => {
   const [helpfulVoted, setHelpfulVoted] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.from('help_articles').select('*').eq('status', 'published').order('sort_order').order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setArticles(data || []);
-        setLoading(false);
-      });
+    Promise.all([
+      supabase.from('help_articles').select('*').eq('status', 'published').order('sort_order').order('created_at', { ascending: false }),
+      supabase.from('software_downloads' as any).select('*').eq('is_active', true).order('sort_order'),
+    ]).then(([{ data: articles }, { data: software }]) => {
+      setArticles(articles || []);
+      setSoftwareDownloads((software as any) || []);
+      setLoading(false);
+    });
   }, []);
 
   useEffect(() => {
