@@ -70,11 +70,7 @@ const Categories = () => {
   }
 
   return (
-    <section
-      ref={sectionRef as React.RefObject<HTMLElement>}
-      className="py-20 relative overflow-hidden"
-      style={{ background: 'hsl(var(--background))' }}
-    >
+    <section className="py-20 relative overflow-hidden bg-transparent">
       {/* Background blobs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.06), transparent)', filter: 'blur(80px)' }} />

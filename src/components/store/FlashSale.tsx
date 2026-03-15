@@ -90,7 +90,7 @@ const FlashSale = () => {
   ];
 
   return (
-    <section className="py-24 relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
+    <section className="py-24 relative overflow-hidden bg-transparent">
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full"

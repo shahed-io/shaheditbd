@@ -37,7 +37,7 @@ const WhyChooseUs = () => {
   }, []);
 
   return (
-    <section className="py-24 relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
+    <section className="py-24 relative overflow-hidden bg-transparent">
       {/* Background ambient */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/3 left-0 w-96 h-96 rounded-full"
