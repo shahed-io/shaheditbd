@@ -222,22 +222,28 @@ const HeroBanner = () => {
               <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full translate-x-0.5 translate-y-0.5 z-10"
                 style={{ background: slide.accentFrom, boxShadow: `0 0 10px 3px ${slide.accentFrom}` }} />
 
-              {/* Frosted glass inner card */}
+              {/* Frosted glass inner card — accent-tinted */}
               <div className="relative overflow-hidden"
                 style={{
                   borderRadius: 'calc(2rem - 2px)',
-                  background: 'hsla(230, 40%, 8%, 0.85)',
-                  backdropFilter: 'blur(28px) saturate(180%)',
+                  background: `linear-gradient(150deg, ${slide.accentFrom}28 0%, ${slide.accentTo}18 50%, hsla(230,30%,10%,0.88) 100%)`,
+                  backdropFilter: 'blur(28px) saturate(200%)',
                 }}>
-                {/* Inner shine overlay */}
+                {/* Strong inner radial glow top-left */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 15% 10%, ${slide.accentFrom}22 0%, transparent 55%)` }} />
+                  style={{ backgroundImage: `radial-gradient(ellipse at 20% 15%, ${slide.accentFrom}45 0%, transparent 60%)` }} />
+                {/* Bottom-right secondary glow */}
+                <div className="absolute inset-0 pointer-events-none"
+                  style={{ backgroundImage: `radial-gradient(ellipse at 85% 90%, ${slide.accentTo}30 0%, transparent 50%)` }} />
                 {/* Shimmer line */}
-                <div className="absolute top-0 left-0 right-0 h-px"
-                  style={{ background: `linear-gradient(90deg, transparent, ${slide.accentFrom}80, ${slide.accentTo}80, transparent)` }} />
+                <div className="absolute top-0 left-0 right-0 h-[1.5px]"
+                  style={{ background: `linear-gradient(90deg, transparent, ${slide.accentFrom}cc, ${slide.accentTo}cc, transparent)` }} />
+                {/* Bottom shimmer line */}
+                <div className="absolute bottom-0 left-0 right-0 h-px"
+                  style={{ background: `linear-gradient(90deg, transparent, ${slide.accentTo}50, transparent)` }} />
                 {/* Dot grid */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                  style={{ backgroundImage: `radial-gradient(circle, ${slide.accentFrom}12 1px, transparent 1px)`, backgroundSize: '20px 20px' }} />
 
                 <div className="relative p-8">
                   {slide.comboSlide && slide.combo ? (
