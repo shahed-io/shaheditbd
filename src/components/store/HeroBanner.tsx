@@ -198,114 +198,145 @@ const HeroBanner = () => {
             </div>
           </div>
 
-          {/* Right Visual — Glassmorphic Card */}
+          {/* Right Visual — Glassmorphism Gradient Border Card */}
           <div className="relative hidden lg:flex items-center justify-center min-h-[440px]">
+            {/* Gradient border wrapper */}
             <div
-              className="relative w-[300px] rounded-[2rem] overflow-hidden anim-float"
+              className="relative w-[300px] anim-float"
               style={{
-                background: `linear-gradient(150deg, ${slide.accentFrom}cc, ${slide.accentTo}bb)`,
-                boxShadow: `0 32px 80px ${slide.accentFrom}40, 0 0 0 1px ${slide.accentFrom}30, inset 0 1px 0 hsla(0,0%,100%,0.2)`,
                 opacity:    dir === 'in' ? 1 : 0,
                 transform:  dir === 'in' ? 'scale(1)' : 'scale(0.95)',
                 transition: 'opacity 0.3s, transform 0.3s',
-                backdropFilter: 'blur(20px)',
+                borderRadius: '2rem',
+                padding: '2px',
+                background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo}, ${slide.accentFrom}88)`,
+                boxShadow: `0 32px 80px ${slide.accentFrom}40, 0 8px 32px ${slide.accentTo}30`,
               }}>
-              {/* Inner glass shine */}
-              <div className="absolute inset-0 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(ellipse at 15% 15%, rgba(255,255,255,0.22) 0%, transparent 55%)' }} />
-              <div className="absolute inset-0 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+              {/* Corner glow dots */}
+              <div className="absolute top-0 left-0 w-3 h-3 rounded-full -translate-x-0.5 -translate-y-0.5 z-10"
+                style={{ background: slide.accentFrom, boxShadow: `0 0 10px 3px ${slide.accentFrom}` }} />
+              <div className="absolute top-0 right-0 w-3 h-3 rounded-full translate-x-0.5 -translate-y-0.5 z-10"
+                style={{ background: slide.accentTo, boxShadow: `0 0 10px 3px ${slide.accentTo}` }} />
+              <div className="absolute bottom-0 left-0 w-3 h-3 rounded-full -translate-x-0.5 translate-y-0.5 z-10"
+                style={{ background: slide.accentTo, boxShadow: `0 0 10px 3px ${slide.accentTo}` }} />
+              <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full translate-x-0.5 translate-y-0.5 z-10"
+                style={{ background: slide.accentFrom, boxShadow: `0 0 10px 3px ${slide.accentFrom}` }} />
 
-              <div className="relative p-8">
-                {slide.comboSlide && slide.combo ? (
-                  /* Combo Slide Card */
-                  <>
-                    <div className="flex items-center justify-between mb-5">
-                      <div className="flex items-center gap-2">
-                        <Award size={18} className="text-white" />
-                        <span className="text-white font-bold text-[11px] uppercase tracking-widest">Official Bundle</span>
-                      </div>
-                      <Sparkles size={16} className="text-white/40 anim-spin-slow" />
-                    </div>
-                    <div className="space-y-2.5 mb-5">
-                      {slide.combo.map((item) => (
-                        <div key={item.name}
-                          className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all"
-                          style={{
-                            background: item.highlight
-                              ? `linear-gradient(135deg, ${item.color}30, ${item.color}18)`
-                              : 'hsla(0,0%,100%,0.1)',
-                            border: item.highlight
-                              ? `1px solid ${item.color}70`
-                              : '1px solid hsla(0,0%,100%,0.15)',
-                            boxShadow: item.highlight ? `0 0 14px ${item.color}30` : 'none',
-                          }}>
-                          <span className="text-2xl">{item.icon}</span>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-white font-bold text-[13px] leading-tight truncate">{item.name}</div>
-                            <div className="text-[10px] mt-0.5 font-semibold" style={{ color: item.color }}>{item.tag}</div>
-                          </div>
-                          {item.highlight && (
-                            <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full text-white"
-                              style={{ background: item.color }}>
-                              OFFICIAL
-                            </span>
-                          )}
+              {/* Frosted glass inner card */}
+              <div className="relative overflow-hidden"
+                style={{
+                  borderRadius: 'calc(2rem - 2px)',
+                  background: 'hsla(230, 40%, 8%, 0.85)',
+                  backdropFilter: 'blur(28px) saturate(180%)',
+                }}>
+                {/* Inner shine overlay */}
+                <div className="absolute inset-0 pointer-events-none"
+                  style={{ backgroundImage: `radial-gradient(ellipse at 15% 10%, ${slide.accentFrom}22 0%, transparent 55%)` }} />
+                {/* Shimmer line */}
+                <div className="absolute top-0 left-0 right-0 h-px"
+                  style={{ background: `linear-gradient(90deg, transparent, ${slide.accentFrom}80, ${slide.accentTo}80, transparent)` }} />
+                {/* Dot grid */}
+                <div className="absolute inset-0 pointer-events-none"
+                  style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+
+                <div className="relative p-8">
+                  {slide.comboSlide && slide.combo ? (
+                    /* Combo Slide Card */
+                    <>
+                      <div className="flex items-center justify-between mb-5">
+                        <div className="flex items-center gap-2">
+                          <Award size={18} className="text-white" />
+                          <span className="text-white font-bold text-[11px] uppercase tracking-widest">Official Bundle</span>
                         </div>
-                      ))}
-                    </div>
-                    <div className="pt-4 flex items-center justify-between" style={{ borderTop: '1px solid hsla(0,0%,100%,0.15)' }}>
-                      <div>
-                        <div className="text-white/45 text-xs line-through font-fira">{slide.original}</div>
-                        <div className="text-white font-sora font-black text-[2rem] leading-none mt-0.5">{slide.price}</div>
+                        <Sparkles size={16} className="anim-spin-slow" style={{ color: `${slide.accentFrom}99` }} />
                       </div>
-                      <div className="rounded-2xl px-4 py-3 text-center"
-                        style={{ background: 'hsla(0,0%,100%,0.15)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.2)' }}>
-                        <div className="font-fira font-black text-[1.25rem] text-white leading-none">-{slide.off}</div>
-                        <div className="text-[9px] text-white/55 uppercase tracking-wider mt-0.5">OFF</div>
+                      <div className="space-y-2.5 mb-5">
+                        {slide.combo.map((item) => (
+                          <div key={item.name}
+                            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all"
+                            style={{
+                              background: item.highlight
+                                ? `linear-gradient(135deg, ${item.color}25, ${item.color}12)`
+                                : 'hsla(0,0%,100%,0.06)',
+                              border: item.highlight
+                                ? `1px solid ${item.color}60`
+                                : '1px solid hsla(0,0%,100%,0.1)',
+                              boxShadow: item.highlight ? `0 0 14px ${item.color}25` : 'none',
+                            }}>
+                            <span className="text-2xl">{item.icon}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-white font-bold text-[13px] leading-tight truncate">{item.name}</div>
+                              <div className="text-[10px] mt-0.5 font-semibold" style={{ color: item.color }}>{item.tag}</div>
+                            </div>
+                            {item.highlight && (
+                              <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full text-white"
+                                style={{ background: item.color }}>
+                                OFFICIAL
+                              </span>
+                            )}
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                    <button className="mt-4 w-full py-3.5 rounded-xl font-bold text-sm transition-all hover:scale-[1.02]"
-                      style={{ background: 'hsla(0,0%,100%,0.92)', color: slide.accentFrom }}>
-                      Get Bundle →
-                    </button>
-                  </>
-                ) : (
-                  /* Regular Slide Card */
-                  <>
-                    <div className="flex items-start justify-between mb-8">
-                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-soft"
-                        style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.25)' }}>
-                        {slide.emoji}
+                      <div className="pt-4 flex items-center justify-between" style={{ borderTop: `1px solid ${slide.accentFrom}30` }}>
+                        <div>
+                          <div className="text-white/40 text-xs line-through font-fira">{slide.original}</div>
+                          <div className="text-white font-sora font-black text-[2rem] leading-none mt-0.5">{slide.price}</div>
+                        </div>
+                        <div className="rounded-2xl px-4 py-3 text-center"
+                          style={{ background: `linear-gradient(135deg, ${slide.accentFrom}25, ${slide.accentTo}18)`, border: `1px solid ${slide.accentFrom}40` }}>
+                          <div className="font-fira font-black text-[1.25rem] leading-none"
+                            style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            -{slide.off}
+                          </div>
+                          <div className="text-[9px] text-white/50 uppercase tracking-wider mt-0.5">OFF</div>
+                        </div>
                       </div>
-                      <Sparkles size={18} className="text-white/40 anim-spin-slow mt-1" />
-                    </div>
-                    <div className="text-white/55 text-[10px] font-fira uppercase tracking-[0.2em] mb-2">Featured Deal</div>
-                    <div className="text-white font-sora font-black text-[22px] leading-tight">{slide.title} {slide.titleAccent}</div>
-                    <div className="text-white/75 text-sm mt-1 font-medium">{slide.subtitle}</div>
-                    <div className="flex flex-wrap gap-1.5 mt-4">
-                      {slide.features.map(f => (
-                        <span key={f} className="text-[10px] font-bold text-white/80 px-2.5 py-1 rounded-full"
-                          style={{ background: 'hsla(0,0%,100%,0.15)', border: '1px solid hsla(0,0%,100%,0.2)', backdropFilter: 'blur(8px)' }}>{f}</span>
-                      ))}
-                    </div>
-                    <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid hsla(0,0%,100%,0.15)' }}>
-                      <div>
-                        <div className="text-white/45 text-xs line-through font-fira">{slide.original}</div>
-                        <div className="text-white font-sora font-black text-[2rem] leading-none mt-0.5">{slide.price}</div>
+                      <button className="mt-4 w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all hover:scale-[1.02] hover:brightness-110"
+                        style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 6px 20px ${slide.accentFrom}50` }}>
+                        Get Bundle →
+                      </button>
+                    </>
+                  ) : (
+                    /* Regular Slide Card */
+                    <>
+                      <div className="flex items-start justify-between mb-8">
+                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl"
+                          style={{ background: `linear-gradient(135deg, ${slide.accentFrom}30, ${slide.accentTo}20)`, border: `1px solid ${slide.accentFrom}50`, boxShadow: `0 4px 16px ${slide.accentFrom}30` }}>
+                          {slide.emoji}
+                        </div>
+                        <Sparkles size={18} className="anim-spin-slow mt-1" style={{ color: `${slide.accentFrom}80` }} />
                       </div>
-                      <div className="rounded-2xl px-4 py-3 text-center"
-                        style={{ background: 'hsla(0,0%,100%,0.15)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.2)' }}>
-                        <div className="font-fira font-black text-[1.25rem] text-white leading-none">-{slide.off}</div>
-                        <div className="text-[9px] text-white/55 uppercase tracking-wider mt-0.5">OFF</div>
+                      <div className="text-[10px] font-fira uppercase tracking-[0.2em] mb-2"
+                        style={{ color: `${slide.accentFrom}cc` }}>Featured Deal</div>
+                      <div className="text-white font-sora font-black text-[22px] leading-tight">{slide.title} {slide.titleAccent}</div>
+                      <div className="text-white/70 text-sm mt-1 font-medium">{slide.subtitle}</div>
+                      <div className="flex flex-wrap gap-1.5 mt-4">
+                        {slide.features.map(f => (
+                          <span key={f} className="text-[10px] font-bold px-2.5 py-1 rounded-full"
+                            style={{ background: `${slide.accentFrom}18`, border: `1px solid ${slide.accentFrom}40`, color: 'rgba(255,255,255,0.85)' }}>{f}</span>
+                        ))}
                       </div>
-                    </div>
-                    <button className="mt-5 w-full py-3.5 rounded-xl font-bold text-sm transition-all hover:scale-[1.02]"
-                      style={{ background: 'hsla(0,0%,100%,0.92)', color: slide.accentFrom }}>
-                      Order Now →
-                    </button>
-                  </>
-                )}
+                      <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: `1px solid ${slide.accentFrom}25` }}>
+                        <div>
+                          <div className="text-white/40 text-xs line-through font-fira">{slide.original}</div>
+                          <div className="text-white font-sora font-black text-[2rem] leading-none mt-0.5">{slide.price}</div>
+                        </div>
+                        <div className="rounded-2xl px-4 py-3 text-center"
+                          style={{ background: `linear-gradient(135deg, ${slide.accentFrom}25, ${slide.accentTo}18)`, border: `1px solid ${slide.accentFrom}40` }}>
+                          <div className="font-fira font-black text-[1.25rem] leading-none"
+                            style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            -{slide.off}
+                          </div>
+                          <div className="text-[9px] text-white/50 uppercase tracking-wider mt-0.5">OFF</div>
+                        </div>
+                      </div>
+                      <button className="mt-5 w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all hover:scale-[1.02] hover:brightness-110"
+                        style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 6px 20px ${slide.accentFrom}50` }}>
+                        Order Now →
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
