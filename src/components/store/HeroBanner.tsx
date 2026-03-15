@@ -222,25 +222,25 @@ const HeroBanner = () => {
               <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full translate-x-0.5 translate-y-0.5 z-10"
                 style={{ background: slide.accentFrom, boxShadow: `0 0 10px 3px ${slide.accentFrom}` }} />
 
-              {/* Frosted glass inner card — deep dark + accent tinted */}
+              {/* Frosted glass inner card — vivid accent gradient, no black/white */}
               <div className="relative overflow-hidden"
                 style={{
                   borderRadius: 'calc(2rem - 2px)',
-                  background: `linear-gradient(145deg, hsla(230,40%,7%,0.97) 0%, hsla(230,35%,10%,0.95) 100%)`,
-                  backdropFilter: 'blur(32px) saturate(180%)',
+                  background: `linear-gradient(145deg, ${slide.accentFrom}e8 0%, ${slide.accentTo}d0 60%, ${slide.accentFrom}c0 100%)`,
+                  backdropFilter: 'blur(24px) saturate(160%)',
                 }}>
-                {/* Top-left accent radial glow */}
+                {/* Light radial shine top-left */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 10% 0%, ${slide.accentFrom}55 0%, transparent 55%)` }} />
-                {/* Bottom-right secondary glow */}
+                  style={{ backgroundImage: `radial-gradient(ellipse at 15% 10%, rgba(255,255,255,0.28) 0%, transparent 55%)` }} />
+                {/* Soft vignette bottom */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 90% 100%, ${slide.accentTo}40 0%, transparent 50%)` }} />
-                {/* Top shimmer line */}
+                  style={{ backgroundImage: `radial-gradient(ellipse at 80% 95%, rgba(0,0,0,0.18) 0%, transparent 55%)` }} />
+                {/* Top shimmer line — white */}
                 <div className="absolute top-0 left-0 right-0 h-[1.5px]"
-                  style={{ background: `linear-gradient(90deg, transparent 5%, ${slide.accentFrom}ff 40%, ${slide.accentTo}ff 60%, transparent 95%)` }} />
-                {/* Dot grid */}
+                  style={{ background: `linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.5) 60%, transparent 95%)` }} />
+                {/* Dot grid — white subtle */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(circle, ${slide.accentFrom}18 1px, transparent 1px)`, backgroundSize: '22px 22px' }} />
+                  style={{ backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)`, backgroundSize: '22px 22px' }} />
 
                 <div className="relative p-8">
                   {slide.comboSlide && slide.combo ? (
@@ -299,65 +299,77 @@ const HeroBanner = () => {
                   ) : (
                     /* Regular Slide Card */
                     <>
+                      {/* Icon + Sparkles */}
                       <div className="flex items-start justify-between mb-6">
                         <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
                           style={{
-                            background: `linear-gradient(135deg, ${slide.accentFrom}40, ${slide.accentTo}28)`,
-                            border: `1.5px solid ${slide.accentFrom}70`,
-                            boxShadow: `0 4px 20px ${slide.accentFrom}45`,
+                            background: 'rgba(255,255,255,0.25)',
+                            border: '1.5px solid rgba(255,255,255,0.45)',
+                            boxShadow: '0 4px 16px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4)',
+                            backdropFilter: 'blur(8px)',
                           }}>
                           {slide.emoji}
                         </div>
-                        <Sparkles size={18} className="anim-spin-slow mt-1" style={{ color: slide.accentFrom }} />
+                        <Sparkles size={18} className="anim-spin-slow mt-1" style={{ color: 'rgba(255,255,255,0.7)' }} />
                       </div>
 
-                      {/* FEATURED DEAL label — accent colored */}
+                      {/* FEATURED DEAL — white muted */}
                       <div className="text-[10px] font-fira font-bold uppercase tracking-[0.22em] mb-2"
-                        style={{ color: slide.accentFrom }}>Featured Deal</div>
+                        style={{ color: 'rgba(255,255,255,0.65)' }}>Featured Deal</div>
 
-                      {/* Title — bright white, bold */}
-                      <div className="font-sora font-black text-[23px] leading-tight text-white drop-shadow-sm">
-                        {slide.title} <span style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{slide.titleAccent}</span>
+                      {/* Title — pure white bold */}
+                      <div className="font-sora font-black text-[23px] leading-tight"
+                        style={{ color: '#ffffff', textShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>
+                        {slide.title}{' '}
+                        <span style={{ color: 'rgba(255,255,255,0.95)' }}>{slide.titleAccent}</span>
                       </div>
 
-                      {/* Subtitle — clearly readable */}
-                      <div className="text-white/80 text-[13px] mt-1.5 font-medium leading-snug">{slide.subtitle}</div>
+                      {/* Subtitle */}
+                      <div className="text-[13px] mt-1.5 font-medium leading-snug"
+                        style={{ color: 'rgba(255,255,255,0.82)' }}>{slide.subtitle}</div>
 
-                      {/* Feature pills — solid accent-tinted backgrounds */}
+                      {/* Feature pills — frosted white */}
                       <div className="flex flex-wrap gap-2 mt-4">
                         {slide.features.map(f => (
                           <span key={f} className="text-[11px] font-semibold px-3 py-1.5 rounded-full"
                             style={{
-                              background: `linear-gradient(135deg, ${slide.accentFrom}30, ${slide.accentTo}20)`,
-                              border: `1px solid ${slide.accentFrom}60`,
-                              color: 'rgba(255,255,255,0.95)',
-                              boxShadow: `0 2px 8px ${slide.accentFrom}25`,
+                              background: 'rgba(255,255,255,0.2)',
+                              border: '1px solid rgba(255,255,255,0.4)',
+                              color: '#ffffff',
+                              backdropFilter: 'blur(6px)',
                             }}>{f}</span>
                         ))}
                       </div>
 
                       {/* Price row */}
-                      <div className="mt-6 pt-4 flex items-center justify-between" style={{ borderTop: `1px solid ${slide.accentFrom}35` }}>
+                      <div className="mt-6 pt-4 flex items-center justify-between"
+                        style={{ borderTop: '1px solid rgba(255,255,255,0.25)' }}>
                         <div>
-                          <div className="text-white/45 text-xs line-through font-fira">{slide.original}</div>
-                          <div className="text-white font-sora font-black text-[2.1rem] leading-none mt-0.5">{slide.price}</div>
+                          <div className="text-xs line-through font-fira"
+                            style={{ color: 'rgba(255,255,255,0.5)' }}>{slide.original}</div>
+                          <div className="font-sora font-black text-[2.1rem] leading-none mt-0.5"
+                            style={{ color: '#ffffff', textShadow: '0 2px 16px rgba(0,0,0,0.2)' }}>{slide.price}</div>
                         </div>
-                        {/* OFF badge — solid vivid gradient */}
+                        {/* OFF badge — deep frosted dark */}
                         <div className="rounded-xl px-4 py-3 text-center"
                           style={{
-                            background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
-                            boxShadow: `0 4px 18px ${slide.accentFrom}65`,
+                            background: 'rgba(0,0,0,0.28)',
+                            border: '1px solid rgba(255,255,255,0.3)',
+                            backdropFilter: 'blur(10px)',
                           }}>
-                          <div className="font-fira font-black text-[1.1rem] text-white leading-none">-{slide.off}</div>
-                          <div className="text-[9px] text-white/85 uppercase tracking-wider mt-0.5">OFF</div>
+                          <div className="font-fira font-black text-[1.1rem] leading-none"
+                            style={{ color: '#ffffff' }}>-{slide.off}</div>
+                          <div className="text-[9px] uppercase tracking-wider mt-0.5"
+                            style={{ color: 'rgba(255,255,255,0.7)' }}>OFF</div>
                         </div>
                       </div>
 
-                      {/* CTA button */}
-                      <button className="mt-5 w-full py-3.5 rounded-2xl font-bold text-[14px] text-white transition-all hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                      {/* CTA button — white with colored text */}
+                      <button className="mt-5 w-full py-3.5 rounded-2xl font-bold text-[14px] transition-all hover:scale-[1.02] hover:brightness-105 active:scale-[0.98]"
                         style={{
-                          background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
-                          boxShadow: `0 8px 28px ${slide.accentFrom}60, inset 0 1px 0 rgba(255,255,255,0.2)`,
+                          background: 'rgba(255,255,255,0.95)',
+                          color: slide.accentFrom,
+                          boxShadow: '0 8px 28px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,1)',
                         }}>
                         Order Now →
                       </button>
