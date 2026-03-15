@@ -687,12 +687,12 @@ body::before {
    NEON TEXT GLOW
 ══════════════════════════════════════ */
 .neon-text-violet {
-  color: hsl(271,91%,75%);
-  text-shadow: 0 0 10px hsla(271,91%,65%,0.8), 0 0 30px hsla(271,91%,65%,0.4);
+  color: hsl(42,96%,72%);
+  text-shadow: 0 0 10px hsla(42,96%,58%,0.8), 0 0 30px hsla(42,96%,58%,0.4);
 }
 .neon-text-cyan {
-  color: hsl(185,90%,62%);
-  text-shadow: 0 0 10px hsla(185,90%,52%,0.8), 0 0 30px hsla(185,90%,52%,0.4);
+  color: hsl(186,78%,62%);
+  text-shadow: 0 0 10px hsla(186,78%,50%,0.8), 0 0 30px hsla(186,78%,50%,0.4);
 }
 
 /* ══════════════════════════════════════
