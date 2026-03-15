@@ -253,7 +253,7 @@ const HelpCenter = () => {
               color: '#fff',
               boxShadow: '0 4px 18px hsla(185,90%,42%,0.35), 0 1px 0 rgba(255,255,255,0.2) inset',
             }}>
-            <Headphones size={14} /> হেল্প সেন্টার
+            <Headphones size={14} /> Software Download Link
           </div>
           <h1 className="text-4xl sm:text-5xl font-black mb-4" style={{ fontFamily: 'Orbitron, sans-serif' }}>
             কিভাবে <span className="gradient-text">সাহায্য</span> করতে পারি?
