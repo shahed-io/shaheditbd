@@ -279,6 +279,47 @@ const HelpCenter = () => {
       </section>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
+
+        {/* ── Software Downloads Section ── */}
+        {softwareDownloads.length > 0 && (
+          <section className="mb-10">
+            <h2 className="font-bold text-foreground flex items-center gap-2 mb-4 text-sm">
+              <Download size={14} className="text-primary" /> সফটওয়্যার ডাউনলোড
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+              {softwareDownloads.map((sw: any) => (
+                <a
+                  key={sw.id}
+                  href={sw.download_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass-card rounded-2xl p-4 flex flex-col items-center gap-3 hover:border-primary/30 transition-all hover:-translate-y-1 group"
+                >
+                  <div className="w-16 h-16 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0"
+                    style={{ background: 'hsla(258,78%,55%,0.07)' }}>
+                    {sw.image_url ? (
+                      <img src={sw.image_url} alt={sw.name} className="w-full h-full object-contain p-1" />
+                    ) : (
+                      <Download size={24} className="text-primary" />
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">{sw.name}</p>
+                    {sw.description && (
+                      <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1">{sw.description}</p>
+                    )}
+                  </div>
+                  <div className="mt-auto w-full">
+                    <div className="flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-[11px] font-bold text-white"
+                      style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+                      <Download size={11} /> ডাউনলোড
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
         {/* Category Cards */}
         {!search && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
