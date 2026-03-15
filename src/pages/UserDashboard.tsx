@@ -11,7 +11,7 @@ import {
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
   Trash2, Download, History, BellRing, BellOff, ExternalLink, Wallet
 } from 'lucide-react';
-import logoIcon from '@/assets/logo-icon.png';
+import BrandLogo from '@/components/store/BrandLogo';
 
 interface Profile {
   display_name: string | null;
