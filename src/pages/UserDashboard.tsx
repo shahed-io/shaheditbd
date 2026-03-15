@@ -1017,125 +1017,209 @@ const UserDashboard = () => {
               {activeTab === 'wallet' && (
                 <div className="space-y-6">
                   {/* Balance Card */}
-                  <div className="rounded-2xl p-6 text-white relative overflow-hidden"
+                  <div className="rounded-2xl p-6 text-primary-foreground relative overflow-hidden"
                     style={{ background: 'linear-gradient(135deg, hsl(243,75%,50%), hsl(263,70%,48%))' }}>
                     <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                        <Wallet size={20} />
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                          <Wallet size={20} />
+                        </div>
+                        <div>
+                          <p className="text-sm opacity-80">My Wallet</p>
+                          <p className="text-xs opacity-60">Store Wallet</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm opacity-80">আমার ওয়ালেট</p>
-                        <p className="text-xs opacity-60">Shahed Store Wallet</p>
-                      </div>
-                    </div>
-                    <p className="text-4xl font-black tracking-tight">
-                      ৳{walletBalance.toLocaleString()}
-                    </p>
-                    <p className="text-sm opacity-70 mt-1">বর্তমান ব্যালেন্স</p>
-                    {walletLoading && (
-                      <div className="absolute top-4 right-4">
-                        <RefreshCw size={14} className="animate-spin opacity-60" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    {/* Top-up request */}
-                    <div className="rounded-2xl border border-border p-5 space-y-4 bg-card">
-                      <h3 className="font-bold text-foreground flex items-center gap-2">
-                        <Plus size={16} className="text-primary" /> টপ-আপ অনুরোধ
-                      </h3>
-                      <p className="text-xs text-muted-foreground">টাকা পাঠিয়ে অনুরোধ করুন, অ্যাডমিন যাচাই করে ব্যালেন্স যোগ করবে।</p>
-                      <div>
-                        <label className={labelCls}>পরিমাণ (৳)</label>
-                        <input
-                          type="number"
-                          min="10"
-                          value={topupAmount}
-                          onChange={e => setTopupAmount(e.target.value)}
-                          placeholder="যেমন: 500"
-                          className={inputCls.replace('pl-10', 'pl-4')}
-                        />
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {[100, 200, 500, 1000].map(v => (
-                          <button key={v} onClick={() => setTopupAmount(String(v))}
-                            className="px-3 py-1.5 rounded-lg text-xs border border-border hover:border-primary/50 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all">
-                            ৳{v}
-                          </button>
-                        ))}
-                      </div>
-                      <div>
-                        <label className={labelCls}>নোট (ঐচ্ছিক)</label>
-                        <input
-                          value={topupNote}
-                          onChange={e => setTopupNote(e.target.value)}
-                          placeholder="পেমেন্ট পদ্ধতি / TrxID..."
-                          className={inputCls.replace('pl-10', 'pl-4')}
-                        />
-                      </div>
-                      <button
-                        onClick={handleTopupRequest}
-                        disabled={topupProcessing || !topupAmount}
-                        className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
-                        style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}
-                      >
-                        {topupProcessing ? <><RefreshCw size={14} className="animate-spin" /> পাঠানো হচ্ছে...</> : <><Plus size={14} /> অনুরোধ পাঠান</>}
+                      <button onClick={fetchWallet} className="opacity-60 hover:opacity-100 transition-opacity">
+                        <RefreshCw size={14} className={walletLoading ? 'animate-spin' : ''} />
                       </button>
                     </div>
+                    <p className="text-4xl font-black tracking-tight">৳{walletBalance.toLocaleString()}</p>
+                    <p className="text-sm opacity-70 mt-1">Available Balance</p>
+                  </div>
 
-                    {/* Transaction History */}
-                    <div className="rounded-2xl border border-border overflow-hidden bg-card">
-                      <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-                        <h3 className="font-bold text-foreground flex items-center gap-2">
-                          <History size={14} className="text-primary" /> লেনদেন ইতিহাস
-                        </h3>
-                        <button onClick={fetchWallet} className="text-muted-foreground hover:text-primary transition-colors">
-                          <RefreshCw size={13} />
-                        </button>
-                      </div>
-                      <div className="divide-y divide-border max-h-[300px] overflow-y-auto">
-                        {walletLoading ? (
-                          <div className="p-6 text-center text-muted-foreground text-sm">লোড হচ্ছে...</div>
-                        ) : walletTx.length === 0 ? (
-                          <div className="p-6 text-center text-muted-foreground text-sm">কোনো লেনদেন নেই</div>
-                        ) : walletTx.map((tx: any) => (
-                          <div key={tx.id} className="flex items-center justify-between px-4 py-3">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
-                                {tx.type === 'credit'
-                                  ? <TrendingUp size={12} className="text-green-500" />
-                                  : <TrendingDown size={12} className="text-destructive" />
-                                }
-                              </div>
-                              <div>
-                                <p className="text-xs font-medium text-foreground">{tx.note || (tx.type === 'credit' ? 'ক্রেডিট' : 'ডেবিট')}</p>
-                                <p className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString('bn-BD', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                  {/* Top-up Wizard */}
+                  <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                    {/* Step indicators */}
+                    <div className="flex border-b border-border">
+                      {['Select Amount', 'Payment', 'Confirm'].map((s, i) => (
+                        <div key={i} className={`flex-1 py-3 text-center text-xs font-semibold transition-colors ${
+                          topupStep === i ? 'text-primary border-b-2 border-primary bg-primary/5' :
+                          topupStep > i ? 'text-muted-foreground' : 'text-muted-foreground/50'
+                        }`}>{i + 1}. {s}</div>
+                      ))}
+                    </div>
+
+                    <div className="p-5">
+                      {/* STEP 0: Select Amount */}
+                      {topupStep === 0 && (
+                        <div className="space-y-4">
+                          <p className="text-sm font-semibold text-foreground">How much do you want to add?</p>
+                          <div className="flex flex-wrap gap-2">
+                            {[100, 200, 500, 1000, 2000, 5000].map(v => (
+                              <button key={v} onClick={() => setTopupAmount(String(v))}
+                                className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all ${
+                                  topupAmount === String(v)
+                                    ? 'border-primary bg-primary/10 text-primary'
+                                    : 'border-border text-muted-foreground hover:border-primary/50 hover:text-primary'
+                                }`}>৳{v}</button>
+                            ))}
+                          </div>
+                          <div>
+                            <label className={labelCls}>Or enter custom amount</label>
+                            <input type="number" min="10" value={topupAmount} onChange={e => setTopupAmount(e.target.value)}
+                              placeholder="Min ৳10"
+                              className="w-full rounded-xl px-4 py-3 text-sm outline-none border border-border bg-muted/30 text-foreground focus:border-primary" />
+                          </div>
+                          <button onClick={() => { if (!topupAmount || parseFloat(topupAmount) < 10) { toast.error('Minimum ৳10'); return; } setTopupStep(1); }}
+                            className="w-full py-3 rounded-xl text-sm font-bold text-primary-foreground transition-all hover:opacity-90 flex items-center justify-center gap-2"
+                            style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                            Continue →
+                          </button>
+                        </div>
+                      )}
+
+                      {/* STEP 1: Choose payment method + txn ID */}
+                      {topupStep === 1 && (() => {
+                        const pm = TOPUP_PAYMENT_METHODS.find(p => p.id === topupPaymentMethod) || TOPUP_PAYMENT_METHODS[0];
+                        return (
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm font-semibold text-foreground">Top-up amount: <span className="text-primary font-black">৳{topupAmount}</span></p>
+                              <button onClick={() => setTopupStep(0)} className="text-xs text-muted-foreground hover:text-primary underline">Change</button>
+                            </div>
+
+                            <div>
+                              <label className={labelCls}>Select Payment Method</label>
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                {TOPUP_PAYMENT_METHODS.map(p => (
+                                  <button key={p.id} onClick={() => setTopupPaymentMethod(p.id)}
+                                    className={`flex flex-col items-center gap-1 p-3 rounded-xl border text-xs font-semibold transition-all ${
+                                      topupPaymentMethod === p.id
+                                        ? 'border-primary bg-primary/10 text-primary'
+                                        : 'border-border text-muted-foreground hover:border-primary/40'
+                                    }`}>
+                                    <span className="text-xl">{p.icon}</span>
+                                    {p.label}
+                                  </button>
+                                ))}
                               </div>
                             </div>
-                            <div className="text-right">
-                              <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-500' : 'text-destructive'}`}>
-                                {tx.type === 'credit' ? '+' : '-'}৳{tx.amount}
-                              </p>
-                              <p className="text-[10px] text-muted-foreground">৳{tx.balance_after}</p>
+
+                            {/* Payment instructions */}
+                            <div className={`p-4 rounded-xl bg-gradient-to-r ${pm.color} text-white`}>
+                              <p className="text-xs opacity-80 mb-1">{pm.type}</p>
+                              <p className="text-lg font-black tracking-widest">{pm.number}</p>
+                              <p className="text-xs opacity-80 mt-1">Send <span className="font-black">৳{topupAmount}</span> via {pm.label} {pm.type}</p>
+                            </div>
+
+                            <div>
+                              <label className={labelCls}>Transaction ID (TrxID)</label>
+                              <input value={topupTxId} onChange={e => setTopupTxId(e.target.value)}
+                                placeholder="Enter your TrxID after payment"
+                                className="w-full rounded-xl px-4 py-3 text-sm outline-none border border-border bg-muted/30 text-foreground focus:border-primary" />
+                            </div>
+
+                            <div className="flex gap-3">
+                              <button onClick={() => setTopupStep(0)} className="flex-1 py-3 rounded-xl text-sm font-semibold border border-border text-muted-foreground hover:bg-muted/30">Back</button>
+                              <button onClick={handleTopupSubmit} disabled={topupProcessing || !topupTxId.trim()}
+                                className="flex-1 py-3 rounded-xl text-sm font-bold text-primary-foreground transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                                style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                                {topupProcessing ? <><RefreshCw size={14} className="animate-spin" /> Submitting...</> : 'Submit Request'}
+                              </button>
                             </div>
                           </div>
-                        ))}
-                      </div>
+                        );
+                      })()}
+
+                      {/* STEP 2: Success */}
+                      {topupStep === 2 && (
+                        <div className="text-center py-6 space-y-4">
+                          <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
+                            <CheckCircle2 size={32} className="text-green-500" />
+                          </div>
+                          <div>
+                            <p className="text-base font-black text-foreground">Request Submitted!</p>
+                            <p className="text-sm text-muted-foreground mt-1">Admin will verify your payment and credit <span className="font-bold text-primary">৳{topupAmount}</span> to your wallet.</p>
+                          </div>
+                          <button onClick={() => { setTopupStep(0); setTopupAmount(''); fetchWallet(); }}
+                            className="px-6 py-2.5 rounded-xl text-sm font-semibold text-primary-foreground"
+                            style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                            Done
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* How wallet works */}
+                  {/* Pending Requests */}
+                  {topupRequests.filter((r: any) => r.status === 'pending').length > 0 && (
+                    <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
+                      <p className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+                        <Clock size={14} className="text-amber-500" /> Pending Top-up Requests
+                      </p>
+                      {topupRequests.filter((r: any) => r.status === 'pending').map((r: any) => (
+                        <div key={r.id} className="flex items-center justify-between py-2">
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">৳{r.amount} via {r.payment_method}</p>
+                            <p className="text-xs text-muted-foreground">TrxID: {r.transaction_id} · {new Date(r.created_at).toLocaleDateString()}</p>
+                          </div>
+                          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-600 border border-amber-500/30">Pending</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Transaction History */}
+                  <div className="rounded-2xl border border-border overflow-hidden bg-card">
+                    <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                      <h3 className="font-bold text-foreground flex items-center gap-2">
+                        <History size={14} className="text-primary" /> Transaction History
+                      </h3>
+                      <button onClick={fetchWallet} className="text-muted-foreground hover:text-primary transition-colors">
+                        <RefreshCw size={13} />
+                      </button>
+                    </div>
+                    <div className="divide-y divide-border max-h-[300px] overflow-y-auto">
+                      {walletLoading ? (
+                        <div className="p-6 text-center text-muted-foreground text-sm">Loading...</div>
+                      ) : walletTx.length === 0 ? (
+                        <div className="p-6 text-center text-muted-foreground text-sm">No transactions yet</div>
+                      ) : walletTx.map((tx: any) => (
+                        <div key={tx.id} className="flex items-center justify-between px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
+                              {tx.type === 'credit'
+                                ? <TrendingUp size={12} className="text-green-500" />
+                                : <TrendingDown size={12} className="text-destructive" />
+                              }
+                            </div>
+                            <div>
+                              <p className="text-xs font-medium text-foreground">{tx.note || (tx.type === 'credit' ? 'Credit' : 'Debit')}</p>
+                              <p className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-500' : 'text-destructive'}`}>
+                              {tx.type === 'credit' ? '+' : '-'}৳{tx.amount}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">Balance: ৳{tx.balance_after}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* How it works */}
                   <div className="rounded-2xl border border-border p-5 bg-muted/10">
-                    <p className="text-sm font-bold mb-3 text-foreground">ওয়ালেট কিভাবে ব্যবহার করবেন?</p>
+                    <p className="text-sm font-bold mb-3 text-foreground">How to use your wallet?</p>
                     {[
-                      { n: '১', t: 'টপ-আপ অনুরোধ পাঠান, অ্যাডমিন যাচাই করে ব্যালেন্স যোগ করবে' },
-                      { n: '২', t: 'চেকআউটে "Wallet" পেমেন্ট অপশন সিলেক্ট করুন' },
-                      { n: '৩', t: 'ওয়ালেট ব্যালেন্স থেকে সরাসরি পেমেন্ট হয়ে যাবে' },
+                      { n: '1', t: 'Top-up: Choose amount → Pay via bKash/Nagad → Enter TrxID' },
+                      { n: '2', t: 'Admin verifies payment and credits your wallet balance' },
+                      { n: '3', t: 'At checkout, select "Wallet" as payment method to pay instantly' },
                     ].map(({ n, t }) => (
                       <div key={n} className="flex items-start gap-3 mb-2 last:mb-0">
-                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>
+                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-primary-foreground flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>
                         <span className="text-sm text-muted-foreground">{t}</span>
                       </div>
                     ))}
