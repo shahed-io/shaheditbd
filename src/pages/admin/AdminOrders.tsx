@@ -244,7 +244,7 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
     if (items.some(i => !i.product_name)) { toast.error('সব প্রোডাক্টের নাম দিন'); return; }
     setLoading(true);
     try {
-      const orderNum = 'ORD-' + Date.now().toString().slice(-8);
+      const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
       const { data: order, error } = await supabase.from('orders').insert({
         order_number: orderNum,
         customer_name: form.customer_name,

@@ -90,7 +90,7 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
     setSubmitError('');
     setLoading(true);
     try {
-      const orderNum = 'ORD-' + Date.now().toString().slice(-8);
+      const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({

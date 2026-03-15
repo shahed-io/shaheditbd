@@ -131,7 +131,7 @@ const Checkout = () => {
 
     setLoading(true);
     try {
-      const orderNum = 'ORD-' + Date.now().toString().slice(-8);
+      const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
 
       // Get coupon ID if applied
       let couponId: string | null = null;
