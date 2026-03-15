@@ -11,7 +11,7 @@ import {
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
   Trash2, Download, History, BellRing, BellOff, ExternalLink, Wallet
 } from 'lucide-react';
-import logoIcon from '@/assets/logo-icon.png';
+import BrandLogo from '@/components/store/BrandLogo';
 
 interface Profile {
   display_name: string | null;
@@ -380,11 +380,8 @@ const UserDashboard = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b bg-card/90 backdrop-blur-xl border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2.5 group">
-            <img src={logoIcon} alt="Logo" className="w-8 h-8 rounded-xl" />
-            <span className="font-black text-sm tracking-widest hidden sm:block" style={{ fontFamily: 'Orbitron, sans-serif', color: 'hsl(var(--primary))' }}>
-              SHAHED STORE
-            </span>
+          <a href="/" className="flex items-center group">
+            <BrandLogo size="sm" />
           </a>
           <div className="flex items-center gap-3">
             <a href="/" className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-colors hover:bg-muted/60 text-muted-foreground">
