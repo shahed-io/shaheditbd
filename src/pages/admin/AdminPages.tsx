@@ -19,19 +19,19 @@ interface PageLink {
 /* ─── Default data (Information + Policies from footer) ──────── */
 const DEFAULT_LINKS: Omit<PageLink, 'id'>[] = [
   // Information
-  { section: 'information', label: 'Blog',         href: '/blog',      sort_order: 1,  is_active: true },
-  { section: 'information', label: 'Help Center',  href: '/help',      sort_order: 2,  is_active: true },
-  { section: 'information', label: 'About Us',     href: '/about',     sort_order: 3,  is_active: true },
-  { section: 'information', label: 'My Account',   href: '/dashboard', sort_order: 4,  is_active: true },
-  { section: 'information', label: 'Contact Us',   href: '/contact',   sort_order: 5,  is_active: true },
-  { section: 'information', label: 'All Products', href: '/shop',      sort_order: 6,  is_active: true },
+  { section: 'information', label: 'FAQs',          href: '/help',      sort_order: 1, is_active: true },
+  { section: 'information', label: 'Help Center',   href: '/help',      sort_order: 2, is_active: true },
+  { section: 'information', label: 'About Us',      href: '/about',     sort_order: 3, is_active: true },
+  { section: 'information', label: 'My Account',    href: '/dashboard', sort_order: 4, is_active: true },
+  { section: 'information', label: 'Contact Us',    href: '/contact',   sort_order: 5, is_active: true },
+  { section: 'information', label: 'All Products',  href: '/shop',      sort_order: 6, is_active: true },
   // Policies
-  { section: 'policies',    label: 'Privacy Policy',     href: '/help', sort_order: 1, is_active: true },
-  { section: 'policies',    label: 'Terms & Conditions', href: '/help', sort_order: 2, is_active: true },
-  { section: 'policies',    label: 'Refund Policy',      href: '/help', sort_order: 3, is_active: true },
-  { section: 'policies',    label: 'Order Policy',       href: '/help', sort_order: 4, is_active: true },
-  { section: 'policies',    label: 'Delivery Info',      href: '/help', sort_order: 5, is_active: true },
-  { section: 'policies',    label: 'Return Policy',      href: '/help', sort_order: 6, is_active: true },
+  { section: 'policies', label: 'Privacy Policy',        href: '/privacy-policy',   sort_order: 1, is_active: true },
+  { section: 'policies', label: 'Terms & Conditions',    href: '/terms-conditions', sort_order: 2, is_active: true },
+  { section: 'policies', label: 'Refund & Return Policy',href: '/refund-policy',    sort_order: 3, is_active: true },
+  { section: 'policies', label: 'Order & Cancellation',  href: '/order-policy',     sort_order: 4, is_active: true },
+  { section: 'policies', label: 'Delivery Info',         href: '/delivery-info',    sort_order: 5, is_active: true },
+  { section: 'policies', label: 'Return Policy',         href: '/return-policy',    sort_order: 6, is_active: true },
 ];
 
 /* ─── Inline edit row ─────────────────────────────────────────── */
