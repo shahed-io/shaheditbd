@@ -117,16 +117,30 @@
 }
 
 /* ══════════════════════════════════════
-   CYBER GRID BACKGROUND
+   CYBER GRID BACKGROUND  — dual-layer
 ══════════════════════════════════════ */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(hsla(271,91%,65%,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, hsla(271,91%,65%,0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(hsla(271,91%,65%,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(271,91%,65%,0.04) 1px, transparent 1px),
+    linear-gradient(hsla(185,90%,52%,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(185,90%,52%,0.02) 1px, transparent 1px);
+  background-size: 48px 48px, 48px 48px, 12px 12px, 12px 12px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Corner bracket decoration */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 85%, hsla(185,90%,52%,0.04) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 15%, hsla(271,91%,65%,0.05) 0%, transparent 45%);
   pointer-events: none;
   z-index: 0;
 }
