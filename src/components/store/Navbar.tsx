@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { label: 'Categories', href: '/shop' },
   { label: 'Windows', href: '#windows' },
   { label: 'Office',  href: '#office' },
-  { label: 'Support', href: '#support' },
+  { label: 'Fee Tools', href: '#support' },
 ];
 
 const CATEGORY_DROPDOWN = [
