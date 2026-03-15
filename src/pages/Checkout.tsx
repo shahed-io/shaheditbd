@@ -323,7 +323,7 @@ const Checkout = () => {
           {/* Payment Method */}
           <div className="glass-card p-5 rounded-2xl border border-border space-y-4">
             <h2 className="font-bold text-foreground">💳 পেমেন্ট পদ্ধতি</h2>
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
               {paymentMethods.map(pm => (
                 <button
                   key={pm.id}
@@ -337,32 +337,57 @@ const Checkout = () => {
               ))}
             </div>
 
-            {/* Payment Instructions */}
-            <div className="bg-muted/30 border border-border rounded-xl p-4 space-y-2">
-              <div className="flex items-center gap-2 text-sm text-foreground font-medium">
-                <Smartphone size={16} className="text-primary" />
-                <span>{selectedPayment.label} ({selectedPayment.type}):</span>
+            {/* Wallet balance display */}
+            {paymentMethod === 'wallet' && (
+              <div className={`rounded-xl p-4 space-y-2 border ${walletBalance >= finalTotal ? 'bg-green-500/10 border-green-500/30' : 'bg-destructive/10 border-destructive/30'}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                    <Wallet size={16} className="text-primary" />
+                    <span>ওয়ালেট ব্যালেন্স</span>
+                  </div>
+                  <span className={`font-bold text-lg ${walletBalance >= finalTotal ? 'text-green-500' : 'text-destructive'}`}>
+                    ৳{walletBalance.toLocaleString()}
+                  </span>
+                </div>
+                {walletBalance >= finalTotal ? (
+                  <p className="text-xs text-green-500">✅ পর্যাপ্ত ব্যালেন্স আছে। কোনো Transaction ID দরকার নেই।</p>
+                ) : (
+                  <p className="text-xs text-destructive">❌ ব্যালেন্স কম। আরও ৳{(finalTotal - walletBalance).toLocaleString()} দরকার। Dashboard থেকে টপ-আপ করুন।</p>
+                )}
+                {!user && <p className="text-xs text-destructive">⚠️ Wallet পেমেন্টের জন্য লগইন করতে হবে</p>}
               </div>
-              <div className="font-mono text-2xl font-bold text-primary text-center py-2 tracking-widest select-all">
-                {selectedPayment.number}
-              </div>
-              <p className="text-xs text-muted-foreground text-center">
-                মোট <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span> পাঠান → Transaction ID নিচে দিন
-              </p>
-            </div>
+            )}
 
-            {/* Transaction ID */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Transaction ID (TrxID) *</label>
-              <input
-                type="text"
-                value={transactionId}
-                onChange={e => setTransactionId(e.target.value)}
-                placeholder="যেমন: 8F3K2P9X"
-                maxLength={50}
-                className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
-              />
-            </div>
+            {/* Payment Instructions (only for non-wallet) */}
+            {paymentMethod !== 'wallet' && (
+              <>
+                <div className="bg-muted/30 border border-border rounded-xl p-4 space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-foreground font-medium">
+                    <Smartphone size={16} className="text-primary" />
+                    <span>{selectedPayment.label} ({selectedPayment.type}):</span>
+                  </div>
+                  <div className="font-mono text-2xl font-bold text-primary text-center py-2 tracking-widest select-all">
+                    {selectedPayment.number}
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center">
+                    মোট <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span> পাঠান → Transaction ID নিচে দিন
+                  </p>
+                </div>
+
+                {/* Transaction ID */}
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block">Transaction ID (TrxID) *</label>
+                  <input
+                    type="text"
+                    value={transactionId}
+                    onChange={e => setTransactionId(e.target.value)}
+                    placeholder="যেমন: 8F3K2P9X"
+                    maxLength={50}
+                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           {/* Order Notes */}
