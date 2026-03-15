@@ -344,11 +344,11 @@ const ProductDetail = () => {
                   transition: 'all 0.8s cubic-bezier(0.22,1,0.36,1)',
                 }}
               >
-                {/* Neon top border */}
+                {/* Gradient top border */}
                 <div className="h-[2px] w-full absolute top-0 left-0 z-10"
-                  style={{ background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+                  style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(200,90%,45%))' }} />
 
-                {/* Neon sweep effect on load */}
+                {/* Shimmer sweep on load */}
                 {entered && <div className="neon-sweep-line" />}
 
                 {!imgLoaded && <div className="absolute inset-0 shimmer" />}
