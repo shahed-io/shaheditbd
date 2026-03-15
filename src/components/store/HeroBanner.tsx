@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
 
 const SLIDES = [
   {
@@ -18,6 +18,7 @@ const SLIDES = [
     glowTo: 'hsla(263,70%,60%,0.12)',
     emoji: '🪟',
     features: ['Lifetime License', 'Instant Delivery', 'All Devices'],
+    comboSlide: false,
   },
   {
     tag: '⚡ Flash Deal',
@@ -35,6 +36,30 @@ const SLIDES = [
     glowTo: 'hsla(38,100%,55%,0.12)',
     emoji: '📦',
     features: ['1TB OneDrive', '5 Devices', '1 Year'],
+    comboSlide: false,
+  },
+  {
+    tag: '🏆 Official Reseller',
+    title: 'Ultimate',
+    titleAccent: 'Bundle',
+    subtitle: 'Windows 11 Pro + Office 365 + IDM Lifetime',
+    desc: 'পান তিনটি পাওয়ারফুল সফটওয়্যার একসাথে — Windows, Office এবং IDM Lifetime। আমরা IDM-এর অফিশিয়াল রিসেলার।',
+    price: '৳2,499',
+    original: '৳29,999',
+    off: '92%',
+    badge: 'OFFICIAL RESELLER',
+    accentFrom: 'hsl(185,80%,45%)',
+    accentTo: 'hsl(210,85%,52%)',
+    glowFrom: 'hsla(185,80%,45%,0.22)',
+    glowTo: 'hsla(210,85%,52%,0.14)',
+    emoji: '💎',
+    features: ['IDM Official ✓', 'Lifetime License', 'Bundle Savings'],
+    comboSlide: true,
+    combo: [
+      { icon: '🪟', name: 'Windows 11 Pro', tag: 'Lifetime', color: 'hsl(243,75%,65%)' },
+      { icon: '📦', name: 'Microsoft Office 365', tag: '1 Year', color: 'hsl(15,100%,62%)' },
+      { icon: '⚡', name: 'IDM Lifetime', tag: 'Official ★', color: 'hsl(185,80%,45%)', highlight: true },
+    ],
   },
 ];
 
