@@ -231,16 +231,16 @@ const HeroBanner = () => {
                 }}>
                 {/* Light radial shine top-left */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 15% 10%, rgba(255,255,255,0.28) 0%, transparent 55%)` }} />
-                {/* Soft vignette bottom */}
+                  style={{ backgroundImage: `radial-gradient(ellipse at 15% 10%, rgba(255,255,255,0.6) 0%, transparent 55%)` }} />
+                {/* Soft bottom gradient */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 80% 95%, rgba(0,0,0,0.18) 0%, transparent 55%)` }} />
-                {/* Top shimmer line — white */}
+                  style={{ backgroundImage: `radial-gradient(ellipse at 80% 95%, hsla(258,60%,70%,0.12) 0%, transparent 55%)` }} />
+                {/* Top shimmer line — accent */}
                 <div className="absolute top-0 left-0 right-0 h-[1.5px]"
-                  style={{ background: `linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.5) 60%, transparent 95%)` }} />
-                {/* Dot grid — white subtle */}
+                  style={{ background: `linear-gradient(90deg, transparent 5%, ${slide.accentFrom}90 40%, ${slide.accentTo}70 60%, transparent 95%)` }} />
+                {/* Dot grid — subtle accent */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)`, backgroundSize: '22px 22px' }} />
+                  style={{ backgroundImage: `radial-gradient(circle, hsla(258,60%,55%,0.08) 1px, transparent 1px)`, backgroundSize: '22px 22px' }} />
 
                 <div className="relative p-8">
                   {slide.comboSlide && slide.combo ? (
