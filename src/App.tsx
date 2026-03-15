@@ -46,6 +46,7 @@ import OrderPolicy from "./pages/OrderPolicy";
 import DeliveryInfo from "./pages/DeliveryInfo";
 import ReturnPolicy from "./pages/ReturnPolicy";
 import ContactUs from "./pages/ContactUs";
+import AboutUs from "./pages/AboutUs";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -109,6 +110,7 @@ const App = () => (
                 <Route path="/delivery-info" element={<DeliveryInfo />} />
                 <Route path="/return-policy" element={<ReturnPolicy />} />
                 <Route path="/contact" element={<ContactUs />} />
+                <Route path="/about" element={<AboutUs />} />
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
