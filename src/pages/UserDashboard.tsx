@@ -76,25 +76,27 @@ interface Referral {
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  pending:    { label: 'পেন্ডিং',     color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',    icon: <Clock size={11} /> },
-  processing: { label: 'প্রসেসিং',    color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',       icon: <RefreshCw size={11} /> },
-  completed:  { label: 'সম্পন্ন',     color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
-  cancelled:  { label: 'বাতিল',       color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
-  refunded:   { label: 'রিফান্ড',     color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
+  pending:    { label: 'Pending',    color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',    icon: <Clock size={11} /> },
+  processing: { label: 'Processing', color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',       icon: <RefreshCw size={11} /> },
+  completed:  { label: 'Completed',  color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
+  cancelled:  { label: 'Cancelled',  color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
+  refunded:   { label: 'Refunded',   color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
+  delivered:  { label: 'Delivered',  color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
+  failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
 type TabId = 'profile' | 'orders' | 'wallet' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
 
-const TABS: { id: TabId; label: string; icon: any; badge?: number }[] = [
-  { id: 'profile',       label: 'প্রোফাইল',      icon: User },
-  { id: 'orders',        label: 'আমার অর্ডার',   icon: Package },
-  { id: 'wallet',        label: 'ওয়ালেট',         icon: Wallet },
-  { id: 'wishlist',      label: 'উইশলিস্ট',      icon: Heart },
-  { id: 'addresses',     label: 'ঠিকানাসমূহ',    icon: MapPin },
-  { id: 'notifications', label: 'নোটিফিকেশন',   icon: Bell },
-  { id: 'referral',      label: 'রেফারেল',        icon: Gift },
-  { id: 'security',      label: 'নিরাপত্তা',     icon: Lock },
-  { id: 'language',      label: 'ভাষা',           icon: Globe },
+const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
+  { id: 'profile',       key: 'tab_profile',       icon: User },
+  { id: 'orders',        key: 'tab_orders',        icon: Package },
+  { id: 'wallet',        key: 'tab_wallet',        icon: Wallet },
+  { id: 'wishlist',      key: 'tab_wishlist',      icon: Heart },
+  { id: 'addresses',     key: 'tab_addresses',     icon: MapPin },
+  { id: 'notifications', key: 'tab_notifications', icon: Bell },
+  { id: 'referral',      key: 'tab_referral',      icon: Gift },
+  { id: 'security',      key: 'tab_security',      icon: Lock },
+  { id: 'language',      key: 'tab_language',      icon: Globe },
 ];
 
 const UserDashboard = () => {
