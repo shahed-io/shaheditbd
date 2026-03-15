@@ -6,94 +6,101 @@
 
 @layer base {
   /* ══════════════════════════════════════
-     SHAHED STORE — CYBER NEON THEME (Single)
-     Deep Space + Electric Violet + Neon Cyan
+     SHAHED STORE — MIDNIGHT ROYAL THEME
+     Deep Indigo Navy + Electric Gold + Soft Teal
+     চোখে আরামদায়ক, না কালো না সাদা
   ══════════════════════════════════════ */
   :root {
-    --background:         215 28% 7%;
-    --foreground:         210 30% 95%;
+    /* ── Base Surfaces — গভীর নীলাভ স্লেট, চোখে আরামদায়ক ── */
+    --background:         226 35% 10%;
+    --foreground:         220 25% 94%;
 
-    --card:               215 28% 11%;
-    --card-foreground:    210 30% 95%;
+    --card:               228 32% 14%;
+    --card-foreground:    220 25% 94%;
 
-    --popover:            215 28% 11%;
-    --popover-foreground: 210 30% 95%;
+    --popover:            228 32% 13%;
+    --popover-foreground: 220 25% 94%;
 
-    --primary:            271 91% 65%;
-    --primary-foreground: 0 0% 100%;
+    /* ── Primary — Warm Electric Gold ── */
+    --primary:            42 96% 58%;
+    --primary-foreground: 226 35% 8%;
 
-    --secondary:          215 28% 16%;
-    --secondary-foreground: 210 20% 80%;
+    --secondary:          228 30% 20%;
+    --secondary-foreground: 220 20% 78%;
 
-    --muted:              215 25% 14%;
-    --muted-foreground:   215 20% 50%;
+    --muted:              228 28% 17%;
+    --muted-foreground:   220 18% 52%;
 
-    --accent:             185 90% 52%;
-    --accent-foreground:  215 28% 8%;
+    /* ── Accent — Soft Teal ── */
+    --accent:             186 78% 50%;
+    --accent-foreground:  226 35% 8%;
 
-    --destructive:        0 84% 60%;
+    --destructive:        4 80% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border:             215 25% 18%;
-    --input:              215 25% 14%;
-    --ring:               271 91% 65%;
+    --border:             228 28% 20%;
+    --input:              228 28% 16%;
+    --ring:               42 96% 58%;
     --radius:             1rem;
 
-    /* ── Brand Neon Palette ── */
-    --neon-violet:        hsl(271, 91%, 65%);
-    --neon-cyan:          hsl(185, 90%, 52%);
-    --neon-pink:          hsl(320, 90%, 62%);
-    --neon-amber:         hsl(40, 100%, 58%);
-    --neon-emerald:       hsl(158, 80%, 48%);
+    /* ── Brand Palette ── */
+    --neon-gold:          hsl(42, 96%, 58%);
+    --neon-violet:        hsl(258, 78%, 68%);
+    --neon-cyan:          hsl(186, 78%, 50%);
+    --neon-pink:          hsl(330, 85%, 62%);
+    --neon-amber:         hsl(38, 100%, 55%);
+    --neon-emerald:       hsl(162, 72%, 46%);
 
-    --neon-violet-dim:    hsla(271, 91%, 65%, 0.15);
-    --neon-cyan-dim:      hsla(185, 90%, 52%, 0.12);
-    --neon-pink-dim:      hsla(320, 90%, 62%, 0.12);
+    --neon-gold-dim:      hsla(42, 96%, 58%, 0.15);
+    --neon-violet-dim:    hsla(258, 78%, 68%, 0.14);
+    --neon-cyan-dim:      hsla(186, 78%, 50%, 0.12);
+    --neon-pink-dim:      hsla(330, 85%, 62%, 0.12);
 
     /* ── Glow Shadows ── */
-    --glow-violet:        0 0 24px hsla(271, 91%, 65%, 0.55), 0 0 60px hsla(271, 91%, 65%, 0.2);
-    --glow-cyan:          0 0 24px hsla(185, 90%, 52%, 0.55), 0 0 60px hsla(185, 90%, 52%, 0.2);
-    --glow-pink:          0 0 24px hsla(320, 90%, 62%, 0.55), 0 0 60px hsla(320, 90%, 62%, 0.2);
-    --shadow-card:        0 4px 32px hsla(215, 40%, 4%, 0.6), inset 0 1px 0 hsla(0,0%,100%,0.06);
-    --shadow-soft:        0 2px 16px hsla(215, 40%, 4%, 0.4);
-    --shadow-medium:      0 8px 40px hsla(215, 40%, 4%, 0.55);
+    --glow-gold:          0 0 22px hsla(42, 96%, 58%, 0.50), 0 0 55px hsla(42, 96%, 58%, 0.18);
+    --glow-violet:        0 0 22px hsla(258, 78%, 68%, 0.50), 0 0 55px hsla(258, 78%, 68%, 0.18);
+    --glow-cyan:          0 0 22px hsla(186, 78%, 50%, 0.50), 0 0 55px hsla(186, 78%, 50%, 0.18);
+    --glow-pink:          0 0 22px hsla(330, 85%, 62%, 0.50), 0 0 55px hsla(330, 85%, 62%, 0.18);
+    --shadow-card:        0 4px 32px hsla(226, 40%, 4%, 0.55), inset 0 1px 0 hsla(220,60%,100%,0.05);
+    --shadow-soft:        0 2px 16px hsla(226, 40%, 4%, 0.40);
+    --shadow-medium:      0 8px 40px hsla(226, 40%, 4%, 0.55);
 
     /* ── Surfaces ── */
-    --surface-white:      hsl(215, 28%, 11%);
-    --surface-light:      hsl(215, 28%, 9%);
-    --surface-soft:       hsl(215, 25%, 14%);
+    --surface-white:      hsl(228, 32%, 14%);
+    --surface-light:      hsl(228, 32%, 11%);
+    --surface-soft:       hsl(228, 28%, 17%);
 
     /* ── Gradients ── */
-    --gradient-hero:      linear-gradient(135deg, hsl(271,91%,65%) 0%, hsl(185,90%,52%) 100%);
-    --gradient-warm:      linear-gradient(135deg, hsl(320,90%,62%) 0%, hsl(40,100%,58%) 100%);
-    --gradient-cool:      linear-gradient(135deg, hsl(185,90%,52%) 0%, hsl(158,80%,48%) 100%);
-    --gradient-card:      linear-gradient(145deg, hsla(215,28%,14%,0.9) 0%, hsla(215,28%,11%,0.95) 100%);
+    --gradient-hero:      linear-gradient(135deg, hsl(42,96%,58%) 0%, hsl(258,78%,68%) 100%);
+    --gradient-warm:      linear-gradient(135deg, hsl(330,85%,62%) 0%, hsl(42,96%,58%) 100%);
+    --gradient-cool:      linear-gradient(135deg, hsl(186,78%,50%) 0%, hsl(162,72%,46%) 100%);
+    --gradient-card:      linear-gradient(145deg, hsla(228,32%,17%,0.9) 0%, hsla(228,32%,13%,0.95) 100%);
 
-    /* ── Indigo aliases (legacy compatibility) ── */
-    --indigo:             hsl(271, 91%, 65%);
-    --indigo-light:       hsl(271, 95%, 75%);
-    --indigo-dim:         hsla(271, 91%, 65%, 0.15);
-    --indigo-glow:        0 8px 32px hsla(271, 91%, 65%, 0.4);
-    --coral:              hsl(320, 90%, 62%);
-    --coral-light:        hsl(320, 90%, 72%);
-    --coral-dim:          hsla(320, 90%, 62%, 0.12);
-    --emerald:            hsl(158, 80%, 48%);
-    --emerald-dim:        hsla(158, 80%, 48%, 0.12);
-    --amber:              hsl(40, 100%, 58%);
-    --amber-dim:          hsla(40, 100%, 58%, 0.12);
-    --violet:             hsl(271, 91%, 65%);
-    --violet-dim:         hsla(271, 91%, 65%, 0.12);
+    /* ── Legacy compatibility aliases ── */
+    --indigo:             hsl(258, 78%, 68%);
+    --indigo-light:       hsl(258, 80%, 76%);
+    --indigo-dim:         hsla(258, 78%, 68%, 0.15);
+    --indigo-glow:        0 8px 32px hsla(258, 78%, 68%, 0.4);
+    --coral:              hsl(330, 85%, 62%);
+    --coral-light:        hsl(330, 85%, 72%);
+    --coral-dim:          hsla(330, 85%, 62%, 0.12);
+    --emerald:            hsl(162, 72%, 46%);
+    --emerald-dim:        hsla(162, 72%, 46%, 0.12);
+    --amber:              hsl(42, 96%, 58%);
+    --amber-dim:          hsla(42, 96%, 58%, 0.12);
+    --violet:             hsl(258, 78%, 68%);
+    --violet-dim:         hsla(258, 78%, 68%, 0.12);
     --shadow-indigo:      var(--glow-violet);
     --shadow-coral:       var(--glow-pink);
 
-    --sidebar-background: 215 28% 8%;
-    --sidebar-foreground: 210 20% 80%;
-    --sidebar-primary:    271 91% 65%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent:     215 25% 14%;
-    --sidebar-accent-foreground: 210 20% 85%;
-    --sidebar-border:     215 25% 16%;
-    --sidebar-ring:       271 91% 65%;
+    --sidebar-background: 228 35% 9%;
+    --sidebar-foreground: 220 18% 76%;
+    --sidebar-primary:    42 96% 58%;
+    --sidebar-primary-foreground: 226 35% 8%;
+    --sidebar-accent:     228 28% 17%;
+    --sidebar-accent-foreground: 220 18% 84%;
+    --sidebar-border:     228 28% 18%;
+    --sidebar-ring:       42 96% 58%;
   }
 }
 
