@@ -215,11 +215,12 @@ const AdminPages = () => {
         .eq('key', SETTINGS_KEY)
         .maybeSingle();
       if (data?.value) return JSON.parse(data.value) as PageLink[];
-      // seed defaults
-      const seeded: PageLink[] = DEFAULT_LINKS.map((l, i) => ({
-        ...l,
-        id: `default-${i}`,
-      }));
+      // auto-seed defaults into DB
+      const seeded: PageLink[] = DEFAULT_LINKS.map((l, i) => ({ ...l, id: `default-${i}` }));
+      await supabase.from('site_settings').upsert(
+        { key: SETTINGS_KEY, value: JSON.stringify(seeded), category: 'pages' },
+        { onConflict: 'key' }
+      );
       return seeded;
     },
   });
@@ -233,12 +234,19 @@ const AdminPages = () => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin-pages'] });
-      toast.success('Pages saved successfully!');
+      qc.invalidateQueries({ queryKey: ['footer-pages'] });
+      toast.success('সেভ হয়েছে!');
     },
-    onError: () => toast.error('Failed to save.'),
+    onError: () => toast.error('সেভ করতে ব্যর্থ।'),
   });
 
   const persist = (updated: PageLink[]) => save.mutate(updated);
+
+  const handleReset = () => {
+    if (!confirm('সকল লিঙ্ক ডিফল্টে রিসেট করবেন?')) return;
+    const seeded: PageLink[] = DEFAULT_LINKS.map((l, i) => ({ ...l, id: `default-${i}` }));
+    persist(seeded);
+  };
 
   // editing state
   const [adding, setAdding]   = useState<PageSection | null>(null);
