@@ -833,6 +833,8 @@ const ProductDetail = () => {
                 </div>
               </div>
             )}
+          {/* ── Specifications table from attributes ── */}
+          <ProductSpecsTable productId={product.id} />
           </div>
         </div>
 
