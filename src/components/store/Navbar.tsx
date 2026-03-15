@@ -128,7 +128,7 @@ const Navbar = () => {
             {/* Desktop Links */}
             <div className="hidden lg:flex items-center gap-0.5">
               {NAV_LINKS.map(link => (
-                <div key={link.label} className="relative group"
+                <div key={link.label} className="relative"
                   onMouseEnter={() => link.label === 'Categories' && setCatOpen(true)}
                   onMouseLeave={() => link.label === 'Categories' && setCatOpen(false)}>
                   <a href={link.href}
@@ -141,8 +141,8 @@ const Navbar = () => {
                   </a>
                   {link.label === 'Categories' && (
                     <div
-                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 rounded-2xl border shadow-xl transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
-                      style={{ width: '280px', background: 'hsl(0,0%,100%)', borderColor: 'hsl(220,20%,90%)', boxShadow: '0 20px 60px hsla(226,35%,12%,0.14)' }}
+                      className={`absolute top-full left-1/2 -translate-x-1/2 rounded-2xl border shadow-xl transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
+                      style={{ width: '280px', background: 'hsl(0,0%,100%)', borderColor: 'hsl(220,20%,90%)', boxShadow: '0 20px 60px hsla(226,35%,12%,0.14)', marginTop: '0px' }}
                       onMouseEnter={() => setCatOpen(true)}
                       onMouseLeave={() => setCatOpen(false)}
                     >
