@@ -117,30 +117,16 @@
 }
 
 /* ══════════════════════════════════════
-   CYBER GRID BACKGROUND  — dual-layer
+   CYBER GRID BACKGROUND
 ══════════════════════════════════════ */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(hsla(271,91%,65%,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, hsla(271,91%,65%,0.04) 1px, transparent 1px),
-    linear-gradient(hsla(185,90%,52%,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, hsla(185,90%,52%,0.02) 1px, transparent 1px);
-  background-size: 48px 48px, 48px 48px, 12px 12px, 12px 12px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Corner bracket decoration */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 15% 85%, hsla(185,90%,52%,0.04) 0%, transparent 45%),
-    radial-gradient(ellipse at 85% 15%, hsla(271,91%,65%,0.05) 0%, transparent 45%);
+    linear-gradient(hsla(271,91%,65%,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(271,91%,65%,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
   pointer-events: none;
   z-index: 0;
 }
@@ -934,126 +920,3 @@ body::after {
   60%  { opacity: 0.8; }
   100% { opacity: 0; }
 }
-
-/* ══════════════════════════════════════
-   CODING AESTHETIC — Floating code & glitch
-══════════════════════════════════════ */
-
-/* Floating code snippets drift upward */
-@keyframes code-float-up {
-  0%   { transform: translateY(60px);   opacity: 0; }
-  8%   { opacity: 1; }
-  90%  { opacity: 0.7; }
-  100% { transform: translateY(-120px); opacity: 0; }
-}
-
-/* Hero title glitch effect */
-@keyframes glitch-1 {
-  0%, 90%, 100% { clip-path: inset(50% 0 30% 0); transform: translate(-3px, 0); opacity: 0; }
-  92%            { clip-path: inset(10% 0 60% 0); transform: translate( 3px, 0); opacity: 0.8; }
-  94%            { clip-path: inset(70% 0  5% 0); transform: translate(-2px, 0); opacity: 0.7; }
-  96%            { clip-path: inset(30% 0 40% 0); transform: translate( 2px, 0); opacity: 0.6; }
-}
-@keyframes glitch-2 {
-  0%, 88%, 100% { clip-path: inset(60% 0 20% 0); transform: translate( 3px, 0); opacity: 0; }
-  90%            { clip-path: inset(20% 0 55% 0); transform: translate(-3px, 0); opacity: 0.7; }
-  93%            { clip-path: inset(80% 0  2% 0); transform: translate( 2px, 0); opacity: 0.6; }
-}
-
-.hero-glitch-title {
-  position: relative;
-}
-.hero-glitch-title::before,
-.hero-glitch-title::after {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.hero-glitch-title::before {
-  color: hsl(185,90%,62%);
-  animation: glitch-1 8s infinite;
-}
-.hero-glitch-title::after {
-  color: hsl(320,90%,72%);
-  animation: glitch-2 8s infinite;
-}
-
-/* Scanline overlay on full sections */
-.scanlines::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    hsla(271,91%,65%,0.015) 2px,
-    hsla(271,91%,65%,0.015) 4px
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Terminal cursor blink for section labels */
-.terminal-label {
-  font-family: 'Fira Code', monospace;
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: hsl(185,90%,62%);
-  background: hsla(185,90%,52%,0.1);
-  padding: 0.3rem 0.875rem;
-  border-radius: 0.5rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  border: 1px solid hsla(185,90%,52%,0.25);
-  letter-spacing: 0.05em;
-}
-.terminal-label::before {
-  content: '> ';
-  color: hsl(271,91%,75%);
-  font-weight: 700;
-}
-
-/* Neon underline for section headings */
-.section-heading-coded {
-  font-family: 'Sora', sans-serif;
-  font-weight: 800;
-  color: hsl(var(--foreground));
-  line-height: 1.12;
-  position: relative;
-  display: inline-block;
-}
-.section-heading-coded::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 60%;
-  height: 2px;
-  background: linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%), transparent);
-  border-radius: 999px;
-}
-
-/* Hex corner decorators */
-.hex-corner {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  pointer-events: none;
-}
-.hex-corner-tl { top: -1px; left: -1px; border-top: 2px solid hsl(271,91%,65%); border-left: 2px solid hsl(271,91%,65%); border-radius: 4px 0 0 0; }
-.hex-corner-tr { top: -1px; right: -1px; border-top: 2px solid hsl(185,90%,52%); border-right: 2px solid hsl(185,90%,52%); border-radius: 0 4px 0 0; }
-.hex-corner-bl { bottom: -1px; left: -1px; border-bottom: 2px solid hsl(185,90%,52%); border-left: 2px solid hsl(185,90%,52%); border-radius: 0 0 0 4px; }
-.hex-corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid hsl(271,91%,65%); border-right: 2px solid hsl(271,91%,65%); border-radius: 0 0 4px 0; }
-
-/* Product card — hex corners on hover */
-.product-card-new:hover .hex-corner-tl,
-.product-card-new:hover .hex-corner-tr,
-.product-card-new:hover .hex-corner-bl,
-.product-card-new:hover .hex-corner-br {
-  opacity: 1;
-}
-.product-card-new .hex-corner { opacity: 0; transition: opacity 0.3s; }
-

@@ -288,12 +288,6 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           />
         )}
 
-        {/* ── Hex corner decorators (visible on hover) ── */}
-        <span className="hex-corner hex-corner-tl z-[55]" />
-        <span className="hex-corner hex-corner-tr z-[55]" />
-        <span className="hex-corner hex-corner-bl z-[55]" />
-        <span className="hex-corner hex-corner-br z-[55]" />
-
         {/* ── Image ── */}
         <div className="card-image-wrap relative overflow-hidden aspect-square bg-muted">
           {/* Scan line on hover */}

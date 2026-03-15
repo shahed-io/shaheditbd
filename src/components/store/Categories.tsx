@@ -86,8 +86,8 @@ const Categories = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
           <div>
-            <span className="terminal-label">cat categories/</span>
-            <h2 className="section-heading-coded text-3xl sm:text-4xl mt-3 text-foreground">
+            <span className="section-label">Browse Store</span>
+            <h2 className="section-heading text-3xl sm:text-4xl mt-3 text-foreground">
               Shop by{' '}
               <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Category
