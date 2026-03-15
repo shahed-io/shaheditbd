@@ -98,26 +98,30 @@ const Navbar = () => {
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
       `}</style>
 
-      {/* ── Main Navbar ── */}
-      {/* Gradient border wrapper */}
-      <div
-        className="sticky top-0 z-50"
-        style={{
-          background: 'linear-gradient(135deg, hsla(258,78%,55%,0.55), hsla(200,90%,45%,0.45), hsla(258,78%,55%,0.55))',
-          padding: '1.5px 0 1.5px 0',
-        }}>
-      <nav
-        className={`transition-all duration-300 backdrop-blur-2xl`}
+      {/* ── Main Navbar — Glassmorphism Card ── */}
+      <div className="sticky top-0 z-50 px-4 py-2"
         style={{
           background: scrolled
-            ? 'hsla(0,0%,100%,0.92)'
-            : 'hsla(0,0%,100%,0.85)',
-          boxShadow: scrolled
-            ? '0 8px 32px hsla(258,78%,55%,0.13), 0 2px 8px hsla(200,90%,45%,0.10)'
-            : '0 4px 24px hsla(258,78%,55%,0.09)',
+            ? 'hsla(230,40%,14%,0.55)'
+            : 'hsla(230,40%,18%,0.35)',
+          backdropFilter: 'blur(0px)',
         }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-[76px] gap-4">
+      <nav
+        className="transition-all duration-300 rounded-2xl mx-auto max-w-7xl backdrop-blur-2xl"
+        style={{
+          background: scrolled
+            ? 'hsla(0,0%,100%,0.88)'
+            : 'hsla(0,0%,100%,0.78)',
+          border: '1.5px solid',
+          borderColor: scrolled
+            ? 'hsla(258,78%,60%,0.30)'
+            : 'hsla(258,78%,60%,0.20)',
+          boxShadow: scrolled
+            ? '0 8px 40px hsla(258,78%,55%,0.18), 0 2px 12px hsla(200,90%,45%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.80)'
+            : '0 4px 32px hsla(258,78%,55%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.70)',
+        }}>
+        <div className="px-4 sm:px-6">
+          <div className="flex items-center justify-between h-[68px] gap-4">
 
             {/* Logo */}
             <a href="/" className="flex items-center flex-shrink-0 group select-none">
@@ -242,7 +246,7 @@ const Navbar = () => {
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
           <div className="border-t px-4 py-4 space-y-1"
-            style={{ background: 'hsl(220,20%,98%)', borderColor: 'hsl(220,20%,90%)' }}>
+            style={{ background: 'hsla(0,0%,100%,0.92)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
             <div className="mb-3">
               <SearchBar variant="navbar" className="w-full" onClose={() => setMobileOpen(false)} />
             </div>
