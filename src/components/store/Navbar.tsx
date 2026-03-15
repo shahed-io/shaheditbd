@@ -246,7 +246,7 @@ const Navbar = () => {
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
           <div className="border-t px-4 py-4 space-y-1"
-            style={{ background: 'hsl(220,20%,98%)', borderColor: 'hsl(220,20%,90%)' }}>
+            style={{ background: 'hsla(0,0%,100%,0.92)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
             <div className="mb-3">
               <SearchBar variant="navbar" className="w-full" onClose={() => setMobileOpen(false)} />
             </div>
