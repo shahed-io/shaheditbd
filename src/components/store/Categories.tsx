@@ -61,7 +61,7 @@ const Categories = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="rounded-2xl h-44" style={{ background: 'hsla(222,22%,15%,0.6)', animation: 'pulse 2s ease-in-out infinite' }} />
+              <div key={i} className="rounded-2xl h-44 bg-muted animate-pulse" />
             ))}
           </div>
         </div>
@@ -122,7 +122,7 @@ const Categories = () => {
                   transform: sectionVisible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.96)',
                   transition: `opacity 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s, transform 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s`,
                   boxShadow: isHov
-                    ? `0 20px 50px hsla(220,30%,5%,0.5), 0 0 0 1px ${meta.accent}40, 0 0 32px ${meta.glow}`
+                    ? `0 12px 32px hsla(226,35%,12%,0.12), 0 0 0 1px ${meta.accent}40`
                     : undefined,
                 }}
                 onMouseEnter={() => setHovered(i)}
@@ -134,9 +134,8 @@ const Categories = () => {
 
                 <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon"
                   style={{
-                    background: `linear-gradient(135deg, ${meta.glow.replace('0.18', '0.25')}, hsla(222,22%,20%,0.8))`,
-                    border: `1px solid ${meta.accent}30`,
-                    boxShadow: isHov ? `0 4px 20px ${meta.glow}` : 'none',
+                    background: `linear-gradient(135deg, ${meta.glow}, transparent)`,
+                    border: `1px solid ${meta.accent}35`,
                   }}>
                   {meta.icon}
                 </div>
@@ -149,7 +148,7 @@ const Categories = () => {
                 <div className="relative flex items-center justify-between mt-auto pt-1">
                   <span className="text-[11px] font-bold px-2.5 py-1 rounded-full"
                     style={{
-                      background: `${meta.accent}18`,
+                      background: `${meta.accent}14`,
                       color: meta.accent,
                       border: `1px solid ${meta.accent}30`,
                     }}>
@@ -157,8 +156,8 @@ const Categories = () => {
                   </span>
                   <div className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200"
                     style={{
-                      background: isHov ? `${meta.accent}20` : 'hsla(0,0%,100%,0.06)',
-                      border: `1px solid ${isHov ? meta.accent + '40' : 'hsla(0,0%,100%,0.1)'}`,
+                      background: isHov ? `${meta.accent}18` : 'hsl(var(--muted))',
+                      border: `1px solid ${isHov ? meta.accent + '40' : 'hsl(var(--border))'}`,
                     }}>
                     <ArrowRight size={12} style={{ color: isHov ? meta.accent : 'hsl(var(--muted-foreground))' }} />
                   </div>

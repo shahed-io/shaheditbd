@@ -94,14 +94,12 @@ const FlashSale = () => {
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.08), transparent)', filter: 'blur(80px)' }} />
+          style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.06), transparent)', filter: 'blur(80px)' }} />
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(38,100%,55%,0.06), transparent)', filter: 'blur(80px)' }} />
-        <div className="absolute inset-0"
-          style={{ backgroundImage: 'radial-gradient(circle, hsla(0,0%,100%,0.022) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+          style={{ background: 'radial-gradient(circle, hsla(38,100%,55%,0.05), transparent)', filter: 'blur(80px)' }} />
         {/* Section divider glow */}
         <div className="absolute top-0 left-0 right-0 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent, hsla(15,100%,60%,0.3), hsla(38,100%,55%,0.3), transparent)' }} />
+          style={{ background: 'linear-gradient(90deg, transparent, hsla(15,100%,60%,0.2), hsla(38,100%,55%,0.2), transparent)' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -166,7 +164,7 @@ const FlashSale = () => {
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[0,1,2,3,4,5,6,7].map(i => (
-              <div key={i} className="rounded-2xl" style={{ height: '22rem', background: 'hsla(222,22%,15%,0.6)', animation: 'pulse 2s ease-in-out infinite', animationDelay: `${i * 0.07}s` }} />
+              <div key={i} className="rounded-2xl bg-muted animate-pulse" style={{ height: '22rem', animationDelay: `${i * 0.07}s` }} />
             ))}
           </div>
         ) : (
