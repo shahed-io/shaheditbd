@@ -2,19 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, Sparkles } from 'lucide-react';
 
 const FEATURES = [
-  { icon: '⚡', title: 'Instant Delivery',   desc: 'Payment-এর পরেই ইমেইলে license key পাঠানো হয়।',          from: 'hsl(243,75%,55%)', to: 'hsl(263,70%,52%)' },
-  { icon: '🛡️', title: '100% Genuine Keys', desc: 'সব key ১০০% original এবং Microsoft verified।',            from: 'hsl(158,64%,42%)', to: 'hsl(180,70%,38%)' },
-  { icon: '🎧', title: '24/7 Support',        desc: 'WhatsApp ও Telegram-এ সার্বক্ষণিক সাপোর্ট।',              from: 'hsl(263,70%,52%)', to: 'hsl(283,65%,48%)' },
-  { icon: '🏛️', title: 'Govt. Registered',  desc: 'DBID: 586772174 — সরকার নিবন্ধিত ব্যবসা।',                from: 'hsl(158,64%,42%)', to: 'hsl(180,70%,38%)' },
-  { icon: '💰', title: 'Lowest Price BD',    desc: 'বাংলাদেশের সবচেয়ে কম দামে অরিজিনাল সফটওয়্যার।',         from: 'hsl(15,100%,52%)',  to: 'hsl(38,100%,48%)' },
-  { icon: '😊', title: '12K+ Customers',      desc: '২০২০ সাল থেকে ১২০০০+ সন্তুষ্ট গ্রাহক সারা বিশ্বে।',     from: 'hsl(38,100%,48%)',  to: 'hsl(50,100%,48%)' },
+  { icon: '⚡', title: 'Instant Delivery',   desc: 'Payment-এর পরেই ইমেইলে license key পাঠানো হয়।',          from: 'hsl(243,75%,65%)', to: 'hsl(263,70%,62%)' },
+  { icon: '🛡️', title: '100% Genuine Keys', desc: 'সব key ১০০% original এবং Microsoft verified।',            from: 'hsl(158,64%,48%)', to: 'hsl(180,70%,44%)' },
+  { icon: '🎧', title: '24/7 Support',        desc: 'WhatsApp ও Telegram-এ সার্বক্ষণিক সাপোর্ট।',              from: 'hsl(263,70%,62%)', to: 'hsl(283,65%,58%)' },
+  { icon: '🏛️', title: 'Govt. Registered',  desc: 'DBID: 586772174 — সরকার নিবন্ধিত ব্যবসা।',                from: 'hsl(158,64%,48%)', to: 'hsl(180,70%,44%)' },
+  { icon: '💰', title: 'Lowest Price BD',    desc: 'বাংলাদেশের সবচেয়ে কম দামে অরিজিনাল সফটওয়্যার।',         from: 'hsl(15,100%,62%)',  to: 'hsl(38,100%,58%)' },
+  { icon: '😊', title: '12K+ Customers',      desc: '২০২০ সাল থেকে ১২০০০+ সন্তুষ্ট গ্রাহক সারা বিশ্বে।',     from: 'hsl(38,100%,58%)',  to: 'hsl(50,100%,58%)' },
 ];
 
 const STEPS = [
-  { n: '01', emoji: '🛒', title: 'Choose Product',   desc: 'আমাদের collection থেকে পছন্দের software বেছে নিন।',     from: 'hsl(243,75%,55%)', to: 'hsl(263,70%,52%)' },
-  { n: '02', emoji: '💳', title: 'Make Payment',      desc: 'bKash, Nagad বা Rocket-এ নিরাপদে payment করুন।',        from: 'hsl(15,100%,52%)',  to: 'hsl(38,100%,48%)' },
-  { n: '03', emoji: '📧', title: 'Get Delivery',      desc: 'মিনিটের মধ্যে ইমেইলে license key পাঠানো হবে।',          from: 'hsl(158,64%,42%)', to: 'hsl(180,70%,38%)' },
-  { n: '04', emoji: '✅', title: 'Activate & Enjoy', desc: 'Product activate করুন, সমস্যায় support-এ যোগাযোগ।',    from: 'hsl(263,70%,52%)', to: 'hsl(283,65%,48%)' },
+  { n: '01', emoji: '🛒', title: 'Choose Product',   desc: 'আমাদের collection থেকে পছন্দের software বেছে নিন।',     from: 'hsl(243,75%,65%)', to: 'hsl(263,70%,62%)' },
+  { n: '02', emoji: '💳', title: 'Make Payment',      desc: 'bKash, Nagad বা Rocket-এ নিরাপদে payment করুন।',        from: 'hsl(15,100%,62%)',  to: 'hsl(38,100%,58%)' },
+  { n: '03', emoji: '📧', title: 'Get Delivery',      desc: 'মিনিটের মধ্যে ইমেইলে license key পাঠানো হবে।',          from: 'hsl(158,64%,48%)', to: 'hsl(180,70%,44%)' },
+  { n: '04', emoji: '✅', title: 'Activate & Enjoy', desc: 'Product activate করুন, সমস্যায় support-এ যোগাযোগ।',    from: 'hsl(263,70%,62%)', to: 'hsl(283,65%,58%)' },
 ];
 
 const STATS = [
@@ -54,7 +54,7 @@ const WhyChooseUs = () => {
             <span className="section-label">Why Us</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-4 text-foreground">
               Why{' '}
-              <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,55%), hsl(263,70%,52%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Choose Us?
               </span>
             </h2>
@@ -68,22 +68,20 @@ const WhyChooseUs = () => {
               <div key={i}
                 className="group relative rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                 style={{
-                  background: 'hsla(0, 0%, 100%, 0.75)',
-                  backdropFilter: 'blur(20px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                  border: `1px solid hsla(220, 20%, 88%, 0.80)`,
-                  boxShadow: '0 2px 16px hsla(226,35%,12%,0.07), 0 1px 4px hsla(226,35%,12%,0.04)',
+                  background: 'hsl(var(--card))',
+                  border: `1px solid ${f.from}30`,
+                  boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
                 }}>
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"
                   style={{ background: `radial-gradient(ellipse at 0% 0%, ${f.from}10, transparent 60%)` }} />
                 {/* Top border glow on hover */}
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, transparent, ${f.from}80, ${f.to}80, transparent)` }} />
+                  style={{ background: `linear-gradient(90deg, transparent, ${f.from}90, ${f.to}90, transparent)` }} />
 
                 <div className="relative z-10 flex items-start gap-4">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
-                    style={{ background: `linear-gradient(135deg, ${f.from}18, ${f.to}12)`, border: `1px solid ${f.from}35` }}>
+                    style={{ background: `linear-gradient(135deg, ${f.from}18, ${f.to}12)`, border: `1px solid ${f.from}40` }}>
                     {f.icon}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -105,7 +103,7 @@ const WhyChooseUs = () => {
             <span className="section-label">Order Process</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-4 text-foreground">
               How to{' '}
-              <span style={{ background: 'linear-gradient(135deg, hsl(15,100%,52%), hsl(38,100%,48%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <span style={{ background: 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,58%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Order
               </span>
             </h2>
@@ -115,21 +113,19 @@ const WhyChooseUs = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative">
             {/* Connecting line */}
             <div className="hidden lg:block absolute top-12 left-[15%] right-[15%] h-px z-0"
-              style={{ background: 'linear-gradient(90deg, hsl(243,75%,55%), hsl(15,100%,52%), hsl(158,64%,42%), hsl(263,70%,52%))', opacity: 0.2 }} />
+              style={{ background: 'linear-gradient(90deg, hsl(243,75%,65%), hsl(15,100%,62%), hsl(158,64%,48%), hsl(263,70%,62%))', opacity: 0.2 }} />
 
             {STEPS.map((step, i) => (
               <div key={i}
                 className="relative rounded-3xl p-7 z-10 text-center group transition-all duration-300 hover:-translate-y-2"
                 style={{
-                  background: 'hsla(0, 0%, 100%, 0.75)',
-                  backdropFilter: 'blur(20px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                  border: `1px solid hsla(220, 20%, 88%, 0.80)`,
-                  boxShadow: '0 2px 16px hsla(226,35%,12%,0.07), 0 1px 4px hsla(226,35%,12%,0.04)',
+                  background: 'hsl(var(--card))',
+                  border: `1px solid ${step.from}35`,
+                  boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
                 }}>
                 {/* Hover top glow */}
-                <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-3xl"
-                  style={{ background: `linear-gradient(90deg, transparent, ${step.from}80, ${step.to}80, transparent)` }} />
+                <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: `linear-gradient(90deg, transparent, ${step.from}90, ${step.to}90, transparent)` }} />
                 {/* Step number */}
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <span className="text-[11px] font-fira font-bold px-3 py-1 rounded-full text-white"
@@ -138,7 +134,7 @@ const WhyChooseUs = () => {
                   </span>
                 </div>
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
-                  style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}35` }}>
+                  style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}40` }}>
                   {step.emoji}
                 </div>
                 <h3 className="font-sora font-bold text-[13px] text-foreground mb-2">{step.title}</h3>
@@ -152,11 +148,9 @@ const WhyChooseUs = () => {
         <div ref={statsRef}
           className="relative rounded-3xl p-10 lg:p-14 overflow-hidden"
           style={{
-            background: 'hsla(0, 0%, 100%, 0.80)',
-            backdropFilter: 'blur(24px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-            border: '1px solid hsla(243,75%,62%,0.18)',
-            boxShadow: '0 4px 32px hsla(226,35%,12%,0.08), 0 0 0 1px hsla(243,75%,62%,0.06)',
+            background: 'linear-gradient(135deg, hsla(243,75%,62%,0.08) 0%, hsla(263,70%,58%,0.06) 50%, hsla(15,100%,60%,0.06) 100%)',
+            border: '1px solid hsla(243,75%,62%,0.2)',
+            boxShadow: '0 4px 32px hsla(226,35%,12%,0.08)',
           }}>
           {/* Decorations */}
           <div className="absolute inset-0 pointer-events-none"

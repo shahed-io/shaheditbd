@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useReveal } from '@/hooks/useReveal';
 
 const CAT_META: Record<string, { icon: string; glow: string; accent: string }> = {
-  'Windows':      { icon: '🪟', glow: 'hsla(210,90%,60%,0.18)', accent: 'hsl(210,90%,48%)' },
-  'Office':       { icon: '📦', glow: 'hsla(25,90%,60%,0.18)',  accent: 'hsl(25,90%,52%)' },
-  'Software':     { icon: '💻', glow: 'hsla(263,70%,62%,0.18)', accent: 'hsl(263,70%,52%)' },
-  'VPN':          { icon: '🔒', glow: 'hsla(190,70%,48%,0.18)', accent: 'hsl(190,70%,42%)' },
-  'Subscription': { icon: '🎬', glow: 'hsla(283,65%,62%,0.18)', accent: 'hsl(283,65%,52%)' },
-  'Antivirus':    { icon: '🛡️', glow: 'hsla(158,64%,45%,0.18)', accent: 'hsl(158,64%,38%)' },
-  'Streaming':    { icon: '📺', glow: 'hsla(0,80%,62%,0.18)',   accent: 'hsl(0,80%,52%)' },
-  'default':      { icon: '🛒', glow: 'hsla(243,75%,62%,0.18)', accent: 'hsl(243,75%,52%)' },
+  'Windows':      { icon: '🪟', glow: 'hsla(210,90%,60%,0.18)', accent: 'hsl(210,90%,60%)' },
+  'Office':       { icon: '📦', glow: 'hsla(25,90%,60%,0.18)',  accent: 'hsl(25,90%,60%)' },
+  'Software':     { icon: '💻', glow: 'hsla(263,70%,62%,0.18)', accent: 'hsl(263,70%,62%)' },
+  'VPN':          { icon: '🔒', glow: 'hsla(190,70%,48%,0.18)', accent: 'hsl(190,70%,48%)' },
+  'Subscription': { icon: '🎬', glow: 'hsla(283,65%,62%,0.18)', accent: 'hsl(283,65%,62%)' },
+  'Antivirus':    { icon: '🛡️', glow: 'hsla(158,64%,45%,0.18)', accent: 'hsl(158,64%,45%)' },
+  'Streaming':    { icon: '📺', glow: 'hsla(0,80%,62%,0.18)',   accent: 'hsl(0,80%,62%)' },
+  'default':      { icon: '🛒', glow: 'hsla(243,75%,62%,0.18)', accent: 'hsl(243,75%,62%)' },
 };
 
 interface CatData {
@@ -27,6 +27,7 @@ const Categories = () => {
   const [cats, setCats] = useState<CatData[]>([]);
   const [loading, setLoading] = useState(true);
   const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.08 });
+  const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
 
   useEffect(() => {
     const load = async () => {
@@ -56,7 +57,7 @@ const Categories = () => {
 
   if (loading) {
     return (
-      <section className="py-20 bg-transparent">
+      <section className="py-20" style={{ background: 'hsl(var(--background))' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[...Array(8)].map((_, i) => (
@@ -76,7 +77,7 @@ const Categories = () => {
       <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.05), transparent)', filter: 'blur(80px)' }} />
 
-      <div ref={sectionRef as React.RefObject<HTMLDivElement>} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
@@ -84,7 +85,7 @@ const Categories = () => {
             <span className="section-label">Browse Store</span>
             <h2 className="section-heading text-3xl sm:text-4xl mt-3 text-foreground">
               Shop by{' '}
-              <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,55%), hsl(263,70%,52%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Category
               </span>
             </h2>
@@ -93,11 +94,11 @@ const Categories = () => {
             </p>
           </div>
           <a href="/shop" className="inline-flex items-center gap-2 text-sm font-bold hover:gap-3 transition-all flex-shrink-0 group"
-            style={{ color: 'hsl(243,75%,55%)' }}>
+            style={{ color: 'hsl(243,75%,65%)' }}>
             View All
             <span className="w-7 h-7 rounded-full flex items-center justify-center transition-all group-hover:scale-110"
-              style={{ background: 'hsla(243,75%,62%,0.12)', border: '1px solid hsla(243,75%,62%,0.22)' }}>
-              <ArrowRight size={13} style={{ color: 'hsl(243,75%,55%)' }} />
+              style={{ background: 'hsla(243,75%,62%,0.15)', border: '1px solid hsla(243,75%,62%,0.25)' }}>
+              <ArrowRight size={13} className="text-foreground" />
             </span>
           </a>
         </div>
@@ -112,6 +113,7 @@ const Categories = () => {
                 href={`/shop?category=${cat.slug}`}
                 className="cat-card p-5 flex flex-col gap-3.5"
                 style={{
+                  animationDelay: `${i * 0.06}s`,
                   opacity: sectionVisible ? 1 : 0,
                   transform: sectionVisible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.96)',
                   transition: `opacity 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s, transform 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s`,
@@ -129,7 +131,7 @@ const Categories = () => {
                 <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon"
                   style={{
                     background: `linear-gradient(135deg, ${meta.glow}, transparent)`,
-                    border: `1px solid ${meta.accent}30`,
+                    border: `1px solid ${meta.accent}35`,
                   }}>
                   {meta.icon}
                 </div>
@@ -141,13 +143,17 @@ const Categories = () => {
 
                 <div className="relative flex items-center justify-between mt-auto pt-1">
                   <span className="text-[11px] font-bold px-2.5 py-1 rounded-full"
-                    style={{ background: `${meta.accent}14`, color: meta.accent, border: `1px solid ${meta.accent}28` }}>
+                    style={{
+                      background: `${meta.accent}14`,
+                      color: meta.accent,
+                      border: `1px solid ${meta.accent}30`,
+                    }}>
                     {cat.count} items
                   </span>
                   <div className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200"
                     style={{
-                      background: isHov ? `${meta.accent}15` : 'hsl(var(--muted))',
-                      border: `1px solid ${isHov ? meta.accent + '35' : 'hsl(var(--border))'}`,
+                      background: isHov ? `${meta.accent}18` : 'hsl(var(--muted))',
+                      border: `1px solid ${isHov ? meta.accent + '40' : 'hsl(var(--border))'}`,
                     }}>
                     <ArrowRight size={12} style={{ color: isHov ? meta.accent : 'hsl(var(--muted-foreground))' }} />
                   </div>
