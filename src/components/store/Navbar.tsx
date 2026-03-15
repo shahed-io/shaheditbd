@@ -11,13 +11,11 @@ import { supabase } from '@/integrations/supabase/client';
 const NAV_LINKS = [
   { label: 'Home',    href: '/' },
   { label: 'Categories', href: '/shop' },
-  { label: 'Windows', href: '#windows' },
   { label: 'Office',  href: '#office' },
   { label: 'Fee Tools', href: '#support' },
 ];
 
 const CATEGORY_DROPDOWN = [
-  { icon: '🪟', label: 'Windows',          count: 12, color: 'hsla(200,90%,45%,0.10)' },
   { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(258,78%,55%,0.10)' },
   { icon: '🎨', label: 'Adobe',            count: 6,  color: 'hsla(258,78%,55%,0.10)' },
   { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(162,72%,38%,0.10)' },
