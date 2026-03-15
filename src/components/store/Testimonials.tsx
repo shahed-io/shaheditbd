@@ -208,11 +208,9 @@ const Testimonials = () => {
       {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full blur-3xl"
-          style={{ background: 'hsla(243,75%,62%,0.06)' }} />
+          style={{ background: 'hsla(243,75%,62%,0.05)' }} />
         <div className="absolute bottom-1/4 -right-32 w-80 h-80 rounded-full blur-3xl"
-          style={{ background: 'hsla(15,100%,60%,0.05)' }} />
-        <div className="absolute inset-0"
-          style={{ backgroundImage: 'radial-gradient(circle, hsla(0,0%,100%,0.02) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+          style={{ background: 'hsla(15,100%,60%,0.04)' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

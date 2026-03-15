@@ -164,7 +164,7 @@ const FlashSale = () => {
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[0,1,2,3,4,5,6,7].map(i => (
-              <div key={i} className="rounded-2xl" style={{ height: '22rem', background: 'hsla(222,22%,15%,0.6)', animation: 'pulse 2s ease-in-out infinite', animationDelay: `${i * 0.07}s` }} />
+              <div key={i} className="rounded-2xl bg-muted animate-pulse" style={{ height: '22rem', animationDelay: `${i * 0.07}s` }} />
             ))}
           </div>
         ) : (
