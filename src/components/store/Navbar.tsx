@@ -257,7 +257,7 @@ const Navbar = () => {
                 {link.label}
               </a>
             ))}
-            <div className="pt-2 border-t" style={{ borderColor: 'hsla(220, 60%, 80%, 0.10)' }}>
+            <div className="pt-2 border-t" style={{ borderColor: 'hsl(220,20%,90%)' }}>
               {user ? (
                 <div className="flex gap-2">
                   <button onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}
