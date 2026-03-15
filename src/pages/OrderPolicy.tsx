@@ -10,7 +10,7 @@ const OrderPolicy = () => (
     seoDesc="Shahed Store-এ অর্ডার করার নিয়মকানুন ও প্রক্রিয়া জানুন।"
     badge="Order Guidelines"
     badgeIcon={<ShoppingCart size={13} />}
-    title="Order Policy"
+    title="Order & Cancellation Policy"
     subtitle="অর্ডার দেওয়া থেকে পণ্য পাওয়া পর্যন্ত সম্পূর্ণ প্রক্রিয়া এবং নিয়মকানুন জানুন।"
     accentFrom={A}
     accentTo={B}
