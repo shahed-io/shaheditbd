@@ -7,57 +7,12 @@ import { toast } from 'sonner';
 import {
   User, Mail, Phone, Edit3, Save, X, LogOut, Package,
   ChevronRight, ShieldCheck, Home, Camera, Lock, Eye, EyeOff,
-  Ticket, Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
+  Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
-  Trash2, Download, History, BellRing, BellOff, ExternalLink, Wallet, Globe
+  History, BellRing, BellOff, ExternalLink, Wallet, Globe
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
-
-// ─── Language System ───────────────────────────────────────────────────────
-const LANGUAGES = [
-  { code: 'bn', name: 'বাংলা', native: 'বাংলা', flag: '🇧🇩', region: 'দক্ষিণ এশিয়া' },
-  { code: 'en', name: 'English', native: 'English', flag: '🇬🇧', region: 'International' },
-  { code: 'ar', name: 'Arabic', native: 'العربية', flag: '🇸🇦', region: 'মধ্যপ্রাচ্য' },
-  { code: 'zh', name: 'Chinese', native: '中文', flag: '🇨🇳', region: 'পূর্ব এশিয়া' },
-  { code: 'hi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳', region: 'দক্ষিণ এশিয়া' },
-  { code: 'es', name: 'Spanish', native: 'Español', flag: '🇪🇸', region: 'ইউরোপ/আমেরিকা' },
-  { code: 'fr', name: 'French', native: 'Français', flag: '🇫🇷', region: 'ইউরোপ' },
-  { code: 'pt', name: 'Portuguese', native: 'Português', flag: '🇧🇷', region: 'দক্ষিণ আমেরিকা' },
-  { code: 'ru', name: 'Russian', native: 'Русский', flag: '🇷🇺', region: 'ইউরোপ/এশিয়া' },
-  { code: 'tr', name: 'Turkish', native: 'Türkçe', flag: '🇹🇷', region: 'মধ্যপ্রাচ্য' },
-  { code: 'ur', name: 'Urdu', native: 'اردو', flag: '🇵🇰', region: 'দক্ষিণ এশিয়া' },
-  { code: 'id', name: 'Indonesian', native: 'Bahasa Indonesia', flag: '🇮🇩', region: 'দক্ষিণ-পূর্ব এশিয়া' },
-];
-
-const getStoredLang = () => localStorage.getItem('preferred_language') || 'bn';
-const setStoredLang = (code: string) => localStorage.setItem('preferred_language', code);
-
-// Google Translate language switcher
-const applyGoogleTranslate = (langCode: string) => {
-  // Bengali is the source language, so reset
-  if (langCode === 'bn') {
-    const iframe = document.querySelector<HTMLIFrameElement>('.goog-te-banner-frame');
-    if (iframe) {
-      const innerDoc = iframe.contentDocument || iframe.contentWindow?.document;
-      const closeBtn = innerDoc?.querySelector<HTMLElement>('.goog-close-link');
-      if (closeBtn) { closeBtn.click(); return; }
-    }
-    // fallback: reload with no translate cookie
-    const el = document.querySelector<HTMLSelectElement>('.goog-te-combo');
-    if (el) { el.value = langCode; el.dispatchEvent(new Event('change')); }
-    return;
-  }
-  const tryApply = (attempt = 0) => {
-    const el = document.querySelector<HTMLSelectElement>('.goog-te-combo');
-    if (el) {
-      el.value = langCode;
-      el.dispatchEvent(new Event('change'));
-    } else if (attempt < 20) {
-      setTimeout(() => tryApply(attempt + 1), 300);
-    }
-  };
-  tryApply();
-};
+import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t } from '@/lib/translations';
 
 interface Profile {
   display_name: string | null;
@@ -121,25 +76,27 @@ interface Referral {
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  pending:    { label: 'পেন্ডিং',     color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',    icon: <Clock size={11} /> },
-  processing: { label: 'প্রসেসিং',    color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',       icon: <RefreshCw size={11} /> },
-  completed:  { label: 'সম্পন্ন',     color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
-  cancelled:  { label: 'বাতিল',       color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
-  refunded:   { label: 'রিফান্ড',     color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
+  pending:    { label: 'Pending',    color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',    icon: <Clock size={11} /> },
+  processing: { label: 'Processing', color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',       icon: <RefreshCw size={11} /> },
+  completed:  { label: 'Completed',  color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
+  cancelled:  { label: 'Cancelled',  color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
+  refunded:   { label: 'Refunded',   color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
+  delivered:  { label: 'Delivered',  color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
+  failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
 type TabId = 'profile' | 'orders' | 'wallet' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
 
-const TABS: { id: TabId; label: string; icon: any; badge?: number }[] = [
-  { id: 'profile',       label: 'প্রোফাইল',      icon: User },
-  { id: 'orders',        label: 'আমার অর্ডার',   icon: Package },
-  { id: 'wallet',        label: 'ওয়ালেট',         icon: Wallet },
-  { id: 'wishlist',      label: 'উইশলিস্ট',      icon: Heart },
-  { id: 'addresses',     label: 'ঠিকানাসমূহ',    icon: MapPin },
-  { id: 'notifications', label: 'নোটিফিকেশন',   icon: Bell },
-  { id: 'referral',      label: 'রেফারেল',        icon: Gift },
-  { id: 'security',      label: 'নিরাপত্তা',     icon: Lock },
-  { id: 'language',      label: 'ভাষা',           icon: Globe },
+const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
+  { id: 'profile',       key: 'tab_profile',       icon: User },
+  { id: 'orders',        key: 'tab_orders',        icon: Package },
+  { id: 'wallet',        key: 'tab_wallet',        icon: Wallet },
+  { id: 'wishlist',      key: 'tab_wishlist',      icon: Heart },
+  { id: 'addresses',     key: 'tab_addresses',     icon: MapPin },
+  { id: 'notifications', key: 'tab_notifications', icon: Bell },
+  { id: 'referral',      key: 'tab_referral',      icon: Gift },
+  { id: 'security',      key: 'tab_security',      icon: Lock },
+  { id: 'language',      key: 'tab_language',      icon: Globe },
 ];
 
 const UserDashboard = () => {
@@ -175,16 +132,7 @@ const UserDashboard = () => {
   const [topupAmount, setTopupAmount] = useState('');
   const [topupNote, setTopupNote] = useState('');
   const [topupProcessing, setTopupProcessing] = useState(false);
-  const [selectedLang, setSelectedLang] = useState(getStoredLang());
-
-  // Apply stored language on mount
-  useEffect(() => {
-    const stored = getStoredLang();
-    if (stored && stored !== 'bn') {
-      // Wait for Google Translate to load
-      setTimeout(() => applyGoogleTranslate(stored), 1500);
-    }
-  }, []);
+  const [selectedLang, setSelectedLang] = useState<LangCode>(getStoredLang());
 
   useEffect(() => {
     if (!loading && !user) navigate('/');
@@ -415,10 +363,11 @@ const UserDashboard = () => {
   const totalSpent = orders.filter(o => o.status === 'completed').reduce((s, o) => s + o.total, 0);
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  // Update tab badges
-  const tabsWithBadges = TABS.map(t => ({
-    ...t,
-    badge: t.id === 'wishlist' ? wishlistItems.length : t.id === 'notifications' ? unreadCount : undefined,
+  // Tab labels with translation
+  const tabsWithBadges = TAB_IDS.map(tab => ({
+    ...tab,
+    label: t(selectedLang, tab.key),
+    badge: tab.id === 'wishlist' ? wishlistItems.length : tab.id === 'notifications' ? unreadCount : undefined,
   }));
 
   if (loading) return (
@@ -442,7 +391,7 @@ const UserDashboard = () => {
           </a>
           <div className="flex items-center gap-3">
             <a href="/" className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-colors hover:bg-muted/60 text-muted-foreground">
-              <Home size={14} /> হোম
+              <Home size={14} /> Home
             </a>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border bg-secondary">
               <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
@@ -453,7 +402,7 @@ const UserDashboard = () => {
               {unreadCount > 0 && <span className="w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center" style={{ background: 'hsl(var(--destructive))' }}>{unreadCount}</span>}
             </div>
             <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-all hover:bg-destructive/10 text-muted-foreground">
-              <LogOut size={14} /><span className="hidden sm:inline">লগআউট</span>
+              <LogOut size={14} /><span className="hidden sm:inline">{t(selectedLang, 'tab_logout')}</span>
             </button>
           </div>
         </div>
@@ -490,18 +439,18 @@ const UserDashboard = () => {
                     </span>
                     {completedOrders > 0 && (
                       <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-primary/25 bg-primary/10 text-primary">
-                        <Star size={10} fill="currentColor" /> {completedOrders} অর্ডার
+                        <Star size={10} fill="currentColor" /> {completedOrders} {t(selectedLang, 'tab_orders')}
                       </span>
                     )}
                   </div>
                 </div>
               </div>
               <div className="flex gap-4 sm:gap-6 pb-1">
-                <div className="text-center"><div className="text-xl font-black text-foreground">{orders.length}</div><div className="text-xs text-muted-foreground">অর্ডার</div></div>
+                <div className="text-center"><div className="text-xl font-black text-foreground">{orders.length}</div><div className="text-xs text-muted-foreground">{t(selectedLang, 'order')}</div></div>
                 <div className="w-px bg-border" />
-                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div><div className="text-xs text-muted-foreground">খরচ</div></div>
+                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div><div className="text-xs text-muted-foreground">{t(selectedLang, 'total')}</div></div>
                 <div className="w-px bg-border" />
-                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div><div className="text-xs text-muted-foreground">উইশলিস্ট</div></div>
+                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div><div className="text-xs text-muted-foreground">{t(selectedLang, 'tab_wishlist')}</div></div>
               </div>
             </div>
           </div>
@@ -512,7 +461,7 @@ const UserDashboard = () => {
 
           {/* Sidebar */}
           <div className="bg-card rounded-2xl border border-border p-3 h-fit shadow-sm">
-            <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">মেনু</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">{t(selectedLang, 'menu')}</p>
             {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
               <button key={id} onClick={() => setActiveTab(id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${
@@ -530,7 +479,7 @@ const UserDashboard = () => {
             ))}
             <div className="h-px my-2 bg-border" />
             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive">
-              <LogOut size={16} /> লগআউট
+              <LogOut size={16} /> {t(selectedLang, 'tab_logout')}
             </button>
           </div>
 
@@ -541,35 +490,35 @@ const UserDashboard = () => {
             <div className="px-6 py-5 border-b border-border flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-black text-foreground">
-                  {activeTab === 'profile' ? 'প্রোফাইল তথ্য' : activeTab === 'orders' ? 'আমার অর্ডার' : activeTab === 'wallet' ? 'আমার ওয়ালেট' : activeTab === 'wishlist' ? 'উইশলিস্ট' : activeTab === 'addresses' ? 'সংরক্ষিত ঠিকানা' : activeTab === 'notifications' ? 'নোটিফিকেশন' : activeTab === 'referral' ? 'রেফারেল ড্যাশবোর্ড' : 'নিরাপত্তা'}
+                  {t(selectedLang, `tab_${activeTab}`)}
                 </h2>
                 <p className="text-xs mt-0.5 text-muted-foreground">
-                  {activeTab === 'orders' ? `মোট ${orders.length}টি অর্ডার` : activeTab === 'wishlist' ? `${wishlistItems.length}টি পণ্য` : activeTab === 'notifications' ? `${unreadCount}টি অপঠিত` : ''}
+                  {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : ''}
                 </p>
               </div>
               <div className="flex gap-2">
                 {activeTab === 'profile' && !editing && (
                   <button onClick={() => setEditing(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                    <Edit3 size={14} /> সম্পাদনা
+                    <Edit3 size={14} /> {t(selectedLang, 'edit')}
                   </button>
                 )}
                 {activeTab === 'profile' && editing && (
                   <div className="flex gap-2">
-                    <button onClick={() => setEditing(false)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border border-border text-muted-foreground hover:bg-muted/30"><X size={13} /> বাতিল</button>
+                    <button onClick={() => setEditing(false)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border border-border text-muted-foreground hover:bg-muted/30"><X size={13} /> {t(selectedLang, 'cancel')}</button>
                     <button onClick={handleSaveProfile} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-60" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                      <Save size={13} /> {saving ? 'সংরক্ষণ...' : 'সংরক্ষণ'}
+                      <Save size={13} /> {saving ? t(selectedLang, 'loading') : t(selectedLang, 'save')}
                     </button>
                   </div>
                 )}
                 {activeTab === 'addresses' && (
-                  <button onClick={() => { setShowAddressForm(true); setEditingAddress(null); setAddressForm({ label: 'বাড়ি', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false }); }}
+                  <button onClick={() => { setShowAddressForm(true); setEditingAddress(null); setAddressForm({ label: 'Home', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false }); }}
                     className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                    <Plus size={14} /> নতুন ঠিকানা
+                    <Plus size={14} /> {t(selectedLang, 'add_address')}
                   </button>
                 )}
                 {activeTab === 'notifications' && unreadCount > 0 && (
                   <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-border text-muted-foreground hover:bg-muted/30">
-                    <BellOff size={13} /> সব পড়া হিসেবে চিহ্নিত
+                    <BellOff size={13} /> {t(selectedLang, 'mark_all_read')}
                   </button>
                 )}
               </div>
@@ -784,8 +733,8 @@ const UserDashboard = () => {
                                 className="p-2 rounded-xl hover:bg-muted/40 text-muted-foreground">
                                 <Edit3 size={14} />
                               </button>
-                              <button onClick={() => handleDeleteAddress(addr.id)} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive">
-                                <Trash2 size={14} />
+                               <button onClick={() => handleDeleteAddress(addr.id)} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive">
+                                 <X size={14} />
                               </button>
                             </div>
                           </div>
@@ -1208,10 +1157,10 @@ const UserDashboard = () => {
                         <button
                           key={lang.code}
                           onClick={() => {
-                            setSelectedLang(lang.code);
-                            setStoredLang(lang.code);
-                            applyGoogleTranslate(lang.code);
-                            toast.success(`✅ ভাষা পরিবর্তন: ${lang.native}`);
+                            const code = lang.code as LangCode;
+                            setSelectedLang(code);
+                            setStoredLang(code);
+                            toast.success(`${t(code, 'language_changed')}: ${lang.native}`);
                           }}
                           className={`flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-200 ${
                             isActive
@@ -1239,7 +1188,7 @@ const UserDashboard = () => {
                   <div className="glass-card rounded-2xl p-4 border border-border">
                     <p className="text-xs text-muted-foreground flex items-start gap-2">
                       <Globe size={13} className="text-primary mt-0.5 flex-shrink-0" />
-                      ভাষা নির্বাচন করুন — Google Translate ব্যবহার করে পুরো ওয়েবসাইট সেই ভাষায় দেখাবে। বাংলা সিলেক্ট করলে মূল ভাষায় ফিরে আসবে।
+                      {t(selectedLang, 'language_note')}
                     </p>
                   </div>
                 </div>
