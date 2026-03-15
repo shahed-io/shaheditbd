@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
 
 const SLIDES = [
   {
@@ -18,6 +18,7 @@ const SLIDES = [
     glowTo: 'hsla(263,70%,60%,0.12)',
     emoji: '🪟',
     features: ['Lifetime License', 'Instant Delivery', 'All Devices'],
+    comboSlide: false,
   },
   {
     tag: '⚡ Flash Deal',
@@ -35,6 +36,30 @@ const SLIDES = [
     glowTo: 'hsla(38,100%,55%,0.12)',
     emoji: '📦',
     features: ['1TB OneDrive', '5 Devices', '1 Year'],
+    comboSlide: false,
+  },
+  {
+    tag: '🏆 Official Reseller',
+    title: 'Ultimate',
+    titleAccent: 'Bundle',
+    subtitle: 'Windows 11 Pro + Office 365 + IDM Lifetime',
+    desc: 'পান তিনটি পাওয়ারফুল সফটওয়্যার একসাথে — Windows, Office এবং IDM Lifetime। আমরা IDM-এর অফিশিয়াল রিসেলার।',
+    price: '৳2,499',
+    original: '৳29,999',
+    off: '92%',
+    badge: 'OFFICIAL RESELLER',
+    accentFrom: 'hsl(185,80%,45%)',
+    accentTo: 'hsl(210,85%,52%)',
+    glowFrom: 'hsla(185,80%,45%,0.22)',
+    glowTo: 'hsla(210,85%,52%,0.14)',
+    emoji: '💎',
+    features: ['IDM Official ✓', 'Lifetime License', 'Bundle Savings'],
+    comboSlide: true,
+    combo: [
+      { icon: '🪟', name: 'Windows 11 Pro', tag: 'Lifetime', color: 'hsl(243,75%,65%)' },
+      { icon: '📦', name: 'Microsoft Office 365', tag: '1 Year', color: 'hsl(15,100%,62%)' },
+      { icon: '⚡', name: 'IDM Lifetime', tag: 'Official ★', color: 'hsl(185,80%,45%)', highlight: true },
+    ],
   },
 ];
 
@@ -189,40 +214,95 @@ const HeroBanner = () => {
                 style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
 
               <div className="relative p-8">
-                <div className="flex items-start justify-between mb-8">
-                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-soft"
-                    style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.25)' }}>
-                    {slide.emoji}
-                  </div>
-                  <Sparkles size={18} className="text-white/40 anim-spin-slow mt-1" />
-                </div>
-                <div className="text-white/55 text-[10px] font-fira uppercase tracking-[0.2em] mb-2">Featured Deal</div>
-                <div className="text-white font-sora font-black text-[22px] leading-tight">{slide.title} {slide.titleAccent}</div>
-                <div className="text-white/75 text-sm mt-1 font-medium">{slide.subtitle}</div>
-
-                <div className="flex flex-wrap gap-1.5 mt-4">
-                  {slide.features.map(f => (
-                    <span key={f} className="text-[10px] font-bold text-white/80 px-2.5 py-1 rounded-full"
-                      style={{ background: 'hsla(0,0%,100%,0.15)', border: '1px solid hsla(0,0%,100%,0.2)', backdropFilter: 'blur(8px)' }}>{f}</span>
-                  ))}
-                </div>
-
-                <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid hsla(0,0%,100%,0.15)' }}>
-                  <div>
-                    <div className="text-white/45 text-xs line-through font-fira">{slide.original}</div>
-                    <div className="text-white font-sora font-black text-[2rem] leading-none mt-0.5">{slide.price}</div>
-                  </div>
-                  <div className="rounded-2xl px-4 py-3 text-center"
-                    style={{ background: 'hsla(0,0%,100%,0.15)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.2)' }}>
-                    <div className="font-fira font-black text-[1.25rem] text-white leading-none">-{slide.off}</div>
-                    <div className="text-[9px] text-white/55 uppercase tracking-wider mt-0.5">OFF</div>
-                  </div>
-                </div>
-
-                <button className="mt-5 w-full py-3.5 rounded-xl font-bold text-sm transition-all hover:scale-[1.02]"
-                  style={{ background: 'hsla(0,0%,100%,0.92)', color: slide.accentFrom }}>
-                  Order Now →
-                </button>
+                {slide.comboSlide && slide.combo ? (
+                  /* Combo Slide Card */
+                  <>
+                    <div className="flex items-center justify-between mb-5">
+                      <div className="flex items-center gap-2">
+                        <Award size={18} className="text-white" />
+                        <span className="text-white font-bold text-[11px] uppercase tracking-widest">Official Bundle</span>
+                      </div>
+                      <Sparkles size={16} className="text-white/40 anim-spin-slow" />
+                    </div>
+                    <div className="space-y-2.5 mb-5">
+                      {slide.combo.map((item) => (
+                        <div key={item.name}
+                          className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all"
+                          style={{
+                            background: item.highlight
+                              ? `linear-gradient(135deg, ${item.color}30, ${item.color}18)`
+                              : 'hsla(0,0%,100%,0.1)',
+                            border: item.highlight
+                              ? `1px solid ${item.color}70`
+                              : '1px solid hsla(0,0%,100%,0.15)',
+                            boxShadow: item.highlight ? `0 0 14px ${item.color}30` : 'none',
+                          }}>
+                          <span className="text-2xl">{item.icon}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-white font-bold text-[13px] leading-tight truncate">{item.name}</div>
+                            <div className="text-[10px] mt-0.5 font-semibold" style={{ color: item.color }}>{item.tag}</div>
+                          </div>
+                          {item.highlight && (
+                            <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full text-white"
+                              style={{ background: item.color }}>
+                              OFFICIAL
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="pt-4 flex items-center justify-between" style={{ borderTop: '1px solid hsla(0,0%,100%,0.15)' }}>
+                      <div>
+                        <div className="text-white/45 text-xs line-through font-fira">{slide.original}</div>
+                        <div className="text-white font-sora font-black text-[2rem] leading-none mt-0.5">{slide.price}</div>
+                      </div>
+                      <div className="rounded-2xl px-4 py-3 text-center"
+                        style={{ background: 'hsla(0,0%,100%,0.15)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.2)' }}>
+                        <div className="font-fira font-black text-[1.25rem] text-white leading-none">-{slide.off}</div>
+                        <div className="text-[9px] text-white/55 uppercase tracking-wider mt-0.5">OFF</div>
+                      </div>
+                    </div>
+                    <button className="mt-4 w-full py-3.5 rounded-xl font-bold text-sm transition-all hover:scale-[1.02]"
+                      style={{ background: 'hsla(0,0%,100%,0.92)', color: slide.accentFrom }}>
+                      Get Bundle →
+                    </button>
+                  </>
+                ) : (
+                  /* Regular Slide Card */
+                  <>
+                    <div className="flex items-start justify-between mb-8">
+                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-soft"
+                        style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.25)' }}>
+                        {slide.emoji}
+                      </div>
+                      <Sparkles size={18} className="text-white/40 anim-spin-slow mt-1" />
+                    </div>
+                    <div className="text-white/55 text-[10px] font-fira uppercase tracking-[0.2em] mb-2">Featured Deal</div>
+                    <div className="text-white font-sora font-black text-[22px] leading-tight">{slide.title} {slide.titleAccent}</div>
+                    <div className="text-white/75 text-sm mt-1 font-medium">{slide.subtitle}</div>
+                    <div className="flex flex-wrap gap-1.5 mt-4">
+                      {slide.features.map(f => (
+                        <span key={f} className="text-[10px] font-bold text-white/80 px-2.5 py-1 rounded-full"
+                          style={{ background: 'hsla(0,0%,100%,0.15)', border: '1px solid hsla(0,0%,100%,0.2)', backdropFilter: 'blur(8px)' }}>{f}</span>
+                      ))}
+                    </div>
+                    <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid hsla(0,0%,100%,0.15)' }}>
+                      <div>
+                        <div className="text-white/45 text-xs line-through font-fira">{slide.original}</div>
+                        <div className="text-white font-sora font-black text-[2rem] leading-none mt-0.5">{slide.price}</div>
+                      </div>
+                      <div className="rounded-2xl px-4 py-3 text-center"
+                        style={{ background: 'hsla(0,0%,100%,0.15)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.2)' }}>
+                        <div className="font-fira font-black text-[1.25rem] text-white leading-none">-{slide.off}</div>
+                        <div className="text-[9px] text-white/55 uppercase tracking-wider mt-0.5">OFF</div>
+                      </div>
+                    </div>
+                    <button className="mt-5 w-full py-3.5 rounded-xl font-bold text-sm transition-all hover:scale-[1.02]"
+                      style={{ background: 'hsla(0,0%,100%,0.92)', color: slide.accentFrom }}>
+                      Order Now →
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
