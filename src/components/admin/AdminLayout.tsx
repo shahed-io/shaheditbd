@@ -18,6 +18,7 @@ const menuItems = [
     children: [
       { label: 'All Products', path: '/admin/products' },
       { label: 'Add New', path: '/admin/products/new' },
+      { label: 'Attributes', path: '/admin/attributes' },
     ]
   },
   {
