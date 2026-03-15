@@ -46,6 +46,28 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
+  // Click ripple + burst animation
+  const handleCardClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = ref.current!.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Spawn burst particles
+    const newParticles: Particle[] = Array.from({ length: 10 }, (_, i) => ({
+      id: Date.now() + i,
+      x,
+      y,
+    }));
+    setParticles(p => [...p, ...newParticles]);
+    setTimeout(() => setParticles(p => p.filter(pt => !newParticles.find(n => n.id === pt.id))), 700);
+
+    // Card squeeze flash
+    setClicked(true);
+    setTimeout(() => setClicked(false), 180);
+
+    navigate(`/product/${product.slug || product.id}`);
+  }, [navigate, product.slug, product.id]);
+
   return (
     <>
       {/* ── Quick Preview Modal ── */}
