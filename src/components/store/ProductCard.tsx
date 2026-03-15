@@ -23,6 +23,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered,   setIsHovered]   = useState(false);
   const [clicked,     setClicked]     = useState(false);
+  const [orbitActive, setOrbitActive] = useState(false);
   const [particles,   setParticles]   = useState<Particle[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const { addToCart, isInCart }         = useCart();
@@ -46,7 +47,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
-  // Click ripple + burst animation
+  // Click ripple + burst + orbit animation
   const handleCardClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = ref.current!.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -64,6 +65,10 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     // Card squeeze flash
     setClicked(true);
     setTimeout(() => setClicked(false), 180);
+
+    // Rotating orbit beam
+    setOrbitActive(true);
+    setTimeout(() => setOrbitActive(false), 1100);
 
     navigate(`/product/${product.slug || product.id}`);
   }, [navigate, product.slug, product.id]);
