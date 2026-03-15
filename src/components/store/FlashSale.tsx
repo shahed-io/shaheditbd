@@ -122,7 +122,7 @@ const FlashSale = () => {
                 <Flame size={13} fill="white" /> Flash Sale
               </span>
               <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full font-fira"
-                style={{ background: 'hsla(0,0%,100%,0.07)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsl(var(--muted-foreground))' }}>
+                style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
                 LIMITED TIME
               </span>
             </div>
