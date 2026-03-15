@@ -391,7 +391,7 @@ const UserDashboard = () => {
           </a>
           <div className="flex items-center gap-3">
             <a href="/" className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-colors hover:bg-muted/60 text-muted-foreground">
-              <Home size={14} /> হোম
+              <Home size={14} /> Home
             </a>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border bg-secondary">
               <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
