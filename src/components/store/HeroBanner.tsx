@@ -222,12 +222,12 @@ const HeroBanner = () => {
               <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full translate-x-0.5 translate-y-0.5 z-10"
                 style={{ background: slide.accentFrom, boxShadow: `0 0 10px 3px ${slide.accentFrom}` }} />
 
-              {/* Frosted glass inner card — vivid accent gradient, no black/white */}
+              {/* Frosted glass inner card — light lavender base with accent tint */}
               <div className="relative overflow-hidden"
                 style={{
                   borderRadius: 'calc(2rem - 2px)',
-                  background: `linear-gradient(145deg, ${slide.accentFrom}e8 0%, ${slide.accentTo}d0 60%, ${slide.accentFrom}c0 100%)`,
-                  backdropFilter: 'blur(24px) saturate(160%)',
+                  background: `linear-gradient(145deg, hsl(258,60%,97%) 0%, hsl(258,50%,94%) 50%, hsl(258,55%,96%) 100%)`,
+                  backdropFilter: 'blur(24px) saturate(180%)',
                 }}>
                 {/* Light radial shine top-left */}
                 <div className="absolute inset-0 pointer-events-none"
