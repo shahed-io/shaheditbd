@@ -55,16 +55,19 @@ const Checkout = () => {
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
   const [walletBalance, setWalletBalance] = useState(0);
 
-  // Auto-fill from logged-in user profile
+  // Auto-fill from logged-in user profile + fetch wallet balance
   useEffect(() => {
     if (!user) return;
-    supabase.from('profiles').select('display_name, email, phone').eq('user_id', user.id).single()
+    supabase.from('profiles').select('display_name, email, phone, wallet_balance').eq('user_id', user.id).single()
       .then(({ data }) => {
-        if (data) setForm(prev => ({
-          name: prev.name || data.display_name || '',
-          email: prev.email || data.email || user.email || '',
-          phone: prev.phone || data.phone || '',
-        }));
+        if (data) {
+          setForm(prev => ({
+            name: prev.name || data.display_name || '',
+            email: prev.email || data.email || user.email || '',
+            phone: prev.phone || data.phone || '',
+          }));
+          setWalletBalance((data as any).wallet_balance || 0);
+        }
       });
   }, [user?.id]);
 
