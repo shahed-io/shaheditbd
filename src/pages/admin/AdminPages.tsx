@@ -308,10 +308,19 @@ const AdminPages = () => {
             Manage footer navigation links for Information & Policies sections.
           </p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl"
-          style={{ background: 'hsla(243,75%,65%,0.08)', border: '1px solid hsla(243,75%,65%,0.18)' }}>
-          <span className="text-xs font-medium text-muted-foreground">Total links:</span>
-          <span className="text-sm font-bold" style={{ color: 'hsl(243,75%,65%)' }}>{links.length}</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl"
+            style={{ background: 'hsla(243,75%,65%,0.08)', border: '1px solid hsla(243,75%,65%,0.18)' }}>
+            <span className="text-xs font-medium text-muted-foreground">মোট লিঙ্ক:</span>
+            <span className="text-sm font-bold" style={{ color: 'hsl(243,75%,65%)' }}>{links.length}</span>
+          </div>
+          <button
+            onClick={handleReset}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold border transition-all hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+            style={{ borderColor: 'hsla(0,0%,0%,0.12)', color: 'hsl(226,25%,45%)' }}
+          >
+            ↺ Reset to Default
+          </button>
         </div>
       </div>
 
