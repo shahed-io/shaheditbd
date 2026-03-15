@@ -104,6 +104,7 @@ const App = () => (
                   <Route path="seo" element={<AdminSEO />} />
                   <Route path="attributes" element={<AdminAttributes />} />
                   <Route path="pages" element={<AdminPages />} />
+                  <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
                 </Route>
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-conditions" element={<TermsConditions />} />

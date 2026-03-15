@@ -36,6 +36,7 @@ const menuItems = [
   { icon: BookOpen, label: 'Blog', path: '/admin/blog' },
   { icon: Layout, label: 'Pages', path: '/admin/pages' },
   { icon: HelpCircle, label: 'Help Center', path: '/admin/help' },
+  { icon: FolderDown, label: 'Software Downloads', path: '/admin/software-downloads' },
   { icon: Globe, label: 'SEO', path: '/admin/seo' },
   { icon: TrendingUp, label: 'Reports', path: '/admin/reports' },
   { icon: Megaphone, label: 'Marketing', path: '/admin/marketing' },
