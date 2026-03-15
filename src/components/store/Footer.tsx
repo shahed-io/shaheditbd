@@ -32,7 +32,27 @@ const PRODUCTS_COL = [
   { label: 'AI Tools',       href: '#' },
 ];
 
-const Footer = () => (
+const Footer = () => {
+  const { data: dynamicLinks } = useQuery<FooterLink[]>({
+    queryKey: ['footer-pages'],
+    queryFn: async () => {
+      const { data } = await supabase.from('site_settings').select('value').eq('key', 'footer_pages').maybeSingle();
+      if (data?.value) return JSON.parse(data.value) as FooterLink[];
+      return [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const infoLinks = (dynamicLinks?.filter(l => l.section === 'information' && l.is_active).sort((a, b) => a.sort_order - b.sort_order)) ?? DEFAULT_INFO;
+  const policyLinks = (dynamicLinks?.filter(l => l.section === 'policies' && l.is_active).sort((a, b) => a.sort_order - b.sort_order)) ?? DEFAULT_POLICIES;
+
+  const NAV_COLS = [
+    { title: 'Products',    links: PRODUCTS_COL },
+    { title: 'Information', links: infoLinks },
+    { title: 'Policies',    links: policyLinks },
+  ];
+
+  return (
   <footer className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
 
     {/* Decorative blobs */}
