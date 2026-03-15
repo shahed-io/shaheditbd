@@ -61,7 +61,7 @@ const Categories = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="rounded-2xl h-44" style={{ background: 'hsla(222,22%,15%,0.6)', animation: 'pulse 2s ease-in-out infinite' }} />
+              <div key={i} className="rounded-2xl h-44 bg-muted animate-pulse" />
             ))}
           </div>
         </div>
