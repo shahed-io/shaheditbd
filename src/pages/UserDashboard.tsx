@@ -511,14 +511,14 @@ const UserDashboard = () => {
                   </div>
                 )}
                 {activeTab === 'addresses' && (
-                  <button onClick={() => { setShowAddressForm(true); setEditingAddress(null); setAddressForm({ label: 'বাড়ি', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false }); }}
+                  <button onClick={() => { setShowAddressForm(true); setEditingAddress(null); setAddressForm({ label: 'Home', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false }); }}
                     className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                    <Plus size={14} /> নতুন ঠিকানা
+                    <Plus size={14} /> {t(selectedLang, 'add_address')}
                   </button>
                 )}
                 {activeTab === 'notifications' && unreadCount > 0 && (
                   <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-border text-muted-foreground hover:bg-muted/30">
-                    <BellOff size={13} /> সব পড়া হিসেবে চিহ্নিত
+                    <BellOff size={13} /> {t(selectedLang, 'mark_all_read')}
                   </button>
                 )}
               </div>
