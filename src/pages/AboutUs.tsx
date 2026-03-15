@@ -201,15 +201,22 @@ export default function AboutUs() {
 
         {/* Team */}
         <SectionCard icon={<Users size={15} />} title="আমাদের টিম" accentFrom={A} accentTo={B}>
-          <div className="grid sm:grid-cols-3 gap-4 mt-1">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-1">
             {TEAM.map(member => (
-              <div key={member.name} className="rounded-xl p-4 text-center"
-                style={{ background: 'linear-gradient(155deg, rgba(255,255,255,0.60), rgba(255,255,255,0.35))', border: '1px solid hsla(258,78%,75%,0.18)' }}>
-                <div className="text-4xl mb-3">{member.emoji}</div>
-                <p className="font-sora font-black text-[14px]" style={{ color: 'hsl(226,35%,14%)' }}>{member.name}</p>
-                <p className="text-[11px] font-bold px-3 py-1 rounded-full inline-block mt-1 mb-3"
-                  style={{ background: `${A}12`, color: A }}>{member.role}</p>
-                <p className="text-[12px] leading-relaxed" style={{ color: 'hsl(226,25%,48%)' }}>{member.desc}</p>
+              <div key={member.name} className="rounded-xl p-5 text-center transition-all hover:-translate-y-1 hover:shadow-lg"
+                style={{ background: 'linear-gradient(155deg, rgba(255,255,255,0.70), rgba(255,255,255,0.40))', border: `1px solid ${member.highlight}25`, boxShadow: `0 2px 16px ${member.highlight}10` }}>
+                <div className="w-16 h-16 rounded-2xl mx-auto mb-3 flex items-center justify-center text-4xl"
+                  style={{ background: `linear-gradient(135deg, ${member.highlight}18, ${member.highlight}08)`, border: `1px solid ${member.highlight}25` }}>
+                  {member.emoji}
+                </div>
+                <p className="font-sora font-black text-[13.5px]" style={{ color: 'hsl(226,35%,14%)' }}>{member.name}</p>
+                <p className="text-[11px] font-bold px-2 py-0.5 rounded-full inline-block mt-1 mb-2"
+                  style={{ background: `${member.highlight}15`, color: member.highlight }}>{member.role}</p>
+                <div className="text-[10.5px] font-bold px-2 py-1 rounded-lg mb-3"
+                  style={{ background: `${member.highlight}10`, color: member.highlight, border: `1px solid ${member.highlight}20` }}>
+                  🏆 {member.badge}
+                </div>
+                <p className="text-[11.5px] leading-relaxed" style={{ color: 'hsl(226,25%,48%)' }}>{member.desc}</p>
               </div>
             ))}
           </div>
