@@ -331,12 +331,14 @@ const ProductDetail = () => {
             {/* ═══ LEFT: Image Gallery ═══ */}
             <div className="space-y-4">
               {/* Main Image with cinematic entrance */}
-              <div
+            <div
                 className="relative rounded-3xl overflow-hidden border aspect-square group"
                 style={{
-                  background: 'hsl(215,28%,10%)',
-                  borderColor: entered ? 'hsla(271,91%,65%,0.35)' : 'transparent',
-                  boxShadow: entered ? '0 0 60px hsla(271,91%,65%,0.12), 0 32px 80px hsla(215,40%,4%,0.6)' : 'none',
+                  background: 'linear-gradient(155deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.60) 100%)',
+                  backdropFilter: 'blur(24px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                  borderColor: entered ? 'hsla(258,78%,60%,0.25)' : 'transparent',
+                  boxShadow: entered ? '0 8px 48px hsla(258,78%,55%,0.14), 0 1px 0 rgba(255,255,255,0.9) inset' : 'none',
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'none' : 'translateX(-40px) scale(0.95)',
                   transition: 'all 0.8s cubic-bezier(0.22,1,0.36,1)',
