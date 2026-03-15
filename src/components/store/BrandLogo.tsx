@@ -43,7 +43,7 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
             src={logoIcon}
             alt="Shahed Store"
             className="w-[76%] h-[76%] object-contain relative z-10"
-            style={{ filter: 'brightness(1.1) drop-shadow(0 1px 4px hsla(0,0%,0%,0.4))' }}
+            style={{ filter: 'brightness(0.9) saturate(1.2) drop-shadow(0 1px 3px hsla(258,78%,40%,0.25))' }}
           />
         </div>
       </div>
