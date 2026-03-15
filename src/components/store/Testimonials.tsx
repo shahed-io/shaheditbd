@@ -127,21 +127,31 @@ const AvatarCircle = ({ initials, index }: { initials: string; index: number }) 
 
 const ReviewCard = ({ review, index }: { review: Review; index: number }) => (
   <div
-    className="flex-shrink-0 w-[300px] sm:w-[340px] rounded-2xl p-5 space-y-3 transition-all duration-300 group cursor-default"
+    className="flex-shrink-0 w-[300px] sm:w-[340px] rounded-2xl p-5 space-y-3 transition-all duration-300 group cursor-default relative overflow-hidden"
     style={{
-      background: 'hsl(var(--card))',
-      border: '1px solid hsl(var(--border))',
-      boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
+      background: 'hsla(0,0%,100%,0.55)',
+      backdropFilter: 'blur(20px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+      border: '1px solid hsla(258,78%,75%,0.18)',
+      boxShadow: '0 4px 20px hsla(226,35%,12%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.65)',
     }}
     onMouseEnter={e => {
-      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(243,75%,62%,0.35)';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px hsla(243,75%,62%,0.12)';
+      const el = e.currentTarget as HTMLElement;
+      el.style.border = '1px solid hsla(243,75%,62%,0.38)';
+      el.style.boxShadow = '0 12px 36px hsla(243,75%,62%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.75)';
+      el.style.background = 'hsla(0,0%,100%,0.72)';
     }}
     onMouseLeave={e => {
-      (e.currentTarget as HTMLElement).style.border = '1px solid hsl(var(--border))';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px hsla(226,35%,12%,0.07)';
+      const el = e.currentTarget as HTMLElement;
+      el.style.border = '1px solid hsla(258,78%,75%,0.18)';
+      el.style.boxShadow = '0 4px 20px hsla(226,35%,12%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.65)';
+      el.style.background = 'hsla(0,0%,100%,0.55)';
     }}
   >
+    {/* Inner top shine */}
+    <div className="absolute top-0 left-0 right-0 h-[1px] rounded-t-2xl pointer-events-none"
+      style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.85), transparent)' }} />
+
     {/* Quote icon */}
     <Quote size={18} className="text-primary/40 group-hover:text-primary/60 transition-colors" />
 
@@ -152,13 +162,13 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => (
     <div className="flex items-center justify-between">
       <StarRating rating={review.rating} />
       <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
-        style={{ background: 'hsla(243,75%,62%,0.12)', border: '1px solid hsla(243,75%,62%,0.2)', color: 'hsl(243,75%,70%)' }}>
+        style={{ background: 'hsla(243,75%,62%,0.10)', border: '1px solid hsla(243,75%,62%,0.2)', color: 'hsl(243,75%,65%)' }}>
         {review.product}
       </span>
     </div>
 
     {/* Author */}
-    <div className="flex items-center gap-3 pt-1 border-t border-border">
+    <div className="flex items-center gap-3 pt-1 border-t border-border/60">
       <AvatarCircle initials={review.avatar} index={index} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
@@ -185,7 +195,6 @@ const Testimonials = () => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Intersection observer for section entrance
   useEffect(() => {
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
@@ -195,7 +204,6 @@ const Testimonials = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Infinite marquee via CSS animation
   const row1 = [...REVIEWS.slice(0, 4), ...REVIEWS.slice(0, 4)];
   const row2 = [...REVIEWS.slice(4), ...REVIEWS.slice(4)];
 
@@ -232,14 +240,21 @@ const Testimonials = () => {
             সারা বাংলাদেশ থেকে গ্রাহকরা আমাদের সার্ভিস নিয়ে যা বলছেন
           </p>
 
-          {/* Stats row */}
-          <div className={`flex items-center justify-center gap-8 mt-8 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          {/* Stats row — glassmorphism pills */}
+          <div className={`flex items-center justify-center gap-6 mt-8 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {[
               { value: avgRating, label: 'গড় রেটিং', suffix: '★' },
               { value: '2,500+', label: 'সন্তুষ্ট গ্রাহক', suffix: '' },
               { value: '99%', label: 'পজিটিভ রিভিউ', suffix: '' },
             ].map((stat, i) => (
-              <div key={i} className="text-center">
+              <div key={i} className="text-center px-5 py-3 rounded-2xl"
+                style={{
+                  background: 'hsla(0,0%,100%,0.55)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  border: '1px solid hsla(258,78%,75%,0.18)',
+                  boxShadow: '0 2px 12px hsla(226,35%,12%,0.06), inset 0 1px 0 hsla(0,0%,100%,0.65)',
+                }}>
                 <p className="font-sora font-black text-2xl sm:text-3xl text-foreground">
                   {stat.value}
                   <span className="text-yellow-400">{stat.suffix}</span>
@@ -259,7 +274,6 @@ const Testimonials = () => {
       >
         {/* Row 1 — scrolls left */}
         <div className="relative">
-          {/* Edge fades */}
           <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
             style={{ background: 'linear-gradient(to right, hsl(var(--background)), transparent)' }} />
           <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
@@ -297,7 +311,6 @@ const Testimonials = () => {
         </div>
       </div>
 
-      {/* CSS keyframes injected inline */}
       <style>{`
         @keyframes marquee-left {
           0%   { transform: translateX(0); }
