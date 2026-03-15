@@ -102,6 +102,11 @@ const App = () => (
                   <Route path="pages" element={<AdminPages />} />
                 </Route>
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-conditions" element={<TermsConditions />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/order-policy" element={<OrderPolicy />} />
+                <Route path="/delivery-info" element={<DeliveryInfo />} />
+                <Route path="/return-policy" element={<ReturnPolicy />} />
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
