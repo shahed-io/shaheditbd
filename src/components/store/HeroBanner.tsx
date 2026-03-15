@@ -298,17 +298,28 @@ const HeroBanner = () => {
                   ) : (
                     /* Regular Slide Card */
                     <>
-                      {/* Icon + Sparkles */}
+                      {/* Icon / Logo + Sparkles */}
                       <div className="flex items-start justify-between mb-6">
-                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
+                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden"
                           style={{
-                            background: 'rgba(255,255,255,0.9)',
+                            background: slide.logoImg ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.9)',
                             border: `1.5px solid ${slide.accentFrom}35`,
-                            boxShadow: `0 4px 16px ${slide.accentFrom}20, inset 0 1px 0 rgba(255,255,255,1)`,
+                            boxShadow: `0 4px 20px ${slide.accentFrom}25, inset 0 1px 0 rgba(255,255,255,1)`,
                           }}>
-                          {slide.emoji}
+                          {slide.logoImg
+                            ? <img src={slide.logoImg} alt="product logo" className="w-10 h-10 object-contain" />
+                            : <span className="text-3xl">{slide.emoji}</span>
+                          }
                         </div>
-                        <Sparkles size={18} className="anim-spin-slow mt-1" style={{ color: slide.accentFrom }} />
+                        <div className="flex flex-col items-end gap-1">
+                          <Sparkles size={18} className="anim-spin-slow" style={{ color: slide.accentFrom }} />
+                          {slide.logoImg && (
+                            <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full text-white"
+                              style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
+                              OFFICIAL
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* FEATURED DEAL label */}
