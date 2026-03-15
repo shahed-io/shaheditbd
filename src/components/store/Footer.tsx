@@ -1,43 +1,58 @@
 import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import BrandLogo from './BrandLogo';
 
-const NAV_COL = [
-  {
-    title: 'Products',
-    links: [
-      { label: 'Windows Keys',     href: '#' },
-      { label: 'Office 365',       href: '#' },
-      { label: 'Adobe Creative',   href: '#' },
-      { label: 'Streaming',        href: '#' },
-      { label: 'VPN & Security',   href: '#' },
-      { label: 'AI Tools',         href: '#' },
-    ]
-  },
-  {
-    title: 'Information',
-    links: [
-      { label: 'FAQs',             href: '/help' },
-      { label: 'Help Center',      href: '/help' },
-      { label: 'About Us',         href: '/about' },
-      { label: 'My Account',       href: '/dashboard' },
-      { label: 'Contact Us',       href: '/contact' },
-      { label: 'All Products',     href: '/shop' },
-    ]
-  },
-  {
-    title: 'Policies',
-    links: [
-      { label: 'Privacy Policy',       href: '/privacy-policy' },
-      { label: 'Terms & Conditions',   href: '/terms-conditions' },
-      { label: 'Refund & Return Policy', href: '/refund-policy' },
-      { label: 'Order & Cancellation', href: '/order-policy' },
-      { label: 'Delivery Info',        href: '/delivery-info' },
-      { label: 'Return Policy',        href: '/return-policy' },
-    ]
-  },
+interface FooterLink { id: string; section: 'information' | 'policies'; label: string; href: string; sort_order: number; is_active: boolean; }
+
+const DEFAULT_INFO = [
+  { label: 'FAQs',         href: '/help' },
+  { label: 'Help Center',  href: '/help' },
+  { label: 'About Us',     href: '/about' },
+  { label: 'My Account',   href: '/dashboard' },
+  { label: 'Contact Us',   href: '/contact' },
+  { label: 'All Products', href: '/shop' },
 ];
 
-const Footer = () => (
+const DEFAULT_POLICIES = [
+  { label: 'Privacy Policy',         href: '/privacy-policy' },
+  { label: 'Terms & Conditions',     href: '/terms-conditions' },
+  { label: 'Refund & Return Policy', href: '/refund-policy' },
+  { label: 'Order & Cancellation',   href: '/order-policy' },
+  { label: 'Delivery Info',          href: '/delivery-info' },
+  { label: 'Return Policy',          href: '/return-policy' },
+];
+
+const PRODUCTS_COL = [
+  { label: 'Windows Keys',   href: '#' },
+  { label: 'Office 365',     href: '#' },
+  { label: 'Adobe Creative', href: '#' },
+  { label: 'Streaming',      href: '#' },
+  { label: 'VPN & Security', href: '#' },
+  { label: 'AI Tools',       href: '#' },
+];
+
+const Footer = () => {
+  const { data: dynamicLinks } = useQuery<FooterLink[]>({
+    queryKey: ['footer-pages'],
+    queryFn: async () => {
+      const { data } = await supabase.from('site_settings').select('value').eq('key', 'footer_pages').maybeSingle();
+      if (data?.value) return JSON.parse(data.value) as FooterLink[];
+      return [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const infoLinks = (dynamicLinks?.filter(l => l.section === 'information' && l.is_active).sort((a, b) => a.sort_order - b.sort_order)) ?? DEFAULT_INFO;
+  const policyLinks = (dynamicLinks?.filter(l => l.section === 'policies' && l.is_active).sort((a, b) => a.sort_order - b.sort_order)) ?? DEFAULT_POLICIES;
+
+  const NAV_COLS = [
+    { title: 'Products',    links: PRODUCTS_COL },
+    { title: 'Information', links: infoLinks },
+    { title: 'Policies',    links: policyLinks },
+  ];
+
+  return (
   <footer className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
 
     {/* Decorative blobs */}
@@ -146,7 +161,7 @@ const Footer = () => (
       </div>
 
       {/* Nav columns */}
-      {NAV_COL.map((col, ci) => (
+      {NAV_COLS.map((col, ci) => (
         <div key={ci}>
           <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em] mb-5 flex items-center gap-2"
             style={{ color: 'hsl(226,35%,20%)' }}>
@@ -237,6 +252,7 @@ const Footer = () => (
       </div>
     </div>
   </footer>
-);
+  );
+};
 
 export default Footer;
