@@ -19,7 +19,7 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
         {/* Subtle colored ring */}
         <div className="absolute inset-[-2px] rounded-2xl pointer-events-none"
           style={{
-            background: 'linear-gradient(135deg, hsl(340,90%,58%), hsl(20,100%,58%), hsl(38,100%,62%), hsl(210,90%,58%))',
+            background: 'linear-gradient(135deg, hsl(258,78%,65%), hsl(210,90%,58%), hsl(42,96%,58%), hsl(258,78%,55%))',
             borderRadius: '18px',
             padding: '1.5px',
             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
@@ -30,8 +30,8 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
         {/* Icon container — clean, no dark shadow */}
         <div className={`${iconSize} rounded-2xl flex items-center justify-center relative overflow-hidden`}
           style={{
-            background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,52%) 0%, hsl(340,95%,42%) 50%, hsl(222,30%,18%) 100%)',
-            boxShadow: '0 4px 16px hsla(15,100%,52%,0.28), 0 1px 4px hsla(15,100%,52%,0.15)',
+            background: 'radial-gradient(ellipse at 40% 35%, hsl(258,78%,62%) 0%, hsl(243,80%,45%) 50%, hsl(222,40%,22%) 100%)',
+            boxShadow: '0 4px 16px hsla(258,78%,55%,0.35), 0 1px 4px hsla(258,78%,55%,0.2)',
           }}>
 
           {/* Top-left gloss */}
