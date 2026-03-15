@@ -679,7 +679,7 @@ body::before {
 .trust-badge { display: flex; align-items: flex-start; }
 
 .dot-grid {
-  background-image: radial-gradient(circle, hsla(271,91%,65%,0.15) 1px, transparent 1px);
+  background-image: radial-gradient(circle, hsla(42,96%,58%,0.14) 1px, transparent 1px);
   background-size: 28px 28px;
 }
 
