@@ -148,16 +148,17 @@ body::before {
 }
 
 /* ══════════════════════════════════════
-   PRODUCT CARD — White Theme
+   PRODUCT CARD — Glassmorphism
 ══════════════════════════════════════ */
 .product-card-new {
-  background: hsl(0, 0%, 100%);
-  border: 1px solid hsla(220, 20%, 88%, 1);
+  background: hsla(0, 0%, 100%, 0.55);
+  border: 1px solid hsla(258, 78%, 75%, 0.18);
   border-radius: 1.25rem;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px hsla(226,35%,12%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   position: relative;
   cursor: pointer;
 }
@@ -264,16 +265,17 @@ body::before {
 .neon-pulse-cyan { animation: neon-pulse-cyan 2s ease-in-out infinite; }
 
 /* ══════════════════════════════════════
-   CATEGORY CARD — White Theme
+   CATEGORY CARD — Glassmorphism
 ══════════════════════════════════════ */
 .cat-card {
-  background: hsl(0, 0%, 100%);
-  border: 1px solid hsla(220, 20%, 88%, 1);
+  background: hsla(0, 0%, 100%, 0.55);
+  border: 1px solid hsla(258, 78%, 75%, 0.18);
   border-radius: 1.5rem;
   transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px hsla(226,35%,12%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   overflow: hidden;
   position: relative;
 }
@@ -295,27 +297,30 @@ body::before {
 .cat-icon { transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
 /* ══════════════════════════════════════
-   GLASS CARDS — White Theme
+   GLASS CARDS — Glassmorphism
 ══════════════════════════════════════ */
 .glass-card {
-  background: hsla(0, 0%, 100%, 0.9);
+  background: hsla(0, 0%, 100%, 0.50);
   backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid hsla(220, 20%, 88%, 1);
-  box-shadow: var(--shadow-card);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid hsla(258, 78%, 75%, 0.20);
+  box-shadow: 0 4px 24px hsla(226,35%,12%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.7);
 }
 
 .glass-dark {
-  background: hsla(226, 35%, 12%, 0.92);
+  background: hsla(226, 35%, 12%, 0.65);
   backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid hsla(220, 30%, 100%, 0.10);
-  box-shadow: 0 16px 48px hsla(226, 35%, 12%, 0.25);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid hsla(258, 78%, 75%, 0.15);
+  box-shadow: 0 16px 48px hsla(226, 35%, 12%, 0.25), inset 0 1px 0 hsla(255,100%,100%,0.05);
 }
 
 .glass-white {
-  background: hsla(0, 0%, 100%, 0.95);
+  background: hsla(0, 0%, 100%, 0.55);
   backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid hsla(220, 20%, 90%, 1);
-  box-shadow: var(--shadow-card);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid hsla(258, 78%, 75%, 0.18);
+  box-shadow: 0 4px 24px hsla(226,35%,12%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.6);
 }
 
 /* ══════════════════════════════════════

@@ -24,6 +24,14 @@ const STATS = [
   { n: '24/7', l: 'Support Available' },
 ];
 
+const glassCard = (borderColor: string) => ({
+  background: 'hsla(0,0%,100%,0.55)',
+  backdropFilter: 'blur(20px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+  border: `1px solid ${borderColor}`,
+  boxShadow: '0 4px 20px hsla(226,35%,12%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.65)',
+} as React.CSSProperties);
+
 const WhyChooseUs = () => {
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
@@ -67,17 +75,16 @@ const WhyChooseUs = () => {
             {FEATURES.map((f, i) => (
               <div key={i}
                 className="group relative rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-                style={{
-                  background: 'hsl(var(--card))',
-                  border: `1px solid ${f.from}30`,
-                  boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
-                }}>
+                style={glassCard(`${f.from}28`)}>
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"
-                  style={{ background: `radial-gradient(ellipse at 0% 0%, ${f.from}10, transparent 60%)` }} />
+                  style={{ background: `radial-gradient(ellipse at 0% 0%, ${f.from}12, transparent 60%)` }} />
                 {/* Top border glow on hover */}
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{ background: `linear-gradient(90deg, transparent, ${f.from}90, ${f.to}90, transparent)` }} />
+                {/* Inner top shine */}
+                <div className="absolute top-0 left-0 right-0 h-[1px] rounded-t-2xl pointer-events-none"
+                  style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.8), transparent)' }} />
 
                 <div className="relative z-10 flex items-start gap-4">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
@@ -117,12 +124,11 @@ const WhyChooseUs = () => {
 
             {STEPS.map((step, i) => (
               <div key={i}
-                className="relative rounded-3xl p-7 z-10 text-center group transition-all duration-300 hover:-translate-y-2"
-                style={{
-                  background: 'hsl(var(--card))',
-                  border: `1px solid ${step.from}35`,
-                  boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
-                }}>
+                className="relative rounded-3xl p-7 z-10 text-center group transition-all duration-300 hover:-translate-y-2 overflow-hidden"
+                style={glassCard(`${step.from}30`)}>
+                {/* Inner shine */}
+                <div className="absolute top-0 left-0 right-0 h-[1px] rounded-t-3xl pointer-events-none"
+                  style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.85), transparent)' }} />
                 {/* Hover top glow */}
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{ background: `linear-gradient(90deg, transparent, ${step.from}90, ${step.to}90, transparent)` }} />
@@ -144,17 +150,22 @@ const WhyChooseUs = () => {
           </div>
         </div>
 
-        {/* ── Stats Bar — Glassmorphic ── */}
+        {/* ── Stats Bar — Glassmorphism ── */}
         <div ref={statsRef}
           className="relative rounded-3xl p-10 lg:p-14 overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, hsla(243,75%,62%,0.08) 0%, hsla(263,70%,58%,0.06) 50%, hsla(15,100%,60%,0.06) 100%)',
-            border: '1px solid hsla(243,75%,62%,0.2)',
-            boxShadow: '0 4px 32px hsla(226,35%,12%,0.08)',
+            background: 'hsla(0,0%,100%,0.45)',
+            backdropFilter: 'blur(28px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(28px) saturate(200%)',
+            border: '1px solid hsla(243,75%,62%,0.22)',
+            boxShadow: '0 8px 40px hsla(226,35%,12%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.75)',
           }}>
+          {/* Inner shine */}
+          <div className="absolute top-0 left-0 right-0 h-[1px] rounded-t-3xl pointer-events-none"
+            style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.9), transparent)' }} />
           {/* Decorations */}
           <div className="absolute inset-0 pointer-events-none"
-            style={{ backgroundImage: 'radial-gradient(circle at 15% 20%, hsla(258,78%,55%,0.05) 0%, transparent 45%)' }} />
+            style={{ backgroundImage: 'radial-gradient(circle at 15% 20%, hsla(258,78%,55%,0.04) 0%, transparent 45%)' }} />
           <div className="absolute top-5 right-6 pointer-events-none">
             <Sparkles size={32} style={{ color: 'hsla(258,78%,55%,0.2)' }} />
           </div>

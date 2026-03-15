@@ -97,7 +97,6 @@ const FlashSale = () => {
           style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.06), transparent)', filter: 'blur(80px)' }} />
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full"
           style={{ background: 'radial-gradient(circle, hsla(38,100%,55%,0.05), transparent)', filter: 'blur(80px)' }} />
-        {/* Section divider glow */}
         <div className="absolute top-0 left-0 right-0 h-px"
           style={{ background: 'linear-gradient(90deg, transparent, hsla(15,100%,60%,0.2), hsla(38,100%,55%,0.2), transparent)' }} />
       </div>
@@ -120,7 +119,7 @@ const FlashSale = () => {
                 <Flame size={13} fill="white" /> Flash Sale
               </span>
               <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full font-fira"
-                style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
+                style={{ background: 'hsla(0,0%,100%,0.55)', backdropFilter: 'blur(16px)', border: '1px solid hsla(258,78%,75%,0.2)', color: 'hsl(var(--muted-foreground))' }}>
                 LIMITED TIME
               </span>
             </div>
@@ -134,7 +133,7 @@ const FlashSale = () => {
             <p className="text-muted-foreground mt-2 text-[14px]">Top deals sorted by highest savings — grab them before time runs out!</p>
           </div>
 
-          {/* Countdown — white theme */}
+          {/* Countdown — glassmorphism */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 text-[12px] font-semibold text-muted-foreground">
               <Timer size={13} style={{ color: 'hsl(15,100%,62%)' }} /> Sale ends in:
@@ -144,9 +143,11 @@ const FlashSale = () => {
                 <div key={i} className="flex items-center gap-2">
                   <div className="flex flex-col items-center min-w-[54px] rounded-2xl px-3 py-2.5"
                     style={{
-                      background: 'hsl(220,15%,20%)',
-                      border: '1px solid hsl(220,15%,28%)',
-                      boxShadow: '0 2px 8px hsla(226,35%,12%,0.15)',
+                      background: 'hsla(226,35%,12%,0.55)',
+                      backdropFilter: 'blur(20px) saturate(180%)',
+                      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                      border: '1px solid hsla(258,78%,75%,0.18)',
+                      boxShadow: '0 4px 16px hsla(226,35%,12%,0.2), inset 0 1px 0 hsla(255,100%,100%,0.06)',
                     }}>
                     <span className="text-[1.4rem] font-fira font-black leading-none text-white tabular-nums">{item.v}</span>
                     <span className="text-[9px] font-bold text-gray-400 mt-1 uppercase tracking-wider">{item.l}</span>
@@ -239,12 +240,14 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
       className="group rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
       style={{
         animationDelay: `${delay}s`,
-        background: 'hsl(var(--card))',
-        border: hovered ? '1px solid hsla(15,100%,60%,0.4)' : '1px solid hsl(var(--border))',
+        background: hovered ? 'hsla(0,0%,100%,0.75)' : 'hsla(0,0%,100%,0.55)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        border: hovered ? '1px solid hsla(15,100%,60%,0.45)' : '1px solid hsla(258,78%,75%,0.18)',
         transform: hovered ? 'translateY(-5px)' : 'none',
         boxShadow: hovered
-          ? '0 16px 40px hsla(15,100%,60%,0.15), 0 4px 16px hsla(226,35%,12%,0.1)'
-          : '0 2px 12px hsla(226,35%,12%,0.07)',
+          ? '0 16px 40px hsla(15,100%,60%,0.18), 0 4px 16px hsla(226,35%,12%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.8)'
+          : '0 4px 20px hsla(226,35%,12%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.6)',
         transition: 'all 0.35s cubic-bezier(0.23,1,0.32,1)',
       }}
       onMouseEnter={() => setHovered(true)}
@@ -259,10 +262,8 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
           style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)' }}
           loading="lazy"
         />
-        {/* Hover overlay */}
         <div className="absolute inset-0 pointer-events-none transition-opacity duration-300"
           style={{ background: 'linear-gradient(to top, hsla(226,35%,8%,0.4), transparent)', opacity: hovered ? 1 : 0 }} />
-        {/* Discount Badge */}
         {product.discount_percent && (
           <div className="absolute top-2.5 left-2.5 text-white text-[11px] font-black px-2.5 py-1 rounded-xl flex items-center gap-1"
             style={{ background: 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,55%))', boxShadow: '0 2px 10px hsla(15,100%,60%,0.5)' }}>
@@ -270,7 +271,6 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
             -{product.discount_percent}%
           </div>
         )}
-        {/* Quick Add */}
         <button
           onClick={handleAddToCart}
           className="absolute bottom-2.5 right-2.5 w-9 h-9 rounded-xl text-white flex items-center justify-center transition-all duration-200 hover:scale-110"
@@ -289,24 +289,21 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
       {/* Info */}
       <div className="p-3.5">
         <p className="font-semibold text-[13px] line-clamp-2 leading-snug mb-2.5 transition-colors duration-200"
-          style={{ color: hovered ? 'hsl(15,100%,65%)' : 'hsl(var(--foreground))' }}>
+          style={{ color: hovered ? 'hsl(15,100%,58%)' : 'hsl(var(--foreground))' }}>
           {product.name}
         </p>
-
         <div className="flex items-baseline gap-2 flex-wrap">
           <span className="text-[17px] font-sora font-black text-foreground">৳{product.price.toLocaleString()}</span>
           {product.original_price && (
             <span className="text-[12px] text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</span>
           )}
         </div>
-
         {savings && (
           <div className="mt-2 text-[11px] font-bold rounded-lg px-2.5 py-1 inline-flex items-center gap-1"
-            style={{ color: 'hsl(15,100%,65%)', background: 'hsla(15,100%,60%,0.12)', border: '1px solid hsla(15,100%,60%,0.2)' }}>
+            style={{ color: 'hsl(15,100%,65%)', background: 'hsla(15,100%,60%,0.10)', border: '1px solid hsla(15,100%,60%,0.2)' }}>
             <TrendingDown size={10} /> Save ৳{savings.toLocaleString()}
           </div>
         )}
-
         {product.delivery_time && (
           <p className="mt-1.5 text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
             <Zap size={9} style={{ color: 'hsl(158,64%,48%)' }} />
