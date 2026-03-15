@@ -16,7 +16,7 @@ const NAV_COL = [
   {
     title: 'Information',
     links: [
-      { label: 'Blog',             href: '/blog' },
+      { label: 'FAQs',             href: '/help' },
       { label: 'Help Center',      href: '/help' },
       { label: 'About Us',         href: '#' },
       { label: 'My Account',       href: '/dashboard' },
