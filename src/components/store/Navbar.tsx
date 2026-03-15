@@ -139,7 +139,7 @@ const Navbar = () => {
                     {link.label}
                     {link.label === 'Categories' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
                   </a>
-                  {link.label === 'Shop' && (
+                  {link.label === 'Categories' && (
                     <div
                       className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 rounded-2xl border shadow-xl transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
                       style={{ width: '280px', background: 'hsl(0,0%,100%)', borderColor: 'hsl(220,20%,90%)', boxShadow: '0 20px 60px hsla(226,35%,12%,0.14)' }}
