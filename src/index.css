@@ -265,16 +265,17 @@ body::before {
 .neon-pulse-cyan { animation: neon-pulse-cyan 2s ease-in-out infinite; }
 
 /* ══════════════════════════════════════
-   CATEGORY CARD — White Theme
+   CATEGORY CARD — Glassmorphism
 ══════════════════════════════════════ */
 .cat-card {
-  background: hsl(0, 0%, 100%);
-  border: 1px solid hsla(220, 20%, 88%, 1);
+  background: hsla(0, 0%, 100%, 0.55);
+  border: 1px solid hsla(258, 78%, 75%, 0.18);
   border-radius: 1.5rem;
   transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px hsla(226,35%,12%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   overflow: hidden;
   position: relative;
 }
