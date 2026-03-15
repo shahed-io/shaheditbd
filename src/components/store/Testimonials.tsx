@@ -2,14 +2,8 @@ import { useRef, useEffect, useState } from 'react';
 import { Star, Quote } from 'lucide-react';
 
 interface Review {
-  name: string;
-  location: string;
-  avatar: string;
-  rating: number;
-  review: string;
-  product: string;
-  date: string;
-  verified: boolean;
+  name: string; location: string; avatar: string; rating: number;
+  review: string; product: string; date: string; verified: boolean;
 }
 
 const REVIEWS: Review[] = [
@@ -24,80 +18,67 @@ const REVIEWS: Review[] = [
 ];
 
 const GRADIENTS = [
-  ['hsl(258,78%,45%)', 'hsl(258,78%,62%)'],
-  ['hsl(330,85%,42%)', 'hsl(330,85%,60%)'],
-  ['hsl(162,72%,32%)', 'hsl(162,72%,50%)'],
-  ['hsl(15,100%,42%)',  'hsl(38,100%,55%)'],
-  ['hsl(190,90%,32%)', 'hsl(190,90%,52%)'],
-  ['hsl(283,65%,40%)', 'hsl(283,65%,60%)'],
-  ['hsl(162,72%,32%)', 'hsl(190,70%,52%)'],
-  ['hsl(4,80%,38%)',   'hsl(330,85%,60%)'],
+  'from-violet-500 to-indigo-600', 'from-pink-500 to-rose-600', 'from-emerald-500 to-teal-600',
+  'from-orange-500 to-amber-600', 'from-cyan-500 to-blue-600', 'from-fuchsia-500 to-purple-600',
+  'from-green-500 to-emerald-600', 'from-red-500 to-pink-600',
 ];
 
 const StarRating = ({ rating }: { rating: number }) => (
   <div className="flex items-center gap-0.5">
     {[1, 2, 3, 4, 5].map(i => (
-      <Star key={i} size={13} className={i <= rating ? 'fill-yellow-400' : ''} style={{ color: i <= rating ? 'hsl(42,96%,60%)' : 'hsla(220,20%,35%,0.8)' }} />
+      <Star key={i} size={13} className={i <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'} />
     ))}
   </div>
 );
 
-const AvatarCircle = ({ initials, index }: { initials: string; index: number }) => {
-  const [from, to] = GRADIENTS[index % GRADIENTS.length];
-  return (
-    <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-      style={{ background: `linear-gradient(135deg, ${from}, ${to})`, boxShadow: `0 4px 14px ${from}60` }}>
-      {initials}
-    </div>
-  );
-};
+const AvatarCircle = ({ initials, index }: { initials: string; index: number }) => (
+  <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${GRADIENTS[index % GRADIENTS.length]} flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md`}>
+    {initials}
+  </div>
+);
 
 const ReviewCard = ({ review, index }: { review: Review; index: number }) => (
   <div
     className="flex-shrink-0 w-[300px] sm:w-[340px] rounded-2xl p-5 space-y-3 transition-all duration-300 group cursor-default"
     style={{
-      background: 'hsla(222, 30%, 12%, 0.75)',
-      backdropFilter: 'blur(20px) saturate(160%)',
-      WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-      border: '1px solid hsla(220, 60%, 80%, 0.10)',
-      boxShadow: '0 4px 20px hsla(220,30%,3%,0.35)',
+      background: 'hsla(0, 0%, 100%, 0.78)',
+      backdropFilter: 'blur(20px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+      border: '1px solid hsla(220, 20%, 88%, 0.80)',
+      boxShadow: '0 2px 16px hsla(226,35%,12%,0.07)',
     }}
     onMouseEnter={e => {
-      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(258,78%,62%,0.40)';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 40px hsla(220,30%,3%,0.50), 0 0 0 1px hsla(258,78%,62%,0.15)';
+      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(243,75%,62%,0.35)';
+      (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px hsla(243,75%,62%,0.12)';
     }}
     onMouseLeave={e => {
-      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(220, 60%, 80%, 0.10)';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px hsla(220,30%,3%,0.35)';
+      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(220, 20%, 88%, 0.80)';
+      (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 16px hsla(226,35%,12%,0.07)';
     }}
   >
-    <Quote size={18} style={{ color: 'hsla(258,78%,62%,0.5)' }} className="group-hover:opacity-80 transition-opacity" />
-    <p className="text-sm leading-relaxed line-clamp-4" style={{ color: 'hsl(220,20%,60%)' }}>{review.review}</p>
-
+    <Quote size={18} className="text-primary/40 group-hover:text-primary/60 transition-colors" />
+    <p className="text-sm leading-relaxed text-muted-foreground line-clamp-4">{review.review}</p>
     <div className="flex items-center justify-between">
       <StarRating rating={review.rating} />
       <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
-        style={{ background: 'hsla(258,78%,62%,0.14)', border: '1px solid hsla(258,78%,62%,0.22)', color: 'hsl(258,78%,72%)' }}>
+        style={{ background: 'hsla(243,75%,62%,0.10)', border: '1px solid hsla(243,75%,62%,0.18)', color: 'hsl(243,75%,55%)' }}>
         {review.product}
       </span>
     </div>
-
-    <div className="flex items-center gap-3 pt-1 border-t" style={{ borderColor: 'hsla(220,60%,80%,0.08)' }}>
+    <div className="flex items-center gap-3 pt-1 border-t border-border">
       <AvatarCircle initials={review.avatar} index={index} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
-          <p className="text-sm font-bold truncate" style={{ color: 'hsl(220,20%,85%)' }}>{review.name}</p>
+          <p className="text-sm font-bold text-foreground truncate">{review.name}</p>
           {review.verified && (
-            <span className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ background: 'hsl(162,72%,48%)', boxShadow: '0 0 8px hsla(162,72%,48%,0.5)' }}
-              title="Verified Purchase">
+            <span className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0" title="Verified Purchase">
               <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
                 <path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
           )}
         </div>
-        <p className="text-xs" style={{ color: 'hsl(220,20%,42%)' }}>{review.location} · {review.date}</p>
+        <p className="text-xs text-muted-foreground/60">{review.location} · {review.date}</p>
       </div>
     </div>
   </div>
@@ -121,37 +102,28 @@ const Testimonials = () => {
 
   const row1 = [...REVIEWS.slice(0, 4), ...REVIEWS.slice(0, 4)];
   const row2 = [...REVIEWS.slice(4), ...REVIEWS.slice(4)];
-
-  const totalReviews = REVIEWS.length;
-  const avgRating = (REVIEWS.reduce((s, r) => s + r.rating, 0) / totalReviews).toFixed(1);
+  const avgRating = (REVIEWS.reduce((s, r) => s + r.rating, 0) / REVIEWS.length).toFixed(1);
 
   return (
     <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative bg-transparent">
-
-      {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full blur-3xl"
-          style={{ background: 'hsla(258,78%,62%,0.08)' }} />
-        <div className="absolute bottom-1/4 -right-32 w-80 h-80 rounded-full blur-3xl"
-          style={{ background: 'hsla(15,100%,60%,0.07)' }} />
+        <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full blur-3xl" style={{ background: 'hsla(243,75%,62%,0.05)' }} />
+        <div className="absolute bottom-1/4 -right-32 w-80 h-80 rounded-full blur-3xl" style={{ background: 'hsla(15,100%,60%,0.04)' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <span className="section-label mb-3 inline-block">Customer Reviews</span>
-          <h2 className="font-sora font-black text-3xl sm:text-4xl mb-4" style={{ color: 'hsl(220,20%,92%)' }}>
+          <h2 className="font-sora font-black text-3xl sm:text-4xl text-foreground mb-4">
             হাজারো{' '}
-            <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,72%), hsl(42,96%,62%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            <span style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               সন্তুষ্ট
             </span>{' '}
             গ্রাহক
           </h2>
-          <p className="text-sm sm:text-base max-w-lg mx-auto" style={{ color: 'hsl(220,20%,50%)' }}>
+          <p className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
             সারা বাংলাদেশ থেকে গ্রাহকরা আমাদের সার্ভিস নিয়ে যা বলছেন
           </p>
-
-          {/* Stats row */}
           <div className={`flex items-center justify-center gap-8 mt-8 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {[
               { value: avgRating, label: 'গড় রেটিং', suffix: '★' },
@@ -159,39 +131,28 @@ const Testimonials = () => {
               { value: '99%', label: 'পজিটিভ রিভিউ', suffix: '' },
             ].map((stat, i) => (
               <div key={i} className="text-center">
-                <p className="font-sora font-black text-2xl sm:text-3xl" style={{ color: 'hsl(220,20%,90%)' }}>
-                  {stat.value}
-                  <span style={{ color: 'hsl(42,96%,62%)' }}>{stat.suffix}</span>
+                <p className="font-sora font-black text-2xl sm:text-3xl text-foreground">
+                  {stat.value}<span className="text-yellow-400">{stat.suffix}</span>
                 </p>
-                <p className="text-xs mt-0.5" style={{ color: 'hsl(220,20%,45%)' }}>{stat.label}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Scrolling rows */}
-      <div className="space-y-4"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}>
-        {/* Row 1 — left */}
+      <div className="space-y-4" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
         <div className="relative">
-          <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
-            style={{ background: 'linear-gradient(to right, hsl(220,28%,6%), transparent)' }} />
-          <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
-            style={{ background: 'linear-gradient(to left, hsl(220,28%,6%), transparent)' }} />
+          <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(var(--background)), transparent)' }} />
+          <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(var(--background)), transparent)' }} />
           <div ref={track1Ref} className="flex gap-4 pl-4"
             style={{ width: 'max-content', animation: 'marquee-left 40s linear infinite', animationPlayState: isPaused ? 'paused' : 'running' }}>
             {row1.map((r, i) => <ReviewCard key={`r1-${i}`} review={r} index={i} />)}
           </div>
         </div>
-
-        {/* Row 2 — right */}
         <div className="relative">
-          <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
-            style={{ background: 'linear-gradient(to right, hsl(220,28%,6%), transparent)' }} />
-          <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
-            style={{ background: 'linear-gradient(to left, hsl(220,28%,6%), transparent)' }} />
+          <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, hsl(var(--background)), transparent)' }} />
+          <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, hsl(var(--background)), transparent)' }} />
           <div ref={track2Ref} className="flex gap-4 pl-4"
             style={{ width: 'max-content', animation: 'marquee-right 36s linear infinite', animationPlayState: isPaused ? 'paused' : 'running' }}>
             {row2.map((r, i) => <ReviewCard key={`r2-${i}`} review={r} index={i + 4} />)}
