@@ -388,8 +388,8 @@ body::before {
    BUTTONS
 ══════════════════════════════════════ */
 .btn-primary-new {
-  background: linear-gradient(135deg, hsl(42,96%,55%), hsl(38,100%,48%));
-  color: hsl(226, 35%, 8%);
+  background: linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%));
+  color: hsl(0, 0%, 100%);
   font-family: 'Sora', sans-serif;
   font-weight: 700;
   border: none;
@@ -398,16 +398,16 @@ body::before {
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   overflow: hidden;
-  box-shadow: var(--glow-gold);
+  box-shadow: var(--glow-violet);
 }
 .btn-primary-new:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px hsla(42,96%,58%,0.55);
+  box-shadow: 0 14px 40px hsla(258,78%,55%,0.45);
 }
 
 .btn-coral {
-  background: linear-gradient(135deg, hsl(330,85%,62%), hsl(42,96%,58%));
-  color: hsl(226, 35%, 8%);
+  background: linear-gradient(135deg, hsl(330,85%,55%), hsl(42,96%,50%));
+  color: hsl(0, 0%, 100%);
   font-family: 'Sora', sans-serif;
   font-weight: 700;
   border: none;
@@ -417,7 +417,7 @@ body::before {
 }
 .btn-coral:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px hsla(330,85%,62%,0.5);
+  box-shadow: 0 14px 40px hsla(330,85%,55%,0.45);
 }
 
 /* ══════════════════════════════════════
@@ -436,14 +436,14 @@ body::before {
   bottom: -2px;
   left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(90deg, hsl(42,96%,58%), hsl(258,78%,68%));
+  background: linear-gradient(90deg, hsl(258,78%,55%), hsl(42,96%,50%));
   transform: scaleX(0);
   border-radius: 999px;
   transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.nav-link-new:hover { color: hsl(42,96%,72%); }
+.nav-link-new:hover { color: hsl(258,78%,50%); }
 .nav-link-new:hover::after { transform: scaleX(1); }
-.nav-link-new.active { color: hsl(42,96%,72%); font-weight: 600; }
+.nav-link-new.active { color: hsl(258,78%,50%); font-weight: 600; }
 .nav-link-new.active::after { transform: scaleX(1); }
 
 /* ══════════════════════════════════════
