@@ -121,14 +121,13 @@ const WhyChooseUs = () => {
               <div key={i}
                 className="relative rounded-3xl p-7 z-10 text-center group transition-all duration-300 hover:-translate-y-2"
                 style={{
-                  background: 'hsla(222,22%,14%,0.85)',
-                  border: '1px solid hsla(0,0%,100%,0.07)',
-                  backdropFilter: 'blur(16px)',
-                  boxShadow: '0 4px 24px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.06)',
+                  background: 'hsl(var(--card))',
+                  border: `1px solid ${step.from}35`,
+                  boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
                 }}>
                 {/* Hover top glow */}
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, transparent, ${step.from}80, ${step.to}80, transparent)` }} />
+                  style={{ background: `linear-gradient(90deg, transparent, ${step.from}90, ${step.to}90, transparent)` }} />
                 {/* Step number */}
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <span className="text-[11px] font-fira font-bold px-3 py-1 rounded-full text-white"
@@ -137,7 +136,7 @@ const WhyChooseUs = () => {
                   </span>
                 </div>
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
-                  style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}28` }}>
+                  style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}40` }}>
                   {step.emoji}
                 </div>
                 <h3 className="font-sora font-bold text-[13px] text-foreground mb-2">{step.title}</h3>
