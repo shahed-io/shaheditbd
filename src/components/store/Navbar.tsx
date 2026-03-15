@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const NAV_LINKS = [
   { label: 'Home',    href: '/' },
-  { label: 'Shop',    href: '/shop' },
+  { label: 'Categories', href: '/shop' },
   { label: 'Windows', href: '#windows' },
   { label: 'Office',  href: '#office' },
   { label: 'Support', href: '#support' },
