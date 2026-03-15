@@ -38,34 +38,43 @@ const NAV_COL = [
 ];
 
 const Footer = () => (
-  <footer className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
+  <footer className="relative overflow-hidden" style={{ background: 'hsla(220, 28%, 5%, 0.95)' }}>
 
-    {/* Subtle decorative blobs */}
+    {/* Decorative ambient blobs */}
     <div className="absolute top-0 right-0 w-[500px] h-[400px] pointer-events-none"
-      style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(258,78%,55%,0.06), transparent 60%)' }} />
+      style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(258,78%,62%,0.10), transparent 60%)' }} />
     <div className="absolute bottom-0 left-0 w-[400px] h-[300px] pointer-events-none"
-      style={{ background: 'radial-gradient(ellipse at 0% 100%, hsla(200,90%,45%,0.05), transparent 60%)' }} />
+      style={{ background: 'radial-gradient(ellipse at 0% 100%, hsla(190,90%,55%,0.08), transparent 60%)' }} />
+    {/* Dot grid */}
     <div className="absolute inset-0 pointer-events-none"
-      style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.04) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+      style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,62%,0.05) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+    {/* Top border glow */}
+    <div className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+      style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,62%,0.5), hsla(190,90%,55%,0.5), transparent)' }} />
 
     {/* CTA Strip */}
-    <div className="relative z-10 border-b" style={{ borderColor: 'hsl(220,20%,90%)' }}>
+    <div className="relative z-10 border-b" style={{ borderColor: 'hsla(220,60%,80%,0.08)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-5">
         <div>
-          <h3 className="font-sora font-black text-xl" style={{ color: 'hsl(226,35%,12%)' }}>Need help choosing a product?</h3>
-          <p className="text-sm mt-1" style={{ color: 'hsl(226,35%,45%)' }}>Our experts are available 24/7 to assist you</p>
+          <h3 className="font-sora font-black text-xl" style={{ color: 'hsl(220,20%,90%)' }}>Need help choosing a product?</h3>
+          <p className="text-sm mt-1" style={{ color: 'hsl(220,20%,52%)' }}>Our experts are available 24/7 to assist you</p>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
           <a href="https://wa.me/8801840099853" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border"
-            style={{ color: 'hsl(226,35%,28%)', borderColor: 'hsl(220,20%,86%)', background: 'hsl(0,0%,100%)' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,55%,0.35)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsl(220,20%,86%)'; }}>
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all"
+            style={{
+              color: 'hsl(220,20%,70%)',
+              border: '1px solid hsla(220,60%,80%,0.12)',
+              background: 'hsla(222,30%,14%,0.75)',
+              backdropFilter: 'blur(12px)',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,62%,0.40)'; (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,72%)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(220,60%,80%,0.12)'; (e.currentTarget as HTMLElement).style.color = 'hsl(220,20%,70%)'; }}>
             <MessageCircle size={15} /> WhatsApp
           </a>
           <a href="/shop"
             className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold text-white hover:opacity-90 transition-all"
-            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.28)' }}>
+            style={{ background: 'linear-gradient(135deg, hsl(258,78%,62%), hsl(190,90%,50%))', boxShadow: '0 4px 18px hsla(258,78%,62%,0.40)' }}>
             Shop Now <ArrowRight size={15} />
           </a>
         </div>
@@ -81,7 +90,7 @@ const Footer = () => (
           <BrandLogo size="lg" />
         </a>
 
-        <p className="text-[13px] leading-relaxed max-w-xs" style={{ color: 'hsl(226,35%,42%)' }}>
+        <p className="text-[13px] leading-relaxed max-w-xs" style={{ color: 'hsl(220,20%,48%)' }}>
           বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।
         </p>
 
@@ -94,11 +103,11 @@ const Footer = () => (
           ].map((c, i) => (
             <a key={i} href={c.href} target={c.ext ? '_blank' : undefined} rel={c.ext ? 'noopener noreferrer' : undefined}
               className="flex items-center gap-2.5 text-sm transition-colors w-fit group"
-              style={{ color: 'hsl(226,35%,42%)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; }}>
+              style={{ color: 'hsl(220,20%,48%)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,72%)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(220,20%,48%)'; }}>
               <span className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-105"
-                style={{ background: 'hsl(0,0%,100%)', border: '1px solid hsl(220,20%,88%)' }}>
+                style={{ background: 'hsla(222,30%,16%,0.85)', border: '1px solid hsla(220,60%,80%,0.10)', backdropFilter: 'blur(8px)' }}>
                 {c.icon}
               </span>
               <span className="font-fira text-[12px]">{c.label}</span>
@@ -115,10 +124,15 @@ const Footer = () => (
           ].map((s, i) => (
             <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
               className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-105"
-              style={{ background: 'hsl(0,0%,100%)', border: '1px solid hsl(220,20%,88%)', color: 'hsl(226,35%,42%)' }}
+              style={{
+                background: 'hsla(222,30%,16%,0.85)',
+                border: '1px solid hsla(220,60%,80%,0.10)',
+                color: 'hsl(220,20%,50%)',
+                backdropFilter: 'blur(8px)',
+              }}
               title={s.label}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,55%,0.35)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsl(220,20%,88%)'; }}>
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,72%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,62%,0.40)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(220,20%,50%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsla(220,60%,80%,0.10)'; }}>
               {s.icon}
             </a>
           ))}
@@ -129,9 +143,9 @@ const Footer = () => (
       {NAV_COL.map((col, ci) => (
         <div key={ci}>
           <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em] mb-5 flex items-center gap-2"
-            style={{ color: 'hsl(226,35%,20%)' }}>
+            style={{ color: 'hsl(220,20%,65%)' }}>
             <span className="w-5 h-[2px] rounded-full"
-              style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(200,90%,45%))' }} />
+              style={{ background: 'linear-gradient(90deg, hsl(258,78%,62%), hsl(190,90%,50%))' }} />
             {col.title}
           </h4>
           <ul className="space-y-2.5">
@@ -139,9 +153,9 @@ const Footer = () => (
               <li key={link.label}>
                 <a href={link.href}
                   className="text-[13px] transition-colors flex items-center gap-1.5 group"
-                  style={{ color: 'hsl(226,35%,45%)' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,45%)'; }}>
+                  style={{ color: 'hsl(220,20%,42%)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,72%)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(220,20%,42%)'; }}>
                   <span className="w-0 group-hover:w-3 overflow-hidden transition-all duration-200">
                     <ArrowRight size={11} />
                   </span>
@@ -155,20 +169,20 @@ const Footer = () => (
     </div>
 
     {/* ── Trust bar ── */}
-    <div className="relative z-10 border-t" style={{ borderColor: 'hsl(220,20%,88%)' }}>
+    <div className="relative z-10 border-t" style={{ borderColor: 'hsla(220,60%,80%,0.08)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+            style={{ background: 'linear-gradient(135deg, hsl(258,78%,62%), hsl(190,90%,50%))', boxShadow: '0 4px 16px hsla(258,78%,62%,0.40)' }}>
             <Shield size={16} className="text-white" />
           </div>
           <div>
-            <p className="text-[11px] font-bold font-sora tracking-wide" style={{ color: 'hsl(226,35%,15%)' }}>GOVT. CERTIFIED BUSINESS</p>
-            <p className="text-[10px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>DBID: 586772174</p>
+            <p className="text-[11px] font-bold font-sora tracking-wide" style={{ color: 'hsl(220,20%,75%)' }}>GOVT. CERTIFIED BUSINESS</p>
+            <p className="text-[10px] font-fira" style={{ color: 'hsl(220,20%,42%)' }}>DBID: 586772174</p>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[10px] font-fira mr-1" style={{ color: 'hsl(226,35%,50%)' }}>PAYMENTS:</span>
+          <span className="text-[10px] font-fira mr-1" style={{ color: 'hsl(220,20%,40%)' }}>PAYMENTS:</span>
           {[
             { name: 'bKash', num: '01820060046' },
             { name: 'Nagad', num: '01840099853' },
@@ -178,30 +192,35 @@ const Footer = () => (
           ].map(pm => (
             <span key={pm.name}
               className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold font-fira"
-              style={{ background: 'hsl(0,0%,100%)', color: 'hsl(226,35%,28%)', border: '1px solid hsl(220,20%,88%)' }}
+              style={{
+                background: 'hsla(222,30%,14%,0.80)',
+                color: 'hsl(220,20%,60%)',
+                border: '1px solid hsla(220,60%,80%,0.10)',
+                backdropFilter: 'blur(8px)',
+              }}
               title={pm.num}>
               {pm.name}
             </span>
           ))}
         </div>
-        <div className="flex items-center gap-2 text-[11px] font-fira" style={{ color: 'hsl(226,35%,50%)' }}>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="flex items-center gap-2 text-[11px] font-fira" style={{ color: 'hsl(220,20%,42%)' }}>
+          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'hsl(162,72%,52%)' }} />
           All systems operational
         </div>
       </div>
     </div>
 
     {/* ── Copyright ── */}
-    <div className="relative z-10 border-t border-border">
+    <div className="relative z-10 border-t" style={{ borderColor: 'hsla(220,60%,80%,0.06)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p className="text-[11px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>
-          © 2026 <strong style={{ color: 'hsl(226,35%,20%)' }}>Shahed Store</strong> · All rights reserved.
+        <p className="text-[11px] font-fira" style={{ color: 'hsl(220,20%,38%)' }}>
+          © 2026 <strong style={{ color: 'hsl(220,20%,58%)' }}>Shahed Store</strong> · All rights reserved.
         </p>
         <a href="https://www.shahedstore.com.bd" target="_blank" rel="noopener noreferrer"
           className="flex items-center gap-1 text-[11px] font-fira transition-colors"
-          style={{ color: 'hsl(226,35%,48%)' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,48%)'; }}>
+          style={{ color: 'hsl(220,20%,38%)' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,72%)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(220,20%,38%)'; }}>
           www.shahedstore.com.bd <ExternalLink size={10} />
         </a>
       </div>
