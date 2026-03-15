@@ -476,7 +476,7 @@ const ProductDetail = () => {
                 </span>
                 <button onClick={handleCopy}
                   className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
-                  style={{ color: copied ? 'hsl(158,80%,55%)' : 'hsl(var(--muted-foreground))', background: 'hsla(215,28%,14%,0.8)', border: '1px solid hsl(var(--border))' }}>
+                  style={{ color: copied ? 'hsl(158,80%,45%)' : 'hsl(226,25%,45%)', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid hsla(258,78%,60%,0.18)', boxShadow: '0 2px 8px hsla(258,78%,55%,0.08)' }}>
                   {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Share</>}
                 </button>
               </div>
