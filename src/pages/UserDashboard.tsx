@@ -461,7 +461,7 @@ const UserDashboard = () => {
 
           {/* Sidebar */}
           <div className="bg-card rounded-2xl border border-border p-3 h-fit shadow-sm">
-            <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">মেনু</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">{t(selectedLang, 'menu')}</p>
             {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
               <button key={id} onClick={() => setActiveTab(id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${
@@ -479,7 +479,7 @@ const UserDashboard = () => {
             ))}
             <div className="h-px my-2 bg-border" />
             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive">
-              <LogOut size={16} /> লগআউট
+              <LogOut size={16} /> {t(selectedLang, 'tab_logout')}
             </button>
           </div>
 
