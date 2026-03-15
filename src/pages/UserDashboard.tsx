@@ -1154,10 +1154,10 @@ const UserDashboard = () => {
                         <button
                           key={lang.code}
                           onClick={() => {
-                            setSelectedLang(lang.code);
-                            setStoredLang(lang.code);
-                            applyGoogleTranslate(lang.code);
-                            toast.success(`✅ ভাষা পরিবর্তন: ${lang.native}`);
+                            const code = lang.code as LangCode;
+                            setSelectedLang(code);
+                            setStoredLang(code);
+                            toast.success(`${t(code, 'language_changed')}: ${lang.native}`);
                           }}
                           className={`flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-200 ${
                             isActive
@@ -1185,7 +1185,7 @@ const UserDashboard = () => {
                   <div className="glass-card rounded-2xl p-4 border border-border">
                     <p className="text-xs text-muted-foreground flex items-start gap-2">
                       <Globe size={13} className="text-primary mt-0.5 flex-shrink-0" />
-                      ভাষা নির্বাচন করুন — Google Translate ব্যবহার করে পুরো ওয়েবসাইট সেই ভাষায় দেখাবে। বাংলা সিলেক্ট করলে মূল ভাষায় ফিরে আসবে।
+                      {t(selectedLang, 'language_note')}
                     </p>
                   </div>
                 </div>
