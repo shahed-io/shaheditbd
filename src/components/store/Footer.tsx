@@ -17,11 +17,11 @@ const NAV_COL = [
     title: 'Information',
     links: [
       { label: 'FAQs',             href: '/faqs' },
-      { label: 'Software Download Link', href: '/help' },
       { label: 'About Us',         href: '/about' },
       { label: 'My Account',       href: '/dashboard' },
       { label: 'Contact Us',       href: '/contact' },
       { label: 'All Products',     href: '/shop' },
+      { label: 'Software Download Link', href: '/help' },
     ]
   },
   {
