@@ -82,11 +82,12 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   refunded:   { label: 'রিফান্ড',     color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security';
+type TabId = 'profile' | 'orders' | 'wallet' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security';
 
 const TABS: { id: TabId; label: string; icon: any; badge?: number }[] = [
   { id: 'profile',       label: 'প্রোফাইল',      icon: User },
   { id: 'orders',        label: 'আমার অর্ডার',   icon: Package },
+  { id: 'wallet',        label: 'ওয়ালেট',         icon: Wallet },
   { id: 'wishlist',      label: 'উইশলিস্ট',      icon: Heart },
   { id: 'addresses',     label: 'ঠিকানাসমূহ',    icon: MapPin },
   { id: 'notifications', label: 'নোটিফিকেশন',   icon: Bell },
