@@ -790,27 +790,30 @@ const ProductDetail = () => {
               {/* What You Get */}
               {product.what_you_get && product.what_you_get.length > 0 && (
                 <div
-                  className="rounded-2xl p-5 border"
+                  className="rounded-2xl p-5"
                   style={{
-                    background: 'hsla(215,28%,10%,0.7)',
-                    borderColor: 'hsla(271,91%,65%,0.15)',
+                    background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    border: '1px solid hsla(258,78%,75%,0.22)',
+                    boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
                     opacity: entered ? 1 : 0,
                     transform: entered ? 'none' : 'translateY(20px)',
                     transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.64s',
                   }}
                 >
-                  <h3 className="font-sora font-bold text-base text-foreground flex items-center gap-2 mb-4">
-                    <Package size={16} style={{ color: 'hsl(271,91%,65%)' }} /> What You'll Get
+                  <h3 className="font-sora font-bold text-base flex items-center gap-2 mb-4" style={{ color: 'hsl(226,35%,18%)' }}>
+                    <Package size={16} style={{ color: 'hsl(258,78%,55%)' }} /> What You'll Get
                   </h3>
                   <ul className="space-y-2.5">
                     {product.what_you_get.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-foreground"
-                        style={{
+                      <li key={i} className="flex items-start gap-3 text-sm" style={{ color: 'hsl(226,25%,35%)' }}
+                        style2={{
                           opacity: entered ? 1 : 0,
                           transform: entered ? 'none' : 'translateX(-12px)',
                           transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.7 + i * 0.07}s`,
                         }}>
-                        <CheckCircle2 size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'hsl(158,80%,55%)' }} />
+                        <CheckCircle2 size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'hsl(158,80%,45%)' }} />
                         {item}
                       </li>
                     ))}
