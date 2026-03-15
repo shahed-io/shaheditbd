@@ -6,13 +6,14 @@
 
 @layer base {
   /* ══════════════════════════════════════
-     SHAHED STORE — GLASSMORPHISM DARK THEME
-     Deep Navy + Violet/Cyan Glow + Frosted Glass
+     SHAHED STORE — CLEAN WHITE THEME
+     Pure White + Royal Indigo + Electric Gold
+     (Glassmorphism cards on white background)
   ══════════════════════════════════════ */
   :root {
-    /* ── Base Surfaces — Deep Dark ── */
-    --background:         220 28% 6%;
-    --foreground:         220 20% 94%;
+    /* ── Base Surfaces — বিশুদ্ধ সাদা ── */
+    --background:         0 0% 100%;
+    --foreground:         226 35% 12%;
 
     --card:               222 30% 10%;
     --card-foreground:    220 20% 92%;
