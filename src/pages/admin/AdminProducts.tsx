@@ -369,6 +369,7 @@ const AdminProducts = () => {
     { id: 'media', label: '🖼️ Media' },
     { id: 'details', label: '📋 Details' },
     { id: 'seo', label: '🔍 SEO' },
+    { id: 'options', label: '🎛️ Options' },
   ];
 
   return (
