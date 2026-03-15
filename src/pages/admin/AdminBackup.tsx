@@ -158,6 +158,17 @@ const AdminBackup = () => {
     e.target.value = '';
   };
 
+  // ─── Upsert rows in batches of 200 to avoid payload limits ──────
+  const upsertInBatches = async (tableName: string, rows: any[]): Promise<string | null> => {
+    const BATCH = 200;
+    for (let i = 0; i < rows.length; i += BATCH) {
+      const chunk = rows.slice(i, i + BATCH);
+      const { error } = await supabase.from(tableName as any).upsert(chunk, { onConflict: 'id' });
+      if (error) return error.message;
+    }
+    return null;
+  };
+
   // ─── Restore Single Table ─────────────────────────────────────────
   const restoreTable = async () => {
     if (!importPreview || !confirmRestore) return;
@@ -169,9 +180,8 @@ const AdminBackup = () => {
     const { table, data } = importPreview;
     const label = TABLES.find(t => t.table === table)?.label || table;
     try {
-      // Upsert records
-      const { error } = await supabase.from(table as any).upsert(data, { onConflict: 'id' });
-      if (error) throw error;
+      const errMsg = await upsertInBatches(table, data);
+      if (errMsg) throw new Error(errMsg);
       addHistory({ label: `Restore: ${label}`, tableName: table, date: new Date().toISOString(), records: data.length, type: 'import', status: 'success' });
       toast.success(`✅ ${label} রিস্টোর সম্পন্ন! ${data.length} রেকর্ড আপডেট।`);
       setImportPreview(null);
@@ -194,13 +204,9 @@ const AdminBackup = () => {
     const errors: string[] = [];
     for (const [table, rows] of Object.entries(tables)) {
       if (!rows || rows.length === 0) continue;
-      try {
-        const { error } = await supabase.from(table as any).upsert(rows as any, { onConflict: 'id' });
-        if (error) errors.push(`${table}: ${error.message}`);
-        else totalRestored += rows.length;
-      } catch (e: any) {
-        errors.push(`${table}: ${e.message}`);
-      }
+      const errMsg = await upsertInBatches(table, rows);
+      if (errMsg) errors.push(`${table}: ${errMsg}`);
+      else totalRestored += rows.length;
     }
     addHistory({ label: 'Full Restore', tableName: 'all', date: new Date().toISOString(), records: totalRestored, type: 'import', status: errors.length === 0 ? 'success' : 'error', error: errors.join(', ') });
     if (errors.length > 0) toast.error(`রিস্টোরে ${errors.length}টি error: ${errors[0]}`);
