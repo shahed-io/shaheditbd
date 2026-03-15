@@ -62,7 +62,7 @@ const HeroBanner = () => {
     }, 280);
   };
 
-  const slide = SLIDES[active];
+  const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
     <section className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
