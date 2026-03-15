@@ -23,6 +23,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered,   setIsHovered]   = useState(false);
   const [clicked,     setClicked]     = useState(false);
+  const [orbitActive, setOrbitActive] = useState(false);
   const [particles,   setParticles]   = useState<Particle[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const { addToCart, isInCart }         = useCart();
@@ -46,7 +47,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
-  // Click ripple + burst animation
+  // Click ripple + burst + orbit animation
   const handleCardClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = ref.current!.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -64,6 +65,10 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
     // Card squeeze flash
     setClicked(true);
     setTimeout(() => setClicked(false), 180);
+
+    // Rotating orbit beam
+    setOrbitActive(true);
+    setTimeout(() => setOrbitActive(false), 1100);
 
     navigate(`/product/${product.slug || product.id}`);
   }, [navigate, product.slug, product.id]);
@@ -180,7 +185,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
       {/* ── Main Card ── */}
       <div
         ref={ref}
-        className="group product-card-new flex flex-col cursor-pointer relative overflow-hidden"
+        className="group product-card-new flex flex-col cursor-pointer relative"
         onClick={handleCardClick}
         style={{
           opacity:   visible ? 1 : 0,
@@ -204,6 +209,38 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* ── Rotating orbit light beam on click ── */}
+        {orbitActive && (
+          <span className="pointer-events-none absolute inset-0 z-[60] rounded-[inherit] overflow-hidden">
+            {/* Conic-gradient beam that spins around */}
+            <span
+              className="absolute"
+              style={{
+                inset: '-2px',
+                borderRadius: 'inherit',
+                background: 'conic-gradient(from 0deg, transparent 0deg, hsl(271,91%,75%) 30deg, hsl(185,90%,62%) 60deg, hsl(320,90%,72%) 90deg, transparent 120deg, transparent 360deg)',
+                animation: 'orbit-spin 1.1s cubic-bezier(0.22,1,0.36,1) forwards',
+              }}
+            />
+            {/* Inner mask to show only the border */}
+            <span
+              className="absolute rounded-[inherit]"
+              style={{
+                inset: '2px',
+                background: 'hsl(215,28%,11%)',
+              }}
+            />
+            {/* Glow overlay */}
+            <span
+              className="absolute inset-0 rounded-[inherit]"
+              style={{
+                boxShadow: 'inset 0 0 0 2px hsla(271,91%,65%,0.8), 0 0 20px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3)',
+                animation: 'orbit-glow 1.1s ease-out forwards',
+              }}
+            />
+          </span>
+        )}
+
         {/* ── Ripple burst particles ── */}
         {particles.map(pt => (
           <span

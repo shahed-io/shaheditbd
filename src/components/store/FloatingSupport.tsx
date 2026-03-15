@@ -225,22 +225,98 @@ const FloatingSupport = () => {
       )}
 
       {/* ── Main FAB ── */}
-      <button
-        onClick={() => { if (chatOpen) { setChatOpen(false); } else { setMenuOpen(o => !o); } }}
-        className="fixed right-4 sm:right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
-        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)', background: menuOpen || chatOpen ? 'hsl(var(--muted))' : 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)/0.75))' }}
-        title="সাপোর্ট"
+      <div
+        className="fixed right-4 sm:right-6 z-50 flex items-center justify-center"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)' }}
       >
-        {menuOpen || chatOpen
-          ? <X size={22} className="text-foreground" />
-          : <MessageCircle size={24} className="text-white" />
-        }
-      </button>
+        {/* Animated rings (only when idle / not open) */}
+        {!menuOpen && !chatOpen && (
+          <>
+            <span className="fab-ring fab-ring-1" />
+            <span className="fab-ring fab-ring-2" />
+            <span className="fab-ring fab-ring-3" />
+          </>
+        )}
+
+        {/* Orbit comet */}
+        {!menuOpen && !chatOpen && (
+          <span className="fab-comet" />
+        )}
+
+        <button
+          onClick={() => { if (chatOpen) { setChatOpen(false); } else { setMenuOpen(o => !o); } }}
+          className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
+          style={{
+            background: menuOpen || chatOpen
+              ? 'hsl(var(--muted))'
+              : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+            boxShadow: menuOpen || chatOpen
+              ? 'none'
+              : '0 0 24px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3), 0 8px 24px hsla(215,40%,4%,0.5)',
+          }}
+          title="সাপোর্ট"
+        >
+          {/* Inner glow dot */}
+          {!menuOpen && !chatOpen && (
+            <span className="absolute inset-0 rounded-full fab-pulse-inner" />
+          )}
+          {menuOpen || chatOpen
+            ? <X size={22} className="text-foreground" />
+            : <MessageCircle size={24} className="text-white relative z-10" />
+          }
+        </button>
+      </div>
 
       <style>{`
         @keyframes slideUpIn {
           from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pulse rings */
+        .fab-ring {
+          position: absolute;
+          border-radius: 9999px;
+          border: 1.5px solid hsla(271,91%,65%,0.5);
+          animation: fab-ring-out 2.4s cubic-bezier(0.2,0.8,0.4,1) infinite;
+          pointer-events: none;
+        }
+        .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; }
+        .fab-ring-2 { width: 56px; height: 56px; animation-delay: 0.7s; border-color: hsla(185,90%,52%,0.4); }
+        .fab-ring-3 { width: 56px; height: 56px; animation-delay: 1.4s; border-color: hsla(320,90%,62%,0.35); }
+
+        @keyframes fab-ring-out {
+          0%   { transform: scale(1);   opacity: 0.9; }
+          100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        /* Inner soft pulse */
+        .fab-pulse-inner {
+          background: radial-gradient(circle, hsla(271,91%,65%,0.35) 0%, transparent 70%);
+          animation: fab-inner-pulse 2s ease-in-out infinite;
+        }
+        @keyframes fab-inner-pulse {
+          0%, 100% { opacity: 0.4; transform: scale(0.8); }
+          50%       { opacity: 1;   transform: scale(1.1); }
+        }
+
+        /* Orbiting comet */
+        .fab-comet {
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: hsl(185,90%,62%);
+          box-shadow: 0 0 10px hsl(185,90%,62%), 0 0 20px hsl(271,91%,65%);
+          transform-origin: 38px 38px;
+          animation: fab-orbit 3s linear infinite;
+          pointer-events: none;
+          top: calc(50% - 4px);
+          left: calc(50% - 4px);
+        }
+        @keyframes fab-orbit {
+          0%   { transform: rotate(0deg) translateX(36px); }
+          100% { transform: rotate(360deg) translateX(36px); }
         }
       `}</style>
     </>
