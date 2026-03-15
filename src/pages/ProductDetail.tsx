@@ -972,16 +972,23 @@ const ProductSpecsTable = ({ productId }: { productId: string }) => {
         <span className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
         Specifications
       </h2>
-      <div className="rounded-2xl overflow-hidden border" style={{ borderColor: 'hsla(271,91%,65%,0.15)' }}>
+      <div className="rounded-2xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid hsla(258,78%,75%,0.22)',
+          boxShadow: '0 4px 24px hsla(258,78%,55%,0.08)',
+        }}>
         <table className="w-full text-sm">
           <tbody>
             {specs.map((s, i) => (
-              <tr key={i} className={i % 2 === 0 ? 'bg-muted/10' : ''}>
-                <td className="px-5 py-3 font-semibold text-foreground w-1/3 border-r" style={{ borderColor: 'hsla(271,91%,65%,0.1)' }}>{s.name}</td>
-                <td className="px-5 py-3 text-muted-foreground">
+              <tr key={i} style={{ background: i % 2 === 0 ? 'rgba(255,255,255,0.40)' : 'transparent' }}>
+                <td className="px-5 py-3 font-semibold w-1/3 border-r" style={{ color: 'hsl(226,35%,22%)', borderColor: 'hsla(258,78%,75%,0.18)' }}>{s.name}</td>
+                <td className="px-5 py-3" style={{ color: 'hsl(226,25%,42%)' }}>
                   <div className="flex flex-wrap gap-1.5">
                     {s.values.map(v => (
-                      <span key={v} className="px-2.5 py-0.5 rounded-full text-xs border border-border bg-muted/20 text-foreground">{v}</span>
+                      <span key={v} className="px-2.5 py-0.5 rounded-full text-xs" style={{ background: 'hsla(258,78%,55%,0.08)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(258,78%,45%)' }}>{v}</span>
                     ))}
                   </div>
                 </td>
