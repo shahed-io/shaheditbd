@@ -137,7 +137,7 @@ const Navbar = () => {
                     onMouseEnter={e => { e.currentTarget.style.color = 'hsl(258,78%,50%)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; }}
                     onMouseLeave={e => { e.currentTarget.style.color = 'hsl(226,35%,30%)'; e.currentTarget.style.background = ''; }}>
                     {link.label}
-                    {link.label === 'Shop' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
+                    {link.label === 'Categories' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
                   </a>
                   {link.label === 'Shop' && (
                     <div
