@@ -363,10 +363,11 @@ const UserDashboard = () => {
   const totalSpent = orders.filter(o => o.status === 'completed').reduce((s, o) => s + o.total, 0);
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  // Update tab badges
-  const tabsWithBadges = TABS.map(t => ({
-    ...t,
-    badge: t.id === 'wishlist' ? wishlistItems.length : t.id === 'notifications' ? unreadCount : undefined,
+  // Tab labels with translation
+  const tabsWithBadges = TAB_IDS.map(tab => ({
+    ...tab,
+    label: t(selectedLang, tab.key),
+    badge: tab.id === 'wishlist' ? wishlistItems.length : tab.id === 'notifications' ? unreadCount : undefined,
   }));
 
   if (loading) return (
