@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ChevronDown, ShoppingCart, CreditCard, Truck, RotateCcw, HelpCircle, MessageCircle, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ChevronDown, ShoppingCart, CreditCard, Truck, RotateCcw, HelpCircle, MessageCircle, ArrowRight, BookOpen } from 'lucide-react';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
@@ -11,6 +12,9 @@ const B = 'hsl(200,90%,45%)';
 interface FAQItem {
   q: string;
   a: string;
+  /** Optional slug to a related /help/:slug article */
+  helpSlug?: string;
+  helpLabel?: string;
 }
 
 interface FAQCategory {
