@@ -70,21 +70,20 @@ const WhyChooseUs = () => {
               <div key={i}
                 className="group relative rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                 style={{
-                  background: 'hsla(222,22%,14%,0.8)',
-                  border: '1px solid hsla(0,0%,100%,0.07)',
-                  backdropFilter: 'blur(16px)',
-                  boxShadow: '0 4px 24px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.06)',
+                  background: 'hsl(var(--card))',
+                  border: `1px solid ${f.from}30`,
+                  boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
                 }}>
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"
-                  style={{ background: `radial-gradient(ellipse at 0% 0%, ${f.from}18, transparent 60%)` }} />
+                  style={{ background: `radial-gradient(ellipse at 0% 0%, ${f.from}10, transparent 60%)` }} />
                 {/* Top border glow on hover */}
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, transparent, ${f.from}80, ${f.to}80, transparent)` }} />
+                  style={{ background: `linear-gradient(90deg, transparent, ${f.from}90, ${f.to}90, transparent)` }} />
 
                 <div className="relative z-10 flex items-start gap-4">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
-                    style={{ background: `linear-gradient(135deg, ${f.from}22, ${f.to}16)`, border: `1px solid ${f.from}30` }}>
+                    style={{ background: `linear-gradient(135deg, ${f.from}18, ${f.to}12)`, border: `1px solid ${f.from}40` }}>
                     {f.icon}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -122,14 +121,13 @@ const WhyChooseUs = () => {
               <div key={i}
                 className="relative rounded-3xl p-7 z-10 text-center group transition-all duration-300 hover:-translate-y-2"
                 style={{
-                  background: 'hsla(222,22%,14%,0.85)',
-                  border: '1px solid hsla(0,0%,100%,0.07)',
-                  backdropFilter: 'blur(16px)',
-                  boxShadow: '0 4px 24px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.06)',
+                  background: 'hsl(var(--card))',
+                  border: `1px solid ${step.from}35`,
+                  boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
                 }}>
                 {/* Hover top glow */}
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, transparent, ${step.from}80, ${step.to}80, transparent)` }} />
+                  style={{ background: `linear-gradient(90deg, transparent, ${step.from}90, ${step.to}90, transparent)` }} />
                 {/* Step number */}
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <span className="text-[11px] font-fira font-bold px-3 py-1 rounded-full text-white"
@@ -138,7 +136,7 @@ const WhyChooseUs = () => {
                   </span>
                 </div>
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
-                  style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}28` }}>
+                  style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}40` }}>
                   {step.emoji}
                 </div>
                 <h3 className="font-sora font-bold text-[13px] text-foreground mb-2">{step.title}</h3>
@@ -152,10 +150,9 @@ const WhyChooseUs = () => {
         <div ref={statsRef}
           className="relative rounded-3xl p-10 lg:p-14 overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, hsla(243,75%,62%,0.18) 0%, hsla(253,72%,58%,0.15) 30%, hsla(263,70%,58%,0.15) 65%, hsla(283,65%,55%,0.12) 100%)',
-            border: '1px solid hsla(243,75%,62%,0.25)',
-            backdropFilter: 'blur(24px)',
-            boxShadow: '0 24px 64px hsla(220,30%,5%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.1)',
+            background: 'linear-gradient(135deg, hsla(243,75%,62%,0.08) 0%, hsla(263,70%,58%,0.06) 50%, hsla(15,100%,60%,0.06) 100%)',
+            border: '1px solid hsla(243,75%,62%,0.2)',
+            boxShadow: '0 4px 32px hsla(226,35%,12%,0.08)',
           }}>
           {/* Decorations */}
           <div className="absolute inset-0 pointer-events-none"

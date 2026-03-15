@@ -129,18 +129,17 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => (
   <div
     className="flex-shrink-0 w-[300px] sm:w-[340px] rounded-2xl p-5 space-y-3 transition-all duration-300 group cursor-default"
     style={{
-      background: 'hsla(222,22%,14%,0.82)',
-      border: '1px solid hsla(0,0%,100%,0.07)',
-      backdropFilter: 'blur(16px)',
-      boxShadow: '0 4px 24px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.06)',
+      background: 'hsl(var(--card))',
+      border: '1px solid hsl(var(--border))',
+      boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
     }}
     onMouseEnter={e => {
-      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(243,75%,62%,0.25)';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 16px 48px hsla(220,30%,5%,0.45), 0 0 20px hsla(243,75%,62%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.08)';
+      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(243,75%,62%,0.35)';
+      (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px hsla(243,75%,62%,0.12)';
     }}
     onMouseLeave={e => {
-      (e.currentTarget as HTMLElement).style.border = '1px solid hsla(0,0%,100%,0.07)';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 24px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.06)';
+      (e.currentTarget as HTMLElement).style.border = '1px solid hsl(var(--border))';
+      (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px hsla(226,35%,12%,0.07)';
     }}
   >
     {/* Quote icon */}
@@ -159,7 +158,7 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => (
     </div>
 
     {/* Author */}
-    <div className="flex items-center gap-3 pt-1" style={{ borderTop: '1px solid hsla(0,0%,100%,0.07)' }}>
+    <div className="flex items-center gap-3 pt-1 border-t border-border">
       <AvatarCircle initials={review.avatar} index={index} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
