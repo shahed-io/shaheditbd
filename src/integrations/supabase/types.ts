@@ -366,6 +366,86 @@ export type Database = {
         }
         Relationships: []
       }
+      global_attribute_values: {
+        Row: {
+          attribute_id: string
+          color_code: string | null
+          created_at: string
+          description: string | null
+          id: string
+          slug: string
+          sort_order: number
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          attribute_id: string
+          color_code?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          attribute_id?: string
+          color_code?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "global_attribute_values_attribute_id_fkey"
+            columns: ["attribute_id"]
+            isOneToOne: false
+            referencedRelation: "global_attributes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      global_attributes: {
+        Row: {
+          created_at: string
+          has_archives: boolean
+          id: string
+          name: string
+          order_by: string
+          slug: string
+          sort_order: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          has_archives?: boolean
+          id?: string
+          name: string
+          order_by?: string
+          slug: string
+          sort_order?: number
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          has_archives?: boolean
+          id?: string
+          name?: string
+          order_by?: string
+          slug?: string
+          sort_order?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       help_articles: {
         Row: {
           category: string
@@ -719,6 +799,63 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_attribute_assignments: {
+        Row: {
+          attribute_id: string | null
+          attribute_type: string
+          created_at: string
+          custom_name: string | null
+          id: string
+          is_visible: boolean
+          product_id: string
+          selected_values: Json
+          sort_order: number
+          updated_at: string
+          use_in_variation: boolean
+        }
+        Insert: {
+          attribute_id?: string | null
+          attribute_type?: string
+          created_at?: string
+          custom_name?: string | null
+          id?: string
+          is_visible?: boolean
+          product_id: string
+          selected_values?: Json
+          sort_order?: number
+          updated_at?: string
+          use_in_variation?: boolean
+        }
+        Update: {
+          attribute_id?: string | null
+          attribute_type?: string
+          created_at?: string
+          custom_name?: string | null
+          id?: string
+          is_visible?: boolean
+          product_id?: string
+          selected_values?: Json
+          sort_order?: number
+          updated_at?: string
+          use_in_variation?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_attribute_assignments_attribute_id_fkey"
+            columns: ["attribute_id"]
+            isOneToOne: false
+            referencedRelation: "global_attributes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_attribute_assignments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
