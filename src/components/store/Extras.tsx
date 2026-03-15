@@ -19,34 +19,33 @@ const TickerBanner = () => {
   return (
     <div className="relative overflow-hidden"
       style={{
-        background: 'hsla(222,22%,11%,0.95)',
-        borderTop: '1px solid hsla(0,0%,100%,0.06)',
-        borderBottom: '1px solid hsla(0,0%,100%,0.06)',
-        backdropFilter: 'blur(8px)',
+        background: 'hsl(226,35%,10%)',
+        borderTop: '1px solid hsla(258,78%,55%,0.2)',
+        borderBottom: '1px solid hsla(258,78%,55%,0.2)',
       }}>
       {/* Edge fades */}
-      <div className="absolute left-0 top-0 bottom-0 w-28 z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to right, hsl(222,22%,11%) 0%, transparent 100%)' }} />
-      <div className="absolute right-0 top-0 bottom-0 w-28 z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to left, hsl(222,22%,11%) 0%, transparent 100%)' }} />
+      <div className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to right, hsl(226,35%,10%) 0%, transparent 100%)' }} />
+      <div className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to left, hsl(226,35%,10%) 0%, transparent 100%)' }} />
 
       {/* LIVE indicator */}
       <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold text-white px-3 py-1.5 rounded-full"
-        style={{ background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))', boxShadow: '0 2px 10px hsla(243,75%,62%,0.4)' }}>
+        style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(243,75%,62%))', boxShadow: '0 2px 12px hsla(258,78%,55%,0.5)' }}>
         <Zap size={9} fill="white" />
         <span>LIVE</span>
-        <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse" />
+        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
       </div>
 
-      <div className="ticker-track whitespace-nowrap py-3.5" style={{ paddingLeft: '110px' }}>
+      <div className="ticker-track whitespace-nowrap py-3" style={{ paddingLeft: '110px' }}>
         {items.map((item, i) => (
           <span key={i} className="inline-flex items-center flex-shrink-0">
-            <span className="inline-flex items-center gap-2 px-5 text-[12px]">
-              <span className="font-semibold text-foreground/80">{item.label}</span>
-              <span className="font-bold" style={{ color: 'hsl(243,75%,65%)' }}>{item.price}</span>
-              <span className="badge-sale">{item.off}</span>
+            <span className="inline-flex items-center gap-2 px-5 text-[12.5px]">
+              <span className="font-semibold" style={{ color: 'hsl(220,20%,80%)' }}>{item.label}</span>
+              <span className="font-bold" style={{ color: 'hsl(258,78%,72%)' }}>{item.price}</span>
+              <span className="font-bold text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'hsl(32,100%,52%)', color: 'hsl(0,0%,100%)' }}>{item.off}</span>
             </span>
-            <span className="text-muted-foreground/20 text-sm">|</span>
+            <span className="text-[18px]" style={{ color: 'hsla(220,20%,60%,0.3)' }}>|</span>
           </span>
         ))}
       </div>
