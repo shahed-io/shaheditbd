@@ -87,6 +87,7 @@ const ProductDetail = () => {
   const [selectedOpts, setSelectedOpts] = useState<Record<string, string>>({});
   const [customGroups, setCustomGroups] = useState<CustomOptionGroup[]>([]);
   const [entered,      setEntered]      = useState(false);
+  const [quantity,     setQuantity]     = useState(1);
   // Keep selectedVar for legacy variants
   const [selectedVar,  setSelectedVar]  = useState<Record<string, string>>({});
 
