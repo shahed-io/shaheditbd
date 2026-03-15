@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
   LogOut, Menu, X, Package2, BarChart3, Bell, Search, ChevronDown,
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
-  Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe
+  Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout
 } from 'lucide-react';
 
 const menuItems = [
