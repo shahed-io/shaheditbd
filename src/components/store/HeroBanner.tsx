@@ -217,7 +217,7 @@ const HeroBanner = () => {
                 style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
 
               <div className="relative p-8">
-                {slide.comboSlide && 'combo' in slide && slide.combo ? (
+                {slide.comboSlide && slide.combo ? (
                   /* Combo Slide Card */
                   <>
                     <div className="flex items-center justify-between mb-5">
