@@ -251,7 +251,7 @@ export default function AboutUs() {
         <div className="rounded-2xl p-6 text-center"
           style={{ background: `linear-gradient(135deg, ${A}10, ${B}08)`, border: `1px solid ${A}25` }}>
           <p className="font-sora font-black text-lg mb-2" style={{ color: 'hsl(226,35%,14%)' }}>আমাদের সাথে কেনাকাটা শুরু করুন</p>
-          <p className="text-[13px] mb-5" style={{ color: 'hsl(226,25%,45%)' }}>হাজারো সন্তুষ্ট গ্রাহকের বিশ্বাসের অংশীদার হন</p>
+          <p className="text-[13px] mb-5" style={{ color: 'hsl(226,25%,45%)' }}>৮০,০০০+ সন্তুষ্ট গ্রাহকের বিশ্বাসের অংশীদার হন</p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <a href="/shop"
               className="px-6 py-2.5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90"
