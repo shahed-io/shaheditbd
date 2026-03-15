@@ -99,12 +99,9 @@ const Navbar = () => {
       `}</style>
 
       {/* ── Main Navbar — Glassmorphism Card ── */}
-      <div className="sticky top-0 z-50 px-4 py-2"
+      <div className="sticky top-0 z-50 px-4 py-2 backdrop-blur-xl"
         style={{
-          background: scrolled
-            ? 'hsla(230,40%,14%,0.55)'
-            : 'hsla(230,40%,18%,0.35)',
-          backdropFilter: 'blur(0px)',
+          background: 'hsla(0,0%,100%,0.60)',
         }}>
       <nav
         className="transition-all duration-300 rounded-2xl mx-auto max-w-7xl backdrop-blur-2xl"
