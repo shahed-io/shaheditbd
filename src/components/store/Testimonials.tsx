@@ -203,7 +203,7 @@ const Testimonials = () => {
   const avgRating = (REVIEWS.reduce((s, r) => s + r.rating, 0) / totalReviews).toFixed(1);
 
   return (
-    <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative" style={{ background: 'hsl(var(--background))' }}>
+    <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative bg-transparent">
 
       {/* Background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">

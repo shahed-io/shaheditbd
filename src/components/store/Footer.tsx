@@ -38,7 +38,7 @@ const NAV_COL = [
 ];
 
 const Footer = () => (
-  <footer style={{ background: 'hsl(220,20%,97%)' }} className="relative overflow-hidden">
+  <footer className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
 
     {/* Subtle decorative blobs */}
     <div className="absolute top-0 right-0 w-[500px] h-[400px] pointer-events-none"
@@ -192,7 +192,7 @@ const Footer = () => (
     </div>
 
     {/* ── Copyright ── */}
-    <div className="relative z-10 border-t" style={{ background: 'hsl(220,20%,94%)', borderColor: 'hsl(220,20%,88%)' }}>
+    <div className="relative z-10 border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <p className="text-[11px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>
           © 2026 <strong style={{ color: 'hsl(226,35%,20%)' }}>Shahed Store</strong> · All rights reserved.
