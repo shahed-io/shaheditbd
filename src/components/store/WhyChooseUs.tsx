@@ -154,20 +154,10 @@ const WhyChooseUs = () => {
           }}>
           {/* Decorations */}
           <div className="absolute inset-0 pointer-events-none"
-            style={{ backgroundImage: 'radial-gradient(circle at 15% 20%, rgba(255,255,255,0.07) 0%, transparent 45%)' }} />
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-          {/* Top border gradient */}
-          <div className="absolute top-0 left-0 right-0 h-px"
-            style={{ background: 'linear-gradient(90deg, transparent, hsla(243,75%,65%,0.6), hsla(263,70%,62%,0.6), transparent)' }} />
+            style={{ backgroundImage: 'radial-gradient(circle at 15% 20%, hsla(258,78%,55%,0.05) 0%, transparent 45%)' }} />
           <div className="absolute top-5 right-6 pointer-events-none">
-            <Sparkles size={32} className="text-white/15" />
+            <Sparkles size={32} style={{ color: 'hsla(258,78%,55%,0.2)' }} />
           </div>
-          <div className="absolute top-6 right-7 w-24 h-24 rounded-full pointer-events-none"
-            style={{ background: 'hsla(0,0%,100%,0.04)' }} />
-          <div className="absolute bottom-5 left-5 w-14 h-14 rounded-full pointer-events-none"
-            style={{ background: 'hsla(0,0%,100%,0.04)' }} />
-
           <div className="relative z-10">
             <p className="text-center text-foreground/40 text-[11px] font-semibold mb-10 tracking-[0.25em] uppercase font-fira">
               Our Numbers Speak For Themselves
