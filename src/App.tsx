@@ -38,6 +38,7 @@ import AdminHelp from "./pages/admin/AdminHelp";
 import AdminSEO from "./pages/admin/AdminSEO";
 import AdminAttributes from "./pages/admin/AdminAttributes";
 import AdminPages from "./pages/admin/AdminPages";
+import AdminSoftwareDownloads from "./pages/admin/AdminSoftwareDownloads";
 import Shop from "./pages/Shop";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
