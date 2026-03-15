@@ -490,23 +490,23 @@ const UserDashboard = () => {
             <div className="px-6 py-5 border-b border-border flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-black text-foreground">
-                  {activeTab === 'profile' ? 'প্রোফাইল তথ্য' : activeTab === 'orders' ? 'আমার অর্ডার' : activeTab === 'wallet' ? 'আমার ওয়ালেট' : activeTab === 'wishlist' ? 'উইশলিস্ট' : activeTab === 'addresses' ? 'সংরক্ষিত ঠিকানা' : activeTab === 'notifications' ? 'নোটিফিকেশন' : activeTab === 'referral' ? 'রেফারেল ড্যাশবোর্ড' : 'নিরাপত্তা'}
+                  {t(selectedLang, `tab_${activeTab}`)}
                 </h2>
                 <p className="text-xs mt-0.5 text-muted-foreground">
-                  {activeTab === 'orders' ? `মোট ${orders.length}টি অর্ডার` : activeTab === 'wishlist' ? `${wishlistItems.length}টি পণ্য` : activeTab === 'notifications' ? `${unreadCount}টি অপঠিত` : ''}
+                  {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : ''}
                 </p>
               </div>
               <div className="flex gap-2">
                 {activeTab === 'profile' && !editing && (
                   <button onClick={() => setEditing(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                    <Edit3 size={14} /> সম্পাদনা
+                    <Edit3 size={14} /> {t(selectedLang, 'edit')}
                   </button>
                 )}
                 {activeTab === 'profile' && editing && (
                   <div className="flex gap-2">
-                    <button onClick={() => setEditing(false)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border border-border text-muted-foreground hover:bg-muted/30"><X size={13} /> বাতিল</button>
+                    <button onClick={() => setEditing(false)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border border-border text-muted-foreground hover:bg-muted/30"><X size={13} /> {t(selectedLang, 'cancel')}</button>
                     <button onClick={handleSaveProfile} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-60" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                      <Save size={13} /> {saving ? 'সংরক্ষণ...' : 'সংরক্ষণ'}
+                      <Save size={13} /> {saving ? t(selectedLang, 'loading') : t(selectedLang, 'save')}
                     </button>
                   </div>
                 )}
