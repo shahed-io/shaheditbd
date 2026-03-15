@@ -5,9 +5,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
-  LogOut, Menu, X, Package2, BarChart3, Bell, Search, ChevronDown,
+  LogOut, Menu, X, BarChart3, Bell, Search, ChevronDown,
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
-  Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown
+  Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
+  Map, Bot, Code2, KeyRound, FileSearch, PackageSearch, Star, BarChart2,
+  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off
 } from 'lucide-react';
 
 const menuItems = [
@@ -37,7 +39,29 @@ const menuItems = [
   { icon: Layout, label: 'Pages', path: '/admin/pages' },
   { icon: HelpCircle, label: 'Help Center', path: '/admin/help' },
   { icon: FolderDown, label: 'Software Downloads', path: '/admin/software-downloads' },
-  { icon: Globe, label: 'SEO', path: '/admin/seo' },
+  {
+    icon: Globe, label: 'SEO Settings', path: '/admin/seo',
+    children: [
+      { label: 'SEO Manager', path: '/admin/seo', icon: Globe },
+      { label: 'Blog Manager', path: '/admin/blog', icon: BookOpen },
+      { label: 'Meta Tag Manager', path: '/admin/seo/meta-tags', icon: Tag },
+      { label: 'Sitemap Generator', path: '/admin/seo/sitemap', icon: Map },
+      { label: 'Robots.txt Editor', path: '/admin/seo/robots', icon: Bot },
+      { label: 'Schema Generator', path: '/admin/seo/schema', icon: Code2 },
+      { label: 'Keyword Manager', path: '/admin/seo/keywords', icon: KeyRound },
+      { label: 'Page SEO Control', path: '/admin/seo/pages', icon: FileSearch },
+      { label: 'Product SEO', path: '/admin/seo/products', icon: PackageSearch },
+      { label: 'FAQ Manager', path: '/admin/seo/faq', icon: HelpCircle },
+      { label: 'Review System', path: '/admin/seo/reviews', icon: Star },
+      { label: 'Google Analytics', path: '/admin/seo/analytics', icon: BarChart2 },
+      { label: 'Search Console', path: '/admin/seo/search-console', icon: Search },
+      { label: 'Speed Optimization', path: '/admin/seo/speed', icon: Zap },
+      { label: 'Image SEO', path: '/admin/seo/images', icon: ImageIcon },
+      { label: 'URL Slug Editor', path: '/admin/seo/slugs', icon: Link2 },
+      { label: 'Redirect Manager', path: '/admin/seo/redirects', icon: ArrowLeftRight },
+      { label: 'Broken Link Checker', path: '/admin/seo/broken-links', icon: Link2Off },
+    ]
+  },
   { icon: TrendingUp, label: 'Reports', path: '/admin/reports' },
   { icon: Megaphone, label: 'Marketing', path: '/admin/marketing' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
