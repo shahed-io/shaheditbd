@@ -99,16 +99,22 @@ const Navbar = () => {
       `}</style>
 
       {/* ── Main Navbar ── */}
+      {/* Gradient border wrapper */}
+      <div
+        className="sticky top-0 z-50"
+        style={{
+          background: 'linear-gradient(135deg, hsla(258,78%,55%,0.55), hsla(200,90%,45%,0.45), hsla(258,78%,55%,0.55))',
+          padding: '1.5px 0 1.5px 0',
+        }}>
       <nav
-        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'backdrop-blur-xl' : ''}`}
+        className={`transition-all duration-300 backdrop-blur-2xl`}
         style={{
           background: scrolled
-            ? 'hsla(0,0%,100%,0.97)'
-            : 'hsl(0,0%,100%)',
-          borderBottom: '1px solid hsl(220,20%,90%)',
+            ? 'hsla(0,0%,100%,0.92)'
+            : 'hsla(0,0%,100%,0.85)',
           boxShadow: scrolled
-            ? '0 4px 24px hsla(226,35%,12%,0.10)'
-            : '0 2px 12px hsla(226,35%,12%,0.06)',
+            ? '0 8px 32px hsla(258,78%,55%,0.13), 0 2px 8px hsla(200,90%,45%,0.10)'
+            : '0 4px 24px hsla(258,78%,55%,0.09)',
         }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[76px] gap-4">
@@ -272,6 +278,7 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+      </div>
     </>
   );
 };
