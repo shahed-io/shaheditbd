@@ -34,6 +34,7 @@ const menuItems = [
   { icon: Gift, label: 'Referrals', path: '/admin/referrals' },
   { icon: Headphones, label: 'Tickets', path: '/admin/tickets' },
   { icon: BookOpen, label: 'Blog', path: '/admin/blog' },
+  { icon: Layout, label: 'Pages', path: '/admin/pages' },
   { icon: HelpCircle, label: 'Help Center', path: '/admin/help' },
   { icon: Globe, label: 'SEO', path: '/admin/seo' },
   { icon: TrendingUp, label: 'Reports', path: '/admin/reports' },

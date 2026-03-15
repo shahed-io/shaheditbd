@@ -37,6 +37,7 @@ import AdminBlog from "./pages/admin/AdminBlog";
 import AdminHelp from "./pages/admin/AdminHelp";
 import AdminSEO from "./pages/admin/AdminSEO";
 import AdminAttributes from "./pages/admin/AdminAttributes";
+import AdminPages from "./pages/admin/AdminPages";
 
 const queryClient = new QueryClient({
   defaultOptions: {
