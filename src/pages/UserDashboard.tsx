@@ -1210,7 +1210,8 @@ const UserDashboard = () => {
                           onClick={() => {
                             setSelectedLang(lang.code);
                             setStoredLang(lang.code);
-                            toast.success(`✅ ভাষা পরিবর্তন হয়েছে: ${lang.native}`);
+                            applyGoogleTranslate(lang.code);
+                            toast.success(`✅ ভাষা পরিবর্তন: ${lang.native}`);
                           }}
                           className={`flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-200 ${
                             isActive
@@ -1226,8 +1227,7 @@ const UserDashboard = () => {
                             <p className="text-xs text-muted-foreground">{lang.name} · {lang.region}</p>
                           </div>
                           {isActive && (
-                            <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                              style={{ background: 'hsl(var(--primary))' }}>
+                            <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 bg-primary">
                               <CheckCircle2 size={12} className="text-primary-foreground" />
                             </div>
                           )}
@@ -1238,8 +1238,8 @@ const UserDashboard = () => {
 
                   <div className="glass-card rounded-2xl p-4 border border-border">
                     <p className="text-xs text-muted-foreground flex items-start gap-2">
-                      <AlertCircle size={13} className="text-amber-500 mt-0.5 flex-shrink-0" />
-                      বর্তমানে UI বাংলায় রয়েছে। ভাষা পরিবর্তনের সম্পূর্ণ সাপোর্ট近 শীঘ্রই আসছে। আপনার পছন্দ সংরক্ষিত হবে।
+                      <Globe size={13} className="text-primary mt-0.5 flex-shrink-0" />
+                      ভাষা নির্বাচন করুন — Google Translate ব্যবহার করে পুরো ওয়েবসাইট সেই ভাষায় দেখাবে। বাংলা সিলেক্ট করলে মূল ভাষায় ফিরে আসবে।
                     </p>
                   </div>
                 </div>
