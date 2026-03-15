@@ -83,8 +83,8 @@ const TopProducts = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
-            <span className="section-label">Featured Products</span>
-            <h2 className="section-heading text-3xl sm:text-4xl mt-3">
+            <span className="terminal-label">ls products/ --sort=featured</span>
+            <h2 className="section-heading-coded text-3xl sm:text-4xl mt-3">
               Top{' '}
               <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Selling
