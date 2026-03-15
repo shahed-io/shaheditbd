@@ -209,6 +209,38 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* ── Rotating orbit light beam on click ── */}
+        {orbitActive && (
+          <span className="pointer-events-none absolute inset-0 z-[60] rounded-[inherit] overflow-hidden">
+            {/* Conic-gradient beam that spins around */}
+            <span
+              className="absolute"
+              style={{
+                inset: '-2px',
+                borderRadius: 'inherit',
+                background: 'conic-gradient(from 0deg, transparent 0deg, hsl(271,91%,75%) 30deg, hsl(185,90%,62%) 60deg, hsl(320,90%,72%) 90deg, transparent 120deg, transparent 360deg)',
+                animation: 'orbit-spin 1.1s cubic-bezier(0.22,1,0.36,1) forwards',
+              }}
+            />
+            {/* Inner mask to show only the border */}
+            <span
+              className="absolute rounded-[inherit]"
+              style={{
+                inset: '2px',
+                background: 'hsl(215,28%,11%)',
+              }}
+            />
+            {/* Glow overlay */}
+            <span
+              className="absolute inset-0 rounded-[inherit]"
+              style={{
+                boxShadow: 'inset 0 0 0 2px hsla(271,91%,65%,0.8), 0 0 20px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3)',
+                animation: 'orbit-glow 1.1s ease-out forwards',
+              }}
+            />
+          </span>
+        )}
+
         {/* ── Ripple burst particles ── */}
         {particles.map(pt => (
           <span
