@@ -73,15 +73,33 @@ const AdminBackup = () => {
     setLoading(false);
   };
 
+  // ─── Fetch all rows with pagination (bypass 1000-row default limit) ──
+  const fetchAllRows = async (tableName: string): Promise<any[]> => {
+    const PAGE_SIZE = 1000;
+    let allRows: any[] = [];
+    let page = 0;
+    while (true) {
+      const { data, error } = await supabase
+        .from(tableName as any)
+        .select('*')
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+      if (error) throw error;
+      if (!data || data.length === 0) break;
+      allRows = [...allRows, ...data];
+      if (data.length < PAGE_SIZE) break;
+      page++;
+    }
+    return allRows;
+  };
+
   // ─── Export Single Table ──────────────────────────────────────────
   const exportTable = async (tableName: string, label: string) => {
     setExporting(tableName);
     try {
-      const { data, error } = await supabase.from(tableName as any).select('*');
-      if (error) throw error;
+      const data = await fetchAllRows(tableName);
       downloadJson(data, `${tableName}_backup_${today()}.json`);
-      addHistory({ label, tableName, date: new Date().toISOString(), records: data?.length || 0, type: 'export', status: 'success' });
-      toast.success(`✅ ${label} ব্যাকআপ ডাউনলোড (${data?.length} রেকর্ড)`);
+      addHistory({ label, tableName, date: new Date().toISOString(), records: data.length, type: 'export', status: 'success' });
+      toast.success(`✅ ${label} ব্যাকআপ ডাউনলোড (${data.length} রেকর্ড)`);
     } catch (e: any) {
       addHistory({ label, tableName, date: new Date().toISOString(), records: 0, type: 'export', status: 'error', error: e.message });
       toast.error('এক্সপোর্ট ব্যর্থ: ' + e.message);
@@ -95,8 +113,7 @@ const AdminBackup = () => {
     try {
       const results: Record<string, any[]> = {};
       for (const { table } of TABLES) {
-        const { data } = await supabase.from(table as any).select('*');
-        results[table] = data || [];
+        results[table] = await fetchAllRows(table);
       }
       const payload = { exported_at: new Date().toISOString(), version: '2.0', store: 'Shahed Store', tables: results };
       downloadJson(payload, `shahed_store_full_backup_${today()}.json`);
