@@ -228,18 +228,21 @@ const HeroBanner = () => {
               <div className="relative overflow-hidden"
                 style={{
                   borderRadius: 'calc(2rem - 2px)',
-                  background: `linear-gradient(145deg, hsl(258,60%,97%) 0%, hsl(258,45%,94%) 50%, hsl(258,50%,96%) 100%)`,
+                  background: `linear-gradient(155deg, white 0%, ${slide.accentFrom}0d 60%, ${slide.accentTo}08 100%)`,
                   backdropFilter: 'blur(24px) saturate(180%)',
                 }}>
                 {/* Top shimmer line */}
-                <div className="absolute top-0 left-0 right-0 h-[1.5px]"
-                  style={{ background: `linear-gradient(90deg, transparent 5%, ${slide.accentFrom}70 40%, ${slide.accentTo}50 60%, transparent 95%)` }} />
+                <div className="absolute top-0 left-0 right-0 h-[2px]"
+                  style={{ background: `linear-gradient(90deg, transparent 5%, ${slide.accentFrom}90 40%, ${slide.accentTo}70 60%, transparent 95%)` }} />
+                {/* Bottom accent glow */}
+                <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+                  style={{ background: `linear-gradient(to top, ${slide.accentFrom}10, transparent)` }} />
                 {/* Subtle dot grid */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(circle, hsla(258,60%,55%,0.07) 1px, transparent 1px)`, backgroundSize: '22px 22px' }} />
+                  style={{ backgroundImage: `radial-gradient(circle, ${slide.accentFrom}0f 1px, transparent 1px)`, backgroundSize: '20px 20px' }} />
                 {/* Light radial shine */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.7) 0%, transparent 50%)` }} />
+                  style={{ backgroundImage: `radial-gradient(ellipse at 15% 8%, rgba(255,255,255,0.85) 0%, transparent 45%)` }} />
 
                 <div className="relative p-8">
                   {slide.comboSlide && slide.combo ? (
