@@ -111,8 +111,8 @@ const Navbar = () => {
           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
           borderBottom: '1px solid hsl(220,20%,90%)',
           boxShadow: scrolled
-            ? '0 8px 32px hsla(220, 30%, 3%, 0.45), 0 0 0 1px hsla(258, 78%, 62%, 0.08)'
-            : '0 4px 16px hsla(220, 30%, 3%, 0.25)',
+            ? '0 4px 24px hsla(226,35%,12%,0.10)'
+            : '0 2px 12px hsla(226,35%,12%,0.06)',
         }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[76px] gap-4">
