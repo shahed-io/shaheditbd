@@ -722,12 +722,12 @@ const ProductDetail = () => {
                   <button onClick={waOrder}
                     className="flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
                     style={{
-                      background: 'hsla(142,70%,44%,0.10)',
+                      background: 'linear-gradient(135deg, hsla(142,70%,38%,0.85), hsla(158,80%,34%,0.85))',
                       backdropFilter: 'blur(16px)',
                       WebkitBackdropFilter: 'blur(16px)',
-                      border: '1.5px solid hsla(142,70%,44%,0.35)',
-                      color: 'hsl(142,65%,32%)',
-                      boxShadow: '0 2px 12px hsla(142,70%,44%,0.10)',
+                      border: '1.5px solid hsla(142,70%,55%,0.45)',
+                      color: 'hsl(0,0%,100%)',
+                      boxShadow: '0 2px 14px hsla(142,70%,44%,0.25)',
                     }}>
                     <MessageCircle size={15} /> WhatsApp
                   </button>
