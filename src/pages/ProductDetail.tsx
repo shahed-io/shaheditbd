@@ -331,22 +331,24 @@ const ProductDetail = () => {
             {/* ═══ LEFT: Image Gallery ═══ */}
             <div className="space-y-4">
               {/* Main Image with cinematic entrance */}
-              <div
+            <div
                 className="relative rounded-3xl overflow-hidden border aspect-square group"
                 style={{
-                  background: 'hsl(215,28%,10%)',
-                  borderColor: entered ? 'hsla(271,91%,65%,0.35)' : 'transparent',
-                  boxShadow: entered ? '0 0 60px hsla(271,91%,65%,0.12), 0 32px 80px hsla(215,40%,4%,0.6)' : 'none',
+                  background: 'linear-gradient(155deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.60) 100%)',
+                  backdropFilter: 'blur(24px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                  borderColor: entered ? 'hsla(258,78%,60%,0.25)' : 'transparent',
+                  boxShadow: entered ? '0 8px 48px hsla(258,78%,55%,0.14), 0 1px 0 rgba(255,255,255,0.9) inset' : 'none',
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'none' : 'translateX(-40px) scale(0.95)',
                   transition: 'all 0.8s cubic-bezier(0.22,1,0.36,1)',
                 }}
               >
-                {/* Neon top border */}
+                {/* Gradient top border */}
                 <div className="h-[2px] w-full absolute top-0 left-0 z-10"
-                  style={{ background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+                  style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(200,90%,45%))' }} />
 
-                {/* Neon sweep effect on load */}
+                {/* Shimmer sweep on load */}
                 {entered && <div className="neon-sweep-line" />}
 
                 {!imgLoaded && <div className="absolute inset-0 shimmer" />}
@@ -383,12 +385,12 @@ const ProductDetail = () => {
                   <>
                     <button onClick={prevImg}
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
-                      style={{ background: 'hsla(215,28%,8%,0.9)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)', backdropFilter: 'blur(8px)' }}>
+                      style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(258,78%,60%,0.25)', color: 'hsl(258,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.15)' }}>
                       <ChevronLeft size={18} />
                     </button>
                     <button onClick={nextImg}
                       className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
-                      style={{ background: 'hsla(215,28%,8%,0.9)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)', backdropFilter: 'blur(8px)' }}>
+                      style={{ background: 'rgba(255,255,255,0.80)', border: '1px solid hsla(258,78%,60%,0.25)', color: 'hsl(258,78%,50%)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.15)' }}>
                       <ChevronRight size={18} />
                     </button>
                   </>
@@ -399,9 +401,10 @@ const ProductDetail = () => {
                   onClick={() => toggleWishlist(cartItem)}
                   className="absolute top-4 right-4 w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-110 z-10"
                   style={{
-                    background: wishlisted ? 'hsla(320,90%,62%,0.2)' : 'hsla(215,28%,10%,0.85)',
-                    border: `1px solid ${wishlisted ? 'hsla(320,90%,62%,0.5)' : 'hsla(271,91%,65%,0.25)'}`,
-                    backdropFilter: 'blur(8px)',
+                    background: wishlisted ? 'hsla(320,90%,62%,0.15)' : 'rgba(255,255,255,0.80)',
+                    border: `1px solid ${wishlisted ? 'hsla(320,90%,62%,0.45)' : 'hsla(258,78%,60%,0.20)'}`,
+                    backdropFilter: 'blur(12px)',
+                    boxShadow: '0 2px 12px hsla(258,78%,55%,0.10)',
                   }}>
                   <Heart size={16} fill={wishlisted ? 'hsl(320,90%,62%)' : 'none'} color={wishlisted ? 'hsl(320,90%,62%)' : 'hsl(var(--muted-foreground))'} />
                 </button>
@@ -429,24 +432,27 @@ const ProductDetail = () => {
               {/* Trust badges */}
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0.9s', color: 'hsl(271,91%,65%)' },
-                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '1.05s', color: 'hsl(185,90%,52%)' },
-                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '1.2s', color: 'hsl(158,80%,48%)' },
+                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0.9s', color: 'hsl(258,78%,55%)', accent: 'hsla(258,78%,55%,0.12)' },
+                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '1.05s', color: 'hsl(200,90%,45%)', accent: 'hsla(200,90%,45%,0.10)' },
+                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '1.2s', color: 'hsl(158,80%,45%)', accent: 'hsla(158,80%,45%,0.10)' },
                 ].map(b => (
                   <div
                     key={b.label}
-                    className="rounded-2xl p-3 text-center border"
+                    className="rounded-2xl p-3 text-center"
                     style={{
-                      background: 'hsla(215,28%,10%,0.8)',
-                      borderColor: `${b.color}25`,
+                      background: `linear-gradient(155deg, rgba(255,255,255,0.82) 0%, ${b.accent})`,
+                      backdropFilter: 'blur(20px)',
+                      WebkitBackdropFilter: 'blur(20px)',
+                      border: `1px solid ${b.color}22`,
+                      boxShadow: `0 4px 16px ${b.color}18, 0 1px 0 rgba(255,255,255,0.9) inset`,
                       opacity: entered ? 1 : 0,
                       transform: entered ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.9)',
                       transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}`,
                     }}
                   >
                     <div className="flex justify-center mb-1.5" style={{ color: b.color }}>{b.icon}</div>
-                    <div className="text-xs font-bold text-foreground">{b.label}</div>
-                    <div className="text-[10px] text-muted-foreground">{b.sub}</div>
+                    <div className="text-xs font-bold" style={{ color: 'hsl(226,35%,18%)' }}>{b.label}</div>
+                    <div className="text-[10px]" style={{ color: 'hsl(226,25%,52%)' }}>{b.sub}</div>
                   </div>
                 ))}
               </div>
@@ -470,7 +476,7 @@ const ProductDetail = () => {
                 </span>
                 <button onClick={handleCopy}
                   className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
-                  style={{ color: copied ? 'hsl(158,80%,55%)' : 'hsl(var(--muted-foreground))', background: 'hsla(215,28%,14%,0.8)', border: '1px solid hsl(var(--border))' }}>
+                  style={{ color: copied ? 'hsl(158,80%,45%)' : 'hsl(226,25%,45%)', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid hsla(258,78%,60%,0.18)', boxShadow: '0 2px 8px hsla(258,78%,55%,0.08)' }}>
                   {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Share</>}
                 </button>
               </div>
@@ -784,27 +790,31 @@ const ProductDetail = () => {
               {/* What You Get */}
               {product.what_you_get && product.what_you_get.length > 0 && (
                 <div
-                  className="rounded-2xl p-5 border"
+                  className="rounded-2xl p-5"
                   style={{
-                    background: 'hsla(215,28%,10%,0.7)',
-                    borderColor: 'hsla(271,91%,65%,0.15)',
+                    background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    border: '1px solid hsla(258,78%,75%,0.22)',
+                    boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
                     opacity: entered ? 1 : 0,
                     transform: entered ? 'none' : 'translateY(20px)',
                     transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.64s',
                   }}
                 >
-                  <h3 className="font-sora font-bold text-base text-foreground flex items-center gap-2 mb-4">
-                    <Package size={16} style={{ color: 'hsl(271,91%,65%)' }} /> What You'll Get
+                  <h3 className="font-sora font-bold text-base flex items-center gap-2 mb-4" style={{ color: 'hsl(226,35%,18%)' }}>
+                    <Package size={16} style={{ color: 'hsl(258,78%,55%)' }} /> What You'll Get
                   </h3>
                   <ul className="space-y-2.5">
                     {product.what_you_get.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-foreground"
+                      <li key={i} className="flex items-start gap-3 text-sm"
                         style={{
+                          color: 'hsl(226,25%,35%)',
                           opacity: entered ? 1 : 0,
                           transform: entered ? 'none' : 'translateX(-12px)',
                           transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.7 + i * 0.07}s`,
                         }}>
-                        <CheckCircle2 size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'hsl(158,80%,55%)' }} />
+                        <CheckCircle2 size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'hsl(158,80%,45%)' }} />
                         {item}
                       </li>
                     ))}
@@ -831,8 +841,15 @@ const ProductDetail = () => {
                 {product.description ? 'Product Description' : 'Why Choose This Product?'}
               </h2>
               <div
-                className="rounded-2xl p-6 text-sm text-muted-foreground leading-relaxed border"
-                style={{ background: 'hsla(215,28%,10%,0.7)', borderColor: 'hsla(271,91%,65%,0.1)' }}
+                className="rounded-2xl p-6 text-sm leading-relaxed"
+                style={{
+                  background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
+                  border: '1px solid hsla(258,78%,75%,0.22)',
+                  boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
+                  color: 'hsl(226,25%,40%)',
+                }}
               >
                 {product.description ? (
                   product.description.split('\n').map((line, i) =>
@@ -904,14 +921,23 @@ const ProductDetail = () => {
 const FAQItem = ({ q, a, delay = 0, revealed = true }: { q: string; a: string; delay?: number; revealed?: boolean }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-2xl overflow-hidden border transition-all"
-      style={{ background: 'hsla(215,28%,10%,0.7)', borderColor: open ? 'hsla(271,91%,65%,0.3)' : 'hsla(271,91%,65%,0.1)', boxShadow: open ? '0 0 24px hsla(271,91%,65%,0.08)' : 'none', opacity: revealed ? 1 : 0, transform: revealed ? 'none' : 'translateY(16px)', transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s, box-shadow 0.3s` }}>
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-foreground text-left gap-3">
+    <div className="rounded-2xl overflow-hidden transition-all"
+      style={{
+        background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: `1px solid ${open ? 'hsla(258,78%,60%,0.35)' : 'hsla(258,78%,75%,0.22)'}`,
+        boxShadow: open ? '0 4px 24px hsla(258,78%,55%,0.12)' : '0 2px 12px hsla(258,78%,55%,0.06)',
+        opacity: revealed ? 1 : 0,
+        transform: revealed ? 'none' : 'translateY(16px)',
+        transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s, box-shadow 0.3s`,
+      }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-left gap-3" style={{ color: 'hsl(226,35%,18%)' }}>
         <span>{q}</span>
-        <ChevronDown size={16} className="flex-shrink-0 transition-transform duration-300" style={{ color: 'hsl(271,91%,65%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+        <ChevronDown size={16} className="flex-shrink-0 transition-transform duration-300" style={{ color: 'hsl(258,78%,55%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
       <div className="overflow-hidden transition-all duration-400" style={{ maxHeight: open ? '300px' : '0', opacity: open ? 1 : 0 }}>
-        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t" style={{ borderColor: 'hsla(271,91%,65%,0.1)', paddingTop: '12px' }}>{a}</div>
+        <div className="px-5 pb-4 text-sm leading-relaxed border-t" style={{ borderColor: 'hsla(258,78%,75%,0.18)', paddingTop: '12px', color: 'hsl(226,25%,42%)' }}>{a}</div>
       </div>
     </div>
   );
@@ -946,16 +972,23 @@ const ProductSpecsTable = ({ productId }: { productId: string }) => {
         <span className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
         Specifications
       </h2>
-      <div className="rounded-2xl overflow-hidden border" style={{ borderColor: 'hsla(271,91%,65%,0.15)' }}>
+      <div className="rounded-2xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid hsla(258,78%,75%,0.22)',
+          boxShadow: '0 4px 24px hsla(258,78%,55%,0.08)',
+        }}>
         <table className="w-full text-sm">
           <tbody>
             {specs.map((s, i) => (
-              <tr key={i} className={i % 2 === 0 ? 'bg-muted/10' : ''}>
-                <td className="px-5 py-3 font-semibold text-foreground w-1/3 border-r" style={{ borderColor: 'hsla(271,91%,65%,0.1)' }}>{s.name}</td>
-                <td className="px-5 py-3 text-muted-foreground">
+              <tr key={i} style={{ background: i % 2 === 0 ? 'rgba(255,255,255,0.40)' : 'transparent' }}>
+                <td className="px-5 py-3 font-semibold w-1/3 border-r" style={{ color: 'hsl(226,35%,22%)', borderColor: 'hsla(258,78%,75%,0.18)' }}>{s.name}</td>
+                <td className="px-5 py-3" style={{ color: 'hsl(226,25%,42%)' }}>
                   <div className="flex flex-wrap gap-1.5">
                     {s.values.map(v => (
-                      <span key={v} className="px-2.5 py-0.5 rounded-full text-xs border border-border bg-muted/20 text-foreground">{v}</span>
+                      <span key={v} className="px-2.5 py-0.5 rounded-full text-xs" style={{ background: 'hsla(258,78%,55%,0.08)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(258,78%,45%)' }}>{v}</span>
                     ))}
                   </div>
                 </td>
