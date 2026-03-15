@@ -38,7 +38,7 @@ const NAV_COL = [
       { label: 'Refund & Return Policy', href: '/refund-policy' },
       { label: 'Order & Cancellation',   href: '/order-policy' },
       { label: 'Delivery Info',          href: '/delivery-info' },
-      { label: 'Return Policy',          href: '/return-policy' },
+      { label: 'Blog',                      href: '/blog' },
     ]
   },
 ];
