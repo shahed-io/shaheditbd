@@ -32,6 +32,33 @@ const LANGUAGES = [
 const getStoredLang = () => localStorage.getItem('preferred_language') || 'bn';
 const setStoredLang = (code: string) => localStorage.setItem('preferred_language', code);
 
+// Google Translate language switcher
+const applyGoogleTranslate = (langCode: string) => {
+  // Bengali is the source language, so reset
+  if (langCode === 'bn') {
+    const iframe = document.querySelector<HTMLIFrameElement>('.goog-te-banner-frame');
+    if (iframe) {
+      const innerDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      const closeBtn = innerDoc?.querySelector<HTMLElement>('.goog-close-link');
+      if (closeBtn) { closeBtn.click(); return; }
+    }
+    // fallback: reload with no translate cookie
+    const el = document.querySelector<HTMLSelectElement>('.goog-te-combo');
+    if (el) { el.value = langCode; el.dispatchEvent(new Event('change')); }
+    return;
+  }
+  const tryApply = (attempt = 0) => {
+    const el = document.querySelector<HTMLSelectElement>('.goog-te-combo');
+    if (el) {
+      el.value = langCode;
+      el.dispatchEvent(new Event('change'));
+    } else if (attempt < 20) {
+      setTimeout(() => tryApply(attempt + 1), 300);
+    }
+  };
+  tryApply();
+};
+
 interface Profile {
   display_name: string | null;
   email: string | null;
