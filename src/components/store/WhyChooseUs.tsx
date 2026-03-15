@@ -7,7 +7,7 @@ const FEATURES = [
   { icon: '🎧', title: '24/7 Support',        desc: 'WhatsApp ও Telegram-এ সার্বক্ষণিক সাপোর্ট।',              from: 'hsl(263,70%,62%)', to: 'hsl(283,65%,58%)' },
   { icon: '🏛️', title: 'Govt. Registered',  desc: 'DBID: 586772174 — সরকার নিবন্ধিত ব্যবসা।',                from: 'hsl(158,64%,48%)', to: 'hsl(180,70%,44%)' },
   { icon: '💰', title: 'Lowest Price BD',    desc: 'বাংলাদেশের সবচেয়ে কম দামে অরিজিনাল সফটওয়্যার।',         from: 'hsl(15,100%,62%)',  to: 'hsl(38,100%,58%)' },
-  { icon: '😊', title: '12K+ Customers',      desc: '২০২০ সাল থেকে ১২০০০+ সন্তুষ্ট গ্রাহক সারা বিশ্বে।',     from: 'hsl(38,100%,58%)',  to: 'hsl(50,100%,58%)' },
+  { icon: '😊', title: '12K+ Customers',     desc: '২০২০ সাল থেকে ১২০০০+ সন্তুষ্ট গ্রাহক সারা বিশ্বে।',     from: 'hsl(38,100%,58%)',  to: 'hsl(50,100%,58%)' },
 ];
 
 const STEPS = [
@@ -24,13 +24,56 @@ const STATS = [
   { n: '24/7', l: 'Support Available' },
 ];
 
-const glassCard = (borderColor: string) => ({
-  background: 'hsla(0,0%,100%,0.55)',
-  backdropFilter: 'blur(20px) saturate(180%)',
-  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-  border: `1px solid ${borderColor}`,
-  boxShadow: '0 4px 20px hsla(226,35%,12%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.65)',
-} as React.CSSProperties);
+/* ─── Gradient Border Card wrapper ──────────────────────────── */
+interface GradBorderProps {
+  from: string;
+  to: string;
+  borderWidth?: number;
+  radius?: number;
+  children: React.ReactNode;
+  className?: string;
+  hoverGlow?: boolean;
+  style?: React.CSSProperties;
+}
+const GradBorderCard = ({
+  from, to, borderWidth = 1.5, radius = 18, children, className = '', hoverGlow = true, style,
+}: GradBorderProps) => {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      className={`relative ${className}`}
+      style={{
+        background: hov
+          ? `linear-gradient(135deg, ${from}, ${to})`
+          : `linear-gradient(135deg, ${from}60, ${to}50)`,
+        borderRadius: radius,
+        padding: borderWidth,
+        transition: 'all 0.35s cubic-bezier(0.23,1,0.32,1)',
+        boxShadow: hov && hoverGlow
+          ? `0 16px 48px ${from}28, 0 4px 20px ${from}18`
+          : `0 2px 16px ${from}14`,
+        ...style,
+      }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      {/* Inner glass surface */}
+      <div
+        style={{
+          background: hov ? 'hsla(0,0%,100%,0.72)' : 'hsla(0,0%,100%,0.58)',
+          backdropFilter: 'blur(24px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          borderRadius: radius - borderWidth,
+          height: '100%',
+          width: '100%',
+          transition: 'background 0.35s',
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
 
 const WhyChooseUs = () => {
   const statsRef = useRef<HTMLDivElement>(null);
@@ -46,7 +89,7 @@ const WhyChooseUs = () => {
 
   return (
     <section className="py-24 relative overflow-hidden bg-transparent">
-      {/* Background ambient */}
+      {/* Ambient blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/3 left-0 w-96 h-96 rounded-full"
           style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.05), transparent)', filter: 'blur(80px)' }} />
@@ -71,35 +114,23 @@ const WhyChooseUs = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {FEATURES.map((f, i) => (
-              <div key={i}
-                className="group relative rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-                style={glassCard(`${f.from}28`)}>
-                {/* Hover glow */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"
-                  style={{ background: `radial-gradient(ellipse at 0% 0%, ${f.from}12, transparent 60%)` }} />
-                {/* Top border glow on hover */}
-                <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, transparent, ${f.from}90, ${f.to}90, transparent)` }} />
-                {/* Inner top shine */}
-                <div className="absolute top-0 left-0 right-0 h-[1px] rounded-t-2xl pointer-events-none"
-                  style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.8), transparent)' }} />
-
-                <div className="relative z-10 flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
-                    style={{ background: `linear-gradient(135deg, ${f.from}18, ${f.to}12)`, border: `1px solid ${f.from}40` }}>
+              <GradBorderCard key={i} from={f.from} to={f.to} borderWidth={1.5} radius={20}>
+                <div className="p-6 flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
+                    style={{ background: `linear-gradient(135deg, ${f.from}18, ${f.to}12)`, border: `1px solid ${f.from}35` }}>
                     {f.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-sora font-bold text-[13px] text-foreground flex items-center gap-2">
+                    <h3 className="font-sora font-bold text-[13.5px] text-foreground flex items-center gap-2">
                       {f.title}
                       <CheckCircle2 size={12} style={{ color: f.from }} className="flex-shrink-0" />
                     </h3>
                     <p className="text-[12px] text-muted-foreground mt-1.5 leading-relaxed">{f.desc}</p>
                   </div>
                 </div>
-              </div>
+              </GradBorderCard>
             ))}
           </div>
         </div>
@@ -119,69 +150,83 @@ const WhyChooseUs = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative">
             {/* Connecting line */}
-            <div className="hidden lg:block absolute top-12 left-[15%] right-[15%] h-px z-0"
-              style={{ background: 'linear-gradient(90deg, hsl(243,75%,65%), hsl(15,100%,62%), hsl(158,64%,48%), hsl(263,70%,62%))', opacity: 0.2 }} />
+            <div className="hidden lg:block absolute top-[3.5rem] left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-px z-0"
+              style={{ background: 'linear-gradient(90deg, hsl(243,75%,65%), hsl(15,100%,62%), hsl(158,64%,48%), hsl(263,70%,62%))', opacity: 0.25 }} />
 
             {STEPS.map((step, i) => (
-              <div key={i}
-                className="relative rounded-3xl p-7 z-10 text-center group transition-all duration-300 hover:-translate-y-2 overflow-hidden"
-                style={glassCard(`${step.from}30`)}>
-                {/* Inner shine */}
-                <div className="absolute top-0 left-0 right-0 h-[1px] rounded-t-3xl pointer-events-none"
-                  style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.85), transparent)' }} />
-                {/* Hover top glow */}
-                <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, transparent, ${step.from}90, ${step.to}90, transparent)` }} />
-                {/* Step number */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="text-[11px] font-fira font-bold px-3 py-1 rounded-full text-white"
-                    style={{ background: `linear-gradient(135deg, ${step.from}, ${step.to})`, boxShadow: `0 2px 12px ${step.from}50` }}>
+              <div key={i} className="relative z-10 pt-4">
+                {/* Step badge above card */}
+                <div className="absolute -top-0 left-1/2 -translate-x-1/2 z-20">
+                  <span className="text-[11px] font-fira font-bold px-3.5 py-1.5 rounded-full text-white shadow-lg"
+                    style={{ background: `linear-gradient(135deg, ${step.from}, ${step.to})`, boxShadow: `0 4px 14px ${step.from}55` }}>
                     {step.n}
                   </span>
                 </div>
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
-                  style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}40` }}>
-                  {step.emoji}
-                </div>
-                <h3 className="font-sora font-bold text-[13px] text-foreground mb-2">{step.title}</h3>
-                <p className="text-[12px] text-muted-foreground leading-relaxed">{step.desc}</p>
+                <GradBorderCard from={step.from} to={step.to} borderWidth={1.5} radius={22} className="w-full h-full">
+                  <div className="p-7 pt-8 text-center flex flex-col items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl transition-transform duration-300 group-hover:scale-110"
+                      style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}35` }}>
+                      {step.emoji}
+                    </div>
+                    <div>
+                      <h3 className="font-sora font-bold text-[13.5px] text-foreground mb-2">{step.title}</h3>
+                      <p className="text-[12px] text-muted-foreground leading-relaxed">{step.desc}</p>
+                    </div>
+                  </div>
+                </GradBorderCard>
               </div>
             ))}
           </div>
         </div>
 
-        {/* ── Stats Bar — Glassmorphism ── */}
-        <div ref={statsRef}
-          className="relative rounded-3xl p-10 lg:p-14 overflow-hidden"
-          style={{
-            background: 'hsla(0,0%,100%,0.45)',
-            backdropFilter: 'blur(28px) saturate(200%)',
-            WebkitBackdropFilter: 'blur(28px) saturate(200%)',
-            border: '1px solid hsla(243,75%,62%,0.22)',
-            boxShadow: '0 8px 40px hsla(226,35%,12%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.75)',
+        {/* ── Stats Bar — Gradient Border ── */}
+        <div ref={statsRef} className="relative">
+          {/* Outer gradient border wrapper */}
+          <div style={{
+            background: 'linear-gradient(135deg, hsla(243,75%,62%,0.55), hsla(263,70%,58%,0.35), hsla(15,100%,60%,0.35))',
+            borderRadius: 28,
+            padding: 1.5,
+            boxShadow: '0 8px 48px hsla(243,75%,62%,0.12)',
           }}>
-          {/* Inner shine */}
-          <div className="absolute top-0 left-0 right-0 h-[1px] rounded-t-3xl pointer-events-none"
-            style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.9), transparent)' }} />
-          {/* Decorations */}
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ backgroundImage: 'radial-gradient(circle at 15% 20%, hsla(258,78%,55%,0.04) 0%, transparent 45%)' }} />
-          <div className="absolute top-5 right-6 pointer-events-none">
-            <Sparkles size={32} style={{ color: 'hsla(258,78%,55%,0.2)' }} />
-          </div>
-          <div className="relative z-10">
-            <p className="text-center text-muted-foreground/60 text-[11px] font-semibold mb-10 tracking-[0.25em] uppercase font-fira">
-              Our Numbers Speak For Themselves
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {STATS.map((s, i) => (
-                <div key={i}
-                  className={`transition-all duration-700 ${statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                  style={{ transitionDelay: `${i * 0.12}s` }}>
-                  <div className="font-sora font-black text-[3rem] sm:text-[3.5rem] leading-none text-foreground">{s.n}</div>
-                  <div className="text-muted-foreground text-[11px] font-semibold mt-2.5 uppercase tracking-wider">{s.l}</div>
-                </div>
-              ))}
+            <div style={{
+              background: 'hsla(0,0%,100%,0.55)',
+              backdropFilter: 'blur(28px) saturate(200%)',
+              WebkitBackdropFilter: 'blur(28px) saturate(200%)',
+              borderRadius: 27,
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+              className="p-10 lg:p-14"
+            >
+              {/* Decorative sparkle */}
+              <div className="absolute top-5 right-6 pointer-events-none">
+                <Sparkles size={30} style={{ color: 'hsla(258,78%,55%,0.22)' }} />
+              </div>
+              {/* Inner top highlight */}
+              <div className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none"
+                style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.9), transparent)' }} />
+
+              <p className="text-center text-muted-foreground/50 text-[11px] font-semibold mb-10 tracking-[0.28em] uppercase font-fira">
+                Our Numbers Speak For Themselves
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                {STATS.map((s, i) => (
+                  <div key={i}
+                    className={`transition-all duration-700 ${statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                    style={{ transitionDelay: `${i * 0.12}s` }}>
+                    <div className="font-sora font-black text-[3rem] sm:text-[3.5rem] leading-none"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(243,75%,55%), hsl(263,70%,58%))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}>
+                      {s.n}
+                    </div>
+                    <div className="text-muted-foreground text-[11px] font-semibold mt-2.5 uppercase tracking-wider">{s.l}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
