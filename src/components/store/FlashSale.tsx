@@ -263,7 +263,7 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
         />
         {/* Hover overlay */}
         <div className="absolute inset-0 pointer-events-none transition-opacity duration-300"
-          style={{ background: 'linear-gradient(to top, hsla(220,30%,5%,0.5), transparent)', opacity: hovered ? 1 : 0.3 }} />
+          style={{ background: 'linear-gradient(to top, hsla(226,35%,8%,0.4), transparent)', opacity: hovered ? 1 : 0 }} />
         {/* Discount Badge */}
         {product.discount_percent && (
           <div className="absolute top-2.5 left-2.5 text-white text-[11px] font-black px-2.5 py-1 rounded-xl flex items-center gap-1"
