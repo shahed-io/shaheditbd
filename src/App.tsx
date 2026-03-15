@@ -66,6 +66,7 @@ import AdminImageSeo from "./pages/admin/seo/AdminImageSeo";
 import AdminSlugEditor from "./pages/admin/seo/AdminSlugEditor";
 import AdminRedirects from "./pages/admin/seo/AdminRedirects";
 import AdminBrokenLinks from "./pages/admin/seo/AdminBrokenLinks";
+import AdminWallet from "./pages/admin/AdminWallet";
 
 const queryClient = new QueryClient({
   defaultOptions: {
