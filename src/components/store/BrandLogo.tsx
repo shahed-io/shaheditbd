@@ -19,7 +19,7 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
         {/* Subtle colored ring */}
         <div className="absolute inset-[-2px] rounded-2xl pointer-events-none"
           style={{
-            background: 'linear-gradient(135deg, hsl(258,78%,65%), hsl(210,90%,58%), hsl(42,96%,58%), hsl(258,78%,55%))',
+            background: 'linear-gradient(135deg, hsl(42,96%,58%), hsl(25,100%,55%), hsl(258,78%,60%), hsl(210,90%,60%))',
             borderRadius: '18px',
             padding: '1.5px',
             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
@@ -27,11 +27,12 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
             maskComposite: 'exclude',
           }} />
 
-        {/* Icon container — clean, no dark shadow */}
+        {/* Icon container — white glass with soft gradient */}
         <div className={`${iconSize} rounded-2xl flex items-center justify-center relative overflow-hidden`}
           style={{
-            background: 'radial-gradient(ellipse at 40% 35%, hsl(258,78%,62%) 0%, hsl(243,80%,45%) 50%, hsl(222,40%,22%) 100%)',
-            boxShadow: '0 4px 16px hsla(258,78%,55%,0.35), 0 1px 4px hsla(258,78%,55%,0.2)',
+            background: 'linear-gradient(145deg, hsl(0,0%,100%) 0%, hsl(42,80%,96%) 40%, hsl(258,60%,96%) 100%)',
+            boxShadow: '0 4px 20px hsla(258,60%,60%,0.15), 0 1px 6px hsla(42,96%,58%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+            border: '1px solid hsla(258,60%,80%,0.2)',
           }}>
 
           {/* Top-left gloss */}
@@ -42,7 +43,7 @@ const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
             src={logoIcon}
             alt="Shahed Store"
             className="w-[76%] h-[76%] object-contain relative z-10"
-            style={{ filter: 'brightness(1.1) drop-shadow(0 1px 4px hsla(0,0%,0%,0.4))' }}
+            style={{ filter: 'brightness(0.9) saturate(1.2) drop-shadow(0 1px 3px hsla(258,78%,40%,0.25))' }}
           />
         </div>
       </div>
