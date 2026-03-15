@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 
 const SLIDES = [
   {
@@ -12,10 +12,14 @@ const SLIDES = [
     original: '৳9,999',
     off: '94%',
     badge: 'MOST POPULAR',
-    accentFrom: 'hsl(243,75%,65%)',
-    accentTo: 'hsl(263,70%,62%)',
-    glowFrom: 'hsla(243,75%,62%,0.2)',
-    glowTo: 'hsla(263,70%,60%,0.12)',
+    // Purple/Indigo theme
+    bgFrom:      'hsla(243,80%,97%,1)',
+    bgMid:       'hsla(250,70%,94%,1)',
+    bgTo:        'hsla(220,60%,98%,1)',
+    accentFrom:  'hsl(243,75%,58%)',
+    accentTo:    'hsl(263,70%,55%)',
+    badgeBg:     'hsl(243,75%,58%)',
+    dotColor:    'hsl(243,75%,58%)',
     emoji: '🪟',
     features: ['Lifetime License', 'Instant Delivery', 'All Devices'],
   },
@@ -29,20 +33,24 @@ const SLIDES = [
     original: '৳16,500',
     off: '88%',
     badge: 'LIMITED TIME',
-    accentFrom: 'hsl(15,100%,62%)',
-    accentTo: 'hsl(38,100%,58%)',
-    glowFrom: 'hsla(15,100%,60%,0.2)',
-    glowTo: 'hsla(38,100%,55%,0.12)',
+    // Orange/Peach theme
+    bgFrom:      'hsla(28,100%,97%,1)',
+    bgMid:       'hsla(20,90%,95%,1)',
+    bgTo:        'hsla(40,80%,98%,1)',
+    accentFrom:  'hsl(20,100%,55%)',
+    accentTo:    'hsl(38,100%,52%)',
+    badgeBg:     'hsl(20,100%,55%)',
+    dotColor:    'hsl(20,100%,55%)',
     emoji: '📦',
     features: ['1TB OneDrive', '5 Devices', '1 Year'],
   },
 ];
 
 const STATS = [
-  { label: 'Products',         value: '500+', icon: '🛍️', color: 'hsl(243,75%,65%)' },
-  { label: 'Orders Delivered', value: '25K+', icon: '✅', color: 'hsl(158,64%,48%)' },
-  { label: 'Happy Customers',  value: '12K+', icon: '😊', color: 'hsl(15,100%,62%)' },
-  { label: 'Support Rating',   value: '4.9★', icon: '⭐', color: 'hsl(38,100%,58%)' },
+  { label: 'Products',         value: '500+', icon: '🛍️' },
+  { label: 'Orders Delivered', value: '25K+', icon: '✅' },
+  { label: 'Happy Customers',  value: '12K+', icon: '😊' },
+  { label: 'Support Rating',   value: '4.9★', icon: '⭐' },
 ];
 
 const HeroBanner = () => {
@@ -65,65 +73,56 @@ const HeroBanner = () => {
   const slide = SLIDES[active];
 
   return (
-    <section className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
-      {/* Animated bg blobs */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 transition-all duration-700"
-          style={{ background: `radial-gradient(ellipse at 70% 40%, ${slide.glowFrom} 0%, transparent 55%), radial-gradient(ellipse at 20% 75%, ${slide.glowTo} 0%, transparent 50%)` }} />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] blob opacity-30"
-          style={{ background: `radial-gradient(circle, ${slide.accentFrom}18, transparent)` }} />
-        <div className="absolute bottom-0 left-[-50px] w-80 h-80 blob opacity-20"
-          style={{ background: `radial-gradient(circle, ${slide.accentTo}12, transparent)`, animationDelay: '4s' }} />
-        {/* Grid */}
-        <div className="absolute inset-0"
-          style={{ backgroundImage: 'radial-gradient(circle, hsla(243,75%,62%,0.06) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        {/* Top edge glow line */}
-        <div className="absolute top-0 left-0 right-0 h-px"
-          style={{ background: `linear-gradient(90deg, transparent, ${slide.accentFrom}50, ${slide.accentTo}50, transparent)` }} />
-      </div>
+    <section className="relative overflow-hidden" style={{
+      background: `linear-gradient(135deg, ${slide.bgFrom} 0%, ${slide.bgMid} 50%, ${slide.bgTo} 100%)`,
+      transition: 'background 0.6s ease',
+    }}>
+      {/* Subtle dot pattern overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-40"
+        style={{ backgroundImage: `radial-gradient(circle, ${slide.accentFrom}18 1px, transparent 1px)`, backgroundSize: '28px 28px' }} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10 lg:pt-20 lg:pb-14">
         <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
 
-          {/* Left Content */}
-          <div className="space-y-7"
+          {/* ── Left Content ── */}
+          <div className="space-y-6"
             style={{
               opacity:    dir === 'in' ? 1 : 0,
-              transform:  dir === 'in' ? 'none' : 'translateY(12px)',
-              transition: 'opacity 0.3s ease, transform 0.3s ease',
+              transform:  dir === 'in' ? 'none' : 'translateY(14px)',
+              transition: 'opacity 0.32s ease, transform 0.32s ease',
             }}>
 
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 text-[12px] font-bold px-4 py-1.5 rounded-full text-white"
-                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 4px 16px ${slide.accentFrom}50` }}>
+                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 4px 14px ${slide.accentFrom}50` }}>
                 {slide.tag}
               </span>
-              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full font-fira"
-                style={{ background: 'hsla(0,0%,100%,0.07)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsl(var(--muted-foreground))' }}>
+              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full"
+                style={{ background: `${slide.accentFrom}15`, border: `1px solid ${slide.accentFrom}30`, color: slide.accentFrom }}>
                 {slide.badge}
               </span>
             </div>
 
             {/* Title */}
             <div>
-              <h1 className="font-sora font-black leading-[1.04] tracking-tight text-foreground" style={{ fontSize: 'clamp(2.8rem, 6vw, 4.5rem)' }}>
+              <h1 className="font-sora font-black leading-[1.05] tracking-tight" style={{ fontSize: 'clamp(2.8rem, 6vw, 4.5rem)', color: 'hsl(226,35%,12%)' }}>
                 {slide.title}{' '}
-                <span className="gradient-text-slide" style={{ ['--g-from' as any]: slide.accentFrom, ['--g-to' as any]: slide.accentTo } as React.CSSProperties}>
+                <span style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                   {slide.titleAccent}
                 </span>
               </h1>
-              <p className="font-sora font-semibold text-xl lg:text-2xl mt-2 text-muted-foreground">{slide.subtitle}</p>
+              <p className="font-sora font-semibold text-xl mt-2" style={{ color: 'hsl(226,20%,40%)' }}>{slide.subtitle}</p>
             </div>
 
-            <p className="text-[15px] leading-relaxed max-w-md text-muted-foreground">{slide.desc}</p>
+            <p className="text-[15px] leading-relaxed max-w-md" style={{ color: 'hsl(226,15%,50%)' }}>{slide.desc}</p>
 
-            {/* Feature pills — glassmorphic */}
+            {/* Feature pills */}
             <div className="flex flex-wrap gap-2">
               {slide.features.map(f => (
-                <span key={f} className="flex items-center gap-1.5 text-[12px] font-semibold px-4 py-2 rounded-full"
-                  style={{ background: 'hsla(0,0%,100%,0.07)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsl(var(--foreground))', backdropFilter: 'blur(8px)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: slide.accentFrom }} />
+                <span key={f} className="flex items-center gap-1.5 text-[12.5px] font-semibold px-4 py-2 rounded-full"
+                  style={{ background: 'hsl(0,0%,100%)', border: `1.5px solid ${slide.accentFrom}25`, color: 'hsl(226,25%,30%)', boxShadow: '0 2px 8px hsla(226,20%,50%,0.08)' }}>
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: slide.dotColor }} />
                   {f}
                 </span>
               ))}
@@ -131,10 +130,10 @@ const HeroBanner = () => {
 
             {/* Price */}
             <div className="flex items-end gap-4">
-              <span className="font-sora font-black text-foreground" style={{ fontSize: 'clamp(2.5rem, 5vw, 3.5rem)' }}>{slide.price}</span>
-              <div className="mb-1">
-                <div className="text-sm text-muted-foreground line-through">{slide.original}</div>
-                <span className="text-[11px] font-bold text-white px-2.5 py-1 rounded-full"
+              <span className="font-sora font-black" style={{ fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', color: 'hsl(226,35%,12%)' }}>{slide.price}</span>
+              <div className="mb-1.5">
+                <div className="text-sm line-through" style={{ color: 'hsl(226,15%,55%)' }}>{slide.original}</div>
+                <span className="text-[11px] font-bold text-white px-3 py-1 rounded-full"
                   style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
                   Save {slide.off} OFF
                 </span>
@@ -143,13 +142,13 @@ const HeroBanner = () => {
 
             {/* CTA */}
             <div className="flex flex-wrap gap-3">
-              <button className="flex items-center gap-2 px-7 py-4 rounded-2xl text-[14px] font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
-                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 8px 28px ${slide.accentFrom}55` }}>
-                <ShoppingBag size={17} /> Order Now <ArrowRight size={15} />
+              <button className="flex items-center gap-2 px-7 py-3.5 rounded-2xl text-[14px] font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
+                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 8px 24px ${slide.accentFrom}45` }}>
+                <ShoppingBag size={16} /> Order Now <ArrowRight size={15} />
               </button>
               <a href="/shop"
-                className="flex items-center gap-2 px-6 py-4 rounded-2xl text-[14px] font-semibold transition-all hover:scale-[1.02]"
-                style={{ background: 'hsla(0,0%,100%,0.06)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsl(var(--foreground))', backdropFilter: 'blur(12px)' }}>
+                className="flex items-center gap-2 px-6 py-3.5 rounded-2xl text-[14px] font-semibold transition-all hover:scale-[1.02]"
+                style={{ background: 'hsl(0,0%,100%)', border: `1.5px solid ${slide.accentFrom}30`, color: 'hsl(226,25%,30%)', boxShadow: '0 4px 12px hsla(226,20%,50%,0.10)' }}>
                 <TrendingUp size={15} /> View All Deals
               </a>
             </div>
@@ -162,7 +161,7 @@ const HeroBanner = () => {
                 { icon: <Clock size={13} />, text: '24/7 Support' },
                 { icon: <Star size={13} />, text: '4.9★ Rating' },
               ].map(t => (
-                <span key={t.text} className="flex items-center gap-1.5 text-[12px] font-semibold text-muted-foreground">
+                <span key={t.text} className="flex items-center gap-1.5 text-[12px] font-semibold" style={{ color: 'hsl(226,15%,50%)' }}>
                   <span style={{ color: slide.accentFrom }}>{t.icon}</span>
                   {t.text}
                 </span>
@@ -170,76 +169,76 @@ const HeroBanner = () => {
             </div>
           </div>
 
-          {/* Right Visual — Glassmorphic Card */}
+          {/* ── Right Visual Card ── */}
           <div className="relative hidden lg:flex items-center justify-center min-h-[440px]">
             <div
               className="relative w-[300px] rounded-[2rem] overflow-hidden anim-float"
               style={{
-                background: `linear-gradient(150deg, ${slide.accentFrom}cc, ${slide.accentTo}bb)`,
-                boxShadow: `0 32px 80px ${slide.accentFrom}40, 0 0 0 1px ${slide.accentFrom}30, inset 0 1px 0 hsla(0,0%,100%,0.2)`,
+                background: `linear-gradient(150deg, ${slide.accentFrom}ee, ${slide.accentTo}dd)`,
+                boxShadow: `0 32px 80px ${slide.accentFrom}35, 0 0 0 1px ${slide.accentFrom}20`,
                 opacity:    dir === 'in' ? 1 : 0,
                 transform:  dir === 'in' ? 'scale(1)' : 'scale(0.95)',
-                transition: 'opacity 0.3s, transform 0.3s',
-                backdropFilter: 'blur(20px)',
+                transition: 'opacity 0.32s, transform 0.32s',
               }}>
-              {/* Inner glass shine */}
               <div className="absolute inset-0 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(ellipse at 15% 15%, rgba(255,255,255,0.22) 0%, transparent 55%)' }} />
-              <div className="absolute inset-0 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                style={{ backgroundImage: 'radial-gradient(ellipse at 15% 15%, rgba(255,255,255,0.25) 0%, transparent 55%)' }} />
 
               <div className="relative p-8">
-                <div className="flex items-start justify-between mb-8">
-                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-soft"
-                    style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.25)' }}>
-                    {slide.emoji}
-                  </div>
-                  <Sparkles size={18} className="text-white/40 anim-spin-slow mt-1" />
+                {/* Icon */}
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl mb-6"
+                  style={{ background: 'hsla(0,0%,100%,0.22)', border: '1px solid hsla(0,0%,100%,0.3)' }}>
+                  {slide.emoji}
                 </div>
-                <div className="text-white/55 text-[10px] font-fira uppercase tracking-[0.2em] mb-2">Featured Deal</div>
+
+                <div className="text-white/60 text-[10px] font-fira uppercase tracking-[0.2em] mb-1">Featured Deal</div>
                 <div className="text-white font-sora font-black text-[22px] leading-tight">{slide.title} {slide.titleAccent}</div>
                 <div className="text-white/75 text-sm mt-1 font-medium">{slide.subtitle}</div>
 
                 <div className="flex flex-wrap gap-1.5 mt-4">
                   {slide.features.map(f => (
-                    <span key={f} className="text-[10px] font-bold text-white/80 px-2.5 py-1 rounded-full"
-                      style={{ background: 'hsla(0,0%,100%,0.15)', border: '1px solid hsla(0,0%,100%,0.2)', backdropFilter: 'blur(8px)' }}>{f}</span>
+                    <span key={f} className="text-[10px] font-bold text-white/85 px-2.5 py-1 rounded-full"
+                      style={{ background: 'hsla(0,0%,100%,0.18)', border: '1px solid hsla(0,0%,100%,0.25)' }}>{f}</span>
                   ))}
                 </div>
 
-                <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid hsla(0,0%,100%,0.15)' }}>
+                <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid hsla(0,0%,100%,0.18)' }}>
                   <div>
-                    <div className="text-white/45 text-xs line-through font-fira">{slide.original}</div>
+                    <div className="text-white/50 text-xs line-through font-fira">{slide.original}</div>
                     <div className="text-white font-sora font-black text-[2rem] leading-none mt-0.5">{slide.price}</div>
                   </div>
                   <div className="rounded-2xl px-4 py-3 text-center"
-                    style={{ background: 'hsla(0,0%,100%,0.15)', backdropFilter: 'blur(8px)', border: '1px solid hsla(0,0%,100%,0.2)' }}>
-                    <div className="font-fira font-black text-[1.25rem] text-white leading-none">-{slide.off}</div>
+                    style={{ background: 'hsla(0,0%,100%,0.18)', border: '1px solid hsla(0,0%,100%,0.25)' }}>
+                    <div className="font-fira font-black text-[1.2rem] text-white leading-none">-{slide.off}</div>
                     <div className="text-[9px] text-white/55 uppercase tracking-wider mt-0.5">OFF</div>
                   </div>
                 </div>
 
                 <button className="mt-5 w-full py-3.5 rounded-xl font-bold text-sm transition-all hover:scale-[1.02]"
-                  style={{ background: 'hsla(0,0%,100%,0.92)', color: slide.accentFrom }}>
+                  style={{ background: 'hsla(0,0%,100%,0.95)', color: slide.accentFrom }}>
                   Order Now →
                 </button>
               </div>
             </div>
 
-            {/* Floating stat cards — glassmorphic */}
+            {/* Floating stat cards */}
             {[
               { label: 'Orders Today', value: '248+', icon: '📦', top: '4%',  left: '-18%', right: 'auto', delay: '0s' },
               { label: 'Happy Users',  value: '12K+', icon: '😊', top: '46%', left: 'auto',  right: '-18%', delay: '1.4s' },
               { label: 'Avg Rating',   value: '4.9★', icon: '⭐', top: '82%', left: '-16%', right: 'auto', delay: '2.8s' },
             ].map((card) => (
               <div key={card.label}
-                className="absolute glass-white rounded-2xl px-4 py-3 anim-float"
-                style={{ top: card.top, left: card.left, right: card.right, animationDelay: card.delay }}>
+                className="absolute rounded-2xl px-4 py-3 anim-float"
+                style={{
+                  top: card.top, left: card.left, right: card.right, animationDelay: card.delay,
+                  background: 'hsl(0,0%,100%)',
+                  boxShadow: '0 8px 24px hsla(226,30%,50%,0.14)',
+                  border: '1px solid hsla(226,20%,85%,0.6)',
+                }}>
                 <div className="flex items-center gap-2.5">
                   <span className="text-xl">{card.icon}</span>
                   <div>
-                    <div className="text-[15px] font-sora font-black text-foreground leading-none">{card.value}</div>
-                    <div className="text-[10px] text-muted-foreground leading-none mt-0.5 font-medium">{card.label}</div>
+                    <div className="text-[15px] font-sora font-black leading-none" style={{ color: 'hsl(226,35%,12%)' }}>{card.value}</div>
+                    <div className="text-[10px] leading-none mt-0.5 font-medium" style={{ color: 'hsl(226,15%,50%)' }}>{card.label}</div>
                   </div>
                 </div>
               </div>
@@ -251,7 +250,7 @@ const HeroBanner = () => {
         <div className="flex items-center justify-center gap-4 mt-14">
           <button onClick={() => advance(-1)}
             className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
-            style={{ background: 'hsla(0,0%,100%,0.07)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsl(var(--muted-foreground))' }}>
+            style={{ background: 'hsl(0,0%,100%)', border: `1.5px solid ${slide.accentFrom}30`, color: 'hsl(226,25%,40%)', boxShadow: '0 2px 8px hsla(226,20%,50%,0.10)' }}>
             <ChevronLeft size={16} />
           </button>
           <div className="flex items-center gap-2">
@@ -261,28 +260,28 @@ const HeroBanner = () => {
                 style={{
                   width: i === active ? '28px' : '8px',
                   height: '8px',
-                  background: i === active ? slide.accentFrom : 'hsla(0,0%,100%,0.2)',
-                  boxShadow: i === active ? `0 0 10px ${slide.accentFrom}80` : 'none',
+                  background: i === active ? slide.accentFrom : 'hsla(226,20%,70%,0.4)',
+                  boxShadow: i === active ? `0 0 8px ${slide.accentFrom}70` : 'none',
                 }} />
             ))}
           </div>
           <button onClick={() => advance(1)}
             className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
-            style={{ background: 'hsla(0,0%,100%,0.07)', border: '1px solid hsla(0,0%,100%,0.12)', color: 'hsl(var(--muted-foreground))' }}>
+            style={{ background: 'hsl(0,0%,100%)', border: `1.5px solid ${slide.accentFrom}30`, color: 'hsl(226,25%,40%)', boxShadow: '0 2px 8px hsla(226,20%,50%,0.10)' }}>
             <ChevronRight size={16} />
           </button>
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-12" style={{ borderTop: '1px solid hsla(0,0%,100%,0.07)' }}>
-          {STATS.map((s, i) => (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-12" style={{ borderTop: `1px solid ${slide.accentFrom}20` }}>
+          {STATS.map((s) => (
             <div key={s.label} className="group text-center cursor-default">
               <div className="text-3xl mb-2 transition-transform duration-300 group-hover:scale-110">{s.icon}</div>
-              <div className="text-[1.7rem] font-sora font-black leading-none gradient-text-slide"
-                style={{ ['--g-from' as any]: slide.accentFrom, ['--g-to' as any]: slide.accentTo } as React.CSSProperties}>
+              <div className="text-[1.7rem] font-sora font-black leading-none"
+                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 {s.value}
               </div>
-              <div className="text-[11px] text-muted-foreground font-semibold mt-1.5 uppercase tracking-wider">{s.label}</div>
+              <div className="text-[11px] font-semibold mt-1.5 uppercase tracking-wider" style={{ color: 'hsl(226,15%,50%)' }}>{s.label}</div>
             </div>
           ))}
         </div>
