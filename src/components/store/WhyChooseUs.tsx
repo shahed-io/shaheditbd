@@ -41,11 +41,9 @@ const WhyChooseUs = () => {
       {/* Background ambient */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/3 left-0 w-96 h-96 rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.06), transparent)', filter: 'blur(80px)' }} />
+          style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.05), transparent)', filter: 'blur(80px)' }} />
         <div className="absolute bottom-1/3 right-0 w-80 h-80 rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.05), transparent)', filter: 'blur(80px)' }} />
-        <div className="absolute inset-0"
-          style={{ backgroundImage: 'radial-gradient(circle, hsla(0,0%,100%,0.025) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+          style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.04), transparent)', filter: 'blur(80px)' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24 relative z-10">
