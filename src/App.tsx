@@ -40,6 +40,11 @@ import AdminAttributes from "./pages/admin/AdminAttributes";
 import AdminPages from "./pages/admin/AdminPages";
 import Shop from "./pages/Shop";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
+import RefundPolicy from "./pages/RefundPolicy";
+import OrderPolicy from "./pages/OrderPolicy";
+import DeliveryInfo from "./pages/DeliveryInfo";
+import ReturnPolicy from "./pages/ReturnPolicy";
 
 const queryClient = new QueryClient({
   defaultOptions: {

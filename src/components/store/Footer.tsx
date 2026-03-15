@@ -27,12 +27,12 @@ const NAV_COL = [
   {
     title: 'Policies',
     links: [
-      { label: 'Privacy Policy',   href: '/privacy-policy' },
-      { label: 'Terms & Conditions',href: '/help' },
-      { label: 'Refund Policy',    href: '/help' },
-      { label: 'Order Policy',     href: '/help' },
-      { label: 'Delivery Info',    href: '/help' },
-      { label: 'Return Policy',    href: '/help' },
+      { label: 'Privacy Policy',    href: '/privacy-policy' },
+      { label: 'Terms & Conditions',href: '/terms-conditions' },
+      { label: 'Refund Policy',     href: '/refund-policy' },
+      { label: 'Order Policy',      href: '/order-policy' },
+      { label: 'Delivery Info',     href: '/delivery-info' },
+      { label: 'Return Policy',     href: '/return-policy' },
     ]
   },
 ];
