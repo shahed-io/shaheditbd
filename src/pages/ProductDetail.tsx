@@ -113,8 +113,42 @@ const ProductDetail = () => {
         const row = data?.[0];
         if (!row) { setNotFound(true); setLoading(false); return; }
         setProduct(row as any);
+
+        // Fetch custom option groups from new system
+        const { data: groupData } = await supabase
+          .from('product_option_groups' as any)
+          .select('*, product_option_values(*)')
+          .eq('product_id', row.id)
+          .order('sort_order');
+
+        if (!cancelled && groupData && (groupData as any[]).length > 0) {
+          const groups: CustomOptionGroup[] = (groupData as any[]).map((g: any) => ({
+            id: g.id,
+            name: g.name,
+            display_type: g.display_type,
+            is_required: g.is_required,
+            sort_order: g.sort_order,
+            values: (g.product_option_values || [])
+              .sort((a: any, b: any) => a.sort_order - b.sort_order)
+              .map((v: any) => ({
+                id: v.id,
+                label: v.label,
+                price_adjustment: Number(v.price_adjustment),
+                is_default: v.is_default,
+                sort_order: v.sort_order,
+              })),
+          }));
+          setCustomGroups(groups);
+          // Initialize default selections
+          const defaults: Record<string, string> = {};
+          for (const g of groups) {
+            const def = g.values.find(v => v.is_default) || g.values[0];
+            if (def) defaults[g.id] = def.id;
+          }
+          setSelectedOpts(defaults);
+        }
+
         setLoading(false);
-        // Trigger entrance after short delay for smooth feel
         setTimeout(() => setEntered(true), 80);
         supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
       } catch {
