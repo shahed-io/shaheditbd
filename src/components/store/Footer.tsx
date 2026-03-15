@@ -29,7 +29,7 @@ const NAV_COL = [
     links: [
       { label: 'Privacy Policy',    href: '/privacy-policy' },
       { label: 'Terms & Conditions',href: '/terms-conditions' },
-      { label: 'Refund Policy',     href: '/refund-policy' },
+      { label: 'Refund & Return Policy', href: '/refund-policy' },
       { label: 'Order & Cancellation',         href: '/order-policy' },
       { label: 'Delivery Info',     href: '/delivery-info' },
       { label: 'Return Policy',     href: '/return-policy' },
