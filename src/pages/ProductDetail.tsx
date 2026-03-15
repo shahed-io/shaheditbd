@@ -851,38 +851,52 @@ const ProductDetail = () => {
   );
 };
 
-// ── FAQ accordion item ──
-const FAQItem = ({ q, a, delay = 0, revealed = true }: { q: string; a: string; delay?: number; revealed?: boolean }) => {
-  const [open, setOpen] = useState(false);
+// ── Product Specifications Table ──────────────────────────────
+const ProductSpecsTable = ({ productId }: { productId: string }) => {
+  const [specs, setSpecs] = useState<{ name: string; values: string[] }[]>([]);
+  useEffect(() => {
+    supabase
+      .from('product_attribute_assignments' as any)
+      .select('*, global_attributes(name)')
+      .eq('product_id', productId)
+      .eq('is_visible', true)
+      .order('sort_order')
+      .then(({ data }) => {
+        if (data) {
+          setSpecs((data as any[])
+            .filter((a: any) => (a.selected_values || []).length > 0)
+            .map((a: any) => ({
+              name: a.attribute_type === 'custom' ? a.custom_name : (a.global_attributes?.name || ''),
+              values: a.selected_values || [],
+            }))
+          );
+        }
+      });
+  }, [productId]);
+  if (specs.length === 0) return null;
   return (
-    <div
-      className="rounded-2xl overflow-hidden border transition-all"
-      style={{
-        background: 'hsla(215,28%,10%,0.7)',
-        borderColor: open ? 'hsla(271,91%,65%,0.3)' : 'hsla(271,91%,65%,0.1)',
-        boxShadow: open ? '0 0 24px hsla(271,91%,65%,0.08)' : 'none',
-        opacity: revealed ? 1 : 0,
-        transform: revealed ? 'none' : 'translateY(16px)',
-        transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${delay}s, border-color 0.3s, box-shadow 0.3s`,
-      }}
-    >
-      <button onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-foreground text-left gap-3">
-        <span>{q}</span>
-        <ChevronDown
-          size={16}
-          className="flex-shrink-0 transition-transform duration-300"
-          style={{ color: 'hsl(271,91%,65%)', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
-        />
-      </button>
-      <div
-        className="overflow-hidden transition-all duration-400"
-        style={{ maxHeight: open ? '300px' : '0', opacity: open ? 1 : 0 }}
-      >
-        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t"
-          style={{ borderColor: 'hsla(271,91%,65%,0.1)', paddingTop: '12px' }}>
-          {a}
-        </div>
+    <div className="mt-10">
+      <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
+        <span className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+        Specifications
+      </h2>
+      <div className="rounded-2xl overflow-hidden border" style={{ borderColor: 'hsla(271,91%,65%,0.15)' }}>
+        <table className="w-full text-sm">
+          <tbody>
+            {specs.map((s, i) => (
+              <tr key={i} className={i % 2 === 0 ? 'bg-muted/10' : ''}>
+                <td className="px-5 py-3 font-semibold text-foreground w-1/3 border-r" style={{ borderColor: 'hsla(271,91%,65%,0.1)' }}>{s.name}</td>
+                <td className="px-5 py-3 text-muted-foreground">
+                  <div className="flex flex-wrap gap-1.5">
+                    {s.values.map(v => (
+                      <span key={v} className="px-2.5 py-0.5 rounded-full text-xs border border-border bg-muted/20 text-foreground">{v}</span>
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
