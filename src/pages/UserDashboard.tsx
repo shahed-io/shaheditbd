@@ -122,6 +122,12 @@ const UserDashboard = () => {
   const [notiLoading, setNotiLoading] = useState(false);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [referralLoading, setReferralLoading] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [walletTx, setWalletTx] = useState<any[]>([]);
+  const [walletLoading, setWalletLoading] = useState(false);
+  const [topupAmount, setTopupAmount] = useState('');
+  const [topupNote, setTopupNote] = useState('');
+  const [topupProcessing, setTopupProcessing] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate('/');
@@ -137,6 +143,7 @@ const UserDashboard = () => {
     if (activeTab === 'addresses') fetchAddresses();
     if (activeTab === 'notifications') fetchNotifications();
     if (activeTab === 'referral') { fetchReferrals(); }
+    if (activeTab === 'wallet') { fetchWallet(); }
   }, [activeTab, user]);
 
   const fetchProfile = async () => {
