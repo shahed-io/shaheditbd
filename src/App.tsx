@@ -49,6 +49,23 @@ import ReturnPolicy from "./pages/ReturnPolicy";
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
 import FAQs from "./pages/FAQs";
+// SEO sub-pages
+import AdminMetaTags from "./pages/admin/seo/AdminMetaTags";
+import AdminSitemap from "./pages/admin/seo/AdminSitemap";
+import AdminRobots from "./pages/admin/seo/AdminRobots";
+import AdminSchema from "./pages/admin/seo/AdminSchema";
+import AdminKeywords from "./pages/admin/seo/AdminKeywords";
+import AdminPageSeo from "./pages/admin/seo/AdminPageSeo";
+import AdminProductSeo from "./pages/admin/seo/AdminProductSeo";
+import AdminFaqManager from "./pages/admin/seo/AdminFaqManager";
+import AdminReviews from "./pages/admin/seo/AdminReviews";
+import AdminGoogleAnalytics from "./pages/admin/seo/AdminGoogleAnalytics";
+import AdminSearchConsole from "./pages/admin/seo/AdminSearchConsole";
+import AdminSpeedOptimization from "./pages/admin/seo/AdminSpeedOptimization";
+import AdminImageSeo from "./pages/admin/seo/AdminImageSeo";
+import AdminSlugEditor from "./pages/admin/seo/AdminSlugEditor";
+import AdminRedirects from "./pages/admin/seo/AdminRedirects";
+import AdminBrokenLinks from "./pages/admin/seo/AdminBrokenLinks";
 
 const queryClient = new QueryClient({
   defaultOptions: {
