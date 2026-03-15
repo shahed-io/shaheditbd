@@ -4,21 +4,21 @@ import PolicyLayout, { SectionCard, Bullet, ContactCard } from '@/components/sto
 const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
 
-const PrivacyPolicy = () => (
-  <PolicyLayout
-    seoTitle="Privacy Policy — Shahed Store"
-    seoDesc="Shahed Store আপনার ব্যক্তিগত তথ্য কীভাবে সংগ্রহ ও সুরক্ষিত রাখে জানুন।"
-    badge="Legal Document"
-    badgeIcon={<Shield size={13} />}
-    title="Privacy Policy"
-    subtitle="আমরা আপনার ব্যক্তিগত তথ্যকে সম্মান করি এবং সুরক্ষিত রাখি। এই নীতিটি পড়ুন এবং জানুন আমরা কীভাবে আপনার ডেটা পরিচালনা করি।"
-    accentFrom={A}
-    accentTo={B}
-  >
+const PrivacyPolicy = () =>
+<PolicyLayout
+  seoTitle="Privacy Policy — Shahed Store"
+  seoDesc="Shahed Store আপনার ব্যক্তিগত তথ্য কীভাবে সংগ্রহ ও সুরক্ষিত রাখে জানুন।"
+  badge="Legal Document"
+  badgeIcon={<Shield size={13} />}
+  title="Privacy Policy"
+  subtitle="আমরা আপনার ব্যক্তিগত তথ্যকে সম্মান করি এবং সুরক্ষিত রাখি। এই নীতিটি পড়ুন এবং জানুন আমরা কীভাবে আপনার ডেটা পরিচালনা করি।"
+  accentFrom={A}
+  accentTo={B}>
+  
     {/* Intro highlight */}
     <div className="rounded-2xl p-4 mb-6 text-[13px] leading-relaxed"
-      style={{ background: `linear-gradient(135deg, ${A}0d, ${B}08)`, border: `1px solid ${A}25`, color: 'hsl(226,35%,28%)' }}>
-      <strong>Shahed Store</strong> ("আমরা", "আমাদের") আপনার গোপনীয়তাকে অত্যন্ত গুরুত্বের সাথে বিবেচনা করে। এই Policy-তে বিবরণ দেওয়া হয়েছে যে আমরা <strong>shahedstore.com.bd</strong> ব্যবহারের সময় কোন তথ্য সংগ্রহ করি, কীভাবে ব্যবহার করি এবং আপনার অধিকার কী।
+  style={{ background: `linear-gradient(135deg, ${A}0d, ${B}08)`, border: `1px solid ${A}25`, color: 'hsl(226,35%,28%)' }}>Shahed Store আমরা আপনার গোপনীয়তাকে অত্যন্ত গুরুত্বের সাথে বিবেচনা করে। এই Policy-তে বিবরণ দেওয়া হয়েছে যে আমরা shahedstore.com.bd ব্যবহারের সময় কোন তথ্য সংগ্রহ করি, কীভাবে ব্যবহার করি এবং আপনার অধিকার কী।
+    <strong>Shahed Store</strong> ("আমরা", "আমাদের") আপনার গোপনীয়তাকে অত্যন্ত গুরুত্বের সাথে বিবেচনা করে। এই Policy-তে বিবরণ দেওয়া হয়েছে যে আমরা <strong>shahedstore.com.bd</strong> ব্যবহারের সময় কোন তথ্য সংগ্রহ করি, কীভাবে ব্যবহার করি এবং আপনার অধিকার কী।
     </div>
 
     <SectionCard icon={<Database size={15} />} title="১. আমরা কী তথ্য সংগ্রহ করি" accentFrom={A} accentTo={B}>
@@ -88,7 +88,7 @@ const PrivacyPolicy = () => (
     </SectionCard>
 
     <ContactCard accentFrom={A} accentTo={B} />
-  </PolicyLayout>
-);
+  </PolicyLayout>;
+
 
 export default PrivacyPolicy;
