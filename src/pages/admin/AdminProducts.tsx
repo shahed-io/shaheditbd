@@ -59,7 +59,7 @@ const emptyForm = {
 };
 
 type FormState = typeof emptyForm;
-type TabId = 'basic' | 'pricing' | 'media' | 'details' | 'seo' | 'options';
+type TabId = 'basic' | 'pricing' | 'media' | 'details' | 'seo' | 'options' | 'attributes' | 'linked';
 
 const ic = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground";
 const lc = "text-xs text-muted-foreground mb-1 block font-medium";
