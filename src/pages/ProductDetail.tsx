@@ -538,8 +538,106 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              {/* Variants */}
-              {variants.map((group, vi) => {
+              {/* ── Custom Option Groups (new DB system) ── */}
+              {customGroups.map((group, gi) => {
+                const selValueId = selectedOpts[group.id];
+                const currentVal = selValueId
+                  ? group.values.find(v => v.id === selValueId)
+                  : group.values.find(v => v.is_default) || group.values[0];
+
+                return (
+                  <div
+                    key={group.id}
+                    style={{
+                      opacity: entered ? 1 : 0,
+                      transform: entered ? 'none' : 'translateY(16px)',
+                      transition: `all 0.6s cubic-bezier(0.22,1,0.36,1) ${0.44 + gi * 0.08}s`,
+                    }}
+                  >
+                    <p className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-1.5">
+                      <Tag size={12} style={{ color: 'hsl(185,90%,52%)' }} />
+                      {group.name}
+                      {group.is_required && <span className="text-[10px] text-destructive font-bold">*</span>}:
+                      <span style={{ color: 'hsl(271,91%,75%)' }}>{currentVal?.label}</span>
+                    </p>
+
+                    {/* Dropdown display */}
+                    {group.display_type === 'dropdown' && (
+                      <select
+                        value={selValueId || ''}
+                        onChange={e => setSelectedOpts(p => ({ ...p, [group.id]: e.target.value }))}
+                        className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                      >
+                        {group.values.map(v => (
+                          <option key={v.id} value={v.id}>
+                            {v.label}{v.price_adjustment > 0 ? ` — ৳${v.price_adjustment.toLocaleString()}` : ''}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+
+                    {/* Radio display */}
+                    {group.display_type === 'radio' && (
+                      <div className="space-y-2">
+                        {group.values.map(v => {
+                          const isSel = (selValueId || (group.values.find(x => x.is_default) || group.values[0])?.id) === v.id;
+                          return (
+                            <label
+                              key={v.id}
+                              className="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all"
+                              style={{
+                                borderColor: isSel ? 'hsl(271,91%,65%)' : 'hsl(var(--border))',
+                                background: isSel ? 'hsla(271,91%,65%,0.08)' : 'transparent',
+                              }}
+                            >
+                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${isSel ? 'border-primary' : 'border-border'}`}>
+                                {isSel && <div className="w-2 h-2 rounded-full" style={{ background: 'hsl(271,91%,65%)' }} />}
+                              </div>
+                              <input type="radio" className="sr-only" checked={isSel} onChange={() => setSelectedOpts(p => ({ ...p, [group.id]: v.id }))} />
+                              <span className="text-sm font-semibold text-foreground flex-1">{v.label}</span>
+                              {v.price_adjustment > 0 && (
+                                <span className="text-sm font-bold" style={{ color: 'hsl(271,91%,75%)' }}>
+                                  ৳{v.price_adjustment.toLocaleString()}
+                                </span>
+                              )}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Button display (default) */}
+                    {group.display_type === 'button' && (
+                      <div className="flex flex-wrap gap-2">
+                        {group.values.map(v => {
+                          const isSel = (selValueId || (group.values.find(x => x.is_default) || group.values[0])?.id) === v.id;
+                          return (
+                            <button
+                              key={v.id}
+                              onClick={() => setSelectedOpts(p => ({ ...p, [group.id]: v.id }))}
+                              className="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-105 flex flex-col items-center"
+                              style={isSel
+                                ? { borderColor: 'hsl(271,91%,65%)', color: 'hsl(271,91%,75%)', background: 'hsla(271,91%,65%,0.12)' }
+                                : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))', background: 'transparent' }
+                              }
+                            >
+                              <span>{v.label}</span>
+                              {v.price_adjustment > 0 && (
+                                <span className="text-xs font-bold mt-0.5" style={{ color: isSel ? 'hsl(271,91%,80%)' : 'hsl(var(--muted-foreground))' }}>
+                                  ৳{v.price_adjustment.toLocaleString()}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* ── Legacy Variants (JSONB fallback) — hidden when new system active ── */}
+              {customGroups.length === 0 && legacyVariants.map((group, vi) => {
                 const selectedLabel = selectedVar[group.name] || group.options[0]?.label;
                 return (
                   <div
