@@ -70,21 +70,20 @@ const WhyChooseUs = () => {
               <div key={i}
                 className="group relative rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                 style={{
-                  background: 'hsla(222,22%,14%,0.8)',
-                  border: '1px solid hsla(0,0%,100%,0.07)',
-                  backdropFilter: 'blur(16px)',
-                  boxShadow: '0 4px 24px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.06)',
+                  background: 'hsl(var(--card))',
+                  border: `1px solid ${f.from}30`,
+                  boxShadow: '0 2px 12px hsla(226,35%,12%,0.07)',
                 }}>
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"
-                  style={{ background: `radial-gradient(ellipse at 0% 0%, ${f.from}18, transparent 60%)` }} />
+                  style={{ background: `radial-gradient(ellipse at 0% 0%, ${f.from}10, transparent 60%)` }} />
                 {/* Top border glow on hover */}
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, transparent, ${f.from}80, ${f.to}80, transparent)` }} />
+                  style={{ background: `linear-gradient(90deg, transparent, ${f.from}90, ${f.to}90, transparent)` }} />
 
                 <div className="relative z-10 flex items-start gap-4">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
-                    style={{ background: `linear-gradient(135deg, ${f.from}22, ${f.to}16)`, border: `1px solid ${f.from}30` }}>
+                    style={{ background: `linear-gradient(135deg, ${f.from}18, ${f.to}12)`, border: `1px solid ${f.from}40` }}>
                     {f.icon}
                   </div>
                   <div className="flex-1 min-w-0">
