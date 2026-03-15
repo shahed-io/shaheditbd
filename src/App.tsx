@@ -96,6 +96,7 @@ const App = () => (
                   <Route path="attributes" element={<AdminAttributes />} />
                   <Route path="pages" element={<AdminPages />} />
                 </Route>
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
