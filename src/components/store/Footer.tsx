@@ -161,7 +161,7 @@ const Footer = () => {
       </div>
 
       {/* Nav columns */}
-      {NAV_COL.map((col, ci) => (
+      {NAV_COLS.map((col, ci) => (
         <div key={ci}>
           <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em] mb-5 flex items-center gap-2"
             style={{ color: 'hsl(226,35%,20%)' }}>
