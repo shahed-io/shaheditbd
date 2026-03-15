@@ -129,8 +129,8 @@ const Navbar = () => {
             <div className="hidden lg:flex items-center gap-0.5">
               {NAV_LINKS.map(link => (
                 <div key={link.label} className="relative group"
-                  onMouseEnter={() => link.label === 'Shop' && setCatOpen(true)}
-                  onMouseLeave={() => link.label === 'Shop' && setCatOpen(false)}>
+                  onMouseEnter={() => link.label === 'Categories' && setCatOpen(true)}
+                  onMouseLeave={() => link.label === 'Categories' && setCatOpen(false)}>
                   <a href={link.href}
                     className="flex items-center gap-1 px-3.5 py-2 rounded-xl transition-all font-semibold text-sm"
                     style={{ color: 'hsl(226,35%,30%)' }}
