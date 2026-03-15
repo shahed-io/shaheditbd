@@ -1,5 +1,27 @@
 import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import BrandLogo from './BrandLogo';
+
+interface FooterLink { id: string; section: 'information' | 'policies'; label: string; href: string; sort_order: number; is_active: boolean; }
+
+const DEFAULT_INFO = [
+  { label: 'FAQs',         href: '/help' },
+  { label: 'Help Center',  href: '/help' },
+  { label: 'About Us',     href: '/about' },
+  { label: 'My Account',   href: '/dashboard' },
+  { label: 'Contact Us',   href: '/contact' },
+  { label: 'All Products', href: '/shop' },
+];
+
+const DEFAULT_POLICIES = [
+  { label: 'Privacy Policy',         href: '/privacy-policy' },
+  { label: 'Terms & Conditions',     href: '/terms-conditions' },
+  { label: 'Refund & Return Policy', href: '/refund-policy' },
+  { label: 'Order & Cancellation',   href: '/order-policy' },
+  { label: 'Delivery Info',          href: '/delivery-info' },
+  { label: 'Return Policy',          href: '/return-policy' },
+];
 
 const NAV_COL = [
   {
