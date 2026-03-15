@@ -439,18 +439,18 @@ const UserDashboard = () => {
                     </span>
                     {completedOrders > 0 && (
                       <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-primary/25 bg-primary/10 text-primary">
-                        <Star size={10} fill="currentColor" /> {completedOrders} অর্ডার
+                        <Star size={10} fill="currentColor" /> {completedOrders} {t(selectedLang, 'tab_orders')}
                       </span>
                     )}
                   </div>
                 </div>
               </div>
               <div className="flex gap-4 sm:gap-6 pb-1">
-                <div className="text-center"><div className="text-xl font-black text-foreground">{orders.length}</div><div className="text-xs text-muted-foreground">অর্ডার</div></div>
+                <div className="text-center"><div className="text-xl font-black text-foreground">{orders.length}</div><div className="text-xs text-muted-foreground">{t(selectedLang, 'order')}</div></div>
                 <div className="w-px bg-border" />
-                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div><div className="text-xs text-muted-foreground">খরচ</div></div>
+                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div><div className="text-xs text-muted-foreground">{t(selectedLang, 'total')}</div></div>
                 <div className="w-px bg-border" />
-                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div><div className="text-xs text-muted-foreground">উইশলিস্ট</div></div>
+                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div><div className="text-xs text-muted-foreground">{t(selectedLang, 'tab_wishlist')}</div></div>
               </div>
             </div>
           </div>
