@@ -665,9 +665,30 @@ const ProductDetail = () => {
               })}
 
               {/* Quantity selector */}
-              {(customGroups.length > 0 || legacyVariants.length > 0) && (
-                <QuantitySelector />
-              )}
+              <div
+                style={{
+                  opacity: entered ? 1 : 0,
+                  transform: entered ? 'none' : 'translateY(12px)',
+                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.52s',
+                }}
+              >
+                <p className="text-sm font-medium text-muted-foreground mb-2.5">Quantity</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center border-2 border-border rounded-xl overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                      className="w-11 h-11 flex items-center justify-center text-lg font-bold text-foreground hover:bg-muted/50 transition-colors"
+                    >−</button>
+                    <span className="w-12 text-center font-bold text-base text-foreground">{quantity}</span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(q => q + 1)}
+                      className="w-11 h-11 flex items-center justify-center text-lg font-bold text-foreground hover:bg-muted/50 transition-colors"
+                    >+</button>
+                  </div>
+                </div>
+              </div>
 
               {/* CTA Buttons — FanFlix style */}
               <div
