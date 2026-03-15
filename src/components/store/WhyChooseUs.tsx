@@ -150,10 +150,9 @@ const WhyChooseUs = () => {
         <div ref={statsRef}
           className="relative rounded-3xl p-10 lg:p-14 overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, hsla(243,75%,62%,0.18) 0%, hsla(253,72%,58%,0.15) 30%, hsla(263,70%,58%,0.15) 65%, hsla(283,65%,55%,0.12) 100%)',
-            border: '1px solid hsla(243,75%,62%,0.25)',
-            backdropFilter: 'blur(24px)',
-            boxShadow: '0 24px 64px hsla(220,30%,5%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.1)',
+            background: 'linear-gradient(135deg, hsla(243,75%,62%,0.08) 0%, hsla(263,70%,58%,0.06) 50%, hsla(15,100%,60%,0.06) 100%)',
+            border: '1px solid hsla(243,75%,62%,0.2)',
+            boxShadow: '0 4px 32px hsla(226,35%,12%,0.08)',
           }}>
           {/* Decorations */}
           <div className="absolute inset-0 pointer-events-none"
