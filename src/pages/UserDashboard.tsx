@@ -9,9 +9,28 @@ import {
   ChevronRight, ShieldCheck, Home, Camera, Lock, Eye, EyeOff,
   Ticket, Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
-  Trash2, Download, History, BellRing, BellOff, ExternalLink, Wallet
+  Trash2, Download, History, BellRing, BellOff, ExternalLink, Wallet, Globe
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
+
+// ─── Language System ───────────────────────────────────────────────────────
+const LANGUAGES = [
+  { code: 'bn', name: 'বাংলা', native: 'বাংলা', flag: '🇧🇩', region: 'দক্ষিণ এশিয়া' },
+  { code: 'en', name: 'English', native: 'English', flag: '🇬🇧', region: 'International' },
+  { code: 'ar', name: 'Arabic', native: 'العربية', flag: '🇸🇦', region: 'মধ্যপ্রাচ্য' },
+  { code: 'zh', name: 'Chinese', native: '中文', flag: '🇨🇳', region: 'পূর্ব এশিয়া' },
+  { code: 'hi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳', region: 'দক্ষিণ এশিয়া' },
+  { code: 'es', name: 'Spanish', native: 'Español', flag: '🇪🇸', region: 'ইউরোপ/আমেরিকা' },
+  { code: 'fr', name: 'French', native: 'Français', flag: '🇫🇷', region: 'ইউরোপ' },
+  { code: 'pt', name: 'Portuguese', native: 'Português', flag: '🇧🇷', region: 'দক্ষিণ আমেরিকা' },
+  { code: 'ru', name: 'Russian', native: 'Русский', flag: '🇷🇺', region: 'ইউরোপ/এশিয়া' },
+  { code: 'tr', name: 'Turkish', native: 'Türkçe', flag: '🇹🇷', region: 'মধ্যপ্রাচ্য' },
+  { code: 'ur', name: 'Urdu', native: 'اردو', flag: '🇵🇰', region: 'দক্ষিণ এশিয়া' },
+  { code: 'id', name: 'Indonesian', native: 'Bahasa Indonesia', flag: '🇮🇩', region: 'দক্ষিণ-পূর্ব এশিয়া' },
+];
+
+const getStoredLang = () => localStorage.getItem('preferred_language') || 'bn';
+const setStoredLang = (code: string) => localStorage.setItem('preferred_language', code);
 
 interface Profile {
   display_name: string | null;
