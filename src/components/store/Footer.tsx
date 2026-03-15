@@ -261,7 +261,7 @@ const Footer = () => (
             { name: 'bKash', num: '01820060046' },
             { name: 'Nagad', num: '01840099853' },
             { name: 'Rocket', num: '01840099853' },
-            { name: 'উপায়', num: '01840099853' },
+            { name: 'Upay', num: '01840099853' },
             { name: 'bKash Merchant', num: '01840099853' },
           ].map(pm => (
             <span key={pm.name}
