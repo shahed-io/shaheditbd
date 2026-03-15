@@ -10,7 +10,7 @@ const NAV_COL = [
       { label: 'Windows Keys',   href: '#' },
       { label: 'Office 365',     href: '#' },
       { label: 'Adobe Creative', href: '#' },
-      { label: 'CID For Reseller', href: '#' },
+      { label: 'CID For Reseller', href: 'https://shahedstore.com.bd/getcid/login.php', external: true },
       { label: 'VPN & Security', href: '#' },
       { label: 'AI Tools',       href: '#' },
     ]
@@ -198,7 +198,7 @@ const Footer = () => (
             <ul className="space-y-1">
               {col.links.map((link: any) => (
                 <li key={link.label}>
-                  <a href={link.href}
+                  <a href={link.href} target={(link as any).external ? '_blank' : undefined} rel={(link as any).external ? 'noopener noreferrer' : undefined}
                     className="group flex items-center gap-2 px-3 py-2 rounded-xl text-[13px] transition-all"
                     style={{
                       color: link.highlight ? col.accent : 'hsl(226,35%,45%)',
