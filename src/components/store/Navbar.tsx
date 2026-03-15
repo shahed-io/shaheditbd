@@ -100,19 +100,19 @@ const Navbar = () => {
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
       `}</style>
 
-      {/* ── Main Navbar — Glassmorphism ── */}
+      {/* ── Main Navbar — Glassmorphism on White ── */}
       <nav
         className={`sticky top-0 z-50 transition-all duration-300`}
         style={{
           background: scrolled
-            ? 'hsla(222, 30%, 8%, 0.92)'
-            : 'hsla(222, 30%, 7%, 0.80)',
+            ? 'hsla(0, 0%, 100%, 0.92)'
+            : 'hsla(0, 0%, 100%, 0.85)',
           backdropFilter: 'blur(24px) saturate(180%)',
           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-          borderBottom: '1px solid hsla(220, 60%, 80%, 0.10)',
+          borderBottom: '1px solid hsl(220,20%,90%)',
           boxShadow: scrolled
-            ? '0 8px 32px hsla(220, 30%, 3%, 0.45), 0 0 0 1px hsla(258, 78%, 62%, 0.08)'
-            : '0 4px 16px hsla(220, 30%, 3%, 0.25)',
+            ? '0 4px 24px hsla(226,35%,12%,0.10)'
+            : '0 2px 12px hsla(226,35%,12%,0.06)',
         }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[76px] gap-4">
@@ -257,7 +257,7 @@ const Navbar = () => {
                 {link.label}
               </a>
             ))}
-            <div className="pt-2 border-t" style={{ borderColor: 'hsla(220, 60%, 80%, 0.10)' }}>
+            <div className="pt-2 border-t" style={{ borderColor: 'hsl(220,20%,90%)' }}>
               {user ? (
                 <div className="flex gap-2">
                   <button onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}
