@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const NAV_LINKS = [
   { label: 'Home',    href: '/' },
-  { label: 'Shop',    href: '/shop' },
+  { label: 'Categories', href: '/shop' },
   { label: 'Windows', href: '#windows' },
   { label: 'Office',  href: '#office' },
   { label: 'Support', href: '#support' },
@@ -129,17 +129,17 @@ const Navbar = () => {
             <div className="hidden lg:flex items-center gap-0.5">
               {NAV_LINKS.map(link => (
                 <div key={link.label} className="relative group"
-                  onMouseEnter={() => link.label === 'Shop' && setCatOpen(true)}
-                  onMouseLeave={() => link.label === 'Shop' && setCatOpen(false)}>
+                  onMouseEnter={() => link.label === 'Categories' && setCatOpen(true)}
+                  onMouseLeave={() => link.label === 'Categories' && setCatOpen(false)}>
                   <a href={link.href}
                     className="flex items-center gap-1 px-3.5 py-2 rounded-xl transition-all font-semibold text-sm"
                     style={{ color: 'hsl(226,35%,30%)' }}
                     onMouseEnter={e => { e.currentTarget.style.color = 'hsl(258,78%,50%)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; }}
                     onMouseLeave={e => { e.currentTarget.style.color = 'hsl(226,35%,30%)'; e.currentTarget.style.background = ''; }}>
                     {link.label}
-                    {link.label === 'Shop' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
+                    {link.label === 'Categories' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
                   </a>
-                  {link.label === 'Shop' && (
+                  {link.label === 'Categories' && (
                     <div
                       className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 rounded-2xl border shadow-xl transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
                       style={{ width: '280px', background: 'hsl(0,0%,100%)', borderColor: 'hsl(220,20%,90%)', boxShadow: '0 20px 60px hsla(226,35%,12%,0.14)' }}
