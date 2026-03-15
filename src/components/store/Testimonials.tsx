@@ -158,7 +158,7 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => (
     </div>
 
     {/* Author */}
-    <div className="flex items-center gap-3 pt-1" style={{ borderTop: '1px solid hsla(0,0%,100%,0.07)' }}>
+    <div className="flex items-center gap-3 pt-1 border-t border-border">
       <AvatarCircle initials={review.avatar} index={index} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
