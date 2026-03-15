@@ -18,21 +18,21 @@ const NAV_COL = [
     links: [
       { label: 'FAQs',             href: '/help' },
       { label: 'Help Center',      href: '/help' },
-      { label: 'About Us',         href: '#' },
+      { label: 'About Us',         href: '#about' },
       { label: 'My Account',       href: '/dashboard' },
-      { label: 'Contact Us',       href: '#' },
-      { label: 'All Products',     href: '#' },
+      { label: 'Contact Us',       href: '#contact' },
+      { label: 'All Products',     href: '/shop' },
     ]
   },
   {
     title: 'Policies',
     links: [
-      { label: 'Privacy Policy',    href: '/privacy-policy' },
-      { label: 'Terms & Conditions',href: '/terms-conditions' },
+      { label: 'Privacy Policy',       href: '/privacy-policy' },
+      { label: 'Terms & Conditions',   href: '/terms-conditions' },
       { label: 'Refund & Return Policy', href: '/refund-policy' },
-      { label: 'Order & Cancellation',         href: '/order-policy' },
-      { label: 'Delivery Info',     href: '/delivery-info' },
-      { label: 'Return Policy',     href: '/return-policy' },
+      { label: 'Order & Cancellation', href: '/order-policy' },
+      { label: 'Delivery Info',        href: '/delivery-info' },
+      { label: 'Return Policy',        href: '/return-policy' },
     ]
   },
 ];
