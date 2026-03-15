@@ -100,86 +100,103 @@ const Footer = () => (
     </div>
 
     {/* ── Main footer ── */}
-    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10">
 
-        {/* Brand column */}
-        <div className="lg:col-span-2 space-y-7">
-          <a href="/" className="flex items-center w-fit">
-            <BrandLogo size="lg" />
-          </a>
+      {/* Brand section — centered on mobile, left-aligned on desktop */}
+      <div className="flex flex-col items-center text-center md:items-start md:text-left mb-10 space-y-5"
+        style={{
+          background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
+          backdropFilter: 'blur(24px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          border: '1px solid hsla(258,78%,75%,0.20)',
+          borderRadius: '20px',
+          boxShadow: '0 4px 24px hsla(258,78%,55%,0.07), 0 1px 0 rgba(255,255,255,0.9) inset',
+          padding: '24px 20px',
+        }}>
+        <a href="/" className="flex items-center justify-center md:justify-start">
+          <BrandLogo size="lg" />
+        </a>
+        <p className="text-[13px] leading-relaxed max-w-xs" style={{ color: 'hsl(226,35%,42%)' }}>
+          বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।
+        </p>
 
-          <p className="text-[13.5px] leading-relaxed max-w-xs" style={{ color: 'hsl(226,35%,42%)' }}>
-            বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।
-          </p>
-
-          {/* Contact */}
-          <div className="space-y-2">
-            {[
-              { icon: <Phone size={13} />, href: 'tel:01840099853',                      label: '01840-099853',           color: 'hsl(258,78%,55%)' },
-              { icon: <Mail size={13} />,  href: 'mailto:info@shahedstore.com.bd',        label: 'info@shahedstore.com.bd', color: 'hsl(200,90%,45%)' },
-              { icon: <Globe size={13} />, href: 'https://www.shahedstore.com.bd',        label: 'www.shahedstore.com.bd',  color: 'hsl(162,72%,38%)', ext: true },
-            ].map((c, i) => (
-              <a key={i} href={c.href} target={c.ext ? '_blank' : undefined} rel={c.ext ? 'noopener noreferrer' : undefined}
-                className="flex items-center gap-3 text-sm transition-all w-fit group hover:translate-x-1"
-                style={{ color: 'hsl(226,35%,42%)' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = c.color; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; }}>
-                <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
-                  style={{
-                    background: `hsla(${c.color.replace('hsl(','').replace(')','')},0.08)`,
-                    border: `1.5px solid hsla(${c.color.replace('hsl(','').replace(')','')},0.20)`,
-                    color: c.color,
-                  }}>
-                  {c.icon}
-                </span>
-                <span className="font-fira text-[12px]">{c.label}</span>
-              </a>
-            ))}
-          </div>
-
-          {/* Social */}
-          <div className="flex gap-2.5">
-            {[
-              { icon: <Facebook size={17} />,      href: '#',                           label: 'Facebook',  color: 'hsl(258,78%,55%)' },
-              { icon: <MessageCircle size={17} />, href: 'https://wa.me/8801840099853', label: 'WhatsApp',  color: 'hsl(162,72%,38%)' },
-              { icon: <Instagram size={17} />,     href: '#',                           label: 'Instagram', color: 'hsl(330,85%,55%)' },
-            ].map((s, i) => (
-              <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5"
+        {/* Contact pills — centered on mobile */}
+        <div className="flex flex-col items-center md:items-start gap-2 w-full">
+          {[
+            { icon: <Phone size={13} />, href: 'tel:01840099853',                   label: '01840-099853',            color: 'hsl(258,78%,55%)' },
+            { icon: <Mail size={13} />,  href: 'mailto:info@shahedstore.com.bd',     label: 'info@shahedstore.com.bd', color: 'hsl(200,90%,45%)' },
+            { icon: <Globe size={13} />, href: 'https://www.shahedstore.com.bd',     label: 'www.shahedstore.com.bd',  color: 'hsl(162,72%,38%)', ext: true },
+          ].map((c, i) => (
+            <a key={i} href={c.href} target={c.ext ? '_blank' : undefined} rel={c.ext ? 'noopener noreferrer' : undefined}
+              className="flex items-center gap-3 text-sm transition-all group hover:translate-x-1"
+              style={{ color: 'hsl(226,35%,42%)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = c.color; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; }}>
+              <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{
-                  background: 'hsla(0,0%,100%,0.65)',
-                  backdropFilter: 'blur(12px)',
-                  border: '1.5px solid hsla(258,78%,75%,0.22)',
-                  color: 'hsl(226,35%,42%)',
-                  boxShadow: '0 2px 8px hsla(226,35%,12%,0.06)',
-                }}
-                title={s.label}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.color = s.color;
-                  (e.currentTarget as HTMLElement).style.borderColor = s.color.replace(')', ',0.45)').replace('hsl', 'hsla');
-                  (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 16px ${s.color.replace(')', ',0.20)').replace('hsl', 'hsla')}`;
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)';
-                  (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,75%,0.22)';
-                  (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px hsla(226,35%,12%,0.06)';
+                  background: `${c.color.replace('hsl(','hsla(').replace(')',',0.10)')}`,
+                  border: `1.5px solid ${c.color.replace('hsl(','hsla(').replace(')',',0.22)')}`,
+                  color: c.color,
                 }}>
-                {s.icon}
-              </a>
-            ))}
-          </div>
+                {c.icon}
+              </span>
+              <span className="font-fira text-[12px]">{c.label}</span>
+            </a>
+          ))}
         </div>
 
-        {/* Nav columns */}
+        {/* Social icons — centered on mobile */}
+        <div className="flex gap-3 justify-center md:justify-start">
+          {[
+            { icon: <Facebook size={17} />,      href: '#',                           label: 'Facebook',  color: 'hsl(258,78%,55%)' },
+            { icon: <MessageCircle size={17} />, href: 'https://wa.me/8801840099853', label: 'WhatsApp',  color: 'hsl(162,72%,38%)' },
+            { icon: <Instagram size={17} />,     href: '#',                           label: 'Instagram', color: 'hsl(330,85%,55%)' },
+          ].map((s, i) => (
+            <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
+              className="w-11 h-11 rounded-xl flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5"
+              style={{
+                background: 'hsla(0,0%,100%,0.65)',
+                backdropFilter: 'blur(12px)',
+                border: '1.5px solid hsla(258,78%,75%,0.22)',
+                color: 'hsl(226,35%,42%)',
+                boxShadow: '0 2px 8px hsla(226,35%,12%,0.06)',
+              }}
+              title={s.label}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.color = s.color;
+                el.style.borderColor = s.color.replace('hsl(','hsla(').replace(')',',0.45)');
+                el.style.boxShadow = `0 4px 16px ${s.color.replace('hsl(','hsla(').replace(')',',0.20)')}`;
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.color = 'hsl(226,35%,42%)';
+                el.style.borderColor = 'hsla(258,78%,75%,0.22)';
+                el.style.boxShadow = '0 2px 8px hsla(226,35%,12%,0.06)';
+              }}>
+              {s.icon}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Nav columns — 1 col on mobile (glassmorphism cards), 3 cols on desktop */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {NAV_COL.map((col, ci) => (
-          <div key={ci} className="space-y-5">
+          <div key={ci} className="rounded-2xl p-5 space-y-4"
+            style={{
+              background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
+              backdropFilter: 'blur(24px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+              border: `1px solid ${col.accent.replace('hsl(','hsla(').replace(')',',0.18)')}`,
+              boxShadow: `0 4px 20px ${col.accent.replace('hsl(','hsla(').replace(')',',0.07)')}, 0 1px 0 rgba(255,255,255,0.9) inset`,
+            }}>
             {/* Column header */}
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                 style={{
-                  background: `${col.accent.replace(')', ',0.10)').replace('hsl', 'hsla')}`,
-                  border: `1.5px solid ${col.accent.replace(')', ',0.22)').replace('hsl', 'hsla')}`,
+                  background: col.accent.replace('hsl(','hsla(').replace(')',',0.12)'),
+                  border: `1.5px solid ${col.accent.replace('hsl(','hsla(').replace(')',',0.25)')}`,
                   color: col.accent,
                 }}>
                 {col.icon}
@@ -192,36 +209,37 @@ const Footer = () => (
 
             {/* Divider */}
             <div className="h-px rounded-full"
-              style={{ background: `linear-gradient(90deg, ${col.accent.replace(')', ',0.35)').replace('hsl','hsla')}, transparent)` }} />
+              style={{ background: `linear-gradient(90deg, ${col.accent.replace('hsl(','hsla(').replace(')',',0.40)')}, transparent)` }} />
 
-            {/* Links */}
-            <ul className="space-y-1">
+            {/* Links — 2-column grid on mobile for compact look */}
+            <ul className="grid grid-cols-2 md:grid-cols-1 gap-x-2 gap-y-0.5">
               {col.links.map((link: any) => (
                 <li key={link.label}>
-                  <a href={link.href} target={(link as any).external ? '_blank' : undefined} rel={(link as any).external ? 'noopener noreferrer' : undefined}
-                    className="group flex items-center gap-2 px-3 py-2 rounded-xl text-[13px] transition-all"
+                  <a href={link.href} target={(link as any).external ? '_blank' : undefined}
+                    rel={(link as any).external ? 'noopener noreferrer' : undefined}
+                    className="group flex items-center gap-2 px-2.5 py-2 rounded-xl text-[12.5px] transition-all"
                     style={{
                       color: link.highlight ? col.accent : 'hsl(226,35%,45%)',
-                      background: link.highlight ? col.accent.replace(')', ',0.06)').replace('hsl','hsla') : 'transparent',
-                      border: link.highlight ? `1px solid ${col.accent.replace(')', ',0.18)').replace('hsl','hsla')}` : '1px solid transparent',
+                      background: link.highlight ? col.accent.replace('hsl(','hsla(').replace(')',',0.06)') : 'transparent',
+                      border: link.highlight ? `1px solid ${col.accent.replace('hsl(','hsla(').replace(')',',0.18)')}` : '1px solid transparent',
                     }}
                     onMouseEnter={e => {
                       const el = e.currentTarget as HTMLElement;
                       el.style.color = col.accent;
-                      el.style.background = col.accent.replace(')', ',0.07)').replace('hsl','hsla');
-                      el.style.borderColor = col.accent.replace(')', ',0.20)').replace('hsl','hsla');
-                      el.style.transform = 'translateX(3px)';
+                      el.style.background = col.accent.replace('hsl(','hsla(').replace(')',',0.08)');
+                      el.style.borderColor = col.accent.replace('hsl(','hsla(').replace(')',',0.22)');
+                      el.style.transform = 'translateX(2px)';
                     }}
                     onMouseLeave={e => {
                       const el = e.currentTarget as HTMLElement;
                       el.style.color = link.highlight ? col.accent : 'hsl(226,35%,45%)';
-                      el.style.background = link.highlight ? col.accent.replace(')', ',0.06)').replace('hsl','hsla') : 'transparent';
-                      el.style.borderColor = link.highlight ? col.accent.replace(')', ',0.18)').replace('hsl','hsla') : 'transparent';
+                      el.style.background = link.highlight ? col.accent.replace('hsl(','hsla(').replace(')',',0.06)') : 'transparent';
+                      el.style.borderColor = link.highlight ? col.accent.replace('hsl(','hsla(').replace(')',',0.18)') : 'transparent';
                       el.style.transform = 'translateX(0)';
                     }}>
                     <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all group-hover:scale-125"
-                      style={{ background: col.accent.replace(')', ',0.40)').replace('hsl','hsla') }} />
-                    {link.label}
+                      style={{ background: col.accent.replace('hsl(','hsla(').replace(')',',0.45)') }} />
+                    <span className="truncate">{link.label}</span>
                     {link.highlight && <Download size={10} className="ml-auto flex-shrink-0" style={{ color: col.accent }} />}
                   </a>
                 </li>
