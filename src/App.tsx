@@ -91,6 +91,7 @@ const App = () => (
                   <Route path="help" element={<AdminHelp />} />
                   <Route path="seo" element={<AdminSEO />} />
                   <Route path="attributes" element={<AdminAttributes />} />
+                  <Route path="pages" element={<AdminPages />} />
                 </Route>
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
