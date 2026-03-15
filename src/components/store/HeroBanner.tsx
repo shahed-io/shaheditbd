@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
+import idmLogo from '@/assets/idm.webp';
 
 type ComboItem = { icon: string; name: string; tag: string; color: string; highlight?: boolean };
 type Slide = {
   tag: string; title: string; titleAccent: string; subtitle: string; desc: string;
   price: string; original: string; off: string; badge: string;
   accentFrom: string; accentTo: string; glowFrom: string; glowTo: string;
-  emoji: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
+  emoji: string; logoImg?: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
 };
 
 const SLIDES: Slide[] = [
@@ -61,6 +62,7 @@ const SLIDES: Slide[] = [
     glowFrom: 'hsla(185,80%,45%,0.18)',
     glowTo: 'hsla(210,85%,52%,0.12)',
     emoji: '⚡',
+    logoImg: idmLogo,
     features: ['Official Reseller ✓', 'Lifetime License', 'Instant Delivery'],
     comboSlide: false,
   },
@@ -226,18 +228,21 @@ const HeroBanner = () => {
               <div className="relative overflow-hidden"
                 style={{
                   borderRadius: 'calc(2rem - 2px)',
-                  background: `linear-gradient(145deg, hsl(258,60%,97%) 0%, hsl(258,45%,94%) 50%, hsl(258,50%,96%) 100%)`,
+                  background: `linear-gradient(155deg, white 0%, ${slide.accentFrom}0d 60%, ${slide.accentTo}08 100%)`,
                   backdropFilter: 'blur(24px) saturate(180%)',
                 }}>
                 {/* Top shimmer line */}
-                <div className="absolute top-0 left-0 right-0 h-[1.5px]"
-                  style={{ background: `linear-gradient(90deg, transparent 5%, ${slide.accentFrom}70 40%, ${slide.accentTo}50 60%, transparent 95%)` }} />
+                <div className="absolute top-0 left-0 right-0 h-[2px]"
+                  style={{ background: `linear-gradient(90deg, transparent 5%, ${slide.accentFrom}90 40%, ${slide.accentTo}70 60%, transparent 95%)` }} />
+                {/* Bottom accent glow */}
+                <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+                  style={{ background: `linear-gradient(to top, ${slide.accentFrom}10, transparent)` }} />
                 {/* Subtle dot grid */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(circle, hsla(258,60%,55%,0.07) 1px, transparent 1px)`, backgroundSize: '22px 22px' }} />
+                  style={{ backgroundImage: `radial-gradient(circle, ${slide.accentFrom}0f 1px, transparent 1px)`, backgroundSize: '20px 20px' }} />
                 {/* Light radial shine */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.7) 0%, transparent 50%)` }} />
+                  style={{ backgroundImage: `radial-gradient(ellipse at 15% 8%, rgba(255,255,255,0.85) 0%, transparent 45%)` }} />
 
                 <div className="relative p-8">
                   {slide.comboSlide && slide.combo ? (
@@ -296,17 +301,28 @@ const HeroBanner = () => {
                   ) : (
                     /* Regular Slide Card */
                     <>
-                      {/* Icon + Sparkles */}
+                      {/* Icon / Logo + Sparkles */}
                       <div className="flex items-start justify-between mb-6">
-                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
+                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden"
                           style={{
-                            background: 'rgba(255,255,255,0.9)',
+                            background: slide.logoImg ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.9)',
                             border: `1.5px solid ${slide.accentFrom}35`,
-                            boxShadow: `0 4px 16px ${slide.accentFrom}20, inset 0 1px 0 rgba(255,255,255,1)`,
+                            boxShadow: `0 4px 20px ${slide.accentFrom}25, inset 0 1px 0 rgba(255,255,255,1)`,
                           }}>
-                          {slide.emoji}
+                          {slide.logoImg
+                            ? <img src={slide.logoImg} alt="product logo" className="w-10 h-10 object-contain" />
+                            : <span className="text-3xl">{slide.emoji}</span>
+                          }
                         </div>
-                        <Sparkles size={18} className="anim-spin-slow mt-1" style={{ color: slide.accentFrom }} />
+                        <div className="flex flex-col items-end gap-1">
+                          <Sparkles size={18} className="anim-spin-slow" style={{ color: slide.accentFrom }} />
+                          {slide.logoImg && (
+                            <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full text-white"
+                              style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
+                              OFFICIAL
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* FEATURED DEAL label */}
