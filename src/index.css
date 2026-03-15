@@ -124,15 +124,15 @@
 }
 
 /* ══════════════════════════════════════
-   MIDNIGHT ROYAL GRID BACKGROUND
+   WHITE THEME SUBTLE GRID BACKGROUND
 ══════════════════════════════════════ */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(hsla(42,96%,58%,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, hsla(42,96%,58%,0.025) 1px, transparent 1px);
+    linear-gradient(hsla(258,78%,55%,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(258,78%,55%,0.04) 1px, transparent 1px);
   background-size: 48px 48px;
   pointer-events: none;
   z-index: 0;
