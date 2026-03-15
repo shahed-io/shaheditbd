@@ -136,7 +136,7 @@ const FlashSale = () => {
             <p className="text-muted-foreground mt-2 text-[14px]">Top deals sorted by highest savings — grab them before time runs out!</p>
           </div>
 
-          {/* Countdown — glassmorphic */}
+          {/* Countdown — white theme */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 text-[12px] font-semibold text-muted-foreground">
               <Timer size={13} style={{ color: 'hsl(15,100%,62%)' }} /> Sale ends in:
@@ -146,13 +146,12 @@ const FlashSale = () => {
                 <div key={i} className="flex items-center gap-2">
                   <div className="flex flex-col items-center min-w-[54px] rounded-2xl px-3 py-2.5"
                     style={{
-                      background: 'hsla(222,22%,15%,0.85)',
-                      border: '1px solid hsla(15,100%,60%,0.2)',
-                      backdropFilter: 'blur(12px)',
-                      boxShadow: '0 4px 16px hsla(220,30%,5%,0.3), inset 0 1px 0 hsla(0,0%,100%,0.06)',
+                      background: 'hsl(220,15%,20%)',
+                      border: '1px solid hsl(220,15%,28%)',
+                      boxShadow: '0 2px 8px hsla(226,35%,12%,0.15)',
                     }}>
-                    <span className="text-[1.4rem] font-fira font-black leading-none text-foreground tabular-nums">{item.v}</span>
-                    <span className="text-[9px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">{item.l}</span>
+                    <span className="text-[1.4rem] font-fira font-black leading-none text-white tabular-nums">{item.v}</span>
+                    <span className="text-[9px] font-bold text-gray-400 mt-1 uppercase tracking-wider">{item.l}</span>
                   </div>
                   {i < TIME_UNITS.length - 1 && (
                     <span className="text-xl font-black animate-pulse leading-none mb-1" style={{ color: 'hsl(15,100%,62%)' }}>:</span>
