@@ -20,7 +20,7 @@ const NAV_COL = [
       { label: 'Help Center',      href: '/help' },
       { label: 'About Us',         href: '#about' },
       { label: 'My Account',       href: '/dashboard' },
-      { label: 'Contact Us',       href: '#contact' },
+      { label: 'Contact Us',       href: '/contact' },
       { label: 'All Products',     href: '/shop' },
     ]
   },
