@@ -169,11 +169,11 @@ const Checkout = () => {
           discount_amount: discountAmount,
           total: finalTotal,
           payment_method: paymentMethod,
-          transaction_id: transactionId.trim(),
+          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
           coupon_code: coupon.isApplied ? coupon.code : null,
           coupon_id: couponId,
-          status: 'pending',
-          payment_status: 'pending',
+          status: paymentMethod === 'wallet' ? 'processing' : 'pending',
+          payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
           user_id: user?.id || null,
           notes: orderNotes.trim() || null,
         })
@@ -181,6 +181,18 @@ const Checkout = () => {
         .single();
 
       if (orderError) throw orderError;
+
+      // Debit wallet if wallet payment
+      if (paymentMethod === 'wallet' && user) {
+        const { data: walletResult } = await supabase.rpc('wallet_debit' as any, {
+          p_user_id: user.id,
+          p_amount: finalTotal,
+          p_note: `অর্ডার পেমেন্ট - ${orderNum}`,
+          p_reference_id: order.id,
+          p_created_by: 'user',
+        });
+        if (!(walletResult as any)?.success) throw new Error('Wallet debit failed');
+      }
 
       // Insert order items with product_id if available
       const orderItems = items.map(item => ({
