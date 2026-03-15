@@ -147,6 +147,8 @@ const Footer = () => (
             {col.links.map(link => (
               <li key={link.label}>
                 <a href={link.href}
+                  target={(link as any).ext ? '_blank' : undefined}
+                  rel={(link as any).ext ? 'noopener noreferrer' : undefined}
                   className="text-[13px] transition-colors flex items-center gap-1.5 group"
                   style={{ color: 'hsl(226,35%,45%)' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
