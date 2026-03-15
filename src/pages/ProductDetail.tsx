@@ -841,8 +841,15 @@ const ProductDetail = () => {
                 {product.description ? 'Product Description' : 'Why Choose This Product?'}
               </h2>
               <div
-                className="rounded-2xl p-6 text-sm text-muted-foreground leading-relaxed border"
-                style={{ background: 'hsla(215,28%,10%,0.7)', borderColor: 'hsla(271,91%,65%,0.1)' }}
+                className="rounded-2xl p-6 text-sm leading-relaxed"
+                style={{
+                  background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
+                  border: '1px solid hsla(258,78%,75%,0.22)',
+                  boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
+                  color: 'hsl(226,25%,40%)',
+                }}
               >
                 {product.description ? (
                   product.description.split('\n').map((line, i) =>
