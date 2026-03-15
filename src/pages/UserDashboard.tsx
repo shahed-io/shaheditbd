@@ -130,16 +130,7 @@ const UserDashboard = () => {
   const [topupAmount, setTopupAmount] = useState('');
   const [topupNote, setTopupNote] = useState('');
   const [topupProcessing, setTopupProcessing] = useState(false);
-  const [selectedLang, setSelectedLang] = useState(getStoredLang());
-
-  // Apply stored language on mount
-  useEffect(() => {
-    const stored = getStoredLang();
-    if (stored && stored !== 'bn') {
-      // Wait for Google Translate to load
-      setTimeout(() => applyGoogleTranslate(stored), 1500);
-    }
-  }, []);
+  const [selectedLang, setSelectedLang] = useState<LangCode>(getStoredLang());
 
   useEffect(() => {
     if (!loading && !user) navigate('/');
