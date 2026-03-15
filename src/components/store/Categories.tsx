@@ -1,17 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useReveal } from '@/hooks/useReveal';
-
-interface Particle {
-  id: number;
-  x: number;
-  y: number;
-  dx: number;
-  dy: number;
-  color: string;
-}
-
 
 const CAT_META: Record<string, { icon: string; glow: string; accent: string }> = {
   'Windows':      { icon: '🪟', glow: 'hsla(210,90%,60%,0.18)', accent: 'hsl(210,90%,60%)' },
@@ -34,33 +24,8 @@ interface CatData {
 
 const Categories = () => {
   const [hovered, setHovered] = useState<number | null>(null);
-  const [clicked, setClicked] = useState<number | null>(null);
-  const [particles, setParticles] = useState<(Particle & { catIdx: number })[]>([]);
   const [cats, setCats] = useState<CatData[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const handleCatClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, i: number, meta: typeof CAT_META[string]) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const cx = e.clientX - rect.left;
-    const cy = e.clientY - rect.top;
-    const colors = [meta.accent, 'hsl(var(--accent))', 'hsl(var(--primary))', '#fff'];
-    const newParticles = Array.from({ length: 10 }, (_, j) => {
-      const angle = (j / 10) * Math.PI * 2;
-      const speed = 48 + Math.random() * 52;
-      return {
-        id: Date.now() + j,
-        x: cx, y: cy,
-        dx: Math.cos(angle) * speed,
-        dy: Math.sin(angle) * speed,
-        color: colors[j % colors.length],
-        catIdx: i,
-      };
-    });
-    setParticles(prev => [...prev, ...newParticles]);
-    setClicked(i);
-    setTimeout(() => setClicked(null), 400);
-    setTimeout(() => setParticles(prev => prev.filter(p => p.catIdx !== i || p.id < Date.now() - 700)), 700);
-  }, []);
   const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.08 });
   const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
 
@@ -146,70 +111,32 @@ const Categories = () => {
           {cats.map((cat, i) => {
             const meta = CAT_META[cat.name] || CAT_META['default'];
             const isHov = hovered === i;
-            const isClicked = clicked === i;
-            const catParticles = particles.filter(p => p.catIdx === i);
             return (
               <a
                 key={cat.id}
                 href={`/shop?category=${cat.slug}`}
                 className="cat-card p-5 flex flex-col gap-3.5"
-                onClick={(e) => handleCatClick(e, i, meta)}
                 style={{
                   animationDelay: `${i * 0.06}s`,
                   opacity: sectionVisible ? 1 : 0,
-                  transform: sectionVisible
-                    ? isClicked ? 'translateY(0) scale(0.95)' : 'translateY(0) scale(1)'
-                    : 'translateY(40px) scale(0.96)',
-                  transition: isClicked
-                    ? 'transform 0.12s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.12s'
-                    : `opacity 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.07}s, box-shadow 0.3s`,
-                  boxShadow: isClicked
-                    ? `0 0 0 2px ${meta.accent}, 0 0 60px ${meta.glow.replace('0.18','0.6')}, 0 0 120px ${meta.glow.replace('0.18','0.3')}`
-                    : isHov
-                      ? `0 20px 50px hsla(220,30%,5%,0.5), 0 0 0 1px ${meta.accent}40, 0 0 32px ${meta.glow}`
-                      : undefined,
+                  transform: sectionVisible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.96)',
+                  transition: `opacity 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s, transform 0.6s cubic-bezier(0.23,1,0.32,1) ${i * 0.07}s`,
+                  boxShadow: isHov
+                    ? `0 20px 50px hsla(220,30%,5%,0.5), 0 0 0 1px ${meta.accent}40, 0 0 32px ${meta.glow}`
+                    : undefined,
                 }}
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
               >
-                {/* Hover glow */}
+                {/* Glow spot on hover */}
                 <div className="absolute inset-0 rounded-[1.5rem] pointer-events-none transition-opacity duration-300"
                   style={{ background: `radial-gradient(ellipse at 30% 30%, ${meta.glow}, transparent 60%)`, opacity: isHov ? 1 : 0 }} />
 
-                {/* Click ripple */}
-                {isClicked && (
-                  <div className="absolute inset-0 rounded-[1.5rem] pointer-events-none"
-                    style={{
-                      background: `radial-gradient(circle at center, ${meta.accent}22, transparent 70%)`,
-                      animation: 'cat-ripple 0.45s ease-out forwards',
-                    }} />
-                )}
-
-                {/* Particles */}
-                {catParticles.map(p => (
-                  <div
-                    key={p.id}
-                    className="absolute pointer-events-none rounded-full"
-                    style={{
-                      left: p.x, top: p.y,
-                      width: 6, height: 6,
-                      background: p.color,
-                      boxShadow: `0 0 8px ${p.color}`,
-                      '--dx': `${p.dx}px`,
-                      '--dy': `${p.dy}px`,
-                      animation: 'cat-particle 0.65s ease-out forwards',
-                    } as React.CSSProperties}
-                  />
-                ))}
-
-                <div
-                  className="relative w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon"
+                <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon"
                   style={{
                     background: `linear-gradient(135deg, ${meta.glow.replace('0.18', '0.25')}, hsla(222,22%,20%,0.8))`,
                     border: `1px solid ${meta.accent}30`,
                     boxShadow: isHov ? `0 4px 20px ${meta.glow}` : 'none',
-                    transform: isClicked ? 'scale(1.25) rotate(-8deg)' : 'scale(1) rotate(0deg)',
-                    transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)',
                   }}>
                   {meta.icon}
                 </div>
@@ -232,10 +159,8 @@ const Categories = () => {
                     style={{
                       background: isHov ? `${meta.accent}20` : 'hsla(0,0%,100%,0.06)',
                       border: `1px solid ${isHov ? meta.accent + '40' : 'hsla(0,0%,100%,0.1)'}`,
-                      transform: isClicked ? 'rotate(90deg) scale(1.2)' : 'rotate(0deg) scale(1)',
-                      transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)',
                     }}>
-                    <ArrowRight size={12} style={{ color: isHov || isClicked ? meta.accent : 'hsl(var(--muted-foreground))' }} />
+                    <ArrowRight size={12} style={{ color: isHov ? meta.accent : 'hsl(var(--muted-foreground))' }} />
                   </div>
                 </div>
               </a>

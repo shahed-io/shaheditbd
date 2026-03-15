@@ -895,7 +895,6 @@ body::before {
   transform: translateY(-4px);
 }
 
-
 /* ── Product Card Click Animations ─────────────────────── */
 @keyframes card-burst {
   0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
@@ -908,17 +907,3 @@ body::before {
   60%  { opacity: 0.5; transform: scale(1.05); }
   100% { opacity: 0; transform: scale(1.2); }
 }
-
-/* ── Category Card Click Animations ─────────────────────── */
-@keyframes cat-particle {
-  0%   { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-  60%  { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1); opacity: 0.8; }
-  100% { transform: translate(calc(-50% + var(--dx) * 1.5), calc(-50% + var(--dy) * 1.5)) scale(0); opacity: 0; }
-}
-
-@keyframes cat-ripple {
-  0%   { opacity: 0.9; transform: scale(0.5); }
-  60%  { opacity: 0.4; transform: scale(1.1); }
-  100% { opacity: 0;   transform: scale(1.4); }
-}
-
