@@ -432,24 +432,27 @@ const ProductDetail = () => {
               {/* Trust badges */}
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0.9s', color: 'hsl(271,91%,65%)' },
-                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '1.05s', color: 'hsl(185,90%,52%)' },
-                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '1.2s', color: 'hsl(158,80%,48%)' },
+                  { icon: <Shield size={16} />, label: '100% Genuine', sub: 'Verified Product', delay: '0.9s', color: 'hsl(258,78%,55%)', accent: 'hsla(258,78%,55%,0.12)' },
+                  { icon: <Truck size={16} />, label: 'Instant Delivery', sub: product.delivery_time || '5–30 min', delay: '1.05s', color: 'hsl(200,90%,45%)', accent: 'hsla(200,90%,45%,0.10)' },
+                  { icon: <Clock size={16} />, label: '24/7 Support', sub: 'Always Available', delay: '1.2s', color: 'hsl(158,80%,45%)', accent: 'hsla(158,80%,45%,0.10)' },
                 ].map(b => (
                   <div
                     key={b.label}
-                    className="rounded-2xl p-3 text-center border"
+                    className="rounded-2xl p-3 text-center"
                     style={{
-                      background: 'hsla(215,28%,10%,0.8)',
-                      borderColor: `${b.color}25`,
+                      background: `linear-gradient(155deg, rgba(255,255,255,0.82) 0%, ${b.accent})`,
+                      backdropFilter: 'blur(20px)',
+                      WebkitBackdropFilter: 'blur(20px)',
+                      border: `1px solid ${b.color}22`,
+                      boxShadow: `0 4px 16px ${b.color}18, 0 1px 0 rgba(255,255,255,0.9) inset`,
                       opacity: entered ? 1 : 0,
                       transform: entered ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.9)',
                       transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${b.delay}`,
                     }}
                   >
                     <div className="flex justify-center mb-1.5" style={{ color: b.color }}>{b.icon}</div>
-                    <div className="text-xs font-bold text-foreground">{b.label}</div>
-                    <div className="text-[10px] text-muted-foreground">{b.sub}</div>
+                    <div className="text-xs font-bold" style={{ color: 'hsl(226,35%,18%)' }}>{b.label}</div>
+                    <div className="text-[10px]" style={{ color: 'hsl(226,25%,52%)' }}>{b.sub}</div>
                   </div>
                 ))}
               </div>
