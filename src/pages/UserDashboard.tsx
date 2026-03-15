@@ -206,6 +206,53 @@ const UserDashboard = () => {
     setReferralLoading(false);
   };
 
+  const fetchWallet = async () => {
+    if (!user) return;
+    setWalletLoading(true);
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('wallet_balance')
+      .eq('user_id', user.id)
+      .single();
+    setWalletBalance((profileData as any)?.wallet_balance || 0);
+
+    const { data: txData } = await supabase
+      .from('wallet_transactions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(30);
+    setWalletTx(txData || []);
+    setWalletLoading(false);
+  };
+
+  const handleTopupRequest = async () => {
+    if (!user) return;
+    const amt = parseFloat(topupAmount);
+    if (!amt || amt < 10) { toast.error('কমপক্ষে ৳10 এর টপ-আপ করুন'); return; }
+    setTopupProcessing(true);
+    // Create a support ticket for manual top-up request
+    try {
+      const ticketNum = 'WLT-' + Date.now().toString(36).toUpperCase();
+      await supabase.from('support_tickets').insert({
+        ticket_number: ticketNum,
+        customer_name: profile.display_name || user.email || 'User',
+        customer_email: user.email || '',
+        subject: `ওয়ালেট টপ-আপ অনুরোধ - ৳${amt}`,
+        message: `ওয়ালেট টপ-আপ অনুরোধ:\nপরিমাণ: ৳${amt}\n${topupNote ? `নোট: ${topupNote}` : ''}`,
+        priority: 'normal',
+        status: 'open',
+        user_id: user.id,
+      });
+      toast.success('✅ টপ-আপ অনুরোধ পাঠানো হয়েছে! অ্যাডমিন অনুমোদন করলে ব্যালেন্স যোগ হবে।');
+      setTopupAmount('');
+      setTopupNote('');
+    } catch {
+      toast.error('অনুরোধ পাঠাতে সমস্যা হয়েছে');
+    }
+    setTopupProcessing(false);
+  };
+
   const handleSaveProfile = async () => {
     if (!user) return;
     setEditing(false);
