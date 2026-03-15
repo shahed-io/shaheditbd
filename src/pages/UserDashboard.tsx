@@ -1007,7 +1007,137 @@ const UserDashboard = () => {
                 </div>
               )}
 
-            </div>
+              {/* ── Wallet Tab ── */}
+              {activeTab === 'wallet' && (
+                <div className="space-y-6">
+                  {/* Balance Card */}
+                  <div className="rounded-2xl p-6 text-white relative overflow-hidden"
+                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,50%), hsl(263,70%,48%))' }}>
+                    <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                        <Wallet size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm opacity-80">আমার ওয়ালেট</p>
+                        <p className="text-xs opacity-60">Shahed Store Wallet</p>
+                      </div>
+                    </div>
+                    <p className="text-4xl font-black tracking-tight">
+                      ৳{walletBalance.toLocaleString()}
+                    </p>
+                    <p className="text-sm opacity-70 mt-1">বর্তমান ব্যালেন্স</p>
+                    {walletLoading && (
+                      <div className="absolute top-4 right-4">
+                        <RefreshCw size={14} className="animate-spin opacity-60" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    {/* Top-up request */}
+                    <div className="rounded-2xl border border-border p-5 space-y-4 bg-card">
+                      <h3 className="font-bold text-foreground flex items-center gap-2">
+                        <Plus size={16} className="text-primary" /> টপ-আপ অনুরোধ
+                      </h3>
+                      <p className="text-xs text-muted-foreground">টাকা পাঠিয়ে অনুরোধ করুন, অ্যাডমিন যাচাই করে ব্যালেন্স যোগ করবে।</p>
+                      <div>
+                        <label className={labelCls}>পরিমাণ (৳)</label>
+                        <input
+                          type="number"
+                          min="10"
+                          value={topupAmount}
+                          onChange={e => setTopupAmount(e.target.value)}
+                          placeholder="যেমন: 500"
+                          className={inputCls.replace('pl-10', 'pl-4')}
+                        />
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {[100, 200, 500, 1000].map(v => (
+                          <button key={v} onClick={() => setTopupAmount(String(v))}
+                            className="px-3 py-1.5 rounded-lg text-xs border border-border hover:border-primary/50 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all">
+                            ৳{v}
+                          </button>
+                        ))}
+                      </div>
+                      <div>
+                        <label className={labelCls}>নোট (ঐচ্ছিক)</label>
+                        <input
+                          value={topupNote}
+                          onChange={e => setTopupNote(e.target.value)}
+                          placeholder="পেমেন্ট পদ্ধতি / TrxID..."
+                          className={inputCls.replace('pl-10', 'pl-4')}
+                        />
+                      </div>
+                      <button
+                        onClick={handleTopupRequest}
+                        disabled={topupProcessing || !topupAmount}
+                        className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                        style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}
+                      >
+                        {topupProcessing ? <><RefreshCw size={14} className="animate-spin" /> পাঠানো হচ্ছে...</> : <><Plus size={14} /> অনুরোধ পাঠান</>}
+                      </button>
+                    </div>
+
+                    {/* Transaction History */}
+                    <div className="rounded-2xl border border-border overflow-hidden bg-card">
+                      <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                        <h3 className="font-bold text-foreground flex items-center gap-2">
+                          <History size={14} className="text-primary" /> লেনদেন ইতিহাস
+                        </h3>
+                        <button onClick={fetchWallet} className="text-muted-foreground hover:text-primary transition-colors">
+                          <RefreshCw size={13} />
+                        </button>
+                      </div>
+                      <div className="divide-y divide-border max-h-[300px] overflow-y-auto">
+                        {walletLoading ? (
+                          <div className="p-6 text-center text-muted-foreground text-sm">লোড হচ্ছে...</div>
+                        ) : walletTx.length === 0 ? (
+                          <div className="p-6 text-center text-muted-foreground text-sm">কোনো লেনদেন নেই</div>
+                        ) : walletTx.map((tx: any) => (
+                          <div key={tx.id} className="flex items-center justify-between px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
+                                {tx.type === 'credit'
+                                  ? <TrendingUp size={12} className="text-green-500" />
+                                  : <TrendingDown size={12} className="text-destructive" />
+                                }
+                              </div>
+                              <div>
+                                <p className="text-xs font-medium text-foreground">{tx.note || (tx.type === 'credit' ? 'ক্রেডিট' : 'ডেবিট')}</p>
+                                <p className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString('bn-BD', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-500' : 'text-destructive'}`}>
+                                {tx.type === 'credit' ? '+' : '-'}৳{tx.amount}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground">৳{tx.balance_after}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* How wallet works */}
+                  <div className="rounded-2xl border border-border p-5 bg-muted/10">
+                    <p className="text-sm font-bold mb-3 text-foreground">ওয়ালেট কিভাবে ব্যবহার করবেন?</p>
+                    {[
+                      { n: '১', t: 'টপ-আপ অনুরোধ পাঠান, অ্যাডমিন যাচাই করে ব্যালেন্স যোগ করবে' },
+                      { n: '২', t: 'চেকআউটে "Wallet" পেমেন্ট অপশন সিলেক্ট করুন' },
+                      { n: '৩', t: 'ওয়ালেট ব্যালেন্স থেকে সরাসরি পেমেন্ট হয়ে যাবে' },
+                    ].map(({ n, t }) => (
+                      <div key={n} className="flex items-start gap-3 mb-2 last:mb-0">
+                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>
+                        <span className="text-sm text-muted-foreground">{t}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+
           </div>
         </div>
       </main>
