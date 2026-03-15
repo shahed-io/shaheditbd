@@ -1118,6 +1118,7 @@ export type Database = {
           referred_by: string | null
           updated_at: string
           user_id: string
+          wallet_balance: number
         }
         Insert: {
           avatar_url?: string | null
@@ -1133,6 +1134,7 @@ export type Database = {
           referred_by?: string | null
           updated_at?: string
           user_id: string
+          wallet_balance?: number
         }
         Update: {
           avatar_url?: string | null
@@ -1148,6 +1150,7 @@ export type Database = {
           referred_by?: string | null
           updated_at?: string
           user_id?: string
+          wallet_balance?: number
         }
         Relationships: []
       }
@@ -1381,6 +1384,42 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          reference_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          reference_id?: string | null
+          type?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          reference_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wishlists: {
         Row: {
           created_at: string
@@ -1480,6 +1519,26 @@ export type Database = {
       }
       process_referral: {
         Args: { p_referral_code: string; p_referred_user_id: string }
+        Returns: Json
+      }
+      wallet_credit: {
+        Args: {
+          p_amount: number
+          p_created_by?: string
+          p_note?: string
+          p_reference_id?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      wallet_debit: {
+        Args: {
+          p_amount: number
+          p_created_by?: string
+          p_note?: string
+          p_reference_id?: string
+          p_user_id: string
+        }
         Returns: Json
       }
     }
