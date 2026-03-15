@@ -40,7 +40,7 @@ const NAV_COL = [
 const Footer = () => (
   <footer className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
 
-    {/* Subtle decorative blobs */}
+    {/* Decorative blobs */}
     <div className="absolute top-0 right-0 w-[500px] h-[400px] pointer-events-none"
       style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(258,78%,55%,0.06), transparent 60%)' }} />
     <div className="absolute bottom-0 left-0 w-[400px] h-[300px] pointer-events-none"
@@ -48,19 +48,30 @@ const Footer = () => (
     <div className="absolute inset-0 pointer-events-none"
       style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.04) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
 
-    {/* CTA Strip */}
-    <div className="relative z-10 border-b" style={{ borderColor: 'hsl(220,20%,90%)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-5">
+    {/* CTA Strip — glassmorphism */}
+    <div className="relative z-10 border-b" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-5"
+        style={{
+          background: 'hsla(0,0%,100%,0.50)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        }}>
         <div>
           <h3 className="font-sora font-black text-xl" style={{ color: 'hsl(226,35%,12%)' }}>Need help choosing a product?</h3>
           <p className="text-sm mt-1" style={{ color: 'hsl(226,35%,45%)' }}>Our experts are available 24/7 to assist you</p>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
           <a href="https://wa.me/8801840099853" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border"
-            style={{ color: 'hsl(226,35%,28%)', borderColor: 'hsl(220,20%,86%)', background: 'hsl(0,0%,100%)' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,55%,0.35)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsl(220,20%,86%)'; }}>
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all"
+            style={{
+              color: 'hsl(226,35%,28%)',
+              background: 'hsla(0,0%,100%,0.70)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid hsla(258,78%,75%,0.22)',
+              boxShadow: '0 2px 12px hsla(226,35%,12%,0.06)',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,55%,0.40)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,75%,0.22)'; }}>
             <MessageCircle size={15} /> WhatsApp
           </a>
           <a href="/shop"
@@ -98,7 +109,11 @@ const Footer = () => (
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; }}>
               <span className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-105"
-                style={{ background: 'hsl(0,0%,100%)', border: '1px solid hsl(220,20%,88%)' }}>
+                style={{
+                  background: 'hsla(0,0%,100%,0.65)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid hsla(258,78%,75%,0.20)',
+                }}>
                 {c.icon}
               </span>
               <span className="font-fira text-[12px]">{c.label}</span>
@@ -115,10 +130,15 @@ const Footer = () => (
           ].map((s, i) => (
             <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
               className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-105"
-              style={{ background: 'hsl(0,0%,100%)', border: '1px solid hsl(220,20%,88%)', color: 'hsl(226,35%,42%)' }}
+              style={{
+                background: 'hsla(0,0%,100%,0.60)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid hsla(258,78%,75%,0.20)',
+                color: 'hsl(226,35%,42%)',
+              }}
               title={s.label}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,55%,0.35)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsl(220,20%,88%)'; }}>
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,55%,0.40)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,42%)'; (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,75%,0.20)'; }}>
               {s.icon}
             </a>
           ))}
@@ -154,9 +174,14 @@ const Footer = () => (
       ))}
     </div>
 
-    {/* ── Trust bar ── */}
-    <div className="relative z-10 border-t" style={{ borderColor: 'hsl(220,20%,88%)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+    {/* ── Trust bar — glassmorphism ── */}
+    <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4"
+        style={{
+          background: 'hsla(0,0%,100%,0.45)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        }}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center"
             style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
@@ -178,7 +203,12 @@ const Footer = () => (
           ].map(pm => (
             <span key={pm.name}
               className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold font-fira"
-              style={{ background: 'hsl(0,0%,100%)', color: 'hsl(226,35%,28%)', border: '1px solid hsl(220,20%,88%)' }}
+              style={{
+                background: 'hsla(0,0%,100%,0.65)',
+                backdropFilter: 'blur(10px)',
+                color: 'hsl(226,35%,28%)',
+                border: '1px solid hsla(258,78%,75%,0.18)',
+              }}
               title={pm.num}>
               {pm.name}
             </span>
@@ -192,7 +222,7 @@ const Footer = () => (
     </div>
 
     {/* ── Copyright ── */}
-    <div className="relative z-10 border-t border-border">
+    <div className="relative z-10 border-t border-border/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <p className="text-[11px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>
           © 2026 <strong style={{ color: 'hsl(226,35%,20%)' }}>Shahed Store</strong> · All rights reserved.
