@@ -129,8 +129,12 @@ const UserDashboard = () => {
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletTx, setWalletTx] = useState<any[]>([]);
   const [walletLoading, setWalletLoading] = useState(false);
+  const [topupRequests, setTopupRequests] = useState<any[]>([]);
+  // Top-up wizard: step 0=amount, step 1=payment, step 2=done
+  const [topupStep, setTopupStep] = useState(0);
   const [topupAmount, setTopupAmount] = useState('');
-  const [topupNote, setTopupNote] = useState('');
+  const [topupPaymentMethod, setTopupPaymentMethod] = useState('bkash');
+  const [topupTxId, setTopupTxId] = useState('');
   const [topupProcessing, setTopupProcessing] = useState(false);
   const [selectedLang, setSelectedLang] = useState<LangCode>(getStoredLang());
 
