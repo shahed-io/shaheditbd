@@ -63,6 +63,7 @@ const App = () => (
               <RedirectEnforcer />
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/shop" element={<Shop />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/product/:slug" element={<ProductDetail />} />
                 <Route path="/blog" element={<Blog />} />
