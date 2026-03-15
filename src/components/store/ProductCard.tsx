@@ -251,6 +251,8 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           />
         )}
 
+        {/* ── Image ── */}
+        <div className="card-image-wrap relative overflow-hidden aspect-square bg-muted">
           {/* Scan line on hover */}
           <div className="card-scan-line" />
 
