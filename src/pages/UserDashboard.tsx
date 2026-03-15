@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 import {
   User, Mail, Phone, Edit3, Save, X, LogOut, Package,
   ChevronRight, ShieldCheck, Home, Camera, Lock, Eye, EyeOff,
-  Ticket, Star, Clock, TrendingUp, CheckCircle2, AlertCircle,
+  Ticket, Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
-  Trash2, Download, History, BellRing, BellOff, ExternalLink
+  Trash2, Download, History, BellRing, BellOff, ExternalLink, Wallet
 } from 'lucide-react';
 import logoIcon from '@/assets/logo-icon.png';
 
