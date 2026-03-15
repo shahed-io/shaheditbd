@@ -131,8 +131,17 @@ const Checkout = () => {
       return;
     }
 
-    if (!transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
+
+    // Wallet: check balance
+    if (paymentMethod === 'wallet') {
+      if (!user) { setSubmitError('Wallet পেমেন্টের জন্য লগইন করতে হবে'); return; }
+      if (walletBalance < finalTotal) {
+        setSubmitError(`ওয়ালেট ব্যালেন্স অপর্যাপ্ত। বর্তমান ব্যালেন্স: ৳${walletBalance}`);
+        return;
+      }
+    }
 
     setLoading(true);
     try {
