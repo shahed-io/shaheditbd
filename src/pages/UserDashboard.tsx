@@ -1138,6 +1138,7 @@ const UserDashboard = () => {
               )}
 
 
+            </div>{/* end Content Panel */}
           </div>
         </div>
       </main>
