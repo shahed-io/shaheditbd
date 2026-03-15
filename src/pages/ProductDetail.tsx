@@ -206,7 +206,7 @@ const ProductDetail = () => {
   // Normalize to grouped format with prices
   interface VariantOption { label: string; price?: number; }
   interface VariantGroup { name: string; options: VariantOption[]; }
-  const variants: VariantGroup[] = rawVariants.map((v: any) => ({
+  const legacyVariants: VariantGroup[] = rawVariants.map((v: any) => ({
     name: v.name || v.label || 'Options',
     options: Array.isArray(v.options)
       ? v.options.map((o: any) => typeof o === 'string' ? { label: o } : { label: o.label, price: o.price ? parseFloat(o.price) : undefined })
@@ -217,9 +217,23 @@ const ProductDetail = () => {
   const wishlisted = isWishlisted(product.id);
   const inCart     = isInCart(product.id);
 
-  // Compute displayed price based on selected variant options
+  // Compute displayed price:
+  // 1. Check new custom option groups (DB-driven)
+  // 2. Fall back to legacy variants (JSONB-driven)
+  // 3. Fall back to base price
   const getSelectedPrice = (): number => {
-    for (const group of variants) {
+    // New system: custom option groups
+    if (customGroups.length > 0) {
+      for (const group of customGroups) {
+        const selValueId = selectedOpts[group.id];
+        const val = selValueId
+          ? group.values.find(v => v.id === selValueId)
+          : group.values.find(v => v.is_default) || group.values[0];
+        if (val && val.price_adjustment > 0) return val.price_adjustment;
+      }
+    }
+    // Legacy variant system
+    for (const group of legacyVariants) {
       const selectedLabel = selectedVar[group.name] || group.options[0]?.label;
       const opt = group.options.find(o => o.label === selectedLabel);
       if (opt?.price !== undefined && opt.price > 0) return opt.price;
@@ -229,6 +243,15 @@ const ProductDetail = () => {
   const displayPrice = getSelectedPrice();
   const savings    = product.original_price ? product.original_price - displayPrice : 0;
   const discount   = product.discount_percent || (product.original_price ? Math.round(savings / product.original_price * 100) : 0);
+
+  // Build selected options string for WhatsApp/order
+  const selectedOptsStr = customGroups.length > 0
+    ? customGroups.map(g => {
+        const selId = selectedOpts[g.id];
+        const val = selId ? g.values.find(v => v.id === selId) : g.values.find(v => v.is_default) || g.values[0];
+        return val ? `${g.name}: ${val.label}` : null;
+      }).filter(Boolean).join(', ')
+    : Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`).join(', ');
 
   const cartItem = {
     id: product.id,
@@ -240,8 +263,7 @@ const ProductDetail = () => {
   };
 
   const waOrder = () => {
-    const varStr = Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`).join(', ');
-    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${varStr ? `\n⚙️ ${varStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}`);
+    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${selectedOptsStr ? `\n⚙️ ${selectedOptsStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
