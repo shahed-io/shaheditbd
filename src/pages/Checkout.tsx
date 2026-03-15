@@ -53,6 +53,7 @@ const Checkout = () => {
   const [submitError, setSubmitError] = useState('');
   const [summaryOpen, setSummaryOpen] = useState(true);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
+  const [walletBalance, setWalletBalance] = useState(0);
 
   // Auto-fill from logged-in user profile
   useEffect(() => {
