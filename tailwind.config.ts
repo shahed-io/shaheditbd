@@ -127,12 +127,12 @@ export default {
         "cyber-scan":      "cyber-scan 2s linear infinite",
         "enter":           "fade-in 0.3s ease-out, scale-in 0.2s ease-out",
       },
-      backgroundImage: {
-        'gradient-hero':    'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-        'gradient-warm':    'linear-gradient(135deg, hsl(320,90%,62%), hsl(40,100%,58%))',
-        'gradient-cool':    'linear-gradient(135deg, hsl(185,90%,52%), hsl(158,80%,48%))',
+        backgroundImage: {
+        'gradient-hero':    'linear-gradient(135deg, hsl(42,96%,58%), hsl(258,78%,68%))',
+        'gradient-warm':    'linear-gradient(135deg, hsl(330,85%,62%), hsl(42,96%,58%))',
+        'gradient-cool':    'linear-gradient(135deg, hsl(186,78%,50%), hsl(162,72%,46%))',
         'gradient-radial':  'radial-gradient(ellipse at center, var(--tw-gradient-stops))',
-        'cyber-grid':       "linear-gradient(hsla(271,91%,65%,0.05) 1px, transparent 1px), linear-gradient(90deg, hsla(271,91%,65%,0.05) 1px, transparent 1px)",
+        'cyber-grid':       "linear-gradient(hsla(42,96%,58%,0.04) 1px, transparent 1px), linear-gradient(90deg, hsla(42,96%,58%,0.04) 1px, transparent 1px)",
       },
       boxShadow: {
         'soft':         '0 2px 20px hsla(215,40%,4%,0.4)',
