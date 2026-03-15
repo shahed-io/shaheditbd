@@ -36,6 +36,7 @@ import HelpCenter from "./pages/HelpCenter";
 import AdminBlog from "./pages/admin/AdminBlog";
 import AdminHelp from "./pages/admin/AdminHelp";
 import AdminSEO from "./pages/admin/AdminSEO";
+import AdminAttributes from "./pages/admin/AdminAttributes";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +89,7 @@ const App = () => (
                   <Route path="blog" element={<AdminBlog />} />
                   <Route path="help" element={<AdminHelp />} />
                   <Route path="seo" element={<AdminSEO />} />
+                  <Route path="attributes" element={<AdminAttributes />} />
                 </Route>
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
