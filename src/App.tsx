@@ -119,6 +119,22 @@ const App = () => (
                   <Route path="blog" element={<AdminBlog />} />
                   <Route path="help" element={<AdminHelp />} />
                   <Route path="seo" element={<AdminSEO />} />
+                  <Route path="seo/meta-tags" element={<AdminMetaTags />} />
+                  <Route path="seo/sitemap" element={<AdminSitemap />} />
+                  <Route path="seo/robots" element={<AdminRobots />} />
+                  <Route path="seo/schema" element={<AdminSchema />} />
+                  <Route path="seo/keywords" element={<AdminKeywords />} />
+                  <Route path="seo/pages" element={<AdminPageSeo />} />
+                  <Route path="seo/products" element={<AdminProductSeo />} />
+                  <Route path="seo/faq" element={<AdminFaqManager />} />
+                  <Route path="seo/reviews" element={<AdminReviews />} />
+                  <Route path="seo/analytics" element={<AdminGoogleAnalytics />} />
+                  <Route path="seo/search-console" element={<AdminSearchConsole />} />
+                  <Route path="seo/speed" element={<AdminSpeedOptimization />} />
+                  <Route path="seo/images" element={<AdminImageSeo />} />
+                  <Route path="seo/slugs" element={<AdminSlugEditor />} />
+                  <Route path="seo/redirects" element={<AdminRedirects />} />
+                  <Route path="seo/broken-links" element={<AdminBrokenLinks />} />
                   <Route path="attributes" element={<AdminAttributes />} />
                   <Route path="pages" element={<AdminPages />} />
                   <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
