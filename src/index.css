@@ -124,25 +124,16 @@
 }
 
 /* ══════════════════════════════════════
-   GRAPH PAPER GRID BACKGROUND
+   WHITE THEME SUBTLE GRID BACKGROUND
 ══════════════════════════════════════ */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-color: hsl(0, 0%, 100%);
   background-image:
-    /* Small grid lines */
-    linear-gradient(hsla(210, 80%, 70%, 0.13) 1px, transparent 1px),
-    linear-gradient(90deg, hsla(210, 80%, 70%, 0.13) 1px, transparent 1px),
-    /* Large grid lines */
-    linear-gradient(hsla(210, 80%, 60%, 0.18) 1px, transparent 1px),
-    linear-gradient(90deg, hsla(210, 80%, 60%, 0.18) 1px, transparent 1px);
-  background-size:
-    60px 60px,
-    60px 60px,
-    300px 300px,
-    300px 300px;
+    linear-gradient(hsla(258,78%,55%,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(258,78%,55%,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
   pointer-events: none;
   z-index: 0;
 }
