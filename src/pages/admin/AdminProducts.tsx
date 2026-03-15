@@ -3,8 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Plus, Search, Edit, Trash2, Package, X, Upload,
   Image as ImageIcon, Loader2, Video, Tag, Star,
-  ExternalLink, RefreshCw, Copy, ChevronDown
+  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders
 } from 'lucide-react';
+import ProductOptionsBuilder from '@/components/admin/ProductOptionsBuilder';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 
