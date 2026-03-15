@@ -38,7 +38,7 @@ const NAV_COL = [
 ];
 
 const Footer = () => (
-  <footer style={{ background: 'hsl(220,20%,97%)' }} className="relative overflow-hidden">
+  <footer className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
 
     {/* Subtle decorative blobs */}
     <div className="absolute top-0 right-0 w-[500px] h-[400px] pointer-events-none"
