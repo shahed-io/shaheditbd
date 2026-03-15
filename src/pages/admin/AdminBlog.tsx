@@ -12,7 +12,7 @@ const labelCls = "block text-xs font-semibold text-muted-foreground mb-1 upperca
 const EMPTY_POST = {
   title: '', slug: '', excerpt: '', content: '', featured_image: '',
   category_id: '', author_name: 'Admin', author_avatar: '', author_bio: '',
-  status: 'draft', is_featured: false, tags: [] as string[],
+  status: 'published', is_featured: false, tags: [] as string[],
   reading_time: 5, seo_title: '', seo_description: '',
 };
 
