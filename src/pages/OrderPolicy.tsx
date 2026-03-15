@@ -41,7 +41,7 @@ const OrderPolicy = () => (
         <Bullet>bKash থেকে পাঠাতে হবে: <strong>01820060046</strong></Bullet>
         <Bullet>Nagad/Rocket/উপায় থেকে পাঠাতে হবে: <strong>01840099853</strong></Bullet>
         <Bullet>পেমেন্ট SMS/নোটিফিকেশনের স্ক্রিনশট রাখুন</Bullet>
-        <Bullet>৩ ঘণ্টার মধ্যে পণ্য না পেলে আমাদের জানান</Bullet>
+        <Bullet>পেমেন্ট সফল হলেও ২৪ ঘণ্টার মধ্যে পণ্য না পেলে আমাদের জানান</Bullet>
       </ul>
     </SectionCard>
 
