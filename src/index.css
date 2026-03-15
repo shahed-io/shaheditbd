@@ -666,7 +666,7 @@ body::before {
 .text-brand-coral  { color: var(--neon-pink); }
 
 .gradient-text-slide {
-  background: linear-gradient(135deg, var(--g-from, hsl(271,91%,65%)), var(--g-to, hsl(185,90%,52%)));
+  background: linear-gradient(135deg, var(--g-from, hsl(42,96%,58%)), var(--g-to, hsl(258,78%,68%)));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
