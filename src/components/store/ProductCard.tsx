@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, X, Clock, CheckCircle } from 'lucide-react';
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
@@ -13,12 +13,17 @@ interface ProductCardProps {
 
 const WA = '8801840099853';
 
+// Ripple particle type
+type Particle = { id: number; x: number; y: number };
+
 const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const [visible,     setVisible]     = useState(false);
   const [showModal,   setShowModal]   = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered,   setIsHovered]   = useState(false);
+  const [clicked,     setClicked]     = useState(false);
+  const [particles,   setParticles]   = useState<Particle[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const { addToCart, isInCart }         = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
