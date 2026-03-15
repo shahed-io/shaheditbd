@@ -62,6 +62,7 @@ const SLIDES: Slide[] = [
     glowFrom: 'hsla(185,80%,45%,0.18)',
     glowTo: 'hsla(210,85%,52%,0.12)',
     emoji: '⚡',
+    logoImg: idmLogo,
     features: ['Official Reseller ✓', 'Lifetime License', 'Instant Delivery'],
     comboSlide: false,
   },
