@@ -39,6 +39,7 @@ import AdminSEO from "./pages/admin/AdminSEO";
 import AdminAttributes from "./pages/admin/AdminAttributes";
 import AdminPages from "./pages/admin/AdminPages";
 import Shop from "./pages/Shop";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -95,6 +96,7 @@ const App = () => (
                   <Route path="attributes" element={<AdminAttributes />} />
                   <Route path="pages" element={<AdminPages />} />
                 </Route>
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
