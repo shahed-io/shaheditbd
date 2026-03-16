@@ -9,6 +9,11 @@ import {
 } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
+import bkashLogo from '@/assets/payment/bkash.png';
+import nagadLogo from '@/assets/payment/nagad.png';
+import rocketLogo from '@/assets/payment/rocket.png';
+import upayLogo from '@/assets/payment/upay.png';
+import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
 
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষরের হতে হবে').max(100),
@@ -18,13 +23,13 @@ const checkoutSchema = z.object({
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'wallet';
 
-const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string; type: string; icon: string }[] = [
-  { id: 'wallet',         label: 'Wallet',        color: 'from-violet-600 to-purple-700',  number: '', type: 'Wallet Balance',    icon: '💰' },
-  { id: 'bkash',          label: 'bKash',         color: 'from-pink-600 to-pink-700',     number: '01820060046', type: 'Send Money',       icon: '💳' },
-  { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600', number: '01840099853', type: 'Send Money',       icon: '📱' },
-  { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700', number: '01840099853', type: 'Send Money',       icon: '🚀' },
-  { id: 'upay',           label: 'উপায়',           color: 'from-green-600 to-green-700',   number: '01840099853', type: 'Send Money',       icon: '💚' },
-  { id: 'bkash_merchant', label: 'bKash Merchant', color: 'from-pink-700 to-rose-700',     number: '01840099853', type: 'Merchant Payment', icon: '🏪' },
+const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string; type: string; logo?: string }[] = [
+  { id: 'wallet',         label: 'Wallet',        color: 'from-violet-600 to-purple-700',  number: '', type: 'Wallet Balance' },
+  { id: 'bkash',          label: 'bKash',         color: 'from-pink-600 to-pink-700',     number: '01820060046', type: 'Send Money',       logo: bkashLogo },
+  { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600', number: '01840099853', type: 'Send Money',       logo: nagadLogo },
+  { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700', number: '01840099853', type: 'Send Money',       logo: rocketLogo },
+  { id: 'upay',           label: 'উপায়',           color: 'from-green-600 to-green-700',   number: '01840099853', type: 'Send Money',       logo: upayLogo },
+  { id: 'bkash_merchant', label: 'bKash Merchant', color: 'from-pink-700 to-rose-700',     number: '01840099853', type: 'Merchant Payment', logo: bkashMerchantLogo },
 ];
 
 const Checkout = () => {
@@ -329,10 +334,20 @@ const Checkout = () => {
                   key={pm.id}
                   type="button"
                   onClick={() => setPaymentMethod(pm.id)}
-                  className={`py-2.5 px-1 rounded-xl font-bold text-white text-xs transition-all bg-gradient-to-r ${pm.color} ${paymentMethod === pm.id ? 'ring-2 ring-offset-2 ring-offset-background scale-105 shadow-lg' : 'opacity-60 hover:opacity-90'}`}
+                  className={`flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl text-xs font-semibold transition-all border-2 ${
+                    paymentMethod === pm.id
+                      ? 'border-primary bg-primary/8 scale-105 shadow-md text-foreground'
+                      : 'border-border bg-background/60 hover:border-primary/40 text-muted-foreground'
+                  }`}
                 >
-                  <div className="text-base mb-0.5">{pm.icon}</div>
-                  {pm.label}
+                  {pm.logo ? (
+                    <img src={pm.logo} alt={pm.label} className="h-8 w-auto object-contain rounded-md" />
+                  ) : (
+                    <div className={`h-8 w-10 rounded-md flex items-center justify-center bg-gradient-to-br ${pm.color}`}>
+                      <Wallet size={16} className="text-white" />
+                    </div>
+                  )}
+                  <span>{pm.label}</span>
                 </button>
               ))}
             </div>

@@ -1,4 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
+import bkashLogo from '@/assets/payment/bkash.png';
+import nagadLogo from '@/assets/payment/nagad.png';
+import rocketLogo from '@/assets/payment/rocket.png';
+import upayLogo from '@/assets/payment/upay.png';
+import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -188,11 +193,11 @@ const UserDashboard = () => {
   };
 
   const TOPUP_PAYMENT_METHODS = [
-    { id: 'bkash',          label: 'bKash',         number: '01820060046', type: 'Send Money', icon: '💳', color: 'from-pink-600 to-pink-700' },
-    { id: 'nagad',          label: 'Nagad',          number: '01840099853', type: 'Send Money', icon: '📱', color: 'from-orange-500 to-orange-600' },
-    { id: 'rocket',         label: 'Rocket',         number: '01840099853', type: 'Send Money', icon: '🚀', color: 'from-purple-600 to-purple-700' },
-    { id: 'upay',           label: 'উপায়',           number: '01840099853', type: 'Send Money', icon: '💚', color: 'from-green-600 to-green-700' },
-    { id: 'bkash_merchant', label: 'bKash Merchant', number: '01840099853', type: 'Merchant',  icon: '🏪', color: 'from-pink-700 to-rose-700' },
+    { id: 'bkash',          label: 'bKash',         number: '01820060046', type: 'Send Money', logo: bkashLogo,         color: 'from-pink-600 to-pink-700' },
+    { id: 'nagad',          label: 'Nagad',          number: '01840099853', type: 'Send Money', logo: nagadLogo,         color: 'from-orange-500 to-orange-600' },
+    { id: 'rocket',         label: 'Rocket',         number: '01840099853', type: 'Send Money', logo: rocketLogo,        color: 'from-purple-600 to-purple-700' },
+    { id: 'upay',           label: 'উপায়',           number: '01840099853', type: 'Send Money', logo: upayLogo,          color: 'from-green-600 to-green-700' },
+    { id: 'bkash_merchant', label: 'bKash Merchant', number: '01840099853', type: 'Merchant',  logo: bkashMerchantLogo, color: 'from-pink-700 to-rose-700' },
   ];
 
   const handleTopupSubmit = async () => {
@@ -991,7 +996,7 @@ const UserDashboard = () => {
                                     className={`flex flex-col items-center gap-1 p-3 rounded-xl border text-xs font-semibold transition-all ${
                                       topupPaymentMethod === p.id ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-primary/40 bg-white/60'
                                     }`}>
-                                    <span className="text-xl">{p.icon}</span>{p.label}
+                                    <img src={p.logo} alt={p.label} className="h-7 w-auto object-contain rounded" /><span className="text-xs">{p.label}</span>
                                   </button>
                                 ))}
                               </div>
