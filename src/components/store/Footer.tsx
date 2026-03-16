@@ -249,6 +249,8 @@ const Footer = () => (
           </div>
         ))}
       </div>
+      {/* ── Newsletter ── */}
+      <NewsletterSection />
     </div>
 
     {/* ── Trust bar ── */}

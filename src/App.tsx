@@ -49,6 +49,7 @@ import ReturnPolicy from "./pages/ReturnPolicy";
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
 import FAQs from "./pages/FAQs";
+import OrderTracking from "./pages/OrderTracking";
 // SEO sub-pages
 import AdminMetaTags from "./pages/admin/seo/AdminMetaTags";
 import AdminSitemap from "./pages/admin/seo/AdminSitemap";
