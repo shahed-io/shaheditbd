@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Plus, Search, Edit, Trash2, Package, X, Upload,
   Image as ImageIcon, Loader2, Video, Tag, Star,
-  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders, Tags, Link2
+  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders, Tags
 } from 'lucide-react';
 import ProductOptionsBuilder from '@/components/admin/ProductOptionsBuilder';
 import ProductAttributesEditor from '@/components/admin/ProductAttributesEditor';
@@ -33,6 +33,9 @@ const emptyForm = {
   // Basic
   name: '', slug: '', short_description: '', description: '',
   brand: '', badge: '', product_type: 'digital',
+  // Account type & access
+  account_type: '' as string, // personal / shared / family / student
+  requires_customer_email: false,
   // Pricing
   price: '', original_price: '', discount_percent: '', cost_price: '',
   // Stock
@@ -59,7 +62,7 @@ const emptyForm = {
 };
 
 type FormState = typeof emptyForm;
-type TabId = 'basic' | 'pricing' | 'media' | 'details' | 'seo' | 'options' | 'attributes' | 'linked';
+type TabId = 'basic' | 'pricing' | 'media' | 'details' | 'seo' | 'options' | 'attributes';
 
 const ic = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground";
 const lc = "text-xs text-muted-foreground mb-1 block font-medium";
@@ -188,6 +191,12 @@ const AdminProducts = () => {
     const cleanAttrs = form.attributes.filter(a => a.key.trim());
     const tagList = form.tags.split(',').map(t => t.trim()).filter(Boolean);
     if (form.is_flash_sale && !tagList.includes('flash-sale')) tagList.push('flash-sale');
+    if (form.requires_customer_email && !tagList.includes('requires-email')) tagList.push('requires-email');
+
+    // Prepend account_type as a hidden attribute if set
+    const finalAttrs = form.account_type
+      ? [{ key: '__account_type', value: form.account_type }, ...cleanAttrs]
+      : cleanAttrs;
 
     const payload: any = {
       name: form.name,
@@ -223,7 +232,7 @@ const AdminProducts = () => {
       seo_title: form.seo_title || null,
       seo_description: form.seo_description || null,
       variants: cleanVariants.length ? cleanVariants : [],
-      attributes: cleanAttrs.length ? cleanAttrs : [],
+      attributes: finalAttrs.length ? finalAttrs : [],
     };
 
     try {
@@ -255,7 +264,12 @@ const AdminProducts = () => {
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
     setImagePreview(product.image_url || '');
-    const tagStr = (product.tags || []).filter(t => t !== 'flash-sale').join(', ');
+    const allTags = product.tags || [];
+    const tagStr = allTags.filter(t => t !== 'flash-sale' && t !== 'requires-email').join(', ');
+    // Parse account_type from attributes
+    const attrRaw = (product.attributes as any) || [];
+    const accountTypeAttr = attrRaw.find((a: any) => a.key === '__account_type');
+    const otherAttrs = attrRaw.filter((a: any) => a.key !== '__account_type');
     setForm({
       name: product.name,
       slug: product.id,
@@ -264,6 +278,8 @@ const AdminProducts = () => {
       brand: product.brand || '',
       badge: product.badge || '',
       product_type: product.product_type || 'digital',
+      account_type: accountTypeAttr?.value || '',
+      requires_customer_email: allTags.includes('requires-email'),
       price: String(product.price),
       original_price: product.original_price ? String(product.original_price) : '',
       discount_percent: product.discount_percent ? String(product.discount_percent) : '',
@@ -275,7 +291,7 @@ const AdminProducts = () => {
       subcategory_id: product.subcategory_id || '',
       is_featured: product.is_featured ?? false,
       is_digital: product.is_digital ?? true,
-      is_flash_sale: product.tags?.includes('flash-sale') ?? false,
+      is_flash_sale: allTags.includes('flash-sale'),
       image_url: product.image_url || '',
       images: product.images || [],
       video_url: product.video_url || '',
@@ -290,13 +306,12 @@ const AdminProducts = () => {
       variants: (() => {
         const raw = product.variants as any;
         if (!raw?.length) return [{ name: '', options: [{ label: '', price: '' }] }];
-        // Migrate old flat format { label, price } → new grouped format
         if (raw[0]?.label !== undefined && raw[0]?.name === undefined) {
           return [{ name: 'Options', options: raw.map((v: any) => ({ label: v.label, price: v.price })) }];
         }
         return raw;
       })(),
-      attributes: (product.attributes as any)?.length ? (product.attributes as any) : [{ key: '', value: '' }],
+      attributes: otherAttrs.length ? otherAttrs : [{ key: '', value: '' }],
       faq: (product.faq as any)?.length ? (product.faq as any) : [{ q: '', a: '' }],
       seo_title: product.seo_title || '',
       seo_description: product.seo_description || '',
@@ -371,7 +386,6 @@ const AdminProducts = () => {
     { id: 'details',    label: '📋 Details' },
     { id: 'attributes', label: '🏷️ Attributes' },
     { id: 'options',    label: '🎛️ Variations' },
-    { id: 'linked',     label: '🔗 Linked' },
     { id: 'seo',        label: '🔍 SEO' },
   ];
 
@@ -533,6 +547,27 @@ const AdminProducts = () => {
                         placeholder="windows, license, digital..." className={ic} />
                     </div>
 
+                    {/* Account Type */}
+                    <div>
+                      <label className={lc}>অ্যাকাউন্ট টাইপ <span className="text-muted-foreground/60">(প্রযোজ্য হলে)</span></label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {[
+                          { value: '', label: '— নেই —' },
+                          { value: 'personal', label: '👤 Personal' },
+                          { value: 'shared', label: '👥 Shared' },
+                          { value: 'family', label: '🏠 Family' },
+                          { value: 'student', label: '🎓 Student' },
+                          { value: 'business', label: '💼 Business' },
+                        ].map(opt => (
+                          <button key={opt.value} type="button"
+                            onClick={() => setForm(p => ({ ...p, account_type: opt.value }))}
+                            className={`text-xs py-2 px-2 rounded-xl border transition-colors text-center ${form.account_type === opt.value ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/50'}`}>
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
                     <div className="flex items-center gap-5 flex-wrap pt-1">
                       {[
                         { key: 'is_featured', label: '⭐ Featured' },
@@ -546,7 +581,19 @@ const AdminProducts = () => {
                           <span className="text-sm text-foreground">{label}</span>
                         </label>
                       ))}
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={form.requires_customer_email}
+                          onChange={e => setForm(p => ({ ...p, requires_customer_email: e.target.checked }))}
+                          className="w-4 h-4 accent-primary" />
+                        <span className="text-sm text-foreground">📧 গ্রাহকের ইমেইল লাগবে</span>
+                      </label>
                     </div>
+                    {form.requires_customer_email && (
+                      <div className="rounded-xl p-3 text-xs flex items-start gap-2" style={{ background: 'hsla(200,90%,50%,0.06)', border: '1px solid hsla(200,90%,50%,0.2)' }}>
+                        <span className="text-base">📧</span>
+                        <span className="text-muted-foreground">অর্ডার করার সময় গ্রাহককে তার <strong className="text-foreground">ইমেইল ঠিকানা</strong> দিতে হবে যাতে অ্যাকাউন্ট/লাইসেন্স সেই ইমেইলে সেটআপ করা যায়।</span>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -888,50 +935,7 @@ const AdminProducts = () => {
                   </div>
                 )}
 
-                {/* ======= LINKED PRODUCTS TAB ======= */}
-                {activeTab === 'linked' && (
-                  <div className="space-y-4">
-                    <div className="rounded-xl border border-border p-5 space-y-4"
-                      style={{ background: 'hsla(215,28%,10%,0.5)' }}>
-                      <div className="flex items-center gap-2">
-                        <Link2 size={16} className="text-primary" />
-                        <p className="text-sm font-semibold text-foreground">Linked Products</p>
-                      </div>
-
-                      <div>
-                        <label className="text-xs text-muted-foreground mb-1 block font-medium">
-                          Upsells <span className="opacity-60">— Products recommended on the product page</span>
-                        </label>
-                        <input
-                          placeholder="Product IDs or slugs (comma separated)..."
-                          className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground"
-                          readOnly
-                        />
-                        <p className="text-xs text-muted-foreground/60 mt-1">💡 Full linked-products system coming soon</p>
-                      </div>
-
-                      <div>
-                        <label className="text-xs text-muted-foreground mb-1 block font-medium">
-                          Cross-sells <span className="opacity-60">— Shown in cart</span>
-                        </label>
-                        <input
-                          placeholder="Product IDs or slugs (comma separated)..."
-                          className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground"
-                          readOnly
-                        />
-                      </div>
-                    </div>
-
-                    <div className="glass-card rounded-xl p-4 border border-primary/10">
-                      <p className="text-xs font-semibold text-foreground mb-2">📘 About Linked Products</p>
-                      <ul className="text-xs text-muted-foreground space-y-1.5">
-                        <li>→ <strong className="text-foreground">Upsells</strong> show on the product page as "You may also like"</li>
-                        <li>→ <strong className="text-foreground">Cross-sells</strong> appear in the cart drawer as recommendations</li>
-                        <li>→ Full implementation in the next update</li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
+                {/* ======= LINKED PRODUCTS TAB - REMOVED ======= */}
 
               </div>
 
