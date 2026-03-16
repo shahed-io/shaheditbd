@@ -39,26 +39,32 @@ const GlassCard = ({ from, to, children, className = '' }: GlassCardProps) => {
       className={`relative overflow-hidden ${className}`}
       style={{
         background: hov
-          ? 'linear-gradient(155deg, rgba(255,255,255,0.90) 0%, rgba(255,255,255,0.72) 100%)'
-          : 'linear-gradient(155deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.55) 100%)',
-        backdropFilter: 'blur(28px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+          ? 'linear-gradient(155deg, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.90) 100%)'
+          : 'linear-gradient(155deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.82) 100%)',
+        backdropFilter: 'blur(32px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(32px) saturate(200%)',
         borderRadius: 20,
-        border: `1px solid ${hov ? from + '55' : from + '30'}`,
+        border: hov
+          ? `1.5px solid ${from}70`
+          : `1.5px solid ${from}45`,
         boxShadow: hov
-          ? `0 16px 48px ${from}28, 0 4px 20px ${from}18, 0 1px 0 rgba(255,255,255,0.95) inset`
-          : `0 4px 24px ${from}14, 0 1px 0 rgba(255,255,255,0.85) inset`,
+          ? `0 20px 60px ${from}35, 0 6px 24px ${from}22, 0 1px 0 rgba(255,255,255,1) inset`
+          : `0 6px 32px ${from}20, 0 2px 12px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,1) inset`,
         transition: 'all 0.35s cubic-bezier(0.23,1,0.32,1)',
+        transform: hov ? 'translateY(-2px)' : 'translateY(0)',
       }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      {/* Top shimmer */}
-      <div className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: `linear-gradient(90deg, transparent, ${from}60 50%, transparent)` }} />
-      {/* Subtle gradient tint at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
-        style={{ background: `linear-gradient(to top, ${from}06, transparent)` }} />
+      {/* Top shimmer line */}
+      <div className="absolute top-0 left-0 right-0 h-[1.5px] pointer-events-none"
+        style={{ background: `linear-gradient(90deg, transparent, ${from}80 50%, transparent)` }} />
+      {/* Bottom tint */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+        style={{ background: `linear-gradient(to top, ${from}08, transparent)` }} />
+      {/* Corner accent */}
+      <div className="absolute top-0 right-0 w-20 h-20 pointer-events-none"
+        style={{ background: `radial-gradient(circle at top right, ${from}12, transparent 70%)` }} />
       {children}
     </div>
   );
