@@ -53,6 +53,7 @@ const EMPTY_SLIDE = (): Slide => ({
   emoji: '🛍️',
   features: ['Feature 1', 'Feature 2', 'Feature 3'],
   enabled: true,
+  productSlug: '',
 });
 
 const AdminHeroBanner = () => {
