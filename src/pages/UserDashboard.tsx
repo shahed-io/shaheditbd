@@ -188,11 +188,11 @@ const UserDashboard = () => {
   };
 
   const TOPUP_PAYMENT_METHODS = [
-    { id: 'bkash',          label: 'bKash',         number: '01820060046', type: 'Send Money', icon: '💳', color: 'from-pink-600 to-pink-700' },
-    { id: 'nagad',          label: 'Nagad',          number: '01840099853', type: 'Send Money', icon: '📱', color: 'from-orange-500 to-orange-600' },
-    { id: 'rocket',         label: 'Rocket',         number: '01840099853', type: 'Send Money', icon: '🚀', color: 'from-purple-600 to-purple-700' },
-    { id: 'upay',           label: 'উপায়',           number: '01840099853', type: 'Send Money', icon: '💚', color: 'from-green-600 to-green-700' },
-    { id: 'bkash_merchant', label: 'bKash Merchant', number: '01840099853', type: 'Merchant',  icon: '🏪', color: 'from-pink-700 to-rose-700' },
+    { id: 'bkash',          label: 'bKash',         number: '01820060046', type: 'Send Money', logo: bkashLogo,         color: 'from-pink-600 to-pink-700' },
+    { id: 'nagad',          label: 'Nagad',          number: '01840099853', type: 'Send Money', logo: nagadLogo,         color: 'from-orange-500 to-orange-600' },
+    { id: 'rocket',         label: 'Rocket',         number: '01840099853', type: 'Send Money', logo: rocketLogo,        color: 'from-purple-600 to-purple-700' },
+    { id: 'upay',           label: 'উপায়',           number: '01840099853', type: 'Send Money', logo: upayLogo,          color: 'from-green-600 to-green-700' },
+    { id: 'bkash_merchant', label: 'bKash Merchant', number: '01840099853', type: 'Merchant',  logo: bkashMerchantLogo, color: 'from-pink-700 to-rose-700' },
   ];
 
   const handleTopupSubmit = async () => {
