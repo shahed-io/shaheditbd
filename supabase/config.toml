@@ -1,10 +1,11 @@
 project_id = "dpvdavjwqyviredzoorj"
 
-[functions.ai-support-chat]
-verify_jwt = false
-
-[functions.generate-product-content]
-verify_jwt = false
-
-[functions.process-email-queue]
-verify_jwt = true
+[functions]
+  [functions.ai-support-chat]
+    verify_jwt = false
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.generate-product-content]
+    verify_jwt = false
+  [functions.process-email-queue]
+    verify_jwt = true
