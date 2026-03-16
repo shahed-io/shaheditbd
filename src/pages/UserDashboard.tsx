@@ -165,8 +165,13 @@ const UserDashboard = () => {
 
   const fetchOrders = async () => {
     if (!user) return; setOrdersLoading(true);
-    const { data } = await supabase.from('orders').select('id, order_number, status, total, created_at, payment_status').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20);
-    setOrders(data || []); setOrdersLoading(false);
+    const { data } = await supabase.from('orders').select('id, order_number, status, total, subtotal, discount_amount, created_at, payment_status, payment_method, transaction_id, notes, coupon_code').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50);
+    setOrders((data || []) as Order[]); setOrdersLoading(false);
+  };
+
+  const fetchOrderItems = async (orderId: string) => {
+    const { data } = await supabase.from('order_items').select('id, product_name, price, quantity, total, license_key').eq('order_id', orderId);
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, items: (data || []) as OrderItem[] } : o));
   };
 
   const fetchAddresses = async () => {
