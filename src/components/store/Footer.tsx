@@ -1,4 +1,5 @@
 import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText } from 'lucide-react';
+import NewsletterSection from './NewsletterSection';
 import BrandLogo from './BrandLogo';
 
 const NAV_COL = [
