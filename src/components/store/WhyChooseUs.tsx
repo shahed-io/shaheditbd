@@ -24,53 +24,42 @@ const STATS = [
   { n: '24/7', l: 'Support Available' },
 ];
 
-/* ─── Gradient Border Card wrapper ──────────────────────────── */
-interface GradBorderProps {
+/* ─── Glassmorphism Card ─────────────────────────────────── */
+interface GlassCardProps {
   from: string;
   to: string;
-  borderWidth?: number;
-  radius?: number;
   children: React.ReactNode;
   className?: string;
-  hoverGlow?: boolean;
-  style?: React.CSSProperties;
 }
-const GradBorderCard = ({
-  from, to, borderWidth = 1.5, radius = 18, children, className = '', hoverGlow = true, style,
-}: GradBorderProps) => {
+
+const GlassCard = ({ from, to, children, className = '' }: GlassCardProps) => {
   const [hov, setHov] = useState(false);
   return (
     <div
-      className={`relative ${className}`}
+      className={`relative overflow-hidden ${className}`}
       style={{
         background: hov
-          ? `linear-gradient(135deg, ${from}, ${to})`
-          : `linear-gradient(135deg, ${from}60, ${to}50)`,
-        borderRadius: radius,
-        padding: borderWidth,
+          ? 'linear-gradient(155deg, rgba(255,255,255,0.90) 0%, rgba(255,255,255,0.72) 100%)'
+          : 'linear-gradient(155deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.55) 100%)',
+        backdropFilter: 'blur(28px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+        borderRadius: 20,
+        border: `1px solid ${hov ? from + '55' : from + '30'}`,
+        boxShadow: hov
+          ? `0 16px 48px ${from}28, 0 4px 20px ${from}18, 0 1px 0 rgba(255,255,255,0.95) inset`
+          : `0 4px 24px ${from}14, 0 1px 0 rgba(255,255,255,0.85) inset`,
         transition: 'all 0.35s cubic-bezier(0.23,1,0.32,1)',
-        boxShadow: hov && hoverGlow
-          ? `0 16px 48px ${from}28, 0 4px 20px ${from}18`
-          : `0 2px 16px ${from}14`,
-        ...style,
       }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      {/* Inner glass surface */}
-      <div
-        style={{
-          background: hov ? 'hsla(0,0%,100%,0.72)' : 'hsla(0,0%,100%,0.58)',
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-          borderRadius: radius - borderWidth,
-          height: '100%',
-          width: '100%',
-          transition: 'background 0.35s',
-        }}
-      >
-        {children}
-      </div>
+      {/* Top shimmer */}
+      <div className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+        style={{ background: `linear-gradient(90deg, transparent, ${from}60 50%, transparent)` }} />
+      {/* Subtle gradient tint at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
+        style={{ background: `linear-gradient(to top, ${from}06, transparent)` }} />
+      {children}
     </div>
   );
 };
@@ -92,18 +81,28 @@ const WhyChooseUs = () => {
       {/* Ambient blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/3 left-0 w-96 h-96 rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.05), transparent)', filter: 'blur(80px)' }} />
+          style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.06), transparent)', filter: 'blur(80px)' }} />
         <div className="absolute bottom-1/3 right-0 w-80 h-80 rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.04), transparent)', filter: 'blur(80px)' }} />
+          style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.05), transparent)', filter: 'blur(80px)' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24 relative z-10">
 
         {/* ── Why Choose Us ── */}
         <div>
-          <div className="text-center mb-14">
-            <span className="section-label">Why Us</span>
-            <h2 className="section-heading text-3xl sm:text-4xl mt-4 text-foreground">
+          <div className="text-center mb-12">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold mb-5 tracking-widest uppercase"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.80), rgba(255,255,255,0.58))',
+                backdropFilter: 'blur(16px)',
+                border: '1px solid hsla(243,75%,65%,0.30)',
+                color: 'hsl(243,75%,55%)',
+                boxShadow: '0 4px 16px hsla(243,75%,65%,0.14)',
+              }}>
+              <Sparkles size={12} /> Why Us
+            </div>
+            <h2 className="section-heading text-3xl sm:text-4xl text-foreground">
               Why{' '}
               <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Choose Us?
@@ -114,107 +113,146 @@ const WhyChooseUs = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {FEATURES.map((f, i) => (
-              <GradBorderCard key={i} from={f.from} to={f.to} borderWidth={1.5} radius={20}>
-                <div className="p-6 flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
-                    style={{ background: `linear-gradient(135deg, ${f.from}18, ${f.to}12)`, border: `1px solid ${f.from}35` }}>
+              <GlassCard key={i} from={f.from} to={f.to}>
+                <div className="p-5 sm:p-6 flex items-start gap-4">
+                  {/* Icon bubble */}
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
+                    style={{
+                      background: `linear-gradient(135deg, ${f.from}20, ${f.to}14)`,
+                      border: `1.5px solid ${f.from}40`,
+                      boxShadow: `0 4px 14px ${f.from}20`,
+                    }}>
                     {f.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-sora font-bold text-[13.5px] text-foreground flex items-center gap-2">
+                    <h3 className="font-sora font-bold text-[13.5px] flex items-center gap-1.5"
+                      style={{ color: 'hsl(226,35%,18%)' }}>
                       {f.title}
                       <CheckCircle2 size={12} style={{ color: f.from }} className="flex-shrink-0" />
                     </h3>
-                    <p className="text-[12px] text-muted-foreground mt-1.5 leading-relaxed">{f.desc}</p>
+                    <p className="text-[12px] mt-1.5 leading-relaxed"
+                      style={{ color: 'hsl(226,20%,48%)' }}>{f.desc}</p>
                   </div>
                 </div>
-              </GradBorderCard>
+              </GlassCard>
             ))}
           </div>
         </div>
 
         {/* ── How to Order ── */}
         <div>
-          <div className="text-center mb-14">
-            <span className="section-label">Order Process</span>
-            <h2 className="section-heading text-3xl sm:text-4xl mt-4 text-foreground">
+          <div className="text-center mb-12">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold mb-5 tracking-widest uppercase"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.80), rgba(255,255,255,0.58))',
+                backdropFilter: 'blur(16px)',
+                border: '1px solid hsla(15,100%,62%,0.30)',
+                color: 'hsl(15,100%,52%)',
+                boxShadow: '0 4px 16px hsla(15,100%,62%,0.14)',
+              }}>
+              Order Process
+            </div>
+            <h2 className="section-heading text-3xl sm:text-4xl text-foreground">
               How to{' '}
               <span style={{ background: 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,58%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Order
               </span>
             </h2>
-            <p className="text-muted-foreground mt-3 text-[14px]">চার ধাপে আপনার product পান — সহজ, দ্রুত, নিরাপদ।</p>
+            <p className="text-muted-foreground mt-3 text-[14px]">
+              চার ধাপে আপনার product পান — সহজ, দ্রুত, নিরাপদ।
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative">
-            {/* Connecting line */}
-            <div className="hidden lg:block absolute top-[3.5rem] left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-px z-0"
-              style={{ background: 'linear-gradient(90deg, hsl(243,75%,65%), hsl(15,100%,62%), hsl(158,64%,48%), hsl(263,70%,62%))', opacity: 0.25 }} />
+          {/* Steps grid — 2-col on mobile, 4-col on lg */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative">
+            {/* Connecting line (desktop only) */}
+            <div className="hidden lg:block absolute top-[3.2rem] left-[calc(12.5%+1.5rem)] right-[calc(12.5%+1.5rem)] h-px z-0"
+              style={{ background: 'linear-gradient(90deg, hsl(243,75%,65%), hsl(15,100%,62%), hsl(158,64%,48%), hsl(263,70%,62%))', opacity: 0.20 }} />
 
             {STEPS.map((step, i) => (
-              <div key={i} className="relative z-10 pt-4">
-                {/* Step badge above card */}
+              <div key={i} className="relative z-10 pt-5">
+                {/* Step badge */}
                 <div className="absolute -top-0 left-1/2 -translate-x-1/2 z-20">
                   <span className="text-[11px] font-fira font-bold px-3.5 py-1.5 rounded-full text-white shadow-lg"
-                    style={{ background: `linear-gradient(135deg, ${step.from}, ${step.to})`, boxShadow: `0 4px 14px ${step.from}55` }}>
+                    style={{
+                      background: `linear-gradient(135deg, ${step.from}, ${step.to})`,
+                      boxShadow: `0 4px 14px ${step.from}50`,
+                    }}>
                     {step.n}
                   </span>
                 </div>
-                <GradBorderCard from={step.from} to={step.to} borderWidth={1.5} radius={22} className="w-full h-full">
-                  <div className="p-7 pt-8 text-center flex flex-col items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl transition-transform duration-300 group-hover:scale-110"
-                      style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}35` }}>
+
+                <GlassCard from={step.from} to={step.to} className="w-full h-full">
+                  <div className="px-3 sm:px-5 pt-8 pb-5 text-center flex flex-col items-center gap-3">
+                    {/* Emoji bubble */}
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl"
+                      style={{
+                        background: `linear-gradient(135deg, ${step.from}20, ${step.to}14)`,
+                        border: `1.5px solid ${step.from}40`,
+                        boxShadow: `0 4px 14px ${step.from}20`,
+                      }}>
                       {step.emoji}
                     </div>
                     <div>
-                      <h3 className="font-sora font-bold text-[13.5px] text-foreground mb-2">{step.title}</h3>
-                      <p className="text-[12px] text-muted-foreground leading-relaxed">{step.desc}</p>
+                      <h3 className="font-sora font-bold text-[12.5px] sm:text-[13.5px] mb-1.5"
+                        style={{ color: 'hsl(226,35%,18%)' }}>
+                        {step.title}
+                      </h3>
+                      <p className="text-[11px] sm:text-[12px] leading-relaxed"
+                        style={{ color: 'hsl(226,20%,48%)' }}>
+                        {step.desc}
+                      </p>
                     </div>
                   </div>
-                </GradBorderCard>
+                </GlassCard>
               </div>
             ))}
           </div>
         </div>
 
-        {/* ── Stats Bar — Gradient Border ── */}
-        <div ref={statsRef} className="relative">
-          {/* Outer gradient border wrapper */}
-          <div style={{
-            background: 'linear-gradient(135deg, hsla(243,75%,62%,0.55), hsla(263,70%,58%,0.35), hsla(15,100%,60%,0.35))',
-            borderRadius: 28,
-            padding: 1.5,
-            boxShadow: '0 8px 48px hsla(243,75%,62%,0.12)',
+        {/* ── Stats Bar ── */}
+        <div ref={statsRef} className="relative overflow-hidden rounded-[28px]"
+          style={{
+            background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.60) 100%)',
+            backdropFilter: 'blur(32px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+            border: '1px solid hsla(243,75%,65%,0.22)',
+            boxShadow: '0 8px 48px hsla(243,75%,62%,0.10), 0 1px 0 rgba(255,255,255,0.95) inset',
           }}>
-            <div style={{
-              background: 'hsla(0,0%,100%,0.55)',
-              backdropFilter: 'blur(28px) saturate(200%)',
-              WebkitBackdropFilter: 'blur(28px) saturate(200%)',
-              borderRadius: 27,
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-              className="p-10 lg:p-14"
-            >
-              {/* Decorative sparkle */}
-              <div className="absolute top-5 right-6 pointer-events-none">
-                <Sparkles size={30} style={{ color: 'hsla(258,78%,55%,0.22)' }} />
-              </div>
-              {/* Inner top highlight */}
-              <div className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none"
-                style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.9), transparent)' }} />
+          {/* Top shimmer */}
+          <div className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 50%, transparent)' }} />
+          {/* Corner glow */}
+          <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
+            style={{ background: 'radial-gradient(circle at top right, hsla(243,75%,65%,0.08), transparent 70%)' }} />
+          <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none"
+            style={{ background: 'radial-gradient(circle at bottom left, hsla(15,100%,62%,0.06), transparent 70%)' }} />
 
-              <p className="text-center text-muted-foreground/50 text-[11px] font-semibold mb-10 tracking-[0.28em] uppercase font-fira">
-                Our Numbers Speak For Themselves
-              </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                {STATS.map((s, i) => (
-                  <div key={i}
-                    className={`transition-all duration-700 ${statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                    style={{ transitionDelay: `${i * 0.12}s` }}>
-                    <div className="font-sora font-black text-[3rem] sm:text-[3.5rem] leading-none"
+          <div className="absolute top-5 right-6 pointer-events-none">
+            <Sparkles size={28} style={{ color: 'hsla(258,78%,55%,0.20)' }} />
+          </div>
+
+          <div className="relative p-8 sm:p-12 lg:p-14">
+            <p className="text-center text-[11px] font-semibold mb-10 tracking-[0.28em] uppercase font-fira"
+              style={{ color: 'hsl(226,20%,58%)' }}>
+              Our Numbers Speak For Themselves
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
+              {STATS.map((s, i) => (
+                <div key={i}
+                  className={`transition-all duration-700 ${statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                  style={{ transitionDelay: `${i * 0.12}s` }}>
+                  {/* Stat card */}
+                  <div className="relative inline-block px-4 py-2 rounded-2xl mb-2"
+                    style={{
+                      background: 'linear-gradient(135deg, hsla(243,75%,65%,0.08), hsla(263,70%,62%,0.05))',
+                      border: '1px solid hsla(243,75%,65%,0.15)',
+                    }}>
+                    <div className="font-sora font-black text-[2.6rem] sm:text-[3.2rem] leading-none"
                       style={{
                         background: 'linear-gradient(135deg, hsl(243,75%,55%), hsl(263,70%,58%))',
                         WebkitBackgroundClip: 'text',
@@ -223,10 +261,13 @@ const WhyChooseUs = () => {
                       }}>
                       {s.n}
                     </div>
-                    <div className="text-muted-foreground text-[11px] font-semibold mt-2.5 uppercase tracking-wider">{s.l}</div>
                   </div>
-                ))}
-              </div>
+                  <div className="text-[11px] font-semibold uppercase tracking-wider"
+                    style={{ color: 'hsl(226,20%,50%)' }}>
+                    {s.l}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
