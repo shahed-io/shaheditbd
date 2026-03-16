@@ -258,7 +258,12 @@ const AdminProducts = () => {
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
     setImagePreview(product.image_url || '');
-    const tagStr = (product.tags || []).filter(t => t !== 'flash-sale').join(', ');
+    const allTags = product.tags || [];
+    const tagStr = allTags.filter(t => t !== 'flash-sale' && t !== 'requires-email').join(', ');
+    // Parse account_type from attributes
+    const attrRaw = (product.attributes as any) || [];
+    const accountTypeAttr = attrRaw.find((a: any) => a.key === '__account_type');
+    const otherAttrs = attrRaw.filter((a: any) => a.key !== '__account_type');
     setForm({
       name: product.name,
       slug: product.id,
@@ -267,6 +272,8 @@ const AdminProducts = () => {
       brand: product.brand || '',
       badge: product.badge || '',
       product_type: product.product_type || 'digital',
+      account_type: accountTypeAttr?.value || '',
+      requires_customer_email: allTags.includes('requires-email'),
       price: String(product.price),
       original_price: product.original_price ? String(product.original_price) : '',
       discount_percent: product.discount_percent ? String(product.discount_percent) : '',
@@ -278,7 +285,7 @@ const AdminProducts = () => {
       subcategory_id: product.subcategory_id || '',
       is_featured: product.is_featured ?? false,
       is_digital: product.is_digital ?? true,
-      is_flash_sale: product.tags?.includes('flash-sale') ?? false,
+      is_flash_sale: allTags.includes('flash-sale'),
       image_url: product.image_url || '',
       images: product.images || [],
       video_url: product.video_url || '',
@@ -293,13 +300,12 @@ const AdminProducts = () => {
       variants: (() => {
         const raw = product.variants as any;
         if (!raw?.length) return [{ name: '', options: [{ label: '', price: '' }] }];
-        // Migrate old flat format { label, price } → new grouped format
         if (raw[0]?.label !== undefined && raw[0]?.name === undefined) {
           return [{ name: 'Options', options: raw.map((v: any) => ({ label: v.label, price: v.price })) }];
         }
         return raw;
       })(),
-      attributes: (product.attributes as any)?.length ? (product.attributes as any) : [{ key: '', value: '' }],
+      attributes: otherAttrs.length ? otherAttrs : [{ key: '', value: '' }],
       faq: (product.faq as any)?.length ? (product.faq as any) : [{ q: '', a: '' }],
       seo_title: product.seo_title || '',
       seo_description: product.seo_description || '',
