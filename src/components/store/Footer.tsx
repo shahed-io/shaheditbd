@@ -1,5 +1,6 @@
 import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText } from 'lucide-react';
 import BrandLogo from './BrandLogo';
+import dbidLogo from '@/assets/dbid-logo.png';
 
 const NAV_COL = [
   {
@@ -262,9 +263,9 @@ const Footer = () => (
       <div className="max-w-7xl mx-auto px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Cert badge */}
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 12px hsla(258,78%,55%,0.25)' }}>
-            <Shield size={16} className="text-white" />
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+            style={{ background: 'hsl(0,0%,100%)', boxShadow: '0 4px 12px hsla(258,78%,55%,0.18)', border: '1px solid hsla(258,78%,65%,0.20)' }}>
+            <img src={dbidLogo} alt="DBID Logo" className="w-8 h-8 object-contain" />
           </div>
           <div>
             <p className="text-[11px] font-black font-sora tracking-widest" style={{ color: 'hsl(226,35%,15%)' }}>GOVT. CERTIFIED BUSINESS</p>
