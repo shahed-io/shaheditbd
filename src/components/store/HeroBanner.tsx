@@ -88,6 +88,7 @@ const dbSlideToSlide = (s: SlideData): Slide => ({
   emoji: s.emoji,
   features: s.features,
   comboSlide: false,
+  productSlug: s.productSlug || '',
 });
 
 const STATS = [
