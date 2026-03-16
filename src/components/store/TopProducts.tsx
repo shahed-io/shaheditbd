@@ -77,7 +77,7 @@ const TopProducts = () => {
   const toggleCat = (c: string) => setExpandedCats(p => ({ ...p, [c]: !p[c] }));
 
   return (
-    <section ref={sectionRef as React.RefObject<HTMLElement>} className="py-20 bg-transparent">
+    <section ref={sectionRef as React.RefObject<HTMLElement>} className="py-20 bg-transparent below-fold">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}

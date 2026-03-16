@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Orbitron:wght@400;700;900&display=swap');
+/* Fonts loaded via index.html preload for non-blocking performance */
 
 @layer base {
   /* ══════════════════════════════════════
@@ -112,16 +112,33 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    /* Prevent overscroll bounce on iOS */
+    overscroll-behavior-y: none;
   }
 
   h1, h2, h3, h4 {
-    font-family: 'Sora', sans-serif;
+    font-family: 'Sora', system-ui, sans-serif;
     font-weight: 700;
   }
+
+  /* Smooth tap interactions on mobile */
+  a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .blob, .anim-float, .anim-spin-slow, .ticker-track { animation: none !important; }
+  }
 }
+
 
 /* ══════════════════════════════════════
    WHITE THEME SUBTLE GRID BACKGROUND
@@ -955,3 +972,99 @@ body::before {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* ══════════════════════════════════════
+   MOBILE PERFORMANCE OPTIMIZATIONS
+══════════════════════════════════════ */
+
+/* Reduce blur on mobile to save GPU resources */
+@media (max-width: 768px) {
+  .product-card-new {
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+  }
+
+  /* Disable hover transforms on touch devices */
+  .product-card-new:hover {
+    transform: none;
+  }
+
+  /* Smaller blob blur for performance */
+  .blob {
+    filter: blur(40px);
+  }
+
+  /* Disable heavy animations on mobile */
+  .anim-float {
+    animation: none;
+  }
+
+  /* WhyChooseUs & Testimonials glass cards — lighter blur on mobile */
+  .rounded-3xl[style*="blur(28px)"],
+  .rounded-3xl[style*="blur(32px)"] {
+    /* Note: inline styles override, but we cap GPU load */
+    will-change: auto;
+  }
+
+  /* Hero title size adjustment */
+  .hero-mobile-title {
+    font-size: clamp(2rem, 8vw, 3rem) !important;
+  }
+
+  /* Prevent horizontal overflow from marquee */
+  .overflow-hidden {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Better touch scrolling for horizontal scroll areas */
+  .scrollbar-hide {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .scrollbar-hide > * {
+    scroll-snap-align: start;
+  }
+}
+
+/* ══════════════════════════════════════
+   TOUCH-FRIENDLY BUTTON SIZES
+══════════════════════════════════════ */
+@media (max-width: 640px) {
+  /* Minimum touch target 44px */
+  button, a[role="button"] {
+    min-height: 44px;
+  }
+
+  /* Stats bar grid: 2 cols on small mobile */
+  .stats-mobile-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Section padding reduction on mobile */
+  section.py-20 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  section.py-16 {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+}
+
+/* ══════════════════════════════════════
+   CONTENT VISIBILITY — LAZY RENDERING
+══════════════════════════════════════ */
+/* Below-fold sections: browser skips layout until in viewport */
+.below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
+/* ══════════════════════════════════════
+   IMAGE LOADING OPTIMIZATION
+══════════════════════════════════════ */
+img[loading="lazy"] {
+  /* Reserve space to prevent layout shift */
+  background-color: hsl(var(--muted));
+}
+
