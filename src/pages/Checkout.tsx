@@ -376,22 +376,15 @@ const Checkout = () => {
             {/* Payment Instructions (only for non-wallet) */}
             {paymentMethod !== 'wallet' && (
               <>
-                <div className="bg-muted/30 border border-border rounded-xl p-4 space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-foreground font-medium">
-                    <Smartphone size={16} className="text-primary" />
-                    <span>{selectedPayment.label} ({selectedPayment.type}):</span>
-                  </div>
-                  <div className="font-mono text-2xl font-bold text-primary text-center py-2 tracking-widest select-all">
-                    {selectedPayment.number}
-                  </div>
-                  <p className="text-xs text-muted-foreground text-center">
-                    মোট <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span> পাঠান → Transaction ID নিচে দিন
-                  </p>
-                </div>
+                <PaymentInstructions
+                  paymentMethodId={paymentMethod as import('@/components/store/PaymentInstructions').PMId}
+                  amount={finalTotal}
+                  amountLabel="মোট পরিমাণ"
+                />
 
                 {/* Transaction ID */}
                 <div>
-                  <label className="text-sm text-muted-foreground mb-1 block">Transaction ID (TrxID) *</label>
+                  <label className="text-sm text-muted-foreground mb-1 block font-semibold">Transaction ID (TrxID) *</label>
                   <input
                     type="text"
                     value={transactionId}
