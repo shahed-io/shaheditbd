@@ -561,18 +561,25 @@ const AdminProducts = () => {
                     </div>
 
                     <div>
-                      <label className={lc}>Short Description</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className={lc} style={{marginBottom:0}}>Short Description</label>
+                        <AiBtn fieldType="short_description" label="AI Generate" />
+                      </div>
                       <input value={form.short_description}
                         onChange={e => setForm(p => ({ ...p, short_description: e.target.value }))}
                         placeholder="One-liner shown in cards..." className={ic} />
                     </div>
 
                     <div>
-                      <label className={lc}>Full Description</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className={lc} style={{marginBottom:0}}>Full Description</label>
+                        <AiBtn fieldType="description" label="AI Generate" />
+                      </div>
                       <textarea rows={4} value={form.description}
                         onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                         placeholder="Detailed product description..." className={`${ic} resize-none`} />
                     </div>
+
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
