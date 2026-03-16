@@ -281,7 +281,7 @@ const WhyChooseUs = () => {
   }, []);
 
   return (
-    <section className="py-20 relative overflow-hidden bg-transparent">
+    <section className="py-20 relative overflow-hidden bg-transparent below-fold">
       {/* Soft ambient blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-0 w-[480px] h-[480px] rounded-full"
