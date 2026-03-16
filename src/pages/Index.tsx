@@ -9,7 +9,6 @@ import Footer from '@/components/store/Footer';
 import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
 import { organizationSchema, websiteSchema } from '@/components/seo/schemas';
-import RecentlyViewed from '@/components/store/RecentlyViewed';
 
 const Index = () => {
   return (
@@ -28,7 +27,6 @@ const Index = () => {
       <FlashSale />
       <WhyChooseUs />
       <Testimonials />
-      <RecentlyViewed />
       <Footer />
       <FloatingButtons />
     </div>

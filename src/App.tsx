@@ -49,7 +49,6 @@ import ReturnPolicy from "./pages/ReturnPolicy";
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
 import FAQs from "./pages/FAQs";
-import OrderTracking from "./pages/OrderTracking";
 // SEO sub-pages
 import AdminMetaTags from "./pages/admin/seo/AdminMetaTags";
 import AdminSitemap from "./pages/admin/seo/AdminSitemap";
@@ -166,7 +165,6 @@ const App = () => (
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/faqs" element={<FAQs />} />
                 <Route path="/dashboard" element={<UserDashboard />} />
-                <Route path="/track-order" element={<OrderTracking />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </WishlistProvider>
