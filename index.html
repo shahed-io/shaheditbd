@@ -1,51 +1,36 @@
 <!doctype html>
-<html lang="bn">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png">
+    <!-- TODO: Set the document title to the name of your application -->
     <title>Shahed Store</title>
-    <meta name="description" content="Shahed Store — Windows, Office, Adobe, Antivirus সেরা দামে। তাৎক্ষণিক ডেলিভারি।">
+    <meta name="description" content="Shahed Store – Your Trusted Destination for Online Shopping">
     <meta name="author" content="Shahed Store" />
 
+    <!-- TODO: Update og:title to match your application name -->
+    
+    
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Shahed Store" />
-    <meta property="og:description" content="Shahed Store — Windows, Office, Adobe, Antivirus সেরা দামে। তাৎক্ষণিক ডেলিভারি।" />
-    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5ad3670b-25f8-43c3-998c-602642b28123/id-preview-1bfb8112--6a73ba71-8f3e-48ba-996c-e14dcc8331b2.lovable.app-1772374764479.png">
+    <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/2a193eee-e8d9-4b0c-aaaa-0b6ef0d861ea?Expires=1773666984&amp;GoogleAccessId=go-api-on-aws%40gpt-engineer-390607.iam.gserviceaccount.com&amp;Signature=1kKrRN9DDHzDQJ2wiwYbtzg9DBlx87iNubakL4uRHbjUSQpA33tRLr%2FAbf2zG%2BWZnLdaP1Tl2MNJl2kBRFlxXa0pYK%2BzNZjui0zSOlW%2BYG4jokYRT1sm5Qmzf1mouFoIYON6x0B2qf6Ed7NutyE%2BbQ4nTrJ0MlTa5O1fCAIdKNO3h7zL2l5BgZ5esEMB%2F1Zr0rFrKAxqMg5LaiqNCRdAgpMpRgJT5Ncwmn818I352VQ7HqDNduJNyEF25KftQ1oaAFXjXhhPnElysfQomMjJahaX1UxHyq2tzuJDFDf4NAxFlFI6zGBsw%2F%2FLev15eebxvXC8pJWrXxdWscJ2emjYTA%3D%3D">
+
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Shahed Store" />
-    <meta name="twitter:description" content="Shahed Store — Windows, Office, Adobe, Antivirus সেরা দামে।" />
-    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5ad3670b-25f8-43c3-998c-602642b28123/id-preview-1bfb8112--6a73ba71-8f3e-48ba-996c-e14dcc8331b2.lovable.app-1772374764479.png">
-
-    <!-- Preconnect for faster font loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Non-blocking font load (eliminates render-blocking) -->
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Sora:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Sora:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap" />
-    </noscript>
-
-    <!-- Critical inline styles: prevent FOUC & layout shift -->
-    <style>
-      *,*::before,*::after{box-sizing:border-box}
-      html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-      body{margin:0;background:#fff;color:#1a1f3c;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
-      #root{min-height:100vh}
-      img,video{max-width:100%;height:auto}
-      /* Prevent tap highlight on mobile */
-      a,button{-webkit-tap-highlight-color:transparent}
-      /* Reserve font space to prevent CLS */
-      h1,h2,h3,h4{font-family:'Sora',system-ui,sans-serif}
-    </style>
-  </head>
+    <meta name="twitter:site" content="@Lovable" />
+    <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/2a193eee-e8d9-4b0c-aaaa-0b6ef0d861ea?Expires=1773666984&amp;GoogleAccessId=go-api-on-aws%40gpt-engineer-390607.iam.gserviceaccount.com&amp;Signature=1kKrRN9DDHzDQJ2wiwYbtzg9DBlx87iNubakL4uRHbjUSQpA33tRLr%2FAbf2zG%2BWZnLdaP1Tl2MNJl2kBRFlxXa0pYK%2BzNZjui0zSOlW%2BYG4jokYRT1sm5Qmzf1mouFoIYON6x0B2qf6Ed7NutyE%2BbQ4nTrJ0MlTa5O1fCAIdKNO3h7zL2l5BgZ5esEMB%2F1Zr0rFrKAxqMg5LaiqNCRdAgpMpRgJT5Ncwmn818I352VQ7HqDNduJNyEF25KftQ1oaAFXjXhhPnElysfQomMjJahaX1UxHyq2tzuJDFDf4NAxFlFI6zGBsw%2F%2FLev15eebxvXC8pJWrXxdWscJ2emjYTA%3D%3D">
+    
+  
+  
+  
+  
+  
+  
+  
+    <meta property="og:title" content="Shahed Store">
+  <meta name="twitter:title" content="Shahed Store">
+  <meta property="og:description" content="Shahed Store – Your Trusted Destination for Online Shopping">
+  <meta name="twitter:description" content="Shahed Store – Your Trusted Destination for Online Shopping">
+</head>
 
   <body>
     <div id="root"></div>
