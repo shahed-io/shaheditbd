@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useCart } from '@/hooks/useCart';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
+import ProductReviews from '@/components/store/ProductReviews';
 import {
   ShoppingCart, MessageCircle, CreditCard, Star, Zap, Shield, Clock,
   CheckCircle2, ChevronLeft, ChevronRight, Heart, Package, Tag,
