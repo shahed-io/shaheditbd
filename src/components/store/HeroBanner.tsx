@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
 import idmLogo from '@/assets/idm.webp';
+import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
 
 type ComboItem = { icon: string; name: string; tag: string; color: string; highlight?: boolean };
 type Slide = {
@@ -10,7 +11,7 @@ type Slide = {
   emoji: string; logoImg?: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
 };
 
-const SLIDES: Slide[] = [
+const STATIC_SLIDES: Slide[] = [
   {
     tag: '🔥 Best Seller',
     title: 'Windows 11',
