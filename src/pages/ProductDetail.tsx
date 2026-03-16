@@ -902,6 +902,8 @@ const ProductDetail = () => {
             )}
           {/* ── Specifications table from attributes ── */}
           <ProductSpecsTable productId={product.id} />
+          {/* ── Customer Reviews ── */}
+          <ProductReviews productId={product.id} productSlug={product.slug} />
           </div>
         </div>
 
