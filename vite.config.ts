@@ -18,4 +18,35 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Code splitting for faster initial load
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunk — React + Router loaded separately
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // UI library chunk
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
+          // Supabase chunk (large library, separate chunk)
+          'vendor-supabase': ['@supabase/supabase-js'],
+        },
+      },
+    },
+    // Smaller chunks = faster initial paint
+    chunkSizeWarningLimit: 600,
+    // Minification
+    minify: 'esbuild',
+    target: 'es2020',
+    // Source maps off in prod
+    sourcemap: false,
+    // CSS optimization
+    cssMinify: true,
+    // Assets inline limit (small assets inlined as base64)
+    assetsInlineLimit: 4096,
+  },
+  // Optimize deps pre-bundling
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react'],
+    exclude: [],
+  },
 }));
