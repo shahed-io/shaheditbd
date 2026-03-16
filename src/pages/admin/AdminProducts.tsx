@@ -113,6 +113,66 @@ const AdminProducts = () => {
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [aiLoading, setAiLoading] = useState<string | null>(null); // which field is generating
 
+  // ── AI Content Generator ─────────────────────────────────────
+  const generateAiContent = async (type: 'short_description' | 'description' | 'seo' | 'all') => {
+    if (!form.name.trim()) { toast.error('প্রথমে প্রোডাক্টের নাম দিন'); return; }
+    setAiLoading(type);
+    try {
+      const catName = categories.find(c => c.id === form.category_id)?.name || '';
+      const { data, error } = await supabase.functions.invoke('generate-product-content', {
+        body: {
+          productName: form.name,
+          category: catName,
+          brand: form.brand,
+          productType: form.product_type,
+          type,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      const result = data?.result;
+      if (type === 'short_description') {
+        setForm(p => ({ ...p, short_description: result }));
+        toast.success('Short description generated!');
+      } else if (type === 'description') {
+        setForm(p => ({ ...p, description: result }));
+        toast.success('Description generated!');
+      } else if (type === 'seo') {
+        setForm(p => ({
+          ...p,
+          seo_title: (result.seo_title || '').substring(0, 60),
+          seo_description: (result.seo_description || '').substring(0, 160),
+        }));
+        toast.success('SEO content generated!');
+      } else if (type === 'all') {
+        setForm(p => ({
+          ...p,
+          short_description: result.short_description || p.short_description,
+          description: result.description || p.description,
+          seo_title: (result.seo_title || '').substring(0, 60),
+          seo_description: (result.seo_description || '').substring(0, 160),
+        }));
+        toast.success('সব AI কন্টেন্ট জেনারেট হয়েছে!');
+      }
+    } catch (err: any) {
+      toast.error('AI Error: ' + (err.message || 'Unknown error'));
+    } finally {
+      setAiLoading(null);
+    }
+  };
+
+  const AiBtn = ({ fieldType, label }: { fieldType: 'short_description' | 'description' | 'seo', label: string }) => (
+    <button
+      type="button"
+      onClick={() => generateAiContent(fieldType)}
+      disabled={!form.name.trim() || aiLoading !== null}
+      className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg border border-primary/30 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      {aiLoading === fieldType ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
+      {aiLoading === fieldType ? 'Generating...' : label}
+    </button>
+  );
+
   const parentCategories = categories.filter(c => !c.parent_id);
   const subCategories = categories.filter(
     c => c.parent_id && c.parent_id === form.category_id
