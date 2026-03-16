@@ -248,18 +248,26 @@ const Checkout = () => {
             <p className="text-muted-foreground mt-2">
               অর্ডার নম্বর: <span className="text-primary font-mono font-bold">{orderNumber}</span>
             </p>
-            <p className="text-sm text-muted-foreground mt-3">
-              পেমেন্ট যাচাইয়ের পর আপনার ইমেইলে লাইসেন্স কি পাঠানো হবে।
-              সাধারণত ১–২ ঘন্টার মধ্যে।
-            </p>
+            {paymentMethod === 'wallet' ? (
+              <div className="mt-3 p-4 rounded-2xl bg-violet-500/10 border border-violet-400/30 text-left space-y-1.5">
+                <p className="text-sm font-bold text-violet-700 flex items-center gap-2"><Wallet size={15} /> ওয়ালেট পেমেন্ট সম্পন্ন</p>
+                <p className="text-xs text-violet-600">আপনার ওয়ালেট থেকে ৳{finalTotal.toLocaleString()} কেটে নেওয়া হয়েছে।</p>
+                <p className="text-xs text-muted-foreground">অর্ডারটি প্রক্রিয়াধীন। লাইসেন্স কি শীঘ্রই আপনার ড্যাশবোর্ডে দেখা যাবে।</p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground mt-3">
+                পেমেন্ট যাচাইয়ের পর আপনার ইমেইলে লাইসেন্স কি পাঠানো হবে।
+                সাধারণত ১–২ ঘন্টার মধ্যে।
+              </p>
+            )}
           </div>
           <div className="flex gap-3 justify-center">
-            <button onClick={() => navigate('/')} className="btn-glow px-6 py-3 rounded-xl font-semibold text-sm">
+            <button onClick={() => navigate('/')} className="px-6 py-3 rounded-xl font-semibold text-sm border border-border text-muted-foreground hover:text-foreground transition-colors">
               হোমে ফিরে যাও
             </button>
             {user && (
-              <button onClick={() => navigate('/dashboard')} className="px-6 py-3 rounded-xl font-semibold text-sm border border-border text-muted-foreground hover:text-foreground transition-colors">
-                My Orders
+              <button onClick={() => navigate('/dashboard')} className="btn-glow px-6 py-3 rounded-xl font-semibold text-sm flex items-center gap-2">
+                <Package size={15} /> আমার অর্ডার দেখুন
               </button>
             )}
           </div>
