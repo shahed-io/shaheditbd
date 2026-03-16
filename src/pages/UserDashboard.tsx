@@ -25,7 +25,6 @@ interface Profile {
   referral_discount: number;
 }
 
-// Tier config
 const TIERS = [
   { name: 'bronze',   min: 0,  max: 4,  reward: 50,  label: 'ব্রোঞ্জ',    emoji: '🥉', color: 'hsl(30,60%,55%)',  glow: 'hsla(30,60%,55%,0.3)'  },
   { name: 'silver',   min: 5,  max: 14, reward: 75,  label: 'সিলভার',     emoji: '🥈', color: 'hsl(220,15%,65%)', glow: 'hsla(220,15%,65%,0.3)' },
@@ -37,51 +36,30 @@ const TIERS = [
 const getCurrentTier = (count: number) => TIERS.find(t => count >= t.min && count <= t.max) || TIERS[0];
 
 interface Order {
-  id: string;
-  order_number: string;
-  status: string;
-  total: number;
-  created_at: string;
-  payment_status: string | null;
+  id: string; order_number: string; status: string;
+  total: number; created_at: string; payment_status: string | null;
 }
-
 interface Address {
-  id: string;
-  label: string;
-  recipient_name: string;
-  phone: string;
-  address_line: string;
-  city: string;
-  district: string | null;
-  postal_code: string | null;
-  is_default: boolean;
+  id: string; label: string; recipient_name: string; phone: string;
+  address_line: string; city: string; district: string | null;
+  postal_code: string | null; is_default: boolean;
 }
-
 interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: string;
-  is_read: boolean;
-  link: string | null;
-  created_at: string;
+  id: string; title: string; message: string; type: string;
+  is_read: boolean; link: string | null; created_at: string;
 }
-
 interface Referral {
-  id: string;
-  referral_code: string;
-  status: string;
-  reward_amount: number;
-  created_at: string;
+  id: string; referral_code: string; status: string;
+  reward_amount: number; created_at: string;
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   pending:    { label: 'Pending',    color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',    icon: <Clock size={11} /> },
   processing: { label: 'Processing', color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',       icon: <RefreshCw size={11} /> },
-  completed:  { label: 'Completed',  color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
+  completed:  { label: 'Completed',  color: 'text-emerald-600 bg-emerald-500/10 border-emerald-500/30', icon: <CheckCircle2 size={11} /> },
   cancelled:  { label: 'Cancelled',  color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
   refunded:   { label: 'Refunded',   color: 'text-primary bg-primary/10 border-primary/30',          icon: <AlertCircle size={11} /> },
-  delivered:  { label: 'Delivered',  color: 'text-emerald bg-emerald/10 border-emerald/30',          icon: <CheckCircle2 size={11} /> },
+  delivered:  { label: 'Delivered',  color: 'text-emerald-600 bg-emerald-500/10 border-emerald-500/30', icon: <CheckCircle2 size={11} /> },
   failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
@@ -98,6 +76,23 @@ const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'security',      key: 'tab_security',      icon: Lock },
   { id: 'language',      key: 'tab_language',      icon: Globe },
 ];
+
+// Glassmorphism card style helper
+const glassCard = {
+  background: 'linear-gradient(135deg, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.55) 100%)',
+  backdropFilter: 'blur(24px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+  border: '1px solid hsla(258,78%,75%,0.22)',
+  boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
+};
+
+const glassCardStrong = {
+  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.72) 100%)',
+  backdropFilter: 'blur(32px) saturate(200%)',
+  WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+  border: '1px solid hsla(258,78%,75%,0.28)',
+  boxShadow: '0 8px 32px hsla(258,78%,55%,0.10), 0 1px 0 rgba(255,255,255,0.95) inset',
+};
 
 const UserDashboard = () => {
   const { user, signOut, loading } = useAuth();
@@ -130,7 +125,6 @@ const UserDashboard = () => {
   const [walletTx, setWalletTx] = useState<any[]>([]);
   const [walletLoading, setWalletLoading] = useState(false);
   const [topupRequests, setTopupRequests] = useState<any[]>([]);
-  // Top-up wizard: step 0=amount, step 1=payment, step 2=done
   const [topupStep, setTopupStep] = useState(0);
   const [topupAmount, setTopupAmount] = useState('');
   const [topupPaymentMethod, setTopupPaymentMethod] = useState('bkash');
@@ -138,86 +132,50 @@ const UserDashboard = () => {
   const [topupProcessing, setTopupProcessing] = useState(false);
   const [selectedLang, setSelectedLang] = useState<LangCode>(getStoredLang());
 
-  useEffect(() => {
-    if (!loading && !user) navigate('/');
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
-    if (user) fetchProfile();
-  }, [user]);
-
+  useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
+  useEffect(() => { if (user) fetchProfile(); }, [user]);
   useEffect(() => {
     if (!user) return;
     if (activeTab === 'orders') fetchOrders();
     if (activeTab === 'addresses') fetchAddresses();
     if (activeTab === 'notifications') fetchNotifications();
-    if (activeTab === 'referral') { fetchReferrals(); }
-    if (activeTab === 'wallet') { fetchWallet(); }
+    if (activeTab === 'referral') fetchReferrals();
+    if (activeTab === 'wallet') fetchWallet();
   }, [activeTab, user]);
 
   const fetchProfile = async () => {
     if (!user) return;
-    const { data } = await supabase
-      .from('profiles')
-      .select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount')
-      .eq('user_id', user.id)
-      .single();
-    if (data) {
-      setProfile({
-        display_name: data.display_name,
-        email: data.email,
-        phone: data.phone,
-        avatar_url: data.avatar_url,
-        referral_code: (data as any).referral_code || null,
-        referral_earnings: (data as any).referral_earnings || 0,
-        referral_credit: (data as any).referral_credit || 0,
-        referral_discount: (data as any).referral_discount || 0,
-      });
-    } else {
-      setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
-    }
+    const { data } = await supabase.from('profiles').select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount').eq('user_id', user.id).single();
+    if (data) setProfile({ display_name: data.display_name, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
+    else setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
   };
 
   const fetchOrders = async () => {
-    if (!user) return;
-    setOrdersLoading(true);
-    const { data } = await supabase
-      .from('orders')
-      .select('id, order_number, status, total, created_at, payment_status')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(20);
-    setOrders(data || []);
-    setOrdersLoading(false);
+    if (!user) return; setOrdersLoading(true);
+    const { data } = await supabase.from('orders').select('id, order_number, status, total, created_at, payment_status').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20);
+    setOrders(data || []); setOrdersLoading(false);
   };
 
   const fetchAddresses = async () => {
-    if (!user) return;
-    setAddressLoading(true);
+    if (!user) return; setAddressLoading(true);
     const { data } = await supabase.from('addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false });
-    setAddresses((data || []) as Address[]);
-    setAddressLoading(false);
+    setAddresses((data || []) as Address[]); setAddressLoading(false);
   };
 
   const fetchNotifications = async () => {
-    if (!user) return;
-    setNotiLoading(true);
+    if (!user) return; setNotiLoading(true);
     const { data } = await supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30);
-    setNotifications((data || []) as Notification[]);
-    setNotiLoading(false);
+    setNotifications((data || []) as Notification[]); setNotiLoading(false);
   };
 
   const fetchReferrals = async () => {
-    if (!user) return;
-    setReferralLoading(true);
+    if (!user) return; setReferralLoading(true);
     const { data } = await supabase.from('referrals').select('*').eq('referrer_id', user.id).order('created_at', { ascending: false });
-    setReferrals((data || []) as Referral[]);
-    setReferralLoading(false);
+    setReferrals((data || []) as Referral[]); setReferralLoading(false);
   };
 
   const fetchWallet = async () => {
-    if (!user) return;
-    setWalletLoading(true);
+    if (!user) return; setWalletLoading(true);
     const [profileRes, txRes, reqRes] = await Promise.all([
       supabase.from('profiles').select('wallet_balance').eq('user_id', user.id).single(),
       supabase.from('wallet_transactions').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30),
@@ -230,11 +188,11 @@ const UserDashboard = () => {
   };
 
   const TOPUP_PAYMENT_METHODS = [
-    { id: 'bkash',          label: 'bKash',          number: '01820060046', type: 'Send Money', icon: '💳', color: 'from-pink-600 to-pink-700' },
-    { id: 'nagad',          label: 'Nagad',           number: '01840099853', type: 'Send Money', icon: '📱', color: 'from-orange-500 to-orange-600' },
-    { id: 'rocket',         label: 'Rocket',          number: '01840099853', type: 'Send Money', icon: '🚀', color: 'from-purple-600 to-purple-700' },
-    { id: 'upay',           label: 'উপায়',            number: '01840099853', type: 'Send Money', icon: '💚', color: 'from-green-600 to-green-700' },
-    { id: 'bkash_merchant', label: 'bKash Merchant',  number: '01840099853', type: 'Merchant',  icon: '🏪', color: 'from-pink-700 to-rose-700' },
+    { id: 'bkash',          label: 'bKash',         number: '01820060046', type: 'Send Money', icon: '💳', color: 'from-pink-600 to-pink-700' },
+    { id: 'nagad',          label: 'Nagad',          number: '01840099853', type: 'Send Money', icon: '📱', color: 'from-orange-500 to-orange-600' },
+    { id: 'rocket',         label: 'Rocket',         number: '01840099853', type: 'Send Money', icon: '🚀', color: 'from-purple-600 to-purple-700' },
+    { id: 'upay',           label: 'উপায়',           number: '01840099853', type: 'Send Money', icon: '💚', color: 'from-green-600 to-green-700' },
+    { id: 'bkash_merchant', label: 'bKash Merchant', number: '01840099853', type: 'Merchant',  icon: '🏪', color: 'from-pink-700 to-rose-700' },
   ];
 
   const handleTopupSubmit = async () => {
@@ -244,34 +202,18 @@ const UserDashboard = () => {
     if (!topupTxId.trim()) { toast.error('Please enter transaction ID'); return; }
     setTopupProcessing(true);
     try {
-      const { error } = await (supabase.from('wallet_topup_requests' as any) as any).insert({
-        user_id: user.id,
-        amount: amt,
-        payment_method: topupPaymentMethod,
-        transaction_id: topupTxId.trim(),
-        status: 'pending',
-      });
+      const { error } = await (supabase.from('wallet_topup_requests' as any) as any).insert({ user_id: user.id, amount: amt, payment_method: topupPaymentMethod, transaction_id: topupTxId.trim(), status: 'pending' });
       if (error) throw error;
       toast.success('✅ Top-up request submitted! Admin will verify and credit your wallet.');
-      setTopupStep(2);
-      setTopupTxId('');
-    } catch {
-      toast.error('Failed to submit request. Please try again.');
-    }
+      setTopupStep(2); setTopupTxId('');
+    } catch { toast.error('Failed to submit request. Please try again.'); }
     setTopupProcessing(false);
   };
 
   const handleSaveProfile = async () => {
-    if (!user) return;
-    setEditing(false);
-    toast.success('প্রোফাইল আপডেট হয়েছে!');
-    setSaving(true);
-    const { error } = await supabase.from('profiles').upsert(
-      { user_id: user.id, display_name: profile.display_name, phone: profile.phone, email: user.email, updated_at: new Date().toISOString() },
-      { onConflict: 'user_id' }
-    );
-    if (error) toast.error('সেভ করা সম্ভব হয়নি');
-    setSaving(false);
+    if (!user) return; setEditing(false); toast.success('প্রোফাইল আপডেট হয়েছে!'); setSaving(true);
+    const { error } = await supabase.from('profiles').upsert({ user_id: user.id, display_name: profile.display_name, phone: profile.phone, email: user.email, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+    if (error) toast.error('সেভ করা সম্ভব হয়নি'); setSaving(false);
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -286,11 +228,8 @@ const UserDashboard = () => {
       if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(path);
       await supabase.from('profiles').upsert({ user_id: user.id, avatar_url: publicUrl, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-      setProfile(p => ({ ...p, avatar_url: publicUrl }));
-      toast.success('প্রোফাইল ছবি আপডেট হয়েছে!');
-    } catch {
-      toast.error('আপলোড ব্যর্থ হয়েছে');
-    }
+      setProfile(p => ({ ...p, avatar_url: publicUrl })); toast.success('প্রোফাইল ছবি আপডেট হয়েছে!');
+    } catch { toast.error('আপলোড ব্যর্থ হয়েছে'); }
     setAvatarUploading(false);
   };
 
@@ -306,27 +245,18 @@ const UserDashboard = () => {
 
   const handleSaveAddress = async () => {
     if (!user) return;
-    if (!addressForm.recipient_name || !addressForm.phone || !addressForm.address_line || !addressForm.city) {
-      toast.error('সব প্রয়োজনীয় তথ্য পূরণ করুন'); return;
-    }
+    if (!addressForm.recipient_name || !addressForm.phone || !addressForm.address_line || !addressForm.city) { toast.error('সব প্রয়োজনীয় তথ্য পূরণ করুন'); return; }
     const payload = { ...addressForm, user_id: user.id };
-    if (editingAddress) {
-      await supabase.from('addresses').update(payload).eq('id', editingAddress.id);
-      toast.success('ঠিকানা আপডেট হয়েছে!');
-    } else {
-      await supabase.from('addresses').insert(payload);
-      toast.success('ঠিকানা যোগ করা হয়েছে!');
-    }
-    setShowAddressForm(false);
-    setEditingAddress(null);
+    if (editingAddress) { await supabase.from('addresses').update(payload).eq('id', editingAddress.id); toast.success('ঠিকানা আপডেট হয়েছে!'); }
+    else { await supabase.from('addresses').insert(payload); toast.success('ঠিকানা যোগ করা হয়েছে!'); }
+    setShowAddressForm(false); setEditingAddress(null);
     setAddressForm({ label: 'বাড়ি', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false });
     fetchAddresses();
   };
 
   const handleDeleteAddress = async (id: string) => {
     await supabase.from('addresses').delete().eq('id', id);
-    toast.success('ঠিকানা মুছে ফেলা হয়েছে');
-    fetchAddresses();
+    toast.success('ঠিকানা মুছে ফেলা হয়েছে'); fetchAddresses();
   };
 
   const handleMarkAllRead = async () => {
@@ -342,23 +272,16 @@ const UserDashboard = () => {
 
   const copyReferralCode = () => {
     const code = profile.referral_code;
-    if (!code) return;
-    navigator.clipboard.writeText(code);
-    toast.success('রেফারেল কোড কপি হয়েছে!');
+    if (!code) return; navigator.clipboard.writeText(code); toast.success('রেফারেল কোড কপি হয়েছে!');
   };
 
   const shareReferralLink = () => {
     const code = profile.referral_code;
     if (!code) return;
-    const link = `${window.location.origin}?ref=${code}`;
-    navigator.clipboard.writeText(link);
-    toast.success('রেফারেল লিংক কপি হয়েছে!');
+    navigator.clipboard.writeText(`${window.location.origin}?ref=${code}`); toast.success('রেফারেল লিংক কপি হয়েছে!');
   };
 
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/');
-  };
+  const handleLogout = async () => { await signOut(); navigate('/'); };
 
   const displayName = profile.display_name || user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
@@ -366,10 +289,8 @@ const UserDashboard = () => {
   const totalSpent = orders.filter(o => o.status === 'completed').reduce((s, o) => s + o.total, 0);
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  // Tab labels with translation
   const tabsWithBadges = TAB_IDS.map(tab => ({
-    ...tab,
-    label: t(selectedLang, tab.key),
+    ...tab, label: t(selectedLang, tab.key),
     badge: tab.id === 'wishlist' ? wishlistItems.length : tab.id === 'notifications' ? unreadCount : undefined,
   }));
 
@@ -379,24 +300,23 @@ const UserDashboard = () => {
     </div>
   );
 
-  // ─────────────── Input style helpers ───────────────
-  const inputCls = "w-full rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-all border bg-muted/30 text-foreground border-border focus:border-primary";
+  const inputCls = "w-full rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-all border bg-white/60 text-foreground border-border focus:border-primary focus:bg-white/80 placeholder:text-muted-foreground";
   const labelCls = "block text-xs font-semibold uppercase tracking-wide mb-2 text-muted-foreground";
+  const gradBtn = "text-white font-semibold rounded-xl transition-all hover:opacity-90 active:scale-[0.98]";
+  const gradBtnStyle = { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, hsl(240,30%,96%) 0%, hsl(260,25%,94%) 50%, hsl(280,20%,95%) 100%)' }}>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-card/90 backdrop-blur-xl border-border">
+      <header className="sticky top-0 z-50" style={{ ...glassCard, borderRadius: 0, borderLeft: 'none', borderRight: 'none', borderTop: 'none' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <a href="/" className="flex items-center group">
-            <BrandLogo size="sm" />
-          </a>
-          <div className="flex items-center gap-3">
-            <a href="/" className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-colors hover:bg-muted/60 text-muted-foreground">
-              <Home size={14} /> Home
+          <a href="/" className="flex items-center group"><BrandLogo size="sm" /></a>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <a href="/" className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-colors hover:bg-primary/8 text-muted-foreground">
+              <Home size={14} /> <span className="hidden sm:inline">Home</span>
             </a>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border bg-secondary">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
               <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
                 {profile.avatar_url ? <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" /> : initials}
@@ -411,33 +331,35 @@ const UserDashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
         {/* Hero Profile Card */}
-        <div className="rounded-3xl overflow-hidden mb-8 shadow-lg">
-          <div className="h-32 sm:h-40 relative" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 50%, hsl(283,65%,52%) 100%)' }}>
+        <div className="rounded-3xl overflow-hidden mb-6 sm:mb-8" style={glassCardStrong}>
+          <div className="h-28 sm:h-36 relative" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 50%, hsl(283,65%,52%) 100%)' }}>
             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            {/* Glassmorphism overlay at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: 'linear-gradient(to top, rgba(255,255,255,0.4), transparent)' }} />
           </div>
-          <div className="bg-card px-6 sm:px-8 pb-6">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 -mt-12 sm:-mt-14">
+          <div className="px-5 sm:px-8 pb-5 sm:pb-6" style={{ background: 'rgba(255,255,255,0.5)' }}>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 -mt-10 sm:-mt-12">
               <div className="flex items-end gap-4">
                 <div className="relative flex-shrink-0">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 border-card shadow-xl flex items-center justify-center text-3xl font-black text-white"
-                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-4 shadow-xl flex items-center justify-center text-2xl font-black text-white"
+                    style={{ borderColor: 'rgba(255,255,255,0.85)', background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
                     {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
                   </div>
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
                   <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
-                    className="absolute -bottom-1 -right-1 w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 border-card transition-transform hover:scale-110"
-                    style={{ background: 'hsl(var(--primary))' }}>
+                    className="absolute -bottom-1 -right-1 w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 transition-transform hover:scale-110"
+                    style={{ background: 'hsl(var(--primary))', borderColor: 'white' }}>
                     {avatarUploading ? <RefreshCw size={13} className="text-white animate-spin" /> : <Camera size={13} className="text-white" />}
                   </button>
                 </div>
                 <div className="pb-1">
-                  <h1 className="text-xl sm:text-2xl font-black text-foreground">{displayName}</h1>
+                  <h1 className="text-lg sm:text-2xl font-black text-foreground">{displayName}</h1>
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
                   <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald/30 bg-emerald/10 text-emerald">
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
                       <ShieldCheck size={11} /> Verified
                     </span>
                     {completedOrders > 0 && (
@@ -449,91 +371,106 @@ const UserDashboard = () => {
                 </div>
               </div>
               <div className="flex gap-4 sm:gap-6 pb-1">
-                <div className="text-center"><div className="text-xl font-black text-foreground">{orders.length}</div><div className="text-xs text-muted-foreground">{t(selectedLang, 'order')}</div></div>
+                <div className="text-center">
+                  <div className="text-xl font-black text-foreground">{orders.length}</div>
+                  <div className="text-xs text-muted-foreground">{t(selectedLang, 'order')}</div>
+                </div>
                 <div className="w-px bg-border" />
-                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div><div className="text-xs text-muted-foreground">{t(selectedLang, 'total')}</div></div>
+                <div className="text-center">
+                  <div className="text-xl font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">{t(selectedLang, 'total')}</div>
+                </div>
                 <div className="w-px bg-border" />
-                <div className="text-center"><div className="text-xl font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div><div className="text-xs text-muted-foreground">{t(selectedLang, 'tab_wishlist')}</div></div>
+                <div className="text-center">
+                  <div className="text-xl font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div>
+                  <div className="text-xs text-muted-foreground">{t(selectedLang, 'tab_wishlist')}</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Body */}
-        <div className="grid md:grid-cols-[240px_1fr] gap-6">
+        <div className="grid md:grid-cols-[240px_1fr] gap-5 sm:gap-6">
 
           {/* Sidebar */}
-          <div className="bg-card rounded-2xl border border-border p-3 h-fit shadow-sm">
+          <div className="rounded-2xl p-3 h-fit" style={glassCard}>
             <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">{t(selectedLang, 'menu')}</p>
             {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
               <button key={id} onClick={() => setActiveTab(id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${
                   activeTab === id
-                    ? 'bg-primary/10 text-primary border border-primary/25 shadow-sm'
-                    : 'hover:bg-muted/40 text-muted-foreground border border-transparent'
-                }`}>
+                    ? 'text-primary shadow-sm'
+                    : 'hover:bg-white/50 text-muted-foreground'
+                }`}
+                style={activeTab === id ? {
+                  background: 'rgba(255,255,255,0.85)',
+                  border: '1px solid hsla(258,78%,65%,0.25)',
+                  boxShadow: '0 2px 8px hsla(258,78%,55%,0.12)',
+                } : { border: '1px solid transparent' }}>
                 <Icon size={16} />
                 <span className="flex-1 text-left">{label}</span>
                 {badge !== undefined && badge > 0 && (
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{ background: id === 'notifications' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' }}>{badge}</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
+                    style={{ background: id === 'notifications' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' }}>{badge}</span>
                 )}
                 {activeTab === id && <ChevronRight size={14} />}
               </button>
             ))}
-            <div className="h-px my-2 bg-border" />
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive">
+            <div className="h-px my-2 bg-border/50" />
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive" style={{ border: '1px solid transparent' }}>
               <LogOut size={16} /> {t(selectedLang, 'tab_logout')}
             </button>
           </div>
 
           {/* Content Panel */}
-          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+          <div className="rounded-2xl overflow-hidden" style={glassCardStrong}>
 
             {/* Tab Header */}
-            <div className="px-6 py-5 border-b border-border flex items-center justify-between">
+            <div className="px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'rgba(255,255,255,0.4)' }}>
               <div>
-                <h2 className="text-lg font-black text-foreground">
-                  {t(selectedLang, `tab_${activeTab}`)}
-                </h2>
+                <h2 className="text-lg font-black text-foreground">{t(selectedLang, `tab_${activeTab}`)}</h2>
                 <p className="text-xs mt-0.5 text-muted-foreground">
                   {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : ''}
                 </p>
               </div>
               <div className="flex gap-2">
                 {activeTab === 'profile' && !editing && (
-                  <button onClick={() => setEditing(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                  <button onClick={() => setEditing(true)} className={`flex items-center gap-2 px-4 py-2 text-sm ${gradBtn}`} style={gradBtnStyle}>
                     <Edit3 size={14} /> {t(selectedLang, 'edit')}
                   </button>
                 )}
                 {activeTab === 'profile' && editing && (
                   <div className="flex gap-2">
-                    <button onClick={() => setEditing(false)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border border-border text-muted-foreground hover:bg-muted/30"><X size={13} /> {t(selectedLang, 'cancel')}</button>
-                    <button onClick={handleSaveProfile} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-60" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                    <button onClick={() => setEditing(false)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>
+                      <X size={13} /> {t(selectedLang, 'cancel')}
+                    </button>
+                    <button onClick={handleSaveProfile} disabled={saving} className={`flex items-center gap-1.5 px-4 py-2 text-sm disabled:opacity-60 ${gradBtn}`} style={gradBtnStyle}>
                       <Save size={13} /> {saving ? t(selectedLang, 'loading') : t(selectedLang, 'save')}
                     </button>
                   </div>
                 )}
                 {activeTab === 'addresses' && (
                   <button onClick={() => { setShowAddressForm(true); setEditingAddress(null); setAddressForm({ label: 'Home', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false }); }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                    className={`flex items-center gap-2 px-4 py-2 text-sm ${gradBtn}`} style={gradBtnStyle}>
                     <Plus size={14} /> {t(selectedLang, 'add_address')}
                   </button>
                 )}
                 {activeTab === 'notifications' && unreadCount > 0 && (
-                  <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-border text-muted-foreground hover:bg-muted/30">
+                  <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>
                     <BellOff size={13} /> {t(selectedLang, 'mark_all_read')}
                   </button>
                 )}
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-5 sm:p-6">
 
               {/* ── Profile Tab ── */}
               {activeTab === 'profile' && (
-                <div className="space-y-5 max-w-lg">
+                <div className="space-y-4 max-w-lg">
                   {editing && (
-                    <div className="flex items-center gap-4 p-4 rounded-2xl border border-border bg-muted/20">
+                    <div className="flex items-center gap-4 p-4 rounded-2xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                       <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center text-lg font-black text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
                         {profile.avatar_url ? <img src={profile.avatar_url} alt="av" className="w-full h-full object-cover" /> : initials}
                       </div>
@@ -546,26 +483,30 @@ const UserDashboard = () => {
                       </div>
                     </div>
                   )}
-                  <div>
-                    <label className={labelCls}>পূর্ণ নাম</label>
-                    {editing ? (
-                      <div className="relative">
-                        <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                        <input type="text" value={profile.display_name || ''} onChange={e => setProfile(p => ({ ...p, display_name: e.target.value }))} className={inputCls} placeholder="আপনার পুরো নাম" />
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-muted/20">
-                        <User size={15} className="text-muted-foreground" />
-                        <span className="text-sm font-medium text-foreground">{profile.display_name || '—'}</span>
-                      </div>
-                    )}
-                  </div>
+                  {[
+                    { label: 'পূর্ণ নাম', icon: User, field: 'display_name', editable: true, value: profile.display_name || '', type: 'text', placeholder: 'আপনার পুরো নাম', extra: null },
+                  ].map(item => (
+                    <div key={item.field}>
+                      <label className={labelCls}>{item.label}</label>
+                      {editing ? (
+                        <div className="relative">
+                          <item.icon size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <input type={item.type} value={item.value} onChange={e => setProfile(p => ({ ...p, [item.field]: e.target.value }))} className={inputCls} placeholder={item.placeholder} />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                          <item.icon size={15} className="text-muted-foreground" />
+                          <span className="text-sm font-medium text-foreground">{item.value || '—'}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                   <div>
                     <label className={labelCls}>ইমেইল</label>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-muted/20">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                       <Mail size={15} className="text-muted-foreground" />
                       <span className="text-sm font-medium flex-1 text-foreground">{user?.email}</span>
-                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald/10 text-emerald border border-emerald/20">✓ Verified</span>
+                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">✓ Verified</span>
                     </div>
                   </div>
                   <div>
@@ -576,7 +517,7 @@ const UserDashboard = () => {
                         <input type="tel" value={profile.phone || ''} onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} className={inputCls} placeholder="01XXXXXXXXX" />
                       </div>
                     ) : (
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-muted/20">
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                         <Phone size={15} className="text-muted-foreground" />
                         <span className="text-sm font-medium" style={{ color: profile.phone ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}>{profile.phone || 'যোগ করা হয়নি'}</span>
                       </div>
@@ -600,17 +541,16 @@ const UserDashboard = () => {
                       </div>
                       <p className="font-bold text-base mb-1 text-foreground">কোনো অর্ডার নেই</p>
                       <p className="text-sm mb-4 text-muted-foreground">এখনো কোনো অর্ডার করা হয়নি</p>
-                      <a href="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                        কেনাকাটা শুরু করুন
-                      </a>
+                      <a href="/" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>কেনাকাটা শুরু করুন</a>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       {orders.map(order => {
                         const s = STATUS_MAP[order.status] || { label: order.status, color: 'text-gray-600 bg-gray-50 border-gray-200', icon: null };
                         return (
-                          <div key={order.id} className="flex items-center justify-between px-5 py-4 rounded-2xl border border-border transition-all hover:shadow-md bg-muted/10">
-                            <div className="flex items-center gap-4">
+                          <div key={order.id} className="flex items-center justify-between px-4 sm:px-5 py-4 rounded-2xl transition-all hover:shadow-md"
+                            style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
+                            <div className="flex items-center gap-3 sm:gap-4">
                               <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'hsl(243,75%,97%)' }}>
                                 <Package size={18} style={{ color: 'hsl(var(--primary))' }} />
                               </div>
@@ -619,11 +559,11 @@ const UserDashboard = () => {
                                 <div className="text-xs mt-0.5 text-muted-foreground">{new Date(order.created_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                               </div>
                             </div>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 sm:gap-3">
                               <div className="text-right hidden sm:block">
                                 <div className="text-sm font-black" style={{ color: 'hsl(var(--primary))' }}>৳{order.total.toLocaleString()}</div>
                               </div>
-                              <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border ${s.color}`}>{s.icon} {s.label}</span>
+                              <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full border ${s.color}`}>{s.icon} {s.label}</span>
                             </div>
                           </div>
                         );
@@ -643,22 +583,21 @@ const UserDashboard = () => {
                       </div>
                       <p className="font-bold text-base mb-1 text-foreground">উইশলিস্ট খালি</p>
                       <p className="text-sm mb-4 text-muted-foreground">পছন্দের পণ্যে ❤️ চিহ্ন দিন</p>
-                      <a href="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                        পণ্য দেখুন
-                      </a>
+                      <a href="/" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>পণ্য দেখুন</a>
                     </div>
                   ) : (
                     <div className="grid sm:grid-cols-2 gap-3">
                       {wishlistItems.map(item => (
-                        <div key={item.product_id} className="flex items-center gap-3 p-3 rounded-2xl border border-border bg-muted/10 hover:shadow-sm transition-all">
-                          <div className="w-14 h-14 rounded-xl overflow-hidden bg-muted flex-shrink-0">
+                        <div key={item.product_id} className="flex items-center gap-3 p-3 rounded-2xl transition-all hover:shadow-sm"
+                          style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
+                          <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'hsl(240,20%,96%)' }}>
                             {item.product_image ? <img src={item.product_image} alt={item.product_name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Heart size={16} className="text-muted-foreground" /></div>}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-foreground line-clamp-1">{item.product_name}</p>
                             <p className="text-sm font-black mt-0.5" style={{ color: 'hsl(var(--primary))' }}>৳{item.product_price.toLocaleString()}</p>
                           </div>
-                          <a href="/" className="p-2 rounded-xl hover:bg-muted/40 transition-colors text-muted-foreground">
+                          <a href="/" className="p-2 rounded-xl hover:bg-white/60 transition-colors text-muted-foreground">
                             <ExternalLink size={14} />
                           </a>
                         </div>
@@ -677,7 +616,7 @@ const UserDashboard = () => {
                       <div className="grid grid-cols-3 gap-2">
                         {['বাড়ি', 'অফিস', 'অন্যান্য'].map(l => (
                           <button key={l} onClick={() => setAddressForm(f => ({ ...f, label: l }))}
-                            className={`py-2 rounded-xl text-sm font-semibold transition-all border ${addressForm.label === l ? 'border-primary text-primary bg-primary/10' : 'border-border text-muted-foreground hover:bg-muted/30'}`}>
+                            className={`py-2 rounded-xl text-sm font-semibold transition-all border ${addressForm.label === l ? 'border-primary text-primary bg-primary/10' : 'border-border text-muted-foreground hover:bg-white/60'}`}>
                             {l}
                           </button>
                         ))}
@@ -692,13 +631,8 @@ const UserDashboard = () => {
                       ].map(({ field, label, placeholder }) => (
                         <div key={field}>
                           <label className={labelCls}>{label}</label>
-                          <input
-                            type="text"
-                            value={(addressForm as any)[field]}
-                            onChange={e => setAddressForm(f => ({ ...f, [field]: e.target.value }))}
-                            placeholder={placeholder}
-                            className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all border border-border bg-muted/30 text-foreground focus:border-primary"
-                          />
+                          <input type="text" value={(addressForm as any)[field]} onChange={e => setAddressForm(f => ({ ...f, [field]: e.target.value }))} placeholder={placeholder}
+                            className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all border bg-white/60 text-foreground border-border focus:border-primary focus:bg-white/80" />
                         </div>
                       ))}
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -706,8 +640,8 @@ const UserDashboard = () => {
                         <span className="text-sm text-foreground">ডিফল্ট ঠিকানা হিসেবে সেট করুন</span>
                       </label>
                       <div className="flex gap-3">
-                        <button onClick={() => setShowAddressForm(false)} className="flex-1 py-3 rounded-xl border border-border text-sm font-semibold text-muted-foreground hover:bg-muted/30">বাতিল</button>
-                        <button onClick={handleSaveAddress} className="flex-1 py-3 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>সংরক্ষণ করুন</button>
+                        <button onClick={() => setShowAddressForm(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>বাতিল</button>
+                        <button onClick={handleSaveAddress} className={`flex-1 py-3 text-sm ${gradBtn}`} style={gradBtnStyle}>সংরক্ষণ করুন</button>
                       </div>
                     </div>
                   ) : addressLoading ? (
@@ -717,28 +651,25 @@ const UserDashboard = () => {
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><MapPin size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
                       <p className="font-bold text-base mb-1 text-foreground">কোনো ঠিকানা নেই</p>
                       <p className="text-sm mb-4 text-muted-foreground">ডেলিভারির জন্য ঠিকানা যোগ করুন</p>
-                      <button onClick={() => setShowAddressForm(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                      <button onClick={() => setShowAddressForm(true)} className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>
                         <Plus size={16} /> ঠিকানা যোগ করুন
                       </button>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       {addresses.map(addr => (
-                        <div key={addr.id} className="p-4 rounded-2xl border border-border bg-muted/10 hover:shadow-sm transition-all">
+                        <div key={addr.id} className="p-4 rounded-2xl transition-all hover:shadow-sm"
+                          style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold px-2.5 py-1 rounded-full border" style={addr.is_default ? { background: 'hsl(243,75%,97%)', color: 'hsl(var(--primary))', borderColor: 'hsl(243,75%,88%)' } : { background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}>
+                              <span className="text-xs font-bold px-2.5 py-1 rounded-full border" style={addr.is_default ? { background: 'hsl(243,75%,97%)', color: 'hsl(var(--primary))', borderColor: 'hsl(243,75%,88%)' } : { background: 'rgba(255,255,255,0.6)', color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}>
                                 {addr.label} {addr.is_default && '✓ ডিফল্ট'}
                               </span>
                             </div>
                             <div className="flex gap-1">
                               <button onClick={() => { setEditingAddress(addr); setAddressForm({ label: addr.label, recipient_name: addr.recipient_name, phone: addr.phone, address_line: addr.address_line, city: addr.city, district: addr.district || '', postal_code: addr.postal_code || '', is_default: addr.is_default }); setShowAddressForm(true); }}
-                                className="p-2 rounded-xl hover:bg-muted/40 text-muted-foreground">
-                                <Edit3 size={14} />
-                              </button>
-                               <button onClick={() => handleDeleteAddress(addr.id)} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive">
-                                 <X size={14} />
-                              </button>
+                                className="p-2 rounded-xl hover:bg-white/60 text-muted-foreground"><Edit3 size={14} /></button>
+                              <button onClick={() => handleDeleteAddress(addr.id)} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive"><X size={14} /></button>
                             </div>
                           </div>
                           <p className="text-sm font-semibold text-foreground">{addr.recipient_name}</p>
@@ -766,9 +697,12 @@ const UserDashboard = () => {
                     <div className="space-y-2">
                       {notifications.map(n => (
                         <div key={n.id} onClick={() => !n.is_read && handleMarkRead(n.id)}
-                          className={`p-4 rounded-2xl border transition-all cursor-pointer ${!n.is_read ? 'border-primary/30 bg-primary/5' : 'border-border bg-muted/10'}`}>
+                          className="p-4 rounded-2xl transition-all cursor-pointer"
+                          style={!n.is_read
+                            ? { background: 'rgba(99,82,234,0.07)', border: '1px solid hsla(258,78%,65%,0.28)', backdropFilter: 'blur(8px)' }
+                            : { background: 'rgba(255,255,255,0.55)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
                           <div className="flex items-start gap-3">
-                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${!n.is_read ? '' : 'opacity-50'}`} style={{ background: n.type === 'order' ? 'hsl(243,75%,97%)' : n.type === 'promo' ? 'hsl(38,100%,95%)' : 'hsl(var(--muted))' }}>
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${!n.is_read ? '' : 'opacity-50'}`} style={{ background: n.type === 'order' ? 'hsl(243,75%,97%)' : n.type === 'promo' ? 'hsl(38,100%,95%)' : 'rgba(255,255,255,0.7)' }}>
                               {n.type === 'order' ? <Package size={14} style={{ color: 'hsl(var(--primary))' }} /> : n.type === 'promo' ? <Gift size={14} style={{ color: 'hsl(38,80%,50%)' }} /> : <BellRing size={14} className="text-muted-foreground" />}
                             </div>
                             <div className="flex-1">
@@ -793,146 +727,118 @@ const UserDashboard = () => {
                 const completedRefs = referrals.filter(r => r.status === 'completed').length;
                 const tier = getCurrentTier(completedRefs);
                 const nextTier = TIERS[TIERS.indexOf(tier) + 1];
-                const progressPct = nextTier
-                  ? Math.min(100, ((completedRefs - tier.min) / (nextTier.min - tier.min)) * 100)
-                  : 100;
-
+                const progressPct = nextTier ? Math.min(100, ((completedRefs - tier.min) / (nextTier.min - tier.min)) * 100) : 100;
                 return (
-                  <div className="space-y-5">
-                    {/* ── Tier Badge Card ── */}
-                    <div className="relative overflow-hidden rounded-2xl p-6 border"
-                      style={{ background: `linear-gradient(135deg, hsl(215,28%,10%), hsl(215,28%,12%))`, borderColor: tier.color + '55', boxShadow: `0 0 30px ${tier.glow}` }}>
-                      <div className="absolute inset-0 pointer-events-none"
-                        style={{ backgroundImage: 'radial-gradient(circle, hsla(0,0%,100%,0.03) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-                      <div className="relative flex items-center justify-between flex-wrap gap-4">
+                  <div className="space-y-4">
+                    {/* Tier Badge Card */}
+                    <div className="relative overflow-hidden rounded-2xl p-5 sm:p-6"
+                      style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.65))`, backdropFilter: 'blur(20px)', border: `1.5px solid ${tier.color}55`, boxShadow: `0 0 30px ${tier.glow}, 0 4px 16px hsla(258,78%,55%,0.08)` }}>
+                      <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl"
-                            style={{ background: `linear-gradient(135deg, ${tier.color}22, ${tier.color}44)`, border: `1px solid ${tier.color}55`, boxShadow: `0 0 20px ${tier.glow}` }}>
-                            {tier.emoji}
-                          </div>
+                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style={{ background: `linear-gradient(135deg, ${tier.color}18, ${tier.color}35)`, border: `1px solid ${tier.color}55`, boxShadow: `0 0 16px ${tier.glow}` }}>{tier.emoji}</div>
                           <div>
-                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">বর্তমান টিয়ার</p>
+                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-0.5">বর্তমান টিয়ার</p>
                             <p className="text-2xl font-black" style={{ color: tier.color }}>{tier.label}</p>
-                            <p className="text-xs text-muted-foreground mt-1">প্রতি রেফারে <span className="font-black" style={{ color: tier.color }}>৳{tier.reward}</span> ক্রেডিট</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">প্রতি রেফারে <span className="font-black" style={{ color: tier.color }}>৳{tier.reward}</span> ক্রেডিট</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">মোট ক্রেডিট</p>
+                          <p className="text-xs text-muted-foreground mb-0.5">মোট ক্রেডিট</p>
                           <p className="text-3xl font-black text-foreground">৳{profile.referral_credit}</p>
                           {profile.referral_discount > 0 && (
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block"
-                              style={{ background: 'hsla(158,80%,48%,0.15)', color: 'hsl(158,80%,48%)', border: '1px solid hsla(158,80%,48%,0.3)' }}>
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block" style={{ background: 'hsla(158,80%,48%,0.15)', color: 'hsl(158,80%,48%)', border: '1px solid hsla(158,80%,48%,0.3)' }}>
                               {profile.referral_discount}% স্থায়ী ছাড়
                             </span>
                           )}
                         </div>
                       </div>
-
-                      {/* Progress to next tier */}
                       {nextTier && (
-                        <div className="mt-5 relative">
+                        <div className="mt-4">
                           <div className="flex items-center justify-between text-xs mb-2">
                             <span className="text-muted-foreground">{completedRefs} রেফারেল সম্পন্ন</span>
                             <span style={{ color: nextTier.color }}>{nextTier.label} এর জন্য আর {nextTier.min - completedRefs}টি</span>
                           </div>
-                          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'hsla(0,0%,100%,0.08)' }}>
-                            <div className="h-full rounded-full transition-all duration-700"
-                              style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${tier.color}, ${nextTier.color})`, boxShadow: `0 0 8px ${tier.glow}` }} />
+                          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'hsla(258,78%,75%,0.15)' }}>
+                            <div className="h-full rounded-full transition-all duration-700" style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${tier.color}, ${nextTier.color})`, boxShadow: `0 0 8px ${tier.glow}` }} />
                           </div>
                         </div>
                       )}
                     </div>
 
-                    {/* ── All Tiers ── */}
-                    <div className="rounded-2xl border border-border p-4 space-y-3">
-                      <p className="text-sm font-bold text-foreground mb-1">টিয়ার সিস্টেম</p>
-                      {TIERS.map(t => (
-                        <div key={t.name} className="flex items-center gap-3 p-3 rounded-xl transition-all"
-                          style={{ background: tier.name === t.name ? `${t.color}15` : 'transparent', border: `1px solid ${tier.name === t.name ? t.color + '40' : 'transparent'}` }}>
-                          <span className="text-xl w-8">{t.emoji}</span>
+                    {/* All Tiers */}
+                    <div className="rounded-2xl p-4 space-y-2" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(12px)' }}>
+                      <p className="text-sm font-bold text-foreground mb-2">টিয়ার সিস্টেম</p>
+                      {TIERS.map(tr => (
+                        <div key={tr.name} className="flex items-center gap-3 p-3 rounded-xl transition-all"
+                          style={{ background: tier.name === tr.name ? `${tr.color}12` : 'rgba(255,255,255,0.4)', border: `1px solid ${tier.name === tr.name ? tr.color + '40' : 'hsla(258,78%,75%,0.15)'}` }}>
+                          <span className="text-xl w-8">{tr.emoji}</span>
                           <div className="flex-1">
-                            <p className="text-sm font-bold" style={{ color: tier.name === t.name ? t.color : 'hsl(var(--foreground))' }}>{t.label}</p>
-                            <p className="text-[10px] text-muted-foreground">{t.max === Infinity ? `${t.min}+` : `${t.min}–${t.max}`} রেফারেল</p>
+                            <p className="text-sm font-bold" style={{ color: tier.name === tr.name ? tr.color : 'hsl(var(--foreground))' }}>{tr.label}</p>
+                            <p className="text-[10px] text-muted-foreground">{tr.max === Infinity ? `${tr.min}+` : `${tr.min}–${tr.max}`} রেফারেল</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-black" style={{ color: t.color }}>৳{t.reward}/রেফার</p>
+                            <p className="text-sm font-black" style={{ color: tr.color }}>৳{tr.reward}/রেফার</p>
                           </div>
-                          {tier.name === t.name && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: t.color }}>বর্তমান</span>
+                          {tier.name === tr.name && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: tr.color }}>বর্তমান</span>
                           )}
                         </div>
                       ))}
                     </div>
 
-                    {/* ── Referral Code Card ── */}
-                    <div className="p-5 rounded-2xl border" style={{ background: 'hsla(271,91%,65%,0.06)', borderColor: 'hsla(271,91%,65%,0.25)' }}>
+                    {/* Referral Code Card */}
+                    <div className="p-5 rounded-2xl" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.07), rgba(99,82,234,0.04))', border: '1px solid hsla(258,78%,65%,0.25)', backdropFilter: 'blur(12px)' }}>
                       <p className="text-xs font-bold uppercase tracking-wide mb-3 text-muted-foreground">আপনার রেফারেল কোড</p>
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="text-2xl font-black tracking-widest flex-1" style={{ fontFamily: 'Orbitron, monospace', color: 'hsl(var(--primary))' }}>
-                          {profile.referral_code || '—'}
-                        </span>
-                        <button onClick={copyReferralCode} className="p-2.5 rounded-xl transition-all hover:scale-110" style={{ background: 'hsl(var(--primary))', color: 'white' }}>
-                          <Copy size={14} />
-                        </button>
+                        <span className="text-2xl font-black tracking-widest flex-1" style={{ fontFamily: 'Orbitron, monospace', color: 'hsl(var(--primary))' }}>{profile.referral_code || '—'}</span>
+                        <button onClick={copyReferralCode} className="p-2.5 rounded-xl transition-all hover:scale-110" style={{ background: 'hsl(var(--primary))', color: 'white' }}><Copy size={14} /></button>
                       </div>
-                      <button onClick={shareReferralLink} className="flex items-center gap-2 text-xs font-semibold text-primary hover:underline">
-                        <ExternalLink size={12} /> রেফারেল লিংক কপি করুন
-                      </button>
+                      <button onClick={shareReferralLink} className="flex items-center gap-2 text-xs font-semibold text-primary hover:underline"><ExternalLink size={12} /> রেফারেল লিংক কপি করুন</button>
                     </div>
 
-                    {/* ── Stats ── */}
+                    {/* Stats */}
                     <div className="grid grid-cols-3 gap-3">
                       {[
                         { label: 'মোট রেফারেল', value: totalRefs, color: 'hsl(var(--foreground))' },
                         { label: 'সফল', value: completedRefs, color: 'hsl(158,64%,42%)' },
                         { label: 'মোট আয়', value: `৳${profile.referral_earnings}`, color: 'hsl(var(--primary))' },
                       ].map(s => (
-                        <div key={s.label} className="p-4 rounded-2xl border border-border bg-muted/10 text-center">
+                        <div key={s.label} className="p-4 rounded-2xl text-center" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                           <div className="text-xl font-black" style={{ color: s.color }}>{s.value}</div>
                           <div className="text-xs text-muted-foreground">{s.label}</div>
                         </div>
                       ))}
                     </div>
 
-                    {/* ── New User Benefit Box ── */}
-                    <div className="p-4 rounded-2xl border" style={{ background: 'hsla(158,80%,48%,0.06)', borderColor: 'hsla(158,80%,48%,0.25)' }}>
-                      <p className="text-sm font-bold mb-3 text-foreground flex items-center gap-2">
-                        <Gift size={15} style={{ color: 'hsl(158,80%,48%)' }} /> রেফার গ্রহণকারীর সুবিধা
-                      </p>
+                    {/* Benefit Box */}
+                    <div className="p-4 rounded-2xl" style={{ background: 'hsla(158,80%,48%,0.06)', border: '1px solid hsla(158,80%,48%,0.22)', backdropFilter: 'blur(8px)' }}>
+                      <p className="text-sm font-bold mb-3 text-foreground flex items-center gap-2"><Gift size={15} style={{ color: 'hsl(158,80%,48%)' }} /> রেফার গ্রহণকারীর সুবিধা</p>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(158,80%,48%,0.08)' }}>
-                          <span className="text-lg">💰</span>
-                          <div>
-                            <p className="text-sm font-black" style={{ color: 'hsl(158,80%,48%)' }}>৳10 ক্রেডিট</p>
-                            <p className="text-[10px] text-muted-foreground">সাইনআপেই পাবে</p>
+                        {[{ emoji: '💰', title: '৳10 ক্রেডিট', sub: 'সাইনআপেই পাবে' }, { emoji: '🏷️', title: '10% ছাড়', sub: 'স্থায়ী ডিসকাউন্ট' }].map(b => (
+                          <div key={b.title} className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(158,80%,48%,0.08)' }}>
+                            <span className="text-lg">{b.emoji}</span>
+                            <div><p className="text-sm font-black" style={{ color: 'hsl(158,80%,48%)' }}>{b.title}</p><p className="text-[10px] text-muted-foreground">{b.sub}</p></div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(158,80%,48%,0.08)' }}>
-                          <span className="text-lg">🏷️</span>
-                          <div>
-                            <p className="text-sm font-black" style={{ color: 'hsl(158,80%,48%)' }}>10% ছাড়</p>
-                            <p className="text-[10px] text-muted-foreground">স্থায়ী ডিসকাউন্ট</p>
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
 
-                    {/* ── How it works ── */}
-                    <div className="p-4 rounded-2xl border border-border bg-muted/10">
+                    {/* How it works */}
+                    <div className="p-4 rounded-2xl" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                       <p className="text-sm font-bold mb-3 text-foreground">কিভাবে কাজ করে?</p>
                       {[
-                        { n: '১', t: 'আপনার রেফারেল কোড বন্ধুদের শেয়ার করুন' },
-                        { n: '২', t: 'বন্ধু সাইনআপে কোড দিলে তারা ৳10 + 10% স্থায়ী ছাড় পাবে' },
-                        { n: '৩', t: `আপনি ৳${tier.reward} ক্রেডিট পাবেন — টিয়ার বাড়লে রিওয়ার্ডও বাড়বে!` },
-                      ].map(({ n, t }) => (
+                        { n: '১', text: 'আপনার রেফারেল কোড বন্ধুদের শেয়ার করুন' },
+                        { n: '২', text: 'বন্ধু সাইনআপে কোড দিলে তারা ৳10 + 10% স্থায়ী ছাড় পাবে' },
+                        { n: '৩', text: `আপনি ৳${tier.reward} ক্রেডিট পাবেন — টিয়ার বাড়লে রিওয়ার্ডও বাড়বে!` },
+                      ].map(({ n, text }) => (
                         <div key={n} className="flex items-start gap-3 mb-2 last:mb-0">
                           <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>
-                          <span className="text-sm text-muted-foreground">{t}</span>
+                          <span className="text-sm text-muted-foreground">{text}</span>
                         </div>
                       ))}
                     </div>
 
-                    {/* ── Referral History ── */}
+                    {/* Referral History */}
                     {referralLoading ? (
                       <div className="flex justify-center py-4"><div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} /></div>
                     ) : referrals.length > 0 && (
@@ -942,7 +848,7 @@ const UserDashboard = () => {
                           {referrals.map((r, i) => {
                             const refTier = getCurrentTier(i + 1);
                             return (
-                              <div key={r.id} className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/10">
+                              <div key={r.id} className="flex items-center justify-between p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
                                 <div className="flex items-center gap-2.5">
                                   <span className="text-base">{refTier.emoji}</span>
                                   <div>
@@ -953,9 +859,7 @@ const UserDashboard = () => {
                                 <div className="flex items-center gap-2">
                                   <span className="text-sm font-black" style={{ color: refTier.color }}>৳{r.reward_amount}</span>
                                   <span className="text-[10px] font-bold px-2 py-1 rounded-full"
-                                    style={r.status === 'completed'
-                                      ? { background: 'hsla(158,80%,48%,0.15)', color: 'hsl(158,80%,48%)' }
-                                      : { background: 'hsla(40,100%,58%,0.15)', color: 'hsl(40,100%,58%)' }}>
+                                    style={r.status === 'completed' ? { background: 'hsla(158,80%,48%,0.15)', color: 'hsl(158,80%,48%)' } : { background: 'hsla(40,100%,58%,0.15)', color: 'hsl(40,100%,58%)' }}>
                                     {r.status === 'completed' ? 'সফল' : 'পেন্ডিং'}
                                   </span>
                                 </div>
@@ -971,43 +875,35 @@ const UserDashboard = () => {
 
               {/* ── Security Tab ── */}
               {activeTab === 'security' && (
-                <div className="max-w-lg space-y-6">
-                  <div className="p-4 rounded-2xl border flex items-start gap-3" style={{ borderColor: 'hsl(243,75%,88%)', background: 'hsl(243,75%,97%)' }}>
+                <div className="max-w-lg space-y-5">
+                  <div className="p-4 rounded-2xl flex items-start gap-3" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.08), rgba(99,82,234,0.04))', border: '1px solid hsla(258,78%,65%,0.22)', backdropFilter: 'blur(8px)' }}>
                     <ShieldCheck size={18} style={{ color: 'hsl(var(--primary))' }} className="mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-sm font-semibold" style={{ color: 'hsl(var(--primary))' }}>পাসওয়ার্ড পরিবর্তন করুন</p>
-                      <p className="text-xs mt-0.5" style={{ color: 'hsl(243,50%,50%)' }}>আপনার অ্যাকাউন্ট সুরক্ষিত রাখতে নিয়মিত পাসওয়ার্ড পরিবর্তন করুন।</p>
+                      <p className="text-xs mt-0.5 text-muted-foreground">আপনার অ্যাকাউন্ট সুরক্ষিত রাখতে নিয়মিত পাসওয়ার্ড পরিবর্তন করুন।</p>
                     </div>
                   </div>
-                  <div>
-                    <label className={labelCls}>নতুন পাসওয়ার্ড</label>
-                    <div className="relative">
-                      <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      <input type={showNewPass ? 'text' : 'password'} value={newPassword} onChange={e => setNewPassword(e.target.value)}
-                        className="w-full rounded-xl pl-10 pr-11 py-3 text-sm outline-none transition-all border border-border bg-muted/30 text-foreground focus:border-primary"
-                        placeholder="নতুন পাসওয়ার্ড লিখুন" />
-                      <button type="button" onClick={() => setShowNewPass(!showNewPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        {showNewPass ? <EyeOff size={15} /> : <Eye size={15} />}
-                      </button>
+                  {[
+                    { label: 'নতুন পাসওয়ার্ড', value: newPassword, set: setNewPassword, show: showNewPass, toggle: () => setShowNewPass(!showNewPass), placeholder: 'নতুন পাসওয়ার্ড লিখুন' },
+                    { label: 'পাসওয়ার্ড নিশ্চিত করুন', value: confirmPassword, set: setConfirmPassword, show: showConfirmPass, toggle: () => setShowConfirmPass(!showConfirmPass), placeholder: 'পাসওয়ার্ড আবার লিখুন' },
+                  ].map((f, idx) => (
+                    <div key={idx}>
+                      <label className={labelCls}>{f.label}</label>
+                      <div className="relative">
+                        <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <input type={f.show ? 'text' : 'password'} value={f.value} onChange={e => f.set(e.target.value)}
+                          className="w-full rounded-xl pl-10 pr-11 py-3 text-sm outline-none transition-all border bg-white/60 text-foreground border-border focus:border-primary focus:bg-white/80"
+                          placeholder={f.placeholder} />
+                        <button type="button" onClick={f.toggle} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                          {f.show ? <EyeOff size={15} /> : <Eye size={15} />}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <label className={labelCls}>পাসওয়ার্ড নিশ্চিত করুন</label>
-                    <div className="relative">
-                      <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      <input type={showConfirmPass ? 'text' : 'password'} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
-                        className="w-full rounded-xl pl-10 pr-11 py-3 text-sm outline-none transition-all border border-border bg-muted/30 text-foreground focus:border-primary"
-                        placeholder="পাসওয়ার্ড আবার লিখুন" />
-                      <button type="button" onClick={() => setShowConfirmPass(!showConfirmPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        {showConfirmPass ? <EyeOff size={15} /> : <Eye size={15} />}
-                      </button>
-                    </div>
-                    {confirmPassword && newPassword !== confirmPassword && <p className="text-xs mt-1.5 flex items-center gap-1 text-destructive"><AlertCircle size={11} /> পাসওয়ার্ড দুটি মিলছে না</p>}
-                    {confirmPassword && newPassword === confirmPassword && newPassword.length >= 6 && <p className="text-xs mt-1.5 flex items-center gap-1" style={{ color: 'hsl(158,64%,42%)' }}><CheckCircle2 size={11} /> পাসওয়ার্ড মিলেছে</p>}
-                  </div>
+                  ))}
+                  {confirmPassword && newPassword !== confirmPassword && <p className="text-xs flex items-center gap-1 text-destructive"><AlertCircle size={11} /> পাসওয়ার্ড দুটি মিলছে না</p>}
+                  {confirmPassword && newPassword === confirmPassword && newPassword.length >= 6 && <p className="text-xs flex items-center gap-1" style={{ color: 'hsl(158,64%,42%)' }}><CheckCircle2 size={11} /> পাসওয়ার্ড মিলেছে</p>}
                   <button onClick={handleChangePassword} disabled={passLoading || !newPassword || !confirmPassword}
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
-                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                    className={`flex items-center justify-center gap-2 w-full py-3 text-sm disabled:opacity-50 ${gradBtn}`} style={gradBtnStyle}>
                     {passLoading ? <><RefreshCw size={15} className="animate-spin" /> পরিবর্তন হচ্ছে...</> : <><ShieldCheck size={15} /> পাসওয়ার্ড পরিবর্তন করুন</>}
                   </button>
                 </div>
@@ -1015,38 +911,39 @@ const UserDashboard = () => {
 
               {/* ── Wallet Tab ── */}
               {activeTab === 'wallet' && (
-                <div className="space-y-6">
+                <div className="space-y-5">
                   {/* Balance Card */}
-                  <div className="rounded-2xl p-6 text-primary-foreground relative overflow-hidden"
-                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,50%), hsl(263,70%,48%))' }}>
-                    <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="rounded-2xl p-5 sm:p-6 relative overflow-hidden"
+                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,52%) 0%, hsl(263,70%,50%) 100%)', boxShadow: '0 8px 32px hsla(258,78%,55%,0.30), 0 1px 0 rgba(255,255,255,0.15) inset' }}>
+                    <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+                    <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10" style={{ background: 'white', transform: 'translate(20%, -20%)' }} />
+                    <div className="relative flex items-center justify-between mb-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                          <Wallet size={20} />
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.22)' }}>
+                          <Wallet size={20} className="text-white" />
                         </div>
                         <div>
-                          <p className="text-sm opacity-80">My Wallet</p>
-                          <p className="text-xs opacity-60">Store Wallet</p>
+                          <p className="text-sm text-white/80 font-medium">My Wallet</p>
+                          <p className="text-xs text-white/55">Store Balance</p>
                         </div>
                       </div>
-                      <button onClick={fetchWallet} className="opacity-60 hover:opacity-100 transition-opacity">
+                      <button onClick={fetchWallet} className="text-white/60 hover:text-white transition-colors">
                         <RefreshCw size={14} className={walletLoading ? 'animate-spin' : ''} />
                       </button>
                     </div>
-                    <p className="text-4xl font-black tracking-tight">৳{walletBalance.toLocaleString()}</p>
-                    <p className="text-sm opacity-70 mt-1">Available Balance</p>
+                    <p className="relative text-4xl font-black tracking-tight text-white">৳{walletBalance.toLocaleString()}</p>
+                    <p className="relative text-sm text-white/65 mt-1">Available Balance</p>
                   </div>
 
                   {/* Top-up Wizard */}
-                  <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                  <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', border: '1px solid hsla(258,78%,75%,0.22)', backdropFilter: 'blur(20px)' }}>
                     {/* Step indicators */}
-                    <div className="flex border-b border-border">
+                    <div className="flex" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)' }}>
                       {['Select Amount', 'Payment', 'Confirm'].map((s, i) => (
                         <div key={i} className={`flex-1 py-3 text-center text-xs font-semibold transition-colors ${
-                          topupStep === i ? 'text-primary border-b-2 border-primary bg-primary/5' :
+                          topupStep === i ? 'text-primary border-b-2 border-primary' :
                           topupStep > i ? 'text-muted-foreground' : 'text-muted-foreground/50'
-                        }`}>{i + 1}. {s}</div>
+                        }`} style={topupStep === i ? { background: 'rgba(99,82,234,0.06)' } : {}}>{i + 1}. {s}</div>
                       ))}
                     </div>
 
@@ -1061,70 +958,58 @@ const UserDashboard = () => {
                                 className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all ${
                                   topupAmount === String(v)
                                     ? 'border-primary bg-primary/10 text-primary'
-                                    : 'border-border text-muted-foreground hover:border-primary/50 hover:text-primary'
+                                    : 'border-border text-muted-foreground hover:border-primary/50 hover:text-primary bg-white/60'
                                 }`}>৳{v}</button>
                             ))}
                           </div>
                           <div>
                             <label className={labelCls}>Or enter custom amount</label>
-                            <input type="number" min="10" value={topupAmount} onChange={e => setTopupAmount(e.target.value)}
-                              placeholder="Min ৳10"
-                              className="w-full rounded-xl px-4 py-3 text-sm outline-none border border-border bg-muted/30 text-foreground focus:border-primary" />
+                            <input type="number" min="10" value={topupAmount} onChange={e => setTopupAmount(e.target.value)} placeholder="Min ৳10"
+                              className="w-full rounded-xl px-4 py-3 text-sm outline-none border border-border bg-white/60 text-foreground focus:border-primary focus:bg-white/80" />
                           </div>
                           <button onClick={() => { if (!topupAmount || parseFloat(topupAmount) < 10) { toast.error('Minimum ৳10'); return; } setTopupStep(1); }}
-                            className="w-full py-3 rounded-xl text-sm font-bold text-primary-foreground transition-all hover:opacity-90 flex items-center justify-center gap-2"
-                            style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                            className={`w-full py-3 text-sm flex items-center justify-center gap-2 ${gradBtn}`} style={gradBtnStyle}>
                             Continue →
                           </button>
                         </div>
                       )}
 
-                      {/* STEP 1: Choose payment method + txn ID */}
+                      {/* STEP 1: Payment */}
                       {topupStep === 1 && (() => {
                         const pm = TOPUP_PAYMENT_METHODS.find(p => p.id === topupPaymentMethod) || TOPUP_PAYMENT_METHODS[0];
                         return (
                           <div className="space-y-4">
                             <div className="flex items-center justify-between">
-                              <p className="text-sm font-semibold text-foreground">Top-up amount: <span className="text-primary font-black">৳{topupAmount}</span></p>
+                              <p className="text-sm font-semibold text-foreground">Top-up: <span className="text-primary font-black">৳{topupAmount}</span></p>
                               <button onClick={() => setTopupStep(0)} className="text-xs text-muted-foreground hover:text-primary underline">Change</button>
                             </div>
-
                             <div>
                               <label className={labelCls}>Select Payment Method</label>
                               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 {TOPUP_PAYMENT_METHODS.map(p => (
                                   <button key={p.id} onClick={() => setTopupPaymentMethod(p.id)}
                                     className={`flex flex-col items-center gap-1 p-3 rounded-xl border text-xs font-semibold transition-all ${
-                                      topupPaymentMethod === p.id
-                                        ? 'border-primary bg-primary/10 text-primary'
-                                        : 'border-border text-muted-foreground hover:border-primary/40'
+                                      topupPaymentMethod === p.id ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-primary/40 bg-white/60'
                                     }`}>
-                                    <span className="text-xl">{p.icon}</span>
-                                    {p.label}
+                                    <span className="text-xl">{p.icon}</span>{p.label}
                                   </button>
                                 ))}
                               </div>
                             </div>
-
-                            {/* Payment instructions */}
                             <div className={`p-4 rounded-xl bg-gradient-to-r ${pm.color} text-white`}>
                               <p className="text-xs opacity-80 mb-1">{pm.type}</p>
                               <p className="text-lg font-black tracking-widest">{pm.number}</p>
                               <p className="text-xs opacity-80 mt-1">Send <span className="font-black">৳{topupAmount}</span> via {pm.label} {pm.type}</p>
                             </div>
-
                             <div>
                               <label className={labelCls}>Transaction ID (TrxID)</label>
-                              <input value={topupTxId} onChange={e => setTopupTxId(e.target.value)}
-                                placeholder="Enter your TrxID after payment"
-                                className="w-full rounded-xl px-4 py-3 text-sm outline-none border border-border bg-muted/30 text-foreground focus:border-primary" />
+                              <input value={topupTxId} onChange={e => setTopupTxId(e.target.value)} placeholder="Enter your TrxID after payment"
+                                className="w-full rounded-xl px-4 py-3 text-sm outline-none border border-border bg-white/60 text-foreground focus:border-primary focus:bg-white/80" />
                             </div>
-
                             <div className="flex gap-3">
-                              <button onClick={() => setTopupStep(0)} className="flex-1 py-3 rounded-xl text-sm font-semibold border border-border text-muted-foreground hover:bg-muted/30">Back</button>
+                              <button onClick={() => setTopupStep(0)} className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>Back</button>
                               <button onClick={handleTopupSubmit} disabled={topupProcessing || !topupTxId.trim()}
-                                className="flex-1 py-3 rounded-xl text-sm font-bold text-primary-foreground transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
-                                style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                                className={`flex-1 py-3 text-sm flex items-center justify-center gap-2 disabled:opacity-50 ${gradBtn}`} style={gradBtnStyle}>
                                 {topupProcessing ? <><RefreshCw size={14} className="animate-spin" /> Submitting...</> : 'Submit Request'}
                               </button>
                             </div>
@@ -1135,18 +1020,15 @@ const UserDashboard = () => {
                       {/* STEP 2: Success */}
                       {topupStep === 2 && (
                         <div className="text-center py-6 space-y-4">
-                          <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
-                            <CheckCircle2 size={32} className="text-green-500" />
+                          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ background: 'hsla(158,80%,48%,0.12)', border: '1px solid hsla(158,80%,48%,0.3)' }}>
+                            <CheckCircle2 size={32} style={{ color: 'hsl(158,80%,48%)' }} />
                           </div>
                           <div>
                             <p className="text-base font-black text-foreground">Request Submitted!</p>
                             <p className="text-sm text-muted-foreground mt-1">Admin will verify your payment and credit <span className="font-bold text-primary">৳{topupAmount}</span> to your wallet.</p>
                           </div>
                           <button onClick={() => { setTopupStep(0); setTopupAmount(''); fetchWallet(); }}
-                            className="px-6 py-2.5 rounded-xl text-sm font-semibold text-primary-foreground"
-                            style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                            Done
-                          </button>
+                            className={`px-6 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>Done</button>
                         </div>
                       )}
                     </div>
@@ -1154,7 +1036,7 @@ const UserDashboard = () => {
 
                   {/* Pending Requests */}
                   {topupRequests.filter((r: any) => r.status === 'pending').length > 0 && (
-                    <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
+                    <div className="rounded-2xl p-4" style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid hsla(45,93%,58%,0.28)', backdropFilter: 'blur(8px)' }}>
                       <p className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                         <Clock size={14} className="text-amber-500" /> Pending Top-up Requests
                       </p>
@@ -1171,28 +1053,21 @@ const UserDashboard = () => {
                   )}
 
                   {/* Transaction History */}
-                  <div className="rounded-2xl border border-border overflow-hidden bg-card">
-                    <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-                      <h3 className="font-bold text-foreground flex items-center gap-2">
-                        <History size={14} className="text-primary" /> Transaction History
-                      </h3>
-                      <button onClick={fetchWallet} className="text-muted-foreground hover:text-primary transition-colors">
-                        <RefreshCw size={13} />
-                      </button>
+                  <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(16px)' }}>
+                    <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.16)', background: 'rgba(255,255,255,0.4)' }}>
+                      <h3 className="font-bold text-foreground flex items-center gap-2"><History size={14} className="text-primary" /> Transaction History</h3>
+                      <button onClick={fetchWallet} className="text-muted-foreground hover:text-primary transition-colors"><RefreshCw size={13} /></button>
                     </div>
-                    <div className="divide-y divide-border max-h-[300px] overflow-y-auto">
+                    <div className="divide-y max-h-[280px] overflow-y-auto" style={{ divideColor: 'hsla(258,78%,75%,0.12)' } as any}>
                       {walletLoading ? (
                         <div className="p-6 text-center text-muted-foreground text-sm">Loading...</div>
                       ) : walletTx.length === 0 ? (
                         <div className="p-6 text-center text-muted-foreground text-sm">No transactions yet</div>
                       ) : walletTx.map((tx: any) => (
-                        <div key={tx.id} className="flex items-center justify-between px-4 py-3">
+                        <div key={tx.id} className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.10)' }}>
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
-                              {tx.type === 'credit'
-                                ? <TrendingUp size={12} className="text-green-500" />
-                                : <TrendingDown size={12} className="text-destructive" />
-                              }
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center`} style={{ background: tx.type === 'credit' ? 'hsla(158,80%,48%,0.12)' : 'hsla(0,80%,60%,0.10)' }}>
+                              {tx.type === 'credit' ? <TrendingUp size={12} style={{ color: 'hsl(158,80%,42%)' }} /> : <TrendingDown size={12} className="text-destructive" />}
                             </div>
                             <div>
                               <p className="text-xs font-medium text-foreground">{tx.note || (tx.type === 'credit' ? 'Credit' : 'Debit')}</p>
@@ -1200,7 +1075,7 @@ const UserDashboard = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-500' : 'text-destructive'}`}>
+                            <p className={`text-sm font-bold`} style={{ color: tx.type === 'credit' ? 'hsl(158,80%,42%)' : 'hsl(var(--destructive))' }}>
                               {tx.type === 'credit' ? '+' : '-'}৳{tx.amount}
                             </p>
                             <p className="text-[10px] text-muted-foreground">Balance: ৳{tx.balance_after}</p>
@@ -1210,69 +1085,65 @@ const UserDashboard = () => {
                     </div>
                   </div>
 
-                  {/* How it works */}
-                  <div className="rounded-2xl border border-border p-5 bg-muted/10">
+                  {/* How to use wallet */}
+                  <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                     <p className="text-sm font-bold mb-3 text-foreground">How to use your wallet?</p>
                     {[
-                      { n: '1', t: 'Top-up: Choose amount → Pay via bKash/Nagad → Enter TrxID' },
-                      { n: '2', t: 'Admin verifies payment and credits your wallet balance' },
-                      { n: '3', t: 'At checkout, select "Wallet" as payment method to pay instantly' },
-                    ].map(({ n, t }) => (
+                      { n: '1', text: 'Top-up: Choose amount → Pay via bKash/Nagad → Enter TrxID' },
+                      { n: '2', text: 'Admin verifies payment and credits your wallet balance' },
+                      { n: '3', text: 'At checkout, select "Wallet" as payment method to pay instantly' },
+                    ].map(({ n, text }) => (
                       <div key={n} className="flex items-start gap-3 mb-2 last:mb-0">
-                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-primary-foreground flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>
-                        <span className="text-sm text-muted-foreground">{t}</span>
+                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>
+                        <span className="text-sm text-muted-foreground">{text}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* ── LANGUAGE TAB ── */}
+              {/* ── Language Tab ── */}
               {activeTab === 'language' && (
-                <div className="space-y-6">
+                <div className="space-y-5">
                   <div>
-                    <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2">
-                      <Globe size={18} className="text-primary" /> ভাষা নির্বাচন
-                    </h2>
+                    <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2"><Globe size={18} className="text-primary" /> ভাষা নির্বাচন</h2>
                     <p className="text-sm text-muted-foreground">আপনার পছন্দের ভাষা বেছে নিন</p>
                   </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {LANGUAGES.map(lang => {
                       const isActive = selectedLang === lang.code;
                       return (
-                        <button
-                          key={lang.code}
-                          onClick={() => {
-                            const code = lang.code as LangCode;
-                            setSelectedLang(code);
-                            setStoredLang(code);
-                            toast.success(`${t(code, 'language_changed')}: ${lang.native}`);
-                          }}
-                          className={`flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-200 ${
-                            isActive
-                              ? 'border-primary/60 bg-primary/10'
-                              : 'border-border glass-card hover:border-primary/30 hover:bg-muted/20'
-                          }`}
-                        >
+                        <button key={lang.code} onClick={() => {
+                          const code = lang.code as LangCode;
+                          setSelectedLang(code); setStoredLang(code);
+                          toast.success(`${t(code, 'language_changed')}: ${lang.native}`);
+                        }}
+                          className="flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-200"
+                          style={isActive ? {
+                            background: 'linear-gradient(135deg, rgba(99,82,234,0.10), rgba(99,82,234,0.06))',
+                            border: '1.5px solid hsla(258,78%,65%,0.35)',
+                            boxShadow: '0 4px 16px hsla(258,78%,55%,0.10)',
+                            backdropFilter: 'blur(12px)',
+                          } : {
+                            background: 'rgba(255,255,255,0.65)',
+                            border: '1px solid hsla(258,78%,75%,0.18)',
+                            backdropFilter: 'blur(8px)',
+                          }}>
                           <span className="text-3xl leading-none">{lang.flag}</span>
                           <div className="flex-1 min-w-0">
-                            <p className={`font-bold text-sm ${isActive ? 'text-primary' : 'text-foreground'}`}>
-                              {lang.native}
-                            </p>
+                            <p className={`font-bold text-sm ${isActive ? 'text-primary' : 'text-foreground'}`}>{lang.native}</p>
                             <p className="text-xs text-muted-foreground">{lang.name} · {lang.region}</p>
                           </div>
                           {isActive && (
-                            <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 bg-primary">
-                              <CheckCircle2 size={12} className="text-primary-foreground" />
+                            <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>
+                              <CheckCircle2 size={12} className="text-white" />
                             </div>
                           )}
                         </button>
                       );
                     })}
                   </div>
-
-                  <div className="glass-card rounded-2xl p-4 border border-border">
+                  <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
                     <p className="text-xs text-muted-foreground flex items-start gap-2">
                       <Globe size={13} className="text-primary mt-0.5 flex-shrink-0" />
                       {t(selectedLang, 'language_note')}
@@ -1281,9 +1152,8 @@ const UserDashboard = () => {
                 </div>
               )}
 
-
-            </div>{/* end Content Panel */}
-          </div>
+            </div>
+          </div>{/* end Content Panel */}
         </div>
       </main>
     </div>
