@@ -247,12 +247,23 @@ const StepCard = ({ step, index }: { step: typeof STEPS[0]; index: number }) => 
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      {/* Left colored stripe */}
+      {/* Left stripe */}
       <div className="absolute left-0 top-0 bottom-0 w-[3px]"
         style={{ background: `linear-gradient(180deg, ${step.from}, ${step.to})` }} />
+      {/* Right stripe */}
+      <div className="absolute right-0 top-0 bottom-0 w-[3px]"
+        style={{ background: `linear-gradient(180deg, ${step.to}, ${step.from})` }} />
+      {/* Top stripe */}
+      <div className="absolute top-0 left-0 right-0 h-[3px]"
+        style={{ background: `linear-gradient(90deg, ${step.from}, ${step.to})` }} />
+      {/* Bottom stripe */}
+      <div className="absolute bottom-0 left-0 right-0 h-[3px]"
+        style={{ background: `linear-gradient(90deg, ${step.to}, ${step.from})` }} />
       {/* Corner glow */}
       <div className="absolute bottom-0 right-0 w-20 h-20 pointer-events-none"
         style={{ background: `radial-gradient(circle at bottom right, ${step.from}12, transparent 70%)` }} />
+      <div className="absolute top-0 left-0 w-20 h-20 pointer-events-none"
+        style={{ background: `radial-gradient(circle at top left, ${step.to}10, transparent 70%)` }} />
 
       <div className="px-4 py-5 text-center flex flex-col items-center gap-3">
         {/* Step number pill */}
