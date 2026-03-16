@@ -936,6 +936,16 @@ const AdminProducts = () => {
                 {/* ======= SEO TAB ======= */}
                 {activeTab === 'seo' && (
                   <div className="space-y-4">
+                    {/* AI Generate SEO */}
+                    <button
+                      type="button"
+                      onClick={() => generateAiContent('seo')}
+                      disabled={!form.name.trim() || aiLoading !== null}
+                      className="w-full flex items-center justify-center gap-2 text-sm py-2.5 px-4 rounded-xl border border-primary/40 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      {aiLoading === 'seo' ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                      {aiLoading === 'seo' ? 'SEO কন্টেন্ট তৈরি হচ্ছে...' : '✨ AI দিয়ে SEO Title ও Meta Description অটো-জেনারেট করুন'}
+                    </button>
                     <div>
                       <label className={lc}>SEO Title <span className="text-muted-foreground/60">(max 60 chars)</span></label>
                       <input value={form.seo_title} onChange={e => setForm(p => ({ ...p, seo_title: e.target.value }))}
