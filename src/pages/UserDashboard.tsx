@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import PaymentInstructions from '@/components/store/PaymentInstructions';
 import bkashLogo from '@/assets/payment/bkash.png';
 import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
