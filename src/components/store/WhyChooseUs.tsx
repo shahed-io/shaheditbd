@@ -162,26 +162,39 @@ const WhyChooseUs = () => {
         </div>
 
         {/* ── How to Order ── */}
-        <div>
-          <div className="text-center mb-12">
-            {/* Badge */}
+        <div className="relative rounded-3xl overflow-hidden p-6 sm:p-10"
+          style={{
+            background: 'linear-gradient(155deg, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0.48) 100%)',
+            backdropFilter: 'blur(40px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+            border: '1.5px solid hsla(15,100%,62%,0.20)',
+            boxShadow: '0 8px 48px hsla(15,100%,62%,0.08), 0 1px 0 rgba(255,255,255,0.95) inset',
+          }}>
+          {/* Top shimmer */}
+          <div className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.9) 50%, transparent)' }} />
+          {/* Corner glow */}
+          <div className="absolute top-0 right-0 w-48 h-48 pointer-events-none"
+            style={{ background: 'radial-gradient(circle at top right, hsla(15,100%,62%,0.08), transparent 70%)' }} />
+
+          <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold mb-5 tracking-widest uppercase"
               style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.80), rgba(255,255,255,0.58))',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid hsla(15,100%,62%,0.30)',
-                color: 'hsl(15,100%,52%)',
-                boxShadow: '0 4px 16px hsla(15,100%,62%,0.14)',
+                background: 'rgba(255,255,255,0.85)',
+                border: '1px solid hsla(15,100%,62%,0.35)',
+                color: 'hsl(15,100%,48%)',
+                boxShadow: '0 4px 16px hsla(15,100%,62%,0.18)',
               }}>
               Order Process
             </div>
-            <h2 className="section-heading text-3xl sm:text-4xl text-foreground">
+            <h2 className="section-heading text-3xl sm:text-4xl"
+              style={{ color: 'hsl(226,35%,14%)' }}>
               How to{' '}
               <span style={{ background: 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,58%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Order
               </span>
             </h2>
-            <p className="text-muted-foreground mt-3 text-[14px]">
+            <p className="mt-3 text-[14px]" style={{ color: 'hsl(226,20%,45%)' }}>
               চার ধাপে আপনার product পান — সহজ, দ্রুত, নিরাপদ।
             </p>
           </div>
@@ -190,16 +203,16 @@ const WhyChooseUs = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative">
             {/* Connecting line (desktop only) */}
             <div className="hidden lg:block absolute top-[3.2rem] left-[calc(12.5%+1.5rem)] right-[calc(12.5%+1.5rem)] h-px z-0"
-              style={{ background: 'linear-gradient(90deg, hsl(243,75%,65%), hsl(15,100%,62%), hsl(158,64%,48%), hsl(263,70%,62%))', opacity: 0.20 }} />
+              style={{ background: 'linear-gradient(90deg, hsl(243,75%,65%), hsl(15,100%,62%), hsl(158,64%,48%), hsl(263,70%,62%))', opacity: 0.25 }} />
 
             {STEPS.map((step, i) => (
               <div key={i} className="relative z-10 pt-5">
                 {/* Step badge */}
                 <div className="absolute -top-0 left-1/2 -translate-x-1/2 z-20">
-                  <span className="text-[11px] font-fira font-bold px-3.5 py-1.5 rounded-full text-white shadow-lg"
+                  <span className="text-[11px] font-fira font-bold px-3.5 py-1.5 rounded-full text-white"
                     style={{
                       background: `linear-gradient(135deg, ${step.from}, ${step.to})`,
-                      boxShadow: `0 4px 14px ${step.from}50`,
+                      boxShadow: `0 4px 14px ${step.from}60`,
                     }}>
                     {step.n}
                   </span>
@@ -207,22 +220,21 @@ const WhyChooseUs = () => {
 
                 <GlassCard from={step.from} to={step.to} className="w-full h-full">
                   <div className="px-3 sm:px-5 pt-8 pb-5 text-center flex flex-col items-center gap-3">
-                    {/* Emoji bubble */}
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl"
                       style={{
-                        background: `linear-gradient(135deg, ${step.from}20, ${step.to}14)`,
-                        border: `1.5px solid ${step.from}40`,
-                        boxShadow: `0 4px 14px ${step.from}20`,
+                        background: `linear-gradient(135deg, ${step.from}25, ${step.to}18)`,
+                        border: `1.5px solid ${step.from}50`,
+                        boxShadow: `0 4px 14px ${step.from}25`,
                       }}>
                       {step.emoji}
                     </div>
                     <div>
                       <h3 className="font-sora font-bold text-[12.5px] sm:text-[13.5px] mb-1.5"
-                        style={{ color: 'hsl(226,35%,18%)' }}>
+                        style={{ color: 'hsl(226,35%,16%)' }}>
                         {step.title}
                       </h3>
                       <p className="text-[11px] sm:text-[12px] leading-relaxed"
-                        style={{ color: 'hsl(226,20%,48%)' }}>
+                        style={{ color: 'hsl(226,20%,44%)' }}>
                         {step.desc}
                       </p>
                     </div>
