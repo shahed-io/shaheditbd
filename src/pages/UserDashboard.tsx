@@ -996,7 +996,7 @@ const UserDashboard = () => {
                                     className={`flex flex-col items-center gap-1 p-3 rounded-xl border text-xs font-semibold transition-all ${
                                       topupPaymentMethod === p.id ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-primary/40 bg-white/60'
                                     }`}>
-                                    <span className="text-xl">{p.icon}</span>{p.label}
+                                    <img src={p.logo} alt={p.label} className="h-7 w-auto object-contain rounded" /><span className="text-xs">{p.label}</span>
                                   </button>
                                 ))}
                               </div>
