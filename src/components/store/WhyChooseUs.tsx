@@ -92,29 +92,43 @@ const WhyChooseUs = () => {
           style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.05), transparent)', filter: 'blur(80px)' }} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 relative z-10">
 
         {/* ── Why Choose Us ── */}
-        <div>
-          <div className="text-center mb-12">
-            {/* Badge */}
+        <div className="relative rounded-3xl overflow-hidden p-6 sm:p-10"
+          style={{
+            background: 'linear-gradient(155deg, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0.48) 100%)',
+            backdropFilter: 'blur(40px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+            border: '1.5px solid hsla(243,75%,65%,0.22)',
+            boxShadow: '0 8px 48px hsla(243,75%,62%,0.10), 0 1px 0 rgba(255,255,255,0.95) inset',
+          }}>
+          {/* Section top shimmer */}
+          <div className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.9) 50%, transparent)' }} />
+          {/* Corner glow */}
+          <div className="absolute top-0 left-0 w-48 h-48 pointer-events-none"
+            style={{ background: 'radial-gradient(circle at top left, hsla(243,75%,65%,0.09), transparent 70%)' }} />
+
+          <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold mb-5 tracking-widest uppercase"
               style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.80), rgba(255,255,255,0.58))',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid hsla(243,75%,65%,0.30)',
-                color: 'hsl(243,75%,55%)',
-                boxShadow: '0 4px 16px hsla(243,75%,65%,0.14)',
+                background: 'rgba(255,255,255,0.85)',
+                border: '1px solid hsla(243,75%,65%,0.35)',
+                color: 'hsl(243,75%,50%)',
+                boxShadow: '0 4px 16px hsla(243,75%,65%,0.18)',
               }}>
               <Sparkles size={12} /> Why Us
             </div>
-            <h2 className="section-heading text-3xl sm:text-4xl text-foreground">
+            <h2 className="section-heading text-3xl sm:text-4xl"
+              style={{ color: 'hsl(226,35%,14%)' }}>
               Why{' '}
               <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,65%), hsl(263,70%,62%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Choose Us?
               </span>
             </h2>
-            <p className="text-muted-foreground mt-3 max-w-lg mx-auto text-[14px] leading-relaxed">
+            <p className="mt-3 max-w-lg mx-auto text-[14px] leading-relaxed"
+              style={{ color: 'hsl(226,20%,45%)' }}>
               Bangladesh's most trusted digital software marketplace since 2020.
             </p>
           </div>
@@ -123,24 +137,23 @@ const WhyChooseUs = () => {
             {FEATURES.map((f, i) => (
               <GlassCard key={i} from={f.from} to={f.to}>
                 <div className="p-5 sm:p-6 flex items-start gap-4">
-                  {/* Icon bubble */}
                   <div
                     className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
                     style={{
-                      background: `linear-gradient(135deg, ${f.from}20, ${f.to}14)`,
-                      border: `1.5px solid ${f.from}40`,
-                      boxShadow: `0 4px 14px ${f.from}20`,
+                      background: `linear-gradient(135deg, ${f.from}25, ${f.to}18)`,
+                      border: `1.5px solid ${f.from}50`,
+                      boxShadow: `0 4px 14px ${f.from}25`,
                     }}>
                     {f.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-sora font-bold text-[13.5px] flex items-center gap-1.5"
-                      style={{ color: 'hsl(226,35%,18%)' }}>
+                      style={{ color: 'hsl(226,35%,16%)' }}>
                       {f.title}
                       <CheckCircle2 size={12} style={{ color: f.from }} className="flex-shrink-0" />
                     </h3>
                     <p className="text-[12px] mt-1.5 leading-relaxed"
-                      style={{ color: 'hsl(226,20%,48%)' }}>{f.desc}</p>
+                      style={{ color: 'hsl(226,20%,44%)' }}>{f.desc}</p>
                   </div>
                 </div>
               </GlassCard>
