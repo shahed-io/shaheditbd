@@ -140,6 +140,7 @@ const App = () => (
                   <Route path="pages" element={<AdminPages />} />
                   <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
                   <Route path="wallet" element={<AdminWallet />} />
+                  <Route path="hero-banner" element={<AdminHeroBanner />} />
                 </Route>
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-conditions" element={<TermsConditions />} />
