@@ -379,7 +379,7 @@ const Checkout = () => {
             {paymentMethod !== 'wallet' && (
               <>
                 <PaymentInstructions
-                  paymentMethodId={paymentMethod as import('@/components/store/PaymentInstructions').PMId}
+                  paymentMethodId={paymentMethod as PMId}
                   amount={finalTotal}
                   amountLabel="মোট পরিমাণ"
                 />

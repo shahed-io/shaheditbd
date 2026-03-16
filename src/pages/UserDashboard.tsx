@@ -1001,11 +1001,11 @@ const UserDashboard = () => {
                                 ))}
                               </div>
                             </div>
-                            <div className={`p-4 rounded-xl bg-gradient-to-r ${pm.color} text-white`}>
-                              <p className="text-xs opacity-80 mb-1">{pm.type}</p>
-                              <p className="text-lg font-black tracking-widest">{pm.number}</p>
-                              <p className="text-xs opacity-80 mt-1">Send <span className="font-black">৳{topupAmount}</span> via {pm.label} {pm.type}</p>
-                            </div>
+                            <PaymentInstructions
+                              paymentMethodId={topupPaymentMethod as import('@/components/store/PaymentInstructions').PMId}
+                              amount={parseFloat(topupAmount) || 0}
+                              amountLabel="টপ-আপ পরিমাণ"
+                            />
                             <div>
                               <label className={labelCls}>Transaction ID (TrxID)</label>
                               <input value={topupTxId} onChange={e => setTopupTxId(e.target.value)} placeholder="Enter your TrxID after payment"
