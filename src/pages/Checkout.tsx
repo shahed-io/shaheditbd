@@ -334,10 +334,20 @@ const Checkout = () => {
                   key={pm.id}
                   type="button"
                   onClick={() => setPaymentMethod(pm.id)}
-                  className={`py-2.5 px-1 rounded-xl font-bold text-white text-xs transition-all bg-gradient-to-r ${pm.color} ${paymentMethod === pm.id ? 'ring-2 ring-offset-2 ring-offset-background scale-105 shadow-lg' : 'opacity-60 hover:opacity-90'}`}
+                  className={`flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl text-xs font-semibold transition-all border-2 ${
+                    paymentMethod === pm.id
+                      ? 'border-primary bg-primary/8 scale-105 shadow-md text-foreground'
+                      : 'border-border bg-background/60 hover:border-primary/40 text-muted-foreground'
+                  }`}
                 >
-                  <div className="text-base mb-0.5">{pm.icon}</div>
-                  {pm.label}
+                  {pm.logo ? (
+                    <img src={pm.logo} alt={pm.label} className="h-8 w-auto object-contain rounded-md" />
+                  ) : (
+                    <div className={`h-8 w-10 rounded-md flex items-center justify-center bg-gradient-to-br ${pm.color}`}>
+                      <Wallet size={16} className="text-white" />
+                    </div>
+                  )}
+                  <span>{pm.label}</span>
                 </button>
               ))}
             </div>
