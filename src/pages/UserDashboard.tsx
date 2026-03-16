@@ -134,6 +134,7 @@ const UserDashboard = () => {
   const [notiLoading, setNotiLoading] = useState(false);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [referralLoading, setReferralLoading] = useState(false);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletTx, setWalletTx] = useState<any[]>([]);
   const [walletLoading, setWalletLoading] = useState(false);
