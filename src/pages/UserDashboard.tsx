@@ -1,4 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
+import bkashLogo from '@/assets/payment/bkash.png';
+import nagadLogo from '@/assets/payment/nagad.png';
+import rocketLogo from '@/assets/payment/rocket.png';
+import upayLogo from '@/assets/payment/upay.png';
+import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
