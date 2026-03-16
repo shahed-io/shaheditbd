@@ -69,6 +69,26 @@ const STATIC_SLIDES: Slide[] = [
   },
 ];
 
+// Convert DB slide to internal Slide format
+const dbSlideToSlide = (s: SlideData): Slide => ({
+  tag: s.tag,
+  title: s.title,
+  titleAccent: s.titleAccent,
+  subtitle: s.subtitle,
+  desc: s.desc,
+  price: s.price,
+  original: s.original,
+  off: s.off,
+  badge: s.badge,
+  accentFrom: s.accentFrom,
+  accentTo: s.accentTo,
+  glowFrom: `${s.accentFrom.replace(')', ',0.18)').replace('hsl(', 'hsla(')}`,
+  glowTo: `${s.accentTo.replace(')', ',0.10)').replace('hsl(', 'hsla(')}`,
+  emoji: s.emoji,
+  features: s.features,
+  comboSlide: false,
+});
+
 const STATS = [
   { label: 'Products',         value: '500+', icon: '🛍️', color: 'hsl(243,75%,55%)' },
   { label: 'Orders Delivered', value: '25K+', icon: '✅', color: 'hsl(158,64%,38%)' },
@@ -79,11 +99,24 @@ const STATS = [
 const HeroBanner = () => {
   const [active, setActive] = useState(0);
   const [dir, setDir] = useState<'in' | 'out'>('in');
+  const { data: bannerData } = useHeroBanner();
+
+  const SLIDES: Slide[] = bannerData?.slides && bannerData.slides.length > 0
+    ? bannerData.slides.filter(s => s.enabled).map(dbSlideToSlide)
+    : STATIC_SLIDES;
+
+  const bgStyle = (() => {
+    const bg = bannerData?.bg;
+    if (!bg || bg.bgType === 'default') return 'hsl(var(--background))';
+    if (bg.bgType === 'color') return bg.bgColor;
+    if (bg.bgType === 'gradient') return `linear-gradient(135deg, ${bg.bgGradientFrom}, ${bg.bgGradientTo})`;
+    return 'hsl(var(--background))';
+  })();
 
   useEffect(() => {
     const timer = setInterval(() => advance(1), 5500);
     return () => clearInterval(timer);
-  }, [active]);
+  }, [active, SLIDES.length]);
 
   const advance = (delta: number) => {
     setDir('out');
@@ -96,7 +129,7 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
+    <section className="relative overflow-hidden" style={{ background: bgStyle }}>
       {/* Animated bg blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 transition-all duration-700"
