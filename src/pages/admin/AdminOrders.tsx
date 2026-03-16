@@ -679,6 +679,14 @@ const AdminOrders = () => {
     if (error) { toast.error(handleDbError(error)); }
     else {
       toast.success(successMsg);
+      // Send status update email if status changed
+      if (updates.status) {
+        try {
+          await supabase.functions.invoke('send-order-email', {
+            body: { type: 'status_update', orderId: id, newStatus: updates.status },
+          });
+        } catch (e) { console.error('Email send failed:', e); }
+      }
       // Refresh orders and update selected order if open
       fetchOrders();
       if (selectedOrder?.id === id) {
