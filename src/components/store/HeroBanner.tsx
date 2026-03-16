@@ -209,10 +209,19 @@ const HeroBanner = () => {
 
             {/* CTA */}
             <div className="flex flex-wrap gap-3">
-              <button className="flex items-center gap-2 px-7 py-4 rounded-2xl text-[14px] font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
-                style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 8px 28px ${slide.accentFrom}55` }}>
-                <ShoppingBag size={17} /> Order Now <ArrowRight size={15} />
-              </button>
+              {slide.productSlug ? (
+                <a href={`/product/${slide.productSlug}`}
+                  className="flex items-center gap-2 px-7 py-4 rounded-2xl text-[14px] font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
+                  style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 8px 28px ${slide.accentFrom}55` }}>
+                  <ShoppingBag size={17} /> Order Now <ArrowRight size={15} />
+                </a>
+              ) : (
+                <a href="/shop"
+                  className="flex items-center gap-2 px-7 py-4 rounded-2xl text-[14px] font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
+                  style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 8px 28px ${slide.accentFrom}55` }}>
+                  <ShoppingBag size={17} /> Order Now <ArrowRight size={15} />
+                </a>
+              )}
               <a href="/shop"
                 className="flex items-center gap-2 px-6 py-4 rounded-2xl text-[14px] font-semibold transition-all hover:scale-[1.02]"
                 style={{ background: `${slide.accentFrom}08`, border: `1px solid ${slide.accentFrom}25`, color: 'hsl(var(--foreground))' }}>
