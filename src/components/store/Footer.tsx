@@ -1,4 +1,5 @@
 import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText } from 'lucide-react';
+import NewsletterSection from './NewsletterSection';
 import BrandLogo from './BrandLogo';
 
 const NAV_COL = [
@@ -25,6 +26,7 @@ const NAV_COL = [
       { label: 'My Account',     href: '/dashboard' },
       { label: 'Contact Us',     href: '/contact' },
       { label: 'All Products',   href: '/shop' },
+      { label: 'Track Order',    href: '/track-order' },
       { label: 'Software Download Link', href: '/help' },
     ]
   },
@@ -248,6 +250,8 @@ const Footer = () => (
           </div>
         ))}
       </div>
+      {/* ── Newsletter ── */}
+      <NewsletterSection />
     </div>
 
     {/* ── Trust bar ── */}
