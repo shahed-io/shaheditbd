@@ -112,11 +112,11 @@ const HeroBanner = () => {
           style={{ background: `linear-gradient(90deg, transparent, ${slide.accentFrom}40, ${slide.accentTo}40, transparent)` }} />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10 lg:pt-20 lg:pb-14">
-        <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8 sm:pt-14 sm:pb-10 lg:pt-20 lg:pb-14">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-14 lg:gap-20 items-center">
 
           {/* Left Content */}
-          <div className="space-y-7"
+          <div className="space-y-5 sm:space-y-7"
             style={{
               opacity:    dir === 'in' ? 1 : 0,
               transform:  dir === 'in' ? 'none' : 'translateY(12px)',
