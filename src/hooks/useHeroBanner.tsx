@@ -17,6 +17,7 @@ export type SlideData = {
   emoji: string;
   features: string[];
   enabled: boolean;
+  productSlug: string;
 };
 
 export type BgSettings = {

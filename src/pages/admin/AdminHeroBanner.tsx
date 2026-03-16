@@ -20,6 +20,7 @@ type Slide = {
   emoji: string;
   features: SlideFeature[];
   enabled: boolean;
+  productSlug: string;
 };
 
 type BgSettings = {
