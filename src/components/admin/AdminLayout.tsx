@@ -33,6 +33,9 @@ const menuItems = [
   { icon: Users, label: 'Customers', path: '/admin/customers' },
   { icon: Wallet, label: 'Wallet', path: '/admin/wallet' },
   { icon: Sliders, label: 'Hero Banner', path: '/admin/hero-banner' },
+  { icon: Flame, label: 'Flash Sale', path: '/admin/flash-sale' },
+  { icon: Star, label: 'Testimonials', path: '/admin/testimonials' },
+  { icon: Megaphone, label: 'Announcement Bar', path: '/admin/announcement-bar' },
   { icon: CreditCard, label: 'Payments', path: '/admin/payments' },
   { icon: Percent, label: 'Coupons', path: '/admin/coupons' },
   { icon: Gift, label: 'Referrals', path: '/admin/referrals' },
@@ -41,6 +44,9 @@ const menuItems = [
   { icon: Layout, label: 'Pages', path: '/admin/pages' },
   { icon: HelpCircle, label: 'Help Center', path: '/admin/help' },
   { icon: FolderDown, label: 'Software Downloads', path: '/admin/software-downloads' },
+  { icon: Mail, label: 'Newsletter', path: '/admin/newsletter' },
+  { icon: FileText, label: 'Product Reviews', path: '/admin/product-reviews' },
+  { icon: ArrowLeftRight, label: 'Import / Export', path: '/admin/import-export' },
   {
     icon: Globe, label: 'SEO Settings', path: '/admin/seo',
     children: [

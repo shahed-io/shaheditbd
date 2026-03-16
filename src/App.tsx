@@ -68,6 +68,12 @@ import AdminRedirects from "./pages/admin/seo/AdminRedirects";
 import AdminBrokenLinks from "./pages/admin/seo/AdminBrokenLinks";
 import AdminWallet from "./pages/admin/AdminWallet";
 import AdminHeroBanner from "./pages/admin/AdminHeroBanner";
+import AdminFlashSale from "./pages/admin/AdminFlashSale";
+import AdminTestimonials from "./pages/admin/AdminTestimonials";
+import AdminAnnouncementBar from "./pages/admin/AdminAnnouncementBar";
+import AdminNewsletterSubscribers from "./pages/admin/AdminNewsletterSubscribers";
+import AdminProductImportExport from "./pages/admin/AdminProductImportExport";
+import AdminProductReviews from "./pages/admin/AdminProductReviews";
 
 const queryClient = new QueryClient({
   defaultOptions: {
