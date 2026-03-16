@@ -111,6 +111,7 @@ const AdminProducts = () => {
   const [galleryUploading, setGalleryUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const [aiLoading, setAiLoading] = useState<string | null>(null); // which field is generating
 
   const parentCategories = categories.filter(c => !c.parent_id);
   const subCategories = categories.filter(
