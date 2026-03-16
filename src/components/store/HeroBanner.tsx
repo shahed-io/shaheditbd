@@ -408,9 +408,9 @@ const HeroBanner = () => {
         </div>
 
         {/* Slider Controls */}
-        <div className="flex items-center justify-center gap-4 mt-14">
+        <div className="flex items-center justify-center gap-4 mt-8 sm:mt-14">
           <button onClick={() => advance(-1)}
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            className="w-10 h-10 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
             style={{ background: `${slide.accentFrom}10`, border: `1px solid ${slide.accentFrom}25`, color: slide.accentFrom }}>
             <ChevronLeft size={16} />
           </button>
@@ -427,22 +427,22 @@ const HeroBanner = () => {
             ))}
           </div>
           <button onClick={() => advance(1)}
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            className="w-10 h-10 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
             style={{ background: `${slide.accentFrom}10`, border: `1px solid ${slide.accentFrom}25`, color: slide.accentFrom }}>
             <ChevronRight size={16} />
           </button>
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-12" style={{ borderTop: '1px solid hsla(258,60%,60%,0.1)' }}>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mt-8 sm:mt-12 pt-8 sm:pt-12" style={{ borderTop: '1px solid hsla(258,60%,60%,0.1)' }}>
           {STATS.map((s) => (
             <div key={s.label} className="group text-center cursor-default">
-              <div className="text-3xl mb-2 transition-transform duration-300 group-hover:scale-110">{s.icon}</div>
-              <div className="text-[1.7rem] font-sora font-black leading-none gradient-text-slide"
+              <div className="text-2xl sm:text-3xl mb-1.5 sm:mb-2 transition-transform duration-300 group-hover:scale-110">{s.icon}</div>
+              <div className="text-[1.4rem] sm:text-[1.7rem] font-sora font-black leading-none gradient-text-slide"
                 style={{ ['--g-from' as any]: slide.accentFrom, ['--g-to' as any]: slide.accentTo } as React.CSSProperties}>
                 {s.value}
               </div>
-              <div className="text-[11px] text-muted-foreground font-semibold mt-1.5 uppercase tracking-wider">{s.label}</div>
+              <div className="text-[10px] sm:text-[11px] text-muted-foreground font-semibold mt-1 sm:mt-1.5 uppercase tracking-wider">{s.label}</div>
             </div>
           ))}
         </div>
