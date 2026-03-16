@@ -137,7 +137,7 @@ const HeroBanner = () => {
 
             {/* Title */}
             <div>
-              <h1 className="font-sora font-black leading-[1.04] tracking-tight text-foreground" style={{ fontSize: 'clamp(2.8rem, 6vw, 4.5rem)' }}>
+              <h1 className="font-sora font-black leading-[1.04] tracking-tight text-foreground hero-mobile-title" style={{ fontSize: 'clamp(2.2rem, 7vw, 4.5rem)' }}>
                 {slide.title}{' '}
                 <span className="gradient-text-slide" style={{ ['--g-from' as any]: slide.accentFrom, ['--g-to' as any]: slide.accentTo } as React.CSSProperties}>
                   {slide.titleAccent}
