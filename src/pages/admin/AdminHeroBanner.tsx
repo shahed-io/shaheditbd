@@ -260,6 +260,26 @@ const AdminHeroBanner = () => {
                     {/* Off */}
                     <Field label="ছাড় (% Off)" value={slide.off}
                       onChange={v => updateSlide(slide.id, 'off', v)} placeholder="94%" />
+                    {/* Product Slug */}
+                    <div className="md:col-span-2">
+                      <label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5 block">
+                        🔗 প্রোডাক্ট লিংক (Product Slug)
+                        <span className="text-[10px] text-primary/60">"Order Now" বাটন এই প্রোডাক্টে নিয়ে যাবে</span>
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground bg-muted/40 border border-border rounded-l-xl px-3 py-2.5 font-mono">/product/</span>
+                        <input value={slide.productSlug}
+                          onChange={e => updateSlide(slide.id, 'productSlug', e.target.value.toLowerCase().replace(/\s+/g, '-'))}
+                          placeholder="windows-11-pro"
+                          className="flex-1 bg-muted/30 border border-border rounded-r-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors font-mono" />
+                      </div>
+                      {slide.productSlug && (
+                        <a href={`/product/${slide.productSlug}`} target="_blank" rel="noopener noreferrer"
+                          className="text-[11px] text-primary hover:underline mt-1 inline-flex items-center gap-1">
+                          ↗ /product/{slide.productSlug} — প্রিভিউ দেখুন
+                        </a>
+                      )}
+                    </div>
                   </div>
 
                   {/* Description */}
