@@ -15,7 +15,8 @@ import {
   ChevronRight, ShieldCheck, Home, Camera, Lock, Eye, EyeOff,
   Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
-  History, BellRing, BellOff, ExternalLink, Wallet, Globe
+  History, BellRing, BellOff, ExternalLink, Wallet, Globe,
+  ChevronDown, Key, CreditCard, Receipt, Info
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t } from '@/lib/translations';
