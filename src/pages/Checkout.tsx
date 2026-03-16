@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import PaymentInstructions from '@/components/store/PaymentInstructions';
+import type { PMId } from '@/components/store/PaymentInstructions';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
