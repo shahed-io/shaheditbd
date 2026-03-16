@@ -547,6 +547,27 @@ const AdminProducts = () => {
                         placeholder="windows, license, digital..." className={ic} />
                     </div>
 
+                    {/* Account Type */}
+                    <div>
+                      <label className={lc}>অ্যাকাউন্ট টাইপ <span className="text-muted-foreground/60">(প্রযোজ্য হলে)</span></label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {[
+                          { value: '', label: '— নেই —' },
+                          { value: 'personal', label: '👤 Personal' },
+                          { value: 'shared', label: '👥 Shared' },
+                          { value: 'family', label: '🏠 Family' },
+                          { value: 'student', label: '🎓 Student' },
+                          { value: 'business', label: '💼 Business' },
+                        ].map(opt => (
+                          <button key={opt.value} type="button"
+                            onClick={() => setForm(p => ({ ...p, account_type: opt.value }))}
+                            className={`text-xs py-2 px-2 rounded-xl border transition-colors text-center ${form.account_type === opt.value ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/50'}`}>
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
                     <div className="flex items-center gap-5 flex-wrap pt-1">
                       {[
                         { key: 'is_featured', label: '⭐ Featured' },
@@ -560,7 +581,19 @@ const AdminProducts = () => {
                           <span className="text-sm text-foreground">{label}</span>
                         </label>
                       ))}
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={form.requires_customer_email}
+                          onChange={e => setForm(p => ({ ...p, requires_customer_email: e.target.checked }))}
+                          className="w-4 h-4 accent-primary" />
+                        <span className="text-sm text-foreground">📧 গ্রাহকের ইমেইল লাগবে</span>
+                      </label>
                     </div>
+                    {form.requires_customer_email && (
+                      <div className="rounded-xl p-3 text-xs flex items-start gap-2" style={{ background: 'hsla(200,90%,50%,0.06)', border: '1px solid hsla(200,90%,50%,0.2)' }}>
+                        <span className="text-base">📧</span>
+                        <span className="text-muted-foreground">অর্ডার করার সময় গ্রাহককে তার <strong className="text-foreground">ইমেইল ঠিকানা</strong> দিতে হবে যাতে অ্যাকাউন্ট/লাইসেন্স সেই ইমেইলে সেটআপ করা যায়।</span>
+                      </div>
+                    )}
                   </div>
                 )}
 
