@@ -32,6 +32,7 @@ const menuItems = [
   },
   { icon: Users, label: 'Customers', path: '/admin/customers' },
   { icon: Wallet, label: 'Wallet', path: '/admin/wallet' },
+  { icon: Sliders, label: 'Hero Banner', path: '/admin/hero-banner' },
   { icon: CreditCard, label: 'Payments', path: '/admin/payments' },
   { icon: Percent, label: 'Coupons', path: '/admin/coupons' },
   { icon: Gift, label: 'Referrals', path: '/admin/referrals' },
