@@ -191,6 +191,12 @@ const AdminProducts = () => {
     const cleanAttrs = form.attributes.filter(a => a.key.trim());
     const tagList = form.tags.split(',').map(t => t.trim()).filter(Boolean);
     if (form.is_flash_sale && !tagList.includes('flash-sale')) tagList.push('flash-sale');
+    if (form.requires_customer_email && !tagList.includes('requires-email')) tagList.push('requires-email');
+
+    // Prepend account_type as a hidden attribute if set
+    const finalAttrs = form.account_type
+      ? [{ key: '__account_type', value: form.account_type }, ...cleanAttrs]
+      : cleanAttrs;
 
     const payload: any = {
       name: form.name,
@@ -226,7 +232,7 @@ const AdminProducts = () => {
       seo_title: form.seo_title || null,
       seo_description: form.seo_description || null,
       variants: cleanVariants.length ? cleanVariants : [],
-      attributes: cleanAttrs.length ? cleanAttrs : [],
+      attributes: finalAttrs.length ? finalAttrs : [],
     };
 
     try {
