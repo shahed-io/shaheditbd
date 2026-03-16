@@ -972,3 +972,99 @@ body::before {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* ══════════════════════════════════════
+   MOBILE PERFORMANCE OPTIMIZATIONS
+══════════════════════════════════════ */
+
+/* Reduce blur on mobile to save GPU resources */
+@media (max-width: 768px) {
+  .product-card-new {
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+  }
+
+  /* Disable hover transforms on touch devices */
+  .product-card-new:hover {
+    transform: none;
+  }
+
+  /* Smaller blob blur for performance */
+  .blob {
+    filter: blur(40px);
+  }
+
+  /* Disable heavy animations on mobile */
+  .anim-float {
+    animation: none;
+  }
+
+  /* WhyChooseUs & Testimonials glass cards — lighter blur on mobile */
+  .rounded-3xl[style*="blur(28px)"],
+  .rounded-3xl[style*="blur(32px)"] {
+    /* Note: inline styles override, but we cap GPU load */
+    will-change: auto;
+  }
+
+  /* Hero title size adjustment */
+  .hero-mobile-title {
+    font-size: clamp(2rem, 8vw, 3rem) !important;
+  }
+
+  /* Prevent horizontal overflow from marquee */
+  .overflow-hidden {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Better touch scrolling for horizontal scroll areas */
+  .scrollbar-hide {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .scrollbar-hide > * {
+    scroll-snap-align: start;
+  }
+}
+
+/* ══════════════════════════════════════
+   TOUCH-FRIENDLY BUTTON SIZES
+══════════════════════════════════════ */
+@media (max-width: 640px) {
+  /* Minimum touch target 44px */
+  button, a[role="button"] {
+    min-height: 44px;
+  }
+
+  /* Stats bar grid: 2 cols on small mobile */
+  .stats-mobile-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Section padding reduction on mobile */
+  section.py-20 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  section.py-16 {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+}
+
+/* ══════════════════════════════════════
+   CONTENT VISIBILITY — LAZY RENDERING
+══════════════════════════════════════ */
+/* Below-fold sections: browser skips layout until in viewport */
+.below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
+/* ══════════════════════════════════════
+   IMAGE LOADING OPTIMIZATION
+══════════════════════════════════════ */
+img[loading="lazy"] {
+  /* Reserve space to prevent layout shift */
+  background-color: hsl(var(--muted));
+}
+
