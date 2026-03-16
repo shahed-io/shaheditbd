@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Megaphone, Plus, Edit, Trash2, ToggleLeft, ToggleRight, Tag, Bell } from 'lucide-react';
+import { Megaphone, Plus, Edit, Trash2, Tag, Bell, Mail, Send, Users, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 
@@ -12,6 +12,13 @@ const AdminMarketing = () => {
   const [form, setForm] = useState({ key: 'announcement_text', value: '', category: 'marketing' });
   const [saving, setSaving] = useState(false);
 
+  // Promo Email State
+  const [showEmailSection, setShowEmailSection] = useState(false);
+  const [emailForm, setEmailForm] = useState({ subject: '', body: '', ctaText: '', ctaUrl: 'https://shahedstore.com.bd/shop' });
+  const [targetAudience, setTargetAudience] = useState<'all_users' | 'newsletter'>('all_users');
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [recipientCount, setRecipientCount] = useState<number | null>(null);
+
   const fetchAnnouncements = async () => {
     setLoading(true);
     const { data } = await supabase.from('site_settings').select('*').eq('category', 'marketing').order('updated_at', { ascending: false });
@@ -20,6 +27,19 @@ const AdminMarketing = () => {
   };
 
   useEffect(() => { fetchAnnouncements(); }, []);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      if (targetAudience === 'all_users') {
+        const { count } = await supabase.from('profiles').select('id', { count: 'exact', head: true }).not('email', 'is', null);
+        setRecipientCount(count);
+      } else {
+        const { count } = await supabase.from('newsletter_subscribers').select('id', { count: 'exact', head: true }).eq('status', 'active');
+        setRecipientCount(count);
+      }
+    };
+    fetchCount();
+  }, [targetAudience]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +61,52 @@ const AdminMarketing = () => {
     fetchAnnouncements();
   };
 
+  const handleSendPromoEmail = async () => {
+    if (!emailForm.subject.trim() || !emailForm.body.trim()) {
+      toast.error('বিষয় এবং বার্তা লিখুন');
+      return;
+    }
+    if (!confirm(`${recipientCount || 0} জন প্রাপকের কাছে ইমেইল পাঠাবেন?`)) return;
+
+    setSendingEmail(true);
+    try {
+      // Fetch recipient emails
+      let emails: string[] = [];
+      if (targetAudience === 'all_users') {
+        const { data } = await supabase.from('profiles').select('email').not('email', 'is', null);
+        emails = (data || []).map((p: any) => p.email).filter(Boolean);
+      } else {
+        const { data } = await supabase.from('newsletter_subscribers').select('email').eq('status', 'active');
+        emails = (data || []).map((p: any) => p.email).filter(Boolean);
+      }
+
+      if (emails.length === 0) {
+        toast.error('কোনো প্রাপক পাওয়া যায়নি');
+        setSendingEmail(false);
+        return;
+      }
+
+      const { error } = await supabase.functions.invoke('send-order-email', {
+        body: {
+          type: 'promotional',
+          promoSubject: emailForm.subject,
+          promoBody: emailForm.body,
+          ctaText: emailForm.ctaText || undefined,
+          ctaUrl: emailForm.ctaUrl || undefined,
+          recipientEmails: emails,
+        },
+      });
+
+      if (error) throw error;
+      toast.success(`✅ ${emails.length} জনকে সফলভাবে ইমেইল পাঠানো হয়েছে!`);
+      setEmailForm({ subject: '', body: '', ctaText: '', ctaUrl: 'https://shahedstore.com.bd/shop' });
+    } catch (e: any) {
+      toast.error('ইমেইল পাঠাতে সমস্যা হয়েছে: ' + (e?.message || String(e)));
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   const quickActions = [
     { label: 'Flash Sale চালু করুন', icon: Tag, desc: 'হোমপেজে ফ্ল্যাশ সেল ব্যানার দেখান', key: 'flash_sale_active' },
     { label: 'Announcement Bar', icon: Bell, desc: 'টপ বারে বিজ্ঞাপন টেক্সট সেট করুন', key: 'announcement_text' },
@@ -54,12 +120,117 @@ const AdminMarketing = () => {
           <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
             Marketing & <span className="gradient-text">Promotions</span>
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">স্টোরের মার্কেটিং কন্টেন্ট পরিচালনা করুন</p>
+          <p className="text-muted-foreground text-sm mt-1">স্টোরের মার্কেটিং কন্টেন্ট ও ইমেইল ক্যাম্পেইন পরিচালনা করুন</p>
         </div>
         <button onClick={() => { setEditing(null); setForm({ key: 'announcement_text', value: '', category: 'marketing' }); setShowForm(true); }}
           className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold">
           <Plus size={16} /> নতুন যোগ করুন
         </button>
+      </div>
+
+      {/* ── Promo Email Section ── */}
+      <div className="glass-card rounded-2xl overflow-hidden">
+        <button
+          onClick={() => setShowEmailSection(!showEmailSection)}
+          className="w-full flex items-center justify-between p-5 hover:bg-muted/10 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+              <Mail size={18} className="text-white" />
+            </div>
+            <div className="text-left">
+              <div className="font-bold text-foreground">📧 বাল্ক প্রমোশনাল ইমেইল</div>
+              <div className="text-xs text-muted-foreground mt-0.5">এক ক্লিকে সব ব্যবহারকারীকে অফার ইমেইল পাঠান</div>
+            </div>
+          </div>
+          {showEmailSection ? <ChevronUp size={16} className="text-muted-foreground" /> : <ChevronDown size={16} className="text-muted-foreground" />}
+        </button>
+
+        {showEmailSection && (
+          <div className="border-t border-border/50 p-5 space-y-4">
+            {/* Audience selector */}
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground mb-2 block uppercase tracking-wide">প্রাপক বেছে নিন</label>
+              <div className="flex gap-2">
+                {[
+                  { key: 'all_users', label: 'সব ব্যবহারকারী', icon: Users },
+                  { key: 'newsletter', label: 'নিউজলেটার সাবস্ক্রাইবার', icon: Bell },
+                ].map(opt => (
+                  <button
+                    key={opt.key}
+                    onClick={() => setTargetAudience(opt.key as any)}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all ${
+                      targetAudience === opt.key
+                        ? 'btn-glow border-transparent'
+                        : 'glass-card border-border text-muted-foreground hover:text-primary'
+                    }`}
+                  >
+                    <opt.icon size={14} />
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              {recipientCount !== null && (
+                <p className="text-xs text-primary mt-2 font-medium">
+                  👥 মোট প্রাপক: <strong>{recipientCount}</strong> জন
+                </p>
+              )}
+            </div>
+
+            {/* Subject */}
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">ইমেইলের বিষয় (Subject) *</label>
+              <input
+                value={emailForm.subject}
+                onChange={e => setEmailForm({ ...emailForm, subject: e.target.value })}
+                placeholder="যেমন: 🎉 বিশেষ ঈদ অফার — ৫০% ছাড় পান!"
+                className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+              />
+            </div>
+
+            {/* Body */}
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">ইমেইলের বার্তা *</label>
+              <textarea
+                value={emailForm.body}
+                onChange={e => setEmailForm({ ...emailForm, body: e.target.value })}
+                rows={5}
+                placeholder="প্রিয় গ্রাহক,&#10;&#10;আমাদের বিশেষ অফারে স্বাগতম! এই সপ্তাহে সব প্রোডাক্টে ৫০% ছাড় পাচ্ছেন..."
+                className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors resize-none"
+              />
+            </div>
+
+            {/* CTA (optional) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">বাটনের লেখা (ঐচ্ছিক)</label>
+                <input
+                  value={emailForm.ctaText}
+                  onChange={e => setEmailForm({ ...emailForm, ctaText: e.target.value })}
+                  placeholder="যেমন: এখনই কিনুন"
+                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">বাটনের লিংক (ঐচ্ছিক)</label>
+                <input
+                  value={emailForm.ctaUrl}
+                  onChange={e => setEmailForm({ ...emailForm, ctaUrl: e.target.value })}
+                  placeholder="https://shahedstore.com.bd/shop"
+                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={handleSendPromoEmail}
+              disabled={sendingEmail || !emailForm.subject || !emailForm.body}
+              className="btn-glow px-6 py-3 rounded-xl flex items-center gap-2 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {sendingEmail ? <><Loader2 size={16} className="animate-spin" /> পাঠানো হচ্ছে...</> : <><Send size={16} /> {recipientCount || 0} জনকে ইমেইল পাঠান</>}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Quick Action Cards */}
