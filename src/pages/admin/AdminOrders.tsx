@@ -180,7 +180,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
               </div>
             )}
             <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '11px', color: '#aaa', borderTop: '1px solid #eee', paddingTop: '16px' }}>
-              ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য! 🙏 • shahedstore.lovable.app
+              ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য! 🙏 • shahedstore.com.bd
             </div>
           </div>
         </div>

@@ -963,7 +963,7 @@ const AdminProducts = () => {
                       <div className="glass-card rounded-xl p-4 border border-border">
                         <p className="text-xs text-muted-foreground mb-2 font-medium">🔍 Google Preview</p>
                         <p className="text-primary text-sm font-medium line-clamp-1">{form.seo_title || form.name || 'Product Title'}</p>
-                        <p className="text-accent text-xs">shahedstore.lovable.app/product/{form.slug || 'product-slug'}</p>
+                        <p className="text-accent text-xs">shahedstore.com.bd/product/{form.slug || 'product-slug'}</p>
                         <p className="text-muted-foreground text-xs mt-1 line-clamp-2">{form.seo_description || 'No description.'}</p>
                       </div>
                     )}

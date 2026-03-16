@@ -671,7 +671,7 @@ const AdminBlog = () => {
                     <p className="text-xs font-semibold text-muted-foreground mb-3 flex items-center gap-1.5"><Globe size={12} /> Google Preview</p>
                     <div className="space-y-1">
                       <p className="text-blue-400 text-sm font-medium line-clamp-1">{editPost.seo_title || editPost.title || 'পোস্টের শিরোনাম'}</p>
-                      <p className="text-emerald-500 text-[11px]">shahedstore.lovable.app/blog/{editPost.slug || 'post-slug'}</p>
+                      <p className="text-emerald-500 text-[11px]">shahedstore.com.bd/blog/{editPost.slug || 'post-slug'}</p>
                       <p className="text-muted-foreground text-xs line-clamp-2">{editPost.seo_description || editPost.excerpt || 'Meta description এখানে দেখাবে...'}</p>
                     </div>
                   </div>

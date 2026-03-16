@@ -12,7 +12,7 @@ interface SEOHeadProps {
 }
 
 const SITE_NAME = 'Shahed Store';
-const SITE_URL = 'https://shahedstore.lovable.app';
+const SITE_URL = 'https://shahedstore.com.bd';
 const DEFAULT_DESC = 'Shahed Store - আপনার বিশ্বস্ত ডিজিটাল প্রোডাক্ট শপ। Windows, Office, Adobe, Antivirus, Subscription সহ সকল ডিজিটাল সফটওয়্যার সেরা দামে।';
 const DEFAULT_OG = '/favicon.png';
 
