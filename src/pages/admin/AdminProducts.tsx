@@ -386,7 +386,6 @@ const AdminProducts = () => {
     { id: 'details',    label: '📋 Details' },
     { id: 'attributes', label: '🏷️ Attributes' },
     { id: 'options',    label: '🎛️ Variations' },
-    { id: 'linked',     label: '🔗 Linked' },
     { id: 'seo',        label: '🔍 SEO' },
   ];
 
