@@ -1,5 +1,6 @@
 import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText } from 'lucide-react';
 import BrandLogo from './BrandLogo';
+import dbidLogo from '@/assets/dbid-logo.png';
 
 const NAV_COL = [
   {
