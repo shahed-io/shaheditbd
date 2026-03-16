@@ -87,7 +87,7 @@ export default function ContactUs() {
 
     setLoading(true);
     try {
-      const ticketNumber = `TK-${Date.now().toString().slice(-8)}`;
+      const ticketNumber = `TK-${Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8)}`;
       const { error } = await supabase.from('support_tickets').insert({
         ticket_number: ticketNumber,
         customer_name: form.name.trim().slice(0, 100),
