@@ -41,9 +41,16 @@ const TIERS = [
 
 const getCurrentTier = (count: number) => TIERS.find(t => count >= t.min && count <= t.max) || TIERS[0];
 
+interface OrderItem {
+  id: string; product_name: string; price: number; quantity: number; total: number; license_key: string | null;
+}
 interface Order {
   id: string; order_number: string; status: string;
-  total: number; created_at: string; payment_status: string | null;
+  total: number; subtotal: number; discount_amount: number | null;
+  created_at: string; payment_status: string | null;
+  payment_method: string | null; transaction_id: string | null;
+  notes: string | null; coupon_code: string | null;
+  items?: OrderItem[];
 }
 interface Address {
   id: string; label: string; recipient_name: string; phone: string;
