@@ -67,6 +67,7 @@ import AdminSlugEditor from "./pages/admin/seo/AdminSlugEditor";
 import AdminRedirects from "./pages/admin/seo/AdminRedirects";
 import AdminBrokenLinks from "./pages/admin/seo/AdminBrokenLinks";
 import AdminWallet from "./pages/admin/AdminWallet";
+import AdminHeroBanner from "./pages/admin/AdminHeroBanner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -140,6 +141,7 @@ const App = () => (
                   <Route path="pages" element={<AdminPages />} />
                   <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
                   <Route path="wallet" element={<AdminWallet />} />
+                  <Route path="hero-banner" element={<AdminHeroBanner />} />
                 </Route>
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-conditions" element={<TermsConditions />} />
