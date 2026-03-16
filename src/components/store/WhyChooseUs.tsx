@@ -75,6 +75,73 @@ const GradBorderCard = ({
   );
 };
 
+/* ─── Step Card ─────────────────────────────────────────────── */
+const StepCard = ({ step }: { step: typeof STEPS[number] }) => {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      className="relative z-10 pt-5"
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      {/* Number badge */}
+      <div className="absolute -top-0 left-1/2 -translate-x-1/2 z-20">
+        <span
+          className="text-[11px] font-bold px-3.5 py-1.5 rounded-full text-white shadow-lg select-none"
+          style={{
+            background: `linear-gradient(135deg, ${step.from}, ${step.to})`,
+            boxShadow: `0 4px 14px ${step.from}66`,
+          }}
+        >
+          {step.n}
+        </span>
+      </div>
+
+      {/* Card */}
+      <div
+        className="rounded-[22px] overflow-hidden transition-all duration-400"
+        style={{
+          background: `linear-gradient(145deg, ${step.from}cc, ${step.to}bb)`,
+          boxShadow: hov
+            ? `0 20px 56px ${step.from}44, 0 4px 20px ${step.from}28`
+            : `0 4px 24px ${step.from}22`,
+          transform: hov ? 'translateY(-6px) scale(1.02)' : 'translateY(0) scale(1)',
+          transition: 'all 0.35s cubic-bezier(0.23,1,0.32,1)',
+        }}
+      >
+        {/* Glassmorphism overlay */}
+        <div
+          className="p-6 pt-8 text-center flex flex-col items-center gap-4 rounded-[22px]"
+          style={{
+            background: 'linear-gradient(160deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.10) 100%)',
+            backdropFilter: 'blur(12px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(12px) saturate(160%)',
+            borderTop: '1px solid rgba(255,255,255,0.55)',
+            borderLeft: '1px solid rgba(255,255,255,0.35)',
+          }}
+        >
+          {/* Emoji icon */}
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
+            style={{
+              background: 'rgba(255,255,255,0.30)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(255,255,255,0.55)',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
+            }}
+          >
+            {step.emoji}
+          </div>
+          <div>
+            <h3 className="font-sora font-bold text-[14px] text-white mb-2 drop-shadow-sm">{step.title}</h3>
+            <p className="text-[12px] text-white/80 leading-relaxed">{step.desc}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const WhyChooseUs = () => {
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
