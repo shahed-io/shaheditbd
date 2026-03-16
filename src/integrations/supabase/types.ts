@@ -564,6 +564,36 @@ export type Database = {
           },
         ]
       }
+      newsletter_subscribers: {
+        Row: {
+          email: string
+          id: string
+          name: string | null
+          source: string | null
+          status: string
+          subscribed_at: string
+          updated_at: string
+        }
+        Insert: {
+          email: string
+          id?: string
+          name?: string | null
+          source?: string | null
+          status?: string
+          subscribed_at?: string
+          updated_at?: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          name?: string | null
+          source?: string | null
+          status?: string
+          subscribed_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
@@ -952,6 +982,65 @@ export type Database = {
           },
           {
             foreignKeyName: "product_option_values_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_reviews: {
+        Row: {
+          author_email: string | null
+          author_name: string
+          body: string
+          created_at: string
+          helpful_count: number
+          id: string
+          is_verified: boolean
+          product_id: string | null
+          product_slug: string
+          rating: number
+          status: string
+          title: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          author_email?: string | null
+          author_name: string
+          body: string
+          created_at?: string
+          helpful_count?: number
+          id?: string
+          is_verified?: boolean
+          product_id?: string | null
+          product_slug: string
+          rating: number
+          status?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          author_email?: string | null
+          author_name?: string
+          body?: string
+          created_at?: string
+          helpful_count?: number
+          id?: string
+          is_verified?: boolean
+          product_id?: string | null
+          product_slug?: string
+          rating?: number
+          status?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"

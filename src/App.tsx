@@ -68,6 +68,12 @@ import AdminRedirects from "./pages/admin/seo/AdminRedirects";
 import AdminBrokenLinks from "./pages/admin/seo/AdminBrokenLinks";
 import AdminWallet from "./pages/admin/AdminWallet";
 import AdminHeroBanner from "./pages/admin/AdminHeroBanner";
+import AdminFlashSale from "./pages/admin/AdminFlashSale";
+import AdminTestimonials from "./pages/admin/AdminTestimonials";
+import AdminAnnouncementBar from "./pages/admin/AdminAnnouncementBar";
+import AdminNewsletterSubscribers from "./pages/admin/AdminNewsletterSubscribers";
+import AdminProductImportExport from "./pages/admin/AdminProductImportExport";
+import AdminProductReviews from "./pages/admin/AdminProductReviews";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -142,6 +148,12 @@ const App = () => (
                   <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
                   <Route path="wallet" element={<AdminWallet />} />
                   <Route path="hero-banner" element={<AdminHeroBanner />} />
+                  <Route path="flash-sale" element={<AdminFlashSale />} />
+                  <Route path="testimonials" element={<AdminTestimonials />} />
+                  <Route path="announcement-bar" element={<AdminAnnouncementBar />} />
+                  <Route path="newsletter" element={<AdminNewsletterSubscribers />} />
+                  <Route path="product-reviews" element={<AdminProductReviews />} />
+                  <Route path="import-export" element={<AdminProductImportExport />} />
                 </Route>
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-conditions" element={<TermsConditions />} />
