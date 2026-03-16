@@ -532,6 +532,17 @@ const AdminProducts = () => {
                           setForm(p => ({ ...p, name: n, slug: generateSlug(n), seo_title: p.seo_title || n }));
                         }}
                         placeholder="e.g. Windows 11 Pro License Key" className={ic} />
+                      {form.name.trim() && (
+                        <button
+                          type="button"
+                          onClick={() => generateAiContent('all')}
+                          disabled={aiLoading !== null}
+                          className="mt-2 w-full flex items-center justify-center gap-2 text-xs py-2 px-3 rounded-xl border border-primary/40 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40"
+                        >
+                          {aiLoading === 'all' ? <Loader2 size={13} className="animate-spin" /> : <Wand2 size={13} />}
+                          {aiLoading === 'all' ? 'AI কন্টেন্ট তৈরি হচ্ছে...' : '✨ AI দিয়ে সব Description ও SEO অটো-জেনারেট করুন'}
+                        </button>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
