@@ -9,6 +9,7 @@ type Slide = {
   price: string; original: string; off: string; badge: string;
   accentFrom: string; accentTo: string; glowFrom: string; glowTo: string;
   emoji: string; logoImg?: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
+  productSlug?: string;
 };
 
 const STATIC_SLIDES: Slide[] = [
