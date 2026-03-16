@@ -902,50 +902,7 @@ const AdminProducts = () => {
                   </div>
                 )}
 
-                {/* ======= LINKED PRODUCTS TAB ======= */}
-                {activeTab === 'linked' && (
-                  <div className="space-y-4">
-                    <div className="rounded-xl border border-border p-5 space-y-4"
-                      style={{ background: 'hsla(215,28%,10%,0.5)' }}>
-                      <div className="flex items-center gap-2">
-                        <Link2 size={16} className="text-primary" />
-                        <p className="text-sm font-semibold text-foreground">Linked Products</p>
-                      </div>
-
-                      <div>
-                        <label className="text-xs text-muted-foreground mb-1 block font-medium">
-                          Upsells <span className="opacity-60">— Products recommended on the product page</span>
-                        </label>
-                        <input
-                          placeholder="Product IDs or slugs (comma separated)..."
-                          className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground"
-                          readOnly
-                        />
-                        <p className="text-xs text-muted-foreground/60 mt-1">💡 Full linked-products system coming soon</p>
-                      </div>
-
-                      <div>
-                        <label className="text-xs text-muted-foreground mb-1 block font-medium">
-                          Cross-sells <span className="opacity-60">— Shown in cart</span>
-                        </label>
-                        <input
-                          placeholder="Product IDs or slugs (comma separated)..."
-                          className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground"
-                          readOnly
-                        />
-                      </div>
-                    </div>
-
-                    <div className="glass-card rounded-xl p-4 border border-primary/10">
-                      <p className="text-xs font-semibold text-foreground mb-2">📘 About Linked Products</p>
-                      <ul className="text-xs text-muted-foreground space-y-1.5">
-                        <li>→ <strong className="text-foreground">Upsells</strong> show on the product page as "You may also like"</li>
-                        <li>→ <strong className="text-foreground">Cross-sells</strong> appear in the cart drawer as recommendations</li>
-                        <li>→ Full implementation in the next update</li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
+                {/* ======= LINKED PRODUCTS TAB - REMOVED ======= */}
 
               </div>
 
