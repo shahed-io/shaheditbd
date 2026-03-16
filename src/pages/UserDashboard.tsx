@@ -15,7 +15,8 @@ import {
   ChevronRight, ShieldCheck, Home, Camera, Lock, Eye, EyeOff,
   Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
-  History, BellRing, BellOff, ExternalLink, Wallet, Globe
+  History, BellRing, BellOff, ExternalLink, Wallet, Globe,
+  ChevronDown, Key, CreditCard, Receipt, Info
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t } from '@/lib/translations';
@@ -41,9 +42,16 @@ const TIERS = [
 
 const getCurrentTier = (count: number) => TIERS.find(t => count >= t.min && count <= t.max) || TIERS[0];
 
+interface OrderItem {
+  id: string; product_name: string; price: number; quantity: number; total: number; license_key: string | null;
+}
 interface Order {
   id: string; order_number: string; status: string;
-  total: number; created_at: string; payment_status: string | null;
+  total: number; subtotal: number; discount_amount: number | null;
+  created_at: string; payment_status: string | null;
+  payment_method: string | null; transaction_id: string | null;
+  notes: string | null; coupon_code: string | null;
+  items?: OrderItem[];
 }
 interface Address {
   id: string; label: string; recipient_name: string; phone: string;
@@ -127,6 +135,7 @@ const UserDashboard = () => {
   const [notiLoading, setNotiLoading] = useState(false);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [referralLoading, setReferralLoading] = useState(false);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletTx, setWalletTx] = useState<any[]>([]);
   const [walletLoading, setWalletLoading] = useState(false);
@@ -158,8 +167,13 @@ const UserDashboard = () => {
 
   const fetchOrders = async () => {
     if (!user) return; setOrdersLoading(true);
-    const { data } = await supabase.from('orders').select('id, order_number, status, total, created_at, payment_status').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20);
-    setOrders(data || []); setOrdersLoading(false);
+    const { data } = await supabase.from('orders').select('id, order_number, status, total, subtotal, discount_amount, created_at, payment_status, payment_method, transaction_id, notes, coupon_code').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50);
+    setOrders((data || []) as Order[]); setOrdersLoading(false);
+  };
+
+  const fetchOrderItems = async (orderId: string) => {
+    const { data } = await supabase.from('order_items').select('id, product_name, price, quantity, total, license_key').eq('order_id', orderId);
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, items: (data || []) as OrderItem[] } : o));
   };
 
   const fetchAddresses = async () => {
@@ -547,30 +561,148 @@ const UserDashboard = () => {
                       </div>
                       <p className="font-bold text-base mb-1 text-foreground">কোনো অর্ডার নেই</p>
                       <p className="text-sm mb-4 text-muted-foreground">এখনো কোনো অর্ডার করা হয়নি</p>
-                      <a href="/" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>কেনাকাটা শুরু করুন</a>
+                      <a href="/shop" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>কেনাকাটা শুরু করুন</a>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       {orders.map(order => {
-                        const s = STATUS_MAP[order.status] || { label: order.status, color: 'text-gray-600 bg-gray-50 border-gray-200', icon: null };
+                        const s = STATUS_MAP[order.status] || { label: order.status, color: 'text-muted-foreground bg-muted border-border', icon: null };
+                        const isExpanded = expandedOrder === order.id;
+                        const isWallet = order.payment_method === 'wallet';
+                        const pmLabel: Record<string, string> = { bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়', bkash_merchant: 'bKash Merchant', wallet: '💜 Wallet' };
                         return (
-                          <div key={order.id} className="flex items-center justify-between px-4 sm:px-5 py-4 rounded-2xl transition-all hover:shadow-md"
-                            style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
-                            <div className="flex items-center gap-3 sm:gap-4">
-                              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'hsl(243,75%,97%)' }}>
-                                <Package size={18} style={{ color: 'hsl(var(--primary))' }} />
+                          <div key={order.id} className="rounded-2xl overflow-hidden transition-all"
+                            style={{ background: 'rgba(255,255,255,0.72)', border: isExpanded ? '1.5px solid hsla(258,78%,65%,0.4)' : '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(12px)', boxShadow: isExpanded ? '0 4px 20px hsla(258,78%,55%,0.10)' : 'none' }}>
+                            {/* Order Header Row */}
+                            <button
+                              className="w-full flex items-center justify-between px-4 sm:px-5 py-4 hover:bg-white/40 transition-colors text-left"
+                              onClick={() => {
+                                if (!isExpanded) { setExpandedOrder(order.id); if (!order.items) fetchOrderItems(order.id); }
+                                else setExpandedOrder(null);
+                              }}
+                            >
+                              <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'hsl(243,75%,97%)' }}>
+                                  <Package size={18} style={{ color: 'hsl(var(--primary))' }} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="text-sm font-bold text-foreground">#{order.order_number}</span>
+                                    {isWallet && (
+                                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-600 border border-violet-400/30">
+                                        <Wallet size={9} /> Wallet
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-xs mt-0.5 text-muted-foreground">{new Date(order.created_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                </div>
                               </div>
-                              <div>
-                                <div className="text-sm font-bold text-foreground">#{order.order_number}</div>
-                                <div className="text-xs mt-0.5 text-muted-foreground">{new Date(order.created_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                              <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                                <div className="text-right hidden sm:block">
+                                  <div className="text-sm font-black text-primary">৳{order.total.toLocaleString()}</div>
+                                  {order.payment_status && (
+                                    <div className={`text-[10px] font-semibold ${order.payment_status === 'paid' ? 'text-emerald-600' : 'text-amber-500'}`}>
+                                      {order.payment_status === 'paid' ? '✓ Paid' : '⏳ Pending'}
+                                    </div>
+                                  )}
+                                </div>
+                                <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-full border ${s.color}`}>{s.icon} {s.label}</span>
+                                <ChevronDown size={14} className={`text-muted-foreground transition-transform flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
                               </div>
-                            </div>
-                            <div className="flex items-center gap-2 sm:gap-3">
-                              <div className="text-right hidden sm:block">
-                                <div className="text-sm font-black" style={{ color: 'hsl(var(--primary))' }}>৳{order.total.toLocaleString()}</div>
+                            </button>
+
+                            {/* Expanded Detail */}
+                            {isExpanded && (
+                              <div className="border-t px-4 sm:px-5 py-4 space-y-4" style={{ borderColor: 'hsla(258,78%,75%,0.2)', background: 'rgba(255,255,255,0.45)' }}>
+                                {/* Payment Info */}
+                                <div className="flex flex-wrap gap-3">
+                                  <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                                    <CreditCard size={13} className="text-primary" />
+                                    <span className="text-muted-foreground">পেমেন্ট:</span>
+                                    <span className="font-semibold text-foreground">{pmLabel[order.payment_method || ''] || order.payment_method || '—'}</span>
+                                  </div>
+                                  {order.transaction_id && !order.transaction_id.startsWith('WALLET-') && (
+                                    <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                                      <Receipt size={13} className="text-primary" />
+                                      <span className="text-muted-foreground">TrxID:</span>
+                                      <span className="font-mono font-semibold text-foreground">{order.transaction_id}</span>
+                                    </div>
+                                  )}
+                                  {order.coupon_code && (
+                                    <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
+                                      <span className="text-emerald-600 font-semibold">🏷️ {order.coupon_code} — ৳{(order.discount_amount || 0).toLocaleString()} ছাড়</span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Order Items */}
+                                <div>
+                                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">পণ্যসমূহ</p>
+                                  {!order.items ? (
+                                    <div className="flex items-center gap-2 py-3 text-sm text-muted-foreground">
+                                      <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-primary" />
+                                      লোড হচ্ছে...
+                                    </div>
+                                  ) : order.items.length === 0 ? (
+                                    <p className="text-sm text-muted-foreground">কোনো আইটেম পাওয়া যায়নি</p>
+                                  ) : (
+                                    <div className="space-y-2">
+                                      {order.items.map(item => (
+                                        <div key={item.id} className="flex items-center justify-between px-3 py-2.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.15)' }}>
+                                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-primary/10">
+                                              <Package size={13} className="text-primary" />
+                                            </div>
+                                            <div className="min-w-0">
+                                              <p className="text-sm font-semibold text-foreground truncate">{item.product_name}</p>
+                                              <p className="text-xs text-muted-foreground">×{item.quantity} × ৳{item.price.toLocaleString()}</p>
+                                            </div>
+                                          </div>
+                                          <div className="text-sm font-bold text-primary flex-shrink-0 ml-2">৳{item.total.toLocaleString()}</div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* License Keys */}
+                                {order.items && order.items.some(i => i.license_key) && (
+                                  <div>
+                                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">লাইসেন্স কি</p>
+                                    <div className="space-y-2">
+                                      {order.items.filter(i => i.license_key).map(item => (
+                                        <div key={item.id} className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
+                                          <Key size={13} className="text-emerald-600 flex-shrink-0" />
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-xs text-muted-foreground">{item.product_name}</p>
+                                            <p className="font-mono text-sm font-bold text-emerald-700 truncate">{item.license_key}</p>
+                                          </div>
+                                          <button onClick={() => { navigator.clipboard.writeText(item.license_key!); toast.success('কি কপি হয়েছে!'); }}
+                                            className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-emerald-600 flex-shrink-0 transition-colors">
+                                            <Copy size={13} />
+                                          </button>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Price Breakdown */}
+                                <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm pt-2 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+                                  <span className="text-muted-foreground">Subtotal: <span className="font-semibold text-foreground">৳{(order.subtotal || 0).toLocaleString()}</span></span>
+                                  {(order.discount_amount || 0) > 0 && <span className="text-emerald-600 font-semibold">ছাড়: -৳{(order.discount_amount || 0).toLocaleString()}</span>}
+                                  <span className="font-bold text-primary">মোট: ৳{order.total.toLocaleString()}</span>
+                                </div>
+
+                                {/* Notes */}
+                                {order.notes && (
+                                  <div className="flex items-start gap-2 text-xs px-3 py-2 rounded-xl bg-muted/30 border border-border">
+                                    <Info size={12} className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                                    <span className="text-muted-foreground">{order.notes}</span>
+                                  </div>
+                                )}
                               </div>
-                              <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full border ${s.color}`}>{s.icon} {s.label}</span>
-                            </div>
+                            )}
                           </div>
                         );
                       })}
