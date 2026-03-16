@@ -1,7 +1,16 @@
-import { useState } from 'react';
-import { X, MessageCircle, CreditCard, Smartphone, CheckCircle, Tag, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, MessageCircle, CreditCard, CheckCircle, Tag, ChevronDown, Wallet, Loader2, Shield, Package } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
+import PaymentInstructions from '@/components/store/PaymentInstructions';
+import type { PMId } from '@/components/store/PaymentInstructions';
+import bkashLogo from '@/assets/payment/bkash.png';
+import nagadLogo from '@/assets/payment/nagad.png';
+import rocketLogo from '@/assets/payment/rocket.png';
+import upayLogo from '@/assets/payment/upay.png';
+import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
 
 interface Product {
   id: string | number;
@@ -23,19 +32,30 @@ const schema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর (01XXXXXXXXX)'),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant';
+type PaymentMethod = PMId | 'wallet';
 
-const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string; type: string }[] = [
-  { id: 'bkash',          label: 'bKash',          color: 'from-pink-600 to-pink-700',     number: '01820060046', type: 'Send Money' },
-  { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600', number: '01840099853', type: 'Send Money' },
-  { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700', number: '01840099853', type: 'Send Money' },
-  { id: 'upay',           label: 'উপায়',           color: 'from-green-600 to-green-700',   number: '01840099853', type: 'Send Money' },
-  { id: 'bkash_merchant', label: 'bKash Merchant', color: 'from-pink-700 to-rose-700',     number: '01840099853', type: 'Merchant Payment' },
+interface PaymentOption {
+  id: PaymentMethod;
+  label: string;
+  color: string;
+  logo?: string;
+  isWallet?: boolean;
+}
+
+const MFS_METHODS: PaymentOption[] = [
+  { id: 'bkash',          label: 'bKash',         color: 'from-pink-600 to-pink-700',    logo: bkashLogo },
+  { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600',logo: nagadLogo },
+  { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700',logo: rocketLogo },
+  { id: 'upay',           label: 'উপায়',           color: 'from-green-600 to-green-700',  logo: upayLogo },
+  { id: 'bkash_merchant', label: 'bKash Merchant', color: 'from-pink-700 to-rose-700',    logo: bkashMerchantLogo },
 ];
 
 const inputClass = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all";
 
 const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const [step, setStep] = useState<'info' | 'payment' | 'success'>('info');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -48,9 +68,30 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
   const [loading, setLoading] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
   const [submitError, setSubmitError] = useState('');
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [walletLoading, setWalletLoading] = useState(false);
 
   const finalTotal = Math.max(0, product.price - couponDiscount);
-  const selectedPayment = paymentMethods.find(p => p.id === paymentMethod)!;
+
+  // Auto-fill user info and fetch wallet balance
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from('profiles')
+      .select('display_name, email, phone, wallet_balance')
+      .eq('user_id', user.id)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setForm(prev => ({
+            name: prev.name || (data as any).display_name || '',
+            email: prev.email || (data as any).email || user.email || '',
+            phone: prev.phone || (data as any).phone || '',
+          }));
+          setWalletBalance((data as any).wallet_balance || 0);
+        }
+      });
+  }, [user?.id]);
 
   const applyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -86,11 +127,24 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
   };
 
   const handlePlaceOrder = async () => {
-    if (!transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     setSubmitError('');
+
+    // Wallet checks
+    if (paymentMethod === 'wallet') {
+      if (!user) { setSubmitError('Wallet পেমেন্টের জন্য লগইন করতে হবে'); return; }
+      if (walletBalance < finalTotal) {
+        setSubmitError(`ব্যালেন্স অপর্যাপ্ত। বর্তমান: ৳${walletBalance.toLocaleString()}, দরকার: ৳${finalTotal.toLocaleString()}`);
+        return;
+      }
+    } else {
+      if (!transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    }
+
     setLoading(true);
     try {
-      const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
+      const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5)))
+        .map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -102,16 +156,30 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
           discount_amount: couponDiscount,
           total: finalTotal,
           payment_method: paymentMethod,
-          transaction_id: transactionId.trim(),
+          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
           coupon_code: couponCode.trim().toUpperCase() || null,
-          status: 'pending',
-          payment_status: 'pending',
-          user_id: null,
+          status: paymentMethod === 'wallet' ? 'processing' : 'pending',
+          payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
+          user_id: user?.id || null,
         })
         .select()
         .single();
 
       if (orderError) throw orderError;
+
+      // Debit wallet if wallet payment
+      if (paymentMethod === 'wallet' && user) {
+        const { data: walletResult } = await supabase.rpc('wallet_debit' as any, {
+          p_user_id: user.id,
+          p_amount: finalTotal,
+          p_note: `অর্ডার পেমেন্ট - ${orderNum}`,
+          p_reference_id: order.id,
+          p_created_by: 'user',
+        });
+        if (!(walletResult as any)?.success) throw new Error('Wallet debit failed');
+        // Refresh balance
+        setWalletBalance(prev => prev - finalTotal);
+      }
 
       await supabase.from('order_items').insert({
         order_id: order.id,
@@ -119,22 +187,28 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
         product_id: typeof product.id === 'string' ? product.id : null,
         price: product.price,
         quantity: 1,
-        total: product.price,
+        total: finalTotal,
       });
 
       setOrderNumber(orderNum);
       setStep('success');
-    } catch {
+    } catch (err) {
+      console.error(err);
       setSubmitError('অর্ডার দিতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
     } finally {
       setLoading(false);
     }
   };
 
+  const allMethods: PaymentOption[] = user
+    ? [{ id: 'wallet', label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, ...MFS_METHODS]
+    : MFS_METHODS;
+
   return (
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-card border border-border rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md max-h-[92vh] overflow-y-auto shadow-2xl">
-        {/* Header */}
+
+        {/* ── Header ── */}
         <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border px-5 py-4 flex items-center justify-between rounded-t-3xl sm:rounded-t-2xl z-10">
           <div className="flex items-center gap-3">
             <img src={product.image} alt={product.name} className="w-10 h-10 rounded-lg object-cover"
@@ -150,33 +224,56 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
         </div>
 
         <div className="p-5 space-y-5">
+
           {/* ══ SUCCESS ══ */}
           {step === 'success' && (
             <div className="text-center space-y-4 py-6">
-              <div className="w-16 h-16 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center mx-auto animate-bounce">
-                <CheckCircle size={32} className="text-primary" />
+              <div className="w-16 h-16 rounded-full bg-green-500/20 border-2 border-green-500/40 flex items-center justify-center mx-auto">
+                <CheckCircle size={32} className="text-green-400" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground">অর্ডার সফল! 🎉</h3>
                 <p className="text-muted-foreground text-sm mt-1">
                   অর্ডার নম্বর: <span className="text-primary font-mono font-bold">{orderNumber}</span>
                 </p>
-                <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                  পেমেন্ট যাচাইয়ের পর আপনার ইমেইলে লাইসেন্স কি পাঠানো হবে। সাধারণত ১–২ ঘন্টার মধ্যে।
-                </p>
+                {paymentMethod === 'wallet' ? (
+                  <div className="mt-3 p-3 rounded-xl bg-violet-500/10 border border-violet-400/30 text-left space-y-1">
+                    <p className="text-sm font-bold text-violet-600 flex items-center gap-2"><Wallet size={14}/> ওয়ালেট পেমেন্ট সম্পন্ন</p>
+                    <p className="text-xs text-muted-foreground">আপনার ওয়ালেট থেকে ৳{finalTotal.toLocaleString()} কেটে নেওয়া হয়েছে।</p>
+                    <p className="text-xs text-muted-foreground">লাইসেন্স কি শীঘ্রই আপনার ড্যাশবোর্ডে দেখা যাবে।</p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+                    পেমেন্ট যাচাইয়ের পর আপনার ইমেইলে লাইসেন্স কি পাঠানো হবে। সাধারণত ১–২ ঘন্টার মধ্যে।
+                  </p>
+                )}
               </div>
-              <button onClick={onClose} className="btn-glow px-8 py-2.5 rounded-xl font-semibold text-sm w-full">
-                ঠিক আছে
-              </button>
+              <div className="flex gap-2">
+                <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground text-sm transition-colors">
+                  ঠিক আছে
+                </button>
+                {user && (
+                  <button
+                    onClick={() => { onClose(); navigate('/dashboard'); }}
+                    className="flex-1 btn-glow py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-1.5"
+                  >
+                    <Package size={14}/> আমার অর্ডার
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
           {/* ══ STEP 1: Customer Info ══ */}
           {step === 'info' && (
             <>
+              {/* Step indicator */}
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">1</span>
                 <span className="text-sm font-semibold text-foreground">আপনার তথ্য দিন</span>
+                {user && (
+                  <span className="ml-auto text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">লগইন আছে ✓</span>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -215,11 +312,11 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
                   </div>
                   <button type="button" onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()}
                     className="px-4 py-2.5 rounded-xl border border-primary/40 text-primary text-xs font-medium hover:bg-primary/10 transition-colors disabled:opacity-50">
-                    {couponLoading ? '...' : 'Apply'}
+                    {couponLoading ? <Loader2 size={13} className="animate-spin" /> : 'Apply'}
                   </button>
                 </div>
                 {couponError && <p className="text-destructive text-xs mt-1">{couponError}</p>}
-                {couponDiscount > 0 && <p className="text-accent text-xs mt-1">✅ ৳{couponDiscount.toLocaleString()} ছাড় পেয়েছেন!</p>}
+                {couponDiscount > 0 && <p className="text-green-500 text-xs mt-1">✅ ৳{couponDiscount.toLocaleString()} ছাড় পেয়েছেন!</p>}
               </div>
 
               {/* Price Summary */}
@@ -228,7 +325,7 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
                   <span>মূল্য</span><span>৳{product.price.toLocaleString()}</span>
                 </div>
                 {couponDiscount > 0 && (
-                  <div className="flex justify-between text-sm text-accent">
+                  <div className="flex justify-between text-sm text-green-500">
                     <span>ছাড়</span><span>-৳{couponDiscount.toLocaleString()}</span>
                   </div>
                 )}
@@ -252,47 +349,104 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
                 <button onClick={() => setStep('info')} className="ml-auto text-xs text-muted-foreground hover:text-foreground">← পিছনে</button>
               </div>
 
-              {/* Payment method selector */}
-              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
-                {paymentMethods.map(pm => (
+              {/* Payment method buttons */}
+              <div className="grid grid-cols-3 gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(allMethods.length, 3)}, 1fr)` }}>
+                {allMethods.map(pm => (
                   <button
                     key={pm.id}
-                    onClick={() => setPaymentMethod(pm.id)}
-                    className={`py-2 px-1 rounded-xl font-bold text-white text-xs bg-gradient-to-r ${pm.color} transition-all ${paymentMethod === pm.id ? 'ring-2 ring-offset-2 ring-offset-background scale-105 shadow-lg' : 'opacity-60 hover:opacity-90'}`}
+                    type="button"
+                    onClick={() => { setPaymentMethod(pm.id); setTransactionId(''); setSubmitError(''); }}
+                    className={`flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl text-xs font-semibold transition-all border-2 ${
+                      paymentMethod === pm.id
+                        ? 'border-primary bg-primary/8 scale-105 shadow-md text-foreground'
+                        : 'border-border bg-background/60 hover:border-primary/40 text-muted-foreground'
+                    }`}
                   >
-                    {pm.label}
+                    {pm.isWallet ? (
+                      <div className="h-8 w-10 rounded-md flex items-center justify-center bg-gradient-to-br from-violet-600 to-purple-700">
+                        <Wallet size={16} className="text-white" />
+                      </div>
+                    ) : (
+                      <img src={pm.logo} alt={pm.label} className="h-8 w-auto object-contain rounded-md" />
+                    )}
+                    <span className="text-[10px] leading-tight text-center">{pm.label}</span>
                   </button>
                 ))}
               </div>
 
-              {/* Payment instruction box */}
-              <div className="bg-muted/20 border border-border rounded-xl p-4 space-y-3">
-                <div className="flex items-center gap-2 text-sm text-foreground font-medium">
-                  <Smartphone size={15} className="text-primary" />
-                  {selectedPayment.label} ({selectedPayment.type})
-                </div>
-                <div className="text-center">
-                  <p className="font-mono text-2xl font-bold text-primary tracking-widest">{selectedPayment.number}</p>
-                  <p className="text-xs text-muted-foreground mt-1">মোট পাঠান: <span className="text-foreground font-bold">৳{finalTotal.toLocaleString()}</span></p>
-                </div>
-                <div className="bg-primary/5 border border-primary/20 rounded-lg p-2.5 text-xs text-muted-foreground leading-relaxed">
-                  ১. উপরের নম্বরে {selectedPayment.label} থেকে {selectedPayment.type} করুন<br/>
-                  ২. Transaction ID কপি করুন<br/>
-                  ৩. নিচে TrxID বক্সে পেস্ট করুন
-                </div>
-              </div>
+              {/* Wallet payment UI */}
+              {paymentMethod === 'wallet' && (
+                <div className={`rounded-2xl p-4 space-y-3 border ${walletBalance >= finalTotal ? 'bg-violet-500/8 border-violet-400/30' : 'bg-destructive/8 border-destructive/30'}`}>
+                  {/* Balance row */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center">
+                        <Wallet size={16} className="text-white" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">আপনার ওয়ালেট</p>
+                        <p className={`text-lg font-black ${walletBalance >= finalTotal ? 'text-violet-600' : 'text-destructive'}`}>
+                          ৳{walletBalance.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">অর্ডার মোট</p>
+                      <p className="text-lg font-black text-primary">৳{finalTotal.toLocaleString()}</p>
+                    </div>
+                  </div>
 
-              {/* Transaction ID */}
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Transaction ID (TrxID) *</label>
-                <input
-                  value={transactionId}
-                  onChange={e => setTransactionId(e.target.value)}
-                  placeholder="যেমন: 8F3K2P9X"
-                  maxLength={50}
-                  className={`${inputClass} font-mono tracking-wider`}
-                />
-              </div>
+                  {/* Status */}
+                  {walletBalance >= finalTotal ? (
+                    <div className="flex items-center gap-2 bg-violet-500/10 border border-violet-400/20 rounded-xl px-3 py-2.5">
+                      <CheckCircle size={14} className="text-violet-500 flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold text-violet-700">পর্যাপ্ত ব্যালেন্স আছে ✓</p>
+                        <p className="text-[11px] text-muted-foreground">অর্ডার কনফার্ম করলেই তাৎক্ষণিক পেমেন্ট হবে — কোনো TrxID লাগবে না</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="flex items-start gap-2 bg-destructive/10 border border-destructive/20 rounded-xl px-3 py-2.5">
+                        <p className="text-xs text-destructive font-medium">
+                          ❌ ব্যালেন্স কম — আরও ৳{(finalTotal - walletBalance).toLocaleString()} দরকার
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => { onClose(); navigate('/dashboard?tab=wallet'); }}
+                        className="w-full py-2.5 rounded-xl border border-violet-400/50 text-violet-600 text-xs font-bold hover:bg-violet-500/10 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Wallet size={13}/> Dashboard থেকে Wallet টপ-আপ করুন
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* MFS payment instructions */}
+              {paymentMethod !== 'wallet' && (
+                <>
+                  <PaymentInstructions
+                    paymentMethodId={paymentMethod as PMId}
+                    amount={finalTotal}
+                    amountLabel="মোট পাঠান"
+                  />
+
+                  {/* Transaction ID */}
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 block font-semibold">
+                      Transaction ID (TrxID) *
+                    </label>
+                    <input
+                      value={transactionId}
+                      onChange={e => setTransactionId(e.target.value)}
+                      placeholder="যেমন: 8F3K2P9X"
+                      maxLength={50}
+                      className={`${inputClass} font-mono tracking-wider`}
+                    />
+                  </div>
+                </>
+              )}
 
               {/* Total reminder */}
               <div className="flex justify-between items-center glass-card rounded-xl p-3">
@@ -308,15 +462,21 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
 
               <button
                 onClick={handlePlaceOrder}
-                disabled={loading}
+                disabled={loading || (paymentMethod === 'wallet' && walletBalance < finalTotal)}
                 className="w-full btn-glow py-3.5 rounded-xl font-bold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <><span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> Processing...</>
+                  <><Loader2 size={16} className="animate-spin" /> Processing...</>
+                ) : paymentMethod === 'wallet' ? (
+                  <><Wallet size={16} /> ওয়ালেট দিয়ে অর্ডার করুন — ৳{finalTotal.toLocaleString()}</>
                 ) : (
                   <><CreditCard size={16} /> অর্ডার কনফার্ম করুন</>
                 )}
               </button>
+
+              <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
+                <Shield size={11}/> নিরাপদ পেমেন্ট — আপনার তথ্য সুরক্ষিত
+              </p>
             </>
           )}
         </div>
