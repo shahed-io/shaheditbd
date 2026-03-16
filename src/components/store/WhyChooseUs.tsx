@@ -148,33 +148,13 @@ const WhyChooseUs = () => {
             <p className="text-muted-foreground mt-3 text-[14px]">চার ধাপে আপনার product পান — সহজ, দ্রুত, নিরাপদ।</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative">
-            {/* Connecting line */}
-            <div className="hidden lg:block absolute top-[3.5rem] left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-px z-0"
-              style={{ background: 'linear-gradient(90deg, hsl(243,75%,65%), hsl(15,100%,62%), hsl(158,64%,48%), hsl(263,70%,62%))', opacity: 0.25 }} />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 relative">
+            {/* Connecting line desktop */}
+            <div className="hidden lg:block absolute top-[3.8rem] left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-px z-0"
+              style={{ background: 'linear-gradient(90deg, hsl(243,75%,65%), hsl(15,100%,62%), hsl(158,64%,48%), hsl(263,70%,62%))', opacity: 0.30 }} />
 
             {STEPS.map((step, i) => (
-              <div key={i} className="relative z-10 pt-4">
-                {/* Step badge above card */}
-                <div className="absolute -top-0 left-1/2 -translate-x-1/2 z-20">
-                  <span className="text-[11px] font-fira font-bold px-3.5 py-1.5 rounded-full text-white shadow-lg"
-                    style={{ background: `linear-gradient(135deg, ${step.from}, ${step.to})`, boxShadow: `0 4px 14px ${step.from}55` }}>
-                    {step.n}
-                  </span>
-                </div>
-                <GradBorderCard from={step.from} to={step.to} borderWidth={1.5} radius={22} className="w-full h-full">
-                  <div className="p-7 pt-8 text-center flex flex-col items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl transition-transform duration-300 group-hover:scale-110"
-                      style={{ background: `linear-gradient(135deg, ${step.from}18, ${step.to}12)`, border: `1px solid ${step.from}35` }}>
-                      {step.emoji}
-                    </div>
-                    <div>
-                      <h3 className="font-sora font-bold text-[13.5px] text-foreground mb-2">{step.title}</h3>
-                      <p className="text-[12px] text-muted-foreground leading-relaxed">{step.desc}</p>
-                    </div>
-                  </div>
-                </GradBorderCard>
-              </div>
+              <StepCard key={i} step={step} />
             ))}
           </div>
         </div>
