@@ -166,6 +166,7 @@ const App = () => (
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/faqs" element={<FAQs />} />
                 <Route path="/dashboard" element={<UserDashboard />} />
+                <Route path="/track-order" element={<OrderTracking />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </WishlistProvider>
