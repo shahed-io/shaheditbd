@@ -180,12 +180,23 @@ const FeatureCard = ({ feature: f }: { feature: typeof FEATURES[0] }) => {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      {/* Left colored stripe */}
+      {/* Left stripe */}
       <div className="absolute left-0 top-0 bottom-0 w-[3px]"
         style={{ background: `linear-gradient(180deg, ${f.from}, ${f.to})` }} />
-      {/* Corner accent glow */}
+      {/* Right stripe */}
+      <div className="absolute right-0 top-0 bottom-0 w-[3px]"
+        style={{ background: `linear-gradient(180deg, ${f.to}, ${f.from})` }} />
+      {/* Top stripe */}
+      <div className="absolute top-0 left-0 right-0 h-[3px]"
+        style={{ background: `linear-gradient(90deg, ${f.from}, ${f.to})` }} />
+      {/* Bottom stripe */}
+      <div className="absolute bottom-0 left-0 right-0 h-[3px]"
+        style={{ background: `linear-gradient(90deg, ${f.to}, ${f.from})` }} />
+      {/* Corner glow */}
       <div className="absolute top-0 right-0 w-24 h-24 pointer-events-none"
-        style={{ background: `radial-gradient(circle at top right, ${f.from}12, transparent 70%)` }} />
+        style={{ background: `radial-gradient(circle at top right, ${f.from}14, transparent 70%)` }} />
+      <div className="absolute bottom-0 left-0 w-20 h-20 pointer-events-none"
+        style={{ background: `radial-gradient(circle at bottom left, ${f.to}10, transparent 70%)` }} />
 
       <div className="p-5 sm:p-6 pl-6">
         {/* Icon + title row */}
