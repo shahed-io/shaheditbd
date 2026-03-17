@@ -13,3 +13,5 @@ project_id = "dpvdavjwqyviredzoorj"
     verify_jwt = false
   [functions.ai-free-tools]
     verify_jwt = false
+  [functions.generate-product-card]
+    verify_jwt = false

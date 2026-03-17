@@ -112,6 +112,7 @@ const AdminProducts = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [aiLoading, setAiLoading] = useState<string | null>(null); // which field is generating
+  const [aiCardLoading, setAiCardLoading] = useState(false);
 
   // ── AI Content Generator ─────────────────────────────────────
   const generateAiContent = async (type: 'short_description' | 'description' | 'seo' | 'all') => {
@@ -214,6 +215,68 @@ const AdminProducts = () => {
       toast.error('Gallery upload failed: ' + err.message);
     } finally {
       setGalleryUploading(false);
+    }
+  };
+
+  // ── AI Glassmorphism Card Generator ──────────────────────────
+  const generateAiCard = async () => {
+    const srcUrl = form.image_url || imagePreview;
+    setAiCardLoading(true);
+    const toastId = toast.loading('🎨 AI দিয়ে Glassmorphism Card তৈরি হচ্ছে...');
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-product-card', {
+        body: {
+          imageUrl: srcUrl || null,
+          productName: form.name,
+          category: categories.find(c => c.id === form.category_id)?.name || '',
+          price: form.price,
+          brand: form.brand,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const imageDataUrl: string = data.imageData;
+
+      // Convert base64 PNG → WEBP via Canvas API
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Image load failed'));
+        img.src = imageDataUrl;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || 800;
+      canvas.height = img.naturalHeight || 800;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Canvas not supported');
+      ctx.drawImage(img, 0, 0);
+
+      const webpBlob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(blob => {
+          if (blob) resolve(blob);
+          else reject(new Error('WEBP conversion failed'));
+        }, 'image/webp', 0.92);
+      });
+
+      // Upload WEBP to storage
+      const fileName = `ai-card-${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, webpBlob, { contentType: 'image/webp', upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(uploadData.path);
+      setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
+      setImagePreview(urlData.publicUrl);
+      toast.dismiss(toastId);
+      toast.success('✨ AI Glassmorphism Card তৈরি হয়েছে! WEBP ফরমেটে সেভ হয়েছে।');
+    } catch (err: any) {
+      toast.dismiss(toastId);
+      toast.error('AI Card Error: ' + (err.message || 'Unknown error'));
+    } finally {
+      setAiCardLoading(false);
     }
   };
 
@@ -775,6 +838,59 @@ const AdminProducts = () => {
                             onChange={e => { setForm(p => ({ ...p, image_url: e.target.value })); setImagePreview(e.target.value); }}
                             placeholder="or paste image URL..." className={ic} />
                         </div>
+                      </div>
+
+                      {/* AI Glassmorphism Card Generator */}
+                      <div
+                        className="relative rounded-2xl overflow-hidden p-4"
+                        style={{
+                          background: 'linear-gradient(135deg, hsla(271,91%,65%,0.10) 0%, hsla(217,91%,60%,0.10) 100%)',
+                          border: '1px solid hsla(271,91%,65%,0.30)',
+                          backdropFilter: 'blur(12px)',
+                        }}
+                      >
+                        <div className="absolute top-0 left-0 right-0 h-px"
+                          style={{ background: 'linear-gradient(90deg, transparent, hsla(271,91%,65%,0.6), transparent)' }} />
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+                            style={{ background: 'linear-gradient(135deg, hsla(271,91%,65%,0.20), hsla(217,91%,60%,0.20))', border: '1px solid hsla(271,91%,65%,0.30)' }}>
+                            🎨
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-foreground">AI Glassmorphism Card Generator</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              {form.image_url || imagePreview
+                                ? 'আপলোড করা ছবি দিয়ে AI একটি প্রিমিয়াম Glassmorphism card ডিজাইন তৈরি করবে এবং WEBP ফরমেটে সেভ করবে।'
+                                : 'প্রথমে একটি ছবি আপলোড করুন, তারপর AI দিয়ে Glassmorphism card তৈরি করুন।'}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={generateAiCard}
+                              disabled={aiCardLoading || imageUploading}
+                              className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-[0.98]"
+                              style={{
+                                background: aiCardLoading
+                                  ? 'hsla(271,91%,65%,0.40)'
+                                  : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))',
+                                boxShadow: '0 4px 20px hsla(271,91%,65%,0.35)',
+                              }}
+                            >
+                              {aiCardLoading
+                                ? <><Loader2 size={15} className="animate-spin" /> AI তৈরি হচ্ছে...</>
+                                : <><Wand2 size={15} /> ✨ AI দিয়ে Glassmorphism Card তৈরি করুন</>}
+                            </button>
+                          </div>
+                        </div>
+                        {aiCardLoading && (
+                          <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                            <div className="flex gap-1">
+                              {[0, 0.2, 0.4].map((d, i) => (
+                                <div key={i} className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: `${d}s` }} />
+                              ))}
+                            </div>
+                            AI ছবি তৈরি করছে, WEBP কনভার্ট করছে এবং সেভ করছে...
+                          </div>
+                        )}
                       </div>
                     </div>
 
