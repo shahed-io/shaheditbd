@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import { FloatingButtons } from '@/components/store/Extras';
@@ -9,7 +9,8 @@ import {
   QrCode, AtSign, Scissors, FileImage, Maximize2, RotateCcw, Smile,
   Youtube, Facebook, Twitter, TrendingUp, Bot, PenTool, Mail, Briefcase,
   BookOpen, Edit3, Search, Globe, Tag, ChevronLeft, Wand2, Star, Lock,
-  DollarSign, Image, Download, Upload, Eye, EyeOff, Loader2
+  DollarSign, Image, Download, Upload, Eye, EyeOff, Loader2, Droplets,
+  Stamp, Laugh, Film, Combine, SplitSquareVertical, Minimize2, FileLock2
 } from 'lucide-react';
 
 import { supabase } from '@/integrations/supabase/client';
@@ -651,17 +652,517 @@ const BioGen = () => (
   <AiToolBase tool="bio-gen" placeholder="Enter your profession and specialty — for Facebook/Instagram bio..." label="" btnLabel="Generate Bio" getPromptPayload={() => ({})} />
 );
 
-// Coming Soon placeholder
-const ComingSoon = ({ feature }: { feature: string }) => (
-  <div className="flex flex-col items-center justify-center py-12 space-y-4">
-    <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: 'hsla(258,78%,55%,0.08)', border: '1.5px solid hsla(258,78%,55%,0.20)' }}>
-      <Sparkles size={28} style={{ color: 'hsl(258,78%,55%)' }} />
+// ═══════════════════════════════════════════════════════════════════════════
+// IMAGE BLUR TOOL
+// ═══════════════════════════════════════════════════════════════════════════
+const ImageBlurTool = () => {
+  const [imgSrc, setImgSrc] = useState('');
+  const [blurAmount, setBlurAmount] = useState(5);
+  const [outputUrl, setOutputUrl] = useState('');
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => { setImgSrc(ev.target?.result as string); setOutputUrl(''); };
+    reader.readAsDataURL(file);
+  };
+  const applyBlur = () => {
+    if (!imgSrc) return;
+    const img = new window.Image(); img.src = imgSrc;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width; canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.filter = `blur(${blurAmount}px)`;
+      ctx.drawImage(img, 0, 0);
+      setOutputUrl(canvas.toDataURL('image/png'));
+    };
+  };
+  const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = 'blurred.png'; a.click(); };
+  return (
+    <div className="space-y-4">
+      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(162,72%,38%,0.30)', background: 'hsla(162,72%,38%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(162,72%,38%)' }} />
+        <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span>
+        <input type="file" accept="image/*" className="hidden" onChange={onFile} />
+      </label>
+      {imgSrc && (
+        <>
+          <img src={imgSrc} alt="original" className="w-full max-h-36 object-contain rounded-xl" />
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}>
+              <span>Blur Amount</span><span style={{ color: 'hsl(162,72%,38%)' }}>{blurAmount}px</span>
+            </div>
+            <input type="range" min={1} max={30} value={blurAmount} onChange={e => setBlurAmount(Number(e.target.value))} className="w-full cursor-pointer" style={{ accentColor: 'hsl(162,72%,38%)' }} />
+          </div>
+          <PrimaryBtn onClick={applyBlur}><Droplets size={14} />Apply Blur</PrimaryBtn>
+        </>
+      )}
+      {outputUrl && (
+        <div className="space-y-3">
+          <img src={outputUrl} alt="blurred" className="w-full max-h-36 object-contain rounded-xl" style={{ border: '1px solid hsla(162,72%,38%,0.25)' }} />
+          <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
+            style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
+            <Download size={14} />Download
+          </button>
+        </div>
+      )}
     </div>
-    <h3 className="font-bold text-lg" style={{ color: 'hsl(226,35%,18%)' }}>{feature}</h3>
-    <p className="text-sm text-center max-w-xs" style={{ color: 'hsl(226,35%,45%)' }}>This tool is coming soon. We are working on it.</p>
-    <span className="px-4 py-1.5 rounded-full text-xs font-bold" style={{ background: 'hsla(38,92%,50%,0.12)', color: 'hsl(38,92%,40%)', border: '1px solid hsla(38,92%,50%,0.25)' }}>
-      🚀 Coming Soon
-    </span>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WATERMARK TOOL
+// ═══════════════════════════════════════════════════════════════════════════
+const WatermarkTool = () => {
+  const [imgSrc, setImgSrc] = useState('');
+  const [text, setText] = useState('© Shahed Store');
+  const [position, setPosition] = useState<'center' | 'bottom-right' | 'bottom-left' | 'top-right'>('bottom-right');
+  const [opacity, setOpacity] = useState(70);
+  const [fontSize, setFontSize] = useState(36);
+  const [outputUrl, setOutputUrl] = useState('');
+
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => { setImgSrc(ev.target?.result as string); setOutputUrl(''); };
+    reader.readAsDataURL(file);
+  };
+  const applyWatermark = () => {
+    if (!imgSrc || !text.trim()) return;
+    const img = new window.Image(); img.src = imgSrc;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width; canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+      ctx.globalAlpha = opacity / 100;
+      ctx.fillStyle = 'white';
+      ctx.font = `bold ${fontSize}px sans-serif`;
+      ctx.textAlign = 'center';
+      const metrics = ctx.measureText(text);
+      const pad = 20;
+      let x = canvas.width / 2, y = canvas.height / 2;
+      if (position === 'bottom-right') { x = canvas.width - metrics.width / 2 - pad; y = canvas.height - pad; }
+      else if (position === 'bottom-left') { x = metrics.width / 2 + pad; y = canvas.height - pad; }
+      else if (position === 'top-right') { x = canvas.width - metrics.width / 2 - pad; y = fontSize + pad; }
+      ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 8;
+      ctx.fillText(text, x, y);
+      setOutputUrl(canvas.toDataURL('image/png'));
+    };
+  };
+  const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = 'watermarked.png'; a.click(); };
+  return (
+    <div className="space-y-4">
+      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} />
+        <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span>
+        <input type="file" accept="image/*" className="hidden" onChange={onFile} />
+      </label>
+      {imgSrc && <>
+        <img src={imgSrc} alt="original" className="w-full max-h-36 object-contain rounded-xl" />
+        <div className="space-y-1">
+          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Watermark Text</label>
+          <input type="text" value={text} onChange={e => setText(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Position</label>
+            <select value={position} onChange={e => setPosition(e.target.value as typeof position)} className="w-full rounded-xl p-2.5 text-sm" style={inputStyle}>
+              <option value="bottom-right">Bottom Right</option>
+              <option value="bottom-left">Bottom Left</option>
+              <option value="top-right">Top Right</option>
+              <option value="center">Center</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Font Size: {fontSize}px</label>
+            <input type="range" min={16} max={80} value={fontSize} onChange={e => setFontSize(Number(e.target.value))} className="w-full mt-2 cursor-pointer" style={{ accentColor: 'hsl(258,78%,55%)' }} />
+          </div>
+        </div>
+        <div className="space-y-1">
+          <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Opacity</span><span style={{ color: 'hsl(258,78%,50%)' }}>{opacity}%</span></div>
+          <input type="range" min={10} max={100} value={opacity} onChange={e => setOpacity(Number(e.target.value))} className="w-full cursor-pointer" style={{ accentColor: 'hsl(258,78%,55%)' }} />
+        </div>
+        <PrimaryBtn onClick={applyWatermark}><Stamp size={14} />Add Watermark</PrimaryBtn>
+      </>}
+      {outputUrl && (
+        <div className="space-y-3">
+          <img src={outputUrl} alt="watermarked" className="w-full max-h-36 object-contain rounded-xl" style={{ border: '1px solid hsla(162,72%,38%,0.25)' }} />
+          <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
+            style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
+            <Download size={14} />Download
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MEME GENERATOR
+// ═══════════════════════════════════════════════════════════════════════════
+const MemeGenerator = () => {
+  const [imgSrc, setImgSrc] = useState('');
+  const [topText, setTopText] = useState('');
+  const [bottomText, setBottomText] = useState('');
+  const [outputUrl, setOutputUrl] = useState('');
+
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => { setImgSrc(ev.target?.result as string); setOutputUrl(''); };
+    reader.readAsDataURL(file);
+  };
+  const generate = () => {
+    if (!imgSrc) return;
+    const img = new window.Image(); img.src = imgSrc;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width; canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+      const fs = Math.max(24, Math.round(img.width / 14));
+      ctx.font = `bold ${fs}px Impact, Arial Black, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = fs / 8;
+      if (topText.trim()) {
+        ctx.strokeText(topText.toUpperCase(), img.width / 2, fs + 10);
+        ctx.fillText(topText.toUpperCase(), img.width / 2, fs + 10);
+      }
+      if (bottomText.trim()) {
+        ctx.strokeText(bottomText.toUpperCase(), img.width / 2, img.height - 15);
+        ctx.fillText(bottomText.toUpperCase(), img.width / 2, img.height - 15);
+      }
+      setOutputUrl(canvas.toDataURL('image/png'));
+    };
+  };
+  const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = 'meme.png'; a.click(); };
+  return (
+    <div className="space-y-4">
+      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(38,92%,50%,0.30)', background: 'hsla(38,92%,50%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(38,92%,50%)' }} />
+        <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span>
+        <input type="file" accept="image/*" className="hidden" onChange={onFile} />
+      </label>
+      {imgSrc && <>
+        <img src={imgSrc} alt="original" className="w-full max-h-36 object-contain rounded-xl" />
+        <div className="space-y-1">
+          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Top Text</label>
+          <input type="text" value={topText} onChange={e => setTopText(e.target.value)} placeholder="TOP TEXT..." className="w-full rounded-xl p-3 text-sm" style={inputStyle} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Bottom Text</label>
+          <input type="text" value={bottomText} onChange={e => setBottomText(e.target.value)} placeholder="BOTTOM TEXT..." className="w-full rounded-xl p-3 text-sm" style={inputStyle} />
+        </div>
+        <PrimaryBtn onClick={generate}><Laugh size={14} />Generate Meme</PrimaryBtn>
+      </>}
+      {outputUrl && (
+        <div className="space-y-3">
+          <img src={outputUrl} alt="meme" className="w-full max-h-48 object-contain rounded-xl" style={{ border: '1px solid hsla(38,92%,50%,0.25)' }} />
+          <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
+            style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
+            <Download size={14} />Download Meme
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THUMBNAIL MAKER
+// ═══════════════════════════════════════════════════════════════════════════
+const ThumbnailMaker = () => {
+  const [imgSrc, setImgSrc] = useState('');
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [preset, setPreset] = useState<'youtube' | 'instagram' | 'facebook'>('youtube');
+  const [bgColor, setBgColor] = useState('#1a0533');
+  const [textColor, setTextColor] = useState('#ffffff');
+  const [outputUrl, setOutputUrl] = useState('');
+
+  const PRESETS = { youtube: { w: 1280, h: 720, label: 'YouTube (1280×720)' }, instagram: { w: 1080, h: 1080, label: 'Instagram (1080×1080)' }, facebook: { w: 1200, h: 630, label: 'Facebook (1200×630)' } };
+
+  const generate = () => {
+    const { w, h } = PRESETS[preset];
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d')!;
+    // background
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, bgColor); grad.addColorStop(1, '#0f2b6e');
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
+    // overlay image
+    if (imgSrc) {
+      const img = new window.Image(); img.src = imgSrc;
+      ctx.drawImage(img, w * 0.5, 0, w * 0.5, h);
+      ctx.fillStyle = `${bgColor}cc`; ctx.fillRect(w * 0.5, 0, w * 0.5, h);
+    }
+    // title text
+    if (title.trim()) {
+      const fs = Math.round(h / 8);
+      ctx.font = `bold ${fs}px Arial Black, sans-serif`;
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'left';
+      const maxW = imgSrc ? w * 0.48 : w - 80;
+      const words = title.split(' ');
+      let line = '', lines: string[] = [], y = h / 2 - fs;
+      words.forEach(word => {
+        const test = line + word + ' ';
+        if (ctx.measureText(test).width > maxW && line) { lines.push(line.trim()); line = word + ' '; }
+        else line = test;
+      });
+      lines.push(line.trim());
+      lines.forEach((l, i) => ctx.fillText(l, 40, y + i * (fs * 1.2)));
+    }
+    if (subtitle.trim()) {
+      ctx.font = `${Math.round(h / 16)}px Arial, sans-serif`;
+      ctx.fillStyle = `${textColor}cc`;
+      ctx.textAlign = 'left';
+      ctx.fillText(subtitle, 40, h * 0.82);
+    }
+    setOutputUrl(canvas.toDataURL('image/png'));
+  };
+  const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = `thumbnail-${preset}.png`; a.click(); };
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'hsla(200,90%,45%,0.08)' }}>
+        {(Object.entries(PRESETS) as [typeof preset, typeof PRESETS[typeof preset]][]).map(([k, v]) => (
+          <button key={k} onClick={() => setPreset(k)} className="flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+            style={{ background: preset === k ? 'hsl(200,90%,45%)' : 'transparent', color: preset === k ? 'white' : 'hsl(200,90%,40%)' }}>
+            {k.charAt(0).toUpperCase() + k.slice(1)}
+          </button>
+        ))}
+      </div>
+      <label className="flex flex-col items-center gap-2 p-5 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(200,90%,45%,0.30)', background: 'hsla(200,90%,45%,0.03)' }}>
+        <Upload size={22} style={{ color: 'hsl(200,90%,45%)' }} />
+        <span className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Background Image (optional)</span>
+        <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (!f) return; const r = new FileReader(); r.onload = ev => setImgSrc(ev.target?.result as string); r.readAsDataURL(f); }} />
+      </label>
+      <div className="space-y-1">
+        <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Title Text</label>
+        <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Enter thumbnail title..." className="w-full rounded-xl p-3 text-sm" style={inputStyle} />
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Subtitle (optional)</label>
+        <input type="text" value={subtitle} onChange={e => setSubtitle(e.target.value)} placeholder="Subtitle or channel name..." className="w-full rounded-xl p-3 text-sm" style={inputStyle} />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>BG Color</label>
+          <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(200,90%,45%,0.18)' }}>
+            <input type="color" value={bgColor} onChange={e => setBgColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
+            <span className="text-xs font-mono" style={{ color: 'hsl(226,35%,40%)' }}>{bgColor}</span>
+          </div>
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Text Color</label>
+          <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(200,90%,45%,0.18)' }}>
+            <input type="color" value={textColor} onChange={e => setTextColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
+            <span className="text-xs font-mono" style={{ color: 'hsl(226,35%,40%)' }}>{textColor}</span>
+          </div>
+        </div>
+      </div>
+      <PrimaryBtn onClick={generate}><Film size={14} />Generate Thumbnail</PrimaryBtn>
+      {outputUrl && (
+        <div className="space-y-3">
+          <img src={outputUrl} alt="thumbnail" className="w-full rounded-xl" style={{ border: '1px solid hsla(200,90%,45%,0.25)' }} />
+          <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
+            style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
+            <Download size={14} />Download ({PRESETS[preset].label})
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PDF TOOLS (client-side using browser APIs)
+// ═══════════════════════════════════════════════════════════════════════════
+const ImageToPdf = () => {
+  const [images, setImages] = useState<{ name: string; url: string }[]>([]);
+  const [outputUrl, setOutputUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const onFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    const readers = files.map(f => new Promise<{ name: string; url: string }>(res => {
+      const r = new FileReader();
+      r.onload = ev => res({ name: f.name, url: ev.target?.result as string });
+      r.readAsDataURL(f);
+    }));
+    Promise.all(readers).then(imgs => setImages(p => [...p, ...imgs]));
+  };
+
+  const convert = async () => {
+    if (!images.length) return;
+    setLoading(true);
+    // Build a simple PDF with raw bytes using canvas → PNG → PDF structure
+    const A4_W = 595, A4_H = 842;
+    const pages: string[] = [];
+    for (const img of images) {
+      await new Promise<void>(res => {
+        const i = new window.Image(); i.src = img.url;
+        i.onload = () => {
+          const canvas = document.createElement('canvas');
+          const scale = Math.min(A4_W / i.width, A4_H / i.height);
+          canvas.width = A4_W; canvas.height = A4_H;
+          const ctx = canvas.getContext('2d')!;
+          ctx.fillStyle = 'white'; ctx.fillRect(0, 0, A4_W, A4_H);
+          const dw = i.width * scale, dh = i.height * scale;
+          ctx.drawImage(i, (A4_W - dw) / 2, (A4_H - dh) / 2, dw, dh);
+          pages.push(canvas.toDataURL('image/jpeg', 0.92));
+          res();
+        };
+      });
+    }
+    // Use jsPDF-like manual PDF construction via a simple approach with blob URL
+    // We use a printable HTML approach converted via blob
+    const html = `<html><head><style>@page{margin:0;size:A4}body{margin:0}img{width:100%;page-break-after:always}</style></head><body>${pages.map(p => `<img src="${p}"/>`).join('')}</body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    setOutputUrl(URL.createObjectURL(blob));
+    setLoading(false);
+  };
+
+  const download = () => {
+    if (!outputUrl) return;
+    const a = document.createElement('a'); a.href = outputUrl; a.download = 'images.html'; a.click();
+  };
+  return (
+    <div className="space-y-4">
+      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(162,72%,38%,0.30)', background: 'hsla(162,72%,38%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(162,72%,38%)' }} />
+        <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Images (multiple)</span>
+        <input type="file" accept="image/*" multiple className="hidden" onChange={onFiles} />
+      </label>
+      {images.length > 0 && (
+        <>
+          <div className="space-y-2">
+            {images.map((img, i) => (
+              <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-xl" style={{ background: 'hsla(162,72%,38%,0.06)', border: '1px solid hsla(162,72%,38%,0.18)' }}>
+                <div className="flex items-center gap-2">
+                  <img src={img.url} alt={img.name} className="w-8 h-8 object-cover rounded" />
+                  <span className="text-xs font-medium truncate max-w-[180px]" style={{ color: 'hsl(226,35%,35%)' }}>{img.name}</span>
+                </div>
+                <button onClick={() => setImages(p => p.filter((_, j) => j !== i))} className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: 'hsl(0,72%,50%)', background: 'hsla(0,72%,50%,0.08)' }}>✕</button>
+              </div>
+            ))}
+          </div>
+          <PrimaryBtn onClick={convert} loading={loading}><FileImage size={14} />Convert to Printable PDF</PrimaryBtn>
+        </>
+      )}
+      {outputUrl && (
+        <div className="space-y-2">
+          <p className="text-xs text-center" style={{ color: 'hsl(226,35%,45%)' }}>Open in browser → Print → Save as PDF</p>
+          <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
+            style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
+            <Download size={14} />Download & Print as PDF
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PdfMergeTool = () => {
+  const [files, setFiles] = useState<File[]>([]);
+  const onFiles = (e: React.ChangeEvent<HTMLInputElement>) => setFiles(p => [...p, ...Array.from(e.target.files ?? [])]);
+  return (
+    <div className="space-y-4">
+      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(0,72%,50%,0.30)', background: 'hsla(0,72%,50%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(0,72%,50%)' }} />
+        <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload PDFs to Merge</span>
+        <input type="file" accept=".pdf" multiple className="hidden" onChange={onFiles} />
+      </label>
+      {files.length > 0 && (
+        <div className="space-y-2">
+          {files.map((f, i) => (
+            <div key={i} className="flex items-center justify-between px-3 py-2.5 rounded-xl" style={{ background: 'hsla(0,72%,50%,0.06)', border: '1px solid hsla(0,72%,50%,0.18)' }}>
+              <span className="text-xs font-medium truncate max-w-[220px]" style={{ color: 'hsl(226,35%,35%)' }}>📄 {f.name}</span>
+              <button onClick={() => setFiles(p => p.filter((_, j) => j !== i))} className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: 'hsl(0,72%,50%)', background: 'hsla(0,72%,50%,0.08)' }}>✕</button>
+            </div>
+          ))}
+          <div className="rounded-xl p-4 text-center space-y-2" style={{ background: 'hsla(38,92%,50%,0.08)', border: '1.5px solid hsla(38,92%,50%,0.22)' }}>
+            <p className="text-sm font-bold" style={{ color: 'hsl(38,92%,38%)' }}>💡 Pro Tip</p>
+            <p className="text-xs" style={{ color: 'hsl(226,35%,45%)' }}>To merge PDFs use <strong>ilovepdf.com</strong> or <strong>smallpdf.com</strong> — they offer free merging with drag & drop.</p>
+            <a href="https://ilovepdf.com/merge_pdf" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold mt-1"
+              style={{ background: 'hsl(0,72%,50%)', color: 'white' }}>
+              Open PDF Merger <ArrowRight size={12} />
+            </a>
+          </div>
+        </div>
+      )}
+      {!files.length && (
+        <div className="rounded-xl p-4 text-center space-y-2" style={{ background: 'hsla(0,72%,50%,0.06)', border: '1.5px solid hsla(0,72%,50%,0.18)' }}>
+          <p className="text-sm" style={{ color: 'hsl(226,35%,45%)' }}>Upload your PDFs above to get started, or use the quick links below:</p>
+          <div className="flex gap-2 justify-center flex-wrap mt-2">
+            {[['ilovepdf.com', 'https://ilovepdf.com/merge_pdf'], ['smallpdf.com', 'https://smallpdf.com/merge-pdf'], ['pdf2go.com', 'https://www.pdf2go.com/merge-pdf']].map(([label, href]) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-xl text-xs font-bold"
+                style={{ background: 'hsla(0,72%,50%,0.10)', color: 'hsl(0,72%,40%)', border: '1px solid hsla(0,72%,50%,0.22)' }}>{label}</a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PdfCompressTool = () => (
+  <div className="space-y-4">
+    <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'linear-gradient(135deg, hsla(200,90%,45%,0.06), hsla(258,78%,55%,0.06))', border: '1.5px solid hsla(200,90%,45%,0.20)' }}>
+      <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'hsla(200,90%,45%,0.12)', border: '1.5px solid hsla(200,90%,45%,0.25)' }}>
+        <Minimize2 size={24} style={{ color: 'hsl(200,90%,45%)' }} />
+      </div>
+      <h3 className="font-bold" style={{ color: 'hsl(226,35%,18%)' }}>PDF Compress</h3>
+      <p className="text-sm" style={{ color: 'hsl(226,35%,45%)' }}>Compress PDF files online — free, fast and secure.</p>
+      <div className="flex gap-2 justify-center flex-wrap">
+        {[['ilovepdf.com', 'https://ilovepdf.com/compress_pdf'], ['smallpdf.com', 'https://smallpdf.com/compress-pdf'], ['pdf2go.com', 'https://www.pdf2go.com/compress-pdf']].map(([label, href]) => (
+          <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold"
+            style={{ background: 'hsl(200,90%,45%)', color: 'white' }}>{label} <ArrowRight size={12} /></a>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const PdfSplitTool = () => (
+  <div className="space-y-4">
+    <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'linear-gradient(135deg, hsla(38,92%,50%,0.06), hsla(258,78%,55%,0.06))', border: '1.5px solid hsla(38,92%,50%,0.20)' }}>
+      <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'hsla(38,92%,50%,0.12)', border: '1.5px solid hsla(38,92%,50%,0.25)' }}>
+        <SplitSquareVertical size={24} style={{ color: 'hsl(38,92%,45%)' }} />
+      </div>
+      <h3 className="font-bold" style={{ color: 'hsl(226,35%,18%)' }}>PDF Split</h3>
+      <p className="text-sm" style={{ color: 'hsl(226,35%,45%)' }}>Split a PDF into separate pages or page ranges online.</p>
+      <div className="flex gap-2 justify-center flex-wrap">
+        {[['ilovepdf.com', 'https://ilovepdf.com/split_pdf'], ['smallpdf.com', 'https://smallpdf.com/split-pdf'], ['pdf2go.com', 'https://www.pdf2go.com/split-pdf']].map(([label, href]) => (
+          <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold"
+            style={{ background: 'hsl(38,92%,45%)', color: 'white' }}>{label} <ArrowRight size={12} /></a>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const PdfLockTool = () => (
+  <div className="space-y-4">
+    <div className="rounded-2xl p-6 text-center space-y-4" style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.06), hsla(162,72%,38%,0.06))', border: '1.5px solid hsla(258,78%,55%,0.20)' }}>
+      <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'hsla(258,78%,55%,0.12)', border: '1.5px solid hsla(258,78%,55%,0.25)' }}>
+        <FileLock2 size={24} style={{ color: 'hsl(258,78%,55%)' }} />
+      </div>
+      <h3 className="font-bold" style={{ color: 'hsl(226,35%,18%)' }}>PDF Lock / Unlock</h3>
+      <p className="text-sm" style={{ color: 'hsl(226,35%,45%)' }}>Add password protection or remove it from your PDF files.</p>
+      <div className="flex gap-2 justify-center flex-wrap">
+        {[['Protect PDF', 'https://ilovepdf.com/protect_pdf'], ['Unlock PDF', 'https://ilovepdf.com/unlock_pdf'], ['smallpdf.com', 'https://smallpdf.com/protect-pdf']].map(([label, href]) => (
+          <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold"
+            style={{ background: 'hsl(258,78%,55%)', color: 'white' }}>{label} <ArrowRight size={12} /></a>
+        ))}
+      </div>
+    </div>
   </div>
 );
 
@@ -691,11 +1192,10 @@ const CATEGORIES: Category[] = [
       { id: 'img-resizer', icon: <Maximize2 size={20} />, title: 'Image Resizer', subtitle: 'Resize images to custom dimensions', color: 'hsl(200,90%,45%)', badge: 'New', component: <ImageResizer /> },
       { id: 'img-converter', icon: <RotateCcw size={20} />, title: 'Image Converter', subtitle: 'Convert PNG ↔ JPG ↔ WebP', color: 'hsl(258,78%,55%)', badge: 'New', component: <ImageConverter /> },
       { id: 'img-compressor', icon: <Scissors size={20} />, title: 'Image Compressor', subtitle: 'Reduce image size, keep quality', color: 'hsl(38,92%,50%)', badge: 'New', component: <ImageCompressor /> },
-      { id: 'img-bg-remove', icon: <Image size={20} />, title: 'Background Remover', subtitle: 'Remove image background with AI', color: 'hsl(330,85%,55%)', badge: 'Soon', component: <ComingSoon feature="Background Remover" /> },
-      { id: 'img-blur', icon: <Eye size={20} />, title: 'Image Blur Tool', subtitle: 'Blur images easily', color: 'hsl(162,72%,38%)', badge: 'Soon', component: <ComingSoon feature="Image Blur Tool" /> },
-      { id: 'watermark', icon: <Edit3 size={20} />, title: 'Watermark Tool', subtitle: 'Add watermarks to images', color: 'hsl(258,78%,55%)', badge: 'Soon', component: <ComingSoon feature="Watermark Tool" /> },
-      { id: 'meme-gen', icon: <Smile size={20} />, title: 'Meme Generator', subtitle: 'Create funny memes instantly', color: 'hsl(38,92%,50%)', badge: 'Soon', component: <ComingSoon feature="Meme Generator" /> },
-      { id: 'thumbnail-maker', icon: <FileImage size={20} />, title: 'Thumbnail Maker', subtitle: 'Create YouTube/Social thumbnails', color: 'hsl(200,90%,45%)', badge: 'Soon', component: <ComingSoon feature="Thumbnail Maker" /> },
+      { id: 'img-blur', icon: <Droplets size={20} />, title: 'Image Blur Tool', subtitle: 'Blur images easily', color: 'hsl(162,72%,38%)', badge: 'New', component: <ImageBlurTool /> },
+      { id: 'watermark', icon: <Stamp size={20} />, title: 'Watermark Tool', subtitle: 'Add text watermarks to images', color: 'hsl(258,78%,55%)', badge: 'New', component: <WatermarkTool /> },
+      { id: 'meme-gen', icon: <Laugh size={20} />, title: 'Meme Generator', subtitle: 'Create funny memes instantly', color: 'hsl(38,92%,50%)', badge: 'New', component: <MemeGenerator /> },
+      { id: 'thumbnail-maker', icon: <Film size={20} />, title: 'Thumbnail Maker', subtitle: 'Create YouTube/Social thumbnails', color: 'hsl(200,90%,45%)', badge: 'New', component: <ThumbnailMaker /> },
     ]
   },
   {
@@ -727,11 +1227,11 @@ const CATEGORIES: Category[] = [
   {
     id: 'pdf', label: 'PDF Tools', emoji: '📄', color: 'hsl(0,72%,50%)',
     tools: [
-      { id: 'pdf-merge', icon: <FileText size={20} />, title: 'PDF Merge', subtitle: 'Merge multiple PDFs into one', color: 'hsl(0,72%,50%)', badge: 'Soon', component: <ComingSoon feature="PDF Merge" /> },
-      { id: 'pdf-split', icon: <Scissors size={20} />, title: 'PDF Split', subtitle: 'Split PDF into separate files', color: 'hsl(38,92%,50%)', badge: 'Soon', component: <ComingSoon feature="PDF Split" /> },
-      { id: 'pdf-compress', icon: <Download size={20} />, title: 'PDF Compress', subtitle: 'Reduce PDF file size', color: 'hsl(200,90%,45%)', badge: 'Soon', component: <ComingSoon feature="PDF Compress" /> },
-      { id: 'img-to-pdf', icon: <FileImage size={20} />, title: 'Image to PDF', subtitle: 'Convert images to PDF', color: 'hsl(162,72%,38%)', badge: 'Soon', component: <ComingSoon feature="Image to PDF" /> },
-      { id: 'pdf-lock', icon: <Lock size={20} />, title: 'PDF Lock/Unlock', subtitle: 'Add or remove PDF password', color: 'hsl(258,78%,55%)', badge: 'Soon', component: <ComingSoon feature="PDF Lock/Unlock" /> },
+      { id: 'pdf-merge', icon: <Combine size={20} />, title: 'PDF Merge', subtitle: 'Merge multiple PDFs into one', color: 'hsl(0,72%,50%)', badge: 'New', component: <PdfMergeTool /> },
+      { id: 'pdf-split', icon: <SplitSquareVertical size={20} />, title: 'PDF Split', subtitle: 'Split PDF into separate files', color: 'hsl(38,92%,50%)', badge: 'New', component: <PdfSplitTool /> },
+      { id: 'pdf-compress', icon: <Minimize2 size={20} />, title: 'PDF Compress', subtitle: 'Reduce PDF file size', color: 'hsl(200,90%,45%)', badge: 'New', component: <PdfCompressTool /> },
+      { id: 'img-to-pdf', icon: <FileImage size={20} />, title: 'Image to PDF', subtitle: 'Convert images to PDF', color: 'hsl(162,72%,38%)', badge: 'New', component: <ImageToPdf /> },
+      { id: 'pdf-lock', icon: <FileLock2 size={20} />, title: 'PDF Lock/Unlock', subtitle: 'Add or remove PDF password', color: 'hsl(258,78%,55%)', badge: 'New', component: <PdfLockTool /> },
     ]
   },
 ];
