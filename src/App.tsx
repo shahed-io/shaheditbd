@@ -75,6 +75,7 @@ import AdminNewsletterSubscribers from "./pages/admin/AdminNewsletterSubscribers
 import AdminProductImportExport from "./pages/admin/AdminProductImportExport";
 import AdminProductReviews from "./pages/admin/AdminProductReviews";
 import FreeTools from "./pages/FreeTools";
+import { useCopyProtection } from "./hooks/useCopyProtection";
 
 const queryClient = new QueryClient({
   defaultOptions: {
