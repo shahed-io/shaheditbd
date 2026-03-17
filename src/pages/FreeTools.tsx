@@ -173,7 +173,7 @@ const ProfitCalculator = () => {
   const marginSell = sellN > 0 ? ((profit / sellN) * 100).toFixed(2) : '0';
   return (
     <div className="space-y-4">
-      {[{ label: 'ক্রয় মূল্য (টাকা)', val: cost, set: setCost }, { label: 'বিক্রয় মূল্য (টাকা)', val: selling, set: setSelling }].map(f => (
+      {[{ label: 'Cost Price (৳)', val: cost, set: setCost }, { label: 'Selling Price (৳)', val: selling, set: setSelling }].map(f => (
         <div key={f.label} className="space-y-1.5">
           <label className="text-sm font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>{f.label}</label>
           <input type="number" value={f.val} onChange={e => f.set(e.target.value)} placeholder="0.00" className="w-full rounded-xl p-3.5 text-sm" style={inputStyle} />
@@ -181,7 +181,7 @@ const ProfitCalculator = () => {
       ))}
       {(costN > 0 || sellN > 0) && (
         <div className="grid grid-cols-2 gap-3 pt-2">
-          {[{ label: 'লাভ/ক্ষতি', value: `৳${profit.toFixed(2)}`, c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }, { label: 'লাভের হার', value: `${margin}%`, c: 'hsl(258,78%,50%)' }, { label: 'মার্জিন', value: `${marginSell}%`, c: 'hsl(200,90%,42%)' }, { label: 'লাভজনক', value: profit >= 0 ? 'হ্যাঁ ✓' : 'না ✗', c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }].map(r => (
+          {[{ label: 'Profit/Loss', value: `৳${profit.toFixed(2)}`, c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }, { label: 'Profit Rate', value: `${margin}%`, c: 'hsl(258,78%,50%)' }, { label: 'Margin', value: `${marginSell}%`, c: 'hsl(200,90%,42%)' }, { label: 'Profitable', value: profit >= 0 ? 'Yes ✓' : 'No ✗', c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }].map(r => (
             <div key={r.label} className="rounded-xl p-3 text-center" style={{ background: `${r.c.slice(0, -1)},0.07)`.replace('hsl', 'hsla'), border: `1.5px solid ${r.c.slice(0, -1)},0.18)`.replace('hsl', 'hsla') }}>
               <p className="text-xl font-black" style={{ color: r.c }}>{r.value}</p>
               <p className="text-xs mt-0.5 font-medium" style={{ color: 'hsl(226,35%,45%)' }}>{r.label}</p>
