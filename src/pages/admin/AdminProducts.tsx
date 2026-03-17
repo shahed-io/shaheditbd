@@ -839,6 +839,59 @@ const AdminProducts = () => {
                             placeholder="or paste image URL..." className={ic} />
                         </div>
                       </div>
+
+                      {/* AI Glassmorphism Card Generator */}
+                      <div
+                        className="relative rounded-2xl overflow-hidden p-4"
+                        style={{
+                          background: 'linear-gradient(135deg, hsla(271,91%,65%,0.10) 0%, hsla(217,91%,60%,0.10) 100%)',
+                          border: '1px solid hsla(271,91%,65%,0.30)',
+                          backdropFilter: 'blur(12px)',
+                        }}
+                      >
+                        <div className="absolute top-0 left-0 right-0 h-px"
+                          style={{ background: 'linear-gradient(90deg, transparent, hsla(271,91%,65%,0.6), transparent)' }} />
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+                            style={{ background: 'linear-gradient(135deg, hsla(271,91%,65%,0.20), hsla(217,91%,60%,0.20))', border: '1px solid hsla(271,91%,65%,0.30)' }}>
+                            🎨
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-foreground">AI Glassmorphism Card Generator</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              {form.image_url || imagePreview
+                                ? 'আপলোড করা ছবি দিয়ে AI একটি প্রিমিয়াম Glassmorphism card ডিজাইন তৈরি করবে এবং WEBP ফরমেটে সেভ করবে।'
+                                : 'প্রথমে একটি ছবি আপলোড করুন, তারপর AI দিয়ে Glassmorphism card তৈরি করুন।'}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={generateAiCard}
+                              disabled={aiCardLoading || imageUploading}
+                              className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-[0.98]"
+                              style={{
+                                background: aiCardLoading
+                                  ? 'hsla(271,91%,65%,0.40)'
+                                  : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))',
+                                boxShadow: '0 4px 20px hsla(271,91%,65%,0.35)',
+                              }}
+                            >
+                              {aiCardLoading
+                                ? <><Loader2 size={15} className="animate-spin" /> AI তৈরি হচ্ছে...</>
+                                : <><Wand2 size={15} /> ✨ AI দিয়ে Glassmorphism Card তৈরি করুন</>}
+                            </button>
+                          </div>
+                        </div>
+                        {aiCardLoading && (
+                          <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                            <div className="flex gap-1">
+                              {[0, 0.2, 0.4].map((d, i) => (
+                                <div key={i} className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: `${d}s` }} />
+                              ))}
+                            </div>
+                            AI ছবি তৈরি করছে, WEBP কনভার্ট করছে এবং সেভ করছে...
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {/* Gallery Images */}
