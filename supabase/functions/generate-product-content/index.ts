@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { productName, category, brand, productType, price, duration, type, demoDescription } = await req.json();
+    const { productName, category, brand, productType, price, duration, type, demoDescription, count } = await req.json();
 
     if (!productName) {
       return new Response(JSON.stringify({ error: "productName is required" }), {
@@ -31,9 +31,12 @@ serve(async (req) => {
     let maxTokens = 600;
 
     if (type === "short_description") {
-      systemPrompt = "You are a product copywriter for a Bangladeshi digital software store called Shahed Store. Write compelling short product descriptions in Bangla (Bengali). Return ONLY plain text, no JSON, no markdown, max 1–2 sentences.";
+      const numOptions = count && count > 1 ? count : 1;
+      systemPrompt = `You are a product copywriter for a Bangladeshi digital software store called Shahed Store. Write compelling short product descriptions in Bangla (Bengali). Return ONLY plain text, no JSON, no markdown, max 1–2 sentences per option.${numOptions > 1 ? ` Generate exactly ${numOptions} different options, each on a new line, prefixed with the number like: 1. ... 2. ... 3. ...` : ""}`;
       const ctx = [productName, brand && `Brand: ${brand}`, category && `Category: ${category}`, productType && `Type: ${productType}`].filter(Boolean).join(", ");
-      userPrompt = `Write a short product description (1-2 sentences, in Bengali/বাংলা) for: ${ctx}`;
+      userPrompt = numOptions > 1
+        ? `Write ${numOptions} different short product descriptions (1-2 sentences each, in Bengali/বাংলা) for: ${ctx}. Each should have a slightly different tone/angle. Number them 1. 2. 3.`
+        : `Write a short product description (1-2 sentences, in Bengali/বাংলা) for: ${ctx}`;
 
     } else if (type === "description") {
       maxTokens = 2400;

@@ -115,6 +115,8 @@ const AdminProducts = () => {
   const [aiCardLoading, setAiCardLoading] = useState(false);
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
+  const [shortDescOptions, setShortDescOptions] = useState<string[]>([]);
+  const [showShortDescPicker, setShowShortDescPicker] = useState(false);
 
   // ── AI Content Generator ─────────────────────────────────────
   const generateAiContent = async (type: 'short_description' | 'description' | 'seo' | 'all') => {
@@ -122,7 +124,6 @@ const AdminProducts = () => {
     setAiLoading(type);
     try {
       const catName = categories.find(c => c.id === form.category_id)?.name || '';
-      // Extract duration from variants if available
       const durationVariant = (form.variants as any[])?.find((v: any) => v.name?.toLowerCase().includes('duration') || v.name?.toLowerCase().includes('validity'));
       const durationValue = durationVariant?.options?.[0] || '';
       const { data, error } = await supabase.functions.invoke('generate-product-content', {
@@ -134,14 +135,26 @@ const AdminProducts = () => {
           price: form.price,
           duration: durationValue,
           type,
+          count: type === 'short_description' ? 3 : 1,
         },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       const result = data?.result;
       if (type === 'short_description') {
-        setForm(p => ({ ...p, short_description: result }));
-        toast.success('Short description generated!');
+        // Parse numbered options: "1. ...\n2. ...\n3. ..."
+        const raw: string = result || '';
+        const lines = raw.split('\n').map((l: string) => l.trim()).filter(Boolean);
+        const opts = lines
+          .filter((l: string) => /^\d+[\.\)]\s/.test(l))
+          .map((l: string) => l.replace(/^\d+[\.\)]\s*/, '').trim());
+        if (opts.length >= 2) {
+          setShortDescOptions(opts);
+          setShowShortDescPicker(true);
+        } else {
+          setForm(p => ({ ...p, short_description: raw.trim() }));
+          toast.success('Short description generated!');
+        }
       } else if (type === 'description') {
         setForm(p => ({ ...p, description: result }));
         toast.success('Description generated!');
@@ -169,19 +182,17 @@ const AdminProducts = () => {
     }
   };
 
-  const AiBtn = ({ fieldType, label }: { fieldType: 'short_description' | 'description' | 'seo', label: string }) => {
-    return (
-      <button
-        type="button"
-        onClick={() => generateAiContent(fieldType)}
-        disabled={!form.name.trim() || aiLoading !== null}
-        className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg border border-primary/30 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        {aiLoading === fieldType ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
-        {aiLoading === fieldType ? 'Generating...' : label}
-      </button>
-    );
-  };
+  const AiBtn = ({ fieldType, label }: { fieldType: 'short_description' | 'description' | 'seo', label: string }) => (
+    <button
+      type="button"
+      onClick={() => generateAiContent(fieldType)}
+      disabled={!form.name.trim() || aiLoading !== null}
+      className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg border border-primary/30 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      {aiLoading === fieldType ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
+      {aiLoading === fieldType ? 'Generating...' : label}
+    </button>
+  );
 
   // ── Demo Style AI Generator ───────────────────────────────────
   const generateDemoStyle = async () => {
@@ -668,11 +679,41 @@ const AdminProducts = () => {
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <label className={lc} style={{marginBottom:0}}>Short Description</label>
-                        <AiBtn fieldType="short_description" label="AI Generate" />
+                        <AiBtn fieldType="short_description" label="AI Generate (৩টি অপশন)" />
                       </div>
                       <input value={form.short_description}
                         onChange={e => setForm(p => ({ ...p, short_description: e.target.value }))}
                         placeholder="One-liner shown in cards..." className={ic} />
+                      {/* Short description options picker */}
+                      {showShortDescPicker && shortDescOptions.length > 0 && (
+                        <div className="mt-2 rounded-xl border border-primary/30 bg-primary/5 overflow-hidden">
+                          <div className="flex items-center justify-between px-3 py-2 border-b border-primary/20">
+                            <span className="text-[11px] font-semibold text-primary flex items-center gap-1.5">
+                              <Sparkles size={11} /> AI-generated অপশন — একটি বেছে নিন
+                            </span>
+                            <button type="button" onClick={() => setShowShortDescPicker(false)} className="text-muted-foreground hover:text-foreground">
+                              <X size={12} />
+                            </button>
+                          </div>
+                          <div className="divide-y divide-border/50">
+                            {shortDescOptions.map((opt, i) => (
+                              <button
+                                key={i}
+                                type="button"
+                                onClick={() => {
+                                  setForm(p => ({ ...p, short_description: opt }));
+                                  setShowShortDescPicker(false);
+                                  toast.success('Short description সেট হয়েছে!');
+                                }}
+                                className="w-full text-left px-3 py-2.5 text-xs text-foreground hover:bg-primary/10 transition-colors flex items-start gap-2"
+                              >
+                                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className="leading-relaxed">{opt}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div>
