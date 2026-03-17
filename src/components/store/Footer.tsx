@@ -104,8 +104,8 @@ const Footer = () => (
     {/* ── Main footer ── */}
     <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10">
 
-      {/* Brand section — centered on mobile, left-aligned on desktop */}
-      <div className="flex flex-col items-center text-center md:items-start md:text-left mb-10 space-y-5"
+      {/* Brand section — always centered */}
+      <div className="flex flex-col items-center text-center mb-10 space-y-5"
         style={{
           background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
           backdropFilter: 'blur(24px) saturate(180%)',
@@ -115,15 +115,15 @@ const Footer = () => (
           boxShadow: '0 4px 24px hsla(258,78%,55%,0.07), 0 1px 0 rgba(255,255,255,0.9) inset',
           padding: '24px 20px',
         }}>
-        <a href="/" className="flex items-center justify-center md:justify-start">
+        <a href="/" className="flex items-center justify-center">
           <BrandLogo size="lg" />
         </a>
         <p className="text-[13px] leading-relaxed max-w-xs" style={{ color: 'hsl(226,35%,42%)' }}>
           বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।
         </p>
 
-        {/* Contact pills — centered on mobile */}
-        <div className="flex flex-col items-center md:items-start gap-2 w-full">
+        {/* Contact pills — centered */}
+        <div className="flex flex-col items-center gap-2 w-full">
           {[
             { icon: <Phone size={13} />, href: 'tel:01840099853',                   label: '01840-099853',            color: 'hsl(258,78%,55%)' },
             { icon: <Mail size={13} />,  href: 'mailto:info@shahedstore.com.bd',     label: 'info@shahedstore.com.bd', color: 'hsl(200,90%,45%)' },
