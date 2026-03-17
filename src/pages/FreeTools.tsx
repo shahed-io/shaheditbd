@@ -100,15 +100,15 @@ const PasswordGenerator = () => {
   };
   const s = (() => {
     const n = Object.values(opts).filter(Boolean).length;
-    if (length < 8 || n < 2) return { label: 'দুর্বল', color: 'hsl(0,72%,50%)', w: '25%' };
-    if (length < 12 || n < 3) return { label: 'মোটামুটি', color: 'hsl(38,92%,50%)', w: '55%' };
-    if (length < 16) return { label: 'ভালো', color: 'hsl(200,90%,45%)', w: '75%' };
-    return { label: 'শক্তিশালী', color: 'hsl(162,72%,38%)', w: '100%' };
+    if (length < 8 || n < 2) return { label: 'Weak', color: 'hsl(0,72%,50%)', w: '25%' };
+    if (length < 12 || n < 3) return { label: 'Fair', color: 'hsl(38,92%,50%)', w: '55%' };
+    if (length < 16) return { label: 'Good', color: 'hsl(200,90%,45%)', w: '75%' };
+    return { label: 'Strong', color: 'hsl(162,72%,38%)', w: '100%' };
   })();
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3">
-        {([['upper', 'বড় হাতের (A-Z)'], ['lower', 'ছোট হাতের (a-z)'], ['num', 'সংখ্যা (0-9)'], ['sym', 'চিহ্ন (!@#$)']] as const).map(([k, label]) => (
+        {([['upper', 'Uppercase (A-Z)'], ['lower', 'Lowercase (a-z)'], ['num', 'Numbers (0-9)'], ['sym', 'Symbols (!@#$)']] as const).map(([k, label]) => (
           <label key={k} className="flex items-center gap-2 cursor-pointer px-3 py-2.5 rounded-xl select-none"
             style={{ background: opts[k] ? 'hsla(258,78%,55%,0.08)' : 'hsla(226,35%,50%,0.05)', border: `1.5px solid ${opts[k] ? 'hsla(258,78%,55%,0.30)' : 'hsla(226,35%,50%,0.12)'}` }}>
             <input type="checkbox" className="hidden" checked={opts[k]} onChange={e => setOpts(p => ({ ...p, [k]: e.target.checked }))} />
@@ -121,14 +121,14 @@ const PasswordGenerator = () => {
         ))}
       </div>
       <div className="space-y-2">
-        <div className="flex justify-between"><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>দৈর্ঘ্য</span><span className="font-black text-lg" style={{ color: 'hsl(258,78%,50%)' }}>{length}</span></div>
+        <div className="flex justify-between"><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>Length</span><span className="font-black text-lg" style={{ color: 'hsl(258,78%,50%)' }}>{length}</span></div>
         <input type="range" min={6} max={64} value={length} onChange={e => setLength(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
       </div>
       <div className="space-y-1.5">
-        <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>শক্তিমাত্রা</span><span style={{ color: s.color }}>{s.label}</span></div>
+        <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Strength</span><span style={{ color: s.color }}>{s.label}</span></div>
         <div className="h-2 rounded-full" style={{ background: 'hsla(226,35%,50%,0.12)' }}><div className="h-full rounded-full transition-all duration-500" style={{ width: s.w, background: s.color }} /></div>
       </div>
-      <PrimaryBtn onClick={generate}><RefreshCw size={14} />পাসওয়ার্ড তৈরি করুন</PrimaryBtn>
+      <PrimaryBtn onClick={generate}><RefreshCw size={14} />Generate Password</PrimaryBtn>
       {password && <ResultBox value={password} mono />}
     </div>
   );
@@ -149,10 +149,10 @@ const AgeCalculator = () => {
     <div className="space-y-5">
       <input type="date" value={dob} onChange={e => setDob(e.target.value)} max={new Date().toISOString().split('T')[0]}
         className="w-full rounded-xl p-3.5 text-sm" style={inputStyle} />
-      <PrimaryBtn onClick={calculate}>বয়স হিসাব করুন</PrimaryBtn>
+      <PrimaryBtn onClick={calculate}>Calculate Age</PrimaryBtn>
       {result && (
         <div className="grid grid-cols-2 gap-3">
-          {[{ label: 'বছর', value: result.years, c: 'hsl(258,78%,50%)' }, { label: 'মাস', value: result.months, c: 'hsl(200,90%,42%)' }, { label: 'দিন', value: result.days, c: 'hsl(162,72%,38%)' }, { label: 'মোট দিন', value: result.totalDays.toLocaleString(), c: 'hsl(38,92%,50%)' }].map(r => (
+          {[{ label: 'Years', value: result.years, c: 'hsl(258,78%,50%)' }, { label: 'Months', value: result.months, c: 'hsl(200,90%,42%)' }, { label: 'Days', value: result.days, c: 'hsl(162,72%,38%)' }, { label: 'Total Days', value: result.totalDays.toLocaleString(), c: 'hsl(38,92%,50%)' }].map(r => (
             <div key={r.label} className="rounded-xl p-4 text-center" style={{ background: `${r.c.slice(0, -1)},0.07)`.replace('hsl', 'hsla'), border: `1.5px solid ${r.c.slice(0, -1)},0.20)`.replace('hsl', 'hsla') }}>
               <p className="text-3xl font-black" style={{ color: r.c }}>{r.value}</p>
               <p className="text-xs font-semibold mt-1" style={{ color: 'hsl(226,35%,45%)' }}>{r.label}</p>
@@ -173,7 +173,7 @@ const ProfitCalculator = () => {
   const marginSell = sellN > 0 ? ((profit / sellN) * 100).toFixed(2) : '0';
   return (
     <div className="space-y-4">
-      {[{ label: 'ক্রয় মূল্য (টাকা)', val: cost, set: setCost }, { label: 'বিক্রয় মূল্য (টাকা)', val: selling, set: setSelling }].map(f => (
+      {[{ label: 'Cost Price (৳)', val: cost, set: setCost }, { label: 'Selling Price (৳)', val: selling, set: setSelling }].map(f => (
         <div key={f.label} className="space-y-1.5">
           <label className="text-sm font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>{f.label}</label>
           <input type="number" value={f.val} onChange={e => f.set(e.target.value)} placeholder="0.00" className="w-full rounded-xl p-3.5 text-sm" style={inputStyle} />
@@ -181,7 +181,7 @@ const ProfitCalculator = () => {
       ))}
       {(costN > 0 || sellN > 0) && (
         <div className="grid grid-cols-2 gap-3 pt-2">
-          {[{ label: 'লাভ/ক্ষতি', value: `৳${profit.toFixed(2)}`, c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }, { label: 'লাভের হার', value: `${margin}%`, c: 'hsl(258,78%,50%)' }, { label: 'মার্জিন', value: `${marginSell}%`, c: 'hsl(200,90%,42%)' }, { label: 'লাভজনক', value: profit >= 0 ? 'হ্যাঁ ✓' : 'না ✗', c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }].map(r => (
+          {[{ label: 'Profit/Loss', value: `৳${profit.toFixed(2)}`, c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }, { label: 'Profit Rate', value: `${margin}%`, c: 'hsl(258,78%,50%)' }, { label: 'Margin', value: `${marginSell}%`, c: 'hsl(200,90%,42%)' }, { label: 'Profitable', value: profit >= 0 ? 'Yes ✓' : 'No ✗', c: profit >= 0 ? 'hsl(162,72%,38%)' : 'hsl(0,72%,50%)' }].map(r => (
             <div key={r.label} className="rounded-xl p-3 text-center" style={{ background: `${r.c.slice(0, -1)},0.07)`.replace('hsl', 'hsla'), border: `1.5px solid ${r.c.slice(0, -1)},0.18)`.replace('hsl', 'hsla') }}>
               <p className="text-xl font-black" style={{ color: r.c }}>{r.value}</p>
               <p className="text-xs mt-0.5 font-medium" style={{ color: 'hsl(226,35%,45%)' }}>{r.label}</p>
@@ -201,7 +201,7 @@ const CaseConverter = () => {
   };
   return (
     <div className="space-y-4">
-      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder="কনভার্ট করতে টেক্সট লিখুন..." rows={4} />
+      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder="Enter text to convert..." rows={4} />
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {[['upper', 'UPPER CASE'], ['lower', 'lower case'], ['title', 'Title Case'], ['sentence', 'Sentence case'], ['alternate', 'aLtErNaTe'], ['reverse', 'esreveR']].map(([t, l]) => (
           <button key={t} onClick={() => convert(t)} className="py-2.5 px-3 rounded-xl text-sm font-bold transition-all hover:scale-[1.03]"
@@ -216,7 +216,7 @@ const CaseConverter = () => {
 const UrlEncoder = () => {
   const [input, setInput] = useState(''), [mode, setMode] = useState<'encode' | 'decode'>('encode'), [result, setResult] = useState(''), [error, setError] = useState('');
   const process = () => {
-    setError(''); try { setResult(mode === 'encode' ? encodeURIComponent(input) : decodeURIComponent(input)); } catch { setError('ভুল ইনপুট'); }
+    setError(''); try { setResult(mode === 'encode' ? encodeURIComponent(input) : decodeURIComponent(input)); } catch { setError('Invalid input'); }
   };
   return (
     <div className="space-y-4">
@@ -226,8 +226,8 @@ const UrlEncoder = () => {
             style={{ background: mode === m ? 'hsl(258,78%,55%)' : 'transparent', color: mode === m ? 'white' : 'hsl(258,78%,50%)' }}>{m === 'encode' ? 'Encode' : 'Decode'}</button>
         ))}
       </div>
-      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'URL লিখুন...' : 'Encoded URL দিন...'} rows={3} />
-      <PrimaryBtn onClick={process}>{mode === 'encode' ? 'Encode করুন' : 'Decode করুন'}</PrimaryBtn>
+      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'Enter URL...' : 'Enter encoded URL...'} rows={3} />
+      <PrimaryBtn onClick={process}>{mode === 'encode' ? 'Encode' : 'Decode'}</PrimaryBtn>
       {error && <p className="text-sm font-medium" style={{ color: 'hsl(0,72%,50%)' }}>{error}</p>}
       {result && <ResultBox value={result} mono />}
     </div>
@@ -237,7 +237,7 @@ const UrlEncoder = () => {
 const Base64Tool = () => {
   const [input, setInput] = useState(''), [mode, setMode] = useState<'encode' | 'decode'>('encode'), [result, setResult] = useState(''), [error, setError] = useState('');
   const process = () => {
-    setError(''); try { setResult(mode === 'encode' ? btoa(unescape(encodeURIComponent(input))) : decodeURIComponent(escape(atob(input)))); } catch { setError('ভুল ইনপুট'); }
+    setError(''); try { setResult(mode === 'encode' ? btoa(unescape(encodeURIComponent(input))) : decodeURIComponent(escape(atob(input)))); } catch { setError('Invalid input'); }
   };
   return (
     <div className="space-y-4">
@@ -247,8 +247,8 @@ const Base64Tool = () => {
             style={{ background: mode === m ? 'hsl(258,78%,55%)' : 'transparent', color: mode === m ? 'white' : 'hsl(258,78%,50%)' }}>{m === 'encode' ? 'Encode' : 'Decode'}</button>
         ))}
       </div>
-      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'টেক্সট লিখুন...' : 'Base64 দিন...'} rows={3} />
-      <PrimaryBtn onClick={process}>{mode === 'encode' ? 'Encode করুন' : 'Decode করুন'}</PrimaryBtn>
+      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'Enter text...' : 'Enter Base64...'} rows={3} />
+      <PrimaryBtn onClick={process}>{mode === 'encode' ? 'Encode' : 'Decode'}</PrimaryBtn>
       {error && <p className="text-sm font-medium" style={{ color: 'hsl(0,72%,50%)' }}>{error}</p>}
       {result && <ResultBox value={result} mono />}
     </div>
@@ -276,30 +276,30 @@ const QrGenerator = () => {
   };
   return (
     <div className="space-y-4">
-      <ToolInput value={text} onChange={e => setText(e.target.value)} placeholder="URL বা টেক্সট লিখুন — যেমন: https://shahedstore.com.bd" rows={3} />
+      <ToolInput value={text} onChange={e => setText(e.target.value)} placeholder="Enter URL or text — e.g. https://shahedstore.com.bd" rows={3} />
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
-          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>QR রঙ</label>
+          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>QR Color</label>
           <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(258,78%,55%,0.18)' }}>
             <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
             <span className="text-xs font-mono" style={{ color: 'hsl(226,35%,40%)' }}>{color}</span>
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>ব্যাকগ্রাউন্ড</label>
+          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Background</label>
           <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(258,78%,55%,0.18)' }}>
             <input type="color" value={bgColor} onChange={e => setBgColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
             <span className="text-xs font-mono" style={{ color: 'hsl(226,35%,40%)' }}>{bgColor}</span>
           </div>
         </div>
       </div>
-      <PrimaryBtn onClick={generate}><QrCode size={14} />QR কোড তৈরি করুন</PrimaryBtn>
+      <PrimaryBtn onClick={generate}><QrCode size={14} />Generate QR Code</PrimaryBtn>
       {qrUrl && (
         <div className="flex flex-col items-center gap-4">
           <img src={qrUrl} alt="QR Code" className="w-48 h-48 rounded-xl border-2" style={{ borderColor: 'hsla(258,78%,55%,0.20)' }} />
           <button onClick={download} className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105"
             style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
-            <Download size={14} />ডাউনলোড করুন
+            <Download size={14} />Download
           </button>
         </div>
       )}
@@ -340,18 +340,18 @@ const ImageResizer = () => {
       <label className="flex flex-col items-center justify-center gap-3 p-8 rounded-xl cursor-pointer transition-all"
         style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
         <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} />
-        <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>ছবি আপলোড করুন</span>
+        <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span>
         <input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
       {imgSrc && (
         <>
           <img src={imgSrc} alt="original" className="w-full max-h-40 object-contain rounded-xl" style={{ border: '1px solid hsla(258,78%,55%,0.15)' }} />
-          <p className="text-xs font-medium text-center" style={{ color: 'hsl(226,35%,45%)' }}>মূল সাইজ: {origSize}</p>
+          <p className="text-xs font-medium text-center" style={{ color: 'hsl(226,35%,45%)' }}>Original size: {origSize}</p>
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1"><label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>প্রস্থ (px)</label><input type="number" value={width} onChange={e => setWidth(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} /></div>
-            <div className="space-y-1"><label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>উচ্চতা (px)</label><input type="number" value={height} onChange={e => setHeight(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} /></div>
+            <div className="space-y-1"><label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Width (px)</label><input type="number" value={width} onChange={e => setWidth(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} /></div>
+            <div className="space-y-1"><label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Height (px)</label><input type="number" value={height} onChange={e => setHeight(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} /></div>
           </div>
-          <PrimaryBtn onClick={resize}><Maximize2 size={14} />রিসাইজ করুন</PrimaryBtn>
+          <PrimaryBtn onClick={resize}><Maximize2 size={14} />Resize Image</PrimaryBtn>
         </>
       )}
       {outputUrl && (
@@ -359,7 +359,7 @@ const ImageResizer = () => {
           <img src={outputUrl} alt="resized" className="w-full max-h-40 object-contain rounded-xl" style={{ border: '1px solid hsla(162,72%,38%,0.25)' }} />
           <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
             style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
-            <Download size={14} />ডাউনলোড করুন
+            <Download size={14} />Download
           </button>
         </div>
       )}
@@ -389,13 +389,13 @@ const ImageConverter = () => {
   return (
     <div className="space-y-4">
       <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
-        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>ছবি আপলোড করুন</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
+        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
       {imgSrc && (
         <>
           <img src={imgSrc} alt="src" className="w-full max-h-36 object-contain rounded-xl" />
           <div className="space-y-2">
-            <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>আউটপুট ফরম্যাট</label>
+            <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Output Format</label>
             <div className="flex gap-2">
               {(['png', 'jpeg', 'webp'] as const).map(f => (
                 <button key={f} onClick={() => setFormat(f)} className="flex-1 py-2 rounded-xl text-sm font-bold transition-all"
@@ -407,11 +407,11 @@ const ImageConverter = () => {
           </div>
           {format !== 'png' && (
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>কোয়ালিটি</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
+              <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
               <input type="range" min={10} max={100} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
             </div>
           )}
-          <PrimaryBtn onClick={convert}><RotateCcw size={14} />কনভার্ট করুন</PrimaryBtn>
+          <PrimaryBtn onClick={convert}><RotateCcw size={14} />Convert</PrimaryBtn>
         </>
       )}
       {outputUrl && (
@@ -419,7 +419,7 @@ const ImageConverter = () => {
           <img src={outputUrl} alt="converted" className="w-full max-h-36 object-contain rounded-xl" style={{ border: '1px solid hsla(162,72%,38%,0.25)' }} />
           <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
             style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
-            <Download size={14} />ডাউনলোড (.{format})
+            <Download size={14} />Download (.{format})
           </button>
         </div>
       )}
@@ -453,16 +453,16 @@ const ImageCompressor = () => {
   return (
     <div className="space-y-4">
       <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
-        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>ছবি আপলোড করুন</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
+        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
       {imgSrc && (
         <>
           <img src={imgSrc} alt="orig" className="w-full max-h-36 object-contain rounded-xl" />
           <div className="space-y-2">
-            <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>কোয়ালিটি</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
+            <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
             <input type="range" min={10} max={99} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
           </div>
-          <PrimaryBtn onClick={compress}><Scissors size={14} />কম্প্রেস করুন</PrimaryBtn>
+          <PrimaryBtn onClick={compress}><Scissors size={14} />Compress</PrimaryBtn>
         </>
       )}
       {outputUrl && (
@@ -470,16 +470,16 @@ const ImageCompressor = () => {
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl p-3 text-center" style={{ background: 'hsla(0,72%,50%,0.07)', border: '1.5px solid hsla(0,72%,50%,0.18)' }}>
               <p className="text-xl font-black" style={{ color: 'hsl(0,72%,50%)' }}>{sizes.orig} KB</p>
-              <p className="text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}>আগের সাইজ</p>
+              <p className="text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}>Before</p>
             </div>
             <div className="rounded-xl p-3 text-center" style={{ background: 'hsla(162,72%,38%,0.07)', border: '1.5px solid hsla(162,72%,38%,0.18)' }}>
               <p className="text-xl font-black" style={{ color: 'hsl(162,72%,38%)' }}>{sizes.compressed} KB</p>
-              <p className="text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}>পরের সাইজ</p>
+              <p className="text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}>After</p>
             </div>
           </div>
           <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
             style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
-            <Download size={14} />ডাউনলোড করুন
+            <Download size={14} />Download
           </button>
         </div>
       )}
@@ -508,7 +508,6 @@ const HashtagGenerator = () => {
         setTags(extracted);
       }
     } catch {
-      // fallback static
       setTags([`#${topic.replace(/\s+/g, '')}`, `#${platform}`, '#trending', '#viral', '#shahedstore', `#${topic.split(' ')[0]}tips`]);
     }
     setLoading(false);
@@ -525,8 +524,8 @@ const HashtagGenerator = () => {
           </button>
         ))}
       </div>
-      <ToolInput value={topic} onChange={e => setTopic(e.target.value)} placeholder="টপিক লিখুন — যেমন: বাংলাদেশ ফ্যাশন, ডিজিটাল মার্কেটিং..." rows={2} />
-      <PrimaryBtn onClick={generate} loading={loading}><Hash size={14} />হ্যাশট্যাগ তৈরি করুন</PrimaryBtn>
+      <ToolInput value={topic} onChange={e => setTopic(e.target.value)} placeholder="Enter topic — e.g. Fashion, Digital Marketing..." rows={2} />
+      <PrimaryBtn onClick={generate} loading={loading}><Hash size={14} />Generate Hashtags</PrimaryBtn>
       {tags.length > 0 && (
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
@@ -538,7 +537,7 @@ const HashtagGenerator = () => {
           </div>
           <button onClick={copyAll} className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl"
             style={{ background: 'hsla(162,72%,38%,0.08)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.22)' }}>
-            <Copy size={13} />সব কপি করুন
+            <Copy size={13} />Copy All
           </button>
         </div>
       )}
@@ -562,8 +561,8 @@ const AiToolBase = ({ tool, placeholder, btnLabel, extraFields, getPromptPayload
       const { data } = await supabase.functions.invoke('ai-free-tools', {
         body: { tool, input, ...getPromptPayload() }
       });
-      setResult(data?.result ?? 'কিছু সমস্যা হয়েছে, আবার চেষ্টা করুন।');
-    } catch { setResult('সার্ভার এরর। পরে আবার চেষ্টা করুন।'); }
+      setResult(data?.result ?? 'Something went wrong, please try again.');
+    } catch { setResult('Server error. Please try again later.'); }
     setLoading(false);
   };
   return (
@@ -577,69 +576,69 @@ const AiToolBase = ({ tool, placeholder, btnLabel, extraFields, getPromptPayload
 };
 
 const FacebookCaptionGen = () => {
-  const [tone, setTone] = useState('engaging');
+  const [tone] = useState('engaging');
   return (
     <div className="space-y-4">
-      <AiToolBase tool="fb-caption" placeholder="পোস্টের বিষয় লিখুন — যেমন: নতুন পণ্য লঞ্চ, অফার, ইভেন্ট..." label="" btnLabel="ক্যাপশন তৈরি করুন" getPromptPayload={() => ({ tone })}>
+      <AiToolBase tool="fb-caption" placeholder="Describe your post topic — e.g. new product launch, offer, event..." label="" btnLabel="Generate Caption" getPromptPayload={() => ({ tone })}>
       </AiToolBase>
     </div>
   );
 };
 
 const YoutubeTitleGen = () => (
-  <AiToolBase tool="yt-title" placeholder="ভিডিওর বিষয় লিখুন — যেমন: বাংলাদেশে ফ্রিল্যান্সিং শুরু করার উপায়..." label="" btnLabel="টাইটেল তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="yt-title" placeholder="Describe your video topic — e.g. How to start freelancing..." label="" btnLabel="Generate Title" getPromptPayload={() => ({})} />
 );
 
 const AdCopyGen = () => (
-  <AiToolBase tool="ad-copy" placeholder="পণ্য বা সেবার বিবরণ লিখুন..." label="" btnLabel="Ad Copy তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="ad-copy" placeholder="Describe your product or service..." label="" btnLabel="Generate Ad Copy" getPromptPayload={() => ({})} />
 );
 
 const BlogWriterTool = () => (
-  <AiToolBase tool="blog-writer" placeholder="ব্লগ টপিক লিখুন — যেমন: ডিজিটাল মার্কেটিং কিভাবে শিখবো..." label="" btnLabel="ব্লগ ড্রাফট তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="blog-writer" placeholder="Enter blog topic — e.g. How to learn digital marketing..." label="" btnLabel="Generate Blog Draft" getPromptPayload={() => ({})} />
 );
 
 const EmailWriterTool = () => (
-  <AiToolBase tool="email-writer" placeholder="ইমেইলের বিষয় ও উদ্দেশ্য লিখুন..." label="" btnLabel="ইমেইল তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="email-writer" placeholder="Describe the email subject and purpose..." label="" btnLabel="Write Email" getPromptPayload={() => ({})} />
 );
 
 const ProductDescGen = () => (
-  <AiToolBase tool="product-desc" placeholder="পণ্যের নাম ও বৈশিষ্ট্য লিখুন..." label="" btnLabel="Description তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="product-desc" placeholder="Enter product name and features..." label="" btnLabel="Generate Description" getPromptPayload={() => ({})} />
 );
 
 const GrammarFixer = () => (
-  <AiToolBase tool="grammar-fix" placeholder="ভুল ব্যাকরণের টেক্সট লিখুন — ঠিক করে দেওয়া হবে..." label="" btnLabel="ব্যাকরণ ঠিক করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="grammar-fix" placeholder="Paste text with grammar errors — it will be corrected..." label="" btnLabel="Fix Grammar" getPromptPayload={() => ({})} />
 );
 
 const Paraphraser = () => (
-  <AiToolBase tool="paraphrase" placeholder="টেক্সট লিখুন যা নতুনভাবে লিখতে চান..." label="" btnLabel="Paraphrase করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="paraphrase" placeholder="Enter text you want to rewrite..." label="" btnLabel="Paraphrase" getPromptPayload={() => ({})} />
 );
 
 const TextSummarizer = () => (
-  <AiToolBase tool="summarize" placeholder="দীর্ঘ টেক্সট পেস্ট করুন — সংক্ষেপ করে দেওয়া হবে..." label="" btnLabel="সংক্ষেপ করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="summarize" placeholder="Paste long text — it will be summarized..." label="" btnLabel="Summarize" getPromptPayload={() => ({})} />
 );
 
 const SeoMetaGen = () => (
-  <AiToolBase tool="seo-meta" placeholder="পেজ বা আর্টিকেলের বিষয় লিখুন..." label="" btnLabel="SEO Meta তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="seo-meta" placeholder="Describe your page or article topic..." label="" btnLabel="Generate SEO Meta" getPromptPayload={() => ({})} />
 );
 
 const BusinessNameGen = () => (
-  <AiToolBase tool="business-name" placeholder="আপনার ব্যবসার ধরন ও কীওয়ার্ড লিখুন..." label="" btnLabel="নাম তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="business-name" placeholder="Describe your business type and keywords..." label="" btnLabel="Generate Names" getPromptPayload={() => ({})} />
 );
 
 const ResumeGen = () => (
-  <AiToolBase tool="resume" placeholder="আপনার নাম, অভিজ্ঞতা, দক্ষতা সংক্ষেপে লিখুন..." label="" btnLabel="Resume ড্রাফট তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="resume" placeholder="Enter your name, experience, skills briefly..." label="" btnLabel="Generate Resume Draft" getPromptPayload={() => ({})} />
 );
 
 const TikTokCaptionGen = () => (
-  <AiToolBase tool="tiktok-caption" placeholder="ভিডিওর বিষয় লিখুন..." label="" btnLabel="TikTok Caption তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="tiktok-caption" placeholder="Describe your video topic..." label="" btnLabel="Generate TikTok Caption" getPromptPayload={() => ({})} />
 );
 
 const KeywordGen = () => (
-  <AiToolBase tool="keyword-gen" placeholder="আপনার ব্যবসা বা টপিক লিখুন..." label="" btnLabel="Keywords তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="keyword-gen" placeholder="Enter your business or topic..." label="" btnLabel="Generate Keywords" getPromptPayload={() => ({})} />
 );
 
 const BioGen = () => (
-  <AiToolBase tool="bio-gen" placeholder="আপনার পেশা ও বিশেষত্ব লিখুন — ফেসবুক/ইনস্টাগ্রাম বায়ো..." label="" btnLabel="Bio তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="bio-gen" placeholder="Enter your profession and specialty — for Facebook/Instagram bio..." label="" btnLabel="Generate Bio" getPromptPayload={() => ({})} />
 );
 
 // Coming Soon placeholder
@@ -649,7 +648,7 @@ const ComingSoon = ({ feature }: { feature: string }) => (
       <Sparkles size={28} style={{ color: 'hsl(258,78%,55%)' }} />
     </div>
     <h3 className="font-bold text-lg" style={{ color: 'hsl(226,35%,18%)' }}>{feature}</h3>
-    <p className="text-sm text-center max-w-xs" style={{ color: 'hsl(226,35%,45%)' }}>এই টুলটি শীঘ্রই আসছে। আমরা এটি তৈরি করছি।</p>
+    <p className="text-sm text-center max-w-xs" style={{ color: 'hsl(226,35%,45%)' }}>This tool is coming soon. We are working on it.</p>
     <span className="px-4 py-1.5 rounded-full text-xs font-bold" style={{ background: 'hsla(38,92%,50%,0.12)', color: 'hsl(38,92%,40%)', border: '1px solid hsla(38,92%,50%,0.25)' }}>
       🚀 Coming Soon
     </span>
@@ -664,66 +663,65 @@ type Category = { id: string; label: string; emoji: string; color: string; tools
 
 const CATEGORIES: Category[] = [
   {
-    id: 'utility', label: 'ইউটিলিটি টুলস', emoji: '⚙️', color: 'hsl(258,78%,55%)',
+    id: 'utility', label: 'Utility Tools', emoji: '⚙️', color: 'hsl(258,78%,55%)',
     tools: [
-      
-      { id: 'password-gen', icon: <Shield size={20} />, title: 'পাসওয়ার্ড জেনারেটর', subtitle: 'শক্তিশালী পাসওয়ার্ড তৈরি', color: 'hsl(162,72%,38%)', badge: 'সিকিউর', component: <PasswordGenerator /> },
-      { id: 'case-converter', icon: <Type size={20} />, title: 'কেস কনভার্টার', subtitle: 'টেক্সটের কেস পরিবর্তন', color: 'hsl(200,90%,45%)', component: <CaseConverter /> },
-      { id: 'age-calculator', icon: <Clock size={20} />, title: 'বয়স ক্যালকুলেটর', subtitle: 'সঠিক বয়স বছর, মাস ও দিনে', color: 'hsl(38,92%,50%)', component: <AgeCalculator /> },
-      { id: 'profit-calculator', icon: <DollarSign size={20} />, title: 'প্রফিট ক্যালকুলেটর', subtitle: 'লাভ-ক্ষতি ও মার্জিন হিসাব', color: 'hsl(162,72%,38%)', component: <ProfitCalculator /> },
-      { id: 'url-encoder', icon: <Link2 size={20} />, title: 'URL Encoder/Decoder', subtitle: 'URL এনকোড ও ডিকোড', color: 'hsl(258,78%,55%)', component: <UrlEncoder /> },
-      { id: 'base64', icon: <FileText size={20} />, title: 'Base64 Encoder', subtitle: 'টেক্সট Base64 রূপান্তর', color: 'hsl(330,85%,55%)', component: <Base64Tool /> },
-      { id: 'qr-generator', icon: <QrCode size={20} />, title: 'QR কোড জেনারেটর', subtitle: 'কাস্টম কালার QR কোড তৈরি', color: 'hsl(258,78%,55%)', badge: 'নতুন', component: <QrGenerator /> },
-      { id: 'hashtag-gen', icon: <Hash size={20} />, title: 'হ্যাশট্যাগ জেনারেটর', subtitle: 'AI দিয়ে হ্যাশট্যাগ তৈরি', color: 'hsl(200,90%,45%)', badge: 'AI', component: <HashtagGenerator /> },
+      { id: 'password-gen', icon: <Shield size={20} />, title: 'Password Generator', subtitle: 'Generate strong secure passwords', color: 'hsl(162,72%,38%)', badge: 'Secure', component: <PasswordGenerator /> },
+      { id: 'case-converter', icon: <Type size={20} />, title: 'Case Converter', subtitle: 'Convert text case easily', color: 'hsl(200,90%,45%)', component: <CaseConverter /> },
+      { id: 'age-calculator', icon: <Clock size={20} />, title: 'Age Calculator', subtitle: 'Exact age in years, months & days', color: 'hsl(38,92%,50%)', component: <AgeCalculator /> },
+      { id: 'profit-calculator', icon: <DollarSign size={20} />, title: 'Profit Calculator', subtitle: 'Calculate profit, loss & margin', color: 'hsl(162,72%,38%)', component: <ProfitCalculator /> },
+      { id: 'url-encoder', icon: <Link2 size={20} />, title: 'URL Encoder/Decoder', subtitle: 'Encode & decode URLs', color: 'hsl(258,78%,55%)', component: <UrlEncoder /> },
+      { id: 'base64', icon: <FileText size={20} />, title: 'Base64 Encoder', subtitle: 'Convert text to Base64', color: 'hsl(330,85%,55%)', component: <Base64Tool /> },
+      { id: 'qr-generator', icon: <QrCode size={20} />, title: 'QR Code Generator', subtitle: 'Create custom color QR codes', color: 'hsl(258,78%,55%)', badge: 'New', component: <QrGenerator /> },
+      { id: 'hashtag-gen', icon: <Hash size={20} />, title: 'Hashtag Generator', subtitle: 'Generate hashtags with AI', color: 'hsl(200,90%,45%)', badge: 'AI', component: <HashtagGenerator /> },
     ]
   },
   {
-    id: 'image', label: 'ইমেজ টুলস', emoji: '🖼️', color: 'hsl(200,90%,45%)',
+    id: 'image', label: 'Image Tools', emoji: '🖼️', color: 'hsl(200,90%,45%)',
     tools: [
-      { id: 'img-resizer', icon: <Maximize2 size={20} />, title: 'ইমেজ রিসাইজার', subtitle: 'কাস্টম সাইজে ছবি রিসাইজ', color: 'hsl(200,90%,45%)', badge: 'নতুন', component: <ImageResizer /> },
-      { id: 'img-converter', icon: <RotateCcw size={20} />, title: 'ইমেজ কনভার্টার', subtitle: 'PNG ↔ JPG ↔ WebP রূপান্তর', color: 'hsl(258,78%,55%)', badge: 'নতুন', component: <ImageConverter /> },
-      { id: 'img-compressor', icon: <Scissors size={20} />, title: 'ইমেজ কম্প্রেসর', subtitle: 'ছবির সাইজ কমান মান বজায় রেখে', color: 'hsl(38,92%,50%)', badge: 'নতুন', component: <ImageCompressor /> },
-      { id: 'img-bg-remove', icon: <Image size={20} />, title: 'ব্যাকগ্রাউন্ড রিমুভার', subtitle: 'ছবির ব্যাকগ্রাউন্ড সরান AI দিয়ে', color: 'hsl(330,85%,55%)', badge: 'শীঘ্রই', component: <ComingSoon feature="Background Remover" /> },
-      { id: 'img-blur', icon: <Eye size={20} />, title: 'ব্লার ইমেজ টুল', subtitle: 'ছবি ব্লার করুন সহজে', color: 'hsl(162,72%,38%)', badge: 'শীঘ্রই', component: <ComingSoon feature="Image Blur Tool" /> },
-      { id: 'watermark', icon: <Edit3 size={20} />, title: 'ওয়াটারমার্ক টুল', subtitle: 'ছবিতে ওয়াটারমার্ক যুক্ত করুন', color: 'hsl(258,78%,55%)', badge: 'শীঘ্রই', component: <ComingSoon feature="Watermark Tool" /> },
-      { id: 'meme-gen', icon: <Smile size={20} />, title: 'মিম জেনারেটর', subtitle: 'মজার মিম তৈরি করুন', color: 'hsl(38,92%,50%)', badge: 'শীঘ্রই', component: <ComingSoon feature="Meme Generator" /> },
-      { id: 'thumbnail-maker', icon: <FileImage size={20} />, title: 'থাম্বনেইল মেকার', subtitle: 'YouTube/Social থাম্বনেইল তৈরি', color: 'hsl(200,90%,45%)', badge: 'শীঘ্রই', component: <ComingSoon feature="Thumbnail Maker" /> },
+      { id: 'img-resizer', icon: <Maximize2 size={20} />, title: 'Image Resizer', subtitle: 'Resize images to custom dimensions', color: 'hsl(200,90%,45%)', badge: 'New', component: <ImageResizer /> },
+      { id: 'img-converter', icon: <RotateCcw size={20} />, title: 'Image Converter', subtitle: 'Convert PNG ↔ JPG ↔ WebP', color: 'hsl(258,78%,55%)', badge: 'New', component: <ImageConverter /> },
+      { id: 'img-compressor', icon: <Scissors size={20} />, title: 'Image Compressor', subtitle: 'Reduce image size, keep quality', color: 'hsl(38,92%,50%)', badge: 'New', component: <ImageCompressor /> },
+      { id: 'img-bg-remove', icon: <Image size={20} />, title: 'Background Remover', subtitle: 'Remove image background with AI', color: 'hsl(330,85%,55%)', badge: 'Soon', component: <ComingSoon feature="Background Remover" /> },
+      { id: 'img-blur', icon: <Eye size={20} />, title: 'Image Blur Tool', subtitle: 'Blur images easily', color: 'hsl(162,72%,38%)', badge: 'Soon', component: <ComingSoon feature="Image Blur Tool" /> },
+      { id: 'watermark', icon: <Edit3 size={20} />, title: 'Watermark Tool', subtitle: 'Add watermarks to images', color: 'hsl(258,78%,55%)', badge: 'Soon', component: <ComingSoon feature="Watermark Tool" /> },
+      { id: 'meme-gen', icon: <Smile size={20} />, title: 'Meme Generator', subtitle: 'Create funny memes instantly', color: 'hsl(38,92%,50%)', badge: 'Soon', component: <ComingSoon feature="Meme Generator" /> },
+      { id: 'thumbnail-maker', icon: <FileImage size={20} />, title: 'Thumbnail Maker', subtitle: 'Create YouTube/Social thumbnails', color: 'hsl(200,90%,45%)', badge: 'Soon', component: <ComingSoon feature="Thumbnail Maker" /> },
     ]
   },
   {
-    id: 'social', label: 'সোশ্যাল মিডিয়া', emoji: '📱', color: 'hsl(330,85%,55%)',
+    id: 'social', label: 'Social Media', emoji: '📱', color: 'hsl(330,85%,55%)',
     tools: [
-      { id: 'fb-caption', icon: <Facebook size={20} />, title: 'Facebook ক্যাপশন', subtitle: 'AI দিয়ে আকর্ষণীয় FB ক্যাপশন', color: 'hsl(200,90%,45%)', badge: 'AI', component: <FacebookCaptionGen /> },
-      { id: 'tiktok-caption', icon: <Zap size={20} />, title: 'TikTok ক্যাপশন', subtitle: 'ভাইরাল TikTok ক্যাপশন তৈরি', color: 'hsl(330,85%,55%)', badge: 'AI', component: <TikTokCaptionGen /> },
-      { id: 'yt-title', icon: <Youtube size={20} />, title: 'YouTube টাইটেল', subtitle: 'SEO-অপ্টিমাইজড YouTube টাইটেল', color: 'hsl(0,72%,50%)', badge: 'AI', component: <YoutubeTitleGen /> },
-      { id: 'bio-gen', icon: <AtSign size={20} />, title: 'Bio জেনারেটর', subtitle: 'FB/Instagram বায়ো তৈরি', color: 'hsl(258,78%,55%)', badge: 'AI', component: <BioGen /> },
-      { id: 'hashtag-social', icon: <Hash size={20} />, title: 'হ্যাশট্যাগ (সোশ্যাল)', subtitle: 'ট্রেন্ডিং হ্যাশট্যাগ জেনারেট', color: 'hsl(200,90%,45%)', badge: 'AI', component: <HashtagGenerator /> },
+      { id: 'fb-caption', icon: <Facebook size={20} />, title: 'Facebook Caption', subtitle: 'AI-powered engaging FB captions', color: 'hsl(200,90%,45%)', badge: 'AI', component: <FacebookCaptionGen /> },
+      { id: 'tiktok-caption', icon: <Zap size={20} />, title: 'TikTok Caption', subtitle: 'Viral TikTok captions generator', color: 'hsl(330,85%,55%)', badge: 'AI', component: <TikTokCaptionGen /> },
+      { id: 'yt-title', icon: <Youtube size={20} />, title: 'YouTube Title', subtitle: 'SEO-optimized YouTube titles', color: 'hsl(0,72%,50%)', badge: 'AI', component: <YoutubeTitleGen /> },
+      { id: 'bio-gen', icon: <AtSign size={20} />, title: 'Bio Generator', subtitle: 'Create FB/Instagram bio', color: 'hsl(258,78%,55%)', badge: 'AI', component: <BioGen /> },
+      { id: 'hashtag-social', icon: <Hash size={20} />, title: 'Hashtag Generator', subtitle: 'Generate trending hashtags', color: 'hsl(200,90%,45%)', badge: 'AI', component: <HashtagGenerator /> },
     ]
   },
   {
-    id: 'ai', label: 'AI কন্টেন্ট রাইটার', emoji: '🤖', color: 'hsl(162,72%,38%)',
+    id: 'ai', label: 'AI Content Writer', emoji: '🤖', color: 'hsl(162,72%,38%)',
     tools: [
-      { id: 'blog-writer', icon: <BookOpen size={20} />, title: 'ব্লগ রাইটার', subtitle: 'AI দিয়ে সম্পূর্ণ ব্লগ পোস্ট', color: 'hsl(258,78%,55%)', badge: 'AI', component: <BlogWriterTool /> },
-      { id: 'ad-copy', icon: <TrendingUp size={20} />, title: 'Ad Copy জেনারেটর', subtitle: 'বিজ্ঞাপনের কপি তৈরি', color: 'hsl(38,92%,50%)', badge: 'AI', component: <AdCopyGen /> },
-      { id: 'product-desc', icon: <Tag size={20} />, title: 'পণ্য বিবরণ', subtitle: 'প্রোডাক্ট ডেসক্রিপশন তৈরি', color: 'hsl(162,72%,38%)', badge: 'AI', component: <ProductDescGen /> },
-      { id: 'email-writer', icon: <Mail size={20} />, title: 'Email রাইটার', subtitle: 'ফর্মাল/মার্কেটিং ইমেইল', color: 'hsl(200,90%,45%)', badge: 'AI', component: <EmailWriterTool /> },
-      { id: 'resume-gen', icon: <Briefcase size={20} />, title: 'Resume জেনারেটর', subtitle: 'প্রফেশনাল Resume ড্রাফট', color: 'hsl(330,85%,55%)', badge: 'AI', component: <ResumeGen /> },
-      { id: 'grammar-fix', icon: <Check size={20} />, title: 'গ্রামার ফিক্সার', subtitle: 'ইংরেজি ব্যাকরণ ঠিক করুন', color: 'hsl(162,72%,38%)', badge: 'AI', component: <GrammarFixer /> },
-      { id: 'paraphrase', icon: <RotateCcw size={20} />, title: 'Paraphrasing টুল', subtitle: 'টেক্সট নতুনভাবে লিখুন', color: 'hsl(258,78%,55%)', badge: 'AI', component: <Paraphraser /> },
-      { id: 'summarize', icon: <FileText size={20} />, title: 'টেক্সট সামারাইজার', subtitle: 'দীর্ঘ লেখা সংক্ষেপ করুন', color: 'hsl(38,92%,50%)', badge: 'AI', component: <TextSummarizer /> },
-      { id: 'seo-meta', icon: <Search size={20} />, title: 'SEO Meta জেনারেটর', subtitle: 'Title ও Meta Description', color: 'hsl(200,90%,45%)', badge: 'AI', component: <SeoMetaGen /> },
-      { id: 'business-name', icon: <Globe size={20} />, title: 'Business Name', subtitle: 'ব্যবসার নাম ও ডোমেন আইডিয়া', color: 'hsl(162,72%,38%)', badge: 'AI', component: <BusinessNameGen /> },
-      { id: 'keyword-gen', icon: <Tag size={20} />, title: 'Keyword জেনারেটর', subtitle: 'SEO কীওয়ার্ড তৈরি', color: 'hsl(258,78%,55%)', badge: 'AI', component: <KeywordGen /> },
+      { id: 'blog-writer', icon: <BookOpen size={20} />, title: 'Blog Writer', subtitle: 'Generate full blog posts with AI', color: 'hsl(258,78%,55%)', badge: 'AI', component: <BlogWriterTool /> },
+      { id: 'ad-copy', icon: <TrendingUp size={20} />, title: 'Ad Copy Generator', subtitle: 'Create compelling ad copy', color: 'hsl(38,92%,50%)', badge: 'AI', component: <AdCopyGen /> },
+      { id: 'product-desc', icon: <Tag size={20} />, title: 'Product Description', subtitle: 'Generate product descriptions', color: 'hsl(162,72%,38%)', badge: 'AI', component: <ProductDescGen /> },
+      { id: 'email-writer', icon: <Mail size={20} />, title: 'Email Writer', subtitle: 'Formal & marketing emails', color: 'hsl(200,90%,45%)', badge: 'AI', component: <EmailWriterTool /> },
+      { id: 'resume-gen', icon: <Briefcase size={20} />, title: 'Resume Generator', subtitle: 'Professional resume drafts', color: 'hsl(330,85%,55%)', badge: 'AI', component: <ResumeGen /> },
+      { id: 'grammar-fix', icon: <Check size={20} />, title: 'Grammar Fixer', subtitle: 'Fix English grammar errors', color: 'hsl(162,72%,38%)', badge: 'AI', component: <GrammarFixer /> },
+      { id: 'paraphrase', icon: <RotateCcw size={20} />, title: 'Paraphrasing Tool', subtitle: 'Rewrite text in a new way', color: 'hsl(258,78%,55%)', badge: 'AI', component: <Paraphraser /> },
+      { id: 'summarize', icon: <FileText size={20} />, title: 'Text Summarizer', subtitle: 'Summarize long content', color: 'hsl(38,92%,50%)', badge: 'AI', component: <TextSummarizer /> },
+      { id: 'seo-meta', icon: <Search size={20} />, title: 'SEO Meta Generator', subtitle: 'Generate title & meta description', color: 'hsl(200,90%,45%)', badge: 'AI', component: <SeoMetaGen /> },
+      { id: 'business-name', icon: <Globe size={20} />, title: 'Business Name Generator', subtitle: 'Business name & domain ideas', color: 'hsl(162,72%,38%)', badge: 'AI', component: <BusinessNameGen /> },
+      { id: 'keyword-gen', icon: <Tag size={20} />, title: 'Keyword Generator', subtitle: 'Generate SEO keywords', color: 'hsl(258,78%,55%)', badge: 'AI', component: <KeywordGen /> },
     ]
   },
   {
-    id: 'pdf', label: 'PDF টুলস', emoji: '📄', color: 'hsl(0,72%,50%)',
+    id: 'pdf', label: 'PDF Tools', emoji: '📄', color: 'hsl(0,72%,50%)',
     tools: [
-      { id: 'pdf-merge', icon: <FileText size={20} />, title: 'PDF Merge', subtitle: 'একাধিক PDF একত্রিত করুন', color: 'hsl(0,72%,50%)', badge: 'শীঘ্রই', component: <ComingSoon feature="PDF Merge" /> },
-      { id: 'pdf-split', icon: <Scissors size={20} />, title: 'PDF Split', subtitle: 'PDF ভেঙে আলাদা করুন', color: 'hsl(38,92%,50%)', badge: 'শীঘ্রই', component: <ComingSoon feature="PDF Split" /> },
-      { id: 'pdf-compress', icon: <Download size={20} />, title: 'PDF Compress', subtitle: 'PDF এর সাইজ কমান', color: 'hsl(200,90%,45%)', badge: 'শীঘ্রই', component: <ComingSoon feature="PDF Compress" /> },
-      { id: 'img-to-pdf', icon: <FileImage size={20} />, title: 'Image to PDF', subtitle: 'ছবি থেকে PDF তৈরি করুন', color: 'hsl(162,72%,38%)', badge: 'শীঘ্রই', component: <ComingSoon feature="Image to PDF" /> },
-      { id: 'pdf-lock', icon: <Lock size={20} />, title: 'PDF Lock/Unlock', subtitle: 'PDF পাসওয়ার্ড যোগ/সরান', color: 'hsl(258,78%,55%)', badge: 'শীঘ্রই', component: <ComingSoon feature="PDF Lock/Unlock" /> },
+      { id: 'pdf-merge', icon: <FileText size={20} />, title: 'PDF Merge', subtitle: 'Merge multiple PDFs into one', color: 'hsl(0,72%,50%)', badge: 'Soon', component: <ComingSoon feature="PDF Merge" /> },
+      { id: 'pdf-split', icon: <Scissors size={20} />, title: 'PDF Split', subtitle: 'Split PDF into separate files', color: 'hsl(38,92%,50%)', badge: 'Soon', component: <ComingSoon feature="PDF Split" /> },
+      { id: 'pdf-compress', icon: <Download size={20} />, title: 'PDF Compress', subtitle: 'Reduce PDF file size', color: 'hsl(200,90%,45%)', badge: 'Soon', component: <ComingSoon feature="PDF Compress" /> },
+      { id: 'img-to-pdf', icon: <FileImage size={20} />, title: 'Image to PDF', subtitle: 'Convert images to PDF', color: 'hsl(162,72%,38%)', badge: 'Soon', component: <ComingSoon feature="Image to PDF" /> },
+      { id: 'pdf-lock', icon: <Lock size={20} />, title: 'PDF Lock/Unlock', subtitle: 'Add or remove PDF password', color: 'hsl(258,78%,55%)', badge: 'Soon', component: <ComingSoon feature="PDF Lock/Unlock" /> },
     ]
   },
 ];
@@ -735,7 +733,7 @@ const ALL_TOOLS = CATEGORIES.flatMap(c => c.tools);
 // MAIN PAGE
 // ═══════════════════════════════════════════════════════════════════════════
 const FreeTools = () => {
-  const [activeCategory, setActiveCategory] = useState('utility');
+  const [activeCategory, setActiveCategory] = useState('ai');
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
@@ -748,7 +746,7 @@ const FreeTools = () => {
 
   return (
     <div className="min-h-screen" style={{ background: 'hsl(var(--background))' }}>
-      <SEOHead title="ফ্রি অনলাইন টুলস | Shahed Store" description="সম্পূর্ণ বিনামূল্যে — Image Resizer, QR Generator, AI Caption, Hashtag Generator, Password Generator সহ ৪০+ টুলস।" />
+      <SEOHead title="Free Online Tools | Shahed Store" description="100% free — Image Resizer, QR Generator, AI Caption, Hashtag Generator, Password Generator and 40+ more tools." />
       <Navbar />
 
       {/* ── Hero ── */}
@@ -758,18 +756,17 @@ const FreeTools = () => {
         <div className="relative z-10 max-w-5xl mx-auto text-center space-y-5">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold"
             style={{ background: 'hsla(162,72%,38%,0.10)', border: '1.5px solid hsla(162,72%,38%,0.25)', color: 'hsl(162,72%,30%)' }}>
-            <Gift size={14} />সম্পূর্ণ বিনামূল্যে — {totalTools}+ টুলস
+            <Gift size={14} />Completely Free — {totalTools}+ Tools
           </div>
           <h1 className="font-sora font-black text-4xl sm:text-5xl leading-tight" style={{ color: 'hsl(226,35%,12%)' }}>
-            ফ্রি অনলাইন <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>টুলস</span>
+            Free Online <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Tools</span>
           </h1>
           <p className="text-base leading-relaxed max-w-2xl mx-auto" style={{ color: 'hsl(226,35%,40%)' }}>
-            Image, AI, PDF, Social Media সহ সকল দরকারি টুলস — কোনো একাউন্ট বা পেমেন্ট ছাড়াই
+            Image, AI, PDF, Social Media and all essential tools — no account or payment required
           </p>
-          {/* Search */}
           <div className="relative max-w-md mx-auto">
             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'hsl(258,78%,55%)' }} />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="টুল খুঁজুন..."
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tools..."
               className="w-full pl-11 pr-4 py-3.5 rounded-2xl text-sm"
               style={{ background: 'hsla(0,0%,100%,0.85)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(258,78%,55%,0.22)', color: 'hsl(226,35%,18%)', outline: 'none' }} />
           </div>
@@ -778,12 +775,11 @@ const FreeTools = () => {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {activeTool ? (
-          // ── Tool Detail View ──
           <div className="max-w-2xl mx-auto">
             <button onClick={() => setActiveTool(null)}
               className="flex items-center gap-2 mb-8 text-sm font-semibold px-4 py-2 rounded-xl transition-all"
               style={{ color: 'hsl(226,35%,40%)', background: 'hsla(226,35%,50%,0.08)', border: '1px solid hsla(226,35%,50%,0.15)' }}>
-              <ChevronLeft size={16} />সব টুলস
+              <ChevronLeft size={16} />All Tools
             </button>
             {activeTolObj && (
               <div className="rounded-3xl overflow-hidden"
@@ -791,7 +787,6 @@ const FreeTools = () => {
                   ...glass(activeTolObj.color),
                   boxShadow: `0 8px 48px ${activeTolObj.color.replace('hsl(', 'hsla(').replace(')', ',0.15)')}`,
                 }}>
-                {/* header */}
                 <div className="p-6 flex items-center gap-4"
                   style={{ borderBottom: `1.5px solid ${activeTolObj.color.replace('hsl(', 'hsla(').replace(')', ',0.12)')}`, background: activeTolObj.color.replace('hsl(', 'hsla(').replace(')', ',0.04)') }}>
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
@@ -806,9 +801,8 @@ const FreeTools = () => {
                 <div className="p-6">{activeTolObj.component}</div>
               </div>
             )}
-            {/* Quick nav */}
             <div className="mt-8">
-              <p className="text-sm font-semibold mb-3" style={{ color: 'hsl(226,35%,40%)' }}>অন্য টুলসগুলো:</p>
+              <p className="text-sm font-semibold mb-3" style={{ color: 'hsl(226,35%,40%)' }}>Other Tools:</p>
               <div className="flex flex-wrap gap-2">
                 {ALL_TOOLS.filter(t => t.id !== activeTool).slice(0, 8).map(tool => (
                   <button key={tool.id} onClick={() => setActiveTool(tool.id)}
@@ -821,9 +815,7 @@ const FreeTools = () => {
             </div>
           </div>
         ) : (
-          // ── Category + Grid View ──
           <div className="space-y-8">
-            {/* Category tabs */}
             {!search.trim() && (
               <div className="flex flex-wrap gap-3">
                 {CATEGORIES.map(cat => (
@@ -845,22 +837,20 @@ const FreeTools = () => {
                 ))}
               </div>
             )}
-            {/* Section title */}
             {!search.trim() && (
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{currentCat.emoji}</span>
                 <div>
                   <h2 className="font-sora font-black text-xl" style={{ color: 'hsl(226,35%,14%)' }}>{currentCat.label}</h2>
-                  <p className="text-sm" style={{ color: 'hsl(226,35%,45%)' }}>{currentCat.tools.length}টি টুলস উপলব্ধ</p>
+                  <p className="text-sm" style={{ color: 'hsl(226,35%,45%)' }}>{currentCat.tools.length} tools available</p>
                 </div>
               </div>
             )}
             {search.trim() && (
               <p className="text-sm font-semibold" style={{ color: 'hsl(226,35%,45%)' }}>
-                "{search}" এর জন্য {filteredTools.length}টি টুল পাওয়া গেছে
+                {filteredTools.length} result(s) for "{search}"
               </p>
             )}
-            {/* Tools grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {filteredTools.map(tool => (
                 <button key={tool.id} onClick={() => setActiveTool(tool.id)}
@@ -877,10 +867,8 @@ const FreeTools = () => {
                     (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 24px ${tool.color.replace('hsl(', 'hsla(').replace(')', ',0.10)')}`;
                     (e.currentTarget as HTMLElement).style.borderColor = tool.color.replace('hsl(', 'hsla(').replace(')', ',0.20)');
                   }}>
-                  {/* shimmer line */}
+                  {/* shimmer line top */}
                   <div className="absolute top-0 left-4 right-4 h-px rounded-full" style={{ background: `linear-gradient(90deg, transparent, ${tool.color.replace('hsl(', 'hsla(').replace(')', ',0.35)')}, transparent)` }} />
-                  {/* left color stripe */}
-                  <div className="absolute left-0 top-6 bottom-6 w-0.5 rounded-full" style={{ background: tool.color.replace('hsl(', 'hsla(').replace(')', ',0.45)') }} />
 
                   {tool.badge && (
                     <span className="absolute top-3 right-3 text-[10px] font-black px-2 py-0.5 rounded-full"
@@ -895,7 +883,7 @@ const FreeTools = () => {
                   <h3 className="font-sora font-black text-sm mb-1" style={{ color: 'hsl(226,35%,14%)' }}>{tool.title}</h3>
                   <p className="text-xs leading-relaxed" style={{ color: 'hsl(226,35%,48%)' }}>{tool.subtitle}</p>
                   <div className="flex items-center gap-1 mt-3 text-xs font-bold" style={{ color: tool.color }}>
-                    ব্যবহার করুন <ArrowRight size={11} className="transition-transform group-hover:translate-x-1" />
+                    Use Tool <ArrowRight size={11} className="transition-transform group-hover:translate-x-1" />
                   </div>
                 </button>
               ))}
@@ -909,11 +897,11 @@ const FreeTools = () => {
         style={{ background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,42%))', boxShadow: '0 12px 48px hsla(258,78%,55%,0.30)' }}>
         <div className="max-w-4xl mx-auto px-8 py-12 text-center text-white space-y-4">
           <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)' }}><Sparkles size={24} /></div>
-          <h2 className="font-sora font-black text-3xl">আরও টুলস আসছে!</h2>
-          <p className="text-white/80 text-base max-w-xl mx-auto">PDF Tools, Background Remover, Meme Generator সহ আরও অনেক টুলস শীঘ্রই যুক্ত হবে। নতুন কোনো টুলের পরামর্শ থাকলে জানান।</p>
+          <h2 className="font-sora font-black text-3xl">More Tools Coming Soon!</h2>
+          <p className="text-white/80 text-base max-w-xl mx-auto">PDF Tools, Background Remover, Meme Generator and many more tools will be added soon. Have a suggestion? Let us know!</p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <a href="/contact" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.30)' }}>পরামর্শ দিন <ArrowRight size={14} /></a>
-            <a href="/shop" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 text-white" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.40)' }}>প্রোডাক্ট দেখুন <ArrowRight size={14} /></a>
+            <a href="/contact" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.30)' }}>Suggest a Tool <ArrowRight size={14} /></a>
+            <a href="/shop" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 text-white" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.40)' }}>Browse Products <ArrowRight size={14} /></a>
           </div>
         </div>
       </section>
