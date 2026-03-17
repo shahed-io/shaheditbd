@@ -147,8 +147,8 @@ const Footer = () => (
           ))}
         </div>
 
-        {/* Social icons — centered on mobile */}
-        <div className="flex gap-3 justify-center md:justify-start">
+        {/* Social icons — centered */}
+        <div className="flex gap-3 justify-center">
           {[
             { icon: <Facebook size={17} />,      href: '#',                           label: 'Facebook',  color: 'hsl(258,78%,55%)' },
             { icon: <MessageCircle size={17} />, href: 'https://wa.me/8801840099853', label: 'WhatsApp',  color: 'hsl(162,72%,38%)' },
