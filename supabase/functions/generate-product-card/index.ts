@@ -68,10 +68,49 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const imageData =
-      data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    console.log("AI response keys:", JSON.stringify(Object.keys(data)));
+    console.log("choices[0].message keys:", JSON.stringify(Object.keys(data.choices?.[0]?.message || {})));
 
-    if (!imageData) throw new Error("AI did not return an image. Please try again.");
+    // Try multiple extraction paths
+    let imageData: string | undefined;
+
+    // Path 1: images array (documented format)
+    imageData = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+    // Path 2: content as array with image parts
+    if (!imageData) {
+      const content = data.choices?.[0]?.message?.content;
+      if (Array.isArray(content)) {
+        const imgPart = content.find((p: any) => p.type === "image_url");
+        imageData = imgPart?.image_url?.url;
+      }
+    }
+
+    // Path 3: content as array with inline_data (Gemini native format)
+    if (!imageData) {
+      const content = data.choices?.[0]?.message?.content;
+      if (Array.isArray(content)) {
+        const imgPart = content.find((p: any) => p.type === "image" || p.inline_data);
+        if (imgPart?.inline_data?.data) {
+          imageData = `data:${imgPart.inline_data.mime_type || "image/png"};base64,${imgPart.inline_data.data}`;
+        }
+      }
+    }
+
+    // Path 4: direct base64 in images array with data field
+    if (!imageData) {
+      const img = data.choices?.[0]?.message?.images?.[0];
+      if (img?.data) {
+        imageData = `data:image/png;base64,${img.data}`;
+      }
+    }
+
+    console.log("imageData found:", !!imageData, "prefix:", imageData?.substring(0, 30));
+
+    if (!imageData) {
+      console.error("Full response structure:", JSON.stringify(data).substring(0, 500));
+      throw new Error("AI did not return an image. Please try again.");
+    }
 
     return new Response(JSON.stringify({ imageData }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

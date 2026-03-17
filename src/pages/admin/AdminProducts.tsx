@@ -162,17 +162,19 @@ const AdminProducts = () => {
     }
   };
 
-  const AiBtn = ({ fieldType, label }: { fieldType: 'short_description' | 'description' | 'seo', label: string }) => (
-    <button
-      type="button"
-      onClick={() => generateAiContent(fieldType)}
-      disabled={!form.name.trim() || aiLoading !== null}
-      className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg border border-primary/30 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-    >
-      {aiLoading === fieldType ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
-      {aiLoading === fieldType ? 'Generating...' : label}
-    </button>
-  );
+  const AiBtn = ({ fieldType, label }: { fieldType: 'short_description' | 'description' | 'seo', label: string }) => {
+    return (
+      <button
+        type="button"
+        onClick={() => generateAiContent(fieldType)}
+        disabled={!form.name.trim() || aiLoading !== null}
+        className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg border border-primary/30 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        {aiLoading === fieldType ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
+        {aiLoading === fieldType ? 'Generating...' : label}
+      </button>
+    );
+  };
 
   const parentCategories = categories.filter(c => !c.parent_id);
   const subCategories = categories.filter(
