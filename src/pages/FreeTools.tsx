@@ -100,15 +100,15 @@ const PasswordGenerator = () => {
   };
   const s = (() => {
     const n = Object.values(opts).filter(Boolean).length;
-    if (length < 8 || n < 2) return { label: 'দুর্বল', color: 'hsl(0,72%,50%)', w: '25%' };
-    if (length < 12 || n < 3) return { label: 'মোটামুটি', color: 'hsl(38,92%,50%)', w: '55%' };
-    if (length < 16) return { label: 'ভালো', color: 'hsl(200,90%,45%)', w: '75%' };
-    return { label: 'শক্তিশালী', color: 'hsl(162,72%,38%)', w: '100%' };
+    if (length < 8 || n < 2) return { label: 'Weak', color: 'hsl(0,72%,50%)', w: '25%' };
+    if (length < 12 || n < 3) return { label: 'Fair', color: 'hsl(38,92%,50%)', w: '55%' };
+    if (length < 16) return { label: 'Good', color: 'hsl(200,90%,45%)', w: '75%' };
+    return { label: 'Strong', color: 'hsl(162,72%,38%)', w: '100%' };
   })();
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3">
-        {([['upper', 'বড় হাতের (A-Z)'], ['lower', 'ছোট হাতের (a-z)'], ['num', 'সংখ্যা (0-9)'], ['sym', 'চিহ্ন (!@#$)']] as const).map(([k, label]) => (
+        {([['upper', 'Uppercase (A-Z)'], ['lower', 'Lowercase (a-z)'], ['num', 'Numbers (0-9)'], ['sym', 'Symbols (!@#$)']] as const).map(([k, label]) => (
           <label key={k} className="flex items-center gap-2 cursor-pointer px-3 py-2.5 rounded-xl select-none"
             style={{ background: opts[k] ? 'hsla(258,78%,55%,0.08)' : 'hsla(226,35%,50%,0.05)', border: `1.5px solid ${opts[k] ? 'hsla(258,78%,55%,0.30)' : 'hsla(226,35%,50%,0.12)'}` }}>
             <input type="checkbox" className="hidden" checked={opts[k]} onChange={e => setOpts(p => ({ ...p, [k]: e.target.checked }))} />
@@ -121,14 +121,14 @@ const PasswordGenerator = () => {
         ))}
       </div>
       <div className="space-y-2">
-        <div className="flex justify-between"><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>দৈর্ঘ্য</span><span className="font-black text-lg" style={{ color: 'hsl(258,78%,50%)' }}>{length}</span></div>
+        <div className="flex justify-between"><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,30%)' }}>Length</span><span className="font-black text-lg" style={{ color: 'hsl(258,78%,50%)' }}>{length}</span></div>
         <input type="range" min={6} max={64} value={length} onChange={e => setLength(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
       </div>
       <div className="space-y-1.5">
-        <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>শক্তিমাত্রা</span><span style={{ color: s.color }}>{s.label}</span></div>
+        <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Strength</span><span style={{ color: s.color }}>{s.label}</span></div>
         <div className="h-2 rounded-full" style={{ background: 'hsla(226,35%,50%,0.12)' }}><div className="h-full rounded-full transition-all duration-500" style={{ width: s.w, background: s.color }} /></div>
       </div>
-      <PrimaryBtn onClick={generate}><RefreshCw size={14} />পাসওয়ার্ড তৈরি করুন</PrimaryBtn>
+      <PrimaryBtn onClick={generate}><RefreshCw size={14} />Generate Password</PrimaryBtn>
       {password && <ResultBox value={password} mono />}
     </div>
   );
