@@ -124,7 +124,6 @@ const AdminProducts = () => {
     setAiLoading(type);
     try {
       const catName = categories.find(c => c.id === form.category_id)?.name || '';
-      // Extract duration from variants if available
       const durationVariant = (form.variants as any[])?.find((v: any) => v.name?.toLowerCase().includes('duration') || v.name?.toLowerCase().includes('validity'));
       const durationValue = durationVariant?.options?.[0] || '';
       const { data, error } = await supabase.functions.invoke('generate-product-content', {
@@ -136,14 +135,26 @@ const AdminProducts = () => {
           price: form.price,
           duration: durationValue,
           type,
+          count: type === 'short_description' ? 3 : 1,
         },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       const result = data?.result;
       if (type === 'short_description') {
-        setForm(p => ({ ...p, short_description: result }));
-        toast.success('Short description generated!');
+        // Parse numbered options: "1. ...\n2. ...\n3. ..."
+        const raw: string = result || '';
+        const lines = raw.split('\n').map((l: string) => l.trim()).filter(Boolean);
+        const opts = lines
+          .filter((l: string) => /^\d+[\.\)]\s/.test(l))
+          .map((l: string) => l.replace(/^\d+[\.\)]\s*/, '').trim());
+        if (opts.length >= 2) {
+          setShortDescOptions(opts);
+          setShowShortDescPicker(true);
+        } else {
+          setForm(p => ({ ...p, short_description: raw.trim() }));
+          toast.success('Short description generated!');
+        }
       } else if (type === 'description') {
         setForm(p => ({ ...p, description: result }));
         toast.success('Description generated!');
@@ -171,19 +182,17 @@ const AdminProducts = () => {
     }
   };
 
-  const AiBtn = ({ fieldType, label }: { fieldType: 'short_description' | 'description' | 'seo', label: string }) => {
-    return (
-      <button
-        type="button"
-        onClick={() => generateAiContent(fieldType)}
-        disabled={!form.name.trim() || aiLoading !== null}
-        className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg border border-primary/30 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        {aiLoading === fieldType ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
-        {aiLoading === fieldType ? 'Generating...' : label}
-      </button>
-    );
-  };
+  const AiBtn = ({ fieldType, label }: { fieldType: 'short_description' | 'description' | 'seo', label: string }) => (
+    <button
+      type="button"
+      onClick={() => generateAiContent(fieldType)}
+      disabled={!form.name.trim() || aiLoading !== null}
+      className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg border border-primary/30 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      {aiLoading === fieldType ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
+      {aiLoading === fieldType ? 'Generating...' : label}
+    </button>
+  );
 
   // ── Demo Style AI Generator ───────────────────────────────────
   const generateDemoStyle = async () => {
