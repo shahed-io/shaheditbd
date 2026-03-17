@@ -149,10 +149,10 @@ const AgeCalculator = () => {
     <div className="space-y-5">
       <input type="date" value={dob} onChange={e => setDob(e.target.value)} max={new Date().toISOString().split('T')[0]}
         className="w-full rounded-xl p-3.5 text-sm" style={inputStyle} />
-      <PrimaryBtn onClick={calculate}>বয়স হিসাব করুন</PrimaryBtn>
+      <PrimaryBtn onClick={calculate}>Calculate Age</PrimaryBtn>
       {result && (
         <div className="grid grid-cols-2 gap-3">
-          {[{ label: 'বছর', value: result.years, c: 'hsl(258,78%,50%)' }, { label: 'মাস', value: result.months, c: 'hsl(200,90%,42%)' }, { label: 'দিন', value: result.days, c: 'hsl(162,72%,38%)' }, { label: 'মোট দিন', value: result.totalDays.toLocaleString(), c: 'hsl(38,92%,50%)' }].map(r => (
+          {[{ label: 'Years', value: result.years, c: 'hsl(258,78%,50%)' }, { label: 'Months', value: result.months, c: 'hsl(200,90%,42%)' }, { label: 'Days', value: result.days, c: 'hsl(162,72%,38%)' }, { label: 'Total Days', value: result.totalDays.toLocaleString(), c: 'hsl(38,92%,50%)' }].map(r => (
             <div key={r.label} className="rounded-xl p-4 text-center" style={{ background: `${r.c.slice(0, -1)},0.07)`.replace('hsl', 'hsla'), border: `1.5px solid ${r.c.slice(0, -1)},0.20)`.replace('hsl', 'hsla') }}>
               <p className="text-3xl font-black" style={{ color: r.c }}>{r.value}</p>
               <p className="text-xs font-semibold mt-1" style={{ color: 'hsl(226,35%,45%)' }}>{r.label}</p>
