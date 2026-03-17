@@ -100,25 +100,30 @@ const AdminHeroBanner = () => {
     const { data } = await supabase
       .from('site_settings')
       .select('key, value')
-      .in('key', ['hero_slides', 'hero_background']);
+      .in('key', ['hero_slides', 'hero_background', 'hero_stats', 'hero_floating', 'hero_trust']);
 
-    const slidesRow = data?.find(r => r.key === 'hero_slides');
-    const bgRow = data?.find(r => r.key === 'hero_background');
+    const slidesRow   = data?.find(r => r.key === 'hero_slides');
+    const bgRow       = data?.find(r => r.key === 'hero_background');
+    const statsRow    = data?.find(r => r.key === 'hero_stats');
+    const floatRow    = data?.find(r => r.key === 'hero_floating');
+    const trustRow    = data?.find(r => r.key === 'hero_trust');
 
-    if (slidesRow?.value) {
-      try { setSlides(JSON.parse(slidesRow.value)); } catch {}
-    }
-    if (bgRow?.value) {
-      try { setBgSettings(JSON.parse(bgRow.value)); } catch {}
-    }
+    if (slidesRow?.value)  try { setSlides(JSON.parse(slidesRow.value)); }  catch {}
+    if (bgRow?.value)      try { setBgSettings(JSON.parse(bgRow.value)); }  catch {}
+    if (statsRow?.value)   try { setStats(JSON.parse(statsRow.value)); }    catch {}
+    if (floatRow?.value)   try { setFloating(JSON.parse(floatRow.value)); } catch {}
+    if (trustRow?.value)   try { setTrust(JSON.parse(trustRow.value)); }    catch {}
     setLoading(false);
   };
 
   const handleSave = async () => {
     setSaving(true);
     await Promise.all([
-      supabase.from('site_settings').upsert({ key: 'hero_slides', value: JSON.stringify(slides) }, { onConflict: 'key' }),
+      supabase.from('site_settings').upsert({ key: 'hero_slides',     value: JSON.stringify(slides) },     { onConflict: 'key' }),
       supabase.from('site_settings').upsert({ key: 'hero_background', value: JSON.stringify(bgSettings) }, { onConflict: 'key' }),
+      supabase.from('site_settings').upsert({ key: 'hero_stats',      value: JSON.stringify(stats) },      { onConflict: 'key' }),
+      supabase.from('site_settings').upsert({ key: 'hero_floating',   value: JSON.stringify(floating) },   { onConflict: 'key' }),
+      supabase.from('site_settings').upsert({ key: 'hero_trust',      value: JSON.stringify(trust) },      { onConflict: 'key' }),
     ]);
     toast.success('Hero Banner সেটিংস সেভ হয়েছে!');
     setSaving(false);
