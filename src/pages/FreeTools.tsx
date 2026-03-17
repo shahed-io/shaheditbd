@@ -508,7 +508,6 @@ const HashtagGenerator = () => {
         setTags(extracted);
       }
     } catch {
-      // fallback static
       setTags([`#${topic.replace(/\s+/g, '')}`, `#${platform}`, '#trending', '#viral', '#shahedstore', `#${topic.split(' ')[0]}tips`]);
     }
     setLoading(false);
@@ -525,8 +524,8 @@ const HashtagGenerator = () => {
           </button>
         ))}
       </div>
-      <ToolInput value={topic} onChange={e => setTopic(e.target.value)} placeholder="টপিক লিখুন — যেমন: বাংলাদেশ ফ্যাশন, ডিজিটাল মার্কেটিং..." rows={2} />
-      <PrimaryBtn onClick={generate} loading={loading}><Hash size={14} />হ্যাশট্যাগ তৈরি করুন</PrimaryBtn>
+      <ToolInput value={topic} onChange={e => setTopic(e.target.value)} placeholder="Enter topic — e.g. Fashion, Digital Marketing..." rows={2} />
+      <PrimaryBtn onClick={generate} loading={loading}><Hash size={14} />Generate Hashtags</PrimaryBtn>
       {tags.length > 0 && (
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
@@ -538,7 +537,7 @@ const HashtagGenerator = () => {
           </div>
           <button onClick={copyAll} className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl"
             style={{ background: 'hsla(162,72%,38%,0.08)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.22)' }}>
-            <Copy size={13} />সব কপি করুন
+            <Copy size={13} />Copy All
           </button>
         </div>
       )}
@@ -562,8 +561,8 @@ const AiToolBase = ({ tool, placeholder, btnLabel, extraFields, getPromptPayload
       const { data } = await supabase.functions.invoke('ai-free-tools', {
         body: { tool, input, ...getPromptPayload() }
       });
-      setResult(data?.result ?? 'কিছু সমস্যা হয়েছে, আবার চেষ্টা করুন।');
-    } catch { setResult('সার্ভার এরর। পরে আবার চেষ্টা করুন।'); }
+      setResult(data?.result ?? 'Something went wrong, please try again.');
+    } catch { setResult('Server error. Please try again later.'); }
     setLoading(false);
   };
   return (
@@ -577,69 +576,69 @@ const AiToolBase = ({ tool, placeholder, btnLabel, extraFields, getPromptPayload
 };
 
 const FacebookCaptionGen = () => {
-  const [tone, setTone] = useState('engaging');
+  const [tone] = useState('engaging');
   return (
     <div className="space-y-4">
-      <AiToolBase tool="fb-caption" placeholder="পোস্টের বিষয় লিখুন — যেমন: নতুন পণ্য লঞ্চ, অফার, ইভেন্ট..." label="" btnLabel="ক্যাপশন তৈরি করুন" getPromptPayload={() => ({ tone })}>
+      <AiToolBase tool="fb-caption" placeholder="Describe your post topic — e.g. new product launch, offer, event..." label="" btnLabel="Generate Caption" getPromptPayload={() => ({ tone })}>
       </AiToolBase>
     </div>
   );
 };
 
 const YoutubeTitleGen = () => (
-  <AiToolBase tool="yt-title" placeholder="ভিডিওর বিষয় লিখুন — যেমন: বাংলাদেশে ফ্রিল্যান্সিং শুরু করার উপায়..." label="" btnLabel="টাইটেল তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="yt-title" placeholder="Describe your video topic — e.g. How to start freelancing..." label="" btnLabel="Generate Title" getPromptPayload={() => ({})} />
 );
 
 const AdCopyGen = () => (
-  <AiToolBase tool="ad-copy" placeholder="পণ্য বা সেবার বিবরণ লিখুন..." label="" btnLabel="Ad Copy তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="ad-copy" placeholder="Describe your product or service..." label="" btnLabel="Generate Ad Copy" getPromptPayload={() => ({})} />
 );
 
 const BlogWriterTool = () => (
-  <AiToolBase tool="blog-writer" placeholder="ব্লগ টপিক লিখুন — যেমন: ডিজিটাল মার্কেটিং কিভাবে শিখবো..." label="" btnLabel="ব্লগ ড্রাফট তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="blog-writer" placeholder="Enter blog topic — e.g. How to learn digital marketing..." label="" btnLabel="Generate Blog Draft" getPromptPayload={() => ({})} />
 );
 
 const EmailWriterTool = () => (
-  <AiToolBase tool="email-writer" placeholder="ইমেইলের বিষয় ও উদ্দেশ্য লিখুন..." label="" btnLabel="ইমেইল তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="email-writer" placeholder="Describe the email subject and purpose..." label="" btnLabel="Write Email" getPromptPayload={() => ({})} />
 );
 
 const ProductDescGen = () => (
-  <AiToolBase tool="product-desc" placeholder="পণ্যের নাম ও বৈশিষ্ট্য লিখুন..." label="" btnLabel="Description তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="product-desc" placeholder="Enter product name and features..." label="" btnLabel="Generate Description" getPromptPayload={() => ({})} />
 );
 
 const GrammarFixer = () => (
-  <AiToolBase tool="grammar-fix" placeholder="ভুল ব্যাকরণের টেক্সট লিখুন — ঠিক করে দেওয়া হবে..." label="" btnLabel="ব্যাকরণ ঠিক করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="grammar-fix" placeholder="Paste text with grammar errors — it will be corrected..." label="" btnLabel="Fix Grammar" getPromptPayload={() => ({})} />
 );
 
 const Paraphraser = () => (
-  <AiToolBase tool="paraphrase" placeholder="টেক্সট লিখুন যা নতুনভাবে লিখতে চান..." label="" btnLabel="Paraphrase করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="paraphrase" placeholder="Enter text you want to rewrite..." label="" btnLabel="Paraphrase" getPromptPayload={() => ({})} />
 );
 
 const TextSummarizer = () => (
-  <AiToolBase tool="summarize" placeholder="দীর্ঘ টেক্সট পেস্ট করুন — সংক্ষেপ করে দেওয়া হবে..." label="" btnLabel="সংক্ষেপ করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="summarize" placeholder="Paste long text — it will be summarized..." label="" btnLabel="Summarize" getPromptPayload={() => ({})} />
 );
 
 const SeoMetaGen = () => (
-  <AiToolBase tool="seo-meta" placeholder="পেজ বা আর্টিকেলের বিষয় লিখুন..." label="" btnLabel="SEO Meta তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="seo-meta" placeholder="Describe your page or article topic..." label="" btnLabel="Generate SEO Meta" getPromptPayload={() => ({})} />
 );
 
 const BusinessNameGen = () => (
-  <AiToolBase tool="business-name" placeholder="আপনার ব্যবসার ধরন ও কীওয়ার্ড লিখুন..." label="" btnLabel="নাম তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="business-name" placeholder="Describe your business type and keywords..." label="" btnLabel="Generate Names" getPromptPayload={() => ({})} />
 );
 
 const ResumeGen = () => (
-  <AiToolBase tool="resume" placeholder="আপনার নাম, অভিজ্ঞতা, দক্ষতা সংক্ষেপে লিখুন..." label="" btnLabel="Resume ড্রাফট তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="resume" placeholder="Enter your name, experience, skills briefly..." label="" btnLabel="Generate Resume Draft" getPromptPayload={() => ({})} />
 );
 
 const TikTokCaptionGen = () => (
-  <AiToolBase tool="tiktok-caption" placeholder="ভিডিওর বিষয় লিখুন..." label="" btnLabel="TikTok Caption তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="tiktok-caption" placeholder="Describe your video topic..." label="" btnLabel="Generate TikTok Caption" getPromptPayload={() => ({})} />
 );
 
 const KeywordGen = () => (
-  <AiToolBase tool="keyword-gen" placeholder="আপনার ব্যবসা বা টপিক লিখুন..." label="" btnLabel="Keywords তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="keyword-gen" placeholder="Enter your business or topic..." label="" btnLabel="Generate Keywords" getPromptPayload={() => ({})} />
 );
 
 const BioGen = () => (
-  <AiToolBase tool="bio-gen" placeholder="আপনার পেশা ও বিশেষত্ব লিখুন — ফেসবুক/ইনস্টাগ্রাম বায়ো..." label="" btnLabel="Bio তৈরি করুন" getPromptPayload={() => ({})} />
+  <AiToolBase tool="bio-gen" placeholder="Enter your profession and specialty — for Facebook/Instagram bio..." label="" btnLabel="Generate Bio" getPromptPayload={() => ({})} />
 );
 
 // Coming Soon placeholder
@@ -649,7 +648,7 @@ const ComingSoon = ({ feature }: { feature: string }) => (
       <Sparkles size={28} style={{ color: 'hsl(258,78%,55%)' }} />
     </div>
     <h3 className="font-bold text-lg" style={{ color: 'hsl(226,35%,18%)' }}>{feature}</h3>
-    <p className="text-sm text-center max-w-xs" style={{ color: 'hsl(226,35%,45%)' }}>এই টুলটি শীঘ্রই আসছে। আমরা এটি তৈরি করছি।</p>
+    <p className="text-sm text-center max-w-xs" style={{ color: 'hsl(226,35%,45%)' }}>This tool is coming soon. We are working on it.</p>
     <span className="px-4 py-1.5 rounded-full text-xs font-bold" style={{ background: 'hsla(38,92%,50%,0.12)', color: 'hsl(38,92%,40%)', border: '1px solid hsla(38,92%,50%,0.25)' }}>
       🚀 Coming Soon
     </span>
