@@ -216,7 +216,7 @@ const CaseConverter = () => {
 const UrlEncoder = () => {
   const [input, setInput] = useState(''), [mode, setMode] = useState<'encode' | 'decode'>('encode'), [result, setResult] = useState(''), [error, setError] = useState('');
   const process = () => {
-    setError(''); try { setResult(mode === 'encode' ? encodeURIComponent(input) : decodeURIComponent(input)); } catch { setError('ভুল ইনপুট'); }
+    setError(''); try { setResult(mode === 'encode' ? encodeURIComponent(input) : decodeURIComponent(input)); } catch { setError('Invalid input'); }
   };
   return (
     <div className="space-y-4">
@@ -226,8 +226,8 @@ const UrlEncoder = () => {
             style={{ background: mode === m ? 'hsl(258,78%,55%)' : 'transparent', color: mode === m ? 'white' : 'hsl(258,78%,50%)' }}>{m === 'encode' ? 'Encode' : 'Decode'}</button>
         ))}
       </div>
-      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'URL লিখুন...' : 'Encoded URL দিন...'} rows={3} />
-      <PrimaryBtn onClick={process}>{mode === 'encode' ? 'Encode করুন' : 'Decode করুন'}</PrimaryBtn>
+      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'Enter URL...' : 'Enter encoded URL...'} rows={3} />
+      <PrimaryBtn onClick={process}>{mode === 'encode' ? 'Encode' : 'Decode'}</PrimaryBtn>
       {error && <p className="text-sm font-medium" style={{ color: 'hsl(0,72%,50%)' }}>{error}</p>}
       {result && <ResultBox value={result} mono />}
     </div>
@@ -237,7 +237,7 @@ const UrlEncoder = () => {
 const Base64Tool = () => {
   const [input, setInput] = useState(''), [mode, setMode] = useState<'encode' | 'decode'>('encode'), [result, setResult] = useState(''), [error, setError] = useState('');
   const process = () => {
-    setError(''); try { setResult(mode === 'encode' ? btoa(unescape(encodeURIComponent(input))) : decodeURIComponent(escape(atob(input)))); } catch { setError('ভুল ইনপুট'); }
+    setError(''); try { setResult(mode === 'encode' ? btoa(unescape(encodeURIComponent(input))) : decodeURIComponent(escape(atob(input)))); } catch { setError('Invalid input'); }
   };
   return (
     <div className="space-y-4">
@@ -247,8 +247,8 @@ const Base64Tool = () => {
             style={{ background: mode === m ? 'hsl(258,78%,55%)' : 'transparent', color: mode === m ? 'white' : 'hsl(258,78%,50%)' }}>{m === 'encode' ? 'Encode' : 'Decode'}</button>
         ))}
       </div>
-      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'টেক্সট লিখুন...' : 'Base64 দিন...'} rows={3} />
-      <PrimaryBtn onClick={process}>{mode === 'encode' ? 'Encode করুন' : 'Decode করুন'}</PrimaryBtn>
+      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={mode === 'encode' ? 'Enter text...' : 'Enter Base64...'} rows={3} />
+      <PrimaryBtn onClick={process}>{mode === 'encode' ? 'Encode' : 'Decode'}</PrimaryBtn>
       {error && <p className="text-sm font-medium" style={{ color: 'hsl(0,72%,50%)' }}>{error}</p>}
       {result && <ResultBox value={result} mono />}
     </div>
@@ -276,30 +276,30 @@ const QrGenerator = () => {
   };
   return (
     <div className="space-y-4">
-      <ToolInput value={text} onChange={e => setText(e.target.value)} placeholder="URL বা টেক্সট লিখুন — যেমন: https://shahedstore.com.bd" rows={3} />
+      <ToolInput value={text} onChange={e => setText(e.target.value)} placeholder="Enter URL or text — e.g. https://shahedstore.com.bd" rows={3} />
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
-          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>QR রঙ</label>
+          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>QR Color</label>
           <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(258,78%,55%,0.18)' }}>
             <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
             <span className="text-xs font-mono" style={{ color: 'hsl(226,35%,40%)' }}>{color}</span>
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>ব্যাকগ্রাউন্ড</label>
+          <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Background</label>
           <div className="flex items-center gap-2 p-2 rounded-xl" style={{ border: '1.5px solid hsla(258,78%,55%,0.18)' }}>
             <input type="color" value={bgColor} onChange={e => setBgColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
             <span className="text-xs font-mono" style={{ color: 'hsl(226,35%,40%)' }}>{bgColor}</span>
           </div>
         </div>
       </div>
-      <PrimaryBtn onClick={generate}><QrCode size={14} />QR কোড তৈরি করুন</PrimaryBtn>
+      <PrimaryBtn onClick={generate}><QrCode size={14} />Generate QR Code</PrimaryBtn>
       {qrUrl && (
         <div className="flex flex-col items-center gap-4">
           <img src={qrUrl} alt="QR Code" className="w-48 h-48 rounded-xl border-2" style={{ borderColor: 'hsla(258,78%,55%,0.20)' }} />
           <button onClick={download} className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105"
             style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
-            <Download size={14} />ডাউনলোড করুন
+            <Download size={14} />Download
           </button>
         </div>
       )}
