@@ -679,11 +679,41 @@ const AdminProducts = () => {
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <label className={lc} style={{marginBottom:0}}>Short Description</label>
-                        <AiBtn fieldType="short_description" label="AI Generate" />
+                        <AiBtn fieldType="short_description" label="AI Generate (৩টি অপশন)" />
                       </div>
                       <input value={form.short_description}
                         onChange={e => setForm(p => ({ ...p, short_description: e.target.value }))}
                         placeholder="One-liner shown in cards..." className={ic} />
+                      {/* Short description options picker */}
+                      {showShortDescPicker && shortDescOptions.length > 0 && (
+                        <div className="mt-2 rounded-xl border border-primary/30 bg-primary/5 overflow-hidden">
+                          <div className="flex items-center justify-between px-3 py-2 border-b border-primary/20">
+                            <span className="text-[11px] font-semibold text-primary flex items-center gap-1.5">
+                              <Sparkles size={11} /> AI-generated অপশন — একটি বেছে নিন
+                            </span>
+                            <button type="button" onClick={() => setShowShortDescPicker(false)} className="text-muted-foreground hover:text-foreground">
+                              <X size={12} />
+                            </button>
+                          </div>
+                          <div className="divide-y divide-border/50">
+                            {shortDescOptions.map((opt, i) => (
+                              <button
+                                key={i}
+                                type="button"
+                                onClick={() => {
+                                  setForm(p => ({ ...p, short_description: opt }));
+                                  setShowShortDescPicker(false);
+                                  toast.success('Short description সেট হয়েছে!');
+                                }}
+                                className="w-full text-left px-3 py-2.5 text-xs text-foreground hover:bg-primary/10 transition-colors flex items-start gap-2"
+                              >
+                                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className="leading-relaxed">{opt}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div>
