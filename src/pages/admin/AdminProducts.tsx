@@ -581,8 +581,6 @@ const AdminProducts = () => {
     { id: 'pricing',    label: '💰 Inventory' },
     { id: 'media',      label: '🖼️ Media' },
     { id: 'details',    label: '📋 Details' },
-    { id: 'attributes', label: '🏷️ Attributes' },
-    { id: 'options',    label: '🎛️ Variations' },
     { id: 'seo',        label: '🔍 SEO' },
   ];
 
