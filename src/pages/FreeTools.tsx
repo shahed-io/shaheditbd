@@ -1227,11 +1227,11 @@ const CATEGORIES: Category[] = [
   {
     id: 'pdf', label: 'PDF Tools', emoji: '📄', color: 'hsl(0,72%,50%)',
     tools: [
-      { id: 'pdf-merge', icon: <FileText size={20} />, title: 'PDF Merge', subtitle: 'Merge multiple PDFs into one', color: 'hsl(0,72%,50%)', badge: 'Soon', component: <ComingSoon feature="PDF Merge" /> },
-      { id: 'pdf-split', icon: <Scissors size={20} />, title: 'PDF Split', subtitle: 'Split PDF into separate files', color: 'hsl(38,92%,50%)', badge: 'Soon', component: <ComingSoon feature="PDF Split" /> },
-      { id: 'pdf-compress', icon: <Download size={20} />, title: 'PDF Compress', subtitle: 'Reduce PDF file size', color: 'hsl(200,90%,45%)', badge: 'Soon', component: <ComingSoon feature="PDF Compress" /> },
-      { id: 'img-to-pdf', icon: <FileImage size={20} />, title: 'Image to PDF', subtitle: 'Convert images to PDF', color: 'hsl(162,72%,38%)', badge: 'Soon', component: <ComingSoon feature="Image to PDF" /> },
-      { id: 'pdf-lock', icon: <Lock size={20} />, title: 'PDF Lock/Unlock', subtitle: 'Add or remove PDF password', color: 'hsl(258,78%,55%)', badge: 'Soon', component: <ComingSoon feature="PDF Lock/Unlock" /> },
+      { id: 'pdf-merge', icon: <Combine size={20} />, title: 'PDF Merge', subtitle: 'Merge multiple PDFs into one', color: 'hsl(0,72%,50%)', badge: 'New', component: <PdfMergeTool /> },
+      { id: 'pdf-split', icon: <SplitSquareVertical size={20} />, title: 'PDF Split', subtitle: 'Split PDF into separate files', color: 'hsl(38,92%,50%)', badge: 'New', component: <PdfSplitTool /> },
+      { id: 'pdf-compress', icon: <Minimize2 size={20} />, title: 'PDF Compress', subtitle: 'Reduce PDF file size', color: 'hsl(200,90%,45%)', badge: 'New', component: <PdfCompressTool /> },
+      { id: 'img-to-pdf', icon: <FileImage size={20} />, title: 'Image to PDF', subtitle: 'Convert images to PDF', color: 'hsl(162,72%,38%)', badge: 'New', component: <ImageToPdf /> },
+      { id: 'pdf-lock', icon: <FileLock2 size={20} />, title: 'PDF Lock/Unlock', subtitle: 'Add or remove PDF password', color: 'hsl(258,78%,55%)', badge: 'New', component: <PdfLockTool /> },
     ]
   },
 ];
