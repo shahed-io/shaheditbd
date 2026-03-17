@@ -112,6 +112,7 @@ const AdminProducts = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [aiLoading, setAiLoading] = useState<string | null>(null); // which field is generating
+  const [aiCardLoading, setAiCardLoading] = useState(false);
 
   // ── AI Content Generator ─────────────────────────────────────
   const generateAiContent = async (type: 'short_description' | 'description' | 'seo' | 'all') => {
