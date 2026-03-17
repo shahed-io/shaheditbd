@@ -156,21 +156,30 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
       });
     }
 
+    const isJsonType = type === "seo" || type === "all";
+
+    const requestBody: any = {
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.7,
+      max_tokens: maxTokens,
+    };
+
+    // Force JSON output mode for types that need it
+    if (isJsonType) {
+      requestBody.response_format = { type: "json_object" };
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.7,
-        max_tokens: maxTokens,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
@@ -193,28 +202,70 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content || "";
 
-    // Plain text types
+    // Plain text types — return as-is
     if (type === "short_description" || type === "description" || type === "demo_style") {
       return new Response(JSON.stringify({ result: content.trim() }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // JSON types — parse safely
+    // JSON types — robust multi-stage parsing
     let parsed: any;
+
+    // Stage 1: strip markdown fences and try direct parse
     try {
-      const cleaned = content.replace(/```json\n?|\n?```/g, "").trim();
+      const cleaned = content
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/\s*```$/i, "")
+        .trim();
       parsed = JSON.parse(cleaned);
     } catch {
+      // Stage 2: extract first {...} block
       const match = content.match(/\{[\s\S]*\}/);
       if (match) {
         try {
           parsed = JSON.parse(match[0]);
         } catch {
-          throw new Error("Failed to parse AI response as JSON");
+          // Stage 3: try to fix common issues (unescaped newlines inside strings)
+          try {
+            const fixed = match[0]
+              .replace(/(?<=:\s*"[^"]*)\n(?=[^"]*")/g, "\\n")
+              .replace(/[\x00-\x1F\x7F]/g, (c) => {
+                if (c === "\n") return "\\n";
+                if (c === "\r") return "\\r";
+                if (c === "\t") return "\\t";
+                return "";
+              });
+            parsed = JSON.parse(fixed);
+          } catch {
+            // Stage 4: give meaningful fallback for 'all' type
+            if (type === "all") {
+              parsed = {
+                short_description: "",
+                description: content,
+                seo_title: "",
+                seo_description: "",
+              };
+            } else {
+              console.error("Raw AI content that failed to parse:", content.substring(0, 500));
+              throw new Error("Failed to parse AI response as JSON");
+            }
+          }
         }
       } else {
-        throw new Error("Failed to parse AI response as JSON");
+        // No JSON object found at all — fallback for 'all'
+        if (type === "all") {
+          parsed = {
+            short_description: "",
+            description: content,
+            seo_title: "",
+            seo_description: "",
+          };
+        } else {
+          console.error("No JSON found in AI content:", content.substring(0, 500));
+          throw new Error("Failed to parse AI response as JSON");
+        }
       }
     }
 
