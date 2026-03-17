@@ -949,6 +949,132 @@ const ProductDetail = () => {
   );
 };
 
+// ── Related Products ─────────────────────────────────────────
+interface RelatedProduct {
+  id: string; name: string; slug: string; price: number;
+  original_price: number | null; discount_percent: number | null;
+  image_url: string | null; is_featured: boolean | null;
+  categories: { name: string } | null;
+}
+
+const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string | null; currentProductId: string }) => {
+  const navigate = useNavigate();
+  const [products, setProducts] = useState<RelatedProduct[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const sectionReveal = useReveal(0.05);
+
+  useEffect(() => {
+    if (!categoryId) { setLoading(false); return; }
+    supabase
+      .from('products')
+      .select('id, name, slug, price, original_price, discount_percent, image_url, is_featured, category:category_id(name)')
+      .eq('status', 'active')
+      .eq('category_id', categoryId)
+      .neq('id', currentProductId)
+      .limit(6)
+      .then(({ data }) => {
+        setProducts((data as any[]) || []);
+        setLoading(false);
+      });
+  }, [categoryId, currentProductId]);
+
+  if (!loading && products.length === 0) return null;
+
+  return (
+    <div
+      ref={sectionReveal.ref}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14"
+      style={{
+        opacity: sectionReveal.revealed ? 1 : 0,
+        transform: sectionReveal.revealed ? 'none' : 'translateY(30px)',
+        transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
+      }}
+    >
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-8">
+        <span className="w-1 h-7 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+        <h2 className="font-sora font-bold text-2xl text-foreground">Related Products</h2>
+        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
+          style={{ background: 'hsla(258,78%,55%,0.1)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(258,78%,50%)' }}>
+          একই ক্যাটাগরি
+        </span>
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl shimmer aspect-[3/4]" style={{ animationDelay: `${i * 0.07}s` }} />
+            ))
+          : products.map((p, i) => {
+              const discount = p.discount_percent || (p.original_price ? Math.round((p.original_price - p.price) / p.original_price * 100) : 0);
+              return (
+                <div
+                  key={p.id}
+                  onClick={() => navigate(`/product/${p.slug}`)}
+                  className="group cursor-pointer rounded-2xl overflow-hidden flex flex-col transition-all hover:-translate-y-1"
+                  style={{
+                    background: 'linear-gradient(155deg, rgba(255,255,255,0.90) 0%, rgba(255,255,255,0.65) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                    border: '1px solid hsla(258,78%,75%,0.22)',
+                    boxShadow: '0 4px 20px hsla(258,78%,55%,0.08)',
+                    opacity: sectionReveal.revealed ? 1 : 0,
+                    transform: sectionReveal.revealed ? 'translateY(0)' : 'translateY(20px)',
+                    transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${i * 0.07}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${i * 0.07}s, box-shadow 0.3s, border-color 0.3s`,
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 36px hsla(258,78%,55%,0.20)';
+                    (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,60%,0.40)';
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px hsla(258,78%,55%,0.08)';
+                    (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,75%,0.22)';
+                  }}
+                >
+                  {/* Image */}
+                  <div className="relative aspect-square overflow-hidden bg-muted">
+                    <img
+                      src={p.image_url || PLACEHOLDER}
+                      alt={p.name}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
+                    />
+                    {discount > 0 && (
+                      <span className="absolute top-2 left-2 badge-sale text-[10px] px-2 py-0.5">-{discount}%</span>
+                    )}
+                    {p.is_featured && (
+                      <span className="absolute top-2 right-2 badge-hot-item text-[10px] px-2 py-0.5 flex items-center gap-0.5">
+                        <Zap size={8} fill="white" /> HOT
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Info */}
+                  <div className="p-3 flex flex-col gap-1.5 flex-1">
+                    {p.categories && (
+                      <span className="text-[9px] font-bold uppercase tracking-widest"
+                        style={{ color: 'hsl(258,78%,55%)' }}>{p.categories.name}</span>
+                    )}
+                    <p className="text-xs font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-primary transition-colors">{p.name}</p>
+                    <div className="flex items-baseline gap-1.5 mt-auto">
+                      <span className="text-sm font-sora font-black" style={{ color: 'hsl(271,91%,65%)' }}>
+                        ৳{p.price.toLocaleString()}
+                      </span>
+                      {p.original_price && (
+                        <span className="text-[10px] line-through text-muted-foreground">৳{p.original_price.toLocaleString()}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+      </div>
+    </div>
+  );
+};
+
 // ── FAQ accordion item ──
 const FAQItem = ({ q, a, delay = 0, revealed = true }: { q: string; a: string; delay?: number; revealed?: boolean }) => {
   const [open, setOpen] = useState(false);
