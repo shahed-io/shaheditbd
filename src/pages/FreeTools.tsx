@@ -486,43 +486,6 @@ const ImageCompressor = () => {
     </div>
   );
 };
-  const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = 'compressed.jpg'; a.click(); };
-  return (
-    <div className="space-y-4">
-      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
-        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>ছবি আপলোড করুন</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
-      </label>
-      {imgSrc && (
-        <>
-          <img src={imgSrc} alt="orig" className="w-full max-h-36 object-contain rounded-xl" />
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>কোয়ালিটি</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
-            <input type="range" min={10} max={99} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
-          </div>
-          <PrimaryBtn onClick={compress}><Scissors size={14} />কম্প্রেস করুন</PrimaryBtn>
-        </>
-      )}
-      {outputUrl && (
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl p-3 text-center" style={{ background: 'hsla(0,72%,50%,0.07)', border: '1.5px solid hsla(0,72%,50%,0.18)' }}>
-              <p className="text-xl font-black" style={{ color: 'hsl(0,72%,50%)' }}>{sizes.orig} KB</p>
-              <p className="text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}>আগের সাইজ</p>
-            </div>
-            <div className="rounded-xl p-3 text-center" style={{ background: 'hsla(162,72%,38%,0.07)', border: '1.5px solid hsla(162,72%,38%,0.18)' }}>
-              <p className="text-xl font-black" style={{ color: 'hsl(162,72%,38%)' }}>{sizes.compressed} KB</p>
-              <p className="text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}>পরের সাইজ</p>
-            </div>
-          </div>
-          <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
-            style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
-            <Download size={14} />ডাউনলোড করুন
-          </button>
-        </div>
-      )}
-    </div>
-  );
-};
 
 // ═══════════════════════════════════════════════════════════════════════════
 // HASHTAG GENERATOR
