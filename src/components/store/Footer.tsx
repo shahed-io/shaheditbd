@@ -118,7 +118,7 @@ const Footer = () => (
         <a href="/" className="flex items-center justify-center">
           <BrandLogo size="lg" />
         </a>
-        <p className="text-[13px] leading-relaxed whitespace-nowrap" style={{ color: 'hsl(226,35%,42%)' }}>
+        <p className="text-[13px] leading-relaxed md:whitespace-nowrap" style={{ color: 'hsl(226,35%,42%)' }}>
           বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।
         </p>
 
