@@ -488,12 +488,19 @@ const AdminProducts = () => {
     const attrRaw = (product.attributes as any) || [];
     const accountTypeAttr = attrRaw.find((a: any) => a.key === '__account_type');
     const otherAttrs = attrRaw.filter((a: any) => a.key !== '__account_type');
+    // Parse subtitle and duration_plans from attributes
+    const subtitleAttr = attrRaw.find((a: any) => a.key === '__subtitle');
+    const durationPlansAttr = attrRaw.find((a: any) => a.key === '__duration_plans');
+    const cleanAttrs = attrRaw.filter((a: any) => a.key !== '__account_type' && a.key !== '__subtitle' && a.key !== '__duration_plans');
+    const parsedDurationPlans = (() => {
+      try { return durationPlansAttr ? JSON.parse(durationPlansAttr.value) : []; } catch { return []; }
+    })();
     setForm({
       name: product.name,
-      // Use actual product slug; if it looks like a UUID (old data), regenerate from name
       slug: (product as any).slug && !/^[0-9a-f-]{36}$/.test((product as any).slug)
         ? (product as any).slug
         : generateSlug(product.name),
+      subtitle: subtitleAttr?.value || '',
       short_description: product.short_description || '',
       description: product.description || '',
       brand: product.brand || '',
@@ -501,6 +508,7 @@ const AdminProducts = () => {
       product_type: product.product_type || 'digital',
       account_type: accountTypeAttr?.value || '',
       requires_customer_email: allTags.includes('requires-email'),
+      duration_plans: parsedDurationPlans,
       price: String(product.price),
       original_price: product.original_price ? String(product.original_price) : '',
       discount_percent: product.discount_percent ? String(product.discount_percent) : '',
@@ -532,7 +540,7 @@ const AdminProducts = () => {
         }
         return raw;
       })(),
-      attributes: otherAttrs.length ? otherAttrs : [{ key: '', value: '' }],
+      attributes: cleanAttrs.length ? cleanAttrs : [{ key: '', value: '' }],
       faq: (product.faq as any)?.length ? (product.faq as any) : [{ q: '', a: '' }],
       seo_title: product.seo_title || '',
       seo_description: product.seo_description || '',
