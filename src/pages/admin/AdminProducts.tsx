@@ -115,6 +115,8 @@ const AdminProducts = () => {
   const [aiCardLoading, setAiCardLoading] = useState(false);
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
+  const [shortDescOptions, setShortDescOptions] = useState<string[]>([]);
+  const [showShortDescPicker, setShowShortDescPicker] = useState(false);
 
   // ── AI Content Generator ─────────────────────────────────────
   const generateAiContent = async (type: 'short_description' | 'description' | 'seo' | 'all') => {
