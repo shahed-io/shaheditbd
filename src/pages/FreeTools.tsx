@@ -263,18 +263,26 @@ const QrGenerator = () => {
   const [qrUrl, setQrUrl] = useState('');
   const [color, setColor] = useState('#6c3bc4');
   const [bgColor, setBgColor] = useState('#ffffff');
-  const generate = async () => {
+  const [loading, setLoading] = useState(false);
+
+  const generate = () => {
     if (!text.trim()) return;
-    try {
-      // Dynamically load qrcode via esm.sh to avoid React duplication
-      const { default: QRCodeLib } = await import(/* @vite-ignore */ 'https://esm.sh/qrcode@1.5.4');
-      const url = await QRCodeLib.toDataURL(text, { width: 400, margin: 2, color: { dark: color, light: bgColor } });
-      setQrUrl(url);
-    } catch (e) { console.error(e); }
+    setLoading(true);
+    const encoded = encodeURIComponent(text.trim());
+    const url = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encoded}&color=${color.replace('#','')}&bgcolor=${bgColor.replace('#','')}&format=png&margin=10`;
+    setQrUrl(url);
+    setLoading(false);
   };
-  const download = () => {
+  const download = async () => {
     if (!qrUrl) return;
-    const a = document.createElement('a'); a.href = qrUrl; a.download = 'qrcode.png'; a.click();
+    try {
+      const res = await fetch(qrUrl);
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'qrcode.png';
+      a.click();
+    } catch (e) { console.error(e); }
   };
   return (
     <div className="space-y-4">
@@ -295,7 +303,7 @@ const QrGenerator = () => {
           </div>
         </div>
       </div>
-      <PrimaryBtn onClick={generate}><QrCode size={14} />Generate QR Code</PrimaryBtn>
+      <PrimaryBtn onClick={generate}>{loading ? <Loader2 size={14} className="animate-spin" /> : <QrCode size={14} />}Generate QR Code</PrimaryBtn>
       {qrUrl && (
         <div className="flex flex-col items-center gap-4">
           <img src={qrUrl} alt="QR Code" className="w-48 h-48 rounded-xl border-2" style={{ borderColor: 'hsla(258,78%,55%,0.20)' }} />
