@@ -1,6 +1,41 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
+import { ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
 import idmLogo from '@/assets/idm.webp';
+import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
+
+type ComboItem = { icon: string; name: string; tag: string; color: string; highlight?: boolean };
+type Slide = {
+  tag: string; title: string; titleAccent: string; subtitle: string; desc: string;
+  price: string; original: string; off: string; badge: string;
+  accentFrom: string; accentTo: string; glowFrom: string; glowTo: string;
+  emoji: string; logoImg?: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
+  productSlug?: string;
+};
+
+const STATIC_SLIDES: Slide[] = [
+  // ... keep existing code
+];
+
+// Convert DB slide to internal Slide format
+const dbSlideToSlide = (s: SlideData): Slide => ({
+  tag: s.tag,
+  title: s.title,
+  titleAccent: s.titleAccent,
+  subtitle: s.subtitle,
+  desc: s.desc,
+  price: s.price,
+  original: s.original,
+  off: s.off,
+  badge: s.badge,
+  accentFrom: s.accentFrom,
+  accentTo: s.accentTo,
+  glowFrom: `${s.accentFrom.replace(')', ',0.18)').replace('hsl(', 'hsla(')}`,
+  glowTo: `${s.accentTo.replace(')', ',0.10)').replace('hsl(', 'hsla(')}`,
+  emoji: s.emoji,
+  features: s.features,
+  comboSlide: false,
+  productSlug: s.productSlug || '',
+});
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
 
 type ComboItem = { icon: string; name: string; tag: string; color: string; highlight?: boolean };
