@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import { FloatingButtons } from '@/components/store/Extras';
@@ -9,7 +9,8 @@ import {
   QrCode, AtSign, Scissors, FileImage, Maximize2, RotateCcw, Smile,
   Youtube, Facebook, Twitter, TrendingUp, Bot, PenTool, Mail, Briefcase,
   BookOpen, Edit3, Search, Globe, Tag, ChevronLeft, Wand2, Star, Lock,
-  DollarSign, Image, Download, Upload, Eye, EyeOff, Loader2
+  DollarSign, Image, Download, Upload, Eye, EyeOff, Loader2, Droplets,
+  Stamp, Laugh, Film, Combine, SplitSquareVertical, Minimize2, FileLock2
 } from 'lucide-react';
 
 import { supabase } from '@/integrations/supabase/client';
