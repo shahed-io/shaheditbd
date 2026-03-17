@@ -685,6 +685,66 @@ const AdminProducts = () => {
                         placeholder="Detailed product description..." className={`${ic} resize-none`} />
                     </div>
 
+                    {/* ── Demo Style AI Panel ── */}
+                    <div className="rounded-xl border border-dashed border-primary/40 bg-primary/5 overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => setShowDemoPanel(p => !p)}
+                        className="w-full flex items-center justify-between px-4 py-3 text-xs font-semibold text-primary hover:bg-primary/10 transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Wand2 size={13} />
+                          🎯 Demo দেখিয়ে AI Description লেখান
+                        </span>
+                        <span className="text-muted-foreground text-[10px]">{showDemoPanel ? '▲ বন্ধ করুন' : '▼ খুলুন'}</span>
+                      </button>
+                      {showDemoPanel && (
+                        <div className="px-4 pb-4 space-y-3 border-t border-primary/20 pt-3">
+                          <p className="text-[11px] text-muted-foreground leading-relaxed">
+                            নিচে একটি <strong className="text-foreground">উদাহরণ/ডেমো ডেসক্রিপশন</strong> পেস্ট করুন।
+                            AI সেটির <strong className="text-foreground">স্টাইল, ফরম্যাট ও ভাষা</strong> অনুসরণ করে
+                            নতুন প্রোডাক্টের জন্য ডেসক্রিপশন লিখে দেবে।
+                          </p>
+                          <textarea
+                            rows={7}
+                            value={demoDescription}
+                            onChange={e => setDemoDescription(e.target.value)}
+                            placeholder="এখানে একটি পুরোনো/উদাহরণ ডেসক্রিপশন পেস্ট করুন যার স্টাইলে নতুন ডেসক্রিপশন চান..."
+                            className={`${ic} resize-none text-[11px] leading-relaxed`}
+                          />
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={generateDemoStyle}
+                              disabled={!form.name.trim() || !demoDescription.trim() || aiLoading !== null}
+                              className="flex-1 flex items-center justify-center gap-2 text-xs py-2.5 px-4 rounded-xl border border-primary/50 text-primary bg-primary/10 hover:bg-primary/20 font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              {aiLoading === 'demo_style' ? (
+                                <><Loader2 size={13} className="animate-spin" /> Demo স্টাইলে লেখা হচ্ছে...</>
+                              ) : (
+                                <><Sparkles size={13} /> এই স্টাইলে Description লিখুন</>
+                              )}
+                            </button>
+                            {demoDescription && (
+                              <button
+                                type="button"
+                                onClick={() => setDemoDescription('')}
+                                className="text-xs px-3 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground transition-colors"
+                              >
+                                <X size={12} />
+                              </button>
+                            )}
+                          </div>
+                          {demoDescription && (
+                            <p className="text-[10px] text-muted-foreground">
+                              📝 {demoDescription.length} অক্ষর · {demoDescription.split('\n').length} লাইন
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
