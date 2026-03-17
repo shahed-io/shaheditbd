@@ -162,8 +162,13 @@ const AdminProducts = () => {
     setAiLoading(type);
     try {
       const catName = categories.find(c => c.id === form.category_id)?.name || '';
-      const durationVariant = (form.variants as any[])?.find((v: any) => v.name?.toLowerCase().includes('duration') || v.name?.toLowerCase().includes('validity'));
-      const durationValue = durationVariant?.options?.[0] || '';
+      // Build duration & pricing info from duration_plans
+      const validPlans = form.duration_plans.filter(p => p.duration.trim() && p.price.trim());
+      const durationSummary = validPlans.length > 0
+        ? validPlans.map(p => `${p.duration}: ৳${p.price}${p.original_price ? ` (was ৳${p.original_price})` : ''}`).join(', ')
+        : (form.price ? `৳${form.price}` : '');
+      const accountType = form.account_type || '';
+      const subtitle = form.subtitle || '';
       const { data, error } = await supabase.functions.invoke('generate-product-content', {
         body: {
           productName: form.name,
@@ -171,7 +176,9 @@ const AdminProducts = () => {
           brand: form.brand,
           productType: form.product_type,
           price: form.price,
-          duration: durationValue,
+          durationPlans: durationSummary,
+          accountType,
+          subtitle,
           type,
           count: type === 'short_description' ? 3 : 1,
         },
