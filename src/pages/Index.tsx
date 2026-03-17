@@ -14,8 +14,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title="ডিজিটাল প্রোডাক্ট শপ"
-        description="Shahed Store — Windows, Office, Adobe, Antivirus, Subscription সহ সব ডিজিটাল প্রোডাক্ট সেরা দামে। ৳ পেমেন্টে তাৎক্ষণিক ডেলিভারি।"
+        title="Your Trusted Destination for Online Shopping"
+        description="Shahed Store – Your Trusted Destination for Online Shopping. Buy Windows, Office, Adobe, Antivirus & all digital products at the best price in Bangladesh."
         ogType="website"
         schema={[organizationSchema(), websiteSchema()]}
       />
