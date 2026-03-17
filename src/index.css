@@ -842,7 +842,6 @@ body::before {
 .rainbow-glow-border {
   animation: rainbow-border-rotate 4s linear infinite;
 }
-}
 
 /* Badge pop-in */
 @keyframes badge-pop {
