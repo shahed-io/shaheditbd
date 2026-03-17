@@ -36,6 +36,7 @@ interface ProductFull {
   total_sales: number | null;
   variants: any;
   faq: any;
+  category_id: string | null;
   categories: { name: string; slug: string } | null;
   created_at: string;
 }
