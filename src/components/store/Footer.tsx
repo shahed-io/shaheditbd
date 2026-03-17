@@ -1,4 +1,4 @@
-import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText } from 'lucide-react';
+import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText, Send } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 import dbidLogo from '@/assets/dbid-logo.png';
 
@@ -150,9 +150,10 @@ const Footer = () => (
         {/* Social icons — centered */}
         <div className="flex gap-3 justify-center">
           {[
-            { icon: <Facebook size={17} />,      href: '#',                           label: 'Facebook',  color: 'hsl(258,78%,55%)' },
-            { icon: <MessageCircle size={17} />, href: 'https://wa.me/8801840099853', label: 'WhatsApp',  color: 'hsl(162,72%,38%)' },
-            { icon: <Instagram size={17} />,     href: '#',                           label: 'Instagram', color: 'hsl(330,85%,55%)' },
+            { icon: <Facebook size={17} />,      href: 'https://www.facebook.com/Shahed.Store365',       label: 'Facebook',  color: 'hsl(258,78%,55%)' },
+            { icon: <MessageCircle size={17} />, href: 'https://wa.me/shahedstore',                        label: 'WhatsApp',  color: 'hsl(162,72%,38%)' },
+            { icon: <Instagram size={17} />,     href: 'https://www.instagram.com/shahedstore.com.bd/',    label: 'Instagram', color: 'hsl(330,85%,55%)' },
+            { icon: <Send size={17} />,          href: 'https://t.me/Shahed_Store',                        label: 'Telegram',  color: 'hsl(200,80%,50%)' },
           ].map((s, i) => (
             <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
               className="w-11 h-11 rounded-xl flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5"
