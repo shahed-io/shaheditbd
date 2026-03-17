@@ -151,6 +151,7 @@ const AdminProducts = () => {
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [aiLoading, setAiLoading] = useState<string | null>(null); // which field is generating
   const [aiCardLoading, setAiCardLoading] = useState(false);
+  const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo'>('dark_neon');
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
   const [shortDescOptions, setShortDescOptions] = useState<string[]>([]);
