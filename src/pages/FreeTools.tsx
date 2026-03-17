@@ -201,7 +201,7 @@ const CaseConverter = () => {
   };
   return (
     <div className="space-y-4">
-      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder="কনভার্ট করতে টেক্সট লিখুন..." rows={4} />
+      <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder="Enter text to convert..." rows={4} />
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {[['upper', 'UPPER CASE'], ['lower', 'lower case'], ['title', 'Title Case'], ['sentence', 'Sentence case'], ['alternate', 'aLtErNaTe'], ['reverse', 'esreveR']].map(([t, l]) => (
           <button key={t} onClick={() => convert(t)} className="py-2.5 px-3 rounded-xl text-sm font-bold transition-all hover:scale-[1.03]"
