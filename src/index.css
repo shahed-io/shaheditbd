@@ -829,6 +829,21 @@ body::before {
   z-index: 5;
 }
 
+/* ══════════════════════════════════════
+   RAINBOW GLOW — Product Image Border
+══════════════════════════════════════ */
+@keyframes rainbow-border-rotate {
+  0%   { box-shadow: 0 0 0 2px hsla(320,90%,65%,0.85), 0 0 0 4px hsla(270,80%,65%,0.50), 0 0 30px hsla(320,90%,65%,0.40), 0 0 65px hsla(270,80%,60%,0.25), inset 0 1px 0 rgba(255,255,255,0.9); }
+  25%  { box-shadow: 0 0 0 2px hsla(190,90%,55%,0.85), 0 0 0 4px hsla(150,75%,55%,0.50), 0 0 30px hsla(190,90%,55%,0.40), 0 0 65px hsla(150,75%,55%,0.25), inset 0 1px 0 rgba(255,255,255,0.9); }
+  50%  { box-shadow: 0 0 0 2px hsla(50,95%,60%,0.85),  0 0 0 4px hsla(20,90%,60%,0.50),  0 0 30px hsla(50,95%,60%,0.40),  0 0 65px hsla(20,90%,60%,0.25),  inset 0 1px 0 rgba(255,255,255,0.9); }
+  75%  { box-shadow: 0 0 0 2px hsla(260,90%,65%,0.85), 0 0 0 4px hsla(320,80%,65%,0.50), 0 0 30px hsla(260,90%,65%,0.40), 0 0 65px hsla(320,80%,65%,0.25), inset 0 1px 0 rgba(255,255,255,0.9); }
+  100% { box-shadow: 0 0 0 2px hsla(320,90%,65%,0.85), 0 0 0 4px hsla(270,80%,65%,0.50), 0 0 30px hsla(320,90%,65%,0.40), 0 0 65px hsla(270,80%,60%,0.25), inset 0 1px 0 rgba(255,255,255,0.9); }
+}
+.rainbow-glow-border {
+  animation: rainbow-border-rotate 4s linear infinite;
+}
+}
+
 /* Badge pop-in */
 @keyframes badge-pop {
   0%   { opacity: 0; transform: scale(0.4) rotate(-8deg); }
