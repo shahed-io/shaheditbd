@@ -665,7 +665,13 @@ const AdminProducts = () => {
                       <input required value={form.name}
                         onChange={e => {
                           const n = e.target.value;
-                          setForm(p => ({ ...p, name: n, slug: generateSlug(n), seo_title: p.seo_title || n }));
+                          // Auto-update slug only if not manually edited
+                          setForm(p => ({
+                            ...p,
+                            name: n,
+                            slug: generateSlug(n),
+                            seo_title: p.seo_title || n
+                          }));
                         }}
                         placeholder="e.g. Windows 11 Pro License Key" className={ic} />
                       {form.name.trim() && (
@@ -683,10 +689,19 @@ const AdminProducts = () => {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className={lc}>Slug (URL) *</label>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className={lc}>Slug (URL) *</label>
+                          <button type="button" onClick={() => setForm(p => ({ ...p, slug: generateSlug(p.name) }))}
+                            className="text-[10px] text-primary hover:underline">↺ নাম থেকে রিজেনারেট</button>
+                        </div>
                         <input value={form.slug}
-                          onChange={e => setForm(p => ({ ...p, slug: e.target.value }))}
-                          placeholder="product-slug" className={ic} />
+                          onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^\w-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') }))}
+                          placeholder="product-name-here" className={ic} />
+                        {form.slug && (
+                          <p className="text-[10px] text-muted-foreground mt-1 truncate">
+                            🔗 shahedstore.com.bd/product/<span className="text-primary">{form.slug}</span>
+                          </p>
+                        )}
                       </div>
                       <div>
                         <label className={lc}>Brand / Publisher</label>
