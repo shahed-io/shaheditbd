@@ -29,13 +29,37 @@ interface Product {
   category?: { name: string } | null;
 }
 
+const DURATION_PRESETS = [
+  { label: '1 মাস', value: '1 Month' },
+  { label: '2 মাস', value: '2 Months' },
+  { label: '3 মাস', value: '3 Months' },
+  { label: '4 মাস', value: '4 Months' },
+  { label: '5 মাস', value: '5 Months' },
+  { label: '6 মাস', value: '6 Months' },
+  { label: '7 মাস', value: '7 Months' },
+  { label: '8 মাস', value: '8 Months' },
+  { label: '9 মাস', value: '9 Months' },
+  { label: '10 মাস', value: '10 Months' },
+  { label: '11 মাস', value: '11 Months' },
+  { label: '12 মাস', value: '12 Months' },
+  { label: '1 বছর', value: '1 Year' },
+  { label: '2 বছর', value: '2 Years' },
+  { label: '3 বছর', value: '3 Years' },
+  { label: 'Lifetime', value: 'Lifetime' },
+  { label: '⚙️ Custom', value: '__custom__' },
+];
+
 const emptyForm = {
   // Basic
   name: '', slug: '', short_description: '', description: '',
   brand: '', badge: '', product_type: 'digital',
+  // Subtitle (custom text below product title)
+  subtitle: '' as string,
   // Account type & access
-  account_type: '' as string, // personal / shared / family / student
+  account_type: '' as string,
   requires_customer_email: false,
+  // Duration pricing plans
+  duration_plans: [] as { duration: string; price: string; original_price: string }[],
   // Pricing
   price: '', original_price: '', discount_percent: '', cost_price: '',
   // Stock
