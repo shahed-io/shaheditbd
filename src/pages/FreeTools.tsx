@@ -666,7 +666,7 @@ const CATEGORIES: Category[] = [
   {
     id: 'utility', label: 'ইউটিলিটি টুলস', emoji: '⚙️', color: 'hsl(258,78%,55%)',
     tools: [
-      { id: 'word-counter', icon: <Hash size={20} />, title: 'ওয়ার্ড কাউন্টার', subtitle: 'শব্দ, অক্ষর ও পড়ার সময় গণনা', color: 'hsl(258,78%,55%)', badge: 'জনপ্রিয়', component: <WordCounter /> },
+      
       { id: 'password-gen', icon: <Shield size={20} />, title: 'পাসওয়ার্ড জেনারেটর', subtitle: 'শক্তিশালী পাসওয়ার্ড তৈরি', color: 'hsl(162,72%,38%)', badge: 'সিকিউর', component: <PasswordGenerator /> },
       { id: 'case-converter', icon: <Type size={20} />, title: 'কেস কনভার্টার', subtitle: 'টেক্সটের কেস পরিবর্তন', color: 'hsl(200,90%,45%)', component: <CaseConverter /> },
       { id: 'age-calculator', icon: <Clock size={20} />, title: 'বয়স ক্যালকুলেটর', subtitle: 'সঠিক বয়স বছর, মাস ও দিনে', color: 'hsl(38,92%,50%)', component: <AgeCalculator /> },
