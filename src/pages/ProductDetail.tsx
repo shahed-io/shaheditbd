@@ -462,91 +462,95 @@ const ProductDetail = () => {
             {/* ═══ RIGHT: Product Info ═══ */}
             <div className="flex flex-col gap-5">
 
-              {/* Category + Share */}
+              {/* ── Glass Info Card: Title + Short Desc + Rating + Price ── */}
               <div
-                className="flex items-center justify-between"
+                className="relative rounded-3xl overflow-hidden"
                 style={{
+                  background: 'linear-gradient(155deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.68) 100%)',
+                  backdropFilter: 'blur(28px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                  border: '1px solid hsla(258,78%,60%,0.22)',
+                  boxShadow: '0 8px 40px hsla(258,78%,55%,0.12), 0 1px 0 rgba(255,255,255,0.95) inset',
                   opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'translateY(20px)',
-                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.15s',
+                  transform: entered ? 'none' : 'translateY(28px)',
+                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s',
                 }}
               >
-                <span className="text-xs font-fira font-bold uppercase tracking-widest px-3 py-1.5 rounded-full"
-                  style={{ color: 'hsl(185,90%,62%)', background: 'hsla(185,90%,52%,0.12)', border: '1px solid hsla(185,90%,52%,0.25)' }}>
-                  {product.categories?.name || 'Digital Product'}
-                </span>
-                <button onClick={handleCopy}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
-                  style={{ color: copied ? 'hsl(158,80%,45%)' : 'hsl(226,25%,45%)', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid hsla(258,78%,60%,0.18)', boxShadow: '0 2px 8px hsla(258,78%,55%,0.08)' }}>
-                  {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Share</>}
-                </button>
-              </div>
+                {/* Top shimmer line */}
+                <div className="h-[2px] w-full absolute top-0 left-0 z-10"
+                  style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(185,90%,52%), hsl(258,78%,55%))' }} />
 
-              {/* Title */}
-              <div
-                style={{
-                  opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'translateY(24px)',
-                  filter: entered ? 'none' : 'blur(3px)',
-                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.22s',
-                }}
-              >
-                <h1 className="font-sora font-black text-2xl sm:text-3xl text-foreground leading-tight">
-                  {product.name}
-                </h1>
-                {product.short_description && (
-                  <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{product.short_description}</p>
-                )}
-              </div>
+                <div className="px-5 pt-5 pb-4">
+                  {/* Category + Share row */}
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-fira font-bold uppercase tracking-widest px-3 py-1.5 rounded-full"
+                      style={{ color: 'hsl(185,90%,42%)', background: 'hsla(185,90%,52%,0.12)', border: '1px solid hsla(185,90%,52%,0.25)' }}>
+                      {product.categories?.name || 'Digital Product'}
+                    </span>
+                    <button onClick={handleCopy}
+                      className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
+                      style={{ color: copied ? 'hsl(158,80%,45%)' : 'hsl(226,25%,45%)', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid hsla(258,78%,60%,0.18)', boxShadow: '0 2px 8px hsla(258,78%,55%,0.08)' }}>
+                      {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Share</>}
+                    </button>
+                  </div>
 
-              {/* Rating + Sales */}
-              <div
-                className="flex items-center gap-4"
-                style={{
-                  opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'translateY(16px)',
-                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.3s',
-                }}
-              >
-                <div className="flex items-center gap-1">
-                  {[1,2,3,4,5].map(s => (
-                    <Star key={s} size={14} fill="hsl(38,100%,55%)" color="hsl(38,100%,55%)" />
-                  ))}
-                  <span className="text-sm font-semibold text-foreground ml-1">4.9</span>
-                </div>
-                <span className="w-1 h-1 rounded-full bg-border" />
-                <span className="text-sm text-muted-foreground">{(product.total_sales || 0) + 50}+ sold</span>
-                <span className="w-1 h-1 rounded-full bg-border" />
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
-                  style={{ color: 'hsl(158,80%,55%)', background: 'hsla(158,80%,48%,0.12)', border: '1px solid hsla(158,80%,48%,0.25)' }}>
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> In Stock
-                </span>
-              </div>
+                  {/* Title */}
+                  <h1 className="font-sora font-black text-2xl sm:text-3xl leading-tight mb-2"
+                    style={{ color: 'hsl(226,35%,14%)' }}>
+                    {product.name}
+                  </h1>
 
-              {/* Price */}
-              <div
-                className="py-4 border-y"
-                style={{
-                  borderColor: 'hsla(271,91%,65%,0.2)',
-                  opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'scale(0.9) translateX(-16px)',
-                  transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.38s',
-                }}
-              >
-                <div className="flex items-end gap-4">
-                  <span className="text-4xl font-sora font-black" style={{ color: 'hsl(var(--foreground))' }}>
-                    ৳{displayPrice.toLocaleString()}
-                  </span>
-                  {product.original_price && product.original_price > displayPrice && (
-                    <div className="flex flex-col">
-                      <div className="text-lg text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
-                      {savings > 0 && (
-                        <div className="text-xs font-bold" style={{ color: 'hsl(40,100%,58%)' }}>
-                          Save ৳{savings.toLocaleString()}
-                        </div>
-                      )}
-                    </div>
+                  {/* Short Description */}
+                  {product.short_description && (
+                    <p className="text-sm leading-relaxed mb-3"
+                      style={{ color: 'hsl(226,25%,42%)' }}>
+                      {product.short_description}
+                    </p>
                   )}
+
+                  {/* Thin divider */}
+                  <div className="h-px mb-3" style={{ background: 'linear-gradient(90deg, hsla(258,78%,60%,0.15), hsla(185,90%,52%,0.15), transparent)' }} />
+
+                  {/* Rating + Sales + Stock */}
+                  <div className="flex items-center flex-wrap gap-3 mb-4">
+                    <div className="flex items-center gap-1">
+                      {[1,2,3,4,5].map(s => (
+                        <Star key={s} size={14} fill="hsl(38,100%,55%)" color="hsl(38,100%,55%)" />
+                      ))}
+                      <span className="text-sm font-semibold ml-1" style={{ color: 'hsl(226,35%,18%)' }}>4.9</span>
+                    </div>
+                    <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(226,25%,75%)' }} />
+                    <span className="text-sm" style={{ color: 'hsl(226,25%,48%)' }}>{(product.total_sales || 0) + 50}+ sold</span>
+                    <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(226,25%,75%)' }} />
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
+                      style={{ color: 'hsl(158,80%,38%)', background: 'hsla(158,80%,48%,0.12)', border: '1px solid hsla(158,80%,48%,0.28)' }}>
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> In Stock
+                    </span>
+                  </div>
+
+                  {/* Price row */}
+                  <div className="flex items-end gap-4 py-3 px-4 rounded-2xl"
+                    style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.07) 0%, hsla(185,90%,52%,0.05) 100%)', border: '1px solid hsla(258,78%,60%,0.14)' }}>
+                    <span className="text-4xl font-sora font-black" style={{ color: 'hsl(258,78%,42%)' }}>
+                      ৳{displayPrice.toLocaleString()}
+                    </span>
+                    {product.original_price && product.original_price > displayPrice && (
+                      <div className="flex flex-col">
+                        <div className="text-lg line-through" style={{ color: 'hsl(226,25%,62%)' }}>৳{product.original_price.toLocaleString()}</div>
+                        {savings > 0 && (
+                          <div className="text-xs font-bold" style={{ color: 'hsl(40,100%,48%)' }}>
+                            Save ৳{savings.toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {discount > 0 && (
+                      <span className="ml-auto text-xs font-bold px-2.5 py-1 rounded-full"
+                        style={{ color: 'hsl(0,85%,55%)', background: 'hsla(0,85%,55%,0.10)', border: '1px solid hsla(0,85%,55%,0.25)' }}>
+                        -{discount}% OFF
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
