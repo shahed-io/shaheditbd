@@ -11,7 +11,7 @@ import {
   BookOpen, Edit3, Search, Globe, Tag, ChevronLeft, Wand2, Star, Lock,
   DollarSign, Image, Download, Upload, Eye, EyeOff, Loader2
 } from 'lucide-react';
-import QRCode from 'qrcode';
+// qrcode loaded via dynamic import from cdn
 import { supabase } from '@/integrations/supabase/client';
 
 // ── glass style helper ──────────────────────────────────────────────────────
