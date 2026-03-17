@@ -924,17 +924,39 @@ const AdminProducts = () => {
                       <div>
                         <label className={lc}>Selling Price (৳) *</label>
                         <input required type="number" step="0.01" value={form.price}
-                          onChange={e => setForm(p => ({ ...p, price: e.target.value }))} className={ic} placeholder="0.00" />
+                          onChange={e => {
+                            const price = e.target.value;
+                            const orig = parseFloat(form.original_price);
+                            const p = parseFloat(price);
+                            let disc = form.discount_percent;
+                            if (orig > 0 && p > 0 && orig > p) {
+                              disc = String(Math.round(((orig - p) / orig) * 100));
+                            } else if (orig > 0 && p >= orig) {
+                              disc = '0';
+                            }
+                            setForm(prev => ({ ...prev, price, discount_percent: disc }));
+                          }} className={ic} placeholder="0.00" />
                       </div>
                       <div>
                         <label className={lc}>Original / MRP (৳)</label>
                         <input type="number" step="0.01" value={form.original_price}
-                          onChange={e => setForm(p => ({ ...p, original_price: e.target.value }))} className={ic} placeholder="0.00" />
+                          onChange={e => {
+                            const orig = e.target.value;
+                            const p = parseFloat(form.price);
+                            const o = parseFloat(orig);
+                            let disc = form.discount_percent;
+                            if (o > 0 && p > 0 && o > p) {
+                              disc = String(Math.round(((o - p) / o) * 100));
+                            } else if (o > 0 && p >= o) {
+                              disc = '0';
+                            }
+                            setForm(prev => ({ ...prev, original_price: orig, discount_percent: disc }));
+                          }} className={ic} placeholder="0.00" />
                       </div>
                       <div>
-                        <label className={lc}>Discount %</label>
-                        <input type="number" value={form.discount_percent}
-                          onChange={e => setForm(p => ({ ...p, discount_percent: e.target.value }))} className={ic} placeholder="0" />
+                        <label className={lc}>Discount % <span className="text-muted-foreground/60">(auto-calculated)</span></label>
+                        <input type="number" value={form.discount_percent} readOnly
+                          className={`${ic} bg-muted/50 cursor-not-allowed`} placeholder="0" />
                       </div>
                       <div>
                         <label className={lc}>Cost Price (৳) <span className="text-muted-foreground/60">internal</span></label>
