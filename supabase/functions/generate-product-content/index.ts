@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { productName, category, brand, productType, price, duration, type } = await req.json();
+    const { productName, category, brand, productType, price, duration, type, demoDescription } = await req.json();
 
     if (!productName) {
       return new Response(JSON.stringify({ error: "productName is required" }), {
