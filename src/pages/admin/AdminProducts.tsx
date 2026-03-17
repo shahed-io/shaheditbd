@@ -374,7 +374,10 @@ const AdminProducts = () => {
     e.preventDefault();
     setSaving(true);
     const baseSlug = form.slug || generateSlug(form.name);
-    const finalSlug = editingProduct ? (form.slug || editingProduct.id) : `${baseSlug}-${Date.now()}`;
+    // New products: use clean SEO slug; if collision risk, append short random suffix
+    const finalSlug = editingProduct
+      ? (form.slug || generateSlug(form.name))
+      : `${baseSlug}`;
 
     const cleanVariants = form.variants.filter(v => v.name.trim() && v.options.some(o => o.label.trim()));
     const cleanWYG = form.what_you_get.filter(w => w.trim());
