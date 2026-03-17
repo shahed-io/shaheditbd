@@ -93,8 +93,22 @@ const generateSKU = (name: string) => {
   return `${prefix}-${Date.now().toString(36).toUpperCase()}`;
 };
 
-const generateSlug = (name: string) =>
-  name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const generateSlug = (name: string) => {
+  // Transliterate common Bengali product words to English for SEO-friendly slugs
+  const bnMap: Record<string, string> = {
+    'উইন্ডোজ': 'windows', 'অফিস': 'office', 'অ্যাডোবি': 'adobe',
+    'নেটফ্লিক্স': 'netflix', 'স্পটিফাই': 'spotify', 'প্রিমিয়াম': 'premium',
+    'লাইসেন্স': 'license', 'কি': 'key', 'সফটওয়্যার': 'software',
+  };
+  let slug = name;
+  Object.entries(bnMap).forEach(([bn, en]) => { slug = slug.replace(new RegExp(bn, 'g'), en); });
+  return slug
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')      // remove special chars (keep alphanumeric, space, dash)
+    .replace(/[\s_]+/g, '-')       // spaces/underscores → dash
+    .replace(/-+/g, '-')           // collapse multiple dashes
+    .replace(/^-+|-+$/g, '');      // trim leading/trailing dashes
+};
 
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
