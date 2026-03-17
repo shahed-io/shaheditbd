@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { label: 'Home',    href: '/' },
   { label: 'Categories', href: '/shop' },
   { label: 'Office',  href: '#office' },
-  { label: 'Fee Tools', href: '#support' },
+  { label: 'Free Tools', href: '/free-tools' },
 ];
 
 const CATEGORY_DROPDOWN = [
