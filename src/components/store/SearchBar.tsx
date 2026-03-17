@@ -97,8 +97,9 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setQuery(val);
+    setOpen(true);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!val.trim()) { setResults([]); setOpen(true); return; }
+    if (!val.trim()) { setResults([]); return; }
     debounceRef.current = setTimeout(() => search(val), 280);
   };
 
