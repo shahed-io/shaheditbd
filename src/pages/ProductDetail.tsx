@@ -954,24 +954,28 @@ interface RelatedProduct {
   id: string; name: string; slug: string; price: number;
   original_price: number | null; discount_percent: number | null;
   image_url: string | null; is_featured: boolean | null;
+  tags: string[] | null;
   categories: { name: string } | null;
 }
+
+const ITEMS_PER_PAGE = 4;
 
 const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string | null; currentProductId: string }) => {
   const navigate = useNavigate();
   const [products, setProducts] = useState<RelatedProduct[]>([]);
   const [loading, setLoading]   = useState(true);
+  const [page, setPage] = useState(0);
   const sectionReveal = useReveal(0.05);
 
   useEffect(() => {
     if (!categoryId) { setLoading(false); return; }
     supabase
       .from('products')
-      .select('id, name, slug, price, original_price, discount_percent, image_url, is_featured, category:category_id(name)')
+      .select('id, name, slug, price, original_price, discount_percent, image_url, is_featured, tags, category:category_id(name)')
       .eq('status', 'active')
       .eq('category_id', categoryId)
       .neq('id', currentProductId)
-      .limit(6)
+      .limit(8)
       .then(({ data }) => {
         setProducts((data as any[]) || []);
         setLoading(false);
@@ -980,60 +984,51 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
 
   if (!loading && products.length === 0) return null;
 
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const visible = products.slice(page * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE + ITEMS_PER_PAGE);
+
   return (
     <div
       ref={sectionReveal.ref}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
       style={{
         opacity: sectionReveal.revealed ? 1 : 0,
         transform: sectionReveal.revealed ? 'none' : 'translateY(30px)',
         transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
       }}
     >
-      {/* Section Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <span className="w-1 h-7 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
-        <h2 className="font-sora font-bold text-2xl text-foreground">Related Products</h2>
-        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
-          style={{ background: 'hsla(258,78%,55%,0.1)', border: '1px solid hsla(258,78%,75%,0.25)', color: 'hsl(258,78%,50%)' }}>
-          একই ক্যাটাগরি
-        </span>
-      </div>
+      {/* Divider */}
+      <div className="border-t border-border mb-8" />
 
-      {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+      {/* Section Header */}
+      <h2 className="font-sora font-bold text-xl text-foreground mb-6">Related products</h2>
+
+      {/* Grid — 4 columns matching reference */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-5">
         {loading
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-2xl shimmer aspect-[3/4]" style={{ animationDelay: `${i * 0.07}s` }} />
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-xl overflow-hidden bg-muted animate-pulse aspect-[3/4]" />
             ))
-          : products.map((p, i) => {
-              const discount = p.discount_percent || (p.original_price ? Math.round((p.original_price - p.price) / p.original_price * 100) : 0);
+          : visible.map((p, i) => {
+              const discount = p.discount_percent || (p.original_price && p.original_price > p.price ? Math.round((p.original_price - p.price) / p.original_price * 100) : 0);
+              // build category tags from categories + some tags
+              const categoryLabel = (p.categories as any)?.name || '';
+              const extraTags = (p.tags || []).filter(t => !['flash-sale','requires-email'].includes(t)).slice(0, 2);
+              const allTags = [categoryLabel, ...extraTags].filter(Boolean);
+
               return (
                 <div
                   key={p.id}
                   onClick={() => navigate(`/product/${p.slug}`)}
-                  className="group cursor-pointer rounded-2xl overflow-hidden flex flex-col transition-all hover:-translate-y-1"
+                  className="group cursor-pointer flex flex-col"
                   style={{
-                    background: 'linear-gradient(155deg, rgba(255,255,255,0.90) 0%, rgba(255,255,255,0.65) 100%)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
-                    border: '1px solid hsla(258,78%,75%,0.22)',
-                    boxShadow: '0 4px 20px hsla(258,78%,55%,0.08)',
                     opacity: sectionReveal.revealed ? 1 : 0,
-                    transform: sectionReveal.revealed ? 'translateY(0)' : 'translateY(20px)',
-                    transition: `opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${i * 0.07}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${i * 0.07}s, box-shadow 0.3s, border-color 0.3s`,
-                  }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 36px hsla(258,78%,55%,0.20)';
-                    (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,60%,0.40)';
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px hsla(258,78%,55%,0.08)';
-                    (e.currentTarget as HTMLElement).style.borderColor = 'hsla(258,78%,75%,0.22)';
+                    transform: sectionReveal.revealed ? 'translateY(0)' : 'translateY(16px)',
+                    transition: `opacity 0.5s ease ${i * 0.08}s, transform 0.5s ease ${i * 0.08}s`,
                   }}
                 >
-                  {/* Image */}
-                  <div className="relative aspect-square overflow-hidden bg-muted">
+                  {/* Image Box */}
+                  <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted/30 group-hover:border-primary/40 transition-colors">
                     <img
                       src={p.image_url || PLACEHOLDER}
                       alt={p.name}
@@ -1041,29 +1036,45 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
                     />
+                    {/* Discount badge — orange circle like reference */}
                     {discount > 0 && (
-                      <span className="absolute top-2 left-2 badge-sale text-[10px] px-2 py-0.5">-{discount}%</span>
-                    )}
-                    {p.is_featured && (
-                      <span className="absolute top-2 right-2 badge-hot-item text-[10px] px-2 py-0.5 flex items-center gap-0.5">
-                        <Zap size={8} fill="white" /> HOT
+                      <span
+                        className="absolute top-2.5 left-2.5 w-11 h-11 rounded-full flex items-center justify-center text-[11px] font-bold text-white leading-none"
+                        style={{ background: 'hsl(30,100%,50%)', boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}
+                      >
+                        -{discount}%
                       </span>
                     )}
                   </div>
 
                   {/* Info */}
-                  <div className="p-3 flex flex-col gap-1.5 flex-1">
-                    {p.categories && (
-                      <span className="text-[9px] font-bold uppercase tracking-widest"
-                        style={{ color: 'hsl(258,78%,55%)' }}>{p.categories.name}</span>
+                  <div className="pt-3 flex flex-col gap-1.5">
+                    <p className="text-sm font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-primary transition-colors">
+                      {p.name}
+                    </p>
+
+                    {/* Category / Tag pills */}
+                    {allTags.length > 0 && (
+                      <p className="text-xs text-muted-foreground line-clamp-1">
+                        {allTags.join(', ')}
+                      </p>
                     )}
-                    <p className="text-xs font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-primary transition-colors">{p.name}</p>
-                    <div className="flex items-baseline gap-1.5 mt-auto">
-                      <span className="text-sm font-sora font-black" style={{ color: 'hsl(271,91%,65%)' }}>
-                        ৳{p.price.toLocaleString()}
-                      </span>
-                      {p.original_price && (
-                        <span className="text-[10px] line-through text-muted-foreground">৳{p.original_price.toLocaleString()}</span>
+
+                    {/* Price */}
+                    <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                      {p.original_price && p.original_price > p.price ? (
+                        <>
+                          <span className="text-xs line-through text-muted-foreground">
+                            {p.original_price.toLocaleString()}৳
+                          </span>
+                          <span className="text-sm font-bold" style={{ color: 'hsl(35,100%,45%)' }}>
+                            – {p.price.toLocaleString()}৳
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-sm font-bold" style={{ color: 'hsl(35,100%,45%)' }}>
+                          {p.price.toLocaleString()}৳
+                        </span>
                       )}
                     </div>
                   </div>
@@ -1071,6 +1082,24 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
               );
             })}
       </div>
+
+      {/* Dot Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-8">
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i)}
+              className="rounded-full transition-all"
+              style={{
+                width: i === page ? '24px' : '10px',
+                height: '10px',
+                background: i === page ? 'hsl(258,78%,55%)' : 'hsl(220,13%,82%)',
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
