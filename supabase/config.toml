@@ -11,3 +11,5 @@ project_id = "dpvdavjwqyviredzoorj"
     verify_jwt = true
   [functions.send-order-email]
     verify_jwt = false
+  [functions.ai-free-tools]
+    verify_jwt = false
