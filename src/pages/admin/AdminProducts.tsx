@@ -120,12 +120,17 @@ const AdminProducts = () => {
     setAiLoading(type);
     try {
       const catName = categories.find(c => c.id === form.category_id)?.name || '';
+      // Extract duration from variants if available
+      const durationVariant = (form.variants as any[])?.find((v: any) => v.name?.toLowerCase().includes('duration') || v.name?.toLowerCase().includes('validity'));
+      const durationValue = durationVariant?.options?.[0] || '';
       const { data, error } = await supabase.functions.invoke('generate-product-content', {
         body: {
           productName: form.name,
           category: catName,
           brand: form.brand,
           productType: form.product_type,
+          price: form.price,
+          duration: durationValue,
           type,
         },
       });
