@@ -495,7 +495,6 @@ const AdminProducts = () => {
     // Parse account_type from attributes
     const attrRaw = (product.attributes as any) || [];
     const accountTypeAttr = attrRaw.find((a: any) => a.key === '__account_type');
-    const otherAttrs = attrRaw.filter((a: any) => a.key !== '__account_type');
     // Parse subtitle and duration_plans from attributes
     const subtitleAttr = attrRaw.find((a: any) => a.key === '__subtitle');
     const durationPlansAttr = attrRaw.find((a: any) => a.key === '__duration_plans');
