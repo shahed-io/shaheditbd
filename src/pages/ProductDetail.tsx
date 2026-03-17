@@ -500,13 +500,30 @@ const ProductDetail = () => {
                     {product.name}
                   </h1>
 
-                  {/* Short Description */}
-                  {product.short_description && (
-                    <p className="text-sm leading-relaxed mb-3"
-                      style={{ color: 'hsl(226,25%,42%)' }}>
-                      {product.short_description}
-                    </p>
-                  )}
+                  {/* Short Description — bullet list */}
+                  {product.short_description && (() => {
+                    const lines = product.short_description
+                      .split('\n')
+                      .map(l => l.replace(/^[-•*]\s*/, '').trim())
+                      .filter(Boolean);
+                    return lines.length > 1 ? (
+                      <ul className="mb-3 space-y-1.5">
+                        {lines.map((line, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed">
+                            <span className="mt-[3px] flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center"
+                              style={{ background: 'hsla(258,78%,55%,0.12)', border: '1px solid hsla(258,78%,55%,0.28)' }}>
+                              <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />
+                            </span>
+                            <span style={{ color: 'hsl(226,25%,38%)' }}>{line}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm leading-relaxed mb-3" style={{ color: 'hsl(226,25%,42%)' }}>
+                        {product.short_description}
+                      </p>
+                    );
+                  })()}
 
                   {/* Thin divider */}
                   <div className="h-px mb-3" style={{ background: 'linear-gradient(90deg, hsla(258,78%,60%,0.15), hsla(185,90%,52%,0.15), transparent)' }} />
