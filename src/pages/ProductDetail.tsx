@@ -339,8 +339,10 @@ const ProductDetail = () => {
                   background: 'linear-gradient(155deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.60) 100%)',
                   backdropFilter: 'blur(24px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-                  borderColor: entered ? 'hsla(258,78%,60%,0.25)' : 'transparent',
-                  boxShadow: entered ? '0 8px 48px hsla(258,78%,55%,0.14), 0 1px 0 rgba(255,255,255,0.9) inset' : 'none',
+                  borderColor: 'transparent',
+                  boxShadow: entered
+                    ? '0 0 0 2px hsla(320,90%,65%,0.8), 0 0 0 4px hsla(270,80%,65%,0.5), 0 0 35px hsla(320,90%,65%,0.40), 0 0 70px hsla(270,80%,60%,0.25), 0 0 110px hsla(190,85%,55%,0.18), 0 1px 0 rgba(255,255,255,0.9) inset'
+                    : 'none',
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'none' : 'translateX(-40px) scale(0.95)',
                   transition: 'all 0.8s cubic-bezier(0.22,1,0.36,1)',
