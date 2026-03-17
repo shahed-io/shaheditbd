@@ -26,7 +26,6 @@ const NAV_COL = [
       { label: 'My Account',     href: '/dashboard' },
       { label: 'Contact Us',     href: '/contact' },
       { label: 'All Products',   href: '/shop' },
-      { label: 'Blog',           href: '/blog' },
       { label: 'Software Download Link', href: '/help' },
     ]
   },
@@ -40,7 +39,7 @@ const NAV_COL = [
       { label: 'Refund & Return Policy', href: '/refund-policy' },
       { label: 'Order & Cancellation',   href: '/order-policy' },
       { label: 'Delivery Info',          href: '/delivery-info' },
-      { label: 'Return Policy',          href: '/return-policy' },
+      { label: 'Blog',                      href: '/blog' },
     ]
   },
 ];
