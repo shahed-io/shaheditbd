@@ -411,10 +411,18 @@ const AdminProducts = () => {
     if (form.is_flash_sale && !tagList.includes('flash-sale')) tagList.push('flash-sale');
     if (form.requires_customer_email && !tagList.includes('requires-email')) tagList.push('requires-email');
 
-    // Prepend account_type as a hidden attribute if set
-    const finalAttrs = form.account_type
-      ? [{ key: '__account_type', value: form.account_type }, ...cleanAttrs]
-      : cleanAttrs;
+    // Build hidden attributes for subtitle, account_type, duration_plans
+    const hiddenAttrs: { key: string; value: string }[] = [];
+    if (form.account_type) hiddenAttrs.push({ key: '__account_type', value: form.account_type });
+    if (form.subtitle.trim()) hiddenAttrs.push({ key: '__subtitle', value: form.subtitle.trim() });
+    const validPlans = form.duration_plans.filter(p => p.duration.trim() && p.price.trim());
+    if (validPlans.length) hiddenAttrs.push({ key: '__duration_plans', value: JSON.stringify(validPlans) });
+    const finalAttrs = [...hiddenAttrs, ...cleanAttrs];
+
+    // Use first duration plan price as default price if plans exist and no manual price
+    const firstPlanPrice = validPlans.length ? parseFloat(validPlans[0].price) : null;
+    const mainPrice = parseFloat(form.price) || firstPlanPrice || 0;
+    const mainOriginalPrice = form.original_price ? parseFloat(form.original_price) : (validPlans.length && validPlans[0].original_price ? parseFloat(validPlans[0].original_price) : null);
 
     const payload: any = {
       name: form.name,
@@ -424,8 +432,8 @@ const AdminProducts = () => {
       brand: form.brand || null,
       badge: form.badge || null,
       product_type: form.product_type,
-      price: parseFloat(form.price) || 0,
-      original_price: form.original_price ? parseFloat(form.original_price) : null,
+      price: mainPrice,
+      original_price: mainOriginalPrice,
       discount_percent: form.discount_percent ? parseInt(form.discount_percent) : null,
       cost_price: form.cost_price ? parseFloat(form.cost_price) : null,
       status: form.status,
