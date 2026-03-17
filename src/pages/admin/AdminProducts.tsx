@@ -183,6 +183,39 @@ const AdminProducts = () => {
     );
   };
 
+  // ── Demo Style AI Generator ───────────────────────────────────
+  const generateDemoStyle = async () => {
+    if (!form.name.trim()) { toast.error('প্রথমে প্রোডাক্টের নাম দিন'); return; }
+    if (!demoDescription.trim()) { toast.error('Demo description দিন'); return; }
+    setAiLoading('demo_style');
+    try {
+      const catName = categories.find(c => c.id === form.category_id)?.name || '';
+      const durationVariant = (form.variants as any[])?.find((v: any) => v.name?.toLowerCase().includes('duration') || v.name?.toLowerCase().includes('validity'));
+      const durationValue = durationVariant?.options?.[0]?.label || '';
+      const { data, error } = await supabase.functions.invoke('generate-product-content', {
+        body: {
+          productName: form.name,
+          category: catName,
+          brand: form.brand,
+          productType: form.product_type,
+          price: form.price,
+          duration: durationValue,
+          type: 'demo_style',
+          demoDescription: demoDescription.trim(),
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setForm(p => ({ ...p, description: data?.result || p.description }));
+      toast.success('✨ Demo স্টাইলে Description তৈরি হয়েছে!');
+    } catch (err: any) {
+      toast.error('AI Error: ' + (err.message || 'Unknown error'));
+    } finally {
+      setAiLoading(null);
+    }
+  };
+
+
   const parentCategories = categories.filter(c => !c.parent_id);
   const subCategories = categories.filter(
     c => c.parent_id && c.parent_id === form.category_id
