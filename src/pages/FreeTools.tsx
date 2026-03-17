@@ -733,7 +733,7 @@ const ALL_TOOLS = CATEGORIES.flatMap(c => c.tools);
 // MAIN PAGE
 // ═══════════════════════════════════════════════════════════════════════════
 const FreeTools = () => {
-  const [activeCategory, setActiveCategory] = useState('utility');
+  const [activeCategory, setActiveCategory] = useState('ai');
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
@@ -746,7 +746,7 @@ const FreeTools = () => {
 
   return (
     <div className="min-h-screen" style={{ background: 'hsl(var(--background))' }}>
-      <SEOHead title="ফ্রি অনলাইন টুলস | Shahed Store" description="সম্পূর্ণ বিনামূল্যে — Image Resizer, QR Generator, AI Caption, Hashtag Generator, Password Generator সহ ৪০+ টুলস।" />
+      <SEOHead title="Free Online Tools | Shahed Store" description="100% free — Image Resizer, QR Generator, AI Caption, Hashtag Generator, Password Generator and 40+ more tools." />
       <Navbar />
 
       {/* ── Hero ── */}
@@ -756,18 +756,17 @@ const FreeTools = () => {
         <div className="relative z-10 max-w-5xl mx-auto text-center space-y-5">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold"
             style={{ background: 'hsla(162,72%,38%,0.10)', border: '1.5px solid hsla(162,72%,38%,0.25)', color: 'hsl(162,72%,30%)' }}>
-            <Gift size={14} />সম্পূর্ণ বিনামূল্যে — {totalTools}+ টুলস
+            <Gift size={14} />Completely Free — {totalTools}+ Tools
           </div>
           <h1 className="font-sora font-black text-4xl sm:text-5xl leading-tight" style={{ color: 'hsl(226,35%,12%)' }}>
-            ফ্রি অনলাইন <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>টুলস</span>
+            Free Online <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Tools</span>
           </h1>
           <p className="text-base leading-relaxed max-w-2xl mx-auto" style={{ color: 'hsl(226,35%,40%)' }}>
-            Image, AI, PDF, Social Media সহ সকল দরকারি টুলস — কোনো একাউন্ট বা পেমেন্ট ছাড়াই
+            Image, AI, PDF, Social Media and all essential tools — no account or payment required
           </p>
-          {/* Search */}
           <div className="relative max-w-md mx-auto">
             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'hsl(258,78%,55%)' }} />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="টুল খুঁজুন..."
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tools..."
               className="w-full pl-11 pr-4 py-3.5 rounded-2xl text-sm"
               style={{ background: 'hsla(0,0%,100%,0.85)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(258,78%,55%,0.22)', color: 'hsl(226,35%,18%)', outline: 'none' }} />
           </div>
@@ -776,12 +775,11 @@ const FreeTools = () => {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {activeTool ? (
-          // ── Tool Detail View ──
           <div className="max-w-2xl mx-auto">
             <button onClick={() => setActiveTool(null)}
               className="flex items-center gap-2 mb-8 text-sm font-semibold px-4 py-2 rounded-xl transition-all"
               style={{ color: 'hsl(226,35%,40%)', background: 'hsla(226,35%,50%,0.08)', border: '1px solid hsla(226,35%,50%,0.15)' }}>
-              <ChevronLeft size={16} />সব টুলস
+              <ChevronLeft size={16} />All Tools
             </button>
             {activeTolObj && (
               <div className="rounded-3xl overflow-hidden"
@@ -789,7 +787,6 @@ const FreeTools = () => {
                   ...glass(activeTolObj.color),
                   boxShadow: `0 8px 48px ${activeTolObj.color.replace('hsl(', 'hsla(').replace(')', ',0.15)')}`,
                 }}>
-                {/* header */}
                 <div className="p-6 flex items-center gap-4"
                   style={{ borderBottom: `1.5px solid ${activeTolObj.color.replace('hsl(', 'hsla(').replace(')', ',0.12)')}`, background: activeTolObj.color.replace('hsl(', 'hsla(').replace(')', ',0.04)') }}>
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
@@ -804,9 +801,8 @@ const FreeTools = () => {
                 <div className="p-6">{activeTolObj.component}</div>
               </div>
             )}
-            {/* Quick nav */}
             <div className="mt-8">
-              <p className="text-sm font-semibold mb-3" style={{ color: 'hsl(226,35%,40%)' }}>অন্য টুলসগুলো:</p>
+              <p className="text-sm font-semibold mb-3" style={{ color: 'hsl(226,35%,40%)' }}>Other Tools:</p>
               <div className="flex flex-wrap gap-2">
                 {ALL_TOOLS.filter(t => t.id !== activeTool).slice(0, 8).map(tool => (
                   <button key={tool.id} onClick={() => setActiveTool(tool.id)}
@@ -819,9 +815,7 @@ const FreeTools = () => {
             </div>
           </div>
         ) : (
-          // ── Category + Grid View ──
           <div className="space-y-8">
-            {/* Category tabs */}
             {!search.trim() && (
               <div className="flex flex-wrap gap-3">
                 {CATEGORIES.map(cat => (
@@ -843,22 +837,20 @@ const FreeTools = () => {
                 ))}
               </div>
             )}
-            {/* Section title */}
             {!search.trim() && (
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{currentCat.emoji}</span>
                 <div>
                   <h2 className="font-sora font-black text-xl" style={{ color: 'hsl(226,35%,14%)' }}>{currentCat.label}</h2>
-                  <p className="text-sm" style={{ color: 'hsl(226,35%,45%)' }}>{currentCat.tools.length}টি টুলস উপলব্ধ</p>
+                  <p className="text-sm" style={{ color: 'hsl(226,35%,45%)' }}>{currentCat.tools.length} tools available</p>
                 </div>
               </div>
             )}
             {search.trim() && (
               <p className="text-sm font-semibold" style={{ color: 'hsl(226,35%,45%)' }}>
-                "{search}" এর জন্য {filteredTools.length}টি টুল পাওয়া গেছে
+                {filteredTools.length} result(s) for "{search}"
               </p>
             )}
-            {/* Tools grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {filteredTools.map(tool => (
                 <button key={tool.id} onClick={() => setActiveTool(tool.id)}
@@ -875,10 +867,8 @@ const FreeTools = () => {
                     (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 24px ${tool.color.replace('hsl(', 'hsla(').replace(')', ',0.10)')}`;
                     (e.currentTarget as HTMLElement).style.borderColor = tool.color.replace('hsl(', 'hsla(').replace(')', ',0.20)');
                   }}>
-                  {/* shimmer line */}
+                  {/* shimmer line top */}
                   <div className="absolute top-0 left-4 right-4 h-px rounded-full" style={{ background: `linear-gradient(90deg, transparent, ${tool.color.replace('hsl(', 'hsla(').replace(')', ',0.35)')}, transparent)` }} />
-                  {/* left color stripe */}
-                  <div className="absolute left-0 top-6 bottom-6 w-0.5 rounded-full" style={{ background: tool.color.replace('hsl(', 'hsla(').replace(')', ',0.45)') }} />
 
                   {tool.badge && (
                     <span className="absolute top-3 right-3 text-[10px] font-black px-2 py-0.5 rounded-full"
@@ -893,7 +883,7 @@ const FreeTools = () => {
                   <h3 className="font-sora font-black text-sm mb-1" style={{ color: 'hsl(226,35%,14%)' }}>{tool.title}</h3>
                   <p className="text-xs leading-relaxed" style={{ color: 'hsl(226,35%,48%)' }}>{tool.subtitle}</p>
                   <div className="flex items-center gap-1 mt-3 text-xs font-bold" style={{ color: tool.color }}>
-                    ব্যবহার করুন <ArrowRight size={11} className="transition-transform group-hover:translate-x-1" />
+                    Use Tool <ArrowRight size={11} className="transition-transform group-hover:translate-x-1" />
                   </div>
                 </button>
               ))}
@@ -907,11 +897,11 @@ const FreeTools = () => {
         style={{ background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,42%))', boxShadow: '0 12px 48px hsla(258,78%,55%,0.30)' }}>
         <div className="max-w-4xl mx-auto px-8 py-12 text-center text-white space-y-4">
           <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)' }}><Sparkles size={24} /></div>
-          <h2 className="font-sora font-black text-3xl">আরও টুলস আসছে!</h2>
-          <p className="text-white/80 text-base max-w-xl mx-auto">PDF Tools, Background Remover, Meme Generator সহ আরও অনেক টুলস শীঘ্রই যুক্ত হবে। নতুন কোনো টুলের পরামর্শ থাকলে জানান।</p>
+          <h2 className="font-sora font-black text-3xl">More Tools Coming Soon!</h2>
+          <p className="text-white/80 text-base max-w-xl mx-auto">PDF Tools, Background Remover, Meme Generator and many more tools will be added soon. Have a suggestion? Let us know!</p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <a href="/contact" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.30)' }}>পরামর্শ দিন <ArrowRight size={14} /></a>
-            <a href="/shop" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 text-white" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.40)' }}>প্রোডাক্ট দেখুন <ArrowRight size={14} /></a>
+            <a href="/contact" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.30)' }}>Suggest a Tool <ArrowRight size={14} /></a>
+            <a href="/shop" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 text-white" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.40)' }}>Browse Products <ArrowRight size={14} /></a>
           </div>
         </div>
       </section>
