@@ -1068,3 +1068,33 @@ img[loading="lazy"] {
   background-color: hsl(var(--muted));
 }
 
+/* ══════════════════════════════════════
+   COPY PROTECTION — Admin panel ছাড়া
+   সকল পেজে টেক্সট সিলেকশন ও ইমেজ ড্র্যাগ বন্ধ
+══════════════════════════════════════ */
+body:not(.admin-page) {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+body:not(.admin-page) img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* Admin panel এ সব কিছু স্বাভাবিক থাকবে */
+body.admin-page,
+body.admin-page * {
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  user-select: auto;
+}
+
+
