@@ -266,7 +266,9 @@ const QrGenerator = () => {
   const generate = async () => {
     if (!text.trim()) return;
     try {
-      const url = await QRCode.toDataURL(text, { width: 400, margin: 2, color: { dark: color, light: bgColor } });
+      // Dynamically load qrcode via esm.sh to avoid React duplication
+      const { default: QRCodeLib } = await import(/* @vite-ignore */ 'https://esm.sh/qrcode@1.5.4');
+      const url = await QRCodeLib.toDataURL(text, { width: 400, margin: 2, color: { dark: color, light: bgColor } });
       setQrUrl(url);
     } catch (e) { console.error(e); }
   };
