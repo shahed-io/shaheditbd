@@ -1,41 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, ShoppingBag, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Award } from 'lucide-react';
 import idmLogo from '@/assets/idm.webp';
-import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
-
-type ComboItem = { icon: string; name: string; tag: string; color: string; highlight?: boolean };
-type Slide = {
-  tag: string; title: string; titleAccent: string; subtitle: string; desc: string;
-  price: string; original: string; off: string; badge: string;
-  accentFrom: string; accentTo: string; glowFrom: string; glowTo: string;
-  emoji: string; logoImg?: string; features: string[]; comboSlide: boolean; combo?: ComboItem[];
-  productSlug?: string;
-};
-
-const STATIC_SLIDES: Slide[] = [
-  // ... keep existing code
-];
-
-// Convert DB slide to internal Slide format
-const dbSlideToSlide = (s: SlideData): Slide => ({
-  tag: s.tag,
-  title: s.title,
-  titleAccent: s.titleAccent,
-  subtitle: s.subtitle,
-  desc: s.desc,
-  price: s.price,
-  original: s.original,
-  off: s.off,
-  badge: s.badge,
-  accentFrom: s.accentFrom,
-  accentTo: s.accentTo,
-  glowFrom: `${s.accentFrom.replace(')', ',0.18)').replace('hsl(', 'hsla(')}`,
-  glowTo: `${s.accentTo.replace(')', ',0.10)').replace('hsl(', 'hsla(')}`,
-  emoji: s.emoji,
-  features: s.features,
-  comboSlide: false,
-  productSlug: s.productSlug || '',
-});
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
 
 type ComboItem = { icon: string; name: string; tag: string; color: string; highlight?: boolean };
@@ -105,32 +70,41 @@ const STATIC_SLIDES: Slide[] = [
   },
 ];
 
-// Convert DB slide to internal Slide format
 const dbSlideToSlide = (s: SlideData): Slide => ({
-  tag: s.tag,
-  title: s.title,
-  titleAccent: s.titleAccent,
-  subtitle: s.subtitle,
-  desc: s.desc,
-  price: s.price,
-  original: s.original,
-  off: s.off,
-  badge: s.badge,
-  accentFrom: s.accentFrom,
-  accentTo: s.accentTo,
+  tag: s.tag, title: s.title, titleAccent: s.titleAccent,
+  subtitle: s.subtitle, desc: s.desc, price: s.price,
+  original: s.original, off: s.off, badge: s.badge,
+  accentFrom: s.accentFrom, accentTo: s.accentTo,
   glowFrom: `${s.accentFrom.replace(')', ',0.18)').replace('hsl(', 'hsla(')}`,
   glowTo: `${s.accentTo.replace(')', ',0.10)').replace('hsl(', 'hsla(')}`,
-  emoji: s.emoji,
-  features: s.features,
-  comboSlide: false,
+  emoji: s.emoji, features: s.features, comboSlide: false,
   productSlug: s.productSlug || '',
 });
 
-const STATS = [
-  { label: 'Products',         value: '500+', icon: '🛍️', color: 'hsl(243,75%,55%)' },
-  { label: 'Orders Delivered', value: '25K+', icon: '✅', color: 'hsl(158,64%,38%)' },
-  { label: 'Happy Customers',  value: '12K+', icon: '😊', color: 'hsl(15,100%,52%)' },
-  { label: 'Support Rating',   value: '4.9★', icon: '⭐', color: 'hsl(38,100%,48%)' },
+const DEFAULT_STATS = [
+  { label: 'Products',         value: '500+', icon: '🛍️' },
+  { label: 'Orders Delivered', value: '25K+', icon: '✅' },
+  { label: 'Happy Customers',  value: '12K+', icon: '😊' },
+  { label: 'Support Rating',   value: '4.9★', icon: '⭐' },
+];
+
+const DEFAULT_FLOATING = [
+  { label: 'Orders Today', value: '248+', icon: '📦', top: '4%',  left: '-18%', right: 'auto', delay: '0s' },
+  { label: 'Happy Users',  value: '12K+', icon: '😊', top: '46%', left: 'auto',  right: '-18%', delay: '1.4s' },
+  { label: 'Avg Rating',   value: '4.9★', icon: '⭐', top: '82%', left: '-16%', right: 'auto', delay: '2.8s' },
+];
+
+const FLOAT_POSITIONS = [
+  { top: '4%',  left: '-18%', right: 'auto', delay: '0s'   },
+  { top: '46%', left: 'auto',  right: '-18%', delay: '1.4s' },
+  { top: '82%', left: '-16%', right: 'auto', delay: '2.8s' },
+];
+
+const DEFAULT_TRUST = [
+  { text: 'Instant Delivery', icon: '⚡' },
+  { text: '100% Genuine',     icon: '🛡️' },
+  { text: '24/7 Support',     icon: '🕐' },
+  { text: '4.9★ Rating',      icon: '⭐' },
 ];
 
 const HeroBanner = () => {
@@ -141,6 +115,10 @@ const HeroBanner = () => {
   const SLIDES: Slide[] = bannerData?.slides && bannerData.slides.length > 0
     ? bannerData.slides.filter(s => s.enabled).map(dbSlideToSlide)
     : STATIC_SLIDES;
+
+  const STATS    = bannerData?.stats    ?? DEFAULT_STATS;
+  const FLOATING = bannerData?.floating ?? DEFAULT_FLOATING;
+  const TRUST    = bannerData?.trust    ?? DEFAULT_TRUST;
 
   const bgStyle = (() => {
     const bg = bannerData?.bg;
@@ -175,10 +153,8 @@ const HeroBanner = () => {
           style={{ background: `radial-gradient(circle, ${slide.accentFrom}18, transparent)` }} />
         <div className="absolute bottom-0 left-[-50px] w-80 h-80 blob opacity-15"
           style={{ background: `radial-gradient(circle, ${slide.accentTo}12, transparent)`, animationDelay: '4s' }} />
-        {/* Grid */}
         <div className="absolute inset-0"
           style={{ backgroundImage: 'radial-gradient(circle, hsla(243,75%,62%,0.04) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        {/* Top edge glow line */}
         <div className="absolute top-0 left-0 right-0 h-px"
           style={{ background: `linear-gradient(90deg, transparent, ${slide.accentFrom}40, ${slide.accentTo}40, transparent)` }} />
       </div>
@@ -264,14 +240,9 @@ const HeroBanner = () => {
               </a>
             </div>
 
-            {/* Trust signals */}
+            {/* Trust signals — dynamic */}
             <div className="flex flex-wrap gap-5 pt-1">
-              {[
-                { icon: <Zap size={13} />, text: 'Instant Delivery' },
-                { icon: <Shield size={13} />, text: '100% Genuine' },
-                { icon: <Clock size={13} />, text: '24/7 Support' },
-                { icon: <Star size={13} />, text: '4.9★ Rating' },
-              ].map(t => (
+              {TRUST.map(t => (
                 <span key={t.text} className="flex items-center gap-1.5 text-[12px] font-semibold text-muted-foreground">
                   <span style={{ color: slide.accentFrom }}>{t.icon}</span>
                   {t.text}
@@ -311,22 +282,17 @@ const HeroBanner = () => {
                   background: `linear-gradient(155deg, white 0%, ${slide.accentFrom}0d 60%, ${slide.accentTo}08 100%)`,
                   backdropFilter: 'blur(24px) saturate(180%)',
                 }}>
-                {/* Top shimmer line */}
                 <div className="absolute top-0 left-0 right-0 h-[2px]"
                   style={{ background: `linear-gradient(90deg, transparent 5%, ${slide.accentFrom}90 40%, ${slide.accentTo}70 60%, transparent 95%)` }} />
-                {/* Bottom accent glow */}
                 <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
                   style={{ background: `linear-gradient(to top, ${slide.accentFrom}10, transparent)` }} />
-                {/* Subtle dot grid */}
                 <div className="absolute inset-0 pointer-events-none"
                   style={{ backgroundImage: `radial-gradient(circle, ${slide.accentFrom}0f 1px, transparent 1px)`, backgroundSize: '20px 20px' }} />
-                {/* Light radial shine */}
                 <div className="absolute inset-0 pointer-events-none"
                   style={{ backgroundImage: `radial-gradient(ellipse at 15% 8%, rgba(255,255,255,0.85) 0%, transparent 45%)` }} />
 
                 <div className="relative p-8">
                   {slide.comboSlide && slide.combo ? (
-                    /* Combo Slide Card */
                     <>
                       <div className="flex items-center justify-between mb-5">
                         <div className="flex items-center gap-2">
@@ -340,12 +306,8 @@ const HeroBanner = () => {
                           <div key={item.name}
                             className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all"
                             style={{
-                              background: item.highlight
-                                ? `linear-gradient(135deg, ${item.color}18, ${item.color}08)`
-                                : 'rgba(255,255,255,0.6)',
-                              border: item.highlight
-                                ? `1px solid ${item.color}50`
-                                : '1px solid rgba(255,255,255,0.8)',
+                              background: item.highlight ? `linear-gradient(135deg, ${item.color}18, ${item.color}08)` : 'rgba(255,255,255,0.6)',
+                              border: item.highlight ? `1px solid ${item.color}50` : '1px solid rgba(255,255,255,0.8)',
                               boxShadow: item.highlight ? `0 0 14px ${item.color}20` : 'none',
                             }}>
                             <span className="text-2xl">{item.icon}</span>
@@ -355,9 +317,7 @@ const HeroBanner = () => {
                             </div>
                             {item.highlight && (
                               <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full text-white"
-                                style={{ background: item.color }}>
-                                OFFICIAL
-                              </span>
+                                style={{ background: item.color }}>OFFICIAL</span>
                             )}
                           </div>
                         ))}
@@ -379,9 +339,7 @@ const HeroBanner = () => {
                       </button>
                     </>
                   ) : (
-                    /* Regular Slide Card */
                     <>
-                      {/* Icon / Logo + Sparkles */}
                       <div className="flex items-start justify-between mb-6">
                         <div className="w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden"
                           style={{
@@ -405,59 +363,36 @@ const HeroBanner = () => {
                         </div>
                       </div>
 
-                      {/* FEATURED DEAL label */}
-                      <div className="text-[10px] font-fira font-bold uppercase tracking-[0.22em] mb-2"
-                        style={{ color: slide.accentFrom }}>Featured Deal</div>
-
-                      {/* Title — dark */}
-                      <div className="font-sora font-black text-[23px] leading-tight"
-                        style={{ color: 'hsl(226,35%,16%)' }}>
+                      <div className="text-[10px] font-fira font-bold uppercase tracking-[0.22em] mb-2" style={{ color: slide.accentFrom }}>Featured Deal</div>
+                      <div className="font-sora font-black text-[23px] leading-tight" style={{ color: 'hsl(226,35%,16%)' }}>
                         {slide.title}{' '}
                         <span style={{ color: slide.accentFrom }}>{slide.titleAccent}</span>
                       </div>
+                      <div className="text-[13px] mt-1.5 font-medium leading-snug" style={{ color: 'hsl(226,20%,42%)' }}>{slide.subtitle}</div>
 
-                      {/* Subtitle */}
-                      <div className="text-[13px] mt-1.5 font-medium leading-snug"
-                        style={{ color: 'hsl(226,20%,42%)' }}>{slide.subtitle}</div>
-
-                      {/* Feature pills */}
                       <div className="flex flex-wrap gap-2 mt-4">
                         {slide.features.map(f => (
                           <span key={f} className="text-[11px] font-semibold px-3 py-1.5 rounded-full"
-                            style={{
-                              background: `${slide.accentFrom}12`,
-                              border: `1px solid ${slide.accentFrom}30`,
-                              color: slide.accentFrom,
-                            }}>{f}</span>
+                            style={{ background: `${slide.accentFrom}12`, border: `1px solid ${slide.accentFrom}30`, color: slide.accentFrom }}>
+                            {f}
+                          </span>
                         ))}
                       </div>
 
-                      {/* Price row */}
-                      <div className="mt-6 pt-4 flex items-center justify-between"
-                        style={{ borderTop: `1px solid ${slide.accentFrom}20` }}>
+                      <div className="mt-6 pt-4 flex items-center justify-between" style={{ borderTop: `1px solid ${slide.accentFrom}20` }}>
                         <div>
-                          <div className="text-xs line-through font-fira"
-                            style={{ color: 'hsl(226,15%,55%)' }}>{slide.original}</div>
-                          <div className="font-sora font-black text-[2.1rem] leading-none mt-0.5"
-                            style={{ color: 'hsl(226,35%,14%)' }}>{slide.price}</div>
+                          <div className="text-xs line-through font-fira" style={{ color: 'hsl(226,15%,55%)' }}>{slide.original}</div>
+                          <div className="font-sora font-black text-[2.1rem] leading-none mt-0.5" style={{ color: 'hsl(226,35%,14%)' }}>{slide.price}</div>
                         </div>
-                        {/* OFF badge — solid accent */}
                         <div className="rounded-xl px-4 py-3 text-center"
-                          style={{
-                            background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
-                            boxShadow: `0 4px 16px ${slide.accentFrom}50`,
-                          }}>
+                          style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 4px 16px ${slide.accentFrom}50` }}>
                           <div className="font-fira font-black text-[1.1rem] leading-none text-white">-{slide.off}</div>
                           <div className="text-[9px] uppercase tracking-wider mt-0.5 text-white/80">OFF</div>
                         </div>
                       </div>
 
-                      {/* CTA button — accent gradient */}
                       <button className="mt-5 w-full py-3.5 rounded-2xl font-bold text-[14px] text-white transition-all hover:scale-[1.02] hover:brightness-105 active:scale-[0.98]"
-                        style={{
-                          background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
-                          boxShadow: `0 8px 28px ${slide.accentFrom}50`,
-                        }}>
+                        style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 8px 28px ${slide.accentFrom}50` }}>
                         Order Now →
                       </button>
                     </>
@@ -466,24 +401,23 @@ const HeroBanner = () => {
               </div>
             </div>
 
-            {/* Floating stat cards */}
-            {[
-              { label: 'Orders Today', value: '248+', icon: '📦', top: '4%',  left: '-18%', right: 'auto', delay: '0s' },
-              { label: 'Happy Users',  value: '12K+', icon: '😊', top: '46%', left: 'auto',  right: '-18%', delay: '1.4s' },
-              { label: 'Avg Rating',   value: '4.9★', icon: '⭐', top: '82%', left: '-16%', right: 'auto', delay: '2.8s' },
-            ].map((card) => (
-              <div key={card.label}
-                className="absolute glass-white rounded-2xl px-4 py-3 anim-float"
-                style={{ top: card.top, left: card.left, right: card.right, animationDelay: card.delay }}>
-                <div className="flex items-center gap-2.5">
-                  <span className="text-xl">{card.icon}</span>
-                  <div>
-                    <div className="text-[15px] font-sora font-black text-foreground leading-none">{card.value}</div>
-                    <div className="text-[10px] text-muted-foreground leading-none mt-0.5 font-medium">{card.label}</div>
+            {/* Floating stat cards — dynamic */}
+            {FLOATING.slice(0, 3).map((card, i) => {
+              const pos = FLOAT_POSITIONS[i];
+              return (
+                <div key={card.label}
+                  className="absolute glass-white rounded-2xl px-4 py-3 anim-float"
+                  style={{ top: pos.top, left: pos.left, right: pos.right, animationDelay: pos.delay }}>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xl">{card.icon}</span>
+                    <div>
+                      <div className="text-[15px] font-sora font-black text-foreground leading-none">{card.value}</div>
+                      <div className="text-[10px] text-muted-foreground leading-none mt-0.5 font-medium">{card.label}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -513,7 +447,7 @@ const HeroBanner = () => {
           </button>
         </div>
 
-        {/* Stats Row */}
+        {/* Stats Row — dynamic */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mt-8 sm:mt-12 pt-8 sm:pt-12" style={{ borderTop: '1px solid hsla(258,60%,60%,0.1)' }}>
           {STATS.map((s) => (
             <div key={s.label} className="group text-center cursor-default">
