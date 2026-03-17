@@ -82,28 +82,6 @@ const PrimaryBtn = ({ onClick, children, loading = false }: { onClick: () => voi
 // ═══════════════════════════════════════════════════════════════════════════
 // UTILITY TOOLS
 // ═══════════════════════════════════════════════════════════════════════════
-const WordCounter = () => {
-  const [text, setText] = useState('');
-  const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-  const chars = text.length;
-  const charsNoSpace = text.replace(/\s/g, '').length;
-  const sentences = text.split(/[.!?]+/).filter(s => s.trim()).length;
-  const readTime = Math.max(1, Math.ceil(words / 200));
-  return (
-    <div className="space-y-4">
-      <ToolInput value={text} onChange={e => setText(e.target.value)} placeholder="এখানে আপনার টেক্সট লিখুন বা পেস্ট করুন..." rows={6} />
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {[{ label: 'শব্দ', value: words }, { label: 'অক্ষর', value: chars }, { label: 'স্পেস ছাড়া', value: charsNoSpace }, { label: 'বাক্য', value: sentences }, { label: 'পড়ার সময়', value: `${readTime} মি.` }].map(s => (
-          <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.12)' }}>
-            <p className="text-xl font-black" style={{ color: 'hsl(258,78%,50%)' }}>{s.value}</p>
-            <p className="text-xs mt-0.5 font-medium" style={{ color: 'hsl(226,35%,45%)' }}>{s.label}</p>
-          </div>
-        ))}
-      </div>
-      {text && <button onClick={() => setText('')} className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl" style={{ color: 'hsl(0,72%,50%)', background: 'hsla(0,72%,50%,0.07)', border: '1px solid hsla(0,72%,50%,0.18)' }}><Trash2 size={14} />ক্লিয়ার</button>}
-    </div>
-  );
-};
 
 const PasswordGenerator = () => {
   const [password, setPassword] = useState('');
