@@ -191,7 +191,7 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
     const content = data.choices?.[0]?.message?.content || "";
 
     // Plain text types
-    if (type === "short_description" || type === "description") {
+    if (type === "short_description" || type === "description" || type === "demo_style") {
       return new Response(JSON.stringify({ result: content.trim() }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
