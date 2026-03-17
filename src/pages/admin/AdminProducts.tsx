@@ -1299,45 +1299,6 @@ const AdminProducts = () => {
                   </div>
                 )}
 
-                {/* ======= OPTIONS / VARIATIONS TAB ======= */}
-                {activeTab === 'options' && (
-                  <div className="space-y-4">
-                    {editingProduct ? (
-                      <ProductOptionsBuilder
-                        productId={editingProduct.id}
-                        basePrice={parseFloat(form.price) || editingProduct.price}
-                      />
-                    ) : (
-                      <div className="rounded-xl border-2 border-dashed border-border py-12 flex flex-col items-center gap-3 text-center px-6">
-                        <Sliders size={32} className="text-muted-foreground opacity-40" />
-                        <p className="text-sm font-semibold text-foreground">Save product first</p>
-                        <p className="text-xs text-muted-foreground">
-                          Variations can be added after the product is created.<br />
-                          Click "Add Product" then come back to this tab.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* ======= ATTRIBUTES TAB ======= */}
-                {activeTab === 'attributes' && (
-                  <div className="space-y-4">
-                    {editingProduct ? (
-                      <ProductAttributesEditor productId={editingProduct.id} />
-                    ) : (
-                      <div className="rounded-xl border-2 border-dashed border-border py-12 flex flex-col items-center gap-3 text-center px-6">
-                        <Tags size={32} className="text-muted-foreground opacity-40" />
-                        <p className="text-sm font-semibold text-foreground">Save product first</p>
-                        <p className="text-xs text-muted-foreground">
-                          Attributes can be assigned after the product is created.<br />
-                          Click "Add Product" then come back to this tab.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
                 {/* ======= LINKED PRODUCTS TAB - REMOVED ======= */}
 
               </div>
