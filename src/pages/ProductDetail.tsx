@@ -334,16 +334,15 @@ const ProductDetail = () => {
             <div className="space-y-4">
               {/* Main Image with cinematic entrance */}
             <div
-                className="relative rounded-3xl overflow-hidden border aspect-square group"
+                className={`relative rounded-3xl overflow-hidden border aspect-square group${entered ? ' rainbow-glow-border' : ''}`}
                 style={{
                   background: 'linear-gradient(155deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.60) 100%)',
                   backdropFilter: 'blur(24px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-                  borderColor: entered ? 'hsla(258,78%,60%,0.25)' : 'transparent',
-                  boxShadow: entered ? '0 8px 48px hsla(258,78%,55%,0.14), 0 1px 0 rgba(255,255,255,0.9) inset' : 'none',
+                  borderColor: 'transparent',
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'none' : 'translateX(-40px) scale(0.95)',
-                  transition: 'all 0.8s cubic-bezier(0.22,1,0.36,1)',
+                  transition: 'opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1)',
                 }}
               >
                 {/* Gradient top border */}
