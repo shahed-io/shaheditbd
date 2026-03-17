@@ -725,6 +725,155 @@ const AdminProducts = () => {
                       )}
                     </div>
 
+                    {/* ── Subtitle (custom tagline below title) ── */}
+                    <div>
+                      <label className={lc}>📝 Subtitle / Custom Tagline <span className="text-muted-foreground/60">(ঐচ্ছিক)</span></label>
+                      <input
+                        value={form.subtitle}
+                        onChange={e => setForm(p => ({ ...p, subtitle: e.target.value }))}
+                        placeholder="যেমন: Best quality guaranteed, Instant delivery..."
+                        className={ic}
+                      />
+                      <p className="text-[10px] text-muted-foreground mt-1">প্রোডাক্ট টাইটেলের নিচে এই ছোট টেক্সটটি দেখাবে</p>
+                    </div>
+
+                    {/* ── Personal / Shared Account Type ── */}
+                    <div>
+                      <label className={lc}>👤 অ্যাকাউন্ট টাইপ <span className="text-muted-foreground/60">(প্রযোজ্য হলে)</span></label>
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                        {[
+                          { value: '', label: '— নেই —' },
+                          { value: 'personal', label: '👤 Personal' },
+                          { value: 'shared', label: '👥 Shared' },
+                          { value: 'family', label: '🏠 Family' },
+                          { value: 'student', label: '🎓 Student' },
+                          { value: 'business', label: '💼 Business' },
+                        ].map(opt => (
+                          <button key={opt.value} type="button"
+                            onClick={() => setForm(p => ({ ...p, account_type: opt.value }))}
+                            className={`text-xs py-2 px-2 rounded-xl border transition-colors text-center ${form.account_type === opt.value ? 'border-primary bg-primary/10 text-primary font-semibold' : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/50'}`}>
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* ── Duration Pricing Plans ── */}
+                    <div className="rounded-xl border border-border bg-muted/10 p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-foreground flex items-center gap-2">
+                          ⏱️ মেয়াদ ও মূল্য পরিকল্পনা
+                          <span className="text-muted-foreground font-normal">(একাধিক প্যাকেজ)</span>
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setForm(p => ({ ...p, duration_plans: [...p.duration_plans, { duration: '', price: '', original_price: '' }] }))}
+                          className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors flex items-center gap-1"
+                        >
+                          <Plus size={11} /> প্যাকেজ যোগ করুন
+                        </button>
+                      </div>
+
+                      {form.duration_plans.length === 0 && (
+                        <p className="text-xs text-muted-foreground text-center py-2">
+                          কোনো মেয়াদ প্যাকেজ নেই — উপরের বাটনে ক্লিক করে যোগ করুন
+                        </p>
+                      )}
+
+                      {form.duration_plans.map((plan, idx) => {
+                        const isCustom = plan.duration === '__custom__' || (plan.duration && !DURATION_PRESETS.find(d => d.value === plan.duration));
+                        return (
+                          <div key={idx} className="rounded-xl border border-border bg-background p-3 space-y-2">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-[11px] font-semibold text-muted-foreground">প্যাকেজ #{idx + 1}</span>
+                              <button
+                                type="button"
+                                onClick={() => setForm(p => ({ ...p, duration_plans: p.duration_plans.filter((_, i) => i !== idx) }))}
+                                className="text-muted-foreground hover:text-destructive transition-colors"
+                              >
+                                <X size={13} />
+                              </button>
+                            </div>
+                            {/* Duration selector */}
+                            <div>
+                              <label className={lc}>মেয়াদ</label>
+                              <div className="flex flex-wrap gap-1.5 mb-2">
+                                {DURATION_PRESETS.map(d => (
+                                  <button
+                                    key={d.value}
+                                    type="button"
+                                    onClick={() => {
+                                      const newDuration = d.value === '__custom__' ? '' : d.value;
+                                      setForm(p => ({
+                                        ...p,
+                                        duration_plans: p.duration_plans.map((pl, i) =>
+                                          i === idx ? { ...pl, duration: d.value === '__custom__' ? '__custom__' : newDuration } : pl
+                                        )
+                                      }));
+                                    }}
+                                    className={`text-[10px] px-2 py-1 rounded-lg border transition-colors ${
+                                      (d.value === '__custom__' ? isCustom && plan.duration === '__custom__' : plan.duration === d.value)
+                                        ? 'border-primary bg-primary/10 text-primary font-semibold'
+                                        : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/40'
+                                    }`}
+                                  >
+                                    {d.label}
+                                  </button>
+                                ))}
+                              </div>
+                              {(isCustom || plan.duration === '__custom__') && (
+                                <input
+                                  value={plan.duration === '__custom__' ? '' : plan.duration}
+                                  onChange={e => setForm(p => ({
+                                    ...p,
+                                    duration_plans: p.duration_plans.map((pl, i) =>
+                                      i === idx ? { ...pl, duration: e.target.value } : pl
+                                    )
+                                  }))}
+                                  placeholder="Custom মেয়াদ লিখুন যেমন: 15 Days, 45 Days..."
+                                  className={`${ic} text-xs`}
+                                />
+                              )}
+                            </div>
+                            {/* Price fields */}
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className={lc}>বিক্রয় মূল্য (৳) *</label>
+                                <input
+                                  type="number"
+                                  value={plan.price}
+                                  onChange={e => setForm(p => ({
+                                    ...p,
+                                    duration_plans: p.duration_plans.map((pl, i) =>
+                                      i === idx ? { ...pl, price: e.target.value } : pl
+                                    )
+                                  }))}
+                                  placeholder="০"
+                                  className={`${ic} text-xs`}
+                                />
+                              </div>
+                              <div>
+                                <label className={lc}>আসল মূল্য (৳) <span className="text-muted-foreground/60">কাটা দামে</span></label>
+                                <input
+                                  type="number"
+                                  value={plan.original_price}
+                                  onChange={e => setForm(p => ({
+                                    ...p,
+                                    duration_plans: p.duration_plans.map((pl, i) =>
+                                      i === idx ? { ...pl, original_price: e.target.value } : pl
+                                    )
+                                  }))}
+                                  placeholder="০"
+                                  className={`${ic} text-xs`}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <div className="flex items-center justify-between mb-1">
