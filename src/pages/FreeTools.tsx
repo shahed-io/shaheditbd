@@ -1403,15 +1403,38 @@ const FreeTools = () => {
       </section>
 
       {/* Bottom CTA */}
-      <section className="mx-4 sm:mx-6 lg:mx-8 mb-16 rounded-3xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,42%))', boxShadow: '0 12px 48px hsla(258,78%,55%,0.30)' }}>
-        <div className="max-w-4xl mx-auto px-8 py-12 text-center text-white space-y-4">
-          <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)' }}><Sparkles size={24} /></div>
-          <h2 className="font-sora font-black text-3xl">More Tools Coming Soon!</h2>
-          <p className="text-white/80 text-base max-w-xl mx-auto">PDF Tools, Background Remover, Meme Generator and many more tools will be added soon. Have a suggestion? Let us know!</p>
+      <section className="mx-4 sm:mx-6 lg:mx-8 mb-16 rounded-3xl overflow-hidden relative"
+        style={{
+          background: 'linear-gradient(135deg, hsl(258,78%,45%) 0%, hsl(240,72%,52%) 50%, hsl(210,85%,52%) 100%)',
+          boxShadow: '0 16px 56px hsla(258,78%,45%,0.40)'
+        }}>
+        {/* Grid overlay */}
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: 'linear-gradient(hsla(0,0%,100%,0.3) 1px, transparent 1px), linear-gradient(90deg, hsla(0,0%,100%,0.3) 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }} />
+        {/* Radial glow center */}
+        <div className="absolute inset-0 opacity-30" style={{
+          background: 'radial-gradient(ellipse 60% 60% at 50% 50%, hsla(210,100%,70%,0.35) 0%, transparent 70%)'
+        }} />
+        <div className="relative max-w-4xl mx-auto px-8 py-14 text-center text-white space-y-5">
+          <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center mb-4"
+            style={{ background: 'hsla(0,0%,100%,0.15)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.30)' }}>
+            <Sparkles size={22} />
+          </div>
+          <h2 className="font-sora font-black text-3xl md:text-4xl">More Tools Coming Soon!</h2>
+          <p className="text-white/75 text-base max-w-xl mx-auto leading-relaxed">
+            PDF Tools, Background Remover, Meme Generator and many more tools will be added soon. Have a suggestion? Let us know!
+          </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <a href="/contact" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.30)' }}>Suggest a Tool <ArrowRight size={14} /></a>
-            <a href="/shop" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 text-white" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.40)' }}>Browse Products <ArrowRight size={14} /></a>
+            <a href="/contact" className="flex items-center gap-2 px-7 py-3 rounded-full font-bold text-sm transition-all hover:scale-105 hover:bg-white/25"
+              style={{ background: 'hsla(0,0%,100%,0.15)', backdropFilter: 'blur(16px)', border: '1.5px solid hsla(0,0%,100%,0.35)' }}>
+              Suggest a Tool <ArrowRight size={14} />
+            </a>
+            <a href="/shop" className="flex items-center gap-2 px-7 py-3 rounded-full font-bold text-sm transition-all hover:scale-105 hover:bg-white/35"
+              style={{ background: 'hsla(0,0%,100%,0.22)', backdropFilter: 'blur(16px)', border: '1.5px solid hsla(0,0%,100%,0.45)' }}>
+              Browse Products <ArrowRight size={14} />
+            </a>
           </div>
         </div>
       </section>
