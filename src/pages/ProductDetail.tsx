@@ -363,9 +363,6 @@ const ProductDetail = () => {
                   style={{ opacity: imgLoaded ? 1 : 0 }}
                 />
 
-                {/* Gradient overlay */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: 'linear-gradient(to bottom, transparent 50%, hsla(215,28%,6%,0.7) 100%)' }} />
 
                 {/* Badges */}
                 <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
