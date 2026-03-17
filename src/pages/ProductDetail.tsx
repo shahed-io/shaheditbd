@@ -345,9 +345,6 @@ const ProductDetail = () => {
                   transition: 'opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1)',
                 }}
               >
-                  transition: 'all 0.8s cubic-bezier(0.22,1,0.36,1)',
-                }}
-              >
                 {/* Gradient top border */}
                 <div className="h-[2px] w-full absolute top-0 left-0 z-10"
                   style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(200,90%,45%))' }} />
