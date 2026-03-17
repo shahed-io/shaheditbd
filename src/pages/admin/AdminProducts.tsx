@@ -1054,26 +1054,8 @@ const AdminProducts = () => {
                         placeholder="windows, license, digital..." className={ic} />
                     </div>
 
-                    {/* Account Type */}
-                    <div>
-                      <label className={lc}>অ্যাকাউন্ট টাইপ <span className="text-muted-foreground/60">(প্রযোজ্য হলে)</span></label>
-                      <div className="grid grid-cols-4 gap-2">
-                        {[
-                          { value: '', label: '— নেই —' },
-                          { value: 'personal', label: '👤 Personal' },
-                          { value: 'shared', label: '👥 Shared' },
-                          { value: 'family', label: '🏠 Family' },
-                          { value: 'student', label: '🎓 Student' },
-                          { value: 'business', label: '💼 Business' },
-                        ].map(opt => (
-                          <button key={opt.value} type="button"
-                            onClick={() => setForm(p => ({ ...p, account_type: opt.value }))}
-                            className={`text-xs py-2 px-2 rounded-xl border transition-colors text-center ${form.account_type === opt.value ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/50'}`}>
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+
+
 
                     <div className="flex items-center gap-5 flex-wrap pt-1">
                       {[
