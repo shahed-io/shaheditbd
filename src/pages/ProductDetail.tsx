@@ -36,6 +36,7 @@ interface ProductFull {
   total_sales: number | null;
   variants: any;
   faq: any;
+  category_id: string | null;
   categories: { name: string; slug: string } | null;
   created_at: string;
 }
@@ -934,7 +935,7 @@ const ProductDetail = () => {
         </div>
 
         {/* ── Related Products ── */}
-        <RelatedProducts categoryId={product.categories ? (product as any).category_id : null} currentProductId={product.id} />
+        <RelatedProducts categoryId={product.category_id} currentProductId={product.id} />
 
         <Footer />
       </div>
@@ -968,18 +969,21 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
   const sectionReveal = useReveal(0.05);
 
   useEffect(() => {
-    if (!categoryId) { setLoading(false); return; }
-    supabase
+    const query = supabase
       .from('products')
       .select('id, name, slug, price, original_price, discount_percent, image_url, is_featured, tags, category:category_id(name)')
       .eq('status', 'active')
-      .eq('category_id', categoryId)
       .neq('id', currentProductId)
-      .limit(8)
-      .then(({ data }) => {
-        setProducts((data as any[]) || []);
-        setLoading(false);
-      });
+      .limit(8);
+
+    if (categoryId) {
+      query.eq('category_id', categoryId);
+    }
+
+    query.then(({ data }) => {
+      setProducts((data as any[]) || []);
+      setLoading(false);
+    });
   }, [categoryId, currentProductId]);
 
   if (!loading && products.length === 0) return null;
