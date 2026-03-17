@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useCart } from '@/hooks/useCart';
@@ -852,9 +853,16 @@ const ProductDetail = () => {
                 }}
               >
                 {product.description ? (
-                  product.description.split('\n').map((line, i) =>
-                    line.trim() ? <p key={i} className="mb-3 last:mb-0">{line}</p> : null
-                  )
+                  <div className="prose prose-sm max-w-none
+                    prose-headings:text-foreground prose-headings:font-bold prose-headings:mt-4 prose-headings:mb-2
+                    prose-h2:text-base prose-h3:text-sm
+                    prose-p:text-[hsl(226,25%,40%)] prose-p:mb-2 prose-p:leading-relaxed
+                    prose-strong:text-foreground prose-strong:font-semibold
+                    prose-ul:pl-4 prose-ul:space-y-1
+                    prose-li:text-[hsl(226,25%,40%)] prose-li:leading-relaxed
+                    prose-a:text-primary">
+                    <ReactMarkdown>{product.description}</ReactMarkdown>
+                  </div>
                 ) : (
                   <ul className="space-y-3">
                     {[
