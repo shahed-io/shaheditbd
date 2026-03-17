@@ -87,18 +87,21 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <CartDrawer />
-              <RedirectEnforcer />
-              <Routes>
+const AppContent = () => {
+  useCopyProtection();
+
+  // Admin পেজে body class যোগ করা হয় যাতে CSS protection বাদ যায়
+  const location = window.location;
+  const isAdmin = location.pathname.startsWith('/admin');
+  if (isAdmin) {
+    document.body.classList.add('admin-page');
+  } else {
+    document.body.classList.remove('admin-page');
+  }
+
+  return (
+    <Routes>
+
                 <Route path="/" element={<Index />} />
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/checkout" element={<Checkout />} />
