@@ -218,6 +218,68 @@ const AdminProducts = () => {
     }
   };
 
+  // ── AI Glassmorphism Card Generator ──────────────────────────
+  const generateAiCard = async () => {
+    const srcUrl = form.image_url || imagePreview;
+    setAiCardLoading(true);
+    const toastId = toast.loading('🎨 AI দিয়ে Glassmorphism Card তৈরি হচ্ছে...');
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-product-card', {
+        body: {
+          imageUrl: srcUrl || null,
+          productName: form.name,
+          category: categories.find(c => c.id === form.category_id)?.name || '',
+          price: form.price,
+          brand: form.brand,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const imageDataUrl: string = data.imageData;
+
+      // Convert base64 PNG → WEBP via Canvas API
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Image load failed'));
+        img.src = imageDataUrl;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || 800;
+      canvas.height = img.naturalHeight || 800;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Canvas not supported');
+      ctx.drawImage(img, 0, 0);
+
+      const webpBlob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(blob => {
+          if (blob) resolve(blob);
+          else reject(new Error('WEBP conversion failed'));
+        }, 'image/webp', 0.92);
+      });
+
+      // Upload WEBP to storage
+      const fileName = `ai-card-${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, webpBlob, { contentType: 'image/webp', upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(uploadData.path);
+      setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
+      setImagePreview(urlData.publicUrl);
+      toast.dismiss(toastId);
+      toast.success('✨ AI Glassmorphism Card তৈরি হয়েছে! WEBP ফরমেটে সেভ হয়েছে।');
+    } catch (err: any) {
+      toast.dismiss(toastId);
+      toast.error('AI Card Error: ' + (err.message || 'Unknown error'));
+    } finally {
+      setAiCardLoading(false);
+    }
+  };
+
   const fetchProducts = async () => {
     setLoading(true);
     const { data } = await supabase
