@@ -1233,7 +1233,7 @@ const AdminProducts = () => {
 
                       {/* AI Glassmorphism Card Generator */}
                       <div
-                        className="relative rounded-2xl overflow-hidden p-4"
+                        className="relative rounded-2xl overflow-hidden p-4 space-y-3"
                         style={{
                           background: 'linear-gradient(135deg, hsla(271,91%,65%,0.10) 0%, hsla(217,91%,60%,0.10) 100%)',
                           border: '1px solid hsla(271,91%,65%,0.30)',
@@ -1242,38 +1242,78 @@ const AdminProducts = () => {
                       >
                         <div className="absolute top-0 left-0 right-0 h-px"
                           style={{ background: 'linear-gradient(90deg, transparent, hsla(271,91%,65%,0.6), transparent)' }} />
-                        <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+
+                        {/* Header */}
+                        <div className="flex items-center gap-2">
+                          <div className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-base"
                             style={{ background: 'linear-gradient(135deg, hsla(271,91%,65%,0.20), hsla(217,91%,60%,0.20))', border: '1px solid hsla(271,91%,65%,0.30)' }}>
                             🎨
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-foreground">AI Glassmorphism Card Generator</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {form.image_url || imagePreview
-                                ? 'আপলোড করা ছবি দিয়ে AI একটি প্রিমিয়াম Glassmorphism card ডিজাইন তৈরি করবে এবং WEBP ফরমেটে সেভ করবে।'
-                                : 'প্রথমে একটি ছবি আপলোড করুন, তারপর AI দিয়ে Glassmorphism card তৈরি করুন।'}
-                            </p>
-                            <button
-                              type="button"
-                              onClick={generateAiCard}
-                              disabled={aiCardLoading || imageUploading}
-                              className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-[0.98]"
-                              style={{
-                                background: aiCardLoading
-                                  ? 'hsla(271,91%,65%,0.40)'
-                                  : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))',
-                                boxShadow: '0 4px 20px hsla(271,91%,65%,0.35)',
-                              }}
-                            >
-                              {aiCardLoading
-                                ? <><Loader2 size={15} className="animate-spin" /> AI তৈরি হচ্ছে...</>
-                                : <><Wand2 size={15} /> ✨ AI দিয়ে Glassmorphism Card তৈরি করুন</>}
-                            </button>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground leading-none">AI Card Generator</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">Shahed Store ব্র্যান্ডিংসহ প্রোডাক্ট কার্ড তৈরি করুন</p>
                           </div>
                         </div>
+
+                        {/* Style Selector */}
+                        <div>
+                          <p className="text-[11px] text-muted-foreground mb-2 font-medium">ডিজাইন স্টাইল বেছে নিন:</p>
+                          <div className="grid grid-cols-2 gap-1.5">
+                            {CARD_STYLES.map(style => (
+                              <button
+                                key={style.value}
+                                type="button"
+                                onClick={() => setCardStyle(style.value)}
+                                className="flex flex-col items-start px-3 py-2 rounded-xl border text-left transition-all"
+                                style={{
+                                  background: cardStyle === style.value
+                                    ? 'hsla(271,91%,65%,0.18)'
+                                    : 'hsla(0,0%,100%,0.05)',
+                                  border: cardStyle === style.value
+                                    ? '1.5px solid hsla(271,91%,65%,0.70)'
+                                    : '1px solid hsla(271,91%,65%,0.15)',
+                                  boxShadow: cardStyle === style.value ? '0 0 10px hsla(271,91%,65%,0.20)' : 'none',
+                                }}
+                              >
+                                <span className="text-xs font-semibold text-foreground">{style.label}</span>
+                                <span className="text-[10px] text-muted-foreground leading-tight mt-0.5">{style.desc}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Style Preview Hint */}
+                        <div className="rounded-xl px-3 py-2 text-[11px] text-muted-foreground flex items-start gap-2"
+                          style={{ background: 'hsla(0,0%,100%,0.05)', border: '1px dashed hsla(271,91%,65%,0.20)' }}>
+                          <span>💡</span>
+                          <span>
+                            {cardStyle === 'dark_neon' && 'গাঢ় ব্যাকগ্রাউন্ড + নিয়ন গ্লোয়িং বর্ডার, Shahed Store ব্র্যান্ডিং সহ — রেফারেন্স: Grok card'}
+                            {cardStyle === 'light_glass' && 'পাস্টেল কালার গ্রেডিয়েন্ট + ফ্রস্টেড গ্লাস কার্ড — রেফারেন্স: CamScanner colorful card'}
+                            {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল Shahed Store ব্যাজ — রেফারেন্স: CamScanner clean card'}
+                            {cardStyle === 'vibrant_promo' && 'ডিপ পার্পল ব্যাকগ্রাউন্ড + ভাইব্র্যান্ট কালার, সোশ্যাল মিডিয়া প্রমো স্টাইল'}
+                          </span>
+                        </div>
+
+                        {/* Generate Button */}
+                        <button
+                          type="button"
+                          onClick={generateAiCard}
+                          disabled={aiCardLoading || imageUploading}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
+                          style={{
+                            background: aiCardLoading
+                              ? 'hsla(271,91%,65%,0.40)'
+                              : 'linear-gradient(135deg, hsl(271,91%,60%), hsl(217,91%,55%))',
+                            boxShadow: '0 4px 20px hsla(271,91%,65%,0.35)',
+                          }}
+                        >
+                          {aiCardLoading
+                            ? <><Loader2 size={15} className="animate-spin" /> AI তৈরি হচ্ছে...</>
+                            : <><Wand2 size={15} /> ✨ এই স্টাইলে Card তৈরি করুন</>}
+                        </button>
+
                         {aiCardLoading && (
-                          <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <div className="flex gap-1">
                               {[0, 0.2, 0.4].map((d, i) => (
                                 <div key={i} className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: `${d}s` }} />
