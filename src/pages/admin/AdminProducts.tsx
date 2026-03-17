@@ -466,7 +466,10 @@ const AdminProducts = () => {
     const otherAttrs = attrRaw.filter((a: any) => a.key !== '__account_type');
     setForm({
       name: product.name,
-      slug: product.id,
+      // Use actual product slug; if it looks like a UUID (old data), regenerate from name
+      slug: (product as any).slug && !/^[0-9a-f-]{36}$/.test((product as any).slug)
+        ? (product as any).slug
+        : generateSlug(product.name),
       short_description: product.short_description || '',
       description: product.description || '',
       brand: product.brand || '',
