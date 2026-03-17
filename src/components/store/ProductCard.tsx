@@ -305,9 +305,12 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           {!imageLoaded && <div className="absolute inset-0 shimmer" />}
 
 
-          {/* Gradient overlay on hover */}
-          <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 pointer-events-none"
-            style={{ background: 'linear-gradient(to bottom, transparent 40%, hsla(215,28%,8%,0.85) 100%)' }} />
+          {/* Light shimmer overlay on hover — replaces dark shadow */}
+          <div className="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100 pointer-events-none"
+            style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 40%, transparent 70%)' }} />
+          {/* Bottom light glow — soft upward light */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 transition-opacity duration-500 opacity-0 group-hover:opacity-100 pointer-events-none"
+            style={{ background: 'linear-gradient(to top, hsla(271,91%,75%,0.18) 0%, hsla(185,90%,62%,0.08) 50%, transparent 100%)' }} />
 
           {/* Badges */}
           <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
