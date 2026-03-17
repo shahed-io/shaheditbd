@@ -23,6 +23,7 @@ const Index = () => {
       <Navbar />
       <HeroBanner />
       <TickerBanner />
+      <WalletWidget />
       {/* <Categories /> */}
       <TopProducts />
       <FlashSale />
