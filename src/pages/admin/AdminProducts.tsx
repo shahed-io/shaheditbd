@@ -323,11 +323,19 @@ const AdminProducts = () => {
     }
   };
 
+  const CARD_STYLES = [
+    { value: 'dark_neon', label: '🌌 Dark Neon', desc: 'গাঢ় ব্যাকগ্রাউন্ড, নিয়ন গ্লোয়িং বর্ডার' },
+    { value: 'light_glass', label: '🌸 Light Glass', desc: 'পাস্টেল গ্রেডিয়েন্ট, ফ্রস্টেড গ্লাস' },
+    { value: 'clean_light', label: '🩵 Clean Light', desc: 'ক্লিন হোয়াইট, বোকে এফেক্ট' },
+    { value: 'vibrant_promo', label: '💜 Vibrant Promo', desc: 'ডিপ পার্পল, ভাইব্র্যান্ট' },
+  ] as const;
+
   // ── AI Glassmorphism Card Generator ──────────────────────────
   const generateAiCard = async () => {
     const srcUrl = form.image_url || imagePreview;
     setAiCardLoading(true);
-    const toastId = toast.loading('🎨 AI দিয়ে Glassmorphism Card তৈরি হচ্ছে...');
+    const styleName = CARD_STYLES.find(s => s.value === cardStyle)?.label || 'AI Card';
+    const toastId = toast.loading(`🎨 ${styleName} Card তৈরি হচ্ছে...`);
     try {
       const { data, error } = await supabase.functions.invoke('generate-product-card', {
         body: {
@@ -336,6 +344,7 @@ const AdminProducts = () => {
           category: categories.find(c => c.id === form.category_id)?.name || '',
           price: form.price,
           brand: form.brand,
+          cardStyle,
         },
       });
       if (error) throw error;
