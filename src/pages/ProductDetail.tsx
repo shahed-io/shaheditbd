@@ -935,7 +935,7 @@ const ProductDetail = () => {
         </div>
 
         {/* ── Related Products ── */}
-        <RelatedProducts categoryId={product.categories ? (product as any).category_id : null} currentProductId={product.id} />
+        <RelatedProducts categoryId={product.category_id} currentProductId={product.id} />
 
         <Footer />
       </div>
