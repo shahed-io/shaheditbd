@@ -2,10 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
+import { useCopyProtection } from "@/hooks/useCopyProtection";
 import CartDrawer from "@/components/store/CartDrawer";
 import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
 import Index from "./pages/Index";
@@ -86,6 +88,100 @@ const queryClient = new QueryClient({
   },
 });
 
+// Copy protection + admin body class management
+const AppContent = () => {
+  useCopyProtection();
+  const location = useLocation();
+
+  useEffect(() => {
+    const isAdmin = location.pathname.startsWith('/admin');
+    if (isAdmin) {
+      document.body.classList.add('admin-page');
+    } else {
+      document.body.classList.remove('admin-page');
+    }
+  }, [location.pathname]);
+
+  return (
+    <>
+      <CartDrawer />
+      <RedirectEnforcer />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/product/:slug" element={<ProductDetail />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/help/:slug" element={<HelpCenter />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="products/new" element={<AdminProducts />} />
+          <Route path="categories" element={<AdminCategories />} />
+          <Route path="categories/new" element={<AdminCategories />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="coupons" element={<AdminCoupons />} />
+          <Route path="settings" element={<AdminSettings />} />
+          <Route path="customers" element={<AdminCustomers />} />
+          <Route path="payments" element={<AdminPayments />} />
+          <Route path="tickets" element={<AdminTickets />} />
+          <Route path="reports" element={<AdminReports />} />
+          <Route path="marketing" element={<AdminMarketing />} />
+          <Route path="roles" element={<AdminRoles />} />
+          <Route path="backup" element={<AdminBackup />} />
+          <Route path="referrals" element={<AdminReferrals />} />
+          <Route path="blog" element={<AdminBlog />} />
+          <Route path="help" element={<AdminHelp />} />
+          <Route path="seo" element={<AdminSEO />} />
+          <Route path="seo/meta-tags" element={<AdminMetaTags />} />
+          <Route path="seo/sitemap" element={<AdminSitemap />} />
+          <Route path="seo/robots" element={<AdminRobots />} />
+          <Route path="seo/schema" element={<AdminSchema />} />
+          <Route path="seo/keywords" element={<AdminKeywords />} />
+          <Route path="seo/pages" element={<AdminPageSeo />} />
+          <Route path="seo/products" element={<AdminProductSeo />} />
+          <Route path="seo/faq" element={<AdminFaqManager />} />
+          <Route path="seo/reviews" element={<AdminReviews />} />
+          <Route path="seo/analytics" element={<AdminGoogleAnalytics />} />
+          <Route path="seo/search-console" element={<AdminSearchConsole />} />
+          <Route path="seo/speed" element={<AdminSpeedOptimization />} />
+          <Route path="seo/images" element={<AdminImageSeo />} />
+          <Route path="seo/slugs" element={<AdminSlugEditor />} />
+          <Route path="seo/redirects" element={<AdminRedirects />} />
+          <Route path="seo/broken-links" element={<AdminBrokenLinks />} />
+          <Route path="attributes" element={<AdminAttributes />} />
+          <Route path="pages" element={<AdminPages />} />
+          <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
+          <Route path="wallet" element={<AdminWallet />} />
+          <Route path="hero-banner" element={<AdminHeroBanner />} />
+          <Route path="flash-sale" element={<AdminFlashSale />} />
+          <Route path="testimonials" element={<AdminTestimonials />} />
+          <Route path="announcement-bar" element={<AdminAnnouncementBar />} />
+          <Route path="newsletter" element={<AdminNewsletterSubscribers />} />
+          <Route path="product-reviews" element={<AdminProductReviews />} />
+          <Route path="import-export" element={<AdminProductImportExport />} />
+        </Route>
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-conditions" element={<TermsConditions />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/order-policy" element={<OrderPolicy />} />
+        <Route path="/delivery-info" element={<DeliveryInfo />} />
+        <Route path="/return-policy" element={<ReturnPolicy />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/faqs" element={<FAQs />} />
+        <Route path="/free-tools" element={<FreeTools />} />
+        <Route path="/dashboard" element={<UserDashboard />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -95,80 +191,7 @@ const App = () => (
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
-              <CartDrawer />
-              <RedirectEnforcer />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/product/:slug" element={<ProductDetail />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:slug" element={<BlogPost />} />
-                <Route path="/help" element={<HelpCenter />} />
-                <Route path="/help/:slug" element={<HelpCenter />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<AdminDashboard />} />
-                  <Route path="products" element={<AdminProducts />} />
-                  <Route path="products/new" element={<AdminProducts />} />
-                  <Route path="categories" element={<AdminCategories />} />
-                  <Route path="categories/new" element={<AdminCategories />} />
-                  <Route path="orders" element={<AdminOrders />} />
-                  <Route path="coupons" element={<AdminCoupons />} />
-                  <Route path="settings" element={<AdminSettings />} />
-                  <Route path="customers" element={<AdminCustomers />} />
-                  <Route path="payments" element={<AdminPayments />} />
-                  <Route path="tickets" element={<AdminTickets />} />
-                  <Route path="reports" element={<AdminReports />} />
-                  <Route path="marketing" element={<AdminMarketing />} />
-                  <Route path="roles" element={<AdminRoles />} />
-                  <Route path="backup" element={<AdminBackup />} />
-                  <Route path="referrals" element={<AdminReferrals />} />
-                  <Route path="blog" element={<AdminBlog />} />
-                  <Route path="help" element={<AdminHelp />} />
-                  <Route path="seo" element={<AdminSEO />} />
-                  <Route path="seo/meta-tags" element={<AdminMetaTags />} />
-                  <Route path="seo/sitemap" element={<AdminSitemap />} />
-                  <Route path="seo/robots" element={<AdminRobots />} />
-                  <Route path="seo/schema" element={<AdminSchema />} />
-                  <Route path="seo/keywords" element={<AdminKeywords />} />
-                  <Route path="seo/pages" element={<AdminPageSeo />} />
-                  <Route path="seo/products" element={<AdminProductSeo />} />
-                  <Route path="seo/faq" element={<AdminFaqManager />} />
-                  <Route path="seo/reviews" element={<AdminReviews />} />
-                  <Route path="seo/analytics" element={<AdminGoogleAnalytics />} />
-                  <Route path="seo/search-console" element={<AdminSearchConsole />} />
-                  <Route path="seo/speed" element={<AdminSpeedOptimization />} />
-                  <Route path="seo/images" element={<AdminImageSeo />} />
-                  <Route path="seo/slugs" element={<AdminSlugEditor />} />
-                  <Route path="seo/redirects" element={<AdminRedirects />} />
-                  <Route path="seo/broken-links" element={<AdminBrokenLinks />} />
-                  <Route path="attributes" element={<AdminAttributes />} />
-                  <Route path="pages" element={<AdminPages />} />
-                  <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
-                  <Route path="wallet" element={<AdminWallet />} />
-                  <Route path="hero-banner" element={<AdminHeroBanner />} />
-                  <Route path="flash-sale" element={<AdminFlashSale />} />
-                  <Route path="testimonials" element={<AdminTestimonials />} />
-                  <Route path="announcement-bar" element={<AdminAnnouncementBar />} />
-                  <Route path="newsletter" element={<AdminNewsletterSubscribers />} />
-                  <Route path="product-reviews" element={<AdminProductReviews />} />
-                  <Route path="import-export" element={<AdminProductImportExport />} />
-                </Route>
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/terms-conditions" element={<TermsConditions />} />
-                <Route path="/refund-policy" element={<RefundPolicy />} />
-                <Route path="/order-policy" element={<OrderPolicy />} />
-                <Route path="/delivery-info" element={<DeliveryInfo />} />
-                <Route path="/return-policy" element={<ReturnPolicy />} />
-                <Route path="/contact" element={<ContactUs />} />
-                <Route path="/about" element={<AboutUs />} />
-                <Route path="/faqs" element={<FAQs />} />
-                <Route path="/free-tools" element={<FreeTools />} />
-                <Route path="/dashboard" element={<UserDashboard />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <AppContent />
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>
