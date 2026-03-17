@@ -165,6 +165,7 @@ const App = () => (
                 <Route path="/contact" element={<ContactUs />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/faqs" element={<FAQs />} />
+                <Route path="/free-tools" element={<FreeTools />} />
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
