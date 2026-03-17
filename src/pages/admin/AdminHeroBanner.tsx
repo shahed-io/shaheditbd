@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Save, GripVertical, Eye, EyeOff, ChevronUp, ChevronDown, Image as ImageIcon, Palette, LayoutTemplate } from 'lucide-react';
+import { Plus, Trash2, Save, Eye, EyeOff, ChevronUp, ChevronDown, Palette, LayoutTemplate, BarChart3, ShieldCheck } from 'lucide-react';
 
 type SlideFeature = string;
 type Slide = {
@@ -30,12 +30,36 @@ type BgSettings = {
   bgGradientTo: string;
 };
 
+type StatCard = { label: string; value: string; icon: string };
+type FloatingCard = { label: string; value: string; icon: string };
+type TrustSignal = { text: string; icon: string };
+
 const DEFAULT_BG: BgSettings = {
   bgType: 'default',
   bgColor: '#f8f9ff',
   bgGradientFrom: '#e8ecff',
   bgGradientTo: '#f0f4ff',
 };
+
+const DEFAULT_STATS: StatCard[] = [
+  { label: 'Products', value: '500+', icon: '🛍️' },
+  { label: 'Orders Delivered', value: '25K+', icon: '✅' },
+  { label: 'Happy Customers', value: '12K+', icon: '😊' },
+  { label: 'Support Rating', value: '4.9★', icon: '⭐' },
+];
+
+const DEFAULT_FLOATING: FloatingCard[] = [
+  { label: 'Orders Today', value: '248+', icon: '📦' },
+  { label: 'Happy Users',  value: '12K+', icon: '😊' },
+  { label: 'Avg Rating',   value: '4.9★', icon: '⭐' },
+];
+
+const DEFAULT_TRUST: TrustSignal[] = [
+  { text: 'Instant Delivery', icon: '⚡' },
+  { text: '100% Genuine', icon: '🛡️' },
+  { text: '24/7 Support', icon: '🕐' },
+  { text: '4.9★ Rating', icon: '⭐' },
+];
 
 const EMPTY_SLIDE = (): Slide => ({
   id: crypto.randomUUID(),
@@ -59,9 +83,12 @@ const EMPTY_SLIDE = (): Slide => ({
 const AdminHeroBanner = () => {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [bgSettings, setBgSettings] = useState<BgSettings>(DEFAULT_BG);
+  const [stats, setStats] = useState<StatCard[]>(DEFAULT_STATS);
+  const [floating, setFloating] = useState<FloatingCard[]>(DEFAULT_FLOATING);
+  const [trust, setTrust] = useState<TrustSignal[]>(DEFAULT_TRUST);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'slides' | 'background'>('slides');
+  const [activeTab, setActiveTab] = useState<'slides' | 'background' | 'stats'>('slides');
   const [editingSlide, setEditingSlide] = useState<string | null>(null);
 
   useEffect(() => {
