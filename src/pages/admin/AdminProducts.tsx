@@ -1225,9 +1225,22 @@ const AdminProducts = () => {
                             {imageUploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
                             {imageUploading ? 'Uploading...' : 'Upload Image'}
                           </button>
-                          <input value={form.image_url}
-                            onChange={e => { setForm(p => ({ ...p, image_url: e.target.value })); setImagePreview(e.target.value); }}
-                            placeholder="or paste image URL..." className={ic} />
+                          <div className="flex gap-2 items-center">
+                            <input value={form.image_url}
+                              onChange={e => { setForm(p => ({ ...p, image_url: e.target.value })); setImagePreview(e.target.value); }}
+                              placeholder="or paste image URL..." className={`${ic} flex-1`} />
+                            {(form.image_url || imagePreview) && (
+                              <a
+                                href={form.image_url || imagePreview}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                title="লিংক খুলুন"
+                              >
+                                <ExternalLink size={14} />
+                              </a>
+                            )}
+                          </div>
                         </div>
                       </div>
 
