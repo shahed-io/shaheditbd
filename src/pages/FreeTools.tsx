@@ -340,18 +340,18 @@ const ImageResizer = () => {
       <label className="flex flex-col items-center justify-center gap-3 p-8 rounded-xl cursor-pointer transition-all"
         style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
         <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} />
-        <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>ছবি আপলোড করুন</span>
+        <span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span>
         <input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
       {imgSrc && (
         <>
           <img src={imgSrc} alt="original" className="w-full max-h-40 object-contain rounded-xl" style={{ border: '1px solid hsla(258,78%,55%,0.15)' }} />
-          <p className="text-xs font-medium text-center" style={{ color: 'hsl(226,35%,45%)' }}>মূল সাইজ: {origSize}</p>
+          <p className="text-xs font-medium text-center" style={{ color: 'hsl(226,35%,45%)' }}>Original size: {origSize}</p>
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1"><label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>প্রস্থ (px)</label><input type="number" value={width} onChange={e => setWidth(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} /></div>
-            <div className="space-y-1"><label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>উচ্চতা (px)</label><input type="number" value={height} onChange={e => setHeight(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} /></div>
+            <div className="space-y-1"><label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Width (px)</label><input type="number" value={width} onChange={e => setWidth(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} /></div>
+            <div className="space-y-1"><label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Height (px)</label><input type="number" value={height} onChange={e => setHeight(e.target.value)} className="w-full rounded-xl p-3 text-sm" style={inputStyle} /></div>
           </div>
-          <PrimaryBtn onClick={resize}><Maximize2 size={14} />রিসাইজ করুন</PrimaryBtn>
+          <PrimaryBtn onClick={resize}><Maximize2 size={14} />Resize Image</PrimaryBtn>
         </>
       )}
       {outputUrl && (
@@ -359,7 +359,7 @@ const ImageResizer = () => {
           <img src={outputUrl} alt="resized" className="w-full max-h-40 object-contain rounded-xl" style={{ border: '1px solid hsla(162,72%,38%,0.25)' }} />
           <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
             style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
-            <Download size={14} />ডাউনলোড করুন
+            <Download size={14} />Download
           </button>
         </div>
       )}
@@ -389,13 +389,13 @@ const ImageConverter = () => {
   return (
     <div className="space-y-4">
       <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
-        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>ছবি আপলোড করুন</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
+        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
       </label>
       {imgSrc && (
         <>
           <img src={imgSrc} alt="src" className="w-full max-h-36 object-contain rounded-xl" />
           <div className="space-y-2">
-            <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>আউটপুট ফরম্যাট</label>
+            <label className="text-xs font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Output Format</label>
             <div className="flex gap-2">
               {(['png', 'jpeg', 'webp'] as const).map(f => (
                 <button key={f} onClick={() => setFormat(f)} className="flex-1 py-2 rounded-xl text-sm font-bold transition-all"
@@ -407,11 +407,11 @@ const ImageConverter = () => {
           </div>
           {format !== 'png' && (
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>কোয়ালিটি</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
+              <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
               <input type="range" min={10} max={100} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
             </div>
           )}
-          <PrimaryBtn onClick={convert}><RotateCcw size={14} />কনভার্ট করুন</PrimaryBtn>
+          <PrimaryBtn onClick={convert}><RotateCcw size={14} />Convert</PrimaryBtn>
         </>
       )}
       {outputUrl && (
@@ -419,7 +419,7 @@ const ImageConverter = () => {
           <img src={outputUrl} alt="converted" className="w-full max-h-36 object-contain rounded-xl" style={{ border: '1px solid hsla(162,72%,38%,0.25)' }} />
           <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
             style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
-            <Download size={14} />ডাউনলোড (.{format})
+            <Download size={14} />Download (.{format})
           </button>
         </div>
       )}
@@ -449,6 +449,43 @@ const ImageCompressor = () => {
       setSizes(p => ({ ...p, compressed: bytes }));
     };
   };
+  const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = 'compressed.jpg'; a.click(); };
+  return (
+    <div className="space-y-4">
+      <label className="flex flex-col items-center gap-3 p-8 rounded-xl cursor-pointer" style={{ border: '2px dashed hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.03)' }}>
+        <Upload size={28} style={{ color: 'hsl(258,78%,55%)' }} /><span className="text-sm font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Upload Image</span><input type="file" accept="image/*" className="hidden" onChange={onFile} />
+      </label>
+      {imgSrc && (
+        <>
+          <img src={imgSrc} alt="orig" className="w-full max-h-36 object-contain rounded-xl" />
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}><span>Quality</span><span style={{ color: 'hsl(258,78%,50%)' }}>{quality}%</span></div>
+            <input type="range" min={10} max={99} value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-violet-600 cursor-pointer" />
+          </div>
+          <PrimaryBtn onClick={compress}><Scissors size={14} />Compress</PrimaryBtn>
+        </>
+      )}
+      {outputUrl && (
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl p-3 text-center" style={{ background: 'hsla(0,72%,50%,0.07)', border: '1.5px solid hsla(0,72%,50%,0.18)' }}>
+              <p className="text-xl font-black" style={{ color: 'hsl(0,72%,50%)' }}>{sizes.orig} KB</p>
+              <p className="text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}>Before</p>
+            </div>
+            <div className="rounded-xl p-3 text-center" style={{ background: 'hsla(162,72%,38%,0.07)', border: '1.5px solid hsla(162,72%,38%,0.18)' }}>
+              <p className="text-xl font-black" style={{ color: 'hsl(162,72%,38%)' }}>{sizes.compressed} KB</p>
+              <p className="text-xs font-medium" style={{ color: 'hsl(226,35%,45%)' }}>After</p>
+            </div>
+          </div>
+          <button onClick={download} className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
+            style={{ background: 'hsla(162,72%,38%,0.10)', color: 'hsl(162,72%,30%)', border: '1.5px solid hsla(162,72%,38%,0.25)' }}>
+            <Download size={14} />Download
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
   const download = () => { if (!outputUrl) return; const a = document.createElement('a'); a.href = outputUrl; a.download = 'compressed.jpg'; a.click(); };
   return (
     <div className="space-y-4">
