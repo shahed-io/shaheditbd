@@ -107,8 +107,47 @@ No markdown outside the JSON string values. Escape newlines as \\n in the JSON.`
 - Duration: ${duration || "Lifetime"}
 - Price: ${price ? `৳${price}` : "Contact for price"}`;
 
+    } else if (type === "demo_style") {
+      // Generate description by following the style/format of a provided demo description
+      if (!demoDescription) {
+        return new Response(JSON.stringify({ error: "demoDescription is required for demo_style type" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      maxTokens = 3000;
+      systemPrompt = `You are an expert eCommerce product description writer for Shahed Store — a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh (DBID: 586772174).
+
+The user will provide a DEMO/SAMPLE description as a reference. You MUST:
+1. Analyze the demo description carefully — its tone, language mix (Bangla/English), structure, formatting style, emoji usage, section headers, writing style.
+2. Write a brand NEW description for the new product following the EXACT SAME style, format, structure, and tone as the demo.
+3. Replace all product-specific details (name, features, pricing, specs) with the new product's details.
+4. Keep the same section structure — if demo has 8 sections, new one should also have 8 sections with similar headings.
+5. Always end with the Important Notes footer:
+   ### ⚠️ Important Notes
+   🔐 We are a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh.
+   Our DBID Number: 586772174 — ensuring secure and authentic digital product delivery.
+   ❌ Sold products are non-refundable
+   ❌ Activate your product within 2 days of purchase
+   ⚠️ Delayed activation may void warranty or support
+
+Return ONLY the formatted markdown text matching the demo style. No JSON. No extra commentary.`;
+
+      userPrompt = `=== DEMO DESCRIPTION (Reference Style — analyze and follow this format) ===
+${demoDescription}
+
+=== NEW PRODUCT DETAILS ===
+- Product Name: ${productName}
+- Category: ${category || "Software"}
+- Brand: ${brand || "Unknown"}
+- Type: ${productType || "Digital"}
+- Duration: ${duration || "Lifetime"}
+- Price: ${price ? `৳${price}` : "Contact for price"}
+
+Now write the full description for the NEW PRODUCT following the EXACT SAME style and structure as the demo above. Keep the same tone, language mix, emoji style, section structure.`;
+
     } else {
-      return new Response(JSON.stringify({ error: "Invalid type. Use: short_description, description, seo, or all" }), {
+      return new Response(JSON.stringify({ error: "Invalid type. Use: short_description, description, seo, all, or demo_style" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
