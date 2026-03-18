@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://dpvdavjwqyviredzoorj.supabase.co';
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -10,6 +12,14 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     hmr: {
       overlay: false,
+    },
+    proxy: {
+      // Proxy /sitemap.xml to the Supabase edge function in dev
+      '/sitemap.xml': {
+        target: `${SUPABASE_URL}/functions/v1/sitemap`,
+        changeOrigin: true,
+        rewrite: () => '',
+      },
     },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
