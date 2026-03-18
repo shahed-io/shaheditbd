@@ -80,6 +80,7 @@ export default function AdminCustomers() {
         last_order:  orderMap[p.user_id]?.last  ?? null,
         points_balance: (p as any).points_balance ?? 0,
         total_points_earned: (p as any).total_points_earned ?? 0,
+        total_points_redeemed: (p as any).total_points_redeemed ?? 0,
       })) as Customer[];
     },
   });
