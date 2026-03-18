@@ -150,13 +150,17 @@ const AdminProducts = () => {
   const [galleryUploading, setGalleryUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
-  const [aiLoading, setAiLoading] = useState<string | null>(null); // which field is generating
+  const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [aiCardLoading, setAiCardLoading] = useState(false);
   const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo'>('dark_neon');
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
   const [shortDescOptions, setShortDescOptions] = useState<string[]>([]);
   const [showShortDescPicker, setShowShortDescPicker] = useState(false);
+  // Bulk select state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [showBulkConfirm, setShowBulkConfirm] = useState(false);
 
   // ── AI Content Generator ─────────────────────────────────────
   const generateAiContent = async (type: 'short_description' | 'description' | 'seo' | 'all') => {
