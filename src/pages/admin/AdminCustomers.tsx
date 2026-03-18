@@ -52,7 +52,7 @@ export default function AdminCustomers() {
       // Get all profiles
       const { data: profiles, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('*, points_balance, total_points_earned')
         .order('created_at', { ascending: false });
       if (error) throw error;
 
