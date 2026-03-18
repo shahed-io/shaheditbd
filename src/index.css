@@ -177,6 +177,73 @@ body::before {
   50%       { opacity: 1; }
 }
 
+/* ══════════════════════════════════════
+   HERO BANNER — Right Card Shell (Animated Gradient Border)
+══════════════════════════════════════ */
+.hero-card-shell {
+  border-radius: 2rem;
+  padding: 2px;
+  background: linear-gradient(
+    135deg,
+    hsl(258,78%,62%),
+    hsl(230,75%,65%),
+    hsl(200,90%,55%),
+    hsl(220,80%,68%),
+    hsl(258,78%,62%)
+  );
+  background-size: 300% 300%;
+  animation: cta-border-spin 5s ease infinite;
+  box-shadow:
+    0 0 0 1px hsla(258,78%,55%,0.10),
+    0 20px 60px hsla(258,78%,55%,0.22),
+    0 6px 24px hsla(200,90%,50%,0.14);
+}
+.hero-card-shell::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 2.4rem;
+  background: linear-gradient(
+    135deg,
+    hsla(258,78%,62%,0.28),
+    hsla(200,90%,55%,0.16),
+    hsla(258,78%,62%,0.28)
+  );
+  background-size: 300% 300%;
+  animation: cta-border-spin 5s ease infinite, cta-glow-pulse 3.5s ease-in-out infinite;
+  filter: blur(16px);
+  z-index: -1;
+}
+
+/* Inner glass content */
+.hero-card-inner {
+  border-radius: calc(2rem - 2px);
+  background: linear-gradient(
+    155deg,
+    rgba(255,255,255,0.94) 0%,
+    rgba(248,246,255,0.90) 50%,
+    rgba(240,248,255,0.92) 100%
+  );
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 hsla(258,78%,55%,0.05);
+}
+
+/* Floating stat cards */
+.hero-float-card {
+  border-radius: 1rem;
+  padding: 12px 16px;
+  background: linear-gradient(155deg, rgba(255,255,255,0.88) 0%, rgba(248,246,255,0.80) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1.5px solid rgba(255,255,255,0.92);
+  box-shadow:
+    0 4px 20px hsla(258,78%,55%,0.12),
+    0 1px 0 rgba(255,255,255,0.95) inset;
+}
+
 /* Outer wrapper — the animated gradient border shell */
 .cta-card-shell {
   position: relative;
