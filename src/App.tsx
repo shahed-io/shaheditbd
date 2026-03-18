@@ -77,6 +77,7 @@ import AdminNewsletterSubscribers from "./pages/admin/AdminNewsletterSubscribers
 import AdminProductImportExport from "./pages/admin/AdminProductImportExport";
 import AdminProductReviews from "./pages/admin/AdminProductReviews";
 import FreeTools from "./pages/FreeTools";
+import BkashCallback from "./pages/BkashCallback";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -175,6 +176,7 @@ const AppContent = () => {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/faqs" element={<FAQs />} />
         <Route path="/free-tools" element={<FreeTools />} />
+        <Route path="/bkash/callback" element={<BkashCallback />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

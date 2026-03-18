@@ -15,3 +15,5 @@ project_id = "dpvdavjwqyviredzoorj"
     verify_jwt = false
   [functions.generate-product-card]
     verify_jwt = false
+  [functions.bkash-payment]
+    verify_jwt = false
