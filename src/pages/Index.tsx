@@ -14,9 +14,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title="Your Trusted Destination for Online Shopping"
-        description="Shahed Store – Your Trusted Destination for Online Shopping. Buy Windows, Office, Adobe, Antivirus & all digital products at the best price in Bangladesh."
+        title="Buy Windows, Office, Adobe, Antivirus & Digital Software – Best Price Bangladesh"
+        description="Shahed Store – Bangladesh's most trusted digital software shop. Buy Windows 11, Microsoft Office 365, Adobe Creative Cloud, Antivirus, VPN & subscriptions at the lowest price. 100% genuine. Instant delivery."
         ogType="website"
+        canonical="https://shahedstore.com.bd/"
         schema={[organizationSchema(), websiteSchema()]}
       />
       <Navbar />

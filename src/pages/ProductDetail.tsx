@@ -280,36 +280,54 @@ const ProductDetail = () => {
   const prevImg = () => { setImgLoaded(false); setActiveImg(i => (i - 1 + images.length) % images.length); };
   const nextImg = () => { setImgLoaded(false); setActiveImg(i => (i + 1) % images.length); };
 
+  // Build rich SEO description for product
+  const seoDescription = (() => {
+    const base = product.short_description || product.description || '';
+    const clean = base.replace(/[#*_`[\]]/g, '').substring(0, 120).trim();
+    const price = `৳${product.price.toLocaleString()}`;
+    const discount = product.discount_percent ? ` | ${product.discount_percent}% ছাড়` : '';
+    const cat = product.categories?.name ? ` | ${product.categories.name}` : '';
+    const suffix = `Buy ${product.name} at ${price}${discount}${cat}. Instant delivery, genuine license. Shahed Store Bangladesh.`;
+    return clean ? `${clean}. ${suffix}` : suffix;
+  })();
+
+  // Build rich title: "Product Name – Buy at ৳Price | Shahed Store"
+  const seoTitle = `${product.name} – Buy at ৳${product.price.toLocaleString()} | Best Price Bangladesh`;
+
   // Build SEO schemas
   const seoSchemas = [
     productSchema({
       name: product.name,
-      description: product.short_description || product.description,
+      description: seoDescription,
       image: product.image_url,
       price: product.price,
       slug: product.slug,
       category: product.categories?.name,
+      sku: product.slug,
     }),
     breadcrumbSchema([
       { name: 'Home', url: '/' },
-      ...(product.categories ? [{ name: product.categories.name, url: `/?cat=${product.categories.slug}` }] : []),
+      { name: 'Shop', url: '/shop' },
+      ...(product.categories ? [{ name: product.categories.name, url: `/shop?category=${product.categories.slug}` }] : []),
       { name: product.name, url: `/product/${product.slug}` },
     ]),
     ...(faqs.length > 0 ? [faqSchema(faqs)] : []),
   ];
 
   const breadcrumbItems = [
-    ...(product.categories ? [{ label: product.categories.name, href: `/?cat=${product.categories.slug}` }] : []),
+    { label: 'Shop', href: '/shop' },
+    ...(product.categories ? [{ label: product.categories.name, href: `/shop?category=${product.categories.slug}` }] : []),
     { label: product.name },
   ];
 
   return (
     <>
       <SEOHead
-        title={product.name}
-        description={product.short_description || product.description || `${product.name} — ৳${product.price.toLocaleString()} | Shahed Store থেকে তাৎক্ষণিক ডেলিভারি`}
+        title={seoTitle}
+        description={seoDescription}
         ogImage={product.image_url || undefined}
         ogType="product"
+        canonical={`https://shahedstore.com.bd/product/${product.slug}`}
         schema={seoSchemas}
       />
       <div className="min-h-screen bg-background">
