@@ -225,6 +225,36 @@ serve(async (req) => {
         throw new Error(responseData.error?.message || "AI gateway error");
       }
 
+      // Check if choices[0] itself contains a rate-limit or error (200 OK but error injected)
+      const choiceError = responseData.choices?.[0]?.error;
+      if (choiceError) {
+        const choiceCode = choiceError?.code || choiceError?.metadata?.error_type;
+        if (choiceCode === 429 || choiceCode === "rate_limit_exceeded") {
+          console.warn(`Gateway choice-level 429 on ${model}, trying next...`);
+          await new Promise(r => setTimeout(r, 800));
+          continue;
+        }
+        if (choiceCode === 402) {
+          console.warn("Gateway choice-level credits exhausted, switching to direct Gemini API...");
+          break;
+        }
+        console.warn(`Gateway choice-level error on ${model}: ${JSON.stringify(choiceError)}, trying next...`);
+        continue;
+      }
+
+      // Verify there's actually image data before accepting this response
+      const hasImage = !!(
+        responseData.choices?.[0]?.message?.images?.[0]?.image_url?.url ||
+        responseData.choices?.[0]?.message?.images?.[0]?.data ||
+        (Array.isArray(responseData.choices?.[0]?.message?.content) &&
+          responseData.choices?.[0]?.message?.content.find((p: any) => p.type === "image_url" || p.inline_data))
+      );
+
+      if (!hasImage) {
+        console.warn(`Gateway model ${model} returned no image data, trying next...`);
+        continue;
+      }
+
       data = responseData;
       break;
     }
