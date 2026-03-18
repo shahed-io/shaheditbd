@@ -173,11 +173,12 @@ const UserDashboard = () => {
 
   const fetchProfile = async () => {
     if (!user) return;
-    const { data } = await supabase.from('profiles').select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned').eq('user_id', user.id).single();
+    const { data } = await supabase.from('profiles').select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned, total_points_redeemed').eq('user_id', user.id).single();
     if (data) {
       setProfile({ display_name: data.display_name, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
       setPointsBalance((data as any).points_balance || 0);
       setTotalPointsEarned((data as any).total_points_earned || 0);
+      setTotalPointsRedeemed((data as any).total_points_redeemed || 0);
     } else {
       setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
     }
@@ -186,11 +187,12 @@ const UserDashboard = () => {
   const fetchPoints = async () => {
     if (!user) return; setPointsLoading(true);
     const [profileRes, txRes] = await Promise.all([
-      supabase.from('profiles').select('points_balance, total_points_earned').eq('user_id', user.id).single(),
-      (supabase as any).from('point_transactions').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
+      supabase.from('profiles').select('points_balance, total_points_earned, total_points_redeemed').eq('user_id', user.id).single(),
+      supabase.from('point_transactions').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(100),
     ]);
     setPointsBalance((profileRes.data as any)?.points_balance || 0);
     setTotalPointsEarned((profileRes.data as any)?.total_points_earned || 0);
+    setTotalPointsRedeemed((profileRes.data as any)?.total_points_redeemed || 0);
     setPointsTx(txRes.data || []);
     setPointsLoading(false);
   };
@@ -198,8 +200,8 @@ const UserDashboard = () => {
   const handleRedeemPoints = async () => {
     if (!user) return;
     const pts = parseInt(redeemPoints);
-    if (!pts || pts < 2) { toast.error('ন্যূনতম ২ পয়েন্ট রিডিম করতে হবে'); return; }
-    if (pts % 2 !== 0) { toast.error('পয়েন্ট অবশ্যই ২ এর গুণিতক হতে হবে (যেমন: ২, ৪, ১০, ২০...)'); return; }
+    if (!pts || pts < 20) { toast.error('ন্যূনতম ২০ পয়েন্ট রিডিম করতে হবে'); return; }
+    if (pts % 2 !== 0) { toast.error('পয়েন্ট অবশ্যই ২ এর গুণিতক হতে হবে'); return; }
     if (pts > pointsBalance) { toast.error('পর্যাপ্ত পয়েন্ট নেই'); return; }
     setRedeemProcessing(true);
     try {
