@@ -269,7 +269,7 @@ const HeroBanner = () => {
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%), hsl(200,90%,48%))',
                   boxShadow: '0 8px 28px hsla(258,78%,55%,0.42), 0 1px 0 rgba(255,255,255,0.25) inset',
                 }}>
-                <ShoppingBag size={16} /> Order Now <ArrowRight size={14} />
+                <ShoppingBag size={16} /> Buy Now <ArrowRight size={14} />
               </a>
               {/* Secondary — glass */}
               <a href="/shop"
@@ -420,7 +420,7 @@ const HeroBanner = () => {
                       background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%), hsl(200,90%,48%))',
                       boxShadow: '0 8px 24px hsla(258,78%,55%,0.38), 0 1px 0 rgba(255,255,255,0.22) inset',
                     }}>
-                    <Package size={14} /> Order Now <ArrowRight size={12} />
+                    <Package size={14} /> Buy Now <ArrowRight size={12} />
                   </a>
                 </div>
               </div>

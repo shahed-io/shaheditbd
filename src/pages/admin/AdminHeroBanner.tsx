@@ -255,7 +255,7 @@ const AdminHeroBanner = () => {
                     <div className="md:col-span-2">
                       <label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5 block">
                         🔗 প্রোডাক্ট লিংক (Product Slug)
-                        <span className="text-[10px] text-primary/60">"Order Now" বাটন এই প্রোডাক্টে নিয়ে যাবে</span>
+                        <span className="text-[10px] text-primary/60">"Buy Now" বাটন এই প্রোডাক্টে নিয়ে যাবে</span>
                       </label>
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground bg-muted/40 border border-border rounded-l-xl px-3 py-2.5 font-mono">/product/</span>

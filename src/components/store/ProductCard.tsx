@@ -167,7 +167,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
                     onClick={() => { setShowPreview(false); setShowModal(true); }}
                     className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.02]"
                     style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 0 20px hsla(271,91%,65%,0.4)' }}>
-                    <CreditCard size={13} className="inline mr-1.5" /> Order Now
+                    <CreditCard size={13} className="inline mr-1.5" /> Buy Now
                   </button>
                   <button
                     onClick={() => { setShowPreview(false); navigate(`/product/${product.slug || product.id}`); }}
@@ -389,7 +389,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
                 background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
                 boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
               }}>
-              <CreditCard size={12} /> Order Now
+              <CreditCard size={12} /> Buy Now
             </button>
             <div className="grid grid-cols-2 gap-2">
               <button
