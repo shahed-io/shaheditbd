@@ -787,28 +787,6 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              {/* Delivery Info Strip */}
-              <div
-                className="grid grid-cols-3 gap-2"
-                style={{
-                  opacity: entered ? 1 : 0,
-                  transform: entered ? 'none' : 'translateY(16px)',
-                  transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s',
-                }}
-              >
-                {[
-                  { icon: <Zap size={15} />, label: 'ডেলিভারি', value: product.delivery_time || 'ইন্সট্যান্ট', color: 'hsl(38,100%,50%)', bg: 'hsla(38,100%,50%,0.08)', border: 'hsla(38,100%,50%,0.22)' },
-                  { icon: <Shield size={15} />, label: 'নিরাপদ', value: '১০০% জেনুইন', color: 'hsl(258,78%,55%)', bg: 'hsla(258,78%,55%,0.08)', border: 'hsla(258,78%,55%,0.22)' },
-                  { icon: <MessageCircle size={15} />, label: 'সাপোর্ট', value: '২৪/৭ অনলাইন', color: 'hsl(158,72%,45%)', bg: 'hsla(158,72%,45%,0.08)', border: 'hsla(158,72%,45%,0.22)' },
-                ].map(b => (
-                  <div key={b.label} className="flex flex-col items-center gap-1 rounded-2xl py-3 px-2 text-center"
-                    style={{ background: b.bg, border: `1px solid ${b.border}` }}>
-                    <span style={{ color: b.color }}>{b.icon}</span>
-                    <span className="text-[10px] font-semibold text-muted-foreground leading-none">{b.label}</span>
-                    <span className="text-[11px] font-bold leading-tight" style={{ color: b.color }}>{b.value}</span>
-                  </div>
-                ))}
-              </div>
 
               {/* What You Get */}
               {product.what_you_get && product.what_you_get.length > 0 && (
