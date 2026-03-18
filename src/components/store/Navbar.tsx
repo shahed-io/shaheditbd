@@ -128,10 +128,18 @@ const Navbar = () => {
               <BrandLogo size="md" />
             </a>
 
-            {/* Search */}
-            <div className="hidden md:flex flex-1 max-w-[420px]">
-              <SearchBar variant="navbar" className="w-full" />
-            </div>
+            {/* Desktop Search Trigger */}
+            <button
+              onClick={() => setDesktopSearch(true)}
+              className="hidden md:flex flex-1 max-w-[460px] items-center gap-3 rounded-2xl border-2 px-4 py-2.5 text-left transition-all hover:border-primary/50 hover:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)] group"
+              style={{ borderColor: 'hsla(258,78%,60%,0.20)', background: 'hsla(258,78%,55%,0.04)' }}
+            >
+              <Search size={15} className="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+              <span className="text-sm text-muted-foreground flex-1">প্রোডাক্ট খুঁজুন...</span>
+              <kbd className="hidden lg:flex items-center gap-1 px-2 py-0.5 rounded-lg border border-border/60 text-[10px] font-mono text-muted-foreground bg-muted/40 flex-shrink-0">
+                Ctrl K
+              </kbd>
+            </button>
 
             {/* Desktop Links */}
             <div className="hidden lg:flex items-center gap-0.5">
