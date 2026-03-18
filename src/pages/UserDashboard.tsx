@@ -16,7 +16,7 @@ import {
   Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
   History, BellRing, BellOff, ExternalLink, Wallet, Globe,
-  ChevronDown, Key, CreditCard, Receipt, Info
+  ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t } from '@/lib/translations';
