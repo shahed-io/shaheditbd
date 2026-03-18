@@ -534,10 +534,10 @@ const UserDashboard = () => {
             {/* Tab Header */}
             <div className="px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'rgba(255,255,255,0.4)' }}>
               <div>
-                <h2 className="text-lg font-black text-foreground">{t(selectedLang, `tab_${activeTab}`)}</h2>
-                <p className="text-xs mt-0.5 text-muted-foreground">
-                  {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : ''}
-                </p>
+                 <h2 className="text-lg font-black text-foreground">{activeTab === 'points' ? '⭐ পয়েন্ট' : t(selectedLang, `tab_${activeTab}`)}</h2>
+                 <p className="text-xs mt-0.5 text-muted-foreground">
+                   {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `ব্যালেন্স: ${pointsBalance} পয়েন্ট` : ''}
+                 </p>
               </div>
               <div className="flex gap-2">
                 {activeTab === 'profile' && !editing && (
