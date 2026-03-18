@@ -8,7 +8,8 @@ import Footer from '@/components/store/Footer';
 import {
   ShoppingCart, MessageCircle, CreditCard, Star, Zap, Shield, Clock,
   CheckCircle2, ChevronLeft, ChevronRight, Heart, Package, Tag,
-  Truck, ArrowLeft, Share2, Copy, Check, ChevronDown, AlertCircle
+  Truck, ArrowLeft, Share2, Copy, Check, ChevronDown, AlertCircle,
+  ThumbsUp, Send, User
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
 import SEOHead from '@/components/seo/SEOHead';
@@ -933,6 +934,9 @@ const ProductDetail = () => {
           </div>
         </div>
 
+        {/* ── Customer Reviews ── */}
+        <ProductReviews productId={product.id} productSlug={product.slug} />
+
         {/* ── Related Products ── */}
         <RelatedProducts categoryId={product.category_id} currentProductId={product.id} />
 
@@ -1187,6 +1191,302 @@ const ProductSpecsTable = ({ productId }: { productId: string }) => {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+};
+
+// ── Customer Reviews Section ──────────────────────────────────
+interface Review {
+  id: string;
+  author_name: string;
+  rating: number;
+  title: string | null;
+  body: string;
+  is_verified: boolean;
+  helpful_count: number;
+  created_at: string;
+}
+
+const StarRating = ({ value, onChange, size = 20 }: { value: number; onChange?: (v: number) => void; size?: number }) => {
+  const [hover, setHover] = useState(0);
+  return (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map(s => (
+        <button
+          key={s}
+          type="button"
+          onClick={() => onChange?.(s)}
+          onMouseEnter={() => onChange && setHover(s)}
+          onMouseLeave={() => onChange && setHover(0)}
+          className={onChange ? 'cursor-pointer transition-transform hover:scale-110' : 'cursor-default'}
+          tabIndex={onChange ? 0 : -1}
+        >
+          <Star
+            size={size}
+            fill={(hover || value) >= s ? 'hsl(38,100%,55%)' : 'none'}
+            color={(hover || value) >= s ? 'hsl(38,100%,55%)' : 'hsl(220,13%,75%)'}
+          />
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const ProductReviews = ({ productId, productSlug }: { productId: string; productSlug: string }) => {
+  const [reviews, setReviews]     = useState<Review[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [showForm, setShowForm]   = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const sectionReveal             = useReveal(0.05);
+
+  // Form state
+  const [rating, setRating]       = useState(5);
+  const [name, setName]           = useState('');
+  const [title, setTitle]         = useState('');
+  const [body, setBody]           = useState('');
+
+  const fetchReviews = async () => {
+    const { data } = await supabase
+      .from('product_reviews')
+      .select('id, author_name, rating, title, body, is_verified, helpful_count, created_at')
+      .eq('product_slug', productSlug)
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(20);
+    setReviews((data as Review[]) || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchReviews(); }, [productSlug]);
+
+  const avgRating = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) : 0;
+  const ratingCounts = [5, 4, 3, 2, 1].map(n => ({
+    star: n,
+    count: reviews.filter(r => r.rating === n).length,
+  }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !body.trim() || rating < 1) return;
+    setSubmitting(true);
+    await (supabase as any).from('product_reviews').insert({
+      product_id: productId,
+      product_slug: productSlug,
+      author_name: name.trim(),
+      title: title.trim() || null,
+      body: body.trim(),
+      rating,
+      status: 'pending',
+    });
+    setSubmitting(false);
+    setSubmitted(true);
+    setShowForm(false);
+    setName(''); setTitle(''); setBody(''); setRating(5);
+  };
+
+  const handleHelpful = async (id: string, current: number) => {
+    await (supabase as any).from('product_reviews').update({ helpful_count: current + 1 }).eq('id', id);
+    setReviews(p => p.map(r => r.id === id ? { ...r, helpful_count: r.helpful_count + 1 } : r));
+  };
+
+  if (loading) return null;
+
+  const glassStyle: React.CSSProperties = {
+    background: 'linear-gradient(155deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.68) 100%)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    border: '1px solid hsla(258,78%,75%,0.22)',
+    boxShadow: '0 4px 24px hsla(258,78%,55%,0.08)',
+  };
+
+  return (
+    <div
+      ref={sectionReveal.ref}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+      style={{
+        opacity: sectionReveal.revealed ? 1 : 0,
+        transform: sectionReveal.revealed ? 'none' : 'translateY(30px)',
+        transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
+      }}
+    >
+      <div className="border-t border-border mb-8" />
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2">
+          <span className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
+          গ্রাহক রিভিউ
+          <span className="text-sm font-normal text-muted-foreground">({reviews.length})</span>
+        </h2>
+        {!submitted ? (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:scale-105"
+            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(271,91%,65%))', color: 'white', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}
+          >
+            <Star size={14} fill="white" color="white" />
+            রিভিউ লিখুন
+          </button>
+        ) : (
+          <span className="flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl" style={{ color: 'hsl(158,80%,38%)', background: 'hsla(158,80%,48%,0.12)', border: '1px solid hsla(158,80%,48%,0.28)' }}>
+            <CheckCircle2 size={14} /> রিভিউ পাঠানো হয়েছে!
+          </span>
+        )}
+      </div>
+
+      {/* Summary + Rating Bar */}
+      {reviews.length > 0 && (
+        <div className="rounded-2xl p-5 mb-6 flex flex-col sm:flex-row gap-6" style={glassStyle}>
+          {/* Avg score */}
+          <div className="flex flex-col items-center justify-center min-w-[100px]">
+            <div className="text-5xl font-sora font-black" style={{ color: 'hsl(258,78%,42%)' }}>
+              {avgRating.toFixed(1)}
+            </div>
+            <StarRating value={Math.round(avgRating)} size={16} />
+            <div className="text-xs text-muted-foreground mt-1">{reviews.length} রিভিউ</div>
+          </div>
+          {/* Bars */}
+          <div className="flex-1 space-y-1.5">
+            {ratingCounts.map(({ star, count }) => (
+              <div key={star} className="flex items-center gap-2">
+                <span className="text-xs w-4 text-right font-semibold" style={{ color: 'hsl(226,35%,25%)' }}>{star}</span>
+                <Star size={11} fill="hsl(38,100%,55%)" color="hsl(38,100%,55%)" />
+                <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'hsla(258,78%,55%,0.10)' }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{
+                      width: reviews.length ? `${(count / reviews.length) * 100}%` : '0%',
+                      background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(271,91%,65%))',
+                    }}
+                  />
+                </div>
+                <span className="text-xs w-5 text-muted-foreground">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Review Submission Form */}
+      {showForm && (
+        <form onSubmit={handleSubmit} className="rounded-2xl p-5 mb-6 space-y-4" style={glassStyle}>
+          <h3 className="font-semibold text-foreground">আপনার রিভিউ লিখুন</h3>
+
+          {/* Rating picker */}
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block">রেটিং *</label>
+            <StarRating value={rating} onChange={setRating} size={28} />
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-muted-foreground mb-1.5 block">আপনার নাম *</label>
+              <input
+                value={name}
+                onChange={e => setName(e.target.value)}
+                required
+                placeholder="আপনার নাম লিখুন"
+                className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1.5 block">শিরোনাম (ঐচ্ছিক)</label>
+              <input
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                placeholder="সংক্ষিপ্ত শিরোনাম"
+                className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block">রিভিউ *</label>
+            <textarea
+              value={body}
+              onChange={e => setBody(e.target.value)}
+              required
+              rows={4}
+              placeholder="প্রোডাক্টটি সম্পর্কে আপনার অভিজ্ঞতা শেয়ার করুন..."
+              className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors resize-none"
+            />
+          </div>
+
+          <div className="flex gap-3 justify-end">
+            <button type="button" onClick={() => setShowForm(false)}
+              className="px-4 py-2 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
+              বাতিল
+            </button>
+            <button
+              type="submit"
+              disabled={submitting || !name.trim() || !body.trim()}
+              className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
+              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(271,91%,65%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}
+            >
+              <Send size={14} />
+              {submitting ? 'পাঠানো হচ্ছে...' : 'রিভিউ পাঠান'}
+            </button>
+          </div>
+          <p className="text-xs text-muted-foreground">* রিভিউ অনুমোদনের পর প্রকাশিত হবে।</p>
+        </form>
+      )}
+
+      {/* Reviews List */}
+      {reviews.length === 0 ? (
+        <div className="rounded-2xl p-10 text-center" style={glassStyle}>
+          <Star size={36} className="mx-auto mb-3 opacity-30" style={{ color: 'hsl(38,100%,55%)' }} />
+          <p className="text-muted-foreground text-sm">এখনো কোনো রিভিউ নেই। প্রথম রিভিউ দিন!</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {reviews.map((r, i) => (
+            <div
+              key={r.id}
+              className="rounded-2xl p-5"
+              style={{
+                ...glassStyle,
+                opacity: sectionReveal.revealed ? 1 : 0,
+                transform: sectionReveal.revealed ? 'none' : 'translateY(12px)',
+                transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${i * 0.06}s`,
+              }}
+            >
+              <div className="flex items-start gap-3">
+                {/* Avatar */}
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
+                  style={{ background: `hsl(${(r.author_name.charCodeAt(0) * 47) % 360},65%,88%)`, color: `hsl(${(r.author_name.charCodeAt(0) * 47) % 360},65%,35%)` }}>
+                  {r.author_name.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center flex-wrap gap-2 mb-1">
+                    <span className="font-semibold text-sm text-foreground">{r.author_name}</span>
+                    {r.is_verified && (
+                      <span className="text-[10px] flex items-center gap-1 px-2 py-0.5 rounded-full font-bold"
+                        style={{ color: 'hsl(158,80%,38%)', background: 'hsla(158,80%,48%,0.12)', border: '1px solid hsla(158,80%,48%,0.28)' }}>
+                        <CheckCircle2 size={9} /> Verified
+                      </span>
+                    )}
+                    <StarRating value={r.rating} size={12} />
+                    <span className="text-xs text-muted-foreground ml-auto">
+                      {new Date(r.created_at).toLocaleDateString('bn-BD')}
+                    </span>
+                  </div>
+                  {r.title && <p className="text-sm font-semibold text-foreground mb-1">{r.title}</p>}
+                  <p className="text-sm leading-relaxed" style={{ color: 'hsl(226,25%,42%)' }}>{r.body}</p>
+                  {/* Helpful */}
+                  <button
+                    onClick={() => handleHelpful(r.id, r.helpful_count)}
+                    className="flex items-center gap-1.5 mt-3 text-xs text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <ThumbsUp size={12} />
+                    সহায়ক ({r.helpful_count})
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
