@@ -1017,32 +1017,47 @@ const UserDashboard = () => {
                     {/* Referral History */}
                     {referralLoading ? (
                       <div className="flex justify-center py-4"><div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} /></div>
-                    ) : referrals.length > 0 && (
+                    ) : referrals.length > 0 ? (
                       <div>
-                        <p className="text-sm font-bold mb-3 text-foreground">রেফারেল ইতিহাস</p>
+                        <p className="text-sm font-bold mb-3 text-foreground flex items-center gap-2">
+                          <History size={14} style={{ color: 'hsl(var(--primary))' }} /> রেফারেল ইতিহাস ({referrals.length}টি)
+                        </p>
                         <div className="space-y-2">
                           {referrals.map((r, i) => {
                             const refTier = getCurrentTier(i + 1);
                             return (
                               <div key={r.id} className="flex items-center justify-between p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
                                 <div className="flex items-center gap-2.5">
-                                  <span className="text-base">{refTier.emoji}</span>
+                                  <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0" style={{ background: `${refTier.color}18`, border: `1px solid ${refTier.color}30` }}>
+                                    {refTier.emoji}
+                                  </div>
                                   <div>
-                                    <p className="text-xs font-semibold text-foreground">#{i + 1} রেফারেল</p>
-                                    <p className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString('bn-BD')}</p>
+                                    <p className="text-xs font-bold text-foreground">
+                                      {r.referred_name ? r.referred_name : `#${i + 1} রেফারেল`}
+                                    </p>
+                                    {r.referred_email && (
+                                      <p className="text-[10px] text-muted-foreground">{r.referred_email}</p>
+                                    )}
+                                    <p className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm font-black" style={{ color: refTier.color }}>৳{r.reward_amount}</span>
-                                  <span className="text-[10px] font-bold px-2 py-1 rounded-full"
+                                <div className="flex flex-col items-end gap-1">
+                                  <span className="text-sm font-black" style={{ color: refTier.color }}>+৳{r.reward_amount}</span>
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                                     style={r.status === 'completed' ? { background: 'hsla(158,80%,48%,0.15)', color: 'hsl(158,80%,48%)' } : { background: 'hsla(40,100%,58%,0.15)', color: 'hsl(40,100%,58%)' }}>
-                                    {r.status === 'completed' ? 'সফল' : 'পেন্ডিং'}
+                                    {r.status === 'completed' ? '✓ সফল' : '⏳ পেন্ডিং'}
                                   </span>
                                 </div>
                               </div>
                             );
                           })}
                         </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid hsla(258,78%,75%,0.18)' }}>
+                        <div className="text-3xl mb-2">👥</div>
+                        <p className="text-sm font-semibold text-foreground mb-1">এখনো কেউ রেফার হয়নি</p>
+                        <p className="text-xs text-muted-foreground">আপনার কোড শেয়ার করুন এবং ক্রেডিট আয় করুন!</p>
                       </div>
                     )}
                   </div>
