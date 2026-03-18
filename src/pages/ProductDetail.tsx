@@ -128,6 +128,18 @@ const ProductDetail = () => {
         if (!row) { setNotFound(true); setLoading(false); return; }
         setProduct(row as any);
 
+        // Parse __duration_plans from attributes
+        const attrRaw = Array.isArray((row as any).attributes) ? (row as any).attributes : [];
+        const durationPlansAttr = attrRaw.find((a: any) => a.key === '__duration_plans');
+        const parsedPlans: DurationPlan[] = (() => {
+          try { return durationPlansAttr ? JSON.parse(durationPlansAttr.value) : []; } catch { return []; }
+        })();
+        const validPlans = parsedPlans.filter(p => p.duration?.trim() && p.price?.trim());
+        if (!cancelled && validPlans.length > 0) {
+          setDurationPlans(validPlans);
+          setSelectedPlanIdx(0);
+        }
+
         // Fetch custom option groups from new system
         const { data: groupData } = await supabase
           .from('product_option_groups' as any)
