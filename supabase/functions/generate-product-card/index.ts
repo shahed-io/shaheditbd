@@ -234,7 +234,39 @@ serve(async (req) => {
       userContent.push({ type: "image_url", image_url: { url: imageUrl } });
     }
 
-    // ── Phase 1: Lovable AI Gateway (best quality models) ─────────────────
+    // ── Collect all available Gemini API keys ─────────────────────────────
+    const GEMINI_KEYS = [
+      Deno.env.get("GEMINI_API_KEY"),
+      Deno.env.get("GEMINI_API_KEY_2"),
+      Deno.env.get("GEMINI_API_KEY_3"),
+      Deno.env.get("GEMINI_API_KEY_4"),
+      Deno.env.get("GEMINI_API_KEY_5"),
+      Deno.env.get("GEMINI_API_KEY_6"),
+    ].map(k => (k || "").trim()).filter(Boolean) as string[];
+
+    console.log(`Available Gemini keys: ${GEMINI_KEYS.length}`);
+
+    // ── Preload product image as base64 for direct Gemini calls ─────────────
+    let productImageBase64: string | null = null;
+    let productImageMime = "image/jpeg";
+    if (imageUrl) {
+      try {
+        const imgResp = await fetch(imageUrl, { signal: AbortSignal.timeout(10000) });
+        if (imgResp.ok) {
+          const imgBuf = await imgResp.arrayBuffer();
+          productImageBase64 = btoa(String.fromCharCode(...new Uint8Array(imgBuf)));
+          productImageMime = imgResp.headers.get("content-type") || "image/jpeg";
+          console.log("Product image preloaded successfully");
+        }
+      } catch (e) {
+        console.warn("Could not preload product image, will use text-only prompt");
+      }
+    }
+
+    let imageData: string | undefined;
+    let imageMime = "image/png";
+
+    // ── Phase 1: Lovable AI Gateway ──────────────────────────────────────────
     const GATEWAY_MODELS = [
       "google/gemini-3-pro-image-preview",
       "google/gemini-3.1-flash-image-preview",
