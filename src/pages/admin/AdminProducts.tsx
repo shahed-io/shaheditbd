@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Plus, Search, Edit, Trash2, Package, X, Upload,
   Image as ImageIcon, Loader2, Video, Tag, Star,
-  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders, Tags, Sparkles, Wand2
+  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders, Tags, Sparkles, Wand2,
+  CheckSquare, Square, AlertTriangle
 } from 'lucide-react';
 import ProductOptionsBuilder from '@/components/admin/ProductOptionsBuilder';
 import ProductAttributesEditor from '@/components/admin/ProductAttributesEditor';
@@ -149,13 +150,17 @@ const AdminProducts = () => {
   const [galleryUploading, setGalleryUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
-  const [aiLoading, setAiLoading] = useState<string | null>(null); // which field is generating
+  const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [aiCardLoading, setAiCardLoading] = useState(false);
   const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo'>('dark_neon');
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
   const [shortDescOptions, setShortDescOptions] = useState<string[]>([]);
   const [showShortDescPicker, setShowShortDescPicker] = useState(false);
+  // Bulk select state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [showBulkConfirm, setShowBulkConfirm] = useState(false);
 
   // ── AI Content Generator ─────────────────────────────────────
   const generateAiContent = async (type: 'short_description' | 'description' | 'seo' | 'all') => {
@@ -518,6 +523,37 @@ const AdminProducts = () => {
     const { error } = await supabase.from('products').delete().eq('id', id);
     if (error) toast.error('Failed to delete');
     else { toast.success('Product deleted'); fetchProducts(); }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map(p => p.id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    setBulkDeleting(true);
+    const ids = Array.from(selectedIds);
+    const { error } = await supabase.from('products').delete().in('id', ids);
+    setBulkDeleting(false);
+    setShowBulkConfirm(false);
+    if (error) {
+      toast.error('Bulk delete failed: ' + error.message);
+    } else {
+      toast.success(`${ids.length}টি প্রোডাক্ট ডিলিট হয়েছে`);
+      setSelectedIds(new Set());
+      fetchProducts();
+    }
   };
 
   const handleEdit = (product: Product) => {
@@ -1576,6 +1612,62 @@ const AdminProducts = () => {
 
       {/* ======= PRODUCTS TABLE ======= */}
       <div className="glass-card rounded-2xl overflow-hidden">
+
+        {/* Bulk Action Bar */}
+        {selectedIds.size > 0 && (
+          <div className="flex items-center justify-between px-4 py-3 bg-destructive/10 border-b border-destructive/20">
+            <span className="text-sm font-medium text-destructive">
+              {selectedIds.size}টি প্রোডাক্ট সিলেক্ট করা হয়েছে
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                className="text-xs px-3 py-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground transition-colors"
+              >
+                বাতিল করুন
+              </button>
+              <button
+                onClick={() => setShowBulkConfirm(true)}
+                disabled={bulkDeleting}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors disabled:opacity-50"
+              >
+                <Trash2 size={13} />
+                {selectedIds.size}টি ডিলিট করুন
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Bulk Delete Confirmation Modal */}
+        {showBulkConfirm && (
+          <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="glass-card rounded-2xl p-6 max-w-sm w-full space-y-4">
+              <div className="flex items-center gap-3 text-destructive">
+                <AlertTriangle size={24} />
+                <h3 className="text-lg font-bold">নিশ্চিত করুন</h3>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                আপনি কি সত্যিই <strong className="text-foreground">{selectedIds.size}টি</strong> প্রোডাক্ট ডিলিট করতে চান? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowBulkConfirm(false)}
+                  className="flex-1 glass-card py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  বাতিল
+                </button>
+                <button
+                  onClick={handleBulkDelete}
+                  disabled={bulkDeleting}
+                  className="flex-1 bg-destructive text-destructive-foreground py-2.5 rounded-xl text-sm font-semibold hover:bg-destructive/90 transition-colors disabled:opacity-50"
+                >
+                  {bulkDeleting ? <Loader2 size={14} className="animate-spin mx-auto" /> : 'হ্যাঁ, ডিলিট করুন'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="p-8 space-y-3">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-14 bg-muted/30 rounded-xl animate-pulse" />)}</div>
         ) : filtered.length === 0 ? (
@@ -1588,6 +1680,13 @@ const AdminProducts = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/20">
+                  <th className="px-4 py-3 w-10">
+                    <button onClick={toggleSelectAll} className="text-muted-foreground hover:text-primary transition-colors">
+                      {selectedIds.size === filtered.length && filtered.length > 0
+                        ? <CheckSquare size={16} className="text-primary" />
+                        : <Square size={16} />}
+                    </button>
+                  </th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Product</th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden md:table-cell">Type</th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Price</th>
@@ -1598,7 +1697,14 @@ const AdminProducts = () => {
               </thead>
               <tbody className="divide-y divide-border/30">
                 {filtered.map((product) => (
-                  <tr key={product.id} className="hover:bg-muted/10 transition-colors">
+                  <tr key={product.id} className={`hover:bg-muted/10 transition-colors ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>
+                    <td className="px-4 py-3">
+                      <button onClick={() => toggleSelect(product.id)} className="text-muted-foreground hover:text-primary transition-colors">
+                        {selectedIds.has(product.id)
+                          ? <CheckSquare size={16} className="text-primary" />
+                          : <Square size={16} />}
+                      </button>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex-shrink-0">
