@@ -389,7 +389,7 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
                 background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
                 boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
               }}>
-              <CreditCard size={12} /> Order Now
+              <CreditCard size={12} /> Buy Now
             </button>
             <div className="grid grid-cols-2 gap-2">
               <button
