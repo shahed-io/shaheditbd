@@ -546,10 +546,26 @@ const Checkout = () => {
             </div>
           )}
 
+          {/* bKash Auto-Pay button (only for bkash_merchant) */}
+          {paymentMethod === 'bkash_merchant' && (
+            <button
+              type="button"
+              onClick={handleBkashAutoPay}
+              disabled={loading || !termsAccepted || items.length === 0}
+              className="w-full py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-[#E2136E] hover:bg-[#c4105d] text-white transition-colors shadow-lg"
+            >
+              {loading ? (
+                <><Loader2 size={16} className="animate-spin" /> Processing...</>
+              ) : (
+                <><Zap size={16} /> bKash দিয়ে পেমেন্ট করুন — ৳{finalTotal.toLocaleString()}</>
+              )}
+            </button>
+          )}
+
           <button
             type="submit"
-            disabled={loading || !termsAccepted || items.length === 0}
-            className="w-full btn-glow py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            disabled={loading || !termsAccepted || items.length === 0 || paymentMethod === 'bkash_merchant'}
+            className={`w-full btn-glow py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${paymentMethod === 'bkash_merchant' ? 'hidden' : ''}`}
           >
             {loading ? (
               <><Loader2 size={16} className="animate-spin" /> Processing...</>
