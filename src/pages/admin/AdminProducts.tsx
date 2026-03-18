@@ -934,19 +934,45 @@ const AdminProducts = () => {
                                 />
                               )}
                             </div>
-                            {/* Price fields */}
+                             {/* Price fields */}
                             <div className="grid grid-cols-2 gap-2">
                               <div>
                                 <label className={lc}>বিক্রয় মূল্য (৳) *</label>
                                 <input
                                   type="number"
                                   value={plan.price}
-                                  onChange={e => setForm(p => ({
-                                    ...p,
-                                    duration_plans: p.duration_plans.map((pl, i) =>
-                                      i === idx ? { ...pl, price: e.target.value } : pl
-                                    )
-                                  }))}
+                                  onChange={e => {
+                                    const newPrice = e.target.value;
+                                    setForm(p => {
+                                      const updatedPlans = p.duration_plans.map((pl, i) =>
+                                        i === idx ? { ...pl, price: newPrice } : pl
+                                      );
+                                      // Auto-sync: use lowest plan price as the main product price
+                                      const validPrices = updatedPlans
+                                        .map(pl => parseFloat(pl.price))
+                                        .filter(v => !isNaN(v) && v > 0);
+                                      const minPrice = validPrices.length > 0 ? Math.min(...validPrices) : null;
+                                      // Also sync original_price from lowest plan's original_price
+                                      const lowestPlan = updatedPlans.find(pl => parseFloat(pl.price) === minPrice);
+                                      const newOrigPrice = lowestPlan?.original_price || p.original_price;
+                                      const newPriceStr = minPrice !== null ? String(minPrice) : p.price;
+                                      const o = parseFloat(newOrigPrice);
+                                      const pr = parseFloat(newPriceStr);
+                                      let disc = p.discount_percent;
+                                      if (o > 0 && pr > 0 && o > pr) {
+                                        disc = String(Math.round(((o - pr) / o) * 100));
+                                      } else if (o > 0 && pr >= o) {
+                                        disc = '0';
+                                      }
+                                      return {
+                                        ...p,
+                                        duration_plans: updatedPlans,
+                                        price: newPriceStr,
+                                        original_price: newOrigPrice,
+                                        discount_percent: disc,
+                                      };
+                                    });
+                                  }}
                                   placeholder="০"
                                   className={`${ic} text-xs`}
                                 />
@@ -956,12 +982,35 @@ const AdminProducts = () => {
                                 <input
                                   type="number"
                                   value={plan.original_price}
-                                  onChange={e => setForm(p => ({
-                                    ...p,
-                                    duration_plans: p.duration_plans.map((pl, i) =>
-                                      i === idx ? { ...pl, original_price: e.target.value } : pl
-                                    )
-                                  }))}
+                                  onChange={e => {
+                                    const newOrig = e.target.value;
+                                    setForm(p => {
+                                      const updatedPlans = p.duration_plans.map((pl, i) =>
+                                        i === idx ? { ...pl, original_price: newOrig } : pl
+                                      );
+                                      // Sync original_price from the lowest-priced plan
+                                      const validPrices = updatedPlans
+                                        .map(pl => parseFloat(pl.price))
+                                        .filter(v => !isNaN(v) && v > 0);
+                                      const minPrice = validPrices.length > 0 ? Math.min(...validPrices) : null;
+                                      const lowestPlan = updatedPlans.find(pl => parseFloat(pl.price) === minPrice);
+                                      const syncedOrig = lowestPlan?.original_price || p.original_price;
+                                      const pr = parseFloat(p.price);
+                                      const o = parseFloat(syncedOrig);
+                                      let disc = p.discount_percent;
+                                      if (o > 0 && pr > 0 && o > pr) {
+                                        disc = String(Math.round(((o - pr) / o) * 100));
+                                      } else if (o > 0 && pr >= o) {
+                                        disc = '0';
+                                      }
+                                      return {
+                                        ...p,
+                                        duration_plans: updatedPlans,
+                                        original_price: syncedOrig,
+                                        discount_percent: disc,
+                                      };
+                                    });
+                                  }}
                                   placeholder="০"
                                   className={`${ic} text-xs`}
                                 />
