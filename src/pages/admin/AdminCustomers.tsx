@@ -287,6 +287,8 @@ export default function AdminCustomers() {
                   { icon: Calendar,  label: 'Joined',   value: format(new Date(selected.created_at), 'dd MMM yyyy') },
                   { icon: ShoppingBag, label: 'Orders', value: String(selected.order_count ?? 0) },
                   { icon: TrendingUp,  label: 'Total Spent', value: `৳${(selected.total_spent ?? 0).toLocaleString()}` },
+                  { icon: Award,       label: 'Points Balance', value: `${(selected.points_balance ?? 0).toLocaleString()} pts` },
+                  { icon: Star,        label: 'Total Earned',   value: `${(selected.total_points_earned ?? 0).toLocaleString()} pts` },
                   { icon: Calendar,  label: 'Last Order', value: selected.last_order ? format(new Date(selected.last_order), 'dd MMM yyyy') : '—' },
                 ].map(item => (
                   <div key={item.label} className="glass-card rounded-lg p-3 border border-border/50">
