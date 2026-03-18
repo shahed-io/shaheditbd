@@ -209,7 +209,14 @@ serve(async (req) => {
         continue;
       }
 
-      const responseData = await response.json();
+      let responseData: any;
+      try {
+        responseData = await response.json();
+      } catch (bodyErr) {
+        console.warn(`Body read error on ${model}: ${bodyErr}. Retrying next model...`);
+        await new Promise(r => setTimeout(r, 1000));
+        continue;
+      }
 
       if (responseData.error) {
         const code = responseData.error?.code;
