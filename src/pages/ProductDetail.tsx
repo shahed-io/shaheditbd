@@ -855,12 +855,15 @@ const ProductDetail = () => {
                   {/* Buy Now — full-width primary */}
                   <button
                     onClick={() => setShowModal(true)}
-                    className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                    className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                     style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(230,75%,58%) 40%, hsl(200,90%,48%) 100%)',
-                      boxShadow: '0 4px 24px hsla(258,78%,55%,0.45), 0 1px 0 hsla(0,0%,100%,0.30) inset',
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(245,243,255,0.82) 50%, rgba(235,245,255,0.88) 100%)',
+                      backdropFilter: 'blur(20px)',
+                      WebkitBackdropFilter: 'blur(20px)',
+                      border: '1.5px solid rgba(255,255,255,0.95)',
+                      boxShadow: '0 4px 24px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,1) inset, 0 -1px 0 hsla(258,78%,55%,0.08) inset',
+                      color: 'hsl(258,78%,48%)',
                       letterSpacing: '0.02em',
-                      textShadow: '0 1px 4px hsla(258,78%,30%,0.30)',
                     }}
                   >
                     <CreditCard size={18} strokeWidth={2.5} /> Buy Now
@@ -870,11 +873,14 @@ const ProductDetail = () => {
                   <div className="grid grid-cols-2 gap-2.5">
                     {/* WhatsApp */}
                     <button onClick={waOrder}
-                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={{
-                        background: 'linear-gradient(135deg, hsl(258,78%,56%) 0%, hsl(230,75%,62%) 60%, hsl(210,80%,60%) 100%)',
-                        boxShadow: '0 2px 16px hsla(258,78%,55%,0.35), 0 1px 0 hsla(0,0%,100%,0.25) inset',
-                        textShadow: '0 1px 3px hsla(258,78%,25%,0.25)',
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(243,242,255,0.76) 100%)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        border: '1.5px solid rgba(255,255,255,0.90)',
+                        boxShadow: '0 2px 16px hsla(258,78%,55%,0.12), 0 1px 0 rgba(255,255,255,1) inset',
+                        color: 'hsl(258,78%,48%)',
                       }}>
                       <MessageCircle size={15} strokeWidth={2.5} /> WhatsApp
                     </button>
@@ -882,19 +888,19 @@ const ProductDetail = () => {
                     {/* Cart */}
                     <button
                       onClick={() => addToCart(cartItem)}
-                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
-                      style={inCart
-                        ? {
-                            background: 'linear-gradient(135deg, hsl(258,78%,50%) 0%, hsl(220,78%,56%) 100%)',
-                            boxShadow: '0 2px 16px hsla(258,78%,55%,0.40), 0 1px 0 hsla(0,0%,100%,0.25) inset',
-                            textShadow: '0 1px 3px hsla(258,78%,25%,0.25)',
-                          }
-                        : {
-                            background: 'linear-gradient(135deg, hsl(200,90%,46%) 0%, hsl(215,82%,54%) 50%, hsl(235,75%,60%) 100%)',
-                            boxShadow: '0 2px 16px hsla(200,90%,45%,0.35), 0 1px 0 hsla(0,0%,100%,0.25) inset',
-                            textShadow: '0 1px 3px hsla(200,90%,20%,0.25)',
-                          }
-                      }
+                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                      style={{
+                        background: inCart
+                          ? 'linear-gradient(135deg, rgba(240,255,248,0.88) 0%, rgba(230,250,255,0.82) 100%)'
+                          : 'linear-gradient(135deg, rgba(235,248,255,0.88) 0%, rgba(230,242,255,0.82) 100%)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        border: '1.5px solid rgba(255,255,255,0.90)',
+                        boxShadow: inCart
+                          ? '0 2px 16px hsla(162,72%,46%,0.18), 0 1px 0 rgba(255,255,255,1) inset'
+                          : '0 2px 16px hsla(200,90%,45%,0.15), 0 1px 0 rgba(255,255,255,1) inset',
+                        color: inCart ? 'hsl(162,72%,38%)' : 'hsl(200,90%,38%)',
+                      }}
                     >
                       <ShoppingCart size={15} strokeWidth={2.5} />
                       {inCart ? '✓ Added' : 'Cart'}
