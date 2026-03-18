@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/store/Navbar';
 import HeroBanner from '@/components/store/HeroBanner';
 import Categories from '@/components/store/Categories';
@@ -9,8 +11,22 @@ import Footer from '@/components/store/Footer';
 import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
 import { organizationSchema, websiteSchema } from '@/components/seo/schemas';
+import AuthModal from '@/components/store/AuthModal';
 
 const Index = () => {
+  const [searchParams] = useSearchParams();
+  const [authOpen, setAuthOpen] = useState(false);
+
+  // Auto-open signup modal when ?ref= is in URL
+  useEffect(() => {
+    const refCode = searchParams.get('ref');
+    if (refCode) {
+      // Small delay so page loads first
+      const timer = setTimeout(() => setAuthOpen(true), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
@@ -30,6 +46,7 @@ const Index = () => {
       <Testimonials />
       <Footer />
       <FloatingButtons />
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </div>
   );
 };
