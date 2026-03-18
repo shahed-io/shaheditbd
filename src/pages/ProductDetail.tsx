@@ -8,7 +8,8 @@ import Footer from '@/components/store/Footer';
 import {
   ShoppingCart, MessageCircle, CreditCard, Star, Zap, Shield, Clock,
   CheckCircle2, ChevronLeft, ChevronRight, Heart, Package, Tag,
-  Truck, ArrowLeft, Share2, Copy, Check, ChevronDown, AlertCircle
+  Truck, ArrowLeft, Share2, Copy, Check, ChevronDown, AlertCircle,
+  ThumbsUp, Send, User
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
 import SEOHead from '@/components/seo/SEOHead';
