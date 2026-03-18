@@ -573,6 +573,10 @@ const AdminProducts = () => {
     const parsedDurationPlans = (() => {
       try { return durationPlansAttr ? JSON.parse(durationPlansAttr.value) : []; } catch { return []; }
     })();
+    // Parse short_description into bullets
+    const existingBullets = product.short_description
+      ? product.short_description.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean)
+      : [''];
     setForm({
       name: product.name,
       slug: (product as any).slug && !/^[0-9a-f-]{36}$/.test((product as any).slug)
@@ -580,6 +584,7 @@ const AdminProducts = () => {
         : generateSlug(product.name),
       subtitle: subtitleAttr?.value || '',
       short_description: product.short_description || '',
+      short_desc_bullets: existingBullets.length ? existingBullets : [''],
       description: product.description || '',
       brand: product.brand || '',
       badge: product.badge || '',
