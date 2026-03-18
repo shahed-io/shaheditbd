@@ -888,7 +888,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   ru: {
-    tab_profile: 'Профиль', tab_orders: 'Мои Заказы', tab_wallet: 'Кошелёк', tab_wishlist: 'Список Желаний',
+    tab_profile: 'Профиль', tab_orders: 'Мои Заказы', tab_wallet: 'Кошелёк', tab_points: 'Баллы', tab_wishlist: 'Список Желаний',
     tab_addresses: 'Адреса', tab_notifications: 'Уведомления', tab_referral: 'Реферальная программа',
     tab_security: 'Безопасность', tab_language: 'Язык', tab_logout: 'Выйти', menu: 'Меню',
     profile_title: 'Профиль', profile_subtitle: 'Управляйте личной информацией',
