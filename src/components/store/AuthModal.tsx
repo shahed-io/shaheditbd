@@ -76,15 +76,22 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 p_referred_user_id: userId,
               });
               if ((refResult as any)?.success) {
-                toast.success('🎉 রেফারেল কোড প্রয়োগ হয়েছে! আপনি ৳10 ক্রেডিট ও 10% স্থায়ী ছাড় পেয়েছেন');
+                const referredReward = (refResult as any)?.referred_reward || 10;
+                toast.success(`🎉 রেফারেল বোনাস! ৳${referredReward} সরাসরি আপনার ওয়ালেটে যোগ হয়েছে + ১০% স্থায়ী ছাড় সক্রিয়!`);
                 processed = true;
                 break;
-              } else if ((refResult as any)?.error && (refResult as any).error !== 'User not found') {
-                // Non-transient error — give up
-                toast.warning('রেফারেল কোড সঠিক নয়।');
-                break;
+              } else if ((refResult as any)?.error) {
+                const err = (refResult as any).error;
+                if (err === 'User not found' || err === 'Invalid referral code' && attempt < 4) {
+                  // Profile not ready yet or code not found — retry
+                  continue;
+                }
+                if (err !== 'User not found') {
+                  toast.warning('রেফারেল কোড সঠিক নয় অথবা আগেই ব্যবহার করা হয়েছে।');
+                  break;
+                }
               }
-              // If "User not found" — profile not ready yet, retry
+              // profile not ready yet — retry
             } catch { /* retry */ }
           }
           if (!processed) {
