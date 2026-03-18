@@ -166,54 +166,87 @@ serve(async (req) => {
       userContent.push({ type: "image_url", image_url: { url: imageUrl } });
     }
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3.1-flash-image-preview",
-        messages: [{ role: "user", content: userContent }],
-        modalities: ["image", "text"],
-      }),
-    });
+    // Try primary model first, fallback to secondary on 429
+    const MODELS = [
+      "google/gemini-2.5-flash-image",
+      "google/gemini-3.1-flash-image-preview",
+    ];
 
-    if (!response.ok) {
-      if (response.status === 429)
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      if (response.status === 402)
+    let data: any = null;
+
+    for (let attempt = 0; attempt < MODELS.length; attempt++) {
+      const model = MODELS[attempt];
+      console.log(`Attempt ${attempt + 1} with model: ${model}`);
+
+      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: "user", content: userContent }],
+          modalities: ["image", "text"],
+        }),
+      });
+
+      if (response.status === 402) {
         return new Response(
           JSON.stringify({ error: "Insufficient AI credits. Please top up your workspace." }),
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
-      const errText = await response.text();
-      throw new Error(`AI gateway error ${response.status}: ${errText}`);
+      }
+
+      if (response.status === 429) {
+        console.warn(`Model ${model} rate limited, trying next...`);
+        if (attempt === MODELS.length - 1) {
+          return new Response(
+            JSON.stringify({ error: "সার্ভার এখন ব্যস্ত। ১-২ মিনিট পর আবার চেষ্টা করুন।" }),
+            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        // Small delay before trying next model
+        await new Promise(r => setTimeout(r, 1500));
+        continue;
+      }
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`AI gateway error ${response.status}: ${errText}`);
+      }
+
+      const responseData = await response.json();
+
+      // Check for API-level errors in body (e.g. rate limit returned as 200)
+      if (responseData.error) {
+        const errCode = responseData.error?.code;
+        console.error(`Model ${model} body error:`, JSON.stringify(responseData.error));
+        if (errCode === 429 || responseData.error?.status === 429) {
+          if (attempt === MODELS.length - 1) {
+            return new Response(
+              JSON.stringify({ error: "সার্ভার এখন ব্যস্ত। ১-২ মিনিট পর আবার চেষ্টা করুন।" }),
+              { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+          }
+          await new Promise(r => setTimeout(r, 1500));
+          continue;
+        }
+        if (errCode === 402) {
+          return new Response(
+            JSON.stringify({ error: "Insufficient AI credits. Please top up your workspace." }),
+            { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        throw new Error(responseData.error?.message || "AI gateway error");
+      }
+
+      data = responseData;
+      break;
     }
 
-    const data = await response.json();
-
-    // Check for API-level errors returned with 200 status (e.g., rate limits from provider)
-    if (data.error) {
-      const errCode = data.error?.code;
-      const errMsg = data.error?.message || "AI gateway error";
-      console.error("AI gateway returned error in body:", JSON.stringify(data.error));
-      if (errCode === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please wait a moment and try again." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (errCode === 402) {
-        return new Response(
-          JSON.stringify({ error: "Insufficient AI credits. Please top up your workspace." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      throw new Error(errMsg);
+    if (!data) {
+      throw new Error("সকল AI মডেল রেট লিমিটেড। একটু পর আবার চেষ্টা করুন।");
     }
 
     console.log("AI response keys:", JSON.stringify(Object.keys(data)));
