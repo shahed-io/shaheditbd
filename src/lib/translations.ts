@@ -831,7 +831,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   pt: {
-    tab_profile: 'Perfil', tab_orders: 'Meus Pedidos', tab_wallet: 'Carteira', tab_wishlist: 'Lista de Desejos',
+    tab_profile: 'Perfil', tab_orders: 'Meus Pedidos', tab_wallet: 'Carteira', tab_points: 'Pontos', tab_wishlist: 'Lista de Desejos',
     tab_addresses: 'Endereços', tab_notifications: 'Notificações', tab_referral: 'Indicações',
     tab_security: 'Segurança', tab_language: 'Idioma', tab_logout: 'Sair', menu: 'Menu',
     profile_title: 'Perfil', profile_subtitle: 'Gerencie suas informações pessoais',
