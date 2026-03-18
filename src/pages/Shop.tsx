@@ -163,8 +163,13 @@ const Shop = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title={activeCategory ? `${activeCategory.name} — Shahed Store` : 'সব প্রোডাক্ট — Shahed Store'}
-        description="ডিজিটাল সফটওয়্যার, লাইসেন্স কী, সাবস্ক্রিপশন সেরা দামে।"
+        title={activeCategory
+          ? `${activeCategory.name} | Buy ${activeCategory.name} Online – Best Price Bangladesh`
+          : 'Buy Digital Software, License Keys & Subscriptions – Best Price in Bangladesh'}
+        description={activeCategory
+          ? `Buy original ${activeCategory.name} at the best price in Bangladesh. Instant delivery, genuine license keys. Shahed Store – Bangladesh's most trusted digital software shop.`
+          : 'Shop Windows, Office, Adobe, Antivirus, VPN, Streaming subscriptions & all digital software at the lowest price in Bangladesh. 100% genuine. Instant delivery.'}
+        canonical={activeCatSlug ? `https://shahedstore.com.bd/shop?category=${activeCatSlug}` : 'https://shahedstore.com.bd/shop'}
       />
       <Navbar />
 
