@@ -65,6 +65,9 @@ interface Notification {
 interface Referral {
   id: string; referral_code: string; status: string;
   reward_amount: number; created_at: string;
+  referred_id: string | null;
+  referred_name?: string;
+  referred_email?: string;
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
