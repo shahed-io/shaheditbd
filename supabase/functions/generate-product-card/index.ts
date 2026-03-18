@@ -195,6 +195,27 @@ serve(async (req) => {
     }
 
     const data = await response.json();
+
+    // Check for API-level errors returned with 200 status (e.g., rate limits from provider)
+    if (data.error) {
+      const errCode = data.error?.code;
+      const errMsg = data.error?.message || "AI gateway error";
+      console.error("AI gateway returned error in body:", JSON.stringify(data.error));
+      if (errCode === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please wait a moment and try again." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (errCode === 402) {
+        return new Response(
+          JSON.stringify({ error: "Insufficient AI credits. Please top up your workspace." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      throw new Error(errMsg);
+    }
+
     console.log("AI response keys:", JSON.stringify(Object.keys(data)));
     console.log("choices[0].message keys:", JSON.stringify(Object.keys(data.choices?.[0]?.message || {})));
 
