@@ -150,6 +150,13 @@ const UserDashboard = () => {
   const [topupTxId, setTopupTxId] = useState('');
   const [topupProcessing, setTopupProcessing] = useState(false);
   const [selectedLang, setSelectedLang] = useState<LangCode>(getStoredLang());
+  // Points state
+  const [pointsBalance, setPointsBalance] = useState(0);
+  const [totalPointsEarned, setTotalPointsEarned] = useState(0);
+  const [pointsTx, setPointsTx] = useState<any[]>([]);
+  const [pointsLoading, setPointsLoading] = useState(false);
+  const [redeemPoints, setRedeemPoints] = useState('');
+  const [redeemProcessing, setRedeemProcessing] = useState(false);
 
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
   useEffect(() => { if (user) fetchProfile(); }, [user]);
@@ -160,13 +167,52 @@ const UserDashboard = () => {
     if (activeTab === 'notifications') fetchNotifications();
     if (activeTab === 'referral') fetchReferrals();
     if (activeTab === 'wallet') fetchWallet();
+    if (activeTab === 'points') fetchPoints();
   }, [activeTab, user]);
 
   const fetchProfile = async () => {
     if (!user) return;
-    const { data } = await supabase.from('profiles').select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount').eq('user_id', user.id).single();
-    if (data) setProfile({ display_name: data.display_name, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
-    else setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+    const { data } = await supabase.from('profiles').select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned').eq('user_id', user.id).single();
+    if (data) {
+      setProfile({ display_name: data.display_name, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
+      setPointsBalance((data as any).points_balance || 0);
+      setTotalPointsEarned((data as any).total_points_earned || 0);
+    } else {
+      setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+    }
+  };
+
+  const fetchPoints = async () => {
+    if (!user) return; setPointsLoading(true);
+    const [profileRes, txRes] = await Promise.all([
+      supabase.from('profiles').select('points_balance, total_points_earned').eq('user_id', user.id).single(),
+      (supabase as any).from('point_transactions').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
+    ]);
+    setPointsBalance((profileRes.data as any)?.points_balance || 0);
+    setTotalPointsEarned((profileRes.data as any)?.total_points_earned || 0);
+    setPointsTx(txRes.data || []);
+    setPointsLoading(false);
+  };
+
+  const handleRedeemPoints = async () => {
+    if (!user) return;
+    const pts = parseInt(redeemPoints);
+    if (!pts || pts < 2) { toast.error('ন্যূনতম ২ পয়েন্ট রিডিম করতে হবে'); return; }
+    if (pts % 2 !== 0) { toast.error('পয়েন্ট অবশ্যই ২ এর গুণিতক হতে হবে (যেমন: ২, ৪, ১০, ২০...)'); return; }
+    if (pts > pointsBalance) { toast.error('পর্যাপ্ত পয়েন্ট নেই'); return; }
+    setRedeemProcessing(true);
+    try {
+      const { data } = await (supabase as any).rpc('redeem_points', { p_user_id: user.id, p_points: pts });
+      if (data?.success) {
+        toast.success(`✅ ${pts} পয়েন্ট রিডিম করে ৳${data.taka_credited} ওয়ালেটে যোগ হয়েছে!`);
+        setRedeemPoints('');
+        fetchPoints();
+        fetchProfile();
+      } else {
+        toast.error(data?.error || 'রিডিম করা সম্ভব হয়নি');
+      }
+    } catch { toast.error('একটি সমস্যা হয়েছে, আবার চেষ্টা করুন'); }
+    setRedeemProcessing(false);
   };
 
   const fetchOrders = async () => {
