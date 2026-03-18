@@ -20,6 +20,12 @@ import { SITE_URL } from '@/components/seo/SEOHead';
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
 
+interface DurationPlan {
+  duration: string;
+  price: string;
+  original_price?: string;
+}
+
 interface ProductFull {
   id: string;
   name: string;
@@ -37,6 +43,7 @@ interface ProductFull {
   total_sales: number | null;
   variants: any;
   faq: any;
+  attributes: any;
   category_id: string | null;
   categories: { name: string; slug: string } | null;
   created_at: string;
@@ -80,19 +87,22 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
 
-  const [product,      setProduct]      = useState<ProductFull | null>(null);
-  const [loading,      setLoading]      = useState(true);
-  const [notFound,     setNotFound]     = useState(false);
-  const [activeImg,    setActiveImg]    = useState(0);
-  const [showModal,    setShowModal]    = useState(false);
-  const [copied,       setCopied]       = useState(false);
-  const [imgLoaded,    setImgLoaded]    = useState(false);
-  const [selectedOpts, setSelectedOpts] = useState<Record<string, string>>({});
-  const [customGroups, setCustomGroups] = useState<CustomOptionGroup[]>([]);
-  const [entered,      setEntered]      = useState(false);
-  const [quantity,     setQuantity]     = useState(1);
+  const [product,       setProduct]      = useState<ProductFull | null>(null);
+  const [loading,       setLoading]      = useState(true);
+  const [notFound,      setNotFound]     = useState(false);
+  const [activeImg,     setActiveImg]    = useState(0);
+  const [showModal,     setShowModal]    = useState(false);
+  const [copied,        setCopied]       = useState(false);
+  const [imgLoaded,     setImgLoaded]    = useState(false);
+  const [selectedOpts,  setSelectedOpts] = useState<Record<string, string>>({});
+  const [customGroups,  setCustomGroups] = useState<CustomOptionGroup[]>([]);
+  const [entered,       setEntered]      = useState(false);
+  const [quantity,      setQuantity]     = useState(1);
   // Keep selectedVar for legacy variants
-  const [selectedVar,  setSelectedVar]  = useState<Record<string, string>>({});
+  const [selectedVar,   setSelectedVar]  = useState<Record<string, string>>({});
+  // Duration plans from __duration_plans attribute
+  const [durationPlans, setDurationPlans] = useState<DurationPlan[]>([]);
+  const [selectedPlanIdx, setSelectedPlanIdx] = useState(0);
 
   // Section reveals
   const descReveal   = useReveal(0.05);
@@ -117,6 +127,18 @@ const ProductDetail = () => {
         const row = data?.[0];
         if (!row) { setNotFound(true); setLoading(false); return; }
         setProduct(row as any);
+
+        // Parse __duration_plans from attributes
+        const attrRaw = Array.isArray((row as any).attributes) ? (row as any).attributes : [];
+        const durationPlansAttr = attrRaw.find((a: any) => a.key === '__duration_plans');
+        const parsedPlans: DurationPlan[] = (() => {
+          try { return durationPlansAttr ? JSON.parse(durationPlansAttr.value) : []; } catch { return []; }
+        })();
+        const validPlans = parsedPlans.filter(p => p.duration?.trim() && p.price?.trim());
+        if (!cancelled && validPlans.length > 0) {
+          setDurationPlans(validPlans);
+          setSelectedPlanIdx(0);
+        }
 
         // Fetch custom option groups from new system
         const { data: groupData } = await supabase
@@ -222,10 +244,17 @@ const ProductDetail = () => {
   const inCart     = isInCart(product.id);
 
   // Compute displayed price:
-  // 1. Check new custom option groups (DB-driven)
-  // 2. Fall back to legacy variants (JSONB-driven)
-  // 3. Fall back to base price
+  // 1. Duration plans (__duration_plans attribute) — highest priority
+  // 2. Custom option groups (DB-driven)
+  // 3. Legacy variants (JSONB-driven)
+  // 4. Base price
+  const selectedPlan = durationPlans[selectedPlanIdx] || null;
   const getSelectedPrice = (): number => {
+    // Duration plans system
+    if (selectedPlan) {
+      const p = parseFloat(selectedPlan.price);
+      if (!isNaN(p) && p > 0) return p;
+    }
     // New system: custom option groups
     if (customGroups.length > 0) {
       for (const group of customGroups) {
@@ -245,25 +274,35 @@ const ProductDetail = () => {
     return product.price;
   };
   const displayPrice = getSelectedPrice();
-  const savings    = product.original_price ? product.original_price - displayPrice : 0;
-  const discount   = product.discount_percent || (product.original_price ? Math.round(savings / product.original_price * 100) : 0);
+
+  // Original price: use selected plan's original_price if available, else product's
+  const displayOriginalPrice = selectedPlan?.original_price
+    ? parseFloat(selectedPlan.original_price) || product.original_price
+    : product.original_price;
+
+  const savings  = displayOriginalPrice && displayOriginalPrice > displayPrice ? displayOriginalPrice - displayPrice : 0;
+  const discount = product.discount_percent || (displayOriginalPrice && displayOriginalPrice > displayPrice ? Math.round(savings / displayOriginalPrice * 100) : 0);
 
   // Build selected options string for WhatsApp/order
-  const selectedOptsStr = customGroups.length > 0
-    ? customGroups.map(g => {
-        const selId = selectedOpts[g.id];
-        const val = selId ? g.values.find(v => v.id === selId) : g.values.find(v => v.is_default) || g.values[0];
-        return val ? `${g.name}: ${val.label}` : null;
-      }).filter(Boolean).join(', ')
-    : Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`).join(', ');
+  const selectedOptsStr = [
+    ...(selectedPlan ? [`মেয়াদ: ${selectedPlan.duration}`] : []),
+    ...(customGroups.length > 0
+      ? customGroups.map(g => {
+          const selId = selectedOpts[g.id];
+          const val = selId ? g.values.find(v => v.id === selId) : g.values.find(v => v.is_default) || g.values[0];
+          return val ? `${g.name}: ${val.label}` : null;
+        }).filter(Boolean)
+      : Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`)),
+  ].join(', ');
 
   const cartItem = {
     id: product.id,
     name: product.name,
     category: product.categories?.name || '',
     price: displayPrice,
-    originalPrice: product.original_price || undefined,
+    originalPrice: displayOriginalPrice || undefined,
     image: product.image_url || PLACEHOLDER,
+    variant: selectedPlan ? selectedPlan.duration : undefined,
   };
 
   const waOrder = () => {
@@ -567,9 +606,9 @@ const ProductDetail = () => {
                     <span className="text-4xl font-sora font-black" style={{ color: 'hsl(258,78%,42%)' }}>
                       ৳{displayPrice.toLocaleString()}
                     </span>
-                    {product.original_price && product.original_price > displayPrice && (
+                    {displayOriginalPrice && displayOriginalPrice > displayPrice && (
                       <div className="flex flex-col">
-                        <div className="text-lg line-through" style={{ color: 'hsl(226,25%,62%)' }}>৳{product.original_price.toLocaleString()}</div>
+                        <div className="text-lg line-through" style={{ color: 'hsl(226,25%,62%)' }}>৳{displayOriginalPrice.toLocaleString()}</div>
                         {savings > 0 && (
                           <div className="text-xs font-bold" style={{ color: 'hsl(40,100%,48%)' }}>
                             Save ৳{savings.toLocaleString()}
@@ -587,7 +626,72 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              {/* ── Custom Option Groups (new DB system) ── */}
+              {/* ── Duration Plans Selector ── */}
+              {durationPlans.length > 0 && (
+                <div
+                  style={{
+                    opacity: entered ? 1 : 0,
+                    transform: entered ? 'none' : 'translateY(16px)',
+                    transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.38s',
+                  }}
+                >
+                  <p className="text-sm font-semibold mb-3" style={{ color: 'hsl(226,35%,28%)' }}>
+                    মেয়াদ ও মূল্য পরিকল্পনা
+                  </p>
+                  <div className="grid grid-cols-1 gap-2.5">
+                    {durationPlans.map((plan, idx) => {
+                      const planPrice = parseFloat(plan.price) || 0;
+                      const planOriginal = plan.original_price ? parseFloat(plan.original_price) : null;
+                      const planSavings = planOriginal && planOriginal > planPrice ? planOriginal - planPrice : 0;
+                      const planDiscount = planOriginal && planOriginal > planPrice ? Math.round(planSavings / planOriginal * 100) : 0;
+                      const isSel = selectedPlanIdx === idx;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setSelectedPlanIdx(idx)}
+                          className="w-full flex items-center justify-between px-4 py-3 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] active:scale-[0.99]"
+                          style={isSel ? {
+                            borderColor: 'hsl(258,78%,55%)',
+                            background: 'linear-gradient(135deg, hsla(258,78%,55%,0.10) 0%, hsla(185,90%,52%,0.07) 100%)',
+                            boxShadow: '0 0 0 3px hsla(258,78%,55%,0.12)',
+                          } : {
+                            borderColor: 'hsla(220,20%,82%,0.9)',
+                            background: 'rgba(255,255,255,0.65)',
+                            backdropFilter: 'blur(12px)',
+                          }}
+                        >
+                          {/* Left: duration + check */}
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors"
+                              style={{ borderColor: isSel ? 'hsl(258,78%,55%)' : 'hsl(220,20%,75%)' }}>
+                              {isSel && <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />}
+                            </div>
+                            <span className="font-bold text-sm" style={{ color: isSel ? 'hsl(258,78%,42%)' : 'hsl(226,35%,22%)' }}>
+                              {plan.duration}
+                            </span>
+                          </div>
+                          {/* Right: price */}
+                          <div className="flex items-center gap-2 text-right">
+                            {planOriginal && planOriginal > planPrice && (
+                              <span className="text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>৳{planOriginal.toLocaleString()}</span>
+                            )}
+                            <span className="font-black text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
+                              ৳{planPrice.toLocaleString()}
+                            </span>
+                            {planDiscount > 0 && (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                                style={{ color: 'hsl(0,85%,52%)', background: 'hsla(0,85%,55%,0.10)', border: '1px solid hsla(0,85%,55%,0.20)' }}>
+                                -{planDiscount}%
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
               {customGroups.map((group, gi) => {
                 const selValueId = selectedOpts[group.id];
                 const currentVal = selValueId
