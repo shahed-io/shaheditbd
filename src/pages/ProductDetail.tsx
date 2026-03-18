@@ -1410,7 +1410,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
         transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
       }}
     >
-      <div className="border-t border-border mb-8" />
+      <div className="border-t border-border mb-4" />
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
