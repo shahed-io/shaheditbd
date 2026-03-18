@@ -267,76 +267,76 @@ const HeroBanner = () => {
                 transform:  dir === 'in' ? 'scale(1)' : 'scale(0.94)',
                 transition: 'opacity 0.32s ease, transform 0.32s ease',
               }}>
-              {/* Corner glow dots */}
-              <div className="absolute top-0 left-0 w-3 h-3 rounded-full -translate-x-0.5 -translate-y-0.5 z-10"
-                style={{ background: slide.accentFrom, boxShadow: `0 0 10px 3px ${slide.accentFrom}` }} />
-              <div className="absolute top-0 right-0 w-3 h-3 rounded-full translate-x-0.5 -translate-y-0.5 z-10"
-                style={{ background: slide.accentTo, boxShadow: `0 0 10px 3px ${slide.accentTo}` }} />
-              <div className="absolute bottom-0 left-0 w-3 h-3 rounded-full -translate-x-0.5 translate-y-0.5 z-10"
-                style={{ background: slide.accentTo, boxShadow: `0 0 10px 3px ${slide.accentTo}` }} />
-              <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full translate-x-0.5 translate-y-0.5 z-10"
-                style={{ background: slide.accentFrom, boxShadow: `0 0 10px 3px ${slide.accentFrom}` }} />
+              {/* Corner glow dots — indigo-cyan theme */}
+              <div className="absolute top-0 left-0 w-2.5 h-2.5 rounded-full -translate-x-0.5 -translate-y-0.5 z-10"
+                style={{ background: 'hsl(258,78%,62%)', boxShadow: '0 0 10px 3px hsla(258,78%,62%,0.7)' }} />
+              <div className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full translate-x-0.5 -translate-y-0.5 z-10"
+                style={{ background: 'hsl(200,90%,55%)', boxShadow: '0 0 10px 3px hsla(200,90%,55%,0.7)' }} />
+              <div className="absolute bottom-0 left-0 w-2.5 h-2.5 rounded-full -translate-x-0.5 translate-y-0.5 z-10"
+                style={{ background: 'hsl(200,90%,55%)', boxShadow: '0 0 10px 3px hsla(200,90%,55%,0.7)' }} />
+              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full translate-x-0.5 translate-y-0.5 z-10"
+                style={{ background: 'hsl(258,78%,62%)', boxShadow: '0 0 10px 3px hsla(258,78%,62%,0.7)' }} />
 
-              {/* Light frosted glass inner card */}
-              <div className="relative overflow-hidden"
-                style={{
-                  borderRadius: 'calc(2rem - 2px)',
-                  background: `linear-gradient(155deg, white 0%, ${slide.accentFrom}0d 60%, ${slide.accentTo}08 100%)`,
-                  backdropFilter: 'blur(24px) saturate(180%)',
-                }}>
-                <div className="absolute top-0 left-0 right-0 h-[2px]"
-                  style={{ background: `linear-gradient(90deg, transparent 5%, ${slide.accentFrom}90 40%, ${slide.accentTo}70 60%, transparent 95%)` }} />
-                <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-                  style={{ background: `linear-gradient(to top, ${slide.accentFrom}10, transparent)` }} />
+              {/* White frosted glass inner card */}
+              <div className="relative overflow-hidden hero-card-inner">
+                {/* Shimmer top line */}
+                <div className="absolute top-0 left-0 right-0 h-[1.5px]"
+                  style={{ background: 'linear-gradient(90deg, transparent 5%, hsla(258,78%,65%,0.85) 35%, hsla(200,90%,60%,0.75) 65%, transparent 95%)' }} />
+                {/* Subtle dot grid */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(circle, ${slide.accentFrom}0f 1px, transparent 1px)`, backgroundSize: '20px 20px' }} />
+                  style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.05) 1px, transparent 1px)', backgroundSize: '18px 18px' }} />
+                {/* Top-left specular highlight */}
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ backgroundImage: `radial-gradient(ellipse at 15% 8%, rgba(255,255,255,0.85) 0%, transparent 45%)` }} />
+                  style={{ backgroundImage: 'radial-gradient(ellipse at 12% 6%, rgba(255,255,255,0.90) 0%, transparent 42%)' }} />
 
                 <div className="relative p-8">
                   {slide.comboSlide && slide.combo ? (
                     <>
                       <div className="flex items-center justify-between mb-5">
                         <div className="flex items-center gap-2">
-                          <Award size={18} style={{ color: slide.accentFrom }} />
+                          <Award size={18} style={{ color: 'hsl(258,78%,55%)' }} />
                           <span className="font-bold text-[11px] uppercase tracking-widest" style={{ color: 'hsl(226,35%,16%)' }}>Official Bundle</span>
                         </div>
-                        <Sparkles size={16} className="anim-spin-slow" style={{ color: slide.accentFrom }} />
+                        <Sparkles size={16} className="anim-spin-slow" style={{ color: 'hsl(258,78%,55%)' }} />
                       </div>
                       <div className="space-y-2.5 mb-5">
                         {slide.combo.map((item) => (
                           <div key={item.name}
                             className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all"
                             style={{
-                              background: item.highlight ? `linear-gradient(135deg, ${item.color}18, ${item.color}08)` : 'rgba(255,255,255,0.6)',
-                              border: item.highlight ? `1px solid ${item.color}50` : '1px solid rgba(255,255,255,0.8)',
-                              boxShadow: item.highlight ? `0 0 14px ${item.color}20` : 'none',
+                              background: item.highlight
+                                ? 'linear-gradient(135deg, hsla(258,78%,55%,0.10), hsla(200,90%,55%,0.06))'
+                                : 'rgba(255,255,255,0.70)',
+                              border: item.highlight
+                                ? '1px solid hsla(258,78%,65%,0.35)'
+                                : '1px solid rgba(255,255,255,0.85)',
+                              boxShadow: item.highlight ? '0 0 14px hsla(258,78%,55%,0.12)' : 'none',
                             }}>
                             <span className="text-2xl">{item.icon}</span>
                             <div className="flex-1 min-w-0">
                               <div className="font-bold text-[13px] leading-tight truncate" style={{ color: 'hsl(226,35%,16%)' }}>{item.name}</div>
-                              <div className="text-[10px] mt-0.5 font-semibold" style={{ color: item.color }}>{item.tag}</div>
+                              <div className="text-[10px] mt-0.5 font-semibold" style={{ color: 'hsl(258,78%,55%)' }}>{item.tag}</div>
                             </div>
                             {item.highlight && (
                               <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full text-white"
-                                style={{ background: item.color }}>OFFICIAL</span>
+                                style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))' }}>OFFICIAL</span>
                             )}
                           </div>
                         ))}
                       </div>
-                      <div className="pt-4 flex items-center justify-between" style={{ borderTop: `1px solid ${slide.accentFrom}25` }}>
+                      <div className="pt-4 flex items-center justify-between" style={{ borderTop: '1px solid hsla(258,78%,55%,0.14)' }}>
                         <div>
                           <div className="text-xs line-through font-fira" style={{ color: 'hsl(226,15%,55%)' }}>{slide.original}</div>
                           <div className="font-sora font-black text-[2rem] leading-none mt-0.5" style={{ color: 'hsl(226,35%,14%)' }}>{slide.price}</div>
                         </div>
                         <div className="rounded-2xl px-4 py-3 text-center"
-                          style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 4px 16px ${slide.accentFrom}50` }}>
+                          style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.40)' }}>
                           <div className="font-fira font-black text-[1.1rem] text-white leading-none">-{slide.off}</div>
                           <div className="text-[9px] text-white/80 uppercase tracking-wider mt-0.5">OFF</div>
                         </div>
                       </div>
-                      <button className="mt-4 w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all hover:scale-[1.02] hover:brightness-110"
-                        style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 6px 24px ${slide.accentFrom}55` }}>
+                      <button className="mt-4 w-full py-3.5 rounded-2xl font-bold text-sm text-white transition-all hover:scale-[1.02] hover:brightness-110"
+                        style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))', boxShadow: '0 6px 24px hsla(258,78%,55%,0.45)' }}>
                         Get Bundle →
                       </button>
                     </>
@@ -345,9 +345,9 @@ const HeroBanner = () => {
                       <div className="flex items-start justify-between mb-6">
                         <div className="w-14 h-14 rounded-2xl flex items-center justify-center overflow-hidden"
                           style={{
-                            background: slide.logoImg ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.9)',
-                            border: `1.5px solid ${slide.accentFrom}35`,
-                            boxShadow: `0 4px 20px ${slide.accentFrom}25, inset 0 1px 0 rgba(255,255,255,1)`,
+                            background: 'rgba(255,255,255,0.95)',
+                            border: '1.5px solid hsla(258,78%,65%,0.28)',
+                            boxShadow: '0 4px 20px hsla(258,78%,55%,0.14), inset 0 1px 0 rgba(255,255,255,1)',
                           }}>
                           {slide.logoImg
                             ? <img src={slide.logoImg} alt="product logo" className="w-10 h-10 object-contain" />
@@ -355,46 +355,48 @@ const HeroBanner = () => {
                           }
                         </div>
                         <div className="flex flex-col items-end gap-1">
-                          <Sparkles size={18} className="anim-spin-slow" style={{ color: slide.accentFrom }} />
+                          <Sparkles size={18} className="anim-spin-slow" style={{ color: 'hsl(258,78%,55%)' }} />
                           {slide.logoImg && (
                             <span className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full text-white"
-                              style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})` }}>
+                              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))' }}>
                               OFFICIAL
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div className="text-[10px] font-fira font-bold uppercase tracking-[0.22em] mb-2" style={{ color: slide.accentFrom }}>Featured Deal</div>
+                      <div className="text-[10px] font-fira font-bold uppercase tracking-[0.22em] mb-2" style={{ color: 'hsl(258,78%,55%)' }}>Featured Deal</div>
                       <div className="font-sora font-black text-[23px] leading-tight" style={{ color: 'hsl(226,35%,16%)' }}>
                         {slide.title}{' '}
-                        <span style={{ color: slide.accentFrom }}>{slide.titleAccent}</span>
+                        <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,46%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                          {slide.titleAccent}
+                        </span>
                       </div>
                       <div className="text-[13px] mt-1.5 font-medium leading-snug" style={{ color: 'hsl(226,20%,42%)' }}>{slide.subtitle}</div>
 
                       <div className="flex flex-wrap gap-2 mt-4">
                         {slide.features.map(f => (
                           <span key={f} className="text-[11px] font-semibold px-3 py-1.5 rounded-full"
-                            style={{ background: `${slide.accentFrom}12`, border: `1px solid ${slide.accentFrom}30`, color: slide.accentFrom }}>
+                            style={{ background: 'hsla(258,78%,55%,0.08)', border: '1px solid hsla(258,78%,65%,0.22)', color: 'hsl(258,78%,52%)' }}>
                             {f}
                           </span>
                         ))}
                       </div>
 
-                      <div className="mt-6 pt-4 flex items-center justify-between" style={{ borderTop: `1px solid ${slide.accentFrom}20` }}>
+                      <div className="mt-6 pt-4 flex items-center justify-between" style={{ borderTop: '1px solid hsla(258,78%,55%,0.12)' }}>
                         <div>
                           <div className="text-xs line-through font-fira" style={{ color: 'hsl(226,15%,55%)' }}>{slide.original}</div>
                           <div className="font-sora font-black text-[2.1rem] leading-none mt-0.5" style={{ color: 'hsl(226,35%,14%)' }}>{slide.price}</div>
                         </div>
                         <div className="rounded-xl px-4 py-3 text-center"
-                          style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 4px 16px ${slide.accentFrom}50` }}>
+                          style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.38)' }}>
                           <div className="font-fira font-black text-[1.1rem] leading-none text-white">-{slide.off}</div>
                           <div className="text-[9px] uppercase tracking-wider mt-0.5 text-white/80">OFF</div>
                         </div>
                       </div>
 
                       <button className="mt-5 w-full py-3.5 rounded-2xl font-bold text-[14px] text-white transition-all hover:scale-[1.02] hover:brightness-105 active:scale-[0.98]"
-                        style={{ background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`, boxShadow: `0 8px 28px ${slide.accentFrom}50` }}>
+                        style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))', boxShadow: '0 8px 28px hsla(258,78%,55%,0.40)' }}>
                         Order Now →
                       </button>
                     </>
@@ -403,18 +405,24 @@ const HeroBanner = () => {
               </div>
             </div>
 
-            {/* Floating stat cards — dynamic */}
+            {/* Floating stat cards — Glassmorphism */}
             {FLOATING.slice(0, 3).map((card, i) => {
               const pos = FLOAT_POSITIONS[i];
               return (
                 <div key={card.label}
-                  className="absolute glass-white rounded-2xl px-4 py-3 anim-float"
+                  className="absolute anim-float hero-float-card"
                   style={{ top: pos.top, left: pos.left, right: pos.right, animationDelay: pos.delay }}>
                   <div className="flex items-center gap-2.5">
-                    <span className="text-xl">{card.icon}</span>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.12), hsla(200,90%,55%,0.08))', border: '1px solid hsla(258,78%,65%,0.20)' }}>
+                      <span className="text-lg leading-none">{card.icon}</span>
+                    </div>
                     <div>
-                      <div className="text-[15px] font-sora font-black text-foreground leading-none">{card.value}</div>
-                      <div className="text-[10px] text-muted-foreground leading-none mt-0.5 font-medium">{card.label}</div>
+                      <div className="text-[15px] font-sora font-black leading-none"
+                        style={{ background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,46%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        {card.value}
+                      </div>
+                      <div className="text-[10px] leading-none mt-0.5 font-medium" style={{ color: 'hsl(226,20%,48%)' }}>{card.label}</div>
                     </div>
                   </div>
                 </div>
