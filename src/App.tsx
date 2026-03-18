@@ -88,9 +88,8 @@ const queryClient = new QueryClient({
   },
 });
 
-// Copy protection + admin body class management
+// Admin body class management
 const AppContent = () => {
-  useCopyProtection();
   const location = useLocation();
 
   useEffect(() => {
