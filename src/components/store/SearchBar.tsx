@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, X, Tag, TrendingUp, Zap, ArrowRight, Clock } from 'lucide-react';
+import { Search, X, Tag, TrendingUp, Zap, ArrowRight, Clock, Flame, Star, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,11 +13,13 @@ interface Product {
   image_url: string | null;
   short_description: string | null;
   category_id: string | null;
+  total_sales?: number | null;
 }
 
 interface Category {
   id: string;
   name: string;
+  slug: string;
 }
 
 const RECENT_KEY = 'shahed_recent_searches';
@@ -27,7 +29,7 @@ const getRecent = (): string[] => {
 };
 const addRecent = (q: string) => {
   const prev = getRecent().filter(r => r !== q);
-  localStorage.setItem(RECENT_KEY, JSON.stringify([q, ...prev].slice(0, 5)));
+  localStorage.setItem(RECENT_KEY, JSON.stringify([q, ...prev].slice(0, 6)));
 };
 
 interface SearchBarProps {
@@ -35,6 +37,391 @@ interface SearchBarProps {
   variant?: 'navbar' | 'standalone';
   onClose?: () => void;
 }
+
+// ── Desktop Command Palette ─────────────────────────────────────────
+const DesktopSearchPalette = ({ onClose }: { onClose: () => void }) => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<Product[]>([]);
+  const [trendingProducts, setTrendingProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(-1);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [recent, setRecent] = useState<string[]>(getRecent());
+  const inputRef = useRef<HTMLInputElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    inputRef.current?.focus();
+
+    // Load categories
+    supabase.from('categories').select('id, name, slug').eq('is_active', true).order('sort_order').limit(8)
+      .then(({ data }) => {
+        if (data) {
+          setCategories(data);
+          const map: Record<string, string> = {};
+          data.forEach((c: Category) => { map[c.id] = c.name; });
+          setCategoryMap(map);
+        }
+      });
+
+    // Load trending products
+    supabase.from('products').select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
+      .eq('status', 'active').order('total_sales', { ascending: false }).limit(6)
+      .then(({ data }) => { if (data) setTrendingProducts(data); });
+  }, []);
+
+  const search = useCallback(async (q: string, catId?: string | null) => {
+    if (!q.trim() && !catId) { setResults([]); return; }
+    setLoading(true);
+    setActiveIdx(-1);
+    try {
+      let qb = supabase.from('products')
+        .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
+        .eq('status', 'active');
+      if (q.trim()) qb = qb.or(`name.ilike.%${q}%,short_description.ilike.%${q}%`);
+      if (catId) qb = qb.eq('category_id', catId);
+      const { data } = await qb.order('total_sales', { ascending: false }).limit(8);
+      setResults(data || []);
+    } catch {
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setQuery(val);
+    setActiveCategory(null);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!val.trim()) { setResults([]); return; }
+    debounceRef.current = setTimeout(() => search(val, null), 250);
+  };
+
+  const handleCategoryFilter = (cat: Category) => {
+    setActiveCategory(cat.id === activeCategory ? null : cat.id);
+    const newCat = cat.id === activeCategory ? null : cat.id;
+    search(query, newCat);
+  };
+
+  const handleSelect = (product: Product) => {
+    addRecent(product.name);
+    setRecent(getRecent());
+    onClose();
+    navigate(`/product/${product.slug}`);
+  };
+
+  const handleRecentSelect = (term: string) => {
+    setQuery(term);
+    search(term, null);
+  };
+
+  const handleSubmit = () => {
+    if (!query.trim()) return;
+    addRecent(query);
+    onClose();
+    navigate(`/shop?q=${encodeURIComponent(query.trim())}${activeCategory ? `&category_id=${activeCategory}` : ''}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const items = results.length ? results : trendingProducts;
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIdx(i => Math.min(i + 1, items.length - 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActiveIdx(i => Math.max(i - 1, -1)); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (activeIdx >= 0 && items[activeIdx]) handleSelect(items[activeIdx]);
+      else handleSubmit();
+    } else if (e.key === 'Escape') onClose();
+  };
+
+  const highlight = (text: string, q: string) => {
+    if (!q.trim()) return <>{text}</>;
+    const idx = text.toLowerCase().indexOf(q.toLowerCase());
+    if (idx === -1) return <>{text}</>;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <mark className="bg-primary/20 text-primary font-semibold rounded-sm px-0.5 not-italic">{text.slice(idx, idx + q.length)}</mark>
+        {text.slice(idx + q.length)}
+      </>
+    );
+  };
+
+  const showRecent = !query.trim() && recent.length > 0;
+  const showTrending = !query.trim() && !activeCategory;
+  const showResults = results.length > 0 || loading;
+  const displayProducts = results.length > 0 ? results : (activeCategory ? [] : trendingProducts);
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Search Input */}
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-border/60">
+        <div className="flex items-center gap-3 flex-1 rounded-2xl px-4 py-3 border-2 transition-all duration-200"
+          style={{ borderColor: 'hsl(var(--primary))', background: 'hsl(var(--background))', boxShadow: '0 0 0 4px hsl(var(--primary)/0.08)' }}>
+          {loading
+            ? <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
+            : <Search size={18} className="text-primary flex-shrink-0" />
+          }
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            placeholder="প্রোডাক্ট, সফটওয়্যার, লাইসেন্স খুঁজুন..."
+            className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground text-foreground"
+          />
+          {query && (
+            <button onClick={() => { setQuery(''); setResults([]); setActiveCategory(null); inputRef.current?.focus(); }}
+              className="text-muted-foreground hover:text-foreground transition-colors p-0.5 rounded-lg hover:bg-muted/50">
+              <X size={15} />
+            </button>
+          )}
+        </div>
+        <button onClick={handleSubmit} disabled={!query.trim()}
+          className="px-5 py-3 rounded-2xl text-sm font-bold text-white flex items-center gap-2 flex-shrink-0 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+          style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', boxShadow: '0 4px 16px hsl(var(--primary)/0.35)' }}>
+          <Search size={16} /> খুঁজুন
+        </button>
+      </div>
+
+      {/* Category Quick Filters */}
+      {categories.length > 0 && (
+        <div className="px-5 py-3 border-b border-border/40 flex items-center gap-2 overflow-x-auto scrollbar-none flex-shrink-0">
+          <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest flex-shrink-0 mr-1">ক্যাটাগরি:</span>
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => handleCategoryFilter(cat)}
+              className="flex-shrink-0 text-[11px] font-semibold px-3 py-1.5 rounded-full border transition-all"
+              style={{
+                borderColor: activeCategory === cat.id ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                background: activeCategory === cat.id ? 'hsl(var(--primary)/0.12)' : 'hsl(var(--muted)/0.40)',
+                color: activeCategory === cat.id ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
+              }}>
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Body */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left: Recent + Results */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Recent Searches */}
+          {showRecent && !activeCategory && (
+            <div className="px-4 pt-4 pb-2">
+              <div className="flex items-center gap-2 px-2 mb-2">
+                <Clock size={12} className="text-muted-foreground" />
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">সাম্প্রতিক সার্চ</span>
+                <button onClick={() => { localStorage.removeItem(RECENT_KEY); setRecent([]); }}
+                  className="ml-auto text-[10px] text-muted-foreground hover:text-destructive transition-colors">মুছুন</button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {recent.map(term => (
+                  <button key={term} onClick={() => handleRecentSelect(term)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all text-sm text-foreground group">
+                    <Clock size={11} className="text-muted-foreground" />
+                    {term}
+                    <ChevronRight size={11} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Results Header */}
+          {(showResults || activeCategory) && (
+            <div className="px-5 pt-4 pb-2 flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                {loading ? (
+                  <span className="text-xs text-muted-foreground">খোঁজা হচ্ছে...</span>
+                ) : (
+                  <>
+                    <TrendingUp size={11} />
+                    <span><span className="font-semibold text-foreground">{results.length}</span> টি ফলাফল</span>
+                  </>
+                )}
+              </div>
+              {query && !loading && (
+                <button onClick={handleSubmit}
+                  className="text-xs text-primary font-semibold flex items-center gap-1 hover:underline">
+                  সব দেখুন <ChevronRight size={11} />
+                </button>
+              )}
+              {!query && !loading && (
+                <div className="flex items-center gap-1 text-xs text-primary font-medium">
+                  <Flame size={11} /> Trending
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Product List */}
+          {!loading && (
+            <ul className="px-2 pb-3 space-y-0.5">
+              {displayProducts.map((product, idx) => {
+                const catName = product.category_id ? categoryMap[product.category_id] : null;
+                const isActive = idx === activeIdx;
+                return (
+                  <li key={product.id}>
+                    <button
+                      onClick={() => handleSelect(product)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-left ${isActive ? 'bg-primary/8' : 'hover:bg-muted/50'}`}
+                      onMouseEnter={() => setActiveIdx(idx)}
+                    >
+                      {/* Thumbnail */}
+                      <div className="w-12 h-12 rounded-xl overflow-hidden bg-muted flex-shrink-0 border border-border/50">
+                        {product.image_url ? (
+                          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Tag size={18} className="text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground group-hover:text-primary truncate transition-colors leading-snug">
+                          {highlight(product.name, query)}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          {catName && (
+                            <span className="text-[10px] bg-primary/10 text-primary font-medium px-2 py-0.5 rounded-full flex-shrink-0">
+                              {catName}
+                            </span>
+                          )}
+                          {product.short_description && (
+                            <p className="text-xs text-muted-foreground truncate">
+                              {product.short_description.split('\n')[0]}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Price */}
+                      <div className="flex-shrink-0 text-right space-y-0.5">
+                        <div className="text-sm font-bold text-primary">৳{product.price.toLocaleString()}</div>
+                        {product.original_price && product.original_price > product.price && (
+                          <div className="text-[11px] text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
+                        )}
+                        {product.discount_percent && product.discount_percent > 0 && (
+                          <div className="text-[10px] bg-accent/15 text-accent font-bold rounded-full px-1.5 py-0.5">
+                            -{product.discount_percent}%
+                          </div>
+                        )}
+                      </div>
+
+                      <ArrowRight size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                    </button>
+                  </li>
+                );
+              })}
+
+              {/* Empty State */}
+              {!loading && query.trim() && results.length === 0 && (
+                <li className="px-3 py-10 text-center">
+                  <Search size={36} className="mx-auto mb-3 text-muted-foreground opacity-25" />
+                  <p className="text-sm font-medium text-foreground">কোনো ফলাফল পাওয়া যায়নি</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    "<span className="text-primary">{query}</span>" এর জন্য প্রোডাক্ট নেই
+                  </p>
+                </li>
+              )}
+
+              {/* Trending Placeholder */}
+              {!query.trim() && !activeCategory && trendingProducts.length === 0 && !loading && (
+                <li className="px-3 py-8 text-center">
+                  <p className="text-xs text-muted-foreground">ট্রেন্ডিং প্রোডাক্ট লোড হচ্ছে...</p>
+                </li>
+              )}
+            </ul>
+          )}
+
+          {/* Loading Skeleton */}
+          {loading && (
+            <div className="px-4 py-3 space-y-2">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="flex gap-3 animate-pulse px-2 py-2">
+                  <div className="w-12 h-12 rounded-xl bg-muted flex-shrink-0" />
+                  <div className="flex-1 space-y-2 pt-1">
+                    <div className="h-3.5 bg-muted rounded-lg w-3/4" />
+                    <div className="h-2.5 bg-muted rounded-lg w-1/2" />
+                  </div>
+                  <div className="w-16 space-y-2 pt-1">
+                    <div className="h-3.5 bg-muted rounded-lg" />
+                    <div className="h-2.5 bg-muted rounded-lg" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right: Trending Tags / Quick Links */}
+        <div className="w-52 flex-shrink-0 border-l border-border/50 overflow-y-auto p-4 space-y-5 hidden xl:block">
+          {/* Popular Tags */}
+          <div>
+            <div className="flex items-center gap-1.5 mb-3">
+              <Flame size={12} className="text-primary" />
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">জনপ্রিয় সার্চ</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {['Windows 11', 'Office 365', 'Netflix', 'Adobe', 'Antivirus', 'VPN', 'Spotify', 'Canva Pro'].map(tag => (
+                <button key={tag}
+                  onClick={() => { setQuery(tag); search(tag, null); }}
+                  className="text-[11px] px-2.5 py-1 rounded-full border border-border/60 hover:border-primary/50 hover:bg-primary/8 hover:text-primary transition-all text-muted-foreground">
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Top Categories */}
+          <div>
+            <div className="flex items-center gap-1.5 mb-3">
+              <Star size={12} className="text-primary" />
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">ক্যাটাগরি</span>
+            </div>
+            <div className="space-y-1">
+              {categories.slice(0, 6).map(cat => (
+                <button key={cat.id}
+                  onClick={() => { navigate(`/shop?category=${cat.slug}`); onClose(); }}
+                  className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-left hover:bg-muted/50 transition-colors group">
+                  <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{cat.name}</span>
+                  <ChevronRight size={11} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                </button>
+              ))}
+              <button onClick={() => { navigate('/shop'); onClose(); }}
+                className="w-full flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs text-primary font-semibold hover:bg-primary/8 transition-colors">
+                সব ক্যাটাগরি <ChevronRight size={11} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="px-5 py-2.5 border-t border-border/40 flex items-center justify-between flex-shrink-0"
+        style={{ background: 'hsl(var(--muted)/0.30)' }}>
+        <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
+          <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded border border-border/60 text-[9px] font-mono bg-background">↑↓</kbd> নেভিগেট</span>
+          <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded border border-border/60 text-[9px] font-mono bg-background">↵</kbd> সিলেক্ট</span>
+          <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded border border-border/60 text-[9px] font-mono bg-background">Esc</kbd> বন্ধ</kbd></span>
+        </div>
+        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+          <Zap size={10} className="text-primary" />
+          <span>Live Search</span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBarProps) => {
   const [query, setQuery] = useState('');
@@ -61,7 +448,6 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // Load categories for badge display
   useEffect(() => {
     supabase.from('categories').select('id, name').eq('is_active', true).then(({ data }) => {
       if (data) {
@@ -124,7 +510,6 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
     inputRef.current?.focus();
   };
 
-  // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!open) return;
     const items = results;
@@ -157,47 +542,51 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
   const showEmpty = !loading && query.trim() && results.length === 0;
   const showResults = !loading && results.length > 0;
 
-  if (variant === 'navbar') {
+  // Mobile / standalone variant — compact dropdown
+  if (variant === 'standalone') {
     return (
       <div ref={containerRef} className={`relative ${className}`}>
-        <div className={`flex items-center gap-2 rounded-2xl border-2 px-4 py-2.5 transition-all duration-300 ${
-          open ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.12)] bg-card' : 'border-border bg-secondary'
-        }`}>
-          {loading
-            ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
-            : <Search size={16} className="text-muted-foreground flex-shrink-0" />
-          }
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={handleChange}
-            onFocus={() => setOpen(true)}
-            onKeyDown={handleKeyDown}
-            placeholder="Search software, licenses…"
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground min-w-0"
-          />
-          {query && (
-            <button onClick={clear} className="text-muted-foreground hover:text-foreground flex-shrink-0">
-              <X size={14} />
-            </button>
-          )}
+        <div className="w-full flex gap-2">
+          <div className={`relative flex-1 flex items-center gap-2 rounded-xl border-2 px-4 py-3 transition-all duration-200 ${
+            open ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.1)] bg-card' : 'border-border bg-muted/30'
+          }`}>
+            {loading
+              ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              : <Search size={16} className="text-muted-foreground flex-shrink-0" />
+            }
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={handleChange}
+              onFocus={() => setOpen(true)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search for software, licenses, subscriptions..."
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
+            />
+            {query && (
+              <button onClick={clear} className="text-muted-foreground hover:text-foreground">
+                <X size={14} />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => { if (query.trim()) { addRecent(query); search(query); } }}
+            className="px-6 py-3 rounded-xl text-sm font-semibold text-white flex items-center gap-2 flex-shrink-0 transition-all hover:scale-105"
+            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))' }}
+          >
+            <Search size={16} />
+            <span className="hidden lg:inline">Search</span>
+          </button>
         </div>
 
         {open && (
           <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-2xl shadow-[0_8px_40px_hsl(var(--foreground)/0.12)] overflow-hidden z-[200]">
-            <SearchDropdown
-              query={query}
-              results={results}
-              loading={loading}
-              activeIdx={activeIdx}
-              recent={recent}
-              showRecent={showRecent}
-              showEmpty={showEmpty}
-              showResults={showResults}
-              categories={categories}
-              onSelect={handleSelect}
-              onRecentSelect={handleRecentSelect}
+            <CompactDropdown
+              query={query} results={results} loading={loading} activeIdx={activeIdx}
+              recent={recent} showRecent={showRecent} showEmpty={showEmpty}
+              showResults={showResults} categories={categories}
+              onSelect={handleSelect} onRecentSelect={handleRecentSelect}
             />
           </div>
         )}
@@ -205,57 +594,40 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
     );
   }
 
-  // Standalone variant
+  // Navbar variant (mobile only)
   return (
     <div ref={containerRef} className={`relative ${className}`}>
-      <div className="w-full flex gap-2">
-        <div className={`relative flex-1 flex items-center gap-2 rounded-xl border-2 px-4 py-3 transition-all duration-200 ${
-          open ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.1)] bg-card' : 'border-border bg-muted/30'
-        }`}>
-          {loading
-            ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
-            : <Search size={16} className="text-muted-foreground flex-shrink-0" />
-          }
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={handleChange}
-            onFocus={() => setOpen(true)}
-            onKeyDown={handleKeyDown}
-            placeholder="Search for software, licenses, subscriptions..."
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
-          />
-          {query && (
-            <button onClick={clear} className="text-muted-foreground hover:text-foreground">
-              <X size={14} />
-            </button>
-          )}
-        </div>
-        <button
-          onClick={() => { if (query.trim()) { addRecent(query); search(query); } }}
-          className="px-6 py-3 rounded-xl text-sm font-semibold text-white flex items-center gap-2 flex-shrink-0 transition-all hover:scale-105"
-          style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))' }}
-        >
-          <Search size={16} />
-          <span className="hidden lg:inline">Search</span>
-        </button>
+      <div className={`flex items-center gap-2 rounded-2xl border-2 px-4 py-2.5 transition-all duration-300 ${
+        open ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.12)] bg-card' : 'border-border bg-secondary'
+      }`}>
+        {loading
+          ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
+          : <Search size={16} className="text-muted-foreground flex-shrink-0" />
+        }
+        <input
+          ref={inputRef}
+          type="text"
+          value={query}
+          onChange={handleChange}
+          onFocus={() => setOpen(true)}
+          onKeyDown={handleKeyDown}
+          placeholder="Search software, licenses…"
+          className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground min-w-0"
+        />
+        {query && (
+          <button onClick={clear} className="text-muted-foreground hover:text-foreground flex-shrink-0">
+            <X size={14} />
+          </button>
+        )}
       </div>
 
       {open && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-2xl shadow-[0_8px_40px_hsl(var(--foreground)/0.12)] overflow-hidden z-[200]">
-          <SearchDropdown
-            query={query}
-            results={results}
-            loading={loading}
-            activeIdx={activeIdx}
-            recent={recent}
-            showRecent={showRecent}
-            showEmpty={showEmpty}
-            showResults={showResults}
-            categories={categories}
-            onSelect={handleSelect}
-            onRecentSelect={handleRecentSelect}
+          <CompactDropdown
+            query={query} results={results} loading={loading} activeIdx={activeIdx}
+            recent={recent} showRecent={showRecent} showEmpty={showEmpty}
+            showResults={showResults} categories={categories}
+            onSelect={handleSelect} onRecentSelect={handleRecentSelect}
           />
         </div>
       )}
@@ -263,25 +635,17 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
   );
 };
 
-// ── Shared Dropdown UI ──────────────────────────────────────────────
-const SearchDropdown = ({
+// ── Compact Dropdown (mobile/standalone) ──────────────────────────────
+const CompactDropdown = ({
   query, results, loading, activeIdx, recent,
   showRecent, showEmpty, showResults, categories,
   onSelect, onRecentSelect,
 }: {
-  query: string;
-  results: Product[];
-  loading: boolean;
-  activeIdx: number;
-  recent: string[];
-  showRecent: boolean;
-  showEmpty: boolean;
-  showResults: boolean;
-  categories: Record<string, string>;
-  onSelect: (p: Product) => void;
-  onRecentSelect: (term: string) => void;
+  query: string; results: Product[]; loading: boolean; activeIdx: number;
+  recent: string[]; showRecent: boolean; showEmpty: boolean;
+  showResults: boolean; categories: Record<string, string>;
+  onSelect: (p: Product) => void; onRecentSelect: (term: string) => void;
 }) => {
-  // Highlight matching text
   const highlight = (text: string, q: string) => {
     if (!q.trim()) return text;
     const idx = text.toLowerCase().indexOf(q.toLowerCase());
@@ -323,11 +687,8 @@ const SearchDropdown = ({
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">সাম্প্রতিক সার্চ</span>
         </div>
         {recent.map(term => (
-          <button
-            key={term}
-            onClick={() => onRecentSelect(term)}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted/60 transition-colors text-left group"
-          >
+          <button key={term} onClick={() => onRecentSelect(term)}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted/60 transition-colors text-left group">
             <Clock size={14} className="text-muted-foreground flex-shrink-0" />
             <span className="text-sm text-foreground flex-1 truncate">{term}</span>
             <ArrowRight size={13} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -345,7 +706,6 @@ const SearchDropdown = ({
         <p className="text-xs text-muted-foreground mt-1">
           "<span className="text-primary">{query}</span>" এর জন্য কোনো প্রোডাক্ট নেই
         </p>
-        <p className="text-xs text-muted-foreground mt-0.5">অন্য কীওয়ার্ড ব্যবহার করুন</p>
       </div>
     );
   }
@@ -368,13 +728,8 @@ const SearchDropdown = ({
             const catName = product.category_id ? categories[product.category_id] : null;
             return (
               <li key={product.id}>
-                <button
-                  onClick={() => onSelect(product)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/5 transition-colors group text-left ${
-                    idx === activeIdx ? 'bg-primary/8' : ''
-                  }`}
-                >
-                  {/* Thumbnail */}
+                <button onClick={() => onSelect(product)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/5 transition-colors group text-left ${idx === activeIdx ? 'bg-primary/8' : ''}`}>
                   <div className="w-11 h-11 rounded-xl overflow-hidden bg-muted flex-shrink-0 border border-border/50">
                     {product.image_url ? (
                       <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
@@ -384,37 +739,24 @@ const SearchDropdown = ({
                       </div>
                     )}
                   </div>
-
-                  {/* Info */}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground group-hover:text-primary truncate transition-colors leading-snug">
                       {highlight(product.name, query)}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      {catName && (
-                        <span className="text-[10px] bg-primary/10 text-primary font-medium px-1.5 py-0.5 rounded-full">
-                          {catName}
-                        </span>
-                      )}
-                      {product.short_description && (
-                        <p className="text-xs text-muted-foreground truncate">{product.short_description}</p>
-                      )}
+                      {catName && <span className="text-[10px] bg-primary/10 text-primary font-medium px-1.5 py-0.5 rounded-full">{catName}</span>}
+                      {product.short_description && <p className="text-xs text-muted-foreground truncate">{product.short_description}</p>}
                     </div>
                   </div>
-
-                  {/* Price */}
                   <div className="flex-shrink-0 text-right">
                     <div className="text-sm font-bold text-primary">৳{product.price}</div>
                     {product.original_price && product.original_price > product.price && (
                       <div className="text-[11px] text-muted-foreground line-through">৳{product.original_price}</div>
                     )}
                     {product.discount_percent && product.discount_percent > 0 && (
-                      <div className="text-[10px] bg-accent/15 text-accent font-semibold rounded px-1.5 py-0.5 mt-0.5">
-                        -{product.discount_percent}%
-                      </div>
+                      <div className="text-[10px] bg-accent/15 text-accent font-semibold rounded px-1.5 py-0.5 mt-0.5">-{product.discount_percent}%</div>
                     )}
                   </div>
-
                   <ArrowRight size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                 </button>
               </li>
@@ -428,4 +770,5 @@ const SearchDropdown = ({
   return null;
 };
 
+export { DesktopSearchPalette };
 export default SearchBar;
