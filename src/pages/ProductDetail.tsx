@@ -87,19 +87,22 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
 
-  const [product,      setProduct]      = useState<ProductFull | null>(null);
-  const [loading,      setLoading]      = useState(true);
-  const [notFound,     setNotFound]     = useState(false);
-  const [activeImg,    setActiveImg]    = useState(0);
-  const [showModal,    setShowModal]    = useState(false);
-  const [copied,       setCopied]       = useState(false);
-  const [imgLoaded,    setImgLoaded]    = useState(false);
-  const [selectedOpts, setSelectedOpts] = useState<Record<string, string>>({});
-  const [customGroups, setCustomGroups] = useState<CustomOptionGroup[]>([]);
-  const [entered,      setEntered]      = useState(false);
-  const [quantity,     setQuantity]     = useState(1);
+  const [product,       setProduct]      = useState<ProductFull | null>(null);
+  const [loading,       setLoading]      = useState(true);
+  const [notFound,      setNotFound]     = useState(false);
+  const [activeImg,     setActiveImg]    = useState(0);
+  const [showModal,     setShowModal]    = useState(false);
+  const [copied,        setCopied]       = useState(false);
+  const [imgLoaded,     setImgLoaded]    = useState(false);
+  const [selectedOpts,  setSelectedOpts] = useState<Record<string, string>>({});
+  const [customGroups,  setCustomGroups] = useState<CustomOptionGroup[]>([]);
+  const [entered,       setEntered]      = useState(false);
+  const [quantity,      setQuantity]     = useState(1);
   // Keep selectedVar for legacy variants
-  const [selectedVar,  setSelectedVar]  = useState<Record<string, string>>({});
+  const [selectedVar,   setSelectedVar]  = useState<Record<string, string>>({});
+  // Duration plans from __duration_plans attribute
+  const [durationPlans, setDurationPlans] = useState<DurationPlan[]>([]);
+  const [selectedPlanIdx, setSelectedPlanIdx] = useState(0);
 
   // Section reveals
   const descReveal   = useReveal(0.05);
