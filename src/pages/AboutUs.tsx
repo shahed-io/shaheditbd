@@ -71,8 +71,9 @@ export default function AboutUs() {
       style={{ background: 'linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}
     >
       <SEOHead
-        title="About Us — Shahed Store"
-        description="Shahed Store সম্পর্কে জানুন। বাংলাদেশের বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর — আমাদের মিশন, দল এবং যাত্রার গল্প।"
+        title="About Shahed Store – Trusted Digital Software Shop in Bangladesh"
+        description="Learn about Shahed Store – Bangladesh's most trusted digital software shop since 2020. Our mission, team, and commitment to delivering 100% genuine software at the best price."
+        canonical="https://shahedstore.com.bd/about"
       />
       <Navbar />
 

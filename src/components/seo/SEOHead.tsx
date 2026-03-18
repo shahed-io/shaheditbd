@@ -9,12 +9,14 @@ interface SEOHeadProps {
   canonical?: string;
   noIndex?: boolean;
   schema?: object | object[];
+  keywords?: string;
 }
 
 const SITE_NAME = 'Shahed Store';
 const SITE_URL = 'https://shahedstore.com.bd';
-const DEFAULT_DESC = 'Shahed Store - আপনার বিশ্বস্ত ডিজিটাল প্রোডাক্ট শপ। Windows, Office, Adobe, Antivirus, Subscription সহ সকল ডিজিটাল সফটওয়্যার সেরা দামে।';
+const DEFAULT_DESC = 'Shahed Store – Bangladesh\'s most trusted digital software shop. Buy Windows 11, Microsoft Office 365, Adobe Creative Cloud, Antivirus, VPN & subscriptions at the lowest price. 100% genuine. Instant delivery.';
 const DEFAULT_OG = '/favicon.png';
+const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, shahed store';
 
 const SEOHead = ({
   title,
@@ -24,15 +26,19 @@ const SEOHead = ({
   canonical,
   noIndex = false,
   schema,
+  keywords,
 }: SEOHeadProps) => {
   const { pathname } = useLocation();
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
+  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} – Buy Digital Software at Best Price in Bangladesh`;
   const canonicalUrl = canonical || `${SITE_URL}${pathname}`;
   const ogImageFull = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`;
 
   useEffect(() => {
     // Title
     document.title = fullTitle;
+
+    // Lang
+    document.documentElement.lang = 'en';
 
     const setMeta = (sel: string, content: string) => {
       let el = document.querySelector(sel) as HTMLMetaElement | null;
@@ -58,7 +64,8 @@ const SEOHead = ({
 
     // Basic meta
     setMeta('meta[name="description"]', description);
-    setMeta('meta[name="robots"]', noIndex ? 'noindex,nofollow' : 'index,follow');
+    setMeta('meta[name="robots"]', noIndex ? 'noindex,nofollow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
+    setMeta('meta[name="keywords"]', keywords || DEFAULT_KEYWORDS);
 
     // Open Graph
     setMeta('meta[property="og:title"]', fullTitle);
@@ -66,6 +73,8 @@ const SEOHead = ({
     setMeta('meta[property="og:type"]', ogType);
     setMeta('meta[property="og:url"]', canonicalUrl);
     setMeta('meta[property="og:image"]', ogImageFull);
+    setMeta('meta[property="og:image:width"]', '1200');
+    setMeta('meta[property="og:image:height"]', '630');
     setMeta('meta[property="og:site_name"]', SITE_NAME);
     setMeta('meta[property="og:locale"]', 'bn_BD');
 
@@ -97,7 +106,7 @@ const SEOHead = ({
       // cleanup schema on unmount
       document.querySelectorAll('script[data-seo-schema]').forEach(s => s.remove());
     };
-  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, noIndex, schema]);
+  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, noIndex, schema, keywords]);
 
   return null;
 };
