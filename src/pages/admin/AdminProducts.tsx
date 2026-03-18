@@ -347,7 +347,17 @@ const AdminProducts = () => {
           cardStyle,
         },
       });
-      if (error) throw error;
+
+      // Handle rate limit / payment errors gracefully
+      if (error) {
+        // Try to parse body from FunctionsHttpError
+        let msg = error.message || 'Unknown error';
+        try {
+          const body = await (error as any).context?.json?.();
+          if (body?.error) msg = body.error;
+        } catch { /* ignore */ }
+        throw new Error(msg);
+      }
       if (data?.error) throw new Error(data.error);
 
       const imageDataUrl: string = data.imageData;
