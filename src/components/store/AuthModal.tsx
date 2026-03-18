@@ -24,13 +24,15 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Auto-fill referral code from URL (?ref=CODE)
+  // Auto-fill referral code from URL (?ref=CODE) and switch to signup
   useEffect(() => {
+    if (!isOpen) return;
     const refFromUrl = searchParams.get('ref');
-    if (refFromUrl && mode === 'signup') {
+    if (refFromUrl) {
+      setMode('signup');
       setReferralCode(refFromUrl.toUpperCase());
     }
-  }, [mode, searchParams]);
+  }, [isOpen, searchParams]);
 
   if (!isOpen) return null;
 
