@@ -145,6 +145,7 @@ export default function AdminCustomers() {
           { label: 'Active Buyers',   value: activeCustomers,      icon: UserCheck,  color: 'text-green-500' },
           { label: 'Total Orders',    value: customers.reduce((s, c) => s + (c.order_count ?? 0), 0), icon: ShoppingBag, color: 'text-blue-500' },
           { label: 'Total Revenue',   value: `৳${totalRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-yellow-500' },
+          { label: 'Total Points',    value: customers.reduce((s, c) => s + (c.points_balance ?? 0), 0).toLocaleString() + ' pts', icon: Award, color: 'text-amber-500' },
         ].map(stat => (
           <div key={stat.label} className="glass-card rounded-xl p-4 border border-border/50">
             <div className="flex items-center gap-2 mb-2">
