@@ -166,10 +166,11 @@ serve(async (req) => {
       userContent.push({ type: "image_url", image_url: { url: imageUrl } });
     }
 
-    // Try primary model first, fallback to secondary on 429
+    // Best quality first, fallback on rate limit
     const MODELS = [
-      "google/gemini-2.5-flash-image",
-      "google/gemini-3.1-flash-image-preview",
+      "google/gemini-3-pro-image-preview",       // highest quality
+      "google/gemini-3.1-flash-image-preview",   // fast + pro-level
+      "google/gemini-2.5-flash-image",           // final fallback
     ];
 
     let data: any = null;
