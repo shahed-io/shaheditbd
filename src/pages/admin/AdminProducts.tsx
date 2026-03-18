@@ -78,6 +78,8 @@ const emptyForm = {
   warranty_note: '', refund_note: '',
   // Lists
   what_you_get: [''] as string[],
+  // Bullet points for short description (each item = one bullet)
+  short_desc_bullets: [''] as string[],
   variants: [{ name: '', options: [{ label: '', price: '' }] }] as { name: string; options: { label: string; price: string }[] }[],
   attributes: [{ key: '', value: '' }] as { key: string; value: string }[],
   faq: [{ q: '', a: '' }] as { q: string; a: string }[],
