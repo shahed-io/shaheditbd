@@ -20,6 +20,12 @@ import { SITE_URL } from '@/components/seo/SEOHead';
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
 
+interface DurationPlan {
+  duration: string;
+  price: string;
+  original_price?: string;
+}
+
 interface ProductFull {
   id: string;
   name: string;
@@ -37,6 +43,7 @@ interface ProductFull {
   total_sales: number | null;
   variants: any;
   faq: any;
+  attributes: any;
   category_id: string | null;
   categories: { name: string; slug: string } | null;
   created_at: string;
