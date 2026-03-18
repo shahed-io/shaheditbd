@@ -149,6 +149,28 @@ OVERALL: Rich dark premium promotional style, vibrant colors, glassmorphism, sui
   },
 };
 
+// Extract the short/main product name from a full product title
+// e.g. "Microsoft Office 365 Personal Subscription Price in BD" → "Office 365"
+function extractShortName(fullName: string): string {
+  if (!fullName) return "Product";
+
+  // Remove common Bangladeshi e-commerce suffixes
+  let name = fullName
+    .replace(/\s*(subscription\s*)?(price\s*)?(in\s*bd|in\s*bangladesh|bangladesh)\s*$/i, "")
+    .replace(/\s*(buy\s+online|online|official|genuine|original|authentic|lifetime|yearly|annual|monthly|subscription|plan|license|key|cd|dvd|download)\s*$/i, "")
+    .replace(/\s*(personal|family|home|business|professional|enterprise|premium|standard|basic|pro|plus|ultra)\s+subscription\s*$/i, "")
+    .trim();
+
+  // Keep only first 3–4 meaningful words (brand + product line)
+  const words = name.split(/\s+/);
+  if (words.length > 4) {
+    // Try to find the product core: brand + product name (usually first 2-3 words)
+    name = words.slice(0, 3).join(" ");
+  }
+
+  return name || fullName;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -158,7 +180,8 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    const name = productName || "Product";
+    const fullName = productName || "Product";
+    const name = extractShortName(fullName);
     const selectedStyle = STYLES[cardStyle as keyof typeof STYLES] || STYLES.dark_neon;
     const promptText = selectedStyle.prompt(name, brand || name, price || "", category || "");
 
