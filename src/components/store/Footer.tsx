@@ -242,7 +242,7 @@ const Footer = () => (
                     <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all group-hover:scale-125"
                       style={{ background: col.accent.replace('hsl(','hsla(').replace(')',',0.45)') }} />
                     <span className="truncate">{link.label}</span>
-                    {link.highlight && <Download size={10} className="ml-auto flex-shrink-0" style={{ color: col.accent }} />}
+                    
                   </a>
                 </li>
               ))}
