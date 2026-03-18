@@ -315,6 +315,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: 'الملف الشخصي',
     tab_orders: 'طلباتي',
     tab_wallet: 'المحفظة',
+    tab_points: 'النقاط',
     tab_wishlist: 'قائمة الأمنيات',
     tab_addresses: 'العناوين',
     tab_notifications: 'الإشعارات',
