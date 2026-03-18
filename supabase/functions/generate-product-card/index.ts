@@ -99,7 +99,7 @@ BOTTOM SECTION (clean strip):
 - "www.shahedstore.com.bd" — dark text, globe icon
 - "+880 1840-099853" — dark text, phone icon
 
-STYLE: Clean, minimal, white aesthetic. Inspired by CamScanner/clean product card style. Slight red/orange accent. Boke blur + lal Shahed Store badge reference. Square format exactly.
+STYLE: Clean, minimal, white aesthetic. Inspired by CamScanner/clean product card style. Slight red/orange accent. Square format exactly.
 `.trim(),
   },
 
@@ -136,9 +136,8 @@ OVERALL: Rich dark purple, vibrant glowing borders, energetic promotional style.
   },
 };
 
-// Helper: upload base64 image to Supabase Storage and return public URL
+// ── Upload base64 image to Supabase Storage ──────────────────────────────────
 async function uploadImageToStorage(base64Data: string, mimeType: string): Promise<string> {
-  // Trim any accidental whitespace/newlines from env vars
   const SUPABASE_URL = (Deno.env.get("SUPABASE_URL") || "").trim();
   const SUPABASE_SERVICE_ROLE_KEY = (Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "").trim();
 
@@ -146,7 +145,6 @@ async function uploadImageToStorage(base64Data: string, mimeType: string): Promi
     throw new Error("Storage credentials not configured");
   }
 
-  // Convert base64 to binary
   const binaryStr = atob(base64Data);
   const bytes = new Uint8Array(binaryStr.length);
   for (let i = 0; i < binaryStr.length; i++) {
@@ -179,249 +177,204 @@ async function uploadImageToStorage(base64Data: string, mimeType: string): Promi
   return `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
 }
 
+// ── Helper ───────────────────────────────────────────────────────────────────
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+function extractImageFromGatewayResponse(responseData: any): { data: string; mime: string } | null {
+  const msg = responseData.choices?.[0]?.message;
+  if (!msg) return null;
+
+  const img1 = msg?.images?.[0];
+  if (img1?.image_url?.url?.startsWith("data:")) {
+    const [prefix, b64] = img1.image_url.url.split(",");
+    return { data: b64, mime: prefix.split(":")[1].split(";")[0] };
+  }
+  if (img1?.data) return { data: img1.data, mime: "image/jpeg" };
+
+  if (Array.isArray(msg?.content)) {
+    const imgPart = msg.content.find((p: any) => p.type === "image_url" && p.image_url?.url?.startsWith("data:"));
+    if (imgPart) {
+      const [prefix, b64] = imgPart.image_url.url.split(",");
+      return { data: b64, mime: prefix.split(":")[1].split(";")[0] };
+    }
+    const inlinePart = msg.content.find((p: any) => p.inline_data?.data);
+    if (inlinePart) return { data: inlinePart.inline_data.data, mime: inlinePart.inline_data.mime_type || "image/png" };
+  }
+  return null;
+}
+
+function extractImageFromGeminiResponse(data: any): { data: string; mime: string } | null {
+  const inlinePart = data.candidates?.[0]?.content?.parts?.find((p: any) => p.inlineData?.data);
+  if (inlinePart) return { data: inlinePart.inlineData.data, mime: inlinePart.inlineData.mimeType || "image/jpeg" };
+  return null;
+}
+
+// ── Main handler ─────────────────────────────────────────────────────────────
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
     const { imageUrl, productName, category, price, brand, cardStyle } = await req.json();
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    const LOVABLE_API_KEY = (Deno.env.get("LOVABLE_API_KEY") || "").trim();
 
     const name = productName || "Product";
     const selectedStyle = STYLES[cardStyle as keyof typeof STYLES] || STYLES.dark_neon;
     const promptText = selectedStyle.prompt(name, brand || name, price || "", category || "");
 
-    const userContent: any[] = [{ type: "text", text: promptText }];
-    if (imageUrl) {
-      userContent.push({ type: "image_url", image_url: { url: imageUrl } });
-    }
+    // Collect all 6 Gemini keys (skip empty ones)
+    const GEMINI_KEYS = [
+      "GEMINI_API_KEY", "GEMINI_API_KEY_2", "GEMINI_API_KEY_3",
+      "GEMINI_API_KEY_4", "GEMINI_API_KEY_5", "GEMINI_API_KEY_6",
+    ]
+      .map(k => (Deno.env.get(k) || "").trim())
+      .filter(Boolean);
 
-    // ── Phase 1: Lovable AI Gateway (best quality models) ─────────────────
-    const GATEWAY_MODELS = [
-      "google/gemini-3-pro-image-preview",
-      "google/gemini-3.1-flash-image-preview",
-    ];
+    console.log(`Available Gemini keys: ${GEMINI_KEYS.length}`);
+
+    // Preload product image as base64 ONCE — reused across all retries
+    let productImageBase64: string | null = null;
+    let productImageMime = "image/jpeg";
+    if (imageUrl) {
+      try {
+        const imgResp = await fetch(imageUrl, { signal: AbortSignal.timeout(12000) });
+        if (imgResp.ok) {
+          const buf = await imgResp.arrayBuffer();
+          productImageBase64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+          productImageMime = imgResp.headers.get("content-type") || "image/jpeg";
+          console.log("Product image preloaded");
+        }
+      } catch (e) {
+        console.warn("Could not preload product image, using text-only prompt");
+      }
+    }
 
     let imageData: string | undefined;
-    let imageMime = "image/png";
+    let imageMime = "image/jpeg";
 
-    for (let attempt = 0; attempt < GATEWAY_MODELS.length; attempt++) {
-      const model = GATEWAY_MODELS[attempt];
-      console.log(`Gateway attempt ${attempt + 1}: ${model}`);
+    // ── Phase 1: Lovable AI Gateway ──────────────────────────────────────────
+    if (LOVABLE_API_KEY) {
+      const userContent: any[] = [{ type: "text", text: promptText }];
+      if (imageUrl) userContent.push({ type: "image_url", image_url: { url: imageUrl } });
 
-      let response: Response;
-      try {
-        response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model,
-            messages: [{ role: "user", content: userContent }],
-            modalities: ["image", "text"],
-          }),
-        });
-      } catch (fetchErr) {
-        console.warn(`Gateway fetch error on ${model}: ${fetchErr}`);
-        continue;
-      }
+      const GATEWAY_MODELS = [
+        "google/gemini-3-pro-image-preview",
+        "google/gemini-3.1-flash-image-preview",
+      ];
 
-      if (response.status === 402) {
-        console.warn("Gateway credits exhausted, switching to direct Gemini API...");
-        break;
-      }
+      for (const model of GATEWAY_MODELS) {
+        if (imageData) break;
+        console.log(`Gateway: ${model}`);
+        try {
+          const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model,
+              messages: [{ role: "user", content: userContent }],
+              modalities: ["image", "text"],
+            }),
+            signal: AbortSignal.timeout(55000),
+          });
 
-      if (response.status === 429) {
-        console.warn(`Gateway model ${model} rate limited, trying next...`);
-        await new Promise(r => setTimeout(r, 1000));
-        continue;
-      }
+          if (response.status === 402) { console.warn("Gateway credits exhausted"); break; }
+          if (response.status === 429) { console.warn(`Gateway ${model} rate limited`); continue; }
+          if (!response.ok) { console.warn(`Gateway ${model} error ${response.status}`); continue; }
 
-      if (!response.ok) {
-        let errText = "";
-        try { errText = await response.text(); } catch { /* ignore */ }
-        console.warn(`Gateway error ${response.status}: ${errText}, trying next...`);
-        continue;
-      }
+          let responseData: any;
+          try { responseData = await response.json(); } catch { continue; }
 
-      let responseData: any;
-      try {
-        responseData = await response.json();
-      } catch (bodyErr) {
-        console.warn(`Body read error on ${model}: ${bodyErr}. Retrying next model...`);
-        await new Promise(r => setTimeout(r, 1000));
-        continue;
-      }
+          if (responseData.error?.code === 402) break;
+          if (responseData.error?.code === 429) continue;
+          if (responseData.choices?.[0]?.error?.code === 429) continue;
+          if (responseData.error || responseData.choices?.[0]?.error) continue;
 
-      if (responseData.error) {
-        const code = responseData.error?.code;
-        if (code === 429 || responseData.error?.status === 429) {
-          await new Promise(r => setTimeout(r, 1000));
-          continue;
-        }
-        if (code === 402) break;
-        console.warn(`Gateway error body: ${JSON.stringify(responseData.error)}`);
-        continue;
-      }
-
-      const choiceError = responseData.choices?.[0]?.error;
-      if (choiceError) {
-        const choiceCode = choiceError?.code || choiceError?.metadata?.error_type;
-        if (choiceCode === 429 || choiceCode === "rate_limit_exceeded") {
-          await new Promise(r => setTimeout(r, 1000));
-          continue;
-        }
-        if (choiceCode === 402) break;
-        continue;
-      }
-
-      // Extract image from response
-      const msg = responseData.choices?.[0]?.message;
-
-      // Path 1: images array
-      const img1 = msg?.images?.[0];
-      if (img1?.image_url?.url) {
-        const url: string = img1.image_url.url;
-        if (url.startsWith("data:")) {
-          const [prefix, b64] = url.split(",");
-          imageMime = prefix.split(":")[1].split(";")[0];
-          imageData = b64;
+          const extracted = extractImageFromGatewayResponse(responseData);
+          if (extracted) {
+            imageData = extracted.data;
+            imageMime = extracted.mime;
+            console.log(`✓ Gateway success: ${model}`);
+          }
+        } catch (err) {
+          console.warn(`Gateway ${model} exception: ${err}`);
         }
       }
-
-      // Path 2: content array
-      if (!imageData && Array.isArray(msg?.content)) {
-        const imgPart = msg.content.find((p: any) => p.type === "image_url");
-        if (imgPart?.image_url?.url?.startsWith("data:")) {
-          const [prefix, b64] = imgPart.image_url.url.split(",");
-          imageMime = prefix.split(":")[1].split(";")[0];
-          imageData = b64;
-        }
-      }
-
-      // Path 3: inline_data
-      if (!imageData && Array.isArray(msg?.content)) {
-        const imgPart = msg.content.find((p: any) => p.inline_data?.data);
-        if (imgPart) {
-          imageMime = imgPart.inline_data.mime_type || "image/png";
-          imageData = imgPart.inline_data.data;
-        }
-      }
-
-      // Path 4: images[0].data
-      if (!imageData && img1?.data) {
-        imageData = img1.data;
-      }
-
-      if (imageData) {
-        console.log(`Image extracted from gateway model ${model}`);
-        break;
-      }
-
-      console.warn(`Gateway model ${model} returned no image, trying next...`);
     }
 
-    // ── Phase 2: Direct Gemini API ──────────────────────────────────────────
-    if (!imageData) {
-      const GEMINI_KEYS = [
-        Deno.env.get("GEMINI_API_KEY"),
-        Deno.env.get("GEMINI_API_KEY_2"),
-        Deno.env.get("GEMINI_API_KEY_3"),
-      ].filter(Boolean) as string[];
+    // ── Phase 2: Direct Gemini API — rotate all 6 keys × 2 models ───────────
+    if (!imageData && GEMINI_KEYS.length > 0) {
+      const DIRECT_MODELS = [
+        "gemini-2.0-flash-preview-image-generation",
+        "gemini-imagen-3.0-generate-002",
+      ];
 
-      const DIRECT_MODEL = "gemini-2.0-flash-preview-image-generation";
+      const baseParts: any[] = [{ text: promptText }];
+      if (productImageBase64) {
+        baseParts.push({ inline_data: { mime_type: productImageMime, data: productImageBase64 } });
+      }
 
-      for (let i = 0; i < GEMINI_KEYS.length; i++) {
-        const apiKey = GEMINI_KEYS[i];
-        console.log(`Direct Gemini attempt ${i + 1}...`);
-
-        const parts: any[] = [{ text: promptText }];
-        if (imageUrl) {
+      outerLoop:
+      for (const apiKey of GEMINI_KEYS) {
+        for (const directModel of DIRECT_MODELS) {
+          if (imageData) break outerLoop;
+          console.log(`Direct Gemini [key …${apiKey.slice(-4)}] ${directModel}`);
           try {
-            const imgResp = await fetch(imageUrl);
-            if (imgResp.ok) {
-              const imgBuf = await imgResp.arrayBuffer();
-              const base64 = btoa(String.fromCharCode(...new Uint8Array(imgBuf)));
-              const mimeType = imgResp.headers.get("content-type") || "image/jpeg";
-              parts.push({ inline_data: { mime_type: mimeType, data: base64 } });
+            const directResp = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${directModel}:generateContent?key=${apiKey}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{ parts: baseParts }],
+                  generationConfig: {
+                    responseModalities: ["IMAGE", "TEXT"],
+                    responseMimeType: "image/jpeg",
+                  },
+                }),
+                signal: AbortSignal.timeout(55000),
+              }
+            );
+
+            if (directResp.status === 429) {
+              console.warn(`Key …${apiKey.slice(-4)} rate limited, trying next key...`);
+              break; // move to next key
             }
-          } catch (e) {
-            console.warn("Could not fetch image for direct API, text-only prompt");
+            if (!directResp.ok) {
+              let et = ""; try { et = await directResp.text(); } catch {}
+              console.warn(`Key …${apiKey.slice(-4)} ${directModel} error ${directResp.status}: ${et}`);
+              continue;
+            }
+
+            let directData: any;
+            try { directData = await directResp.json(); } catch { continue; }
+
+            const extracted = extractImageFromGeminiResponse(directData);
+            if (extracted) {
+              imageData = extracted.data;
+              imageMime = extracted.mime;
+              console.log(`✓ Direct Gemini success: key …${apiKey.slice(-4)} ${directModel}`);
+              break outerLoop;
+            }
+          } catch (err) {
+            console.warn(`Direct Gemini exception: ${err}`);
           }
         }
-
-        let directResp: Response;
-        try {
-          directResp = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${DIRECT_MODEL}:generateContent?key=${apiKey}`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                contents: [{ parts }],
-                generationConfig: {
-                  responseModalities: ["IMAGE", "TEXT"],
-                  responseMimeType: "image/jpeg",
-                },
-              }),
-            }
-          );
-        } catch (fetchErr) {
-          console.warn(`Direct API fetch error: ${fetchErr}`);
-          continue;
-        }
-
-        if (directResp.status === 429) {
-          await new Promise(r => setTimeout(r, 1000));
-          continue;
-        }
-
-        if (!directResp.ok) {
-          let errText = "";
-          try { errText = await directResp.text(); } catch { /* ignore */ }
-          console.warn(`Direct key ${i + 1} error: ${errText}`);
-          continue;
-        }
-
-        let directData: any;
-        try {
-          directData = await directResp.json();
-        } catch (bodyErr) {
-          console.warn(`Direct body read error: ${bodyErr}`);
-          continue;
-        }
-
-        const inlinePart = directData.candidates?.[0]?.content?.parts?.find(
-          (p: any) => p.inlineData?.data
-        );
-
-        if (inlinePart?.inlineData?.data) {
-          imageMime = inlinePart.inlineData.mimeType || "image/jpeg";
-          imageData = inlinePart.inlineData.data;
-          console.log("Direct Gemini image generated successfully");
-          break;
-        }
-
-        console.warn(`Direct key ${i + 1} returned no image`);
+        if (!imageData) await sleep(300);
       }
     }
 
     if (!imageData) {
       return new Response(
-        JSON.stringify({ error: "AI ছবি তৈরি করতে পারেনি। একটু পরে আবার চেষ্টা করুন।" }),
+        JSON.stringify({ error: "AI ছবি তৈরি করতে পারেনি। কিছুক্ষণ পরে আবার চেষ্টা করুন।" }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // ── Upload image to storage server-side ─────────────────────────────────
+    // ── Upload to Storage ────────────────────────────────────────────────────
     console.log(`Uploading image (mime: ${imageMime}) to storage...`);
     const publicUrl = await uploadImageToStorage(imageData, imageMime);
     console.log("Image uploaded:", publicUrl);
 
-    // Return only the URL — no large base64 sent to client
     return new Response(
       JSON.stringify({ imageUrl: publicUrl }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
