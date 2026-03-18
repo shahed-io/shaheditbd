@@ -1635,7 +1635,7 @@ const AdminProducts = () => {
                                 <div key={i} className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: `${d}s` }} />
                               ))}
                             </div>
-                            AI ছবি তৈরি করছে, WEBP কনভার্ট করছে এবং সেভ করছে...
+                            Glassmorphism Card তৈরি হচ্ছে এবং সেভ করছে...
                           </div>
                         )}
                       </div>
