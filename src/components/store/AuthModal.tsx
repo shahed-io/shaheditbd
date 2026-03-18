@@ -59,19 +59,36 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         });
         if (error) throw error;
 
-        // Process referral if code provided
+        toast.success('অ্যাকাউন্ট তৈরি হয়েছে! ইমেইল ভেরিফাই করুন।');
+
+        // Process referral after signup — wait for profile trigger to complete (retry up to 5x)
         if (referralCode.trim() && data.user) {
-          const { data: refResult } = await supabase.rpc('process_referral', {
-            p_referral_code: referralCode.trim().toUpperCase(),
-            p_referred_user_id: data.user.id,
-          });
-          if ((refResult as any)?.success) {
-            toast.success('রেফারেল কোড সফলভাবে প্রয়োগ হয়েছে! আপনি ৳10 ক্রেডিট ও 10% স্থায়ী ছাড় পেয়েছেন 🎉');
-          } else if ((refResult as any)?.error) {
-            toast.warning('রেফারেল কোড সঠিক নয়, তবে অ্যাকাউন্ট তৈরি হয়েছে।');
+          const code = referralCode.trim().toUpperCase();
+          const userId = data.user.id;
+          let processed = false;
+          for (let attempt = 0; attempt < 5; attempt++) {
+            await new Promise(res => setTimeout(res, 1200 * (attempt + 1)));
+            try {
+              const { data: refResult } = await supabase.rpc('process_referral', {
+                p_referral_code: code,
+                p_referred_user_id: userId,
+              });
+              if ((refResult as any)?.success) {
+                toast.success('🎉 রেফারেল কোড প্রয়োগ হয়েছে! আপনি ৳10 ক্রেডিট ও 10% স্থায়ী ছাড় পেয়েছেন');
+                processed = true;
+                break;
+              } else if ((refResult as any)?.error && (refResult as any).error !== 'User not found') {
+                // Non-transient error — give up
+                toast.warning('রেফারেল কোড সঠিক নয়।');
+                break;
+              }
+              // If "User not found" — profile not ready yet, retry
+            } catch { /* retry */ }
           }
-        } else {
-          toast.success('অ্যাকাউন্ট তৈরি হয়েছে! ইমেইল ভেরিফাই করুন।');
+          if (!processed) {
+            // Store code in localStorage so dashboard can retry later
+            localStorage.setItem('pending_referral', code);
+          }
         }
         onClose();
       }
