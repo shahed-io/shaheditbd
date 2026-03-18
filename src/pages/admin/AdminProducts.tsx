@@ -597,6 +597,21 @@ const AdminProducts = () => {
     const parsedDurationPlans = (() => {
       try { return durationPlansAttr ? JSON.parse(durationPlansAttr.value) : []; } catch { return []; }
     })();
+    // Auto-sync price from duration_plans (lowest plan price)
+    const syncedPrices = (() => {
+      if (!parsedDurationPlans.length) return null;
+      const validPrices = parsedDurationPlans
+        .map((pl: any) => parseFloat(pl.price))
+        .filter((v: number) => !isNaN(v) && v > 0);
+      if (!validPrices.length) return null;
+      const minPrice = Math.min(...validPrices);
+      const lowestPlan = parsedDurationPlans.find((pl: any) => parseFloat(pl.price) === minPrice);
+      const origPrice = lowestPlan?.original_price || '';
+      const o = parseFloat(origPrice);
+      const p = minPrice;
+      const disc = o > 0 && p > 0 && o > p ? String(Math.round(((o - p) / o) * 100)) : (o > 0 && p >= o ? '0' : '');
+      return { price: String(minPrice), original_price: origPrice, discount_percent: disc };
+    })();
     // Parse short_description into bullets
     const existingBullets = product.short_description
       ? product.short_description.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean)
@@ -616,9 +631,9 @@ const AdminProducts = () => {
       account_type: accountTypeAttr?.value || '',
       requires_customer_email: allTags.includes('requires-email'),
       duration_plans: parsedDurationPlans,
-      price: String(product.price),
-      original_price: product.original_price ? String(product.original_price) : '',
-      discount_percent: product.discount_percent ? String(product.discount_percent) : '',
+      price: syncedPrices?.price ?? String(product.price),
+      original_price: syncedPrices?.original_price ?? (product.original_price ? String(product.original_price) : ''),
+      discount_percent: syncedPrices?.discount_percent ?? (product.discount_percent ? String(product.discount_percent) : ''),
       cost_price: product.cost_price ? String(product.cost_price) : '',
       status: product.status,
       sku: product.sku || '',
