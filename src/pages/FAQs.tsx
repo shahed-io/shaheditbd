@@ -213,7 +213,6 @@ const FAQs = () => {
         canonical="https://shahedstore.com.bd/faqs"
         keywords="shahed store faq, digital software faq bangladesh, order help, payment help"
       />
-      />
       <Navbar />
 
       <main className="min-h-screen" style={{ background: 'hsl(var(--background))' }}>
