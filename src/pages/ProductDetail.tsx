@@ -606,9 +606,9 @@ const ProductDetail = () => {
                     <span className="text-4xl font-sora font-black" style={{ color: 'hsl(258,78%,42%)' }}>
                       ৳{displayPrice.toLocaleString()}
                     </span>
-                    {product.original_price && product.original_price > displayPrice && (
+                    {displayOriginalPrice && displayOriginalPrice > displayPrice && (
                       <div className="flex flex-col">
-                        <div className="text-lg line-through" style={{ color: 'hsl(226,25%,62%)' }}>৳{product.original_price.toLocaleString()}</div>
+                        <div className="text-lg line-through" style={{ color: 'hsl(226,25%,62%)' }}>৳{displayOriginalPrice.toLocaleString()}</div>
                         {savings > 0 && (
                           <div className="text-xs font-bold" style={{ color: 'hsl(40,100%,48%)' }}>
                             Save ৳{savings.toLocaleString()}
@@ -626,7 +626,72 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              {/* ── Custom Option Groups (new DB system) ── */}
+              {/* ── Duration Plans Selector ── */}
+              {durationPlans.length > 0 && (
+                <div
+                  style={{
+                    opacity: entered ? 1 : 0,
+                    transform: entered ? 'none' : 'translateY(16px)',
+                    transition: 'all 0.6s cubic-bezier(0.22,1,0.36,1) 0.38s',
+                  }}
+                >
+                  <p className="text-sm font-semibold mb-3" style={{ color: 'hsl(226,35%,28%)' }}>
+                    মেয়াদ ও মূল্য পরিকল্পনা
+                  </p>
+                  <div className="grid grid-cols-1 gap-2.5">
+                    {durationPlans.map((plan, idx) => {
+                      const planPrice = parseFloat(plan.price) || 0;
+                      const planOriginal = plan.original_price ? parseFloat(plan.original_price) : null;
+                      const planSavings = planOriginal && planOriginal > planPrice ? planOriginal - planPrice : 0;
+                      const planDiscount = planOriginal && planOriginal > planPrice ? Math.round(planSavings / planOriginal * 100) : 0;
+                      const isSel = selectedPlanIdx === idx;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setSelectedPlanIdx(idx)}
+                          className="w-full flex items-center justify-between px-4 py-3 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] active:scale-[0.99]"
+                          style={isSel ? {
+                            borderColor: 'hsl(258,78%,55%)',
+                            background: 'linear-gradient(135deg, hsla(258,78%,55%,0.10) 0%, hsla(185,90%,52%,0.07) 100%)',
+                            boxShadow: '0 0 0 3px hsla(258,78%,55%,0.12)',
+                          } : {
+                            borderColor: 'hsla(220,20%,82%,0.9)',
+                            background: 'rgba(255,255,255,0.65)',
+                            backdropFilter: 'blur(12px)',
+                          }}
+                        >
+                          {/* Left: duration + check */}
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors"
+                              style={{ borderColor: isSel ? 'hsl(258,78%,55%)' : 'hsl(220,20%,75%)' }}>
+                              {isSel && <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />}
+                            </div>
+                            <span className="font-bold text-sm" style={{ color: isSel ? 'hsl(258,78%,42%)' : 'hsl(226,35%,22%)' }}>
+                              {plan.duration}
+                            </span>
+                          </div>
+                          {/* Right: price */}
+                          <div className="flex items-center gap-2 text-right">
+                            {planOriginal && planOriginal > planPrice && (
+                              <span className="text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>৳{planOriginal.toLocaleString()}</span>
+                            )}
+                            <span className="font-black text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
+                              ৳{planPrice.toLocaleString()}
+                            </span>
+                            {planDiscount > 0 && (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                                style={{ color: 'hsl(0,85%,52%)', background: 'hsla(0,85%,55%,0.10)', border: '1px solid hsla(0,85%,55%,0.20)' }}>
+                                -{planDiscount}%
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
               {customGroups.map((group, gi) => {
                 const selValueId = selectedOpts[group.id];
                 const currentVal = selValueId
