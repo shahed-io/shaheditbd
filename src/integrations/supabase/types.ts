@@ -927,6 +927,39 @@ export type Database = {
           },
         ]
       }
+      point_transactions: {
+        Row: {
+          balance_after: number
+          created_at: string
+          id: string
+          note: string | null
+          points: number
+          reference_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          balance_after?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          points: number
+          reference_id?: string | null
+          type?: string
+          user_id: string
+        }
+        Update: {
+          balance_after?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          points?: number
+          reference_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_attribute_assignments: {
         Row: {
           attribute_id: string | null
@@ -1287,11 +1320,13 @@ export type Database = {
           email: string | null
           id: string
           phone: string | null
+          points_balance: number
           referral_code: string | null
           referral_credit: number
           referral_discount: number
           referral_earnings: number
           referred_by: string | null
+          total_points_earned: number
           updated_at: string
           user_id: string
           wallet_balance: number
@@ -1303,11 +1338,13 @@ export type Database = {
           email?: string | null
           id?: string
           phone?: string | null
+          points_balance?: number
           referral_code?: string | null
           referral_credit?: number
           referral_discount?: number
           referral_earnings?: number
           referred_by?: string | null
+          total_points_earned?: number
           updated_at?: string
           user_id: string
           wallet_balance?: number
@@ -1319,11 +1356,13 @@ export type Database = {
           email?: string | null
           id?: string
           phone?: string | null
+          points_balance?: number
           referral_code?: string | null
           referral_credit?: number
           referral_discount?: number
           referral_earnings?: number
           referred_by?: string | null
+          total_points_earned?: number
           updated_at?: string
           user_id?: string
           wallet_balance?: number
@@ -1758,6 +1797,10 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      earn_order_points: {
+        Args: { p_order_id: string; p_order_total: number; p_user_id: string }
+        Returns: Json
+      }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -1790,6 +1833,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      redeem_points: {
+        Args: { p_points: number; p_user_id: string }
+        Returns: Json
       }
       wallet_credit: {
         Args: {
