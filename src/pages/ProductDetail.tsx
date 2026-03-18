@@ -829,7 +829,7 @@ const ProductDetail = () => {
           <div className="mt-14 grid lg:grid-cols-3 gap-8">
 
             <div
-              className={faqs.length > 0 ? 'lg:col-span-2' : 'lg:col-span-3'}
+              className={faqs.length > 0 ? 'lg:col-span-2' : 'col-span-full'}
               ref={descReveal.ref}
               style={{
                 opacity: 1,
