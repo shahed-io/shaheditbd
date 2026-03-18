@@ -216,9 +216,23 @@ const Navbar = () => {
                 </button>
               )}
 
-              {/* Cart Button */}
+              {/* Mobile Search Button — only on xs/sm */}
+              <button
+                onClick={() => { setMobileSearch(v => !v); setMobileOpen(false); }}
+                className="sm:hidden relative p-2.5 rounded-xl transition-all hover:scale-[1.03] active:scale-[0.97]"
+                style={{
+                  background: mobileSearch
+                    ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))'
+                    : 'hsla(258,78%,55%,0.10)',
+                  color: mobileSearch ? 'hsl(0,0%,100%)' : 'hsl(258,78%,50%)',
+                }}
+                aria-label="Search">
+                <Search size={18} />
+              </button>
+
+              {/* Cart Button — hidden on mobile, visible sm+ */}
               <button onClick={() => setCartOpen(true)}
-                className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
+                className="relative hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
                   boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
@@ -235,7 +249,7 @@ const Navbar = () => {
 
               <button className="lg:hidden p-2.5 rounded-xl transition-colors"
                 style={{ color: 'hsl(226,35%,30%)' }}
-                onClick={() => setMobileOpen(!mobileOpen)}>
+                onClick={() => { setMobileOpen(!mobileOpen); setMobileSearch(false); }}>
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
