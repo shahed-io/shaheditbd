@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
 import SearchBar from './SearchBar';
@@ -24,12 +24,14 @@ const CATEGORY_DROPDOWN = [
 ];
 
 const Navbar = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [authOpen,   setAuthOpen]   = useState(false);
-  const [scrolled,   setScrolled]   = useState(false);
-  const [catOpen,    setCatOpen]    = useState(false);
-  const [avatarUrl,  setAvatarUrl]  = useState<string | null>(null);
+  const [mobileOpen,   setMobileOpen]   = useState(false);
+  const [authOpen,     setAuthOpen]     = useState(false);
+  const [scrolled,     setScrolled]     = useState(false);
+  const [catOpen,      setCatOpen]      = useState(false);
+  const [avatarUrl,    setAvatarUrl]    = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState<string | null>(null);
+  const [mobileSearch, setMobileSearch] = useState(false);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
@@ -214,9 +216,23 @@ const Navbar = () => {
                 </button>
               )}
 
-              {/* Cart Button */}
+              {/* Mobile Search Button — only on xs/sm */}
+              <button
+                onClick={() => { setMobileSearch(v => !v); setMobileOpen(false); }}
+                className="sm:hidden relative p-2.5 rounded-xl transition-all hover:scale-[1.03] active:scale-[0.97]"
+                style={{
+                  background: mobileSearch
+                    ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))'
+                    : 'hsla(258,78%,55%,0.10)',
+                  color: mobileSearch ? 'hsl(0,0%,100%)' : 'hsl(258,78%,50%)',
+                }}
+                aria-label="Search">
+                <Search size={18} />
+              </button>
+
+              {/* Cart Button — hidden on mobile, visible sm+ */}
               <button onClick={() => setCartOpen(true)}
-                className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
+                className="relative hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
                   boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
@@ -233,10 +249,18 @@ const Navbar = () => {
 
               <button className="lg:hidden p-2.5 rounded-xl transition-colors"
                 style={{ color: 'hsl(226,35%,30%)' }}
-                onClick={() => setMobileOpen(!mobileOpen)}>
+                onClick={() => { setMobileOpen(!mobileOpen); setMobileSearch(false); }}>
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Mobile Search Dropdown — xs/sm only */}
+        <div ref={mobileSearchRef} className={`sm:hidden overflow-hidden transition-all duration-300 ${mobileSearch ? 'max-h-24' : 'max-h-0'}`}>
+          <div className="border-t px-4 py-3"
+            style={{ background: 'hsla(0,0%,100%,0.96)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
+            <SearchBar variant="navbar" className="w-full" onClose={() => setMobileSearch(false)} />
           </div>
         </div>
 
@@ -244,9 +268,6 @@ const Navbar = () => {
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
           <div className="border-t px-4 py-4 space-y-1"
             style={{ background: 'hsla(0,0%,100%,0.92)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
-            <div className="mb-3">
-              <SearchBar variant="navbar" className="w-full" onClose={() => setMobileOpen(false)} />
-            </div>
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-colors"
