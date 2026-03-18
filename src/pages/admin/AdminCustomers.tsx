@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import {
   Users, Search, RefreshCw, Eye, ShoppingBag,
-  Mail, Phone, Calendar, TrendingUp, UserCheck
+  Mail, Phone, Calendar, TrendingUp, UserCheck, Award, Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,8 @@ type Customer = {
   order_count?: number;
   total_spent?: number;
   last_order?: string | null;
+  points_balance?: number;
+  total_points_earned?: number;
 };
 
 type Order = {
