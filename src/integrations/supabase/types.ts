@@ -1327,6 +1327,7 @@ export type Database = {
           referral_earnings: number
           referred_by: string | null
           total_points_earned: number
+          total_points_redeemed: number
           updated_at: string
           user_id: string
           wallet_balance: number
@@ -1345,6 +1346,7 @@ export type Database = {
           referral_earnings?: number
           referred_by?: string | null
           total_points_earned?: number
+          total_points_redeemed?: number
           updated_at?: string
           user_id: string
           wallet_balance?: number
@@ -1363,6 +1365,7 @@ export type Database = {
           referral_earnings?: number
           referred_by?: string | null
           total_points_earned?: number
+          total_points_redeemed?: number
           updated_at?: string
           user_id?: string
           wallet_balance?: number
@@ -1793,6 +1796,10 @@ export type Database = {
       }
     }
     Functions: {
+      deduct_order_points: {
+        Args: { p_order_id: string; p_order_total: number; p_user_id: string }
+        Returns: Json
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
