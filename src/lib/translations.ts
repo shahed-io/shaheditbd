@@ -945,7 +945,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   tr: {
-    tab_profile: 'Profil', tab_orders: 'Siparişlerim', tab_wallet: 'Cüzdan', tab_wishlist: 'İstek Listesi',
+    tab_profile: 'Profil', tab_orders: 'Siparişlerim', tab_wallet: 'Cüzdan', tab_points: 'Puanlar', tab_wishlist: 'İstek Listesi',
     tab_addresses: 'Adresler', tab_notifications: 'Bildirimler', tab_referral: 'Referans',
     tab_security: 'Güvenlik', tab_language: 'Dil', tab_logout: 'Çıkış Yap', menu: 'Menü',
     profile_title: 'Profil', profile_subtitle: 'Kişisel bilgilerinizi yönetin',
