@@ -1308,6 +1308,12 @@ const AdminProducts = () => {
                 {/* ======= PRICING TAB ======= */}
                 {activeTab === 'pricing' && (
                   <div className="space-y-4">
+                    {form.duration_plans.some(p => p.price) && (
+                      <div className="rounded-xl px-3 py-2 text-xs flex items-center gap-2" style={{ background: 'hsla(142,71%,45%,0.08)', border: '1px solid hsla(142,71%,45%,0.2)' }}>
+                        <span>✅</span>
+                        <span className="text-muted-foreground">মেয়াদ প্ল্যান থেকে <strong className="text-foreground">সর্বনিম্ন মূল্য</strong> অটো-সিঙ্ক হয়েছে → Selling Price: <strong className="text-foreground">৳{form.price}</strong></span>
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className={lc}>Selling Price (৳) *</label>
