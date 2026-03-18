@@ -205,7 +205,9 @@ const AdminProducts = () => {
           setShortDescOptions(opts);
           setShowShortDescPicker(true);
         } else {
-          setForm(p => ({ ...p, short_description: raw.trim() }));
+          // Try to parse as bullet lines
+          const bulletLines = raw.split('\n').map((l: string) => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
+          setForm(p => ({ ...p, short_desc_bullets: bulletLines.length ? bulletLines : [raw.trim()] }));
           toast.success('Short description generated!');
         }
       } else if (type === 'description') {
@@ -219,9 +221,11 @@ const AdminProducts = () => {
         }));
         toast.success('SEO content generated!');
       } else if (type === 'all') {
+        const aiShortDesc: string = result.short_description || '';
+        const aiLines = aiShortDesc.split('\n').map((l: string) => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
         setForm(p => ({
           ...p,
-          short_description: result.short_description || p.short_description,
+          short_desc_bullets: aiLines.length ? aiLines : p.short_desc_bullets,
           description: result.description || p.description,
           seo_title: (result.seo_title || '').substring(0, 60),
           seo_description: (result.seo_description || '').substring(0, 160),
