@@ -1097,7 +1097,7 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
   return (
     <div
       ref={sectionReveal.ref}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8"
       style={{
         opacity: sectionReveal.revealed ? 1 : 0,
         transform: sectionReveal.revealed ? 'none' : 'translateY(30px)',
@@ -1403,14 +1403,14 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
   return (
     <div
       ref={sectionReveal.ref}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2"
       style={{
         opacity: sectionReveal.revealed ? 1 : 0,
         transform: sectionReveal.revealed ? 'none' : 'translateY(30px)',
         transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
       }}
     >
-      <div className="border-t border-border mb-8" />
+      <div className="border-t border-border mb-4" />
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
