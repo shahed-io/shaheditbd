@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
-import { useCopyProtection } from "@/hooks/useCopyProtection";
+
 import CartDrawer from "@/components/store/CartDrawer";
 import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
 import Index from "./pages/Index";
@@ -88,9 +88,8 @@ const queryClient = new QueryClient({
   },
 });
 
-// Copy protection + admin body class management
+// Admin body class management
 const AppContent = () => {
-  useCopyProtection();
   const location = useLocation();
 
   useEffect(() => {
