@@ -371,42 +371,14 @@ const AdminProducts = () => {
       }
       if (data?.error) throw new Error(data.error);
 
-      const imageDataUrl: string = data.imageData;
+      // Edge function now uploads image server-side and returns URL directly
+      const publicUrl: string = data.imageUrl;
+      if (!publicUrl) throw new Error('No image URL returned');
 
-      // Convert base64 PNG → WEBP via Canvas API
-      const img = new Image();
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Image load failed'));
-        img.src = imageDataUrl;
-      });
-
-      const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth || 800;
-      canvas.height = img.naturalHeight || 800;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Canvas not supported');
-      ctx.drawImage(img, 0, 0);
-
-      const webpBlob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(blob => {
-          if (blob) resolve(blob);
-          else reject(new Error('WEBP conversion failed'));
-        }, 'image/webp', 0.92);
-      });
-
-      // Upload WEBP to storage
-      const fileName = `ai-card-${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(fileName, webpBlob, { contentType: 'image/webp', upsert: true });
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(uploadData.path);
-      setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
-      setImagePreview(urlData.publicUrl);
+      setForm(prev => ({ ...prev, image_url: publicUrl }));
+      setImagePreview(publicUrl);
       toast.dismiss(toastId);
-      toast.success('✨ AI Glassmorphism Card তৈরি হয়েছে! WEBP ফরমেটে সেভ হয়েছে।');
+      toast.success('✨ AI Card তৈরি হয়েছে এবং সেভ হয়েছে!');
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error('AI Card Error: ' + (err.message || 'Unknown error'));
