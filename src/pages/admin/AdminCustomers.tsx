@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import {
   Users, Search, RefreshCw, Eye, ShoppingBag,
-  Mail, Phone, Calendar, TrendingUp, UserCheck, Award, Star
+  Mail, Phone, Calendar, TrendingUp, TrendingDown, UserCheck, Award, Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,7 @@ type Customer = {
   last_order?: string | null;
   points_balance?: number;
   total_points_earned?: number;
+  total_points_redeemed?: number;
 };
 
 type Order = {
@@ -52,7 +53,7 @@ export default function AdminCustomers() {
       // Get all profiles
       const { data: profiles, error } = await supabase
         .from('profiles')
-        .select('*, points_balance, total_points_earned')
+        .select('*, points_balance, total_points_earned, total_points_redeemed')
         .order('created_at', { ascending: false });
       if (error) throw error;
 
@@ -79,6 +80,7 @@ export default function AdminCustomers() {
         last_order:  orderMap[p.user_id]?.last  ?? null,
         points_balance: (p as any).points_balance ?? 0,
         total_points_earned: (p as any).total_points_earned ?? 0,
+        total_points_redeemed: (p as any).total_points_redeemed ?? 0,
       })) as Customer[];
     },
   });
@@ -287,8 +289,9 @@ export default function AdminCustomers() {
                   { icon: Calendar,  label: 'Joined',   value: format(new Date(selected.created_at), 'dd MMM yyyy') },
                   { icon: ShoppingBag, label: 'Orders', value: String(selected.order_count ?? 0) },
                   { icon: TrendingUp,  label: 'Total Spent', value: `৳${(selected.total_spent ?? 0).toLocaleString()}` },
-                  { icon: Award,       label: 'Points Balance', value: `${(selected.points_balance ?? 0).toLocaleString()} pts` },
+                { icon: Award,       label: 'Points Balance', value: `${(selected.points_balance ?? 0).toLocaleString()} pts` },
                   { icon: Star,        label: 'Total Earned',   value: `${(selected.total_points_earned ?? 0).toLocaleString()} pts` },
+                  { icon: TrendingDown, label: 'Total Redeemed', value: `${(selected.total_points_redeemed ?? 0).toLocaleString()} pts (৳${Math.floor((selected.total_points_redeemed ?? 0)/2)})` },
                   { icon: Calendar,  label: 'Last Order', value: selected.last_order ? format(new Date(selected.last_order), 'dd MMM yyyy') : '—' },
                 ].map(item => (
                   <div key={item.label} className="glass-card rounded-lg p-3 border border-border/50">
