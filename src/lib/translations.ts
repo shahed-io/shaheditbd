@@ -450,6 +450,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: '个人资料',
     tab_orders: '我的订单',
     tab_wallet: '钱包',
+    tab_points: '积分',
     tab_wishlist: '心愿单',
     tab_addresses: '地址',
     tab_notifications: '通知',
