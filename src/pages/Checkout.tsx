@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import {
   ArrowLeft, ShoppingCart, Tag, CheckCircle, Smartphone,
-  Minus, Plus, Trash2, X, Loader2, Shield, Info, ChevronDown, User, LogIn, FileText, Wallet, Package, Zap
+  Minus, Plus, Trash2, X, Loader2, Shield, Info, ChevronDown, User, LogIn, FileText, Wallet, Package
 } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
@@ -117,102 +117,6 @@ const Checkout = () => {
       setCouponError('কুপন চেক করতে সমস্যা হয়েছে');
     } finally {
       setCouponLoading(false);
-    }
-  };
-
-  // ---- bKash Auto-Payment (PGW) ----
-  const handleBkashAutoPay = async () => {
-    setSubmitError('');
-    setErrors({});
-    if (!termsAccepted) { setSubmitError('Terms & Conditions মেনে নিতে হবে'); return; }
-    const parsed = checkoutSchema.safeParse(form);
-    if (!parsed.success) {
-      const fieldErrors: Record<string, string> = {};
-      parsed.error.errors.forEach(err => { fieldErrors[err.path[0]] = err.message; });
-      setErrors(fieldErrors);
-      return;
-    }
-    if (items.length === 0) { setSubmitError('Cart empty'); return; }
-
-    setLoading(true);
-    try {
-      const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
-
-      // Save order as pending first
-      let couponId: string | null = null;
-      if (coupon.isApplied && coupon.code) {
-        const { data: couponData } = await supabase.from('coupons').select('id').eq('code', coupon.code).single();
-        couponId = couponData?.id || null;
-      }
-
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          order_number: orderNum,
-          customer_name: form.name,
-          customer_email: form.email,
-          customer_phone: form.phone,
-          subtotal,
-          discount_amount: discountAmount,
-          total: finalTotal,
-          payment_method: 'bkash_merchant',
-          status: 'pending',
-          payment_status: 'pending',
-          coupon_code: coupon.isApplied ? coupon.code : null,
-          coupon_id: couponId,
-          user_id: user?.id || null,
-          notes: orderNotes.trim() || null,
-        })
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // Save order items
-      const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_name: item.name + (item.variant ? ` (${item.variant})` : ''),
-        product_id: typeof item.id === 'string' && item.id.includes('-') ? item.id : null,
-        price: item.price,
-        quantity: item.quantity,
-        total: item.price * item.quantity,
-      }));
-      await supabase.from('order_items').insert(orderItems);
-
-      // Store order number for callback
-      localStorage.setItem('bkash_pending_order_id', orderNum);
-
-      const callbackURL = `${window.location.origin}/bkash/callback?orderID=${orderNum}`;
-
-      // Call bKash create payment
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bkash-payment?action=create`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            amount: String(finalTotal),
-            orderID: orderNum,
-            callbackURL,
-          }),
-        }
-      );
-      const data = await res.json();
-
-      if (data.bkashURL) {
-        clearCart();
-        window.location.href = data.bkashURL;
-      } else {
-        throw new Error(data.statusMessage || 'bKash payment URL পাওয়া যায়নি');
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'bKash পেমেন্ট শুরু করতে সমস্যা হয়েছে';
-      toast.error(msg);
-      setSubmitError(msg);
-      setLoading(false);
     }
   };
 
@@ -546,26 +450,10 @@ const Checkout = () => {
             </div>
           )}
 
-          {/* bKash Auto-Pay button (only for bkash_merchant) */}
-          {paymentMethod === 'bkash_merchant' && (
-            <button
-              type="button"
-              onClick={handleBkashAutoPay}
-              disabled={loading || !termsAccepted || items.length === 0}
-              className="w-full py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-[#E2136E] hover:bg-[#c4105d] text-white transition-colors shadow-lg"
-            >
-              {loading ? (
-                <><Loader2 size={16} className="animate-spin" /> Processing...</>
-              ) : (
-                <><Zap size={16} /> bKash দিয়ে পেমেন্ট করুন — ৳{finalTotal.toLocaleString()}</>
-              )}
-            </button>
-          )}
-
           <button
             type="submit"
-            disabled={loading || !termsAccepted || items.length === 0 || paymentMethod === 'bkash_merchant'}
-            className={`w-full btn-glow py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${paymentMethod === 'bkash_merchant' ? 'hidden' : ''}`}
+            disabled={loading || !termsAccepted || items.length === 0}
+            className="w-full btn-glow py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <><Loader2 size={16} className="animate-spin" /> Processing...</>
