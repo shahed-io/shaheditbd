@@ -345,47 +345,111 @@ serve(async (req) => {
     console.log("AI response keys:", JSON.stringify(Object.keys(data)));
     console.log("choices[0].message keys:", JSON.stringify(Object.keys(data.choices?.[0]?.message || {})));
 
-    // Try multiple extraction paths
-    let imageData: string | undefined;
+    // ── Extract image from response (multiple paths) ─────────────────────────
+    let rawBase64: string | undefined;
+    let mimeType = "image/jpeg";
 
-    // Path 1: images array (documented format)
-    imageData = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-
-    // Path 2: content as array with image parts
-    if (!imageData) {
-      const content = data.choices?.[0]?.message?.content;
-      if (Array.isArray(content)) {
-        const imgPart = content.find((p: any) => p.type === "image_url");
-        imageData = imgPart?.image_url?.url;
+    // Path 1: images array with image_url (Lovable gateway documented format)
+    const img0 = data.choices?.[0]?.message?.images?.[0];
+    if (img0?.image_url?.url) {
+      const url: string = img0.image_url.url;
+      if (url.startsWith("data:")) {
+        const [meta, b64] = url.split(",");
+        rawBase64 = b64;
+        mimeType = meta.replace("data:", "").replace(";base64", "") || mimeType;
+      } else {
+        // It's a real URL — fetch and convert
+        try {
+          const fetchResp = await fetch(url);
+          if (fetchResp.ok) {
+            const buf = await fetchResp.arrayBuffer();
+            rawBase64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+            mimeType = fetchResp.headers.get("content-type") || mimeType;
+          }
+        } catch (_) { /* fall through */ }
       }
     }
 
-    // Path 3: content as array with inline_data (Gemini native format)
-    if (!imageData) {
+    // Path 2: images[0].data (raw base64 without prefix)
+    if (!rawBase64 && img0?.data) {
+      rawBase64 = img0.data;
+      mimeType = img0.mimeType || img0.mime_type || mimeType;
+    }
+
+    // Path 3: content array — image_url type
+    if (!rawBase64) {
       const content = data.choices?.[0]?.message?.content;
       if (Array.isArray(content)) {
-        const imgPart = content.find((p: any) => p.type === "image" || p.inline_data);
-        if (imgPart?.inline_data?.data) {
-          imageData = `data:${imgPart.inline_data.mime_type || "image/png"};base64,${imgPart.inline_data.data}`;
+        const imgPart = content.find((p: any) => p.type === "image_url");
+        if (imgPart?.image_url?.url) {
+          const url: string = imgPart.image_url.url;
+          if (url.startsWith("data:")) {
+            const [meta, b64] = url.split(",");
+            rawBase64 = b64;
+            mimeType = meta.replace("data:", "").replace(";base64", "") || mimeType;
+          }
         }
       }
     }
 
-    // Path 4: direct base64 in images array with data field
-    if (!imageData) {
-      const img = data.choices?.[0]?.message?.images?.[0];
-      if (img?.data) {
-        imageData = `data:image/png;base64,${img.data}`;
+    // Path 4: content array — inline_data type (Gemini native)
+    if (!rawBase64) {
+      const content = data.choices?.[0]?.message?.content;
+      if (Array.isArray(content)) {
+        const imgPart = content.find((p: any) => p.inline_data?.data || p.type === "image");
+        if (imgPart?.inline_data?.data) {
+          rawBase64 = imgPart.inline_data.data;
+          mimeType = imgPart.inline_data.mime_type || mimeType;
+        }
       }
     }
 
-    console.log("imageData found:", !!imageData, "prefix:", imageData?.substring(0, 30));
+    console.log("rawBase64 extracted:", !!rawBase64, "mime:", mimeType);
 
-    if (!imageData) {
-      console.error("Full response structure:", JSON.stringify(data).substring(0, 500));
+    if (!rawBase64) {
+      console.error("Full response structure:", JSON.stringify(data).substring(0, 800));
       throw new Error("AI did not return an image. Please try again.");
     }
 
+    // ── Upload to Supabase Storage ─────────────────────────────────────────
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || Deno.env.get("VITE_SUPABASE_URL");
+    const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (SUPABASE_URL && SERVICE_ROLE_KEY) {
+      try {
+        const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+        const ext = mimeType.includes("png") ? "png" : "jpg";
+        const filename = `ai-card-${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
+
+        // Decode base64 to binary
+        const binaryStr = atob(rawBase64);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+
+        console.log(`Uploading image (mime: ${mimeType}) to storage...`);
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("product-images")
+          .upload(filename, bytes.buffer, { contentType: mimeType, upsert: false });
+
+        if (!uploadError && uploadData) {
+          const { data: publicUrlData } = supabase.storage
+            .from("product-images")
+            .getPublicUrl(uploadData.path);
+          const uploadedUrl = publicUrlData.publicUrl;
+          console.log("Image uploaded:", uploadedUrl);
+          return new Response(JSON.stringify({ imageUrl: uploadedUrl }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        } else {
+          console.warn("Storage upload failed:", uploadError?.message, "— returning base64");
+        }
+      } catch (uploadEx) {
+        console.warn("Storage upload exception:", uploadEx, "— returning base64");
+      }
+    }
+
+    // Fallback: return base64 directly if storage unavailable
+    const imageData = `data:${mimeType};base64,${rawBase64}`;
     return new Response(JSON.stringify({ imageData }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
