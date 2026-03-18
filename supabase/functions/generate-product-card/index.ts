@@ -166,18 +166,17 @@ serve(async (req) => {
       userContent.push({ type: "image_url", image_url: { url: imageUrl } });
     }
 
-    // Best quality first, fallback on rate limit
-    const MODELS = [
-      "google/gemini-3-pro-image-preview",       // highest quality
-      "google/gemini-3.1-flash-image-preview",   // fast + pro-level
-      "google/gemini-2.5-flash-image",           // final fallback
+    // ── Phase 1: Lovable AI Gateway (best quality models) ─────────────────
+    const GATEWAY_MODELS = [
+      "google/gemini-3-pro-image-preview",     // highest quality
+      "google/gemini-3.1-flash-image-preview", // fast + pro-level
     ];
 
     let data: any = null;
 
-    for (let attempt = 0; attempt < MODELS.length; attempt++) {
-      const model = MODELS[attempt];
-      console.log(`Attempt ${attempt + 1} with model: ${model}`);
+    for (let attempt = 0; attempt < GATEWAY_MODELS.length; attempt++) {
+      const model = GATEWAY_MODELS[attempt];
+      console.log(`Gateway attempt ${attempt + 1}: ${model}`);
 
       const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -193,51 +192,35 @@ serve(async (req) => {
       });
 
       if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Insufficient AI credits. Please top up your workspace." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        // credits exhausted — fall through to direct API keys
+        console.warn("Gateway credits exhausted, switching to direct Gemini API...");
+        break;
       }
 
       if (response.status === 429) {
-        console.warn(`Model ${model} rate limited, trying next...`);
-        if (attempt === MODELS.length - 1) {
-          return new Response(
-            JSON.stringify({ error: "সার্ভার এখন ব্যস্ত। ১-২ মিনিট পর আবার চেষ্টা করুন।" }),
-            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        // Small delay before trying next model
-        await new Promise(r => setTimeout(r, 1500));
+        console.warn(`Gateway model ${model} rate limited, trying next...`);
+        await new Promise(r => setTimeout(r, 800));
         continue;
       }
 
       if (!response.ok) {
         const errText = await response.text();
-        throw new Error(`AI gateway error ${response.status}: ${errText}`);
+        console.warn(`Gateway error ${response.status}: ${errText}, trying next...`);
+        continue;
       }
 
       const responseData = await response.json();
 
-      // Check for API-level errors in body (e.g. rate limit returned as 200)
       if (responseData.error) {
-        const errCode = responseData.error?.code;
-        console.error(`Model ${model} body error:`, JSON.stringify(responseData.error));
-        if (errCode === 429 || responseData.error?.status === 429) {
-          if (attempt === MODELS.length - 1) {
-            return new Response(
-              JSON.stringify({ error: "সার্ভার এখন ব্যস্ত। ১-২ মিনিট পর আবার চেষ্টা করুন।" }),
-              { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-          }
-          await new Promise(r => setTimeout(r, 1500));
+        const code = responseData.error?.code;
+        if (code === 429 || responseData.error?.status === 429) {
+          console.warn(`Gateway body 429, trying next...`);
+          await new Promise(r => setTimeout(r, 800));
           continue;
         }
-        if (errCode === 402) {
-          return new Response(
-            JSON.stringify({ error: "Insufficient AI credits. Please top up your workspace." }),
-            { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
+        if (code === 402) {
+          console.warn("Gateway credits exhausted, switching to direct Gemini API...");
+          break;
         }
         throw new Error(responseData.error?.message || "AI gateway error");
       }
@@ -246,8 +229,86 @@ serve(async (req) => {
       break;
     }
 
+    // ── Phase 2: Direct Gemini API with user-provided keys ─────────────────
     if (!data) {
-      throw new Error("সকল AI মডেল রেট লিমিটেড। একটু পর আবার চেষ্টা করুন।");
+      const GEMINI_KEYS = [
+        Deno.env.get("GEMINI_API_KEY"),
+        Deno.env.get("GEMINI_API_KEY_2"),
+        Deno.env.get("GEMINI_API_KEY_3"),
+      ].filter(Boolean) as string[];
+
+      // Use gemini-2.0-flash-preview-image-generation for direct API (high quality)
+      const DIRECT_MODEL = "gemini-2.0-flash-preview-image-generation";
+
+      for (let i = 0; i < GEMINI_KEYS.length; i++) {
+        const apiKey = GEMINI_KEYS[i];
+        console.log(`Direct Gemini attempt ${i + 1} with key ${i + 1}...`);
+
+        // Build parts for direct Gemini API
+        const parts: any[] = [{ text: promptText }];
+        if (imageUrl) {
+          // Fetch the image and convert to base64 for direct API
+          try {
+            const imgResp = await fetch(imageUrl);
+            if (imgResp.ok) {
+              const imgBuf = await imgResp.arrayBuffer();
+              const base64 = btoa(String.fromCharCode(...new Uint8Array(imgBuf)));
+              const mimeType = imgResp.headers.get("content-type") || "image/jpeg";
+              parts.push({ inline_data: { mime_type: mimeType, data: base64 } });
+            }
+          } catch (e) {
+            console.warn("Could not fetch image for direct API, text-only prompt");
+          }
+        }
+
+        const directResp = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${DIRECT_MODEL}:generateContent?key=${apiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts }],
+              generationConfig: {
+                responseModalities: ["IMAGE", "TEXT"],
+                responseMimeType: "image/jpeg",
+              },
+            }),
+          }
+        );
+
+        if (directResp.status === 429) {
+          console.warn(`Direct key ${i + 1} rate limited, trying next key...`);
+          await new Promise(r => setTimeout(r, 800));
+          continue;
+        }
+
+        if (!directResp.ok) {
+          const errText = await directResp.text();
+          console.warn(`Direct key ${i + 1} error ${directResp.status}: ${errText}`);
+          continue;
+        }
+
+        const directData = await directResp.json();
+        const inlinePart = directData.candidates?.[0]?.content?.parts?.find(
+          (p: any) => p.inlineData?.data
+        );
+
+        if (inlinePart?.inlineData?.data) {
+          const mime = inlinePart.inlineData.mimeType || "image/jpeg";
+          const imageData = `data:${mime};base64,${inlinePart.inlineData.data}`;
+          console.log("Direct Gemini image generated successfully");
+          return new Response(JSON.stringify({ imageData }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        console.warn(`Direct key ${i + 1} returned no image data`);
+      }
+
+      return new Response(
+        JSON.stringify({ error: "সকল AI কী রেট লিমিটেড। কিছুক্ষণ পর আবার চেষ্টা করুন।" }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     console.log("AI response keys:", JSON.stringify(Object.keys(data)));
