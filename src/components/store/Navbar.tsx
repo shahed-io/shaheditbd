@@ -24,12 +24,14 @@ const CATEGORY_DROPDOWN = [
 ];
 
 const Navbar = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [authOpen,   setAuthOpen]   = useState(false);
-  const [scrolled,   setScrolled]   = useState(false);
-  const [catOpen,    setCatOpen]    = useState(false);
-  const [avatarUrl,  setAvatarUrl]  = useState<string | null>(null);
+  const [mobileOpen,   setMobileOpen]   = useState(false);
+  const [authOpen,     setAuthOpen]     = useState(false);
+  const [scrolled,     setScrolled]     = useState(false);
+  const [catOpen,      setCatOpen]      = useState(false);
+  const [avatarUrl,    setAvatarUrl]    = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState<string | null>(null);
+  const [mobileSearch, setMobileSearch] = useState(false);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
