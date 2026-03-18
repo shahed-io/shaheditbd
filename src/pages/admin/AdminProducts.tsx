@@ -1652,25 +1652,6 @@ const AdminProducts = () => {
                       </div>
                     </div>
 
-                    {/* Attributes */}
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="text-sm font-medium text-foreground">Product Attributes</label>
-                        <button type="button" onClick={addAttr} className="text-xs text-primary hover:underline flex items-center gap-1"><Plus size={12} /> Add</button>
-                      </div>
-                      <div className="space-y-2">
-                        {form.attributes.map((a, i) => (
-                          <div key={i} className="flex gap-2 items-center">
-                            <input value={a.key} onChange={e => setAttr(i, 'key', e.target.value)}
-                              placeholder="e.g. Platform" className={`${ic} flex-1`} />
-                            <input value={a.value} onChange={e => setAttr(i, 'value', e.target.value)}
-                              placeholder="e.g. Windows" className={`${ic} flex-1`} />
-                            <button type="button" onClick={() => removeAttr(i)} className="text-muted-foreground hover:text-destructive"><X size={14} /></button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
                     {/* What You Get */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
