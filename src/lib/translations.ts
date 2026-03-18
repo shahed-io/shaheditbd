@@ -1058,7 +1058,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   id: {
-    tab_profile: 'Profil', tab_orders: 'Pesanan Saya', tab_wallet: 'Dompet', tab_wishlist: 'Daftar Keinginan',
+    tab_profile: 'Profil', tab_orders: 'Pesanan Saya', tab_wallet: 'Dompet', tab_points: 'Poin', tab_wishlist: 'Daftar Keinginan',
     tab_addresses: 'Alamat', tab_notifications: 'Notifikasi', tab_referral: 'Referral',
     tab_security: 'Keamanan', tab_language: 'Bahasa', tab_logout: 'Keluar', menu: 'Menu',
     profile_title: 'Profil', profile_subtitle: 'Kelola informasi pribadi Anda',
