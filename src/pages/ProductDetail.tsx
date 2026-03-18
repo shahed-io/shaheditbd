@@ -244,10 +244,17 @@ const ProductDetail = () => {
   const inCart     = isInCart(product.id);
 
   // Compute displayed price:
-  // 1. Check new custom option groups (DB-driven)
-  // 2. Fall back to legacy variants (JSONB-driven)
-  // 3. Fall back to base price
+  // 1. Duration plans (__duration_plans attribute) — highest priority
+  // 2. Custom option groups (DB-driven)
+  // 3. Legacy variants (JSONB-driven)
+  // 4. Base price
+  const selectedPlan = durationPlans[selectedPlanIdx] || null;
   const getSelectedPrice = (): number => {
+    // Duration plans system
+    if (selectedPlan) {
+      const p = parseFloat(selectedPlan.price);
+      if (!isNaN(p) && p > 0) return p;
+    }
     // New system: custom option groups
     if (customGroups.length > 0) {
       for (const group of customGroups) {
@@ -267,17 +274,26 @@ const ProductDetail = () => {
     return product.price;
   };
   const displayPrice = getSelectedPrice();
-  const savings    = product.original_price ? product.original_price - displayPrice : 0;
-  const discount   = product.discount_percent || (product.original_price ? Math.round(savings / product.original_price * 100) : 0);
+
+  // Original price: use selected plan's original_price if available, else product's
+  const displayOriginalPrice = selectedPlan?.original_price
+    ? parseFloat(selectedPlan.original_price) || product.original_price
+    : product.original_price;
+
+  const savings  = displayOriginalPrice && displayOriginalPrice > displayPrice ? displayOriginalPrice - displayPrice : 0;
+  const discount = product.discount_percent || (displayOriginalPrice && displayOriginalPrice > displayPrice ? Math.round(savings / displayOriginalPrice * 100) : 0);
 
   // Build selected options string for WhatsApp/order
-  const selectedOptsStr = customGroups.length > 0
-    ? customGroups.map(g => {
-        const selId = selectedOpts[g.id];
-        const val = selId ? g.values.find(v => v.id === selId) : g.values.find(v => v.is_default) || g.values[0];
-        return val ? `${g.name}: ${val.label}` : null;
-      }).filter(Boolean).join(', ')
-    : Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`).join(', ');
+  const selectedOptsStr = [
+    ...(selectedPlan ? [`মেয়াদ: ${selectedPlan.duration}`] : []),
+    ...(customGroups.length > 0
+      ? customGroups.map(g => {
+          const selId = selectedOpts[g.id];
+          const val = selId ? g.values.find(v => v.id === selId) : g.values.find(v => v.is_default) || g.values[0];
+          return val ? `${g.name}: ${val.label}` : null;
+        }).filter(Boolean)
+      : Object.entries(selectedVar).map(([k, v]) => `${k}: ${v}`)),
+  ].join(', ');
 
   const cartItem = {
     id: product.id,
