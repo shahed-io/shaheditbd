@@ -13,7 +13,7 @@ const NAV_COL = [
       { label: 'Adobe Creative', href: '#' },
       { label: 'CID For Reseller', href: 'https://shahedstore.com.bd/getcid/login.php', external: true },
       { label: 'VPN & Security', href: '#' },
-      { label: 'Free Tools',      href: '/free-tools', highlight: true },
+      { label: 'Free Tools',      href: '/free-tools' },
     ]
   },
   {
