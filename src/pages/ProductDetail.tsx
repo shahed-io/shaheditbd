@@ -300,8 +300,9 @@ const ProductDetail = () => {
     name: product.name,
     category: product.categories?.name || '',
     price: displayPrice,
-    originalPrice: product.original_price || undefined,
+    originalPrice: displayOriginalPrice || undefined,
     image: product.image_url || PLACEHOLDER,
+    variant: selectedPlan ? selectedPlan.duration : undefined,
   };
 
   const waOrder = () => {
