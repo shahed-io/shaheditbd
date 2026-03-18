@@ -28,6 +28,7 @@ type Customer = {
   last_order?: string | null;
   points_balance?: number;
   total_points_earned?: number;
+  total_points_redeemed?: number;
 };
 
 type Order = {
