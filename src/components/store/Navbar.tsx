@@ -70,6 +70,20 @@ const Navbar = () => {
     <>
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
 
+      {/* ── Desktop Search Overlay ── */}
+      {desktopSearch && (
+        <div className="fixed inset-0 z-[999] hidden md:flex items-start justify-center pt-20 px-4"
+          style={{ background: 'hsla(226,35%,10%,0.55)', backdropFilter: 'blur(6px)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setDesktopSearch(false); }}>
+          <div className="w-full max-w-2xl xl:max-w-3xl rounded-3xl overflow-hidden shadow-[0_32px_80px_hsla(226,35%,10%,0.40)] flex flex-col"
+            style={{ background: 'hsl(var(--card))', border: '1.5px solid hsl(var(--border))', maxHeight: '80vh' }}>
+            {/* Top line */}
+            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
+            <DesktopSearchPalette onClose={() => setDesktopSearch(false)} />
+          </div>
+        </div>
+      )}
+
       {/* ── Top Announcement Bar ── */}
       <div className="w-full text-white text-xs font-medium py-2 flex items-center overflow-hidden relative"
         style={{ background: 'linear-gradient(90deg, hsl(258,78%,50%), hsl(200,90%,42%), hsl(258,78%,50%))' }}>
