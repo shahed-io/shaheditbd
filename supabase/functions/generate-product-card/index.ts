@@ -138,8 +138,9 @@ OVERALL: Rich dark purple, vibrant glowing borders, energetic promotional style.
 
 // Helper: upload base64 image to Supabase Storage and return public URL
 async function uploadImageToStorage(base64Data: string, mimeType: string): Promise<string> {
-  const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  // Trim any accidental whitespace/newlines from env vars
+  const SUPABASE_URL = (Deno.env.get("SUPABASE_URL") || "").trim();
+  const SUPABASE_SERVICE_ROLE_KEY = (Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "").trim();
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     throw new Error("Storage credentials not configured");
@@ -160,7 +161,8 @@ async function uploadImageToStorage(base64Data: string, mimeType: string): Promi
     {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        "apikey": SUPABASE_SERVICE_ROLE_KEY,
         "Content-Type": mimeType,
         "x-upsert": "true",
       },
@@ -169,8 +171,9 @@ async function uploadImageToStorage(base64Data: string, mimeType: string): Promi
   );
 
   if (!uploadResp.ok) {
-    const err = await uploadResp.text();
-    throw new Error(`Storage upload failed: ${err}`);
+    const errText = await uploadResp.text();
+    console.error("Storage upload failed:", errText);
+    throw new Error(`Storage upload failed: ${errText}`);
   }
 
   return `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
