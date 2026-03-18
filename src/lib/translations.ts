@@ -717,7 +717,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   es: {
-    tab_profile: 'Perfil', tab_orders: 'Mis Pedidos', tab_wallet: 'Billetera', tab_wishlist: 'Lista de Deseos',
+    tab_profile: 'Perfil', tab_orders: 'Mis Pedidos', tab_wallet: 'Billetera', tab_points: 'Puntos', tab_wishlist: 'Lista de Deseos',
     tab_addresses: 'Direcciones', tab_notifications: 'Notificaciones', tab_referral: 'Referidos',
     tab_security: 'Seguridad', tab_language: 'Idioma', tab_logout: 'Cerrar Sesión', menu: 'Menú',
     profile_title: 'Perfil', profile_subtitle: 'Gestiona tu información personal',
