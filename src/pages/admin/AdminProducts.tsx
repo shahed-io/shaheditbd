@@ -467,7 +467,7 @@ const AdminProducts = () => {
     const payload: any = {
       name: form.name,
       slug: finalSlug,
-      short_description: form.short_description || null,
+      short_description: form.short_desc_bullets.filter(b => b.trim()).join('\n') || null,
       description: form.description || null,
       brand: form.brand || null,
       badge: form.badge || null,
