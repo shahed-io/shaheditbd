@@ -585,6 +585,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: 'प्रोफ़ाइल',
     tab_orders: 'मेरे ऑर्डर',
     tab_wallet: 'वॉलेट',
+    tab_points: 'पॉइंट्स',
     tab_wishlist: 'विशलिस्ट',
     tab_addresses: 'पते',
     tab_notifications: 'सूचनाएं',
