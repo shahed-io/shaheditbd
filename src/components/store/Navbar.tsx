@@ -256,13 +256,18 @@ const Navbar = () => {
           </div>
         </div>
 
+        {/* Mobile Search Dropdown — xs/sm only */}
+        <div ref={mobileSearchRef} className={`sm:hidden overflow-hidden transition-all duration-300 ${mobileSearch ? 'max-h-24' : 'max-h-0'}`}>
+          <div className="border-t px-4 py-3"
+            style={{ background: 'hsla(0,0%,100%,0.96)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
+            <SearchBar variant="navbar" className="w-full" onClose={() => setMobileSearch(false)} />
+          </div>
+        </div>
+
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
           <div className="border-t px-4 py-4 space-y-1"
             style={{ background: 'hsla(0,0%,100%,0.92)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
-            <div className="mb-3">
-              <SearchBar variant="navbar" className="w-full" onClose={() => setMobileOpen(false)} />
-            </div>
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-colors"
