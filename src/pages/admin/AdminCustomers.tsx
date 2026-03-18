@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import {
   Users, Search, RefreshCw, Eye, ShoppingBag,
-  Mail, Phone, Calendar, TrendingUp, UserCheck, Award, Star
+  Mail, Phone, Calendar, TrendingUp, TrendingDown, UserCheck, Award, Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
