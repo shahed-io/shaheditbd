@@ -63,9 +63,11 @@ const Blog = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title="ব্লগ"
-        description="Shahed Store Blog — ডিজিটাল প্রোডাক্ট, সফটওয়্যার টিপস, গাইড এবং সর্বশেষ আপডেট পড়ুন।"
+        title="Software Tips, Guides & Digital Product News – Blog"
+        description="Shahed Store Blog – Read guides, tips and news about Windows, Microsoft Office, Adobe, Antivirus, VPN, streaming subscriptions and all digital software in Bangladesh."
         ogType="website"
+        canonical="https://shahedstore.com.bd/blog"
+        keywords="software tips bangladesh, windows guide, office 365 tutorial, adobe tips, digital software blog"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'Blog',

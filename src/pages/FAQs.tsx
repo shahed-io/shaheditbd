@@ -208,8 +208,11 @@ const FAQs = () => {
   return (
     <>
       <SEOHead
-        title="সচরাচর জিজ্ঞাসা (FAQ) | Shahed Store"
-        description="অর্ডার, পেমেন্ট, ডেলিভারি ও রিফান্ড সম্পর্কিত সকল প্রশ্নের উত্তর পাবেন এখানে।"
+        title="Frequently Asked Questions – Orders, Payment, Delivery & Refund"
+        description="Find answers to all your questions about orders, payment methods, delivery, license keys and refunds at Shahed Store – Bangladesh's trusted digital software shop."
+        canonical="https://shahedstore.com.bd/faqs"
+        keywords="shahed store faq, digital software faq bangladesh, order help, payment help"
+      />
       />
       <Navbar />
 

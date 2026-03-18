@@ -113,7 +113,7 @@ export default function ContactUs() {
       className="min-h-screen text-foreground"
       style={{ background: 'linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}
     >
-      <SEOHead title="Contact Us — Shahed Store" description="Shahed Store-এর সাথে যোগাযোগ করুন। ফোন, ইমেইল, WhatsApp বা ফর্মের মাধ্যমে আমাদের সাপোর্ট টিমের সাথে কথা বলুন।" />
+      <SEOHead title="Contact Shahed Store – Customer Support Bangladesh" description="Contact Shahed Store for support. Reach us via phone, email, WhatsApp or our contact form. Fast response, 7 days a week. Bangladesh's trusted digital software shop." canonical="https://shahedstore.com.bd/contact" />
       <Navbar />
 
       {/* ── Hero ── */}
