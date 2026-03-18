@@ -120,6 +120,102 @@ const Checkout = () => {
     }
   };
 
+  // ---- bKash Auto-Payment (PGW) ----
+  const handleBkashAutoPay = async () => {
+    setSubmitError('');
+    setErrors({});
+    if (!termsAccepted) { setSubmitError('Terms & Conditions মেনে নিতে হবে'); return; }
+    const parsed = checkoutSchema.safeParse(form);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      parsed.error.errors.forEach(err => { fieldErrors[err.path[0]] = err.message; });
+      setErrors(fieldErrors);
+      return;
+    }
+    if (items.length === 0) { setSubmitError('Cart empty'); return; }
+
+    setLoading(true);
+    try {
+      const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
+
+      // Save order as pending first
+      let couponId: string | null = null;
+      if (coupon.isApplied && coupon.code) {
+        const { data: couponData } = await supabase.from('coupons').select('id').eq('code', coupon.code).single();
+        couponId = couponData?.id || null;
+      }
+
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          order_number: orderNum,
+          customer_name: form.name,
+          customer_email: form.email,
+          customer_phone: form.phone,
+          subtotal,
+          discount_amount: discountAmount,
+          total: finalTotal,
+          payment_method: 'bkash_merchant',
+          status: 'pending',
+          payment_status: 'pending',
+          coupon_code: coupon.isApplied ? coupon.code : null,
+          coupon_id: couponId,
+          user_id: user?.id || null,
+          notes: orderNotes.trim() || null,
+        })
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Save order items
+      const orderItems = items.map(item => ({
+        order_id: order.id,
+        product_name: item.name + (item.variant ? ` (${item.variant})` : ''),
+        product_id: typeof item.id === 'string' && item.id.includes('-') ? item.id : null,
+        price: item.price,
+        quantity: item.quantity,
+        total: item.price * item.quantity,
+      }));
+      await supabase.from('order_items').insert(orderItems);
+
+      // Store order number for callback
+      localStorage.setItem('bkash_pending_order_id', orderNum);
+
+      const callbackURL = `${window.location.origin}/bkash/callback?orderID=${orderNum}`;
+
+      // Call bKash create payment
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bkash-payment?action=create`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            amount: String(finalTotal),
+            orderID: orderNum,
+            callbackURL,
+          }),
+        }
+      );
+      const data = await res.json();
+
+      if (data.bkashURL) {
+        clearCart();
+        window.location.href = data.bkashURL;
+      } else {
+        throw new Error(data.statusMessage || 'bKash payment URL পাওয়া যায়নি');
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'bKash পেমেন্ট শুরু করতে সমস্যা হয়েছে';
+      toast.error(msg);
+      setSubmitError(msg);
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError('');
