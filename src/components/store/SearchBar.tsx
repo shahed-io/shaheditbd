@@ -142,6 +142,9 @@ const SearchBar = ({ className = '', variant = 'standalone', onClose }: SearchBa
         addRecent(query);
         setRecent(getRecent());
         setOpen(false);
+        setQuery('');
+        onClose?.();
+        navigate(`/shop?q=${encodeURIComponent(query.trim())}`);
       }
     } else if (e.key === 'Escape') {
       setOpen(false);
