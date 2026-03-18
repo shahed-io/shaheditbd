@@ -412,7 +412,7 @@ const DesktopSearchPalette = ({ onClose }: { onClose: () => void }) => {
         <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
           <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded border border-border/60 text-[9px] font-mono bg-background">↑↓</kbd> নেভিগেট</span>
           <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded border border-border/60 text-[9px] font-mono bg-background">↵</kbd> সিলেক্ট</span>
-          <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded border border-border/60 text-[9px] font-mono bg-background">Esc</kbd> বন্ধ</kbd></span>
+          <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded border border-border/60 text-[9px] font-mono bg-background">Esc</kbd> বন্ধ</span>
         </div>
         <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
           <Zap size={10} className="text-primary" />
