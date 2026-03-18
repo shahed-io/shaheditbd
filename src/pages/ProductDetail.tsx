@@ -838,72 +838,74 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              {/* CTA Buttons — Glassmorphism Card */}
+              {/* CTA Buttons — Gradient Glassmorphism Card */}
               <div
-                className="rounded-3xl p-4 space-y-3"
+                className="rounded-3xl p-1.5 space-y-1.5"
                 style={{
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'none' : 'translateY(28px)',
                   transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.5s',
-                  background: 'hsla(0,0%,100%,0.70)',
-                  backdropFilter: 'blur(24px)',
-                  WebkitBackdropFilter: 'blur(24px)',
-                  border: '1.5px solid hsla(258,78%,60%,0.20)',
-                  boxShadow: '0 8px 40px hsla(258,78%,55%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.85)',
+                  background: 'linear-gradient(135deg, hsla(258,78%,55%,0.18) 0%, hsla(200,90%,50%,0.14) 50%, hsla(258,78%,55%,0.18) 100%)',
+                  backdropFilter: 'blur(28px)',
+                  WebkitBackdropFilter: 'blur(28px)',
+                  border: '1.5px solid hsla(258,78%,65%,0.30)',
+                  boxShadow: '0 8px 40px hsla(258,78%,55%,0.18), 0 2px 0 hsla(0,0%,100%,0.60) inset',
                 }}
               >
-                {/* Order Now — primary gradient */}
+                {/* Shimmer top line */}
+                <div className="h-px w-full rounded-full mb-1.5"
+                  style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,75%,0.60), hsla(200,90%,70%,0.60), transparent)' }} />
+
+                {/* Buy Now — full-width primary */}
                 <button
                   onClick={() => setShowModal(true)}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
-                    boxShadow: '0 4px 20px hsla(258,78%,55%,0.40), inset 0 1px 0 hsla(0,0%,100%,0.20)',
+                    background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(230,75%,58%) 40%, hsl(200,90%,48%) 100%)',
+                    boxShadow: '0 4px 24px hsla(258,78%,55%,0.50), 0 1px 0 hsla(0,0%,100%,0.25) inset',
+                    letterSpacing: '0.01em',
                   }}
                 >
-                  <CreditCard size={18} /> Order Now
+                  <CreditCard size={18} strokeWidth={2.5} /> Buy Now
                 </button>
 
                 {/* WhatsApp + Cart — row */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-1.5">
                   {/* WhatsApp */}
                   <button onClick={waOrder}
-                    className="flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
                     style={{
-                      background: 'linear-gradient(135deg, hsla(142,70%,38%,0.85), hsla(158,80%,34%,0.85))',
-                      backdropFilter: 'blur(16px)',
-                      WebkitBackdropFilter: 'blur(16px)',
-                      border: '1.5px solid hsla(142,70%,55%,0.45)',
-                      color: 'hsl(0,0%,100%)',
-                      boxShadow: '0 2px 14px hsla(142,70%,44%,0.25)',
+                      background: 'linear-gradient(135deg, hsla(258,78%,55%,0.75) 0%, hsla(230,75%,60%,0.75) 50%, hsla(200,90%,48%,0.75) 100%)',
+                      backdropFilter: 'blur(20px)',
+                      WebkitBackdropFilter: 'blur(20px)',
+                      border: '1.5px solid hsla(258,78%,70%,0.40)',
+                      boxShadow: '0 2px 16px hsla(258,78%,55%,0.28), 0 1px 0 hsla(0,0%,100%,0.20) inset',
                     }}>
-                    <MessageCircle size={15} /> WhatsApp
+                    <MessageCircle size={15} strokeWidth={2.5} /> WhatsApp
                   </button>
 
                   {/* Cart */}
                   <button
                     onClick={() => addToCart(cartItem)}
-                    className="flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
                     style={inCart
                       ? {
-                          background: 'hsla(258,78%,55%,0.10)',
-                          backdropFilter: 'blur(16px)',
-                          WebkitBackdropFilter: 'blur(16px)',
-                          border: '1.5px solid hsla(258,78%,55%,0.40)',
-                          color: 'hsl(258,78%,48%)',
-                          boxShadow: '0 2px 12px hsla(258,78%,55%,0.12)',
+                          background: 'linear-gradient(135deg, hsla(258,78%,48%,0.90) 0%, hsla(230,75%,54%,0.90) 100%)',
+                          backdropFilter: 'blur(20px)',
+                          WebkitBackdropFilter: 'blur(20px)',
+                          border: '1.5px solid hsla(258,78%,70%,0.50)',
+                          boxShadow: '0 2px 16px hsla(258,78%,55%,0.35), 0 1px 0 hsla(0,0%,100%,0.20) inset',
                         }
                       : {
-                          background: 'hsla(0,0%,100%,0.60)',
-                          backdropFilter: 'blur(16px)',
-                          WebkitBackdropFilter: 'blur(16px)',
-                          border: '1.5px solid hsla(220,20%,75%,0.50)',
-                          color: 'hsl(226,35%,30%)',
-                          boxShadow: '0 2px 8px hsla(220,20%,50%,0.08)',
+                          background: 'linear-gradient(135deg, hsla(200,90%,45%,0.75) 0%, hsla(230,75%,58%,0.75) 50%, hsla(258,78%,55%,0.75) 100%)',
+                          backdropFilter: 'blur(20px)',
+                          WebkitBackdropFilter: 'blur(20px)',
+                          border: '1.5px solid hsla(200,90%,65%,0.40)',
+                          boxShadow: '0 2px 16px hsla(200,90%,45%,0.25), 0 1px 0 hsla(0,0%,100%,0.20) inset',
                         }
                     }
                   >
-                    <ShoppingCart size={15} />
+                    <ShoppingCart size={15} strokeWidth={2.5} />
                     {inCart ? '✓ Added' : 'Cart'}
                   </button>
                 </div>
