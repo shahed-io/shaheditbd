@@ -570,7 +570,7 @@ const AdminProducts = () => {
   const handleBulkDelete = async () => {
     setBulkDeleting(true);
     const ids = Array.from(selectedIds);
-    const { error } = await supabase.from('products').delete().in('id', ids);
+    const error = await safeDeleteProducts(ids);
     setBulkDeleting(false);
     setShowBulkConfirm(false);
     if (error) {
