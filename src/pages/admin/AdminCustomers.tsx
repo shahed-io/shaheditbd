@@ -139,7 +139,7 @@ export default function AdminCustomers() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
           { label: 'Total Customers', value: customers.length,     icon: Users,      color: 'text-primary' },
           { label: 'Active Buyers',   value: activeCustomers,      icon: UserCheck,  color: 'text-green-500' },
