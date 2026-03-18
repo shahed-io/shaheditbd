@@ -25,6 +25,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: 'Profile',
     tab_orders: 'My Orders',
     tab_wallet: 'Wallet',
+    tab_points: 'Points',
     tab_wishlist: 'Wishlist',
     tab_addresses: 'Addresses',
     tab_notifications: 'Notifications',
@@ -179,6 +180,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: 'প্রোফাইল',
     tab_orders: 'আমার অর্ডার',
     tab_wallet: 'ওয়ালেট',
+    tab_points: 'পয়েন্ট',
     tab_wishlist: 'উইশলিস্ট',
     tab_addresses: 'ঠিকানাসমূহ',
     tab_notifications: 'নোটিফিকেশন',
@@ -313,6 +315,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: 'الملف الشخصي',
     tab_orders: 'طلباتي',
     tab_wallet: 'المحفظة',
+    tab_points: 'النقاط',
     tab_wishlist: 'قائمة الأمنيات',
     tab_addresses: 'العناوين',
     tab_notifications: 'الإشعارات',
@@ -447,6 +450,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: '个人资料',
     tab_orders: '我的订单',
     tab_wallet: '钱包',
+    tab_points: '积分',
     tab_wishlist: '心愿单',
     tab_addresses: '地址',
     tab_notifications: '通知',
@@ -581,6 +585,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: 'प्रोफ़ाइल',
     tab_orders: 'मेरे ऑर्डर',
     tab_wallet: 'वॉलेट',
+    tab_points: 'पॉइंट्स',
     tab_wishlist: 'विशलिस्ट',
     tab_addresses: 'पते',
     tab_notifications: 'सूचनाएं',
@@ -712,7 +717,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   es: {
-    tab_profile: 'Perfil', tab_orders: 'Mis Pedidos', tab_wallet: 'Billetera', tab_wishlist: 'Lista de Deseos',
+    tab_profile: 'Perfil', tab_orders: 'Mis Pedidos', tab_wallet: 'Billetera', tab_points: 'Puntos', tab_wishlist: 'Lista de Deseos',
     tab_addresses: 'Direcciones', tab_notifications: 'Notificaciones', tab_referral: 'Referidos',
     tab_security: 'Seguridad', tab_language: 'Idioma', tab_logout: 'Cerrar Sesión', menu: 'Menú',
     profile_title: 'Perfil', profile_subtitle: 'Gestiona tu información personal',
@@ -769,7 +774,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   fr: {
-    tab_profile: 'Profil', tab_orders: 'Mes Commandes', tab_wallet: 'Portefeuille', tab_wishlist: 'Liste de Souhaits',
+    tab_profile: 'Profil', tab_orders: 'Mes Commandes', tab_wallet: 'Portefeuille', tab_points: 'Points', tab_wishlist: 'Liste de Souhaits',
     tab_addresses: 'Adresses', tab_notifications: 'Notifications', tab_referral: 'Parrainage',
     tab_security: 'Sécurité', tab_language: 'Langue', tab_logout: 'Déconnexion', menu: 'Menu',
     profile_title: 'Profil', profile_subtitle: 'Gérez vos informations personnelles',
@@ -826,7 +831,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   pt: {
-    tab_profile: 'Perfil', tab_orders: 'Meus Pedidos', tab_wallet: 'Carteira', tab_wishlist: 'Lista de Desejos',
+    tab_profile: 'Perfil', tab_orders: 'Meus Pedidos', tab_wallet: 'Carteira', tab_points: 'Pontos', tab_wishlist: 'Lista de Desejos',
     tab_addresses: 'Endereços', tab_notifications: 'Notificações', tab_referral: 'Indicações',
     tab_security: 'Segurança', tab_language: 'Idioma', tab_logout: 'Sair', menu: 'Menu',
     profile_title: 'Perfil', profile_subtitle: 'Gerencie suas informações pessoais',
@@ -883,7 +888,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   ru: {
-    tab_profile: 'Профиль', tab_orders: 'Мои Заказы', tab_wallet: 'Кошелёк', tab_wishlist: 'Список Желаний',
+    tab_profile: 'Профиль', tab_orders: 'Мои Заказы', tab_wallet: 'Кошелёк', tab_points: 'Баллы', tab_wishlist: 'Список Желаний',
     tab_addresses: 'Адреса', tab_notifications: 'Уведомления', tab_referral: 'Реферальная программа',
     tab_security: 'Безопасность', tab_language: 'Язык', tab_logout: 'Выйти', menu: 'Меню',
     profile_title: 'Профиль', profile_subtitle: 'Управляйте личной информацией',
@@ -940,7 +945,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   tr: {
-    tab_profile: 'Profil', tab_orders: 'Siparişlerim', tab_wallet: 'Cüzdan', tab_wishlist: 'İstek Listesi',
+    tab_profile: 'Profil', tab_orders: 'Siparişlerim', tab_wallet: 'Cüzdan', tab_points: 'Puanlar', tab_wishlist: 'İstek Listesi',
     tab_addresses: 'Adresler', tab_notifications: 'Bildirimler', tab_referral: 'Referans',
     tab_security: 'Güvenlik', tab_language: 'Dil', tab_logout: 'Çıkış Yap', menu: 'Menü',
     profile_title: 'Profil', profile_subtitle: 'Kişisel bilgilerinizi yönetin',
@@ -997,7 +1002,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   ur: {
-    tab_profile: 'پروفائل', tab_orders: 'میرے آرڈر', tab_wallet: 'والٹ', tab_wishlist: 'خواہش فہرست',
+    tab_profile: 'پروفائل', tab_orders: 'میرے آرڈر', tab_wallet: 'والٹ', tab_points: 'پوائنٹس', tab_wishlist: 'خواہش فہرست',
     tab_addresses: 'پتے', tab_notifications: 'اطلاعات', tab_referral: 'حوالہ',
     tab_security: 'سیکیورٹی', tab_language: 'زبان', tab_logout: 'لاگ آؤٹ', menu: 'مینو',
     profile_title: 'پروفائل', profile_subtitle: 'اپنی ذاتی معلومات منظم کریں',
@@ -1053,7 +1058,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   id: {
-    tab_profile: 'Profil', tab_orders: 'Pesanan Saya', tab_wallet: 'Dompet', tab_wishlist: 'Daftar Keinginan',
+    tab_profile: 'Profil', tab_orders: 'Pesanan Saya', tab_wallet: 'Dompet', tab_points: 'Poin', tab_wishlist: 'Daftar Keinginan',
     tab_addresses: 'Alamat', tab_notifications: 'Notifikasi', tab_referral: 'Referral',
     tab_security: 'Keamanan', tab_language: 'Bahasa', tab_logout: 'Keluar', menu: 'Menu',
     profile_title: 'Profil', profile_subtitle: 'Kelola informasi pribadi Anda',

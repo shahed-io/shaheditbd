@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import {
   Users, Search, RefreshCw, Eye, ShoppingBag,
-  Mail, Phone, Calendar, TrendingUp, UserCheck
+  Mail, Phone, Calendar, TrendingUp, UserCheck, Award, Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,8 @@ type Customer = {
   order_count?: number;
   total_spent?: number;
   last_order?: string | null;
+  points_balance?: number;
+  total_points_earned?: number;
 };
 
 type Order = {
@@ -50,7 +52,7 @@ export default function AdminCustomers() {
       // Get all profiles
       const { data: profiles, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('*, points_balance, total_points_earned')
         .order('created_at', { ascending: false });
       if (error) throw error;
 
@@ -75,6 +77,8 @@ export default function AdminCustomers() {
         order_count: orderMap[p.user_id]?.count ?? 0,
         total_spent: orderMap[p.user_id]?.total ?? 0,
         last_order:  orderMap[p.user_id]?.last  ?? null,
+        points_balance: (p as any).points_balance ?? 0,
+        total_points_earned: (p as any).total_points_earned ?? 0,
       })) as Customer[];
     },
   });
@@ -135,12 +139,13 @@ export default function AdminCustomers() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
           { label: 'Total Customers', value: customers.length,     icon: Users,      color: 'text-primary' },
           { label: 'Active Buyers',   value: activeCustomers,      icon: UserCheck,  color: 'text-green-500' },
           { label: 'Total Orders',    value: customers.reduce((s, c) => s + (c.order_count ?? 0), 0), icon: ShoppingBag, color: 'text-blue-500' },
           { label: 'Total Revenue',   value: `৳${totalRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-yellow-500' },
+          { label: 'Total Points',    value: customers.reduce((s, c) => s + (c.points_balance ?? 0), 0).toLocaleString() + ' pts', icon: Award, color: 'text-amber-500' },
         ].map(stat => (
           <div key={stat.label} className="glass-card rounded-xl p-4 border border-border/50">
             <div className="flex items-center gap-2 mb-2">
@@ -194,7 +199,7 @@ export default function AdminCustomers() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/50 bg-muted/20">
-                  {['Customer', 'Contact', 'Joined', 'Orders', 'Total Spent', 'Last Order', 'Action'].map(h => (
+                  {['Customer', 'Contact', 'Joined', 'Orders', 'Total Spent', 'Points', 'Last Order', 'Action'].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
@@ -235,6 +240,15 @@ export default function AdminCustomers() {
                     <td className="px-4 py-3 font-semibold text-foreground text-xs">
                       {(c.total_spent ?? 0) > 0 ? `৳${(c.total_spent ?? 0).toLocaleString()}` : '—'}
                     </td>
+                    <td className="px-4 py-3">
+                      {(c.points_balance ?? 0) > 0 ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border bg-amber-500/10 text-amber-600 border-amber-400/30">
+                          <Award size={10} /> {(c.points_balance ?? 0).toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground/50">0</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
                       {c.last_order ? format(new Date(c.last_order), 'dd MMM yyyy') : '—'}
                     </td>
@@ -273,6 +287,8 @@ export default function AdminCustomers() {
                   { icon: Calendar,  label: 'Joined',   value: format(new Date(selected.created_at), 'dd MMM yyyy') },
                   { icon: ShoppingBag, label: 'Orders', value: String(selected.order_count ?? 0) },
                   { icon: TrendingUp,  label: 'Total Spent', value: `৳${(selected.total_spent ?? 0).toLocaleString()}` },
+                  { icon: Award,       label: 'Points Balance', value: `${(selected.points_balance ?? 0).toLocaleString()} pts` },
+                  { icon: Star,        label: 'Total Earned',   value: `${(selected.total_points_earned ?? 0).toLocaleString()} pts` },
                   { icon: Calendar,  label: 'Last Order', value: selected.last_order ? format(new Date(selected.last_order), 'dd MMM yyyy') : '—' },
                 ].map(item => (
                   <div key={item.label} className="glass-card rounded-lg p-3 border border-border/50">

@@ -16,7 +16,7 @@ import {
   Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
   History, BellRing, BellOff, ExternalLink, Wallet, Globe,
-  ChevronDown, Key, CreditCard, Receipt, Info
+  ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t } from '@/lib/translations';
@@ -80,12 +80,13 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'wallet' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
+type TabId = 'profile' | 'orders' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
 
 const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'profile',       key: 'tab_profile',       icon: User },
   { id: 'orders',        key: 'tab_orders',        icon: Package },
   { id: 'wallet',        key: 'tab_wallet',        icon: Wallet },
+  { id: 'points',        key: 'tab_points',        icon: Award },
   { id: 'wishlist',      key: 'tab_wishlist',      icon: Heart },
   { id: 'addresses',     key: 'tab_addresses',     icon: MapPin },
   { id: 'notifications', key: 'tab_notifications', icon: Bell },
@@ -149,6 +150,13 @@ const UserDashboard = () => {
   const [topupTxId, setTopupTxId] = useState('');
   const [topupProcessing, setTopupProcessing] = useState(false);
   const [selectedLang, setSelectedLang] = useState<LangCode>(getStoredLang());
+  // Points state
+  const [pointsBalance, setPointsBalance] = useState(0);
+  const [totalPointsEarned, setTotalPointsEarned] = useState(0);
+  const [pointsTx, setPointsTx] = useState<any[]>([]);
+  const [pointsLoading, setPointsLoading] = useState(false);
+  const [redeemPoints, setRedeemPoints] = useState('');
+  const [redeemProcessing, setRedeemProcessing] = useState(false);
 
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
   useEffect(() => { if (user) fetchProfile(); }, [user]);
@@ -159,13 +167,52 @@ const UserDashboard = () => {
     if (activeTab === 'notifications') fetchNotifications();
     if (activeTab === 'referral') fetchReferrals();
     if (activeTab === 'wallet') fetchWallet();
+    if (activeTab === 'points') fetchPoints();
   }, [activeTab, user]);
 
   const fetchProfile = async () => {
     if (!user) return;
-    const { data } = await supabase.from('profiles').select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount').eq('user_id', user.id).single();
-    if (data) setProfile({ display_name: data.display_name, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
-    else setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+    const { data } = await supabase.from('profiles').select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned').eq('user_id', user.id).single();
+    if (data) {
+      setProfile({ display_name: data.display_name, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
+      setPointsBalance((data as any).points_balance || 0);
+      setTotalPointsEarned((data as any).total_points_earned || 0);
+    } else {
+      setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+    }
+  };
+
+  const fetchPoints = async () => {
+    if (!user) return; setPointsLoading(true);
+    const [profileRes, txRes] = await Promise.all([
+      supabase.from('profiles').select('points_balance, total_points_earned').eq('user_id', user.id).single(),
+      (supabase as any).from('point_transactions').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
+    ]);
+    setPointsBalance((profileRes.data as any)?.points_balance || 0);
+    setTotalPointsEarned((profileRes.data as any)?.total_points_earned || 0);
+    setPointsTx(txRes.data || []);
+    setPointsLoading(false);
+  };
+
+  const handleRedeemPoints = async () => {
+    if (!user) return;
+    const pts = parseInt(redeemPoints);
+    if (!pts || pts < 2) { toast.error('ন্যূনতম ২ পয়েন্ট রিডিম করতে হবে'); return; }
+    if (pts % 2 !== 0) { toast.error('পয়েন্ট অবশ্যই ২ এর গুণিতক হতে হবে (যেমন: ২, ৪, ১০, ২০...)'); return; }
+    if (pts > pointsBalance) { toast.error('পর্যাপ্ত পয়েন্ট নেই'); return; }
+    setRedeemProcessing(true);
+    try {
+      const { data } = await (supabase as any).rpc('redeem_points', { p_user_id: user.id, p_points: pts });
+      if (data?.success) {
+        toast.success(`✅ ${pts} পয়েন্ট রিডিম করে ৳${data.taka_credited} ওয়ালেটে যোগ হয়েছে!`);
+        setRedeemPoints('');
+        fetchPoints();
+        fetchProfile();
+      } else {
+        toast.error(data?.error || 'রিডিম করা সম্ভব হয়নি');
+      }
+    } catch { toast.error('একটি সমস্যা হয়েছে, আবার চেষ্টা করুন'); }
+    setRedeemProcessing(false);
   };
 
   const fetchOrders = async () => {
@@ -487,10 +534,10 @@ const UserDashboard = () => {
             {/* Tab Header */}
             <div className="px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'rgba(255,255,255,0.4)' }}>
               <div>
-                <h2 className="text-lg font-black text-foreground">{t(selectedLang, `tab_${activeTab}`)}</h2>
-                <p className="text-xs mt-0.5 text-muted-foreground">
-                  {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : ''}
-                </p>
+                 <h2 className="text-lg font-black text-foreground">{activeTab === 'points' ? '⭐ পয়েন্ট' : t(selectedLang, `tab_${activeTab}`)}</h2>
+                 <p className="text-xs mt-0.5 text-muted-foreground">
+                   {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `ব্যালেন্স: ${pointsBalance} পয়েন্ট` : ''}
+                 </p>
               </div>
               <div className="flex gap-2">
                 {activeTab === 'profile' && !editing && (
@@ -890,9 +937,158 @@ const UserDashboard = () => {
                               <p className="text-[10px] text-muted-foreground mt-1">{new Date(n.created_at).toLocaleDateString('bn-BD')}</p>
                             </div>
                           </div>
-                        </div>
+                         </div>
                       ))}
                     </div>
+                  )}
+                </div>
+              )}
+
+              {/* ── Points Tab ── */}
+              {activeTab === 'points' && (
+                <div className="space-y-5">
+                  {pointsLoading ? (
+                    <div className="flex flex-col items-center justify-center py-16 gap-3">
+                      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
+                      <p className="text-sm text-muted-foreground">লোড হচ্ছে...</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Balance Cards */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="rounded-2xl p-4 text-center" style={{ background: 'linear-gradient(135deg, hsl(43,95%,55%), hsl(36,100%,52%))', boxShadow: '0 4px 16px hsla(43,95%,55%,0.3)' }}>
+                          <Award size={22} className="text-white mx-auto mb-1" />
+                          <div className="text-3xl font-black text-white">{pointsBalance}</div>
+                          <div className="text-xs font-semibold text-white/80 mt-0.5">বর্তমান পয়েন্ট</div>
+                        </div>
+                        <div className="rounded-2xl p-4 text-center" style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(243,75%,59%))', boxShadow: '0 4px 16px hsla(271,91%,65%,0.25)' }}>
+                          <TrendingUp size={22} className="text-white mx-auto mb-1" />
+                          <div className="text-3xl font-black text-white">{totalPointsEarned}</div>
+                          <div className="text-xs font-semibold text-white/80 mt-0.5">মোট অর্জিত পয়েন্ট</div>
+                        </div>
+                        <div className="rounded-2xl p-4 text-center" style={{ background: 'linear-gradient(135deg, hsl(158,64%,42%), hsl(170,70%,38%))', boxShadow: '0 4px 16px hsla(158,64%,42%,0.25)' }}>
+                          <Wallet size={22} className="text-white mx-auto mb-1" />
+                          <div className="text-3xl font-black text-white">৳{Math.floor(pointsBalance / 2)}</div>
+                          <div className="text-xs font-semibold text-white/80 mt-0.5">রিডিমযোগ্য টাকা</div>
+                        </div>
+                      </div>
+
+                      {/* Rate Info */}
+                      <div className="rounded-2xl p-4 flex flex-wrap gap-4 items-center" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Zap size={14} className="text-amber-500" />
+                          <span>প্রতি ১০০ টাকা খরচে <strong className="text-foreground">১০ পয়েন্ট</strong></span>
+                        </div>
+                        <div className="w-px h-4 bg-border hidden sm:block" />
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <ArrowDownCircle size={14} className="text-emerald-500" />
+                          <span><strong className="text-foreground">২ পয়েন্ট = ১ টাকা</strong> ওয়ালেটে</span>
+                        </div>
+                        <div className="w-px h-4 bg-border hidden sm:block" />
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Info size={14} className="text-blue-500" />
+                          <span>অর্ডার <strong className="text-foreground">সম্পন্ন</strong> হলে পয়েন্ট যোগ হয়</span>
+                        </div>
+                      </div>
+
+                      {/* Redeem Section */}
+                      {pointsBalance >= 2 && (
+                        <div className="rounded-2xl p-5 space-y-3" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
+                          <h3 className="font-bold text-foreground flex items-center gap-2">
+                            <ArrowDownCircle size={16} className="text-emerald-500" /> পয়েন্ট রিডিম করুন
+                          </h3>
+                          <p className="text-xs text-muted-foreground">পয়েন্ট রিডিম করে ওয়ালেটে টাকা যোগ করুন (২ পয়েন্ট = ১ টাকা)</p>
+                          <div className="flex gap-3 items-end flex-wrap">
+                            <div className="flex-1 min-w-[140px]">
+                              <label className="text-xs font-semibold text-muted-foreground uppercase mb-1.5 block">পয়েন্ট সংখ্যা</label>
+                              <input
+                                type="number"
+                                min="2"
+                                step="2"
+                                max={pointsBalance}
+                                value={redeemPoints}
+                                onChange={e => setRedeemPoints(e.target.value)}
+                                className="w-full rounded-xl px-4 py-2.5 text-sm border bg-white/60 text-foreground border-border focus:border-primary outline-none"
+                                placeholder="যেমন: ২০"
+                              />
+                              {redeemPoints && parseInt(redeemPoints) > 0 && parseInt(redeemPoints) % 2 === 0 && (
+                                <p className="text-xs text-emerald-600 mt-1">= ৳{Math.floor(parseInt(redeemPoints) / 2)} ওয়ালেটে যোগ হবে</p>
+                              )}
+                            </div>
+                            <div className="flex gap-2 flex-wrap">
+                              {[10, 20, 50, 100].filter(v => v <= pointsBalance).map(v => (
+                                <button key={v} onClick={() => setRedeemPoints(String(v))}
+                                  className="px-3 py-2 rounded-lg text-xs font-bold border transition-colors"
+                                  style={redeemPoints === String(v)
+                                    ? { background: 'hsl(var(--primary))', color: 'white', borderColor: 'hsl(var(--primary))' }
+                                    : { background: 'rgba(255,255,255,0.8)', borderColor: 'hsla(258,78%,75%,0.3)' }}>
+                                  {v}
+                                </button>
+                              ))}
+                              <button onClick={() => setRedeemPoints(String(Math.floor(pointsBalance / 2) * 2))}
+                                className="px-3 py-2 rounded-lg text-xs font-bold border transition-colors"
+                                style={{ background: 'rgba(255,255,255,0.8)', borderColor: 'hsla(258,78%,75%,0.3)' }}>
+                                সর্বোচ্চ
+                              </button>
+                            </div>
+                          </div>
+                          <button
+                            onClick={handleRedeemPoints}
+                            disabled={redeemProcessing || !redeemPoints || parseInt(redeemPoints) < 2}
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-50 transition-all"
+                            style={{ background: 'linear-gradient(135deg, hsl(158,64%,42%), hsl(170,70%,38%))' }}>
+                            {redeemProcessing ? <RefreshCw size={14} className="animate-spin" /> : <Wallet size={14} />}
+                            {redeemProcessing ? 'প্রক্রিয়া চলছে...' : 'ওয়ালেটে রিডিম করুন'}
+                          </button>
+                        </div>
+                      )}
+                      {pointsBalance < 2 && (
+                        <div className="rounded-2xl p-5 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                          <Star size={28} className="mx-auto mb-2 text-amber-400" />
+                          <p className="font-semibold text-foreground text-sm">এখনো পর্যাপ্ত পয়েন্ট নেই</p>
+                          <p className="text-xs text-muted-foreground mt-1">কেনাকাটা করুন এবং পয়েন্ট অর্জন করুন</p>
+                          <a href="/shop" className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-xl text-sm font-bold text-white"
+                            style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                            কেনাকাটা করুন
+                          </a>
+                        </div>
+                      )}
+
+                      {/* Transactions History */}
+                      <div>
+                        <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
+                          <History size={15} className="text-primary" /> পয়েন্ট ইতিহাস
+                        </h3>
+                        {pointsTx.length === 0 ? (
+                          <div className="text-center py-8 rounded-2xl text-sm text-muted-foreground" style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                            এখনো কোনো লেনদেন নেই
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {pointsTx.map((tx: any) => (
+                              <div key={tx.id} className="flex items-center justify-between px-4 py-3 rounded-xl"
+                                style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.18)' }}>
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${tx.type === 'earn' ? 'bg-amber-500/15' : 'bg-emerald-500/15'}`}>
+                                    {tx.type === 'earn' ? <TrendingUp size={15} className="text-amber-500" /> : <ArrowDownCircle size={15} className="text-emerald-500" />}
+                                  </div>
+                                  <div>
+                                    <div className="text-xs font-semibold text-foreground">{tx.note}</div>
+                                    <div className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <div className={`text-sm font-black ${tx.type === 'earn' ? 'text-amber-500' : 'text-emerald-600'}`}>
+                                    {tx.type === 'earn' ? '+' : '-'}{tx.points} pts
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground">ব্যালেন্স: {tx.balance_after}</div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </>
                   )}
                 </div>
               )}
