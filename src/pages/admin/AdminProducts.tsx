@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Plus, Search, Edit, Trash2, Package, X, Upload,
   Image as ImageIcon, Loader2, Video, Tag, Star,
-  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders, Tags, Sparkles, Wand2
+  ExternalLink, RefreshCw, Copy, ChevronDown, Sliders, Tags, Sparkles, Wand2,
+  CheckSquare, Square, AlertTriangle
 } from 'lucide-react';
 import ProductOptionsBuilder from '@/components/admin/ProductOptionsBuilder';
 import ProductAttributesEditor from '@/components/admin/ProductAttributesEditor';
