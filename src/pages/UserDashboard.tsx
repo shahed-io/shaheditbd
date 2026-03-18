@@ -153,6 +153,7 @@ const UserDashboard = () => {
   // Points state
   const [pointsBalance, setPointsBalance] = useState(0);
   const [totalPointsEarned, setTotalPointsEarned] = useState(0);
+  const [totalPointsRedeemed, setTotalPointsRedeemed] = useState(0);
   const [pointsTx, setPointsTx] = useState<any[]>([]);
   const [pointsLoading, setPointsLoading] = useState(false);
   const [redeemPoints, setRedeemPoints] = useState('');
