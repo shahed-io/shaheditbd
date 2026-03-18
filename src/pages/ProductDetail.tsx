@@ -934,6 +934,9 @@ const ProductDetail = () => {
           </div>
         </div>
 
+        {/* ── Customer Reviews ── */}
+        <ProductReviews productId={product.id} productSlug={product.slug} />
+
         {/* ── Related Products ── */}
         <RelatedProducts categoryId={product.category_id} currentProductId={product.id} />
 
