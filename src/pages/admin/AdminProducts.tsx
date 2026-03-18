@@ -78,6 +78,8 @@ const emptyForm = {
   warranty_note: '', refund_note: '',
   // Lists
   what_you_get: [''] as string[],
+  // Bullet points for short description (each item = one bullet)
+  short_desc_bullets: [''] as string[],
   variants: [{ name: '', options: [{ label: '', price: '' }] }] as { name: string; options: { label: string; price: string }[] }[],
   attributes: [{ key: '', value: '' }] as { key: string; value: string }[],
   faq: [{ q: '', a: '' }] as { q: string; a: string }[],
@@ -203,7 +205,9 @@ const AdminProducts = () => {
           setShortDescOptions(opts);
           setShowShortDescPicker(true);
         } else {
-          setForm(p => ({ ...p, short_description: raw.trim() }));
+          // Try to parse as bullet lines
+          const bulletLines = raw.split('\n').map((l: string) => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
+          setForm(p => ({ ...p, short_desc_bullets: bulletLines.length ? bulletLines : [raw.trim()] }));
           toast.success('Short description generated!');
         }
       } else if (type === 'description') {
@@ -217,9 +221,11 @@ const AdminProducts = () => {
         }));
         toast.success('SEO content generated!');
       } else if (type === 'all') {
+        const aiShortDesc: string = result.short_description || '';
+        const aiLines = aiShortDesc.split('\n').map((l: string) => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
         setForm(p => ({
           ...p,
-          short_description: result.short_description || p.short_description,
+          short_desc_bullets: aiLines.length ? aiLines : p.short_desc_bullets,
           description: result.description || p.description,
           seo_title: (result.seo_title || '').substring(0, 60),
           seo_description: (result.seo_description || '').substring(0, 160),
@@ -465,7 +471,7 @@ const AdminProducts = () => {
     const payload: any = {
       name: form.name,
       slug: finalSlug,
-      short_description: form.short_description || null,
+      short_description: form.short_desc_bullets.filter(b => b.trim()).join('\n') || null,
       description: form.description || null,
       brand: form.brand || null,
       badge: form.badge || null,
@@ -571,6 +577,10 @@ const AdminProducts = () => {
     const parsedDurationPlans = (() => {
       try { return durationPlansAttr ? JSON.parse(durationPlansAttr.value) : []; } catch { return []; }
     })();
+    // Parse short_description into bullets
+    const existingBullets = product.short_description
+      ? product.short_description.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean)
+      : [''];
     setForm({
       name: product.name,
       slug: (product as any).slug && !/^[0-9a-f-]{36}$/.test((product as any).slug)
@@ -578,6 +588,7 @@ const AdminProducts = () => {
         : generateSlug(product.name),
       subtitle: subtitleAttr?.value || '',
       short_description: product.short_description || '',
+      short_desc_bullets: existingBullets.length ? existingBullets : [''],
       description: product.description || '',
       brand: product.brand || '',
       badge: product.badge || '',
@@ -966,20 +977,85 @@ const AdminProducts = () => {
                       </div>
                     </div>
 
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className={lc} style={{marginBottom:0}}>Short Description</label>
-                        <AiBtn fieldType="short_description" label="AI Generate (৩টি অপশন)" />
+                    {/* ── Bullet Points (Short Description) ── */}
+                    <div className="rounded-xl border border-border bg-muted/10 p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-foreground flex items-center gap-2">
+                          📝 প্রোডাক্ট বিবরণ (বুলেট পয়েন্ট)
+                          <span className="text-muted-foreground font-normal">(টাইটেলের নিচে দেখাবে)</span>
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <AiBtn fieldType="short_description" label="AI" />
+                          <button
+                            type="button"
+                            onClick={() => setForm(p => ({ ...p, short_desc_bullets: [...p.short_desc_bullets, ''] }))}
+                            className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors flex items-center gap-1"
+                          >
+                            <Plus size={11} /> যোগ করুন
+                          </button>
+                        </div>
                       </div>
-                      <input value={form.short_description}
-                        onChange={e => setForm(p => ({ ...p, short_description: e.target.value }))}
-                        placeholder="One-liner shown in cards..." className={ic} />
-                      {/* Short description options picker */}
+
+                      {form.short_desc_bullets.length === 0 && (
+                        <p className="text-xs text-muted-foreground text-center py-1">কোনো বুলেট নেই — উপরের বাটনে ক্লিক করুন</p>
+                      )}
+
+                      <div className="space-y-2">
+                        {form.short_desc_bullets.map((bullet, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center">
+                              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                            </span>
+                            <input
+                              value={bullet}
+                              onChange={e => {
+                                const arr = [...form.short_desc_bullets];
+                                arr[idx] = e.target.value;
+                                setForm(p => ({ ...p, short_desc_bullets: arr }));
+                              }}
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  const arr = [...form.short_desc_bullets];
+                                  arr.splice(idx + 1, 0, '');
+                                  setForm(p => ({ ...p, short_desc_bullets: arr }));
+                                  // Focus next input after render
+                                  setTimeout(() => {
+                                    const inputs = document.querySelectorAll<HTMLInputElement>('.bullet-input');
+                                    inputs[idx + 1]?.focus();
+                                  }, 50);
+                                }
+                                if (e.key === 'Backspace' && bullet === '' && form.short_desc_bullets.length > 1) {
+                                  e.preventDefault();
+                                  const arr = form.short_desc_bullets.filter((_, i) => i !== idx);
+                                  setForm(p => ({ ...p, short_desc_bullets: arr }));
+                                }
+                              }}
+                              placeholder={`বুলেট পয়েন্ট ${idx + 1} লিখুন...`}
+                              className={`${ic} flex-1 text-sm bullet-input`}
+                            />
+                            {form.short_desc_bullets.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const arr = form.short_desc_bullets.filter((_, i) => i !== idx);
+                                  setForm(p => ({ ...p, short_desc_bullets: arr.length ? arr : [''] }));
+                                }}
+                                className="flex-shrink-0 text-muted-foreground hover:text-red-400 transition-colors p-1 rounded-lg hover:bg-red-400/10"
+                              >
+                                <X size={13} />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* AI Options Picker */}
                       {showShortDescPicker && shortDescOptions.length > 0 && (
                         <div className="mt-2 rounded-xl border border-primary/30 bg-primary/5 overflow-hidden">
                           <div className="flex items-center justify-between px-3 py-2 border-b border-primary/20">
                             <span className="text-[11px] font-semibold text-primary flex items-center gap-1.5">
-                              <Sparkles size={11} /> AI-generated অপশন — একটি বেছে নিন
+                              <Sparkles size={11} /> AI-generated অপশন — একটি বেছে নিন (বুলেটে যোগ হবে)
                             </span>
                             <button type="button" onClick={() => setShowShortDescPicker(false)} className="text-muted-foreground hover:text-foreground">
                               <X size={12} />
@@ -991,9 +1067,12 @@ const AdminProducts = () => {
                                 key={i}
                                 type="button"
                                 onClick={() => {
-                                  setForm(p => ({ ...p, short_description: opt }));
+                                  // Parse the option into individual bullets
+                                  const bulletLines = opt.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
+                                  const newBullets = bulletLines.length > 1 ? bulletLines : [opt];
+                                  setForm(p => ({ ...p, short_desc_bullets: newBullets }));
                                   setShowShortDescPicker(false);
-                                  toast.success('Short description সেট হয়েছে!');
+                                  toast.success('বুলেট পয়েন্ট সেট হয়েছে!');
                                 }}
                                 className="w-full text-left px-3 py-2.5 text-xs text-foreground hover:bg-primary/10 transition-colors flex items-start gap-2"
                               >
@@ -1004,7 +1083,10 @@ const AdminProducts = () => {
                           </div>
                         </div>
                       )}
+
+                      <p className="text-[10px] text-muted-foreground">💡 Enter চাপলে নতুন বুলেট যোগ হবে। প্রোডাক্ট পেজে বুলেট লিস্ট হিসেবে দেখাবে।</p>
                     </div>
+
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
