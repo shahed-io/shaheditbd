@@ -371,42 +371,51 @@ const AdminProducts = () => {
       }
       if (data?.error) throw new Error(data.error);
 
-      const imageDataUrl: string = data.imageData;
+      // Server may return a storage URL directly (imageUrl) or base64 fallback (imageData)
+      if (data.imageUrl) {
+        // Already uploaded server-side — use directly
+        setForm(prev => ({ ...prev, image_url: data.imageUrl }));
+        setImagePreview(data.imageUrl);
+        toast.dismiss(toastId);
+        toast.success('✨ AI Card তৈরি হয়েছে!');
+      } else if (data.imageData) {
+        // Fallback: base64 received — upload client-side
+        const imageDataUrl: string = data.imageData;
+        const img = new Image();
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error('Image load failed'));
+          img.src = imageDataUrl;
+        });
 
-      // Convert base64 PNG → WEBP via Canvas API
-      const img = new Image();
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Image load failed'));
-        img.src = imageDataUrl;
-      });
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || 800;
+        canvas.height = img.naturalHeight || 800;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Canvas not supported');
+        ctx.drawImage(img, 0, 0);
 
-      const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth || 800;
-      canvas.height = img.naturalHeight || 800;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Canvas not supported');
-      ctx.drawImage(img, 0, 0);
+        const webpBlob = await new Promise<Blob>((resolve, reject) => {
+          canvas.toBlob(blob => {
+            if (blob) resolve(blob);
+            else reject(new Error('WEBP conversion failed'));
+          }, 'image/webp', 0.92);
+        });
 
-      const webpBlob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(blob => {
-          if (blob) resolve(blob);
-          else reject(new Error('WEBP conversion failed'));
-        }, 'image/webp', 0.92);
-      });
+        const fileName = `ai-card-${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(fileName, webpBlob, { contentType: 'image/webp', upsert: true });
+        if (uploadError) throw uploadError;
 
-      // Upload WEBP to storage
-      const fileName = `ai-card-${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(fileName, webpBlob, { contentType: 'image/webp', upsert: true });
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(uploadData.path);
-      setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
-      setImagePreview(urlData.publicUrl);
-      toast.dismiss(toastId);
-      toast.success('✨ AI Glassmorphism Card তৈরি হয়েছে! WEBP ফরমেটে সেভ হয়েছে।');
+        const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(uploadData.path);
+        setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
+        setImagePreview(urlData.publicUrl);
+        toast.dismiss(toastId);
+        toast.success('✨ AI Glassmorphism Card তৈরি হয়েছে!');
+      } else {
+        throw new Error('AI থেকে কোনো ইমেজ পাওয়া যায়নি। আবার চেষ্টা করুন।');
+      }
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error('AI Card Error: ' + (err.message || 'Unknown error'));
