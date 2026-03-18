@@ -77,6 +77,8 @@ export default function AdminCustomers() {
         order_count: orderMap[p.user_id]?.count ?? 0,
         total_spent: orderMap[p.user_id]?.total ?? 0,
         last_order:  orderMap[p.user_id]?.last  ?? null,
+        points_balance: (p as any).points_balance ?? 0,
+        total_points_earned: (p as any).total_points_earned ?? 0,
       })) as Customer[];
     },
   });
