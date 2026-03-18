@@ -176,6 +176,7 @@ const AppContent = () => {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/faqs" element={<FAQs />} />
         <Route path="/free-tools" element={<FreeTools />} />
+        <Route path="/bkash/callback" element={<BkashCallback />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
