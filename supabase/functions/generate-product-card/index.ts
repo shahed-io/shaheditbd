@@ -179,13 +179,50 @@ async function uploadImageToStorage(base64Data: string, mimeType: string): Promi
   return `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
 }
 
+// ── Smart delay helper ──────────────────────────────────────────────────────
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+// ── Extract image from any Lovable Gateway response shape ───────────────────
+function extractImageFromGatewayResponse(responseData: any): { data: string; mime: string } | null {
+  const msg = responseData.choices?.[0]?.message;
+  if (!msg) return null;
+
+  // Path 1: images array
+  const img1 = msg?.images?.[0];
+  if (img1?.image_url?.url?.startsWith("data:")) {
+    const [prefix, b64] = img1.image_url.url.split(",");
+    return { data: b64, mime: prefix.split(":")[1].split(";")[0] };
+  }
+  if (img1?.data) return { data: img1.data, mime: "image/jpeg" };
+
+  if (Array.isArray(msg?.content)) {
+    // Path 2: content array image_url
+    const imgPart = msg.content.find((p: any) => p.type === "image_url" && p.image_url?.url?.startsWith("data:"));
+    if (imgPart) {
+      const [prefix, b64] = imgPart.image_url.url.split(",");
+      return { data: b64, mime: prefix.split(":")[1].split(";")[0] };
+    }
+    // Path 3: inline_data
+    const inlinePart = msg.content.find((p: any) => p.inline_data?.data);
+    if (inlinePart) return { data: inlinePart.inline_data.data, mime: inlinePart.inline_data.mime_type || "image/png" };
+  }
+  return null;
+}
+
+// ── Extract image from Gemini direct API response ───────────────────────────
+function extractImageFromGeminiResponse(data: any): { data: string; mime: string } | null {
+  const inlinePart = data.candidates?.[0]?.content?.parts?.find((p: any) => p.inlineData?.data);
+  if (inlinePart) return { data: inlinePart.inlineData.data, mime: inlinePart.inlineData.mimeType || "image/jpeg" };
+  return null;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
     const { imageUrl, productName, category, price, brand, cardStyle } = await req.json();
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const LOVABLE_API_KEY = (Deno.env.get("LOVABLE_API_KEY") || "").trim();
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
     const name = productName || "Product";
