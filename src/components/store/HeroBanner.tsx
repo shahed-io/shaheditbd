@@ -251,19 +251,21 @@ const HeroBanner = () => {
             </div>
           </div>
 
-          {/* Right Visual — Light Glassmorphism Card */}
+          {/* Right Visual — Glassmorphism Gradient Border Card */}
           <div className="relative hidden lg:flex items-center justify-center min-h-[440px]">
-            {/* Gradient border wrapper */}
+            {/* Outer glow halo */}
+            <div className="absolute inset-0 pointer-events-none"
+              style={{
+                background: `radial-gradient(ellipse at 60% 50%, hsla(258,78%,62%,0.13) 0%, hsla(200,90%,55%,0.08) 50%, transparent 75%)`,
+              }} />
+
+            {/* Animated gradient border wrapper */}
             <div
-              className="relative w-[300px] anim-float"
+              className="relative w-[300px] anim-float hero-card-shell"
               style={{
                 opacity:    dir === 'in' ? 1 : 0,
-                transform:  dir === 'in' ? 'scale(1)' : 'scale(0.95)',
-                transition: 'opacity 0.3s, transform 0.3s',
-                borderRadius: '2rem',
-                padding: '2px',
-                background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo}, ${slide.accentFrom}88)`,
-                boxShadow: `0 32px 80px ${slide.accentFrom}35, 0 8px 32px ${slide.accentTo}25`,
+                transform:  dir === 'in' ? 'scale(1)' : 'scale(0.94)',
+                transition: 'opacity 0.32s ease, transform 0.32s ease',
               }}>
               {/* Corner glow dots */}
               <div className="absolute top-0 left-0 w-3 h-3 rounded-full -translate-x-0.5 -translate-y-0.5 z-10"
