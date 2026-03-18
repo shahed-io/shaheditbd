@@ -525,6 +525,37 @@ const AdminProducts = () => {
     else { toast.success('Product deleted'); fetchProducts(); }
   };
 
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map(p => p.id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    setBulkDeleting(true);
+    const ids = Array.from(selectedIds);
+    const { error } = await supabase.from('products').delete().in('id', ids);
+    setBulkDeleting(false);
+    setShowBulkConfirm(false);
+    if (error) {
+      toast.error('Bulk delete failed: ' + error.message);
+    } else {
+      toast.success(`${ids.length}টি প্রোডাক্ট ডিলিট হয়েছে`);
+      setSelectedIds(new Set());
+      fetchProducts();
+    }
+  };
+
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
     setImagePreview(product.image_url || '');
