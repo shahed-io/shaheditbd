@@ -194,7 +194,42 @@ const UserDashboard = () => {
   const fetchReferrals = async () => {
     if (!user) return; setReferralLoading(true);
     const { data } = await supabase.from('referrals').select('*').eq('referrer_id', user.id).order('created_at', { ascending: false });
-    setReferrals((data || []) as Referral[]); setReferralLoading(false);
+    const refs = (data || []) as Referral[];
+
+    // Fetch referred user profiles to show names
+    const referredIds = refs.map(r => r.referred_id).filter(Boolean) as string[];
+    if (referredIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, display_name, email')
+        .in('user_id', referredIds);
+      const profileMap = new Map((profiles || []).map(p => [p.user_id, p]));
+      refs.forEach(r => {
+        if (r.referred_id) {
+          const p = profileMap.get(r.referred_id);
+          if (p) {
+            r.referred_name = p.display_name || p.email?.split('@')[0] || 'User';
+            r.referred_email = p.email || '';
+          }
+        }
+      });
+    }
+
+    setReferrals(refs); setReferralLoading(false);
+
+    // Retry pending referral from localStorage if any
+    const pendingRef = localStorage.getItem('pending_referral');
+    if (pendingRef && user) {
+      const { data: refResult } = await supabase.rpc('process_referral', {
+        p_referral_code: pendingRef,
+        p_referred_user_id: user.id,
+      });
+      if ((refResult as any)?.success) {
+        localStorage.removeItem('pending_referral');
+        toast.success('🎉 রেফারেল কোড প্রয়োগ হয়েছে!');
+        fetchProfile();
+      }
+    }
   };
 
   const fetchWallet = async () => {
