@@ -330,62 +330,355 @@ const AdminProducts = () => {
     { value: 'vibrant_promo', label: '💜 Vibrant Promo', desc: 'ডিপ পার্পল, ভাইব্র্যান্ট' },
   ] as const;
 
-  // ── AI Glassmorphism Card Generator ──────────────────────────
+  // ── Canvas Glassmorphism Card Generator (no AI, instant, perfect quality) ──
+  const drawRoundRect = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) => {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  };
+
   const generateAiCard = async () => {
     const srcUrl = form.image_url || imagePreview;
     setAiCardLoading(true);
-    const styleName = CARD_STYLES.find(s => s.value === cardStyle)?.label || 'AI Card';
+    const styleName = CARD_STYLES.find(s => s.value === cardStyle)?.label || 'Card';
     const toastId = toast.loading(`🎨 ${styleName} Card তৈরি হচ্ছে...`);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-product-card', {
-        body: {
-          imageUrl: srcUrl || null,
-          productName: form.name,
-          category: categories.find(c => c.id === form.category_id)?.name || '',
-          price: form.price,
-          brand: form.brand,
-          cardStyle,
-        },
-      });
-
-      // Handle rate limit / payment errors gracefully
-      if (error) {
-        // Try to parse body from FunctionsHttpError
-        let msg = error.message || 'Unknown error';
-        try {
-          const body = await (error as any).context?.json?.();
-          if (body?.error) msg = body.error;
-        } catch { /* ignore */ }
-        throw new Error(msg);
-      }
-      if (data?.error) throw new Error(data.error);
-
-      const imageDataUrl: string = data.imageData;
-
-      // Convert base64 PNG → WEBP via Canvas API
-      const img = new Image();
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Image load failed'));
-        img.src = imageDataUrl;
-      });
-
+      const SIZE = 800;
       const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth || 800;
-      canvas.height = img.naturalHeight || 800;
+      canvas.width = SIZE;
+      canvas.height = SIZE;
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Canvas not supported');
-      ctx.drawImage(img, 0, 0);
 
+      // ── Load product image if available ────────────────────────
+      let productImg: HTMLImageElement | null = null;
+      if (srcUrl) {
+        try {
+          productImg = await new Promise<HTMLImageElement>((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => resolve(img);
+            img.onerror = () => reject();
+            img.src = srcUrl;
+            setTimeout(() => reject(), 8000);
+          });
+        } catch { productImg = null; }
+      }
+
+      // ── Style configurations ────────────────────────────────────
+      const styles = {
+        dark_neon: {
+          bg1: '#050510', bg2: '#0d0825', bg3: '#0a0d2e',
+          cardBg: 'rgba(8,5,28,0.82)',
+          border1: '#a855f7', border2: '#22d3ee', border3: '#f472b6',
+          glowColor: 'rgba(168,85,247,0.55)',
+          textColor: '#ffffff',
+          subTextColor: 'rgba(255,255,255,0.65)',
+          accentGlow: true,
+          bokehColors: ['rgba(168,85,247,0.18)', 'rgba(34,211,238,0.14)', 'rgba(244,114,182,0.12)'],
+        },
+        light_glass: {
+          bg1: '#c8b4f0', bg2: '#f0b4d8', bg3: '#a0c4f0',
+          cardBg: 'rgba(255,255,255,0.58)',
+          border1: '#c084fc', border2: '#f9a8d4', border3: '#93c5fd',
+          glowColor: 'rgba(192,132,252,0.35)',
+          textColor: '#1e0a3c',
+          subTextColor: 'rgba(30,10,60,0.60)',
+          accentGlow: false,
+          bokehColors: ['rgba(255,255,255,0.35)', 'rgba(240,180,216,0.30)', 'rgba(160,196,240,0.25)'],
+        },
+        clean_light: {
+          bg1: '#e8edf5', bg2: '#f2f5fa', bg3: '#dce6f5',
+          cardBg: 'rgba(255,255,255,0.78)',
+          border1: '#60a5fa', border2: '#34d399', border3: '#818cf8',
+          glowColor: 'rgba(96,165,250,0.25)',
+          textColor: '#1e293b',
+          subTextColor: 'rgba(30,41,59,0.60)',
+          accentGlow: false,
+          bokehColors: ['rgba(96,165,250,0.20)', 'rgba(52,211,153,0.16)', 'rgba(129,140,248,0.14)'],
+        },
+        vibrant_promo: {
+          bg1: '#1a0533', bg2: '#2d0a5c', bg3: '#051a40',
+          cardBg: 'rgba(255,255,255,0.07)',
+          border1: '#a855f7', border2: '#06b6d4', border3: '#ec4899',
+          glowColor: 'rgba(168,85,247,0.45)',
+          textColor: '#ffffff',
+          subTextColor: 'rgba(255,255,255,0.65)',
+          accentGlow: true,
+          bokehColors: ['rgba(168,85,247,0.22)', 'rgba(6,182,212,0.16)', 'rgba(236,72,153,0.14)'],
+        },
+      };
+
+      const s = styles[cardStyle];
+
+      // ── 1. Background gradient ──────────────────────────────────
+      const bgGrad = ctx.createRadialGradient(SIZE * 0.3, SIZE * 0.3, 0, SIZE * 0.7, SIZE * 0.7, SIZE * 1.1);
+      bgGrad.addColorStop(0, s.bg1);
+      bgGrad.addColorStop(0.5, s.bg2);
+      bgGrad.addColorStop(1, s.bg3);
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, SIZE, SIZE);
+
+      // ── 2. Bokeh orbs ───────────────────────────────────────────
+      const bokehPositions = [
+        { x: 0.15, y: 0.18, r: 120 }, { x: 0.82, y: 0.12, r: 90 },
+        { x: 0.72, y: 0.78, r: 110 }, { x: 0.22, y: 0.82, r: 85 },
+        { x: 0.50, y: 0.50, r: 70 },
+      ];
+      bokehPositions.forEach((b, i) => {
+        const bokeh = ctx.createRadialGradient(b.x * SIZE, b.y * SIZE, 0, b.x * SIZE, b.y * SIZE, b.r);
+        bokeh.addColorStop(0, s.bokehColors[i % s.bokehColors.length]);
+        bokeh.addColorStop(1, 'transparent');
+        ctx.fillStyle = bokeh;
+        ctx.fillRect(0, 0, SIZE, SIZE);
+      });
+
+      // ── 3. Main card shape ──────────────────────────────────────
+      const PAD = 48, RADIUS = 36;
+      const cardX = PAD, cardY = PAD, cardW = SIZE - PAD * 2, cardH = SIZE - PAD * 2;
+
+      // Gradient border (drawn as thick stroke behind card)
+      const borderThick = 2.5;
+      ctx.save();
+      drawRoundRect(ctx, cardX - borderThick, cardY - borderThick, cardW + borderThick * 2, cardH + borderThick * 2, RADIUS + borderThick);
+      const borderGrad = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY + cardH);
+      borderGrad.addColorStop(0, s.border1);
+      borderGrad.addColorStop(0.5, s.border2);
+      borderGrad.addColorStop(1, s.border3);
+      ctx.strokeStyle = borderGrad;
+      ctx.lineWidth = borderThick * 2 + 1;
+      ctx.stroke();
+      ctx.restore();
+
+      // Neon glow around border (for dark styles)
+      if (s.accentGlow) {
+        ctx.save();
+        ctx.shadowColor = s.glowColor;
+        ctx.shadowBlur = 28;
+        drawRoundRect(ctx, cardX, cardY, cardW, cardH, RADIUS);
+        ctx.strokeStyle = 'rgba(168,85,247,0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Card fill (glassmorphism)
+      ctx.save();
+      drawRoundRect(ctx, cardX, cardY, cardW, cardH, RADIUS);
+      ctx.fillStyle = s.cardBg;
+      ctx.fill();
+      ctx.restore();
+
+      // Inner shimmer line at top
+      ctx.save();
+      drawRoundRect(ctx, cardX, cardY, cardW, cardH, RADIUS);
+      ctx.clip();
+      const shimmer = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY + 4);
+      shimmer.addColorStop(0, 'transparent');
+      shimmer.addColorStop(0.4, 'rgba(255,255,255,0.35)');
+      shimmer.addColorStop(1, 'transparent');
+      ctx.fillStyle = shimmer;
+      ctx.fillRect(cardX, cardY, cardW, 3);
+      ctx.restore();
+
+      // ── 4. Top bar: brand badges ────────────────────────────────
+      ctx.save();
+      drawRoundRect(ctx, cardX, cardY, cardW, cardH, RADIUS);
+      ctx.clip();
+
+      // Left badge: SHAHED STORE
+      const badgeH = 28, badgeY = cardY + 18, badgePadX = 12;
+      const badgeText = 'SHAHED STORE';
+      ctx.font = 'bold 13px Arial, sans-serif';
+      const badgeTW = ctx.measureText(badgeText).width;
+      const leftBadgeX = cardX + 18;
+      const leftBadgeW = badgeTW + badgePadX * 2;
+
+      const leftBadgeBg = ctx.createLinearGradient(leftBadgeX, badgeY, leftBadgeX + leftBadgeW, badgeY);
+      leftBadgeBg.addColorStop(0, s.border1);
+      leftBadgeBg.addColorStop(1, s.border2);
+      drawRoundRect(ctx, leftBadgeX, badgeY, leftBadgeW, badgeH, 8);
+      ctx.fillStyle = leftBadgeBg;
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px Arial, sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(badgeText, leftBadgeX + badgePadX, badgeY + badgeH / 2);
+
+      // Right badge: product name short
+      const productShort = (form.brand || form.name || 'Product').substring(0, 16);
+      ctx.font = 'bold 12px Arial, sans-serif';
+      const rightTW = ctx.measureText(productShort).width;
+      const rightBadgeW = rightTW + badgePadX * 2;
+      const rightBadgeX = cardX + cardW - 18 - rightBadgeW;
+      drawRoundRect(ctx, rightBadgeX, badgeY, rightBadgeW, badgeH, 8);
+      ctx.fillStyle = 'rgba(255,255,255,0.14)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.30)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillStyle = s.textColor;
+      ctx.fillText(productShort, rightBadgeX + badgePadX, badgeY + badgeH / 2);
+      ctx.restore();
+
+      // ── 5. Product image or placeholder ────────────────────────
+      ctx.save();
+      drawRoundRect(ctx, cardX, cardY, cardW, cardH, RADIUS);
+      ctx.clip();
+
+      const imgSize = 320;
+      const imgX = cardX + (cardW - imgSize) / 2;
+      const imgY = cardY + (cardH - imgSize) / 2 - 20;
+      const imgRadius = 28;
+
+      // Shadow/glow behind product image
+      ctx.save();
+      ctx.shadowColor = s.glowColor;
+      ctx.shadowBlur = s.accentGlow ? 40 : 20;
+      drawRoundRect(ctx, imgX, imgY, imgSize, imgSize, imgRadius);
+      ctx.fillStyle = 'rgba(0,0,0,0.01)';
+      ctx.fill();
+      ctx.restore();
+
+      // Image container bg
+      drawRoundRect(ctx, imgX, imgY, imgSize, imgSize, imgRadius);
+      const imgBg = ctx.createLinearGradient(imgX, imgY, imgX + imgSize, imgY + imgSize);
+      imgBg.addColorStop(0, 'rgba(255,255,255,0.10)');
+      imgBg.addColorStop(1, 'rgba(255,255,255,0.04)');
+      ctx.fillStyle = imgBg;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      if (productImg) {
+        ctx.save();
+        drawRoundRect(ctx, imgX + 8, imgY + 8, imgSize - 16, imgSize - 16, imgRadius - 4);
+        ctx.clip();
+        // Fit image
+        const aspect = productImg.naturalWidth / productImg.naturalHeight;
+        let dw = imgSize - 16, dh = imgSize - 16;
+        if (aspect > 1) { dh = dw / aspect; } else { dw = dh * aspect; }
+        const dx = imgX + 8 + (imgSize - 16 - dw) / 2;
+        const dy = imgY + 8 + (imgSize - 16 - dh) / 2;
+        ctx.drawImage(productImg, dx, dy, dw, dh);
+        ctx.restore();
+      } else {
+        // Placeholder icon
+        ctx.font = '96px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.fillText('📦', imgX + imgSize / 2, imgY + imgSize / 2);
+      }
+      ctx.restore();
+
+      // ── 6. Product name ─────────────────────────────────────────
+      ctx.save();
+      drawRoundRect(ctx, cardX, cardY, cardW, cardH, RADIUS);
+      ctx.clip();
+
+      const nameY = imgY + imgSize + 22;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.font = 'bold 22px Arial, sans-serif';
+      ctx.fillStyle = s.textColor;
+      const displayName = (form.name || 'Product Name').substring(0, 30);
+      ctx.fillText(displayName, SIZE / 2, nameY);
+
+      // Price badge
+      if (form.price) {
+        const priceText = `৳${form.price}`;
+        ctx.font = 'bold 18px Arial, sans-serif';
+        const priceTW = ctx.measureText(priceText).width;
+        const priceBadgeW = priceTW + 24;
+        const priceBadgeH = 30;
+        const priceBadgeX = SIZE / 2 - priceBadgeW / 2;
+        const priceBadgeY = nameY + 34;
+
+        const priceGrad = ctx.createLinearGradient(priceBadgeX, priceBadgeY, priceBadgeX + priceBadgeW, priceBadgeY);
+        priceGrad.addColorStop(0, s.border1);
+        priceGrad.addColorStop(1, s.border2);
+        drawRoundRect(ctx, priceBadgeX, priceBadgeY, priceBadgeW, priceBadgeH, 10);
+        ctx.fillStyle = priceGrad;
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(priceText, SIZE / 2, priceBadgeY + priceBadgeH / 2);
+      }
+      ctx.restore();
+
+      // ── 7. Bottom info strip ────────────────────────────────────
+      ctx.save();
+      drawRoundRect(ctx, cardX, cardY, cardW, cardH, RADIUS);
+      ctx.clip();
+
+      const stripH = 44;
+      const stripY = cardY + cardH - stripH;
+      const stripGrad = ctx.createLinearGradient(cardX, stripY, cardX + cardW, stripY + stripH);
+      stripGrad.addColorStop(0, 'rgba(255,255,255,0.10)');
+      stripGrad.addColorStop(1, 'rgba(255,255,255,0.06)');
+      ctx.fillStyle = stripGrad;
+      ctx.fillRect(cardX, stripY, cardW, stripH);
+
+      // separator line
+      const lineGrad = ctx.createLinearGradient(cardX, stripY, cardX + cardW, stripY);
+      lineGrad.addColorStop(0, 'transparent');
+      lineGrad.addColorStop(0.3, s.border1);
+      lineGrad.addColorStop(0.7, s.border2);
+      lineGrad.addColorStop(1, 'transparent');
+      ctx.strokeStyle = lineGrad;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cardX, stripY);
+      ctx.lineTo(cardX + cardW, stripY);
+      ctx.stroke();
+
+      ctx.font = '13px Arial, sans-serif';
+      ctx.textBaseline = 'middle';
+      const infoY = stripY + stripH / 2;
+
+      // Website
+      ctx.textAlign = 'left';
+      ctx.fillStyle = s.subTextColor;
+      ctx.fillText('🌐 www.shahedstore.com.bd', cardX + 18, infoY);
+
+      // Phone
+      ctx.textAlign = 'right';
+      ctx.fillText('📞 +880 1840-099853', cardX + cardW - 18, infoY);
+      ctx.restore();
+
+      // ── 8. Outer glow frame ─────────────────────────────────────
+      if (s.accentGlow) {
+        ctx.save();
+        ctx.shadowColor = s.border1;
+        ctx.shadowBlur = 50;
+        drawRoundRect(ctx, cardX, cardY, cardW, cardH, RADIUS);
+        ctx.strokeStyle = 'transparent';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // ── 9. Export as WEBP ───────────────────────────────────────
       const webpBlob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob(blob => {
           if (blob) resolve(blob);
-          else reject(new Error('WEBP conversion failed'));
-        }, 'image/webp', 0.92);
+          else reject(new Error('Canvas export failed'));
+        }, 'image/webp', 0.94);
       });
 
-      // Upload WEBP to storage
-      const fileName = `ai-card-${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
+      const fileName = `glass-card-${cardStyle}-${Date.now()}.webp`;
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('product-images')
         .upload(fileName, webpBlob, { contentType: 'image/webp', upsert: true });
@@ -395,10 +688,10 @@ const AdminProducts = () => {
       setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
       setImagePreview(urlData.publicUrl);
       toast.dismiss(toastId);
-      toast.success('✨ AI Glassmorphism Card তৈরি হয়েছে! WEBP ফরমেটে সেভ হয়েছে।');
+      toast.success(`✨ ${styleName} Glassmorphism Card তৈরি হয়েছে!`);
     } catch (err: any) {
       toast.dismiss(toastId);
-      toast.error('AI Card Error: ' + (err.message || 'Unknown error'));
+      toast.error('Card Error: ' + (err.message || 'Unknown error'));
     } finally {
       setAiCardLoading(false);
     }
@@ -1342,7 +1635,7 @@ const AdminProducts = () => {
                                 <div key={i} className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: `${d}s` }} />
                               ))}
                             </div>
-                            AI ছবি তৈরি করছে, WEBP কনভার্ট করছে এবং সেভ করছে...
+                            Glassmorphism Card তৈরি হচ্ছে এবং সেভ করছে...
                           </div>
                         )}
                       </div>
