@@ -1002,7 +1002,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   },
 
   ur: {
-    tab_profile: 'پروفائل', tab_orders: 'میرے آرڈر', tab_wallet: 'والٹ', tab_wishlist: 'خواہش فہرست',
+    tab_profile: 'پروفائل', tab_orders: 'میرے آرڈر', tab_wallet: 'والٹ', tab_points: 'پوائنٹس', tab_wishlist: 'خواہش فہرست',
     tab_addresses: 'پتے', tab_notifications: 'اطلاعات', tab_referral: 'حوالہ',
     tab_security: 'سیکیورٹی', tab_language: 'زبان', tab_logout: 'لاگ آؤٹ', menu: 'مینو',
     profile_title: 'پروفائل', profile_subtitle: 'اپنی ذاتی معلومات منظم کریں',
