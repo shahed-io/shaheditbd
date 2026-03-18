@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
-import SearchBar from './SearchBar';
+import SearchBar, { DesktopSearchPalette } from './SearchBar';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +31,7 @@ const Navbar = () => {
   const [avatarUrl,    setAvatarUrl]    = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState<string | null>(null);
   const [mobileSearch, setMobileSearch] = useState(false);
+  const [desktopSearch, setDesktopSearch] = useState(false);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
@@ -40,6 +41,15 @@ const Navbar = () => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Ctrl+K opens desktop search
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); setDesktopSearch(true); }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, []);
 
   useEffect(() => {
@@ -59,6 +69,20 @@ const Navbar = () => {
   return (
     <>
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+
+      {/* ── Desktop Search Overlay ── */}
+      {desktopSearch && (
+        <div className="fixed inset-0 z-[999] hidden md:flex items-start justify-center pt-20 px-4"
+          style={{ background: 'hsla(226,35%,10%,0.55)', backdropFilter: 'blur(6px)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setDesktopSearch(false); }}>
+          <div className="w-full max-w-2xl xl:max-w-3xl rounded-3xl overflow-hidden shadow-[0_32px_80px_hsla(226,35%,10%,0.40)] flex flex-col"
+            style={{ background: 'hsl(var(--card))', border: '1.5px solid hsl(var(--border))', maxHeight: '80vh' }}>
+            {/* Top line */}
+            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
+            <DesktopSearchPalette onClose={() => setDesktopSearch(false)} />
+          </div>
+        </div>
+      )}
 
       {/* ── Top Announcement Bar ── */}
       <div className="w-full text-white text-xs font-medium py-2 flex items-center overflow-hidden relative"
@@ -127,10 +151,18 @@ const Navbar = () => {
               <BrandLogo size="md" />
             </a>
 
-            {/* Search */}
-            <div className="hidden md:flex flex-1 max-w-[420px]">
-              <SearchBar variant="navbar" className="w-full" />
-            </div>
+            {/* Desktop Search Trigger */}
+            <button
+              onClick={() => setDesktopSearch(true)}
+              className="hidden md:flex flex-1 max-w-[460px] items-center gap-3 rounded-2xl border-2 px-4 py-2.5 text-left transition-all hover:border-primary/50 hover:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)] group"
+              style={{ borderColor: 'hsla(258,78%,60%,0.20)', background: 'hsla(258,78%,55%,0.04)' }}
+            >
+              <Search size={15} className="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+              <span className="text-sm text-muted-foreground flex-1">প্রোডাক্ট খুঁজুন...</span>
+              <kbd className="hidden lg:flex items-center gap-1 px-2 py-0.5 rounded-lg border border-border/60 text-[10px] font-mono text-muted-foreground bg-muted/40 flex-shrink-0">
+                Ctrl K
+              </kbd>
+            </button>
 
             {/* Desktop Links */}
             <div className="hidden lg:flex items-center gap-0.5">
