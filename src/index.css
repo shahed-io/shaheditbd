@@ -165,6 +165,71 @@ body::before {
 }
 
 /* ══════════════════════════════════════
+   CTA CARD — Animated Gradient Border
+══════════════════════════════════════ */
+@keyframes cta-border-spin {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes cta-glow-pulse {
+  0%, 100% { opacity: 0.70; }
+  50%       { opacity: 1; }
+}
+
+/* Outer wrapper — the animated gradient border shell */
+.cta-card-shell {
+  position: relative;
+  border-radius: 1.5rem;
+  padding: 2px;
+  background: linear-gradient(
+    135deg,
+    hsl(258,78%,62%),
+    hsl(230,75%,65%),
+    hsl(200,90%,55%),
+    hsl(220,80%,70%),
+    hsl(258,78%,62%)
+  );
+  background-size: 300% 300%;
+  animation: cta-border-spin 4s ease infinite;
+  box-shadow:
+    0 0 0 1px hsla(258,78%,55%,0.12),
+    0 12px 50px hsla(258,78%,55%,0.28),
+    0 4px 20px hsla(200,90%,50%,0.18);
+}
+.cta-card-shell::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 1.75rem;
+  background: linear-gradient(
+    135deg,
+    hsla(258,78%,62%,0.35),
+    hsla(200,90%,55%,0.20),
+    hsla(258,78%,62%,0.35)
+  );
+  background-size: 300% 300%;
+  animation: cta-border-spin 4s ease infinite, cta-glow-pulse 3s ease-in-out infinite;
+  filter: blur(12px);
+  z-index: -1;
+}
+
+/* Inner glass content area */
+.cta-card-inner {
+  border-radius: 1.375rem;
+  padding: 1rem;
+  background: linear-gradient(
+    160deg,
+    hsla(240,30%,98%,0.92) 0%,
+    hsla(258,40%,97%,0.88) 50%,
+    hsla(210,35%,98%,0.92) 100%
+  );
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  box-shadow: inset 0 1px 0 hsla(0,0%,100%,0.95), inset 0 -1px 0 hsla(258,78%,55%,0.06);
+}
+
+/* ══════════════════════════════════════
    PRODUCT CARD — Glassmorphism
 ══════════════════════════════════════ */
 .product-card-new {
