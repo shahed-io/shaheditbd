@@ -524,10 +524,30 @@ const AdminProducts = () => {
     }
   };
 
+  const safeDeleteProducts = async (ids: string[]) => {
+    // 1. Nullify product_id in related tables (FK constraints)
+    await Promise.all([
+      supabase.from('order_items').update({ product_id: null }).in('product_id', ids),
+      supabase.from('license_keys').update({ product_id: null }).in('product_id', ids),
+      supabase.from('product_reviews').update({ product_id: null }).in('product_id', ids),
+    ]);
+    // 2. Delete child tables that cascade on product_id
+    const groupRes = await supabase.from('product_option_groups').select('id').in('product_id', ids);
+    const groupIds = (groupRes.data || []).map((g: any) => g.id);
+    if (groupIds.length) {
+      await supabase.from('product_option_values').delete().in('group_id', groupIds);
+      await supabase.from('product_option_groups').delete().in('id', groupIds);
+    }
+    await supabase.from('product_attribute_assignments').delete().in('product_id', ids);
+    // 3. Now delete the products
+    const { error } = await supabase.from('products').delete().in('id', ids);
+    return error;
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this product?')) return;
-    const { error } = await supabase.from('products').delete().eq('id', id);
-    if (error) toast.error('Failed to delete');
+    const error = await safeDeleteProducts([id]);
+    if (error) toast.error('Failed to delete: ' + error.message);
     else { toast.success('Product deleted'); fetchProducts(); }
   };
 
