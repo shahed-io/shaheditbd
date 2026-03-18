@@ -838,76 +838,68 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              {/* CTA Buttons — Gradient Glassmorphism Card */}
+              {/* CTA Buttons — Animated Gradient Border Glassmorphism Card */}
               <div
-                className="rounded-3xl p-1.5 space-y-1.5"
+                className="cta-card-shell"
                 style={{
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'none' : 'translateY(28px)',
                   transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.5s',
-                  background: 'linear-gradient(135deg, hsla(258,78%,55%,0.18) 0%, hsla(200,90%,50%,0.14) 50%, hsla(258,78%,55%,0.18) 100%)',
-                  backdropFilter: 'blur(28px)',
-                  WebkitBackdropFilter: 'blur(28px)',
-                  border: '1.5px solid hsla(258,78%,65%,0.30)',
-                  boxShadow: '0 8px 40px hsla(258,78%,55%,0.18), 0 2px 0 hsla(0,0%,100%,0.60) inset',
                 }}
               >
-                {/* Shimmer top line */}
-                <div className="h-px w-full rounded-full mb-1.5"
-                  style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,75%,0.60), hsla(200,90%,70%,0.60), transparent)' }} />
+                <div className="cta-card-inner space-y-2.5">
+                  {/* Shimmer line */}
+                  <div className="h-px w-full rounded-full"
+                    style={{ background: 'linear-gradient(90deg, transparent 0%, hsla(258,78%,65%,0.70) 30%, hsla(200,90%,65%,0.70) 70%, transparent 100%)' }} />
 
-                {/* Buy Now — full-width primary */}
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(230,75%,58%) 40%, hsl(200,90%,48%) 100%)',
-                    boxShadow: '0 4px 24px hsla(258,78%,55%,0.50), 0 1px 0 hsla(0,0%,100%,0.25) inset',
-                    letterSpacing: '0.01em',
-                  }}
-                >
-                  <CreditCard size={18} strokeWidth={2.5} /> Buy Now
-                </button>
-
-                {/* WhatsApp + Cart — row */}
-                <div className="grid grid-cols-2 gap-1.5">
-                  {/* WhatsApp */}
-                  <button onClick={waOrder}
-                    className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
-                    style={{
-                      background: 'linear-gradient(135deg, hsla(258,78%,55%,0.75) 0%, hsla(230,75%,60%,0.75) 50%, hsla(200,90%,48%,0.75) 100%)',
-                      backdropFilter: 'blur(20px)',
-                      WebkitBackdropFilter: 'blur(20px)',
-                      border: '1.5px solid hsla(258,78%,70%,0.40)',
-                      boxShadow: '0 2px 16px hsla(258,78%,55%,0.28), 0 1px 0 hsla(0,0%,100%,0.20) inset',
-                    }}>
-                    <MessageCircle size={15} strokeWidth={2.5} /> WhatsApp
-                  </button>
-
-                  {/* Cart */}
+                  {/* Buy Now — full-width primary */}
                   <button
-                    onClick={() => addToCart(cartItem)}
-                    className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
-                    style={inCart
-                      ? {
-                          background: 'linear-gradient(135deg, hsla(258,78%,48%,0.90) 0%, hsla(230,75%,54%,0.90) 100%)',
-                          backdropFilter: 'blur(20px)',
-                          WebkitBackdropFilter: 'blur(20px)',
-                          border: '1.5px solid hsla(258,78%,70%,0.50)',
-                          boxShadow: '0 2px 16px hsla(258,78%,55%,0.35), 0 1px 0 hsla(0,0%,100%,0.20) inset',
-                        }
-                      : {
-                          background: 'linear-gradient(135deg, hsla(200,90%,45%,0.75) 0%, hsla(230,75%,58%,0.75) 50%, hsla(258,78%,55%,0.75) 100%)',
-                          backdropFilter: 'blur(20px)',
-                          WebkitBackdropFilter: 'blur(20px)',
-                          border: '1.5px solid hsla(200,90%,65%,0.40)',
-                          boxShadow: '0 2px 16px hsla(200,90%,45%,0.25), 0 1px 0 hsla(0,0%,100%,0.20) inset',
-                        }
-                    }
+                    onClick={() => setShowModal(true)}
+                    className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(230,75%,58%) 40%, hsl(200,90%,48%) 100%)',
+                      boxShadow: '0 4px 24px hsla(258,78%,55%,0.45), 0 1px 0 hsla(0,0%,100%,0.30) inset',
+                      letterSpacing: '0.02em',
+                      textShadow: '0 1px 4px hsla(258,78%,30%,0.30)',
+                    }}
                   >
-                    <ShoppingCart size={15} strokeWidth={2.5} />
-                    {inCart ? '✓ Added' : 'Cart'}
+                    <CreditCard size={18} strokeWidth={2.5} /> Buy Now
                   </button>
+
+                  {/* WhatsApp + Cart — row */}
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {/* WhatsApp */}
+                    <button onClick={waOrder}
+                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(258,78%,56%) 0%, hsl(230,75%,62%) 60%, hsl(210,80%,60%) 100%)',
+                        boxShadow: '0 2px 16px hsla(258,78%,55%,0.35), 0 1px 0 hsla(0,0%,100%,0.25) inset',
+                        textShadow: '0 1px 3px hsla(258,78%,25%,0.25)',
+                      }}>
+                      <MessageCircle size={15} strokeWidth={2.5} /> WhatsApp
+                    </button>
+
+                    {/* Cart */}
+                    <button
+                      onClick={() => addToCart(cartItem)}
+                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                      style={inCart
+                        ? {
+                            background: 'linear-gradient(135deg, hsl(258,78%,50%) 0%, hsl(220,78%,56%) 100%)',
+                            boxShadow: '0 2px 16px hsla(258,78%,55%,0.40), 0 1px 0 hsla(0,0%,100%,0.25) inset',
+                            textShadow: '0 1px 3px hsla(258,78%,25%,0.25)',
+                          }
+                        : {
+                            background: 'linear-gradient(135deg, hsl(200,90%,46%) 0%, hsl(215,82%,54%) 50%, hsl(235,75%,60%) 100%)',
+                            boxShadow: '0 2px 16px hsla(200,90%,45%,0.35), 0 1px 0 hsla(0,0%,100%,0.25) inset',
+                            textShadow: '0 1px 3px hsla(200,90%,20%,0.25)',
+                          }
+                      }
+                    >
+                      <ShoppingCart size={15} strokeWidth={2.5} />
+                      {inCart ? '✓ Added' : 'Cart'}
+                    </button>
+                  </div>
                 </div>
               </div>
 
