@@ -240,6 +240,15 @@ export default function AdminCustomers() {
                     <td className="px-4 py-3 font-semibold text-foreground text-xs">
                       {(c.total_spent ?? 0) > 0 ? `৳${(c.total_spent ?? 0).toLocaleString()}` : '—'}
                     </td>
+                    <td className="px-4 py-3">
+                      {(c.points_balance ?? 0) > 0 ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border bg-amber-500/10 text-amber-600 border-amber-400/30">
+                          <Award size={10} /> {(c.points_balance ?? 0).toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground/50">0</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
                       {c.last_order ? format(new Date(c.last_order), 'dd MMM yyyy') : '—'}
                     </td>
