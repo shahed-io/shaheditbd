@@ -75,7 +75,6 @@ export default function AboutUs() {
         description="Learn about Shahed Store – Bangladesh's most trusted digital software shop since 2020. Our mission, team, and commitment to delivering 100% genuine software at the best price."
         canonical="https://shahedstore.com.bd/about"
       />
-      />
       <Navbar />
 
       {/* ── Hero ── */}
