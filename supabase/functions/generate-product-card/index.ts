@@ -49,26 +49,28 @@ BACKGROUND:
 - The gradient is smooth, dreamy, pastel aesthetic
 - A few small translucent floating bubble/circle decorations scattered subtly
 
-MAIN CARD ELEMENT:
-- A large frosted glass card in CENTER (takes up ~72% of image)
-- Card: frosted glass / glassmorphism — semi-transparent white (rgba(255,255,255,0.35)), blur effect, very soft rounded corners (20-24px)
-- Subtle white border (1px, rgba(255,255,255,0.6))
-- Delicate drop shadow (soft, not harsh)
-- Product image "${name}" prominently in center of card, large, clean with soft drop shadow
+MAIN FROSTED GLASS CARD:
+- A large frosted glass rounded rectangle card covering most of the image
+- Frosted glass effect: white semi-transparent (rgba(255,255,255,0.55)), heavy blur backdrop, soft white border (1.5px rgba(255,255,255,0.8))
+- Rounded corners (border-radius ~30px)
+- Very subtle box shadow: soft purple/pink shadow
 
-TOP AREA:
-- Small pill/badge top-center or top-right: "${category || 'Software'}" in a soft colored pill
-- Brand name "${brand || name}" in soft dark text
+INSIDE THE CARD - TOP ROW:
+- Top-left: A small frosted glass pill/badge containing "SHAHED STORE" in bold white text (this pill has a slightly darker frosted background)
+- Top-right: A small frosted glass pill/badge containing "${brand || name}" brand name with a small icon, on clean white background
 
-BOTTOM STRIP (inside card, frosted):
-- globe icon + "www.shahedstore.com.bd"
-- phone icon + "+880 1840-099853"
-- Soft gray/dark text
+INSIDE THE CARD - CENTER:
+- The product logo/icon for "${name}" placed in the CENTER of the card, large and prominent
+- The product icon itself should be a clean square with rounded corners (like an app icon)
+- Subtle drop shadow on the product icon
 
-CORNER:
-- "SHAHED STORE" top-left in bold semi-transparent dark text
+BOTTOM OF CARD:
+- At the bottom inside the frosted card: 
+  - globe icon + "www.shahedstore.com.bd"
+  - phone icon + "+880 1840-099853"
+  - Both in dark/charcoal text, clean readable font
 
-OVERALL: Elegant, airy, pastel glassmorphism aesthetic, premium feel, soft colors. Square format exactly.
+OVERALL: Dreamy pastel glassmorphism, soft colors, elegant frosted glass, professional social media promotional style. Square format exactly.
 `.trim(),
   },
 
@@ -78,28 +80,33 @@ OVERALL: Elegant, airy, pastel glassmorphism aesthetic, premium feel, soft color
 Create a premium square (1:1) product promotional card image with this EXACT design:
 
 BACKGROUND:
-- Clean pure white or very light gray (#f8f9fa) background
-- Subtle bokeh or soft focus circles in very light pastel (barely visible)
+- Clean light gray/white background: very light blue-gray (#e8edf5 to #f2f5fa)
+- Several large soft bokeh blur circles/orbs scattered: some are soft blue-white, some soft teal-cyan - they look like out-of-focus light orbs, giving depth
+- The background feels airy, clean, professional, minimal
 
-MAIN CARD ELEMENT:
-- Clean minimal white card CENTER (takes ~75% space), subtle border-radius
-- Very thin light gray border or soft box-shadow (no harsh edges)
-- Product image/logo "${name}" large and prominent in card center, with soft drop shadow
-- Clean, breathable negative space around the product image
+MAIN CARD:
+- A large rounded rectangle card covering most of the image
+- White/very light semi-transparent background (rgba(255,255,255,0.75))
+- Subtle light border (rgba(255,255,255,0.9), 1.5px)
+- Soft box shadow: light blue-gray shadow
+- Very rounded corners (~28px)
 
-PRICE TAG:
-- Bold price display "${price ? '৳' + price : ''}" in prominent text, vivid red or orange accent
-- "SHAHED STORE" badge in top corner, red accent color
+INSIDE THE CARD - TOP ROW:
+- Top-left: "SHAHED STORE" brand badge — white pill/badge with a RED filled background rectangle containing "SHAHED STORE" in white bold text (this is a distinctive red brand badge, very clean)
+- Top-right: "${brand || name}" brand name with its actual logo/icon, on a clean white pill background, dark text
 
-TOP SECTION:
-- Brand "${brand || name}" name in clean bold black text
-- Category pill "${category || 'Software'}" in accent color
+INSIDE THE CARD - CENTER:
+- The product icon/logo for "${name}" in the CENTER, large and prominent
+- Clean square app icon with rounded corners
+- The product image should be the focal point
 
-BOTTOM SECTION (clean strip):
-- "www.shahedstore.com.bd" — dark text, globe icon
-- "+880 1840-099853" — dark text, phone icon
+BOTTOM OF CARD:
+- At the bottom, separated by a subtle line:
+  - Left: globe icon + "www.shahedstore.com.bd" in dark gray text
+  - Right: phone icon + "+880 1840-099853" in dark gray text
+  - Clean, professional typography
 
-STYLE: Clean, minimal, white aesthetic. Inspired by CamScanner/clean product card style. Slight red/orange accent. Square format exactly.
+OVERALL: Clean, minimal, professional look with soft light backgrounds and bokeh orbs. White card aesthetic. Corporate/premium promotional style. Square format exactly.
 `.trim(),
   },
 
@@ -109,277 +116,278 @@ STYLE: Clean, minimal, white aesthetic. Inspired by CamScanner/clean product car
 Create a premium square (1:1) product promotional card image with this EXACT design:
 
 BACKGROUND:
-- Rich deep purple to dark magenta gradient (#2d0057 → #6b0099 → #9b00cc)
-- Scattered small bright glowing particles/sparkles in the background
-- Dynamic diagonal light streaks (subtle)
+- Deep rich gradient: from dark indigo (#1a0533) to deep purple (#2d0a5c) to dark blue (#051a40)
+- Subtle bokeh light orbs: some purple, some cyan, very blurred and soft, adding depth
 
-MAIN CARD ELEMENT:
-- Rounded rectangle card CENTER (~70% space)
-- Card: dark semi-transparent purple (rgba(20,0,40,0.75)) with vivid gradient border: purple → pink → orange → yellow
-- Border glows vibrantly
-- Product image "${name}" large, centered, with vibrant glow halo around it
+DESIGN LAYOUT:
+- A bold frosted glass card in the CENTER with rounded corners (~24px)
+- Card border: gradient from purple to cyan, glowing slightly
+- Card background: rgba(255,255,255,0.08) - very dark frosted glass
 
-PRICE/OFFER:
-- Large bold price "${price ? '৳' + price : ''}" in bright yellow/gold text
-- "BUY NOW" or "GET IT NOW" in accent button style at bottom inside card
+TOP OF CARD:
+- Top-left inside card: "SHAHED STORE" in white bold uppercase letters, with a small white star or sparkle icon
+- Top-right: "${brand || name}" in white text with brand icon
 
-BRAND SECTION:
-- "SHAHED STORE" prominent top-left or top-center in bold white
-- Brand "${brand || name}" subtitle
+CENTER OF CARD:
+- Large product image/logo for "${name}" centered and prominent
+- Product icon is in a separate slightly lighter rounded square container with subtle inner glow
 
-BOTTOM STRIP:
-- "www.shahedstore.com.bd" in white
-- "+880 1840-099853" in white
+${price ? `PRICE BADGE:
+- A vibrant price badge showing "৳${price}" 
+- The badge uses a bright gradient (from orange-red to pink) with white text
+- Positioned at top-right or bottom-right of product icon` : ""}
 
-OVERALL: Rich dark purple, vibrant glowing borders, energetic promotional style. Deep purple, vibrant. Square format exactly.
+BOTTOM OF CARD:
+- Frosted glass bottom strip (slightly lighter than card body)
+- globe icon + "www.shahedstore.com.bd" — white text
+- phone icon + "+880 1840-099853" — white text
+- Both centered or side by side
+
+OVERALL: Rich dark premium promotional style, vibrant colors, glassmorphism, suitable for social media posts. Square format exactly.
 `.trim(),
   },
 };
 
-// ── Upload base64 image to Supabase Storage ──────────────────────────────────
-async function uploadImageToStorage(base64Data: string, mimeType: string): Promise<string> {
-  const SUPABASE_URL = (Deno.env.get("SUPABASE_URL") || "").trim();
-  const SUPABASE_SERVICE_ROLE_KEY = (Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "").trim();
-
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    throw new Error("Storage credentials not configured");
-  }
-
-  const binaryStr = atob(base64Data);
-  const bytes = new Uint8Array(binaryStr.length);
-  for (let i = 0; i < binaryStr.length; i++) {
-    bytes[i] = binaryStr.charCodeAt(i);
-  }
-
-  const ext = mimeType.includes("png") ? "png" : mimeType.includes("webp") ? "webp" : "jpg";
-  const fileName = `ai-card-${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
-
-  const uploadResp = await fetch(
-    `${SUPABASE_URL}/storage/v1/object/product-images/${fileName}`,
-    {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-        "apikey": SUPABASE_SERVICE_ROLE_KEY,
-        "Content-Type": mimeType,
-        "x-upsert": "true",
-      },
-      body: bytes,
-    }
-  );
-
-  if (!uploadResp.ok) {
-    const errText = await uploadResp.text();
-    console.error("Storage upload failed:", errText);
-    throw new Error(`Storage upload failed: ${errText}`);
-  }
-
-  return `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-}
-
-// ── Helper ───────────────────────────────────────────────────────────────────
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-
-function extractImageFromGatewayResponse(responseData: any): { data: string; mime: string } | null {
-  const msg = responseData.choices?.[0]?.message;
-  if (!msg) return null;
-
-  const img1 = msg?.images?.[0];
-  if (img1?.image_url?.url?.startsWith("data:")) {
-    const [prefix, b64] = img1.image_url.url.split(",");
-    return { data: b64, mime: prefix.split(":")[1].split(";")[0] };
-  }
-  if (img1?.data) return { data: img1.data, mime: "image/jpeg" };
-
-  if (Array.isArray(msg?.content)) {
-    const imgPart = msg.content.find((p: any) => p.type === "image_url" && p.image_url?.url?.startsWith("data:"));
-    if (imgPart) {
-      const [prefix, b64] = imgPart.image_url.url.split(",");
-      return { data: b64, mime: prefix.split(":")[1].split(";")[0] };
-    }
-    const inlinePart = msg.content.find((p: any) => p.inline_data?.data);
-    if (inlinePart) return { data: inlinePart.inline_data.data, mime: inlinePart.inline_data.mime_type || "image/png" };
-  }
-  return null;
-}
-
-function extractImageFromGeminiResponse(data: any): { data: string; mime: string } | null {
-  const inlinePart = data.candidates?.[0]?.content?.parts?.find((p: any) => p.inlineData?.data);
-  if (inlinePart) return { data: inlinePart.inlineData.data, mime: inlinePart.inlineData.mimeType || "image/jpeg" };
-  return null;
-}
-
-// ── Main handler ─────────────────────────────────────────────────────────────
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
     const { imageUrl, productName, category, price, brand, cardStyle } = await req.json();
 
-    const LOVABLE_API_KEY = (Deno.env.get("LOVABLE_API_KEY") || "").trim();
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
     const name = productName || "Product";
     const selectedStyle = STYLES[cardStyle as keyof typeof STYLES] || STYLES.dark_neon;
     const promptText = selectedStyle.prompt(name, brand || name, price || "", category || "");
 
-    // Collect all 6 Gemini keys (skip empty ones)
-    const GEMINI_KEYS = [
-      "GEMINI_API_KEY", "GEMINI_API_KEY_2", "GEMINI_API_KEY_3",
-      "GEMINI_API_KEY_4", "GEMINI_API_KEY_5", "GEMINI_API_KEY_6",
-    ]
-      .map(k => (Deno.env.get(k) || "").trim())
-      .filter(Boolean);
-
-    console.log(`Available Gemini keys: ${GEMINI_KEYS.length}`);
-
-    // Preload product image as base64 ONCE — reused across all retries
-    let productImageBase64: string | null = null;
-    let productImageMime = "image/jpeg";
+    const userContent: any[] = [{ type: "text", text: promptText }];
     if (imageUrl) {
-      try {
-        const imgResp = await fetch(imageUrl, { signal: AbortSignal.timeout(12000) });
-        if (imgResp.ok) {
-          const buf = await imgResp.arrayBuffer();
-          productImageBase64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
-          productImageMime = imgResp.headers.get("content-type") || "image/jpeg";
-          console.log("Product image preloaded");
-        }
-      } catch (e) {
-        console.warn("Could not preload product image, using text-only prompt");
-      }
+      userContent.push({ type: "image_url", image_url: { url: imageUrl } });
     }
 
-    let imageData: string | undefined;
-    let imageMime = "image/jpeg";
+    // ── Phase 1: Lovable AI Gateway (best quality models) ─────────────────
+    const GATEWAY_MODELS = [
+      "google/gemini-3-pro-image-preview",     // highest quality
+      "google/gemini-3.1-flash-image-preview", // fast + pro-level
+    ];
 
-    // ── Phase 1: Lovable AI Gateway ──────────────────────────────────────────
-    if (LOVABLE_API_KEY) {
-      const userContent: any[] = [{ type: "text", text: promptText }];
-      if (imageUrl) userContent.push({ type: "image_url", image_url: { url: imageUrl } });
+    let data: any = null;
 
-      const GATEWAY_MODELS = [
-        "google/gemini-3-pro-image-preview",
-        "google/gemini-3.1-flash-image-preview",
-      ];
+    for (let attempt = 0; attempt < GATEWAY_MODELS.length; attempt++) {
+      const model = GATEWAY_MODELS[attempt];
+      console.log(`Gateway attempt ${attempt + 1}: ${model}`);
 
-      for (const model of GATEWAY_MODELS) {
-        if (imageData) break;
-        console.log(`Gateway: ${model}`);
-        try {
-          const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-            body: JSON.stringify({
-              model,
-              messages: [{ role: "user", content: userContent }],
-              modalities: ["image", "text"],
-            }),
-            signal: AbortSignal.timeout(55000),
-          });
+      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: "user", content: userContent }],
+          modalities: ["image", "text"],
+        }),
+      });
 
-          if (response.status === 402) { console.warn("Gateway credits exhausted"); break; }
-          if (response.status === 429) { console.warn(`Gateway ${model} rate limited`); continue; }
-          if (!response.ok) { console.warn(`Gateway ${model} error ${response.status}`); continue; }
-
-          let responseData: any;
-          try { responseData = await response.json(); } catch { continue; }
-
-          if (responseData.error?.code === 402) break;
-          if (responseData.error?.code === 429) continue;
-          if (responseData.choices?.[0]?.error?.code === 429) continue;
-          if (responseData.error || responseData.choices?.[0]?.error) continue;
-
-          const extracted = extractImageFromGatewayResponse(responseData);
-          if (extracted) {
-            imageData = extracted.data;
-            imageMime = extracted.mime;
-            console.log(`✓ Gateway success: ${model}`);
-          }
-        } catch (err) {
-          console.warn(`Gateway ${model} exception: ${err}`);
-        }
+      if (response.status === 402) {
+        // credits exhausted — fall through to direct API keys
+        console.warn("Gateway credits exhausted, switching to direct Gemini API...");
+        break;
       }
+
+      if (response.status === 429) {
+        console.warn(`Gateway model ${model} rate limited, trying next...`);
+        await new Promise(r => setTimeout(r, 800));
+        continue;
+      }
+
+      if (!response.ok) {
+        const errText = await response.text();
+        console.warn(`Gateway error ${response.status}: ${errText}, trying next...`);
+        continue;
+      }
+
+      const responseData = await response.json();
+
+      if (responseData.error) {
+        const code = responseData.error?.code;
+        if (code === 429 || responseData.error?.status === 429) {
+          console.warn(`Gateway body 429, trying next...`);
+          await new Promise(r => setTimeout(r, 800));
+          continue;
+        }
+        if (code === 402) {
+          console.warn("Gateway credits exhausted, switching to direct Gemini API...");
+          break;
+        }
+        throw new Error(responseData.error?.message || "AI gateway error");
+      }
+
+      // Check if choices[0] itself contains a rate-limit or error (200 OK but error injected)
+      const choiceError = responseData.choices?.[0]?.error;
+      if (choiceError) {
+        const choiceCode = choiceError?.code || choiceError?.metadata?.error_type;
+        if (choiceCode === 429 || choiceCode === "rate_limit_exceeded") {
+          console.warn(`Gateway choice-level 429 on ${model}, trying next...`);
+          await new Promise(r => setTimeout(r, 800));
+          continue;
+        }
+        if (choiceCode === 402) {
+          console.warn("Gateway choice-level credits exhausted, switching to direct Gemini API...");
+          break;
+        }
+        console.warn(`Gateway choice-level error on ${model}: ${JSON.stringify(choiceError)}, trying next...`);
+        continue;
+      }
+
+      // Verify there's actually image data before accepting this response
+      const hasImage = !!(
+        responseData.choices?.[0]?.message?.images?.[0]?.image_url?.url ||
+        responseData.choices?.[0]?.message?.images?.[0]?.data ||
+        (Array.isArray(responseData.choices?.[0]?.message?.content) &&
+          responseData.choices?.[0]?.message?.content.find((p: any) => p.type === "image_url" || p.inline_data))
+      );
+
+      if (!hasImage) {
+        console.warn(`Gateway model ${model} returned no image data, trying next...`);
+        continue;
+      }
+
+      data = responseData;
+      break;
     }
 
-    // ── Phase 2: Direct Gemini API — rotate all 6 keys × 2 models ───────────
-    if (!imageData && GEMINI_KEYS.length > 0) {
-      const DIRECT_MODELS = [
-        "gemini-2.0-flash-preview-image-generation",
-        "gemini-imagen-3.0-generate-002",
-      ];
+    // ── Phase 2: Direct Gemini API with user-provided keys ─────────────────
+    if (!data) {
+      const GEMINI_KEYS = [
+        Deno.env.get("GEMINI_API_KEY"),
+        Deno.env.get("GEMINI_API_KEY_2"),
+        Deno.env.get("GEMINI_API_KEY_3"),
+      ].filter(Boolean) as string[];
 
-      const baseParts: any[] = [{ text: promptText }];
-      if (productImageBase64) {
-        baseParts.push({ inline_data: { mime_type: productImageMime, data: productImageBase64 } });
-      }
+      // Use gemini-2.0-flash-preview-image-generation for direct API (high quality)
+      const DIRECT_MODEL = "gemini-2.0-flash-preview-image-generation";
 
-      outerLoop:
-      for (const apiKey of GEMINI_KEYS) {
-        for (const directModel of DIRECT_MODELS) {
-          if (imageData) break outerLoop;
-          console.log(`Direct Gemini [key …${apiKey.slice(-4)}] ${directModel}`);
+      for (let i = 0; i < GEMINI_KEYS.length; i++) {
+        const apiKey = GEMINI_KEYS[i];
+        console.log(`Direct Gemini attempt ${i + 1} with key ${i + 1}...`);
+
+        // Build parts for direct Gemini API
+        const parts: any[] = [{ text: promptText }];
+        if (imageUrl) {
+          // Fetch the image and convert to base64 for direct API
           try {
-            const directResp = await fetch(
-              `https://generativelanguage.googleapis.com/v1beta/models/${directModel}:generateContent?key=${apiKey}`,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  contents: [{ parts: baseParts }],
-                  generationConfig: {
-                    responseModalities: ["IMAGE", "TEXT"],
-                    responseMimeType: "image/jpeg",
-                  },
-                }),
-                signal: AbortSignal.timeout(55000),
-              }
-            );
-
-            if (directResp.status === 429) {
-              console.warn(`Key …${apiKey.slice(-4)} rate limited, trying next key...`);
-              break; // move to next key
+            const imgResp = await fetch(imageUrl);
+            if (imgResp.ok) {
+              const imgBuf = await imgResp.arrayBuffer();
+              const base64 = btoa(String.fromCharCode(...new Uint8Array(imgBuf)));
+              const mimeType = imgResp.headers.get("content-type") || "image/jpeg";
+              parts.push({ inline_data: { mime_type: mimeType, data: base64 } });
             }
-            if (!directResp.ok) {
-              let et = ""; try { et = await directResp.text(); } catch {}
-              console.warn(`Key …${apiKey.slice(-4)} ${directModel} error ${directResp.status}: ${et}`);
-              continue;
-            }
-
-            let directData: any;
-            try { directData = await directResp.json(); } catch { continue; }
-
-            const extracted = extractImageFromGeminiResponse(directData);
-            if (extracted) {
-              imageData = extracted.data;
-              imageMime = extracted.mime;
-              console.log(`✓ Direct Gemini success: key …${apiKey.slice(-4)} ${directModel}`);
-              break outerLoop;
-            }
-          } catch (err) {
-            console.warn(`Direct Gemini exception: ${err}`);
+          } catch (e) {
+            console.warn("Could not fetch image for direct API, text-only prompt");
           }
         }
-        if (!imageData) await sleep(300);
-      }
-    }
 
-    if (!imageData) {
+        const directResp = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${DIRECT_MODEL}:generateContent?key=${apiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts }],
+              generationConfig: {
+                responseModalities: ["IMAGE", "TEXT"],
+                responseMimeType: "image/jpeg",
+              },
+            }),
+          }
+        );
+
+        if (directResp.status === 429) {
+          console.warn(`Direct key ${i + 1} rate limited, trying next key...`);
+          await new Promise(r => setTimeout(r, 800));
+          continue;
+        }
+
+        if (!directResp.ok) {
+          const errText = await directResp.text();
+          console.warn(`Direct key ${i + 1} error ${directResp.status}: ${errText}`);
+          continue;
+        }
+
+        const directData = await directResp.json();
+        const inlinePart = directData.candidates?.[0]?.content?.parts?.find(
+          (p: any) => p.inlineData?.data
+        );
+
+        if (inlinePart?.inlineData?.data) {
+          const mime = inlinePart.inlineData.mimeType || "image/jpeg";
+          const imageData = `data:${mime};base64,${inlinePart.inlineData.data}`;
+          console.log("Direct Gemini image generated successfully");
+          return new Response(JSON.stringify({ imageData }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        console.warn(`Direct key ${i + 1} returned no image data`);
+      }
+
       return new Response(
-        JSON.stringify({ error: "AI ছবি তৈরি করতে পারেনি। কিছুক্ষণ পরে আবার চেষ্টা করুন।" }),
+        JSON.stringify({ error: "সকল AI কী রেট লিমিটেড। কিছুক্ষণ পর আবার চেষ্টা করুন।" }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // ── Upload to Storage ────────────────────────────────────────────────────
-    console.log(`Uploading image (mime: ${imageMime}) to storage...`);
-    const publicUrl = await uploadImageToStorage(imageData, imageMime);
-    console.log("Image uploaded:", publicUrl);
+    console.log("AI response keys:", JSON.stringify(Object.keys(data)));
+    console.log("choices[0].message keys:", JSON.stringify(Object.keys(data.choices?.[0]?.message || {})));
 
-    return new Response(
-      JSON.stringify({ imageUrl: publicUrl }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    // Try multiple extraction paths
+    let imageData: string | undefined;
 
+    // Path 1: images array (documented format)
+    imageData = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+    // Path 2: content as array with image parts
+    if (!imageData) {
+      const content = data.choices?.[0]?.message?.content;
+      if (Array.isArray(content)) {
+        const imgPart = content.find((p: any) => p.type === "image_url");
+        imageData = imgPart?.image_url?.url;
+      }
+    }
+
+    // Path 3: content as array with inline_data (Gemini native format)
+    if (!imageData) {
+      const content = data.choices?.[0]?.message?.content;
+      if (Array.isArray(content)) {
+        const imgPart = content.find((p: any) => p.type === "image" || p.inline_data);
+        if (imgPart?.inline_data?.data) {
+          imageData = `data:${imgPart.inline_data.mime_type || "image/png"};base64,${imgPart.inline_data.data}`;
+        }
+      }
+    }
+
+    // Path 4: direct base64 in images array with data field
+    if (!imageData) {
+      const img = data.choices?.[0]?.message?.images?.[0];
+      if (img?.data) {
+        imageData = `data:image/png;base64,${img.data}`;
+      }
+    }
+
+    console.log("imageData found:", !!imageData, "prefix:", imageData?.substring(0, 30));
+
+    if (!imageData) {
+      console.error("Full response structure:", JSON.stringify(data).substring(0, 500));
+      throw new Error("AI did not return an image. Please try again.");
+    }
+
+    return new Response(JSON.stringify({ imageData }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (e) {
     console.error("generate-product-card error:", e);
     return new Response(
