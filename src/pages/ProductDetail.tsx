@@ -852,15 +852,15 @@ const ProductDetail = () => {
                   <div className="h-px w-full rounded-full"
                     style={{ background: 'linear-gradient(90deg, transparent 0%, hsla(258,78%,65%,0.70) 30%, hsla(200,90%,65%,0.70) 70%, transparent 100%)' }} />
 
-                  {/* Buy Now — full-width primary */}
+                  {/* Buy Now — vivid violet→fuchsia→orange flame */}
                   <button
                     onClick={() => setShowModal(true)}
-                    className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                    className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                     style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(230,75%,58%) 40%, hsl(200,90%,48%) 100%)',
-                      boxShadow: '0 4px 24px hsla(258,78%,55%,0.45), 0 1px 0 hsla(0,0%,100%,0.30) inset',
+                      background: 'linear-gradient(135deg, hsl(262,90%,58%) 0%, hsl(300,80%,55%) 45%, hsl(330,90%,58%) 100%)',
+                      boxShadow: '0 4px 28px hsla(300,80%,55%,0.50), 0 1px 0 hsla(0,0%,100%,0.30) inset',
                       letterSpacing: '0.02em',
-                      textShadow: '0 1px 4px hsla(258,78%,30%,0.30)',
+                      textShadow: '0 1px 6px hsla(300,80%,25%,0.35)',
                     }}
                   >
                     <CreditCard size={18} strokeWidth={2.5} /> Buy Now
@@ -868,31 +868,31 @@ const ProductDetail = () => {
 
                   {/* WhatsApp + Cart — row */}
                   <div className="grid grid-cols-2 gap-2.5">
-                    {/* WhatsApp */}
+                    {/* WhatsApp — emerald teal */}
                     <button onClick={waOrder}
-                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={{
-                        background: 'linear-gradient(135deg, hsl(258,78%,56%) 0%, hsl(230,75%,62%) 60%, hsl(210,80%,60%) 100%)',
-                        boxShadow: '0 2px 16px hsla(258,78%,55%,0.35), 0 1px 0 hsla(0,0%,100%,0.25) inset',
-                        textShadow: '0 1px 3px hsla(258,78%,25%,0.25)',
+                        background: 'linear-gradient(135deg, hsl(158,72%,38%) 0%, hsl(172,80%,36%) 50%, hsl(186,85%,38%) 100%)',
+                        boxShadow: '0 2px 18px hsla(165,76%,38%,0.45), 0 1px 0 hsla(0,0%,100%,0.25) inset',
+                        textShadow: '0 1px 4px hsla(165,76%,15%,0.30)',
                       }}>
                       <MessageCircle size={15} strokeWidth={2.5} /> WhatsApp
                     </button>
 
-                    {/* Cart */}
+                    {/* Cart — electric amber→orange */}
                     <button
                       onClick={() => addToCart(cartItem)}
-                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={inCart
                         ? {
-                            background: 'linear-gradient(135deg, hsl(258,78%,50%) 0%, hsl(220,78%,56%) 100%)',
-                            boxShadow: '0 2px 16px hsla(258,78%,55%,0.40), 0 1px 0 hsla(0,0%,100%,0.25) inset',
-                            textShadow: '0 1px 3px hsla(258,78%,25%,0.25)',
+                            background: 'linear-gradient(135deg, hsl(262,90%,58%) 0%, hsl(300,80%,55%) 100%)',
+                            boxShadow: '0 2px 18px hsla(300,80%,55%,0.40), 0 1px 0 hsla(0,0%,100%,0.25) inset',
+                            textShadow: '0 1px 4px hsla(300,80%,25%,0.30)',
                           }
                         : {
-                            background: 'linear-gradient(135deg, hsl(200,90%,46%) 0%, hsl(215,82%,54%) 50%, hsl(235,75%,60%) 100%)',
-                            boxShadow: '0 2px 16px hsla(200,90%,45%,0.35), 0 1px 0 hsla(0,0%,100%,0.25) inset',
-                            textShadow: '0 1px 3px hsla(200,90%,20%,0.25)',
+                            background: 'linear-gradient(135deg, hsl(35,95%,52%) 0%, hsl(22,92%,52%) 50%, hsl(10,88%,56%) 100%)',
+                            boxShadow: '0 2px 18px hsla(22,92%,52%,0.45), 0 1px 0 hsla(0,0%,100%,0.25) inset',
+                            textShadow: '0 1px 4px hsla(22,92%,20%,0.30)',
                           }
                       }
                     >
