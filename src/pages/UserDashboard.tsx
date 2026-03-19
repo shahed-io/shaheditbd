@@ -1251,9 +1251,9 @@ const UserDashboard = () => {
                           { emoji: '🏷️', title: '৫% স্থায়ী ছাড়', sub: 'যেকোনো সাইনআপে পাবে' },
                           { emoji: '🤝', title: 'Google সাইনআপে বিশেষ সুবিধা', sub: 'রেফারার ৳২০ ওয়ালেট ক্রেডিট পাবে' },
                         ].map(b => (
-                          <div key={b.title} className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(158,80%,48%,0.08)' }}>
+                          <div key={b.title} className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(258,78%,65%,0.08)' }}>
                             <span className="text-lg">{b.emoji}</span>
-                            <div><p className="text-sm font-black" style={{ color: 'hsl(158,80%,48%)' }}>{b.title}</p><p className="text-[10px] text-muted-foreground">{b.sub}</p></div>
+                            <div><p className="text-sm font-black" style={{ color: 'hsl(var(--primary))' }}>{b.title}</p><p className="text-[10px] text-muted-foreground">{b.sub}</p></div>
                           </div>
                         ))}
                       </div>
