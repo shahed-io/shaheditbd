@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag, TrendingUp, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, CheckCircle2, Package } from 'lucide-react';
 import idmLogo from '@/assets/idm.webp';
+import ms365Logo from '@/assets/ms365-logo.png';
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
 
 type Slide = {
@@ -27,7 +28,8 @@ const STATIC_SLIDES: Slide[] = [
     desc: 'Full Office suite: Word, Excel, PowerPoint, OneDrive 1TB. Premium productivity tools.',
     price: '৳1,999', original: '৳16,500', off: '-88%', badge: 'LIMITED TIME',
     accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
-    emoji: '📦', features: ['1TB OneDrive', '5 Devices', '1 Year'],
+    emoji: '📦', logoImg: ms365Logo, features: ['1TB OneDrive', '5 Devices', '1 Year'],
+    productSlug: 'microsoft-office-365-personal-subscription-price-in-bd',
   },
   {
     tag: 'Official Reseller', tagIcon: '🏆',
