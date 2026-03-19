@@ -1218,11 +1218,6 @@ const UserDashboard = () => {
                         </div>
                       </div>
                     </div>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: tr.color }}>বর্তমান</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
 
                     {/* Referral Code Card */}
                     <div className="p-5 rounded-2xl" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.07), rgba(99,82,234,0.04))', border: '1px solid hsla(258,78%,65%,0.25)', backdropFilter: 'blur(12px)' }}>
