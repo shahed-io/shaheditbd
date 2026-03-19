@@ -774,14 +774,19 @@ const CompactDropdown = ({
 export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Product[]>([]);
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [trendingProducts, setTrendingProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [recent, setRecent] = useState<string[]>(getRecent());
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suggDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
 
   // Lock body scroll
@@ -807,9 +812,26 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
       .then(({ data }) => { if (data) setTrendingProducts(data); });
   }, []);
 
+  // Fast autocomplete suggestions (name only, lightweight)
+  const fetchSuggestions = useCallback(async (q: string) => {
+    if (!q.trim() || q.length < 1) { setSuggestions([]); setShowSuggestions(false); return; }
+    setSuggestionLoading(true);
+    try {
+      const { data } = await supabase.from('products')
+        .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id')
+        .eq('status', 'active')
+        .ilike('name', `%${q}%`)
+        .order('total_sales', { ascending: false })
+        .limit(6);
+      setSuggestions(data || []);
+      setShowSuggestions(true);
+    } finally { setSuggestionLoading(false); }
+  }, []);
+
   const search = useCallback(async (q: string, catId?: string | null) => {
     if (!q.trim() && !catId) { setResults([]); return; }
     setLoading(true);
+    setShowSuggestions(false);
     try {
       let qb = supabase.from('products')
         .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
@@ -825,9 +847,13 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
     const val = e.target.value;
     setQuery(val);
     setActiveCategory(null);
+    setSearchSubmitted(false);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!val.trim()) { setResults([]); return; }
-    debounceRef.current = setTimeout(() => search(val, null), 250);
+    if (suggDebounceRef.current) clearTimeout(suggDebounceRef.current);
+    if (!val.trim()) { setResults([]); setSuggestions([]); setShowSuggestions(false); return; }
+    // Fast suggestions (150ms) + full search (400ms)
+    suggDebounceRef.current = setTimeout(() => fetchSuggestions(val), 150);
+    debounceRef.current = setTimeout(() => search(val, null), 400);
   };
 
   const handleCategoryFilter = (cat: Category) => {
@@ -885,7 +911,7 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
         <div className="flex items-center gap-3">
           <div className="flex-1 flex items-center gap-3 rounded-2xl border-2 px-4 py-3.5 transition-all"
             style={{ borderColor: 'hsl(var(--primary))', background: 'hsl(var(--background))', boxShadow: '0 0 0 4px hsl(var(--primary)/0.08)' }}>
-            {loading
+            {(loading || suggestionLoading)
               ? <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
               : <Search size={18} className="text-primary flex-shrink-0" />
             }
@@ -900,7 +926,7 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
               autoComplete="off"
             />
             {query && (
-              <button onClick={() => { setQuery(''); setResults([]); inputRef.current?.focus(); }}
+              <button onClick={() => { setQuery(''); setResults([]); setSuggestions([]); setShowSuggestions(false); inputRef.current?.focus(); }}
                 className="text-muted-foreground hover:text-foreground p-1 rounded-lg transition-colors">
                 <X size={16} />
               </button>
@@ -914,8 +940,62 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
           </button>
         </div>
 
+        {/* Autocomplete suggestion dropdown */}
+        {showSuggestions && suggestions.length > 0 && !searchSubmitted && (
+          <div className="mt-2 rounded-2xl border border-border/70 overflow-hidden"
+            style={{ background: 'hsl(var(--card))', boxShadow: '0 4px 20px hsl(var(--foreground)/0.08)' }}>
+            {suggestions.map((product, idx) => {
+              const nameIdx = product.name.toLowerCase().indexOf(query.toLowerCase());
+              return (
+                <button key={product.id}
+                  onMouseDown={(e) => { e.preventDefault(); }}
+                  onClick={() => {
+                    setShowSuggestions(false);
+                    handleSelect(product);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/5 active:bg-primary/10 transition-colors text-left border-b border-border/30 last:border-0">
+                  {/* Thumbnail */}
+                  <div className="w-9 h-9 rounded-xl overflow-hidden bg-muted flex-shrink-0 border border-border/40">
+                    {product.image_url ? (
+                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Search size={13} className="text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  {/* Name with highlight */}
+                  <p className="flex-1 text-sm text-foreground truncate">
+                    {nameIdx === -1 ? product.name : (
+                      <>
+                        {product.name.slice(0, nameIdx)}
+                        <mark className="bg-primary/20 text-primary font-bold not-italic rounded-sm">{product.name.slice(nameIdx, nameIdx + query.length)}</mark>
+                        {product.name.slice(nameIdx + query.length)}
+                      </>
+                    )}
+                  </p>
+                  {/* Price */}
+                  <span className="text-sm font-bold flex-shrink-0" style={{ color: 'hsl(var(--primary))' }}>
+                    ৳{product.price.toLocaleString()}
+                  </span>
+                  <ArrowRight size={13} className="text-muted-foreground flex-shrink-0" />
+                </button>
+              );
+            })}
+            {/* "সব ফলাফল দেখুন" footer */}
+            <button
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => { setShowSuggestions(false); setSearchSubmitted(true); search(query, null); }}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold transition-colors"
+              style={{ background: 'hsl(var(--primary)/0.06)', color: 'hsl(var(--primary))' }}>
+              <Search size={12} />
+              &quot;{query}&quot; এর সব ফলাফল দেখুন
+            </button>
+          </div>
+        )}
+
         {/* Category pill filters */}
-        {categories.length > 0 && (
+        {categories.length > 0 && !showSuggestions && (
           <div className="flex items-center gap-2 mt-3 overflow-x-auto scrollbar-none pb-1">
             {categories.map(cat => (
               <button key={cat.id} onClick={() => handleCategoryFilter(cat)}
