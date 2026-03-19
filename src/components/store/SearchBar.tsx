@@ -818,7 +818,7 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
     setSuggestionLoading(true);
     try {
       const { data } = await supabase.from('products')
-        .select('id, name, slug, price, original_price, discount_percent, image_url, category_id')
+        .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id')
         .eq('status', 'active')
         .ilike('name', `%${q}%`)
         .order('total_sales', { ascending: false })
