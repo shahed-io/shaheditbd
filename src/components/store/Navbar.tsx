@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
-import SearchBar, { DesktopSearchPalette } from './SearchBar';
+import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +32,6 @@ const Navbar = () => {
   const [announcement, setAnnouncement] = useState<string | null>(null);
   const [mobileSearch, setMobileSearch] = useState(false);
   const [desktopSearch, setDesktopSearch] = useState(false);
-  const mobileSearchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
@@ -288,13 +287,10 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Search Dropdown — xs/sm only */}
-        <div ref={mobileSearchRef} className={`sm:hidden overflow-hidden transition-all duration-300 ${mobileSearch ? 'max-h-24' : 'max-h-0'}`}>
-          <div className="border-t px-4 py-3"
-            style={{ background: 'hsla(0,0%,100%,0.96)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
-            <SearchBar variant="navbar" className="w-full" onClose={() => setMobileSearch(false)} />
-          </div>
-        </div>
+        {/* Mobile Search — full-screen overlay, xs/sm only */}
+        {mobileSearch && (
+          <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
+        )}
 
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
