@@ -267,7 +267,7 @@ const UserDashboard = () => {
 
     setReferrals(refs); setReferralLoading(false);
 
-    // Retry pending referral from localStorage if any
+    // Retry pending referral (email signup) from localStorage if any
     const pendingRef = localStorage.getItem('pending_referral');
     if (pendingRef && user) {
       const { data: refResult } = await supabase.rpc('process_referral', {
@@ -276,8 +276,39 @@ const UserDashboard = () => {
       });
       if ((refResult as any)?.success) {
         localStorage.removeItem('pending_referral');
-        toast.success('🎉 রেফারেল কোড প্রয়োগ হয়েছে!');
+        toast.success('🎁 রেফারেল কোড প্রয়োগ হয়েছে! ৫% স্থায়ী ছাড় সক্রিয়।');
         fetchProfile();
+      }
+    }
+
+    // Process Google OAuth referral — referrer gets ৳20
+    const pendingGoogleRef = localStorage.getItem('pending_google_referral');
+    if (pendingGoogleRef && user) {
+      // Check if user signed in with Google (provider = google)
+      const { data: sessionData } = await supabase.auth.getSession();
+      const provider = sessionData?.session?.user?.app_metadata?.provider;
+      if (provider === 'google') {
+        let processed = false;
+        for (let attempt = 0; attempt < 5; attempt++) {
+          await new Promise(res => setTimeout(res, 800 * (attempt + 1)));
+          try {
+            const { data: refResult } = await (supabase.rpc as any)('process_google_referral', {
+              p_referral_code: pendingGoogleRef,
+              p_referred_user_id: user.id,
+            });
+            if ((refResult as any)?.success) {
+              localStorage.removeItem('pending_google_referral');
+              toast.success('🎉 Google রেফারেল সফল! ৫% স্থায়ী ছাড় সক্রিয় হয়েছে।');
+              processed = true;
+              fetchProfile();
+              break;
+            } else if ((refResult as any)?.error && (refResult as any)?.error !== 'User not found') {
+              localStorage.removeItem('pending_google_referral');
+              break;
+            }
+          } catch { /* retry */ }
+        }
+        if (!processed) localStorage.removeItem('pending_google_referral');
       }
     }
   };
@@ -1152,21 +1183,18 @@ const UserDashboard = () => {
               {activeTab === 'referral' && (() => {
                 const totalRefs = referrals.length;
                 const completedRefs = referrals.filter(r => r.status === 'completed').length;
-                const tier = getCurrentTier(completedRefs);
-                const nextTier = TIERS[TIERS.indexOf(tier) + 1];
-                const progressPct = nextTier ? Math.min(100, ((completedRefs - tier.min) / (nextTier.min - tier.min)) * 100) : 100;
                 return (
                   <div className="space-y-4">
-                    {/* Tier Badge Card */}
+                    {/* Summary Card */}
                     <div className="relative overflow-hidden rounded-2xl p-5 sm:p-6"
-                      style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.65))`, backdropFilter: 'blur(20px)', border: `1.5px solid ${tier.color}55`, boxShadow: `0 0 30px ${tier.glow}, 0 4px 16px hsla(258,78%,55%,0.08)` }}>
+                      style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.65))', backdropFilter: 'blur(20px)', border: '1.5px solid hsla(258,78%,65%,0.35)', boxShadow: '0 0 30px hsla(258,78%,55%,0.12), 0 4px 16px hsla(258,78%,55%,0.08)' }}>
                       <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style={{ background: `linear-gradient(135deg, ${tier.color}18, ${tier.color}35)`, border: `1px solid ${tier.color}55`, boxShadow: `0 0 16px ${tier.glow}` }}>{tier.emoji}</div>
+                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style={{ background: 'linear-gradient(135deg, hsla(258,78%,65%,0.15), hsla(258,78%,65%,0.30))', border: '1px solid hsla(258,78%,65%,0.4)' }}>🎁</div>
                           <div>
-                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-0.5">বর্তমান টিয়ার</p>
-                            <p className="text-2xl font-black" style={{ color: tier.color }}>{tier.label}</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">প্রতি রেফারে <span className="font-black" style={{ color: tier.color }}>৳{tier.reward}</span> ক্রেডিট</p>
+                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-0.5">রেফারেল প্রোগ্রাম</p>
+                            <p className="text-2xl font-black" style={{ color: 'hsl(var(--primary))' }}>৳২০ / রেফার</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Google সাইনআপে রেফারার <span className="font-black text-primary">৳২০</span> পাবেন</p>
                           </div>
                         </div>
                         <div className="text-right">
@@ -1179,38 +1207,16 @@ const UserDashboard = () => {
                           )}
                         </div>
                       </div>
-                      {nextTier && (
-                        <div className="mt-4">
-                          <div className="flex items-center justify-between text-xs mb-2">
-                            <span className="text-muted-foreground">{completedRefs} রেফারেল সম্পন্ন</span>
-                            <span style={{ color: nextTier.color }}>{nextTier.label} এর জন্য আর {nextTier.min - completedRefs}টি</span>
-                          </div>
-                          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'hsla(258,78%,75%,0.15)' }}>
-                            <div className="h-full rounded-full transition-all duration-700" style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${tier.color}, ${nextTier.color})`, boxShadow: `0 0 8px ${tier.glow}` }} />
-                          </div>
+                      <div className="mt-4 grid grid-cols-2 gap-3 text-center">
+                        <div className="rounded-xl p-3" style={{ background: 'hsla(258,78%,65%,0.08)' }}>
+                          <p className="text-xl font-black text-foreground">{completedRefs}</p>
+                          <p className="text-[10px] text-muted-foreground">সফল রেফারেল</p>
                         </div>
-                      )}
-                    </div>
-
-                    {/* All Tiers */}
-                    <div className="rounded-2xl p-4 space-y-2" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(12px)' }}>
-                      <p className="text-sm font-bold text-foreground mb-2">টিয়ার সিস্টেম</p>
-                      {TIERS.map(tr => (
-                        <div key={tr.name} className="flex items-center gap-3 p-3 rounded-xl transition-all"
-                          style={{ background: tier.name === tr.name ? `${tr.color}12` : 'rgba(255,255,255,0.4)', border: `1px solid ${tier.name === tr.name ? tr.color + '40' : 'hsla(258,78%,75%,0.15)'}` }}>
-                          <span className="text-xl w-8">{tr.emoji}</span>
-                          <div className="flex-1">
-                            <p className="text-sm font-bold" style={{ color: tier.name === tr.name ? tr.color : 'hsl(var(--foreground))' }}>{tr.label}</p>
-                            <p className="text-[10px] text-muted-foreground">{tr.max === Infinity ? `${tr.min}+` : `${tr.min}–${tr.max}`} রেফারেল</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-black" style={{ color: tr.color }}>৳{tr.reward}/রেফার</p>
-                          </div>
-                          {tier.name === tr.name && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: tr.color }}>বর্তমান</span>
-                          )}
+                        <div className="rounded-xl p-3" style={{ background: 'hsla(158,80%,48%,0.08)' }}>
+                          <p className="text-xl font-black" style={{ color: 'hsl(158,80%,48%)' }}>{totalRefs - completedRefs}</p>
+                          <p className="text-[10px] text-muted-foreground">পেন্ডিং</p>
                         </div>
-                      ))}
+                      </div>
                     </div>
 
                     {/* Referral Code Card */}
@@ -1240,8 +1246,11 @@ const UserDashboard = () => {
                     {/* Benefit Box */}
                     <div className="p-4 rounded-2xl" style={{ background: 'hsla(158,80%,48%,0.06)', border: '1px solid hsla(158,80%,48%,0.22)', backdropFilter: 'blur(8px)' }}>
                       <p className="text-sm font-bold mb-3 text-foreground flex items-center gap-2"><Gift size={15} style={{ color: 'hsl(158,80%,48%)' }} /> রেফার গ্রহণকারীর সুবিধা</p>
-                      <div className="grid grid-cols-2 gap-3">
-                        {[{ emoji: '💰', title: '৳10 ক্রেডিট', sub: 'সাইনআপেই পাবে' }, { emoji: '🏷️', title: '10% ছাড়', sub: 'স্থায়ী ডিসকাউন্ট' }].map(b => (
+                      <div className="grid grid-cols-1 gap-3">
+                        {[
+                          { emoji: '🏷️', title: '৫% স্থায়ী ছাড়', sub: 'যেকোনো সাইনআপে পাবে' },
+                          { emoji: '🤝', title: 'Google সাইনআপে বিশেষ সুবিধা', sub: 'রেফারার ৳২০ ওয়ালেট ক্রেডিট পাবে' },
+                        ].map(b => (
                           <div key={b.title} className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(158,80%,48%,0.08)' }}>
                             <span className="text-lg">{b.emoji}</span>
                             <div><p className="text-sm font-black" style={{ color: 'hsl(158,80%,48%)' }}>{b.title}</p><p className="text-[10px] text-muted-foreground">{b.sub}</p></div>
@@ -1255,8 +1264,8 @@ const UserDashboard = () => {
                       <p className="text-sm font-bold mb-3 text-foreground">কিভাবে কাজ করে?</p>
                       {[
                         { n: '১', text: 'আপনার রেফারেল কোড বন্ধুদের শেয়ার করুন' },
-                        { n: '২', text: 'বন্ধু সাইনআপে কোড দিলে তারা ৳10 + 10% স্থায়ী ছাড় পাবে' },
-                        { n: '৩', text: `আপনি ৳${tier.reward} ক্রেডিট পাবেন — টিয়ার বাড়লে রিওয়ার্ডও বাড়বে!` },
+                        { n: '২', text: 'বন্ধু রেফারেল কোড দিয়ে সাইনআপ করলে তারা ৫% স্থায়ী ছাড় পাবে' },
+                        { n: '৩', text: 'বন্ধু Google দিয়ে সাইনআপ করলে আপনি ৳২০ ওয়ালেট ক্রেডিট পাবেন!' },
                       ].map(({ n, text }) => (
                         <div key={n} className="flex items-start gap-3 mb-2 last:mb-0">
                           <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>

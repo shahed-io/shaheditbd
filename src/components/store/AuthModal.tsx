@@ -63,7 +63,8 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
         toast.success('অ্যাকাউন্ট তৈরি হয়েছে! ইমেইল ভেরিফাই করুন।');
 
-        // Process referral after signup — wait for profile trigger to complete (retry up to 5x)
+        // Email signup referral: referred user gets 5% discount only (no wallet credit)
+        // Referrer gets ৳20 ONLY when referred user signs up via Google OAuth
         if (referralCode.trim() && data.user) {
           const code = referralCode.trim().toUpperCase();
           const userId = data.user.id;
@@ -76,26 +77,20 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 p_referred_user_id: userId,
               });
               if ((refResult as any)?.success) {
-                const referredReward = (refResult as any)?.referred_reward || 10;
-                toast.success(`🎉 রেফারেল বোনাস! ৳${referredReward} সরাসরি আপনার ওয়ালেটে যোগ হয়েছে + ১০% স্থায়ী ছাড় সক্রিয়!`);
+                toast.success(`🎁 রেফারেল কোড প্রয়োগ হয়েছে! ৫% স্থায়ী ছাড় সক্রিয় হয়েছে।`);
                 processed = true;
                 break;
               } else if ((refResult as any)?.error) {
                 const err = (refResult as any).error;
-                if (err === 'User not found' || err === 'Invalid referral code' && attempt < 4) {
-                  // Profile not ready yet or code not found — retry
-                  continue;
-                }
+                if (err === 'User not found' && attempt < 4) continue;
                 if (err !== 'User not found') {
                   toast.warning('রেফারেল কোড সঠিক নয় অথবা আগেই ব্যবহার করা হয়েছে।');
                   break;
                 }
               }
-              // profile not ready yet — retry
             } catch { /* retry */ }
           }
           if (!processed) {
-            // Store code in localStorage so dashboard can retry later
             localStorage.setItem('pending_referral', code);
           }
         }
@@ -117,6 +112,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   const handleGoogle = async () => {
     setLoading(true);
+    // If there's a referral code, store it before redirecting so we can process after Google OAuth
+    if (referralCode.trim()) {
+      localStorage.setItem('pending_google_referral', referralCode.trim().toUpperCase());
+    }
     const { error } = await lovable.auth.signInWithOAuth('google', {
       redirect_uri: window.location.origin,
     });
@@ -241,7 +240,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   />
                   {referralCode && (
                     <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'hsl(158,80%,48%)' }}>
-                      <span>✓</span> কোড প্রয়োগ হলে ৳10 ক্রেডিট + 10% স্থায়ী ছাড় পাবেন!
+                      <span>✓</span> কোড প্রয়োগ হলে ৫% স্থায়ী ছাড় পাবেন! Google দিয়ে সাইনআপ করলে রেফারারও ৳২০ পাবে।
                     </div>
                   )}
                 </div>
