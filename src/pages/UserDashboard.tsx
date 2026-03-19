@@ -267,7 +267,7 @@ const UserDashboard = () => {
 
     setReferrals(refs); setReferralLoading(false);
 
-    // Retry pending referral from localStorage if any
+    // Retry pending referral (email signup) from localStorage if any
     const pendingRef = localStorage.getItem('pending_referral');
     if (pendingRef && user) {
       const { data: refResult } = await supabase.rpc('process_referral', {
@@ -276,8 +276,39 @@ const UserDashboard = () => {
       });
       if ((refResult as any)?.success) {
         localStorage.removeItem('pending_referral');
-        toast.success('🎉 রেফারেল কোড প্রয়োগ হয়েছে!');
+        toast.success('🎁 রেফারেল কোড প্রয়োগ হয়েছে! ৫% স্থায়ী ছাড় সক্রিয়।');
         fetchProfile();
+      }
+    }
+
+    // Process Google OAuth referral — referrer gets ৳20
+    const pendingGoogleRef = localStorage.getItem('pending_google_referral');
+    if (pendingGoogleRef && user) {
+      // Check if user signed in with Google (provider = google)
+      const { data: sessionData } = await supabase.auth.getSession();
+      const provider = sessionData?.session?.user?.app_metadata?.provider;
+      if (provider === 'google') {
+        let processed = false;
+        for (let attempt = 0; attempt < 5; attempt++) {
+          await new Promise(res => setTimeout(res, 800 * (attempt + 1)));
+          try {
+            const { data: refResult } = await (supabase.rpc as any)('process_google_referral', {
+              p_referral_code: pendingGoogleRef,
+              p_referred_user_id: user.id,
+            });
+            if ((refResult as any)?.success) {
+              localStorage.removeItem('pending_google_referral');
+              toast.success('🎉 Google রেফারেল সফল! ৫% স্থায়ী ছাড় সক্রিয় হয়েছে।');
+              processed = true;
+              fetchProfile();
+              break;
+            } else if ((refResult as any)?.error && (refResult as any)?.error !== 'User not found') {
+              localStorage.removeItem('pending_google_referral');
+              break;
+            }
+          } catch { /* retry */ }
+        }
+        if (!processed) localStorage.removeItem('pending_google_referral');
       }
     }
   };
