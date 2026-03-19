@@ -112,6 +112,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   const handleGoogle = async () => {
     setLoading(true);
+    // If there's a referral code, store it before redirecting so we can process after Google OAuth
+    if (referralCode.trim()) {
+      localStorage.setItem('pending_google_referral', referralCode.trim().toUpperCase());
+    }
     const { error } = await lovable.auth.signInWithOAuth('google', {
       redirect_uri: window.location.origin,
     });
