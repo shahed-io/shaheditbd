@@ -1271,8 +1271,11 @@ const UserDashboard = () => {
                     {/* Benefit Box */}
                     <div className="p-4 rounded-2xl" style={{ background: 'hsla(158,80%,48%,0.06)', border: '1px solid hsla(158,80%,48%,0.22)', backdropFilter: 'blur(8px)' }}>
                       <p className="text-sm font-bold mb-3 text-foreground flex items-center gap-2"><Gift size={15} style={{ color: 'hsl(158,80%,48%)' }} /> রেফার গ্রহণকারীর সুবিধা</p>
-                      <div className="grid grid-cols-2 gap-3">
-                        {[{ emoji: '💰', title: '৳10 ক্রেডিট', sub: 'সাইনআপেই পাবে' }, { emoji: '🏷️', title: '10% ছাড়', sub: 'স্থায়ী ডিসকাউন্ট' }].map(b => (
+                      <div className="grid grid-cols-1 gap-3">
+                        {[
+                          { emoji: '🏷️', title: '৫% স্থায়ী ছাড়', sub: 'যেকোনো সাইনআপে পাবে' },
+                          { emoji: '🤝', title: 'Google সাইনআপে বিশেষ সুবিধা', sub: 'রেফারার ৳২০ ওয়ালেট ক্রেডিট পাবে' },
+                        ].map(b => (
                           <div key={b.title} className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(158,80%,48%,0.08)' }}>
                             <span className="text-lg">{b.emoji}</span>
                             <div><p className="text-sm font-black" style={{ color: 'hsl(158,80%,48%)' }}>{b.title}</p><p className="text-[10px] text-muted-foreground">{b.sub}</p></div>
@@ -1286,8 +1289,8 @@ const UserDashboard = () => {
                       <p className="text-sm font-bold mb-3 text-foreground">কিভাবে কাজ করে?</p>
                       {[
                         { n: '১', text: 'আপনার রেফারেল কোড বন্ধুদের শেয়ার করুন' },
-                        { n: '২', text: 'বন্ধু সাইনআপে কোড দিলে তারা ৳10 + 10% স্থায়ী ছাড় পাবে' },
-                        { n: '৩', text: `আপনি ৳${tier.reward} ক্রেডিট পাবেন — টিয়ার বাড়লে রিওয়ার্ডও বাড়বে!` },
+                        { n: '২', text: 'বন্ধু রেফারেল কোড দিয়ে সাইনআপ করলে তারা ৫% স্থায়ী ছাড় পাবে' },
+                        { n: '৩', text: 'বন্ধু Google দিয়ে সাইনআপ করলে আপনি ৳২০ ওয়ালেট ক্রেডিট পাবেন!' },
                       ].map(({ n, text }) => (
                         <div key={n} className="flex items-start gap-3 mb-2 last:mb-0">
                           <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>
