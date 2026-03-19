@@ -847,9 +847,13 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
     const val = e.target.value;
     setQuery(val);
     setActiveCategory(null);
+    setSearchSubmitted(false);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!val.trim()) { setResults([]); return; }
-    debounceRef.current = setTimeout(() => search(val, null), 250);
+    if (suggDebounceRef.current) clearTimeout(suggDebounceRef.current);
+    if (!val.trim()) { setResults([]); setSuggestions([]); setShowSuggestions(false); return; }
+    // Fast suggestions (150ms) + full search (400ms)
+    suggDebounceRef.current = setTimeout(() => fetchSuggestions(val), 150);
+    debounceRef.current = setTimeout(() => search(val, null), 400);
   };
 
   const handleCategoryFilter = (cat: Category) => {
