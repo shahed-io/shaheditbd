@@ -833,25 +833,29 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
   const handleCategoryFilter = (cat: Category) => {
     const newCat = cat.id === activeCategory ? null : cat.id;
     setActiveCategory(newCat);
+    // Only filter results — do NOT navigate to category page
     search(query, newCat);
   };
 
   const handleSelect = (product: Product) => {
     addRecent(product.name);
     onClose();
+    // Always go directly to product detail page
     navigate(`/product/${product.slug}`);
   };
 
   const handleSubmit = () => {
-    if (!query.trim()) return;
-    addRecent(query);
+    if (!query.trim() && !activeCategory) return;
+    if (query.trim()) addRecent(query);
     onClose();
     navigate(`/shop?q=${encodeURIComponent(query.trim())}${activeCategory ? `&category_id=${activeCategory}` : ''}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleSubmit();
-    else if (e.key === 'Escape') onClose();
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit();
+    } else if (e.key === 'Escape') onClose();
   };
 
   const highlight = (text: string, q: string) => {
