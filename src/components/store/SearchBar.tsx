@@ -770,5 +770,308 @@ const CompactDropdown = ({
   return null;
 };
 
+// ── Mobile Search Overlay (full-screen, touch-optimised) ─────────────
+export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<Product[]>([]);
+  const [trendingProducts, setTrendingProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [recent, setRecent] = useState<string[]>(getRecent());
+  const inputRef = useRef<HTMLInputElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigate = useNavigate();
+
+  // Lock body scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => inputRef.current?.focus(), 100);
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  // Load initial data
+  useEffect(() => {
+    supabase.from('categories').select('id, name, slug').eq('is_active', true).order('sort_order').limit(8)
+      .then(({ data }) => {
+        if (data) {
+          setCategories(data);
+          const map: Record<string, string> = {};
+          data.forEach((c: Category) => { map[c.id] = c.name; });
+          setCategoryMap(map);
+        }
+      });
+    supabase.from('products').select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
+      .eq('status', 'active').order('total_sales', { ascending: false }).limit(6)
+      .then(({ data }) => { if (data) setTrendingProducts(data); });
+  }, []);
+
+  const search = useCallback(async (q: string, catId?: string | null) => {
+    if (!q.trim() && !catId) { setResults([]); return; }
+    setLoading(true);
+    try {
+      let qb = supabase.from('products')
+        .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
+        .eq('status', 'active');
+      if (q.trim()) qb = qb.or(`name.ilike.%${q}%,short_description.ilike.%${q}%`);
+      if (catId) qb = qb.eq('category_id', catId);
+      const { data } = await qb.order('total_sales', { ascending: false }).limit(10);
+      setResults(data || []);
+    } finally { setLoading(false); }
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setQuery(val);
+    setActiveCategory(null);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!val.trim()) { setResults([]); return; }
+    debounceRef.current = setTimeout(() => search(val, null), 250);
+  };
+
+  const handleCategoryFilter = (cat: Category) => {
+    const newCat = cat.id === activeCategory ? null : cat.id;
+    setActiveCategory(newCat);
+    search(query, newCat);
+  };
+
+  const handleSelect = (product: Product) => {
+    addRecent(product.name);
+    onClose();
+    navigate(`/product/${product.slug}`);
+  };
+
+  const handleSubmit = () => {
+    if (!query.trim()) return;
+    addRecent(query);
+    onClose();
+    navigate(`/shop?q=${encodeURIComponent(query.trim())}${activeCategory ? `&category_id=${activeCategory}` : ''}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSubmit();
+    else if (e.key === 'Escape') onClose();
+  };
+
+  const highlight = (text: string, q: string) => {
+    if (!q.trim()) return <>{text}</>;
+    const idx = text.toLowerCase().indexOf(q.toLowerCase());
+    if (idx === -1) return <>{text}</>;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <mark className="bg-primary/20 text-primary font-semibold rounded-sm px-0.5 not-italic">{text.slice(idx, idx + q.length)}</mark>
+        {text.slice(idx + q.length)}
+      </>
+    );
+  };
+
+  const displayProducts = results.length > 0 ? results : (activeCategory ? [] : trendingProducts);
+  const showRecent = !query.trim() && !activeCategory && recent.length > 0;
+
+  return (
+    <div className="fixed inset-0 z-[998] flex flex-col sm:hidden" style={{ background: 'hsl(var(--background))' }}>
+      {/* Gradient top accent */}
+      <div className="h-[3px] w-full flex-shrink-0" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
+
+      {/* Header with input */}
+      <div className="flex-shrink-0 px-4 pt-4 pb-3 border-b border-border/50"
+        style={{ background: 'hsl(var(--card))' }}>
+        <div className="flex items-center gap-3">
+          <div className="flex-1 flex items-center gap-3 rounded-2xl border-2 px-4 py-3.5 transition-all"
+            style={{ borderColor: 'hsl(var(--primary))', background: 'hsl(var(--background))', boxShadow: '0 0 0 4px hsl(var(--primary)/0.08)' }}>
+            {loading
+              ? <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              : <Search size={18} className="text-primary flex-shrink-0" />
+            }
+            <input
+              ref={inputRef}
+              type="search"
+              value={query}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              placeholder="প্রোডাক্ট খুঁজুন..."
+              className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground text-foreground"
+              autoComplete="off"
+            />
+            {query && (
+              <button onClick={() => { setQuery(''); setResults([]); inputRef.current?.focus(); }}
+                className="text-muted-foreground hover:text-foreground p-1 rounded-lg transition-colors">
+                <X size={16} />
+              </button>
+            )}
+          </div>
+          {/* Cancel button */}
+          <button onClick={onClose}
+            className="flex-shrink-0 px-4 py-3 rounded-2xl text-sm font-bold transition-all"
+            style={{ color: 'hsl(var(--primary))', background: 'hsl(var(--primary)/0.08)' }}>
+            বাতিল
+          </button>
+        </div>
+
+        {/* Category pill filters */}
+        {categories.length > 0 && (
+          <div className="flex items-center gap-2 mt-3 overflow-x-auto scrollbar-none pb-1">
+            {categories.map(cat => (
+              <button key={cat.id} onClick={() => handleCategoryFilter(cat)}
+                className="flex-shrink-0 text-xs font-semibold px-3.5 py-1.5 rounded-full border transition-all"
+                style={{
+                  borderColor: activeCategory === cat.id ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                  background: activeCategory === cat.id ? 'hsl(var(--primary)/0.12)' : 'hsl(var(--muted)/0.50)',
+                  color: activeCategory === cat.id ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
+                }}>
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto overscroll-contain">
+
+        {/* Recent searches */}
+        {showRecent && (
+          <div className="px-4 pt-4 pb-2">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock size={13} className="text-muted-foreground" />
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">সাম্প্রতিক সার্চ</span>
+              <button onClick={() => { localStorage.removeItem(RECENT_KEY); setRecent([]); }}
+                className="ml-auto text-xs font-medium transition-colors"
+                style={{ color: 'hsl(var(--primary))' }}>
+                মুছুন
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {recent.map(term => (
+                <button key={term}
+                  onClick={() => { setQuery(term); search(term, null); }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all text-sm text-foreground">
+                  <Clock size={12} className="text-muted-foreground" />
+                  {term}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Results / Trending section label */}
+        <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+          {query.trim() ? (
+            loading ? (
+              <span className="text-xs text-muted-foreground">খোঁজা হচ্ছে...</span>
+            ) : (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <TrendingUp size={12} />
+                <span><span className="font-semibold text-foreground">{results.length}</span> টি ফলাফল</span>
+              </div>
+            )
+          ) : (
+            <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+              <Flame size={12} className="text-primary" /> ট্রেন্ডিং প্রোডাক্ট
+            </div>
+          )}
+          {query.trim() && !loading && results.length > 0 && (
+            <button onClick={handleSubmit}
+              className="text-xs font-semibold flex items-center gap-1"
+              style={{ color: 'hsl(var(--primary))' }}>
+              সব দেখুন <ChevronRight size={12} />
+            </button>
+          )}
+        </div>
+
+        {/* Loading skeleton */}
+        {loading && (
+          <div className="px-4 space-y-2 pb-4">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="flex gap-3 animate-pulse">
+                <div className="w-16 h-16 rounded-2xl bg-muted flex-shrink-0" />
+                <div className="flex-1 space-y-2 pt-2">
+                  <div className="h-4 bg-muted rounded-lg w-3/4" />
+                  <div className="h-3 bg-muted rounded-lg w-1/2" />
+                  <div className="h-3 bg-muted rounded-lg w-1/4" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Product list */}
+        {!loading && displayProducts.length > 0 && (
+          <ul className="px-3 pb-6 space-y-1">
+            {displayProducts.map(product => {
+              const catName = product.category_id ? categoryMap[product.category_id] : null;
+              return (
+                <li key={product.id}>
+                  <button onClick={() => handleSelect(product)}
+                    className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl hover:bg-primary/5 active:bg-primary/10 transition-colors group text-left">
+                    {/* Image */}
+                    <div className="w-16 h-16 rounded-2xl overflow-hidden bg-muted flex-shrink-0 border border-border/50">
+                      {product.image_url ? (
+                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                          <Tag size={20} />
+                        </div>
+                      )}
+                    </div>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground group-hover:text-primary truncate transition-colors leading-snug">
+                        {highlight(product.name, query)}
+                      </p>
+                      {catName && (
+                        <span className="inline-block text-[10px] bg-primary/10 text-primary font-medium px-2 py-0.5 rounded-full mt-1">
+                          {catName}
+                        </span>
+                      )}
+                    </div>
+                    {/* Price */}
+                    <div className="flex-shrink-0 text-right">
+                      <div className="text-base font-bold" style={{ color: 'hsl(var(--primary))' }}>৳{product.price.toLocaleString()}</div>
+                      {product.original_price && product.original_price > product.price && (
+                        <div className="text-xs text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
+                      )}
+                      {product.discount_percent && product.discount_percent > 0 && (
+                        <div className="text-[10px] bg-accent/15 text-accent font-bold rounded-full px-2 py-0.5 mt-0.5">-{product.discount_percent}%</div>
+                      )}
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {/* Empty state */}
+        {!loading && query.trim() && results.length === 0 && (
+          <div className="px-4 py-16 text-center">
+            <Search size={44} className="mx-auto mb-4 text-muted-foreground opacity-20" />
+            <p className="text-base font-semibold text-foreground">কোনো ফলাফল পাওয়া যায়নি</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              "<span className="font-medium" style={{ color: 'hsl(var(--primary))' }}>{query}</span>" এর জন্য প্রোডাক্ট নেই
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom search button */}
+      {query.trim() && (
+        <div className="flex-shrink-0 px-4 py-4 border-t border-border/50"
+          style={{ background: 'hsl(var(--card))' }}>
+          <button onClick={handleSubmit}
+            className="w-full py-4 rounded-2xl text-base font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', boxShadow: '0 6px 20px hsl(var(--primary)/0.35)' }}>
+            <Search size={18} />
+            "{query}" খুঁজুন
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export { DesktopSearchPalette };
 export default SearchBar;
+
