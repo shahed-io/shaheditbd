@@ -288,13 +288,10 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Search Dropdown — xs/sm only */}
-        <div ref={mobileSearchRef} className={`sm:hidden overflow-hidden transition-all duration-300 ${mobileSearch ? 'max-h-24' : 'max-h-0'}`}>
-          <div className="border-t px-4 py-3"
-            style={{ background: 'hsla(0,0%,100%,0.96)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
-            <SearchBar variant="navbar" className="w-full" onClose={() => setMobileSearch(false)} />
-          </div>
-        </div>
+        {/* Mobile Search — full-screen overlay, xs/sm only */}
+        {mobileSearch && (
+          <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
+        )}
 
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
