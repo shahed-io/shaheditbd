@@ -240,7 +240,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   />
                   {referralCode && (
                     <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'hsl(158,80%,48%)' }}>
-                      <span>✓</span> কোড প্রয়োগ হলে ৳10 ক্রেডিট + 10% স্থায়ী ছাড় পাবেন!
+                      <span>✓</span> কোড প্রয়োগ হলে ৫% স্থায়ী ছাড় পাবেন! Google দিয়ে সাইনআপ করলে রেফারারও ৳২০ পাবে।
                     </div>
                   )}
                 </div>
