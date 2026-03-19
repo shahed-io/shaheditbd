@@ -812,9 +812,26 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
       .then(({ data }) => { if (data) setTrendingProducts(data); });
   }, []);
 
+  // Fast autocomplete suggestions (name only, lightweight)
+  const fetchSuggestions = useCallback(async (q: string) => {
+    if (!q.trim() || q.length < 1) { setSuggestions([]); setShowSuggestions(false); return; }
+    setSuggestionLoading(true);
+    try {
+      const { data } = await supabase.from('products')
+        .select('id, name, slug, price, original_price, discount_percent, image_url, category_id')
+        .eq('status', 'active')
+        .ilike('name', `%${q}%`)
+        .order('total_sales', { ascending: false })
+        .limit(6);
+      setSuggestions(data || []);
+      setShowSuggestions(true);
+    } finally { setSuggestionLoading(false); }
+  }, []);
+
   const search = useCallback(async (q: string, catId?: string | null) => {
     if (!q.trim() && !catId) { setResults([]); return; }
     setLoading(true);
+    setShowSuggestions(false);
     try {
       let qb = supabase.from('products')
         .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
