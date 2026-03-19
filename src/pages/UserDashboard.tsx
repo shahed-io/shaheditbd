@@ -1192,17 +1192,17 @@ const UserDashboard = () => {
                         <div className="flex items-center gap-4">
                           <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style={{ background: 'linear-gradient(135deg, hsla(258,78%,65%,0.15), hsla(258,78%,65%,0.30))', border: '1px solid hsla(258,78%,65%,0.4)' }}>🎁</div>
                           <div>
-                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-0.5">রেফারেল প্রোগ্রাম</p>
-                            <p className="text-2xl font-black" style={{ color: 'hsl(var(--primary))' }}>৳২০ / রেফার</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Google সাইনআপে রেফারার <span className="font-black text-primary">৳২০</span> পাবেন</p>
+                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-0.5">{t(lang, 'referral_program_label')}</p>
+                            <p className="text-2xl font-black" style={{ color: 'hsl(var(--primary))' }}>{t(lang, 'referral_rate')}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{t(lang, 'referral_rate_sub')}</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-0.5">মোট ক্রেডিট</p>
+                          <p className="text-xs text-muted-foreground mb-0.5">{t(lang, 'referral_credit')}</p>
                           <p className="text-3xl font-black text-foreground">৳{profile.referral_credit}</p>
                           {profile.referral_discount > 0 && (
                             <span className="text-[11px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block" style={{ background: 'hsla(158,80%,48%,0.15)', color: 'hsl(158,80%,48%)', border: '1px solid hsla(158,80%,48%,0.3)' }}>
-                              {profile.referral_discount}% স্থায়ী ছাড়
+                              {profile.referral_discount}% {t(lang, 'referral_discount')}
                             </span>
                           )}
                         </div>
@@ -1210,31 +1210,31 @@ const UserDashboard = () => {
                       <div className="mt-4 grid grid-cols-2 gap-3 text-center">
                         <div className="rounded-xl p-3" style={{ background: 'hsla(258,78%,65%,0.08)' }}>
                           <p className="text-xl font-black text-foreground">{completedRefs}</p>
-                          <p className="text-[10px] text-muted-foreground">সফল রেফারেল</p>
+                          <p className="text-[10px] text-muted-foreground">{t(lang, 'referral_count_success')} {t(lang, 'tab_referral')}</p>
                         </div>
                         <div className="rounded-xl p-3" style={{ background: 'hsla(158,80%,48%,0.08)' }}>
                           <p className="text-xl font-black" style={{ color: 'hsl(158,80%,48%)' }}>{totalRefs - completedRefs}</p>
-                          <p className="text-[10px] text-muted-foreground">পেন্ডিং</p>
+                          <p className="text-[10px] text-muted-foreground">{t(lang, 'referral_count_pending')}</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Referral Code Card */}
                     <div className="p-5 rounded-2xl" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.07), rgba(99,82,234,0.04))', border: '1px solid hsla(258,78%,65%,0.25)', backdropFilter: 'blur(12px)' }}>
-                      <p className="text-xs font-bold uppercase tracking-wide mb-3 text-muted-foreground">আপনার রেফারেল কোড</p>
+                      <p className="text-xs font-bold uppercase tracking-wide mb-3 text-muted-foreground">{t(lang, 'your_code')}</p>
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl font-black tracking-widest flex-1" style={{ fontFamily: 'Orbitron, monospace', color: 'hsl(var(--primary))' }}>{profile.referral_code || '—'}</span>
                         <button onClick={copyReferralCode} className="p-2.5 rounded-xl transition-all hover:scale-110" style={{ background: 'hsl(var(--primary))', color: 'white' }}><Copy size={14} /></button>
                       </div>
-                      <button onClick={shareReferralLink} className="flex items-center gap-2 text-xs font-semibold text-primary hover:underline"><ExternalLink size={12} /> রেফারেল লিংক কপি করুন</button>
+                      <button onClick={shareReferralLink} className="flex items-center gap-2 text-xs font-semibold text-primary hover:underline"><ExternalLink size={12} /> {t(lang, 'share_link')}</button>
                     </div>
 
                     {/* Stats */}
                     <div className="grid grid-cols-3 gap-3">
                       {[
-                        { label: 'মোট রেফারেল', value: totalRefs, color: 'hsl(var(--foreground))' },
-                        { label: 'সফল', value: completedRefs, color: 'hsl(158,64%,42%)' },
-                        { label: 'মোট আয়', value: `৳${profile.referral_earnings}`, color: 'hsl(var(--primary))' },
+                        { label: t(lang, 'referral_count'), value: totalRefs, color: 'hsl(var(--foreground))' },
+                        { label: t(lang, 'referral_count_success'), value: completedRefs, color: 'hsl(158,64%,42%)' },
+                        { label: t(lang, 'referral_earnings'), value: `৳${profile.referral_earnings}`, color: 'hsl(var(--primary))' },
                       ].map(s => (
                         <div key={s.label} className="p-4 rounded-2xl text-center" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                           <div className="text-xl font-black" style={{ color: s.color }}>{s.value}</div>
@@ -1245,11 +1245,11 @@ const UserDashboard = () => {
 
                     {/* Benefit Box */}
                     <div className="p-4 rounded-2xl" style={{ background: 'hsla(158,80%,48%,0.06)', border: '1px solid hsla(158,80%,48%,0.22)', backdropFilter: 'blur(8px)' }}>
-                      <p className="text-sm font-bold mb-3 text-foreground flex items-center gap-2"><Gift size={15} style={{ color: 'hsl(158,80%,48%)' }} /> রেফার গ্রহণকারীর সুবিধা</p>
+                      <p className="text-sm font-bold mb-3 text-foreground flex items-center gap-2"><Gift size={15} style={{ color: 'hsl(158,80%,48%)' }} /> {t(lang, 'referral_benefit_title')}</p>
                       <div className="grid grid-cols-1 gap-3">
                         {[
-                          { emoji: '🏷️', title: '৫% স্থায়ী ছাড়', sub: 'যেকোনো সাইনআপে পাবে' },
-                          { emoji: '🤝', title: 'Google সাইনআপে বিশেষ সুবিধা', sub: 'রেফারার ৳২০ ওয়ালেট ক্রেডিট পাবে' },
+                          { emoji: '🏷️', title: t(lang, 'referral_benefit1_title'), sub: t(lang, 'referral_benefit1_sub') },
+                          { emoji: '🤝', title: t(lang, 'referral_benefit2_title'), sub: t(lang, 'referral_benefit2_sub') },
                         ].map(b => (
                           <div key={b.title} className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: 'hsla(258,78%,65%,0.08)' }}>
                             <span className="text-lg">{b.emoji}</span>
@@ -1261,11 +1261,11 @@ const UserDashboard = () => {
 
                     {/* How it works */}
                     <div className="p-4 rounded-2xl" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
-                      <p className="text-sm font-bold mb-3 text-foreground">কিভাবে কাজ করে?</p>
+                      <p className="text-sm font-bold mb-3 text-foreground">{t(lang, 'referral_how')}</p>
                       {[
-                        { n: '১', text: 'আপনার রেফারেল কোড বন্ধুদের শেয়ার করুন' },
-                        { n: '২', text: 'বন্ধু রেফারেল কোড দিয়ে সাইনআপ করলে তারা ৫% স্থায়ী ছাড় পাবে' },
-                        { n: '৩', text: 'বন্ধু Google দিয়ে সাইনআপ করলে আপনি ৳২০ ওয়ালেট ক্রেডিট পাবেন!' },
+                        { n: '1', text: t(lang, 'referral_step1') },
+                        { n: '2', text: t(lang, 'referral_step2') },
+                        { n: '3', text: t(lang, 'referral_step3') },
                       ].map(({ n, text }) => (
                         <div key={n} className="flex items-start gap-3 mb-2 last:mb-0">
                           <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0" style={{ background: 'hsl(var(--primary))' }}>{n}</span>
@@ -1280,7 +1280,7 @@ const UserDashboard = () => {
                     ) : referrals.length > 0 ? (
                       <div>
                         <p className="text-sm font-bold mb-3 text-foreground flex items-center gap-2">
-                          <History size={14} style={{ color: 'hsl(var(--primary))' }} /> রেফারেল ইতিহাস ({referrals.length}টি)
+                          <History size={14} style={{ color: 'hsl(var(--primary))' }} /> {t(lang, 'referral_history')} ({referrals.length})
                         </p>
                         <div className="space-y-2">
                           {referrals.map((r, i) => {
@@ -1293,19 +1293,19 @@ const UserDashboard = () => {
                                   </div>
                                   <div>
                                     <p className="text-xs font-bold text-foreground">
-                                      {r.referred_name ? r.referred_name : `#${i + 1} রেফারেল`}
+                                      {r.referred_name ? r.referred_name : `#${i + 1} ${t(lang, 'referral_referred')}`}
                                     </p>
                                     {r.referred_email && (
                                       <p className="text-[10px] text-muted-foreground">{r.referred_email}</p>
                                     )}
-                                    <p className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                                    <p className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</p>
                                   </div>
                                 </div>
                                 <div className="flex flex-col items-end gap-1">
                                   <span className="text-sm font-black" style={{ color: refTier.color }}>+৳{r.reward_amount}</span>
                                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                                     style={r.status === 'completed' ? { background: 'hsla(158,80%,48%,0.15)', color: 'hsl(158,80%,48%)' } : { background: 'hsla(40,100%,58%,0.15)', color: 'hsl(40,100%,58%)' }}>
-                                    {r.status === 'completed' ? '✓ সফল' : '⏳ পেন্ডিং'}
+                                    {r.status === 'completed' ? t(lang, 'referral_success_badge') : t(lang, 'referral_pending_badge')}
                                   </span>
                                 </div>
                               </div>
@@ -1316,8 +1316,8 @@ const UserDashboard = () => {
                     ) : (
                       <div className="text-center py-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid hsla(258,78%,75%,0.18)' }}>
                         <div className="text-3xl mb-2">👥</div>
-                        <p className="text-sm font-semibold text-foreground mb-1">এখনো কেউ রেফার হয়নি</p>
-                        <p className="text-xs text-muted-foreground">আপনার কোড শেয়ার করুন এবং ক্রেডিট আয় করুন!</p>
+                        <p className="text-sm font-semibold text-foreground mb-1">{t(lang, 'no_referrals')}</p>
+                        <p className="text-xs text-muted-foreground">{t(lang, 'no_referrals_sub')}</p>
                       </div>
                     )}
                   </div>
