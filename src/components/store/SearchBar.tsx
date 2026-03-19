@@ -1008,6 +1008,7 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
               const catName = product.category_id ? categoryMap[product.category_id] : null;
               return (
                 <li key={product.id}>
+                  {/* Tap → goes directly to product detail page */}
                   <button onClick={() => handleSelect(product)}
                     className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl hover:bg-primary/5 active:bg-primary/10 transition-colors group text-left">
                     {/* Image */}
@@ -1025,11 +1026,18 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
                       <p className="text-sm font-semibold text-foreground group-hover:text-primary truncate transition-colors leading-snug">
                         {highlight(product.name, query)}
                       </p>
-                      {catName && (
-                        <span className="inline-block text-[10px] bg-primary/10 text-primary font-medium px-2 py-0.5 rounded-full mt-1">
-                          {catName}
-                        </span>
-                      )}
+                      <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                        {catName && (
+                          <span className="inline-block text-[10px] bg-primary/10 text-primary font-medium px-2 py-0.5 rounded-full">
+                            {catName}
+                          </span>
+                        )}
+                        {query.trim() && (
+                          <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
+                            <Zap size={9} className="text-primary" /> লাইভ
+                          </span>
+                        )}
+                      </div>
                     </div>
                     {/* Price */}
                     <div className="flex-shrink-0 text-right">
@@ -1041,6 +1049,7 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
                         <div className="text-[10px] bg-accent/15 text-accent font-bold rounded-full px-2 py-0.5 mt-0.5">-{product.discount_percent}%</div>
                       )}
                     </div>
+                    <ChevronRight size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 flex-shrink-0 transition-opacity" />
                   </button>
                 </li>
               );
