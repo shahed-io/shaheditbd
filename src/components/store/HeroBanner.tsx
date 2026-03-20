@@ -106,7 +106,7 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden" style={{ background: bgStyle, minHeight: '92vh' }}>
+    <section className="relative overflow-hidden" style={{ background: bgStyle }}>
 
       {/* ── Ambient background ── */}
       <div className="absolute inset-0 pointer-events-none">
@@ -134,8 +134,7 @@ const HeroBanner = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0 pt-14 pb-10 lg:pt-20 lg:pb-14"
-          style={{ minHeight: '82vh' }}>
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0 pt-14 pb-10 lg:pt-20 lg:pb-14">
 
           {/* ══════════════════════════════════
                LEFT — Bold editorial content
