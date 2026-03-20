@@ -40,7 +40,7 @@ const STATIC_SLIDES: Slide[] = [
     price: '৳2,650', original: '৳6,500', off: '-59%', badge: 'OFFICIAL RESELLER',
     accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
     emoji: '⚡', logoImg: idmLogo, features: ['Official Reseller ✓', 'Lifetime License', 'Instant Delivery'],
-    productSlug: 'idm-internet-download-manager-lifetime-licence-key-price-in-bd',
+    productSlug: 'internet-download-manager-idm-lifetime-key',
   },
 ];
 
