@@ -63,9 +63,9 @@ const Footer = () => (
     <div className="relative z-10 border-b" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7"
         style={{
-          background: 'hsla(0,0%,100%,0.50)',
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          background: 'linear-gradient(155deg, rgba(255,255,255,0.92) 0%, rgba(248,246,255,0.88) 100%)',
+          backdropFilter: 'blur(32px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(200%)',
         }}>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
           <div className="flex items-center gap-4">
