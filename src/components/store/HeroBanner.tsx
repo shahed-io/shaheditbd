@@ -20,6 +20,7 @@ const STATIC_SLIDES: Slide[] = [
     price: '৳599', original: '৳9,999', off: '-94%', badge: 'MOST POPULAR',
     accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
     emoji: '🪟', features: ['Lifetime License', 'Instant Delivery', 'All Devices'],
+    productSlug: 'windows-11-pro-licence-key-price-in-bd',
   },
   {
     tag: 'Flash Deal', tagIcon: '⚡',
@@ -39,6 +40,7 @@ const STATIC_SLIDES: Slide[] = [
     price: '৳2,650', original: '৳6,500', off: '-59%', badge: 'OFFICIAL RESELLER',
     accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
     emoji: '⚡', logoImg: idmLogo, features: ['Official Reseller ✓', 'Lifetime License', 'Instant Delivery'],
+    productSlug: 'internet-download-manager-idm-lifetime-key',
   },
 ];
 
