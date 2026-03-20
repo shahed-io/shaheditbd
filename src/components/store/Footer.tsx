@@ -309,18 +309,42 @@ const Footer = () => (
     </div>
 
     {/* ── Copyright ── */}
-    <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.12)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p className="text-[11px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>
-          © 2026 <strong style={{ color: 'hsl(226,35%,20%)' }}>Shahed Store</strong> · All rights reserved.
-        </p>
-        <a href="https://www.shahedstore.com.bd" target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-1 text-[11px] font-fira transition-all hover:gap-1.5"
-          style={{ color: 'hsl(226,35%,48%)' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,48%)'; }}>
-          www.shahedstore.com.bd <ExternalLink size={10} />
-        </a>
+    <div className="relative z-10 overflow-hidden"
+      style={{
+        background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(230,70%,48%) 40%, hsl(200,90%,42%) 100%)',
+      }}>
+      {/* Shimmer line */}
+      <div className="absolute top-0 left-0 right-0 h-px"
+        style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.40), transparent)' }} />
+      {/* Subtle dot pattern */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ backgroundImage: 'radial-gradient(circle, hsla(0,0%,100%,0.07) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-white opacity-60 animate-pulse" />
+          <p className="text-[11.5px] font-fira text-white/80">
+            © 2026 <strong className="text-white font-bold">Shahed Store</strong>
+            <span className="mx-1.5 opacity-50">·</span>
+            <span className="opacity-70">All rights reserved.</span>
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full"
+            style={{ background: 'hsla(0,0%,100%,0.15)', border: '1px solid hsla(0,0%,100%,0.20)', backdropFilter: 'blur(8px)' }}>
+            <Shield size={10} className="text-white/70" />
+            <span className="text-[10px] font-fira text-white/70 tracking-wide">100% Secure</span>
+          </div>
+
+          <a href="https://www.shahedstore.com.bd" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-fira font-semibold text-white transition-all hover:scale-105"
+            style={{ background: 'hsla(0,0%,100%,0.18)', border: '1px solid hsla(0,0%,100%,0.28)', backdropFilter: 'blur(8px)' }}>
+            <Globe size={10} />
+            www.shahedstore.com.bd
+            <ExternalLink size={9} className="opacity-60" />
+          </a>
+        </div>
       </div>
     </div>
   </footer>
