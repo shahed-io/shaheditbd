@@ -349,7 +349,7 @@ const Checkout = () => {
           <div className="glass-card p-5 rounded-2xl border border-border space-y-4">
             <h2 className="font-bold text-foreground">💳 পেমেন্ট পদ্ধতি</h2>
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-              {paymentMethods.map(pm => (
+              {availablePaymentMethods.map(pm => (
                 <button
                   key={pm.id}
                   type="button"
