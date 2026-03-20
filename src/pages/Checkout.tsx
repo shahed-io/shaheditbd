@@ -47,6 +47,9 @@ const Checkout = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
 
+  // Filter payment methods: guests can't use wallet
+  const availablePaymentMethods = paymentMethods.filter(pm => pm.id !== 'wallet' || !!user);
+
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
@@ -61,6 +64,13 @@ const Checkout = () => {
   const [summaryOpen, setSummaryOpen] = useState(true);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
   const [walletBalance, setWalletBalance] = useState(0);
+
+  // If user logs out while wallet is selected, switch to bkash
+  useEffect(() => {
+    if (!user && paymentMethod === 'wallet') {
+      setPaymentMethod('bkash');
+    }
+  }, [user]);
 
   // Auto-fill from logged-in user profile + fetch wallet balance
   useEffect(() => {
@@ -339,7 +349,7 @@ const Checkout = () => {
           <div className="glass-card p-5 rounded-2xl border border-border space-y-4">
             <h2 className="font-bold text-foreground">💳 পেমেন্ট পদ্ধতি</h2>
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-              {paymentMethods.map(pm => (
+              {availablePaymentMethods.map(pm => (
                 <button
                   key={pm.id}
                   type="button"
