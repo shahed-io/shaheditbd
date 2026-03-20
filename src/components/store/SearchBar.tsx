@@ -944,7 +944,7 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
         {showSuggestions && suggestions.length > 0 && !searchSubmitted && (
           <div className="mt-2 rounded-2xl border border-border/70 overflow-hidden"
             style={{ background: 'hsl(var(--card))', boxShadow: '0 4px 20px hsl(var(--foreground)/0.08)' }}>
-            {suggestions.map((product, idx) => {
+            {suggestions.map((product) => {
               const nameIdx = product.name.toLowerCase().indexOf(query.toLowerCase());
               return (
                 <button key={product.id}
@@ -953,31 +953,32 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
                     setShowSuggestions(false);
                     handleSelect(product);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/5 active:bg-primary/10 transition-colors text-left border-b border-border/30 last:border-0">
+                  className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-primary/5 active:bg-primary/10 transition-colors text-left border-b border-border/30 last:border-0">
                   {/* Thumbnail */}
-                  <div className="w-9 h-9 rounded-xl overflow-hidden bg-muted flex-shrink-0 border border-border/40">
+                  <div className="w-8 h-8 rounded-lg overflow-hidden bg-muted flex-shrink-0 border border-border/40">
                     {product.image_url ? (
                       <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Search size={13} className="text-muted-foreground" />
+                        <Search size={12} className="text-muted-foreground" />
                       </div>
                     )}
                   </div>
-                  {/* Name with highlight */}
-                  <p className="flex-1 text-sm text-foreground truncate">
-                    {nameIdx === -1 ? product.name : (
-                      <>
-                        {product.name.slice(0, nameIdx)}
-                        <mark className="bg-primary/20 text-primary font-bold not-italic rounded-sm">{product.name.slice(nameIdx, nameIdx + query.length)}</mark>
-                        {product.name.slice(nameIdx + query.length)}
-                      </>
-                    )}
-                  </p>
-                  {/* Price */}
-                  <span className="text-sm font-bold flex-shrink-0" style={{ color: 'hsl(var(--primary))' }}>
-                    ৳{product.price.toLocaleString()}
-                  </span>
+                  {/* Name + Price stacked */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground truncate leading-snug">
+                      {nameIdx === -1 ? product.name : (
+                        <>
+                          {product.name.slice(0, nameIdx)}
+                          <mark className="bg-primary/20 text-primary font-bold not-italic rounded-sm">{product.name.slice(nameIdx, nameIdx + query.length)}</mark>
+                          {product.name.slice(nameIdx + query.length)}
+                        </>
+                      )}
+                    </p>
+                    <span className="text-xs font-bold" style={{ color: 'hsl(var(--primary))' }}>
+                      ৳{product.price.toLocaleString()}
+                    </span>
+                  </div>
                   <ArrowRight size={13} className="text-muted-foreground flex-shrink-0" />
                 </button>
               );
@@ -986,7 +987,7 @@ export const MobileSearchOverlay = ({ onClose }: { onClose: () => void }) => {
             <button
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => { setShowSuggestions(false); setSearchSubmitted(true); search(query, null); }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold transition-colors"
               style={{ background: 'hsl(var(--primary)/0.06)', color: 'hsl(var(--primary))' }}>
               <Search size={12} />
               &quot;{query}&quot; এর সব ফলাফল দেখুন
