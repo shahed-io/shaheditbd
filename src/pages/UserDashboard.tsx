@@ -1157,8 +1157,8 @@ const UserDashboard = () => {
                                        : <TrendingDown size={15} className="text-destructive" />}
                                     </div>
                                     <div>
-                                      <div className="text-xs font-semibold text-foreground">{tx.note}</div>
-                                      <div className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                                       <div className="text-xs font-semibold text-foreground">{translateDbText(tx.note || '', selectedLang)}</div>
+                                       <div className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString(getLangLocale(selectedLang), { year: 'numeric', month: 'short', day: 'numeric' })}</div>
                                     </div>
                                   </div>
                                   <div className="text-right">
