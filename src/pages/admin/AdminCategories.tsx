@@ -3,6 +3,20 @@ import { supabase } from '@/integrations/supabase/client';
 import { Plus, Search, Edit, Trash2, Grid3X3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
+import { z } from 'zod';
+
+const categorySchema = z.object({
+  name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be ≤ 100 characters'),
+  slug: z.string().trim().max(120, 'Slug must be ≤ 120 characters')
+    .regex(/^[a-z0-9-]*$/, 'Slug can only contain lowercase letters, numbers and hyphens')
+    .optional().or(z.literal('')),
+  description: z.string().trim().max(500, 'Description must be ≤ 500 characters').optional().or(z.literal('')),
+  image_url: z.string().trim().max(2000, 'URL too long')
+    .refine(v => !v || /^https?:\/\/.+/.test(v), 'Must be a valid URL starting with http/https')
+    .optional().or(z.literal('')),
+  sort_order: z.string(),
+  is_active: z.boolean(),
+});
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
