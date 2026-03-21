@@ -26,6 +26,7 @@ interface Category {
   id: string;
   name: string;
   slug: string;
+  image_url: string | null;
 }
 
 const CAT_META: Record<string, { icon: string; accent: string }> = {
@@ -36,7 +37,6 @@ const CAT_META: Record<string, { icon: string; accent: string }> = {
   'Subscription':     { icon: '🎬', accent: 'hsl(283,65%,58%)' },
   'Antivirus':        { icon: '🛡️', accent: 'hsl(158,64%,45%)' },
   'Streaming':        { icon: '📺', accent: 'hsl(0,80%,58%)' },
-  'Adobe':            { icon: '🎨', accent: 'hsl(258,78%,55%)' },
   'Microsoft Office': { icon: '📦', accent: 'hsl(25,90%,58%)' },
   'default':          { icon: '🛒', accent: 'hsl(243,75%,60%)' },
 };
