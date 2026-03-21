@@ -358,7 +358,7 @@ const UserDashboard = () => {
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-    if (file.size > 2 * 1024 * 1024) { toast.error('ছবির সাইজ ২MB এর বেশি হবে না'); return; }
+    if (file.size > 2 * 1024 * 1024) { toast.error(t(selectedLang, 'avatar_size_error')); return; }
     setAvatarUploading(true);
     try {
       const ext = file.name.split('.').pop();
@@ -367,8 +367,8 @@ const UserDashboard = () => {
       if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(path);
       await supabase.from('profiles').upsert({ user_id: user.id, avatar_url: publicUrl, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-      setProfile(p => ({ ...p, avatar_url: publicUrl })); toast.success('প্রোফাইল ছবি আপডেট হয়েছে!');
-    } catch { toast.error('আপলোড ব্যর্থ হয়েছে'); }
+      setProfile(p => ({ ...p, avatar_url: publicUrl })); toast.success(t(selectedLang, 'avatar_updated'));
+    } catch { toast.error(t(selectedLang, 'avatar_upload_error')); }
     setAvatarUploading(false);
   };
 
