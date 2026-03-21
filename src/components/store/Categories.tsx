@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useReveal } from '@/hooks/useReveal';
@@ -19,6 +19,7 @@ interface CatData {
   name: string;
   slug: string;
   description: string | null;
+  image_url: string | null;
   count: number;
 }
 
@@ -27,33 +28,44 @@ const Categories = () => {
   const [cats, setCats] = useState<CatData[]>([]);
   const [loading, setLoading] = useState(true);
   const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.08 });
-  const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
+
+  const loadCategories = async () => {
+    const { data: categories } = await supabase
+      .from('categories')
+      .select('id, name, slug, description, image_url, products!products_category_id_fkey(id)')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+
+    if (!categories?.length) { setLoading(false); return; }
+
+    const HIDDEN_CATS = ['Adobe', 'Antivirus', 'Streaming'];
+    setCats(
+      categories
+        .map(c => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          description: c.description,
+          image_url: (c as any).image_url || null,
+          count: Array.isArray(c.products) ? c.products.length : 0,
+        }))
+        .filter(c => c.count > 0 && !HIDDEN_CATS.includes(c.name))
+    );
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const load = async () => {
-      const { data: categories } = await supabase
-        .from('categories')
-        .select('id, name, slug, description, products!products_category_id_fkey(id)')
-        .eq('is_active', true)
-        .order('sort_order', { ascending: true });
+    loadCategories();
 
-      if (!categories?.length) { setLoading(false); return; }
+    // Real-time: reload when categories table changes
+    const channel = supabase
+      .channel('categories-store-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
+        loadCategories();
+      })
+      .subscribe();
 
-      const HIDDEN_CATS = ['Adobe', 'Antivirus', 'Streaming'];
-      setCats(
-        categories
-          .map(c => ({
-            id: c.id,
-            name: c.name,
-            slug: c.slug,
-            description: c.description,
-            count: Array.isArray(c.products) ? c.products.length : 0,
-          }))
-          .filter(c => c.count > 0 && !HIDDEN_CATS.includes(c.name))
-      );
-      setLoading(false);
-    };
-    load();
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   if (loading) {
