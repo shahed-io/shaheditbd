@@ -118,6 +118,7 @@ const AppContent = () => {
 
   return (
     <>
+      <FacebookPixel />
       <CartDrawer />
       <RedirectEnforcer />
       <Suspense fallback={<PageLoader />}>
