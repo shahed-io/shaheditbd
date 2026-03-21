@@ -211,12 +211,33 @@ const Testimonials = () => {
     : '5.0';
 
   const statsData = [
-    { value: avgRating, label: 'গড় রেটিং', suffix: '★', from: 'hsl(38,100%,52%)', to: 'hsl(50,100%,50%)' },
-    { value: '2,500+', label: 'সন্তুষ্ট গ্রাহক', suffix: '', from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
-    { value: '99%',    label: 'পজিটিভ রিভিউ', suffix: '', from: 'hsl(158,64%,40%)', to: 'hsl(180,70%,42%)' },
+    { value: avgRating, label: 'Avg Rating', suffix: '★', from: 'hsl(38,100%,52%)', to: 'hsl(50,100%,50%)' },
+    { value: '2,500+', label: 'Happy Customers', suffix: '', from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
+    { value: '99%',    label: 'Positive Reviews', suffix: '', from: 'hsl(158,64%,40%)', to: 'hsl(180,70%,42%)' },
   ];
 
-  if (!loaded || visibleReviews.length === 0) return null;
+  // Show skeleton while loading
+  if (!loaded) {
+    return (
+      <section className="py-16 sm:py-20 overflow-hidden relative bg-transparent">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 space-y-4">
+            <div className="shimmer h-6 w-40 rounded-full mx-auto" />
+            <div className="shimmer h-10 w-72 rounded-xl mx-auto" />
+            <div className="shimmer h-5 w-56 rounded-lg mx-auto" />
+            <div className="flex justify-center gap-4 mt-8">
+              {[1,2,3].map(i => <div key={i} className="shimmer h-16 w-32 rounded-3xl" />)}
+            </div>
+          </div>
+          <div className="flex gap-4 overflow-hidden pb-2">
+            {[1,2,3,4].map(i => <div key={i} className="shimmer flex-shrink-0 w-[290px] h-44 rounded-2xl" />)}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (visibleReviews.length === 0) return null;
 
   return (
     <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative bg-transparent">
@@ -241,14 +262,14 @@ const Testimonials = () => {
           </div>
 
           <h2 className="font-sora font-black text-3xl sm:text-4xl mb-3" style={{ color: 'hsl(226,35%,13%)' }}>
-            হাজারো{' '}
+            Thousands of{' '}
             <span style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              সন্তুষ্ট
+              Happy
             </span>{' '}
-            গ্রাহক
+            Customers
           </h2>
           <p className="text-sm sm:text-base max-w-lg mx-auto" style={{ color: 'hsl(226,20%,46%)' }}>
-            সারা বাংলাদেশ থেকে গ্রাহকরা আমাদের সার্ভিস নিয়ে যা বলছেন
+            What our customers from across Bangladesh are saying about us
           </p>
 
           {/* Stats */}
