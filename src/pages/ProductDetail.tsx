@@ -1390,8 +1390,6 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
     setReviews(p => p.map(r => r.id === id ? { ...r, helpful_count: r.helpful_count + 1 } : r));
   };
 
-  if (loading) return null;
-
   const glassStyle: React.CSSProperties = {
     background: 'linear-gradient(155deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.68) 100%)',
     backdropFilter: 'blur(20px)',
