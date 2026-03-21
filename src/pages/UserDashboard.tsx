@@ -411,13 +411,13 @@ const UserDashboard = () => {
 
   const copyReferralCode = () => {
     const code = profile.referral_code;
-    if (!code) return; navigator.clipboard.writeText(code); toast.success('রেফারেল কোড কপি হয়েছে!');
+    if (!code) return; navigator.clipboard.writeText(code); toast.success(t(selectedLang, 'copied'));
   };
 
   const shareReferralLink = () => {
     const code = profile.referral_code;
     if (!code) return;
-    navigator.clipboard.writeText(`${window.location.origin}?ref=${code}`); toast.success('রেফারেল লিংক কপি হয়েছে!');
+    navigator.clipboard.writeText(`${window.location.origin}?ref=${code}`); toast.success(t(selectedLang, 'link_copied'));
   };
 
   const handleLogout = async () => { await signOut(); navigate('/'); };
