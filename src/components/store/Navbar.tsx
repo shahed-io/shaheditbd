@@ -211,66 +211,15 @@ const Navbar = () => {
             {/* Desktop Links */}
             <div className="hidden lg:flex items-center gap-0.5">
               {NAV_LINKS.map(link => (
-                <div key={link.label} className="relative"
-                  onMouseEnter={() => link.label === 'All Products' && setCatOpen(true)}
-                  onMouseLeave={() => link.label === 'All Products' && setCatOpen(false)}>
-                  <a
-                    href={link.href}
-                    onClick={e => { if (link.label === 'All Products') { e.preventDefault(); setCatOpen(false); navigate('/shop'); } }}
-                    className="flex items-center gap-1 px-3.5 py-2 rounded-xl transition-all font-semibold text-sm"
-                    style={{ color: 'hsl(226,35%,30%)' }}
-                    onMouseEnter={e => { e.currentTarget.style.color = 'hsl(258,78%,50%)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.color = 'hsl(226,35%,30%)'; e.currentTarget.style.background = ''; }}>
-                    {link.label}
-                    {link.label === 'All Products' && <ChevronDown size={12} className={`transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />}
-                  </a>
-                  {link.label === 'All Products' && (
-                    <div
-                      className={`absolute top-full left-1/2 -translate-x-1/2 rounded-2xl border shadow-xl transition-all duration-200 origin-top ${catOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
-                      style={{ width: '280px', background: 'hsl(0,0%,100%)', borderColor: 'hsl(220,20%,90%)', boxShadow: '0 20px 60px hsla(226,35%,12%,0.14)', marginTop: '0px' }}
-                      onMouseEnter={() => setCatOpen(true)}
-                      onMouseLeave={() => setCatOpen(false)}
-                    >
-                      {/* Indigo top line */}
-                      <div className="h-[2px] rounded-t-2xl" style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(200,90%,45%))' }} />
-                      <div className="p-2">
-                        <div className="px-3 py-2 mb-1">
-                          <span className="text-[10px] font-fira font-bold uppercase tracking-widest" style={{ color: 'hsl(258,78%,50%)' }}>Categories</span>
-                        </div>
-                        {/* All Products link */}
-                        <button
-                          onClick={() => { navigate('/shop'); setCatOpen(false); }}
-                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-left"
-                          style={{ color: 'hsl(226,35%,28%)' }}
-                          onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; e.currentTarget.style.color = 'hsl(258,78%,48%)'; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
-                          <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: 'hsla(243,75%,62%,0.12)' }}>🛒</span>
-                          <span className="text-sm font-semibold flex-1">All Products</span>
-                        </button>
-                        {navCategories.map(cat => {
-                          const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP['default'];
-                          return (
-                            <button key={cat.id}
-                              onClick={() => { navigate(`/shop?category=${cat.slug}`); setCatOpen(false); }}
-                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-left"
-                              style={{ color: 'hsl(226,35%,28%)' }}
-                              onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; e.currentTarget.style.color = 'hsl(258,78%,48%)'; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
-                              <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0 overflow-hidden" style={{ background: meta.color }}>
-                                {cat.image_url
-                                  ? <img key={`${cat.id}-${imgVersion}`} src={`${cat.image_url.split('?')[0]}?v=${imgVersion}`} alt={cat.name} className="w-full h-full object-cover rounded-xl" onError={e => { (e.currentTarget as HTMLImageElement).style.display='none'; }} />
-                                  : meta.icon
-                                }
-                              </span>
-                              <span className="text-sm font-semibold flex-1">{cat.name}</span>
-                              <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,50%)' }}>{cat.count}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="flex items-center px-3.5 py-2 rounded-xl transition-all font-semibold text-sm"
+                  style={{ color: 'hsl(226,35%,30%)' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = 'hsl(258,78%,50%)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'hsl(226,35%,30%)'; e.currentTarget.style.background = ''; }}>
+                  {link.label}
+                </a>
               ))}
             </div>
 
