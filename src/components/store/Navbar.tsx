@@ -16,11 +16,11 @@ const NAV_LINKS = [
 ];
 
 const CATEGORY_DROPDOWN = [
-  { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(258,78%,55%,0.10)' },
-  { icon: '🎨', label: 'Adobe',            count: 6,  color: 'hsla(258,78%,55%,0.10)' },
-  { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(162,72%,38%,0.10)' },
-  { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(330,85%,55%,0.10)' },
-  { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(200,90%,45%,0.10)' },
+  { icon: '🛒', label: 'All Products',     count: 0,  color: 'hsla(243,75%,62%,0.10)', href: '/shop' },
+  { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(258,78%,55%,0.10)', href: '/shop?category=microsoft-office' },
+  { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(162,72%,38%,0.10)', href: '/shop?category=antivirus' },
+  { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(330,85%,55%,0.10)', href: '/shop?category=streaming' },
+  { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(200,90%,45%,0.10)', href: '/shop?category=vpn' },
 ];
 
 const Navbar = () => {
@@ -193,8 +193,7 @@ const Navbar = () => {
                         {CATEGORY_DROPDOWN.map(cat => (
                           <button key={cat.label}
                             onClick={() => {
-                              const slug = cat.label.toLowerCase().replace(/\s+/g, '-');
-                              navigate(`/shop?category=${slug}`);
+                              navigate(cat.href ?? `/shop?category=${cat.label.toLowerCase().replace(/\s+/g, '-')}`);
                               setCatOpen(false);
                             }}
                             className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-left"
@@ -203,7 +202,6 @@ const Navbar = () => {
                             onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
                             <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: cat.color }}>{cat.icon}</span>
                             <span className="text-sm font-semibold flex-1">{cat.label}</span>
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,50%)' }}>{cat.count}</span>
                           </button>
                         ))}
                       </div>
