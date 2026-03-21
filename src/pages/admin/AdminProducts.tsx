@@ -472,6 +472,28 @@ const AdminProducts = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate with Zod before saving
+    const validation = productSchema.safeParse({
+      name: form.name,
+      slug: form.slug,
+      description: form.description,
+      short_description: form.short_desc_bullets.filter(b => b.trim()).join('\n'),
+      brand: form.brand,
+      seo_title: form.seo_title,
+      seo_description: form.seo_description,
+      image_url: form.image_url,
+      video_url: form.video_url,
+      demo_url: form.demo_url,
+      price: form.price,
+      original_price: form.original_price,
+      discount_percent: form.discount_percent,
+    });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
+
     setSaving(true);
     const baseSlug = form.slug || generateSlug(form.name);
     // New products: use clean SEO slug; if collision risk, append short random suffix
