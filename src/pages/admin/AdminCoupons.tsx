@@ -3,6 +3,30 @@ import { supabase } from '@/integrations/supabase/client';
 import { Plus, Edit, Trash2, Tag, Copy, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
+import { z } from 'zod';
+
+const couponSchema = z.object({
+  code: z.string().trim().min(2, 'Code must be at least 2 characters').max(50, 'Code must be ≤ 50 characters')
+    .regex(/^[A-Z0-9_-]+$/, 'Code can only contain uppercase letters, numbers, hyphens and underscores'),
+  description: z.string().trim().max(200, 'Description must be ≤ 200 characters').optional().or(z.literal('')),
+  discount_type: z.enum(['percentage', 'fixed']),
+  discount_value: z.string().refine(v => {
+    const n = parseFloat(v);
+    return !isNaN(n) && n > 0 && n <= 100000;
+  }, 'Discount value must be between 0 and 100000'),
+  min_order_amount: z.string().refine(v => {
+    const n = parseFloat(v);
+    return isNaN(n) || n >= 0;
+  }, 'Min order amount must be 0 or more'),
+  max_uses: z.string().refine(v => !v || (parseInt(v) > 0 && parseInt(v) <= 1000000), 'Usage limit must be between 1 and 1,000,000').optional().or(z.literal('')),
+  is_active: z.boolean(),
+  expires_at: z.string().optional().or(z.literal('')),
+}).superRefine((data, ctx) => {
+  if (data.discount_type === 'percentage') {
+    const v = parseFloat(data.discount_value);
+    if (v > 100) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Percentage discount cannot exceed 100%', path: ['discount_value'] });
+  }
+});
 
 const inputClass = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground";
 const labelClass = "text-xs text-muted-foreground mb-1 block";
@@ -32,20 +56,27 @@ const AdminCoupons = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.discount_value || parseFloat(form.discount_value) <= 0) {
+    // Validate with Zod
+    const validation = couponSchema.safeParse({ ...form, code: form.code.toUpperCase() });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
+    const d = validation.data;
+    if (!d.discount_value || parseFloat(d.discount_value) <= 0) {
       toast.error('Discount value must be greater than 0');
       return;
     }
     setSaving(true);
     const payload = {
-      code: form.code.toUpperCase(),
-      description: form.description,
-      discount_type: form.discount_type,
-      discount_value: parseFloat(form.discount_value),
-      min_order_amount: parseFloat(form.min_order_amount) || 0,
-      max_uses: form.max_uses ? parseInt(form.max_uses) : null,
-      is_active: form.is_active,
-      expires_at: form.expires_at || null,
+      code: d.code,
+      description: d.description || null,
+      discount_type: d.discount_type,
+      discount_value: parseFloat(d.discount_value),
+      min_order_amount: parseFloat(d.min_order_amount) || 0,
+      max_uses: d.max_uses ? parseInt(d.max_uses) : null,
+      is_active: d.is_active,
+      expires_at: d.expires_at || null,
     };
     if (editing) {
       const { error } = await supabase.from('coupons').update(payload).eq('id', editing.id);

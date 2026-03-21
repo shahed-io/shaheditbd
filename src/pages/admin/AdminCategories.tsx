@@ -3,6 +3,20 @@ import { supabase } from '@/integrations/supabase/client';
 import { Plus, Search, Edit, Trash2, Grid3X3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
+import { z } from 'zod';
+
+const categorySchema = z.object({
+  name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be ≤ 100 characters'),
+  slug: z.string().trim().max(120, 'Slug must be ≤ 120 characters')
+    .regex(/^[a-z0-9-]*$/, 'Slug can only contain lowercase letters, numbers and hyphens')
+    .optional().or(z.literal('')),
+  description: z.string().trim().max(500, 'Description must be ≤ 500 characters').optional().or(z.literal('')),
+  image_url: z.string().trim().max(2000, 'URL too long')
+    .refine(v => !v || /^https?:\/\/.+/.test(v), 'Must be a valid URL starting with http/https')
+    .optional().or(z.literal('')),
+  sort_order: z.string(),
+  is_active: z.boolean(),
+});
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
@@ -33,8 +47,22 @@ const AdminCategories = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Validate inputs with Zod
+    const validation = categorySchema.safeParse(form);
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
     setSaving(true);
-    const payload = { ...form, sort_order: parseInt(form.sort_order) || 0, slug: form.slug || form.name.toLowerCase().replace(/\s+/g, '-') };
+    const sanitized = validation.data;
+    const payload = {
+      name: sanitized.name,
+      description: sanitized.description || null,
+      image_url: sanitized.image_url || null,
+      is_active: sanitized.is_active,
+      sort_order: parseInt(sanitized.sort_order) || 0,
+      slug: sanitized.slug || sanitized.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+    };
     if (editing) {
       const { error } = await supabase.from('categories').update(payload).eq('id', editing.id);
       if (error) toast.error(handleDbError(error)); else { toast.success('Updated!'); setShowForm(false); fetchCategories(); }
