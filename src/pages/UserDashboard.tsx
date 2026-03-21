@@ -373,12 +373,12 @@ const UserDashboard = () => {
   };
 
   const handleChangePassword = async () => {
-    if (newPassword.length < 6) { toast.error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে'); return; }
-    if (newPassword !== confirmPassword) { toast.error('পাসওয়ার্ড দুটি মিলছে না'); return; }
+    if (newPassword.length < 6) { toast.error(t(selectedLang, 'password_short')); return; }
+    if (newPassword !== confirmPassword) { toast.error(t(selectedLang, 'password_mismatch')); return; }
     setPassLoading(true);
     const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) toast.error('পাসওয়ার্ড পরিবর্তন করা সম্ভব হয়নি');
-    else { toast.success('পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!'); setNewPassword(''); setConfirmPassword(''); }
+    if (error) toast.error(t(selectedLang, 'password_error'));
+    else { toast.success(t(selectedLang, 'password_success')); setNewPassword(''); setConfirmPassword(''); }
     setPassLoading(false);
   };
 
