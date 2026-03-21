@@ -47,8 +47,22 @@ const AdminCategories = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Validate inputs with Zod
+    const validation = categorySchema.safeParse(form);
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
     setSaving(true);
-    const payload = { ...form, sort_order: parseInt(form.sort_order) || 0, slug: form.slug || form.name.toLowerCase().replace(/\s+/g, '-') };
+    const sanitized = validation.data;
+    const payload = {
+      name: sanitized.name,
+      description: sanitized.description || null,
+      image_url: sanitized.image_url || null,
+      is_active: sanitized.is_active,
+      sort_order: parseInt(sanitized.sort_order) || 0,
+      slug: sanitized.slug || sanitized.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+    };
     if (editing) {
       const { error } = await supabase.from('categories').update(payload).eq('id', editing.id);
       if (error) toast.error(handleDbError(error)); else { toast.success('Updated!'); setShowForm(false); fetchCategories(); }
