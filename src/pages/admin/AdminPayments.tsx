@@ -273,6 +273,37 @@ const MethodEditor = ({
             />
           </div>
 
+          {/* Bank Transfer Fields */}
+          {form.type === 'Bank Transfer' && (
+            <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3">
+              <p className="text-xs font-black tracking-widest uppercase text-primary flex items-center gap-1.5">🏦 ব্যাংক অ্যাকাউন্ট তথ্য</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase">ব্যাংকের নাম</label>
+                  <Input value={form.bankName ?? ''} onChange={e => set('bankName', e.target.value)} placeholder="যেমন: Dutch-Bangla Bank" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase">অ্যাকাউন্ট নাম</label>
+                  <Input value={form.accountName ?? ''} onChange={e => set('accountName', e.target.value)} placeholder="Account Holder Name" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase">অ্যাকাউন্ট নম্বর</label>
+                  <Input value={form.number} onChange={e => set('number', e.target.value)} placeholder="Account Number" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase">শাখার নাম</label>
+                  <Input value={form.branchName ?? ''} onChange={e => set('branchName', e.target.value)} placeholder="Branch Name" />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase">রাউটিং নম্বর (ঐচ্ছিক)</label>
+                <Input value={form.routingNumber ?? ''} onChange={e => set('routingNumber', e.target.value)} placeholder="Routing Number" />
+              </div>
+            </div>
+          )}
+
           {/* Steps */}
           <div>
             <label className="text-xs font-semibold text-muted-foreground mb-2 block uppercase">ধাপসমূহ</label>
