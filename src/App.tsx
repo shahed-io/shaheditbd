@@ -106,7 +106,7 @@ const AppContent = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const isAdmin = location.pathname.startsWith('/admin');
+    const isAdmin = location.pathname.startsWith('/ceo');
     if (isAdmin) {
       document.body.classList.add('admin-page');
     } else {
@@ -129,7 +129,7 @@ const AppContent = () => {
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/help/:slug" element={<HelpCenter />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/ceo/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
