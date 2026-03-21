@@ -166,6 +166,7 @@ const MethodEditor = ({
                 <SelectContent>
                   <SelectItem value="Send Money">Send Money</SelectItem>
                   <SelectItem value="Merchant Payment">Merchant Payment</SelectItem>
+                  <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
                 </SelectContent>
               </Select>
             </div>
