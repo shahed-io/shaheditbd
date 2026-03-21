@@ -47,7 +47,7 @@ const ReturnPolicy = () => (
       <div className="grid sm:grid-cols-2 gap-2.5 mt-1">
         {[
           { icon: '🔄', title: 'প্রতিস্থাপন', desc: 'নতুন কার্যকর পণ্য সরবরাহ' },
-          { icon: '🛠️', title: 'টেকনিক্যাল সাপোর্ট', desc: 'বিশেষজ্ঞ দল ব্যক্তিগতভাবে সমাধান করবে' },
+          { icon: '🛠️', title: 'টেকনিক্যাল সাপোর্ট', desc: 'বিশেষজ্ঞ দল ব্যক্তিগতভাবে সমাধান করবে (সর্বোচ্চ ৩ কর্মদিবস)' },
           { icon: '💰', title: 'স্টোর ক্রেডিট', desc: 'পরবর্তী কেনাকাটায় ব্যবহারের জন্য ক্রেডিট' },
           { icon: '♻️', title: 'পণ্য বিনিময়', desc: 'সমতুল্য মূল্যের ভিন্ন পণ্যের সাথে বিনিময়' },
         ].map(item => (
@@ -69,6 +69,24 @@ const ReturnPolicy = () => (
         <Bullet>সমস্যার <strong>স্ক্রিনশট বা ভিডিও</strong> সহ অর্ডার নম্বর পাঠান</Bullet>
         <Bullet>আমাদের টিম <strong>৬ ঘণ্টার মধ্যে</strong> সাড়া দেবে</Bullet>
         <Bullet>যাচাইয়ের পরে রিটার্ন, বিনিময় বা রিফান্ড প্রক্রিয়া শুরু হবে</Bullet>
+        <Bullet>টেকনিক্যাল সমস্যার সমাধানে সর্বোচ্চ <strong>৩ কর্মদিবস</strong> সময় প্রযোজ্য হতে পারে</Bullet>
+      </ul>
+    </SectionCard>
+
+    <SectionCard icon={<AlertTriangle size={15} />} title="৫. রিফান্ড শর্তাবলী" accentFrom={A} accentTo={B}>
+      <ul className="space-y-1.5">
+        <Bullet color="hsl(38,92%,38%)">
+          <strong>bKash Online Payment রিফান্ড:</strong> ১–২৪ ঘণ্টার মধ্যে প্রদান করা হয়।
+        </Bullet>
+        <Bullet color="hsl(38,92%,38%)">
+          <strong>Gateway রিফান্ড:</strong> তাদের শর্ত অনুযায়ী সাধারণত ৩–৭ কার্যদিবস সময় লাগে।
+        </Bullet>
+        <Bullet color="hsl(38,92%,38%)">
+          <strong>ব্যাংক চার্জ:</strong> রিফান্ডের ক্ষেত্রে ব্যাংক কর্তৃক আরোপিত যেকোনো ফি বা চার্জ ক্রেতাকে বহন করতে হবে।
+        </Bullet>
+        <Bullet color="hsl(38,92%,38%)">
+          <strong>১০% চার্জ:</strong> কাস্টমারের ইচ্ছাশক্তির পরিবর্তন সহ যেকোনো ধরনের রিফান্ডের জন্য গেটওয়ে, সার্ভিস ও ব্যাংক চার্জ বাবদ <strong>১০% কেটে</strong> বাকি টাকা ফেরত দেওয়া হবে।
+        </Bullet>
       </ul>
     </SectionCard>
 

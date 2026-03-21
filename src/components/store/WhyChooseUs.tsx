@@ -4,8 +4,8 @@ import { CheckCircle2, Sparkles, Zap, Shield, Headphones, Building2, Tag, Users 
 const FEATURES = [
   {
     icon: '⚡', lucide: Zap,
-    title: 'Instant Delivery',
-    desc: 'Payment-এর পরেই ইমেইলে license key পাঠানো হয়।',
+    title: 'Fast Delivery',
+    desc: 'Payment যাচাইয়ের পর ১–২৪ ঘণ্টার মধ্যে ইমেইলে license key পাঠানো হয়।',
     from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)',
   },
   {
@@ -43,7 +43,7 @@ const FEATURES = [
 const STEPS = [
   { n: '01', emoji: '🛒', title: 'Choose Product',   desc: 'আমাদের collection থেকে পছন্দের software বেছে নিন।',  from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
   { n: '02', emoji: '💳', title: 'Make Payment',      desc: 'bKash, Nagad বা Rocket-এ নিরাপদে payment করুন।',     from: 'hsl(15,100%,58%)',  to: 'hsl(38,100%,55%)' },
-  { n: '03', emoji: '📧', title: 'Get Delivery',      desc: 'মিনিটের মধ্যে ইমেইলে license key পাঠানো হবে।',       from: 'hsl(158,64%,42%)', to: 'hsl(180,70%,40%)' },
+  { n: '03', emoji: '📧', title: 'Get Delivery',      desc: '১–২৪ ঘণ্টার মধ্যে ইমেইলে license key পাঠানো হবে।',  from: 'hsl(158,64%,42%)', to: 'hsl(180,70%,40%)' },
   { n: '04', emoji: '✅', title: 'Activate & Enjoy', desc: 'Product activate করুন, সমস্যায় support-এ যোগাযোগ।', from: 'hsl(263,70%,58%)', to: 'hsl(283,65%,55%)' },
 ];
 

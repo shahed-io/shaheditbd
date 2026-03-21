@@ -39,7 +39,7 @@ const RefundPolicy = () => (
       <ul className="space-y-1.5">
         <Bullet color="hsl(142,72%,38%)">ডেলিভার করা লাইসেন্স কী সম্পূর্ণ কাজ না করলে</Bullet>
         <Bullet color="hsl(142,72%,38%)">অর্ডার করা পণ্যের বদলে ভিন্ন পণ্য ডেলিভার হলে</Bullet>
-        <Bullet color="hsl(142,72%,38%)">পেমেন্ট সফল হলেও ৩ ঘণ্টার মধ্যে পণ্য না পেলে</Bullet>
+        <Bullet color="hsl(142,72%,38%)">পেমেন্ট সফল হলেও ২৪ ঘণ্টার মধ্যে পণ্য না পেলে</Bullet>
         <Bullet color="hsl(142,72%,38%)">একই অর্ডারে ডাবল পেমেন্ট হয়ে গেলে</Bullet>
         <Bullet color="hsl(142,72%,38%)">স্টক শেষ হওয়ায় সরবরাহ সম্ভব না হলে</Bullet>
       </ul>
@@ -51,16 +51,16 @@ const RefundPolicy = () => (
         <Bullet color="hsl(0,72%,43%)">ডেলিভারির ২৪ ঘণ্টার পরে অভিযোগ করলে</Bullet>
         <Bullet color="hsl(0,72%,43%)">ক্রেতার ভুলে পণ্য ব্যবহার করতে না পারলে</Bullet>
         <Bullet color="hsl(0,72%,43%)">ইন্টারনেট বা ডিভাইস সমস্যার কারণে কাজ না করলে</Bullet>
-        <Bullet color="hsl(0,72%,43%)">"মন পরিবর্তন" হলে (change of mind)</Bullet>
+        <Bullet color="hsl(0,72%,43%)">"মন পরিবর্তন" হলে (change of mind) — তবে ১০% কেটে রিফান্ড বিবেচনাযোগ্য</Bullet>
       </ul>
     </SectionCard>
 
-    <SectionCard icon={<Clock size={15} />} title="৩. রিফান্ড প্রক্রিয়া" accentFrom={A} accentTo={B}>
+    <SectionCard icon={<Clock size={15} />} title="৩. রিফান্ড প্রক্রিয়া ও সময়সীমা" accentFrom={A} accentTo={B}>
       <div className="space-y-3">
         {[
-          { n: '১', t: 'অভিযোগ দাখিল (২৪ ঘণ্টার মধ্যে)', d: 'অর্ডার নম্বর, সমস্যার বিবরণ ও স্ক্রিনশট পাঠান।' },
+          { n: '১', t: 'আবেদন দাখিল (২৪ ঘণ্টার মধ্যে)', d: 'অর্ডার নম্বর, সমস্যার বিবরণ ও স্ক্রিনশট সহ আবেদন করুন।' },
           { n: '২', t: 'যাচাই (১–৬ ঘণ্টা)', d: 'আমাদের টিম সমস্যাটি যাচাই করে সমাধান বা রিফান্ড অনুমোদন করবে।' },
-          { n: '৩', t: 'রিফান্ড প্রদান (১–৩ কার্যদিবস)', d: 'মূল পেমেন্ট মাধ্যমে (bKash/Nagad) ফেরত দেওয়া হবে।' },
+          { n: '৩', t: 'রিফান্ড প্রদান', d: 'bKash Online Payment-এ ১–২৪ ঘণ্টার মধ্যে। Gateway রিফান্ডের ক্ষেত্রে তাদের শর্ত অনুযায়ী সাধারণত ৩–৭ কার্যদিবস সময় প্রযোজ্য।' },
         ].map(s => (
           <div key={s.n} className="flex items-start gap-3">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-black text-white"
@@ -74,12 +74,20 @@ const RefundPolicy = () => (
       </div>
     </SectionCard>
 
-    <SectionCard icon={<AlertTriangle size={15} />} title="৪. বিশেষ ক্ষেত্র" accentFrom={A} accentTo={B}>
+    <SectionCard icon={<AlertTriangle size={15} />} title="৪. বিশেষ শর্তাবলী" accentFrom={A} accentTo={B}>
       <ul className="space-y-1.5">
         <Bullet>সাবস্ক্রিপশন: অব্যবহৃত মাসের সমানুপাতিক রিফান্ড বিবেচনা করা হয়</Bullet>
         <Bullet>বান্ডেল অফার: শুধু সমস্যাযুক্ত পণ্যের রিফান্ড প্রযোজ্য</Bullet>
         <Bullet>ডিসকাউন্ট মূল্যে কেনা পণ্যে ডিসকাউন্ট মূল্যই ফেরত দেওয়া হবে</Bullet>
-        <Bullet color="hsl(38,92%,38%)">কাস্টমারের ইচ্ছাশক্তির পরিবর্তন সহ যে কোন ধরনের রিফান্ডের জন্য কাস্টমারকে গেটওয়ে, সার্ভিস এবং ব্যাংক চার্জ বাবদ তাকে ১০% খরচ বহন করতে হবে। ১০% রেখে বাকীটাকা ফেরৎ পাবেন।</Bullet>
+        <Bullet color="hsl(38,92%,38%)">
+          <strong>রিফান্ড চার্জ:</strong> কাস্টমারের ইচ্ছাশক্তির পরিবর্তন সহ যেকোনো ধরনের রিফান্ডের জন্য গেটওয়ে, সার্ভিস এবং ব্যাংক চার্জ বাবদ <strong>১০% কেটে</strong> বাকি টাকা ফেরত দেওয়া হবে।
+        </Bullet>
+        <Bullet color="hsl(38,92%,38%)">
+          <strong>ব্যাংক চার্জ:</strong> রিফান্ডের ক্ষেত্রে ব্যাংক কর্তৃক আরোপিত যেকোনো ফি বা চার্জ ক্রেতাকে বহন করতে হবে।
+        </Bullet>
+        <Bullet color="hsl(38,92%,38%)">
+          <strong>প্রোডাক্ট সমস্যা:</strong> প্রোডাক্ট ব্যবহারকালীন কোনো ত্রুটি দেখা দিলে সমাধানের জন্য সর্বোচ্চ <strong>৩ কর্মদিবস</strong> সময় প্রযোজ্য। গ্রাহক ক্রয়ের মাধ্যমে এই শর্তে সম্মতি প্রদান করছেন।
+        </Bullet>
       </ul>
     </SectionCard>
 
