@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface PaymentMethodConfig {
@@ -151,6 +152,18 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
 export const usePaymentSettings = () => {
   const qc = useQueryClient();
 
+  // BroadcastChannel: অন্য ট্যাব/পেজে admin সেভ করলে এখানেও instant আপডেট হবে
+  useEffect(() => {
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('payment-settings-update');
+      bc.onmessage = () => {
+        qc.invalidateQueries({ queryKey: ['payment-settings'] });
+      };
+    } catch { /* Safari: no BroadcastChannel support */ }
+    return () => { bc?.close(); };
+  }, [qc]);
+
   const { data: configs = DEFAULT_PAYMENT_CONFIGS, isLoading } = useQuery<PaymentMethodConfig[]>({
     queryKey: ['payment-settings'],
     queryFn: async () => {
@@ -166,7 +179,10 @@ export const usePaymentSettings = () => {
       }
       return DEFAULT_PAYMENT_CONFIGS;
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,            // সবসময় fresh data fetch করবে
+    gcTime: 1000 * 60 * 2,  // 2 মিনিট cache রাখবে
+    refetchOnWindowFocus: true,   // ট্যাবে ফিরলেই আবার লোড হবে
+    refetchOnMount: 'always',     // যেকোনো কম্পোনেন্ট মাউন্টে রিফেচ
   });
 
   const saveMutation = useMutation({
@@ -178,7 +194,13 @@ export const usePaymentSettings = () => {
       if (error) throw error;
     },
     onSuccess: () => {
+      // সব ট্যাব/পেজে instant আপডেট পাঠাও
       qc.invalidateQueries({ queryKey: ['payment-settings'] });
+      try {
+        const bc = new BroadcastChannel('payment-settings-update');
+        bc.postMessage('updated');
+        bc.close();
+      } catch { /* Safari fallback */ }
     },
   });
 
