@@ -568,13 +568,16 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                     <div>
                       <p className="font-bold text-[13px] mb-1" style={{ color: 'hsl(38,60%,25%)' }}>⚠️ মন পরিবর্তন — ১০% চার্জ প্রযোজ্য</p>
                       <p className="text-[12px] leading-relaxed" style={{ color: 'hsl(38,40%,35%)' }}>
-                        কাস্টমারের ইচ্ছাশক্তির পরিবর্তনের ক্ষেত্রে গেটওয়ে, সার্ভিস ও ব্যাংক চার্জ বাবদ মোট পেমেন্ট থেকে <strong>১০% কেটে</strong> বাকি টাকা রিফান্ড করা হবে।
+                        {calc?.proportionalRefund != null
+                          ? <>অব্যবহৃত অংশ (৳{calc.proportionalRefund}) থেকে গেটওয়ে, সার্ভিস ও ব্যাংক চার্জ বাবদ <strong>১০% কেটে</strong> বাকি টাকা রিফান্ড করা হবে।</>
+                          : <>কাস্টমারের ইচ্ছাশক্তির পরিবর্তনের ক্ষেত্রে গেটওয়ে, সার্ভিস ও ব্যাংক চার্জ বাবদ মোট পেমেন্ট থেকে <strong>১০% কেটে</strong> বাকি টাকা রিফান্ড করা হবে।</>
+                        }
                       </p>
                       {form.payment_amount && (
                         <div className="mt-2.5 flex flex-wrap gap-3">
                           <span className="px-3 py-1.5 rounded-lg text-[12px] font-bold"
                             style={{ background: 'hsla(0,72%,50%,0.10)', color: 'hsl(0,65%,38%)' }}>
-                            কাটা হবে: ৳{(parseFloat(form.payment_amount) * 0.1).toFixed(2)}
+                            কাটা হবে: ৳{deductionAmount?.toFixed(2)}
                           </span>
                           <span className="px-3 py-1.5 rounded-lg text-[12px] font-bold"
                             style={{ background: 'hsla(142,72%,50%,0.10)', color: 'hsl(142,65%,30%)' }}>
