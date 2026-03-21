@@ -25,7 +25,6 @@ const NAV_COL = [
       { label: 'About Us',       href: '/about' },
       { label: 'My Account',     href: '/dashboard' },
       { label: 'Contact Us',     href: '/contact' },
-      { label: 'All Products',   href: '/shop' },
       { label: 'Blog',           href: '/blog' },
       { label: 'Software Download Link', href: '/help' },
     ]
