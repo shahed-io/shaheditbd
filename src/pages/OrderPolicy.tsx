@@ -47,10 +47,10 @@ const OrderPolicy = () => (
 
     <SectionCard icon={<Clock size={15} />} title="৩. অর্ডার যাচাই প্রক্রিয়া" accentFrom={A} accentTo={B}>
       <ul className="space-y-1.5">
-        <Bullet>পেমেন্ট যাচাইয়ে সাধারণত ৫–১৫ মিনিট সময় লাগে</Bullet>
-        <Bullet>পিক আওয়ারে (রাত ৮টা–১২টা) সর্বোচ্চ ২ ঘণ্টা লাগতে পারে</Bullet>
+        <Bullet>পেমেন্ট যাচাইয়ের পর <strong>১ ঘণ্টা থেকে সর্বোচ্চ ২৪ ঘণ্টার মধ্যে</strong> ডেলিভারি প্রদান করা হয়</Bullet>
         <Bullet>ছুটির দিনেও সার্ভিস চালু থাকে</Bullet>
         <Bullet>অর্ডার স্ট্যাটাস My Account থেকে ট্র্যাক করতে পারবেন</Bullet>
+        <Bullet color="hsl(38,92%,38%)">প্রোডাক্ট ব্যবহারকালীন কোনো সমস্যার সমাধানে সর্বোচ্চ <strong>৩ কর্মদিবস</strong> সময় প্রযোজ্য। গ্রাহক ক্রয়ের মাধ্যমে এই শর্তে সম্মতি প্রদান করছেন।</Bullet>
       </ul>
     </SectionCard>
 
