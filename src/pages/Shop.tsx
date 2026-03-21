@@ -119,9 +119,27 @@ const Shop = () => {
 
   const activeCatSlug = searchParams.get('category') || '';
 
+  const loadCategories = async () => {
+    const { data } = await supabase
+      .from('categories')
+      .select('id, name, slug, image_url')
+      .eq('is_active', true)
+      .order('sort_order');
+    if (data) setCategories(data as Category[]);
+  };
+
   useEffect(() => {
-    supabase.from('categories').select('id, name, slug').eq('is_active', true).order('sort_order')
-      .then(({ data }) => { if (data) setCategories(data); });
+    loadCategories();
+
+    // Real-time: reload when categories change (e.g. image update)
+    const channel = supabase
+      .channel('shop-categories-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
+        loadCategories();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   useEffect(() => {
