@@ -184,7 +184,21 @@ const UserDashboard = () => {
     if (activeTab === 'referral') fetchReferrals();
     if (activeTab === 'wallet') fetchWallet();
     if (activeTab === 'points') fetchPoints();
+    if (activeTab === 'licenses') fetchLicenses();
   }, [activeTab, user]);
+
+  const fetchLicenses = async () => {
+    if (!user) return;
+    setLicensesLoading(true);
+    const { data } = await supabase
+      .from('order_items')
+      .select('id, product_name, license_key, orders!inner(user_id, order_number, status, created_at)')
+      .eq('orders.user_id', user.id)
+      .eq('orders.status', 'completed')
+      .not('license_key', 'is', null);
+    setMyLicenses(data || []);
+    setLicensesLoading(false);
+  };
 
   const fetchProfile = async () => {
     if (!user) return;
