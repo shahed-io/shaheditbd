@@ -225,11 +225,10 @@ const Navbar = () => {
                         <div className="px-3 py-2 mb-1">
                           <span className="text-[10px] font-fira font-bold uppercase tracking-widest" style={{ color: 'hsl(258,78%,50%)' }}>Categories</span>
                         </div>
-                        {CATEGORY_DROPDOWN.map(cat => (
-                          <button key={cat.label}
+                        {navCats.map(cat => (
+                          <button key={cat.slug}
                             onClick={() => {
-                              const slug = cat.label.toLowerCase().replace(/\s+/g, '-');
-                              navigate(`/shop?category=${slug}`);
+                              navigate(`/shop?category=${cat.slug}`);
                               setCatOpen(false);
                             }}
                             className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-left"
