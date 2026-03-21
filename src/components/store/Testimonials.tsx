@@ -244,7 +244,7 @@ const Testimonials = () => {
                   border: '1.5px solid rgba(255,255,255,0.92)',
                   boxShadow: `0 4px 22px ${stat.from}18, inset 0 1px 0 rgba(255,255,255,1)`,
                 }}>
-                <div className="h-[3px]" style={{ background: `linear-gradient(90deg, ${stat.from}, ${stat.to})` }} />
+                
                 <div className="text-center px-7 py-3">
                   <p className="font-sora font-black text-2xl sm:text-3xl" style={{ color: 'hsl(226,35%,14%)' }}>
                     {stat.value}<span style={{ color: stat.from }}>{stat.suffix}</span>
