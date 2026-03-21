@@ -920,7 +920,7 @@ const UserDashboard = () => {
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-bold px-2.5 py-1 rounded-full border" style={addr.is_default ? { background: 'hsl(243,75%,97%)', color: 'hsl(var(--primary))', borderColor: 'hsl(243,75%,88%)' } : { background: 'rgba(255,255,255,0.6)', color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}>
-                                {addr.label} {addr.is_default && '✓ ডিফল্ট'}
+                                {addr.label} {addr.is_default && `✓ ${t(selectedLang, 'default_label')}`}
                               </span>
                             </div>
                             <div className="flex gap-1">
