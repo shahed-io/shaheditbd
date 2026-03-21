@@ -134,7 +134,7 @@ const UserDashboard = () => {
   const [addressLoading, setAddressLoading] = useState(false);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
-  const [addressForm, setAddressForm] = useState({ label: 'বাড়ি', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false });
+  const [addressForm, setAddressForm] = useState({ label: 'Home', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false });
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notiLoading, setNotiLoading] = useState(false);
   const [referrals, setReferrals] = useState<Referral[]>([]);
