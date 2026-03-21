@@ -191,6 +191,120 @@ function buildPromoHtml(subject: string, body: string, ctaText?: string, ctaUrl?
 </html>`
 }
 
+function buildAdminOrderHtml(order: any, items: any[], adminCount: number) {
+  const paymentMethodLabels: Record<string, string> = {
+    bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket',
+    upay: 'Upay', bkash_merchant: 'bKash Merchant', wallet: 'Wallet',
+  }
+  const itemsHtml = items.map(item => `
+    <tr>
+      <td style="padding:10px 14px;border-bottom:1px solid #f0f0f5;font-size:13px;color:#374151;">${item.product_name}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #f0f0f5;font-size:13px;color:#6b7280;text-align:center;">${item.quantity}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #f0f0f5;font-size:13px;font-weight:700;color:hsl(258,78%,50%);text-align:right;">৳${item.total}</td>
+    </tr>
+  `).join('')
+
+  return `<!DOCTYPE html>
+<html lang="bn">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f5f5f7;font-family:'Segoe UI',Arial,sans-serif;">
+  <div style="max-width:620px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(100,60,200,0.12);">
+
+    <!-- Admin Header -->
+    <div style="background:linear-gradient(135deg,hsl(258,78%,45%),hsl(200,90%,35%));padding:28px 32px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <h1 style="color:#fff;margin:0;font-size:20px;font-weight:800;">${SITE_NAME} — Admin Alert</h1>
+          <p style="color:rgba(255,255,255,0.75);margin:4px 0 0;font-size:12px;">নতুন অর্ডার নোটিফিকেশন</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;text-align:center;">
+          <p style="margin:0;color:#fff;font-size:11px;opacity:0.8;">অর্ডার নম্বর</p>
+          <p style="margin:4px 0 0;color:#fff;font-size:16px;font-weight:900;">#${order.order_number}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Order Badge -->
+    <div style="padding:20px 28px 0;text-align:center;">
+      <span style="display:inline-block;background:#dcfce7;color:#15803d;padding:7px 20px;border-radius:100px;font-size:13px;font-weight:700;">🛒 নতুন অর্ডার পাওয়া গেছে!</span>
+    </div>
+
+    <!-- Customer Info -->
+    <div style="padding:16px 28px 0;">
+      <h3 style="font-size:12px;font-weight:700;color:#9ca3af;margin:0 0 10px;text-transform:uppercase;letter-spacing:.08em;">👤 গ্রাহকের তথ্য</h3>
+      <table width="100%" style="background:#f9f9fc;border-radius:10px;overflow:hidden;" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding:10px 14px;font-size:13px;color:#6b7280;width:35%;border-right:1px solid #eee;border-bottom:1px solid #eee;"><strong>নাম</strong></td>
+          <td style="padding:10px 14px;font-size:13px;color:#111827;font-weight:600;border-bottom:1px solid #eee;">${order.customer_name}</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 14px;font-size:13px;color:#6b7280;border-right:1px solid #eee;border-bottom:1px solid #eee;"><strong>ইমেইল</strong></td>
+          <td style="padding:10px 14px;font-size:13px;border-bottom:1px solid #eee;"><a href="mailto:${order.customer_email}" style="color:hsl(258,78%,55%);text-decoration:none;">${order.customer_email}</a></td>
+        </tr>
+        <tr>
+          <td style="padding:10px 14px;font-size:13px;color:#6b7280;border-right:1px solid #eee;border-bottom:1px solid #eee;"><strong>ফোন</strong></td>
+          <td style="padding:10px 14px;font-size:13px;color:#111827;border-bottom:1px solid #eee;">${order.customer_phone || 'উল্লেখ নেই'}</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 14px;font-size:13px;color:#6b7280;border-right:1px solid #eee;"><strong>পেমেন্ট</strong></td>
+          <td style="padding:10px 14px;font-size:13px;font-weight:700;color:${order.payment_method === 'wallet' ? '#7c3aed' : '#059669'};">${paymentMethodLabels[order.payment_method] || order.payment_method} ${order.transaction_id ? `— TxID: ${order.transaction_id}` : ''}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Order Items -->
+    <div style="padding:16px 28px 0;">
+      <h3 style="font-size:12px;font-weight:700;color:#9ca3af;margin:0 0 10px;text-transform:uppercase;letter-spacing:.08em;">📦 অর্ডারকৃত পণ্য</h3>
+      <table style="width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;">
+        <thead>
+          <tr style="background:#f5f5f7;">
+            <th style="padding:10px 14px;font-size:11px;font-weight:700;color:#6b7280;text-align:left;">পণ্য</th>
+            <th style="padding:10px 14px;font-size:11px;font-weight:700;color:#6b7280;text-align:center;">পরিমাণ</th>
+            <th style="padding:10px 14px;font-size:11px;font-weight:700;color:#6b7280;text-align:right;">মোট</th>
+          </tr>
+        </thead>
+        <tbody>${itemsHtml}</tbody>
+      </table>
+    </div>
+
+    <!-- Total -->
+    <div style="padding:16px 28px 0;">
+      <div style="background:linear-gradient(135deg,hsl(258,78%,97%),hsl(200,90%,97%));border-radius:12px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          ${order.discount_amount > 0 ? `<p style="margin:0 0 4px;font-size:12px;color:#6b7280;">সাবটোটাল: ৳${order.subtotal} | ছাড়: -৳${order.discount_amount}</p>` : ''}
+          <p style="margin:0;font-size:12px;color:#6b7280;">পেমেন্ট স্ট্যাটাস: <strong style="color:${order.payment_status === 'paid' ? '#059669' : '#d97706'};">${order.payment_status === 'paid' ? '✅ পেইড' : '⏳ পেন্ডিং'}</strong></p>
+        </div>
+        <div style="text-align:right;">
+          <p style="margin:0;font-size:11px;color:#9ca3af;">সর্বমোট</p>
+          <p style="margin:4px 0 0;font-size:22px;font-weight:900;color:hsl(258,78%,50%);">৳${order.total}</p>
+        </div>
+      </div>
+    </div>
+
+    ${order.notes ? `
+    <div style="padding:12px 28px 0;">
+      <div style="background:#fffbeb;border-left:3px solid #f59e0b;padding:10px 14px;border-radius:0 8px 8px 0;">
+        <p style="margin:0;font-size:12px;color:#92400e;"><strong>📌 গ্রাহকের নোট:</strong> ${order.notes}</p>
+      </div>
+    </div>` : ''}
+
+    <!-- CTA -->
+    <div style="padding:20px 28px 28px;text-align:center;">
+      <a href="${SITE_URL}/admin/orders"
+        style="display:inline-block;background:${BRAND_GRADIENT};color:#fff;font-size:14px;font-weight:700;border-radius:12px;padding:13px 28px;text-decoration:none;">
+        🔍 অ্যাডমিন প্যানেলে দেখুন →
+      </a>
+      <p style="margin:12px 0 0;font-size:11px;color:#c4c4c4;">এই নোটিফিকেশনটি ${adminCount} জন অ্যাডমিনকে পাঠানো হয়েছে।</p>
+    </div>
+
+    <div style="background:#f9f9fc;border-top:1px solid #f0f0f5;padding:16px 28px;text-align:center;">
+      <p style="margin:0;font-size:11px;color:#9ca3af;">${SITE_NAME} Admin Notification — স্বয়ংক্রিয় বার্তা</p>
+    </div>
+  </div>
+</body>
+</html>`
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -265,6 +379,84 @@ Deno.serve(async (req) => {
       }
 
       return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
+    // ── ADMIN NEW ORDER NOTIFY ──────────────────────────────────────
+    if (type === 'admin_notify') {
+      const { data: order } = await supabaseAdmin
+        .from('orders').select('*').eq('id', orderId).single()
+      if (!order) throw new Error('Order not found')
+
+      const { data: items } = await supabaseAdmin
+        .from('order_items').select('*').eq('order_id', orderId)
+
+      // Get all admin emails from user_roles + profiles
+      const { data: adminRoles } = await supabaseAdmin
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'admin')
+
+      const adminUserIds = adminRoles?.map(r => r.user_id) || []
+
+      let adminEmails: string[] = []
+      if (adminUserIds.length > 0) {
+        const { data: adminProfiles } = await supabaseAdmin
+          .from('profiles')
+          .select('email')
+          .in('user_id', adminUserIds)
+          .not('email', 'is', null)
+        adminEmails = adminProfiles?.map(p => p.email).filter(Boolean) || []
+      }
+
+      // Also add ADMIN_EMAIL secret & site_settings admin_email as fallback
+      const secretAdminEmail = Deno.env.get('ADMIN_EMAIL')
+      if (secretAdminEmail && !adminEmails.includes(secretAdminEmail)) {
+        adminEmails.push(secretAdminEmail)
+      }
+
+      // Also check site_settings for admin_email
+      const { data: settingRow } = await supabaseAdmin
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'admin_email')
+        .maybeSingle()
+      if (settingRow?.value && !adminEmails.includes(settingRow.value)) {
+        adminEmails.push(settingRow.value)
+      }
+
+      // Deduplicate
+      adminEmails = [...new Set(adminEmails.filter(Boolean))]
+
+      if (adminEmails.length === 0) {
+        return new Response(JSON.stringify({ success: false, error: 'No admin emails found' }), {
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
+
+      const html = buildAdminOrderHtml(order, items || [], adminEmails.length)
+      const subject = `🛒 নতুন অর্ডার #${order.order_number} — ${order.customer_name} — ৳${order.total}`
+
+      // Send to all admins
+      const results = await Promise.allSettled(
+        adminEmails.map(email =>
+          fetch('https://api.lovable.dev/v1/email/send', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
+              to: email,
+              subject,
+              html,
+            }),
+          })
+        )
+      )
+
+      const sent = results.filter(r => r.status === 'fulfilled').length
+
+      return new Response(JSON.stringify({ success: true, sent, total: adminEmails.length, adminEmails }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
     }
 
     // ── PROMO BULK EMAIL ────────────────────────────────────────────
