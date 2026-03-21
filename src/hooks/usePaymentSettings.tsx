@@ -127,7 +127,7 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
   {
     id: 'bank_transfer',
     label: 'Bank Transfer',
-    number: '',
+    number: '1351100467666',
     type: 'Bank Transfer',
     logoUrl: '',
     accentColor: 'hsl(214,80%,48%)',
@@ -136,7 +136,6 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
     accountName: 'Shahed Store',
     branchName: 'Rajshahi',
     routingNumber: '090811933',
-    number: '1351100467666',
     steps: [
       'আপনার ব্যাংক অ্যাপ বা ব্রাঞ্চে যান',
       'উপরের অ্যাকাউন্ট নম্বরে টাকা ট্রান্সফার করুন',
