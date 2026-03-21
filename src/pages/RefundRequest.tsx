@@ -461,16 +461,67 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                     <input type="number" min="0" value={form.payment_amount} onChange={e => set('payment_amount', e.target.value)}
                       placeholder="যেমন: 499" className={inputCls} />
                   </div>
+                  {/* Auto-calc: purchase date */}
                   <div>
-                    <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>কতদিন ব্যবহার হয়েছে</label>
-                    <input value={form.days_used} onChange={e => set('days_used', e.target.value)}
-                      placeholder="যেমন: ৫ দিন" className={inputCls} maxLength={50} />
+                    <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>কেনার তারিখ</label>
+                    <input type="date" value={form.purchase_date} onChange={e => set('purchase_date', e.target.value)}
+                      max={new Date().toISOString().split('T')[0]}
+                      className={inputCls} />
+                    <p className="text-[11px] mt-1" style={{ color: 'hsl(226,25%,58%)' }}>কেনার তারিখ দিলে হিসাব স্বয়ংক্রিয় হবে</p>
                   </div>
-                  <div>
-                    <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>কতদিন বাকি আছে</label>
-                    <input value={form.days_remaining} onChange={e => set('days_remaining', e.target.value)}
-                      placeholder="যেমন: ২৫ দিন" className={inputCls} maxLength={50} />
-                  </div>
+                  {/* Auto-calculated display */}
+                  {calc && (
+                    <div className="sm:col-span-2 rounded-2xl p-4 space-y-3"
+                      style={{ background: `linear-gradient(135deg, ${A}08, ${B}06)`, border: `1.5px solid ${A}25` }}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Calculator size={14} style={{ color: A }} />
+                        <p className="text-[12px] font-black uppercase tracking-widest" style={{ color: A }}>
+                          স্বয়ংক্রিয় হিসাব
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {calc.totalDays != null && (
+                          <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.8)' }}>
+                            <p className="font-black text-lg" style={{ color: A }}>{calc.totalDays}</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'hsl(226,25%,52%)' }}>মোট মেয়াদ (দিন)</p>
+                          </div>
+                        )}
+                        <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.8)' }}>
+                          <p className="font-black text-lg" style={{ color: 'hsl(0,72%,43%)' }}>{calc.daysUsed}</p>
+                          <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'hsl(226,25%,52%)' }}>ব্যবহৃত দিন</p>
+                        </div>
+                        {calc.daysRemaining != null && (
+                          <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.8)' }}>
+                            <p className="font-black text-lg" style={{ color: 'hsl(142,72%,38%)' }}>{calc.daysRemaining}</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'hsl(226,25%,52%)' }}>বাকি দিন</p>
+                          </div>
+                        )}
+                        {calc.unusedPercent != null && (
+                          <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.8)' }}>
+                            <p className="font-black text-lg" style={{ color: 'hsl(38,92%,38%)' }}>{calc.unusedPercent}%</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'hsl(226,25%,52%)' }}>অব্যবহৃত অংশ</p>
+                          </div>
+                        )}
+                      </div>
+                      {/* Refund estimate */}
+                      {form.payment_amount && calc.proportionalRefund != null && (
+                        <div className="mt-2 rounded-xl p-3 flex flex-wrap gap-3 justify-between items-center"
+                          style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(255,255,255,0.9)' }}>
+                          <div>
+                            <p className="text-[11px] font-semibold" style={{ color: 'hsl(226,25%,48%)' }}>সমানুপাতিক রিফান্ড (অব্যবহৃত অংশ)</p>
+                            <p className="font-black text-[17px]" style={{ color: 'hsl(226,35%,18%)' }}>৳{calc.proportionalRefund}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[11px] font-semibold" style={{ color: 'hsl(226,25%,48%)' }}>১০% চার্জ বাদ দিয়ে চূড়ান্ত</p>
+                            <p className="font-black text-[20px]" style={{ color: A }}>৳{calc.refundAfter10}</p>
+                          </div>
+                        </div>
+                      )}
+                      {!form.payment_amount && (
+                        <p className="text-[11px]" style={{ color: 'hsl(226,25%,55%)' }}>💡 পেমেন্টের পরিমাণ দিলে সম্ভাব্য রিফান্ডের হিসাব দেখাবে</p>
+                      )}
+                    </div>
+                  )}
                   <div>
                     <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>পেমেন্ট মাধ্যম</label>
                     <select value={form.payment_method} onChange={e => set('payment_method', e.target.value)} className={inputCls}>
