@@ -16,11 +16,11 @@ const NAV_LINKS = [
 ];
 
 const CATEGORY_DROPDOWN = [
-  { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(258,78%,55%,0.10)' },
-  { icon: '🎨', label: 'Adobe',            count: 6,  color: 'hsla(258,78%,55%,0.10)' },
-  { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(162,72%,38%,0.10)' },
-  { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(330,85%,55%,0.10)' },
-  { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(200,90%,45%,0.10)' },
+  { icon: '🛒', label: 'All Products',     count: 0,  color: 'hsla(243,75%,62%,0.10)', href: '/shop' },
+  { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(258,78%,55%,0.10)', href: '/shop?category=microsoft-office' },
+  { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(162,72%,38%,0.10)', href: '/shop?category=antivirus' },
+  { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(330,85%,55%,0.10)', href: '/shop?category=streaming' },
+  { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(200,90%,45%,0.10)', href: '/shop?category=vpn' },
 ];
 
 const Navbar = () => {
