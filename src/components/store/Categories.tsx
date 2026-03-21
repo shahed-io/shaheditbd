@@ -141,12 +141,15 @@ const Categories = () => {
                 <div className="absolute inset-0 rounded-[1.5rem] pointer-events-none transition-opacity duration-300"
                   style={{ background: `radial-gradient(ellipse at 30% 30%, ${meta.glow}, transparent 60%)`, opacity: isHov ? 1 : 0 }} />
 
-                <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon"
+                <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center text-3xl cat-icon overflow-hidden"
                   style={{
                     background: `linear-gradient(135deg, ${meta.glow}, transparent)`,
                     border: `1px solid ${meta.accent}35`,
                   }}>
-                  {meta.icon}
+                  {cat.image_url
+                    ? <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover" />
+                    : meta.icon
+                  }
                 </div>
 
                 <div className="relative">
