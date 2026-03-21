@@ -262,14 +262,14 @@ const Testimonials = () => {
           </div>
 
           <h2 className="font-sora font-black text-3xl sm:text-4xl mb-3" style={{ color: 'hsl(226,35%,13%)' }}>
-            হাজারো{' '}
+            Thousands of{' '}
             <span style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              সন্তুষ্ট
+              Happy
             </span>{' '}
-            গ্রাহক
+            Customers
           </h2>
           <p className="text-sm sm:text-base max-w-lg mx-auto" style={{ color: 'hsl(226,20%,46%)' }}>
-            সারা বাংলাদেশ থেকে গ্রাহকরা আমাদের সার্ভিস নিয়ে যা বলছেন
+            What our customers from across Bangladesh are saying about us
           </p>
 
           {/* Stats */}
