@@ -1700,4 +1700,190 @@ export const t = (lang: LangCode, key: string): string => {
   return translations[lang]?.[key] ?? translations['en']?.[key] ?? key;
 };
 
+// ─── DB Text Translator ──────────────────────────────────────────────────────
+// Translates Bengali database-stored notes/messages into the selected language.
+// Pattern-based approach: match Bengali keywords → map to translation key → t()
+
+const DB_TEXT_PATTERNS: Array<{ pattern: RegExp; key: string }> = [
+  // Points transactions (note field)
+  { pattern: /অর্ডার সম্পন্ন হওয়ায় পয়েন্ট অর্জিত|অর্জিত.*পয়েন্ট|পয়েন্ট অর্জিত/, key: 'db_points_earned_order' },
+  { pattern: /ওয়ালেটে রিডিম করা হয়েছে|পয়েন্ট রিডিম|রিডিম.*ওয়ালেট/, key: 'db_points_redeemed_wallet' },
+  { pattern: /অর্ডার বাতিল.*পয়েন্ট কেটে|পয়েন্ট কেটে|ক্যান্সেল.*পয়েন্ট/, key: 'db_points_deducted_cancel' },
+  { pattern: /রিফান্ড.*পয়েন্ট|পয়েন্ট রিফান্ড/, key: 'db_points_deducted_refund' },
+
+  // Wallet transactions (note field)
+  { pattern: /অর্ডার পেমেন্ট|অর্ডার.*পেমেন্ট|পেমেন্ট.*অর্ডার/, key: 'db_wallet_order_payment' },
+  { pattern: /টপ.আপ অনুমোদিত|টপ-আপ অ্যাপ্রুভ|ওয়ালেট টপ-আপ/, key: 'db_wallet_topup_approved' },
+  { pattern: /রেফারেল বোনাস|রিওয়ার্ড.*রেফারেল|রেফারেল.*বোনাস|রেফারেল \(পূর্ববর্তী\)|রেফারেল বোনাস/, key: 'db_wallet_referral_bonus' },
+  { pattern: /অ্যাডমিন ক্রেডিট|অ্যাডমিন.*যোগ/, key: 'db_wallet_admin_credit' },
+  { pattern: /পয়েন্ট রিডিম.*ওয়ালেট|পয়েন্ট.*ওয়ালেটে|ওয়ালেটে পয়েন্ট/, key: 'db_wallet_points_redeem' },
+
+  // Notification titles
+  { pattern: /পেমেন্ট রিডিম সফল|রিডিম সফল!/, key: 'db_notif_points_redeemed_title' },
+  { pattern: /পয়েন্ট অর্জিত হেয়েছে!|পয়েন্ট অর্জিত হয়েছে!/, key: 'db_notif_points_earned_title' },
+  { pattern: /অর্ডার স্ট্যাটাস আপডেট/, key: 'db_notif_order_status_title' },
+  { pattern: /ওয়ালেট টপ-আপ রিজেক্ট|Wallet Top-up Rejected/, key: 'db_notif_topup_rejected_title' },
+  { pattern: /ওয়ালেট টপ-আপ অনুমোদিত|Wallet Top-up Approved/, key: 'db_notif_topup_approved_title' },
+  { pattern: /অর্ডার কনফার্ম|অর্ডার.*নিশ্চিত/, key: 'db_notif_order_confirmed_title' },
+  { pattern: /রিফান্ড প্রক্রিয়া|রিফান্ড.*শুরু/, key: 'db_notif_refund_processed_title' },
+
+  // Notification messages (body text)
+  { pattern: /পয়েন্ট রিডিম করে.*ওয়ালেটে যোগ হয়েছে|রিডিম করে.*ওয়ালেটে/, key: 'db_notif_msg_points_redeemed' },
+  { pattern: /পয়েন্ট আপনার আকাউন্টে যোগ হয়েছে|পয়েন্ট.*আকাউন্টে যোগ|সম্পন্ন হওয়ায়.*পয়েন্ট/, key: 'db_notif_msg_points_earned' },
+  { pattern: /স্ট্যাটাস.*সম্পন্ন|স্ট্যাটাস.*হয়েছে/, key: 'db_notif_msg_order_status' },
+  { pattern: /টপ-আপ রিকোয়েস্ট.*প্রত্যাখ্যান|টপ-আপ.*রিজেক্ট|was rejected/, key: 'db_notif_msg_topup_rejected' },
+  { pattern: /ওয়ালেটে যোগ করা হয়েছে|ব্যালেন্সে যোগ|has been added to your wallet/, key: 'db_notif_msg_topup_approved' },
+];
+
+// DB text translation keys added to English translations
+const dbTextEn: Record<string, string> = {
+  db_points_earned_order: 'Points earned from completed order',
+  db_points_redeemed_wallet: 'Points redeemed to wallet',
+  db_points_deducted_cancel: 'Points deducted (order cancelled)',
+  db_points_deducted_refund: 'Points deducted (order refunded)',
+  db_wallet_order_payment: 'Order payment',
+  db_wallet_topup_approved: 'Wallet top-up approved',
+  db_wallet_referral_bonus: 'Referral bonus',
+  db_wallet_refund: 'Order refund',
+  db_wallet_admin_credit: 'Admin credit',
+  db_wallet_points_redeem: 'Points redeemed to wallet',
+  // Notification titles
+  db_notif_points_redeemed_title: '🔥 Points Redeemed!',
+  db_notif_points_earned_title: '⭐ Points Earned!',
+  db_notif_order_status_title: '📦 Order Status Update',
+  db_notif_topup_rejected_title: 'Wallet Top-up Rejected ❌',
+  db_notif_topup_approved_title: 'Wallet Top-up Approved ✅',
+  db_notif_order_confirmed_title: '✅ Order Confirmed',
+  db_notif_refund_processed_title: '💸 Refund Processed',
+  // Notification messages
+  db_notif_msg_points_redeemed: 'Your points have been redeemed to your wallet.',
+  db_notif_msg_points_earned: 'Points have been added to your account from your completed order.',
+  db_notif_msg_order_status: 'Your order status has been updated.',
+  db_notif_msg_topup_rejected: 'Your top-up request was rejected.',
+  db_notif_msg_topup_approved: 'Your wallet has been topped up successfully.',
+};
+
+const dbTextBn: Record<string, string> = {
+  db_points_earned_order: 'অর্ডার সম্পন্ন হওয়ায় পয়েন্ট অর্জিত',
+  db_points_redeemed_wallet: 'পয়েন্ট রিডিম → ওয়ালেটে যোগ',
+  db_points_deducted_cancel: 'অর্ডার বাতিলে পয়েন্ট কেটে নেওয়া',
+  db_points_deducted_refund: 'অর্ডার রিফান্ডে পয়েন্ট কেটে নেওয়া',
+  db_wallet_order_payment: 'অর্ডার পেমেন্ট',
+  db_wallet_topup_approved: 'ওয়ালেট টপ-আপ অনুমোদিত',
+  db_wallet_referral_bonus: 'রেফারেল বোনাস',
+  db_wallet_refund: 'অর্ডার রিফান্ড',
+  db_wallet_admin_credit: 'অ্যাডমিন ক্রেডিট',
+  db_wallet_points_redeem: 'পয়েন্ট রিডিম → ওয়ালেটে',
+  db_notif_points_redeemed_title: '🔥 পেমেন্ট রিডিম সফল!',
+  db_notif_points_earned_title: '⭐ পয়েন্ট অর্জিত হয়েছে!',
+  db_notif_order_status_title: '📦 অর্ডার স্ট্যাটাস আপডেট',
+  db_notif_topup_rejected_title: 'ওয়ালেট টপ-আপ রিজেক্ট ❌',
+  db_notif_topup_approved_title: 'ওয়ালেট টপ-আপ অনুমোদিত ✅',
+  db_notif_order_confirmed_title: '✅ অর্ডার কনফার্ম',
+  db_notif_refund_processed_title: '💸 রিফান্ড প্রক্রিয়া',
+  db_notif_msg_points_redeemed: 'আপনার পয়েন্ট ওয়ালেটে রিডিম হয়েছে।',
+  db_notif_msg_points_earned: 'সম্পন্ন অর্ডার থেকে পয়েন্ট আপনার অ্যাকাউন্টে যোগ হয়েছে।',
+  db_notif_msg_order_status: 'আপনার অর্ডারের স্ট্যাটাস আপডেট হয়েছে।',
+  db_notif_msg_topup_rejected: 'আপনার টপ-আপ রিকোয়েস্ট প্রত্যাখ্যান করা হয়েছে।',
+  db_notif_msg_topup_approved: 'আপনার ওয়ালেটে সফলভাবে টপ-আপ হয়েছে।',
+};
+
+const LANG_DB_TEXTS: Partial<Record<LangCode, Record<string, string>>> = {
+  en: dbTextEn,
+  bn: dbTextBn,
+  ar: {
+    db_points_earned_order: 'نقاط مكتسبة من الطلب المكتمل',
+    db_points_redeemed_wallet: 'تم استبدال النقاط بالمحفظة',
+    db_points_deducted_cancel: 'نقاط مخصومة (إلغاء الطلب)',
+    db_points_deducted_refund: 'نقاط مخصومة (استرداد الطلب)',
+    db_wallet_order_payment: 'دفع الطلب',
+    db_wallet_topup_approved: 'تم الموافقة على شحن المحفظة',
+    db_wallet_referral_bonus: 'مكافأة الإحالة',
+    db_wallet_refund: 'استرداد الطلب',
+    db_wallet_admin_credit: 'رصيد من المشرف',
+    db_wallet_points_redeem: 'نقاط مستبدلة بالمحفظة',
+    db_notif_points_redeemed: '🔥 تم استبدال النقاط!',
+    db_notif_points_earned: '⭐ تم كسب النقاط!',
+    db_notif_order_status: '📦 تحديث حالة الطلب',
+    db_notif_topup_rejected: 'رفض شحن المحفظة ❌',
+    db_notif_topup_approved: 'الموافقة على شحن المحفظة ✅',
+    db_notif_order_confirmed: '✅ تأكيد الطلب',
+    db_notif_refund_processed: '💸 معالجة الاسترداد',
+  },
+  hi: {
+    db_points_earned_order: 'पूर्ण ऑर्डर से अंक अर्जित',
+    db_points_redeemed_wallet: 'अंक वॉलेट में रिडीम किए',
+    db_points_deducted_cancel: 'अंक काटे गए (ऑर्डर रद्द)',
+    db_points_deducted_refund: 'अंक काटे गए (ऑर्डर रिफंड)',
+    db_wallet_order_payment: 'ऑर्डर भुगतान',
+    db_wallet_topup_approved: 'वॉलेट टॉप-अप स्वीकृत',
+    db_wallet_referral_bonus: 'रेफ़रल बोनस',
+    db_wallet_refund: 'ऑर्डर रिफंड',
+    db_wallet_admin_credit: 'एडमिन क्रेडिट',
+    db_wallet_points_redeem: 'अंक वॉलेट में रिडीम',
+    db_notif_points_redeemed: '🔥 अंक रिडीम हुए!',
+    db_notif_points_earned: '⭐ अंक अर्जित हुए!',
+    db_notif_order_status: '📦 ऑर्डर स्थिति अपडेट',
+    db_notif_topup_rejected: 'वॉलेट टॉप-अप अस्वीकृत ❌',
+    db_notif_topup_approved: 'वॉलेट टॉप-अप स्वीकृत ✅',
+    db_notif_order_confirmed: '✅ ऑर्डर कन्फर्म',
+    db_notif_refund_processed: '💸 रिफंड प्रोसेस',
+  },
+};
+
+/**
+ * Translates Bengali database-stored text into the selected language.
+ * Falls back to the original text if no pattern matches.
+ */
+export const translateDbText = (text: string, lang: LangCode): string => {
+  if (!text) return text;
+  // If already in English (no Bengali chars), return as-is
+  const hasBengali = /[\u0980-\u09FF]/.test(text);
+  if (!hasBengali) return text;
+
+  // Try to find a matching pattern
+  for (const { pattern, key } of DB_TEXT_PATTERNS) {
+    if (pattern.test(text)) {
+      const langMap = LANG_DB_TEXTS[lang];
+      if (langMap?.[key]) return langMap[key];
+      // Fall back to English
+      return dbTextEn[key] ?? text;
+    }
+  }
+
+  // No pattern matched — extract order number if present and return generic
+  const orderMatch = text.match(/ORD-[A-Z0-9]+/);
+  if (orderMatch) {
+    const orderNum = orderMatch[0];
+    if (/পেমেন্ট/.test(text)) {
+      const base = LANG_DB_TEXTS[lang]?.db_wallet_order_payment ?? dbTextEn.db_wallet_order_payment;
+      return `${base} — ${orderNum}`;
+    }
+    if (/পয়েন্ট/.test(text)) {
+      const base = LANG_DB_TEXTS[lang]?.db_points_earned_order ?? dbTextEn.db_points_earned_order;
+      return `${base} — ${orderNum}`;
+    }
+    if (/স্ট্যাটাস|আপডেট/.test(text)) {
+      const base = LANG_DB_TEXTS[lang]?.db_notif_order_status ?? dbTextEn.db_notif_order_status;
+      return `${base} — ${orderNum}`;
+    }
+  }
+
+  // Last resort: return original
+  return text;
+};
+
+/**
+ * Returns a locale string for date formatting based on selected language.
+ */
+export const getLangLocale = (lang: LangCode): string => {
+  const localeMap: Record<LangCode, string> = {
+    en: 'en-US', bn: 'bn-BD', ar: 'ar-SA', zh: 'zh-CN',
+    hi: 'hi-IN', es: 'es-ES', fr: 'fr-FR', pt: 'pt-BR',
+    ru: 'ru-RU', tr: 'tr-TR', ur: 'ur-PK', id: 'id-ID',
+  };
+  return localeMap[lang] ?? 'en-US';
+};
+
 export default translations;
+
