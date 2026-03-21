@@ -46,6 +46,23 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  const { configs: paymentConfigs } = usePaymentSettings();
+
+  // Build dynamic payment methods from DB config
+  const paymentMethods = [
+    { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', number: '', type: 'Wallet Balance', logo: undefined as string | undefined },
+    ...paymentConfigs
+      .filter(c => c.isActive)
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map(c => ({
+        id: c.id as PaymentMethod,
+        label: c.label,
+        color: 'from-gray-600 to-gray-700',
+        number: c.number,
+        type: c.type,
+        logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
+      })),
+  ];
 
   // Filter payment methods: guests can't use wallet
   const availablePaymentMethods = paymentMethods.filter(pm => pm.id !== 'wallet' || !!user);
