@@ -1,126 +1,36 @@
 import { useState } from 'react';
-import { Copy, CheckCheck, AlertCircle, Smartphone, CreditCard, Store } from 'lucide-react';
+import { Copy, CheckCheck, AlertCircle, Smartphone } from 'lucide-react';
+import { usePaymentSettings } from '@/hooks/usePaymentSettings';
+
+// Fallback asset logos (when DB logoUrl is empty)
 import bkashLogo from '@/assets/payment/bkash.png';
 import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
 
-type PMId = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant';
-
-interface PMConfig {
-  id: PMId;
-  label: string;
-  number: string;
-  type: 'Send Money' | 'Merchant Payment';
-  logo: string;
-  accentColor: string;
-  bgColor: string;
-  steps: string[];
-  warning?: string;
-}
-
-const PM_CONFIGS: Record<PMId, PMConfig> = {
-  bkash: {
-    id: 'bkash',
-    label: 'bKash',
-    number: '01820060046',
-    type: 'Send Money',
-    logo: bkashLogo,
-    accentColor: 'hsl(338,90%,48%)',
-    bgColor: 'hsla(338,90%,48%,0.07)',
-    steps: [
-      'আপনার bKash অ্যাপ বা *247# ডায়াল করুন',
-      '"Send Money" অপশনটি সিলেক্ট করুন',
-      'নম্বর বক্সে উপরের নম্বরটি পেস্ট করুন',
-      'পরিমাণ লিখুন ও PIN দিয়ে কনফার্ম করুন',
-      'Transaction ID (TrxID) কপি করুন',
-      'নিচের বক্সে TrxID পেস্ট করে অর্ডার সম্পন্ন করুন',
-    ],
-    warning: 'বিঃদ্রঃ অবশ্যই "Send Money" করবেন, "Payment" নয়।',
-  },
-  nagad: {
-    id: 'nagad',
-    label: 'Nagad',
-    number: '01840099853',
-    type: 'Send Money',
-    logo: nagadLogo,
-    accentColor: 'hsl(22,100%,48%)',
-    bgColor: 'hsla(22,100%,48%,0.07)',
-    steps: [
-      'আপনার নগদ অ্যাপ বা *167# ডায়াল করুন',
-      '"Send Money" অপশনটি সিলেক্ট করুন',
-      'নম্বর বক্সে উপরের নম্বরটি পেস্ট করুন',
-      'পরিমাণ লিখুন ও PIN দিয়ে কনফার্ম করুন',
-      'Transaction ID কপি করুন',
-      'নিচের বক্সে TrxID পেস্ট করে অর্ডার সম্পন্ন করুন',
-    ],
-  },
-  rocket: {
-    id: 'rocket',
-    label: 'Rocket',
-    number: '01840099853',
-    type: 'Send Money',
-    logo: rocketLogo,
-    accentColor: 'hsl(270,80%,48%)',
-    bgColor: 'hsla(270,80%,48%,0.07)',
-    steps: [
-      'আপনার Rocket অ্যাপ বা *322# ডায়াল করুন',
-      '"Send Money" অপশনটি সিলেক্ট করুন',
-      'নম্বর বক্সে উপরের নম্বরটি পেস্ট করুন',
-      'পরিমাণ লিখুন ও PIN দিয়ে কনফার্ম করুন',
-      'Transaction ID কপি করুন',
-      'নিচের বক্সে TrxID পেস্ট করে অর্ডার সম্পন্ন করুন',
-    ],
-    warning: 'Rocket নম্বরের শেষে একটি অতিরিক্ত ডিজিট থাকতে পারে।',
-  },
-  upay: {
-    id: 'upay',
-    label: 'উপায় (Upay)',
-    number: '01840099853',
-    type: 'Send Money',
-    logo: upayLogo,
-    accentColor: 'hsl(142,70%,38%)',
-    bgColor: 'hsla(142,70%,38%,0.07)',
-    steps: [
-      'আপনার Upay অ্যাপ ওপেন করুন',
-      '"Send Money" অপশনটি সিলেক্ট করুন',
-      'নম্বর বক্সে উপরের নম্বরটি পেস্ট করুন',
-      'পরিমাণ লিখুন ও PIN দিয়ে কনফার্ম করুন',
-      'Transaction ID কপি করুন',
-      'নিচের বক্সে TrxID পেস্ট করে অর্ডার সম্পন্ন করুন',
-    ],
-  },
-  bkash_merchant: {
-    id: 'bkash_merchant',
-    label: 'bKash Merchant',
-    number: '01840099853',
-    type: 'Merchant Payment',
-    logo: bkashMerchantLogo,
-    accentColor: 'hsl(338,85%,42%)',
-    bgColor: 'hsla(338,85%,42%,0.07)',
-    steps: [
-      'আপনার bKash অ্যাপ বা *247# ডায়াল করুন',
-      '"Payment" অপশনটি সিলেক্ট করুন',
-      'Merchant নম্বর বক্সে উপরের নম্বরটি পেস্ট করুন',
-      'পরিমাণ লিখুন ও PIN দিয়ে কনফার্ম করুন',
-      'Transaction ID (TrxID) কপি করুন',
-      'নিচের বক্সে TrxID পেস্ট করে অর্ডার সম্পন্ন করুন',
-    ],
-    warning: 'Merchant Payment-এ কোনো চার্জ নেই — আপনি যা পাঠাবেন তাই পাবেন।',
-  },
+const ASSET_LOGOS: Record<string, string> = {
+  bkash: bkashLogo,
+  nagad: nagadLogo,
+  rocket: rocketLogo,
+  upay: upayLogo,
+  bkash_merchant: bkashMerchantLogo,
 };
 
 interface Props {
-  paymentMethodId: PMId;
+  paymentMethodId: string;
   amount: number;
-  /** label shown for the amount, e.g. "মোট পরিমাণ" */
   amountLabel?: string;
 }
 
 const PaymentInstructions = ({ paymentMethodId, amount, amountLabel = 'মোট পরিমাণ' }: Props) => {
-  const cfg = PM_CONFIGS[paymentMethodId];
+  const { configs } = usePaymentSettings();
   const [copied, setCopied] = useState(false);
+
+  const cfg = configs.find(c => c.id === paymentMethodId);
+  if (!cfg) return null;
+
+  const logoSrc = cfg.logoUrl || ASSET_LOGOS[cfg.id] || '';
 
   const copyNumber = () => {
     navigator.clipboard.writeText(cfg.number).then(() => {
@@ -137,12 +47,15 @@ const PaymentInstructions = ({ paymentMethodId, amount, amountLabel = 'মোট
         background: cfg.bgColor,
       }}
     >
-      {/* ── Header strip ── */}
+      {/* Header strip */}
       <div
         className="flex items-center gap-3 px-4 py-3 border-b"
         style={{ borderColor: `${cfg.accentColor}25`, background: `${cfg.accentColor}12` }}
       >
-        <img src={cfg.logo} alt={cfg.label} className="h-8 w-auto object-contain rounded-md" />
+        {logoSrc
+          ? <img src={logoSrc} alt={cfg.label} className="h-8 w-auto object-contain rounded-md" />
+          : <div className="h-8 w-8 rounded-md flex items-center justify-center text-white text-xs font-bold" style={{ background: cfg.accentColor }}>{cfg.label.charAt(0)}</div>
+        }
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-foreground">{cfg.label}</p>
           <p className="text-[11px] text-muted-foreground font-medium">{cfg.type}</p>
@@ -157,8 +70,7 @@ const PaymentInstructions = ({ paymentMethodId, amount, amountLabel = 'মোট
       </div>
 
       <div className="px-4 py-4 space-y-4">
-
-        {/* ── Copyable Number ── */}
+        {/* Copyable Number */}
         <div className="text-center space-y-2">
           <p className="text-[11px] text-muted-foreground font-semibold tracking-widest uppercase">
             {cfg.type === 'Merchant Payment' ? 'Merchant নম্বর' : 'Send Money নম্বর'}
@@ -185,17 +97,13 @@ const PaymentInstructions = ({ paymentMethodId, amount, amountLabel = 'মোট
                 color: 'white',
               }}
             >
-              {copied ? (
-                <><CheckCheck size={13} /> কপি হয়েছে!</>
-              ) : (
-                <><Copy size={13} /> কপি করুন</>
-              )}
+              {copied ? <><CheckCheck size={13} /> কপি হয়েছে!</> : <><Copy size={13} /> কপি করুন</>}
             </span>
           </button>
           <p className="text-[11px] text-muted-foreground">👆 নম্বরে ক্লিক করলেই কপি হবে</p>
         </div>
 
-        {/* ── Steps ── */}
+        {/* Steps */}
         <div
           className="rounded-xl p-4 space-y-2.5"
           style={{ background: 'hsla(0,0%,100%,0.65)', border: `1px solid ${cfg.accentColor}20` }}
@@ -219,7 +127,7 @@ const PaymentInstructions = ({ paymentMethodId, amount, amountLabel = 'মোট
           ))}
         </div>
 
-        {/* ── Warning ── */}
+        {/* Warning */}
         {cfg.warning && (
           <div
             className="flex items-start gap-2 rounded-xl px-3 py-2.5"
@@ -237,4 +145,6 @@ const PaymentInstructions = ({ paymentMethodId, amount, amountLabel = 'মোট
 };
 
 export default PaymentInstructions;
-export type { PMId };
+export type { Props as PaymentInstructionsProps };
+// Backward-compat type alias
+export type PMId = string;
