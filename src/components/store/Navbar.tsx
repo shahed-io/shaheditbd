@@ -209,18 +209,36 @@ const Navbar = () => {
             </button>
 
             {/* Desktop Links */}
-            <div className="hidden lg:flex items-center gap-0.5">
-              {NAV_LINKS.map(link => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="flex items-center px-3.5 py-2 rounded-xl transition-all font-semibold text-sm"
-                  style={{ color: 'hsl(226,35%,30%)' }}
-                  onMouseEnter={e => { e.currentTarget.style.color = 'hsl(258,78%,50%)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = 'hsl(226,35%,30%)'; e.currentTarget.style.background = ''; }}>
-                  {link.label}
-                </a>
-              ))}
+            <div className="hidden lg:flex items-center gap-1 p-1 rounded-2xl"
+              style={{ background: 'hsla(226,35%,96%,0.80)', border: '1.5px solid hsla(226,35%,88%,0.70)' }}>
+              {NAV_LINKS.map(link => {
+                const isActive = typeof window !== 'undefined' && window.location.pathname === link.href;
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="relative flex items-center px-4 py-1.5 rounded-xl transition-all duration-200 font-semibold text-sm whitespace-nowrap"
+                    style={{
+                      color: isActive ? 'hsl(258,78%,50%)' : 'hsl(226,35%,35%)',
+                      background: isActive ? 'hsl(0,0%,100%)' : 'transparent',
+                      boxShadow: isActive ? '0 2px 8px hsla(226,35%,20%,0.10)' : 'none',
+                    }}
+                    onMouseEnter={e => {
+                      if (!isActive) {
+                        e.currentTarget.style.color = 'hsl(258,78%,50%)';
+                        e.currentTarget.style.background = 'hsla(0,0%,100%,0.70)';
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      if (!isActive) {
+                        e.currentTarget.style.color = 'hsl(226,35%,35%)';
+                        e.currentTarget.style.background = 'transparent';
+                      }
+                    }}>
+                    {link.label}
+                  </a>
+                );
+              })}
             </div>
 
             {/* Actions */}
