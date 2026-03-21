@@ -51,19 +51,12 @@ interface PaymentOption {
   isWallet?: boolean;
 }
 
-const MFS_METHODS: PaymentOption[] = [
-  { id: 'bkash',          label: 'bKash',         color: 'from-pink-600 to-pink-700',    logo: bkashLogo },
-  { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600',logo: nagadLogo },
-  { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700',logo: rocketLogo },
-  { id: 'upay',           label: 'উপায়',           color: 'from-green-600 to-green-700',  logo: upayLogo },
-  { id: 'bkash_merchant', label: 'bKash Merchant', color: 'from-pink-700 to-rose-700',    logo: bkashMerchantLogo },
-];
-
 const inputClass = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all";
 
 const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { configs: paymentConfigs } = usePaymentSettings();
 
   const [step, setStep] = useState<'info' | 'payment' | 'success'>('info');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
