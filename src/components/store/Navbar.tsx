@@ -49,6 +49,8 @@ const Navbar = () => {
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
 
+  const [imgVersion, setImgVersion] = useState(() => Date.now());
+
   const loadNavCategories = async () => {
     const { data: categories } = await supabase
       .from('categories')
@@ -68,6 +70,7 @@ const Navbar = () => {
         }))
         .filter(c => c.count > 0 && !HIDDEN.includes(c.name))
     );
+    setImgVersion(Date.now()); // bust browser cache on every reload
   };
 
   useEffect(() => {
