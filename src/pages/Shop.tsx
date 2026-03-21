@@ -226,16 +226,24 @@ const Shop = () => {
                 const isActive = activeCatSlug === cat.slug;
                 return (
                   <button key={cat.id} onClick={() => setCategory(cat.slug)}
-                    className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold mb-1 transition-all text-left"
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold mb-1 transition-all text-left"
                     style={{
                       background: isActive ? `${meta.accent}18` : 'transparent',
                       color: isActive ? meta.accent : 'hsl(var(--muted-foreground))',
                       border: isActive ? `1px solid ${meta.accent}40` : '1px solid transparent',
                     }}>
-                    {cat.image_url
-                      ? <img src={cat.image_url} alt={cat.name} className="w-5 h-5 rounded object-cover flex-shrink-0" />
-                      : <span className="flex-shrink-0">{meta.icon}</span>
-                    }
+                    <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden text-lg"
+                      style={{ background: isActive ? `${meta.accent}18` : 'hsla(258,78%,55%,0.06)' }}>
+                      {cat.image_url
+                        ? <img
+                            src={`${cat.image_url}?t=${Date.now()}`}
+                            alt={cat.name}
+                            className="w-full h-full object-cover"
+                            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; (e.currentTarget.parentElement as HTMLElement).textContent = meta.icon; }}
+                          />
+                        : meta.icon
+                      }
+                    </span>
                     <span>{cat.name}</span>
                   </button>
                 );
