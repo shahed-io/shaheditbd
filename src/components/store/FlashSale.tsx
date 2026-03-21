@@ -143,11 +143,11 @@ const FlashSale = () => {
                 <div key={i} className="flex items-center gap-3">
                   <div className="flex flex-col items-center justify-center w-[68px] h-[68px] rounded-[18px]"
                     style={{
-                      background: 'hsl(220,18%,28%)',
-                      boxShadow: '0 4px 18px rgba(0,0,0,0.35), inset 0 1px 0 hsla(255,100%,100%,0.07)',
+                      background: 'linear-gradient(145deg, hsl(258,78%,38%), hsl(270,80%,28%))',
+                      boxShadow: '0 4px 18px hsla(258,78%,45%,0.45), inset 0 1px 0 hsla(258,100%,85%,0.15)',
                     }}>
                     <span className="text-[1.55rem] font-fira font-black leading-none text-white tabular-nums tracking-tight">{item.v}</span>
-                    <span className="text-[9px] font-bold uppercase tracking-[0.12em] mt-1" style={{ color: 'hsl(220,10%,60%)' }}>{item.l}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-[0.12em] mt-1" style={{ color: 'hsl(258,60%,80%)' }}>{item.l}</span>
                   </div>
                   {i < TIME_UNITS.length - 1 && (
                     <div className="flex flex-col gap-1.5 mb-1">
