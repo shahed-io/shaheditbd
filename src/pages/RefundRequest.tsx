@@ -188,10 +188,14 @@ export default function RefundRequest() {
 ❓ রিফান্ডের কারণ: ${REFUND_REASONS.find(r => r.value === form.reason)?.label || form.reason}
 📝 বিস্তারিত: ${form.reason_detail || 'উল্লেখ নেই'}
 📅 সাবস্ক্রিপশন মেয়াদ: ${SUBSCRIPTION_PERIODS.find(s => s.value === form.subscription_period)?.label || 'উল্লেখ নেই'}
-📆 ব্যবহৃত দিন: ${form.days_used || 'উল্লেখ নেই'}
-📆 বাকি দিন: ${form.days_remaining || 'উল্লেখ নেই'}
+🗓️ কেনার তারিখ: ${form.purchase_date || 'উল্লেখ নেই'}
+📆 মোট মেয়াদ: ${calc?.totalDays != null ? calc.totalDays + ' দিন' : 'উল্লেখ নেই'}
+📆 ব্যবহৃত দিন: ${daysUsedDisplay || 'উল্লেখ নেই'}
+📆 বাকি দিন: ${daysRemainingDisplay || 'উল্লেখ নেই'}
 💳 পেমেন্টের পরিমাণ: ${form.payment_amount ? '৳' + form.payment_amount : 'উল্লেখ নেই'}
 💳 পেমেন্ট মাধ্যম: ${form.payment_method || 'উল্লেখ নেই'}
+${calc?.proportionalRefund != null ? `📊 অব্যবহৃত অংশের রিফান্ড (সমানুপাতিক): ৳${calc.proportionalRefund}` : ''}
+${calc?.refundAfter10 != null ? `✅ ১০% কেটে চূড়ান্ত রিফান্ড: ৳${calc.refundAfter10}` : ''}
 ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে ১০% কেটে ৳${deductedAmount} রিফান্ড হবে।` : ''}
 📌 অতিরিক্ত তথ্য: ${form.additional_info || 'উল্লেখ নেই'}${screenshotLines}
       `.trim();
