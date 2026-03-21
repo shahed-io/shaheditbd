@@ -33,11 +33,11 @@ interface Profile {
 }
 
 const TIERS = [
-  { name: 'bronze',   min: 0,  max: 4,  reward: 50,  label: 'ব্রোঞ্জ',    emoji: '🥉', color: 'hsl(30,60%,55%)',  glow: 'hsla(30,60%,55%,0.3)'  },
-  { name: 'silver',   min: 5,  max: 14, reward: 75,  label: 'সিলভার',     emoji: '🥈', color: 'hsl(220,15%,65%)', glow: 'hsla(220,15%,65%,0.3)' },
-  { name: 'gold',     min: 15, max: 29, reward: 100, label: 'গোল্ড',      emoji: '🥇', color: 'hsl(45,90%,52%)',  glow: 'hsla(45,90%,52%,0.35)' },
-  { name: 'platinum', min: 30, max: 49, reward: 150, label: 'প্লাটিনাম', emoji: '💎', color: 'hsl(185,90%,52%)', glow: 'hsla(185,90%,52%,0.35)' },
-  { name: 'diamond',  min: 50, max: Infinity, reward: 200, label: 'ডায়মন্ড', emoji: '💠', color: 'hsl(271,91%,65%)', glow: 'hsla(271,91%,65%,0.4)' },
+  { name: 'bronze',   min: 0,  max: 4,  reward: 50,  label: 'Bronze',   emoji: '🥉', color: 'hsl(30,60%,55%)',  glow: 'hsla(30,60%,55%,0.3)'  },
+  { name: 'silver',   min: 5,  max: 14, reward: 75,  label: 'Silver',   emoji: '🥈', color: 'hsl(220,15%,65%)', glow: 'hsla(220,15%,65%,0.3)' },
+  { name: 'gold',     min: 15, max: 29, reward: 100, label: 'Gold',     emoji: '🥇', color: 'hsl(45,90%,52%)',  glow: 'hsla(45,90%,52%,0.35)' },
+  { name: 'platinum', min: 30, max: 49, reward: 150, label: 'Platinum', emoji: '💎', color: 'hsl(185,90%,52%)', glow: 'hsla(185,90%,52%,0.35)' },
+  { name: 'diamond',  min: 50, max: Infinity, reward: 200, label: 'Diamond', emoji: '💠', color: 'hsl(271,91%,65%)', glow: 'hsla(271,91%,65%,0.4)' },
 ];
 
 const getCurrentTier = (count: number) => TIERS.find(t => count >= t.min && count <= t.max) || TIERS[0];
@@ -134,7 +134,7 @@ const UserDashboard = () => {
   const [addressLoading, setAddressLoading] = useState(false);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
-  const [addressForm, setAddressForm] = useState({ label: 'বাড়ি', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false });
+  const [addressForm, setAddressForm] = useState({ label: 'Home', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false });
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notiLoading, setNotiLoading] = useState(false);
   const [referrals, setReferrals] = useState<Referral[]>([]);
@@ -350,15 +350,15 @@ const UserDashboard = () => {
   };
 
   const handleSaveProfile = async () => {
-    if (!user) return; setEditing(false); toast.success('প্রোফাইল আপডেট হয়েছে!'); setSaving(true);
+    if (!user) return; setEditing(false); toast.success(t(selectedLang, 'profile_saved')); setSaving(true);
     const { error } = await supabase.from('profiles').upsert({ user_id: user.id, display_name: profile.display_name, phone: profile.phone, email: user.email, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-    if (error) toast.error('সেভ করা সম্ভব হয়নি'); setSaving(false);
+    if (error) toast.error(t(selectedLang, 'profile_save_error')); setSaving(false);
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-    if (file.size > 2 * 1024 * 1024) { toast.error('ছবির সাইজ ২MB এর বেশি হবে না'); return; }
+    if (file.size > 2 * 1024 * 1024) { toast.error(t(selectedLang, 'avatar_size_error')); return; }
     setAvatarUploading(true);
     try {
       const ext = file.name.split('.').pop();
@@ -367,35 +367,35 @@ const UserDashboard = () => {
       if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(path);
       await supabase.from('profiles').upsert({ user_id: user.id, avatar_url: publicUrl, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-      setProfile(p => ({ ...p, avatar_url: publicUrl })); toast.success('প্রোফাইল ছবি আপডেট হয়েছে!');
-    } catch { toast.error('আপলোড ব্যর্থ হয়েছে'); }
+      setProfile(p => ({ ...p, avatar_url: publicUrl })); toast.success(t(selectedLang, 'avatar_updated'));
+    } catch { toast.error(t(selectedLang, 'avatar_upload_error')); }
     setAvatarUploading(false);
   };
 
   const handleChangePassword = async () => {
-    if (newPassword.length < 6) { toast.error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে'); return; }
-    if (newPassword !== confirmPassword) { toast.error('পাসওয়ার্ড দুটি মিলছে না'); return; }
+    if (newPassword.length < 6) { toast.error(t(selectedLang, 'password_short')); return; }
+    if (newPassword !== confirmPassword) { toast.error(t(selectedLang, 'password_mismatch')); return; }
     setPassLoading(true);
     const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) toast.error('পাসওয়ার্ড পরিবর্তন করা সম্ভব হয়নি');
-    else { toast.success('পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!'); setNewPassword(''); setConfirmPassword(''); }
+    if (error) toast.error(t(selectedLang, 'password_error'));
+    else { toast.success(t(selectedLang, 'password_success')); setNewPassword(''); setConfirmPassword(''); }
     setPassLoading(false);
   };
 
   const handleSaveAddress = async () => {
     if (!user) return;
-    if (!addressForm.recipient_name || !addressForm.phone || !addressForm.address_line || !addressForm.city) { toast.error('সব প্রয়োজনীয় তথ্য পূরণ করুন'); return; }
+    if (!addressForm.recipient_name || !addressForm.phone || !addressForm.address_line || !addressForm.city) { toast.error(t(selectedLang, 'address_required_fields')); return; }
     const payload = { ...addressForm, user_id: user.id };
-    if (editingAddress) { await supabase.from('addresses').update(payload).eq('id', editingAddress.id); toast.success('ঠিকানা আপডেট হয়েছে!'); }
-    else { await supabase.from('addresses').insert(payload); toast.success('ঠিকানা যোগ করা হয়েছে!'); }
+    if (editingAddress) { await supabase.from('addresses').update(payload).eq('id', editingAddress.id); toast.success(t(selectedLang, 'address_saved')); }
+    else { await supabase.from('addresses').insert(payload); toast.success(t(selectedLang, 'address_saved')); }
     setShowAddressForm(false); setEditingAddress(null);
-    setAddressForm({ label: 'বাড়ি', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false });
+    setAddressForm({ label: 'Home', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false });
     fetchAddresses();
   };
 
   const handleDeleteAddress = async (id: string) => {
     await supabase.from('addresses').delete().eq('id', id);
-    toast.success('ঠিকানা মুছে ফেলা হয়েছে'); fetchAddresses();
+    toast.success(t(selectedLang, 'address_deleted')); fetchAddresses();
   };
 
   const handleMarkAllRead = async () => {
@@ -411,13 +411,13 @@ const UserDashboard = () => {
 
   const copyReferralCode = () => {
     const code = profile.referral_code;
-    if (!code) return; navigator.clipboard.writeText(code); toast.success('রেফারেল কোড কপি হয়েছে!');
+    if (!code) return; navigator.clipboard.writeText(code); toast.success(t(selectedLang, 'copied'));
   };
 
   const shareReferralLink = () => {
     const code = profile.referral_code;
     if (!code) return;
-    navigator.clipboard.writeText(`${window.location.origin}?ref=${code}`); toast.success('রেফারেল লিংক কপি হয়েছে!');
+    navigator.clipboard.writeText(`${window.location.origin}?ref=${code}`); toast.success(t(selectedLang, 'link_copied'));
   };
 
   const handleLogout = async () => { await signOut(); navigate('/'); };
@@ -568,10 +568,10 @@ const UserDashboard = () => {
             {/* Tab Header */}
             <div className="px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'rgba(255,255,255,0.4)' }}>
               <div>
-                 <h2 className="text-lg font-black text-foreground">{activeTab === 'points' ? '⭐ পয়েন্ট' : t(selectedLang, `tab_${activeTab}`)}</h2>
+                 <h2 className="text-lg font-black text-foreground">{t(selectedLang, `tab_${activeTab}`)}</h2>
                  <p className="text-xs mt-0.5 text-muted-foreground">
-                   {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `ব্যালেন্স: ${pointsBalance} পয়েন্ট` : ''}
-                 </p>
+                    {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `${t(selectedLang, 'points_balance_label')} ${pointsBalance} pts` : ''}
+                  </p>
               </div>
               <div className="flex gap-2">
                 {activeTab === 'profile' && !editing && (
@@ -614,16 +614,16 @@ const UserDashboard = () => {
                         {profile.avatar_url ? <img src={profile.avatar_url} alt="av" className="w-full h-full object-cover" /> : initials}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">প্রোফাইল ছবি</p>
-                        <p className="text-xs mb-2 text-muted-foreground">JPG, PNG — সর্বোচ্চ ২MB</p>
+                        <p className="text-sm font-semibold text-foreground">{t(selectedLang, 'avatar_change')}</p>
+                        <p className="text-xs mb-2 text-muted-foreground">JPG, PNG — Max 2MB</p>
                         <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-                          <Upload size={12} /> ছবি পরিবর্তন করুন
+                          <Upload size={12} /> {t(selectedLang, 'avatar_change')}
                         </button>
                       </div>
                     </div>
                   )}
                   {[
-                    { label: 'পূর্ণ নাম', icon: User, field: 'display_name', editable: true, value: profile.display_name || '', type: 'text', placeholder: 'আপনার পুরো নাম', extra: null },
+                    { label: t(selectedLang, 'full_name'), icon: User, field: 'display_name', editable: true, value: profile.display_name || '', type: 'text', placeholder: t(selectedLang, 'enter_name'), extra: null },
                   ].map(item => (
                     <div key={item.field}>
                       <label className={labelCls}>{item.label}</label>
@@ -641,7 +641,7 @@ const UserDashboard = () => {
                     </div>
                   ))}
                   <div>
-                    <label className={labelCls}>ইমেইল</label>
+                    <label className={labelCls}>{t(selectedLang, 'email')}</label>
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                       <Mail size={15} className="text-muted-foreground" />
                       <span className="text-sm font-medium flex-1 text-foreground">{user?.email}</span>
@@ -649,7 +649,7 @@ const UserDashboard = () => {
                     </div>
                   </div>
                   <div>
-                    <label className={labelCls}>ফোন নম্বর</label>
+                    <label className={labelCls}>{t(selectedLang, 'phone')}</label>
                     {editing ? (
                       <div className="relative">
                         <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -658,7 +658,7 @@ const UserDashboard = () => {
                     ) : (
                       <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                         <Phone size={15} className="text-muted-foreground" />
-                        <span className="text-sm font-medium" style={{ color: profile.phone ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}>{profile.phone || 'যোগ করা হয়নি'}</span>
+                        <span className="text-sm font-medium" style={{ color: profile.phone ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}>{profile.phone || t(selectedLang, 'phone_not_added')}</span>
                       </div>
                     )}
                   </div>
@@ -671,16 +671,16 @@ const UserDashboard = () => {
                   {ordersLoading ? (
                     <div className="flex flex-col items-center justify-center py-16 gap-3">
                       <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
-                      <p className="text-sm text-muted-foreground">লোড হচ্ছে...</p>
+                      <p className="text-sm text-muted-foreground">{t(selectedLang, 'loading_text')}</p>
                     </div>
                   ) : orders.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}>
                         <Package size={28} style={{ color: 'hsl(var(--primary))' }} />
                       </div>
-                      <p className="font-bold text-base mb-1 text-foreground">কোনো অর্ডার নেই</p>
-                      <p className="text-sm mb-4 text-muted-foreground">এখনো কোনো অর্ডার করা হয়নি</p>
-                      <a href="/shop" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>কেনাকাটা শুরু করুন</a>
+                      <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_orders')}</p>
+                      <p className="text-sm mb-4 text-muted-foreground">{t(selectedLang, 'no_orders_sub')}</p>
+                      <a href="/shop" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>{t(selectedLang, 'shop_now')}</a>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -737,7 +737,7 @@ const UserDashboard = () => {
                                 <div className="flex flex-wrap gap-3">
                                   <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                                     <CreditCard size={13} className="text-primary" />
-                                    <span className="text-muted-foreground">পেমেন্ট:</span>
+                                    <span className="text-muted-foreground">{t(selectedLang, 'payment_status')}:</span>
                                     <span className="font-semibold text-foreground">{pmLabel[order.payment_method || ''] || order.payment_method || '—'}</span>
                                   </div>
                                   {order.transaction_id && !order.transaction_id.startsWith('WALLET-') && (
@@ -749,21 +749,21 @@ const UserDashboard = () => {
                                   )}
                                   {order.coupon_code && (
                                     <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
-                                      <span className="text-emerald-600 font-semibold">🏷️ {order.coupon_code} — ৳{(order.discount_amount || 0).toLocaleString()} ছাড়</span>
+                                      <span className="text-emerald-600 font-semibold">🏷️ {order.coupon_code} — ৳{(order.discount_amount || 0).toLocaleString()} {t(selectedLang, 'discount_off')}</span>
                                     </div>
                                   )}
                                 </div>
 
                                 {/* Order Items */}
                                 <div>
-                                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">পণ্যসমূহ</p>
+                                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t(selectedLang, 'order_items_label')}</p>
                                   {!order.items ? (
                                     <div className="flex items-center gap-2 py-3 text-sm text-muted-foreground">
                                       <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-primary" />
-                                      লোড হচ্ছে...
+                                      {t(selectedLang, 'loading_text')}
                                     </div>
                                   ) : order.items.length === 0 ? (
-                                    <p className="text-sm text-muted-foreground">কোনো আইটেম পাওয়া যায়নি</p>
+                                    <p className="text-sm text-muted-foreground">{t(selectedLang, 'no_items_found')}</p>
                                   ) : (
                                     <div className="space-y-2">
                                       {order.items.map(item => (
@@ -787,7 +787,7 @@ const UserDashboard = () => {
                                 {/* License Keys */}
                                 {order.items && order.items.some(i => i.license_key) && (
                                   <div>
-                                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">লাইসেন্স কি</p>
+                                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t(selectedLang, 'license_keys_label')}</p>
                                     <div className="space-y-2">
                                       {order.items.filter(i => i.license_key).map(item => (
                                         <div key={item.id} className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
@@ -796,7 +796,7 @@ const UserDashboard = () => {
                                             <p className="text-xs text-muted-foreground">{item.product_name}</p>
                                             <p className="font-mono text-sm font-bold text-emerald-700 truncate">{item.license_key}</p>
                                           </div>
-                                          <button onClick={() => { navigator.clipboard.writeText(item.license_key!); toast.success('কি কপি হয়েছে!'); }}
+                                          <button onClick={() => { navigator.clipboard.writeText(item.license_key!); toast.success(t(selectedLang, 'key_copied')); }}
                                             className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-emerald-600 flex-shrink-0 transition-colors">
                                             <Copy size={13} />
                                           </button>
@@ -809,8 +809,8 @@ const UserDashboard = () => {
                                 {/* Price Breakdown */}
                                 <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm pt-2 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
                                   <span className="text-muted-foreground">Subtotal: <span className="font-semibold text-foreground">৳{(order.subtotal || 0).toLocaleString()}</span></span>
-                                  {(order.discount_amount || 0) > 0 && <span className="text-emerald-600 font-semibold">ছাড়: -৳{(order.discount_amount || 0).toLocaleString()}</span>}
-                                  <span className="font-bold text-primary">মোট: ৳{order.total.toLocaleString()}</span>
+                                  {(order.discount_amount || 0) > 0 && <span className="text-emerald-600 font-semibold">{t(selectedLang, 'discount_off')}: -৳{(order.discount_amount || 0).toLocaleString()}</span>}
+                                  <span className="font-bold text-primary">{t(selectedLang, 'total')}: ৳{order.total.toLocaleString()}</span>
                                 </div>
 
                                 {/* Notes */}
@@ -838,9 +838,9 @@ const UserDashboard = () => {
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(15,100%,97%)' }}>
                         <Heart size={28} style={{ color: 'hsl(15,100%,60%)' }} />
                       </div>
-                      <p className="font-bold text-base mb-1 text-foreground">উইশলিস্ট খালি</p>
-                      <p className="text-sm mb-4 text-muted-foreground">পছন্দের পণ্যে ❤️ চিহ্ন দিন</p>
-                      <a href="/" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>পণ্য দেখুন</a>
+                      <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_wishlist')}</p>
+                      <p className="text-sm mb-4 text-muted-foreground">{t(selectedLang, 'no_wishlist_sub')}</p>
+                      <a href="/" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>{t(selectedLang, 'browse_products')}</a>
                     </div>
                   ) : (
                     <div className="grid sm:grid-cols-2 gap-3">
@@ -869,9 +869,9 @@ const UserDashboard = () => {
                 <div>
                   {showAddressForm ? (
                     <div className="max-w-lg space-y-4">
-                      <h3 className="font-bold text-foreground">{editingAddress ? 'ঠিকানা সম্পাদনা' : 'নতুন ঠিকানা যোগ করুন'}</h3>
+                      <h3 className="font-bold text-foreground">{editingAddress ? t(selectedLang, 'edit_address') : t(selectedLang, 'add_address')}</h3>
                       <div className="grid grid-cols-3 gap-2">
-                        {['বাড়ি', 'অফিস', 'অন্যান্য'].map(l => (
+                        {['Home', 'Office', 'Other'].map(l => (
                           <button key={l} onClick={() => setAddressForm(f => ({ ...f, label: l }))}
                             className={`py-2 rounded-xl text-sm font-semibold transition-all border ${addressForm.label === l ? 'border-primary text-primary bg-primary/10' : 'border-border text-muted-foreground hover:bg-white/60'}`}>
                             {l}
@@ -879,12 +879,12 @@ const UserDashboard = () => {
                         ))}
                       </div>
                       {[
-                        { field: 'recipient_name', label: 'প্রাপকের নাম *', placeholder: 'পূর্ণ নাম' },
-                        { field: 'phone', label: 'ফোন নম্বর *', placeholder: '01XXXXXXXXX' },
-                        { field: 'address_line', label: 'ঠিকানা *', placeholder: 'বাড়ি নং, রাস্তা, এলাকা' },
-                        { field: 'city', label: 'শহর *', placeholder: 'ঢাকা' },
-                        { field: 'district', label: 'জেলা', placeholder: 'জেলা' },
-                        { field: 'postal_code', label: 'পোস্টাল কোড', placeholder: '1000' },
+                        { field: 'recipient_name', label: `${t(selectedLang, 'recipient_name')} *`, placeholder: t(selectedLang, 'enter_name') },
+                        { field: 'phone', label: `${t(selectedLang, 'phone')} *`, placeholder: '01XXXXXXXXX' },
+                        { field: 'address_line', label: `${t(selectedLang, 'address_line')} *`, placeholder: t(selectedLang, 'address_placeholder') },
+                        { field: 'city', label: `${t(selectedLang, 'city')} *`, placeholder: t(selectedLang, 'city_placeholder') },
+                        { field: 'district', label: t(selectedLang, 'district'), placeholder: t(selectedLang, 'district') },
+                        { field: 'postal_code', label: t(selectedLang, 'postal_code'), placeholder: '1000' },
                       ].map(({ field, label, placeholder }) => (
                         <div key={field}>
                           <label className={labelCls}>{label}</label>
@@ -894,11 +894,11 @@ const UserDashboard = () => {
                       ))}
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" checked={addressForm.is_default} onChange={e => setAddressForm(f => ({ ...f, is_default: e.target.checked }))} className="rounded" />
-                        <span className="text-sm text-foreground">ডিফল্ট ঠিকানা হিসেবে সেট করুন</span>
+                        <span className="text-sm text-foreground">{t(selectedLang, 'set_default')}</span>
                       </label>
                       <div className="flex gap-3">
-                        <button onClick={() => setShowAddressForm(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>বাতিল</button>
-                        <button onClick={handleSaveAddress} className={`flex-1 py-3 text-sm ${gradBtn}`} style={gradBtnStyle}>সংরক্ষণ করুন</button>
+                        <button onClick={() => setShowAddressForm(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>{t(selectedLang, 'cancel')}</button>
+                        <button onClick={handleSaveAddress} className={`flex-1 py-3 text-sm ${gradBtn}`} style={gradBtnStyle}>{t(selectedLang, 'save')}</button>
                       </div>
                     </div>
                   ) : addressLoading ? (
@@ -906,10 +906,10 @@ const UserDashboard = () => {
                   ) : addresses.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><MapPin size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
-                      <p className="font-bold text-base mb-1 text-foreground">কোনো ঠিকানা নেই</p>
-                      <p className="text-sm mb-4 text-muted-foreground">ডেলিভারির জন্য ঠিকানা যোগ করুন</p>
+                      <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_addresses')}</p>
+                      <p className="text-sm mb-4 text-muted-foreground">{t(selectedLang, 'no_addresses_sub')}</p>
                       <button onClick={() => setShowAddressForm(true)} className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>
-                        <Plus size={16} /> ঠিকানা যোগ করুন
+                        <Plus size={16} /> {t(selectedLang, 'add_address')}
                       </button>
                     </div>
                   ) : (
@@ -920,7 +920,7 @@ const UserDashboard = () => {
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-bold px-2.5 py-1 rounded-full border" style={addr.is_default ? { background: 'hsl(243,75%,97%)', color: 'hsl(var(--primary))', borderColor: 'hsl(243,75%,88%)' } : { background: 'rgba(255,255,255,0.6)', color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}>
-                                {addr.label} {addr.is_default && '✓ ডিফল্ট'}
+                                {addr.label} {addr.is_default && `✓ ${t(selectedLang, 'default_label')}`}
                               </span>
                             </div>
                             <div className="flex gap-1">
@@ -947,8 +947,8 @@ const UserDashboard = () => {
                   ) : notifications.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><Bell size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
-                      <p className="font-bold text-base mb-1 text-foreground">কোনো নোটিফিকেশন নেই</p>
-                      <p className="text-sm text-muted-foreground">নতুন আপডেট পেলে এখানে দেখা যাবে</p>
+                      <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_notifications')}</p>
+                      <p className="text-sm text-muted-foreground">{t(selectedLang, 'no_notifications_sub')}</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -1330,13 +1330,13 @@ const UserDashboard = () => {
                   <div className="p-4 rounded-2xl flex items-start gap-3" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.08), rgba(99,82,234,0.04))', border: '1px solid hsla(258,78%,65%,0.22)', backdropFilter: 'blur(8px)' }}>
                     <ShieldCheck size={18} style={{ color: 'hsl(var(--primary))' }} className="mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-semibold" style={{ color: 'hsl(var(--primary))' }}>পাসওয়ার্ড পরিবর্তন করুন</p>
-                      <p className="text-xs mt-0.5 text-muted-foreground">আপনার অ্যাকাউন্ট সুরক্ষিত রাখতে নিয়মিত পাসওয়ার্ড পরিবর্তন করুন।</p>
+                      <p className="text-sm font-semibold" style={{ color: 'hsl(var(--primary))' }}>{t(selectedLang, 'security_title')}</p>
+                      <p className="text-xs mt-0.5 text-muted-foreground">{t(selectedLang, 'security_subtitle')}</p>
                     </div>
                   </div>
                   {[
-                    { label: 'নতুন পাসওয়ার্ড', value: newPassword, set: setNewPassword, show: showNewPass, toggle: () => setShowNewPass(!showNewPass), placeholder: 'নতুন পাসওয়ার্ড লিখুন' },
-                    { label: 'পাসওয়ার্ড নিশ্চিত করুন', value: confirmPassword, set: setConfirmPassword, show: showConfirmPass, toggle: () => setShowConfirmPass(!showConfirmPass), placeholder: 'পাসওয়ার্ড আবার লিখুন' },
+                    { label: t(selectedLang, 'new_password'), value: newPassword, set: setNewPassword, show: showNewPass, toggle: () => setShowNewPass(!showNewPass), placeholder: t(selectedLang, 'enter_new_password') },
+                    { label: t(selectedLang, 'confirm_password'), value: confirmPassword, set: setConfirmPassword, show: showConfirmPass, toggle: () => setShowConfirmPass(!showConfirmPass), placeholder: t(selectedLang, 'enter_confirm_password') },
                   ].map((f, idx) => (
                     <div key={idx}>
                       <label className={labelCls}>{f.label}</label>
@@ -1351,11 +1351,11 @@ const UserDashboard = () => {
                       </div>
                     </div>
                   ))}
-                  {confirmPassword && newPassword !== confirmPassword && <p className="text-xs flex items-center gap-1 text-destructive"><AlertCircle size={11} /> পাসওয়ার্ড দুটি মিলছে না</p>}
-                  {confirmPassword && newPassword === confirmPassword && newPassword.length >= 6 && <p className="text-xs flex items-center gap-1" style={{ color: 'hsl(158,64%,42%)' }}><CheckCircle2 size={11} /> পাসওয়ার্ড মিলেছে</p>}
+                  {confirmPassword && newPassword !== confirmPassword && <p className="text-xs flex items-center gap-1 text-destructive"><AlertCircle size={11} /> {t(selectedLang, 'password_mismatch')}</p>}
+                  {confirmPassword && newPassword === confirmPassword && newPassword.length >= 6 && <p className="text-xs flex items-center gap-1" style={{ color: 'hsl(158,64%,42%)' }}><CheckCircle2 size={11} /> {t(selectedLang, 'password_match')}</p>}
                   <button onClick={handleChangePassword} disabled={passLoading || !newPassword || !confirmPassword}
                     className={`flex items-center justify-center gap-2 w-full py-3 text-sm disabled:opacity-50 ${gradBtn}`} style={gradBtnStyle}>
-                    {passLoading ? <><RefreshCw size={15} className="animate-spin" /> পরিবর্তন হচ্ছে...</> : <><ShieldCheck size={15} /> পাসওয়ার্ড পরিবর্তন করুন</>}
+                    {passLoading ? <><RefreshCw size={15} className="animate-spin" /> {t(selectedLang, 'loading_text')}</> : <><ShieldCheck size={15} /> {t(selectedLang, 'change_password')}</>}
                   </button>
                 </div>
               )}
@@ -1557,8 +1557,8 @@ const UserDashboard = () => {
               {activeTab === 'language' && (
                 <div className="space-y-5">
                   <div>
-                    <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2"><Globe size={18} className="text-primary" /> ভাষা নির্বাচন</h2>
-                    <p className="text-sm text-muted-foreground">আপনার পছন্দের ভাষা বেছে নিন</p>
+                    <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2"><Globe size={18} className="text-primary" /> {t(selectedLang, 'language_title')}</h2>
+                    <p className="text-sm text-muted-foreground">{t(selectedLang, 'language_subtitle')}</p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {LANGUAGES.map(lang => {
