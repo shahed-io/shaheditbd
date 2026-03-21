@@ -182,6 +182,7 @@ const AppContent = () => {
             <Route path="product-reviews" element={<AdminProductReviews />} />
             <Route path="import-export" element={<AdminProductImportExport />} />
             <Route path="facebook-pixel" element={<AdminFacebookPixel />} />
+            <Route path="licenses" element={<AdminLicenses />} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
