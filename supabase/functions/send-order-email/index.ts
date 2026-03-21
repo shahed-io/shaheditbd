@@ -381,6 +381,84 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
+    // ── ADMIN NEW ORDER NOTIFY ──────────────────────────────────────
+    if (type === 'admin_notify') {
+      const { data: order } = await supabaseAdmin
+        .from('orders').select('*').eq('id', orderId).single()
+      if (!order) throw new Error('Order not found')
+
+      const { data: items } = await supabaseAdmin
+        .from('order_items').select('*').eq('order_id', orderId)
+
+      // Get all admin emails from user_roles + profiles
+      const { data: adminRoles } = await supabaseAdmin
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'admin')
+
+      const adminUserIds = adminRoles?.map(r => r.user_id) || []
+
+      let adminEmails: string[] = []
+      if (adminUserIds.length > 0) {
+        const { data: adminProfiles } = await supabaseAdmin
+          .from('profiles')
+          .select('email')
+          .in('user_id', adminUserIds)
+          .not('email', 'is', null)
+        adminEmails = adminProfiles?.map(p => p.email).filter(Boolean) || []
+      }
+
+      // Also add ADMIN_EMAIL secret & site_settings admin_email as fallback
+      const secretAdminEmail = Deno.env.get('ADMIN_EMAIL')
+      if (secretAdminEmail && !adminEmails.includes(secretAdminEmail)) {
+        adminEmails.push(secretAdminEmail)
+      }
+
+      // Also check site_settings for admin_email
+      const { data: settingRow } = await supabaseAdmin
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'admin_email')
+        .maybeSingle()
+      if (settingRow?.value && !adminEmails.includes(settingRow.value)) {
+        adminEmails.push(settingRow.value)
+      }
+
+      // Deduplicate
+      adminEmails = [...new Set(adminEmails.filter(Boolean))]
+
+      if (adminEmails.length === 0) {
+        return new Response(JSON.stringify({ success: false, error: 'No admin emails found' }), {
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
+
+      const html = buildAdminOrderHtml(order, items || [], adminEmails.length)
+      const subject = `🛒 নতুন অর্ডার #${order.order_number} — ${order.customer_name} — ৳${order.total}`
+
+      // Send to all admins
+      const results = await Promise.allSettled(
+        adminEmails.map(email =>
+          fetch('https://api.lovable.dev/v1/email/send', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
+              to: email,
+              subject,
+              html,
+            }),
+          })
+        )
+      )
+
+      const sent = results.filter(r => r.status === 'fulfilled').length
+
+      return new Response(JSON.stringify({ success: true, sent, total: adminEmails.length, adminEmails }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
     // ── PROMO BULK EMAIL ────────────────────────────────────────────
     if (type === 'promotional') {
       const emails: string[] = recipientEmails || []
