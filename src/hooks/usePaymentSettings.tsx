@@ -151,6 +151,18 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
 export const usePaymentSettings = () => {
   const qc = useQueryClient();
 
+  // BroadcastChannel: অন্য ট্যাব/পেজে admin সেভ করলে এখানেও instant আপডেট হবে
+  useEffect(() => {
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('payment-settings-update');
+      bc.onmessage = () => {
+        qc.invalidateQueries({ queryKey: ['payment-settings'] });
+      };
+    } catch { /* Safari: no BroadcastChannel support */ }
+    return () => { bc?.close(); };
+  }, [qc]);
+
   const { data: configs = DEFAULT_PAYMENT_CONFIGS, isLoading } = useQuery<PaymentMethodConfig[]>({
     queryKey: ['payment-settings'],
     queryFn: async () => {
