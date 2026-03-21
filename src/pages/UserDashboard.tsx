@@ -1,10 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
+import { usePaymentSettings } from '@/hooks/usePaymentSettings';
 import bkashLogo from '@/assets/payment/bkash.png';
 import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
+
+const ASSET_LOGOS: Record<string, string> = {
+  bkash: bkashLogo,
+  nagad: nagadLogo,
+  rocket: rocketLogo,
+  upay: upayLogo,
+  bkash_merchant: bkashMerchantLogo,
+};
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
