@@ -532,7 +532,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                 </p>
               </div>
 
-              <button type="submit" disabled={submitting || !form.reason}
+              <button type="submit" disabled={submitting || uploading || !form.reason}
                 className="w-full py-4 rounded-2xl font-bold text-white text-[15px] transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 style={{ background: `linear-gradient(135deg, ${A}, ${B})`, boxShadow: `0 6px 24px ${A}35` }}>
                 {submitting ? (
