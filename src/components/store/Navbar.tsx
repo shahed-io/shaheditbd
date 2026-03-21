@@ -15,26 +15,60 @@ const NAV_LINKS = [
   { label: 'Free Tools', href: '/free-tools' },
 ];
 
-const CATEGORY_DROPDOWN = [
-  { icon: '🛒', label: 'All Products',     count: 0,  color: 'hsla(243,75%,62%,0.10)', href: '/shop' },
-  { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(258,78%,55%,0.10)', href: '/shop?category=microsoft-office' },
-  { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(162,72%,38%,0.10)', href: '/shop?category=antivirus' },
-  { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(330,85%,55%,0.10)', href: '/shop?category=streaming' },
-  { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(200,90%,45%,0.10)', href: '/shop?category=vpn' },
-];
+const CAT_ICON_MAP: Record<string, { icon: string; color: string }> = {
+  'Windows':      { icon: '🪟', color: 'hsla(210,90%,60%,0.12)' },
+  'Office':       { icon: '📦', color: 'hsla(25,90%,60%,0.12)' },
+  'Microsoft Office': { icon: '📦', color: 'hsla(258,78%,55%,0.12)' },
+  'Software':     { icon: '💻', color: 'hsla(263,70%,62%,0.12)' },
+  'VPN':          { icon: '🔒', color: 'hsla(200,90%,45%,0.12)' },
+  'Subscription': { icon: '🎬', color: 'hsla(283,65%,62%,0.12)' },
+  'Antivirus':    { icon: '🛡️', color: 'hsla(162,72%,38%,0.12)' },
+  'Streaming':    { icon: '📺', color: 'hsla(0,80%,62%,0.12)' },
+  'default':      { icon: '🛒', color: 'hsla(243,75%,62%,0.12)' },
+};
+
+interface NavCategory {
+  id: string;
+  name: string;
+  slug: string;
+  image_url: string | null;
+  count: number;
+}
 
 const Navbar = () => {
-  const [mobileOpen,   setMobileOpen]   = useState(false);
-  const [authOpen,     setAuthOpen]     = useState(false);
-  const [scrolled,     setScrolled]     = useState(false);
-  const [catOpen,      setCatOpen]      = useState(false);
-  const [avatarUrl,    setAvatarUrl]    = useState<string | null>(null);
-  const [announcement, setAnnouncement] = useState<string | null>(null);
-  const [mobileSearch, setMobileSearch] = useState(false);
+  const [mobileOpen,    setMobileOpen]    = useState(false);
+  const [authOpen,      setAuthOpen]      = useState(false);
+  const [scrolled,      setScrolled]      = useState(false);
+  const [catOpen,       setCatOpen]       = useState(false);
+  const [avatarUrl,     setAvatarUrl]     = useState<string | null>(null);
+  const [announcement,  setAnnouncement]  = useState<string | null>(null);
+  const [mobileSearch,  setMobileSearch]  = useState(false);
   const [desktopSearch, setDesktopSearch] = useState(false);
+  const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
+
+  const loadNavCategories = async () => {
+    const { data: categories } = await supabase
+      .from('categories')
+      .select('id, name, slug, image_url, products!products_category_id_fkey(id)')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (!categories) return;
+    const HIDDEN = ['Adobe', 'Antivirus', 'Streaming'];
+    setNavCategories(
+      categories
+        .map(c => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          image_url: (c as any).image_url || null,
+          count: Array.isArray((c as any).products) ? (c as any).products.length : 0,
+        }))
+        .filter(c => c.count > 0 && !HIDDEN.includes(c.name))
+    );
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -42,7 +76,6 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Ctrl+K opens desktop search
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); setDesktopSearch(true); }
@@ -60,6 +93,15 @@ const Navbar = () => {
   useEffect(() => {
     supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
       .then(({ data }) => { if (data?.value) setAnnouncement(data.value); });
+  }, []);
+
+  useEffect(() => {
+    loadNavCategories();
+    const channel = supabase
+      .channel('navbar-cats-rt')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, loadNavCategories)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
@@ -190,20 +232,36 @@ const Navbar = () => {
                         <div className="px-3 py-2 mb-1">
                           <span className="text-[10px] font-fira font-bold uppercase tracking-widest" style={{ color: 'hsl(258,78%,50%)' }}>Categories</span>
                         </div>
-                        {CATEGORY_DROPDOWN.map(cat => (
-                          <button key={cat.label}
-                            onClick={() => {
-                              navigate(cat.href ?? `/shop?category=${cat.label.toLowerCase().replace(/\s+/g, '-')}`);
-                              setCatOpen(false);
-                            }}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-left"
-                            style={{ color: 'hsl(226,35%,28%)' }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; e.currentTarget.style.color = 'hsl(258,78%,48%)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
-                            <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: cat.color }}>{cat.icon}</span>
-                            <span className="text-sm font-semibold flex-1">{cat.label}</span>
-                          </button>
-                        ))}
+                        {/* All Products link */}
+                        <button
+                          onClick={() => { navigate('/shop'); setCatOpen(false); }}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-left"
+                          style={{ color: 'hsl(226,35%,28%)' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; e.currentTarget.style.color = 'hsl(258,78%,48%)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
+                          <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: 'hsla(243,75%,62%,0.12)' }}>🛒</span>
+                          <span className="text-sm font-semibold flex-1">All Products</span>
+                        </button>
+                        {navCategories.map(cat => {
+                          const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP['default'];
+                          return (
+                            <button key={cat.id}
+                              onClick={() => { navigate(`/shop?category=${cat.slug}`); setCatOpen(false); }}
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-left"
+                              style={{ color: 'hsl(226,35%,28%)' }}
+                              onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; e.currentTarget.style.color = 'hsl(258,78%,48%)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
+                              <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0 overflow-hidden" style={{ background: meta.color }}>
+                                {cat.image_url
+                                  ? <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover rounded-xl" />
+                                  : meta.icon
+                                }
+                              </span>
+                              <span className="text-sm font-semibold flex-1">{cat.name}</span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,50%)' }}>{cat.count}</span>
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
