@@ -948,10 +948,10 @@ const ProductDetail = () => {
           </div>
 
           {/* ── Bottom: Description + FAQ ── */}
-          <div className="mt-14 grid lg:grid-cols-3 gap-8">
+          <div className={`mt-14 gap-8 ${faqs.length > 0 ? 'grid lg:grid-cols-3' : 'block'}`}>
 
             <div
-              className={faqs.length > 0 ? 'lg:col-span-2' : 'col-span-full'}
+              className={faqs.length > 0 ? 'lg:col-span-2' : 'w-full'}
               ref={descReveal.ref}
               style={{
                 opacity: 1,
