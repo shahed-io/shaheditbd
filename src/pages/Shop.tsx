@@ -26,6 +26,7 @@ interface Category {
   id: string;
   name: string;
   slug: string;
+  image_url: string | null;
 }
 
 const CAT_META: Record<string, { icon: string; accent: string }> = {
@@ -36,7 +37,6 @@ const CAT_META: Record<string, { icon: string; accent: string }> = {
   'Subscription':     { icon: '🎬', accent: 'hsl(283,65%,58%)' },
   'Antivirus':        { icon: '🛡️', accent: 'hsl(158,64%,45%)' },
   'Streaming':        { icon: '📺', accent: 'hsl(0,80%,58%)' },
-  'Adobe':            { icon: '🎨', accent: 'hsl(258,78%,55%)' },
   'Microsoft Office': { icon: '📦', accent: 'hsl(25,90%,58%)' },
   'default':          { icon: '🛒', accent: 'hsl(243,75%,60%)' },
 };
@@ -119,9 +119,27 @@ const Shop = () => {
 
   const activeCatSlug = searchParams.get('category') || '';
 
+  const loadCategories = async () => {
+    const { data } = await supabase
+      .from('categories')
+      .select('id, name, slug, image_url')
+      .eq('is_active', true)
+      .order('sort_order');
+    if (data) setCategories(data as Category[]);
+  };
+
   useEffect(() => {
-    supabase.from('categories').select('id, name, slug').eq('is_active', true).order('sort_order')
-      .then(({ data }) => { if (data) setCategories(data); });
+    loadCategories();
+
+    // Real-time: reload when categories change (e.g. image update)
+    const channel = supabase
+      .channel('shop-categories-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
+        loadCategories();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   useEffect(() => {
@@ -214,7 +232,11 @@ const Shop = () => {
                       color: isActive ? meta.accent : 'hsl(var(--muted-foreground))',
                       border: isActive ? `1px solid ${meta.accent}40` : '1px solid transparent',
                     }}>
-                    <span>{meta.icon}</span> <span>{cat.name}</span>
+                    {cat.image_url
+                      ? <img src={cat.image_url} alt={cat.name} className="w-5 h-5 rounded object-cover flex-shrink-0" />
+                      : <span className="flex-shrink-0">{meta.icon}</span>
+                    }
+                    <span>{cat.name}</span>
                   </button>
                 );
               })}
