@@ -214,7 +214,9 @@ const Navbar = () => {
                 <div key={link.label} className="relative"
                   onMouseEnter={() => link.label === 'All Products' && setCatOpen(true)}
                   onMouseLeave={() => link.label === 'All Products' && setCatOpen(false)}>
-                  <a href={link.href}
+                  <a
+                    href={link.href}
+                    onClick={e => { if (link.label === 'All Products') { e.preventDefault(); setCatOpen(false); navigate('/shop'); } }}
                     className="flex items-center gap-1 px-3.5 py-2 rounded-xl transition-all font-semibold text-sm"
                     style={{ color: 'hsl(226,35%,30%)' }}
                     onMouseEnter={e => { e.currentTarget.style.color = 'hsl(258,78%,50%)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)'; }}
