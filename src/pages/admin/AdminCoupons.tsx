@@ -56,20 +56,27 @@ const AdminCoupons = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.discount_value || parseFloat(form.discount_value) <= 0) {
+    // Validate with Zod
+    const validation = couponSchema.safeParse({ ...form, code: form.code.toUpperCase() });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
+    const d = validation.data;
+    if (!d.discount_value || parseFloat(d.discount_value) <= 0) {
       toast.error('Discount value must be greater than 0');
       return;
     }
     setSaving(true);
     const payload = {
-      code: form.code.toUpperCase(),
-      description: form.description,
-      discount_type: form.discount_type,
-      discount_value: parseFloat(form.discount_value),
-      min_order_amount: parseFloat(form.min_order_amount) || 0,
-      max_uses: form.max_uses ? parseInt(form.max_uses) : null,
-      is_active: form.is_active,
-      expires_at: form.expires_at || null,
+      code: d.code,
+      description: d.description || null,
+      discount_type: d.discount_type,
+      discount_value: parseFloat(d.discount_value),
+      min_order_amount: parseFloat(d.min_order_amount) || 0,
+      max_uses: d.max_uses ? parseInt(d.max_uses) : null,
+      is_active: d.is_active,
+      expires_at: d.expires_at || null,
     };
     if (editing) {
       const { error } = await supabase.from('coupons').update(payload).eq('id', editing.id);
