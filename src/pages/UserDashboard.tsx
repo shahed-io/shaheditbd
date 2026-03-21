@@ -350,9 +350,9 @@ const UserDashboard = () => {
   };
 
   const handleSaveProfile = async () => {
-    if (!user) return; setEditing(false); toast.success('প্রোফাইল আপডেট হয়েছে!'); setSaving(true);
+    if (!user) return; setEditing(false); toast.success(t(selectedLang, 'profile_saved')); setSaving(true);
     const { error } = await supabase.from('profiles').upsert({ user_id: user.id, display_name: profile.display_name, phone: profile.phone, email: user.email, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-    if (error) toast.error('সেভ করা সম্ভব হয়নি'); setSaving(false);
+    if (error) toast.error(t(selectedLang, 'profile_save_error')); setSaving(false);
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
