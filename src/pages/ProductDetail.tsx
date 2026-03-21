@@ -1403,7 +1403,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
       ref={sectionReveal.ref}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       style={{
-        opacity: sectionReveal.revealed ? 1 : 0,
+        opacity: loading ? 0 : (sectionReveal.revealed ? 1 : 0),
         transform: sectionReveal.revealed ? 'none' : 'translateY(30px)',
         transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
       }}
