@@ -101,8 +101,6 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      <div className="absolute top-0 left-0 right-0 h-[3.5px]"
-        style={{ background: `linear-gradient(90deg, ${from}, ${to})` }} />
       <div className="absolute top-0 right-0 w-28 h-28 pointer-events-none opacity-40"
         style={{ background: `radial-gradient(circle at top right, ${from}18, transparent 70%)` }} />
 
@@ -246,7 +244,7 @@ const Testimonials = () => {
                   border: '1.5px solid rgba(255,255,255,0.92)',
                   boxShadow: `0 4px 22px ${stat.from}18, inset 0 1px 0 rgba(255,255,255,1)`,
                 }}>
-                <div className="h-[3px]" style={{ background: `linear-gradient(90deg, ${stat.from}, ${stat.to})` }} />
+                
                 <div className="text-center px-7 py-3">
                   <p className="font-sora font-black text-2xl sm:text-3xl" style={{ color: 'hsl(226,35%,14%)' }}>
                     {stat.value}<span style={{ color: stat.from }}>{stat.suffix}</span>
