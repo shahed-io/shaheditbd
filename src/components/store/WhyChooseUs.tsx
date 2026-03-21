@@ -185,23 +185,19 @@ const StatsBar = ({ stats, visible }: { stats: typeof STATS; visible: boolean })
       <p className="text-center text-[10.5px] font-bold mb-8 tracking-[0.28em] uppercase text-muted-foreground">
         Our Numbers Speak For Themselves
       </p>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-0 divide-x divide-[hsl(220,13%,92%)]">
         {stats.map((s, i) => (
           <div key={i}
-            className={`relative overflow-hidden rounded-xl p-4 text-center transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{
-              transitionDelay: `${i * 0.12}s`,
-              background: `${s.accent}08`,
-              border: `1.5px solid ${s.accent}28`,
-            }}>
-            {/* top stripe */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl"
+            className={`px-6 py-3 text-center transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            style={{ transitionDelay: `${i * 0.12}s` }}>
+            {/* Colored top line */}
+            <div className="w-16 h-[3px] rounded-full mx-auto mb-5"
               style={{ background: s.accent }} />
-            <div className="font-sora font-black text-[2.4rem] sm:text-[2.8rem] leading-none"
+            <div className="font-sora font-black text-[2.6rem] sm:text-[3rem] leading-none"
               style={{ color: s.accent }}>
               {s.n}
             </div>
-            <div className="text-[11px] font-semibold mt-1.5 uppercase tracking-wider text-muted-foreground">
+            <div className="text-[11px] font-semibold mt-2 uppercase tracking-wider text-muted-foreground">
               {s.l}
             </div>
           </div>
