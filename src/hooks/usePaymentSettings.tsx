@@ -181,7 +181,13 @@ export const usePaymentSettings = () => {
       if (error) throw error;
     },
     onSuccess: () => {
+      // সব ট্যাব/পেজে instant আপডেট পাঠাও
       qc.invalidateQueries({ queryKey: ['payment-settings'] });
+      try {
+        const bc = new BroadcastChannel('payment-settings-update');
+        bc.postMessage('updated');
+        bc.close();
+      } catch { /* Safari fallback */ }
     },
   });
 
