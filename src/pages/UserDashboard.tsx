@@ -947,8 +947,8 @@ const UserDashboard = () => {
                   ) : notifications.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><Bell size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
-                      <p className="font-bold text-base mb-1 text-foreground">কোনো নোটিফিকেশন নেই</p>
-                      <p className="text-sm text-muted-foreground">নতুন আপডেট পেলে এখানে দেখা যাবে</p>
+                      <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_notifications')}</p>
+                      <p className="text-sm text-muted-foreground">{t(selectedLang, 'no_notifications_sub')}</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
