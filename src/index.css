@@ -1203,7 +1203,6 @@ body::before {
 /* Below-fold sections: browser skips layout until in viewport */
 .below-fold {
   content-visibility: auto;
-  contain-intrinsic-size: 0 600px;
 }
 
 /* ══════════════════════════════════════
