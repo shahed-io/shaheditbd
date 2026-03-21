@@ -56,6 +56,7 @@ const ContactUs             = lazy(() => import("./pages/ContactUs"));
 const AboutUs               = lazy(() => import("./pages/AboutUs"));
 const FAQs                  = lazy(() => import("./pages/FAQs"));
 const FreeTools             = lazy(() => import("./pages/FreeTools"));
+const RefundRequest         = lazy(() => import("./pages/RefundRequest"));
 
 // SEO sub-pages
 const AdminMetaTags         = lazy(() => import("./pages/admin/seo/AdminMetaTags"));
