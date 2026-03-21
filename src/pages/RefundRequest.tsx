@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2 } from 'lucide-react';
+import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2, Calculator } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
@@ -21,14 +21,68 @@ const REFUND_REASONS = [
   { value: 'other', label: 'অন্য কারণ' },
 ];
 
+// Period value → total days
+const PERIOD_DAYS: Record<string, number | null> = {
+  '1_month':   30,
+  '3_months':  90,
+  '6_months':  180,
+  '1_year':    365,
+  'lifetime':  null,
+  'na':        null,
+};
+
 const SUBSCRIPTION_PERIODS = [
-  { value: '1_month', label: '১ মাস' },
-  { value: '3_months', label: '৩ মাস' },
-  { value: '6_months', label: '৬ মাস' },
-  { value: '1_year', label: '১ বছর' },
-  { value: 'lifetime', label: 'লাইফটাইম' },
-  { value: 'na', label: 'প্রযোজ্য নয়' },
+  { value: '1_month',   label: '১ মাস (৩০ দিন)' },
+  { value: '3_months',  label: '৩ মাস (৯০ দিন)' },
+  { value: '6_months',  label: '৬ মাস (১৮০ দিন)' },
+  { value: '1_year',    label: '১ বছর (৩৬৫ দিন)' },
+  { value: 'lifetime',  label: 'লাইফটাইম' },
+  { value: 'na',        label: 'প্রযোজ্য নয়' },
 ];
+
+// Auto-calculation result
+type CalcResult = {
+  totalDays: number | null;
+  daysUsed: number;
+  daysRemaining: number | null;
+  unusedPercent: number | null;
+  proportionalRefund: number | null;
+  refundAfter10: number | null;
+};
+
+function calcRefund(purchaseDate: string, period: string, amount: string): CalcResult | null {
+  if (!purchaseDate || !period || period === 'na') return null;
+  const purchase = new Date(purchaseDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  purchase.setHours(0, 0, 0, 0);
+  const daysUsed = Math.max(0, Math.floor((today.getTime() - purchase.getTime()) / 86400000));
+  const totalDays = PERIOD_DAYS[period];
+
+  if (period === 'lifetime') {
+    return {
+      totalDays: null,
+      daysUsed,
+      daysRemaining: null,
+      unusedPercent: null,
+      proportionalRefund: null,
+      refundAfter10: amount ? parseFloat((parseFloat(amount) * 0.9).toFixed(2)) : null,
+    };
+  }
+
+  if (!totalDays) return null;
+  const daysRemaining = Math.max(0, totalDays - daysUsed);
+  const unusedPercent = parseFloat(((daysRemaining / totalDays) * 100).toFixed(1));
+  const paidAmount = parseFloat(amount || '0');
+  const proportionalRefund = paidAmount > 0
+    ? parseFloat(((paidAmount * daysRemaining) / totalDays).toFixed(2))
+    : null;
+  const refundAfter10 = proportionalRefund !== null
+    ? parseFloat((proportionalRefund * 0.9).toFixed(2))
+    : null;
+
+  return { totalDays, daysUsed, daysRemaining, unusedPercent, proportionalRefund, refundAfter10 };
+}
 
 export default function RefundRequest() {
   const [policyOpen, setPolicyOpen] = useState(true);
@@ -48,12 +102,20 @@ export default function RefundRequest() {
     reason: '',
     reason_detail: '',
     subscription_period: '',
-    days_used: '',
-    days_remaining: '',
+    purchase_date: '',
     payment_amount: '',
     payment_method: '',
     additional_info: '',
   });
+
+  // Auto-calculate whenever period, date, or amount changes
+  const calc = (form.purchase_date && form.subscription_period)
+    ? calcRefund(form.purchase_date, form.subscription_period, form.payment_amount)
+    : null;
+
+  // Sync days_used / days_remaining back as display strings
+  const daysUsedDisplay  = calc ? `${calc.daysUsed} দিন` : '';
+  const daysRemainingDisplay = calc?.daysRemaining != null ? `${calc.daysRemaining} দিন` : (calc ? 'লাইফটাইম' : '');
 
   const isChangeOfMind = form.reason === 'change_of_mind';
   const deductedAmount = isChangeOfMind && form.payment_amount
@@ -126,10 +188,14 @@ export default function RefundRequest() {
 ❓ রিফান্ডের কারণ: ${REFUND_REASONS.find(r => r.value === form.reason)?.label || form.reason}
 📝 বিস্তারিত: ${form.reason_detail || 'উল্লেখ নেই'}
 📅 সাবস্ক্রিপশন মেয়াদ: ${SUBSCRIPTION_PERIODS.find(s => s.value === form.subscription_period)?.label || 'উল্লেখ নেই'}
-📆 ব্যবহৃত দিন: ${form.days_used || 'উল্লেখ নেই'}
-📆 বাকি দিন: ${form.days_remaining || 'উল্লেখ নেই'}
+🗓️ কেনার তারিখ: ${form.purchase_date || 'উল্লেখ নেই'}
+📆 মোট মেয়াদ: ${calc?.totalDays != null ? calc.totalDays + ' দিন' : 'উল্লেখ নেই'}
+📆 ব্যবহৃত দিন: ${daysUsedDisplay || 'উল্লেখ নেই'}
+📆 বাকি দিন: ${daysRemainingDisplay || 'উল্লেখ নেই'}
 💳 পেমেন্টের পরিমাণ: ${form.payment_amount ? '৳' + form.payment_amount : 'উল্লেখ নেই'}
 💳 পেমেন্ট মাধ্যম: ${form.payment_method || 'উল্লেখ নেই'}
+${calc?.proportionalRefund != null ? `📊 অব্যবহৃত অংশের রিফান্ড (সমানুপাতিক): ৳${calc.proportionalRefund}` : ''}
+${calc?.refundAfter10 != null ? `✅ ১০% কেটে চূড়ান্ত রিফান্ড: ৳${calc.refundAfter10}` : ''}
 ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে ১০% কেটে ৳${deductedAmount} রিফান্ড হবে।` : ''}
 📌 অতিরিক্ত তথ্য: ${form.additional_info || 'উল্লেখ নেই'}${screenshotLines}
       `.trim();
@@ -158,8 +224,8 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
           reason: REFUND_REASONS.find(r => r.value === form.reason)?.label || form.reason,
           reasonDetail: form.reason_detail || '',
           subscriptionPeriod: SUBSCRIPTION_PERIODS.find(s => s.value === form.subscription_period)?.label || form.subscription_period,
-          daysUsed: form.days_used || '',
-          daysRemaining: form.days_remaining || '',
+          daysUsed: daysUsedDisplay || '',
+          daysRemaining: daysRemainingDisplay || '',
           paymentAmount: form.payment_amount || '',
           paymentMethod: form.payment_method || '',
           additionalInfo: form.additional_info || '',
@@ -327,7 +393,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
             <p className="text-[12px] mt-4" style={{ color: 'hsl(226,25%,52%)' }}>
               এই নম্বরটি সংরক্ষণ করুন। WhatsApp বা Email-এ যোগাযোগ করার সময় এটি উল্লেখ করুন।
             </p>
-            <button onClick={() => { setSubmitted(false); setForm({ customer_name:'',customer_email:'',customer_phone:'',order_number:'',product_name:'',reason:'',reason_detail:'',subscription_period:'',days_used:'',days_remaining:'',payment_amount:'',payment_method:'',additional_info:'' }); }}
+            <button onClick={() => { setSubmitted(false); setForm({ customer_name:'',customer_email:'',customer_phone:'',order_number:'',product_name:'',reason:'',reason_detail:'',subscription_period:'',purchase_date:'',payment_amount:'',payment_method:'',additional_info:'' }); }}
               className="mt-6 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-105"
               style={{ background: `linear-gradient(135deg, ${A}, ${B})`, color: '#fff', boxShadow: `0 4px 16px ${A}30` }}>
               নতুন রিকোয়েস্ট করুন
@@ -395,16 +461,67 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                     <input type="number" min="0" value={form.payment_amount} onChange={e => set('payment_amount', e.target.value)}
                       placeholder="যেমন: 499" className={inputCls} />
                   </div>
+                  {/* Auto-calc: purchase date */}
                   <div>
-                    <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>কতদিন ব্যবহার হয়েছে</label>
-                    <input value={form.days_used} onChange={e => set('days_used', e.target.value)}
-                      placeholder="যেমন: ৫ দিন" className={inputCls} maxLength={50} />
+                    <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>কেনার তারিখ</label>
+                    <input type="date" value={form.purchase_date} onChange={e => set('purchase_date', e.target.value)}
+                      max={new Date().toISOString().split('T')[0]}
+                      className={inputCls} />
+                    <p className="text-[11px] mt-1" style={{ color: 'hsl(226,25%,58%)' }}>কেনার তারিখ দিলে হিসাব স্বয়ংক্রিয় হবে</p>
                   </div>
-                  <div>
-                    <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>কতদিন বাকি আছে</label>
-                    <input value={form.days_remaining} onChange={e => set('days_remaining', e.target.value)}
-                      placeholder="যেমন: ২৫ দিন" className={inputCls} maxLength={50} />
-                  </div>
+                  {/* Auto-calculated display */}
+                  {calc && (
+                    <div className="sm:col-span-2 rounded-2xl p-4 space-y-3"
+                      style={{ background: `linear-gradient(135deg, ${A}08, ${B}06)`, border: `1.5px solid ${A}25` }}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Calculator size={14} style={{ color: A }} />
+                        <p className="text-[12px] font-black uppercase tracking-widest" style={{ color: A }}>
+                          স্বয়ংক্রিয় হিসাব
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {calc.totalDays != null && (
+                          <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.8)' }}>
+                            <p className="font-black text-lg" style={{ color: A }}>{calc.totalDays}</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'hsl(226,25%,52%)' }}>মোট মেয়াদ (দিন)</p>
+                          </div>
+                        )}
+                        <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.8)' }}>
+                          <p className="font-black text-lg" style={{ color: 'hsl(0,72%,43%)' }}>{calc.daysUsed}</p>
+                          <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'hsl(226,25%,52%)' }}>ব্যবহৃত দিন</p>
+                        </div>
+                        {calc.daysRemaining != null && (
+                          <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.8)' }}>
+                            <p className="font-black text-lg" style={{ color: 'hsl(142,72%,38%)' }}>{calc.daysRemaining}</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'hsl(226,25%,52%)' }}>বাকি দিন</p>
+                          </div>
+                        )}
+                        {calc.unusedPercent != null && (
+                          <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.8)' }}>
+                            <p className="font-black text-lg" style={{ color: 'hsl(38,92%,38%)' }}>{calc.unusedPercent}%</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'hsl(226,25%,52%)' }}>অব্যবহৃত অংশ</p>
+                          </div>
+                        )}
+                      </div>
+                      {/* Refund estimate */}
+                      {form.payment_amount && calc.proportionalRefund != null && (
+                        <div className="mt-2 rounded-xl p-3 flex flex-wrap gap-3 justify-between items-center"
+                          style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(255,255,255,0.9)' }}>
+                          <div>
+                            <p className="text-[11px] font-semibold" style={{ color: 'hsl(226,25%,48%)' }}>সমানুপাতিক রিফান্ড (অব্যবহৃত অংশ)</p>
+                            <p className="font-black text-[17px]" style={{ color: 'hsl(226,35%,18%)' }}>৳{calc.proportionalRefund}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[11px] font-semibold" style={{ color: 'hsl(226,25%,48%)' }}>১০% চার্জ বাদ দিয়ে চূড়ান্ত</p>
+                            <p className="font-black text-[20px]" style={{ color: A }}>৳{calc.refundAfter10}</p>
+                          </div>
+                        </div>
+                      )}
+                      {!form.payment_amount && (
+                        <p className="text-[11px]" style={{ color: 'hsl(226,25%,55%)' }}>💡 পেমেন্টের পরিমাণ দিলে সম্ভাব্য রিফান্ডের হিসাব দেখাবে</p>
+                      )}
+                    </div>
+                  )}
                   <div>
                     <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>পেমেন্ট মাধ্যম</label>
                     <select value={form.payment_method} onChange={e => set('payment_method', e.target.value)} className={inputCls}>
