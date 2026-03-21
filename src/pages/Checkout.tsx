@@ -232,6 +232,11 @@ const Checkout = () => {
         } catch { /* silent */ }
       }
 
+      // Send order confirmation email to customer (non-blocking)
+      supabase.functions.invoke('send-order-email', {
+        body: { type: 'order_confirmation', orderId: order.id },
+      }).catch(() => { /* silent */ });
+
       // Notify all admins via email (non-blocking)
       supabase.functions.invoke('send-order-email', {
         body: { type: 'admin_notify', orderId: order.id },
