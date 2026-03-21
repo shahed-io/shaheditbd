@@ -101,8 +101,6 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      <div className="absolute top-0 left-0 right-0 h-[3.5px]"
-        style={{ background: `linear-gradient(90deg, ${from}, ${to})` }} />
       <div className="absolute top-0 right-0 w-28 h-28 pointer-events-none opacity-40"
         style={{ background: `radial-gradient(circle at top right, ${from}18, transparent 70%)` }} />
 
