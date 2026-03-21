@@ -13,68 +13,68 @@ import {
 } from 'lucide-react';
 
 const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
-  { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
+  { icon: ShoppingCart, label: 'Orders', path: '/ceo/orders' },
   {
-    icon: Package, label: 'Products', path: '/admin/products',
+    icon: Package, label: 'Products', path: '/ceo/products',
     children: [
-      { label: 'All Products', path: '/admin/products' },
-      { label: 'Add New', path: '/admin/products/new' },
-      { label: 'Attributes', path: '/admin/attributes' },
+      { label: 'All Products', path: '/ceo/products' },
+      { label: 'Add New', path: '/ceo/products/new' },
+      { label: 'Attributes', path: '/ceo/attributes' },
     ]
   },
   {
-    icon: Grid3X3, label: 'Categories', path: '/admin/categories',
+    icon: Grid3X3, label: 'Categories', path: '/ceo/categories',
     children: [
-      { label: 'All Categories', path: '/admin/categories' },
-      { label: 'Add New', path: '/admin/categories/new' },
+      { label: 'All Categories', path: '/ceo/categories' },
+      { label: 'Add New', path: '/ceo/categories/new' },
     ]
   },
-  { icon: Users, label: 'Customers', path: '/admin/customers' },
-  { icon: Wallet, label: 'Wallet', path: '/admin/wallet' },
-  { icon: Sliders, label: 'Hero Banner', path: '/admin/hero-banner' },
-  { icon: Flame, label: 'Flash Sale', path: '/admin/flash-sale' },
-  { icon: Star, label: 'Testimonials', path: '/admin/testimonials' },
-  { icon: Megaphone, label: 'Announcement Bar', path: '/admin/announcement-bar' },
-  { icon: CreditCard, label: 'Payments', path: '/admin/payments' },
-  { icon: Percent, label: 'Coupons', path: '/admin/coupons' },
-  { icon: Gift, label: 'Referrals', path: '/admin/referrals' },
-  { icon: Headphones, label: 'Tickets', path: '/admin/tickets' },
-  { icon: BookOpen, label: 'Blog', path: '/admin/blog' },
-  { icon: Layout, label: 'Pages', path: '/admin/pages' },
-  { icon: HelpCircle, label: 'Help Center', path: '/admin/help' },
-  { icon: FolderDown, label: 'Software Downloads', path: '/admin/software-downloads' },
-  { icon: Mail, label: 'Newsletter', path: '/admin/newsletter' },
-  { icon: FileText, label: 'Product Reviews', path: '/admin/product-reviews' },
-  { icon: ArrowLeftRight, label: 'Import / Export', path: '/admin/import-export' },
+  { icon: Users, label: 'Customers', path: '/ceo/customers' },
+  { icon: Wallet, label: 'Wallet', path: '/ceo/wallet' },
+  { icon: Sliders, label: 'Hero Banner', path: '/ceo/hero-banner' },
+  { icon: Flame, label: 'Flash Sale', path: '/ceo/flash-sale' },
+  { icon: Star, label: 'Testimonials', path: '/ceo/testimonials' },
+  { icon: Megaphone, label: 'Announcement Bar', path: '/ceo/announcement-bar' },
+  { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
+  { icon: Percent, label: 'Coupons', path: '/ceo/coupons' },
+  { icon: Gift, label: 'Referrals', path: '/ceo/referrals' },
+  { icon: Headphones, label: 'Tickets', path: '/ceo/tickets' },
+  { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
+  { icon: Layout, label: 'Pages', path: '/ceo/pages' },
+  { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
+  { icon: FolderDown, label: 'Software Downloads', path: '/ceo/software-downloads' },
+  { icon: Mail, label: 'Newsletter', path: '/ceo/newsletter' },
+  { icon: FileText, label: 'Product Reviews', path: '/ceo/product-reviews' },
+  { icon: ArrowLeftRight, label: 'Import / Export', path: '/ceo/import-export' },
   {
-    icon: Globe, label: 'SEO Settings', path: '/admin/seo',
+    icon: Globe, label: 'SEO Settings', path: '/ceo/seo',
     children: [
-      { label: 'SEO Manager', path: '/admin/seo', icon: Globe },
-      { label: 'Blog Manager', path: '/admin/blog', icon: BookOpen },
-      { label: 'Meta Tag Manager', path: '/admin/seo/meta-tags', icon: Tag },
-      { label: 'Sitemap Generator', path: '/admin/seo/sitemap', icon: Map },
-      { label: 'Robots.txt Editor', path: '/admin/seo/robots', icon: Bot },
-      { label: 'Schema Generator', path: '/admin/seo/schema', icon: Code2 },
-      { label: 'Keyword Manager', path: '/admin/seo/keywords', icon: KeyRound },
-      { label: 'Page SEO Control', path: '/admin/seo/pages', icon: FileSearch },
-      { label: 'Product SEO', path: '/admin/seo/products', icon: PackageSearch },
-      { label: 'FAQ Manager', path: '/admin/seo/faq', icon: HelpCircle },
-      { label: 'Review System', path: '/admin/seo/reviews', icon: Star },
-      { label: 'Google Analytics', path: '/admin/seo/analytics', icon: BarChart2 },
-      { label: 'Search Console', path: '/admin/seo/search-console', icon: Search },
-      { label: 'Speed Optimization', path: '/admin/seo/speed', icon: Zap },
-      { label: 'Image SEO', path: '/admin/seo/images', icon: ImageIcon },
-      { label: 'URL Slug Editor', path: '/admin/seo/slugs', icon: Link2 },
-      { label: 'Redirect Manager', path: '/admin/seo/redirects', icon: ArrowLeftRight },
-      { label: 'Broken Link Checker', path: '/admin/seo/broken-links', icon: Link2Off },
+      { label: 'SEO Manager', path: '/ceo/seo', icon: Globe },
+      { label: 'Blog Manager', path: '/ceo/blog', icon: BookOpen },
+      { label: 'Meta Tag Manager', path: '/ceo/seo/meta-tags', icon: Tag },
+      { label: 'Sitemap Generator', path: '/ceo/seo/sitemap', icon: Map },
+      { label: 'Robots.txt Editor', path: '/ceo/seo/robots', icon: Bot },
+      { label: 'Schema Generator', path: '/ceo/seo/schema', icon: Code2 },
+      { label: 'Keyword Manager', path: '/ceo/seo/keywords', icon: KeyRound },
+      { label: 'Page SEO Control', path: '/ceo/seo/pages', icon: FileSearch },
+      { label: 'Product SEO', path: '/ceo/seo/products', icon: PackageSearch },
+      { label: 'FAQ Manager', path: '/ceo/seo/faq', icon: HelpCircle },
+      { label: 'Review System', path: '/ceo/seo/reviews', icon: Star },
+      { label: 'Google Analytics', path: '/ceo/seo/analytics', icon: BarChart2 },
+      { label: 'Search Console', path: '/ceo/seo/search-console', icon: Search },
+      { label: 'Speed Optimization', path: '/ceo/seo/speed', icon: Zap },
+      { label: 'Image SEO', path: '/ceo/seo/images', icon: ImageIcon },
+      { label: 'URL Slug Editor', path: '/ceo/seo/slugs', icon: Link2 },
+      { label: 'Redirect Manager', path: '/ceo/seo/redirects', icon: ArrowLeftRight },
+      { label: 'Broken Link Checker', path: '/ceo/seo/broken-links', icon: Link2Off },
     ]
   },
-  { icon: TrendingUp, label: 'Reports', path: '/admin/reports' },
-  { icon: Megaphone, label: 'Marketing', path: '/admin/marketing' },
-  { icon: Settings, label: 'Settings', path: '/admin/settings' },
-  { icon: Shield, label: 'Admin Roles', path: '/admin/roles' },
-  { icon: Database, label: 'Backup', path: '/admin/backup' },
+  { icon: TrendingUp, label: 'Reports', path: '/ceo/reports' },
+  { icon: Megaphone, label: 'Marketing', path: '/ceo/marketing' },
+  { icon: Settings, label: 'Settings', path: '/ceo/settings' },
+  { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
+  { icon: Database, label: 'Backup', path: '/ceo/backup' },
 ];
 
 const AdminLayout = () => {
@@ -89,7 +89,7 @@ const AdminLayout = () => {
     </div>
   );
 
-  if (!user || !isAdmin) return <Navigate to="/admin/login" replace />;
+  if (!user || !isAdmin) return <Navigate to="/ceo/login" replace />;
 
   const toggleMenu = (label: string) => {
     setExpandedMenus(prev =>
@@ -142,7 +142,7 @@ const AdminLayout = () => {
                 ) : (
                   <NavLink
                     to={item.path}
-                    end={item.path === '/admin'}
+                    end={item.path === '/ceo'}
                     className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
                       isActive
                         ? 'bg-primary/20 text-primary border border-primary/30'
