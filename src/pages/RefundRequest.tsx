@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
@@ -35,6 +35,9 @@ export default function RefundRequest() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [ticketNum, setTicketNum] = useState('');
+  const [screenshots, setScreenshots] = useState<{ file: File; preview: string; url?: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     customer_name: '',
@@ -59,6 +62,48 @@ export default function RefundRequest() {
 
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (screenshots.length + files.length > 5) {
+      toast.error('সর্বোচ্চ ৫টি স্ক্রিনশট আপলোড করা যাবে');
+      return;
+    }
+    const newItems = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setScreenshots(p => [...p, ...newItems]);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removeScreenshot = (idx: number) => {
+    setScreenshots(p => {
+      URL.revokeObjectURL(p[idx].preview);
+      return p.filter((_, i) => i !== idx);
+    });
+  };
+
+  const uploadScreenshots = async (): Promise<string[]> => {
+    if (screenshots.length === 0) return [];
+    setUploading(true);
+    const urls: string[] = [];
+    try {
+      for (const item of screenshots) {
+        const ext = item.file.name.split('.').pop() || 'jpg';
+        const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error } = await supabase.storage
+          .from('refund-screenshots')
+          .upload(path, item.file, { upsert: false });
+        if (error) throw error;
+        const { data } = supabase.storage.from('refund-screenshots').getPublicUrl(path);
+        urls.push(data.publicUrl);
+      }
+    } finally {
+      setUploading(false);
+    }
+    return urls;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.customer_name || !form.customer_email || !form.order_number || !form.reason) {
@@ -67,7 +112,14 @@ export default function RefundRequest() {
     }
     setSubmitting(true);
     try {
+      // Upload screenshots first
+      const screenshotUrls = await uploadScreenshots();
+
       const tNum = 'RF-' + Date.now().toString().slice(-8);
+      const screenshotLines = screenshotUrls.length > 0
+        ? `\n🖼️ স্ক্রিনশট (${screenshotUrls.length}টি):\n${screenshotUrls.map((u, i) => `  ${i + 1}. ${u}`).join('\n')}`
+        : '';
+
       const message = `
 📦 অর্ডার নম্বর: ${form.order_number}
 🛍️ পণ্যের নাম: ${form.product_name || 'উল্লেখ নেই'}
@@ -79,7 +131,7 @@ export default function RefundRequest() {
 💳 পেমেন্টের পরিমাণ: ${form.payment_amount ? '৳' + form.payment_amount : 'উল্লেখ নেই'}
 💳 পেমেন্ট মাধ্যম: ${form.payment_method || 'উল্লেখ নেই'}
 ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে ১০% কেটে ৳${deductedAmount} রিফান্ড হবে।` : ''}
-📌 অতিরিক্ত তথ্য: ${form.additional_info || 'উল্লেখ নেই'}
+📌 অতিরিক্ত তথ্য: ${form.additional_info || 'উল্লেখ নেই'}${screenshotLines}
       `.trim();
 
       await supabase.from('support_tickets').insert({
@@ -398,11 +450,76 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                 </div>
               </div>
 
+              {/* Screenshot Upload */}
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: A }}>স্ক্রিনশট আপলোড</p>
+                <div className="rounded-2xl p-4 space-y-3"
+                  style={{ background: 'rgba(255,255,255,0.50)', border: '1.5px dashed rgba(139,92,246,0.35)' }}>
+                  <p className="text-[12px]" style={{ color: 'hsl(226,25%,48%)' }}>
+                    সমস্যার প্রমাণ হিসেবে স্ক্রিনশট যোগ করুন (সর্বোচ্চ ৫টি, প্রতিটি ৫MB পর্যন্ত)
+                  </p>
+
+                  {/* Preview grid */}
+                  {screenshots.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {screenshots.map((item, idx) => (
+                        <div key={idx} className="relative group rounded-xl overflow-hidden border border-white/60"
+                          style={{ aspectRatio: '4/3' }}>
+                          <img src={item.preview} alt={`screenshot-${idx + 1}`}
+                            className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+                            <button type="button" onClick={() => removeScreenshot(idx)}
+                              className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center transition-all hover:scale-110 shadow-lg">
+                              <X size={14} />
+                            </button>
+                          </div>
+                          <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded text-[10px] font-bold text-white"
+                            style={{ background: 'rgba(0,0,0,0.55)' }}>
+                            {idx + 1}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {screenshots.length < 5 && (
+                    <>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handleFileSelect}
+                      />
+                      <button type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01]"
+                        style={{
+                          background: `linear-gradient(135deg, ${A}12, ${B}08)`,
+                          border: `1.5px solid ${A}30`,
+                          color: A,
+                        }}>
+                        <ImagePlus size={17} />
+                        স্ক্রিনশট যোগ করুন {screenshots.length > 0 && `(${screenshots.length}/5)`}
+                      </button>
+                    </>
+                  )}
+
+                  {uploading && (
+                    <div className="flex items-center gap-2 text-[12px]" style={{ color: A }}>
+                      <Loader2 size={14} className="animate-spin" />
+                      স্ক্রিনশট আপলোড হচ্ছে...
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Additional Info */}
               <div>
                 <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: A }}>অতিরিক্ত তথ্য</p>
                 <textarea value={form.additional_info} onChange={e => set('additional_info', e.target.value)}
-                  rows={3} placeholder="স্ক্রিনশট, ট্রানজেকশন আইডি বা অন্য যেকোনো প্রাসঙ্গিক তথ্য এখানে লিখুন।"
+                  rows={3} placeholder="ট্রানজেকশন আইডি বা অন্য যেকোনো প্রাসঙ্গিক তথ্য এখানে লিখুন।"
                   className={inputCls} maxLength={1000} />
               </div>
 
@@ -415,7 +532,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                 </p>
               </div>
 
-              <button type="submit" disabled={submitting || !form.reason}
+              <button type="submit" disabled={submitting || uploading || !form.reason}
                 className="w-full py-4 rounded-2xl font-bold text-white text-[15px] transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 style={{ background: `linear-gradient(135deg, ${A}, ${B})`, boxShadow: `0 6px 24px ${A}35` }}>
                 {submitting ? (
