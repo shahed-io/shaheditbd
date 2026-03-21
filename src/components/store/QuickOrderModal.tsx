@@ -6,11 +6,20 @@ import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
 import type { PMId } from '@/components/store/PaymentInstructions';
+import { usePaymentSettings } from '@/hooks/usePaymentSettings';
 import bkashLogo from '@/assets/payment/bkash.png';
 import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
+
+const ASSET_LOGOS: Record<string, string> = {
+  bkash: bkashLogo,
+  nagad: nagadLogo,
+  rocket: rocketLogo,
+  upay: upayLogo,
+  bkash_merchant: bkashMerchantLogo,
+};
 
 interface Product {
   id: string | number;
