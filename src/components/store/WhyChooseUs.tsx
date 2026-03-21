@@ -173,9 +173,6 @@ const StatsBar = ({ stats, visible }: { stats: typeof STATS; visible: boolean })
       border: '1.5px solid hsl(220,13%,90%)',
       boxShadow: '0 4px 32px rgba(0,0,0,0.07)',
     }}>
-    {/* Rainbow top stripe */}
-    <div className="absolute top-0 left-0 right-0 h-[4px] rounded-t-2xl"
-      style={{ background: 'linear-gradient(90deg, hsl(243,75%,59%), hsl(15,100%,58%), hsl(158,64%,42%), hsl(263,70%,58%))' }} />
 
     <div className="absolute top-5 right-6 pointer-events-none">
       <Sparkles size={20} style={{ color: 'hsla(258,78%,55%,0.18)' }} />
