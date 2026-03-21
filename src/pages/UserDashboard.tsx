@@ -126,6 +126,7 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { wishlistItems } = useWishlist();
+  const { configs: paymentConfigs } = usePaymentSettings();
 
   const [activeTab, setActiveTab] = useState<TabId>('profile');
   const [profile, setProfile] = useState<Profile>({ display_name: '', email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
