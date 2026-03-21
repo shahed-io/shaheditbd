@@ -146,3 +146,5 @@ const PaymentInstructions = ({ paymentMethodId, amount, amountLabel = 'মোট
 
 export default PaymentInstructions;
 export type { Props as PaymentInstructionsProps };
+// Backward-compat type alias
+export type PMId = string;
