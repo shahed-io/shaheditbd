@@ -395,7 +395,7 @@ const UserDashboard = () => {
 
   const handleDeleteAddress = async (id: string) => {
     await supabase.from('addresses').delete().eq('id', id);
-    toast.success('ঠিকানা মুছে ফেলা হয়েছে'); fetchAddresses();
+    toast.success(t(selectedLang, 'address_deleted')); fetchAddresses();
   };
 
   const handleMarkAllRead = async () => {
