@@ -89,11 +89,7 @@ const FeatureCard = ({ feature: f }: { feature: typeof FEATURES[0] }) => {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      {/* Left accent stripe */}
-      <div className="absolute left-0 top-0 bottom-0 w-[4px] rounded-l-2xl"
-        style={{ background: f.accent }} />
-
-      <div className="pl-6 pr-5 py-5">
+      <div className="pl-5 pr-5 py-5">
         {/* Icon + title */}
         <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
