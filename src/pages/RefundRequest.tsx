@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
