@@ -10,6 +10,7 @@ import { WishlistProvider } from "@/hooks/useWishlist";
 
 import CartDrawer from "@/components/store/CartDrawer";
 import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
+import FacebookPixel from "@/components/store/FacebookPixel";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
