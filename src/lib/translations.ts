@@ -250,6 +250,7 @@ const translations: Record<LangCode, Record<string, string>> = {
   bn: {
     tab_profile: 'প্রোফাইল',
     tab_orders: 'আমার অর্ডার',
+    tab_licenses: 'আমার লাইসেন্স',
     tab_wallet: 'ওয়ালেট',
     tab_points: 'পয়েন্ট',
     tab_wishlist: 'উইশলিস্ট',
