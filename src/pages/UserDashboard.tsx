@@ -614,16 +614,16 @@ const UserDashboard = () => {
                         {profile.avatar_url ? <img src={profile.avatar_url} alt="av" className="w-full h-full object-cover" /> : initials}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">প্রোফাইল ছবি</p>
-                        <p className="text-xs mb-2 text-muted-foreground">JPG, PNG — সর্বোচ্চ ২MB</p>
+                        <p className="text-sm font-semibold text-foreground">{t(selectedLang, 'avatar_change')}</p>
+                        <p className="text-xs mb-2 text-muted-foreground">JPG, PNG — Max 2MB</p>
                         <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-                          <Upload size={12} /> ছবি পরিবর্তন করুন
+                          <Upload size={12} /> {t(selectedLang, 'avatar_change')}
                         </button>
                       </div>
                     </div>
                   )}
                   {[
-                    { label: 'পূর্ণ নাম', icon: User, field: 'display_name', editable: true, value: profile.display_name || '', type: 'text', placeholder: 'আপনার পুরো নাম', extra: null },
+                    { label: t(selectedLang, 'full_name'), icon: User, field: 'display_name', editable: true, value: profile.display_name || '', type: 'text', placeholder: t(selectedLang, 'enter_name'), extra: null },
                   ].map(item => (
                     <div key={item.field}>
                       <label className={labelCls}>{item.label}</label>
