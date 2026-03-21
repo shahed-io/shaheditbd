@@ -89,11 +89,12 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
+type TabId = 'profile' | 'orders' | 'licenses' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
 
 const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'profile',       key: 'tab_profile',       icon: User },
   { id: 'orders',        key: 'tab_orders',        icon: Package },
+  { id: 'licenses',      key: 'tab_licenses',      icon: Key },
   { id: 'wallet',        key: 'tab_wallet',        icon: Wallet },
   { id: 'points',        key: 'tab_points',        icon: Award },
   { id: 'wishlist',      key: 'tab_wishlist',      icon: Heart },
@@ -168,6 +169,10 @@ const UserDashboard = () => {
   const [pointsLoading, setPointsLoading] = useState(false);
   const [redeemPoints, setRedeemPoints] = useState('');
   const [redeemProcessing, setRedeemProcessing] = useState(false);
+  // Licenses state
+  const [myLicenses, setMyLicenses] = useState<any[]>([]);
+  const [licensesLoading, setLicensesLoading] = useState(false);
+  const [licenseVisibility, setLicenseVisibility] = useState<Record<string, boolean>>({});
 
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
   useEffect(() => { if (user) fetchProfile(); }, [user]);
@@ -179,7 +184,21 @@ const UserDashboard = () => {
     if (activeTab === 'referral') fetchReferrals();
     if (activeTab === 'wallet') fetchWallet();
     if (activeTab === 'points') fetchPoints();
+    if (activeTab === 'licenses') fetchLicenses();
   }, [activeTab, user]);
+
+  const fetchLicenses = async () => {
+    if (!user) return;
+    setLicensesLoading(true);
+    const { data } = await supabase
+      .from('order_items')
+      .select('id, product_name, license_key, orders!inner(user_id, order_number, status, created_at)')
+      .eq('orders.user_id', user.id)
+      .eq('orders.status', 'completed')
+      .not('license_key', 'is', null);
+    setMyLicenses(data || []);
+    setLicensesLoading(false);
+  };
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -1371,6 +1390,107 @@ const UserDashboard = () => {
                     className={`flex items-center justify-center gap-2 w-full py-3 text-sm disabled:opacity-50 ${gradBtn}`} style={gradBtnStyle}>
                     {passLoading ? <><RefreshCw size={15} className="animate-spin" /> {t(selectedLang, 'loading_text')}</> : <><ShieldCheck size={15} /> {t(selectedLang, 'change_password')}</>}
                   </button>
+                </div>
+              )}
+
+              {/* ── Licenses Tab ── */}
+              {activeTab === 'licenses' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-foreground flex items-center gap-2">
+                      <Key size={16} className="text-primary" />
+                      আমার Licenses ও Credentials
+                    </h3>
+                    <button onClick={fetchLicenses} className="p-2 rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all">
+                      <RefreshCw size={14} />
+                    </button>
+                  </div>
+
+                  {licensesLoading ? (
+                    <div className="flex items-center justify-center py-16">
+                      <RefreshCw size={20} className="animate-spin text-primary" />
+                    </div>
+                  ) : myLicenses.length === 0 ? (
+                    <div className="text-center py-16 text-muted-foreground rounded-2xl border border-dashed border-border">
+                      <Key size={40} className="mx-auto mb-3 opacity-20" />
+                      <p className="font-medium text-sm">কোনো License পাওয়া যায়নি</p>
+                      <p className="text-xs mt-1">অর্ডার Complete হলে এখানে দেখাবে</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {myLicenses.map((item: any) => {
+                        const isVisible = licenseVisibility[item.id];
+                        const parts = (item.license_key || '').split('|');
+                        const keyValue = parts[0];
+                        const extraInfo = parts[1] || null;
+                        const order = item.orders;
+                        return (
+                          <div key={item.id} className="rounded-2xl border overflow-hidden"
+                            style={{ background: 'hsl(var(--card))', borderColor: 'hsla(162,72%,46%,0.25)' }}>
+                            {/* Header */}
+                            <div className="flex items-center gap-3 px-4 py-3"
+                              style={{ background: 'hsla(162,72%,46%,0.06)', borderBottom: '1px solid hsla(162,72%,46%,0.15)' }}>
+                              <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                                style={{ background: 'hsla(162,72%,46%,0.15)' }}>
+                                <Key size={14} style={{ color: 'hsl(162,72%,46%)' }} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-bold text-sm text-foreground truncate">{item.product_name}</p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  অর্ডার #{order?.order_number} · {order?.created_at ? new Date(order.created_at).toLocaleDateString('bn-BD') : ''}
+                                </p>
+                              </div>
+                              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
+                                style={{ background: 'hsla(162,72%,46%,0.15)', color: 'hsl(162,72%,46%)' }}>
+                                ✅ Delivered
+                              </span>
+                            </div>
+
+                            {/* Key Content */}
+                            <div className="p-4 space-y-2.5">
+                              {/* Main key */}
+                              <div>
+                                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                                  {extraInfo ? 'Username / Email' : 'License Key'}
+                                </p>
+                                <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
+                                  style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                                  <code className="flex-1 text-sm font-mono text-foreground break-all">
+                                    {isVisible ? keyValue : keyValue.slice(0, 4) + '•'.repeat(Math.min(keyValue.length - 8, 16)) + keyValue.slice(-4)}
+                                  </code>
+                                  <button onClick={() => setLicenseVisibility(p => ({ ...p, [item.id]: !p[item.id] }))}
+                                    className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0">
+                                    {isVisible ? <EyeOff size={13} /> : <Eye size={13} />}
+                                  </button>
+                                  <button onClick={() => { navigator.clipboard.writeText(keyValue); toast.success('Copied!'); }}
+                                    className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0">
+                                    <Copy size={13} />
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Extra (Password) */}
+                              {extraInfo && (
+                                <div>
+                                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Password</p>
+                                  <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
+                                    style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                                    <code className="flex-1 text-sm font-mono text-foreground break-all">
+                                      {isVisible ? extraInfo : '•'.repeat(Math.min(extraInfo.length, 20))}
+                                    </code>
+                                    <button onClick={() => { navigator.clipboard.writeText(extraInfo); toast.success('Password copied!'); }}
+                                      className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0">
+                                      <Copy size={13} />
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 

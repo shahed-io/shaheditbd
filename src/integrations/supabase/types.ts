@@ -1796,6 +1796,7 @@ export type Database = {
       }
     }
     Functions: {
+      auto_assign_licenses: { Args: { p_order_id: string }; Returns: Json }
       deduct_order_points: {
         Args: { p_order_id: string; p_order_total: number; p_user_id: string }
         Returns: Json

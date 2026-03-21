@@ -85,6 +85,7 @@ const AdminNewsletterSubscribers = lazy(() => import("./pages/admin/AdminNewslet
 const AdminProductImportExport   = lazy(() => import("./pages/admin/AdminProductImportExport"));
 const AdminProductReviews        = lazy(() => import("./pages/admin/AdminProductReviews"));
 const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFacebookPixel"));
+const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -181,6 +182,7 @@ const AppContent = () => {
             <Route path="product-reviews" element={<AdminProductReviews />} />
             <Route path="import-export" element={<AdminProductImportExport />} />
             <Route path="facebook-pixel" element={<AdminFacebookPixel />} />
+            <Route path="licenses" element={<AdminLicenses />} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
