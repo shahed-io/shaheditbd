@@ -76,6 +76,27 @@ const Navbar = () => {
       .then(({ data }) => { if (data?.value) setAnnouncement(data.value); });
   }, []);
 
+  useEffect(() => {
+    supabase
+      .from('categories')
+      .select('id, name, slug, products!products_category_id_fkey(id)')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .then(({ data }) => {
+        if (!data) return;
+        const cats: NavCat[] = data
+          .map(c => ({
+            slug: c.slug,
+            label: c.name,
+            count: Array.isArray(c.products) ? c.products.length : 0,
+            icon: (CAT_ICON_MAP[c.name] || CAT_ICON_MAP['default']).icon,
+            color: (CAT_ICON_MAP[c.name] || CAT_ICON_MAP['default']).color,
+          }))
+          .filter(c => c.count > 0);
+        setNavCats(cats);
+      });
+  }, []);
+
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
   const initials    = displayName[0].toUpperCase();
 
