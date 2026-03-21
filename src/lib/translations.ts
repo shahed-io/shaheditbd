@@ -1747,13 +1747,20 @@ const dbTextEn: Record<string, string> = {
   db_wallet_refund: 'Order refund',
   db_wallet_admin_credit: 'Admin credit',
   db_wallet_points_redeem: 'Points redeemed to wallet',
-  db_notif_points_redeemed: '🔥 Points Redeemed!',
-  db_notif_points_earned: '⭐ Points Earned!',
-  db_notif_order_status: '📦 Order Status Update',
-  db_notif_topup_rejected: 'Wallet Top-up Rejected ❌',
-  db_notif_topup_approved: 'Wallet Top-up Approved ✅',
-  db_notif_order_confirmed: '✅ Order Confirmed',
-  db_notif_refund_processed: '💸 Refund Processed',
+  // Notification titles
+  db_notif_points_redeemed_title: '🔥 Points Redeemed!',
+  db_notif_points_earned_title: '⭐ Points Earned!',
+  db_notif_order_status_title: '📦 Order Status Update',
+  db_notif_topup_rejected_title: 'Wallet Top-up Rejected ❌',
+  db_notif_topup_approved_title: 'Wallet Top-up Approved ✅',
+  db_notif_order_confirmed_title: '✅ Order Confirmed',
+  db_notif_refund_processed_title: '💸 Refund Processed',
+  // Notification messages
+  db_notif_msg_points_redeemed: 'Your points have been redeemed to your wallet.',
+  db_notif_msg_points_earned: 'Points have been added to your account from your completed order.',
+  db_notif_msg_order_status: 'Your order status has been updated.',
+  db_notif_msg_topup_rejected: 'Your top-up request was rejected.',
+  db_notif_msg_topup_approved: 'Your wallet has been topped up successfully.',
 };
 
 const dbTextBn: Record<string, string> = {
