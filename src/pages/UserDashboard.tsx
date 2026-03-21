@@ -384,12 +384,12 @@ const UserDashboard = () => {
 
   const handleSaveAddress = async () => {
     if (!user) return;
-    if (!addressForm.recipient_name || !addressForm.phone || !addressForm.address_line || !addressForm.city) { toast.error('সব প্রয়োজনীয় তথ্য পূরণ করুন'); return; }
+    if (!addressForm.recipient_name || !addressForm.phone || !addressForm.address_line || !addressForm.city) { toast.error(t(selectedLang, 'address_required_fields')); return; }
     const payload = { ...addressForm, user_id: user.id };
-    if (editingAddress) { await supabase.from('addresses').update(payload).eq('id', editingAddress.id); toast.success('ঠিকানা আপডেট হয়েছে!'); }
-    else { await supabase.from('addresses').insert(payload); toast.success('ঠিকানা যোগ করা হয়েছে!'); }
+    if (editingAddress) { await supabase.from('addresses').update(payload).eq('id', editingAddress.id); toast.success(t(selectedLang, 'address_saved')); }
+    else { await supabase.from('addresses').insert(payload); toast.success(t(selectedLang, 'address_saved')); }
     setShowAddressForm(false); setEditingAddress(null);
-    setAddressForm({ label: 'বাড়ি', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false });
+    setAddressForm({ label: 'Home', recipient_name: '', phone: '', address_line: '', city: '', district: '', postal_code: '', is_default: false });
     fetchAddresses();
   };
 
