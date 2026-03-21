@@ -35,6 +35,9 @@ export default function RefundRequest() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [ticketNum, setTicketNum] = useState('');
+  const [screenshots, setScreenshots] = useState<{ file: File; preview: string; url?: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     customer_name: '',
@@ -58,6 +61,48 @@ export default function RefundRequest() {
     : null;
 
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (screenshots.length + files.length > 5) {
+      toast.error('সর্বোচ্চ ৫টি স্ক্রিনশট আপলোড করা যাবে');
+      return;
+    }
+    const newItems = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setScreenshots(p => [...p, ...newItems]);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removeScreenshot = (idx: number) => {
+    setScreenshots(p => {
+      URL.revokeObjectURL(p[idx].preview);
+      return p.filter((_, i) => i !== idx);
+    });
+  };
+
+  const uploadScreenshots = async (): Promise<string[]> => {
+    if (screenshots.length === 0) return [];
+    setUploading(true);
+    const urls: string[] = [];
+    try {
+      for (const item of screenshots) {
+        const ext = item.file.name.split('.').pop() || 'jpg';
+        const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error } = await supabase.storage
+          .from('refund-screenshots')
+          .upload(path, item.file, { upsert: false });
+        if (error) throw error;
+        const { data } = supabase.storage.from('refund-screenshots').getPublicUrl(path);
+        urls.push(data.publicUrl);
+      }
+    } finally {
+      setUploading(false);
+    }
+    return urls;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
