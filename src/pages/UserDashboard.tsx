@@ -838,9 +838,9 @@ const UserDashboard = () => {
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(15,100%,97%)' }}>
                         <Heart size={28} style={{ color: 'hsl(15,100%,60%)' }} />
                       </div>
-                      <p className="font-bold text-base mb-1 text-foreground">উইশলিস্ট খালি</p>
-                      <p className="text-sm mb-4 text-muted-foreground">পছন্দের পণ্যে ❤️ চিহ্ন দিন</p>
-                      <a href="/" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>পণ্য দেখুন</a>
+                      <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_wishlist')}</p>
+                      <p className="text-sm mb-4 text-muted-foreground">{t(selectedLang, 'no_wishlist_sub')}</p>
+                      <a href="/" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>{t(selectedLang, 'browse_products')}</a>
                     </div>
                   ) : (
                     <div className="grid sm:grid-cols-2 gap-3">
