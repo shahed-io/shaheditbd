@@ -737,7 +737,7 @@ const UserDashboard = () => {
                                 <div className="flex flex-wrap gap-3">
                                   <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                                     <CreditCard size={13} className="text-primary" />
-                                    <span className="text-muted-foreground">পেমেন্ট:</span>
+                                    <span className="text-muted-foreground">{t(selectedLang, 'payment_status')}:</span>
                                     <span className="font-semibold text-foreground">{pmLabel[order.payment_method || ''] || order.payment_method || '—'}</span>
                                   </div>
                                   {order.transaction_id && !order.transaction_id.startsWith('WALLET-') && (
