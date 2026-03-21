@@ -869,9 +869,9 @@ const UserDashboard = () => {
                 <div>
                   {showAddressForm ? (
                     <div className="max-w-lg space-y-4">
-                      <h3 className="font-bold text-foreground">{editingAddress ? 'ঠিকানা সম্পাদনা' : 'নতুন ঠিকানা যোগ করুন'}</h3>
+                      <h3 className="font-bold text-foreground">{editingAddress ? t(selectedLang, 'edit_address') : t(selectedLang, 'add_address')}</h3>
                       <div className="grid grid-cols-3 gap-2">
-                        {['বাড়ি', 'অফিস', 'অন্যান্য'].map(l => (
+                        {['Home', 'Office', 'Other'].map(l => (
                           <button key={l} onClick={() => setAddressForm(f => ({ ...f, label: l }))}
                             className={`py-2 rounded-xl text-sm font-semibold transition-all border ${addressForm.label === l ? 'border-primary text-primary bg-primary/10' : 'border-border text-muted-foreground hover:bg-white/60'}`}>
                             {l}
@@ -879,12 +879,12 @@ const UserDashboard = () => {
                         ))}
                       </div>
                       {[
-                        { field: 'recipient_name', label: 'প্রাপকের নাম *', placeholder: 'পূর্ণ নাম' },
-                        { field: 'phone', label: 'ফোন নম্বর *', placeholder: '01XXXXXXXXX' },
-                        { field: 'address_line', label: 'ঠিকানা *', placeholder: 'বাড়ি নং, রাস্তা, এলাকা' },
-                        { field: 'city', label: 'শহর *', placeholder: 'ঢাকা' },
-                        { field: 'district', label: 'জেলা', placeholder: 'জেলা' },
-                        { field: 'postal_code', label: 'পোস্টাল কোড', placeholder: '1000' },
+                        { field: 'recipient_name', label: `${t(selectedLang, 'recipient_name')} *`, placeholder: t(selectedLang, 'enter_name') },
+                        { field: 'phone', label: `${t(selectedLang, 'phone')} *`, placeholder: '01XXXXXXXXX' },
+                        { field: 'address_line', label: `${t(selectedLang, 'address_line')} *`, placeholder: t(selectedLang, 'address_placeholder') },
+                        { field: 'city', label: `${t(selectedLang, 'city')} *`, placeholder: t(selectedLang, 'city_placeholder') },
+                        { field: 'district', label: t(selectedLang, 'district'), placeholder: t(selectedLang, 'district') },
+                        { field: 'postal_code', label: t(selectedLang, 'postal_code'), placeholder: '1000' },
                       ].map(({ field, label, placeholder }) => (
                         <div key={field}>
                           <label className={labelCls}>{label}</label>
@@ -894,11 +894,11 @@ const UserDashboard = () => {
                       ))}
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" checked={addressForm.is_default} onChange={e => setAddressForm(f => ({ ...f, is_default: e.target.checked }))} className="rounded" />
-                        <span className="text-sm text-foreground">ডিফল্ট ঠিকানা হিসেবে সেট করুন</span>
+                        <span className="text-sm text-foreground">{t(selectedLang, 'set_default')}</span>
                       </label>
                       <div className="flex gap-3">
-                        <button onClick={() => setShowAddressForm(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>বাতিল</button>
-                        <button onClick={handleSaveAddress} className={`flex-1 py-3 text-sm ${gradBtn}`} style={gradBtnStyle}>সংরক্ষণ করুন</button>
+                        <button onClick={() => setShowAddressForm(false)} className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>{t(selectedLang, 'cancel')}</button>
+                        <button onClick={handleSaveAddress} className={`flex-1 py-3 text-sm ${gradBtn}`} style={gradBtnStyle}>{t(selectedLang, 'save')}</button>
                       </div>
                     </div>
                   ) : addressLoading ? (
