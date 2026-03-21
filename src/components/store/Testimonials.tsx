@@ -81,42 +81,60 @@ const AvatarCircle = ({ initials, index }: { initials: string; index: number }) 
 /* ─── Review Card ─────────────────────────────── */
 const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
   const [hov, setHov] = useState(false);
-  const { from, to } = PALETTES[index % PALETTES.length];
+  const { from } = PALETTES[index % PALETTES.length];
 
   return (
     <div
-      className="flex-shrink-0 w-[290px] sm:w-[320px] cursor-default rounded-3xl overflow-hidden relative"
+      className="flex-shrink-0 w-[290px] sm:w-[320px] cursor-default rounded-2xl relative"
       style={{
-        background: hov ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.72)',
-        backdropFilter: 'blur(28px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-        border: '1.5px solid rgba(255,255,255,0.90)',
+        background: hov
+          ? 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.78) 100%)'
+          : 'linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.50) 100%)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        border: `1px solid ${from.replace('hsl(','hsla(').replace(')',',0.22)')}`,
         boxShadow: hov
-          ? `0 18px 48px rgba(0,0,0,0.10), 0 4px 18px ${from}28, inset 0 1px 0 rgba(255,255,255,1)`
-          : `0 4px 22px rgba(0,0,0,0.06), 0 2px 8px ${from}14, inset 0 1px 0 rgba(255,255,255,1)`,
+          ? `0 12px 36px ${from.replace('hsl(','hsla(').replace(')',',0.15)')}, 0 1px 0 rgba(255,255,255,0.9) inset`
+          : `0 4px 20px ${from.replace('hsl(','hsla(').replace(')',',0.07)')}, 0 1px 0 rgba(255,255,255,0.9) inset`,
         transform: hov ? 'translateY(-4px) scale(1.015)' : 'translateY(0) scale(1)',
         transition: 'all 0.32s cubic-bezier(0.23,1,0.32,1)',
-        outline: hov ? `1.5px solid ${from}30` : '1.5px solid transparent',
       }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      <div className="absolute top-0 right-0 w-28 h-28 pointer-events-none opacity-40"
-        style={{ background: `radial-gradient(circle at top right, ${from}18, transparent 70%)` }} />
+      {/* Ambient glow top-right */}
+      <div className="absolute top-0 right-0 w-28 h-28 pointer-events-none rounded-2xl overflow-hidden"
+        style={{ background: `radial-gradient(circle at top right, ${from.replace('hsl(','hsla(').replace(')',',0.10)')}, transparent 70%)` }} />
 
-      <div className="p-5 pt-5 space-y-3">
-        <Quote size={20} style={{ color: from, opacity: 0.7 }} />
+      <div className="p-5 space-y-3 relative z-10">
+        {/* Column header style — icon + product label */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{
+              background: from.replace('hsl(','hsla(').replace(')',',0.12)'),
+              border: `1.5px solid ${from.replace('hsl(','hsla(').replace(')',',0.25)')}`,
+              color: from,
+            }}>
+            <Quote size={14} />
+          </div>
+          <span className="text-[10.5px] font-bold uppercase tracking-[0.14em] truncate max-w-[160px]"
+            style={{ color: 'hsl(226,35%,20%)' }}>
+            {review.product}
+          </span>
+          <StarRating rating={review.rating} color={from} />
+        </div>
+
+        {/* Divider like footer columns */}
+        <div className="h-px rounded-full"
+          style={{ background: `linear-gradient(90deg, ${from.replace('hsl(','hsla(').replace(')',',0.40)')}, transparent)` }} />
+
         <p className="text-[12.5px] leading-relaxed line-clamp-4" style={{ color: 'hsl(226,20%,38%)' }}>
           {review.review}
         </p>
-        <div className="flex items-center justify-between gap-2">
-          <StarRating rating={review.rating} color={from} />
-          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full truncate max-w-[110px]"
-            style={{ background: `${from}14`, border: `1px solid ${from}30`, color: from }}>
-            {review.product}
-          </span>
-        </div>
-        <div className="h-px" style={{ background: `linear-gradient(90deg, ${from}25, transparent 70%)` }} />
+
+        <div className="h-px rounded-full"
+          style={{ background: `linear-gradient(90deg, transparent, ${from.replace('hsl(','hsla(').replace(')',',0.18)')}, transparent)` }} />
+
         <div className="flex items-center gap-3">
           <AvatarCircle initials={review.avatar || review.name?.slice(0,2).toUpperCase()} index={index} />
           <div className="flex-1 min-w-0">
