@@ -15,13 +15,25 @@ const NAV_LINKS = [
   { label: 'Free Tools', href: '/free-tools' },
 ];
 
-const CATEGORY_DROPDOWN = [
-  { icon: '🛒', label: 'All Products',     count: 0,  color: 'hsla(243,75%,62%,0.10)', href: '/shop' },
-  { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(258,78%,55%,0.10)', href: '/shop?category=microsoft-office' },
-  { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(162,72%,38%,0.10)', href: '/shop?category=antivirus' },
-  { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(330,85%,55%,0.10)', href: '/shop?category=streaming' },
-  { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(200,90%,45%,0.10)', href: '/shop?category=vpn' },
-];
+const CAT_ICON_MAP: Record<string, { icon: string; color: string }> = {
+  'Windows':      { icon: '🪟', color: 'hsla(210,90%,60%,0.12)' },
+  'Office':       { icon: '📦', color: 'hsla(25,90%,60%,0.12)' },
+  'Microsoft Office': { icon: '📦', color: 'hsla(258,78%,55%,0.12)' },
+  'Software':     { icon: '💻', color: 'hsla(263,70%,62%,0.12)' },
+  'VPN':          { icon: '🔒', color: 'hsla(200,90%,45%,0.12)' },
+  'Subscription': { icon: '🎬', color: 'hsla(283,65%,62%,0.12)' },
+  'Antivirus':    { icon: '🛡️', color: 'hsla(162,72%,38%,0.12)' },
+  'Streaming':    { icon: '📺', color: 'hsla(0,80%,62%,0.12)' },
+  'default':      { icon: '🛒', color: 'hsla(243,75%,62%,0.12)' },
+};
+
+interface NavCategory {
+  id: string;
+  name: string;
+  slug: string;
+  image_url: string | null;
+  count: number;
+}
 
 const Navbar = () => {
   const [mobileOpen,   setMobileOpen]   = useState(false);
