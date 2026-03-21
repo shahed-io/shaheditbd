@@ -1521,7 +1521,7 @@ const UserDashboard = () => {
                               {tx.type === 'credit' ? <TrendingUp size={12} style={{ color: 'hsl(158,80%,42%)' }} /> : <TrendingDown size={12} className="text-destructive" />}
                             </div>
                             <div>
-                              <p className="text-xs font-medium text-foreground">{tx.note || (tx.type === 'credit' ? 'Credit' : 'Debit')}</p>
+                              <p className="text-xs font-medium text-foreground">{translateDbText(tx.note || (tx.type === 'credit' ? 'Credit' : 'Debit'), selectedLang)}</p>
                               <p className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                             </div>
                           </div>
