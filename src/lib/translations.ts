@@ -225,6 +225,25 @@ const translations: Record<LangCode, Record<string, string>> = {
     points_history: 'Points History',
     points_no_tx: 'No transactions yet',
     points_balance_label: 'Balance:',
+
+    // Extra keys
+    avatar_size_error: 'Image size must not exceed 2MB',
+    avatar_updated: '✅ Profile photo updated!',
+    avatar_upload_error: 'Upload failed',
+    password_error: 'Could not change password',
+    password_match: 'Passwords match',
+    address_required_fields: 'Please fill in all required fields',
+    no_addresses_sub: 'Add a delivery address',
+    no_notifications_sub: 'You will see new updates here',
+    phone_not_added: 'Not added',
+    link_copied: 'Referral link copied!',
+    order_items_label: 'Products',
+    no_items_found: 'No items found',
+    license_keys_label: 'License Keys',
+    key_copied: '✅ Key copied!',
+    discount_off: 'Discount',
+    address_placeholder: 'House no, road, area',
+    city_placeholder: 'City',
   },
 
   bn: {
