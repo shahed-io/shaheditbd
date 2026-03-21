@@ -1330,13 +1330,13 @@ const UserDashboard = () => {
                   <div className="p-4 rounded-2xl flex items-start gap-3" style={{ background: 'linear-gradient(135deg, rgba(99,82,234,0.08), rgba(99,82,234,0.04))', border: '1px solid hsla(258,78%,65%,0.22)', backdropFilter: 'blur(8px)' }}>
                     <ShieldCheck size={18} style={{ color: 'hsl(var(--primary))' }} className="mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-semibold" style={{ color: 'hsl(var(--primary))' }}>পাসওয়ার্ড পরিবর্তন করুন</p>
-                      <p className="text-xs mt-0.5 text-muted-foreground">আপনার অ্যাকাউন্ট সুরক্ষিত রাখতে নিয়মিত পাসওয়ার্ড পরিবর্তন করুন।</p>
+                      <p className="text-sm font-semibold" style={{ color: 'hsl(var(--primary))' }}>{t(selectedLang, 'security_title')}</p>
+                      <p className="text-xs mt-0.5 text-muted-foreground">{t(selectedLang, 'security_subtitle')}</p>
                     </div>
                   </div>
                   {[
-                    { label: 'নতুন পাসওয়ার্ড', value: newPassword, set: setNewPassword, show: showNewPass, toggle: () => setShowNewPass(!showNewPass), placeholder: 'নতুন পাসওয়ার্ড লিখুন' },
-                    { label: 'পাসওয়ার্ড নিশ্চিত করুন', value: confirmPassword, set: setConfirmPassword, show: showConfirmPass, toggle: () => setShowConfirmPass(!showConfirmPass), placeholder: 'পাসওয়ার্ড আবার লিখুন' },
+                    { label: t(selectedLang, 'new_password'), value: newPassword, set: setNewPassword, show: showNewPass, toggle: () => setShowNewPass(!showNewPass), placeholder: t(selectedLang, 'enter_new_password') },
+                    { label: t(selectedLang, 'confirm_password'), value: confirmPassword, set: setConfirmPassword, show: showConfirmPass, toggle: () => setShowConfirmPass(!showConfirmPass), placeholder: t(selectedLang, 'enter_confirm_password') },
                   ].map((f, idx) => (
                     <div key={idx}>
                       <label className={labelCls}>{f.label}</label>
@@ -1351,11 +1351,11 @@ const UserDashboard = () => {
                       </div>
                     </div>
                   ))}
-                  {confirmPassword && newPassword !== confirmPassword && <p className="text-xs flex items-center gap-1 text-destructive"><AlertCircle size={11} /> পাসওয়ার্ড দুটি মিলছে না</p>}
-                  {confirmPassword && newPassword === confirmPassword && newPassword.length >= 6 && <p className="text-xs flex items-center gap-1" style={{ color: 'hsl(158,64%,42%)' }}><CheckCircle2 size={11} /> পাসওয়ার্ড মিলেছে</p>}
+                  {confirmPassword && newPassword !== confirmPassword && <p className="text-xs flex items-center gap-1 text-destructive"><AlertCircle size={11} /> {t(selectedLang, 'password_mismatch')}</p>}
+                  {confirmPassword && newPassword === confirmPassword && newPassword.length >= 6 && <p className="text-xs flex items-center gap-1" style={{ color: 'hsl(158,64%,42%)' }}><CheckCircle2 size={11} /> {t(selectedLang, 'password_match')}</p>}
                   <button onClick={handleChangePassword} disabled={passLoading || !newPassword || !confirmPassword}
                     className={`flex items-center justify-center gap-2 w-full py-3 text-sm disabled:opacity-50 ${gradBtn}`} style={gradBtnStyle}>
-                    {passLoading ? <><RefreshCw size={15} className="animate-spin" /> পরিবর্তন হচ্ছে...</> : <><ShieldCheck size={15} /> পাসওয়ার্ড পরিবর্তন করুন</>}
+                    {passLoading ? <><RefreshCw size={15} className="animate-spin" /> {t(selectedLang, 'loading_text')}</> : <><ShieldCheck size={15} /> {t(selectedLang, 'change_password')}</>}
                   </button>
                 </div>
               )}
