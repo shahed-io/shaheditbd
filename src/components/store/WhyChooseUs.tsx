@@ -194,7 +194,8 @@ const StatsBar = ({ stats, visible }: { stats: typeof STATS; visible: boolean })
               style={{ color: s.accent }}>
               {s.n}
             </div>
-            <div className="text-[11px] font-semibold mt-2 uppercase tracking-wider text-muted-foreground">
+            <div className="text-[11px] font-semibold mt-2 uppercase tracking-wider"
+              style={{ color: 'hsl(258,78%,55%)' }}>
               {s.l}
             </div>
           </div>
