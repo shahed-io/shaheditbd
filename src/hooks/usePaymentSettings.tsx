@@ -166,7 +166,10 @@ export const usePaymentSettings = () => {
       }
       return DEFAULT_PAYMENT_CONFIGS;
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,            // সবসময় fresh data fetch করবে
+    gcTime: 1000 * 60 * 2,  // 2 মিনিট cache রাখবে
+    refetchOnWindowFocus: true,   // ট্যাবে ফিরলেই আবার লোড হবে
+    refetchOnMount: 'always',     // যেকোনো কম্পোনেন্ট মাউন্টে রিফেচ
   });
 
   const saveMutation = useMutation({
