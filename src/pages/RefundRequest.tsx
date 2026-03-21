@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2 } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2, Calculator } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
@@ -21,14 +21,68 @@ const REFUND_REASONS = [
   { value: 'other', label: 'অন্য কারণ' },
 ];
 
+// Period value → total days
+const PERIOD_DAYS: Record<string, number | null> = {
+  '1_month':   30,
+  '3_months':  90,
+  '6_months':  180,
+  '1_year':    365,
+  'lifetime':  null,
+  'na':        null,
+};
+
 const SUBSCRIPTION_PERIODS = [
-  { value: '1_month', label: '১ মাস' },
-  { value: '3_months', label: '৩ মাস' },
-  { value: '6_months', label: '৬ মাস' },
-  { value: '1_year', label: '১ বছর' },
-  { value: 'lifetime', label: 'লাইফটাইম' },
-  { value: 'na', label: 'প্রযোজ্য নয়' },
+  { value: '1_month',   label: '১ মাস (৩০ দিন)' },
+  { value: '3_months',  label: '৩ মাস (৯০ দিন)' },
+  { value: '6_months',  label: '৬ মাস (১৮০ দিন)' },
+  { value: '1_year',    label: '১ বছর (৩৬৫ দিন)' },
+  { value: 'lifetime',  label: 'লাইফটাইম' },
+  { value: 'na',        label: 'প্রযোজ্য নয়' },
 ];
+
+// Auto-calculation result
+type CalcResult = {
+  totalDays: number | null;
+  daysUsed: number;
+  daysRemaining: number | null;
+  unusedPercent: number | null;
+  proportionalRefund: number | null;
+  refundAfter10: number | null;
+};
+
+function calcRefund(purchaseDate: string, period: string, amount: string): CalcResult | null {
+  if (!purchaseDate || !period || period === 'na') return null;
+  const purchase = new Date(purchaseDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  purchase.setHours(0, 0, 0, 0);
+  const daysUsed = Math.max(0, Math.floor((today.getTime() - purchase.getTime()) / 86400000));
+  const totalDays = PERIOD_DAYS[period];
+
+  if (period === 'lifetime') {
+    return {
+      totalDays: null,
+      daysUsed,
+      daysRemaining: null,
+      unusedPercent: null,
+      proportionalRefund: null,
+      refundAfter10: amount ? parseFloat((parseFloat(amount) * 0.9).toFixed(2)) : null,
+    };
+  }
+
+  if (!totalDays) return null;
+  const daysRemaining = Math.max(0, totalDays - daysUsed);
+  const unusedPercent = parseFloat(((daysRemaining / totalDays) * 100).toFixed(1));
+  const paidAmount = parseFloat(amount || '0');
+  const proportionalRefund = paidAmount > 0
+    ? parseFloat(((paidAmount * daysRemaining) / totalDays).toFixed(2))
+    : null;
+  const refundAfter10 = proportionalRefund !== null
+    ? parseFloat((proportionalRefund * 0.9).toFixed(2))
+    : null;
+
+  return { totalDays, daysUsed, daysRemaining, unusedPercent, proportionalRefund, refundAfter10 };
+}
 
 export default function RefundRequest() {
   const [policyOpen, setPolicyOpen] = useState(true);
@@ -48,12 +102,20 @@ export default function RefundRequest() {
     reason: '',
     reason_detail: '',
     subscription_period: '',
-    days_used: '',
-    days_remaining: '',
+    purchase_date: '',
     payment_amount: '',
     payment_method: '',
     additional_info: '',
   });
+
+  // Auto-calculate whenever period, date, or amount changes
+  const calc = (form.purchase_date && form.subscription_period)
+    ? calcRefund(form.purchase_date, form.subscription_period, form.payment_amount)
+    : null;
+
+  // Sync days_used / days_remaining back as display strings
+  const daysUsedDisplay  = calc ? `${calc.daysUsed} দিন` : '';
+  const daysRemainingDisplay = calc?.daysRemaining != null ? `${calc.daysRemaining} দিন` : (calc ? 'লাইফটাইম' : '');
 
   const isChangeOfMind = form.reason === 'change_of_mind';
   const deductedAmount = isChangeOfMind && form.payment_amount
