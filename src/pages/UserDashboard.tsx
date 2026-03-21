@@ -89,11 +89,12 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
+type TabId = 'profile' | 'orders' | 'licenses' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
 
 const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'profile',       key: 'tab_profile',       icon: User },
   { id: 'orders',        key: 'tab_orders',        icon: Package },
+  { id: 'licenses',      key: 'tab_licenses',      icon: Key },
   { id: 'wallet',        key: 'tab_wallet',        icon: Wallet },
   { id: 'points',        key: 'tab_points',        icon: Award },
   { id: 'wishlist',      key: 'tab_wishlist',      icon: Heart },
