@@ -36,17 +36,39 @@ interface NavCategory {
 }
 
 const Navbar = () => {
-  const [mobileOpen,   setMobileOpen]   = useState(false);
-  const [authOpen,     setAuthOpen]     = useState(false);
-  const [scrolled,     setScrolled]     = useState(false);
-  const [catOpen,      setCatOpen]      = useState(false);
-  const [avatarUrl,    setAvatarUrl]    = useState<string | null>(null);
-  const [announcement, setAnnouncement] = useState<string | null>(null);
-  const [mobileSearch, setMobileSearch] = useState(false);
+  const [mobileOpen,    setMobileOpen]    = useState(false);
+  const [authOpen,      setAuthOpen]      = useState(false);
+  const [scrolled,      setScrolled]      = useState(false);
+  const [catOpen,       setCatOpen]       = useState(false);
+  const [avatarUrl,     setAvatarUrl]     = useState<string | null>(null);
+  const [announcement,  setAnnouncement]  = useState<string | null>(null);
+  const [mobileSearch,  setMobileSearch]  = useState(false);
   const [desktopSearch, setDesktopSearch] = useState(false);
+  const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
+
+  const loadNavCategories = async () => {
+    const { data: categories } = await supabase
+      .from('categories')
+      .select('id, name, slug, image_url, products!products_category_id_fkey(id)')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (!categories) return;
+    const HIDDEN = ['Adobe', 'Antivirus', 'Streaming'];
+    setNavCategories(
+      categories
+        .map(c => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          image_url: (c as any).image_url || null,
+          count: Array.isArray((c as any).products) ? (c as any).products.length : 0,
+        }))
+        .filter(c => c.count > 0 && !HIDDEN.includes(c.name))
+    );
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -54,7 +76,6 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Ctrl+K opens desktop search
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); setDesktopSearch(true); }
@@ -72,6 +93,15 @@ const Navbar = () => {
   useEffect(() => {
     supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
       .then(({ data }) => { if (data?.value) setAnnouncement(data.value); });
+  }, []);
+
+  useEffect(() => {
+    loadNavCategories();
+    const channel = supabase
+      .channel('navbar-cats-rt')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, loadNavCategories)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
