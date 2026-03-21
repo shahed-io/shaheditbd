@@ -133,27 +133,27 @@ const FlashSale = () => {
             <p className="text-muted-foreground mt-2 text-[14px]">Top deals sorted by highest savings — grab them before time runs out!</p>
           </div>
 
-          {/* Countdown — glassmorphism */}
+          {/* Countdown */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 text-[12px] font-semibold text-muted-foreground">
               <Timer size={13} style={{ color: 'hsl(15,100%,62%)' }} /> Sale ends in:
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {TIME_UNITS.map((item, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <div className="flex flex-col items-center min-w-[54px] rounded-2xl px-3 py-2.5"
+                <div key={i} className="flex items-center gap-3">
+                  <div className="flex flex-col items-center justify-center w-[68px] h-[68px] rounded-[18px]"
                     style={{
-                      background: 'hsla(226,35%,12%,0.55)',
-                      backdropFilter: 'blur(20px) saturate(180%)',
-                      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                      border: '1px solid hsla(258,78%,75%,0.18)',
-                      boxShadow: '0 4px 16px hsla(226,35%,12%,0.2), inset 0 1px 0 hsla(255,100%,100%,0.06)',
+                      background: 'hsl(220,18%,28%)',
+                      boxShadow: '0 4px 18px rgba(0,0,0,0.35), inset 0 1px 0 hsla(255,100%,100%,0.07)',
                     }}>
-                    <span className="text-[1.4rem] font-fira font-black leading-none text-white tabular-nums">{item.v}</span>
-                    <span className="text-[9px] font-bold text-gray-400 mt-1 uppercase tracking-wider">{item.l}</span>
+                    <span className="text-[1.55rem] font-fira font-black leading-none text-white tabular-nums tracking-tight">{item.v}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-[0.12em] mt-1" style={{ color: 'hsl(220,10%,60%)' }}>{item.l}</span>
                   </div>
                   {i < TIME_UNITS.length - 1 && (
-                    <span className="text-xl font-black animate-pulse leading-none mb-1" style={{ color: 'hsl(15,100%,62%)' }}>:</span>
+                    <div className="flex flex-col gap-1.5 mb-1">
+                      <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'hsl(15,100%,62%)' }} />
+                      <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'hsl(15,100%,62%)' }} />
+                    </div>
                   )}
                 </div>
               ))}
