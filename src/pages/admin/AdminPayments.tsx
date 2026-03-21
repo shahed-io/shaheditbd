@@ -432,11 +432,11 @@ const PaymentSettingsTab = () => {
               <div className="flex items-center gap-4">
                 {/* Sort arrows */}
                 <div className="flex flex-col gap-0.5">
-                  <button onClick={() => moveMethod(i, -1)} disabled={i === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-20">
+                  <button onClick={() => moveMethod(i, -1 as -1)} disabled={i === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-20">
                     <ChevronUp size={14} />
                   </button>
                   <GripVertical size={14} className="text-muted-foreground/40 mx-auto" />
-                  <button onClick={() => moveMethod(i, working.length - 1)} disabled={i === working.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-20">
+                  <button onClick={() => moveMethod(i, 1 as 1)} disabled={i === working.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-20">
                     <ChevronDown size={14} />
                   </button>
                 </div>
