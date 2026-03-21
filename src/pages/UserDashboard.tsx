@@ -809,8 +809,8 @@ const UserDashboard = () => {
                                 {/* Price Breakdown */}
                                 <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm pt-2 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
                                   <span className="text-muted-foreground">Subtotal: <span className="font-semibold text-foreground">৳{(order.subtotal || 0).toLocaleString()}</span></span>
-                                  {(order.discount_amount || 0) > 0 && <span className="text-emerald-600 font-semibold">ছাড়: -৳{(order.discount_amount || 0).toLocaleString()}</span>}
-                                  <span className="font-bold text-primary">মোট: ৳{order.total.toLocaleString()}</span>
+                                  {(order.discount_amount || 0) > 0 && <span className="text-emerald-600 font-semibold">{t(selectedLang, 'discount_off')}: -৳{(order.discount_amount || 0).toLocaleString()}</span>}
+                                  <span className="font-bold text-primary">{t(selectedLang, 'total')}: ৳{order.total.toLocaleString()}</span>
                                 </div>
 
                                 {/* Notes */}
