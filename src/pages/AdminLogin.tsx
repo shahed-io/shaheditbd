@@ -16,7 +16,7 @@ const AdminLogin = () => {
   // Redirect as soon as isAdmin confirmed — regardless of submitting state
   useEffect(() => {
     if (!loading && user && isAdmin) {
-      navigate('/admin', { replace: true });
+      navigate('/ceo', { replace: true });
     }
   }, [user, isAdmin, loading, navigate]);
 
