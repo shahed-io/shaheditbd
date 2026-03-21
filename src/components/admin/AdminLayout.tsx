@@ -43,6 +43,7 @@ const menuItems = [
   { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
   { icon: Layout, label: 'Pages', path: '/ceo/pages' },
   { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
+  { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
   { icon: FolderDown, label: 'Software Downloads', path: '/ceo/software-downloads' },
   { icon: Mail, label: 'Newsletter', path: '/ceo/newsletter' },
   { icon: FileText, label: 'Product Reviews', path: '/ceo/product-reviews' },
