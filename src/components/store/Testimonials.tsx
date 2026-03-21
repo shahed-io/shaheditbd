@@ -252,7 +252,7 @@ const Testimonials = () => {
           </p>
 
           {/* Stats */}
-          <div className={`flex items-center justify-center gap-4 mt-8 flex-wrap transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <div className="flex items-center justify-center gap-4 mt-8 flex-wrap">
             {statsData.map((stat, i) => (
               <div key={i} className="rounded-3xl overflow-hidden"
                 style={{
