@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Edit, Trash2, Upload, X, ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, X, ImageIcon, Sparkles, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 import { z } from 'zod';
@@ -15,6 +15,14 @@ const categorySchema = z.object({
   is_active: z.boolean(),
 });
 
+const STYLE_PRESETS = [
+  { label: 'Tech / Digital', value: 'modern tech, neon glows, dark background, futuristic digital art' },
+  { label: 'Gradient Icon', value: 'vibrant gradient, minimal flat icon, bold colors, clean modern' },
+  { label: 'Gaming / Bold', value: 'gaming style, bold vivid colors, dynamic lighting, action feel' },
+  { label: 'Professional', value: 'professional corporate, blue tones, clean minimal, business software' },
+  { label: 'Colorful Abstract', value: 'colorful abstract geometric shapes, artistic, eye-catching, playful' },
+];
+
 const AdminCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +33,10 @@ const AdminCategories = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [uploading, setUploading] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [showAiPanel, setShowAiPanel] = useState(false);
+  const [aiStyle, setAiStyle] = useState(STYLE_PRESETS[0].value);
+  const [aiCustomPrompt, setAiCustomPrompt] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchCategories = async () => {
@@ -44,15 +56,12 @@ const AdminCategories = () => {
 
   useEffect(() => {
     fetchCategories();
-
-    // Real-time subscription
     const channel = supabase
       .channel('categories-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
         fetchCategories();
       })
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, []);
 
@@ -79,15 +88,52 @@ const AdminCategories = () => {
     return publicUrl;
   };
 
+  const handleAiGenerate = async () => {
+    if (!form.name.trim()) {
+      toast.error('Please enter a category name first');
+      return;
+    }
+    setAiGenerating(true);
+    const toastId = toast.loading(`🤖 AI generating image for "${form.name}"...`);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-category-image', {
+        body: {
+          categoryName: form.name,
+          style: aiCustomPrompt.trim() || aiStyle,
+        },
+      });
+      if (error) throw new Error(error.message);
+      if (data?.error) {
+        if (data.error.includes('Rate limit')) {
+          toast.error('Rate limit exceeded. Please try again later.', { id: toastId });
+        } else if (data.error.includes('credits')) {
+          toast.error('AI credits exhausted. Add funds at Settings → Workspace → Usage.', { id: toastId });
+        } else {
+          toast.error(data.error, { id: toastId });
+        }
+        return;
+      }
+      if (data?.url) {
+        setImagePreview(data.url);
+        setForm(prev => ({ ...prev, image_url: data.url }));
+        setImageFile(null);
+        setShowAiPanel(false);
+        toast.success('✨ AI image generated!', { id: toastId });
+      }
+    } catch (err: any) {
+      toast.error('Failed to generate image: ' + err.message, { id: toastId });
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validation = categorySchema.safeParse(form);
     if (!validation.success) { toast.error(validation.error.errors[0].message); return; }
     setSaving(true);
     const sanitized = validation.data;
-
     const uploadedUrl = await uploadImage();
-
     const payload = {
       name: sanitized.name,
       description: sanitized.description || null,
@@ -96,7 +142,6 @@ const AdminCategories = () => {
       sort_order: parseInt(sanitized.sort_order) || 0,
       slug: sanitized.slug || sanitized.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
     };
-
     if (editing) {
       const { error } = await supabase.from('categories').update(payload).eq('id', editing.id);
       if (error) toast.error(handleDbError(error));
@@ -120,6 +165,7 @@ const AdminCategories = () => {
     setForm({ name: cat.name, slug: cat.slug, description: cat.description || '', image_url: cat.image_url || '', is_active: cat.is_active, sort_order: String(cat.sort_order) });
     setImagePreview(cat.image_url || '');
     setImageFile(null);
+    setShowAiPanel(false);
     setShowForm(true);
   };
 
@@ -128,6 +174,7 @@ const AdminCategories = () => {
     setEditing(null);
     setImageFile(null);
     setImagePreview('');
+    setShowAiPanel(false);
     setForm({ name: '', slug: '', description: '', image_url: '', is_active: true, sort_order: '0' });
   };
 
@@ -140,7 +187,7 @@ const AdminCategories = () => {
           </h1>
           <p className="text-xs text-muted-foreground mt-1">Changes update the website in real-time</p>
         </div>
-        <button onClick={() => { setEditing(null); setForm({ name:'',slug:'',description:'',image_url:'',is_active:true,sort_order:'0' }); setImagePreview(''); setImageFile(null); setShowForm(true); }}
+        <button onClick={() => { setEditing(null); setForm({ name:'',slug:'',description:'',image_url:'',is_active:true,sort_order:'0' }); setImagePreview(''); setImageFile(null); setShowAiPanel(false); setShowForm(true); }}
           className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold">
           <Plus size={16} /> Add Category
         </button>
@@ -157,9 +204,11 @@ const AdminCategories = () => {
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
 
-              {/* Image Upload */}
+              {/* Image Section */}
               <div>
                 <label className="text-xs text-muted-foreground mb-2 block font-medium">Category Image</label>
+
+                {/* Upload area */}
                 <div
                   onClick={() => fileInputRef.current?.click()}
                   className="relative w-full h-36 rounded-2xl border-2 border-dashed border-border hover:border-primary/60 transition-colors cursor-pointer flex flex-col items-center justify-center gap-2 overflow-hidden bg-muted/20"
@@ -187,14 +236,96 @@ const AdminCategories = () => {
                   )}
                 </div>
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageSelect} className="hidden" />
-                {imagePreview && (
-                  <button type="button" onClick={() => { setImagePreview(''); setImageFile(null); setForm({...form, image_url: ''}); }}
-                    className="mt-2 text-xs text-destructive hover:underline flex items-center gap-1">
-                    <X size={12} /> Remove image
+
+                {/* Action buttons row */}
+                <div className="flex items-center gap-2 mt-2">
+                  {imagePreview && (
+                    <button type="button" onClick={() => { setImagePreview(''); setImageFile(null); setForm({...form, image_url: ''}); }}
+                      className="text-xs text-destructive hover:underline flex items-center gap-1">
+                      <X size={12} /> Remove
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setShowAiPanel(!showAiPanel)}
+                    className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
+                      showAiPanel
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
+                    }`}
+                  >
+                    <Sparkles size={13} />
+                    Generate with AI
                   </button>
+                </div>
+
+                {/* AI Generation Panel */}
+                {showAiPanel && (
+                  <div className="mt-3 p-4 rounded-2xl border border-primary/20 bg-primary/5 space-y-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Wand2 size={14} className="text-primary" />
+                      <span className="text-xs font-semibold text-primary">AI Image Generator</span>
+                    </div>
+
+                    {/* Style Presets */}
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Style preset:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {STYLE_PRESETS.map((preset) => (
+                          <button
+                            key={preset.label}
+                            type="button"
+                            onClick={() => { setAiStyle(preset.value); setAiCustomPrompt(''); }}
+                            className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
+                              aiStyle === preset.value && !aiCustomPrompt
+                                ? 'bg-primary text-primary-foreground border-primary'
+                                : 'bg-muted/40 text-muted-foreground border-border hover:border-primary/40'
+                            }`}
+                          >
+                            {preset.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Custom prompt */}
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Or custom description (optional):</p>
+                      <input
+                        type="text"
+                        value={aiCustomPrompt}
+                        onChange={e => setAiCustomPrompt(e.target.value)}
+                        placeholder="e.g. blue tech icons with circuit board pattern..."
+                        className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleAiGenerate}
+                      disabled={aiGenerating || !form.name.trim()}
+                      className="w-full btn-glow py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {aiGenerating ? (
+                        <>
+                          <div className="w-3 h-3 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={13} />
+                          Generate for "{form.name || 'Category'}"
+                        </>
+                      )}
+                    </button>
+                    {!form.name.trim() && (
+                      <p className="text-xs text-amber-500">Enter category name above first</p>
+                    )}
+                  </div>
                 )}
               </div>
 
+              {/* Form Fields */}
               {[
                 { label: 'Name *', field: 'name', required: true },
                 { label: 'Slug', field: 'slug', placeholder: 'auto-generated' },
