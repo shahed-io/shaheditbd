@@ -964,11 +964,11 @@ const UserDashboard = () => {
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center justify-between">
-                                <p className={`text-sm font-semibold ${!n.is_read ? 'text-foreground' : 'text-muted-foreground'}`}>{n.title}</p>
+                              <p className={`text-sm font-semibold ${!n.is_read ? 'text-foreground' : 'text-muted-foreground'}`}>{translateDbText(n.title, selectedLang)}</p>
                                 {!n.is_read && <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />}
                               </div>
-                              <p className="text-xs text-muted-foreground mt-0.5">{n.message}</p>
-                              <p className="text-[10px] text-muted-foreground mt-1">{new Date(n.created_at).toLocaleDateString('bn-BD')}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">{translateDbText(n.message, selectedLang)}</p>
+                              <p className="text-[10px] text-muted-foreground mt-1">{new Date(n.created_at).toLocaleDateString(getLangLocale(selectedLang))}</p>
                             </div>
                           </div>
                          </div>
