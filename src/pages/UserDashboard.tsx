@@ -756,14 +756,14 @@ const UserDashboard = () => {
 
                                 {/* Order Items */}
                                 <div>
-                                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">পণ্যসমূহ</p>
+                                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t(selectedLang, 'order_items_label')}</p>
                                   {!order.items ? (
                                     <div className="flex items-center gap-2 py-3 text-sm text-muted-foreground">
                                       <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-primary" />
-                                      লোড হচ্ছে...
+                                      {t(selectedLang, 'loading_text')}
                                     </div>
                                   ) : order.items.length === 0 ? (
-                                    <p className="text-sm text-muted-foreground">কোনো আইটেম পাওয়া যায়নি</p>
+                                    <p className="text-sm text-muted-foreground">{t(selectedLang, 'no_items_found')}</p>
                                   ) : (
                                     <div className="space-y-2">
                                       {order.items.map(item => (
