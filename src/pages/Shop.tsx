@@ -224,6 +224,18 @@ const Shop = () => {
               {categories.map(cat => {
                 const meta = CAT_META[cat.name] || CAT_META.default;
                 const isActive = activeCatSlug === cat.slug;
+                // Use a stable cache-buster based on the URL itself to force fresh load
+                const imgSrc = cat.image_url
+                  ? (() => {
+                      try {
+                        const u = new URL(cat.image_url);
+                        u.searchParams.set('t', String(cat.image_url.length + cat.name.length));
+                        return u.toString();
+                      } catch {
+                        return cat.image_url;
+                      }
+                    })()
+                  : null;
                 return (
                   <button key={cat.id} onClick={() => setCategory(cat.slug)}
                     className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold mb-1 transition-all text-left"
@@ -234,12 +246,18 @@ const Shop = () => {
                     }}>
                     <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden text-lg"
                       style={{ background: isActive ? `${meta.accent}18` : 'hsla(258,78%,55%,0.06)' }}>
-                      {cat.image_url
+                      {imgSrc
                         ? <img
-                            src={`${cat.image_url}?t=${Date.now()}`}
+                            key={imgSrc}
+                            src={imgSrc}
                             alt={cat.name}
                             className="w-full h-full object-cover"
-                            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; (e.currentTarget.parentElement as HTMLElement).textContent = meta.icon; }}
+                            onError={e => {
+                              const img = e.currentTarget as HTMLImageElement;
+                              img.style.display = 'none';
+                              const parent = img.parentElement;
+                              if (parent) parent.textContent = meta.icon;
+                            }}
                           />
                         : meta.icon
                       }
