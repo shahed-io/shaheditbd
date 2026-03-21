@@ -229,17 +229,9 @@ const Shop = () => {
               {categories.map(cat => {
                 const meta = CAT_META[cat.name] || CAT_META.default;
                 const isActive = activeCatSlug === cat.slug;
-                // Use a stable cache-buster based on the URL itself to force fresh load
+                // Append imgVersion timestamp so browser fetches fresh image after admin update
                 const imgSrc = cat.image_url
-                  ? (() => {
-                      try {
-                        const u = new URL(cat.image_url);
-                        u.searchParams.set('t', String(cat.image_url.length + cat.name.length));
-                        return u.toString();
-                      } catch {
-                        return cat.image_url;
-                      }
-                    })()
+                  ? `${cat.image_url.split('?')[0]}?v=${imgVersion}`
                   : null;
                 return (
                   <button key={cat.id} onClick={() => setCategory(cat.slug)}
