@@ -200,21 +200,21 @@ const UserDashboard = () => {
   const handleRedeemPoints = async () => {
     if (!user) return;
     const pts = parseInt(redeemPoints);
-    if (!pts || pts < 20) { toast.error('ন্যূনতম ২০ পয়েন্ট রিডিম করতে হবে'); return; }
-    if (pts % 2 !== 0) { toast.error('পয়েন্ট অবশ্যই ২ এর গুণিতক হতে হবে'); return; }
-    if (pts > pointsBalance) { toast.error('পর্যাপ্ত পয়েন্ট নেই'); return; }
+    if (!pts || pts < 20) { toast.error(t(selectedLang, 'points_min_redeem')); return; }
+    if (pts % 2 !== 0) { toast.error('Points must be a multiple of 2'); return; }
+    if (pts > pointsBalance) { toast.error('Insufficient points'); return; }
     setRedeemProcessing(true);
     try {
       const { data } = await (supabase as any).rpc('redeem_points', { p_user_id: user.id, p_points: pts });
       if (data?.success) {
-        toast.success(`✅ ${pts} পয়েন্ট রিডিম করে ৳${data.taka_credited} ওয়ালেটে যোগ হয়েছে!`);
+        toast.success(`✅ ${pts} pts redeemed — ৳${data.taka_credited} ${t(selectedLang, 'points_will_add')}!`);
         setRedeemPoints('');
         fetchPoints();
         fetchProfile();
       } else {
-        toast.error(data?.error || 'রিডিম করা সম্ভব হয়নি');
+        toast.error(data?.error || 'Could not redeem');
       }
-    } catch { toast.error('একটি সমস্যা হয়েছে, আবার চেষ্টা করুন'); }
+    } catch { toast.error('Something went wrong, please try again'); }
     setRedeemProcessing(false);
   };
 
