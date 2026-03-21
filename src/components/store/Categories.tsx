@@ -146,8 +146,14 @@ const Categories = () => {
                     background: `linear-gradient(135deg, ${meta.glow}, transparent)`,
                     border: `1px solid ${meta.accent}35`,
                   }}>
-                  {cat.image_url
-                    ? <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover" />
+                {cat.image_url
+                    ? <img
+                        key={cat.image_url}
+                        src={`${cat.image_url.split('?')[0]}?v=${cat.id}`}
+                        alt={cat.name}
+                        className="w-full h-full object-cover"
+                        onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                      />
                     : meta.icon
                   }
                 </div>
