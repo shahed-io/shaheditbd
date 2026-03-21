@@ -9,10 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 const NAV_LINKS = [
-  { label: 'Home',       href: '/' },
-  { label: 'Categories', href: '/shop' },
-  { label: 'Blog',       href: '/blog' },
-  { label: 'Free Tools', href: '/free-tools' },
+  { label: 'Home',         href: '/' },
+  { label: 'All Products', href: '/shop' },
+  { label: 'Blog',         href: '/blog' },
+  { label: 'Free Tools',   href: '/free-tools' },
 ];
 
 const CAT_ICON_MAP: Record<string, { icon: string; color: string }> = {
