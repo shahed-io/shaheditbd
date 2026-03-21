@@ -202,9 +202,21 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
     }
   };
 
+  // Build dynamic payment methods from DB (admin-controlled)
+  const dynamicMethods: PaymentOption[] = paymentConfigs
+    .filter(c => c.isActive)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map(c => ({
+      id: c.id as PaymentMethod,
+      label: c.label,
+      color: 'from-gray-600 to-gray-700',
+      logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
+      isWallet: false,
+    }));
+
   const allMethods: PaymentOption[] = user
-    ? [{ id: 'wallet', label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, ...MFS_METHODS]
-    : MFS_METHODS;
+    ? [{ id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, ...dynamicMethods]
+    : dynamicMethods;
 
   return (
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
