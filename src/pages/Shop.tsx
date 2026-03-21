@@ -232,7 +232,11 @@ const Shop = () => {
                       color: isActive ? meta.accent : 'hsl(var(--muted-foreground))',
                       border: isActive ? `1px solid ${meta.accent}40` : '1px solid transparent',
                     }}>
-                    <span>{meta.icon}</span> <span>{cat.name}</span>
+                    {cat.image_url
+                      ? <img src={cat.image_url} alt={cat.name} className="w-5 h-5 rounded object-cover flex-shrink-0" />
+                      : <span className="flex-shrink-0">{meta.icon}</span>
+                    }
+                    <span>{cat.name}</span>
                   </button>
                 );
               })}
