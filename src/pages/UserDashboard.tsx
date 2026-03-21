@@ -787,7 +787,7 @@ const UserDashboard = () => {
                                 {/* License Keys */}
                                 {order.items && order.items.some(i => i.license_key) && (
                                   <div>
-                                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">লাইসেন্স কি</p>
+                                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">{t(selectedLang, 'license_keys_label')}</p>
                                     <div className="space-y-2">
                                       {order.items.filter(i => i.license_key).map(item => (
                                         <div key={item.id} className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
@@ -796,7 +796,7 @@ const UserDashboard = () => {
                                             <p className="text-xs text-muted-foreground">{item.product_name}</p>
                                             <p className="font-mono text-sm font-bold text-emerald-700 truncate">{item.license_key}</p>
                                           </div>
-                                          <button onClick={() => { navigator.clipboard.writeText(item.license_key!); toast.success('কি কপি হয়েছে!'); }}
+                                          <button onClick={() => { navigator.clipboard.writeText(item.license_key!); toast.success(t(selectedLang, 'key_copied')); }}
                                             className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-emerald-600 flex-shrink-0 transition-colors">
                                             <Copy size={13} />
                                           </button>
