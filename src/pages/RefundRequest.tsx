@@ -112,7 +112,14 @@ export default function RefundRequest() {
     }
     setSubmitting(true);
     try {
+      // Upload screenshots first
+      const screenshotUrls = await uploadScreenshots();
+
       const tNum = 'RF-' + Date.now().toString().slice(-8);
+      const screenshotLines = screenshotUrls.length > 0
+        ? `\n🖼️ স্ক্রিনশট (${screenshotUrls.length}টি):\n${screenshotUrls.map((u, i) => `  ${i + 1}. ${u}`).join('\n')}`
+        : '';
+
       const message = `
 📦 অর্ডার নম্বর: ${form.order_number}
 🛍️ পণ্যের নাম: ${form.product_name || 'উল্লেখ নেই'}
@@ -124,7 +131,7 @@ export default function RefundRequest() {
 💳 পেমেন্টের পরিমাণ: ${form.payment_amount ? '৳' + form.payment_amount : 'উল্লেখ নেই'}
 💳 পেমেন্ট মাধ্যম: ${form.payment_method || 'উল্লেখ নেই'}
 ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে ১০% কেটে ৳${deductedAmount} রিফান্ড হবে।` : ''}
-📌 অতিরিক্ত তথ্য: ${form.additional_info || 'উল্লেখ নেই'}
+📌 অতিরিক্ত তথ্য: ${form.additional_info || 'উল্লেখ নেই'}${screenshotLines}
       `.trim();
 
       await supabase.from('support_tickets').insert({
