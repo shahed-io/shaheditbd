@@ -118,9 +118,14 @@ export default function RefundRequest() {
   const daysRemainingDisplay = calc?.daysRemaining != null ? `${calc.daysRemaining} দিন` : (calc ? 'লাইফটাইম' : '');
 
   const isChangeOfMind = form.reason === 'change_of_mind';
-  const deductedAmount = isChangeOfMind && form.payment_amount
-    ? (parseFloat(form.payment_amount) * 0.9).toFixed(2)
-    : null;
+  // If subscription-based calc exists, deduct 10% from proportional amount (not full price)
+  const baseRefundAmount = (calc?.refundAfter10 != null)
+    ? calc.refundAfter10
+    : (form.payment_amount ? parseFloat((parseFloat(form.payment_amount) * 0.9).toFixed(2)) : null);
+  const deductionAmount = (calc?.proportionalRefund != null)
+    ? parseFloat((calc.proportionalRefund * 0.1).toFixed(2))
+    : (form.payment_amount ? parseFloat((parseFloat(form.payment_amount) * 0.1).toFixed(2)) : null);
+  const deductedAmount = isChangeOfMind && form.payment_amount ? baseRefundAmount?.toFixed(2) ?? null : null;
 
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
