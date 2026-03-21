@@ -450,11 +450,76 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                 </div>
               </div>
 
+              {/* Screenshot Upload */}
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: A }}>স্ক্রিনশট আপলোড</p>
+                <div className="rounded-2xl p-4 space-y-3"
+                  style={{ background: 'rgba(255,255,255,0.50)', border: '1.5px dashed rgba(139,92,246,0.35)' }}>
+                  <p className="text-[12px]" style={{ color: 'hsl(226,25%,48%)' }}>
+                    সমস্যার প্রমাণ হিসেবে স্ক্রিনশট যোগ করুন (সর্বোচ্চ ৫টি, প্রতিটি ৫MB পর্যন্ত)
+                  </p>
+
+                  {/* Preview grid */}
+                  {screenshots.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {screenshots.map((item, idx) => (
+                        <div key={idx} className="relative group rounded-xl overflow-hidden border border-white/60"
+                          style={{ aspectRatio: '4/3' }}>
+                          <img src={item.preview} alt={`screenshot-${idx + 1}`}
+                            className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+                            <button type="button" onClick={() => removeScreenshot(idx)}
+                              className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center transition-all hover:scale-110 shadow-lg">
+                              <X size={14} />
+                            </button>
+                          </div>
+                          <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded text-[10px] font-bold text-white"
+                            style={{ background: 'rgba(0,0,0,0.55)' }}>
+                            {idx + 1}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {screenshots.length < 5 && (
+                    <>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handleFileSelect}
+                      />
+                      <button type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01]"
+                        style={{
+                          background: `linear-gradient(135deg, ${A}12, ${B}08)`,
+                          border: `1.5px solid ${A}30`,
+                          color: A,
+                        }}>
+                        <ImagePlus size={17} />
+                        স্ক্রিনশট যোগ করুন {screenshots.length > 0 && `(${screenshots.length}/5)`}
+                      </button>
+                    </>
+                  )}
+
+                  {uploading && (
+                    <div className="flex items-center gap-2 text-[12px]" style={{ color: A }}>
+                      <Loader2 size={14} className="animate-spin" />
+                      স্ক্রিনশট আপলোড হচ্ছে...
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Additional Info */}
               <div>
                 <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: A }}>অতিরিক্ত তথ্য</p>
                 <textarea value={form.additional_info} onChange={e => set('additional_info', e.target.value)}
-                  rows={3} placeholder="স্ক্রিনশট, ট্রানজেকশন আইডি বা অন্য যেকোনো প্রাসঙ্গিক তথ্য এখানে লিখুন।"
+                  rows={3} placeholder="ট্রানজেকশন আইডি বা অন্য যেকোনো প্রাসঙ্গিক তথ্য এখানে লিখুন।"
                   className={inputCls} maxLength={1000} />
               </div>
 
