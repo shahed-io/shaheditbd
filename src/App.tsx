@@ -10,6 +10,7 @@ import { WishlistProvider } from "@/hooks/useWishlist";
 
 import CartDrawer from "@/components/store/CartDrawer";
 import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
+import FacebookPixel from "@/components/store/FacebookPixel";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
@@ -83,6 +84,7 @@ const AdminAnnouncementBar  = lazy(() => import("./pages/admin/AdminAnnouncement
 const AdminNewsletterSubscribers = lazy(() => import("./pages/admin/AdminNewsletterSubscribers"));
 const AdminProductImportExport   = lazy(() => import("./pages/admin/AdminProductImportExport"));
 const AdminProductReviews        = lazy(() => import("./pages/admin/AdminProductReviews"));
+const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFacebookPixel"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -116,6 +118,7 @@ const AppContent = () => {
 
   return (
     <>
+      <FacebookPixel />
       <CartDrawer />
       <RedirectEnforcer />
       <Suspense fallback={<PageLoader />}>
@@ -177,6 +180,7 @@ const AppContent = () => {
             <Route path="newsletter" element={<AdminNewsletterSubscribers />} />
             <Route path="product-reviews" element={<AdminProductReviews />} />
             <Route path="import-export" element={<AdminProductImportExport />} />
+            <Route path="facebook-pixel" element={<AdminFacebookPixel />} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
