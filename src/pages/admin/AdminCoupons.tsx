@@ -3,6 +3,30 @@ import { supabase } from '@/integrations/supabase/client';
 import { Plus, Edit, Trash2, Tag, Copy, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
+import { z } from 'zod';
+
+const couponSchema = z.object({
+  code: z.string().trim().min(2, 'Code must be at least 2 characters').max(50, 'Code must be ≤ 50 characters')
+    .regex(/^[A-Z0-9_-]+$/, 'Code can only contain uppercase letters, numbers, hyphens and underscores'),
+  description: z.string().trim().max(200, 'Description must be ≤ 200 characters').optional().or(z.literal('')),
+  discount_type: z.enum(['percentage', 'fixed']),
+  discount_value: z.string().refine(v => {
+    const n = parseFloat(v);
+    return !isNaN(n) && n > 0 && n <= 100000;
+  }, 'Discount value must be between 0 and 100000'),
+  min_order_amount: z.string().refine(v => {
+    const n = parseFloat(v);
+    return isNaN(n) || n >= 0;
+  }, 'Min order amount must be 0 or more'),
+  max_uses: z.string().refine(v => !v || (parseInt(v) > 0 && parseInt(v) <= 1000000), 'Usage limit must be between 1 and 1,000,000').optional().or(z.literal('')),
+  is_active: z.boolean(),
+  expires_at: z.string().optional().or(z.literal('')),
+}).superRefine((data, ctx) => {
+  if (data.discount_type === 'percentage') {
+    const v = parseFloat(data.discount_value);
+    if (v > 100) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Percentage discount cannot exceed 100%', path: ['discount_value'] });
+  }
+});
 
 const inputClass = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors placeholder:text-muted-foreground";
 const labelClass = "text-xs text-muted-foreground mb-1 block";
