@@ -1557,8 +1557,8 @@ const UserDashboard = () => {
               {activeTab === 'language' && (
                 <div className="space-y-5">
                   <div>
-                    <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2"><Globe size={18} className="text-primary" /> ভাষা নির্বাচন</h2>
-                    <p className="text-sm text-muted-foreground">আপনার পছন্দের ভাষা বেছে নিন</p>
+                    <h2 className="text-lg font-bold text-foreground mb-1 flex items-center gap-2"><Globe size={18} className="text-primary" /> {t(selectedLang, 'language_title')}</h2>
+                    <p className="text-sm text-muted-foreground">{t(selectedLang, 'language_subtitle')}</p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {LANGUAGES.map(lang => {
