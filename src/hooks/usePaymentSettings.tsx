@@ -5,7 +5,7 @@ export interface PaymentMethodConfig {
   id: string;
   label: string;
   number: string;
-  type: 'Send Money' | 'Merchant Payment';
+  type: 'Send Money' | 'Merchant Payment' | 'Bank Transfer';
   logoUrl: string; // URL or empty (falls back to asset)
   accentColor: string;
   bgColor: string;
@@ -13,6 +13,11 @@ export interface PaymentMethodConfig {
   warning?: string;
   isActive: boolean;
   sortOrder: number;
+  // Bank-specific fields (only for type === 'Bank Transfer')
+  bankName?: string;
+  accountName?: string;
+  branchName?: string;
+  routingNumber?: string;
 }
 
 const SETTINGS_KEY = 'payment_methods_config';
@@ -118,6 +123,28 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
     warning: 'Merchant Payment-এ কোনো চার্জ নেই — আপনি যা পাঠাবেন তাই পাবেন।',
     isActive: true,
     sortOrder: 4,
+  },
+  {
+    id: 'bank_transfer',
+    label: 'Bank Transfer',
+    number: '',
+    type: 'Bank Transfer',
+    logoUrl: '',
+    accentColor: 'hsl(214,80%,48%)',
+    bgColor: 'hsla(214,80%,48%,0.07)',
+    bankName: 'Dutch-Bangla Bank Limited (DBBL)',
+    accountName: 'Account Holder Name',
+    branchName: 'Branch Name',
+    routingNumber: '',
+    steps: [
+      'আপনার ব্যাংক অ্যাপ বা ব্রাঞ্চে যান',
+      'উপরের অ্যাকাউন্ট নম্বরে টাকা ট্রান্সফার করুন',
+      'ট্রান্সফারের রেফারেন্স/TRN নম্বর কপি করুন',
+      'নিচের বক্সে TRN নম্বর দিয়ে অর্ডার সম্পন্ন করুন',
+    ],
+    warning: 'ব্যাংক ট্রান্সফার ভেরিফাই হতে ১-২ কার্যদিবস সময় লাগতে পারে।',
+    isActive: true,
+    sortOrder: 5,
   },
 ];
 

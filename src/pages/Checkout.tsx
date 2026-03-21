@@ -32,7 +32,7 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'wallet';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet';
 
 const Checkout = () => {
   const {
@@ -431,12 +431,14 @@ const Checkout = () => {
 
                 {/* Transaction ID */}
                 <div>
-                  <label className="text-sm text-muted-foreground mb-1 block font-semibold">Transaction ID (TrxID) *</label>
+                  <label className="text-sm text-muted-foreground mb-1 block font-semibold">
+                    {paymentMethod === 'bank_transfer' ? 'Bank Reference / TRN নম্বর *' : 'Transaction ID (TrxID) *'}
+                  </label>
                   <input
                     type="text"
                     value={transactionId}
                     onChange={e => setTransactionId(e.target.value)}
-                    placeholder="যেমন: 8F3K2P9X"
+                    placeholder={paymentMethod === 'bank_transfer' ? 'যেমন: TRN123456789' : 'যেমন: 8F3K2P9X'}
                     maxLength={50}
                     className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
                   />
