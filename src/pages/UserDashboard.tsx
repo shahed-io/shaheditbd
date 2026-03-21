@@ -200,21 +200,21 @@ const UserDashboard = () => {
   const handleRedeemPoints = async () => {
     if (!user) return;
     const pts = parseInt(redeemPoints);
-    if (!pts || pts < 20) { toast.error('ন্যূনতম ২০ পয়েন্ট রিডিম করতে হবে'); return; }
-    if (pts % 2 !== 0) { toast.error('পয়েন্ট অবশ্যই ২ এর গুণিতক হতে হবে'); return; }
-    if (pts > pointsBalance) { toast.error('পর্যাপ্ত পয়েন্ট নেই'); return; }
+    if (!pts || pts < 20) { toast.error(t(selectedLang, 'points_min_redeem')); return; }
+    if (pts % 2 !== 0) { toast.error('Points must be a multiple of 2'); return; }
+    if (pts > pointsBalance) { toast.error('Insufficient points'); return; }
     setRedeemProcessing(true);
     try {
       const { data } = await (supabase as any).rpc('redeem_points', { p_user_id: user.id, p_points: pts });
       if (data?.success) {
-        toast.success(`✅ ${pts} পয়েন্ট রিডিম করে ৳${data.taka_credited} ওয়ালেটে যোগ হয়েছে!`);
+        toast.success(`✅ ${pts} pts redeemed — ৳${data.taka_credited} ${t(selectedLang, 'points_will_add')}!`);
         setRedeemPoints('');
         fetchPoints();
         fetchProfile();
       } else {
-        toast.error(data?.error || 'রিডিম করা সম্ভব হয়নি');
+        toast.error(data?.error || 'Could not redeem');
       }
-    } catch { toast.error('একটি সমস্যা হয়েছে, আবার চেষ্টা করুন'); }
+    } catch { toast.error('Something went wrong, please try again'); }
     setRedeemProcessing(false);
   };
 
@@ -984,7 +984,7 @@ const UserDashboard = () => {
                   {pointsLoading ? (
                     <div className="flex flex-col items-center justify-center py-16 gap-3">
                       <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
-                      <p className="text-sm text-muted-foreground">লোড হচ্ছে...</p>
+                      <p className="text-sm text-muted-foreground">{t(selectedLang, 'loading_text')}</p>
                     </div>
                   ) : (
                     <>
@@ -999,8 +999,8 @@ const UserDashboard = () => {
                               <Award size={20} className="text-white" />
                             </div>
                             <div>
-                              <p className="text-sm text-white/80 font-medium">Reward Points</p>
-                              <p className="text-xs text-white/55">Available Balance</p>
+                              <p className="text-sm text-white/80 font-medium">{t(selectedLang, 'points_reward_points')}</p>
+                              <p className="text-xs text-white/55">{t(selectedLang, 'points_available_balance')}</p>
                             </div>
                           </div>
                           <button onClick={fetchPoints} className="text-white/60 hover:text-white transition-colors">
@@ -1008,16 +1008,16 @@ const UserDashboard = () => {
                           </button>
                         </div>
                         <p className="relative text-4xl font-black tracking-tight text-white">{pointsBalance.toLocaleString()}</p>
-                        <p className="relative text-sm text-white/65 mt-1">= ৳{Math.floor(pointsBalance / 2).toLocaleString()} Wallet Value</p>
+                        <p className="relative text-sm text-white/65 mt-1">= ৳{Math.floor(pointsBalance / 2).toLocaleString()} {t(selectedLang, 'points_wallet_value')}</p>
                       </div>
 
                       {/* Stats Grid */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {[
-                          { label: 'Available Points', value: pointsBalance.toLocaleString(), sub: `= ৳${Math.floor(pointsBalance/2)}`, color: 'hsl(43,95%,48%)', bg: 'hsla(43,95%,55%,0.08)', border: 'hsla(43,95%,55%,0.25)', icon: <Award size={16} /> },
-                          { label: 'Total Earned', value: totalPointsEarned.toLocaleString(), sub: 'সকল অর্ডার থেকে', color: 'hsl(271,91%,65%)', bg: 'hsla(271,91%,65%,0.08)', border: 'hsla(271,91%,65%,0.25)', icon: <TrendingUp size={16} /> },
-                          { label: 'Total Redeemed', value: totalPointsRedeemed.toLocaleString(), sub: `= ৳${Math.floor(totalPointsRedeemed/2)} credited`, color: 'hsl(158,64%,42%)', bg: 'hsla(158,64%,42%,0.08)', border: 'hsla(158,64%,42%,0.25)', icon: <Wallet size={16} /> },
-                          { label: 'Point Value', value: `৳${Math.floor(pointsBalance / 2)}`, sub: '2 pts = ৳1', color: 'hsl(243,75%,59%)', bg: 'hsla(243,75%,59%,0.08)', border: 'hsla(243,75%,59%,0.25)', icon: <Zap size={16} /> },
+                          { label: t(selectedLang, 'points_available'), value: pointsBalance.toLocaleString(), sub: `= ৳${Math.floor(pointsBalance/2)}`, color: 'hsl(43,95%,48%)', bg: 'hsla(43,95%,55%,0.08)', border: 'hsla(43,95%,55%,0.25)', icon: <Award size={16} /> },
+                          { label: t(selectedLang, 'points_total_earned'), value: totalPointsEarned.toLocaleString(), sub: t(selectedLang, 'points_from_orders'), color: 'hsl(271,91%,65%)', bg: 'hsla(271,91%,65%,0.08)', border: 'hsla(271,91%,65%,0.25)', icon: <TrendingUp size={16} /> },
+                          { label: t(selectedLang, 'points_total_redeemed'), value: totalPointsRedeemed.toLocaleString(), sub: `= ৳${Math.floor(totalPointsRedeemed/2)} ${t(selectedLang, 'points_credited')}`, color: 'hsl(158,64%,42%)', bg: 'hsla(158,64%,42%,0.08)', border: 'hsla(158,64%,42%,0.25)', icon: <Wallet size={16} /> },
+                          { label: t(selectedLang, 'points_value'), value: `৳${Math.floor(pointsBalance / 2)}`, sub: t(selectedLang, 'points_rate'), color: 'hsl(243,75%,59%)', bg: 'hsla(243,75%,59%,0.08)', border: 'hsla(243,75%,59%,0.25)', icon: <Zap size={16} /> },
                         ].map(stat => (
                           <div key={stat.label} className="rounded-2xl p-4" style={{ background: stat.bg, border: `1px solid ${stat.border}`, backdropFilter: 'blur(8px)' }}>
                             <div className="flex items-center gap-2 mb-2" style={{ color: stat.color }}>{stat.icon}<span className="text-xs font-semibold text-muted-foreground">{stat.label}</span></div>
@@ -1030,24 +1030,24 @@ const UserDashboard = () => {
                       {/* Earning & Conversion Rules */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="rounded-2xl p-4 space-y-2" style={{ background: 'hsla(43,95%,55%,0.07)', border: '1px solid hsla(43,95%,55%,0.25)' }}>
-                          <p className="text-xs font-bold uppercase tracking-wide text-amber-600 flex items-center gap-1.5"><Zap size={13} /> Earning Rules</p>
-                          {[['100 টাকা', '10 পয়েন্ট'], ['500 টাকা', '50 পয়েন্ট'], ['1000 টাকা', '100 পয়েন্ট']].map(([spend, earn]) => (
+                          <p className="text-xs font-bold uppercase tracking-wide text-amber-600 flex items-center gap-1.5"><Zap size={13} /> {t(selectedLang, 'points_earning_rules')}</p>
+                          {[['100', '10'], ['500', '50'], ['1000', '100']].map(([spend, earn]) => (
                             <div key={spend} className="flex items-center justify-between text-sm">
-                              <span className="text-muted-foreground">{spend} খরচ</span>
-                              <span className="font-bold text-amber-600">= {earn}</span>
+                              <span className="text-muted-foreground">৳{spend} {t(selectedLang, 'points_spend')}</span>
+                              <span className="font-bold text-amber-600">= {earn} pts</span>
                             </div>
                           ))}
-                          <p className="text-[10px] text-muted-foreground pt-1 border-t border-amber-200/50">✅ শুধুমাত্র Completed অর্ডারে পয়েন্ট যোগ হবে</p>
+                          <p className="text-[10px] text-muted-foreground pt-1 border-t border-amber-200/50">{t(selectedLang, 'points_only_completed')}</p>
                         </div>
                         <div className="rounded-2xl p-4 space-y-2" style={{ background: 'hsla(158,64%,42%,0.07)', border: '1px solid hsla(158,64%,42%,0.25)' }}>
-                          <p className="text-xs font-bold uppercase tracking-wide flex items-center gap-1.5" style={{ color: 'hsl(158,64%,42%)' }}><Wallet size={13} /> Redemption Rules</p>
-                          {[['20 পয়েন্ট', '৳10'], ['100 পয়েন্ট', '৳50'], ['200 পয়েন্ট', '৳100']].map(([pts, taka]) => (
+                          <p className="text-xs font-bold uppercase tracking-wide flex items-center gap-1.5" style={{ color: 'hsl(158,64%,42%)' }}><Wallet size={13} /> {t(selectedLang, 'points_redemption_rules')}</p>
+                          {[['20', '৳10'], ['100', '৳50'], ['200', '৳100']].map(([pts, taka]) => (
                             <div key={pts} className="flex items-center justify-between text-sm">
-                              <span className="text-muted-foreground">{pts} রিডিম</span>
+                              <span className="text-muted-foreground">{pts} pts {t(selectedLang, 'points_redeem_label')}</span>
                               <span className="font-bold" style={{ color: 'hsl(158,64%,42%)' }}>= {taka} Wallet</span>
                             </div>
                           ))}
-                          <p className="text-[10px] text-muted-foreground pt-1 border-t" style={{ borderColor: 'hsla(158,64%,42%,0.2)' }}>ন্যূনতম ২০ পয়েন্ট রিডিম করতে হবে</p>
+                          <p className="text-[10px] text-muted-foreground pt-1 border-t" style={{ borderColor: 'hsla(158,64%,42%,0.2)' }}>{t(selectedLang, 'points_min_redeem')}</p>
                         </div>
                       </div>
 
@@ -1056,13 +1056,13 @@ const UserDashboard = () => {
                         <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
                           <div>
                             <h3 className="font-bold text-foreground flex items-center gap-2">
-                              <ArrowDownCircle size={16} style={{ color: 'hsl(158,64%,42%)' }} /> পয়েন্ট রিডিম করুন
+                              <ArrowDownCircle size={16} style={{ color: 'hsl(158,64%,42%)' }} /> {t(selectedLang, 'points_redeem_title')}
                             </h3>
-                            <p className="text-xs text-muted-foreground mt-0.5">পয়েন্ট → Wallet টাকা (২ পয়েন্ট = ১ টাকা · ন্যূনতম ২০ পয়েন্ট)</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{t(selectedLang, 'points_redeem_subtitle')}</p>
                           </div>
                           {/* Quick select */}
                           <div>
-                            <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">দ্রুত নির্বাচন</p>
+                            <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{t(selectedLang, 'points_quick_select')}</p>
                             <div className="flex flex-wrap gap-2">
                               {[20, 50, 100, 200, 500].filter(v => v <= pointsBalance).map(v => (
                                 <button key={v} onClick={() => setRedeemPoints(String(v))}
@@ -1077,14 +1077,14 @@ const UserDashboard = () => {
                                 <button onClick={() => setRedeemPoints(String(Math.floor(pointsBalance / 2) * 2))}
                                   className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all"
                                   style={{ background: 'hsla(43,95%,55%,0.12)', borderColor: 'hsla(43,95%,55%,0.3)', color: 'hsl(43,95%,38%)' }}>
-                                  সর্বোচ্চ ({Math.floor(pointsBalance / 2) * 2} pts)
+                                  {t(selectedLang, 'points_max')} ({Math.floor(pointsBalance / 2) * 2} pts)
                                 </button>
                               )}
                             </div>
                           </div>
                           {/* Custom input */}
                           <div>
-                            <label className="text-xs font-semibold text-muted-foreground uppercase mb-1.5 block">নির্দিষ্ট পরিমাণ লিখুন</label>
+                            <label className="text-xs font-semibold text-muted-foreground uppercase mb-1.5 block">{t(selectedLang, 'points_custom_label')}</label>
                             <div className="flex gap-3 items-end">
                               <div className="flex-1">
                                 <input
@@ -1095,13 +1095,13 @@ const UserDashboard = () => {
                                   value={redeemPoints}
                                   onChange={e => setRedeemPoints(e.target.value)}
                                   className="w-full rounded-xl px-4 py-2.5 text-sm border bg-white/60 text-foreground border-border focus:border-primary outline-none"
-                                  placeholder="ন্যূনতম ২০"
+                                  placeholder={t(selectedLang, 'points_min_placeholder')}
                                 />
                                 {redeemPoints && parseInt(redeemPoints) >= 20 && parseInt(redeemPoints) % 2 === 0 && parseInt(redeemPoints) <= pointsBalance && (
-                                  <p className="text-xs mt-1" style={{ color: 'hsl(158,64%,42%)' }}>✅ {parseInt(redeemPoints)} পয়েন্ট = ৳{Math.floor(parseInt(redeemPoints) / 2)} ওয়ালেটে যোগ হবে</p>
+                                  <p className="text-xs mt-1" style={{ color: 'hsl(158,64%,42%)' }}>✅ {parseInt(redeemPoints)} pts = ৳{Math.floor(parseInt(redeemPoints) / 2)} {t(selectedLang, 'points_will_add')}</p>
                                 )}
                                 {redeemPoints && parseInt(redeemPoints) > 0 && parseInt(redeemPoints) < 20 && (
-                                  <p className="text-xs mt-1 text-destructive">⚠️ ন্যূনতম ২০ পয়েন্ট লাগবে</p>
+                                  <p className="text-xs mt-1 text-destructive">{t(selectedLang, 'points_min_warning')}</p>
                                 )}
                               </div>
                             </div>
@@ -1111,16 +1111,16 @@ const UserDashboard = () => {
                             disabled={redeemProcessing || !redeemPoints || parseInt(redeemPoints) < 20 || parseInt(redeemPoints) > pointsBalance || parseInt(redeemPoints) % 2 !== 0}
                             className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold text-white disabled:opacity-50 transition-all"
                             style={{ background: 'linear-gradient(135deg, hsl(158,64%,42%), hsl(170,70%,38%))' }}>
-                            {redeemProcessing ? <><RefreshCw size={14} className="animate-spin" /> প্রক্রিয়া চলছে...</> : <><Wallet size={14} /> ওয়ালেটে রিডিম করুন</>}
+                            {redeemProcessing ? <><RefreshCw size={14} className="animate-spin" /> {t(selectedLang, 'points_processing')}</> : <><Wallet size={14} /> {t(selectedLang, 'points_redeem_btn')}</>}
                           </button>
                         </div>
                       ) : (
                         <div className="rounded-2xl p-6 text-center" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                           <div className="text-4xl mb-3">⭐</div>
                           <p className="font-bold text-foreground text-sm mb-1">
-                            {pointsBalance > 0 ? `আরও ${20 - pointsBalance} পয়েন্ট দরকার` : 'এখনো পয়েন্ট নেই'}
+                            {pointsBalance > 0 ? `${t(selectedLang, 'points_need_more')} (${20 - pointsBalance} pts)` : t(selectedLang, 'points_none_yet')}
                           </p>
-                          <p className="text-xs text-muted-foreground mb-3">রিডিম করতে ন্যূনতম ২০ পয়েন্ট প্রয়োজন</p>
+                          <p className="text-xs text-muted-foreground mb-3">{t(selectedLang, 'points_need_20')}</p>
                           {pointsBalance > 0 && (
                             <div className="w-full bg-border rounded-full h-2 mb-3">
                               <div className="h-2 rounded-full transition-all" style={{ width: `${Math.min(100, (pointsBalance/20)*100)}%`, background: 'linear-gradient(90deg, hsl(43,95%,55%), hsl(36,100%,52%))' }} />
@@ -1128,7 +1128,7 @@ const UserDashboard = () => {
                           )}
                           <a href="/shop" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white"
                             style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                            <Zap size={13} /> কেনাকাটা করুন
+                            <Zap size={13} /> {t(selectedLang, 'points_shop_btn')}
                           </a>
                         </div>
                       )}
@@ -1136,11 +1136,11 @@ const UserDashboard = () => {
                       {/* Transactions History */}
                       <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.72)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(16px)' }}>
                         <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.16)', background: 'rgba(255,255,255,0.4)' }}>
-                          <h3 className="font-bold text-foreground flex items-center gap-2"><History size={14} className="text-primary" /> পয়েন্ট ইতিহাস</h3>
+                          <h3 className="font-bold text-foreground flex items-center gap-2"><History size={14} className="text-primary" /> {t(selectedLang, 'points_history')}</h3>
                           <button onClick={fetchPoints} className="text-muted-foreground hover:text-primary transition-colors"><RefreshCw size={13} /></button>
                         </div>
                         {pointsTx.length === 0 ? (
-                          <div className="text-center py-8 text-sm text-muted-foreground">এখনো কোনো লেনদেন নেই</div>
+                          <div className="text-center py-8 text-sm text-muted-foreground">{t(selectedLang, 'points_no_tx')}</div>
                         ) : (
                           <div className="divide-y max-h-[320px] overflow-y-auto" style={{ divideColor: 'hsla(258,78%,75%,0.12)' } as any}>
                             {pointsTx.map((tx: any) => {
@@ -1158,7 +1158,7 @@ const UserDashboard = () => {
                                     </div>
                                     <div>
                                       <div className="text-xs font-semibold text-foreground">{tx.note}</div>
-                                      <div className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                                      <div className="text-[10px] text-muted-foreground">{new Date(tx.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</div>
                                     </div>
                                   </div>
                                   <div className="text-right">
@@ -1166,7 +1166,7 @@ const UserDashboard = () => {
                                       style={{ color: isEarn ? 'hsl(43,95%,42%)' : isRedeem ? 'hsl(158,64%,42%)' : 'hsl(var(--destructive))' }}>
                                       {isEarn ? '+' : '-'}{tx.points} pts
                                     </div>
-                                    <div className="text-[10px] text-muted-foreground">ব্যালেন্স: {tx.balance_after} pts</div>
+                                    <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'points_balance_label')} {tx.balance_after} pts</div>
                                   </div>
                                 </div>
                               );
