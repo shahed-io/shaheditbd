@@ -5,7 +5,7 @@ export interface PaymentMethodConfig {
   id: string;
   label: string;
   number: string;
-  type: 'Send Money' | 'Merchant Payment';
+  type: 'Send Money' | 'Merchant Payment' | 'Bank Transfer';
   logoUrl: string; // URL or empty (falls back to asset)
   accentColor: string;
   bgColor: string;
@@ -13,6 +13,11 @@ export interface PaymentMethodConfig {
   warning?: string;
   isActive: boolean;
   sortOrder: number;
+  // Bank-specific fields (only for type === 'Bank Transfer')
+  bankName?: string;
+  accountName?: string;
+  branchName?: string;
+  routingNumber?: string;
 }
 
 const SETTINGS_KEY = 'payment_methods_config';
