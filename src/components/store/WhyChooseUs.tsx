@@ -18,7 +18,7 @@ const FEATURES = [
     icon: '🎧', lucide: Headphones,
     title: '24/7 Support',
     desc: 'WhatsApp ও Telegram-এ সার্বক্ষণিক সাপোর্ট।',
-    from: 'hsl(258,78%,55%)', to: 'hsl(283,65%,55%)',
+    from: 'hsl(263,70%,58%)', to: 'hsl(283,65%,55%)',
   },
   {
     icon: '🏛️', lucide: Building2,
@@ -36,83 +36,25 @@ const FEATURES = [
     icon: '😊', lucide: Users,
     title: '12K+ Customers',
     desc: '২০২০ সাল থেকে ১২০০০+ সন্তুষ্ট গ্রাহক সারা বিশ্বে।',
-    from: 'hsl(258,78%,55%)', to: 'hsl(38,100%,55%)',
+    from: 'hsl(38,100%,55%)', to: 'hsl(50,100%,55%)',
   },
 ];
 
 const STEPS = [
-  { n: '01', emoji: '🛒', title: 'Choose Product',   desc: 'আমাদের collection থেকে পছন্দের software বেছে নিন।',  from: 'hsl(243,75%,59%)', to: 'hsl(258,78%,55%)' },
+  { n: '01', emoji: '🛒', title: 'Choose Product',   desc: 'আমাদের collection থেকে পছন্দের software বেছে নিন।',  from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
   { n: '02', emoji: '💳', title: 'Make Payment',      desc: 'bKash, Nagad বা Rocket-এ নিরাপদে payment করুন।',     from: 'hsl(15,100%,58%)',  to: 'hsl(38,100%,55%)' },
   { n: '03', emoji: '📧', title: 'Get Delivery',      desc: '১–২৪ ঘণ্টার মধ্যে ইমেইলে license key পাঠানো হবে।',  from: 'hsl(158,64%,42%)', to: 'hsl(180,70%,40%)' },
-  { n: '04', emoji: '✅', title: 'Activate & Enjoy', desc: 'Product activate করুন, সমস্যায় support-এ যোগাযোগ।', from: 'hsl(258,78%,55%)', to: 'hsl(283,65%,55%)' },
+  { n: '04', emoji: '✅', title: 'Activate & Enjoy', desc: 'Product activate করুন, সমস্যায় support-এ যোগাযোগ।', from: 'hsl(263,70%,58%)', to: 'hsl(283,65%,55%)' },
 ];
 
 const STATS = [
-  { n: '12K+', l: 'Happy Customers',  from: 'hsl(243,75%,59%)', to: 'hsl(258,78%,55%)' },
+  { n: '12K+', l: 'Happy Customers',  from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
   { n: '500+', l: 'Products',          from: 'hsl(158,64%,42%)', to: 'hsl(180,70%,40%)' },
   { n: '25K+', l: 'Orders Delivered',  from: 'hsl(15,100%,58%)',  to: 'hsl(38,100%,55%)' },
-  { n: '24/7', l: 'Support Available', from: 'hsl(258,78%,55%)', to: 'hsl(283,65%,55%)' },
+  { n: '24/7', l: 'Support Available', from: 'hsl(263,70%,58%)', to: 'hsl(283,65%,55%)' },
 ];
 
-/* ─── Spinning Gradient Border Wrapper ─────────── */
-const GradientBorderCard = ({
-  children, from, to, className = '',
-}: {
-  children: React.ReactNode; from: string; to: string; className?: string;
-}) => {
-  const [hov, setHov] = useState(false);
-  return (
-    <div
-      className={`relative rounded-[22px] p-[1.5px] ${className}`}
-      style={{
-        background: hov
-          ? `linear-gradient(135deg, ${from}, ${to}, ${from})`
-          : `linear-gradient(135deg, ${from}55, ${to}30, transparent 60%)`,
-        transition: 'background 0.35s ease',
-        boxShadow: hov
-          ? `0 0 28px ${from}45, 0 8px 40px rgba(0,0,0,0.10)`
-          : `0 4px 20px rgba(0,0,0,0.06)`,
-      }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-    >
-      {/* Animated rotating border on hover */}
-      {hov && (
-        <div
-          className="absolute inset-0 rounded-[22px] pointer-events-none"
-          style={{
-            background: `conic-gradient(from 0deg, ${from}, ${to}, ${from}88, transparent 60%)`,
-            animation: 'spin 2.5s linear infinite',
-            opacity: 0.6,
-          }}
-        />
-      )}
-      {/* Inner glass card */}
-      <div
-        className="relative rounded-[20px] h-full"
-        style={{
-          background: hov
-            ? 'rgba(255,255,255,0.93)'
-            : 'rgba(255,255,255,0.80)',
-          backdropFilter: 'blur(32px) saturate(200%)',
-          WebkitBackdropFilter: 'blur(32px) saturate(200%)',
-          transform: hov ? 'translateY(-3px)' : 'translateY(0)',
-          transition: 'all 0.32s cubic-bezier(0.23,1,0.32,1)',
-        }}
-      >
-        {/* Top shimmer line */}
-        <div className="absolute top-0 left-0 right-0 h-px rounded-t-[20px]"
-          style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.95) 50%, transparent)' }} />
-        {/* Ambient corner glow */}
-        <div className="absolute top-0 right-0 w-32 h-32 rounded-tr-[20px] pointer-events-none"
-          style={{ background: `radial-gradient(circle at top right, ${from}18, transparent 65%)` }} />
-        {children}
-      </div>
-    </div>
-  );
-};
-
-/* ─── Section Header ─────────────────────────────── */
+/* ─── Section Header ─────────────────────────── */
 const SectionHeader = ({ badge, badgeColor, title, subtitle }: {
   badge: string; badgeColor: string; title: React.ReactNode; subtitle: string;
 }) => (
@@ -137,143 +79,189 @@ const SectionHeader = ({ badge, badgeColor, title, subtitle }: {
 );
 
 /* ─── Feature Card ─────────────────────────────── */
-const FeatureCard = ({ feature: f }: { feature: typeof FEATURES[0] }) => (
-  <GradientBorderCard from={f.from} to={f.to}>
-    <div className="pl-6 pr-5 py-5">
-      {/* Icon + title */}
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl flex-shrink-0"
-          style={{
-            background: `linear-gradient(135deg, ${f.from}22, ${f.to}14)`,
-            border: `1.5px solid ${f.from}40`,
-            boxShadow: `0 4px 14px ${f.from}20`,
-          }}>
-          {f.icon}
+const FeatureCard = ({ feature: f }: { feature: typeof FEATURES[0] }) => {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      className="relative rounded-3xl overflow-hidden cursor-default"
+      style={{
+        /* White frosted glass */
+        background: hov
+          ? 'rgba(255,255,255,0.88)'
+          : 'rgba(255,255,255,0.72)',
+        backdropFilter: 'blur(28px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+        border: `1.5px solid rgba(255,255,255,0.90)`,
+        boxShadow: hov
+          ? `0 16px 48px rgba(0,0,0,0.10), 0 4px 16px ${f.from}22, inset 0 1px 0 rgba(255,255,255,1)`
+          : `0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,1)`,
+        transform: hov ? 'translateY(-4px) scale(1.01)' : 'translateY(0) scale(1)',
+        transition: 'all 0.32s cubic-bezier(0.23,1,0.32,1)',
+        outline: hov ? `1.5px solid ${f.from}35` : '1.5px solid transparent',
+      }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      {/* Left colored stripe */}
+      <div className="absolute left-0 top-0 bottom-0 w-[4px] rounded-l-3xl"
+        style={{ background: `linear-gradient(180deg, ${f.from}, ${f.to})` }} />
+
+      {/* Subtle corner glow */}
+      <div className="absolute top-0 right-0 w-28 h-28 pointer-events-none opacity-40"
+        style={{ background: `radial-gradient(circle at top right, ${f.from}18, transparent 70%)` }} />
+
+      <div className="pl-7 pr-5 py-5">
+        {/* Icon + title */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg flex-shrink-0"
+            style={{
+              background: `linear-gradient(135deg, ${f.from}20, ${f.to}12)`,
+              border: `1.5px solid ${f.from}38`,
+            }}>
+            {f.icon}
+          </div>
+          <h3 className="font-sora font-bold text-[13.5px] leading-tight flex items-center gap-1.5"
+            style={{ color: 'hsl(226,35%,14%)' }}>
+            {f.title}
+            <CheckCircle2 size={13} style={{ color: f.from }} className="flex-shrink-0 opacity-80" />
+          </h3>
         </div>
-        <h3 className="font-sora font-bold text-[13.5px] leading-tight flex items-center gap-1.5"
-          style={{ color: 'hsl(226,35%,14%)' }}>
-          {f.title}
-          <CheckCircle2 size={13} style={{ color: f.from }} className="flex-shrink-0 opacity-80" />
-        </h3>
-      </div>
 
-      {/* Thin gradient divider */}
-      <div className="h-px mb-3"
-        style={{ background: `linear-gradient(90deg, ${f.from}45, transparent 70%)` }} />
+        {/* Thin divider */}
+        <div className="h-px mb-3 ml-0"
+          style={{ background: `linear-gradient(90deg, ${f.from}35, transparent 70%)` }} />
 
-      <p className="text-[12.5px] leading-relaxed" style={{ color: 'hsl(226,20%,46%)' }}>
-        {f.desc}
-      </p>
-    </div>
-  </GradientBorderCard>
-);
-
-/* ─── Step Card ─────────────────────────────────── */
-const StepCard = ({ step }: { step: typeof STEPS[0] }) => (
-  <GradientBorderCard from={step.from} to={step.to}>
-    <div className="px-4 py-6 flex flex-col items-center text-center gap-3">
-      {/* Step pill */}
-      <div className="px-3.5 py-1 rounded-full text-[10px] font-extrabold text-white tracking-widest"
-        style={{
-          background: `linear-gradient(135deg, ${step.from}, ${step.to})`,
-          boxShadow: `0 3px 12px ${step.from}50`,
-        }}>
-        STEP {step.n}
-      </div>
-
-      {/* Emoji bubble */}
-      <div className="w-[52px] h-[52px] rounded-2xl flex items-center justify-center text-2xl"
-        style={{
-          background: `linear-gradient(135deg, ${step.from}22, ${step.to}14)`,
-          border: `1.5px solid ${step.from}40`,
-          boxShadow: `0 4px 14px ${step.from}22`,
-        }}>
-        {step.emoji}
-      </div>
-
-      {/* Divider */}
-      <div className="w-8 h-px"
-        style={{ background: `linear-gradient(90deg, transparent, ${step.from}60, transparent)` }} />
-
-      <div>
-        <h3 className="font-sora font-bold text-[13px] mb-1.5"
-          style={{ color: 'hsl(226,35%,14%)' }}>
-          {step.title}
-        </h3>
-        <p className="text-[11.5px] leading-relaxed"
-          style={{ color: 'hsl(226,20%,46%)' }}>
-          {step.desc}
+        <p className="text-[12.5px] leading-relaxed" style={{ color: 'hsl(226,20%,46%)' }}>
+          {f.desc}
         </p>
       </div>
     </div>
-  </GradientBorderCard>
-);
+  );
+};
+
+/* ─── Step Card ─────────────────────────────────── */
+const StepCard = ({ step, index }: { step: typeof STEPS[0]; index: number }) => {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      className="relative rounded-3xl overflow-hidden cursor-default"
+      style={{
+        background: hov
+          ? 'rgba(255,255,255,0.88)'
+          : 'rgba(255,255,255,0.72)',
+        backdropFilter: 'blur(28px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+        border: `1.5px solid rgba(255,255,255,0.90)`,
+        boxShadow: hov
+          ? `0 16px 48px rgba(0,0,0,0.10), 0 4px 16px ${step.from}22, inset 0 1px 0 rgba(255,255,255,1)`
+          : `0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,1)`,
+        transform: hov ? 'translateY(-4px) scale(1.01)' : 'translateY(0) scale(1)',
+        transition: 'all 0.32s cubic-bezier(0.23,1,0.32,1)',
+        outline: hov ? `1.5px solid ${step.from}35` : '1.5px solid transparent',
+      }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      {/* Left colored stripe */}
+      <div className="absolute left-0 top-0 bottom-0 w-[4px] rounded-l-3xl"
+        style={{ background: `linear-gradient(180deg, ${step.from}, ${step.to})` }} />
+
+      {/* Corner glow */}
+      <div className="absolute bottom-0 right-0 w-24 h-24 pointer-events-none opacity-40"
+        style={{ background: `radial-gradient(circle at bottom right, ${step.from}18, transparent 70%)` }} />
+
+      <div className="pl-6 pr-4 py-5 flex flex-col items-center text-center gap-3">
+        {/* Step pill */}
+        <div className="px-3 py-1 rounded-full text-[10px] font-bold text-white"
+          style={{
+            background: `linear-gradient(135deg, ${step.from}, ${step.to})`,
+            boxShadow: `0 3px 10px ${step.from}45`,
+            letterSpacing: '0.08em',
+          }}>
+          STEP {step.n}
+        </div>
+
+        {/* Emoji bubble */}
+        <div className="w-13 h-13 rounded-2xl flex items-center justify-center text-2xl"
+          style={{
+            background: `linear-gradient(135deg, ${step.from}20, ${step.to}12)`,
+            border: `1.5px solid ${step.from}38`,
+            width: 52, height: 52,
+          }}>
+          {step.emoji}
+        </div>
+
+        {/* Divider */}
+        <div className="w-8 h-px"
+          style={{ background: `linear-gradient(90deg, transparent, ${step.from}55, transparent)` }} />
+
+        <div>
+          <h3 className="font-sora font-bold text-[12.5px] sm:text-[13px] mb-1.5"
+            style={{ color: 'hsl(226,35%,14%)' }}>
+            {step.title}
+          </h3>
+          <p className="text-[11px] sm:text-[11.5px] leading-relaxed"
+            style={{ color: 'hsl(226,20%,46%)' }}>
+            {step.desc}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 /* ─── Stats Bar ─────────────────────────────────── */
 const StatsBar = ({ stats, visible }: { stats: typeof STATS; visible: boolean }) => (
-  <div className="relative overflow-hidden rounded-[24px] p-[1.5px]"
+  <div className="relative overflow-hidden rounded-3xl"
     style={{
-      background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(15,100%,58%), hsl(158,64%,42%), hsl(258,78%,55%))',
-      boxShadow: '0 8px 48px hsla(258,78%,55%,0.18)',
+      background: 'rgba(255,255,255,0.75)',
+      backdropFilter: 'blur(32px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+      border: '1.5px solid rgba(255,255,255,0.92)',
+      boxShadow: '0 8px 48px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,1)',
     }}>
-    {/* Rotating conic border */}
-    <div className="absolute inset-0 rounded-[24px] pointer-events-none"
-      style={{
-        background: 'conic-gradient(from 0deg, hsl(258,78%,55%), hsl(15,100%,58%), hsl(158,64%,42%), hsl(258,78%,55%))',
-        animation: 'spin 6s linear infinite',
-        opacity: 0.5,
-      }} />
+    {/* Rainbow top stripe */}
+    <div className="absolute top-0 left-0 right-0 h-[4px] rounded-t-3xl"
+      style={{ background: 'linear-gradient(90deg, hsl(243,75%,59%), hsl(15,100%,58%), hsl(158,64%,42%), hsl(263,70%,58%))' }} />
 
-    <div className="relative rounded-[22px] overflow-hidden"
-      style={{
-        background: 'rgba(255,255,255,0.88)',
-        backdropFilter: 'blur(36px) saturate(200%)',
-        WebkitBackdropFilter: 'blur(36px) saturate(200%)',
-      }}>
-      {/* Top shimmer */}
-      <div className="absolute top-0 left-0 right-0 h-px"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,1) 50%, transparent)' }} />
+    <div className="absolute top-5 right-6 pointer-events-none">
+      <Sparkles size={24} style={{ color: 'hsla(258,78%,55%,0.15)' }} />
+    </div>
 
-      <div className="absolute top-4 right-6 pointer-events-none">
-        <Sparkles size={22} style={{ color: 'hsla(258,78%,55%,0.18)' }} />
-      </div>
-
-      <div className="relative px-8 py-10">
-        <p className="text-center text-[10.5px] font-semibold mb-8 tracking-[0.30em] uppercase"
-          style={{ color: 'hsl(226,20%,55%)' }}>
-          Our Numbers Speak For Themselves
-        </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {stats.map((s, i) => (
-            <div key={i}
-              className={`relative overflow-hidden rounded-2xl p-[1.5px] transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+    <div className="relative p-8 sm:p-10 pt-9">
+      <p className="text-center text-[10.5px] font-semibold mb-8 tracking-[0.28em] uppercase"
+        style={{ color: 'hsl(226,20%,55%)' }}>
+        Our Numbers Speak For Themselves
+      </p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {stats.map((s, i) => (
+          <div key={i}
+            className={`relative overflow-hidden rounded-2xl p-4 text-center transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            style={{
+              transitionDelay: `${i * 0.12}s`,
+              background: 'rgba(255,255,255,0.60)',
+              backdropFilter: 'blur(16px)',
+              border: `1.5px solid ${s.from}28`,
+              boxShadow: `0 4px 18px ${s.from}12`,
+            }}>
+            {/* top stripe */}
+            <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl"
+              style={{ background: `linear-gradient(90deg, ${s.from}, ${s.to})` }} />
+            <div className="font-sora font-black text-[2.2rem] sm:text-[2.8rem] leading-none"
               style={{
-                transitionDelay: `${i * 0.13}s`,
                 background: `linear-gradient(135deg, ${s.from}, ${s.to})`,
-                boxShadow: `0 4px 20px ${s.from}30`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
               }}>
-              <div className="rounded-[14px] p-4 text-center h-full"
-                style={{
-                  background: 'rgba(255,255,255,0.88)',
-                  backdropFilter: 'blur(16px)',
-                }}>
-                <div className="font-sora font-black text-[2.2rem] sm:text-[2.6rem] leading-none"
-                  style={{
-                    background: `linear-gradient(135deg, ${s.from}, ${s.to})`,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}>
-                  {s.n}
-                </div>
-                <div className="text-[11px] font-semibold mt-1.5 uppercase tracking-wider"
-                  style={{ color: 'hsl(226,20%,52%)' }}>
-                  {s.l}
-                </div>
-              </div>
+              {s.n}
             </div>
-          ))}
-        </div>
+            <div className="text-[11px] font-semibold mt-1.5 uppercase tracking-wider"
+              style={{ color: 'hsl(226,20%,52%)' }}>
+              {s.l}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   </div>
@@ -296,8 +284,8 @@ const WhyChooseUs = () => {
     <section className="py-20 relative overflow-hidden bg-transparent below-fold">
       {/* Soft ambient blobs */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-0 w-[500px] h-[500px] rounded-full"
-          style={{ background: 'radial-gradient(circle, hsla(258,78%,62%,0.07), transparent)', filter: 'blur(100px)' }} />
+        <div className="absolute top-1/4 left-0 w-[480px] h-[480px] rounded-full"
+          style={{ background: 'radial-gradient(circle, hsla(243,75%,62%,0.06), transparent)', filter: 'blur(90px)' }} />
         <div className="absolute bottom-1/4 right-0 w-80 h-80 rounded-full"
           style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.05), transparent)', filter: 'blur(90px)' }} />
       </div>
@@ -308,9 +296,9 @@ const WhyChooseUs = () => {
         <div>
           <SectionHeader
             badge="✦ Why Us"
-            badgeColor="hsl(258,78%,55%)"
+            badgeColor="hsl(243,75%,58%)"
             title={
-              <>Why <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(258,78%,55%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Choose Us?</span></>
+              <>Why <span style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,62%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Choose Us?</span></>
             }
             subtitle="Bangladesh's most trusted digital software marketplace since 2020."
           />
@@ -333,7 +321,7 @@ const WhyChooseUs = () => {
           />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {STEPS.map((step, i) => (
-              <StepCard key={i} step={step} />
+              <StepCard key={i} step={step} index={i} />
             ))}
           </div>
         </div>
@@ -344,13 +332,6 @@ const WhyChooseUs = () => {
         </div>
 
       </div>
-
-      <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </section>
   );
 };
