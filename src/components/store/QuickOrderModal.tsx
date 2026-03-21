@@ -6,11 +6,20 @@ import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
 import type { PMId } from '@/components/store/PaymentInstructions';
+import { usePaymentSettings } from '@/hooks/usePaymentSettings';
 import bkashLogo from '@/assets/payment/bkash.png';
 import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
+
+const ASSET_LOGOS: Record<string, string> = {
+  bkash: bkashLogo,
+  nagad: nagadLogo,
+  rocket: rocketLogo,
+  upay: upayLogo,
+  bkash_merchant: bkashMerchantLogo,
+};
 
 interface Product {
   id: string | number;
@@ -42,19 +51,12 @@ interface PaymentOption {
   isWallet?: boolean;
 }
 
-const MFS_METHODS: PaymentOption[] = [
-  { id: 'bkash',          label: 'bKash',         color: 'from-pink-600 to-pink-700',    logo: bkashLogo },
-  { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600',logo: nagadLogo },
-  { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700',logo: rocketLogo },
-  { id: 'upay',           label: 'উপায়',           color: 'from-green-600 to-green-700',  logo: upayLogo },
-  { id: 'bkash_merchant', label: 'bKash Merchant', color: 'from-pink-700 to-rose-700',    logo: bkashMerchantLogo },
-];
-
 const inputClass = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all";
 
 const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { configs: paymentConfigs } = usePaymentSettings();
 
   const [step, setStep] = useState<'info' | 'payment' | 'success'>('info');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
@@ -200,9 +202,21 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
     }
   };
 
+  // Build dynamic payment methods from DB (admin-controlled)
+  const dynamicMethods: PaymentOption[] = paymentConfigs
+    .filter(c => c.isActive)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map(c => ({
+      id: c.id as PaymentMethod,
+      label: c.label,
+      color: 'from-gray-600 to-gray-700',
+      logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
+      isWallet: false,
+    }));
+
   const allMethods: PaymentOption[] = user
-    ? [{ id: 'wallet', label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, ...MFS_METHODS]
-    : MFS_METHODS;
+    ? [{ id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, ...dynamicMethods]
+    : dynamicMethods;
 
   return (
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
