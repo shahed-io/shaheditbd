@@ -336,8 +336,6 @@ const UserDashboard = () => {
     setWalletLoading(false);
   };
 
-  const { configs: paymentConfigs } = usePaymentSettings();
-
   const TOPUP_PAYMENT_METHODS = paymentConfigs
     .filter(c => c.isActive)
     .sort((a, b) => a.sortOrder - b.sortOrder)
