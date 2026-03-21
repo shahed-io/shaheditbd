@@ -10,6 +10,29 @@ import ProductOptionsBuilder from '@/components/admin/ProductOptionsBuilder';
 import ProductAttributesEditor from '@/components/admin/ProductAttributesEditor';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
+import { z } from 'zod';
+
+const productSchema = z.object({
+  name: z.string().trim().min(1, 'Product name is required').max(300, 'Name must be ≤ 300 characters'),
+  slug: z.string().trim().max(320, 'Slug too long').optional().or(z.literal('')),
+  description: z.string().trim().max(50000, 'Description too long').optional().or(z.literal('')),
+  short_description: z.string().trim().max(2000, 'Short description too long').optional().or(z.literal('')),
+  brand: z.string().trim().max(100, 'Brand must be ≤ 100 characters').optional().or(z.literal('')),
+  seo_title: z.string().trim().max(60, 'SEO title must be ≤ 60 characters').optional().or(z.literal('')),
+  seo_description: z.string().trim().max(160, 'SEO description must be ≤ 160 characters').optional().or(z.literal('')),
+  image_url: z.string().trim().max(2000, 'URL too long')
+    .refine(v => !v || /^https?:\/\/.+/.test(v), 'Image URL must start with http/https')
+    .optional().or(z.literal('')),
+  video_url: z.string().trim().max(2000, 'URL too long')
+    .refine(v => !v || /^https?:\/\/.+/.test(v), 'Video URL must start with http/https')
+    .optional().or(z.literal('')),
+  demo_url: z.string().trim().max(2000, 'URL too long')
+    .refine(v => !v || /^https?:\/\/.+/.test(v), 'Demo URL must start with http/https')
+    .optional().or(z.literal('')),
+  price: z.string().refine(v => !v || (parseFloat(v) >= 0 && parseFloat(v) <= 10000000), 'Price must be 0–10,000,000').optional().or(z.literal('')),
+  original_price: z.string().refine(v => !v || (parseFloat(v) >= 0 && parseFloat(v) <= 10000000), 'Original price must be 0–10,000,000').optional().or(z.literal('')),
+  discount_percent: z.string().refine(v => !v || (parseInt(v) >= 0 && parseInt(v) <= 100), 'Discount must be 0–100%').optional().or(z.literal('')),
+});
 
 interface Category { id: string; name: string; parent_id: string | null; }
 
