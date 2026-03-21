@@ -668,19 +668,19 @@ const UserDashboard = () => {
               {/* ── Orders Tab ── */}
               {activeTab === 'orders' && (
                 <div>
-                  {ordersLoading ? (
+                  ) : ordersLoading ? (
                     <div className="flex flex-col items-center justify-center py-16 gap-3">
                       <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
-                      <p className="text-sm text-muted-foreground">লোড হচ্ছে...</p>
+                      <p className="text-sm text-muted-foreground">{t(selectedLang, 'loading_text')}</p>
                     </div>
                   ) : orders.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}>
                         <Package size={28} style={{ color: 'hsl(var(--primary))' }} />
                       </div>
-                      <p className="font-bold text-base mb-1 text-foreground">কোনো অর্ডার নেই</p>
-                      <p className="text-sm mb-4 text-muted-foreground">এখনো কোনো অর্ডার করা হয়নি</p>
-                      <a href="/shop" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>কেনাকাটা শুরু করুন</a>
+                      <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_orders')}</p>
+                      <p className="text-sm mb-4 text-muted-foreground">{t(selectedLang, 'no_orders_sub')}</p>
+                      <a href="/shop" className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>{t(selectedLang, 'shop_now')}</a>
                     </div>
                   ) : (
                     <div className="space-y-3">
