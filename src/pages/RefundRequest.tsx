@@ -146,6 +146,29 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
         status: 'open',
       });
 
+      // Send admin email notification (non-blocking)
+      supabase.functions.invoke('notify-refund-request', {
+        body: {
+          ticketNumber: tNum,
+          customerName: form.customer_name,
+          customerEmail: form.customer_email,
+          customerPhone: form.customer_phone || '',
+          orderNumber: form.order_number,
+          productName: form.product_name || '',
+          reason: REFUND_REASONS.find(r => r.value === form.reason)?.label || form.reason,
+          reasonDetail: form.reason_detail || '',
+          subscriptionPeriod: SUBSCRIPTION_PERIODS.find(s => s.value === form.subscription_period)?.label || form.subscription_period,
+          daysUsed: form.days_used || '',
+          daysRemaining: form.days_remaining || '',
+          paymentAmount: form.payment_amount || '',
+          paymentMethod: form.payment_method || '',
+          additionalInfo: form.additional_info || '',
+          screenshotUrls,
+          isChangeOfMind,
+          refundAmount: deductedAmount,
+        },
+      }).catch(() => { /* silent — ticket already saved */ });
+
       setTicketNum(tNum);
       setSubmitted(true);
       toast.success('রিফান্ড রিকোয়েস্ট সফলভাবে জমা হয়েছে!');
