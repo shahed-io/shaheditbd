@@ -24,6 +24,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     // Nav tabs
     tab_profile: 'Profile',
     tab_orders: 'My Orders',
+    tab_licenses: 'My Licenses',
     tab_wallet: 'Wallet',
     tab_points: 'Points',
     tab_wishlist: 'Wishlist',
