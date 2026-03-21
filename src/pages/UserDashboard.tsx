@@ -169,6 +169,10 @@ const UserDashboard = () => {
   const [pointsLoading, setPointsLoading] = useState(false);
   const [redeemPoints, setRedeemPoints] = useState('');
   const [redeemProcessing, setRedeemProcessing] = useState(false);
+  // Licenses state
+  const [myLicenses, setMyLicenses] = useState<any[]>([]);
+  const [licensesLoading, setLicensesLoading] = useState(false);
+  const [licenseVisibility, setLicenseVisibility] = useState<Record<string, boolean>>({});
 
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
   useEffect(() => { if (user) fetchProfile(); }, [user]);
