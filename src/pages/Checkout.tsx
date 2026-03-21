@@ -232,6 +232,11 @@ const Checkout = () => {
         } catch { /* silent */ }
       }
 
+      // Notify all admins via email (non-blocking)
+      supabase.functions.invoke('send-order-email', {
+        body: { type: 'admin_notify', orderId: order.id },
+      }).catch(() => { /* silent */ });
+
       clearCart();
       setOrderNumber(orderNum);
       setOrderPlaced(true);
