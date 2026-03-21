@@ -4,8 +4,8 @@ import { CheckCircle2, Sparkles, Zap, Shield, Headphones, Building2, Tag, Users 
 const FEATURES = [
   {
     icon: '⚡', lucide: Zap,
-    title: 'Instant Delivery',
-    desc: 'Payment-এর পরেই ইমেইলে license key পাঠানো হয়।',
+    title: 'Fast Delivery',
+    desc: 'Payment যাচাইয়ের পর ১–২৪ ঘণ্টার মধ্যে ইমেইলে license key পাঠানো হয়।',
     from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)',
   },
   {
