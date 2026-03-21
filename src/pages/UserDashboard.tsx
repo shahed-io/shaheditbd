@@ -641,7 +641,7 @@ const UserDashboard = () => {
                     </div>
                   ))}
                   <div>
-                    <label className={labelCls}>ইমেইল</label>
+                    <label className={labelCls}>{t(selectedLang, 'email')}</label>
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                       <Mail size={15} className="text-muted-foreground" />
                       <span className="text-sm font-medium flex-1 text-foreground">{user?.email}</span>
@@ -649,7 +649,7 @@ const UserDashboard = () => {
                     </div>
                   </div>
                   <div>
-                    <label className={labelCls}>ফোন নম্বর</label>
+                    <label className={labelCls}>{t(selectedLang, 'phone')}</label>
                     {editing ? (
                       <div className="relative">
                         <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -658,7 +658,7 @@ const UserDashboard = () => {
                     ) : (
                       <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
                         <Phone size={15} className="text-muted-foreground" />
-                        <span className="text-sm font-medium" style={{ color: profile.phone ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}>{profile.phone || 'যোগ করা হয়নি'}</span>
+                        <span className="text-sm font-medium" style={{ color: profile.phone ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}>{profile.phone || t(selectedLang, 'phone_not_added')}</span>
                       </div>
                     )}
                   </div>
