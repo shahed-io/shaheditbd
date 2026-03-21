@@ -906,10 +906,10 @@ const UserDashboard = () => {
                   ) : addresses.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><MapPin size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
-                      <p className="font-bold text-base mb-1 text-foreground">কোনো ঠিকানা নেই</p>
-                      <p className="text-sm mb-4 text-muted-foreground">ডেলিভারির জন্য ঠিকানা যোগ করুন</p>
+                      <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_addresses')}</p>
+                      <p className="text-sm mb-4 text-muted-foreground">{t(selectedLang, 'no_addresses_sub')}</p>
                       <button onClick={() => setShowAddressForm(true)} className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm ${gradBtn}`} style={gradBtnStyle}>
-                        <Plus size={16} /> ঠিকানা যোগ করুন
+                        <Plus size={16} /> {t(selectedLang, 'add_address')}
                       </button>
                     </div>
                   ) : (
