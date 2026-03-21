@@ -118,14 +118,9 @@ export default function RefundRequest() {
   const daysRemainingDisplay = calc?.daysRemaining != null ? `${calc.daysRemaining} দিন` : (calc ? 'লাইফটাইম' : '');
 
   const isChangeOfMind = form.reason === 'change_of_mind';
-  // If subscription-based calc exists, deduct 10% from proportional amount (not full price)
-  const baseRefundAmount = (calc?.refundAfter10 != null)
-    ? calc.refundAfter10
-    : (form.payment_amount ? parseFloat((parseFloat(form.payment_amount) * 0.9).toFixed(2)) : null);
-  const deductionAmount = (calc?.proportionalRefund != null)
-    ? parseFloat((calc.proportionalRefund * 0.1).toFixed(2))
-    : (form.payment_amount ? parseFloat((parseFloat(form.payment_amount) * 0.1).toFixed(2)) : null);
-  const deductedAmount = isChangeOfMind && form.payment_amount ? baseRefundAmount?.toFixed(2) ?? null : null;
+  const deductedAmount = isChangeOfMind && form.payment_amount
+    ? (parseFloat(form.payment_amount) * 0.9).toFixed(2)
+    : null;
 
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
@@ -568,16 +563,13 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                     <div>
                       <p className="font-bold text-[13px] mb-1" style={{ color: 'hsl(38,60%,25%)' }}>⚠️ মন পরিবর্তন — ১০% চার্জ প্রযোজ্য</p>
                       <p className="text-[12px] leading-relaxed" style={{ color: 'hsl(38,40%,35%)' }}>
-                        {calc?.proportionalRefund != null
-                          ? <>অব্যবহৃত অংশ (৳{calc.proportionalRefund}) থেকে গেটওয়ে, সার্ভিস ও ব্যাংক চার্জ বাবদ <strong>১০% কেটে</strong> বাকি টাকা রিফান্ড করা হবে।</>
-                          : <>কাস্টমারের ইচ্ছাশক্তির পরিবর্তনের ক্ষেত্রে গেটওয়ে, সার্ভিস ও ব্যাংক চার্জ বাবদ মোট পেমেন্ট থেকে <strong>১০% কেটে</strong> বাকি টাকা রিফান্ড করা হবে।</>
-                        }
+                        কাস্টমারের ইচ্ছাশক্তির পরিবর্তনের ক্ষেত্রে গেটওয়ে, সার্ভিস ও ব্যাংক চার্জ বাবদ মোট পেমেন্ট থেকে <strong>১০% কেটে</strong> বাকি টাকা রিফান্ড করা হবে।
                       </p>
                       {form.payment_amount && (
                         <div className="mt-2.5 flex flex-wrap gap-3">
                           <span className="px-3 py-1.5 rounded-lg text-[12px] font-bold"
                             style={{ background: 'hsla(0,72%,50%,0.10)', color: 'hsl(0,65%,38%)' }}>
-                            কাটা হবে: ৳{deductionAmount?.toFixed(2)}
+                            কাটা হবে: ৳{(parseFloat(form.payment_amount) * 0.1).toFixed(2)}
                           </span>
                           <span className="px-3 py-1.5 rounded-lg text-[12px] font-bold"
                             style={{ background: 'hsla(142,72%,50%,0.10)', color: 'hsl(142,65%,30%)' }}>
