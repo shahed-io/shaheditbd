@@ -15,13 +15,26 @@ const NAV_LINKS = [
   { label: 'Free Tools', href: '/free-tools' },
 ];
 
-const CATEGORY_DROPDOWN = [
-  { icon: '📦', label: 'Microsoft Office', count: 8,  color: 'hsla(258,78%,55%,0.10)' },
-  { icon: '🎨', label: 'Adobe',            count: 6,  color: 'hsla(258,78%,55%,0.10)' },
-  { icon: '🛡️', label: 'Antivirus',       count: 10, color: 'hsla(162,72%,38%,0.10)' },
-  { icon: '🎬', label: 'Streaming',        count: 9,  color: 'hsla(330,85%,55%,0.10)' },
-  { icon: '🔒', label: 'VPN',              count: 5,  color: 'hsla(200,90%,45%,0.10)' },
-];
+const CAT_ICON_MAP: Record<string, { icon: string; color: string }> = {
+  'Windows':          { icon: '🪟', color: 'hsla(210,90%,60%,0.12)' },
+  'Office':           { icon: '📦', color: 'hsla(25,90%,60%,0.12)' },
+  'Microsoft Office': { icon: '📦', color: 'hsla(258,78%,55%,0.10)' },
+  'Software':         { icon: '💻', color: 'hsla(263,70%,62%,0.12)' },
+  'VPN':              { icon: '🔒', color: 'hsla(200,90%,45%,0.10)' },
+  'Subscription':     { icon: '🎬', color: 'hsla(283,65%,62%,0.12)' },
+  'Antivirus':        { icon: '🛡️', color: 'hsla(162,72%,38%,0.10)' },
+  'Streaming':        { icon: '📺', color: 'hsla(0,80%,62%,0.12)' },
+  'Adobe':            { icon: '🎨', color: 'hsla(258,78%,55%,0.10)' },
+  'default':          { icon: '🛒', color: 'hsla(243,75%,62%,0.10)' },
+};
+
+interface NavCat {
+  slug: string;
+  label: string;
+  count: number;
+  icon: string;
+  color: string;
+}
 
 const Navbar = () => {
   const [mobileOpen,   setMobileOpen]   = useState(false);
@@ -32,6 +45,7 @@ const Navbar = () => {
   const [announcement, setAnnouncement] = useState<string | null>(null);
   const [mobileSearch, setMobileSearch] = useState(false);
   const [desktopSearch, setDesktopSearch] = useState(false);
+  const [navCats, setNavCats] = useState<NavCat[]>([]);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
@@ -60,6 +74,27 @@ const Navbar = () => {
   useEffect(() => {
     supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
       .then(({ data }) => { if (data?.value) setAnnouncement(data.value); });
+  }, []);
+
+  useEffect(() => {
+    supabase
+      .from('categories')
+      .select('id, name, slug, products!products_category_id_fkey(id)')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .then(({ data }) => {
+        if (!data) return;
+        const cats: NavCat[] = data
+          .map(c => ({
+            slug: c.slug,
+            label: c.name,
+            count: Array.isArray(c.products) ? c.products.length : 0,
+            icon: (CAT_ICON_MAP[c.name] || CAT_ICON_MAP['default']).icon,
+            color: (CAT_ICON_MAP[c.name] || CAT_ICON_MAP['default']).color,
+          }))
+          .filter(c => c.count > 0);
+        setNavCats(cats);
+      });
   }, []);
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
@@ -190,11 +225,10 @@ const Navbar = () => {
                         <div className="px-3 py-2 mb-1">
                           <span className="text-[10px] font-fira font-bold uppercase tracking-widest" style={{ color: 'hsl(258,78%,50%)' }}>Categories</span>
                         </div>
-                        {CATEGORY_DROPDOWN.map(cat => (
-                          <button key={cat.label}
+                        {navCats.map(cat => (
+                          <button key={cat.slug}
                             onClick={() => {
-                              const slug = cat.label.toLowerCase().replace(/\s+/g, '-');
-                              navigate(`/shop?category=${slug}`);
+                              navigate(`/shop?category=${cat.slug}`);
                               setCatOpen(false);
                             }}
                             className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full text-left"
