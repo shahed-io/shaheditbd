@@ -947,11 +947,11 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* ── Bottom: Description + FAQ ── */}
-          <div className={`mt-14 gap-8 ${faqs.length > 0 ? 'grid lg:grid-cols-3' : 'block'}`}>
+          {/* ── Bottom: Description + FAQ (stacked) ── */}
+          <div className="mt-14 space-y-8">
 
+            {/* Description — full width */}
             <div
-              className={faqs.length > 0 ? 'lg:col-span-2' : 'w-full'}
               ref={descReveal.ref}
               style={{
                 opacity: 1,
@@ -1009,12 +1009,13 @@ const ProductDetail = () => {
               </div>
             </div>
 
+            {/* FAQ — full width, below description */}
             {faqs.length > 0 && (
               <div
                 ref={faqReveal.ref}
                 style={{
                   opacity: faqReveal.revealed ? 1 : 0,
-                  transform: faqReveal.revealed ? 'none' : 'translateX(30px)',
+                  transform: faqReveal.revealed ? 'none' : 'translateY(20px)',
                   transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s',
                 }}
               >
@@ -1029,6 +1030,7 @@ const ProductDetail = () => {
                 </div>
               </div>
             )}
+
           {/* ── Specifications table from attributes ── */}
           <ProductSpecsTable productId={product.id} />
           </div>
