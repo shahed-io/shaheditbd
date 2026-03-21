@@ -45,6 +45,7 @@ const Navbar = () => {
   const [announcement, setAnnouncement] = useState<string | null>(null);
   const [mobileSearch, setMobileSearch] = useState(false);
   const [desktopSearch, setDesktopSearch] = useState(false);
+  const [navCats, setNavCats] = useState<NavCat[]>([]);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
