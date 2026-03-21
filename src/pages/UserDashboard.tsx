@@ -1399,7 +1399,7 @@ const UserDashboard = () => {
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold text-foreground flex items-center gap-2">
                       <Key size={16} className="text-primary" />
-                      আমার Licenses ও Credentials
+                      My Licenses & Credentials
                     </h3>
                     <button onClick={fetchLicenses} className="p-2 rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all">
                       <RefreshCw size={14} />
@@ -1413,8 +1413,8 @@ const UserDashboard = () => {
                   ) : myLicenses.length === 0 ? (
                     <div className="text-center py-16 text-muted-foreground rounded-2xl border border-dashed border-border">
                       <Key size={40} className="mx-auto mb-3 opacity-20" />
-                      <p className="font-medium text-sm">কোনো License পাওয়া যায়নি</p>
-                      <p className="text-xs mt-1">অর্ডার Complete হলে এখানে দেখাবে</p>
+                       <p className="font-medium text-sm">No License Found</p>
+                      <p className="text-xs mt-1">Licenses will appear here after your order is completed</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
