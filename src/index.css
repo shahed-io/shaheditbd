@@ -1199,10 +1199,10 @@ body::before {
 
 /* ══════════════════════════════════════
    CONTENT VISIBILITY — LAZY RENDERING
+   (content-visibility removed — causes blank space gaps)
 ══════════════════════════════════════ */
-/* Below-fold sections: browser skips layout until in viewport */
 .below-fold {
-  content-visibility: auto;
+  /* content-visibility disabled to prevent layout gaps */
 }
 
 /* ══════════════════════════════════════

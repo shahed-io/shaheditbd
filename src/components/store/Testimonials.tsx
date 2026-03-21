@@ -219,7 +219,7 @@ const Testimonials = () => {
   if (!loaded || visibleReviews.length === 0) return null;
 
   return (
-    <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative bg-transparent below-fold">
+    <section ref={sectionRef} className="py-16 sm:py-20 overflow-hidden relative bg-transparent">
       {/* Ambient blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full blur-3xl" style={{ background: 'hsla(243,75%,62%,0.05)' }} />
