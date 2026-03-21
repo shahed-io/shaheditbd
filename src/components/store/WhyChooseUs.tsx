@@ -132,9 +132,6 @@ const StepCard = ({ step }: { step: typeof STEPS[0] }) => {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      {/* Top accent stripe */}
-      <div className="absolute top-0 left-0 right-0 h-[4px] rounded-t-2xl"
-        style={{ background: step.accent }} />
 
       <div className="px-5 pt-7 pb-6 flex flex-col items-center gap-3 w-full">
         {/* Step pill */}
