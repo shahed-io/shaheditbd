@@ -1399,7 +1399,7 @@ const UserDashboard = () => {
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold text-foreground flex items-center gap-2">
                       <Key size={16} className="text-primary" />
-                      আমার Licenses ও Credentials
+                      My Licenses & Credentials
                     </h3>
                     <button onClick={fetchLicenses} className="p-2 rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all">
                       <RefreshCw size={14} />
