@@ -393,7 +393,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
             <p className="text-[12px] mt-4" style={{ color: 'hsl(226,25%,52%)' }}>
               এই নম্বরটি সংরক্ষণ করুন। WhatsApp বা Email-এ যোগাযোগ করার সময় এটি উল্লেখ করুন।
             </p>
-            <button onClick={() => { setSubmitted(false); setForm({ customer_name:'',customer_email:'',customer_phone:'',order_number:'',product_name:'',reason:'',reason_detail:'',subscription_period:'',days_used:'',days_remaining:'',payment_amount:'',payment_method:'',additional_info:'' }); }}
+            <button onClick={() => { setSubmitted(false); setForm({ customer_name:'',customer_email:'',customer_phone:'',order_number:'',product_name:'',reason:'',reason_detail:'',subscription_period:'',purchase_date:'',payment_amount:'',payment_method:'',additional_info:'' }); }}
               className="mt-6 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-105"
               style={{ background: `linear-gradient(135deg, ${A}, ${B})`, color: '#fff', boxShadow: `0 4px 16px ${A}30` }}>
               নতুন রিকোয়েস্ট করুন
