@@ -49,6 +49,8 @@ const Navbar = () => {
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
 
+  const [imgVersion, setImgVersion] = useState(() => Date.now());
+
   const loadNavCategories = async () => {
     const { data: categories } = await supabase
       .from('categories')
@@ -68,6 +70,7 @@ const Navbar = () => {
         }))
         .filter(c => c.count > 0 && !HIDDEN.includes(c.name))
     );
+    setImgVersion(Date.now()); // bust browser cache on every reload
   };
 
   useEffect(() => {
@@ -253,7 +256,7 @@ const Navbar = () => {
                               onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
                               <span className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0 overflow-hidden" style={{ background: meta.color }}>
                                 {cat.image_url
-                                  ? <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover rounded-xl" />
+                                  ? <img key={`${cat.id}-${imgVersion}`} src={`${cat.image_url.split('?')[0]}?v=${imgVersion}`} alt={cat.name} className="w-full h-full object-cover rounded-xl" onError={e => { (e.currentTarget as HTMLImageElement).style.display='none'; }} />
                                   : meta.icon
                                 }
                               </span>
