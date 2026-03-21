@@ -119,13 +119,18 @@ const Shop = () => {
 
   const activeCatSlug = searchParams.get('category') || '';
 
+  const [imgVersion, setImgVersion] = useState(() => Date.now());
+
   const loadCategories = async () => {
     const { data } = await supabase
       .from('categories')
-      .select('id, name, slug, image_url')
+      .select('id, name, slug, image_url, updated_at')
       .eq('is_active', true)
       .order('sort_order');
-    if (data) setCategories(data as Category[]);
+    if (data) {
+      setCategories(data as Category[]);
+      setImgVersion(Date.now()); // force re-render with fresh cache key
+    }
   };
 
   useEffect(() => {
