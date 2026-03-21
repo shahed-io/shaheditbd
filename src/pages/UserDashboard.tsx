@@ -749,7 +749,7 @@ const UserDashboard = () => {
                                   )}
                                   {order.coupon_code && (
                                     <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
-                                      <span className="text-emerald-600 font-semibold">🏷️ {order.coupon_code} — ৳{(order.discount_amount || 0).toLocaleString()} ছাড়</span>
+                                      <span className="text-emerald-600 font-semibold">🏷️ {order.coupon_code} — ৳{(order.discount_amount || 0).toLocaleString()} {t(selectedLang, 'discount_off')}</span>
                                     </div>
                                   )}
                                 </div>
