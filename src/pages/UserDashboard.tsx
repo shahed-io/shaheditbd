@@ -19,7 +19,7 @@ import {
   ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
-import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t } from '@/lib/translations';
+import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
 
 interface Profile {
   display_name: string | null;
