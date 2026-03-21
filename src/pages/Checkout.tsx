@@ -11,11 +11,20 @@ import {
 } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
+import { usePaymentSettings, DEFAULT_PAYMENT_CONFIGS } from '@/hooks/usePaymentSettings';
 import bkashLogo from '@/assets/payment/bkash.png';
 import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
+
+const ASSET_LOGOS: Record<string, string> = {
+  bkash: bkashLogo,
+  nagad: nagadLogo,
+  rocket: rocketLogo,
+  upay: upayLogo,
+  bkash_merchant: bkashMerchantLogo,
+};
 
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষরের হতে হবে').max(100),
@@ -24,15 +33,6 @@ const checkoutSchema = z.object({
 });
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'wallet';
-
-const paymentMethods: { id: PaymentMethod; label: string; color: string; number: string; type: string; logo?: string }[] = [
-  { id: 'wallet',         label: 'Wallet',        color: 'from-violet-600 to-purple-700',  number: '', type: 'Wallet Balance' },
-  { id: 'bkash',          label: 'bKash',         color: 'from-pink-600 to-pink-700',     number: '01820060046', type: 'Send Money',       logo: bkashLogo },
-  { id: 'nagad',          label: 'Nagad',          color: 'from-orange-500 to-orange-600', number: '01840099853', type: 'Send Money',       logo: nagadLogo },
-  { id: 'rocket',         label: 'Rocket',         color: 'from-purple-600 to-purple-700', number: '01840099853', type: 'Send Money',       logo: rocketLogo },
-  { id: 'upay',           label: 'উপায়',           color: 'from-green-600 to-green-700',   number: '01840099853', type: 'Send Money',       logo: upayLogo },
-  { id: 'bkash_merchant', label: 'bKash Merchant', color: 'from-pink-700 to-rose-700',     number: '01840099853', type: 'Merchant Payment', logo: bkashMerchantLogo },
-];
 
 const Checkout = () => {
   const {
@@ -46,6 +46,23 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  const { configs: paymentConfigs } = usePaymentSettings();
+
+  // Build dynamic payment methods from DB config
+  const paymentMethods = [
+    { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', number: '', type: 'Wallet Balance', logo: undefined as string | undefined },
+    ...paymentConfigs
+      .filter(c => c.isActive)
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map(c => ({
+        id: c.id as PaymentMethod,
+        label: c.label,
+        color: 'from-gray-600 to-gray-700',
+        number: c.number,
+        type: c.type,
+        logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
+      })),
+  ];
 
   // Filter payment methods: guests can't use wallet
   const availablePaymentMethods = paymentMethods.filter(pm => pm.id !== 'wallet' || !!user);
