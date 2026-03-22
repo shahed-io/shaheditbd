@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-// Global fbq function type
 declare global {
   interface Window {
     fbq: (...args: any[]) => void;
@@ -9,43 +8,74 @@ declare global {
   }
 }
 
-// Singleton to avoid double-loading
-let pixelLoaded = false;
-let pixelConfig: { id: string; tracks: Record<string, boolean>; capiEnabled: boolean; testCode: string } | null = null;
+interface PixelConfig {
+  id: string;
+  name: string;
+  pixel_id: string;
+  capi_token: string;
+  capi_test_event_code: string;
+  pixel_enabled: boolean;
+  capi_enabled: boolean;
+  track_pageview: boolean;
+  track_purchase: boolean;
+  track_add_to_cart: boolean;
+  track_view_content: boolean;
+  track_lead: boolean;
+}
 
-const loadPixelSettings = async () => {
-  if (pixelConfig !== null) return pixelConfig;
+let pixelLoaded = false;
+let pixelConfigs: PixelConfig[] | null = null;
+
+const loadPixelSettings = async (): Promise<PixelConfig[]> => {
+  if (pixelConfigs !== null) return pixelConfigs;
+
   const { data } = await supabase
     .from('site_settings')
     .select('key, value')
     .eq('category', 'facebook_pixel');
 
-  if (!data) return null;
+  if (!data) return [];
   const map: Record<string, string> = {};
   data.forEach((r) => { map[r.key] = r.value || ''; });
 
-  if (map['fb_pixel_enabled'] === 'false' || !map['fb_pixel_id']) return null;
+  // Try multi-pixel config first
+  if (map['fb_pixels_config']) {
+    try {
+      const parsed = JSON.parse(map['fb_pixels_config']);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        pixelConfigs = parsed.filter((p: PixelConfig) => p.pixel_enabled && p.pixel_id);
+        return pixelConfigs;
+      }
+    } catch {}
+  }
 
-  pixelConfig = {
-    id: map['fb_pixel_id'],
-    capiEnabled: map['fb_capi_enabled'] === 'true',
-    testCode: map['fb_capi_test_code'] || '',
-    tracks: {
-      pageview:     map['fb_track_pageview'] !== 'false',
-      view_content: map['fb_track_view_content'] !== 'false',
-      add_to_cart:  map['fb_track_add_to_cart'] !== 'false',
-      purchase:     map['fb_track_purchase'] !== 'false',
-      lead:         map['fb_track_lead'] === 'true',
-    },
-  };
-  return pixelConfig;
+  // Fallback to legacy single pixel
+  if (map['fb_pixel_enabled'] === 'false' || !map['fb_pixel_id']) {
+    pixelConfigs = [];
+    return [];
+  }
+
+  pixelConfigs = [{
+    id: 'legacy',
+    name: 'Primary',
+    pixel_id: map['fb_pixel_id'],
+    capi_token: '',
+    capi_test_event_code: map['fb_capi_test_code'] || '',
+    pixel_enabled: true,
+    capi_enabled: map['fb_capi_enabled'] === 'true',
+    track_pageview: map['fb_track_pageview'] !== 'false',
+    track_purchase: map['fb_track_purchase'] !== 'false',
+    track_add_to_cart: map['fb_track_add_to_cart'] !== 'false',
+    track_view_content: map['fb_track_view_content'] !== 'false',
+    track_lead: map['fb_track_lead'] === 'true',
+  }];
+  return pixelConfigs;
 };
 
-const injectPixelScript = (pixelId: string) => {
-  if (pixelLoaded) return;
+const injectPixelScript = (pixelIds: string[]) => {
+  if (pixelLoaded || pixelIds.length === 0) return;
   pixelLoaded = true;
 
-  // Facebook Pixel base code
   const n: any = function (...args: any[]) { (n.q = n.q || []).push(args); };
   n.push = n;
   n.loaded = true;
@@ -59,18 +89,25 @@ const injectPixelScript = (pixelId: string) => {
   script.src = 'https://connect.facebook.net/en_US/fbevents.js';
   document.head.appendChild(script);
 
-  window.fbq('init', pixelId);
+  // Init all pixels
+  pixelIds.forEach(id => window.fbq('init', id));
 };
 
-// ─── Server-side CAPI helper ──────────────────────────────
+// Send CAPI events to all enabled pixels
 const sendCAPI = async (eventName: string, params?: Record<string, any>) => {
-  if (!pixelConfig?.capiEnabled) return;
+  if (!pixelConfigs) return;
+  const capiPixels = pixelConfigs.filter(p => p.capi_enabled && p.pixel_id);
+  if (capiPixels.length === 0) return;
+
   try {
     await supabase.functions.invoke('facebook-capi', {
       body: {
         event_name: eventName,
         event_source_url: window.location.href,
-        test_event_code: pixelConfig.testCode || undefined,
+        pixels: capiPixels.map(p => ({
+          pixel_id: p.pixel_id,
+          test_event_code: p.capi_test_event_code || undefined,
+        })),
         user_data: {
           client_user_agent: navigator.userAgent,
         },
@@ -78,29 +115,38 @@ const sendCAPI = async (eventName: string, params?: Record<string, any>) => {
       },
     });
   } catch {
-    // Silently fail - don't block UX
+    // Silently fail
   }
 };
 
-// ─── Public helpers ────────────────────────────────────────
-export const fbTrack = (event: string, params?: Record<string, any>) => {
+// Track event on pixels that have the corresponding track flag enabled
+const shouldTrack = (eventKey: string): string[] => {
+  if (!pixelConfigs) return [];
+  const key = `track_${eventKey}` as keyof PixelConfig;
+  return pixelConfigs.filter(p => p[key] === true && p.pixel_id).map(p => p.pixel_id);
+};
+
+export const fbTrack = (event: string, params?: Record<string, any>, trackKey?: string) => {
   if (typeof window !== 'undefined' && window.fbq) {
-    window.fbq('track', event, params);
+    if (trackKey) {
+      const ids = shouldTrack(trackKey);
+      ids.forEach(id => window.fbq('trackSingle', id, event, params));
+    } else {
+      window.fbq('track', event, params);
+    }
   }
-  // Also send server-side CAPI event
   sendCAPI(event, params);
 };
 
-export const fbTrackPageView = () => fbTrack('PageView');
+export const fbTrackPageView = () => fbTrack('PageView', undefined, 'pageview');
 export const fbTrackViewContent = (params: { content_name: string; content_ids: string[]; value?: number; currency?: string }) =>
-  fbTrack('ViewContent', { ...params, currency: params.currency || 'BDT' });
+  fbTrack('ViewContent', { ...params, currency: params.currency || 'BDT' }, 'view_content');
 export const fbTrackAddToCart = (params: { content_name: string; content_ids: string[]; value: number; currency?: string }) =>
-  fbTrack('AddToCart', { ...params, currency: params.currency || 'BDT' });
+  fbTrack('AddToCart', { ...params, currency: params.currency || 'BDT' }, 'add_to_cart');
 export const fbTrackPurchase = (params: { value: number; currency?: string; content_ids?: string[]; num_items?: number }) =>
-  fbTrack('Purchase', { ...params, currency: params.currency || 'BDT' });
-export const fbTrackLead = () => fbTrack('Lead');
+  fbTrack('Purchase', { ...params, currency: params.currency || 'BDT' }, 'purchase');
+export const fbTrackLead = () => fbTrack('Lead', undefined, 'lead');
 
-// ─── Component ─────────────────────────────────────────────
 const FacebookPixel = () => {
   const initialized = useRef(false);
 
@@ -108,10 +154,13 @@ const FacebookPixel = () => {
     if (initialized.current) return;
     initialized.current = true;
 
-    loadPixelSettings().then((cfg) => {
-      if (!cfg) return;
-      injectPixelScript(cfg.id);
-      if (cfg.tracks.pageview) fbTrackPageView();
+    loadPixelSettings().then((configs) => {
+      if (configs.length === 0) return;
+      const enabledIds = configs.filter(c => c.pixel_enabled && c.pixel_id).map(c => c.pixel_id);
+      injectPixelScript(enabledIds);
+      // Fire PageView for pixels that track it
+      const pvIds = configs.filter(c => c.track_pageview && c.pixel_id).map(c => c.pixel_id);
+      if (pvIds.length > 0) fbTrackPageView();
     });
   }, []);
 
