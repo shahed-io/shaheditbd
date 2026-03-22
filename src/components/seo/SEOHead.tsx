@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SEOHeadProps {
   title?: string;
@@ -18,6 +19,9 @@ const DEFAULT_DESC = 'Shahed Store – Bangladesh\'s most trusted digital softwa
 const DEFAULT_OG = '/favicon.png';
 const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, shahed store';
 
+// Cache for GA/GSC settings so we only fetch once per session
+let _seoCache: { ga?: string; gsc?: string; loaded?: boolean } = {};
+
 const SEOHead = ({
   title,
   description = DEFAULT_DESC,
@@ -32,6 +36,49 @@ const SEOHead = ({
   const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} – Buy Digital Software at Best Price in Bangladesh`;
   const canonicalUrl = canonical || `${SITE_URL}${pathname}`;
   const ogImageFull = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`;
+  const gaInjected = useRef(false);
+
+  // Fetch GA & GSC settings once
+  useEffect(() => {
+    if (_seoCache.loaded) {
+      injectGA(_seoCache.ga);
+      injectGSC(_seoCache.gsc);
+      return;
+    }
+    supabase.from('site_settings').select('key,value')
+      .in('key', ['google_analytics', 'google_site_verification'])
+      .then(({ data }) => {
+        _seoCache.loaded = true;
+        data?.forEach(r => {
+          if (r.key === 'google_analytics') _seoCache.ga = r.value || '';
+          if (r.key === 'google_site_verification') _seoCache.gsc = r.value || '';
+        });
+        injectGA(_seoCache.ga);
+        injectGSC(_seoCache.gsc);
+      });
+  }, []);
+
+  function injectGA(gaId?: string) {
+    if (!gaId || gaInjected.current) return;
+    if (document.querySelector(`script[src*="gtag/js?id=${gaId}"]`)) { gaInjected.current = true; return; }
+    const s1 = document.createElement('script');
+    s1.async = true;
+    s1.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+    document.head.appendChild(s1);
+    const s2 = document.createElement('script');
+    s2.textContent = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`;
+    document.head.appendChild(s2);
+    gaInjected.current = true;
+  }
+
+  function injectGSC(code?: string) {
+    if (!code) return;
+    if (document.querySelector('meta[name="google-site-verification"]')) return;
+    const m = document.createElement('meta');
+    m.name = 'google-site-verification';
+    m.content = code;
+    document.head.appendChild(m);
+  }
 
   useEffect(() => {
     // Title
