@@ -12,6 +12,7 @@ import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
+import type { CustomField } from '@/pages/admin/AdminProducts';
 
 const ASSET_LOGOS: Record<string, string> = {
   bkash: bkashLogo,
