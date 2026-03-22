@@ -8,6 +8,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
+// Module-level cache so categories aren't re-fetched on every mount
+let _catCache: NavCategory[] | null = null;
+let _catFetchedAt = 0;
+const CAT_TTL = 5 * 60 * 1000; // 5 minutes
+
 const NAV_LINKS = [
   { label: 'Home',         href: '/' },
   { label: 'All Products', href: '/shop' },
