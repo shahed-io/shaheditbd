@@ -21,6 +21,10 @@ import { SITE_URL } from '@/components/seo/SEOHead';
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
 
+// Fix: replace Bengali danda (।) after English/numbers with English period (.)
+const fixPunctuation = (text: string): string =>
+  text.replace(/([A-Za-z0-9])\s*।/g, '$1.');
+
 interface DurationPlan {
   duration: string;
   price: string;
@@ -987,8 +991,8 @@ const ProductDetail = () => {
                     prose-ul:pl-4 prose-ul:space-y-1
                     prose-li:text-[hsl(226,25%,40%)] prose-li:leading-relaxed
                     prose-a:text-primary">
-                    <Suspense fallback={<div className="h-20 shimmer rounded-xl" />}>
-                      <ReactMarkdown>{product.description}</ReactMarkdown>
+                  <Suspense fallback={<div className="h-20 shimmer rounded-xl" />}>
+                      <ReactMarkdown>{fixPunctuation(product.description)}</ReactMarkdown>
                     </Suspense>
                   </div>
                 ) : (
