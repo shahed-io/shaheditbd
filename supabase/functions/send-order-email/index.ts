@@ -338,25 +338,22 @@ Deno.serve(async (req) => {
 
       const html = buildInvoiceHtml(order, items || [])
 
-      const emailRes = await fetch('https://api.lovable.dev/v1/email/send', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
+      await sendLovableEmail(
+        {
+          run_id: `order-confirm-${order.id}`,
           to: order.customer_email,
+          from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
+          sender_domain: 'noreply.shahedstore.com.bd',
           subject: `✅ অর্ডার কনফার্ম হয়েছে — #${order.order_number}`,
           html,
-        }),
-      })
+          purpose: 'transactional',
+          label: 'order_confirmation',
+        },
+        { apiKey: LOVABLE_API_KEY }
+      )
 
-      const emailBody = await emailRes.text()
-      if (!emailRes.ok) {
-        console.error(`[order_confirmation] Email API error ${emailRes.status}:`, emailBody)
-        throw new Error(`Email API failed: ${emailRes.status} — ${emailBody}`)
-      }
-
-      console.log(`[order_confirmation] Email sent successfully to ${order.customer_email}, status: ${emailRes.status}`)
-      return new Response(JSON.stringify({ success: true, emailStatus: emailRes.status }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      console.log(`[order_confirmation] Email sent successfully to ${order.customer_email}`)
+      return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
     // ── STATUS UPDATE ───────────────────────────────────────────────
