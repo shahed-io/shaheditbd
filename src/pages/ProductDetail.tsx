@@ -991,8 +991,8 @@ const ProductDetail = () => {
                     prose-ul:pl-4 prose-ul:space-y-1
                     prose-li:text-[hsl(226,25%,40%)] prose-li:leading-relaxed
                     prose-a:text-primary">
-                    <Suspense fallback={<div className="h-20 shimmer rounded-xl" />}>
-                      <ReactMarkdown>{product.description}</ReactMarkdown>
+                  <Suspense fallback={<div className="h-20 shimmer rounded-xl" />}>
+                      <ReactMarkdown>{fixPunctuation(product.description)}</ReactMarkdown>
                     </Suspense>
                   </div>
                 ) : (
