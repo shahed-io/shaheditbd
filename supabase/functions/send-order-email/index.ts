@@ -342,8 +342,8 @@ Deno.serve(async (req) => {
         {
           idempotency_key: `order-confirm-${order.id}`,
           to: order.customer_email,
-          from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
-          sender_domain: 'noreply.shahedstore.com.bd',
+          from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
+          sender_domain: 'notify.shahedstore.com.bd',
           subject: `✅ অর্ডার কনফার্ম হয়েছে — #${order.order_number}`,
           html,
           text: `অর্ডার কনফার্ম হয়েছে — #${order.order_number}\nমোট: ৳${order.total}\nধন্যবাদ ${order.customer_name}!`,
@@ -376,8 +376,8 @@ Deno.serve(async (req) => {
           {
             idempotency_key: `order-status-${order.id}-${newStatus}`,
             to: order.customer_email,
-            from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
-            sender_domain: 'noreply.shahedstore.com.bd',
+            from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
+            sender_domain: 'notify.shahedstore.com.bd',
             subject: `${statusInfo.emoji} অর্ডার স্ট্যাটাস আপডেট: ${statusInfo.bn} — #${order.order_number}`,
             html,
             text: `অর্ডার #${order.order_number} এর স্ট্যাটাস "${statusInfo.bn}" হয়েছে। ${SITE_URL}/dashboard`,
@@ -467,8 +467,8 @@ Deno.serve(async (req) => {
             {
               idempotency_key: `admin-notify-${order.id}-${idx}`,
               to: email,
-              from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
-              sender_domain: 'noreply.shahedstore.com.bd',
+              from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
+              sender_domain: 'notify.shahedstore.com.bd',
               subject,
               html,
               text: `নতুন অর্ডার #${order.order_number} — ${order.customer_name} — ৳${order.total}\n${SITE_URL}/admin/orders`,
@@ -503,8 +503,8 @@ Deno.serve(async (req) => {
             {
               idempotency_key: `promo-${Date.now()}-${i + idx}`,
               to: email,
-              from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
-              sender_domain: 'noreply.shahedstore.com.bd',
+              from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
+              sender_domain: 'notify.shahedstore.com.bd',
               subject: promoSubject,
               html,
               text: promoBody || promoSubject,
