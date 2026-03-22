@@ -8,6 +8,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
+// Module-level cache so categories aren't re-fetched on every mount
+let _catCache: NavCategory[] | null = null;
+let _catFetchedAt = 0;
+const CAT_TTL = 5 * 60 * 1000; // 5 minutes
+
 const NAV_LINKS = [
   { label: 'Home',         href: '/' },
   { label: 'All Products', href: '/shop' },
@@ -51,7 +56,13 @@ const Navbar = () => {
 
   const [imgVersion, setImgVersion] = useState(() => Date.now());
 
-  const loadNavCategories = async () => {
+  const loadNavCategories = async (force = false) => {
+    // Use cache if fresh
+    const now = Date.now();
+    if (!force && _catCache && now - _catFetchedAt < CAT_TTL) {
+      setNavCategories(_catCache);
+      return;
+    }
     const { data: categories } = await supabase
       .from('categories')
       .select('id, name, slug, image_url, products!products_category_id_fkey(id)')
@@ -59,18 +70,18 @@ const Navbar = () => {
       .order('sort_order', { ascending: true });
     if (!categories) return;
     const HIDDEN = ['Adobe', 'Antivirus', 'Streaming'];
-    setNavCategories(
-      categories
-        .map(c => ({
-          id: c.id,
-          name: c.name,
-          slug: c.slug,
-          image_url: (c as any).image_url || null,
-          count: Array.isArray((c as any).products) ? (c as any).products.length : 0,
-        }))
-        .filter(c => c.count > 0 && !HIDDEN.includes(c.name))
-    );
-    setImgVersion(Date.now()); // bust browser cache on every reload
+    const mapped = categories
+      .map(c => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        image_url: (c as any).image_url || null,
+        count: Array.isArray((c as any).products) ? (c as any).products.length : 0,
+      }))
+      .filter(c => c.count > 0 && !HIDDEN.includes(c.name));
+    _catCache = mapped;
+    _catFetchedAt = Date.now();
+    setNavCategories(mapped);
   };
 
   useEffect(() => {
@@ -100,9 +111,13 @@ const Navbar = () => {
 
   useEffect(() => {
     loadNavCategories();
+    // Realtime: bust cache and reload when categories change
     const channel = supabase
       .channel('navbar-cats-rt')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, loadNavCategories)
+      .on('postgres_changes' as any, { event: '*', schema: 'public', table: 'categories' }, () => {
+        _catCache = null;
+        loadNavCategories(true);
+      })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);

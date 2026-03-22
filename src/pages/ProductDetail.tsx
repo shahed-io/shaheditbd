@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+
+const ReactMarkdown = lazy(() => import('react-markdown'));
 import { supabase } from '@/integrations/supabase/client';
 import { useCart } from '@/hooks/useCart';
 import Navbar from '@/components/store/Navbar';
@@ -176,7 +177,10 @@ const ProductDetail = () => {
 
         setLoading(false);
         setTimeout(() => setEntered(true), 80);
-        supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
+        // Defer view tracking — don't block UI
+        setTimeout(() => {
+          supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
+        }, 3000);
       } catch {
         if (!cancelled) { setNotFound(true); setLoading(false); }
       }
@@ -983,7 +987,9 @@ const ProductDetail = () => {
                     prose-ul:pl-4 prose-ul:space-y-1
                     prose-li:text-[hsl(226,25%,40%)] prose-li:leading-relaxed
                     prose-a:text-primary">
-                    <ReactMarkdown>{product.description}</ReactMarkdown>
+                    <Suspense fallback={<div className="h-20 shimmer rounded-xl" />}>
+                      <ReactMarkdown>{product.description}</ReactMarkdown>
+                    </Suspense>
                   </div>
                 ) : (
                   <ul className="space-y-3">
