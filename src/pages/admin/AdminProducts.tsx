@@ -1166,9 +1166,14 @@ const AdminProducts = () => {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className={lc}>Category</label>
+                        <label className={lc}>Primary Category</label>
                         <select value={form.category_id}
-                          onChange={e => setForm(p => ({ ...p, category_id: e.target.value, subcategory_id: '' }))}
+                          onChange={e => setForm(p => ({
+                            ...p,
+                            category_id: e.target.value,
+                            subcategory_id: '',
+                            extra_category_ids: p.extra_category_ids.filter(id => id !== e.target.value),
+                          }))}
                           className={ic}>
                           <option value="">Select Category</option>
                           {parentCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -1183,6 +1188,70 @@ const AdminProducts = () => {
                           {subCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                       </div>
+                    </div>
+
+                    {/* Additional Categories (multi-select) */}
+                    <div className="relative">
+                      <label className={lc}>
+                        Additional Categories
+                        <span className="text-muted-foreground/60 ml-1">(একাধিক ক্যাটাগরিতে দেখাবে)</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setExtraCatOpen(o => !o)}
+                        className={`${ic} text-left flex items-center justify-between`}
+                      >
+                        <span className={form.extra_category_ids.length ? 'text-foreground' : 'text-muted-foreground/50'}>
+                          {form.extra_category_ids.length > 0
+                            ? form.extra_category_ids
+                                .map(id => categories.find(c => c.id === id)?.name)
+                                .filter(Boolean)
+                                .join(', ')
+                            : 'Select additional categories...'}
+                        </span>
+                        <ChevronDown size={14} className={`flex-shrink-0 transition-transform ${extraCatOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {extraCatOpen && (
+                        <div className="absolute z-50 w-full mt-1 rounded-xl border border-border bg-card shadow-lg max-h-52 overflow-y-auto">
+                          {parentCategories
+                            .filter(c => c.id !== form.category_id)
+                            .map(c => {
+                              const checked = form.extra_category_ids.includes(c.id);
+                              return (
+                                <label key={c.id} className="flex items-center gap-2.5 px-3 py-2 hover:bg-muted/40 cursor-pointer text-sm">
+                                  <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={() => setForm(p => ({
+                                      ...p,
+                                      extra_category_ids: checked
+                                        ? p.extra_category_ids.filter(id => id !== c.id)
+                                        : [...p.extra_category_ids, c.id],
+                                    }))}
+                                    className="accent-primary w-4 h-4"
+                                  />
+                                  <span className="text-foreground">{c.name}</span>
+                                </label>
+                              );
+                            })}
+                        </div>
+                      )}
+                      {form.extra_category_ids.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {form.extra_category_ids.map(id => {
+                            const cat = categories.find(c => c.id === id);
+                            if (!cat) return null;
+                            return (
+                              <span key={id} className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
+                                {cat.name}
+                                <button type="button" onClick={() => setForm(p => ({ ...p, extra_category_ids: p.extra_category_ids.filter(i => i !== id) }))}>
+                                  <X size={10} />
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
