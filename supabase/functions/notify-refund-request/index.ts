@@ -140,7 +140,7 @@ Deno.serve(async (req) => {
 
         <!-- CTA -->
         <tr><td style="padding:0 24px 28px;text-align:center;">
-          <a href="https://shahedstore.lovable.app/admin/tickets"
+          <a href="https://shahedstore.com.bd/admin/tickets"
             style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;padding:13px 32px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;">
             🔍 অ্যাডমিন প্যানেলে দেখুন →
           </a>
