@@ -252,12 +252,17 @@ const Checkout = () => {
       // Send order confirmation email to customer (non-blocking)
       supabase.functions.invoke('send-order-email', {
         body: { type: 'order_confirmation', orderId: order.id },
-      }).catch(() => { /* silent */ });
+      }).then(({ error }) => {
+        if (error) console.error('[Checkout] order_confirmation email error:', error);
+        else console.log('[Checkout] order_confirmation email sent for order:', order.id);
+      });
 
       // Notify all admins via email (non-blocking)
       supabase.functions.invoke('send-order-email', {
         body: { type: 'admin_notify', orderId: order.id },
-      }).catch(() => { /* silent */ });
+      }).then(({ error }) => {
+        if (error) console.error('[Checkout] admin_notify email error:', error);
+      });
 
       clearCart();
       setOrderNumber(orderNum);

@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { sendLovableEmail } from 'npm:@lovable.dev/email-js'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -323,49 +324,74 @@ Deno.serve(async (req) => {
 
     // ── ORDER CONFIRMATION ──────────────────────────────────────────
     if (type === 'order_confirmation') {
-      const { data: order } = await supabaseAdmin
+      const { data: order, error: orderErr } = await supabaseAdmin
         .from('orders').select('*').eq('id', orderId).single()
-      if (!order) throw new Error('Order not found')
+      if (orderErr || !order) {
+        console.error('[order_confirmation] Order fetch error:', orderErr, 'orderId:', orderId)
+        throw new Error('Order not found')
+      }
 
       const { data: items } = await supabaseAdmin
         .from('order_items').select('*').eq('order_id', orderId)
 
+      console.log(`[order_confirmation] Sending email to: ${order.customer_email} for order #${order.order_number}`)
+
       const html = buildInvoiceHtml(order, items || [])
 
-      await fetch('https://api.lovable.dev/v1/email/send', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
+      await sendLovableEmail(
+        {
+          idempotency_key: `order-confirm-${order.id}`,
+          unsubscribe_token: crypto.randomUUID(),
           to: order.customer_email,
+          from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
+          sender_domain: 'notify.shahedstore.com.bd',
           subject: `✅ অর্ডার কনফার্ম হয়েছে — #${order.order_number}`,
           html,
-        }),
-      })
+          text: `অর্ডার কনফার্ম হয়েছে — #${order.order_number}\nমোট: ৳${order.total}\nধন্যবাদ ${order.customer_name}!`,
+          purpose: 'transactional',
+          label: 'order_confirmation',
+        },
+        { apiKey: LOVABLE_API_KEY }
+      )
 
+      console.log(`[order_confirmation] Email sent successfully to ${order.customer_email}`)
       return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
     // ── STATUS UPDATE ───────────────────────────────────────────────
     if (type === 'status_update') {
-      const { data: order } = await supabaseAdmin
+      const { data: order, error: orderErr } = await supabaseAdmin
         .from('orders').select('*').eq('id', orderId).single()
-      if (!order) throw new Error('Order not found')
+      if (orderErr || !order) {
+        console.error('[status_update] Order fetch error:', orderErr, 'orderId:', orderId)
+        throw new Error('Order not found')
+      }
 
       const html = buildStatusUpdateHtml(order, newStatus)
-
       const statusInfo = STATUS_LABELS[newStatus] || { bn: newStatus, emoji: '📋' }
 
-      await fetch('https://api.lovable.dev/v1/email/send', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
-          to: order.customer_email,
-          subject: `${statusInfo.emoji} অর্ডার স্ট্যাটাস আপডেট: ${statusInfo.bn} — #${order.order_number}`,
-          html,
-        }),
-      })
+      console.log(`[status_update] Sending status email to: ${order.customer_email} — ${newStatus}`)
+
+      try {
+        await sendLovableEmail(
+          {
+            idempotency_key: `order-status-${order.id}-${newStatus}`,
+            unsubscribe_token: crypto.randomUUID(),
+            to: order.customer_email,
+            from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
+            sender_domain: 'notify.shahedstore.com.bd',
+            subject: `${statusInfo.emoji} অর্ডার স্ট্যাটাস আপডেট: ${statusInfo.bn} — #${order.order_number}`,
+            html,
+            text: `অর্ডার #${order.order_number} এর স্ট্যাটাস "${statusInfo.bn}" হয়েছে। ${SITE_URL}/dashboard`,
+            purpose: 'transactional',
+            label: 'status_update',
+          },
+          { apiKey: LOVABLE_API_KEY }
+        )
+        console.log(`[status_update] Email sent to ${order.customer_email}`)
+      } catch (emailErr) {
+        console.error('[status_update] Email send failed:', emailErr)
+      }
 
       // Push notification to dashboard
       if (order.user_id) {
@@ -438,23 +464,30 @@ Deno.serve(async (req) => {
 
       // Send to all admins
       const results = await Promise.allSettled(
-        adminEmails.map(email =>
-          fetch('https://api.lovable.dev/v1/email/send', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
+        adminEmails.map((email, idx) =>
+          sendLovableEmail(
+            {
+              idempotency_key: `admin-notify-${order.id}-${idx}`,
+              unsubscribe_token: crypto.randomUUID(),
               to: email,
+              from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
+              sender_domain: 'notify.shahedstore.com.bd',
               subject,
               html,
-            }),
-          })
+              text: `নতুন অর্ডার #${order.order_number} — ${order.customer_name} — ৳${order.total}\n${SITE_URL}/admin/orders`,
+              purpose: 'transactional',
+              label: 'admin_order_notify',
+            },
+            { apiKey: LOVABLE_API_KEY }
+          )
         )
       )
 
       const sent = results.filter(r => r.status === 'fulfilled').length
+      const errors = results.filter(r => r.status === 'rejected').map(r => (r as any).reason?.message)
+      if (errors.length > 0) console.error('[admin_notify] Some emails failed:', errors)
 
-      return new Response(JSON.stringify({ success: true, sent, total: adminEmails.length, adminEmails }), {
+      return new Response(JSON.stringify({ success: true, sent, total: adminEmails.length }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
@@ -468,17 +501,22 @@ Deno.serve(async (req) => {
       const batchSize = 10
       for (let i = 0; i < emails.length; i += batchSize) {
         const batch = emails.slice(i, i + batchSize)
-        await Promise.all(batch.map(email =>
-          fetch('https://api.lovable.dev/v1/email/send', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
+        await Promise.allSettled(batch.map((email, idx) =>
+          sendLovableEmail(
+            {
+              idempotency_key: `promo-${Date.now()}-${i + idx}`,
+              unsubscribe_token: crypto.randomUUID(),
               to: email,
+              from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
+              sender_domain: 'notify.shahedstore.com.bd',
               subject: promoSubject,
               html,
-            }),
-          })
+              text: promoBody || promoSubject,
+              purpose: 'transactional',
+              label: 'promotional',
+            },
+            { apiKey: LOVABLE_API_KEY }
+          )
         ))
         sent += batch.length
         if (i + batchSize < emails.length) {
