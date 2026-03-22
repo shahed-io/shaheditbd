@@ -471,6 +471,7 @@ Deno.serve(async (req) => {
               sender_domain: 'noreply.shahedstore.com.bd',
               subject,
               html,
+              text: `নতুন অর্ডার #${order.order_number} — ${order.customer_name} — ৳${order.total}\n${SITE_URL}/admin/orders`,
               purpose: 'transactional',
               label: 'admin_order_notify',
             },
