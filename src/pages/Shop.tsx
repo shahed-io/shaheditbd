@@ -150,15 +150,30 @@ const Shop = () => {
   useEffect(() => {
     setLoading(true);
     const fetchProducts = async () => {
+      let productIds: string[] | null = null;
+
+      // If a category is selected, find product IDs via junction table (supports multi-category)
+      if (activeCatSlug) {
+        const { data: cat } = await supabase.from('categories').select('id').eq('slug', activeCatSlug).maybeSingle();
+        if (cat) {
+          const { data: pcRows } = await supabase
+            .from('product_categories' as any)
+            .select('product_id')
+            .eq('category_id', cat.id);
+          productIds = (pcRows as any[] || []).map((r: any) => r.product_id);
+          if (productIds.length === 0) {
+            setProducts([]);
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
       let query = supabase.from('products')
         .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description')
         .eq('status', 'active');
 
-      if (activeCatSlug) {
-        const { data: cat } = await supabase.from('categories').select('id').eq('slug', activeCatSlug).maybeSingle();
-        if (cat) query = query.eq('category_id', cat.id);
-      }
-
+      if (productIds !== null) query = query.in('id', productIds);
       if (search) query = query.ilike('name', `%${search}%`);
 
       switch (sort) {

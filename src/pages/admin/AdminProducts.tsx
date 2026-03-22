@@ -88,8 +88,9 @@ const emptyForm = {
   price: '', original_price: '', discount_percent: '', cost_price: '',
   // Stock
   status: 'active', sku: '', stock_quantity: '',
-  // Category
+  // Category (primary + multi)
   category_id: '', subcategory_id: '',
+  extra_category_ids: [] as string[],
   // Flags
   is_featured: false, is_digital: true, is_flash_sale: false,
   // Media
@@ -186,6 +187,8 @@ const AdminProducts = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [showBulkConfirm, setShowBulkConfirm] = useState(false);
+  // Extra categories dropdown open state
+  const [extraCatOpen, setExtraCatOpen] = useState(false);
 
   // ── AI Content Generator ─────────────────────────────────────
   const generateAiContent = async (type: 'short_description' | 'description' | 'seo' | 'all') => {
@@ -560,15 +563,34 @@ const AdminProducts = () => {
     };
 
     try {
+      let productId: string;
       if (editingProduct) {
         const { error } = await supabase.from('products').update(payload).eq('id', editingProduct.id);
         if (error) throw error;
+        productId = editingProduct.id;
         toast.success('Product updated!');
       } else {
-        const { error } = await supabase.from('products').insert(payload);
+        const { data: inserted, error } = await supabase.from('products').insert(payload).select('id').single();
         if (error) throw error;
+        productId = (inserted as any).id;
         toast.success('Product added!');
       }
+
+      // Sync product_categories junction table
+      const allCatIds = [
+        ...(form.category_id ? [form.category_id] : []),
+        ...form.extra_category_ids,
+      ];
+      const uniqueCatIds = [...new Set(allCatIds)];
+
+      // Delete old entries and reinsert
+      await supabase.from('product_categories' as any).delete().eq('product_id', productId);
+      if (uniqueCatIds.length > 0) {
+        await supabase.from('product_categories' as any).insert(
+          uniqueCatIds.map(cid => ({ product_id: productId, category_id: cid }))
+        );
+      }
+
       setShowForm(false);
       fetchProducts();
     } catch (err: any) {
@@ -636,22 +658,19 @@ const AdminProducts = () => {
     }
   };
 
-  const handleEdit = (product: Product) => {
+  const handleEdit = async (product: Product) => {
     setEditingProduct(product);
     setImagePreview(product.image_url || '');
     const allTags = product.tags || [];
     const tagStr = allTags.filter(t => t !== 'flash-sale' && t !== 'requires-email').join(', ');
-    // Parse account_type from attributes
     const attrRaw = (product.attributes as any) || [];
     const accountTypeAttr = attrRaw.find((a: any) => a.key === '__account_type');
-    // Parse subtitle and duration_plans from attributes
     const subtitleAttr = attrRaw.find((a: any) => a.key === '__subtitle');
     const durationPlansAttr = attrRaw.find((a: any) => a.key === '__duration_plans');
     const cleanAttrs = attrRaw.filter((a: any) => a.key !== '__account_type' && a.key !== '__subtitle' && a.key !== '__duration_plans');
     const parsedDurationPlans = (() => {
       try { return durationPlansAttr ? JSON.parse(durationPlansAttr.value) : []; } catch { return []; }
     })();
-    // Auto-sync price from duration_plans (lowest plan price)
     const syncedPrices = (() => {
       if (!parsedDurationPlans.length) return null;
       const validPrices = parsedDurationPlans
@@ -666,10 +685,22 @@ const AdminProducts = () => {
       const disc = o > 0 && p > 0 && o > p ? String(Math.round(((o - p) / o) * 100)) : (o > 0 && p >= o ? '0' : '');
       return { price: String(minPrice), original_price: origPrice, discount_percent: disc };
     })();
-    // Parse short_description into bullets
     const existingBullets = product.short_description
       ? product.short_description.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean)
       : [''];
+
+    // Load extra categories from junction table
+    let extraCatIds: string[] = [];
+    const { data: pcRows } = await supabase
+      .from('product_categories' as any)
+      .select('category_id')
+      .eq('product_id', product.id);
+    if (pcRows) {
+      extraCatIds = (pcRows as any[])
+        .map((r: any) => r.category_id)
+        .filter((cid: string) => cid !== (product.category_id || ''));
+    }
+
     setForm({
       name: product.name,
       slug: (product as any).slug && !/^[0-9a-f-]{36}$/.test((product as any).slug)
@@ -694,6 +725,7 @@ const AdminProducts = () => {
       stock_quantity: '',
       category_id: product.category_id || '',
       subcategory_id: product.subcategory_id || '',
+      extra_category_ids: extraCatIds,
       is_featured: product.is_featured ?? false,
       is_digital: product.is_digital ?? true,
       is_flash_sale: allTags.includes('flash-sale'),
@@ -1134,9 +1166,14 @@ const AdminProducts = () => {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className={lc}>Category</label>
+                        <label className={lc}>Primary Category</label>
                         <select value={form.category_id}
-                          onChange={e => setForm(p => ({ ...p, category_id: e.target.value, subcategory_id: '' }))}
+                          onChange={e => setForm(p => ({
+                            ...p,
+                            category_id: e.target.value,
+                            subcategory_id: '',
+                            extra_category_ids: p.extra_category_ids.filter(id => id !== e.target.value),
+                          }))}
                           className={ic}>
                           <option value="">Select Category</option>
                           {parentCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -1151,6 +1188,70 @@ const AdminProducts = () => {
                           {subCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                       </div>
+                    </div>
+
+                    {/* Additional Categories (multi-select) */}
+                    <div className="relative">
+                      <label className={lc}>
+                        Additional Categories
+                        <span className="text-muted-foreground/60 ml-1">(একাধিক ক্যাটাগরিতে দেখাবে)</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setExtraCatOpen(o => !o)}
+                        className={`${ic} text-left flex items-center justify-between`}
+                      >
+                        <span className={form.extra_category_ids.length ? 'text-foreground' : 'text-muted-foreground/50'}>
+                          {form.extra_category_ids.length > 0
+                            ? form.extra_category_ids
+                                .map(id => categories.find(c => c.id === id)?.name)
+                                .filter(Boolean)
+                                .join(', ')
+                            : 'Select additional categories...'}
+                        </span>
+                        <ChevronDown size={14} className={`flex-shrink-0 transition-transform ${extraCatOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {extraCatOpen && (
+                        <div className="absolute z-50 w-full mt-1 rounded-xl border border-border bg-card shadow-lg max-h-52 overflow-y-auto">
+                          {parentCategories
+                            .filter(c => c.id !== form.category_id)
+                            .map(c => {
+                              const checked = form.extra_category_ids.includes(c.id);
+                              return (
+                                <label key={c.id} className="flex items-center gap-2.5 px-3 py-2 hover:bg-muted/40 cursor-pointer text-sm">
+                                  <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={() => setForm(p => ({
+                                      ...p,
+                                      extra_category_ids: checked
+                                        ? p.extra_category_ids.filter(id => id !== c.id)
+                                        : [...p.extra_category_ids, c.id],
+                                    }))}
+                                    className="accent-primary w-4 h-4"
+                                  />
+                                  <span className="text-foreground">{c.name}</span>
+                                </label>
+                              );
+                            })}
+                        </div>
+                      )}
+                      {form.extra_category_ids.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {form.extra_category_ids.map(id => {
+                            const cat = categories.find(c => c.id === id);
+                            if (!cat) return null;
+                            return (
+                              <span key={id} className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
+                                {cat.name}
+                                <button type="button" onClick={() => setForm(p => ({ ...p, extra_category_ids: p.extra_category_ids.filter(i => i !== id) }))}>
+                                  <X size={10} />
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
