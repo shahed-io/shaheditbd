@@ -303,7 +303,7 @@ const Footer = () => (
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
           style={{ background: 'hsla(162,72%,38%,0.08)', border: '1px solid hsla(162,72%,38%,0.20)' }}>
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[11px] font-fira font-medium" style={{ color: 'hsl(162,72%,30%)' }}>All systems operational</span>
+          <span className="text-[11px] font-fira font-medium" style={{ color: 'hsl(162,72%,30%)' }}>Trusted Digital Product Store</span>
         </div>
       </div>
     </div>
