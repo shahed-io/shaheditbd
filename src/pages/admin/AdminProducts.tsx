@@ -88,8 +88,9 @@ const emptyForm = {
   price: '', original_price: '', discount_percent: '', cost_price: '',
   // Stock
   status: 'active', sku: '', stock_quantity: '',
-  // Category
+  // Category (primary + multi)
   category_id: '', subcategory_id: '',
+  extra_category_ids: [] as string[],
   // Flags
   is_featured: false, is_digital: true, is_flash_sale: false,
   // Media
