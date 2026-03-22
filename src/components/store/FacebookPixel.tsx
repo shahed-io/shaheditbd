@@ -11,7 +11,7 @@ declare global {
 
 // Singleton to avoid double-loading
 let pixelLoaded = false;
-let pixelConfig: { id: string; tracks: Record<string, boolean> } | null = null;
+let pixelConfig: { id: string; tracks: Record<string, boolean>; capiEnabled: boolean; testCode: string } | null = null;
 
 const loadPixelSettings = async () => {
   if (pixelConfig !== null) return pixelConfig;
@@ -28,6 +28,8 @@ const loadPixelSettings = async () => {
 
   pixelConfig = {
     id: map['fb_pixel_id'],
+    capiEnabled: map['fb_capi_enabled'] === 'true',
+    testCode: map['fb_capi_test_code'] || '',
     tracks: {
       pageview:     map['fb_track_pageview'] !== 'false',
       view_content: map['fb_track_view_content'] !== 'false',
@@ -48,7 +50,7 @@ const injectPixelScript = (pixelId: string) => {
   n.push = n;
   n.loaded = true;
   n.version = '2.0';
-  n.queue = [];
+  n.q = [];
   window.fbq = n;
   if (!window._fbq) window._fbq = n;
 
@@ -60,11 +62,33 @@ const injectPixelScript = (pixelId: string) => {
   window.fbq('init', pixelId);
 };
 
+// ─── Server-side CAPI helper ──────────────────────────────
+const sendCAPI = async (eventName: string, params?: Record<string, any>) => {
+  if (!pixelConfig?.capiEnabled) return;
+  try {
+    await supabase.functions.invoke('facebook-capi', {
+      body: {
+        event_name: eventName,
+        event_source_url: window.location.href,
+        test_event_code: pixelConfig.testCode || undefined,
+        user_data: {
+          client_user_agent: navigator.userAgent,
+        },
+        custom_data: params || undefined,
+      },
+    });
+  } catch {
+    // Silently fail - don't block UX
+  }
+};
+
 // ─── Public helpers ────────────────────────────────────────
 export const fbTrack = (event: string, params?: Record<string, any>) => {
   if (typeof window !== 'undefined' && window.fbq) {
     window.fbq('track', event, params);
   }
+  // Also send server-side CAPI event
+  sendCAPI(event, params);
 };
 
 export const fbTrackPageView = () => fbTrack('PageView');

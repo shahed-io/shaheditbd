@@ -46,7 +46,22 @@ serve(async (req) => {
     };
 
     if (event_source_url) eventData.event_source_url = event_source_url;
-    if (user_data)        eventData.user_data = user_data;
+
+    // Ensure user_data always has client_ip_address and client_user_agent
+    const enrichedUserData: Record<string, any> = { ...(user_data || {}) };
+    // Get client IP from request headers
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || req.headers.get('x-real-ip')
+      || req.headers.get('cf-connecting-ip')
+      || '0.0.0.0';
+    if (!enrichedUserData.client_ip_address) {
+      enrichedUserData.client_ip_address = clientIp;
+    }
+    if (!enrichedUserData.client_user_agent) {
+      enrichedUserData.client_user_agent = req.headers.get('user-agent') || '';
+    }
+    eventData.user_data = enrichedUserData;
+
     if (custom_data)      eventData.custom_data = custom_data;
 
     const payload: Record<string, any> = {
