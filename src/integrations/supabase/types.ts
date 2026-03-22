@@ -717,6 +717,7 @@ export type Database = {
       order_items: {
         Row: {
           created_at: string
+          custom_field_values: Json | null
           id: string
           license_key: string | null
           order_id: string
@@ -728,6 +729,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          custom_field_values?: Json | null
           id?: string
           license_key?: string | null
           order_id: string
@@ -739,6 +741,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          custom_field_values?: Json | null
           id?: string
           license_key?: string | null
           order_id?: string
@@ -1209,6 +1212,7 @@ export type Database = {
           category_id: string | null
           cost_price: number | null
           created_at: string
+          custom_fields: Json | null
           delivery_time: string | null
           delivery_type: string | null
           demo_url: string | null
@@ -1251,6 +1255,7 @@ export type Database = {
           category_id?: string | null
           cost_price?: number | null
           created_at?: string
+          custom_fields?: Json | null
           delivery_time?: string | null
           delivery_type?: string | null
           demo_url?: string | null
@@ -1293,6 +1298,7 @@ export type Database = {
           category_id?: string | null
           cost_price?: number | null
           created_at?: string
+          custom_fields?: Json | null
           delivery_time?: string | null
           delivery_type?: string | null
           demo_url?: string | null
