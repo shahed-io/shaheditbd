@@ -374,7 +374,7 @@ Deno.serve(async (req) => {
       try {
         await sendLovableEmail(
           {
-            run_id: `order-status-${order.id}-${newStatus}`,
+            idempotency_key: `order-status-${order.id}-${newStatus}`,
             to: order.customer_email,
             from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
             sender_domain: 'noreply.shahedstore.com.bd',
@@ -465,7 +465,7 @@ Deno.serve(async (req) => {
         adminEmails.map((email, idx) =>
           sendLovableEmail(
             {
-              run_id: `admin-notify-${order.id}-${idx}`,
+              idempotency_key: `admin-notify-${order.id}-${idx}`,
               to: email,
               from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
               sender_domain: 'noreply.shahedstore.com.bd',
@@ -501,7 +501,7 @@ Deno.serve(async (req) => {
         await Promise.allSettled(batch.map((email, idx) =>
           sendLovableEmail(
             {
-              run_id: `promo-${Date.now()}-${i + idx}`,
+              idempotency_key: `promo-${Date.now()}-${i + idx}`,
               to: email,
               from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
               sender_domain: 'noreply.shahedstore.com.bd',
