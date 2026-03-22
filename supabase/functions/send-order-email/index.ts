@@ -360,15 +360,19 @@ Deno.serve(async (req) => {
 
     // ── STATUS UPDATE ───────────────────────────────────────────────
     if (type === 'status_update') {
-      const { data: order } = await supabaseAdmin
+      const { data: order, error: orderErr } = await supabaseAdmin
         .from('orders').select('*').eq('id', orderId).single()
-      if (!order) throw new Error('Order not found')
+      if (orderErr || !order) {
+        console.error('[status_update] Order fetch error:', orderErr, 'orderId:', orderId)
+        throw new Error('Order not found')
+      }
 
       const html = buildStatusUpdateHtml(order, newStatus)
-
       const statusInfo = STATUS_LABELS[newStatus] || { bn: newStatus, emoji: '📋' }
 
-      await fetch('https://api.lovable.dev/v1/email/send', {
+      console.log(`[status_update] Sending status email to: ${order.customer_email} — ${newStatus}`)
+
+      const emailRes = await fetch('https://api.lovable.dev/v1/email/send', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -378,6 +382,13 @@ Deno.serve(async (req) => {
           html,
         }),
       })
+
+      const emailBody = await emailRes.text()
+      if (!emailRes.ok) {
+        console.error(`[status_update] Email API error ${emailRes.status}:`, emailBody)
+      } else {
+        console.log(`[status_update] Email sent to ${order.customer_email}, status: ${emailRes.status}`)
+      }
 
       // Push notification to dashboard
       if (order.user_id) {
@@ -390,7 +401,7 @@ Deno.serve(async (req) => {
         })
       }
 
-      return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify({ success: true, emailStatus: emailRes.status }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
     // ── ADMIN NEW ORDER NOTIFY ──────────────────────────────────────
