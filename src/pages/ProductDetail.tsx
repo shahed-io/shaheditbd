@@ -177,7 +177,10 @@ const ProductDetail = () => {
 
         setLoading(false);
         setTimeout(() => setEntered(true), 80);
-        supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
+        // Defer view tracking — don't block UI
+        setTimeout(() => {
+          supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
+        }, 3000);
       } catch {
         if (!cancelled) { setNotFound(true); setLoading(false); }
       }
