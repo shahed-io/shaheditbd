@@ -106,9 +106,11 @@ STRICT STRUCTURE — follow exactly in this order:
 9. ### ⚠️ Important Notes
 🔐 We are a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh.
 Our DBID Number: 586772174 — ensuring secure and authentic digital product delivery.
-❌ Sold products are non-refundable
-❌ Activate your product within 2 days of purchase
-⚠️ Delayed activation may void warranty or support
+❌ Sold products are non-refundable.
+❌ Activate your product within 2 days of purchase.
+⚠️ Delayed activation may void warranty or support.
+
+CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use ।  at the end of purely Bengali sentences.
 
 Return ONLY the formatted markdown text. No JSON. No extra commentary.`;
 
