@@ -346,6 +346,7 @@ Deno.serve(async (req) => {
           sender_domain: 'noreply.shahedstore.com.bd',
           subject: `✅ অর্ডার কনফার্ম হয়েছে — #${order.order_number}`,
           html,
+          text: `অর্ডার কনফার্ম হয়েছে — #${order.order_number}\nমোট: ৳${order.total}\nধন্যবাদ ${order.customer_name}!`,
           purpose: 'transactional',
           label: 'order_confirmation',
         },
