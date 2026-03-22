@@ -86,6 +86,7 @@ const AdminProductImportExport   = lazy(() => import("./pages/admin/AdminProduct
 const AdminProductReviews        = lazy(() => import("./pages/admin/AdminProductReviews"));
 const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFacebookPixel"));
 const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
+const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -183,6 +184,7 @@ const AppContent = () => {
             <Route path="import-export" element={<AdminProductImportExport />} />
             <Route path="facebook-pixel" element={<AdminFacebookPixel />} />
             <Route path="licenses" element={<AdminLicenses />} />
+            <Route path="popup-banner" element={<AdminPopupBanner />} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
