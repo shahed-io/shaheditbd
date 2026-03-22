@@ -334,6 +334,41 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
                 ))}
               </div>
 
+              {/* ── Custom Fields ── */}
+              {customFields.length > 0 && (
+                <div className="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
+                  <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <span>📋</span> প্রোডাক্ট সম্পর্কিত তথ্য দিন
+                  </p>
+                  {customFields.map(field => (
+                    <div key={field.id}>
+                      <label className="text-xs text-muted-foreground mb-1 block">
+                        {field.label} {field.required && <span className="text-destructive">*</span>}
+                      </label>
+                      {field.type === 'textarea' ? (
+                        <textarea
+                          rows={3}
+                          value={customFieldValues[field.id] || ''}
+                          onChange={e => setCustomFieldValues(p => ({ ...p, [field.id]: e.target.value }))}
+                          placeholder={field.placeholder}
+                          className={`${inputClass} resize-none`}
+                        />
+                      ) : (
+                        <input
+                          type={field.type}
+                          value={customFieldValues[field.id] || ''}
+                          onChange={e => setCustomFieldValues(p => ({ ...p, [field.id]: e.target.value }))}
+                          placeholder={field.placeholder}
+                          className={inputClass}
+                        />
+                      )}
+                      {field.hint && <p className="text-[10px] text-muted-foreground mt-1">{field.hint}</p>}
+                      {customFieldErrors[field.id] && <p className="text-destructive text-xs mt-1">{customFieldErrors[field.id]}</p>}
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Coupon */}
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">কুপন কোড (ঐচ্ছিক)</label>
