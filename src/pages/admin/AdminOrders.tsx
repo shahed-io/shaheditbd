@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
+import logoIcon from '@/assets/logo-icon.webp';
 
 // ─── Status Config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any; dot: string }> = {
@@ -39,6 +40,24 @@ const inputCls = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5
 // ─── Invoice Component (printable) ─────────────────────────────────────────
 const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) => {
   const printRef = useRef<HTMLDivElement>(null);
+  const [logoBase64, setLogoBase64] = useState<string>('');
+
+  // Convert logo to base64 for print compatibility
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, 0, 0);
+        setLogoBase64(canvas.toDataURL('image/png'));
+      }
+    };
+    img.src = logoIcon;
+  }, []);
 
   const handlePrint = () => {
     const content = printRef.current?.innerHTML;
@@ -48,40 +67,28 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
     win.document.write(`
       <html>
       <head>
-        <title>Invoice #${order.order_number}</title>
+        <title>Invoice #${order.order_number} — Shahed Store</title>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { font-family: Arial, sans-serif; color: #1a1a1a; background: #fff; padding: 32px; }
-          .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; border-bottom: 2px solid #7c3aed; padding-bottom: 20px; }
-          .logo { font-size: 24px; font-weight: 900; letter-spacing: 3px; color: #7c3aed; }
-          .invoice-title { font-size: 28px; font-weight: 700; color: #7c3aed; text-align: right; }
-          .invoice-num { font-size: 13px; color: #666; text-align: right; margin-top: 4px; }
-          .section { margin-bottom: 24px; }
-          .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #888; letter-spacing: 1px; margin-bottom: 8px; }
-          .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-          .info-box { background: #f8f7ff; border-radius: 8px; padding: 14px; }
-          .info-box p { font-size: 12px; color: #555; margin: 3px 0; }
-          .info-box strong { color: #1a1a1a; }
-          table { width: 100%; border-collapse: collapse; }
-          th { background: #f3f0ff; color: #7c3aed; font-size: 11px; text-transform: uppercase; padding: 10px 12px; text-align: left; }
-          td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #eee; }
-          .totals { margin-top: 16px; text-align: right; }
-          .totals div { display: flex; justify-content: flex-end; gap: 80px; margin: 4px 0; font-size: 13px; color: #555; }
-          .totals .grand { font-size: 18px; font-weight: 700; color: #7c3aed; border-top: 2px solid #7c3aed; padding-top: 8px; margin-top: 8px; }
-          .footer { margin-top: 32px; text-align: center; font-size: 11px; color: #aaa; border-top: 1px solid #eee; padding-top: 16px; }
-          .status-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #f3f0ff; color: #7c3aed; }
-          @media print { body { padding: 16px; } }
+          body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; background: #fff; padding: 0; }
+          @media print { body { padding: 0; } @page { margin: 15mm; } }
         </style>
       </head>
       <body>${content}</body>
       </html>
     `);
     win.document.close();
-    setTimeout(() => { win.print(); win.close(); }, 300);
+    setTimeout(() => { win.print(); win.close(); }, 400);
   };
 
   const items = order.order_items || [];
   const date = new Date(order.created_at).toLocaleDateString('bn-BD', { day: '2-digit', month: 'long', year: 'numeric' });
+  const dateEn = new Date(order.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+  const statusCfg = STATUS_CONFIG[order.status] || STATUS_CONFIG['pending'];
+
+  const brandColor = '#7c3aed';
+  const brandLight = '#f3f0ff';
+  const brandDark = '#4c1d95';
 
   return (
     <div className="fixed inset-0 z-[60] bg-background/90 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
@@ -101,86 +108,107 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
 
         {/* Invoice Body */}
         <div className="overflow-y-auto flex-1 p-6">
-          <div ref={printRef} style={{ background: '#fff', color: '#1a1a1a', padding: '32px', borderRadius: '8px' }}>
-            {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px', borderBottom: '2px solid #7c3aed', paddingBottom: '20px' }}>
-              <div>
-                <div style={{ fontSize: '22px', fontWeight: 900, letterSpacing: '3px', color: '#7c3aed' }}>SHAHED STORE</div>
-                <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>Digital Products & Services</div>
+          <div ref={printRef} style={{ background: '#fff', color: '#1a1a2e', padding: '40px', borderRadius: '12px', fontFamily: "'Segoe UI', Arial, sans-serif" }}>
+
+            {/* ─── Header with Logo ─── */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', paddingBottom: '20px', borderBottom: `3px solid ${brandColor}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                {logoBase64 && (
+                  <img src={logoBase64} alt="Shahed Store" style={{ width: '52px', height: '52px', borderRadius: '12px', objectFit: 'contain' }} />
+                )}
+                <div>
+                  <div style={{ fontSize: '22px', fontWeight: 900, letterSpacing: '2px', color: brandColor, fontFamily: "'Orbitron', sans-serif" }}>SHAHED STORE</div>
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '2px', letterSpacing: '0.5px' }}>Your Trusted Digital Store</div>
+                </div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '26px', fontWeight: 700, color: '#7c3aed' }}>INVOICE</div>
-                <div style={{ fontSize: '13px', color: '#666', marginTop: '4px' }}>#{order.order_number}</div>
-                <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>{date}</div>
+                <div style={{ fontSize: '28px', fontWeight: 800, color: brandColor, letterSpacing: '2px' }}>INVOICE</div>
+                <div style={{ fontSize: '13px', color: '#666', marginTop: '4px', fontFamily: 'monospace' }}>#{order.order_number}</div>
+                <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>{dateEn}</div>
               </div>
             </div>
 
-            {/* Customer + Payment Info */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
-              <div style={{ background: '#f8f7ff', borderRadius: '8px', padding: '14px' }}>
-                <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: '#888', letterSpacing: '1px', marginBottom: '8px' }}>Bill To</div>
-                <p style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a' }}>{order.customer_name}</p>
-                <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>{order.customer_email}</p>
-                {order.customer_phone && <p style={{ fontSize: '12px', color: '#555', marginTop: '2px' }}>{order.customer_phone}</p>}
+            {/* ─── Customer + Payment Info ─── */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '28px' }}>
+              <div style={{ background: brandLight, borderRadius: '10px', padding: '16px', borderLeft: `4px solid ${brandColor}` }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '10px' }}>📋 বিলিং তথ্য</div>
+                <p style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a2e', marginBottom: '4px' }}>{order.customer_name}</p>
+                <p style={{ fontSize: '12px', color: '#555', display: 'flex', alignItems: 'center', gap: '4px' }}>✉️ {order.customer_email}</p>
+                {order.customer_phone && <p style={{ fontSize: '12px', color: '#555', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>📱 {order.customer_phone}</p>}
               </div>
-              <div style={{ background: '#f8f7ff', borderRadius: '8px', padding: '14px' }}>
-                <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: '#888', letterSpacing: '1px', marginBottom: '8px' }}>Payment</div>
-                <p style={{ fontSize: '12px', color: '#555' }}>Method: <strong style={{ color: '#1a1a1a' }}>{PM_LABELS[order.payment_method] || order.payment_method}</strong></p>
-                {order.transaction_id && <p style={{ fontSize: '12px', color: '#555', marginTop: '2px' }}>TrxID: <strong style={{ color: '#1a1a1a', fontFamily: 'monospace' }}>{order.transaction_id}</strong></p>}
-                <p style={{ fontSize: '12px', color: '#555', marginTop: '2px' }}>Status: <span style={{ background: '#f3f0ff', color: '#7c3aed', padding: '2px 8px', borderRadius: '999px', fontSize: '11px', fontWeight: 600 }}>{STATUS_CONFIG[order.status]?.label || order.status}</span></p>
+              <div style={{ background: brandLight, borderRadius: '10px', padding: '16px', borderLeft: `4px solid ${brandColor}` }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '10px' }}>💳 পেমেন্ট তথ্য</div>
+                <p style={{ fontSize: '12px', color: '#555' }}>Method: <strong style={{ color: '#1a1a2e' }}>{PM_LABELS[order.payment_method] || order.payment_method}</strong></p>
+                {order.transaction_id && <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>TrxID: <strong style={{ color: '#1a1a2e', fontFamily: 'monospace', background: '#e8e5f7', padding: '1px 6px', borderRadius: '4px', fontSize: '11px' }}>{order.transaction_id}</strong></p>}
+                <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>
+                  Status: <span style={{ background: brandColor, color: '#fff', padding: '2px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 600 }}>{statusCfg.label}</span>
+                </p>
+                {order.coupon_code && <p style={{ fontSize: '12px', color: '#059669', marginTop: '4px' }}>🎟️ কুপন: <strong>{order.coupon_code}</strong></p>}
               </div>
             </div>
 
-            {/* Items */}
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '16px' }}>
+            {/* ─── Items Table ─── */}
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
               <thead>
-                <tr style={{ background: '#f3f0ff' }}>
-                  <th style={{ color: '#7c3aed', fontSize: '11px', textTransform: 'uppercase', padding: '10px 12px', textAlign: 'left' }}>পণ্য</th>
-                  <th style={{ color: '#7c3aed', fontSize: '11px', textTransform: 'uppercase', padding: '10px 12px', textAlign: 'center' }}>পরিমাণ</th>
-                  <th style={{ color: '#7c3aed', fontSize: '11px', textTransform: 'uppercase', padding: '10px 12px', textAlign: 'right' }}>মূল্য</th>
-                  <th style={{ color: '#7c3aed', fontSize: '11px', textTransform: 'uppercase', padding: '10px 12px', textAlign: 'right' }}>মোট</th>
+                <tr style={{ background: brandColor }}>
+                  <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'left', letterSpacing: '0.5px' }}>#</th>
+                  <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'left', letterSpacing: '0.5px' }}>পণ্যের নাম</th>
+                  <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'center', letterSpacing: '0.5px' }}>পরিমাণ</th>
+                  <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'right', letterSpacing: '0.5px' }}>দাম</th>
+                  <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'right', letterSpacing: '0.5px' }}>মোট</th>
                 </tr>
               </thead>
               <tbody>
                 {items.map((item: any, idx: number) => (
                   <tr key={item.id} style={{ borderBottom: '1px solid #eee', background: idx % 2 === 0 ? '#fff' : '#faf9ff' }}>
-                    <td style={{ padding: '10px 12px', fontSize: '13px', color: '#1a1a1a' }}>
+                    <td style={{ padding: '11px 14px', fontSize: '12px', color: '#888' }}>{idx + 1}</td>
+                    <td style={{ padding: '11px 14px', fontSize: '13px', color: '#1a1a2e', fontWeight: 500 }}>
                       {item.product_name}
-                      {item.license_key && <div style={{ fontSize: '11px', color: '#7c3aed', fontFamily: 'monospace', marginTop: '2px' }}>🔑 {item.license_key}</div>}
+                      {item.license_key && (
+                        <div style={{ fontSize: '11px', color: brandColor, fontFamily: 'monospace', marginTop: '3px', background: brandLight, padding: '2px 8px', borderRadius: '4px', display: 'inline-block' }}>
+                          🔑 {item.license_key}
+                        </div>
+                      )}
                     </td>
-                    <td style={{ padding: '10px 12px', fontSize: '13px', textAlign: 'center', color: '#555' }}>×{item.quantity}</td>
-                    <td style={{ padding: '10px 12px', fontSize: '13px', textAlign: 'right', color: '#555' }}>৳{Number(item.price).toLocaleString()}</td>
-                    <td style={{ padding: '10px 12px', fontSize: '13px', fontWeight: 700, textAlign: 'right', color: '#1a1a1a' }}>৳{Number(item.total).toLocaleString()}</td>
+                    <td style={{ padding: '11px 14px', fontSize: '13px', textAlign: 'center', color: '#555' }}>×{item.quantity}</td>
+                    <td style={{ padding: '11px 14px', fontSize: '13px', textAlign: 'right', color: '#555' }}>৳{Number(item.price).toLocaleString()}</td>
+                    <td style={{ padding: '11px 14px', fontSize: '14px', fontWeight: 700, textAlign: 'right', color: '#1a1a2e' }}>৳{Number(item.total).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
-            {/* Totals */}
+            {/* ─── Totals ─── */}
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <div style={{ minWidth: '240px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
+              <div style={{ minWidth: '260px', background: brandLight, borderRadius: '10px', padding: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#555', marginBottom: '8px' }}>
                   <span>সাবটোটাল:</span><span>৳{Number(order.subtotal).toLocaleString()}</span>
                 </div>
                 {Number(order.discount_amount) > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#059669', marginBottom: '6px' }}>
-                    <span>ডিসকাউন্ট:</span><span>-৳{Number(order.discount_amount).toLocaleString()}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#059669', marginBottom: '8px' }}>
+                    <span>🎉 ডিসকাউন্ট:</span><span>-৳{Number(order.discount_amount).toLocaleString()}</span>
                   </div>
                 )}
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 700, color: '#7c3aed', borderTop: '2px solid #7c3aed', paddingTop: '8px', marginTop: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 800, color: brandColor, borderTop: `2px solid ${brandColor}`, paddingTop: '10px', marginTop: '8px' }}>
                   <span>সর্বমোট:</span><span>৳{Number(order.total).toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
-            {/* Footer */}
+            {/* ─── Notes ─── */}
             {order.notes && (
-              <div style={{ marginTop: '20px', background: '#fffbeb', borderRadius: '8px', padding: '12px', fontSize: '12px', color: '#555' }}>
-                <strong>Customer Note:</strong> {order.notes}
+              <div style={{ marginTop: '20px', background: '#fffbeb', borderRadius: '10px', padding: '14px', fontSize: '12px', color: '#555', borderLeft: '4px solid #f59e0b' }}>
+                <strong style={{ color: '#b45309' }}>📝 গ্রাহকের নোট:</strong> {order.notes}
               </div>
             )}
-            <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '11px', color: '#aaa', borderTop: '1px solid #eee', paddingTop: '16px' }}>
-              ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য! 🙏 • shahedstore.com.bd
+
+            {/* ─── Footer ─── */}
+            <div style={{ marginTop: '28px', textAlign: 'center', borderTop: `2px solid ${brandLight}`, paddingTop: '18px' }}>
+              <div style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য! 🙏</div>
+              <div style={{ fontSize: '11px', color: '#aaa' }}>
+                🌐 shahedstore.com.bd &nbsp;•&nbsp; 📧 support@shahedstore.com.bd
+              </div>
+              <div style={{ fontSize: '10px', color: '#ccc', marginTop: '8px' }}>This is a computer-generated invoice and does not require a signature.</div>
             </div>
           </div>
         </div>
