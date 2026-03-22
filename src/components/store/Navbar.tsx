@@ -111,9 +111,13 @@ const Navbar = () => {
 
   useEffect(() => {
     loadNavCategories();
+    // Realtime: bust cache and reload when categories change
     const channel = supabase
       .channel('navbar-cats-rt')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, loadNavCategories)
+      .on('postgres_changes' as any, { event: '*', schema: 'public', table: 'categories' }, () => {
+        _catCache = null;
+        loadNavCategories(true);
+      })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);
