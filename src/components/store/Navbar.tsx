@@ -56,7 +56,13 @@ const Navbar = () => {
 
   const [imgVersion, setImgVersion] = useState(() => Date.now());
 
-  const loadNavCategories = async () => {
+  const loadNavCategories = async (force = false) => {
+    // Use cache if fresh
+    const now = Date.now();
+    if (!force && _catCache && now - _catFetchedAt < CAT_TTL) {
+      setNavCategories(_catCache);
+      return;
+    }
     const { data: categories } = await supabase
       .from('categories')
       .select('id, name, slug, image_url, products!products_category_id_fkey(id)')
@@ -64,18 +70,18 @@ const Navbar = () => {
       .order('sort_order', { ascending: true });
     if (!categories) return;
     const HIDDEN = ['Adobe', 'Antivirus', 'Streaming'];
-    setNavCategories(
-      categories
-        .map(c => ({
-          id: c.id,
-          name: c.name,
-          slug: c.slug,
-          image_url: (c as any).image_url || null,
-          count: Array.isArray((c as any).products) ? (c as any).products.length : 0,
-        }))
-        .filter(c => c.count > 0 && !HIDDEN.includes(c.name))
-    );
-    setImgVersion(Date.now()); // bust browser cache on every reload
+    const mapped = categories
+      .map(c => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        image_url: (c as any).image_url || null,
+        count: Array.isArray((c as any).products) ? (c as any).products.length : 0,
+      }))
+      .filter(c => c.count > 0 && !HIDDEN.includes(c.name));
+    _catCache = mapped;
+    _catFetchedAt = Date.now();
+    setNavCategories(mapped);
   };
 
   useEffect(() => {
