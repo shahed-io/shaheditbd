@@ -48,6 +48,7 @@ const Index = () => {
       <Footer />
       <FloatingButtons />
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+      <PopupBanner />
     </div>
   );
 };
