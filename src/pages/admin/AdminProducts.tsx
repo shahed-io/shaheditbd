@@ -73,6 +73,25 @@ const DURATION_PRESETS = [
   { label: '⚙️ Custom', value: '__custom__' },
 ];
 
+// Custom field types for customer input
+const CUSTOM_FIELD_TYPES = [
+  { value: 'text',     label: '📝 Text',      placeholder: 'Short text input' },
+  { value: 'email',    label: '📧 Email',     placeholder: 'Email address' },
+  { value: 'password', label: '🔒 Password',  placeholder: 'Password field' },
+  { value: 'textarea', label: '📄 Textarea',  placeholder: 'Long text / notes' },
+  { value: 'tel',      label: '📞 Phone',     placeholder: 'Phone number' },
+  { value: 'url',      label: '🔗 URL',       placeholder: 'https://...' },
+];
+
+export interface CustomField {
+  id: string;
+  label: string;
+  placeholder: string;
+  hint: string;
+  type: 'text' | 'email' | 'password' | 'textarea' | 'tel' | 'url';
+  required: boolean;
+}
+
 const emptyForm = {
   // Basic
   name: '', slug: '', short_description: '', description: '',
@@ -110,6 +129,8 @@ const emptyForm = {
   tags: '' as string,
   // SEO
   seo_title: '', seo_description: '',
+  // Custom fields: customer must fill before ordering
+  custom_fields: [] as CustomField[],
 };
 
 type FormState = typeof emptyForm;
