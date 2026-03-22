@@ -7,68 +7,40 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// ─── Call OpenAI GPT-4o ───────────────────────────────────────────────────────
-async function callOpenAI(prompt: string, apiKey: string): Promise<string> {
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+// ─── Call Lovable AI Gateway (Gemini) ────────────────────────────────────────
+async function callLovableAI(prompt: string): Promise<string> {
+  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${LOVABLE_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o",
+      model: "google/gemini-2.5-flash",
       messages: [
         {
           role: "system",
           content:
-            "You are an expert SEO blog writer for a digital software store. Always respond with valid JSON only, no markdown code blocks.",
+            "You are an expert SEO blog writer for a digital software store in Bangladesh. Always respond with valid JSON only, no markdown code blocks.",
         },
         { role: "user", content: prompt },
       ],
       temperature: 0.7,
-      max_tokens: 2000,
     }),
   });
+
   if (!res.ok) {
+    if (res.status === 429) throw new Error("Rate limit exceeded. Please try again later.");
+    if (res.status === 402) throw new Error("AI credits exhausted. Please add funds to your workspace.");
     const err = await res.text();
-    throw new Error(`OpenAI error [${res.status}]: ${err}`);
+    throw new Error(`AI Gateway error [${res.status}]: ${err}`);
   }
+
   const data = await res.json();
   return data.choices?.[0]?.message?.content || "";
-}
-
-// ─── Call Google Gemini Pro ───────────────────────────────────────────────────
-async function callGemini(prompt: string, apiKey: string): Promise<string> {
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text:
-                  "You are an expert SEO blog writer for a digital software store. Always respond with valid JSON only, no markdown code blocks.\n\n" +
-                  prompt,
-              },
-            ],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 2000,
-        },
-      }),
-    }
-  );
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Gemini error [${res.status}]: ${err}`);
-  }
-  const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
 
 // ─── Parse JSON from AI response ─────────────────────────────────────────────
@@ -118,26 +90,13 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-  // ─────────────────────────────────────────────────────────────────────────────
 
   try {
     const {
       product_id,
       auto_publish = false,
       bulk = false,
-      ai_model = "openai", // "openai" | "gemini"
     } = await req.json();
-
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-
-    // Validate API keys based on selected model
-    if (ai_model === "openai" && !OPENAI_API_KEY) {
-      throw new Error("OPENAI_API_KEY is not configured");
-    }
-    if (ai_model === "gemini" && !GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY is not configured");
-    }
 
     const supabase = supabaseAdmin;
 
@@ -168,7 +127,7 @@ serve(async (req) => {
       });
     }
 
-    console.log(`Generating blogs for ${products.length} products using ${ai_model}`);
+    console.log(`Generating blogs for ${products.length} products using Lovable AI (Gemini)`);
 
     const results: any[] = [];
 
@@ -239,14 +198,7 @@ Respond ONLY with this JSON (no markdown, no explanation):
 }`;
 
       try {
-        let rawContent = "";
-
-        if (ai_model === "gemini") {
-          rawContent = await callGemini(prompt, GEMINI_API_KEY!);
-        } else {
-          rawContent = await callOpenAI(prompt, OPENAI_API_KEY!);
-        }
-
+        const rawContent = await callLovableAI(prompt);
         const blogData = parseAIJson(rawContent);
 
         const blogSlug = `${product.slug}-review-buy-bangladesh`;
@@ -286,7 +238,7 @@ Respond ONLY with this JSON (no markdown, no explanation):
             status: "success",
             blog_id: insertedPost?.id,
             blog_slug: blogSlug,
-            ai_model,
+            ai_model: "gemini",
           });
         }
       } catch (err: any) {
@@ -301,7 +253,7 @@ Respond ONLY with this JSON (no markdown, no explanation):
 
       // Delay between requests to respect rate limits
       if (bulk && products.length > 1) {
-        await new Promise((r) => setTimeout(r, 2000));
+        await new Promise((r) => setTimeout(r, 2500));
       }
     }
 
@@ -317,7 +269,7 @@ Respond ONLY with this JSON (no markdown, no explanation):
           success: successCount,
           skipped: skippedCount,
           errors: errorCount,
-          ai_model,
+          ai_model: "gemini",
         },
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
