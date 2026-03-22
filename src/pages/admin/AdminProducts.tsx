@@ -773,6 +773,12 @@ const AdminProducts = () => {
       faq: (product.faq as any)?.length ? (product.faq as any) : [{ q: '', a: '' }],
       seo_title: product.seo_title || '',
       seo_description: product.seo_description || '',
+      custom_fields: (() => {
+        try {
+          const cf = (product as any).custom_fields;
+          return Array.isArray(cf) ? cf : [];
+        } catch { return []; }
+      })(),
     });
     setActiveTab('basic');
     setShowForm(true);
