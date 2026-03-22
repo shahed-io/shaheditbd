@@ -341,6 +341,7 @@ Deno.serve(async (req) => {
       await sendLovableEmail(
         {
           idempotency_key: `order-confirm-${order.id}`,
+          unsubscribe_token: crypto.randomUUID(),
           to: order.customer_email,
           from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
           sender_domain: 'notify.shahedstore.com.bd',
@@ -375,6 +376,7 @@ Deno.serve(async (req) => {
         await sendLovableEmail(
           {
             idempotency_key: `order-status-${order.id}-${newStatus}`,
+            unsubscribe_token: crypto.randomUUID(),
             to: order.customer_email,
             from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
             sender_domain: 'notify.shahedstore.com.bd',
@@ -466,6 +468,7 @@ Deno.serve(async (req) => {
           sendLovableEmail(
             {
               idempotency_key: `admin-notify-${order.id}-${idx}`,
+              unsubscribe_token: crypto.randomUUID(),
               to: email,
               from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
               sender_domain: 'notify.shahedstore.com.bd',
@@ -502,6 +505,7 @@ Deno.serve(async (req) => {
           sendLovableEmail(
             {
               idempotency_key: `promo-${Date.now()}-${i + idx}`,
+              unsubscribe_token: crypto.randomUUID(),
               to: email,
               from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
               sender_domain: 'notify.shahedstore.com.bd',
