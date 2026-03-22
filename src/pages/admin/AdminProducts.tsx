@@ -563,15 +563,34 @@ const AdminProducts = () => {
     };
 
     try {
+      let productId: string;
       if (editingProduct) {
         const { error } = await supabase.from('products').update(payload).eq('id', editingProduct.id);
         if (error) throw error;
+        productId = editingProduct.id;
         toast.success('Product updated!');
       } else {
-        const { error } = await supabase.from('products').insert(payload);
+        const { data: inserted, error } = await supabase.from('products').insert(payload).select('id').single();
         if (error) throw error;
+        productId = (inserted as any).id;
         toast.success('Product added!');
       }
+
+      // Sync product_categories junction table
+      const allCatIds = [
+        ...(form.category_id ? [form.category_id] : []),
+        ...form.extra_category_ids,
+      ];
+      const uniqueCatIds = [...new Set(allCatIds)];
+
+      // Delete old entries and reinsert
+      await supabase.from('product_categories' as any).delete().eq('product_id', productId);
+      if (uniqueCatIds.length > 0) {
+        await supabase.from('product_categories' as any).insert(
+          uniqueCatIds.map(cid => ({ product_id: productId, category_id: cid }))
+        );
+      }
+
       setShowForm(false);
       fetchProducts();
     } catch (err: any) {
