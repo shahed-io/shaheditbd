@@ -399,7 +399,9 @@ const ProductDetail = () => {
         ogType="product"
         canonical={`https://shahedstore.com.bd/product/${product.slug}`}
         schema={seoSchemas}
+        keywords={seoKeywords}
       />
+
       <div className="min-h-screen bg-background">
         <Navbar />
 
