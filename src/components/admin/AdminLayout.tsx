@@ -36,6 +36,7 @@ const menuItems = [
   { icon: Flame, label: 'Flash Sale', path: '/ceo/flash-sale' },
   { icon: Star, label: 'Testimonials', path: '/ceo/testimonials' },
   { icon: Megaphone, label: 'Announcement Bar', path: '/ceo/announcement-bar' },
+  { icon: Layers, label: 'Popup Banner', path: '/ceo/popup-banner' },
   { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
   { icon: Percent, label: 'Coupons', path: '/ceo/coupons' },
   { icon: Gift, label: 'Referrals', path: '/ceo/referrals' },
