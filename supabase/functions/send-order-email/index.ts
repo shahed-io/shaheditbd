@@ -380,6 +380,7 @@ Deno.serve(async (req) => {
             sender_domain: 'noreply.shahedstore.com.bd',
             subject: `${statusInfo.emoji} অর্ডার স্ট্যাটাস আপডেট: ${statusInfo.bn} — #${order.order_number}`,
             html,
+            text: `অর্ডার #${order.order_number} এর স্ট্যাটাস "${statusInfo.bn}" হয়েছে। ${SITE_URL}/dashboard`,
             purpose: 'transactional',
             label: 'status_update',
           },
