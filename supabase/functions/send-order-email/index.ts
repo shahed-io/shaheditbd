@@ -323,16 +323,21 @@ Deno.serve(async (req) => {
 
     // ── ORDER CONFIRMATION ──────────────────────────────────────────
     if (type === 'order_confirmation') {
-      const { data: order } = await supabaseAdmin
+      const { data: order, error: orderErr } = await supabaseAdmin
         .from('orders').select('*').eq('id', orderId).single()
-      if (!order) throw new Error('Order not found')
+      if (orderErr || !order) {
+        console.error('[order_confirmation] Order fetch error:', orderErr, 'orderId:', orderId)
+        throw new Error('Order not found')
+      }
 
       const { data: items } = await supabaseAdmin
         .from('order_items').select('*').eq('order_id', orderId)
 
+      console.log(`[order_confirmation] Sending email to: ${order.customer_email} for order #${order.order_number}`)
+
       const html = buildInvoiceHtml(order, items || [])
 
-      await fetch('https://api.lovable.dev/v1/email/send', {
+      const emailRes = await fetch('https://api.lovable.dev/v1/email/send', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -343,7 +348,14 @@ Deno.serve(async (req) => {
         }),
       })
 
-      return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      const emailBody = await emailRes.text()
+      if (!emailRes.ok) {
+        console.error(`[order_confirmation] Email API error ${emailRes.status}:`, emailBody)
+        throw new Error(`Email API failed: ${emailRes.status} — ${emailBody}`)
+      }
+
+      console.log(`[order_confirmation] Email sent successfully to ${order.customer_email}, status: ${emailRes.status}`)
+      return new Response(JSON.stringify({ success: true, emailStatus: emailRes.status }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
     // ── STATUS UPDATE ───────────────────────────────────────────────
