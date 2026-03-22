@@ -159,6 +159,8 @@ For the description field, follow this exact structure:
 8. ### 🚀 Call To Action
 9. ### ⚠️ Important Notes (ALWAYS LAST — include DBID 586772174, non-refundable policy, activate within 2 days)
 
+CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.
+
 No markdown outside the JSON string values. Escape newlines as \\n in the JSON.`;
 
       userPrompt = `Generate complete product content for:
