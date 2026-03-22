@@ -12,6 +12,7 @@ import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
 import { organizationSchema, websiteSchema } from '@/components/seo/schemas';
 import AuthModal from '@/components/store/AuthModal';
+import PopupBanner from '@/components/store/PopupBanner';
 
 const Index = () => {
   const [searchParams] = useSearchParams();

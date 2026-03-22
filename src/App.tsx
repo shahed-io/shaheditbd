@@ -86,6 +86,7 @@ const AdminProductImportExport   = lazy(() => import("./pages/admin/AdminProduct
 const AdminProductReviews        = lazy(() => import("./pages/admin/AdminProductReviews"));
 const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFacebookPixel"));
 const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
+const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
