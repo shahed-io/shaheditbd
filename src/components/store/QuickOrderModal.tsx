@@ -12,6 +12,7 @@ import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
+import type { CustomField } from '@/pages/admin/AdminProducts';
 
 const ASSET_LOGOS: Record<string, string> = {
   bkash: bkashLogo,
@@ -28,6 +29,7 @@ interface Product {
   originalPrice?: number;
   image: string;
   category: string;
+  customFields?: CustomField[];
 }
 
 interface QuickOrderModalProps {
@@ -72,7 +74,11 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
   const [submitError, setSubmitError] = useState('');
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletLoading, setWalletLoading] = useState(false);
+  // Custom field values: { fieldId: value }
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>({});
+  const [customFieldErrors, setCustomFieldErrors] = useState<Record<string, string>>({});
 
+  const customFields: CustomField[] = product.customFields || [];
   const finalTotal = Math.max(0, product.price - couponDiscount);
 
   // Auto-fill user info and fetch wallet balance
@@ -124,7 +130,20 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
       setErrors(errs);
       return;
     }
+    // Validate custom fields
+    const cfErrors: Record<string, string> = {};
+    customFields.forEach(f => {
+      if (f.required && !customFieldValues[f.id]?.trim()) {
+        cfErrors[f.id] = `${f.label} আবশ্যিক`;
+      }
+    });
+    if (Object.keys(cfErrors).length > 0) {
+      setCustomFieldErrors(cfErrors);
+      setErrors({});
+      return;
+    }
     setErrors({});
+    setCustomFieldErrors({});
     setStep('payment');
   };
 
@@ -147,6 +166,11 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
       const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5)))
         .map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
 
+      // Build notes with custom field values
+      const customFieldNotes = customFields.length > 0
+        ? customFields.map(f => `${f.label}: ${customFieldValues[f.id] || '-'}`).join('\n')
+        : '';
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -163,6 +187,7 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
           user_id: user?.id || null,
+          notes: customFieldNotes || null,
         })
         .select()
         .single();
@@ -190,7 +215,8 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
         price: product.price,
         quantity: 1,
         total: finalTotal,
-      });
+        custom_field_values: customFields.length > 0 ? customFieldValues : {},
+      } as any);
 
       setOrderNumber(orderNum);
       setStep('success');
@@ -201,8 +227,6 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
       setLoading(false);
     }
   };
-
-  // Build dynamic payment methods from DB (admin-controlled)
   const dynamicMethods: PaymentOption[] = paymentConfigs
     .filter(c => c.isActive)
     .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -309,6 +333,41 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
                   </div>
                 ))}
               </div>
+
+              {/* ── Custom Fields ── */}
+              {customFields.length > 0 && (
+                <div className="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
+                  <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <span>📋</span> প্রোডাক্ট সম্পর্কিত তথ্য দিন
+                  </p>
+                  {customFields.map(field => (
+                    <div key={field.id}>
+                      <label className="text-xs text-muted-foreground mb-1 block">
+                        {field.label} {field.required && <span className="text-destructive">*</span>}
+                      </label>
+                      {field.type === 'textarea' ? (
+                        <textarea
+                          rows={3}
+                          value={customFieldValues[field.id] || ''}
+                          onChange={e => setCustomFieldValues(p => ({ ...p, [field.id]: e.target.value }))}
+                          placeholder={field.placeholder}
+                          className={`${inputClass} resize-none`}
+                        />
+                      ) : (
+                        <input
+                          type={field.type}
+                          value={customFieldValues[field.id] || ''}
+                          onChange={e => setCustomFieldValues(p => ({ ...p, [field.id]: e.target.value }))}
+                          placeholder={field.placeholder}
+                          className={inputClass}
+                        />
+                      )}
+                      {field.hint && <p className="text-[10px] text-muted-foreground mt-1">{field.hint}</p>}
+                      {customFieldErrors[field.id] && <p className="text-destructive text-xs mt-1">{customFieldErrors[field.id]}</p>}
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Coupon */}
               <div>

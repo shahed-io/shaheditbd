@@ -12,4 +12,5 @@ export interface Product {
   badge?: string;
   isNew?: boolean;
   isBestseller?: boolean;
+  customFields?: any[];
 }

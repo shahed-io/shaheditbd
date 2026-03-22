@@ -73,6 +73,25 @@ const DURATION_PRESETS = [
   { label: '⚙️ Custom', value: '__custom__' },
 ];
 
+// Custom field types for customer input
+const CUSTOM_FIELD_TYPES = [
+  { value: 'text',     label: '📝 Text',      placeholder: 'Short text input' },
+  { value: 'email',    label: '📧 Email',     placeholder: 'Email address' },
+  { value: 'password', label: '🔒 Password',  placeholder: 'Password field' },
+  { value: 'textarea', label: '📄 Textarea',  placeholder: 'Long text / notes' },
+  { value: 'tel',      label: '📞 Phone',     placeholder: 'Phone number' },
+  { value: 'url',      label: '🔗 URL',       placeholder: 'https://...' },
+];
+
+export interface CustomField {
+  id: string;
+  label: string;
+  placeholder: string;
+  hint: string;
+  type: 'text' | 'email' | 'password' | 'textarea' | 'tel' | 'url';
+  required: boolean;
+}
+
 const emptyForm = {
   // Basic
   name: '', slug: '', short_description: '', description: '',
@@ -110,6 +129,8 @@ const emptyForm = {
   tags: '' as string,
   // SEO
   seo_title: '', seo_description: '',
+  // Custom fields: customer must fill before ordering
+  custom_fields: [] as CustomField[],
 };
 
 type FormState = typeof emptyForm;
@@ -560,6 +581,7 @@ const AdminProducts = () => {
       seo_description: form.seo_description || null,
       variants: cleanVariants.length ? cleanVariants : [],
       attributes: finalAttrs.length ? finalAttrs : [],
+      custom_fields: form.custom_fields.filter(f => f.label.trim()) || [],
     };
 
     try {
@@ -752,6 +774,12 @@ const AdminProducts = () => {
       faq: (product.faq as any)?.length ? (product.faq as any) : [{ q: '', a: '' }],
       seo_title: product.seo_title || '',
       seo_description: product.seo_description || '',
+      custom_fields: (() => {
+        try {
+          const cf = (product as any).custom_fields;
+          return Array.isArray(cf) ? cf : [];
+        } catch { return []; }
+      })(),
     });
     setActiveTab('basic');
     setShowForm(true);
@@ -1830,6 +1858,156 @@ const AdminProducts = () => {
                             </div>
                             <input value={item.q} onChange={e => setFaq(i, 'q', e.target.value)} placeholder="Question" className={ic} />
                             <textarea rows={2} value={item.a} onChange={e => setFaq(i, 'a', e.target.value)} placeholder="Answer" className={`${ic} resize-none`} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* ── Custom Order Fields ── */}
+                    <div className="rounded-xl border border-border bg-muted/10 p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-xs font-semibold text-foreground flex items-center gap-2">
+                            📋 অর্ডার কাস্টম ফিল্ড
+                          </label>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
+                            অর্ডার করার সময় গ্রাহক কী তথ্য দেবে (ইমেইল, পাসওয়ার্ড ইত্যাদি) তা নির্ধারণ করুন
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newField: CustomField = {
+                              id: `field_${Date.now()}`,
+                              label: '',
+                              placeholder: '',
+                              hint: '',
+                              type: 'text',
+                              required: true,
+                            };
+                            setForm(p => ({ ...p, custom_fields: [...p.custom_fields, newField] }));
+                          }}
+                          className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors flex items-center gap-1"
+                        >
+                          <Plus size={11} /> ফিল্ড যোগ করুন
+                        </button>
+                      </div>
+
+                      {form.custom_fields.length === 0 && (
+                        <div className="text-center py-4 border border-dashed border-border rounded-xl">
+                          <p className="text-xs text-muted-foreground">কোনো কাস্টম ফিল্ড নেই</p>
+                          <p className="text-[10px] text-muted-foreground/60 mt-1">যেমন: Microsoft Account Email, Adobe Password ইত্যাদি</p>
+                        </div>
+                      )}
+
+                      <div className="space-y-3">
+                        {form.custom_fields.map((field, idx) => (
+                          <div key={field.id} className="rounded-xl border border-border bg-background p-3 space-y-2.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11px] font-semibold text-muted-foreground">ফিল্ড #{idx + 1}</span>
+                              <button
+                                type="button"
+                                onClick={() => setForm(p => ({ ...p, custom_fields: p.custom_fields.filter((_, i) => i !== idx) }))}
+                                className="text-muted-foreground hover:text-destructive transition-colors"
+                              >
+                                <X size={13} />
+                              </button>
+                            </div>
+
+                            {/* Field Type */}
+                            <div>
+                              <label className={lc}>ফিল্ড টাইপ</label>
+                              <div className="flex flex-wrap gap-1.5">
+                                {CUSTOM_FIELD_TYPES.map(ft => (
+                                  <button
+                                    key={ft.value}
+                                    type="button"
+                                    onClick={() => setForm(p => ({
+                                      ...p,
+                                      custom_fields: p.custom_fields.map((f, i) =>
+                                        i === idx ? { ...f, type: ft.value as CustomField['type'], placeholder: f.placeholder || ft.placeholder } : f
+                                      )
+                                    }))}
+                                    className={`text-[10px] px-2 py-1 rounded-lg border transition-colors ${
+                                      field.type === ft.value
+                                        ? 'border-primary bg-primary/10 text-primary font-semibold'
+                                        : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/40'
+                                    }`}
+                                  >
+                                    {ft.label}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2">
+                              {/* Label */}
+                              <div>
+                                <label className={lc}>লেবেল <span className="text-destructive">*</span></label>
+                                <input
+                                  value={field.label}
+                                  onChange={e => setForm(p => ({
+                                    ...p,
+                                    custom_fields: p.custom_fields.map((f, i) => i === idx ? { ...f, label: e.target.value } : f)
+                                  }))}
+                                  placeholder="যেমন: Mail Address"
+                                  className={ic}
+                                />
+                              </div>
+                              {/* Placeholder */}
+                              <div>
+                                <label className={lc}>Placeholder</label>
+                                <input
+                                  value={field.placeholder}
+                                  onChange={e => setForm(p => ({
+                                    ...p,
+                                    custom_fields: p.custom_fields.map((f, i) => i === idx ? { ...f, placeholder: e.target.value } : f)
+                                  }))}
+                                  placeholder="যেমন: example@gmail.com"
+                                  className={ic}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Hint */}
+                            <div>
+                              <label className={lc}>সাহায্যকারী টেক্সট (Hint)</label>
+                              <input
+                                value={field.hint}
+                                onChange={e => setForm(p => ({
+                                  ...p,
+                                  custom_fields: p.custom_fields.map((f, i) => i === idx ? { ...f, hint: e.target.value } : f)
+                                }))}
+                                placeholder="যেমন: Microsoft Account Any Mail"
+                                className={ic}
+                              />
+                            </div>
+
+                            {/* Required toggle */}
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={field.required}
+                                onChange={e => setForm(p => ({
+                                  ...p,
+                                  custom_fields: p.custom_fields.map((f, i) => i === idx ? { ...f, required: e.target.checked } : f)
+                                }))}
+                                className="w-3.5 h-3.5 accent-primary"
+                              />
+                              <span className="text-xs text-foreground">আবশ্যিক ফিল্ড (Required)</span>
+                            </label>
+
+                            {/* Preview */}
+                            {field.label && (
+                              <div className="rounded-lg border border-border/50 bg-muted/20 p-2.5 space-y-1">
+                                <p className="text-[10px] text-muted-foreground font-medium">👁️ Preview:</p>
+                                <p className="text-xs text-foreground">{field.label} {field.required && <span className="text-destructive">*</span>}</p>
+                                <div className="w-full h-8 rounded-lg border border-border bg-background px-2.5 flex items-center">
+                                  <span className="text-[11px] text-muted-foreground/50">{field.placeholder || '...'}</span>
+                                </div>
+                                {field.hint && <p className="text-[10px] text-muted-foreground">{field.hint}</p>}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
