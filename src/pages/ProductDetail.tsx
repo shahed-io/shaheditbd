@@ -327,30 +327,53 @@ const ProductDetail = () => {
   const prevImg = () => { setImgLoaded(false); setActiveImg(i => (i - 1 + images.length) % images.length); };
   const nextImg = () => { setImgLoaded(false); setActiveImg(i => (i + 1) % images.length); };
 
-  // Build rich SEO description for product
+  // ── SEO: DB values take priority, then smart auto-generation ───────────────
+  // DB seo_title/seo_description are set via Admin Product SEO panel or AI generation
+  const dbSeoTitle = (product as any).seo_title;
+  const dbSeoDesc = (product as any).seo_description;
+
+  const seoTitle = dbSeoTitle
+    ? dbSeoTitle
+    : `${product.name} কিনুন বাংলাদেশ | ৳${displayPrice.toLocaleString()} | Shahed Store`;
+
   const seoDescription = (() => {
+    if (dbSeoDesc) return dbSeoDesc;
+    // Auto-generate rich Bangladesh-targeted description
     const base = product.short_description || product.description || '';
-    const clean = base.replace(/[#*_`[\]]/g, '').substring(0, 120).trim();
-    const price = `৳${product.price.toLocaleString()}`;
-    const discount = product.discount_percent ? ` | ${product.discount_percent}% ছাড়` : '';
-    const cat = product.categories?.name ? ` | ${product.categories.name}` : '';
-    const suffix = `Buy ${product.name} at ${price}${discount}${cat}. Instant delivery, genuine license. Shahed Store Bangladesh.`;
-    return clean ? `${clean}. ${suffix}` : suffix;
+    const clean = base.replace(/[#*_`[\]]/g, '').substring(0, 100).trim();
+    const priceStr = `৳${displayPrice.toLocaleString()}`;
+    const discountStr = product.discount_percent ? ` | ${product.discount_percent}% ছাড়` : '';
+    const catStr = product.categories?.name ? ` | ${product.categories.name}` : '';
+    const suffix = `${product.name} কিনুন ${priceStr}${discountStr}${catStr}. ১০০% genuine license. Instant delivery. Shahed Store বাংলাদেশ।`;
+    return clean ? `${clean}. ${suffix}`.substring(0, 160) : suffix.substring(0, 160);
   })();
 
-  // Build rich title: "Product Name – Buy at ৳Price | Shahed Store"
-  const seoTitle = `${product.name} – Buy at ৳${product.price.toLocaleString()} | Best Price Bangladesh`;
+  // Keywords for meta tag — Bangladesh-targeted long-tail
+  const seoKeywords = [
+    `${product.name} বাংলাদেশ`,
+    `${product.name} কিনুন`,
+    `${product.name} price in bangladesh`,
+    `${product.name} bd`,
+    `${product.name} সেরা দাম`,
+    `buy ${product.name} bangladesh`,
+    `${product.name} cheap price bangladesh`,
+    product.categories?.name ? `${product.categories.name} বাংলাদেশ` : '',
+    'shahed store',
+    'digital software bangladesh',
+  ].filter(Boolean).join(', ');
 
-  // Build SEO schemas
+  // Build SEO schemas — enhanced for Bangladesh ranking
   const seoSchemas = [
     productSchema({
       name: product.name,
       description: seoDescription,
       image: product.image_url,
-      price: product.price,
+      price: displayPrice,
       slug: product.slug,
       category: product.categories?.name,
-      sku: product.slug,
+      sku: (product as any).sku || product.slug,
+      originalPrice: displayOriginalPrice,
+      inStock: true,
     }),
     breadcrumbSchema([
       { name: 'Home', url: '/' },
@@ -376,7 +399,9 @@ const ProductDetail = () => {
         ogType="product"
         canonical={`https://shahedstore.com.bd/product/${product.slug}`}
         schema={seoSchemas}
+        keywords={seoKeywords}
       />
+
       <div className="min-h-screen bg-background">
         <Navbar />
 
