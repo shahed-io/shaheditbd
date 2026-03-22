@@ -1,6 +1,9 @@
 import { SITE_URL, SITE_NAME } from './SEOHead';
 
-/** Product (offers) schema */
+const PHONE = '+8801840099853';
+const BD_AREA_CODE = 'BD';
+
+/** Product (offers) schema — enhanced for Bangladesh Google ranking */
 export const productSchema = (p: {
   name: string;
   description?: string | null;
@@ -11,12 +14,14 @@ export const productSchema = (p: {
   reviewCount?: number;
   category?: string;
   sku?: string;
+  originalPrice?: number | null;
+  inStock?: boolean;
 }) => ({
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: p.name,
   description: p.description || p.name,
-  image: p.image || `${SITE_URL}/favicon.png`,
+  image: [p.image || `${SITE_URL}/favicon.png`],
   url: `${SITE_URL}/product/${p.slug}`,
   sku: p.sku || p.slug,
   brand: { '@type': 'Brand', name: SITE_NAME },
@@ -26,8 +31,23 @@ export const productSchema = (p: {
     url: `${SITE_URL}/product/${p.slug}`,
     priceCurrency: 'BDT',
     price: p.price,
-    availability: 'https://schema.org/InStock',
-    seller: { '@type': 'Organization', name: SITE_NAME },
+    priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    availability: p.inStock !== false ? 'https://schema.org/InStock' : 'https://schema.org/LimitedAvailability',
+    itemCondition: 'https://schema.org/NewCondition',
+    seller: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+      areaServed: { '@type': 'Country', name: 'Bangladesh', '@id': 'https://www.wikidata.org/wiki/Q902' },
+    },
+    ...(p.originalPrice && p.originalPrice > p.price ? {
+      priceSpecification: {
+        '@type': 'UnitPriceSpecification',
+        price: p.originalPrice,
+        priceCurrency: 'BDT',
+        priceType: 'https://schema.org/ListPrice',
+      },
+    } : {}),
   },
   ...(p.rating && p.reviewCount
     ? {
@@ -41,6 +61,7 @@ export const productSchema = (p: {
       }
     : {}),
 });
+
 
 /** Breadcrumb schema */
 export const breadcrumbSchema = (

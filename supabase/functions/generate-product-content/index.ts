@@ -12,7 +12,7 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // ─── Admin Auth Check ────────────────────────────────────────────────────────
+  // ─── Admin Auth Check ─────────────────────────────────────────────────────
   const authHeader = req.headers.get("Authorization");
   const token = authHeader?.replace("Bearer ", "");
   if (!token) {
@@ -44,7 +44,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
 
   try {
     const { productName, category, brand, productType, price, duration, durationPlans, accountType, subtitle, type, demoDescription, count } = await req.json();
@@ -65,14 +65,39 @@ serve(async (req) => {
     let userPrompt = "";
     let maxTokens = 600;
 
-    // Build enriched product context with new fields
+    // Build enriched product context
     const durationInfo = durationPlans || duration || "Lifetime";
     const accountInfo = accountType ? `Account Type: ${accountType}` : "";
     const subtitleInfo = subtitle ? `Subtitle: ${subtitle}` : "";
 
+    // ── Bangladesh SEO keyword strategy ─────────────────────────────────────
+    // Core intent: rank #1 on Google Bangladesh for product-related searches
+    // Strategy: Bangla + English mix, city-level coverage, price in BDT,
+    //           intent keywords (কিনুন, সস্তা, অফার, ডিসকাউন্ট, বাংলাদেশে),
+    //           brand + "bangladesh" long-tail, semantic LSI keywords
+    const bdCities = "ঢাকা, চট্টগ্রাম, সিলেট, রাজশাহী, খুলনা, বরিশাল, ময়মনসিংহ, কুমিল্লা";
+    const bdSeoContext = `
+TARGET MARKET: Bangladesh (বাংলাদেশ)
+TARGET CITIES: ${bdCities}
+LANGUAGE MIX: Bangla (বাংলা) + English brand names — exactly like how Bangladeshi users search Google.
+KEYWORD INTENT TYPES to include naturally:
+  - Informational: "[product] কী", "[product] কিভাবে কিনবেন"
+  - Transactional: "[product] কিনুন বাংলাদেশ", "[product] buy bangladesh", "[product] price bd"
+  - Commercial: "[product] সেরা দাম", "[product] সবচেয়ে কম দাম", "সস্তায় [product]"
+  - Local: "[product] ঢাকা", "[product] bangladesh online shop"
+PRICE FORMAT: Always write price as ৳[amount] (Taka symbol)
+TRUST SIGNALS: "১০০% genuine", "instant delivery", "official license", "নিরাপদ পেমেন্ট"`;
+
     if (type === "short_description") {
       const numOptions = count && count > 1 ? count : 1;
-      systemPrompt = `You are a product copywriter for a Bangladeshi digital software store called Shahed Store. Write compelling short product descriptions in Bangla (Bengali). Return ONLY plain text, no JSON, no markdown, max 1–2 sentences per option.${numOptions > 1 ? ` Generate exactly ${numOptions} different options, each on a new line, prefixed with the number like: 1. ... 2. ... 3. ...` : ""}`;
+      systemPrompt = `You are a product copywriter for Shahed Store — Bangladesh's top digital software shop. Write compelling short product descriptions in Bangla-English mix optimized for Bangladesh Google search ranking.
+
+${bdSeoContext}
+
+Return ONLY plain text, no JSON, no markdown, max 1–2 sentences per option.${numOptions > 1 ? ` Generate exactly ${numOptions} different options, each on a new line, prefixed with the number like: 1. ... 2. ... 3. ...` : ""}
+
+CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.`;
+
       const ctx = [
         productName,
         subtitleInfo,
@@ -81,97 +106,130 @@ serve(async (req) => {
         productType && `Type: ${productType}`,
         accountInfo,
         durationInfo !== "Lifetime" && `Plans: ${durationInfo}`,
+        price && `Price: ৳${price}`,
       ].filter(Boolean).join(", ");
+
       userPrompt = numOptions > 1
-        ? `Write ${numOptions} different short product descriptions (1-2 sentences each, in Bengali/বাংলা) for: ${ctx}. Each should have a slightly different tone/angle. Number them 1. 2. 3.`
-        : `Write a short product description (1-2 sentences, in Bengali/বাংলা) for: ${ctx}`;
+        ? `Write ${numOptions} different short product descriptions (1-2 sentences each, Bangla-English mix, Bangladesh-SEO optimized) for: ${ctx}. Include price in BDT and at least one buying intent keyword (কিনুন/buy/সেরা দাম). Number them 1. 2. 3.`
+        : `Write a short product description (1-2 sentences, Bangla-English mix, Bangladesh SEO-optimized) for: ${ctx}. Include price in BDT and a buying intent keyword.`;
 
     } else if (type === "description") {
-      maxTokens = 2400;
-      systemPrompt = `You are an expert eCommerce product description writer for Shahed Store — a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh (DBID: 586772174).
+      maxTokens = 2800;
+      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed Store — a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh (DBID: 586772174).
 
-Write a professional, high-converting, SEO-friendly product description using Bangla + simple English mix. Use emojis sparingly. Mobile-friendly formatting.
+${bdSeoContext}
 
-STRICT STRUCTURE — follow exactly in this order:
-1. ## 🛍️ [Product Title]
-2. ### 📦 Product Overview  (2-3 engaging sentences in Bangla-English mix)
-3. ### ✅ Key Features  (5-7 bullet points)
-4. ### 💡 Benefits  (3-5 bullets — why user should buy)
-5. ### 💰 Pricing & Plans  (List ALL duration plans with prices clearly. Mention Personal/Shared/account type if provided)
-6. ### 🔍 SEO Paragraph  (Bangladesh-targeted keywords, 2-3 sentences)
-7. ### 🏪 Why Choose Shahed Store  (3-4 trust points)
-8. ### 🚀 Call To Action  (1-2 lines, action-oriented)
+Write a professional, high-converting, SEO-optimized product description using Bangla + simple English mix. Mobile-friendly formatting. Use emojis sparingly.
 
---- FOOTER (ALWAYS AT THE VERY END, never in the middle) ---
-9. ### ⚠️ Important Notes
-🔐 We are a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh.
+STRICT SEO STRUCTURE — follow exactly in this order:
+1. ## 🛍️ [Product Title] — include main keyword in title
+2. ### 📦 পণ্য পরিচিতি (Product Overview)
+   - 2-3 engaging sentences in Bangla-English mix
+   - Include primary keyword + "বাংলাদেশ" naturally
+3. ### ✅ মূল বৈশিষ্ট্য (Key Features)
+   - 5-7 bullet points — feature-rich, include technical specs
+4. ### 💡 কেন কিনবেন? (Why Buy?)
+   - 3-5 bullets — benefits + trust signals + Bangladesh context
+5. ### 💰 মূল্য ও প্ল্যান (Pricing & Plans)
+   - List ALL duration plans with BDT prices clearly
+   - Mention Personal/Shared/account type if provided
+   - Include "সেরা দাম", "সাশ্রয়ী মূল্য" naturally
+6. ### 🔍 SEO কীওয়ার্ড সেকশন (for Google Bangladesh)
+   - 2-3 sentences with 4-6 strategic keywords naturally embedded
+   - Include: [product name] বাংলাদেশ, [product] কিনুন, [product] price bd, [product] সেরা দাম
+   - Mention at least 2 major cities from: ${bdCities}
+7. ### 🏪 কেন Shahed Store? (Why Choose Us?)
+   - 3-4 trust points: genuine license, instant delivery, 24/7 support, secure payment
+8. ### 🚀 এখনই কিনুন (Call To Action)
+   - 1-2 action-oriented lines with urgency
+
+--- FOOTER (ALWAYS AT THE VERY END) ---
+9. ### ⚠️ গুরুত্বপূর্ণ তথ্য (Important Notes)
+🔐 আমরা একটি সার্টিফাইড ডিজিটাল ই-কমার্স প্ল্যাটফর্ম, বাণিজ্য মন্ত্রণালয়, গণপ্রজাতন্ত্রী বাংলাদেশ কর্তৃক নিবন্ধিত।
 Our DBID Number: 586772174 — ensuring secure and authentic digital product delivery.
-❌ Sold products are non-refundable.
-❌ Activate your product within 2 days of purchase.
-⚠️ Delayed activation may void warranty or support.
+❌ বিক্রিত পণ্য ফেরতযোগ্য নয়।
+❌ কেনার ২ দিনের মধ্যে পণ্য সক্রিয় করুন।
+⚠️ নির্ধারিত সময়ের মধ্যে সক্রিয় না করলে ওয়ারেন্টি বা সাপোর্ট বাতিল হতে পারে।
 
-CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use ।  at the end of purely Bengali sentences.
+CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.
 
 Return ONLY the formatted markdown text. No JSON. No extra commentary.`;
 
-      userPrompt = `Generate the full product description for:
+      userPrompt = `Generate the full SEO-optimized product description for Bangladesh Google ranking:
 - Product Name: ${productName}${subtitle ? `\n- Subtitle: ${subtitle}` : ""}
 - Category: ${category || "Software"}
-- Type: ${productType || brand || "Digital"}${accountType ? `\n- Account Type: ${accountType} (Personal / Shared — mention this clearly in the description)` : ""}
+- Type: ${productType || brand || "Digital"}${accountType ? `\n- Account Type: ${accountType} (Personal / Shared — mention this clearly)` : ""}
 - Pricing Plans: ${durationInfo}
 - Base Price: ${price ? `৳${price}` : "See plans"}
 
-IMPORTANT: In the Pricing section, list ALL duration plans with their exact prices. If account type is Personal or Shared, clearly explain what that means for the user.
-
-Follow the exact structure from the system prompt. The footer with DBID and Important Notes MUST be the last section.`;
+IMPORTANT: 
+1. In the Pricing section, list ALL duration plans with their exact BDT prices.
+2. In the SEO section, include these keyword patterns naturally: "${productName} বাংলাদেশ", "${productName} কিনুন", "${productName} price in Bangladesh", "সস্তায় ${productName}".
+3. The footer with DBID and Important Notes MUST be the very last section.`;
 
     } else if (type === "seo") {
-      systemPrompt = "You are an SEO expert for a digital software store in Bangladesh. Return ONLY valid JSON in this exact format: {\"seo_title\": \"...\", \"seo_description\": \"...\"}. No markdown, no extra text. seo_title max 60 chars, seo_description max 160 chars. Write in Bengali/বাংলা mixed with English product names.";
+      systemPrompt = `You are a Bangladesh Google SEO expert for a digital software store. Return ONLY valid JSON in this exact format: {"seo_title": "...", "seo_description": "..."}.
+
+No markdown, no extra text.
+RULES:
+- seo_title: max 60 chars. Format: "[Product Name] কিনুন | সেরা দাম | Shahed Store" OR "[Product Name] – Buy at ৳[price] | Shahed Store BD". Include main keyword + Bangladesh/BD signal.
+- seo_description: max 160 chars. Bangla-English mix. Must include: price in ৳, one action word (কিনুন/Buy), "Bangladesh" or "বাংলাদেশ", trust signal (genuine/original/100% original).
+- Write naturally like a Bangladeshi user would search.`;
+
       const ctx = [
         productName,
         brand && `Brand: ${brand}`,
         category && `Category: ${category}`,
         productType && `Type: ${productType}`,
         accountType && `Account: ${accountType}`,
+        price && `Price: ৳${price}`,
       ].filter(Boolean).join(", ");
-      userPrompt = `Generate SEO title and meta description for this digital product: ${ctx}. Pricing plans: ${durationInfo}. Rules: seo_title must be under 60 chars, seo_description must be under 160 chars, include primary keyword naturally.`;
+
+      userPrompt = `Generate Bangladesh-SEO-optimized title and meta description for: ${ctx}. Pricing: ${durationInfo}. 
+SEO Title must include product name + buying intent + "Shahed Store" (max 60 chars).
+Meta Description must include price in ৳, Bangladesh/বাংলাদেশ, and "genuine/original/অরিজিনাল" (max 160 chars).`;
 
     } else if (type === "all") {
-      maxTokens = 2400;
-      systemPrompt = `You are a product copywriter and SEO expert for Shahed Store — a certified Bangladeshi Digital E-commerce Platform (DBID: 586772174).
+      maxTokens = 2800;
+      systemPrompt = `You are a product copywriter and Bangladesh SEO expert for Shahed Store (DBID: 586772174) — Bangladesh's #1 digital software shop.
+
+${bdSeoContext}
 
 Return ONLY valid JSON in this exact format:
 {
-  "short_description": "1-2 sentences in Bangla-English mix",
-  "description": "full markdown formatted description following the 9-section structure below",
-  "seo_title": "max 60 chars",
-  "seo_description": "max 160 chars"
+  "short_description": "1-2 sentences in Bangla-English mix with BDT price and buying intent",
+  "description": "full markdown formatted description following the 9-section Bangladesh SEO structure",
+  "seo_title": "max 60 chars — product keyword + Bangladesh signal + Shahed Store",
+  "seo_description": "max 160 chars — Bangla-English, price in ৳, buying intent, Bangladesh/বাংলাদেশ, trust signal"
 }
 
 For the description field, follow this exact structure:
-1. ## 🛍️ [Product Title]
-2. ### 📦 Product Overview
-3. ### ✅ Key Features (bullets)
-4. ### 💡 Benefits (bullets)
-5. ### 💰 Pricing & Plans (list all duration plans with prices; mention Personal/Shared account type if given)
-6. ### 🔍 SEO Paragraph
-7. ### 🏪 Why Choose Shahed Store
-8. ### 🚀 Call To Action
-9. ### ⚠️ Important Notes (ALWAYS LAST — include DBID 586772174, non-refundable policy, activate within 2 days)
+1. ## 🛍️ [Product Title with main keyword]
+2. ### 📦 পণ্য পরিচিতি (Product Overview)
+3. ### ✅ মূল বৈশিষ্ট্য (Key Features — bullets)
+4. ### 💡 কেন কিনবেন? (Benefits — bullets)
+5. ### 💰 মূল্য ও প্ল্যান (Pricing — all plans with ৳ prices, Personal/Shared if given)
+6. ### 🔍 SEO কীওয়ার্ড সেকশন (2-3 sentences, Bangladesh keywords, 2+ cities)
+7. ### 🏪 কেন Shahed Store? (3-4 trust points)
+8. ### 🚀 এখনই কিনুন (Call To Action)
+9. ### ⚠️ গুরুত্বপূর্ণ তথ্য (Important Notes — ALWAYS LAST — DBID 586772174, non-refundable, activate within 2 days)
 
 CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.
 
 No markdown outside the JSON string values. Escape newlines as \\n in the JSON.`;
 
-      userPrompt = `Generate complete product content for:
+      userPrompt = `Generate complete Bangladesh-SEO-optimized product content for:
 - Product Name: ${productName}${subtitle ? `\n- Subtitle: ${subtitle}` : ""}
 - Category: ${category || "Software"}
 - Type: ${productType || brand || "Digital"}${accountType ? `\n- Account Type: ${accountType}` : ""}
 - Pricing Plans: ${durationInfo}
-- Base Price: ${price ? `৳${price}` : "See plans"}`;
+- Base Price: ${price ? `৳${price}` : "See plans"}
+
+SEO title: include "${productName}" + "বাংলাদেশ" or "BD" + "Shahed Store" within 60 chars.
+SEO description: include price in ৳, "বাংলাদেশ", "অরিজিনাল/genuine", buying intent word within 160 chars.
+In description's SEO section: include these naturally: "${productName} বাংলাদেশ", "${productName} কিনুন ঢাকা", "${productName} price bd".`;
 
     } else if (type === "demo_style") {
-      // Generate description by following the style/format of a provided demo description
       if (!demoDescription) {
         return new Response(JSON.stringify({ error: "demoDescription is required for demo_style type" }), {
           status: 400,
@@ -179,20 +237,23 @@ No markdown outside the JSON string values. Escape newlines as \\n in the JSON.`
         });
       }
       maxTokens = 3000;
-      systemPrompt = `You are an expert eCommerce product description writer for Shahed Store — a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh (DBID: 586772174).
+      systemPrompt = `You are an expert eCommerce SEO content writer for Shahed Store (DBID: 586772174) — Bangladesh's #1 digital software shop.
 
-The user will provide a DEMO/SAMPLE description as a reference. You MUST:
-1. Analyze the demo description carefully — its tone, language mix (Bangla/English), structure, formatting style, emoji usage, section headers, writing style.
+${bdSeoContext}
+
+The user provides a DEMO/SAMPLE description as reference. You MUST:
+1. Analyze the demo — tone, language mix (Bangla/English), structure, formatting, emojis, section headers, writing style.
 2. Write a brand NEW description for the new product following the EXACT SAME style, format, structure, and tone as the demo.
 3. Replace all product-specific details (name, features, pricing, plans, account type) with the new product's details.
-4. Keep the same section structure — if demo has 8 sections, new one should also have 8 sections with similar headings.
-5. Always end with the Important Notes footer:
-   ### ⚠️ Important Notes
-   🔐 We are a certified Digital E-commerce Platform, officially registered under the Ministry of Commerce, People's Republic of Bangladesh.
+4. Maintain Bangladesh SEO optimization: include product keywords + "বাংলাদেশ", BDT prices, buying intent words.
+5. Keep the same section count — if demo has 8 sections, new one should also have 8 sections.
+6. Always end with the Important Notes footer:
+   ### ⚠️ গুরুত্বপূর্ণ তথ্য (Important Notes)
+   🔐 আমরা একটি সার্টিফাইড ডিজিটাল ই-কমার্স প্ল্যাটফর্ম, বাণিজ্য মন্ত্রণালয়, গণপ্রজাতন্ত্রী বাংলাদেশ কর্তৃক নিবন্ধিত।
    Our DBID Number: 586772174 — ensuring secure and authentic digital product delivery.
-   ❌ Sold products are non-refundable.
-   ❌ Activate your product within 2 days of purchase.
-   ⚠️ Delayed activation may void warranty or support.
+   ❌ বিক্রিত পণ্য ফেরতযোগ্য নয়।
+   ❌ কেনার ২ দিনের মধ্যে পণ্য সক্রিয় করুন।
+   ⚠️ নির্ধারিত সময়ের মধ্যে সক্রিয় না করলে ওয়ারেন্টি বা সাপোর্ট বাতিল হতে পারে।
 
 CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.
 
@@ -209,7 +270,7 @@ ${demoDescription}
 - Pricing Plans: ${durationInfo}
 - Base Price: ${price ? `৳${price}` : "See plans"}
 
-Now write the full description for the NEW PRODUCT following the EXACT SAME style and structure as the demo above. Keep the same tone, language mix, emoji style, section structure. Make sure pricing plans and account type are clearly mentioned.`;
+Now write the full description for the NEW PRODUCT following the EXACT SAME style and structure as the demo. Maintain Bangladesh SEO optimization with local keywords.`;
 
     } else {
       return new Response(JSON.stringify({ error: "Invalid type. Use: short_description, description, seo, all, or demo_style" }), {
@@ -226,11 +287,10 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      temperature: 0.7,
+      temperature: 0.65,
       max_tokens: maxTokens,
     };
 
-    // Force JSON output mode for types that need it
     if (isJsonType) {
       requestBody.response_format = { type: "json_object" };
     }
@@ -264,7 +324,6 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content || "";
 
-    // Plain text types — return as-is
     if (type === "short_description" || type === "description" || type === "demo_style") {
       return new Response(JSON.stringify({ result: content.trim() }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -273,8 +332,6 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
 
     // JSON types — robust multi-stage parsing
     let parsed: any;
-
-    // Stage 1: strip markdown fences and try direct parse
     try {
       const cleaned = content
         .replace(/^```json\s*/i, "")
@@ -283,13 +340,11 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
         .trim();
       parsed = JSON.parse(cleaned);
     } catch {
-      // Stage 2: extract first {...} block
       const match = content.match(/\{[\s\S]*\}/);
       if (match) {
         try {
           parsed = JSON.parse(match[0]);
         } catch {
-          // Stage 3: try to fix common issues (unescaped newlines inside strings)
           try {
             const fixed = match[0]
               .replace(/(?<=:\s*"[^"]*)\n(?=[^"]*")/g, "\\n")
@@ -301,7 +356,6 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
               });
             parsed = JSON.parse(fixed);
           } catch {
-            // Stage 4: give meaningful fallback for 'all' type
             if (type === "all") {
               parsed = {
                 short_description: "",
@@ -310,13 +364,11 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
                 seo_description: "",
               };
             } else {
-              console.error("Raw AI content that failed to parse:", content.substring(0, 500));
               throw new Error("Failed to parse AI response as JSON");
             }
           }
         }
       } else {
-        // No JSON object found at all — fallback for 'all'
         if (type === "all") {
           parsed = {
             short_description: "",
@@ -325,7 +377,6 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
             seo_description: "",
           };
         } else {
-          console.error("No JSON found in AI content:", content.substring(0, 500));
           throw new Error("Failed to parse AI response as JSON");
         }
       }
