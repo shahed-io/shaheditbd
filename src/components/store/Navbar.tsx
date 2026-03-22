@@ -209,30 +209,38 @@ const Navbar = () => {
             </button>
 
             {/* Desktop Links */}
-            <div className="hidden lg:flex items-center gap-1 p-1 rounded-2xl"
-              style={{ background: 'hsla(226,35%,96%,0.80)', border: '1.5px solid hsla(226,35%,88%,0.70)' }}>
+            {/* Desktop Links — footer chip style */}
+            <div className="hidden lg:flex items-center gap-2">
               {NAV_LINKS.map(link => {
                 const isActive = typeof window !== 'undefined' && window.location.pathname === link.href;
                 return (
                   <a
                     key={link.label}
                     href={link.href}
-                    className="relative flex items-center px-4 py-1.5 rounded-xl transition-all duration-200 font-semibold text-sm whitespace-nowrap"
+                    className="flex items-center px-4 py-1.5 rounded-lg transition-all duration-200 font-bold text-sm whitespace-nowrap hover:scale-105"
                     style={{
-                      color: isActive ? 'hsl(258,78%,50%)' : 'hsl(226,35%,35%)',
-                      background: isActive ? 'hsl(0,0%,100%)' : 'transparent',
-                      boxShadow: isActive ? '0 2px 8px hsla(226,35%,20%,0.10)' : 'none',
+                      background: isActive ? 'linear-gradient(135deg, hsla(258,78%,55%,0.12), hsla(200,90%,45%,0.08))' : 'hsla(0,0%,100%,0.70)',
+                      backdropFilter: 'blur(10px)',
+                      color: isActive ? 'hsl(258,78%,45%)' : 'hsl(226,35%,30%)',
+                      border: isActive ? '1px solid hsla(258,78%,75%,0.35)' : '1px solid hsla(258,78%,75%,0.22)',
+                      boxShadow: isActive
+                        ? '0 2px 10px hsla(258,78%,55%,0.15)'
+                        : '0 1px 4px hsla(226,35%,12%,0.05)',
                     }}
                     onMouseEnter={e => {
                       if (!isActive) {
-                        e.currentTarget.style.color = 'hsl(258,78%,50%)';
-                        e.currentTarget.style.background = 'hsla(0,0%,100%,0.70)';
+                        e.currentTarget.style.color = 'hsl(258,78%,45%)';
+                        e.currentTarget.style.border = '1px solid hsla(258,78%,75%,0.35)';
+                        e.currentTarget.style.boxShadow = '0 2px 10px hsla(258,78%,55%,0.12)';
+                        e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)';
                       }
                     }}
                     onMouseLeave={e => {
                       if (!isActive) {
-                        e.currentTarget.style.color = 'hsl(226,35%,35%)';
-                        e.currentTarget.style.background = 'transparent';
+                        e.currentTarget.style.color = 'hsl(226,35%,30%)';
+                        e.currentTarget.style.border = '1px solid hsla(258,78%,75%,0.22)';
+                        e.currentTarget.style.boxShadow = '0 1px 4px hsla(226,35%,12%,0.05)';
+                        e.currentTarget.style.background = 'hsla(0,0%,100%,0.70)';
                       }
                     }}>
                     {link.label}
