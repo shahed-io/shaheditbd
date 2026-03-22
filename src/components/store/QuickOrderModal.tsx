@@ -29,6 +29,7 @@ interface Product {
   originalPrice?: number;
   image: string;
   category: string;
+  customFields?: CustomField[];
 }
 
 interface QuickOrderModalProps {
@@ -73,7 +74,11 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
   const [submitError, setSubmitError] = useState('');
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletLoading, setWalletLoading] = useState(false);
+  // Custom field values: { fieldId: value }
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>({});
+  const [customFieldErrors, setCustomFieldErrors] = useState<Record<string, string>>({});
 
+  const customFields: CustomField[] = product.customFields || [];
   const finalTotal = Math.max(0, product.price - couponDiscount);
 
   // Auto-fill user info and fetch wallet balance
@@ -125,7 +130,20 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
       setErrors(errs);
       return;
     }
+    // Validate custom fields
+    const cfErrors: Record<string, string> = {};
+    customFields.forEach(f => {
+      if (f.required && !customFieldValues[f.id]?.trim()) {
+        cfErrors[f.id] = `${f.label} আবশ্যিক`;
+      }
+    });
+    if (Object.keys(cfErrors).length > 0) {
+      setCustomFieldErrors(cfErrors);
+      setErrors({});
+      return;
+    }
     setErrors({});
+    setCustomFieldErrors({});
     setStep('payment');
   };
 
@@ -148,6 +166,11 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
       const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5)))
         .map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
 
+      // Build notes with custom field values
+      const customFieldNotes = customFields.length > 0
+        ? customFields.map(f => `${f.label}: ${customFieldValues[f.id] || '-'}`).join('\n')
+        : '';
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -164,6 +187,7 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
           user_id: user?.id || null,
+          notes: customFieldNotes || null,
         })
         .select()
         .single();
@@ -191,7 +215,8 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
         price: product.price,
         quantity: 1,
         total: finalTotal,
-      });
+        custom_field_values: customFields.length > 0 ? customFieldValues : {},
+      } as any);
 
       setOrderNumber(orderNum);
       setStep('success');
@@ -202,8 +227,6 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
       setLoading(false);
     }
   };
-
-  // Build dynamic payment methods from DB (admin-controlled)
   const dynamicMethods: PaymentOption[] = paymentConfigs
     .filter(c => c.isActive)
     .sort((a, b) => a.sortOrder - b.sortOrder)
