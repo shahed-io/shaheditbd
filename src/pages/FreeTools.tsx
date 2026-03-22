@@ -1402,16 +1402,81 @@ const FreeTools = () => {
         )}
       </section>
 
-      {/* Bottom CTA */}
-      <section className="mx-4 sm:mx-6 lg:mx-8 mb-16 rounded-3xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,42%))', boxShadow: '0 12px 48px hsla(258,78%,55%,0.30)' }}>
-        <div className="max-w-4xl mx-auto px-8 py-12 text-center text-white space-y-4">
-          <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-4" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)' }}><Sparkles size={24} /></div>
-          <h2 className="font-sora font-black text-3xl">More Tools Coming Soon!</h2>
-          <p className="text-white/80 text-base max-w-xl mx-auto">PDF Tools, Background Remover, Meme Generator and many more tools will be added soon. Have a suggestion? Let us know!</p>
-          <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <a href="/contact" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105" style={{ background: 'hsla(0,0%,100%,0.18)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.30)' }}>Suggest a Tool <ArrowRight size={14} /></a>
-            <a href="/shop" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 text-white" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '1.5px solid hsla(0,0%,100%,0.40)' }}>Browse Products <ArrowRight size={14} /></a>
+      {/* Bottom CTA — Footer glassmorphism style */}
+      <section className="mx-4 sm:mx-6 lg:mx-8 mb-16 relative overflow-hidden rounded-3xl"
+        style={{
+          background: 'hsla(0,0%,100%,0.72)',
+          backdropFilter: 'blur(28px)',
+          WebkitBackdropFilter: 'blur(28px)',
+          border: '1.5px solid hsla(258,78%,75%,0.22)',
+          boxShadow: '0 8px 40px hsla(258,78%,55%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.80)',
+        }}>
+
+        {/* Background decorative blobs — same as footer */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
+          <div className="absolute top-0 right-0 w-80 h-64"
+            style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(258,78%,55%,0.07), transparent 65%)' }} />
+          <div className="absolute bottom-0 left-0 w-64 h-48"
+            style={{ background: 'radial-gradient(ellipse at 0% 100%, hsla(200,90%,45%,0.06), transparent 65%)' }} />
+          <div className="absolute inset-0 rounded-3xl"
+            style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.035) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-8 py-14 text-center space-y-5">
+
+          {/* Icon */}
+          <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center mb-2"
+            style={{
+              background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
+              boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)',
+            }}>
+            <Sparkles size={22} className="text-white" />
+          </div>
+
+          {/* Heading */}
+          <h2 className="font-sora font-black text-3xl" style={{ color: 'hsl(226,35%,12%)' }}>
+            More Tools Coming Soon!
+          </h2>
+
+          {/* Sub text */}
+          <p className="text-base max-w-xl mx-auto" style={{ color: 'hsl(226,35%,45%)' }}>
+            PDF Tools, Background Remover, Meme Generator and many more tools will be added soon. Have a suggestion? Let us know!
+          </p>
+
+          {/* Buttons — footer chip style */}
+          <div className="flex flex-wrap justify-center gap-3 pt-2">
+            <a href="/contact"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold text-sm transition-all hover:scale-105"
+              style={{
+                background: 'hsla(0,0%,100%,0.70)',
+                backdropFilter: 'blur(10px)',
+                color: 'hsl(258,78%,45%)',
+                border: '1px solid hsla(258,78%,75%,0.35)',
+                boxShadow: '0 1px 4px hsla(226,35%,12%,0.05)',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.08)'; e.currentTarget.style.boxShadow = '0 2px 10px hsla(258,78%,55%,0.15)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'hsla(0,0%,100%,0.70)'; e.currentTarget.style.boxShadow = '0 1px 4px hsla(226,35%,12%,0.05)'; }}>
+              Suggest a Tool <ArrowRight size={14} />
+            </a>
+            <a href="/shop"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold text-sm transition-all hover:scale-105"
+              style={{
+                background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
+                color: 'white',
+                border: '1px solid hsla(258,78%,75%,0.30)',
+                boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)',
+              }}>
+              Browse Products <ArrowRight size={14} />
+            </a>
+          </div>
+
+          {/* Status badge — like footer */}
+          <div className="flex items-center justify-center gap-2 pt-1">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+              style={{ background: 'hsla(162,72%,38%,0.08)', border: '1px solid hsla(162,72%,38%,0.20)' }}>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[11px] font-fira font-medium" style={{ color: 'hsl(162,72%,30%)' }}>New tools added regularly</span>
+            </div>
           </div>
         </div>
       </section>
