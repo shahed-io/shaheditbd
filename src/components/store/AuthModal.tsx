@@ -125,6 +125,20 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     }
   };
 
+  const handleApple = async () => {
+    setLoading(true);
+    if (referralCode.trim()) {
+      localStorage.setItem('pending_google_referral', referralCode.trim().toUpperCase());
+    }
+    const { error } = await lovable.auth.signInWithOAuth('apple', {
+      redirect_uri: window.location.origin,
+    });
+    if (error) {
+      toast.error('Apple লগইন ব্যর্থ হয়েছে');
+      setLoading(false);
+    }
+  };
+
   const resetAndSwitch = (m: Mode) => {
     setMode(m);
     setForgotSent(false);
