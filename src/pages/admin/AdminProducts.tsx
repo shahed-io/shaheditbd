@@ -639,22 +639,19 @@ const AdminProducts = () => {
     }
   };
 
-  const handleEdit = (product: Product) => {
+  const handleEdit = async (product: Product) => {
     setEditingProduct(product);
     setImagePreview(product.image_url || '');
     const allTags = product.tags || [];
     const tagStr = allTags.filter(t => t !== 'flash-sale' && t !== 'requires-email').join(', ');
-    // Parse account_type from attributes
     const attrRaw = (product.attributes as any) || [];
     const accountTypeAttr = attrRaw.find((a: any) => a.key === '__account_type');
-    // Parse subtitle and duration_plans from attributes
     const subtitleAttr = attrRaw.find((a: any) => a.key === '__subtitle');
     const durationPlansAttr = attrRaw.find((a: any) => a.key === '__duration_plans');
     const cleanAttrs = attrRaw.filter((a: any) => a.key !== '__account_type' && a.key !== '__subtitle' && a.key !== '__duration_plans');
     const parsedDurationPlans = (() => {
       try { return durationPlansAttr ? JSON.parse(durationPlansAttr.value) : []; } catch { return []; }
     })();
-    // Auto-sync price from duration_plans (lowest plan price)
     const syncedPrices = (() => {
       if (!parsedDurationPlans.length) return null;
       const validPrices = parsedDurationPlans
@@ -669,10 +666,22 @@ const AdminProducts = () => {
       const disc = o > 0 && p > 0 && o > p ? String(Math.round(((o - p) / o) * 100)) : (o > 0 && p >= o ? '0' : '');
       return { price: String(minPrice), original_price: origPrice, discount_percent: disc };
     })();
-    // Parse short_description into bullets
     const existingBullets = product.short_description
       ? product.short_description.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean)
       : [''];
+
+    // Load extra categories from junction table
+    let extraCatIds: string[] = [];
+    const { data: pcRows } = await supabase
+      .from('product_categories' as any)
+      .select('category_id')
+      .eq('product_id', product.id);
+    if (pcRows) {
+      extraCatIds = (pcRows as any[])
+        .map((r: any) => r.category_id)
+        .filter((cid: string) => cid !== (product.category_id || ''));
+    }
+
     setForm({
       name: product.name,
       slug: (product as any).slug && !/^[0-9a-f-]{36}$/.test((product as any).slug)
@@ -697,6 +706,7 @@ const AdminProducts = () => {
       stock_quantity: '',
       category_id: product.category_id || '',
       subcategory_id: product.subcategory_id || '',
+      extra_category_ids: extraCatIds,
       is_featured: product.is_featured ?? false,
       is_digital: product.is_digital ?? true,
       is_flash_sale: allTags.includes('flash-sale'),
