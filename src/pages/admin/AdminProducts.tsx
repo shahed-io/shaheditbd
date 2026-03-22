@@ -581,6 +581,7 @@ const AdminProducts = () => {
       seo_description: form.seo_description || null,
       variants: cleanVariants.length ? cleanVariants : [],
       attributes: finalAttrs.length ? finalAttrs : [],
+      custom_fields: form.custom_fields.filter(f => f.label.trim()) || [],
     };
 
     try {
