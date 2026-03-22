@@ -507,6 +507,7 @@ Deno.serve(async (req) => {
               sender_domain: 'noreply.shahedstore.com.bd',
               subject: promoSubject,
               html,
+              text: promoBody || promoSubject,
               purpose: 'transactional',
               label: 'promotional',
             },
