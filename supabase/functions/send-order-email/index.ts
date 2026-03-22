@@ -340,7 +340,7 @@ Deno.serve(async (req) => {
 
       await sendLovableEmail(
         {
-          run_id: `order-confirm-${order.id}`,
+          idempotency_key: `order-confirm-${order.id}`,
           to: order.customer_email,
           from: `${SITE_NAME} <noreply@noreply.shahedstore.com.bd>`,
           sender_domain: 'noreply.shahedstore.com.bd',
