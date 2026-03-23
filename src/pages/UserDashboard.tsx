@@ -14,7 +14,7 @@ const ASSET_LOGOS: Record<string, string> = {
   upay: upayLogo,
   bkash_merchant: bkashMerchantLogo,
 };
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -125,11 +125,15 @@ const glassCardStrong = {
 const UserDashboard = () => {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { wishlistItems } = useWishlist();
   const { configs: paymentConfigs } = usePaymentSettings();
 
-  const [activeTab, setActiveTab] = useState<TabId>('profile');
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab') as TabId;
+    return TAB_IDS.some(t => t.id === tab) ? tab : 'profile';
+  });
   const [profile, setProfile] = useState<Profile>({ display_name: '', email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
