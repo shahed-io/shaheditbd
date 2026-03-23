@@ -973,6 +973,13 @@ const AdminOrders = () => {
                               <Truck size={14} />
                             </button>
                           )}
+                          {/* Admin WhatsApp Notification Button */}
+                          <button
+                            onClick={() => sendAdminWhatsApp(order)}
+                            title="Admin WhatsApp নোটিফিকেশন"
+                            className={`p-1.5 transition-colors rounded-lg ${newOrderIds.has(order.id) ? 'text-[#25D366] bg-[#25D366]/10 animate-pulse' : 'text-muted-foreground hover:text-[#25D366] hover:bg-[#25D366]/10'}`}>
+                            <MessageCircle size={14} />
+                          </button>
                           <button
                             onClick={() => setSelectedOrder(order)}
                             className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
