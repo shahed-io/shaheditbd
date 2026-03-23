@@ -123,7 +123,7 @@ const glassCardStrong = {
 };
 
 const UserDashboard = () => {
-  const { user, signOut, loading } = useAuth();
+  const { user, signOut, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -500,6 +500,11 @@ const UserDashboard = () => {
               <span className="text-sm font-semibold max-w-[120px] truncate hidden sm:block text-foreground">{displayName}</span>
               {unreadCount > 0 && <span className="w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center" style={{ background: 'hsl(var(--destructive))' }}>{unreadCount}</span>}
             </div>
+            {isAdmin && (
+              <button onClick={() => navigate('/ceo')} className="flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-xl transition-all" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', color: 'white', boxShadow: '0 2px 8px hsla(243,75%,59%,0.4)' }}>
+                <ShieldCheck size={14} /><span className="hidden sm:inline">Admin Panel</span>
+              </button>
+            )}
             <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-all hover:bg-destructive/10 text-muted-foreground">
               <LogOut size={14} /><span className="hidden sm:inline">{t(selectedLang, 'tab_logout')}</span>
             </button>
@@ -594,6 +599,11 @@ const UserDashboard = () => {
               </button>
             ))}
             <div className="h-px my-2 bg-border/50" />
+            {isAdmin && (
+              <button onClick={() => navigate('/ceo')} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', color: 'white', boxShadow: '0 2px 10px hsla(243,75%,59%,0.35)', border: '1px solid transparent' }}>
+                <ShieldCheck size={16} /> Admin Panel
+              </button>
+            )}
             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive" style={{ border: '1px solid transparent' }}>
               <LogOut size={16} /> {t(selectedLang, 'tab_logout')}
             </button>
