@@ -978,137 +978,38 @@ const UserDashboard = () => {
 
               {/* ── Notifications Tab ── */}
               {activeTab === 'notifications' && (
-                <div className="space-y-4">
-
-                  {/* Stats Header */}
-                  {notifications.length > 0 && (
-                    <div className="grid grid-cols-3 gap-3">
-                      {[
-                        {
-                          label: 'মোট নোটিফিকেশন',
-                          value: notifications.length,
-                          icon: <Bell size={15} />,
-                          color: 'hsl(243,75%,59%)',
-                          bg: 'hsla(243,75%,59%,0.08)',
-                          border: 'hsla(243,75%,59%,0.22)',
-                        },
-                        {
-                          label: 'অপঠিত',
-                          value: unreadCount,
-                          icon: <BellRing size={15} />,
-                          color: 'hsl(var(--destructive))',
-                          bg: 'hsla(0,84%,60%,0.07)',
-                          border: 'hsla(0,84%,60%,0.2)',
-                        },
-                        {
-                          label: 'পঠিত',
-                          value: notifications.filter(n => n.is_read).length,
-                          icon: <CheckCircle2 size={15} />,
-                          color: 'hsl(158,64%,42%)',
-                          bg: 'hsla(158,64%,42%,0.07)',
-                          border: 'hsla(158,64%,42%,0.2)',
-                        },
-                      ].map(stat => (
-                        <div key={stat.label} className="rounded-2xl p-4 flex flex-col items-center justify-center text-center"
-                          style={{ background: stat.bg, border: `1px solid ${stat.border}`, backdropFilter: 'blur(8px)' }}>
-                          <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style={{ background: stat.bg, color: stat.color, border: `1px solid ${stat.border}` }}>
-                            {stat.icon}
-                          </div>
-                          <p className="text-xl font-black" style={{ color: stat.color }}>{stat.value}</p>
-                          <p className="text-[10px] text-muted-foreground font-medium mt-0.5">{stat.label}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Notification List */}
+                <div>
                   {notiLoading ? (
-                    <div className="flex flex-col items-center justify-center py-16 gap-3">
-                      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
-                      <p className="text-sm text-muted-foreground">লোড হচ্ছে...</p>
-                    </div>
+                    <div className="flex justify-center py-12"><div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} /></div>
                   ) : notifications.length === 0 ? (
-                    <div className="text-center py-16 rounded-2xl" style={{ background: 'rgba(255,255,255,0.55)', border: '1px solid hsla(258,78%,75%,0.18)' }}>
-                      <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-5" style={{ background: 'hsl(243,75%,97%)' }}>
-                        <Bell size={36} style={{ color: 'hsl(var(--primary))' }} />
-                      </div>
-                      <p className="font-bold text-base mb-1.5 text-foreground">{t(selectedLang, 'no_notifications')}</p>
+                    <div className="text-center py-16">
+                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><Bell size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
+                      <p className="font-bold text-base mb-1 text-foreground">{t(selectedLang, 'no_notifications')}</p>
                       <p className="text-sm text-muted-foreground">{t(selectedLang, 'no_notifications_sub')}</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      {notifications.map(n => {
-                        const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: string; border: string; badgeBg: string; badgeLabel: string }> = {
-                          order:   { icon: <Package size={16} />,    color: 'hsl(243,75%,59%)', bg: 'hsla(243,75%,59%,0.12)', border: 'hsla(243,75%,59%,0.35)', badgeBg: 'hsla(243,75%,59%,0.12)', badgeLabel: 'অর্ডার' },
-                          promo:   { icon: <Gift size={16} />,       color: 'hsl(38,90%,50%)',  bg: 'hsla(38,90%,55%,0.12)',  border: 'hsla(38,90%,55%,0.35)',  badgeBg: 'hsla(38,90%,55%,0.12)',  badgeLabel: 'প্রমো' },
-                          success: { icon: <CheckCircle2 size={16} />, color: 'hsl(158,64%,42%)', bg: 'hsla(158,64%,42%,0.12)', border: 'hsla(158,64%,42%,0.35)', badgeBg: 'hsla(158,64%,42%,0.12)', badgeLabel: 'সফল' },
-                          warning: { icon: <AlertCircle size={16} />, color: 'hsl(38,100%,44%)', bg: 'hsla(38,100%,44%,0.10)', border: 'hsla(38,100%,44%,0.30)', badgeBg: 'hsla(38,100%,44%,0.10)', badgeLabel: 'সতর্কতা' },
-                          info:    { icon: <BellRing size={16} />,   color: 'hsl(217,91%,60%)', bg: 'hsla(217,91%,60%,0.10)', border: 'hsla(217,91%,60%,0.28)', badgeBg: 'hsla(217,91%,60%,0.10)', badgeLabel: 'তথ্য' },
-                        };
-                        const cfg = typeConfig[n.type] || typeConfig['info'];
-                        const timeAgo = (() => {
-                          const diff = Date.now() - new Date(n.created_at).getTime();
-                          const mins = Math.floor(diff / 60000);
-                          const hrs = Math.floor(diff / 3600000);
-                          const days = Math.floor(diff / 86400000);
-                          if (mins < 1) return 'এইমাত্র';
-                          if (mins < 60) return `${mins} মিনিট আগে`;
-                          if (hrs < 24) return `${hrs} ঘণ্টা আগে`;
-                          return `${days} দিন আগে`;
-                        })();
-                        return (
-                          <div key={n.id}
-                            onClick={() => { if (!n.is_read) handleMarkRead(n.id); if (n.link) window.location.href = n.link; }}
-                            className="group p-4 rounded-2xl transition-all cursor-pointer hover:scale-[1.005] hover:shadow-md"
-                            style={!n.is_read
-                              ? { background: `rgba(99,82,234,0.06)`, border: `1px solid hsla(258,78%,65%,0.30)`, backdropFilter: 'blur(8px)' }
-                              : { background: 'rgba(255,255,255,0.55)', border: '1px solid hsla(258,78%,75%,0.16)', backdropFilter: 'blur(8px)' }}>
-                            <div className="flex items-start gap-3.5">
-
-                              {/* Icon */}
-                              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110"
-                                style={{ background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}` }}>
-                                {cfg.icon}
+                      {notifications.map(n => (
+                        <div key={n.id} onClick={() => !n.is_read && handleMarkRead(n.id)}
+                          className="p-4 rounded-2xl transition-all cursor-pointer"
+                          style={!n.is_read
+                            ? { background: 'rgba(99,82,234,0.07)', border: '1px solid hsla(258,78%,65%,0.28)', backdropFilter: 'blur(8px)' }
+                            : { background: 'rgba(255,255,255,0.55)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
+                          <div className="flex items-start gap-3">
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${!n.is_read ? '' : 'opacity-50'}`} style={{ background: n.type === 'order' ? 'hsl(243,75%,97%)' : n.type === 'promo' ? 'hsl(38,100%,95%)' : 'rgba(255,255,255,0.7)' }}>
+                              {n.type === 'order' ? <Package size={14} style={{ color: 'hsl(var(--primary))' }} /> : n.type === 'promo' ? <Gift size={14} style={{ color: 'hsl(38,80%,50%)' }} /> : <BellRing size={14} className="text-muted-foreground" />}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                              <p className={`text-sm font-semibold ${!n.is_read ? 'text-foreground' : 'text-muted-foreground'}`}>{translateDbText(n.title, selectedLang)}</p>
+                                {!n.is_read && <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />}
                               </div>
-
-                              {/* Content */}
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-start justify-between gap-2">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <p className={`text-sm font-bold leading-snug ${!n.is_read ? 'text-foreground' : 'text-muted-foreground'}`}>
-                                      {translateDbText(n.title, selectedLang)}
-                                    </p>
-                                    {/* Type Badge */}
-                                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full flex-shrink-0"
-                                      style={{ background: cfg.badgeBg, color: cfg.color, border: `1px solid ${cfg.border}` }}>
-                                      {cfg.badgeLabel}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                                    {!n.is_read && (
-                                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: 'hsl(var(--destructive))' }} />
-                                    )}
-                                    {n.link && <ExternalLink size={12} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />}
-                                  </div>
-                                </div>
-                                <p className={`text-xs mt-1 leading-relaxed ${!n.is_read ? 'text-foreground/70' : 'text-muted-foreground'}`}>
-                                  {translateDbText(n.message, selectedLang)}
-                                </p>
-                                <div className="flex items-center gap-3 mt-2">
-                                  <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                                    <Clock size={9} /> {timeAgo}
-                                  </span>
-                                  {!n.is_read && (
-                                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full text-white" style={{ background: 'hsl(var(--destructive))' }}>
-                                      নতুন
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
+                              <p className="text-xs text-muted-foreground mt-0.5">{translateDbText(n.message, selectedLang)}</p>
+                              <p className="text-[10px] text-muted-foreground mt-1">{new Date(n.created_at).toLocaleDateString(getLangLocale(selectedLang))}</p>
                             </div>
                           </div>
-                        );
-                      })}
+                         </div>
+                      ))}
                     </div>
                   )}
                 </div>
