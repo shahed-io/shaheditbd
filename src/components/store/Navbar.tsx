@@ -50,7 +50,7 @@ const Navbar = () => {
   const [mobileSearch,  setMobileSearch]  = useState(false);
   const [desktopSearch, setDesktopSearch] = useState(false);
   const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
-  const [unreadCount,   setUnreadCount]   = useState(0);
+  
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
