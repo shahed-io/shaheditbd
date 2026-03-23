@@ -199,6 +199,7 @@ const AppContent = () => {
           <Route path="/free-tools" element={<FreeTools />} />
           <Route path="/refund-request" element={<RefundRequest />} />
           <Route path="/dashboard" element={<UserDashboard />} />
+          <Route path="/install" element={<InstallApp />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
