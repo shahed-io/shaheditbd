@@ -126,18 +126,27 @@ const FeatureCard = ({ feature: f, index }: { feature: typeof FEATURES[0]; index
 };
 
 /* ─── Step Card ─────────────────────────────────── */
-const StepCard = ({ step }: { step: typeof STEPS[0] }) => {
+const StepCard = ({ step, index }: { step: typeof STEPS[0]; index: number }) => {
   const [hov, setHov] = useState(false);
+  const { ref, visible } = useReveal({ threshold: 0.1 });
+  const delay = index * 0.1;
   return (
     <div
-      className="relative rounded-2xl overflow-hidden cursor-default transition-all duration-300 flex flex-col items-center text-center"
+      ref={ref as React.RefObject<HTMLDivElement>}
+      className="relative rounded-2xl overflow-hidden cursor-default flex flex-col items-center text-center"
       style={{
         background: '#ffffff',
         border: `1.5px solid ${hov ? step.accent + '55' : 'hsl(220,13%,91%)'}`,
         boxShadow: hov
           ? `0 8px 32px ${step.accent}20, 0 2px 8px rgba(0,0,0,0.06)`
           : '0 2px 12px rgba(0,0,0,0.05)',
-        transform: hov ? 'translateY(-3px)' : 'translateY(0)',
+        opacity: visible ? 1 : 0,
+        transform: hov
+          ? 'translateY(-3px) scale(1)'
+          : visible ? 'translateY(0) scale(1)' : 'translateY(32px) scale(0.96)',
+        filter: visible ? 'blur(0px)' : 'blur(4px)',
+        transition: `opacity 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s, filter 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s, box-shadow 0.3s, border-color 0.3s`,
+        willChange: 'transform, opacity, filter',
       }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
