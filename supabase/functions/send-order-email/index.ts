@@ -174,11 +174,12 @@ function buildInvoiceHtml(order: any, items: any[]) {
     <!-- ═══ FOOTER ═══ -->
     <div style="background:#1e1b4b;padding:24px 32px;text-align:center;">
       <img src="${SITE_URL}/logo.png" alt="${SITE_NAME}" height="36" style="display:block;margin:0 auto 14px;height:36px;width:auto;opacity:0.9;" />
-      <div style="font-size:13px;color:rgba(255,255,255,0.75);margin-bottom:6px;">
-        ধন্যবাদ <strong style="color:#a78bfa;">${SITE_NAME}</strong>-এ কেনাকাটা করার জন্য 🙏
+      <div style="font-size:13px;color:rgba(255,255,255,0.75);margin-bottom:4px;line-height:1.7;">
+        আপনার অর্ডারের জন্য আন্তরিক ধন্যবাদ। ✨<br>
+        <strong style="color:#a78bfa;">${SITE_NAME}</strong>-এ আপনাকে স্বাগত জানাতে পেরে আমরা গর্বিত।
       </div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:10px;">
-        <a href="${SITE_URL}" style="color:#818cf8;text-decoration:none;">${SITE_URL}</a>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:12px;line-height:1.8;">
+        <a href="${SITE_URL}" style="color:#818cf8;text-decoration:none;font-weight:600;">${SITE_URL}</a>
         &nbsp;•&nbsp; support@shahedstore.com.bd
       </div>
     </div>
@@ -224,9 +225,10 @@ function buildStatusUpdateHtml(order: any, newStatus: string) {
         </a>
       </div>
 
-      <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;text-align:center;">
-        ধন্যবাদ <strong>${SITE_NAME}</strong>-এ কেনাকাটা করার জন্য 🙏<br>
-        <a href="${SITE_URL}" style="color:hsl(258,78%,55%);text-decoration:none;">${SITE_URL}</a>
+      <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;text-align:center;line-height:1.8;">
+        আপনার অর্ডারের জন্য আন্তরিক ধন্যবাদ। ✨<br>
+        <strong>${SITE_NAME}</strong>-এ আপনাকে সেবা দিতে পেরে আমরা সর্বদা আনন্দিত।<br>
+        <a href="${SITE_URL}" style="color:hsl(258,78%,55%);text-decoration:none;font-weight:600;">${SITE_URL}</a>
       </p>
     </div>
   </div>
