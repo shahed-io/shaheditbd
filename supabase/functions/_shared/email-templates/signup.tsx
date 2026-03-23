@@ -35,8 +35,7 @@ export const SignupEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>
-          <Img src={`${siteUrl}/favicon.png`} width="36" height="36" alt={siteName} style={{ borderRadius: '8px', verticalAlign: 'middle' }} />
-          <Heading style={brandName}>{siteName}</Heading>
+          <Img src={`${siteUrl}/logo.png`} width="140" height="44" alt={siteName} style={{ display: 'block', objectFit: 'contain' }} />
         </Section>
         <Section style={content}>
           <Heading style={h1}>স্বাগতম! ইমেইল যাচাই করুন 🎉</Heading>
