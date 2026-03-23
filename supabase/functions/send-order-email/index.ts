@@ -225,9 +225,10 @@ function buildStatusUpdateHtml(order: any, newStatus: string) {
         </a>
       </div>
 
-      <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;text-align:center;">
-        ধন্যবাদ <strong>${SITE_NAME}</strong>-এ কেনাকাটা করার জন্য 🙏<br>
-        <a href="${SITE_URL}" style="color:hsl(258,78%,55%);text-decoration:none;">${SITE_URL}</a>
+      <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;text-align:center;line-height:1.8;">
+        আপনার অর্ডারের জন্য আন্তরিক ধন্যবাদ। ✨<br>
+        <strong>${SITE_NAME}</strong>-এ আপনাকে সেবা দিতে পেরে আমরা সর্বদা আনন্দিত।<br>
+        <a href="${SITE_URL}" style="color:hsl(258,78%,55%);text-decoration:none;font-weight:600;">${SITE_URL}</a>
       </p>
     </div>
   </div>
