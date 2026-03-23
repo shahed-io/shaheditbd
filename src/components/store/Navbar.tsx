@@ -100,25 +100,9 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) { setAvatarUrl(null); setUnreadCount(0); return; }
+    if (!user) { setAvatarUrl(null); return; }
     supabase.from('profiles').select('avatar_url, display_name').eq('user_id', user.id).single()
       .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
-    // Fetch unread notifications count
-    supabase.from('notifications').select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id).eq('is_read', false)
-      .then(({ count }) => { setUnreadCount(count || 0); });
-    // Realtime: update unread count on new notifications
-    const ch = supabase.channel('navbar-notifs')
-      .on('postgres_changes' as any, { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
-        () => setUnreadCount(prev => prev + 1))
-      .on('postgres_changes' as any, { event: 'UPDATE', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
-        () => {
-          supabase.from('notifications').select('id', { count: 'exact', head: true })
-            .eq('user_id', user.id).eq('is_read', false)
-            .then(({ count }) => setUnreadCount(count || 0));
-        })
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
   }, [user]);
 
   useEffect(() => {
