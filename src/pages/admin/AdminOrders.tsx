@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
-import logoIcon from '@/assets/logo-icon.webp';
+import logoIcon from '@/assets/logo.png';
 
 // ─── Status Config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any; dot: string }> = {
@@ -114,7 +114,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', paddingBottom: '20px', borderBottom: `3px solid ${brandColor}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                 {logoBase64 && (
-                  <img src={logoBase64} alt="Shahed Store" style={{ width: '52px', height: '52px', borderRadius: '12px', objectFit: 'contain' }} />
+                  <img src={logoBase64} alt="Shahed Store" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
                 )}
                 <div>
                   <div style={{ fontSize: '22px', fontWeight: 900, letterSpacing: '2px', color: brandColor, fontFamily: "'Orbitron', sans-serif" }}>SHAHED STORE</div>

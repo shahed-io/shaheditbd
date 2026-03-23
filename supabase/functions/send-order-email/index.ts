@@ -39,9 +39,8 @@ function buildInvoiceHtml(order: any, items: any[]) {
   <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(100,60,200,0.10);">
     
     <!-- Header -->
-    <div style="background:${BRAND_GRADIENT};padding:28px 32px;">
-      <h1 style="color:#fff;margin:0;font-size:22px;font-weight:800;">${SITE_NAME}</h1>
-      <p style="color:rgba(255,255,255,0.85);margin:4px 0 0;font-size:13px;">অর্ডার কনফার্মেশন ইনভয়েস</p>
+    <div style="background:#ffffff;padding:20px 32px;border-bottom:3px solid hsl(258,78%,55%);">
+      <img src="${SITE_URL}/logo.png" width="160" height="50" alt="${SITE_NAME}" style="display:block;max-height:50px;width:auto;object-fit:contain;" />
     </div>
 
     <!-- Status Banner -->
@@ -132,8 +131,8 @@ function buildStatusUpdateHtml(order: any, newStatus: string) {
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#f5f5f7;font-family:'Segoe UI',Arial,sans-serif;">
   <div style="max-width:560px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(100,60,200,0.10);">
-    <div style="background:${BRAND_GRADIENT};padding:24px 28px;">
-      <h1 style="color:#fff;margin:0;font-size:20px;font-weight:800;">${SITE_NAME}</h1>
+    <div style="background:#ffffff;padding:16px 28px;border-bottom:3px solid hsl(258,78%,55%);">
+      <img src="${SITE_URL}/logo.png" width="160" height="50" alt="${SITE_NAME}" style="display:block;max-height:50px;width:auto;object-fit:contain;" />
     </div>
     <div style="padding:28px;">
       <h2 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 6px;">${statusInfo.emoji} অর্ডার স্ট্যাটাস আপডেট</h2>
@@ -212,13 +211,10 @@ function buildAdminOrderHtml(order: any, items: any[], adminCount: number) {
   <div style="max-width:620px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(100,60,200,0.12);">
 
     <!-- Admin Header -->
-    <div style="background:linear-gradient(135deg,hsl(258,78%,45%),hsl(200,90%,35%));padding:28px 32px;">
+    <div style="background:#ffffff;padding:16px 28px;border-bottom:3px solid hsl(258,78%,55%);">
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div>
-          <h1 style="color:#fff;margin:0;font-size:20px;font-weight:800;">${SITE_NAME} — Admin Alert</h1>
-          <p style="color:rgba(255,255,255,0.75);margin:4px 0 0;font-size:12px;">নতুন অর্ডার নোটিফিকেশন</p>
-        </div>
-        <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;text-align:center;">
+        <img src="${SITE_URL}/logo.png" width="160" height="50" alt="${SITE_NAME}" style="display:block;max-height:50px;width:auto;object-fit:contain;" />
+        <div style="background:hsl(258,78%,55%);border-radius:10px;padding:10px 14px;text-align:center;">
           <p style="margin:0;color:#fff;font-size:11px;opacity:0.8;">অর্ডার নম্বর</p>
           <p style="margin:4px 0 0;color:#fff;font-size:16px;font-weight:900;">#${order.order_number}</p>
         </div>
