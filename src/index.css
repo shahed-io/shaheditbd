@@ -870,57 +870,94 @@ body::before {
 }
 
 /* ══════════════════════════════════════
-   SCROLL REVEAL ANIMATIONS
+   SCROLL REVEAL — CINEMATIC SYSTEM v2
+   blur + scale + translate combined
+   GPU-accelerated, mobile-optimised
 ══════════════════════════════════════ */
 
-/* Base hidden state */
+/* ── Hidden states ── */
 .reveal {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  transform: translateY(36px) scale(0.98);
+  filter: blur(4px);
+  transition:
+    opacity    0.65s cubic-bezier(0.22,1,0.36,1),
+    transform  0.65s cubic-bezier(0.22,1,0.36,1),
+    filter     0.65s cubic-bezier(0.22,1,0.36,1);
+  will-change: transform, opacity, filter;
 }
 .reveal.revealed {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+  filter: blur(0px);
 }
 
-/* Variants */
 .reveal-left {
   opacity: 0;
-  transform: translateX(-50px);
-  transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  transform: translateX(-40px);
+  filter: blur(3px);
+  transition:
+    opacity    0.6s cubic-bezier(0.22,1,0.36,1),
+    transform  0.6s cubic-bezier(0.22,1,0.36,1),
+    filter     0.6s cubic-bezier(0.22,1,0.36,1);
+  will-change: transform, opacity, filter;
 }
-.reveal-left.revealed { opacity: 1; transform: translateX(0); }
+.reveal-left.revealed { opacity: 1; transform: translateX(0); filter: blur(0px); }
 
 .reveal-right {
   opacity: 0;
-  transform: translateX(50px);
-  transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  transform: translateX(40px);
+  filter: blur(3px);
+  transition:
+    opacity    0.6s cubic-bezier(0.22,1,0.36,1),
+    transform  0.6s cubic-bezier(0.22,1,0.36,1),
+    filter     0.6s cubic-bezier(0.22,1,0.36,1);
+  will-change: transform, opacity, filter;
 }
-.reveal-right.revealed { opacity: 1; transform: translateX(0); }
+.reveal-right.revealed { opacity: 1; transform: translateX(0); filter: blur(0px); }
 
 .reveal-scale {
   opacity: 0;
-  transform: scale(0.88) translateY(20px);
-  transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+  transform: scale(0.85);
+  filter: blur(6px);
+  transition:
+    opacity    0.7s cubic-bezier(0.22,1,0.36,1),
+    transform  0.7s cubic-bezier(0.22,1,0.36,1),
+    filter     0.7s cubic-bezier(0.22,1,0.36,1);
+  will-change: transform, opacity, filter;
 }
-.reveal-scale.revealed { opacity: 1; transform: scale(1) translateY(0); }
+.reveal-scale.revealed { opacity: 1; transform: scale(1); filter: blur(0px); }
 
 .reveal-fade {
   opacity: 0;
-  transition: opacity 0.8s ease;
+  filter: blur(8px);
+  transform: scale(0.97);
+  transition:
+    opacity    0.8s cubic-bezier(0.22,1,0.36,1),
+    filter     0.8s cubic-bezier(0.22,1,0.36,1),
+    transform  0.8s cubic-bezier(0.22,1,0.36,1);
+  will-change: opacity, filter, transform;
 }
-.reveal-fade.revealed { opacity: 1; }
+.reveal-fade.revealed { opacity: 1; filter: blur(0px); transform: scale(1); }
 
-/* Stagger delays */
-.delay-1 { transition-delay: 0.1s !important; }
-.delay-2 { transition-delay: 0.2s !important; }
-.delay-3 { transition-delay: 0.3s !important; }
-.delay-4 { transition-delay: 0.4s !important; }
-.delay-5 { transition-delay: 0.5s !important; }
-.delay-6 { transition-delay: 0.6s !important; }
-.delay-7 { transition-delay: 0.7s !important; }
-.delay-8 { transition-delay: 0.8s !important; }
+/* ── Stagger delays ── */
+.delay-1 { transition-delay: 0.08s !important; }
+.delay-2 { transition-delay: 0.16s !important; }
+.delay-3 { transition-delay: 0.24s !important; }
+.delay-4 { transition-delay: 0.32s !important; }
+.delay-5 { transition-delay: 0.40s !important; }
+.delay-6 { transition-delay: 0.48s !important; }
+.delay-7 { transition-delay: 0.56s !important; }
+.delay-8 { transition-delay: 0.64s !important; }
+
+/* ── Mobile: lighter blur for performance ── */
+@media (max-width: 768px) {
+  .reveal        { filter: blur(2px); transform: translateY(24px) scale(0.99); }
+  .reveal-left   { filter: blur(2px); transform: translateX(-24px); }
+  .reveal-right  { filter: blur(2px); transform: translateX(24px); }
+  .reveal-scale  { filter: blur(3px); transform: scale(0.92); }
+  .reveal-fade   { filter: blur(4px); transform: scale(0.98); }
+}
 
 /* ══════════════════════════════════════
    PRODUCT DETAIL — CINEMATIC ENTRANCE
