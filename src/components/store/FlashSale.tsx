@@ -54,7 +54,6 @@ const FlashSale = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
-  const { ref: gridRef, visible: gridVisible } = useReveal({ threshold: 0.05 });
 
   useEffect(() => {
     let cancelled = false;
