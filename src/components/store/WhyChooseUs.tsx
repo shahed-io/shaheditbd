@@ -252,7 +252,7 @@ const WhyChooseUs = () => {
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {FEATURES.map((f, i) => (
-              <FeatureCard key={i} feature={f} />
+              <FeatureCard key={i} feature={f} index={i} />
             ))}
           </div>
         </div>
