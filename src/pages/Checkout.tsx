@@ -264,6 +264,37 @@ const Checkout = () => {
         if (error) console.error('[Checkout] admin_notify email error:', error);
       });
 
+      // In-app notification: customer
+      if (user?.id) {
+        supabase.from('notifications').insert({
+          user_id: user.id,
+          title: '🛒 অর্ডার সফলভাবে সম্পন্ন!',
+          message: `আপনার অর্ডার #${orderNum} সফলভাবে গৃহীত হয়েছে। মোট: ৳${finalTotal.toLocaleString()}। পেমেন্ট যাচাইয়ের পর আপনাকে জানানো হবে।`,
+          type: 'success',
+          link: '/dashboard',
+          is_read: false,
+        }).then(({ error }) => {
+          if (error) console.error('[Checkout] customer notification error:', error);
+        });
+      }
+
+      // In-app notification: all admins
+      supabase.from('user_roles').select('user_id').eq('role', 'admin').then(({ data: adminRoles }) => {
+        if (adminRoles && adminRoles.length > 0) {
+          const adminNotifs = adminRoles.map((ar: { user_id: string }) => ({
+            user_id: ar.user_id,
+            title: '🆕 নতুন অর্ডার!',
+            message: `নতুন অর্ডার #${orderNum} — ${form.name} (${form.phone}), মোট: ৳${finalTotal.toLocaleString()} [${paymentMethod.toUpperCase()}]`,
+            type: 'info',
+            link: '/ceo/orders',
+            is_read: false,
+          }));
+          supabase.from('notifications').insert(adminNotifs).then(({ error }) => {
+            if (error) console.error('[Checkout] admin notification error:', error);
+          });
+        }
+      });
+
       clearCart();
       setOrderNumber(orderNum);
       setOrderPlaced(true);
