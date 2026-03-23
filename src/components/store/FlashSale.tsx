@@ -54,7 +54,6 @@ const FlashSale = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
-  const { ref: gridRef, visible: gridVisible } = useReveal({ threshold: 0.05 });
 
   useEffect(() => {
     let cancelled = false;
@@ -170,17 +169,14 @@ const FlashSale = () => {
           </div>
         ) : (
           <>
-            <div
-              ref={gridRef as React.RefObject<HTMLDivElement>}
-              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-            >
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {products.map((p, i) => (
                 <div
                   key={p.id}
                   style={{
-                    opacity: gridVisible ? 1 : 0,
-                    transform: gridVisible ? 'translateY(0) scale(1)' : 'translateY(48px) scale(0.95)',
-                    transition: `opacity 0.65s cubic-bezier(0.23,1,0.32,1) ${i * 0.08}s, transform 0.65s cubic-bezier(0.23,1,0.32,1) ${i * 0.08}s`,
+                    opacity: 1,
+                    transform: 'none',
+                    animation: `rise-up 0.5s ease ${i * 0.06}s both`,
                   }}
                 >
                   <FlashCard product={p} delay={i * 0.06}
@@ -189,14 +185,7 @@ const FlashSale = () => {
                 </div>
               ))}
             </div>
-            <div
-              className="flex justify-center mt-12 transition-all duration-700"
-              style={{
-                opacity: gridVisible ? 1 : 0,
-                transform: gridVisible ? 'translateY(0)' : 'translateY(24px)',
-                transitionDelay: '0.55s',
-              }}
-            >
+            <div className="flex justify-center mt-12">
               <button
                 onClick={() => navigate('/shop')}
                 className="flex items-center gap-2.5 px-8 py-4 rounded-2xl text-[14px] font-bold text-white hover:scale-[1.03] active:scale-[0.97] transition-all"
