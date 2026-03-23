@@ -293,16 +293,28 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           {/* Scan line on hover */}
           <div className="card-scan-line" />
 
+          {/* Shimmer placeholder — always visible until image loads */}
+          {!imageLoaded && <div className="absolute inset-0 shimmer" />}
+
           <img
             src={product.image}
             alt={product.name}
-            loading="lazy"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
             onLoad={() => setImageLoaded(true)}
-            onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/13131f/a855f7?text=Product'; }}
+            onError={e => {
+              (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/f5f3ff/7c3aed?text=Product';
+              setImageLoaded(true);
+            }}
             className="w-full h-full object-cover"
-            style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s' }}
+            style={{
+              opacity: imageLoaded ? 1 : 0,
+              transition: 'opacity 0.4s ease',
+              position: 'relative',
+              zIndex: 1,
+            }}
           />
-          {!imageLoaded && <div className="absolute inset-0 shimmer" />}
 
 
           {/* Light shimmer overlay on hover — replaces dark shadow */}
