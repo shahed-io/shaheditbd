@@ -154,14 +154,18 @@ const FacebookPixel = () => {
     if (initialized.current) return;
     initialized.current = true;
 
-    loadPixelSettings().then((configs) => {
-      if (configs.length === 0) return;
-      const enabledIds = configs.filter(c => c.pixel_enabled && c.pixel_id).map(c => c.pixel_id);
-      injectPixelScript(enabledIds);
-      // Fire PageView for pixels that track it
-      const pvIds = configs.filter(c => c.track_pageview && c.pixel_id).map(c => c.pixel_id);
-      if (pvIds.length > 0) fbTrackPageView();
-    });
+    // Defer pixel loading — don't block initial paint
+    const timer = setTimeout(() => {
+      loadPixelSettings().then((configs) => {
+        if (configs.length === 0) return;
+        const enabledIds = configs.filter(c => c.pixel_enabled && c.pixel_id).map(c => c.pixel_id);
+        injectPixelScript(enabledIds);
+        const pvIds = configs.filter(c => c.track_pageview && c.pixel_id).map(c => c.pixel_id);
+        if (pvIds.length > 0) fbTrackPageView();
+      });
+    }, 3000); // Delay 3s after page load
+
+    return () => clearTimeout(timer);
   }, []);
 
   return null;
