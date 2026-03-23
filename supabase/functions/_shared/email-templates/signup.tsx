@@ -62,8 +62,7 @@ export default SignupEmail
 
 const main = { backgroundColor: '#f5f5f7', fontFamily: "'Segoe UI', Arial, sans-serif" }
 const container = { maxWidth: '560px', margin: '32px auto', backgroundColor: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 24px rgba(100,60,200,0.10)' }
-const header = { background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', padding: '24px 28px', display: 'flex', alignItems: 'center', gap: '10px' }
-const brandName = { color: '#ffffff', fontSize: '20px', fontWeight: '800', margin: '0 0 0 8px', display: 'inline-block', verticalAlign: 'middle' }
+const header = { background: '#ffffff', padding: '20px 28px', borderBottom: '3px solid hsl(258,78%,55%)' }
 const content = { padding: '28px 28px 20px' }
 const h1 = { fontSize: '20px', fontWeight: 'bold' as const, color: 'hsl(226,35%,12%)', margin: '0 0 14px' }
 const text = { fontSize: '14px', color: 'hsl(220,15%,40%)', lineHeight: '1.6', margin: '0 0 18px' }
