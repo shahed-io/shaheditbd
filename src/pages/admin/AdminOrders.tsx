@@ -662,6 +662,14 @@ const AdminOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [copiedTrx, setCopiedTrx] = useState<string | null>(null);
+  const [adminWhatsapp, setAdminWhatsapp] = useState('');
+  const [newOrderIds, setNewOrderIds] = useState<Set<string>>(new Set());
+
+  // Load admin WhatsApp from settings
+  useEffect(() => {
+    supabase.from('site_settings').select('value').eq('key', 'admin_whatsapp').single()
+      .then(({ data }) => { if (data?.value) setAdminWhatsapp(data.value); });
+  }, []);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -675,13 +683,55 @@ const AdminOrders = () => {
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
-  // Realtime
+  // Send admin WhatsApp notification for new order
+  const sendAdminWhatsApp = useCallback((order: any) => {
+    const phone = adminWhatsapp.replace(/\D/g, '').replace(/^0/, '880');
+    if (!phone) { toast.error('Admin WhatsApp নম্বর সেট করুন (Settings থেকে)'); return; }
+    const items = order.order_items?.map((i: any) => `• ${i.product_name} ×${i.quantity}`).join('\n') || '';
+    const msg = encodeURIComponent(
+      `🛍️ নতুন অর্ডার!\n\n` +
+      `📦 অর্ডার: #${order.order_number}\n` +
+      `👤 নাম: ${order.customer_name}\n` +
+      `📱 ফোন: ${order.customer_phone || 'নেই'}\n` +
+      `✉️ ইমেইল: ${order.customer_email}\n\n` +
+      `🛒 পণ্যসমূহ:\n${items}\n\n` +
+      `💳 পেমেন্ট: ${PM_LABELS[order.payment_method] || order.payment_method}\n` +
+      (order.transaction_id ? `🔑 TrxID: ${order.transaction_id}\n` : '') +
+      `💰 মোট: ৳${Number(order.total).toLocaleString()}\n\n` +
+      `⏰ সময়: ${new Date(order.created_at).toLocaleString('en-BD')}\n\n` +
+      `— Shahed Store Admin Panel`
+    );
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+  }, [adminWhatsapp]);
+
+  // Realtime — detect new orders and play sound
   useEffect(() => {
     const channel = supabase.channel('orders-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchOrders)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
+        const newOrder = payload.new as any;
+        setNewOrderIds(prev => new Set(prev).add(newOrder.id));
+        toast.success(
+          `🛍️ নতুন অর্ডার! #${newOrder.order_number}`,
+          {
+            duration: 10000,
+            action: adminWhatsapp ? {
+              label: '📱 WhatsApp',
+              onClick: () => {
+                const phone = adminWhatsapp.replace(/\D/g, '').replace(/^0/, '880');
+                const msg = encodeURIComponent(
+                  `🛍️ নতুন অর্ডার!\n📦 #${newOrder.order_number}\n👤 ${newOrder.customer_name}\n💰 ৳${Number(newOrder.total).toLocaleString()}\n💳 ${PM_LABELS[newOrder.payment_method] || newOrder.payment_method}${newOrder.transaction_id ? '\n🔑 TrxID: ' + newOrder.transaction_id : ''}`
+                );
+                window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+              }
+            } : undefined,
+          }
+        );
+        fetchOrders();
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, fetchOrders)
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [fetchOrders]);
+  }, [fetchOrders, adminWhatsapp]);
 
   const filtered = orders.filter(o => {
     if (statusFilter !== 'all' && o.status !== statusFilter) return false;
