@@ -8,12 +8,12 @@ const NAV_COL = [
     icon: <Package size={14} />,
     accent: 'hsl(258,78%,55%)',
     links: [
-      { label: 'Windows Keys',   href: '#' },
-      { label: 'Office 365',     href: '#' },
-      { label: 'All Products',   href: '/shop' },
+      { label: 'Windows Keys',     href: '/shop?category=windows' },
+      { label: 'Office 365',       href: '/shop?category=office' },
+      { label: 'All Products',     href: '/shop' },
       { label: 'CID For Reseller', href: 'https://shahedstore.com.bd/getcid/login.php', external: true },
-      { label: 'VPN & Security', href: '#' },
-      { label: 'Free Tools',      href: '/free-tools' },
+      { label: 'VPN & Security',   href: '/shop?category=vpn' },
+      { label: 'Free Tools',       href: '/free-tools' },
     ]
   },
   {
@@ -21,11 +21,11 @@ const NAV_COL = [
     icon: <Info size={14} />,
     accent: 'hsl(200,90%,45%)',
     links: [
-      { label: 'FAQs',           href: '/faqs' },
-      { label: 'About Us',       href: '/about' },
-      { label: 'My Account',     href: '/dashboard' },
-      { label: 'Contact Us',     href: '/contact' },
-      { label: 'Blog',           href: '/blog' },
+      { label: 'FAQs',                   href: '/faqs' },
+      { label: 'About Us',               href: '/about' },
+      { label: 'My Account',             href: '/dashboard' },
+      { label: 'Contact Us',             href: '/contact' },
+      { label: 'Blog',                   href: '/blog' },
       { label: 'Software Download Link', href: '/help' },
     ]
   },
