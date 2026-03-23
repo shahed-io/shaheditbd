@@ -260,7 +260,9 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500"
           style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)' }}
-          loading="lazy"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
         <div className="absolute inset-0 pointer-events-none transition-opacity duration-300"
           style={{ background: 'linear-gradient(to top, hsla(226,35%,8%,0.4), transparent)', opacity: hovered ? 1 : 0 }} />
