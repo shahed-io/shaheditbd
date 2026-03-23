@@ -101,13 +101,21 @@ const Navbar = () => {
 
   useEffect(() => {
     if (!user) { setAvatarUrl(null); return; }
-    supabase.from('profiles').select('avatar_url, display_name').eq('user_id', user.id).single()
-      .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
+    // Defer avatar fetch slightly — not critical for initial render
+    const t = setTimeout(() => {
+      supabase.from('profiles').select('avatar_url, display_name').eq('user_id', user.id).single()
+        .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
+    }, 500);
+    return () => clearTimeout(t);
   }, [user]);
 
   useEffect(() => {
-    supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
-      .then(({ data }) => { if (data?.value) setAnnouncement(data.value); });
+    // Defer announcement fetch — below-fold banner
+    const t = setTimeout(() => {
+      supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
+        .then(({ data }) => { if (data?.value) setAnnouncement(data.value); });
+    }, 1000);
+    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
