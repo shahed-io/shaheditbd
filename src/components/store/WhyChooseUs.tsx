@@ -278,7 +278,7 @@ const WhyChooseUs = () => {
           />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {STEPS.map((step, i) => (
-              <StepCard key={i} step={step} />
+              <StepCard key={i} step={step} index={i} />
             ))}
           </div>
         </div>
