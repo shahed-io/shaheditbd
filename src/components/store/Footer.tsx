@@ -27,7 +27,6 @@ const NAV_COL = [
       { label: 'Contact Us',     href: '/contact' },
       { label: 'Blog',           href: '/blog' },
       { label: 'Software Download Link', href: '/help' },
-      { label: '📱 অ্যাপ ইনস্টল করুন', href: '/install' },
     ]
   },
   {
