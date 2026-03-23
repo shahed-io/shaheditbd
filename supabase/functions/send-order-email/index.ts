@@ -23,92 +23,166 @@ const STATUS_LABELS: Record<string, { bn: string; emoji: string; color: string }
 
 function buildInvoiceHtml(order: any, items: any[]) {
   const statusInfo = STATUS_LABELS[order.status] || { bn: order.status, emoji: '📋', color: '#6b7280' }
-  const itemsHtml = items.map(item => `
+  const PM_LABELS: Record<string, string> = {
+    bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket',
+    upay: 'Upay', bkash_merchant: 'bKash Merchant', wallet: 'Wallet'
+  }
+  const dateFormatted = new Date(order.created_at).toLocaleDateString('bn-BD', { day: '2-digit', month: 'long', year: 'numeric' })
+  const dateEn = new Date(order.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
+
+  const itemsHtml = items.map((item, idx) => `
     <tr>
-      <td style="padding:10px 14px;border-bottom:1px solid #f0f0f5;font-size:13px;color:#374151;">${item.product_name}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #f0f0f5;font-size:13px;color:#6b7280;text-align:center;">${item.quantity}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #f0f0f5;font-size:13px;color:#374151;text-align:right;">৳${item.price}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #f0f0f5;font-size:13px;font-weight:700;color:hsl(258,78%,50%);text-align:right;">৳${item.total}</td>
+      <td style="padding:12px 16px;border-bottom:1px solid #f0f0f5;font-size:13px;color:#4b5563;vertical-align:top;">
+        <span style="display:inline-block;background:#ede9fe;color:#7c3aed;border-radius:4px;padding:1px 7px;font-size:11px;font-weight:700;margin-right:6px;">${idx + 1}</span>
+        <strong style="color:#111827;">${item.product_name}</strong>
+        ${item.license_key ? `<br><span style="font-size:11px;color:#7c3aed;font-family:monospace;background:#f5f3ff;padding:2px 8px;border-radius:4px;display:inline-block;margin-top:4px;">🔑 ${item.license_key}</span>` : ''}
+      </td>
+      <td style="padding:12px 16px;border-bottom:1px solid #f0f0f5;font-size:13px;color:#6b7280;text-align:center;white-space:nowrap;">×${item.quantity}</td>
+      <td style="padding:12px 16px;border-bottom:1px solid #f0f0f5;font-size:13px;color:#6b7280;text-align:right;white-space:nowrap;">৳${Number(item.price).toLocaleString('en-US')}</td>
+      <td style="padding:12px 16px;border-bottom:1px solid #f0f0f5;font-size:14px;font-weight:700;color:#7c3aed;text-align:right;white-space:nowrap;">৳${Number(item.total).toLocaleString('en-US')}</td>
     </tr>
   `).join('')
 
   return `<!DOCTYPE html>
-<html lang="bn">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f5f5f7;font-family:'Segoe UI',Arial,sans-serif;">
-  <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(100,60,200,0.10);">
-    
-    <!-- Header -->
-    <div style="background:#ffffff;padding:20px 32px;border-bottom:3px solid hsl(258,78%,55%);">
-      <img src="${SITE_URL}/logo.png" width="160" height="50" alt="${SITE_NAME}" style="display:block;max-height:50px;width:auto;object-fit:contain;" />
-    </div>
+<html lang="bn" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>অর্ডার কনফার্মেশন — #${order.order_number}</title>
+</head>
+<body style="margin:0;padding:0;background:#f0edf8;font-family:'Segoe UI',Tahoma,Arial,sans-serif;">
 
-    <!-- Status Banner -->
-    <div style="background:${statusInfo.color}15;border-left:4px solid ${statusInfo.color};margin:24px 28px 0;padding:14px 18px;border-radius:0 10px 10px 0;">
-      <p style="margin:0;font-size:15px;font-weight:700;color:${statusInfo.color};">${statusInfo.emoji} অর্ডার স্ট্যাটাস: ${statusInfo.bn}</p>
-    </div>
+  <div style="max-width:620px;margin:32px auto 48px;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(124,58,237,0.13);">
 
-    <!-- Order Info -->
-    <div style="padding:24px 28px 0;">
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;background:#f9f9fc;border-radius:12px;padding:18px 20px;margin-bottom:20px;">
-        <div>
-          <p style="margin:0;font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;">অর্ডার নম্বর</p>
-          <p style="margin:4px 0 0;font-size:16px;font-weight:800;color:hsl(258,78%,50%);">#${order.order_number}</p>
-        </div>
-        <div>
-          <p style="margin:0;font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;">তারিখ</p>
-          <p style="margin:4px 0 0;font-size:13px;font-weight:600;color:#374151;">${new Date(order.created_at).toLocaleDateString('bn-BD')}</p>
-        </div>
-        <div>
-          <p style="margin:0;font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;">পেমেন্ট</p>
-          <p style="margin:4px 0 0;font-size:13px;font-weight:600;color:#374151;">${order.payment_method?.toUpperCase() || 'N/A'}</p>
-        </div>
+    <!-- ═══ TOP LOGO BAR ═══ -->
+    <div style="background:#ffffff;padding:22px 32px;border-bottom:3px solid #7c3aed;display:flex;align-items:center;justify-content:space-between;">
+      <img src="${SITE_URL}/logo.png" alt="${SITE_NAME}" height="44" style="display:block;height:44px;width:auto;object-fit:contain;" />
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.1em;">Invoice</div>
+        <div style="font-size:15px;font-weight:800;color:#7c3aed;font-family:monospace;">#${order.order_number}</div>
+        <div style="font-size:11px;color:#9ca3af;margin-top:2px;">${dateEn}</div>
       </div>
+    </div>
 
-      <!-- Items Table -->
-      <h3 style="font-size:13px;font-weight:700;color:#374151;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em;">অর্ডারকৃত প্রোডাক্ট</h3>
-      <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
-        <thead>
-          <tr style="background:#f5f5f7;">
-            <th style="padding:10px 14px;font-size:11px;font-weight:700;color:#6b7280;text-align:left;text-transform:uppercase;">প্রোডাক্ট</th>
-            <th style="padding:10px 14px;font-size:11px;font-weight:700;color:#6b7280;text-align:center;text-transform:uppercase;">পরিমাণ</th>
-            <th style="padding:10px 14px;font-size:11px;font-weight:700;color:#6b7280;text-align:right;text-transform:uppercase;">মূল্য</th>
-            <th style="padding:10px 14px;font-size:11px;font-weight:700;color:#6b7280;text-align:right;text-transform:uppercase;">মোট</th>
-          </tr>
-        </thead>
-        <tbody>${itemsHtml}</tbody>
+    <!-- ═══ HERO GREETING ═══ -->
+    <div style="background:linear-gradient(135deg,#7c3aed 0%,#0ea5e9 100%);padding:32px 36px;">
+      <div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:500;letter-spacing:.05em;margin-bottom:8px;">আস্সালামু আলাইকুম,</div>
+      <div style="font-size:22px;font-weight:900;color:#ffffff;margin-bottom:8px;">${order.customer_name} 👋</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;">
+        আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে। আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।
+      </div>
+      <!-- Status pill -->
+      <div style="margin-top:18px;display:inline-block;background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.35);border-radius:999px;padding:6px 18px;">
+        <span style="font-size:13px;font-weight:700;color:#fff;">${statusInfo.emoji} স্ট্যাটাস: ${statusInfo.bn}</span>
+      </div>
+    </div>
+
+    <!-- ═══ ORDER + CUSTOMER INFO GRID ═══ -->
+    <div style="padding:28px 32px 0;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <!-- Order details card -->
+          <td width="50%" style="vertical-align:top;padding-right:10px;">
+            <div style="background:#f8f5ff;border-radius:14px;padding:18px 20px;border:1px solid #ede9fe;">
+              <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#7c3aed;margin-bottom:12px;">📋 অর্ডার তথ্য</div>
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr><td style="font-size:12px;color:#6b7280;padding-bottom:7px;">অর্ডার নম্বর</td><td style="font-size:12px;font-weight:700;color:#111827;text-align:right;padding-bottom:7px;">#${order.order_number}</td></tr>
+                <tr><td style="font-size:12px;color:#6b7280;padding-bottom:7px;">তারিখ</td><td style="font-size:12px;font-weight:600;color:#111827;text-align:right;padding-bottom:7px;">${dateFormatted}</td></tr>
+                <tr><td style="font-size:12px;color:#6b7280;padding-bottom:7px;">পেমেন্ট মেথড</td><td style="font-size:12px;font-weight:700;color:#7c3aed;text-align:right;padding-bottom:7px;">${PM_LABELS[order.payment_method] || (order.payment_method || 'N/A').toUpperCase()}</td></tr>
+                ${order.transaction_id ? `<tr><td style="font-size:12px;color:#6b7280;padding-bottom:7px;">TrxID</td><td style="font-size:11px;font-weight:600;color:#111827;text-align:right;font-family:monospace;padding-bottom:7px;">${order.transaction_id}</td></tr>` : ''}
+                <tr><td style="font-size:12px;color:#6b7280;">পেমেন্ট স্ট্যাটাস</td><td style="text-align:right;"><span style="font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;background:${order.payment_status === 'paid' ? '#dcfce7' : '#fef3c7'};color:${order.payment_status === 'paid' ? '#15803d' : '#b45309'};">${order.payment_status === 'paid' ? '✅ পেইড' : '⏳ পেন্ডিং'}</span></td></tr>
+              </table>
+            </div>
+          </td>
+          <!-- Customer details card -->
+          <td width="50%" style="vertical-align:top;padding-left:10px;">
+            <div style="background:#f0f9ff;border-radius:14px;padding:18px 20px;border:1px solid #bae6fd;">
+              <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#0284c7;margin-bottom:12px;">👤 গ্রাহকের তথ্য</div>
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr><td style="font-size:12px;color:#6b7280;padding-bottom:7px;">নাম</td><td style="font-size:12px;font-weight:700;color:#111827;text-align:right;padding-bottom:7px;">${order.customer_name}</td></tr>
+                <tr><td style="font-size:12px;color:#6b7280;padding-bottom:7px;">ইমেইল</td><td style="font-size:11px;color:#0284c7;text-align:right;padding-bottom:7px;">${order.customer_email}</td></tr>
+                ${order.customer_phone ? `<tr><td style="font-size:12px;color:#6b7280;">ফোন</td><td style="font-size:12px;font-weight:600;color:#111827;text-align:right;">${order.customer_phone}</td></tr>` : ''}
+              </table>
+            </div>
+          </td>
+        </tr>
       </table>
+    </div>
 
-      <!-- Totals -->
-      <div style="border-top:2px solid #f0f0f5;padding-top:14px;margin-bottom:20px;">
-        ${order.discount_amount > 0 ? `
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="font-size:13px;color:#6b7280;">সাবটোটাল</span>
-          <span style="font-size:13px;color:#374151;">৳${order.subtotal}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="font-size:13px;color:#10b981;">ছাড় (${order.coupon_code || ''})</span>
-          <span style="font-size:13px;color:#10b981;">-৳${order.discount_amount}</span>
-        </div>` : ''}
-        <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px dashed #e5e7eb;margin-top:6px;">
-          <span style="font-size:16px;font-weight:800;color:#111827;">সর্বমোট</span>
-          <span style="font-size:18px;font-weight:900;color:hsl(258,78%,50%);">৳${order.total}</span>
-        </div>
-      </div>
-
-      <!-- CTA -->
-      <div style="text-align:center;padding:8px 0 28px;">
-        <a href="${SITE_URL}/dashboard" style="display:inline-block;background:${BRAND_GRADIENT};color:#fff;font-size:14px;font-weight:700;border-radius:12px;padding:13px 28px;text-decoration:none;">
-          📋 আমার অর্ডার দেখুন
-        </a>
+    <!-- ═══ ITEMS TABLE ═══ -->
+    <div style="padding:24px 32px 0;">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#374151;margin-bottom:12px;">📦 অর্ডারকৃত পণ্য</div>
+      <div style="border-radius:14px;overflow:hidden;border:1px solid #ede9fe;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+          <thead>
+            <tr style="background:#7c3aed;">
+              <th style="padding:11px 16px;font-size:11px;font-weight:700;color:#ffffff;text-align:left;letter-spacing:.06em;">পণ্যের নাম</th>
+              <th style="padding:11px 16px;font-size:11px;font-weight:700;color:#ffffff;text-align:center;letter-spacing:.06em;">পরিমাণ</th>
+              <th style="padding:11px 16px;font-size:11px;font-weight:700;color:#ffffff;text-align:right;letter-spacing:.06em;">একক মূল্য</th>
+              <th style="padding:11px 16px;font-size:11px;font-weight:700;color:#ffffff;text-align:right;letter-spacing:.06em;">মোট</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsHtml}
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <!-- Footer -->
-    <div style="background:#f9f9fc;border-top:1px solid #f0f0f5;padding:18px 28px;text-align:center;">
-      <p style="margin:0;font-size:12px;color:#9ca3af;">ধন্যবাদ <strong>${SITE_NAME}</strong>-এ কেনাকাটা করার জন্য 🙏</p>
-      <p style="margin:6px 0 0;font-size:11px;color:#c4c4c4;"><a href="${SITE_URL}" style="color:hsl(258,78%,55%);text-decoration:none;">${SITE_URL}</a></p>
+    <!-- ═══ TOTALS ═══ -->
+    <div style="padding:20px 32px;">
+      <div style="display:flex;justify-content:flex-end;">
+        <div style="min-width:260px;background:#f8f5ff;border-radius:14px;padding:18px 20px;border:1px solid #ede9fe;">
+          ${order.subtotal && Number(order.discount_amount) > 0 ? `
+          <div style="display:flex;justify-content:space-between;margin-bottom:9px;">
+            <span style="font-size:13px;color:#6b7280;">সাবটোটাল</span>
+            <span style="font-size:13px;color:#374151;">৳${Number(order.subtotal).toLocaleString('en-US')}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:9px;">
+            <span style="font-size:13px;color:#059669;">🎉 ছাড় ${order.coupon_code ? '(' + order.coupon_code + ')' : ''}</span>
+            <span style="font-size:13px;font-weight:700;color:#059669;">-৳${Number(order.discount_amount).toLocaleString('en-US')}</span>
+          </div>
+          <hr style="border:none;border-top:1px dashed #d8b4fe;margin:0 0 9px;">` : ''}
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:15px;font-weight:800;color:#111827;">সর্বমোট</span>
+            <span style="font-size:22px;font-weight:900;color:#7c3aed;">৳${Number(order.total).toLocaleString('en-US')}</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    ${order.notes ? `
+    <!-- Notes -->
+    <div style="padding:0 32px 20px;">
+      <div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:0 10px 10px 0;padding:12px 16px;">
+        <span style="font-size:12px;font-weight:700;color:#b45309;">📝 গ্রাহকের নোট:</span>
+        <span style="font-size:12px;color:#374151;margin-left:6px;">${order.notes}</span>
+      </div>
+    </div>` : ''}
+
+    <!-- ═══ CTA BUTTON ═══ -->
+    <div style="padding:8px 32px 32px;text-align:center;">
+      <a href="${SITE_URL}/dashboard"
+        style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#0ea5e9);color:#fff;font-size:15px;font-weight:800;border-radius:14px;padding:15px 36px;text-decoration:none;letter-spacing:.02em;box-shadow:0 4px 18px rgba(124,58,237,0.35);">
+        📋 আমার অর্ডার ট্র্যাক করুন →
+      </a>
+      <div style="margin-top:14px;font-size:12px;color:#9ca3af;">
+        কোনো সমস্যা হলে আমাদের <a href="${SITE_URL}/contact" style="color:#7c3aed;text-decoration:none;font-weight:600;">সাপোর্ট</a>-এ যোগাযোগ করুন
+      </div>
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div style="background:#1e1b4b;padding:24px 32px;text-align:center;">
+      <img src="${SITE_URL}/logo.png" alt="${SITE_NAME}" height="36" style="display:block;margin:0 auto 14px;height:36px;width:auto;opacity:0.9;" />
+      <div style="font-size:13px;color:rgba(255,255,255,0.75);margin-bottom:6px;">
+        ধন্যবাদ <strong style="color:#a78bfa;">${SITE_NAME}</strong>-এ কেনাকাটা করার জন্য 🙏
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:10px;">
+        <a href="${SITE_URL}" style="color:#818cf8;text-decoration:none;">${SITE_URL}</a>
+        &nbsp;•&nbsp; support@shahedstore.com.bd
+      </div>
+    </div>
+
   </div>
 </body>
 </html>`
