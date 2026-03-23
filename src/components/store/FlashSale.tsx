@@ -176,7 +176,7 @@ const FlashSale = () => {
                   style={{
                     opacity: 1,
                     transform: 'none',
-                    animation: `fadeInUp 0.5s ease ${i * 0.06}s both`,
+                    animation: `rise-up 0.5s ease ${i * 0.06}s both`,
                   }}
                 >
                   <FlashCard product={p} delay={i * 0.06}
