@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search, Bell } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
 import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
@@ -50,6 +50,7 @@ const Navbar = () => {
   const [mobileSearch,  setMobileSearch]  = useState(false);
   const [desktopSearch, setDesktopSearch] = useState(false);
   const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
+  const [unreadCount,   setUnreadCount]   = useState(0);
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
@@ -99,9 +100,25 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) { setAvatarUrl(null); return; }
+    if (!user) { setAvatarUrl(null); setUnreadCount(0); return; }
     supabase.from('profiles').select('avatar_url, display_name').eq('user_id', user.id).single()
       .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
+    // Fetch unread notifications count
+    supabase.from('notifications').select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id).eq('is_read', false)
+      .then(({ count }) => { setUnreadCount(count || 0); });
+    // Realtime: update unread count on new notifications
+    const ch = supabase.channel('navbar-notifs')
+      .on('postgres_changes' as any, { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+        () => setUnreadCount(prev => prev + 1))
+      .on('postgres_changes' as any, { event: 'UPDATE', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+        () => {
+          supabase.from('notifications').select('id', { count: 'exact', head: true })
+            .eq('user_id', user.id).eq('is_read', false)
+            .then(({ count }) => setUnreadCount(count || 0));
+        })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [user]);
 
   useEffect(() => {
@@ -268,6 +285,22 @@ const Navbar = () => {
             <div className="flex items-center gap-1.5">
               {user ? (
                 <div className="hidden sm:flex items-center gap-1">
+                  {/* Notification Bell */}
+                  <button
+                    onClick={() => navigate('/dashboard?tab=notifications')}
+                    className="relative p-2 rounded-xl transition-all"
+                    style={{ color: 'hsl(226,35%,45%)' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; (e.currentTarget as HTMLElement).style.background = 'hsla(258,78%,55%,0.08)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,45%)'; (e.currentTarget as HTMLElement).style.background = ''; }}
+                    title="নোটিফিকেশন">
+                    <Bell size={18} />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center px-1 text-white"
+                        style={{ background: 'hsl(330,85%,55%)', boxShadow: '0 0 8px hsla(330,85%,55%,0.55)', border: '1.5px solid hsl(0,0%,100%)' }}>
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </button>
                   <button onClick={() => navigate('/dashboard')}
                     className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
                     style={{ color: 'hsl(226,35%,28%)' }}
