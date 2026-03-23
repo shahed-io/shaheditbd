@@ -797,7 +797,18 @@ const AdminOrders = () => {
           <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
             Orders <span className="gradient-text">Management</span>
           </h1>
-          <p className="text-muted-foreground text-sm">{orders.length} total orders</p>
+          <div className="flex items-center gap-3 mt-0.5">
+            <p className="text-muted-foreground text-sm">{orders.length} total orders</p>
+            {adminWhatsapp ? (
+              <span className="flex items-center gap-1 text-[11px] text-[#25D366] bg-[#25D366]/10 px-2 py-0.5 rounded-full border border-[#25D366]/20">
+                <MessageCircle size={10} /> WhatsApp সক্রিয়
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-[11px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                <Bell size={10} /> WhatsApp নম্বর দিন Settings-এ
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex gap-2">
           <button
