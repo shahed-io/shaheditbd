@@ -269,22 +269,6 @@ const Navbar = () => {
             <div className="flex items-center gap-1.5">
               {user ? (
                 <div className="hidden sm:flex items-center gap-1">
-                  {/* Notification Bell */}
-                  <button
-                    onClick={() => navigate('/dashboard?tab=notifications')}
-                    className="relative p-2 rounded-xl transition-all"
-                    style={{ color: 'hsl(226,35%,45%)' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; (e.currentTarget as HTMLElement).style.background = 'hsla(258,78%,55%,0.08)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,45%)'; (e.currentTarget as HTMLElement).style.background = ''; }}
-                    title="নোটিফিকেশন">
-                    <Bell size={18} />
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center px-1 text-white"
-                        style={{ background: 'hsl(330,85%,55%)', boxShadow: '0 0 8px hsla(330,85%,55%,0.55)', border: '1.5px solid hsl(0,0%,100%)' }}>
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                      </span>
-                    )}
-                  </button>
                   <button onClick={() => navigate('/dashboard')}
                     className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
                     style={{ color: 'hsl(226,35%,28%)' }}
