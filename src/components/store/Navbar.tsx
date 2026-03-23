@@ -55,7 +55,7 @@ const Navbar = () => {
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
 
-  const [imgVersion, setImgVersion] = useState(() => Date.now());
+  const [imgVersion] = useState(() => Date.now());
 
   const loadNavCategories = async (force = false) => {
     // Use cache if fresh
