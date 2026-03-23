@@ -92,9 +92,10 @@ const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBa
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,
-      gcTime: 1000 * 60 * 10,
+      staleTime: 1000 * 60 * 10,   // 10 minutes — reduce redundant refetches
+      gcTime:    1000 * 60 * 30,   // 30 minutes cache
       retry: 1,
+      refetchOnWindowFocus: false, // Don't refetch on tab switch
     },
   },
 });
