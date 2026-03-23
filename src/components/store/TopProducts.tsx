@@ -41,10 +41,10 @@ const TopProducts = () => {
       try {
         const { data, error: err } = await supabase
           .from('products')
-          .select('*, category:category_id(name, sort_order)')
+          .select('id, slug, name, price, original_price, discount_percent, image_url, is_featured, total_sales, created_at, status, category:category_id(name, sort_order)')
           .eq('status', 'active')
           .order('sort_order', { ascending: true })
-          .limit(200);
+          .limit(80);
         if (cancelled) return;
         if (err) {
           console.error('[TopProducts] Supabase error:', err);
