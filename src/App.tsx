@@ -58,7 +58,6 @@ const AboutUs               = lazy(() => import("./pages/AboutUs"));
 const FAQs                  = lazy(() => import("./pages/FAQs"));
 const FreeTools             = lazy(() => import("./pages/FreeTools"));
 const RefundRequest         = lazy(() => import("./pages/RefundRequest"));
-const InstallApp            = lazy(() => import("./pages/InstallApp"));
 
 // SEO sub-pages
 const AdminMetaTags         = lazy(() => import("./pages/admin/seo/AdminMetaTags"));
@@ -199,7 +198,6 @@ const AppContent = () => {
           <Route path="/free-tools" element={<FreeTools />} />
           <Route path="/refund-request" element={<RefundRequest />} />
           <Route path="/dashboard" element={<UserDashboard />} />
-          <Route path="/install" element={<InstallApp />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
