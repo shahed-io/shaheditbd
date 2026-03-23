@@ -39,9 +39,8 @@ function buildInvoiceHtml(order: any, items: any[]) {
   <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(100,60,200,0.10);">
     
     <!-- Header -->
-    <div style="background:${BRAND_GRADIENT};padding:28px 32px;">
-      <h1 style="color:#fff;margin:0;font-size:22px;font-weight:800;">${SITE_NAME}</h1>
-      <p style="color:rgba(255,255,255,0.85);margin:4px 0 0;font-size:13px;">অর্ডার কনফার্মেশন ইনভয়েস</p>
+    <div style="background:#ffffff;padding:20px 32px;border-bottom:3px solid hsl(258,78%,55%);">
+      <img src="${SITE_URL}/logo.png" width="160" height="50" alt="${SITE_NAME}" style="display:block;max-height:50px;width:auto;object-fit:contain;" />
     </div>
 
     <!-- Status Banner -->
