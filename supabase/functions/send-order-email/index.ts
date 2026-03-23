@@ -131,8 +131,8 @@ function buildStatusUpdateHtml(order: any, newStatus: string) {
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#f5f5f7;font-family:'Segoe UI',Arial,sans-serif;">
   <div style="max-width:560px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(100,60,200,0.10);">
-    <div style="background:${BRAND_GRADIENT};padding:24px 28px;">
-      <h1 style="color:#fff;margin:0;font-size:20px;font-weight:800;">${SITE_NAME}</h1>
+    <div style="background:#ffffff;padding:16px 28px;border-bottom:3px solid hsl(258,78%,55%);">
+      <img src="${SITE_URL}/logo.png" width="160" height="50" alt="${SITE_NAME}" style="display:block;max-height:50px;width:auto;object-fit:contain;" />
     </div>
     <div style="padding:28px;">
       <h2 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 6px;">${statusInfo.emoji} অর্ডার স্ট্যাটাস আপডেট</h2>
