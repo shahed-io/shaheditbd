@@ -206,14 +206,17 @@ const TopProducts = () => {
 
 /* Helper: each category block reveals when it enters viewport */
 const CategoryRevealBlock = ({ children, catIdx }: { children: React.ReactNode; catIdx: number }) => {
-  const { ref, visible } = useReveal({ threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  const { ref, visible } = useReveal({ threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+  const delay = Math.min(catIdx * 0.04, 0.2);
   return (
     <div
       ref={ref as React.RefObject<HTMLDivElement>}
       style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(40px)',
-        transition: `opacity 0.7s cubic-bezier(0.23,1,0.32,1) ${catIdx * 0.05}s, transform 0.7s cubic-bezier(0.23,1,0.32,1) ${catIdx * 0.05}s`,
+        opacity:    visible ? 1 : 0,
+        transform:  visible ? 'translateY(0) scale(1)' : 'translateY(28px) scale(0.99)',
+        filter:     visible ? 'blur(0px)' : 'blur(3px)',
+        transition: `opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s, filter 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
+        willChange: 'transform, opacity, filter',
       }}
     >
       {children}
