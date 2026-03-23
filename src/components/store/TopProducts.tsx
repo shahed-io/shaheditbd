@@ -99,14 +99,7 @@ const TopProducts = () => {
         </div>
 
         {/* Tab Bar */}
-        <div
-          className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border transition-all duration-700"
-          style={{
-            opacity: headerVisible ? 1 : 0,
-            transform: headerVisible ? 'translateY(0)' : 'translateY(20px)',
-            transitionDelay: '0.18s',
-          }}
-        >
+        <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border">
           {tabs.map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}}
