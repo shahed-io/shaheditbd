@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Save, Globe, Phone, Mail, MapPin, DollarSign } from 'lucide-react';
+import { Save, Globe, DollarSign, MessageCircle, TestTube } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSettings = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [testingWA, setTestingWA] = useState(false);
 
   const fetchSettings = async () => {
     const { data } = await supabase.from('site_settings').select('*');
@@ -26,6 +27,19 @@ const AdminSettings = () => {
     await Promise.all(updates);
     toast.success('Settings saved!');
     setSaving(false);
+  };
+
+  // Test WhatsApp notification
+  const testWhatsApp = () => {
+    const phone = settings['admin_whatsapp'];
+    if (!phone) { toast.error('আগে WhatsApp নম্বর সেভ করুন'); return; }
+    setTestingWA(true);
+    const cleaned = phone.replace(/\D/g, '').replace(/^0/, '880');
+    const msg = encodeURIComponent(
+      `✅ টেস্ট নোটিফিকেশন!\n\nShahed Store Admin WhatsApp সফলভাবে কনফিগার হয়েছে। নতুন অর্ডার আসলে এখানে নোটিফিকেশন আসবে। 🎉`
+    );
+    window.open(`https://wa.me/${cleaned}?text=${msg}`, '_blank');
+    setTestingWA(false);
   };
 
   const settingGroups = [
@@ -56,6 +70,8 @@ const AdminSettings = () => {
       ]
     },
   ];
+
+  const inputCls = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors";
 
   return (
     <div className="space-y-6">
@@ -94,13 +110,60 @@ const AdminSettings = () => {
                       value={settings[field.key] || ''}
                       onChange={e => setSettings({ ...settings, [field.key]: e.target.value })}
                       placeholder={field.placeholder}
-                      className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                      className={inputCls}
                     />
                   </div>
                 ))}
               </div>
             </div>
           ))}
+
+          {/* WhatsApp Notification Settings */}
+          <div className="glass-card rounded-2xl p-6 border border-[#25D366]/20">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 rounded-xl bg-[#25D366]/20 flex items-center justify-center">
+                <MessageCircle size={18} className="text-[#25D366]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">WhatsApp অর্ডার নোটিফিকেশন</h3>
+                <p className="text-xs text-muted-foreground">নতুন অর্ডার আসলে এই নম্বরে WhatsApp নোটিফিকেশন যাবে</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Admin WhatsApp নম্বর</label>
+                <input
+                  value={settings['admin_whatsapp'] || ''}
+                  onChange={e => setSettings({ ...settings, admin_whatsapp: e.target.value })}
+                  placeholder="01XXXXXXXXX বা 880XXXXXXXXXX"
+                  className={inputCls}
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">যেকোনো ফরম্যাটে দিন — 01712345678 বা 8801712345678</p>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">নোটিফিকেশন টেস্ট করুন</label>
+                <button
+                  onClick={testWhatsApp}
+                  disabled={testingWA || !settings['admin_whatsapp']}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <TestTube size={14} /> টেস্ট মেসেজ পাঠান
+                </button>
+                <p className="text-[11px] text-muted-foreground mt-1">প্রথমে Save করুন, তারপর টেস্ট করুন</p>
+              </div>
+            </div>
+
+            <div className="mt-4 bg-[#25D366]/5 border border-[#25D366]/20 rounded-xl p-4">
+              <p className="text-xs text-foreground font-semibold mb-2">📱 কীভাবে কাজ করে:</p>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>✅ নতুন অর্ডার প্লেস হলে Admin Orders পেজে <strong className="text-[#25D366]">WhatsApp</strong> বাটন দেখাবে</li>
+                <li>✅ বাটনে ক্লিক করলে অর্ডারের সব তথ্য সহ WhatsApp খুলবে</li>
+                <li>✅ অর্ডার নম্বর, কাস্টমার, প্রোডাক্ট, মোট টাকা — সব তথ্য থাকবে</li>
+                <li>✅ Orders পেজের প্রতিটি অর্ডারেও আলাদা WhatsApp বাটন থাকবে</li>
+              </ul>
+            </div>
+          </div>
 
           {/* Admin Setup Section */}
           <div className="glass-card rounded-2xl p-6 border-primary/30">
