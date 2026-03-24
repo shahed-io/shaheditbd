@@ -28,27 +28,19 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { action, installation_id, token } = body;
 
-    // ── Balance check (grahok.io API balance) — admin only ─────────────────────
+    // ── Balance check (grahok.io API balance) — any valid reseller session ──────
     if (action === 'balance') {
-      // Validate reseller session (must be admin)
-      if (token) {
-        const { data: sessions } = await supabase
-          .from('reseller_sessions')
-          .select('user_id, expires_at')
-          .eq('token', token)
-          .limit(1);
-        const session = sessions?.[0];
-        if (!session || new Date(session.expires_at) < new Date()) {
-          return json({ ok: false, error: 'Invalid or expired session' });
-        }
-        const { data: users } = await supabase
-          .from('reseller_users')
-          .select('is_admin')
-          .eq('id', session.user_id)
-          .limit(1);
-        if (!users?.[0]?.is_admin) {
-          return json({ ok: false, error: 'Admin only' });
-        }
+      // Validate any reseller session (admin OR regular user)
+      if (!token) return json({ ok: false, error: 'Authentication required' }, 401);
+
+      const { data: sessions } = await supabase
+        .from('reseller_sessions')
+        .select('user_id, expires_at')
+        .eq('token', token)
+        .limit(1);
+      const session = sessions?.[0];
+      if (!session || new Date(session.expires_at) < new Date()) {
+        return json({ ok: false, error: 'Invalid or expired session' }, 401);
       }
 
       const res = await fetch(`${BALANCE_URL}?token=${encodeURIComponent(GRAHOK_API_TOKEN)}`, {
