@@ -651,7 +651,7 @@ const Reseller = () => {
         ) : (
           <div className="max-w-2xl mx-auto">
             {(currentUser?.balance_cents ?? 0) === 0 && (
-              <div className="mb-5 flex items-start gap-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 text-amber-600 text-sm">
+              <div className="mb-5 flex items-start gap-2.5 bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-destructive text-sm">
                 <AlertCircle size={15} className="mt-0.5 shrink-0" />
                 আপনার ব্যালেন্স শেষ। Admin-এর সাথে যোগাযোগ করুন টপআপের জন্য।
               </div>
