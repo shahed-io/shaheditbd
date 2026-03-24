@@ -105,6 +105,8 @@ export default function RefundRequest() {
     purchase_date: '',
     payment_amount: '',
     payment_method: '',
+    refund_account_type: '',
+    refund_account_number: '',
     additional_info: '',
   });
 
@@ -168,8 +170,8 @@ export default function RefundRequest() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.customer_name || !form.customer_email || !form.order_number || !form.reason) {
-      toast.error('অনুগ্রহ করে সকল বাধ্যতামূলক ফিল্ড পূরণ করুন');
+    if (!form.customer_name || !form.customer_email || !form.order_number || !form.reason || !form.refund_account_type || !form.refund_account_number) {
+      toast.error('অনুগ্রহ করে সকল বাধ্যতামূলক ফিল্ড পূরণ করুন (রিফান্ড নম্বর সহ)');
       return;
     }
     setSubmitting(true);
@@ -197,6 +199,8 @@ export default function RefundRequest() {
 ${calc?.proportionalRefund != null ? `📊 অব্যবহৃত অংশের রিফান্ড (সমানুপাতিক): ৳${calc.proportionalRefund}` : ''}
 ${calc?.refundAfter10 != null ? `✅ ১০% কেটে চূড়ান্ত রিফান্ড: ৳${calc.refundAfter10}` : ''}
 ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে ১০% কেটে ৳${deductedAmount} রিফান্ড হবে।` : ''}
+💰 রিফান্ড পাঠানোর মাধ্যম: ${form.refund_account_type || 'উল্লেখ নেই'}
+📱 রিফান্ড নম্বর: ${form.refund_account_number || 'উল্লেখ নেই'}
 📌 অতিরিক্ত তথ্য: ${form.additional_info || 'উল্লেখ নেই'}${screenshotLines}
       `.trim();
 
@@ -228,6 +232,8 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
           daysRemaining: daysRemainingDisplay || '',
           paymentAmount: form.payment_amount || '',
           paymentMethod: form.payment_method || '',
+          refundAccountType: form.refund_account_type || '',
+          refundAccountNumber: form.refund_account_number || '',
           additionalInfo: form.additional_info || '',
           screenshotUrls,
           isChangeOfMind,
@@ -393,7 +399,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
             <p className="text-[12px] mt-4" style={{ color: 'hsl(226,25%,52%)' }}>
               এই নম্বরটি সংরক্ষণ করুন। WhatsApp বা Email-এ যোগাযোগ করার সময় এটি উল্লেখ করুন।
             </p>
-            <button onClick={() => { setSubmitted(false); setForm({ customer_name:'',customer_email:'',customer_phone:'',order_number:'',product_name:'',reason:'',reason_detail:'',subscription_period:'',purchase_date:'',payment_amount:'',payment_method:'',additional_info:'' }); }}
+            <button onClick={() => { setSubmitted(false); setForm({ customer_name:'',customer_email:'',customer_phone:'',order_number:'',product_name:'',reason:'',reason_detail:'',subscription_period:'',purchase_date:'',payment_amount:'',payment_method:'',refund_account_type:'',refund_account_number:'',additional_info:'' }); }}
               className="mt-6 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-105"
               style={{ background: `linear-gradient(135deg, ${A}, ${B})`, color: '#fff', boxShadow: `0 4px 16px ${A}30` }}>
               নতুন রিকোয়েস্ট করুন
@@ -650,6 +656,59 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                     <div className="flex items-center gap-2 text-[12px]" style={{ color: A }}>
                       <Loader2 size={14} className="animate-spin" />
                       স্ক্রিনশট আপলোড হচ্ছে...
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Refund Account Info — REQUIRED */}
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-widest mb-1" style={{ color: A }}>রিফান্ড প্রাপ্তির তথ্য *</p>
+                <p className="text-[12px] mb-3" style={{ color: 'hsl(226,25%,52%)' }}>আপনি কোন নম্বরে রিফান্ডের টাকা পেতে চান তা উল্লেখ করুন</p>
+                <div className="rounded-2xl p-5 space-y-4"
+                  style={{ background: 'hsla(258,78%,55%,0.06)', border: '1.5px solid hsla(258,78%,55%,0.25)' }}>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>
+                        পেমেন্ট মাধ্যম *
+                        <span className="ml-1 text-red-500">●</span>
+                      </label>
+                      <select
+                        required
+                        value={form.refund_account_type}
+                        onChange={e => set('refund_account_type', e.target.value)}
+                        className={inputCls}
+                        style={{ borderColor: !form.refund_account_type ? 'hsla(258,78%,55%,0.45)' : undefined }}
+                      >
+                        <option value="">-- নির্বাচন করুন --</option>
+                        {['bKash', 'Nagad', 'Rocket', 'Upay', 'Dutch Bangla Bank', 'Brac Bank', 'Dutch-Bangla Nexus', 'অন্যান্য ব্যাংক'].map(m => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>
+                        নম্বর / অ্যাকাউন্ট *
+                        <span className="ml-1 text-red-500">●</span>
+                      </label>
+                      <input
+                        required
+                        value={form.refund_account_number}
+                        onChange={e => set('refund_account_number', e.target.value)}
+                        placeholder={form.refund_account_type?.includes('Bank') || form.refund_account_type === 'অন্যান্য ব্যাংক' ? 'ব্যাংক অ্যাকাউন্ট নম্বর' : '01XXXXXXXXX'}
+                        className={inputCls}
+                        maxLength={50}
+                        style={{ borderColor: !form.refund_account_number ? 'hsla(258,78%,55%,0.45)' : undefined }}
+                      />
+                    </div>
+                  </div>
+                  {form.refund_account_type && form.refund_account_number && (
+                    <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl"
+                      style={{ background: 'hsla(142,72%,50%,0.10)', border: '1px solid hsla(142,72%,50%,0.30)' }}>
+                      <span className="text-lg">✅</span>
+                      <p className="text-[13px] font-semibold" style={{ color: 'hsl(142,50%,28%)' }}>
+                        রিফান্ড পাঠানো হবে: <strong>{form.refund_account_type}</strong> → <strong>{form.refund_account_number}</strong>
+                      </p>
                     </div>
                   )}
                 </div>
