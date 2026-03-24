@@ -24,15 +24,10 @@ const Reseller = () => {
         body: { action: 'balance' },
       });
       if (error) throw error;
-      if (data?.balance !== undefined) {
-        setBalance(parseFloat(data.balance));
-      } else if (data?.credits !== undefined) {
-        setBalance(parseFloat(data.credits));
-      } else if (typeof data === 'object') {
-        // Try to find any numeric field
-        const val = Object.values(data).find(v => typeof v === 'number' || (typeof v === 'string' && !isNaN(Number(v))));
-        if (val !== undefined) setBalance(Number(val));
-      }
+      // Normalize common balance keys from grahok.io
+      const raw = data?.data ?? data;
+      const b = raw?.balance ?? raw?.credits ?? raw?.remaining ?? raw?.Balance;
+      if (b !== undefined && b !== null) setBalance(parseFloat(String(b)));
     } catch {
       // Balance fetch failed silently
     } finally {
