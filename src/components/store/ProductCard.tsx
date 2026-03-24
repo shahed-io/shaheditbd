@@ -30,14 +30,16 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
   const { toggleWishlist, isWishlisted } = useWishlist();
   const navigate = useNavigate();
 
-  // Intersection observer for staggered entry
+  // Intersection observer for staggered entry — disabled on mobile to prevent scroll jank
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   useEffect(() => {
+    if (isMobile) { setVisible(true); return; }
     const obs = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
     }, { threshold: 0.05 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, []);
+  }, [isMobile]);
 
   const wishlisted = isWishlisted(String(product.id));
   const inCart     = isInCart(product.id);
