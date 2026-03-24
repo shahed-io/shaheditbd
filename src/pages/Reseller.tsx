@@ -360,9 +360,9 @@ const AdminPanel = ({ adminUser }: { adminUser: ResellerUser }) => {
         <div className="space-y-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: 'Total Users', value: stats?.total_users ?? '—', icon: Users, color: 'text-blue-500' },
-              { label: 'Total CIDs', value: stats?.total_cids ?? '—', icon: Zap, color: 'text-yellow-500' },
-              { label: 'User Balances', value: stats ? `$${(stats.total_balance_cents / 100).toFixed(2)}` : '—', icon: Wallet, color: 'text-green-500' },
+              { label: 'Total Users', value: stats?.total_users ?? '—', icon: Users, color: 'text-primary' },
+              { label: 'Total CIDs', value: stats?.total_cids ?? '—', icon: Zap, color: 'text-primary' },
+              { label: 'User Balances', value: stats ? `$${(stats.total_balance_cents / 100).toFixed(2)}` : '—', icon: Wallet, color: 'text-primary' },
               { label: 'API Balance', value: apiBalance !== null ? `$${apiBalance.toFixed(2)}` : '—', icon: DollarSign, color: 'text-primary' },
             ].map(s => (
               <div key={s.label} className="rounded-2xl border border-border bg-card p-4">
