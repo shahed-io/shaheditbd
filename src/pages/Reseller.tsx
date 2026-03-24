@@ -541,6 +541,7 @@ const AdminPanel = () => {
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart2 },
+    { id: 'generate', label: 'CID Generate', icon: Zap },
     { id: 'users', label: 'Users', icon: Users },
     { id: 'history', label: 'History', icon: History },
   ] as const;
