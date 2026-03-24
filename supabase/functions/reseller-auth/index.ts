@@ -22,36 +22,31 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { action } = body;
 
-    // ── Ensure admin exists with correct password ────────────────────────────
-    const adminPass = Deno.env.get('ADMIN_PASSWORD') || 'Sh@9696';
-    const hash = await bcrypt.hash(adminPass, 10);
-
-    const { data: existingAdmin } = await supabase
-      .from('reseller_users')
-      .select('id')
-      .eq('username', 'admin')
-      .limit(1);
-
-    if (!existingAdmin || existingAdmin.length === 0) {
-      // Create admin for the first time
-      await supabase.from('reseller_users').insert({
-        username: 'admin',
-        password_hash: hash,
-        is_admin: true,
-        balance_cents: 0,
-      });
-    } else {
-      // Always sync admin password with configured value
-      await supabase.from('reseller_users')
-        .update({ password_hash: hash })
-        .eq('username', 'admin');
-    }
-
     // ── Login ────────────────────────────────────────────────────────────────
     if (action === 'login') {
       const { username, password } = body;
       if (!username || !password) return json({ error: 'Username and password required' }, 400);
 
+      const adminPass = Deno.env.get('ADMIN_PASSWORD') || 'Sh@9696';
+
+      // Ensure admin exists
+      const { data: existingAdmin } = await supabase
+        .from('reseller_users')
+        .select('id')
+        .eq('username', 'admin')
+        .limit(1);
+
+      if (!existingAdmin || existingAdmin.length === 0) {
+        const hash = await bcrypt.hash(adminPass, 10);
+        await supabase.from('reseller_users').insert({
+          username: 'admin',
+          password_hash: hash,
+          is_admin: true,
+          balance_cents: 0,
+        });
+      }
+
+      // Fetch user
       const { data: users } = await supabase
         .from('reseller_users')
         .select('*')
@@ -59,7 +54,22 @@ Deno.serve(async (req) => {
         .limit(1);
 
       const user = users?.[0];
-      if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+      if (!user) return json({ error: 'Invalid username or password' }, 401);
+
+      // For admin user: if password matches ADMIN_PASSWORD but hash doesn't verify,
+      // it means the hash is stale — re-hash and update
+      let passwordValid = await bcrypt.compare(password, user.password_hash);
+
+      if (!passwordValid && user.username === 'admin' && password === adminPass) {
+        // Password matches config but hash is stale — update hash
+        const newHash = await bcrypt.hash(adminPass, 10);
+        await supabase.from('reseller_users')
+          .update({ password_hash: newHash })
+          .eq('username', 'admin');
+        passwordValid = true;
+      }
+
+      if (!passwordValid) {
         return json({ error: 'Invalid username or password' }, 401);
       }
 
