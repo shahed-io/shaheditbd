@@ -88,6 +88,7 @@ const AdminProductReviews        = lazy(() => import("./pages/admin/AdminProduct
 const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFacebookPixel"));
 const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
+const GetCID                     = lazy(() => import("./pages/GetCID"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -201,6 +202,7 @@ const AppContent = () => {
           <Route path="/refund-request" element={<RefundRequest />} />
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/install" element={<InstallApp />} />
+          <Route path="/getcid" element={<GetCID />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
