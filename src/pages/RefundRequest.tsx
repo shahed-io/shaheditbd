@@ -105,6 +105,8 @@ export default function RefundRequest() {
     purchase_date: '',
     payment_amount: '',
     payment_method: '',
+    refund_account_type: '',
+    refund_account_number: '',
     additional_info: '',
   });
 
