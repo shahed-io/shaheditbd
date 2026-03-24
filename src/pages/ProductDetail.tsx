@@ -183,9 +183,20 @@ const ProductDetail = () => {
 
         setLoading(false);
         setTimeout(() => setEntered(true), 80);
-        // Defer view tracking — don't block UI
+        // Defer view tracking + review stats for schema — don't block UI
         setTimeout(() => {
           supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
+          // Fetch review stats for Google rich snippet schema
+          (supabase as any).from('product_reviews')
+            .select('rating')
+            .eq('product_slug', row.slug)
+            .eq('status', 'approved')
+            .then(({ data: rData }: { data: any[] | null }) => {
+              if (rData && rData.length > 0) {
+                const avg = rData.reduce((s: number, r: any) => s + r.rating, 0) / rData.length;
+                if (!cancelled) setReviewStats({ avg: parseFloat(avg.toFixed(1)), count: rData.length });
+              }
+            });
         }, 3000);
       } catch {
         if (!cancelled) { setNotFound(true); setLoading(false); }
