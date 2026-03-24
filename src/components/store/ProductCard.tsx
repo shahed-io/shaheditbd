@@ -194,12 +194,14 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           transform: visible
             ? clicked
               ? 'translateY(-3px) scale(0.97)'
-              : isHovered ? 'translateY(-6px) scale(1.015)' : 'translateY(0) scale(1)'
-            : 'translateY(40px)',
+              : (!isMobile && isHovered) ? 'translateY(-6px) scale(1.015)' : 'translateY(0) scale(1)'
+            : isMobile ? 'none' : 'translateY(40px)',
           transition: clicked
             ? 'transform 0.1s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.1s ease'
-            : isHovered
+            : (!isMobile && isHovered)
             ? `opacity 0.1s, transform 0.35s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.35s ease`
+            : isMobile
+            ? `opacity 0.3s ease ${delay}s, box-shadow 0.3s ease`
             : `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s, box-shadow 0.4s ease`,
           boxShadow: clicked
             ? '0 4px 60px hsla(185,90%,52%,0.6), 0 0 0 2px hsla(185,90%,52%,0.6)'
