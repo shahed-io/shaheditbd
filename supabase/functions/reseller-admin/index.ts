@@ -68,10 +68,10 @@ Deno.serve(async (req) => {
       return json({ user: data });
     }
 
-    // ── Topup balance ────────────────────────────────────────────────────────
+    // ── Topup balance (add) ──────────────────────────────────────────────────
     if (action === 'topup') {
       const { user_id, amount_cents } = body;
-      if (!user_id || !amount_cents) return json({ error: 'user_id and amount_cents required' }, 400);
+      if (!user_id || amount_cents === undefined) return json({ error: 'user_id and amount_cents required' }, 400);
 
       const { data: users } = await supabase.from('reseller_users').select('balance_cents').eq('id', user_id).limit(1);
       const current = users?.[0]?.balance_cents ?? 0;
@@ -91,6 +91,7 @@ Deno.serve(async (req) => {
     // ── Set balance (absolute) ───────────────────────────────────────────────
     if (action === 'set_balance') {
       const { user_id, balance_cents } = body;
+      if (!user_id || balance_cents === undefined) return json({ error: 'user_id and balance_cents required' }, 400);
       const { data, error } = await supabase
         .from('reseller_users')
         .update({ balance_cents: parseInt(balance_cents), updated_at: new Date().toISOString() })
@@ -123,9 +124,39 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
 
+    // ── Edit CID in generation record ────────────────────────────────────────
+    if (action === 'edit_generation') {
+      const { generation_id, cid, installation_id } = body;
+      if (!generation_id) return json({ error: 'generation_id required' }, 400);
+
+      const updates: Record<string, string> = {};
+      if (cid !== undefined) updates['cid'] = String(cid).trim();
+      if (installation_id !== undefined) updates['installation_id'] = String(installation_id).trim();
+      if (Object.keys(updates).length === 0) return json({ error: 'Nothing to update' }, 400);
+
+      const { data, error } = await supabase
+        .from('reseller_generations')
+        .update(updates)
+        .eq('id', generation_id)
+        .select('id, installation_id, cid, price_cents, created_at')
+        .single();
+
+      if (error) return json({ error: error.message }, 400);
+      return json({ generation: data });
+    }
+
+    // ── Delete generation record ─────────────────────────────────────────────
+    if (action === 'delete_generation') {
+      const { generation_id } = body;
+      if (!generation_id) return json({ error: 'generation_id required' }, 400);
+      const { error } = await supabase.from('reseller_generations').delete().eq('id', generation_id);
+      if (error) return json({ error: error.message }, 400);
+      return json({ ok: true });
+    }
+
     // ── List generations ─────────────────────────────────────────────────────
     if (action === 'list_generations') {
-      const { user_id, page = 1, limit = 50 } = body;
+      const { user_id, page = 1, limit = 100 } = body;
       const from = (page - 1) * limit;
 
       let query = supabase
