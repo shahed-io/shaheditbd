@@ -67,8 +67,8 @@ const Reseller = () => {
           /* Fallback when iframe is blocked */
           <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
             <div className="p-8 sm:p-12 flex flex-col items-center text-center gap-5">
-              <div className="w-16 h-16 rounded-2xl bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center">
-                <ExternalLink className="w-8 h-8 text-orange-500" />
+              <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center">
+                <ExternalLink className="w-8 h-8 text-accent-foreground" />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-foreground mb-2">
