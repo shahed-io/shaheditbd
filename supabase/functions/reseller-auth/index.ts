@@ -22,17 +22,29 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { action } = body;
 
-    // ── Seed admin on first run ──────────────────────────────────────────────
-    const { count } = await supabase.from('reseller_users').select('*', { count: 'exact', head: true });
-    if ((count ?? 0) === 0) {
-      const adminPass = Deno.env.get('ADMIN_PASSWORD') || 'Sh@9696';
-      const hash = await bcrypt.hash(adminPass, 10);
+    // ── Ensure admin exists with correct password ────────────────────────────
+    const adminPass = Deno.env.get('ADMIN_PASSWORD') || 'Sh@9696';
+    const hash = await bcrypt.hash(adminPass, 10);
+
+    const { data: existingAdmin } = await supabase
+      .from('reseller_users')
+      .select('id')
+      .eq('username', 'admin')
+      .limit(1);
+
+    if (!existingAdmin || existingAdmin.length === 0) {
+      // Create admin for the first time
       await supabase.from('reseller_users').insert({
         username: 'admin',
         password_hash: hash,
         is_admin: true,
         balance_cents: 0,
       });
+    } else {
+      // Always sync admin password with configured value
+      await supabase.from('reseller_users')
+        .update({ password_hash: hash })
+        .eq('username', 'admin');
     }
 
     // ── Login ────────────────────────────────────────────────────────────────
