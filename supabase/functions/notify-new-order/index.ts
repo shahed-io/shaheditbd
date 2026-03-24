@@ -11,17 +11,49 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const { orderId } = await req.json();
-    if (!orderId) {
-      return new Response(JSON.stringify({ error: 'orderId required' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    const body = await req.json();
+    const { orderId, _test, _chatId } = body;
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
+
+    // ─── TEST MODE ────────────────────────────────────────────────────────────
+    if (_test && _chatId) {
+      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+      const TELEGRAM_API_KEY = Deno.env.get('TELEGRAM_API_KEY');
+      if (!LOVABLE_API_KEY || !TELEGRAM_API_KEY) {
+        return new Response(JSON.stringify({ error: 'Telegram API keys missing' }), {
+          status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const testMsg = `✅ *Telegram নোটিফিকেশন সফলভাবে কাজ করছে!*\n\nShahed Store-এ নতুন অর্ডার আসলে এখানে তাৎক্ষণিক নোটিফিকেশন পাবেন। 🎉\n\n🛒 উদাহরণ:\n👤 কাস্টমার: Test User\n💵 মোট: ৳৫০০\n⏰ এইমাত্র`;
+      const tgRes = await fetch('https://connector-gateway.lovable.dev/telegram/sendMessage', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'X-Connection-Api-Key': TELEGRAM_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ chat_id: _chatId, text: testMsg, parse_mode: 'Markdown' }),
+      });
+      const tgData = await tgRes.json();
+      if (!tgRes.ok) {
+        return new Response(JSON.stringify({ error: 'Telegram failed', detail: tgData }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      return new Response(JSON.stringify({ success: true, test: true }), {
+        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!orderId) {
+      return new Response(JSON.stringify({ error: 'orderId required' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Fetch order + items
     const { data: order, error: orderErr } = await supabase
