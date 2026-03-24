@@ -196,10 +196,12 @@ const TopProducts = () => {
   );
 };
 
-/* Helper: each category block reveals when it enters viewport */
+/* Helper: each category block reveals when it enters viewport — no transform on mobile */
 const CategoryRevealBlock = ({ children, catIdx }: { children: React.ReactNode; catIdx: number }) => {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const { ref, visible } = useReveal({ threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
   const delay = Math.min(catIdx * 0.04, 0.2);
+  if (isMobile) return <div>{children}</div>;
   return (
     <div
       ref={ref as React.RefObject<HTMLDivElement>}
