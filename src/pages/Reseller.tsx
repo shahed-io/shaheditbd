@@ -629,6 +629,132 @@ const AdminPanel = () => {
         </div>
       )}
 
+      {/* Generate CID Tab — Admin can generate CIDs directly */}
+      {tab === 'generate' && (
+        <div className="space-y-5 max-w-2xl">
+          {showAdminScreenshot && (
+            <ScreenshotModal
+              onClose={() => setShowAdminScreenshot(false)}
+              onSuccess={url => setAdminScreenshotUrl(url)}
+            />
+          )}
+
+          <div className={card + " p-6"}>
+            <h2 className="font-bold text-foreground flex items-center gap-2 mb-5">
+              <Zap size={16} className="text-primary" /> Admin — CID Generate করুন
+            </h2>
+
+            <form onSubmit={handleAdminGenerate} className="space-y-4">
+              {/* Target user selector */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5">
+                  কোন User এর জন্য? <span className="text-muted-foreground font-normal">(ঐচ্ছিক — খালি রাখলে Admin নিজে)</span>
+                </label>
+                <select value={adminTargetUserId} onChange={e => setAdminTargetUserId(e.target.value)}
+                  className={inp}>
+                  <option value="">— Admin নিজের account থেকে —</option>
+                  {users.filter(u => !u.is_admin).map(u => (
+                    <option key={u.id} value={u.id}>
+                      {u.username} (${(u.balance_cents / 100).toFixed(2)} balance)
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Installation ID */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Installation ID</label>
+                <input type="text" value={adminIid} onChange={e => setAdminIid(e.target.value)}
+                  placeholder="Installation ID এখানে লিখুন..." required className={inp + " font-mono"} />
+              </div>
+
+              {/* Optional screenshot */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Screenshot (ঐচ্ছিক)</label>
+                {adminScreenshotUrl ? (
+                  <div className="flex items-center gap-2 border border-green-200 bg-green-50 rounded-xl px-3 py-2">
+                    <Check size={14} className="text-green-600 shrink-0" />
+                    <span className="text-xs text-green-700 truncate flex-1">Screenshot আপলোড সফল</span>
+                    <button type="button" onClick={() => setAdminScreenshotUrl(null)} className="text-muted-foreground hover:text-destructive">
+                      <X size={13} />
+                    </button>
+                  </div>
+                ) : (
+                  <button type="button" onClick={() => setShowAdminScreenshot(true)}
+                    className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-border rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all">
+                    <Upload size={14} /> Screenshot আপলোড করুন
+                  </button>
+                )}
+              </div>
+
+              {adminGenError && (
+                <div className="flex items-start gap-2 bg-destructive/8 border border-destructive/25 rounded-xl px-3 py-2.5 text-destructive text-sm">
+                  <AlertCircle size={14} className="mt-0.5 shrink-0" />{adminGenError}
+                </div>
+              )}
+
+              <button type="submit" disabled={adminGenLoading || !adminIid.trim()}
+                className={`w-full ${btn} disabled:opacity-40 disabled:cursor-not-allowed`}>
+                {adminGenLoading
+                  ? <><Loader2 size={14} className="animate-spin" /> প্রসেস হচ্ছে...</>
+                  : <><Zap size={14} /> CID Generate করুন</>}
+              </button>
+            </form>
+
+            {/* CID Result */}
+            {adminCid && (
+              <div className="mt-5 bg-primary/5 border border-primary/20 rounded-xl p-5">
+                <p className="text-xs text-primary/70 font-semibold uppercase tracking-wider mb-2">Confirmation ID (CID)</p>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-3xl font-black text-primary font-mono tracking-widest">{adminCid}</p>
+                  <button onClick={() => copyAdminCid(adminCid)} className="p-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary transition-colors">
+                    {adminCopied ? <Check size={18} /> : <Copy size={18} />}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">Installation ID: <span className="font-mono">{adminIid}</span></p>
+              </div>
+            )}
+          </div>
+
+          {/* Quick CID history */}
+          <div className={card + " overflow-hidden"}>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
+              <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
+                <History size={13} className="text-primary" /> সাম্প্রতিক Generations
+              </h3>
+              <button onClick={loadHistory} className="text-muted-foreground hover:text-primary transition-colors"><RefreshCw size={13} /></button>
+            </div>
+            {loadingHist ? (
+              <div className="flex justify-center py-8"><Loader2 size={18} className="animate-spin text-muted-foreground" /></div>
+            ) : generations.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-6">এখনো কোনো generation নেই।</p>
+            ) : (
+              <div className="divide-y divide-border/40 max-h-72 overflow-y-auto">
+                {generations.slice(0, 10).map(g => (
+                  <div key={g.id} className="px-5 py-3 grid grid-cols-3 gap-x-3 text-xs hover:bg-primary/[0.02]">
+                    <div>
+                      <p className="text-muted-foreground mb-0.5">User</p>
+                      <p className="font-semibold text-foreground truncate">{(g as Generation & { reseller_users?: { username: string } }).reseller_users?.username || '—'}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground mb-0.5">CID</p>
+                      <div className="flex items-center gap-1">
+                        <p className="font-mono font-bold text-primary truncate">{g.cid}</p>
+                        <button onClick={() => copy(g.cid)} className="text-muted-foreground hover:text-primary shrink-0"><Copy size={9} /></button>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground mb-0.5">Date</p>
+                      <p className="text-muted-foreground">{new Date(g.created_at).toLocaleDateString('bn-BD')}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Users Tab */}
       {tab === 'users' && (
         <div className="space-y-5">
