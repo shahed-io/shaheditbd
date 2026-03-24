@@ -43,14 +43,11 @@ Deno.serve(async (req) => {
         return json({ ok: false, error: 'Invalid or expired session' }, 401);
       }
 
-      // Try POST with form data (same as getcid pattern)
-      const balForm = new FormData();
-      balForm.append('token', GRAHOK_API_TOKEN);
-
-      const res = await fetch(BALANCE_URL, {
-        method: 'POST',
+      // Try GET with query param (grahok.io balance API format)
+      const balUrl = `${BALANCE_URL}${BALANCE_URL.includes('?') ? '&' : '?'}token=${encodeURIComponent(GRAHOK_API_TOKEN)}`;
+      const res = await fetch(balUrl, {
+        method: 'GET',
         headers: { 'Accept': 'application/json', 'X-API-TOKEN': GRAHOK_API_TOKEN },
-        body: balForm,
       });
       const text = await res.text();
       let data: Record<string, unknown> = {};
