@@ -377,7 +377,7 @@ const CIDGenerator = ({ user, onBalanceUpdate }: { user: ResellerUser; onBalance
 
 // ─── Admin Panel ──────────────────────────────────────────────────────────────
 const AdminPanel = () => {
-  const [tab, setTab] = useState<'dashboard' | 'users' | 'history'>('dashboard');
+  const [tab, setTab] = useState<'dashboard' | 'generate' | 'users' | 'history'>('dashboard');
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [stats, setStats] = useState<{ total_users: number; total_cids: number; total_balance_cents: number } | null>(null);
@@ -385,6 +385,16 @@ const AdminPanel = () => {
   const [apiBalanceLoading, setApiBalanceLoading] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [loadingHist, setLoadingHist] = useState(false);
+
+  // Admin CID generation
+  const [adminIid, setAdminIid] = useState('');
+  const [adminTargetUserId, setAdminTargetUserId] = useState('');
+  const [adminCid, setAdminCid] = useState('');
+  const [adminGenLoading, setAdminGenLoading] = useState(false);
+  const [adminGenError, setAdminGenError] = useState('');
+  const [adminCopied, setAdminCopied] = useState(false);
+  const [showAdminScreenshot, setShowAdminScreenshot] = useState(false);
+  const [adminScreenshotUrl, setAdminScreenshotUrl] = useState<string | null>(null);
 
   // Create user
   const [newUsername, setNewUsername] = useState('');
