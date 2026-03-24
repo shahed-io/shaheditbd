@@ -7,13 +7,13 @@ const corsHeaders = {
 };
 
 const PRICE_CENTS = 100; // $1 per CID
-const API_URL     = 'https://grahok.io/api/getcid.php';
-const BALANCE_URL = 'https://grahok.io/api/balance.php';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   const GRAHOK_API_TOKEN = Deno.env.get('GRAHOK_API_TOKEN');
+  const API_URL     = Deno.env.get('GRAHOK_API_URL')     || 'https://grahok.io/api/getcid.php';
+  const BALANCE_URL = Deno.env.get('GRAHOK_BALANCE_URL') || 'https://grahok.io/api/balance.php';
   const json = (data: unknown, status = 200) =>
     new Response(JSON.stringify(data), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
