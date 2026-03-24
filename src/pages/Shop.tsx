@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
+import { itemListSchema, breadcrumbSchema } from '@/components/seo/schemas';
 import { Search, X, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 
@@ -202,12 +203,23 @@ const Shop = () => {
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
         title={activeCategory
-          ? `${activeCategory.name} | Buy ${activeCategory.name} Online – Best Price Bangladesh`
+          ? `${activeCategory.name} কিনুন বাংলাদেশ | Best Price – Shahed Store`
           : 'Buy Digital Software, License Keys & Subscriptions – Best Price in Bangladesh'}
         description={activeCategory
-          ? `Buy original ${activeCategory.name} at the best price in Bangladesh. Instant delivery, genuine license keys. Shahed Store – Bangladesh's most trusted digital software shop.`
-          : 'Shop Windows, Office, Adobe, Antivirus, VPN, Streaming subscriptions & all digital software at the lowest price in Bangladesh. 100% genuine. Instant delivery.'}
+          ? `Buy original ${activeCategory.name} at the best price in Bangladesh. ১০০% genuine license key. Instant delivery. Shahed Store – Bangladesh's most trusted digital software shop.`
+          : 'Shop Windows 11, Office 365, Adobe CC, Netflix, Spotify, Antivirus, VPN & all digital software at the lowest price in Bangladesh. ১০০% genuine. Instant delivery. bKash/Nagad payment.'}
         canonical={activeCatSlug ? `https://shahedstore.com.bd/shop?category=${activeCatSlug}` : 'https://shahedstore.com.bd/shop'}
+        keywords={activeCategory
+          ? `${activeCategory.name} price in bangladesh, ${activeCategory.name} কিনুন, buy ${activeCategory.name} bangladesh, ${activeCategory.name} bd, shahed store`
+          : 'digital software bangladesh, license key bangladesh, windows 11 key, office 365 bangladesh, adobe bangladesh, netflix subscription bd, shahed store'}
+        schema={[
+          ...(products.length > 0 ? [itemListSchema(products.map(p => ({ name: p.name, slug: p.slug, image: p.image_url, price: p.price })))] : []),
+          breadcrumbSchema([
+            { name: 'Home', url: '/' },
+            { name: 'Shop', url: '/shop' },
+            ...(activeCategory ? [{ name: activeCategory.name, url: `/shop?category=${activeCatSlug}` }] : []),
+          ]),
+        ]}
       />
       <Navbar />
 

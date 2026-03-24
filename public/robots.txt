@@ -19,5 +19,9 @@ Disallow: /admin/login
 Disallow: /dashboard
 Disallow: /checkout
 Disallow: /reset-password
+Disallow: /api/
+Disallow: /*?*sort=
+Disallow: /*?*filter=
 
+# Sitemaps
 Sitemap: https://shahedstore.com.bd/sitemap.xml
