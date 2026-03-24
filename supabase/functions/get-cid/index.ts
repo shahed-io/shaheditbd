@@ -1,102 +1,140 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
+const PRICE_CENTS = 100; // $1 per CID
+const API_URL     = 'https://grahok.io/api/getcid.php';
+const BALANCE_URL = 'https://grahok.io/api/balance.php';
+
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   const GRAHOK_API_TOKEN = Deno.env.get('GRAHOK_API_TOKEN');
-  if (!GRAHOK_API_TOKEN) {
-    return new Response(JSON.stringify({ error: 'API token not configured' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
+  const json = (data: unknown, status = 200) =>
+    new Response(JSON.stringify(data), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
-  const API_URL     = 'https://grahok.io/api/getcid.php';
-  const BALANCE_URL = 'https://grahok.io/api/balance.php';
+  if (!GRAHOK_API_TOKEN) return json({ error: 'API token not configured' }, 500);
+
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  );
 
   try {
-    const { action, installation_id } = await req.json();
+    const body = await req.json();
+    const { action, installation_id, token } = body;
 
-    // ── Balance: GET with token in query string ──────────────────────────────
+    // ── Balance check (grahok.io API balance) ────────────────────────────────
     if (action === 'balance') {
-      const url = `${BALANCE_URL}?token=${encodeURIComponent(GRAHOK_API_TOKEN)}`;
-      const res = await fetch(url, {
+      const res = await fetch(`${BALANCE_URL}?token=${encodeURIComponent(GRAHOK_API_TOKEN)}`, {
         headers: { 'Accept': 'application/json' },
       });
-
       const text = await res.text();
       let data: Record<string, unknown> = {};
-
       try { data = JSON.parse(text); } catch {
-        // Plain text fallback (e.g. "Balance: 2")
-        const match = text.match(/([0-9]+(?:\.[0-9]+)?)/);
-        data = { balance: match ? parseFloat(match[1]) : null, raw: text };
+        const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
+        data = { balance: m ? parseFloat(m[1]) : null, raw: text };
       }
-
-      return new Response(JSON.stringify(data), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return json(data);
     }
 
-    // ── Get CID: POST with X-API-TOKEN header ────────────────────────────────
+    // ── Get CID (requires reseller session token) ─────────────────────────────
     if (action === 'getcid') {
+      if (!token) return json({ error: 'Authentication required' }, 401);
       if (!installation_id || String(installation_id).trim().length < 4) {
-        return new Response(JSON.stringify({ error: 'Installation ID too short' }), {
-          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return json({ error: 'Installation ID too short' }, 400);
       }
 
-      // Normalize whitespace (same as PHP)
+      // Validate reseller session
+      const { data: sessions } = await supabase
+        .from('reseller_sessions')
+        .select('user_id, expires_at')
+        .eq('token', token)
+        .limit(1);
+
+      const session = sessions?.[0];
+      if (!session || new Date(session.expires_at) < new Date()) {
+        return json({ error: 'Invalid or expired session' }, 401);
+      }
+
+      // Get user & check balance
+      const { data: users } = await supabase
+        .from('reseller_users')
+        .select('id, username, balance_cents')
+        .eq('id', session.user_id)
+        .limit(1);
+
+      const user = users?.[0];
+      if (!user) return json({ error: 'User not found' }, 401);
+      if (user.balance_cents < PRICE_CENTS) {
+        return json({ error: `Insufficient balance. You need $${(PRICE_CENTS/100).toFixed(2)} but have $${(user.balance_cents/100).toFixed(2)}` }, 402);
+      }
+
+      // Normalize IID
       const iid = String(installation_id).trim().replace(/\s+/g, ' ');
 
+      // Call grahok.io API
       const formData = new FormData();
       formData.append('installation_id', iid);
 
       const res = await fetch(API_URL, {
         method: 'POST',
-        headers: {
-          'X-API-TOKEN': GRAHOK_API_TOKEN,
-          'Accept': 'application/json',
-        },
+        headers: { 'X-API-TOKEN': GRAHOK_API_TOKEN, 'Accept': 'application/json' },
         body: formData,
       });
 
       const text = await res.text();
       let data: Record<string, unknown> = {};
-
       try { data = JSON.parse(text); } catch {
-        return new Response(JSON.stringify({ error: 'Upstream did not return JSON', raw: text }), {
-          status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return json({ error: 'Upstream did not return JSON', raw: text }, 502);
       }
 
       if (!data['cid']) {
-        return new Response(JSON.stringify({
-          error: (data['error'] as string) || 'No CID in response',
-          raw: text,
-        }), {
-          status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return json({ error: (data['error'] as string) || 'No CID in response', raw: text }, 502);
       }
 
-      return new Response(JSON.stringify(data), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      const cidValue = String(data['cid']);
+
+      // Deduct balance atomically & log generation
+      const newBalance = user.balance_cents - PRICE_CENTS;
+
+      await Promise.all([
+        supabase.from('reseller_users').update({ balance_cents: newBalance, updated_at: new Date().toISOString() }).eq('id', user.id),
+        supabase.from('reseller_generations').insert({ user_id: user.id, installation_id: iid, cid: cidValue, price_cents: PRICE_CENTS }),
+      ]);
+
+      return json({ ...data, balance_after_cents: newBalance });
     }
 
-    return new Response(JSON.stringify({ error: 'Invalid action' }), {
-      status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    // ── User's own generation history ─────────────────────────────────────────
+    if (action === 'my_history') {
+      if (!token) return json({ error: 'Authentication required' }, 401);
 
+      const { data: sessions } = await supabase
+        .from('reseller_sessions')
+        .select('user_id, expires_at')
+        .eq('token', token)
+        .limit(1);
+
+      const session = sessions?.[0];
+      if (!session || new Date(session.expires_at) < new Date()) return json({ error: 'Invalid session' }, 401);
+
+      const { data: generations } = await supabase
+        .from('reseller_generations')
+        .select('id, installation_id, cid, price_cents, created_at')
+        .eq('user_id', session.user_id)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      return json({ generations: generations ?? [] });
+    }
+
+    return json({ error: 'Invalid action' }, 400);
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Server error', detail: String(err) }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return json({ error: 'Server error', detail: String(err) }, 500);
   }
 });
