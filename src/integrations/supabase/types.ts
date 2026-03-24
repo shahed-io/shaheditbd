@@ -1477,6 +1477,103 @@ export type Database = {
         }
         Relationships: []
       }
+      reseller_generations: {
+        Row: {
+          cid: string
+          created_at: string
+          id: string
+          installation_id: string | null
+          price_cents: number
+          user_id: string
+        }
+        Insert: {
+          cid: string
+          created_at?: string
+          id?: string
+          installation_id?: string | null
+          price_cents?: number
+          user_id: string
+        }
+        Update: {
+          cid?: string
+          created_at?: string
+          id?: string
+          installation_id?: string | null
+          price_cents?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reseller_generations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "reseller_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reseller_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reseller_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "reseller_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reseller_users: {
+        Row: {
+          balance_cents: number
+          created_at: string
+          id: string
+          is_admin: boolean
+          password_hash: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          balance_cents?: number
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          password_hash: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          balance_cents?: number
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          password_hash?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           category: string | null
