@@ -59,8 +59,8 @@ const Reseller = () => {
 
       if (error) throw error;
 
-      // Handle various response formats from grahok.io
-      const cid = data?.confirmation_id || data?.cid || data?.result || data?.data;
+      // grahok.io returns { cid: "..." } field
+      const cid = data?.cid || data?.confirmation_id || data?.result;
 
       if (cid) {
         setConfirmationId(String(cid));
