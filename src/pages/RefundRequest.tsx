@@ -659,6 +659,59 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                 </div>
               </div>
 
+              {/* Refund Account Info — REQUIRED */}
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-widest mb-1" style={{ color: A }}>রিফান্ড প্রাপ্তির তথ্য *</p>
+                <p className="text-[12px] mb-3" style={{ color: 'hsl(226,25%,52%)' }}>আপনি কোন নম্বরে রিফান্ডের টাকা পেতে চান তা উল্লেখ করুন</p>
+                <div className="rounded-2xl p-5 space-y-4"
+                  style={{ background: 'hsla(258,78%,55%,0.06)', border: '1.5px solid hsla(258,78%,55%,0.25)' }}>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>
+                        পেমেন্ট মাধ্যম *
+                        <span className="ml-1 text-red-500">●</span>
+                      </label>
+                      <select
+                        required
+                        value={form.refund_account_type}
+                        onChange={e => set('refund_account_type', e.target.value)}
+                        className={inputCls}
+                        style={{ borderColor: !form.refund_account_type ? 'hsla(258,78%,55%,0.45)' : undefined }}
+                      >
+                        <option value="">-- নির্বাচন করুন --</option>
+                        {['bKash', 'Nagad', 'Rocket', 'Upay', 'Dutch Bangla Bank', 'Brac Bank', 'Dutch-Bangla Nexus', 'অন্যান্য ব্যাংক'].map(m => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>
+                        নম্বর / অ্যাকাউন্ট *
+                        <span className="ml-1 text-red-500">●</span>
+                      </label>
+                      <input
+                        required
+                        value={form.refund_account_number}
+                        onChange={e => set('refund_account_number', e.target.value)}
+                        placeholder={form.refund_account_type?.includes('Bank') || form.refund_account_type === 'অন্যান্য ব্যাংক' ? 'ব্যাংক অ্যাকাউন্ট নম্বর' : '01XXXXXXXXX'}
+                        className={inputCls}
+                        maxLength={50}
+                        style={{ borderColor: !form.refund_account_number ? 'hsla(258,78%,55%,0.45)' : undefined }}
+                      />
+                    </div>
+                  </div>
+                  {form.refund_account_type && form.refund_account_number && (
+                    <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl"
+                      style={{ background: 'hsla(142,72%,50%,0.10)', border: '1px solid hsla(142,72%,50%,0.30)' }}>
+                      <span className="text-lg">✅</span>
+                      <p className="text-[13px] font-semibold" style={{ color: 'hsl(142,50%,28%)' }}>
+                        রিফান্ড পাঠানো হবে: <strong>{form.refund_account_type}</strong> → <strong>{form.refund_account_number}</strong>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Additional Info */}
               <div>
                 <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: A }}>অতিরিক্ত তথ্য</p>
