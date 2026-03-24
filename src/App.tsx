@@ -88,6 +88,7 @@ const AdminProductReviews        = lazy(() => import("./pages/admin/AdminProduct
 const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFacebookPixel"));
 const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
+const GetCID                     = lazy(() => import("./pages/GetCID"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
