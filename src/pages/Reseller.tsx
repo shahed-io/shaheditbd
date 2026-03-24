@@ -615,7 +615,7 @@ const Reseller = () => {
           <div className="flex items-center gap-3">
             {/* API Balance (admin only) */}
             {currentUser?.is_admin && apiBalance !== null && (
-              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/20">
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
                 <DollarSign size={11} />
                 API: ${apiBalance.toFixed(2)}
                 <button onClick={fetchApiBalance} className={balanceLoading ? 'animate-spin' : ''}><RefreshCw size={10} /></button>
@@ -624,7 +624,7 @@ const Reseller = () => {
 
             {/* User balance */}
             {!currentUser?.is_admin && (
-              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${(currentUser?.balance_cents ?? 0) > 0 ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-destructive/10 text-destructive border-destructive/20'}`}>
+              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${(currentUser?.balance_cents ?? 0) > 0 ? 'bg-primary/10 text-primary border-primary/20' : 'bg-destructive/10 text-destructive border-destructive/20'}`}>
                 <Wallet size={11} />
                 ${((currentUser?.balance_cents ?? 0) / 100).toFixed(2)}
               </div>
