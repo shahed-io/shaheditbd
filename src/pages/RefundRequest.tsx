@@ -170,8 +170,8 @@ export default function RefundRequest() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.customer_name || !form.customer_email || !form.order_number || !form.reason) {
-      toast.error('অনুগ্রহ করে সকল বাধ্যতামূলক ফিল্ড পূরণ করুন');
+    if (!form.customer_name || !form.customer_email || !form.order_number || !form.reason || !form.refund_account_type || !form.refund_account_number) {
+      toast.error('অনুগ্রহ করে সকল বাধ্যতামূলক ফিল্ড পূরণ করুন (রিফান্ড নম্বর সহ)');
       return;
     }
     setSubmitting(true);
