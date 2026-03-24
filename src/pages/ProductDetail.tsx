@@ -108,6 +108,8 @@ const ProductDetail = () => {
   // Duration plans from __duration_plans attribute
   const [durationPlans, setDurationPlans] = useState<DurationPlan[]>([]);
   const [selectedPlanIdx, setSelectedPlanIdx] = useState(0);
+  // Review stats for schema
+  const [reviewStats, setReviewStats] = useState<{ avg: number; count: number } | null>(null);
 
   // Section reveals
   const descReveal   = useReveal(0.05);
