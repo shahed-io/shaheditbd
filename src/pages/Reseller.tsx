@@ -450,6 +450,33 @@ const AdminPanel = () => {
 
   useEffect(() => { loadStats(); loadUsers(); loadApiBalance(); }, [loadStats, loadUsers, loadApiBalance]);
   useEffect(() => { if (tab === 'history') loadHistory(); }, [tab, loadHistory]);
+  useEffect(() => { if (tab === 'generate') loadUsers(); }, [tab, loadUsers]);
+
+  // Admin generate CID
+  const handleAdminGenerate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdminGenError(''); setAdminCid(''); setAdminGenLoading(true);
+    try {
+      // Admin uses their own token to call get-cid on behalf of a user
+      const res = await callCID({ action: 'getcid', installation_id: adminIid, target_user_id: adminTargetUserId || undefined });
+      if (res?.cid) {
+        setAdminCid(res.cid);
+        toast.success('CID সফলভাবে তৈরি হয়েছে!');
+        loadStats(); loadUsers();
+        if (tab === 'history') loadHistory();
+      } else {
+        setAdminGenError(res?.error || 'CID তৈরি ব্যর্থ হয়েছে');
+      }
+    } catch (err: unknown) { setAdminGenError((err as Error).message); }
+    finally { setAdminGenLoading(false); }
+  };
+
+  const copyAdminCid = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setAdminCopied(true);
+    toast.success('CID কপি হয়েছে!');
+    setTimeout(() => setAdminCopied(false), 2000);
+  };
 
   const createUser = async (e: React.FormEvent) => {
     e.preventDefault(); setCreating(true);
