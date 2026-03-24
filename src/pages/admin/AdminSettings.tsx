@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Save, Globe, DollarSign, MessageCircle, TestTube } from 'lucide-react';
+import { Save, Globe, DollarSign, MessageCircle, TestTube, Send, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSettings = () => {
@@ -71,6 +71,23 @@ const AdminSettings = () => {
     },
   ];
 
+  // Test Telegram notification
+  const testTelegram = async () => {
+    const chatId = settings['telegram_chat_id'];
+    if (!chatId) { toast.error('আগে Telegram Chat ID সেভ করুন'); return; }
+    setTestingWA(true);
+    try {
+      const { error } = await supabase.functions.invoke('notify-new-order', {
+        body: { orderId: 'test', _test: true, _chatId: chatId },
+      });
+      if (error) toast.error('টেস্ট ব্যর্থ: ' + error.message);
+      else toast.success('✅ Telegram টেস্ট মেসেজ পাঠানো হয়েছে!');
+    } catch(e: any) {
+      toast.error('টেস্ট ব্যর্থ: ' + String(e));
+    }
+    setTestingWA(false);
+  };
+
   const inputCls = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors";
 
   return (
@@ -117,6 +134,81 @@ const AdminSettings = () => {
               </div>
             </div>
           ))}
+
+          {/* Telegram Notification Settings */}
+          <div className="glass-card rounded-2xl p-6 border border-[#229ED9]/20">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 rounded-xl bg-[#229ED9]/20 flex items-center justify-center">
+                <Send size={18} className="text-[#229ED9]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">📱 Telegram অর্ডার নোটিফিকেশন</h3>
+                <p className="text-xs text-muted-foreground">নতুন অর্ডার আসলে আপনার Telegram-এ তাৎক্ষণিক নোটিফিকেশন আসবে</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Telegram Chat ID</label>
+                <input
+                  value={settings['telegram_chat_id'] || ''}
+                  onChange={e => setSettings({ ...settings, telegram_chat_id: e.target.value })}
+                  placeholder="যেমন: 123456789"
+                  className={inputCls}
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Chat ID পেতে Telegram-এ <strong>@userinfobot</strong> কে মেসেজ করুন
+                </p>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">টেস্ট করুন</label>
+                <button
+                  onClick={testTelegram}
+                  disabled={testingWA || !settings['telegram_chat_id']}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border border-[#229ED9]/40 text-[#229ED9] hover:bg-[#229ED9]/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <TestTube size={14} /> টেস্ট মেসেজ পাঠান
+                </button>
+                <p className="text-[11px] text-muted-foreground mt-1">প্রথমে Save করুন, তারপর টেস্ট করুন</p>
+              </div>
+            </div>
+
+            <div className="mt-4 bg-[#229ED9]/5 border border-[#229ED9]/20 rounded-xl p-4">
+              <p className="text-xs text-foreground font-semibold mb-2">📲 কীভাবে Chat ID পাবেন:</p>
+              <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
+                <li>Telegram খুলুন এবং <strong className="text-[#229ED9]">@userinfobot</strong> সার্চ করুন</li>
+                <li>Bot-কে <code className="bg-muted px-1 rounded">/start</code> মেসেজ পাঠান</li>
+                <li>Bot আপনার Chat ID দেখাবে — সেটি এখানে পেস্ট করুন</li>
+                <li>Save করুন এবং টেস্ট বাটনে ক্লিক করুন</li>
+              </ol>
+            </div>
+          </div>
+
+          {/* Admin Email Notification Settings */}
+          <div className="glass-card rounded-2xl p-6 border border-violet-500/20">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 rounded-xl bg-violet-500/20 flex items-center justify-center">
+                <Mail size={18} className="text-violet-500" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">📧 Admin Email নোটিফিকেশন</h3>
+                <p className="text-xs text-muted-foreground">নতুন অর্ডার আসলে এই ইমেইলে নোটিফিকেশন আসবে</p>
+              </div>
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1.5 block">Admin Notification Email</label>
+              <input
+                value={settings['admin_notification_email'] || ''}
+                onChange={e => setSettings({ ...settings, admin_notification_email: e.target.value })}
+                placeholder="admin@example.com"
+                className={inputCls}
+                type="email"
+              />
+              <p className="text-[11px] text-muted-foreground mt-1">
+                নতুন অর্ডার আসলে এই ইমেইলে অর্ডারের সম্পূর্ণ বিস্তারিত পাঠানো হবে
+              </p>
+            </div>
+          </div>
 
           {/* WhatsApp Notification Settings */}
           <div className="glass-card rounded-2xl p-6 border border-[#25D366]/20">

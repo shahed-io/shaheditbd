@@ -264,6 +264,13 @@ const Checkout = () => {
         if (error) console.error('[Checkout] admin_notify email error:', error);
       });
 
+      // Notify admin via Telegram + WhatsApp (non-blocking)
+      supabase.functions.invoke('notify-new-order', {
+        body: { orderId: order.id },
+      }).then(({ error }) => {
+        if (error) console.error('[Checkout] notify-new-order error:', error);
+      });
+
       // In-app notification: customer
       if (user?.id) {
         supabase.from('notifications').insert({
