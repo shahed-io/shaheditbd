@@ -199,6 +199,8 @@ export default function RefundRequest() {
 ${calc?.proportionalRefund != null ? `📊 অব্যবহৃত অংশের রিফান্ড (সমানুপাতিক): ৳${calc.proportionalRefund}` : ''}
 ${calc?.refundAfter10 != null ? `✅ ১০% কেটে চূড়ান্ত রিফান্ড: ৳${calc.refundAfter10}` : ''}
 ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে ১০% কেটে ৳${deductedAmount} রিফান্ড হবে।` : ''}
+💰 রিফান্ড পাঠানোর মাধ্যম: ${form.refund_account_type || 'উল্লেখ নেই'}
+📱 রিফান্ড নম্বর: ${form.refund_account_number || 'উল্লেখ নেই'}
 📌 অতিরিক্ত তথ্য: ${form.additional_info || 'উল্লেখ নেই'}${screenshotLines}
       `.trim();
 
