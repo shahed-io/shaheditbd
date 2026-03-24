@@ -232,6 +232,8 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
           daysRemaining: daysRemainingDisplay || '',
           paymentAmount: form.payment_amount || '',
           paymentMethod: form.payment_method || '',
+          refundAccountType: form.refund_account_type || '',
+          refundAccountNumber: form.refund_account_number || '',
           additionalInfo: form.additional_info || '',
           screenshotUrls,
           isChangeOfMind,
