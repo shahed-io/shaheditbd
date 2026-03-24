@@ -2,18 +2,19 @@ import { useEffect, useState, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/store/Navbar';
 import HeroBanner from '@/components/store/HeroBanner';
-import TopProducts from '@/components/store/TopProducts';
-import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
 import { organizationSchema, websiteSchema } from '@/components/seo/schemas';
 import AuthModal from '@/components/store/AuthModal';
 
 // Below-fold sections — lazy loaded after hero renders
+const TopProducts  = lazy(() => import('@/components/store/TopProducts'));
 const FlashSale    = lazy(() => import('@/components/store/FlashSale'));
 const WhyChooseUs  = lazy(() => import('@/components/store/WhyChooseUs'));
 const Testimonials = lazy(() => import('@/components/store/Testimonials'));
 const Footer       = lazy(() => import('@/components/store/Footer'));
 const PopupBanner  = lazy(() => import('@/components/store/PopupBanner'));
+const TickerBanner = lazy(() => import('@/components/store/Extras').then(m => ({ default: m.TickerBanner })));
+const FloatingButtons = lazy(() => import('@/components/store/Extras').then(m => ({ default: m.FloatingButtons })));
 
 // Lightweight skeleton placeholders
 const SectionSkeleton = () => (
@@ -26,6 +27,8 @@ const SectionSkeleton = () => (
     </div>
   </div>
 );
+
+const TickerSkeleton = () => <div className="h-10 bg-muted/20 animate-pulse" />;
 
 const Index = () => {
   const [searchParams] = useSearchParams();
@@ -52,8 +55,16 @@ const Index = () => {
       {/* Critical above-fold content — eager */}
       <Navbar />
       <HeroBanner />
-      <TickerBanner />
-      <TopProducts />
+
+      {/* Ticker — lazy but very small, loads immediately after hero paint */}
+      <Suspense fallback={<TickerSkeleton />}>
+        <TickerBanner />
+      </Suspense>
+
+      {/* Top Products — lazy loaded */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <TopProducts />
+      </Suspense>
 
       {/* Below-fold — lazy loaded */}
       <Suspense fallback={<SectionSkeleton />}>
@@ -69,7 +80,9 @@ const Index = () => {
         <Footer />
       </Suspense>
 
-      <FloatingButtons />
+      <Suspense fallback={null}>
+        <FloatingButtons />
+      </Suspense>
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
       <Suspense fallback={null}>
         <PopupBanner />
