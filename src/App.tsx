@@ -202,6 +202,7 @@ const AppContent = () => {
           <Route path="/refund-request" element={<RefundRequest />} />
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/install" element={<InstallApp />} />
+          <Route path="/getcid" element={<GetCID />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
