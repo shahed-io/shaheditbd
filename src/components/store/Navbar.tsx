@@ -321,9 +321,9 @@ const Navbar = () => {
                 <Search size={18} />
               </button>
 
-              {/* Cart Button — icon-only on mobile, full on sm+ */}
+              {/* Cart Button — hidden on mobile, visible on sm+ */}
               <button onClick={() => setCartOpen(true)}
-                className="relative flex items-center gap-2 p-2.5 sm:px-4 sm:py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
+                className="hidden sm:relative sm:flex items-center gap-2 sm:px-4 sm:py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
                   boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
@@ -331,7 +331,7 @@ const Navbar = () => {
                 <ShoppingCart size={18} />
                 <span className="hidden sm:inline">Cart</span>
                 {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full text-[9px] font-bold flex items-center justify-center border-2"
+                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full text-[9px] font-bold flex items-center justify-center border-2"
                     style={{ background: 'hsl(330,85%,55%)', borderColor: 'hsl(0,0%,100%)', boxShadow: '0 0 8px hsla(330,85%,55%,0.5)' }}>
                     {cartCount}
                   </span>
