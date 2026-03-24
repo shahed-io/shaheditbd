@@ -71,6 +71,23 @@ const AdminSettings = () => {
     },
   ];
 
+  // Test Telegram notification
+  const testTelegram = async () => {
+    const chatId = settings['telegram_chat_id'];
+    if (!chatId) { toast.error('আগে Telegram Chat ID সেভ করুন'); return; }
+    setTestingWA(true);
+    try {
+      const { error } = await supabase.functions.invoke('notify-new-order', {
+        body: { orderId: 'test', _test: true, _chatId: chatId },
+      });
+      if (error) toast.error('টেস্ট ব্যর্থ: ' + error.message);
+      else toast.success('✅ Telegram টেস্ট মেসেজ পাঠানো হয়েছে!');
+    } catch(e: any) {
+      toast.error('টেস্ট ব্যর্থ: ' + String(e));
+    }
+    setTestingWA(false);
+  };
+
   const inputCls = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors";
 
   return (
