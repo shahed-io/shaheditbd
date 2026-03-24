@@ -28,6 +28,8 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
+      devOptions: { enabled: false },
+      injectRegister: "auto",
       includeAssets: ["favicon.png", "robots.txt"],
       workbox: {
         // Never cache OAuth redirect
