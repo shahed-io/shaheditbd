@@ -98,13 +98,14 @@ Deno.serve(async (req) => {
       // Normalize IID
       const iid = String(installation_id).trim().replace(/\s+/g, ' ');
 
-      // Call grahok.io API
+      // Call grahok.io API — token sent as form field (same as balance.php uses query param)
       const formData = new FormData();
+      formData.append('token', GRAHOK_API_TOKEN);
       formData.append('installation_id', iid);
 
       const res = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'X-API-TOKEN': GRAHOK_API_TOKEN, 'Accept': 'application/json' },
+        headers: { 'Accept': 'application/json' },
         body: formData,
       });
 
