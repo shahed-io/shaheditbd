@@ -449,7 +449,7 @@ const AdminPanel = () => {
   }, []);
 
   useEffect(() => { loadStats(); loadUsers(); loadApiBalance(); }, [loadStats, loadUsers, loadApiBalance]);
-  useEffect(() => { if (tab === 'history') loadHistory(); }, [tab, loadHistory]);
+  useEffect(() => { if (tab === 'history' || tab === 'generate') loadHistory(); }, [tab, loadHistory]);
   useEffect(() => { if (tab === 'generate') loadUsers(); }, [tab, loadUsers]);
 
   // Admin generate CID
