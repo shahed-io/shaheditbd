@@ -387,6 +387,7 @@ const ProductDetail = () => {
       sku: (product as any).sku || product.slug,
       originalPrice: displayOriginalPrice,
       inStock: true,
+      ...(reviewStats ? { rating: reviewStats.avg, reviewCount: reviewStats.count } : {}),
     }),
     breadcrumbSchema([
       { name: 'Home', url: '/' },
