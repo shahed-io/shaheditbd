@@ -33,6 +33,11 @@ export default defineConfig(({ mode }) => ({
         // Never cache OAuth redirect
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        // Force clients to claim immediately (fixes stale cache on desktop)
+        clientsClaim: true,
+        skipWaiting: true,
+        // Don't cache the HTML shell — always fetch fresh
+        navigateFallback: null,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
