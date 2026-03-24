@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
+import { itemListSchema, breadcrumbSchema } from '@/components/seo/schemas';
 import { Search, X, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 
