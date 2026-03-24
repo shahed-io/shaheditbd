@@ -77,23 +77,42 @@ Deno.serve(async (req) => {
         return json({ error: 'Invalid or expired session' }, 401);
       }
 
-      // Get user & check balance
-      const { data: users } = await supabase
+      // Determine which user to bill: admin can pass target_user_id, otherwise bill self
+      const { target_user_id } = body;
+      const { data: callerRows } = await supabase
         .from('reseller_users')
-        .select('id, username, balance_cents')
+        .select('id, is_admin, balance_cents')
         .eq('id', session.user_id)
         .limit(1);
+      const caller = callerRows?.[0];
+      if (!caller) return json({ error: 'User not found' }, 401);
 
-      const user = users?.[0];
-      if (!user) return json({ error: 'User not found' }, 401);
-      if (user.balance_cents < PRICE_CENTS) {
-        return json({ error: `Insufficient balance. You need $${(PRICE_CENTS/100).toFixed(2)} but have $${(user.balance_cents/100).toFixed(2)}` }, 402);
+      let billedUserId = session.user_id;
+      let billedUserBalance = caller.balance_cents;
+
+      if (target_user_id && caller.is_admin) {
+        // Admin can generate on behalf of any user
+        const { data: targetRows } = await supabase
+          .from('reseller_users')
+          .select('id, balance_cents')
+          .eq('id', target_user_id)
+          .limit(1);
+        const targetUser = targetRows?.[0];
+        if (!targetUser) return json({ error: 'Target user not found' }, 404);
+        billedUserId = targetUser.id;
+        billedUserBalance = targetUser.balance_cents;
+      } else if (!caller.is_admin && caller.balance_cents < PRICE_CENTS) {
+        return json({ error: `Insufficient balance. You need $${(PRICE_CENTS/100).toFixed(2)} but have $${(caller.balance_cents/100).toFixed(2)}` }, 402);
+      }
+
+      if (!caller.is_admin && billedUserBalance < PRICE_CENTS) {
+        return json({ error: `Insufficient balance. Need $${(PRICE_CENTS/100).toFixed(2)}, have $${(billedUserBalance/100).toFixed(2)}` }, 402);
       }
 
       // Normalize IID
       const iid = String(installation_id).trim().replace(/\s+/g, ' ');
 
-      // Call grahok.io API — token sent as query param, form field, and header for maximum compatibility
+      // Call grahok.io API
       const formData = new FormData();
       formData.append('token', GRAHOK_API_TOKEN);
       formData.append('installation_id', iid);
@@ -118,15 +137,19 @@ Deno.serve(async (req) => {
 
       const cidValue = String(data['cid']);
 
-      // Deduct balance atomically & log generation
-      const newBalance = user.balance_cents - PRICE_CENTS;
+      // Deduct balance & log generation (admin billing target user; if admin generates for self and is_admin, skip deduction)
+      const shouldDeductBalance = !caller.is_admin || (caller.is_admin && target_user_id);
+      const newBalance = shouldDeductBalance ? billedUserBalance - PRICE_CENTS : billedUserBalance;
 
-      await Promise.all([
-        supabase.from('reseller_users').update({ balance_cents: newBalance, updated_at: new Date().toISOString() }).eq('id', user.id),
-        supabase.from('reseller_generations').insert({ user_id: user.id, installation_id: iid, cid: cidValue, price_cents: PRICE_CENTS }),
-      ]);
+      const ops = [
+        supabase.from('reseller_generations').insert({ user_id: billedUserId, installation_id: iid, cid: cidValue, price_cents: shouldDeductBalance ? PRICE_CENTS : 0 }),
+      ];
+      if (shouldDeductBalance) {
+        ops.push(supabase.from('reseller_users').update({ balance_cents: newBalance, updated_at: new Date().toISOString() }).eq('id', billedUserId) as never);
+      }
+      await Promise.all(ops);
 
-      return json({ ...data, balance_after_cents: newBalance });
+      return json({ ...data, balance_after_cents: newBalance, billed_user_id: billedUserId });
     }
 
     // ── User's own generation history ─────────────────────────────────────────
