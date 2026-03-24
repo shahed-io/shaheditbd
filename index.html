@@ -55,8 +55,25 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://dpvdavjwqyviredzoorj.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://dpvdavjwqyviredzoorj.supabase.co" />
-    <link rel="preconnect" href="https://connect.facebook.net" />
     <link rel="dns-prefetch" href="https://connect.facebook.net" />
+
+    <!-- Critical fonts — load early to reduce FCP/LCP -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+
+    <!-- Critical above-fold CSS to prevent layout shift -->
+    <style>
+      *,::before,::after{box-sizing:border-box}
+      html{font-size:16px;-webkit-text-size-adjust:100%}
+      body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;background:#0b0d17;color:#e2e8f0;-webkit-font-smoothing:antialiased}
+      #root{width:100%;min-height:100vh}
+      /* Reserve hero height to prevent CLS */
+      .hero-reserve{min-height:520px}
+      @media(min-width:1024px){.hero-reserve{min-height:640px}}
+      /* Font-display swap fallback */
+      .font-sora{font-family:'Sora',system-ui,sans-serif}
+    </style>
 
     <!-- Structured Data: Organization + WebSite (Google Rich Results) -->
     <script type="application/ld+json">
