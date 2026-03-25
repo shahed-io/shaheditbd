@@ -69,10 +69,8 @@
 
     <!-- 3. Critical inline CSS: prevent FOUC before React hydrates -->
     <style>
-      /* System font stack while Sora/Inter loads — avoids CLS */
+      /* System font stack while Sora/Inter loads */
       html { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-      /* Prevent layout shift from scrollbar appearing */
-      html { overflow-y: scroll; }
       /* Neutral background — avoids black screen if JS fails */
       body { background: #ffffff; margin: 0; }
       /* Minimal loading spinner while JS parses */

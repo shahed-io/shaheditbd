@@ -116,8 +116,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-    /* Prevent overscroll bounce on iOS */
-    overscroll-behavior-y: none;
   }
 
   h1, h2, h3, h4 {
