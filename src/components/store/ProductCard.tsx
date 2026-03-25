@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 interface ProductCardProps {
   product: Product;
   delay?: number;
+  priority?: boolean; // First few cards load eagerly
 }
 
 const WA = '8801840099853';
@@ -16,7 +17,7 @@ const WA = '8801840099853';
 // Ripple particle type
 type Particle = { id: number; x: number; y: number };
 
-const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
+const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps) => {
   const [visible,     setVisible]     = useState(false);
   const [showModal,   setShowModal]   = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -303,9 +304,8 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           <img
             src={product.image}
             alt={product.name}
-            loading="eager"
+            loading={priority ? 'eager' : 'lazy'}
             decoding="async"
-            fetchPriority="high"
             onLoad={() => setImageLoaded(true)}
             onError={e => {
               (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/f5f3ff/7c3aed?text=Product';

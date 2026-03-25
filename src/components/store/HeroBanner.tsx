@@ -110,17 +110,6 @@ const HeroBanner = () => {
   return (
     <section className="relative overflow-hidden" style={{ background: bgStyle }}>
 
-      {/* LCP element: gives browser a fast-loading image to track for Core Web Vitals */}
-      <img
-        src="/favicon.png"
-        alt="Shahed Store"
-        width={1}
-        height={1}
-        fetchPriority="high"
-        decoding="sync"
-        style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none', top: 0, left: 0 }}
-      />
-
 
       <div className="absolute inset-0 pointer-events-none">
         {/* Large gradient sphere top-right */}
@@ -179,21 +168,20 @@ const HeroBanner = () => {
               </span>
             </div>
 
-            {/* Headline */}
+            {/* Headline — single h1 for SEO, span for accent styling */}
             <div>
               <h1 className="font-sora font-black leading-[1.0] tracking-tight"
                 style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)', color: 'hsl(226,35%,12%)' }}>
-                {slide.title}
-              </h1>
-              <h1 className="font-sora font-black leading-[1.0] tracking-tight"
-                style={{
-                  fontSize: 'clamp(3rem, 8vw, 5.5rem)',
-                  background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}>
-                {slide.titleAccent}
+                {slide.title}{' '}
+                <span
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}>
+                  {slide.titleAccent}
+                </span>
               </h1>
               <p className="text-base lg:text-lg font-semibold mt-3"
                 style={{ color: 'hsl(226,22%,44%)' }}>
@@ -356,7 +344,7 @@ const HeroBanner = () => {
                         boxShadow: '0 4px 16px hsla(258,78%,55%,0.10), inset 0 1px 0 rgba(255,255,255,1)',
                       }}>
                       {slide.logoImg
-                        ? <img src={slide.logoImg} alt="product" className="w-9 h-9 object-contain" />
+                        ? <img src={slide.logoImg} alt={slide.title} width={36} height={36} className="w-9 h-9 object-contain" loading="eager" />
                         : <span className="text-3xl leading-none">{slide.emoji}</span>}
                     </div>
                     <div className="flex flex-col items-end gap-1">
