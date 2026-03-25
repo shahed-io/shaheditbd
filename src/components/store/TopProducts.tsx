@@ -166,7 +166,7 @@ const TopProducts = () => {
                   </div>
                   {/* Desktop grid */}
                   <div className="hidden md:grid grid-cols-3 lg:grid-cols-4 gap-4">
-                    {shown.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.05} />)}
+                    {shown.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.05} priority={catIdx === 0 && i < 4} />)}
                   </div>
                   {hasMore && (
                     <div className="hidden md:flex justify-center mt-6">
