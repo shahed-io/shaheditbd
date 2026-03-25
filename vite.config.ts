@@ -27,15 +27,27 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       includeAssets: ["favicon.png", "apple-touch-icon.png", "splash-*.png", "robots.txt"],
       workbox: {
-        clientsClaim: true,
-        skipWaiting: true,
-        // Never cache OAuth redirect
+        clientsClaim: false,
+        skipWaiting: false,
+        // Never cache OAuth redirect or HTML navigation (always fresh)
         navigateFallbackDenylist: [/^\/~oauth/],
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        // Only cache JS/CSS/images — never HTML (so SW stale app shell can't block render)
+        globPatterns: ["**/*.{js,css,ico,png,svg,woff2}"],
+        navigationPreload: true,
         runtimeCaching: [
+          {
+            // Network-first for all navigation (HTML) — SW can never serve a stale shell
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "html-cache",
+              networkTimeoutSeconds: 10,
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 },
+            },
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: "CacheFirst",
