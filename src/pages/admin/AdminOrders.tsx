@@ -116,10 +116,6 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
                 {logoBase64 && (
                   <img src={logoBase64} alt="Shahed Store" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
                 )}
-                <div>
-                  <div style={{ fontSize: '22px', fontWeight: 900, letterSpacing: '2px', color: brandColor, fontFamily: "'Orbitron', sans-serif" }}>SHAHED STORE</div>
-                  <div style={{ fontSize: '11px', color: '#888', marginTop: '2px', letterSpacing: '0.5px' }}>Your Trusted Digital Store</div>
-                </div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '28px', fontWeight: 800, color: brandColor, letterSpacing: '2px' }}>INVOICE</div>
