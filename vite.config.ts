@@ -10,11 +10,8 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    hmr: {
-      overlay: false,
-    },
+    hmr: { overlay: false },
     proxy: {
-      // Proxy /sitemap.xml to the Supabase edge function in dev
       '/sitemap.xml': {
         target: `${SUPABASE_URL}/functions/v1/sitemap`,
         changeOrigin: true,
@@ -32,34 +29,51 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Code splitting for faster initial load
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Vendor chunk — React + Router loaded separately
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          // UI library chunk
-          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
-          // Supabase chunk (large library, separate chunk)
-          'vendor-supabase': ['@supabase/supabase-js'],
+        // Fine-grained code splitting: each chunk loads only when needed
+        manualChunks(id) {
+          // React core — loaded first, cached aggressively
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router-dom/') || id.includes('node_modules/scheduler/')) {
+            return 'vendor-react';
+          }
+          // Supabase SDK — large, separate chunk
+          if (id.includes('node_modules/@supabase/')) {
+            return 'vendor-supabase';
+          }
+          // Recharts — only used on admin pages, defer
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-') || id.includes('node_modules/victory-')) {
+            return 'vendor-charts';
+          }
+          // Radix UI — split from main bundle
+          if (id.includes('node_modules/@radix-ui/')) {
+            return 'vendor-ui';
+          }
+          // TanStack Query
+          if (id.includes('node_modules/@tanstack/')) {
+            return 'vendor-query';
+          }
+          // Admin-only pages — loaded only when /ceo/* is visited
+          if (id.includes('src/pages/admin/') || id.includes('src/components/admin/')) {
+            return 'admin';
+          }
         },
       },
     },
-    // Smaller chunks = faster initial paint
-    chunkSizeWarningLimit: 600,
-    // Minification
+    // Warn if any chunk exceeds 500kB
+    chunkSizeWarningLimit: 500,
+    // esbuild is faster and produces smaller output than terser
     minify: 'esbuild',
     target: 'es2020',
-    // Source maps off in prod
     sourcemap: false,
-    // CSS optimization
     cssMinify: true,
-    // Assets inline limit (small assets inlined as base64)
+    // Inline tiny assets (< 4kB) as base64 to save HTTP round trips
     assetsInlineLimit: 4096,
+    // Ensure CSS is extracted to a separate file so it can be cached
+    cssCodeSplit: true,
   },
-  // Optimize deps pre-bundling
+  // Pre-bundle critical deps so first HMR is instant in dev
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react'],
-    exclude: [],
+    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react', '@tanstack/react-query'],
   },
 }));
