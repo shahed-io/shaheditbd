@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 interface ProductCardProps {
   product: Product;
   delay?: number;
+  priority?: boolean; // true for first ~4 cards (above fold)
 }
 
 const WA = '8801840099853';
