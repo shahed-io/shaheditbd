@@ -321,9 +321,9 @@ const Navbar = () => {
                 <Search size={18} />
               </button>
 
-              {/* Cart Button — hidden on mobile, visible on sm+ */}
+              {/* Cart Button — mobile: icon only, sm+: icon + text */}
               <button onClick={() => setCartOpen(true)}
-                className="hidden sm:relative sm:flex items-center gap-2 sm:px-4 sm:py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
+                className="relative flex items-center gap-2 p-2.5 sm:px-4 sm:py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
                   boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
