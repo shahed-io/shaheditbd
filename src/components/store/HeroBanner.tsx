@@ -110,7 +110,18 @@ const HeroBanner = () => {
   return (
     <section className="relative overflow-hidden" style={{ background: bgStyle }}>
 
-      {/* ── Ambient background ── */}
+      {/* LCP element: gives browser a fast-loading image to track for Core Web Vitals */}
+      <img
+        src="/favicon.png"
+        alt="Shahed Store"
+        width={1}
+        height={1}
+        fetchPriority="high"
+        decoding="sync"
+        style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none', top: 0, left: 0 }}
+      />
+
+
       <div className="absolute inset-0 pointer-events-none">
         {/* Large gradient sphere top-right */}
         <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full"
