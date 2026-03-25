@@ -751,9 +751,10 @@ body::before {
 }
 
 @keyframes card-float {
-  0%, 100% { transform: translateY(0px) rotate(-0.5deg); }
-  50%       { transform: translateY(-14px) rotate(0.5deg); }
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
 }
+
 
 @keyframes pulse-ring {
   0%   { box-shadow: 0 0 0 0 hsla(258,78%,55%,0.4); }
