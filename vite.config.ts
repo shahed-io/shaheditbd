@@ -31,45 +31,21 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        // Fine-grained code splitting: each chunk loads only when needed
-        manualChunks(id) {
-          // React core — loaded first, cached aggressively
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router-dom/') || id.includes('node_modules/scheduler/')) {
-            return 'vendor-react';
-          }
-          // Supabase SDK — large, separate chunk
-          if (id.includes('node_modules/@supabase/')) {
-            return 'vendor-supabase';
-          }
-          // Recharts — only used on admin pages, defer
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-') || id.includes('node_modules/victory-')) {
-            return 'vendor-charts';
-          }
-          // Radix UI — split from main bundle
-          if (id.includes('node_modules/@radix-ui/')) {
-            return 'vendor-ui';
-          }
-          // TanStack Query
-          if (id.includes('node_modules/@tanstack/')) {
-            return 'vendor-query';
-          }
-          // Admin-only pages — loaded only when /ceo/* is visited
-          if (id.includes('src/pages/admin/') || id.includes('src/components/admin/')) {
-            return 'admin';
-          }
+        // Simple chunk splitting — reliable on all CDNs including Hostinger
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-select', '@radix-ui/react-dropdown-menu'],
+          'vendor-query': ['@tanstack/react-query'],
         },
       },
     },
-    // Warn if any chunk exceeds 500kB
-    chunkSizeWarningLimit: 500,
-    // esbuild is faster and produces smaller output than terser
+    chunkSizeWarningLimit: 600,
     minify: 'esbuild',
     target: 'es2020',
     sourcemap: false,
     cssMinify: true,
-    // Inline tiny assets (< 4kB) as base64 to save HTTP round trips
     assetsInlineLimit: 4096,
-    // Ensure CSS is extracted to a separate file so it can be cached
     cssCodeSplit: true,
   },
   // Pre-bundle critical deps so first HMR is instant in dev
