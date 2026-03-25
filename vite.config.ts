@@ -30,6 +30,8 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.png", "robots.txt"],
       workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
         // Never cache OAuth redirect
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
