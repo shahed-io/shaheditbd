@@ -166,6 +166,37 @@
 
   <body>
     <div id="root"></div>
+    <!-- Force-clear any broken/stale service worker so the app loads fresh -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          registrations.forEach(function(reg) {
+            // Only unregister if the SW is waiting (stale update stuck)
+            if (reg.waiting) {
+              reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+        // If page is blank after 4s, force a hard reload once
+        var _swBlankGuard = setTimeout(function() {
+          var root = document.getElementById('root');
+          if (root && root.childElementCount === 0) {
+            sessionStorage.setItem('sw_reload', '1');
+            window.location.reload(true);
+          }
+        }, 4000);
+        if (sessionStorage.getItem('sw_reload') === '1') {
+          sessionStorage.removeItem('sw_reload');
+          clearTimeout(_swBlankGuard);
+          // Unregister all SWs and reload clean
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            Promise.all(regs.map(function(r){ return r.unregister(); })).then(function() {
+              window.location.reload(true);
+            });
+          });
+        }
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
