@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import logoIcon from '@/assets/logo-icon.webp';
 
 interface BrandLogoProps {
@@ -5,7 +6,7 @@ interface BrandLogoProps {
   className?: string;
 }
 
-const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
+const BrandLogo = forwardRef<HTMLDivElement, BrandLogoProps>(({ size = 'md', className = '' }, ref) => {
   const iconSize = size === 'sm' ? 'h-9 w-9'    : size === 'lg' ? 'h-16 w-16' : 'h-12 w-12';
   const textSize = size === 'sm' ? 'text-xl'    : size === 'lg' ? 'text-4xl'  : 'text-[1.6rem]';
   const subSize  = size === 'sm' ? 'text-[8px]' : size === 'lg' ? 'text-xs'   : 'text-[9px]';
