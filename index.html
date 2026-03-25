@@ -171,12 +171,22 @@
   <body>
     <div id="root"></div>
 
-    <!-- SW Blank Guard: if root is empty after 5s, unregister SW and hard reload -->
+    <!-- SW Blank Guard: unregister stale SW once, then let app load normally -->
     <script>
       (function() {
+        // Only run guard on real browser (not iframe preview)
+        var isInIframe = (window.self !== window.top);
+        if (isInIframe) return;
+
+        // Prevent infinite reload loop using sessionStorage flag
+        var reloadKey = 'sw_reload_v2';
+        var alreadyReloaded = sessionStorage.getItem(reloadKey);
+
         var guard = setTimeout(function() {
           var root = document.getElementById('root');
           if (!root || !root.firstChild) {
+            if (alreadyReloaded) return; // Don't reload again
+            sessionStorage.setItem(reloadKey, '1');
             if ('serviceWorker' in navigator) {
               navigator.serviceWorker.getRegistrations().then(function(regs) {
                 regs.forEach(function(r) { r.unregister(); });
@@ -187,13 +197,16 @@
               window.location.reload(true);
             }
           }
-        }, 5000);
+        }, 6000);
+
         window.addEventListener('load', function() {
-          // Clear guard once page loaded successfully
           setTimeout(function() {
             var root = document.getElementById('root');
-            if (root && root.firstChild) clearTimeout(guard);
-          }, 500);
+            if (root && root.firstChild) {
+              clearTimeout(guard);
+              sessionStorage.removeItem(reloadKey); // Reset on successful load
+            }
+          }, 1000);
         });
       })();
     </script>
