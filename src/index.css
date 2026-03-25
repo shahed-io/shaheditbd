@@ -751,10 +751,9 @@ body::before {
 }
 
 @keyframes card-float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-14px); }
+  0%, 100% { transform: translateY(0px) rotate(-0.5deg); }
+  50%       { transform: translateY(-14px) rotate(0.5deg); }
 }
-
 
 @keyframes pulse-ring {
   0%   { box-shadow: 0 0 0 0 hsla(258,78%,55%,0.4); }
@@ -804,13 +803,12 @@ body::before {
 .anim-rise       { animation: rise-up 0.6s cubic-bezier(0.22,1,0.36,1) forwards; }
 .anim-slide      { animation: slide-right 0.6s cubic-bezier(0.22,1,0.36,1) forwards; }
 .anim-zoom       { animation: zoom-in 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
-.anim-float      { animation: card-float 5s ease-in-out infinite; will-change: transform; contain: layout style; }
-.anim-spin-slow  { animation: spin-slow 8s linear infinite; will-change: transform; }
+.anim-float      { animation: card-float 5s ease-in-out infinite; }
+.anim-spin-slow  { animation: spin-slow 8s linear infinite; }
 .anim-pulse-ring { animation: pulse-ring 2.5s ease-out infinite; }
-.anim-float-badge { animation: float-badge 3s ease-in-out infinite; will-change: transform; }
+.anim-float-badge { animation: float-badge 3s ease-in-out infinite; }
 .anim-scan       { animation: scan-down 2s linear infinite; }
 .anim-flicker    { animation: flicker 3s linear infinite; }
-
 
 /* ══════════════════════════════════════
    UTILITY

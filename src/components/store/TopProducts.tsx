@@ -156,17 +156,17 @@ const TopProducts = () => {
                       View all <ArrowRight size={13} />
                     </button>
                   </div>
-                   {/* Mobile scroll */}
+                  {/* Mobile scroll */}
                   <div className="flex gap-3 overflow-x-auto pb-2 md:hidden scrollbar-hide">
                     {items.map((p, i) => (
                       <div key={p.id} className="flex-shrink-0 w-48">
-                        <ProductCard product={p} delay={i * 0.05} priority={catIdx === 0 && i < 2} />
+                        <ProductCard product={p} delay={i * 0.05} />
                       </div>
                     ))}
                   </div>
                   {/* Desktop grid */}
                   <div className="hidden md:grid grid-cols-3 lg:grid-cols-4 gap-4">
-                    {shown.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.05} priority={catIdx === 0 && i < 4} />)}
+                    {shown.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.05} />)}
                   </div>
                   {hasMore && (
                     <div className="hidden md:flex justify-center mt-6">

@@ -110,7 +110,7 @@ const HeroBanner = () => {
   return (
     <section className="relative overflow-hidden" style={{ background: bgStyle }}>
 
-
+      {/* ── Ambient background ── */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Large gradient sphere top-right */}
         <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full"
@@ -168,20 +168,21 @@ const HeroBanner = () => {
               </span>
             </div>
 
-            {/* Headline — single h1 for SEO, span for accent styling */}
+            {/* Headline */}
             <div>
               <h1 className="font-sora font-black leading-[1.0] tracking-tight"
                 style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)', color: 'hsl(226,35%,12%)' }}>
-                {slide.title}{' '}
-                <span
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}>
-                  {slide.titleAccent}
-                </span>
+                {slide.title}
+              </h1>
+              <h1 className="font-sora font-black leading-[1.0] tracking-tight"
+                style={{
+                  fontSize: 'clamp(3rem, 8vw, 5.5rem)',
+                  background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}>
+                {slide.titleAccent}
               </h1>
               <p className="text-base lg:text-lg font-semibold mt-3"
                 style={{ color: 'hsl(226,22%,44%)' }}>
@@ -344,7 +345,7 @@ const HeroBanner = () => {
                         boxShadow: '0 4px 16px hsla(258,78%,55%,0.10), inset 0 1px 0 rgba(255,255,255,1)',
                       }}>
                       {slide.logoImg
-                        ? <img src={slide.logoImg} alt={slide.title} width={36} height={36} className="w-9 h-9 object-contain" loading="eager" />
+                        ? <img src={slide.logoImg} alt="product" className="w-9 h-9 object-contain" />
                         : <span className="text-3xl leading-none">{slide.emoji}</span>}
                     </div>
                     <div className="flex flex-col items-end gap-1">

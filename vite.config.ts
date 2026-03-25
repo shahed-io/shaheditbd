@@ -80,25 +80,16 @@ export default defineConfig(({ mode }) => ({
     // Code splitting for faster initial load
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // React core — always loaded
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router-dom/')) return 'vendor-react';
-          // Supabase — large, separate chunk
-          if (id.includes('node_modules/@supabase/')) return 'vendor-supabase';
-          // Radix UI — lazy loaded with components
-          if (id.includes('node_modules/@radix-ui/')) return 'vendor-radix';
-          // Charts — only loaded on admin pages
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) return 'vendor-charts';
-          // Form libs
-          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/@hookform/') || id.includes('node_modules/zod')) return 'vendor-forms';
-          // Date libs
-          if (id.includes('node_modules/date-fns') || id.includes('node_modules/react-day-picker')) return 'vendor-dates';
-          // Admin pages — separate chunk
-          if (id.includes('/src/pages/admin/')) return 'pages-admin';
+        manualChunks: {
+          // Vendor chunk — React + Router loaded separately
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // UI library chunk
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
+          // Supabase chunk (large library, separate chunk)
+          'vendor-supabase': ['@supabase/supabase-js'],
         },
       },
     },
-
     // Smaller chunks = faster initial paint
     chunkSizeWarningLimit: 600,
     // Minification

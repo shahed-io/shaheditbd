@@ -1,4 +1,3 @@
-import { forwardRef } from 'react';
 import logoIcon from '@/assets/logo-icon.webp';
 
 interface BrandLogoProps {
@@ -6,13 +5,13 @@ interface BrandLogoProps {
   className?: string;
 }
 
-const BrandLogo = forwardRef<HTMLDivElement, BrandLogoProps>(({ size = 'md', className = '' }, ref) => {
+const BrandLogo = ({ size = 'md', className = '' }: BrandLogoProps) => {
   const iconSize = size === 'sm' ? 'h-9 w-9'    : size === 'lg' ? 'h-16 w-16' : 'h-12 w-12';
   const textSize = size === 'sm' ? 'text-xl'    : size === 'lg' ? 'text-4xl'  : 'text-[1.6rem]';
   const subSize  = size === 'sm' ? 'text-[8px]' : size === 'lg' ? 'text-xs'   : 'text-[9px]';
 
   return (
-    <div ref={ref} className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex items-center gap-3 ${className}`}>
 
       {/* ── Icon ── */}
       <div className="relative flex-shrink-0 flex items-center justify-center">
@@ -42,9 +41,7 @@ const BrandLogo = forwardRef<HTMLDivElement, BrandLogoProps>(({ size = 'md', cla
 
           <img
             src={logoIcon}
-            alt="Shahed Store Logo"
-            width={48}
-            height={48}
+            alt="Shahed Store"
             className="w-[76%] h-[76%] object-contain relative z-10"
             style={{ filter: 'brightness(0.9) saturate(1.2) drop-shadow(0 1px 3px hsla(258,78%,40%,0.25))' }}
           />
@@ -96,8 +93,6 @@ const BrandLogo = forwardRef<HTMLDivElement, BrandLogoProps>(({ size = 'md', cla
       </div>
     </div>
   );
-});
-
-BrandLogo.displayName = 'BrandLogo';
+};
 
 export default BrandLogo;

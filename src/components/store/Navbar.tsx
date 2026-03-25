@@ -289,7 +289,6 @@ const Navbar = () => {
                     <span className="hidden lg:inline">Dashboard</span>
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
-                    aria-label="Sign out"
                     className="p-2 rounded-xl transition-all"
                     style={{ color: 'hsl(226,35%,45%)' }}
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(0,84%,55%)'; (e.currentTarget as HTMLElement).style.background = 'hsla(0,84%,55%,0.08)'; }}
@@ -324,7 +323,6 @@ const Navbar = () => {
 
               {/* Cart Button — hidden on mobile, visible on sm+ */}
               <button onClick={() => setCartOpen(true)}
-                aria-label="Open cart"
                 className="hidden sm:relative sm:flex items-center gap-2 sm:px-4 sm:py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
@@ -342,7 +340,6 @@ const Navbar = () => {
 
               <button className="lg:hidden p-2.5 rounded-xl transition-colors"
                 style={{ color: 'hsl(226,35%,30%)' }}
-                aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
                 onClick={() => { setMobileOpen(!mobileOpen); setMobileSearch(false); }}>
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
