@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.png", "robots.txt"],
+      includeAssets: ["favicon.png", "apple-touch-icon.png", "splash-*.png", "robots.txt"],
       workbox: {
         clientsClaim: true,
         skipWaiting: true,
