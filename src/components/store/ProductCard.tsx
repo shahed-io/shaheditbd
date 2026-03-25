@@ -17,7 +17,7 @@ const WA = '8801840099853';
 // Ripple particle type
 type Particle = { id: number; x: number; y: number };
 
-const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
+const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps) => {
   const [visible,     setVisible]     = useState(false);
   const [showModal,   setShowModal]   = useState(false);
   const [showPreview, setShowPreview] = useState(false);
