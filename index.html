@@ -3,9 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -58,25 +55,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://dpvdavjwqyviredzoorj.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://dpvdavjwqyviredzoorj.supabase.co" />
+    <link rel="preconnect" href="https://connect.facebook.net" />
     <link rel="dns-prefetch" href="https://connect.facebook.net" />
-
-    <!-- Critical fonts — load early to reduce FCP/LCP -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
-
-    <!-- Critical above-fold CSS to prevent layout shift -->
-    <style>
-      *,::before,::after{box-sizing:border-box}
-      html{font-size:16px;-webkit-text-size-adjust:100%}
-      body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;background:#ffffff;color:#1a1a2e;-webkit-font-smoothing:antialiased}
-      #root{width:100%;min-height:100vh;background:#ffffff}
-      /* Reserve hero height to prevent CLS */
-      .hero-reserve{min-height:520px}
-      @media(min-width:1024px){.hero-reserve{min-height:640px}}
-      /* Font-display swap fallback */
-      .font-sora{font-family:'Sora',system-ui,sans-serif}
-    </style>
 
     <!-- Structured Data: Organization + WebSite (Google Rich Results) -->
     <script type="application/ld+json">
@@ -166,37 +146,6 @@
 
   <body>
     <div id="root"></div>
-    <!-- Force-clear any broken/stale service worker so the app loads fresh -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-          registrations.forEach(function(reg) {
-            // Only unregister if the SW is waiting (stale update stuck)
-            if (reg.waiting) {
-              reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-            }
-          });
-        });
-        // If page is blank after 4s, force a hard reload once
-        var _swBlankGuard = setTimeout(function() {
-          var root = document.getElementById('root');
-          if (root && root.childElementCount === 0) {
-            sessionStorage.setItem('sw_reload', '1');
-            window.location.reload(true);
-          }
-        }, 4000);
-        if (sessionStorage.getItem('sw_reload') === '1') {
-          sessionStorage.removeItem('sw_reload');
-          clearTimeout(_swBlankGuard);
-          // Unregister all SWs and reload clean
-          navigator.serviceWorker.getRegistrations().then(function(regs) {
-            Promise.all(regs.map(function(r){ return r.unregister(); })).then(function() {
-              window.location.reload(true);
-            });
-          });
-        }
-      }
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

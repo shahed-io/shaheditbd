@@ -2,22 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Critical font-face declarations with font-display:swap for LCP improvement */
-@font-face {
-  font-family: 'Sora';
-  font-style: normal;
-  font-weight: 700 900;
-  font-display: swap;
-  src: local('Sora');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: local('Inter');
-}
-
 /* Fonts loaded via index.html preload for non-blocking performance */
 
 @layer base {

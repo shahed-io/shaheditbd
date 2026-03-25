@@ -303,8 +303,9 @@ const ProductCard = ({ product, delay = 0 }: ProductCardProps) => {
           <img
             src={product.image}
             alt={product.name}
-            loading="lazy"
+            loading="eager"
             decoding="async"
+            fetchPriority="high"
             onLoad={() => setImageLoaded(true)}
             onError={e => {
               (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/f5f3ff/7c3aed?text=Product';

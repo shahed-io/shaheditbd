@@ -28,18 +28,11 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      devOptions: { enabled: false },
-      injectRegister: "auto",
       includeAssets: ["favicon.png", "robots.txt"],
       workbox: {
         // Never cache OAuth redirect
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        // Force clients to claim immediately (fixes stale cache on desktop)
-        clientsClaim: true,
-        skipWaiting: true,
-        // Don't cache the HTML shell — always fetch fresh
-        navigateFallback: null,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -82,63 +75,32 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    // Code splitting for faster initial load
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          // Core React — tiny, must be first
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/scheduler/')) {
-            return 'vendor-react';
-          }
-          // Router
-          if (id.includes('node_modules/react-router') || id.includes('node_modules/@remix-run')) {
-            return 'vendor-router';
-          }
-          // Supabase (large) — separate chunk
-          if (id.includes('node_modules/@supabase/')) {
-            return 'vendor-supabase';
-          }
-          // Charting libs (heavy) — only loaded on admin/dashboard
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
-            return 'vendor-charts';
-          }
-          // Radix UI components — split from main bundle
-          if (id.includes('node_modules/@radix-ui/')) {
-            return 'vendor-radix';
-          }
-          // Form / validation
-          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform/')) {
-            return 'vendor-forms';
-          }
-          // Date utilities (heavy)
-          if (id.includes('node_modules/date-fns')) {
-            return 'vendor-dates';
-          }
-          // Lucide icons — medium size
-          if (id.includes('node_modules/lucide-react')) {
-            return 'vendor-icons';
-          }
-          // Everything else in node_modules → vendor-misc
-          if (id.includes('node_modules/')) {
-            return 'vendor-misc';
-          }
+        manualChunks: {
+          // Vendor chunk — React + Router loaded separately
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // UI library chunk
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
+          // Supabase chunk (large library, separate chunk)
+          'vendor-supabase': ['@supabase/supabase-js'],
         },
       },
     },
-    chunkSizeWarningLimit: 500,
+    // Smaller chunks = faster initial paint
+    chunkSizeWarningLimit: 600,
+    // Minification
     minify: 'esbuild',
-    // esbuild optimizations — remove dead code aggressively
     target: 'es2020',
+    // Source maps off in prod
     sourcemap: false,
+    // CSS optimization
     cssMinify: true,
-    // Inline small assets (< 2KB) to save requests
-    assetsInlineLimit: 2048,
-    // Reduce JS size by dropping console logs in prod
-    esbuildOptions: {
-      drop: ['debugger'],
-      legalComments: 'none',
-      treeShaking: true,
-    },
+    // Assets inline limit (small assets inlined as base64)
+    assetsInlineLimit: 4096,
   },
+  // Optimize deps pre-bundling
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'lucide-react'],
     exclude: [],

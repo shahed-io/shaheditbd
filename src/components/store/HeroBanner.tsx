@@ -108,7 +108,7 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden hero-reserve" style={{ background: bgStyle }}>
+    <section className="relative overflow-hidden" style={{ background: bgStyle }}>
 
       {/* ── Ambient background ── */}
       <div className="absolute inset-0 pointer-events-none">
@@ -345,7 +345,7 @@ const HeroBanner = () => {
                         boxShadow: '0 4px 16px hsla(258,78%,55%,0.10), inset 0 1px 0 rgba(255,255,255,1)',
                       }}>
                       {slide.logoImg
-                        ? <img src={slide.logoImg} alt="product" className="w-9 h-9 object-contain" fetchPriority="high" decoding="async" />
+                        ? <img src={slide.logoImg} alt="product" className="w-9 h-9 object-contain" />
                         : <span className="text-3xl leading-none">{slide.emoji}</span>}
                     </div>
                     <div className="flex flex-col items-end gap-1">
