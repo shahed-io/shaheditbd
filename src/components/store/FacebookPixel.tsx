@@ -23,8 +23,10 @@ interface PixelConfig {
   track_lead: boolean;
 }
 
+// Reset on each module load so HMR doesn't get stuck
 let pixelLoaded = false;
 let pixelConfigs: PixelConfig[] | null = null;
+let pixelInitialized = false;
 
 const loadPixelSettings = async (): Promise<PixelConfig[]> => {
   if (pixelConfigs !== null) return pixelConfigs;
@@ -59,7 +61,7 @@ const loadPixelSettings = async (): Promise<PixelConfig[]> => {
     id: 'legacy',
     name: 'Primary',
     pixel_id: map['fb_pixel_id'],
-    capi_token: '',
+    capi_token: map['fb_capi_token'] || '',
     capi_test_event_code: map['fb_capi_test_code'] || '',
     pixel_enabled: true,
     capi_enabled: map['fb_capi_enabled'] === 'true',
@@ -72,25 +74,39 @@ const loadPixelSettings = async (): Promise<PixelConfig[]> => {
   return pixelConfigs;
 };
 
-const injectPixelScript = (pixelIds: string[]) => {
-  if (pixelLoaded || pixelIds.length === 0) return;
-  pixelLoaded = true;
+const injectPixelScript = (configs: PixelConfig[]): Promise<void> => {
+  return new Promise((resolve) => {
+    if (pixelLoaded || configs.length === 0) { resolve(); return; }
 
-  const n: any = function (...args: any[]) { (n.q = n.q || []).push(args); };
-  n.push = n;
-  n.loaded = true;
-  n.version = '2.0';
-  n.q = [];
-  window.fbq = n;
-  if (!window._fbq) window._fbq = n;
+    const enabledIds = configs.filter(c => c.pixel_enabled && c.pixel_id).map(c => c.pixel_id);
+    if (enabledIds.length === 0) { resolve(); return; }
 
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = 'https://connect.facebook.net/en_US/fbevents.js';
-  document.head.appendChild(script);
+    // If fbq already exists (e.g. loaded externally), just init
+    if (typeof window.fbq === 'function' && pixelInitialized) { resolve(); return; }
 
-  // Init all pixels
-  pixelIds.forEach(id => window.fbq('init', id));
+    pixelLoaded = true;
+
+    // Set up fbq stub so init calls queue properly
+    const n: any = function (...args: any[]) { (n.q = n.q || []).push(args); };
+    n.push = n;
+    n.loaded = true;
+    n.version = '2.0';
+    n.queue = [];
+    n.q = n.queue;
+    window.fbq = n;
+    if (!window._fbq) window._fbq = n;
+
+    // Init all pixels BEFORE script loads so they queue
+    enabledIds.forEach(id => window.fbq('init', id));
+    pixelInitialized = true;
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://connect.facebook.net/en_US/fbevents.js';
+    script.onload = () => resolve();
+    script.onerror = () => resolve(); // still resolve so PageView fires
+    document.head.appendChild(script);
+  });
 };
 
 // Send CAPI events to all enabled pixels
@@ -130,7 +146,12 @@ export const fbTrack = (event: string, params?: Record<string, any>, trackKey?: 
   if (typeof window !== 'undefined' && window.fbq) {
     if (trackKey) {
       const ids = shouldTrack(trackKey);
-      ids.forEach(id => window.fbq('trackSingle', id, event, params));
+      // Use trackSingle per pixel if multiple, else plain track for single pixel
+      if (ids.length === 1) {
+        window.fbq('trackSingle', ids[0], event, params);
+      } else if (ids.length > 1) {
+        ids.forEach(id => window.fbq('trackSingle', id, event, params));
+      }
     } else {
       window.fbq('track', event, params);
     }
@@ -138,7 +159,14 @@ export const fbTrack = (event: string, params?: Record<string, any>, trackKey?: 
   sendCAPI(event, params);
 };
 
-export const fbTrackPageView = () => fbTrack('PageView', undefined, 'pageview');
+export const fbTrackPageView = () => {
+  // For PageView, use standard fbq('track', 'PageView') to avoid "Custom event" label
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'PageView');
+  }
+  sendCAPI('PageView');
+};
+
 export const fbTrackViewContent = (params: { content_name: string; content_ids: string[]; value?: number; currency?: string }) =>
   fbTrack('ViewContent', { ...params, currency: params.currency || 'BDT' }, 'view_content');
 export const fbTrackAddToCart = (params: { content_name: string; content_ids: string[]; value: number; currency?: string }) =>
@@ -154,16 +182,17 @@ const FacebookPixel = () => {
     if (initialized.current) return;
     initialized.current = true;
 
-    // Defer pixel loading — don't block initial paint
-    const timer = setTimeout(() => {
-      loadPixelSettings().then((configs) => {
-        if (configs.length === 0) return;
-        const enabledIds = configs.filter(c => c.pixel_enabled && c.pixel_id).map(c => c.pixel_id);
-        injectPixelScript(enabledIds);
-        const pvIds = configs.filter(c => c.track_pageview && c.pixel_id).map(c => c.pixel_id);
-        if (pvIds.length > 0) fbTrackPageView();
-      });
-    }, 3000); // Delay 3s after page load
+    // Defer pixel loading slightly to not block initial paint
+    const timer = setTimeout(async () => {
+      const configs = await loadPixelSettings();
+      if (configs.length === 0) return;
+
+      // Wait for script to load before firing PageView — prevents "Custom event"
+      await injectPixelScript(configs);
+
+      const shouldFirePV = configs.some(c => c.track_pageview && c.pixel_id);
+      if (shouldFirePV) fbTrackPageView();
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, []);
