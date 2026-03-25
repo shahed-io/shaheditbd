@@ -169,44 +169,95 @@
 </head>
 
   <body>
-    <div id="root"></div>
+    <!-- Inline loading indicator so users never see a blank screen -->
+    <div id="root">
+      <div id="app-loader" style="
+        position:fixed;inset:0;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;
+        background:#ffffff;z-index:9999;font-family:sans-serif;
+      ">
+        <img src="/favicon.png" alt="Shahed Store" width="72" height="72"
+             style="border-radius:16px;margin-bottom:20px;animation:spin 1.5s linear infinite;"
+             onerror="this.style.display='none'" />
+        <div style="width:48px;height:4px;background:#e2e8f0;border-radius:4px;overflow:hidden;">
+          <div style="height:100%;background:#2563eb;border-radius:4px;animation:bar 1.4s ease-in-out infinite;"></div>
+        </div>
+        <p style="margin-top:16px;color:#64748b;font-size:14px;">লোড হচ্ছে...</p>
+        <style>
+          @keyframes spin{0%{transform:scale(1)}50%{transform:scale(0.92)}100%{transform:scale(1)}}
+          @keyframes bar{0%{width:0%;margin-left:0}50%{width:100%;margin-left:0}100%{width:0%;margin-left:100%}}
+        </style>
+      </div>
+    </div>
 
-    <!-- SW Blank Guard: unregister stale SW once, then let app load normally -->
+    <!-- Permanent SW Blank Guard -->
     <script>
       (function() {
-        // Only run guard on real browser (not iframe preview)
         var isInIframe = (window.self !== window.top);
         if (isInIframe) return;
 
-        // Prevent infinite reload loop using sessionStorage flag
-        var reloadKey = 'sw_reload_v2';
+        // ── Step 1: On every fresh hard-navigation, unregister ALL stale SWs ──
+        // This prevents cached SW from serving a stale app shell permanently.
+        var cleanKey = 'sw_cleaned_v3';
+        if (!sessionStorage.getItem(cleanKey) && 'serviceWorker' in navigator) {
+          sessionStorage.setItem(cleanKey, '1');
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            if (regs.length > 0) {
+              Promise.all(regs.map(function(r) { return r.unregister(); }))
+                .then(function() {
+                  // Clear all caches to force fresh assets
+                  if ('caches' in window) {
+                    caches.keys().then(function(names) {
+                      return Promise.all(names.map(function(n) { return caches.delete(n); }));
+                    }).then(function() {
+                      window.location.reload(true);
+                    });
+                  } else {
+                    window.location.reload(true);
+                  }
+                });
+            }
+          });
+        }
+
+        // ── Step 2: Watchdog – if root is still empty after 8s, force reload ──
+        var reloadKey = 'sw_reload_v4';
         var alreadyReloaded = sessionStorage.getItem(reloadKey);
 
         var guard = setTimeout(function() {
           var root = document.getElementById('root');
-          if (!root || !root.firstChild) {
-            if (alreadyReloaded) return; // Don't reload again
+          var loader = document.getElementById('app-loader');
+          // If loader is still visible (app never mounted), force hard reload
+          if (loader && loader.parentNode) {
+            if (alreadyReloaded) {
+              // Show permanent error message instead of infinite loop
+              loader.innerHTML = '<p style="color:#ef4444;font-size:15px;text-align:center;padding:24px">পেজ লোড হচ্ছে না।<br><button onclick="sessionStorage.clear();caches.keys&&caches.keys().then(k=>Promise.all(k.map(n=>caches.delete(n)))).then(()=>location.reload(true))||location.reload(true)" style="margin-top:12px;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:15px;cursor:pointer">ক্লিয়ার করে রিলোড করুন</button></p>';
+              return;
+            }
             sessionStorage.setItem(reloadKey, '1');
-            if ('serviceWorker' in navigator) {
-              navigator.serviceWorker.getRegistrations().then(function(regs) {
-                regs.forEach(function(r) { r.unregister(); });
-              }).finally(function() {
-                window.location.reload(true);
-              });
+            if ('caches' in window) {
+              caches.keys().then(function(names) {
+                return Promise.all(names.map(function(n) { return caches.delete(n); }));
+              }).finally(function() { window.location.reload(true); });
             } else {
               window.location.reload(true);
             }
           }
-        }, 6000);
+        }, 8000);
 
+        // ── Step 3: Clear guard when app mounts successfully ──
         window.addEventListener('load', function() {
-          setTimeout(function() {
-            var root = document.getElementById('root');
-            if (root && root.firstChild) {
+          var check = setInterval(function() {
+            var loader = document.getElementById('app-loader');
+            if (!loader || !loader.parentNode) {
               clearTimeout(guard);
-              sessionStorage.removeItem(reloadKey); // Reset on successful load
+              clearInterval(check);
+              sessionStorage.removeItem(reloadKey);
+              sessionStorage.removeItem(cleanKey);
             }
-          }, 1000);
+          }, 500);
+          // Stop checking after 10s regardless
+          setTimeout(function() { clearInterval(check); }, 10000);
         });
       })();
     </script>
