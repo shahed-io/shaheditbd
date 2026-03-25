@@ -123,8 +123,8 @@
     font-weight: 700;
   }
 
-  /* Smooth tap interactions on mobile */
-  a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  /* Smooth tap interactions on mobile — only remove highlight, keep default touch-action so scroll works */
+  a, button { -webkit-tap-highlight-color: transparent; }
 
   /* Reduce motion for users who prefer it */
   @media (prefers-reduced-motion: reduce) {
@@ -150,7 +150,7 @@ body::before {
     linear-gradient(90deg, hsla(210, 60%, 80%, 0.10) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1;
 }
 
 /* ══════════════════════════════════════
