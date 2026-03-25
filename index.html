@@ -22,21 +22,21 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Shahed Store" />
     <meta property="og:url" content="https://shahedstore.com.bd" />
-    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/846be5d6-fd30-45fb-ba8b-f517d2c45756/id-preview-c7cd4054--6a73ba71-8f3e-48ba-996c-e14dcc8331b2.lovable.app-1774436232607.png">
+    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/96d49d99-639c-4b4b-8900-5f379298c1c8/id-preview-943e24a0--6a73ba71-8f3e-48ba-996c-e14dcc8331b2.lovable.app-1774427025788.png">
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Shahed Store – Best Digital Software Shop in Bangladesh" />
     <meta property="og:locale" content="bn_BD" />
     <meta property="og:locale:alternate" content="en_US" />
-    
-    
+    <meta property="og:title" content="Shahed Store – Your Trusted Destination for Online Shopping">
+    <meta property="og:description" content="Shahed Store – বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার শপ। Windows 11, Microsoft Office 365, Adobe Creative Cloud, Netflix, Spotify, VPN সাবস্ক্রিপশন সর্বনিম্ন মূল্যে। ১০০% অরিজিনাল। Instant Delivery।">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@shahedstore" />
-    
-    
-    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/846be5d6-fd30-45fb-ba8b-f517d2c45756/id-preview-c7cd4054--6a73ba71-8f3e-48ba-996c-e14dcc8331b2.lovable.app-1774436232607.png">
+    <meta name="twitter:title" content="Shahed Store – Your Trusted Destination for Online Shopping">
+    <meta name="twitter:description" content="Shahed Store – বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার শপ। Windows 11, Microsoft Office 365, Adobe Creative Cloud, Netflix, Spotify, VPN সাবস্ক্রিপশন সর্বনিম্ন মূল্যে। ১০০% অরিজিনাল। Instant Delivery।">
+    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/96d49d99-639c-4b4b-8900-5f379298c1c8/id-preview-943e24a0--6a73ba71-8f3e-48ba-996c-e14dcc8331b2.lovable.app-1774427025788.png">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -67,26 +67,28 @@
         href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" />
     </noscript>
 
-    <!-- 3. Critical inline CSS: prevent FOUC -->
+    <!-- 3. Critical inline CSS: prevent FOUC before React hydrates -->
     <style>
+      /* System font stack while Sora/Inter loads */
       html { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+      /* Neutral background — avoids black screen if JS fails */
       body { background: #ffffff; margin: 0; }
-      /* Loading spinner while JS parses — disappears once React mounts */
+      /* Minimal loading spinner while JS parses */
       #root:empty::after {
         content: '';
         display: block;
         position: fixed;
         top: 50%;
         left: 50%;
-        width: 36px;
-        height: 36px;
-        margin: -18px 0 0 -18px;
+        width: 40px;
+        height: 40px;
+        margin: -20px 0 0 -20px;
         border: 3px solid #e2e8f0;
         border-top-color: #7c3aed;
         border-radius: 50%;
-        animation: ld-spin 0.8s linear infinite;
+        animation: spin 0.8s linear infinite;
       }
-      @keyframes ld-spin { to { transform: rotate(360deg); } }
+      @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 
     <!-- Structured Data: Organization + WebSite (Google Rich Results) -->
@@ -173,11 +175,7 @@
       ]
     }
     </script>
-    <meta property="og:title" content="Shahed Store – Your Trusted Destination for Online Shopping">
-  <meta name="twitter:title" content="Shahed Store – Your Trusted Destination for Online Shopping">
-  <meta property="og:description" content="Shahed Store – বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার শপ। Windows 11, Microsoft Office 365, Adobe Creative Cloud, Netflix, Spotify, VPN সাবস্ক্রিপশন সর্বনিম্ন মূল্যে। ১০০% অরিজিনাল। Instant Delivery।">
-  <meta name="twitter:description" content="Shahed Store – বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার শপ। Windows 11, Microsoft Office 365, Adobe Creative Cloud, Netflix, Spotify, VPN সাবস্ক্রিপশন সর্বনিম্ন মূল্যে। ১০০% অরিজিনাল। Instant Delivery।">
-</head>
+  </head>
 
   <body>
     <div id="root"></div>

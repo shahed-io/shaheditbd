@@ -78,69 +78,74 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
   return (
     <>
-      {/* ── Quick Preview Modal — White Theme ── */}
+      {/* ── Quick Preview Modal ── */}
       {showPreview && (
         <div
           className="fixed inset-0 z-[999] flex items-center justify-center p-4"
-          style={{ background: 'hsla(226,35%,12%,0.55)', backdropFilter: 'blur(16px)' }}
+          style={{ background: 'hsla(215,28%,4%,0.85)', backdropFilter: 'blur(20px)' }}
           onClick={() => setShowPreview(false)}
         >
           <div
-            className="quick-preview-enter relative rounded-3xl overflow-hidden max-w-lg w-full"
+            className="quick-preview-enter relative rounded-3xl overflow-hidden max-w-lg w-full border"
             style={{
-              background: 'hsl(var(--card))',
-              border: '1.5px solid hsla(258,78%,75%,0.28)',
-              boxShadow: '0 32px 80px hsla(226,35%,12%,0.20), 0 8px 32px hsla(258,78%,55%,0.12)',
+              background: 'hsl(215,28%,10%)',
+              borderColor: 'hsla(271,91%,65%,0.35)',
+              boxShadow: '0 0 60px hsla(271,91%,65%,0.25), 0 32px 80px hsla(215,40%,4%,0.8)',
             }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Top accent bar */}
-            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(258,78%,55%), hsl(200,90%,48%))' }} />
+            {/* Neon top border */}
+            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
 
             <button
               onClick={() => setShowPreview(false)}
               className="absolute top-4 right-4 z-10 w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:scale-110"
-              style={{ background: 'hsla(258,78%,55%,0.08)', border: '1px solid hsla(258,78%,55%,0.20)', color: 'hsl(226,35%,35%)' }}
+              style={{ background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)' }}
             >
               <X size={16} />
             </button>
 
-            <div className="flex flex-col sm:flex-row gap-0">
+            <div className="flex gap-0">
               {/* Image */}
-              <div className="w-full sm:w-44 flex-shrink-0 relative overflow-hidden" style={{ minHeight: '200px' }}>
+              <div className="w-48 flex-shrink-0 relative overflow-hidden">
                 <img
                   src={product.image}
                   alt={product.name}
                   className="w-full h-full object-cover"
-                  style={{ minHeight: '200px' }}
-                  onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/f8f9ff/6366f1?text=Product'; }}
+                  style={{ minHeight: '280px' }}
+                  onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/13131f/a855f7?text=Product'; }}
                 />
+                {/* Scan line animation */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  <div className="absolute left-0 right-0 h-[2px] anim-scan"
+                    style={{ background: 'linear-gradient(90deg, transparent, hsl(271,91%,65%), transparent)', opacity: 0.7 }} />
+                </div>
                 {product.discount && (
                   <div className="absolute top-3 left-3 badge-sale text-[11px] px-2.5 py-1">-{product.discount}%</div>
                 )}
               </div>
 
               {/* Info */}
-              <div className="flex-1 p-5 flex flex-col gap-3">
+              <div className="flex-1 p-6 flex flex-col gap-3">
                 <div>
                   <div className="flex items-center gap-1.5 mb-2">
                     <span className="text-[10px] font-fira font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
-                      style={{ color: 'hsl(200,90%,40%)', background: 'hsla(200,90%,45%,0.10)', border: '1px solid hsla(200,90%,45%,0.20)' }}>
+                      style={{ color: 'hsl(185,90%,62%)', background: 'hsla(185,90%,52%,0.12)', border: '1px solid hsla(185,90%,52%,0.2)' }}>
                       {product.category}
                     </span>
                   </div>
-                  <h3 className="font-sora font-black text-[16px] leading-snug" style={{ color: 'hsl(226,35%,12%)' }}>{product.name}</h3>
+                  <h3 className="font-sora font-black text-[17px] leading-snug text-foreground">{product.name}</h3>
                 </div>
 
                 <div className="flex items-center gap-1">
                   {[1,2,3,4,5].map(s => (
-                    <Star key={s} size={11} fill={s <= Math.floor(product.rating) ? 'hsl(40,100%,55%)' : 'none'} color={s <= Math.floor(product.rating) ? 'hsl(40,100%,55%)' : 'hsl(var(--border))'} />
+                    <Star key={s} size={11} fill={s <= Math.floor(product.rating) ? 'hsl(40,100%,58%)' : 'none'} color={s <= Math.floor(product.rating) ? 'hsl(40,100%,58%)' : 'hsl(var(--border))'} />
                   ))}
                   <span className="text-[11px] text-muted-foreground ml-1">({product.reviews})</span>
                 </div>
 
                 <div className="flex items-baseline gap-2">
-                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(258,78%,50%)' }}>৳{product.price.toLocaleString()}</span>
+                  <span className="font-sora font-black text-2xl" style={{ color: 'hsl(271,91%,75%)' }}>৳{product.price.toLocaleString()}</span>
                   {product.originalPrice && (
                     <span className="text-sm line-through text-muted-foreground">৳{product.originalPrice.toLocaleString()}</span>
                   )}
@@ -154,23 +159,23 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                     { icon: <Clock size={10} />, text: '24/7 Support' },
                   ].map(f => (
                     <span key={f.text} className="flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full"
-                      style={{ background: 'hsla(258,78%,55%,0.08)', border: '1px solid hsla(258,78%,55%,0.18)', color: 'hsl(258,78%,48%)' }}>
+                      style={{ background: 'hsla(271,91%,65%,0.1)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
                       {f.icon} {f.text}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex flex-col gap-2 mt-auto pt-1">
+                <div className="flex flex-col gap-2 mt-auto pt-2">
                   <button
                     onClick={() => { setShowPreview(false); setShowModal(true); }}
                     className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.02]"
-                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)' }}>
+                    style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 0 20px hsla(271,91%,65%,0.4)' }}>
                     <CreditCard size={13} className="inline mr-1.5" /> Buy Now
                   </button>
                   <button
                     onClick={() => { setShowPreview(false); navigate(`/product/${product.slug || product.id}`); }}
                     className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-[1.01] flex items-center justify-center gap-1.5"
-                    style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.18)', color: 'hsl(258,78%,48%)' }}>
+                    style={{ background: 'hsla(271,91%,65%,0.08)', border: '1px solid hsla(271,91%,65%,0.2)', color: 'hsl(271,91%,75%)' }}>
                     View Details →
                   </button>
                 </div>

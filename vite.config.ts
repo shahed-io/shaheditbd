@@ -31,40 +31,24 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          // React core — must load first
-          if (
-            id.includes('node_modules/react/') ||
-            id.includes('node_modules/react-dom/') ||
-            id.includes('node_modules/react-router-dom/') ||
-            id.includes('node_modules/scheduler/')
-          ) return 'vendor-react';
-
-          // Supabase SDK
-          if (id.includes('node_modules/@supabase/')) return 'vendor-supabase';
-
-          // All Radix UI components together
-          if (id.includes('node_modules/@radix-ui/')) return 'vendor-radix';
-
-          // TanStack Query
-          if (id.includes('node_modules/@tanstack/')) return 'vendor-query';
-
-          // Charts — only admin uses these
-          if (
-            id.includes('node_modules/recharts') ||
-            id.includes('node_modules/d3-') ||
-            id.includes('node_modules/victory-')
-          ) return 'vendor-charts';
+        // Simple chunk splitting — reliable on all CDNs including Hostinger
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-select', '@radix-ui/react-dropdown-menu'],
+          'vendor-query': ['@tanstack/react-query'],
         },
       },
     },
-    chunkSizeWarningLimit: 700,
+    chunkSizeWarningLimit: 600,
     minify: 'esbuild',
     target: 'es2020',
     sourcemap: false,
     cssMinify: true,
-    cssCodeSplit: false, // Single CSS file — avoids chunk load failures on Hostinger
+    assetsInlineLimit: 4096,
+    cssCodeSplit: true,
   },
+  // Pre-bundle critical deps so first HMR is instant in dev
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'lucide-react', '@tanstack/react-query'],
   },
