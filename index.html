@@ -150,6 +150,34 @@
 
   <body>
     <div id="root"></div>
+
+    <!-- SW Blank Guard: if root is empty after 5s, unregister SW and hard reload -->
+    <script>
+      (function() {
+        var guard = setTimeout(function() {
+          var root = document.getElementById('root');
+          if (!root || !root.firstChild) {
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function(regs) {
+                regs.forEach(function(r) { r.unregister(); });
+              }).finally(function() {
+                window.location.reload(true);
+              });
+            } else {
+              window.location.reload(true);
+            }
+          }
+        }, 5000);
+        window.addEventListener('load', function() {
+          // Clear guard once page loaded successfully
+          setTimeout(function() {
+            var root = document.getElementById('root');
+            if (root && root.firstChild) clearTimeout(guard);
+          }, 500);
+        });
+      })();
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
