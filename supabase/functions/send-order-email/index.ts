@@ -522,6 +522,14 @@ Deno.serve(async (req) => {
         adminEmails.push(settingRow.value)
       }
 
+      // Hardcoded admin notification emails
+      const hardcodedAdminEmails = ['shahedstore.bd@gmail.com', 'info.shahedit@gmail.com']
+      for (const hEmail of hardcodedAdminEmails) {
+        if (!adminEmails.includes(hEmail)) {
+          adminEmails.push(hEmail)
+        }
+      }
+
       // Deduplicate
       adminEmails = [...new Set(adminEmails.filter(Boolean))]
 
