@@ -1695,7 +1695,7 @@ const AdminProducts = () => {
                             {cardStyle === 'dark_neon' && 'গাঢ় ব্যাকগ্রাউন্ড + নিয়ন গ্লোয়িং বর্ডার, Shahed Store ব্র্যান্ডিং সহ — রেফারেন্স: Grok card'}
                             {cardStyle === 'light_glass' && 'পাস্টেল কালার গ্রেডিয়েন্ট + ফ্রস্টেড গ্লাস কার্ড — রেফারেন্স: CamScanner colorful card'}
                             {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল Shahed Store ব্যাজ — রেফারেন্স: CamScanner clean card'}
-                            {cardStyle === 'vibrant_promo' && 'ডিপ পার্পল ব্যাকগ্রাউন্ড + ভাইব্র্যান্ট কালার, সোশ্যাল মিডিয়া প্রমো স্টাইল'}
+                            {cardStyle === 'vibrant_promo' && 'সফট অরোরা গ্রেডিয়েন্ট + হোয়াইট গ্লাস কার্ড, লাইট প্রিমিয়াম প্রোডাক্ট শোকেস'}
                             {cardStyle === 'glass_gradient' && 'ডার্ক ব্যাকগ্রাউন্ড + মাল্টি-কালার গ্লোয়িং গ্রেডিয়েন্ট বর্ডার, প্রিমিয়াম গ্লাসমরফিজম'}
                           </span>
                         </div>

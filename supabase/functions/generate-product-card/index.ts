@@ -112,39 +112,55 @@ OVERALL: Clean, minimal, professional look with soft light backgrounds and bokeh
   },
 
   vibrant_promo: {
-    label: "Vibrant Promo",
+    label: "Soft Aurora",
     prompt: (name: string, brand: string, price: string, category: string) => `
 Create a premium square (1:1) product promotional card image with this EXACT design:
 
 BACKGROUND:
-- Deep rich gradient: from dark indigo (#1a0533) to deep purple (#2d0a5c) to dark blue (#051a40)
-- Subtle bokeh light orbs: some purple, some cyan, very blurred and soft, adding depth
+- Beautiful soft aurora gradient background flowing diagonally:
+  - Top-left: soft mint/seafoam green (#a8edea, #b8f5e8)
+  - Center: soft lavender/lilac (#d4b5fc, #c9b1ff)
+  - Bottom-right: soft warm peach/apricot (#ffd6b0, #ffe0c2)
+- The gradient is smooth, dreamy, organic — like northern lights or watercolor wash
+- A few very subtle translucent floating circles/orbs (white, 5-10% opacity) scattered for depth
+- Overall feeling: bright, airy, warm, inviting
 
-DESIGN LAYOUT:
-- A bold frosted glass card in the CENTER with rounded corners (~24px)
-- Card border: gradient from purple to cyan, glowing slightly
-- Card background: rgba(255,255,255,0.08) - very dark frosted glass
+MAIN CARD:
+- A large rounded rectangle card in the CENTER (takes up ~72% of space)
+- Card background: WHITE frosted glass — rgba(255,255,255,0.82), heavy backdrop blur
+- Border: 1.5px solid rgba(255,255,255,0.9) — crisp white edge
+- Very soft colored shadow: 0 20px 60px rgba(180,160,220,0.25) — subtle lavender shadow
+- Rounded corners (~26px border-radius)
+- The card feels like it's floating on the aurora background
 
-TOP OF CARD:
-- Top-left inside card: "SHAHED STORE" in white bold uppercase letters, with a small white star or sparkle icon
-- Top-right: "${brand || name}" in white text with brand icon
+INSIDE THE CARD - TOP ROW:
+- Top-left: "SHAHED STORE" in a small rounded pill badge with soft gradient background (mint to lavender), white bold text
+- Top-right: "${brand || name}" brand name in a clean white pill with subtle border, dark charcoal text with a small brand icon
 
-CENTER OF CARD:
-- Large product image/logo for "${name}" centered and prominent
-- Product icon is in a separate slightly lighter rounded square container with subtle inner glow
+INSIDE THE CARD - CENTER:
+- The product logo/icon for "${name}" placed LARGE and prominently in the center
+- Clean square app icon with rounded corners
+- The product icon has a very subtle soft shadow beneath it
+- Generous white space around the product icon — let it breathe
 
 ${price ? `PRICE BADGE:
-- A vibrant price badge showing "৳${price}" 
-- The badge uses a bright gradient (from orange-red to pink) with white text
-- Positioned at top-right or bottom-right of product icon` : ""}
+- A small elegant rounded pill showing "৳${price}"
+- Soft gradient background (mint to lavender), white text
+- Positioned subtly below or beside the product icon` : ""}
 
 BOTTOM OF CARD:
-- Frosted glass bottom strip (slightly lighter than card body)
-- globe icon + "www.shahedstore.com.bd" — white text
-- phone icon + "+880 1840-099853" — white text
-- Both centered or side by side
+- A thin subtle divider line (rgba(0,0,0,0.06))
+- Below the line, clean minimal info:
+  - Left: globe icon + "www.shahedstore.com.bd" in soft gray text (#6b7280)
+  - Right: phone icon + "+880 1840-099853" in soft gray text (#6b7280)
+- Small, professional, not distracting
 
-OVERALL: Rich dark premium promotional style, vibrant colors, glassmorphism, suitable for social media posts. Square format exactly.
+OVERALL AESTHETIC:
+- Light, bright, airy, premium — like a luxury skincare or Apple product ad
+- Soft aurora/watercolor gradient gives warmth and elegance
+- White glass card creates beautiful contrast against the colorful background
+- Minimal, clean typography — lots of breathing room
+- Professional social media promotional style. Square format exactly.
 `.trim(),
   },
 
