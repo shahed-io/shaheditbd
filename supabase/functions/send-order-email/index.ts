@@ -543,11 +543,12 @@ Deno.serve(async (req) => {
       const subject = `🛒 নতুন অর্ডার #${order.order_number} — ${order.customer_name} — ৳${order.total}`
 
       // Send to all admins
+      console.log(`[admin_notify] Sending to ${adminEmails.length} admins:`, adminEmails)
       const results = await Promise.allSettled(
         adminEmails.map((email, idx) =>
           sendLovableEmail(
             {
-              idempotency_key: `admin-notify-${order.id}-${idx}`,
+              idempotency_key: `admin-notify-${order.id}-${idx}-${Date.now()}`,
               unsubscribe_token: crypto.randomUUID(),
               to: email,
               from: `${SITE_NAME} <noreply@notify.shahedstore.com.bd>`,
