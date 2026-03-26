@@ -386,7 +386,7 @@ const AdminProducts = () => {
     { value: 'dark_neon', label: '🌌 Dark Neon', desc: 'গাঢ় ব্যাকগ্রাউন্ড, নিয়ন গ্লোয়িং বর্ডার' },
     { value: 'light_glass', label: '🌸 Light Glass', desc: 'পাস্টেল গ্রেডিয়েন্ট, ফ্রস্টেড গ্লাস' },
     { value: 'clean_light', label: '🩵 Clean Light', desc: 'ক্লিন হোয়াইট, বোকে এফেক্ট' },
-    { value: 'vibrant_promo', label: '💜 Vibrant Promo', desc: 'ডিপ পার্পল, ভাইব্র্যান্ট' },
+    { value: 'vibrant_promo', label: '🌈 Soft Aurora', desc: 'সফট অরোরা গ্রেডিয়েন্ট, লাইট প্রিমিয়াম' },
     { value: 'glass_gradient', label: '✨ Glass Gradient', desc: 'গ্লাসমরফিজম গ্রেডিয়েন্ট বর্ডার' },
   ] as const;
 
