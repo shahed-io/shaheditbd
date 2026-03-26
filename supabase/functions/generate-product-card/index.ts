@@ -170,47 +170,51 @@ OVERALL AESTHETIC:
 Create a premium square (1:1) product promotional card image with this EXACT design:
 
 BACKGROUND:
-- Solid deep dark background: very dark charcoal black (#0c0c14) to dark navy (#0e1023)
-- Extremely subtle noise/grain texture on the background for depth
-- NO distracting elements in the background — clean, minimal, premium
+- Soft, clean, LIGHT background: very light warm gray (#f5f5f7) to soft off-white (#fafafa)
+- A very subtle, large soft gradient wash in the background: faint lavender (#ede9fe at 30% opacity) blending with faint mint (#ecfdf5 at 25% opacity) — barely noticeable, just adds warmth
+- A few very subtle translucent geometric shapes (circles, soft rectangles) in the background at 3-5% opacity for depth
+- Overall: BRIGHT, LIGHT, CLEAN — like Apple's product pages
 
 MAIN GLASSMORPHISM CARD:
 - A large rounded rectangle card in the CENTER of the image (takes up ~75% of space)
-- Card has rounded corners (~28px border-radius)
-- Card background: frosted dark glass effect — rgba(255,255,255,0.06), with a soft blur
-- THE KEY FEATURE: The card border is a VIVID ANIMATED-LOOKING GRADIENT BORDER:
-  - The border is ~2.5px thick
-  - Gradient flows from: indigo (#6366f1) → purple (#a855f7) → pink (#ec4899) → cyan (#22d3ee) → teal (#14b8a6) → back to indigo
-  - The border has a soft outer GLOW that matches the gradient colors (like a luminous halo around the card)
-  - The glow is subtle but noticeable, giving the card a floating premium feel
+- Card has rounded corners (~26px border-radius)
+- Card background: bright white frosted glass — rgba(255,255,255,0.85), with soft backdrop blur
+- THE KEY FEATURE: The card border is a beautiful GRADIENT BORDER:
+  - The border is ~2px thick
+  - Gradient flows from: soft indigo (#818cf8) → soft purple (#c084fc) → soft pink (#f9a8d4) → soft cyan (#67e8f9) → soft teal (#5eead4) → back to indigo
+  - The border has a very soft outer GLOW (subtle pastel halo, like a gentle aura)
+  - The glow is delicate — just enough to make the card feel elevated and premium
+- Very soft shadow: 0 16px 48px rgba(130,120,180,0.12)
 
-INSIDE THE CARD - TOP SECTION:
-- Top-left: "SHAHED STORE" brand text in clean white uppercase letters, medium weight, with a small diamond/sparkle icon before it
-- Top-right: A small frosted glass pill badge containing "${brand || name}" with a subtle icon
+INSIDE THE CARD - TOP ROW:
+- Top-left: "SHAHED STORE" in a small rounded pill badge with soft gradient (indigo to purple, pastel), white bold text
+- Top-right: "${brand || name}" in a clean pill with subtle light border, dark charcoal text (#374151) with a small brand icon
 
 INSIDE THE CARD - CENTER:
 - The product logo/icon for "${name}" placed LARGE and prominently in the center
-- The product icon sits on a very subtle frosted glass inner card/container with rounded corners
-- The inner container also has a faint gradient border (same colors but much more subtle)
-- Subtle reflection/glow beneath the product icon
+- Clean square app icon with rounded corners
+- The product icon sits on a very subtle inner container with faint gradient border (same pastel gradient but very light)
+- Soft subtle shadow beneath the product icon
+- Generous white space around — let it breathe
 
-${price ? `PRICE SECTION:
-- Below or beside the product icon: "৳${price}" in bold white text
-- Price text has a subtle gradient color effect (purple to cyan)` : ""}
+${price ? `PRICE BADGE:
+- A small elegant rounded pill showing "৳${price}"
+- Soft pastel gradient background (indigo to teal), white text
+- Positioned subtly below the product icon` : ""}
 
 BOTTOM OF CARD:
-- A frosted glass bottom strip inside the card (slightly lighter than the card body)
-- Separated by a very subtle gradient line (same gradient as border but at 30% opacity)
-- Left: globe icon + "www.shahedstore.com.bd" in light gray/white text
-- Right: phone icon + "+880 1840-099853" in light gray/white text
-- Typography is clean, small, professional
+- A thin subtle divider line (rgba(0,0,0,0.05))
+- Below the line:
+  - Left: globe icon + "www.shahedstore.com.bd" in soft gray text (#9ca3af)
+  - Right: phone icon + "+880 1840-099853" in soft gray text (#9ca3af)
+- Small, professional, minimal
 
 OVERALL AESTHETIC:
-- Ultra-premium glassmorphism with animated-gradient-border look
-- The gradient border is the HERO ELEMENT — vivid, multi-color, glowing
-- Dark background makes the gradient border and glass card pop dramatically
-- Feels like a high-end tech product showcase or premium SaaS promotional material
-- Professional, modern, luxurious. Square format exactly.
+- LIGHT, bright, airy premium glassmorphism
+- The pastel gradient border is the HERO ELEMENT — colorful but soft, elegant not flashy
+- White/light background with white glass card = clean, modern, Apple-like
+- Feels like a high-end product showcase on a luxury e-commerce site
+- Professional, minimal, lots of breathing room. Square format exactly.
 `.trim(),
   },
 };
