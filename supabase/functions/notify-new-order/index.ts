@@ -109,20 +109,15 @@ Deno.serve(async (req) => {
     }
 
     // ─── ADMIN EMAIL ─────────────────────────────────────────────────────────
-    const adminEmail = settings['admin_notification_email'];
-    if (adminEmail) {
-      try {
-        const emailRes = await supabase.functions.invoke('send-order-email', {
-          body: { type: 'admin_new_order', orderId: order.id, adminEmail },
-        });
-        results.email = emailRes.error
-          ? { success: false, error: emailRes.error }
-          : { success: true };
-      } catch (e) {
-        results.email = { success: false, error: String(e) };
-      }
-    } else {
-      results.email = { skipped: true, reason: 'admin_notification_email not set' };
+    try {
+      const emailRes = await supabase.functions.invoke('send-order-email', {
+        body: { type: 'admin_notify', orderId: order.id },
+      });
+      results.email = emailRes.error
+        ? { success: false, error: emailRes.error }
+        : { success: true };
+    } catch (e) {
+      results.email = { success: false, error: String(e) };
     }
 
     // ─── WhatsApp link ────────────────────────────────────────────────────────
