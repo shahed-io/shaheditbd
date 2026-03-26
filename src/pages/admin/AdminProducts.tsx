@@ -387,6 +387,7 @@ const AdminProducts = () => {
     { value: 'light_glass', label: '🌸 Light Glass', desc: 'পাস্টেল গ্রেডিয়েন্ট, ফ্রস্টেড গ্লাস' },
     { value: 'clean_light', label: '🩵 Clean Light', desc: 'ক্লিন হোয়াইট, বোকে এফেক্ট' },
     { value: 'vibrant_promo', label: '💜 Vibrant Promo', desc: 'ডিপ পার্পল, ভাইব্র্যান্ট' },
+    { value: 'glass_gradient', label: '✨ Glass Gradient', desc: 'গ্লাসমরফিজম গ্রেডিয়েন্ট বর্ডার' },
   ] as const;
 
   // ── AI Glassmorphism Card Generator ──────────────────────────
