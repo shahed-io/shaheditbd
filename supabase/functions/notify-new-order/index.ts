@@ -110,11 +110,17 @@ Deno.serve(async (req) => {
 
     // ─── ADMIN EMAIL ─────────────────────────────────────────────────────────
     const adminEmail = settings['admin_notification_email'];
-    if (adminEmail) {
+    if (true) {
       try {
         const emailRes = await supabase.functions.invoke('send-order-email', {
-          body: { type: 'admin_new_order', orderId: order.id, adminEmail },
+          body: { type: 'admin_notify', orderId: order.id },
         });
+        results.email = emailRes.error
+          ? { success: false, error: emailRes.error }
+          : { success: true };
+      } catch (e) {
+        results.email = { success: false, error: String(e) };
+      }
         results.email = emailRes.error
           ? { success: false, error: emailRes.error }
           : { success: true };
