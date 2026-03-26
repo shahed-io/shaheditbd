@@ -200,7 +200,7 @@ const AdminProducts = () => {
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [aiCardLoading, setAiCardLoading] = useState(false);
   const [aiCardPreview, setAiCardPreview] = useState<string | null>(null);
-  const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo'>('dark_neon');
+  const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo' | 'glass_gradient'>('dark_neon');
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
   const [shortDescOptions, setShortDescOptions] = useState<string[]>([]);
@@ -387,6 +387,7 @@ const AdminProducts = () => {
     { value: 'light_glass', label: '🌸 Light Glass', desc: 'পাস্টেল গ্রেডিয়েন্ট, ফ্রস্টেড গ্লাস' },
     { value: 'clean_light', label: '🩵 Clean Light', desc: 'ক্লিন হোয়াইট, বোকে এফেক্ট' },
     { value: 'vibrant_promo', label: '💜 Vibrant Promo', desc: 'ডিপ পার্পল, ভাইব্র্যান্ট' },
+    { value: 'glass_gradient', label: '✨ Glass Gradient', desc: 'গ্লাসমরফিজম গ্রেডিয়েন্ট বর্ডার' },
   ] as const;
 
   // ── AI Glassmorphism Card Generator ──────────────────────────
@@ -1695,6 +1696,7 @@ const AdminProducts = () => {
                             {cardStyle === 'light_glass' && 'পাস্টেল কালার গ্রেডিয়েন্ট + ফ্রস্টেড গ্লাস কার্ড — রেফারেন্স: CamScanner colorful card'}
                             {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল Shahed Store ব্যাজ — রেফারেন্স: CamScanner clean card'}
                             {cardStyle === 'vibrant_promo' && 'ডিপ পার্পল ব্যাকগ্রাউন্ড + ভাইব্র্যান্ট কালার, সোশ্যাল মিডিয়া প্রমো স্টাইল'}
+                            {cardStyle === 'glass_gradient' && 'ডার্ক ব্যাকগ্রাউন্ড + মাল্টি-কালার গ্লোয়িং গ্রেডিয়েন্ট বর্ডার, প্রিমিয়াম গ্লাসমরফিজম'}
                           </span>
                         </div>
 
