@@ -199,6 +199,7 @@ const AdminProducts = () => {
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [aiCardLoading, setAiCardLoading] = useState(false);
+  const [aiCardPreview, setAiCardPreview] = useState<string | null>(null);
   const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo'>('dark_neon');
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
@@ -419,12 +420,9 @@ const AdminProducts = () => {
       if (data?.error) throw new Error(data.error);
 
       // Server may return a storage URL directly (imageUrl) or base64 fallback (imageData)
+      let previewUrl: string | null = null;
       if (data.imageUrl) {
-        // Already uploaded server-side — use directly
-        setForm(prev => ({ ...prev, image_url: data.imageUrl }));
-        setImagePreview(data.imageUrl);
-        toast.dismiss(toastId);
-        toast.success('✨ AI Card তৈরি হয়েছে!');
+        previewUrl = data.imageUrl;
       } else if (data.imageData) {
         // Fallback: base64 received — upload client-side
         const imageDataUrl: string = data.imageData;
@@ -456,13 +454,15 @@ const AdminProducts = () => {
         if (uploadError) throw uploadError;
 
         const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(uploadData.path);
-        setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
-        setImagePreview(urlData.publicUrl);
-        toast.dismiss(toastId);
-        toast.success('✨ AI Glassmorphism Card তৈরি হয়েছে!');
+        previewUrl = urlData.publicUrl;
       } else {
         throw new Error('AI থেকে কোনো ইমেজ পাওয়া যায়নি। আবার চেষ্টা করুন।');
       }
+
+      // Show preview instead of directly applying
+      toast.dismiss(toastId);
+      toast.success('✨ AI Card তৈরি হয়েছে! প্রিভিউ দেখুন।');
+      setAiCardPreview(previewUrl);
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error('AI Card Error: ' + (err.message || 'Unknown error'));
@@ -1724,6 +1724,48 @@ const AdminProducts = () => {
                               ))}
                             </div>
                             AI ছবি তৈরি করছে, WEBP কনভার্ট করছে এবং সেভ করছে...
+                          </div>
+                        )}
+
+                        {/* AI Card Preview Modal */}
+                        {aiCardPreview && (
+                          <div className="rounded-2xl overflow-hidden border border-primary/30 space-y-3"
+                            style={{ background: 'hsla(271,91%,65%,0.08)' }}>
+                            <div className="p-3 pb-0">
+                              <p className="text-xs font-semibold text-foreground mb-2">🖼️ জেনারেট করা ইমেজ প্রিভিউ:</p>
+                              <div className="rounded-xl overflow-hidden border border-border bg-background">
+                                <img
+                                  src={aiCardPreview}
+                                  alt="AI Generated Card Preview"
+                                  className="w-full h-auto max-h-[300px] object-contain"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex gap-2 p-3 pt-0">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setForm(prev => ({ ...prev, image_url: aiCardPreview }));
+                                  setImagePreview(aiCardPreview);
+                                  setAiCardPreview(null);
+                                  toast.success('✅ ইমেজ সেট করা হয়েছে!');
+                                }}
+                                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
+                                style={{ background: 'linear-gradient(135deg, hsl(142,71%,45%), hsl(142,71%,35%))' }}
+                              >
+                                ✅ ব্যবহার করুন
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAiCardPreview(null);
+                                  toast.info('ইমেজ বাতিল করা হয়েছে');
+                                }}
+                                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-foreground border border-border transition-all hover:bg-muted"
+                              >
+                                ❌ বাতিল করুন
+                              </button>
+                            </div>
                           </div>
                         )}
                       </div>
