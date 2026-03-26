@@ -147,6 +147,56 @@ BOTTOM OF CARD:
 OVERALL: Rich dark premium promotional style, vibrant colors, glassmorphism, suitable for social media posts. Square format exactly.
 `.trim(),
   },
+
+  glass_gradient: {
+    label: "Glass Gradient Border",
+    prompt: (name: string, brand: string, price: string, category: string) => `
+Create a premium square (1:1) product promotional card image with this EXACT design:
+
+BACKGROUND:
+- Solid deep dark background: very dark charcoal black (#0c0c14) to dark navy (#0e1023)
+- Extremely subtle noise/grain texture on the background for depth
+- NO distracting elements in the background — clean, minimal, premium
+
+MAIN GLASSMORPHISM CARD:
+- A large rounded rectangle card in the CENTER of the image (takes up ~75% of space)
+- Card has rounded corners (~28px border-radius)
+- Card background: frosted dark glass effect — rgba(255,255,255,0.06), with a soft blur
+- THE KEY FEATURE: The card border is a VIVID ANIMATED-LOOKING GRADIENT BORDER:
+  - The border is ~2.5px thick
+  - Gradient flows from: indigo (#6366f1) → purple (#a855f7) → pink (#ec4899) → cyan (#22d3ee) → teal (#14b8a6) → back to indigo
+  - The border has a soft outer GLOW that matches the gradient colors (like a luminous halo around the card)
+  - The glow is subtle but noticeable, giving the card a floating premium feel
+
+INSIDE THE CARD - TOP SECTION:
+- Top-left: "SHAHED STORE" brand text in clean white uppercase letters, medium weight, with a small diamond/sparkle icon before it
+- Top-right: A small frosted glass pill badge containing "${brand || name}" with a subtle icon
+
+INSIDE THE CARD - CENTER:
+- The product logo/icon for "${name}" placed LARGE and prominently in the center
+- The product icon sits on a very subtle frosted glass inner card/container with rounded corners
+- The inner container also has a faint gradient border (same colors but much more subtle)
+- Subtle reflection/glow beneath the product icon
+
+${price ? `PRICE SECTION:
+- Below or beside the product icon: "৳${price}" in bold white text
+- Price text has a subtle gradient color effect (purple to cyan)` : ""}
+
+BOTTOM OF CARD:
+- A frosted glass bottom strip inside the card (slightly lighter than the card body)
+- Separated by a very subtle gradient line (same gradient as border but at 30% opacity)
+- Left: globe icon + "www.shahedstore.com.bd" in light gray/white text
+- Right: phone icon + "+880 1840-099853" in light gray/white text
+- Typography is clean, small, professional
+
+OVERALL AESTHETIC:
+- Ultra-premium glassmorphism with animated-gradient-border look
+- The gradient border is the HERO ELEMENT — vivid, multi-color, glowing
+- Dark background makes the gradient border and glass card pop dramatically
+- Feels like a high-end tech product showcase or premium SaaS promotional material
+- Professional, modern, luxurious. Square format exactly.
+`.trim(),
+  },
 };
 
 // Extract the short/main product name from a full product title
