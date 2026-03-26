@@ -126,7 +126,7 @@ const Footer = () => (
           {[
             { icon: <Phone size={13} />, href: 'tel:01840099853',                   label: '01840-099853',            color: 'hsl(258,78%,55%)' },
             { icon: <Mail size={13} />,  href: 'mailto:info@shahedstore.com.bd',     label: 'info@shahedstore.com.bd', color: 'hsl(200,90%,45%)' },
-            { icon: <Globe size={13} />, href: 'https://www.shahedstore.com.bd',     label: 'www.shahedstore.com.bd',  color: 'hsl(162,72%,38%)', ext: true },
+            { icon: <Globe size={13} />, href: '#',                                  label: 'Ishwardi, Pabna',         color: 'hsl(162,72%,38%)' },
           ].map((c, i) => (
             <a key={i} href={c.href} target={c.ext ? '_blank' : undefined} rel={c.ext ? 'noopener noreferrer' : undefined}
               className="flex items-center gap-3 text-sm transition-all group hover:translate-x-1"
