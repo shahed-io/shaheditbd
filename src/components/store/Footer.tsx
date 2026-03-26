@@ -1,4 +1,4 @@
-import { Phone, Mail, Globe, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText, Send } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 import dbidLogo from '@/assets/dbid-logo.png';
 
@@ -126,7 +126,7 @@ const Footer = () => (
           {[
             { icon: <Phone size={13} />, href: 'tel:01840099853',                   label: '01840-099853',            color: 'hsl(258,78%,55%)' },
             { icon: <Mail size={13} />,  href: 'mailto:info@shahedstore.com.bd',     label: 'info@shahedstore.com.bd', color: 'hsl(200,90%,45%)' },
-            { icon: <Globe size={13} />, href: '#',                                  label: 'Ishwardi, Pabna',         color: 'hsl(162,72%,38%)' },
+            { icon: <MapPin size={13} />, href: '#',                                  label: 'Ishwardi, Pabna',         color: 'hsl(162,72%,38%)' },
           ].map((c, i) => (
             <a key={i} href={c.href} target={(c as any).ext ? '_blank' : undefined} rel={(c as any).ext ? 'noopener noreferrer' : undefined}
               className="flex items-center gap-3 text-sm transition-all group hover:translate-x-1"
