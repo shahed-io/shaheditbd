@@ -199,6 +199,7 @@ const AdminProducts = () => {
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [aiCardLoading, setAiCardLoading] = useState(false);
+  const [aiCardPreview, setAiCardPreview] = useState<string | null>(null);
   const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo'>('dark_neon');
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
@@ -419,12 +420,9 @@ const AdminProducts = () => {
       if (data?.error) throw new Error(data.error);
 
       // Server may return a storage URL directly (imageUrl) or base64 fallback (imageData)
+      let previewUrl: string | null = null;
       if (data.imageUrl) {
-        // Already uploaded server-side — use directly
-        setForm(prev => ({ ...prev, image_url: data.imageUrl }));
-        setImagePreview(data.imageUrl);
-        toast.dismiss(toastId);
-        toast.success('✨ AI Card তৈরি হয়েছে!');
+        previewUrl = data.imageUrl;
       } else if (data.imageData) {
         // Fallback: base64 received — upload client-side
         const imageDataUrl: string = data.imageData;
@@ -456,13 +454,15 @@ const AdminProducts = () => {
         if (uploadError) throw uploadError;
 
         const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(uploadData.path);
-        setForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
-        setImagePreview(urlData.publicUrl);
-        toast.dismiss(toastId);
-        toast.success('✨ AI Glassmorphism Card তৈরি হয়েছে!');
+        previewUrl = urlData.publicUrl;
       } else {
         throw new Error('AI থেকে কোনো ইমেজ পাওয়া যায়নি। আবার চেষ্টা করুন।');
       }
+
+      // Show preview instead of directly applying
+      toast.dismiss(toastId);
+      toast.success('✨ AI Card তৈরি হয়েছে! প্রিভিউ দেখুন।');
+      setAiCardPreview(previewUrl);
     } catch (err: any) {
       toast.dismiss(toastId);
       toast.error('AI Card Error: ' + (err.message || 'Unknown error'));
