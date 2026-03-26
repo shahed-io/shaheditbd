@@ -200,7 +200,7 @@ const AdminProducts = () => {
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [aiCardLoading, setAiCardLoading] = useState(false);
   const [aiCardPreview, setAiCardPreview] = useState<string | null>(null);
-  const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo'>('dark_neon');
+  const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo' | 'glass_gradient'>('dark_neon');
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
   const [shortDescOptions, setShortDescOptions] = useState<string[]>([]);
