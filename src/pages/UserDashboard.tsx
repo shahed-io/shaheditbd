@@ -1753,6 +1753,11 @@ const UserDashboard = () => {
                 </div>
               )}
 
+              {/* ── Install App Tab ── */}
+              {activeTab === 'install' && (
+                <InstallAppTab />
+              )}
+
             </div>
           </div>{/* end Content Panel */}
         </div>
