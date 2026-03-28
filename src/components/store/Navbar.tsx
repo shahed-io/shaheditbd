@@ -140,6 +140,32 @@ const Navbar = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
+  // PWA Install detection
+  useEffect(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    if (isStandalone) return;
+    const ua = navigator.userAgent;
+    const ios = /iPad|iPhone|iPod/.test(ua);
+    setIsIOS(ios);
+    if (ios) { setCanInstall(true); return; }
+    const handler = (e: Event) => {
+      e.preventDefault();
+      deferredPrompt.current = e as BeforeInstallPromptEvent;
+      setCanInstall(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (isIOS) { setShowIOSTip(v => !v); return; }
+    if (!deferredPrompt.current) return;
+    await deferredPrompt.current.prompt();
+    const { outcome } = await deferredPrompt.current.userChoice;
+    if (outcome === 'accepted') setCanInstall(false);
+    deferredPrompt.current = null;
+  };
+
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
   const initials    = displayName[0].toUpperCase();
 
