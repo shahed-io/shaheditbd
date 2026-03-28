@@ -75,13 +75,11 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
           }}
         />
         <img
-          src="/favicon.png"
+          src="/pwa-192.png"
           alt="Shahed Store"
-          className="relative w-[88px] h-[88px] rounded-2xl object-contain"
+          className="relative w-[80px] h-[80px] rounded-2xl object-cover"
           style={{
             boxShadow: '0 0 30px hsla(258, 78%, 55%, 0.5), 0 0 60px hsla(258, 78%, 55%, 0.2)',
-            background: 'linear-gradient(135deg, hsl(258, 78%, 22%), hsl(226, 40%, 15%))',
-            padding: '8px',
           }}
         />
       </div>
