@@ -729,7 +729,15 @@ const UserDashboard = () => {
           </div>
 
           {/* Content Panel */}
-          <div className="rounded-2xl overflow-hidden" style={glassCardStrong}>
+          <div className={`rounded-2xl overflow-hidden ${!mobileShowContent ? 'hidden md:block' : ''}`} style={glassCardStrong}>
+
+            {/* Mobile Back Button */}
+            <button
+              onClick={() => { setMobileShowContent(false); window.scrollTo({ top: 0 }); }}
+              className="md:hidden flex items-center gap-2 px-4 py-3 text-sm font-semibold text-primary w-full"
+              style={{ borderBottom: '1px solid hsla(258,78%,75%,0.15)', background: 'rgba(255,255,255,0.5)' }}>
+              <ChevronRight size={16} className="rotate-180" /> Back to Menu
+            </button>
 
             {/* Tab Header */}
             <div className="px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'rgba(255,255,255,0.4)' }}>
