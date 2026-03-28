@@ -17,9 +17,6 @@ const CartDrawer = lazy(() => import("@/components/store/CartDrawer"));
 const RedirectEnforcer = lazy(() => import("@/components/seo/RedirectEnforcer"));
 const FacebookPixel = lazy(() => import("@/components/store/FacebookPixel"));
 
-// Critical pages — eager load
-import Index from "./pages/Index";
-
 // All other pages — lazy loaded
 const Checkout              = lazy(() => import("./pages/Checkout"));
 const ProductDetail         = lazy(() => import("./pages/ProductDetail"));
