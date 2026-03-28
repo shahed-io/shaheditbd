@@ -12,7 +12,6 @@ interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
-import { supabase } from '@/integrations/supabase/client';
 
 // Module-level cache so categories aren't re-fetched on every mount
 let _catCache: NavCategory[] | null = null;
