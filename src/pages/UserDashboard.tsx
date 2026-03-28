@@ -827,7 +827,7 @@ const UserDashboard = () => {
                 <div>
                   {ordersLoading ? (
                     <div className="flex flex-col items-center justify-center py-16 gap-3">
-                      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
+                      <BrandLoader size="sm" />
                       <p className="text-sm text-muted-foreground">{t(selectedLang, 'loading_text')}</p>
                     </div>
                   ) : orders.length === 0 ? (
