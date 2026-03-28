@@ -171,8 +171,14 @@ const InstallAppTab = () => {
         background: 'linear-gradient(145deg, hsla(258,78%,55%,0.12), hsla(258,78%,55%,0.04))',
         border: '1px solid hsla(258,78%,55%,0.2)',
       }}>
-        <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden shadow-lg" style={{ boxShadow: '0 4px 20px hsla(258,78%,55%,0.3)' }}>
-          <img src="/favicon.png" alt="Shahed Store" className="w-full h-full" />
+        <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden flex items-center justify-center"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.55) 100%)',
+            backdropFilter: 'blur(24px) saturate(180%)',
+            border: '1px solid hsla(258,78%,75%,0.25)',
+            boxShadow: '0 4px 20px hsla(258,78%,55%,0.15)',
+          }}>
+          <img src="/favicon.png" alt="Shahed Store" className="w-14 h-14 object-contain" />
         </div>
         <h3 className="text-lg font-black text-foreground">Install Shahed Store App</h3>
         <p className="text-sm text-muted-foreground mt-1">Get direct access on your phone</p>
