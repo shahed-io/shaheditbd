@@ -3,6 +3,7 @@ import BrandLogo from '@/components/store/BrandLogo';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
+import { useAdminOrderNotification } from '@/hooks/useAdminOrderNotification';
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
   LogOut, Menu, X, BarChart3, Bell, Search, ChevronDown,
