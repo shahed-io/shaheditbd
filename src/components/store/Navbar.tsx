@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search, Download, Share2, PlusSquare } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
 import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
@@ -7,6 +7,11 @@ import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 // Module-level cache so categories aren't re-fetched on every mount
 let _catCache: NavCategory[] | null = null;
@@ -50,6 +55,10 @@ const Navbar = () => {
   const [mobileSearch,  setMobileSearch]  = useState(false);
   const [desktopSearch, setDesktopSearch] = useState(false);
   const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
+  const [canInstall, setCanInstall] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showIOSTip, setShowIOSTip] = useState(false);
+  const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
   
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
@@ -130,6 +139,32 @@ const Navbar = () => {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);
+
+  // PWA Install detection
+  useEffect(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    if (isStandalone) return;
+    const ua = navigator.userAgent;
+    const ios = /iPad|iPhone|iPod/.test(ua);
+    setIsIOS(ios);
+    if (ios) { setCanInstall(true); return; }
+    const handler = (e: Event) => {
+      e.preventDefault();
+      deferredPrompt.current = e as BeforeInstallPromptEvent;
+      setCanInstall(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (isIOS) { setShowIOSTip(v => !v); return; }
+    if (!deferredPrompt.current) return;
+    await deferredPrompt.current.prompt();
+    const { outcome } = await deferredPrompt.current.userChoice;
+    if (outcome === 'accepted') setCanInstall(false);
+    deferredPrompt.current = null;
+  };
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
   const initials    = displayName[0].toUpperCase();
@@ -363,6 +398,32 @@ const Navbar = () => {
                 {link.label}
               </a>
             ))}
+            {/* Install App Button */}
+            {canInstall && (
+              <div className="pb-1">
+                <button onClick={handleInstall}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all"
+                  style={{ color: 'hsl(258,78%,50%)', background: 'hsla(258,78%,55%,0.08)' }}>
+                  <Download size={16} />
+                  অ্যাপ ইন্সটল করুন
+                </button>
+                {showIOSTip && (
+                  <div className="mx-2 mt-1.5 rounded-xl p-3 text-[12px] leading-relaxed"
+                    style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.15)' }}>
+                    <p className="font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
+                      <Share2 size={13} /> iOS-এ ইন্সটল করুন:
+                    </p>
+                    <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
+                      1. নিচের <Share2 size={12} className="text-blue-500" /> Share বাটনে ক্লিক করুন
+                    </p>
+                    <p className="flex items-center gap-1.5 mt-1" style={{ color: 'hsl(226,35%,45%)' }}>
+                      2. <PlusSquare size={12} className="text-blue-500" /> "Add to Home Screen" সিলেক্ট করুন
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="pt-2 border-t" style={{ borderColor: 'hsl(220,20%,90%)' }}>
               {user ? (
                 <div className="flex gap-2">
