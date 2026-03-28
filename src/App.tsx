@@ -8,12 +8,14 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
-import SplashScreen from "@/components/store/SplashScreen";
 
+// Critical pages — eager load
+import Index from "./pages/Index";
 
-import CartDrawer from "@/components/store/CartDrawer";
-import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
-import FacebookPixel from "@/components/store/FacebookPixel";
+// Deferred non-critical components — lazy loaded
+const CartDrawer = lazy(() => import("@/components/store/CartDrawer"));
+const RedirectEnforcer = lazy(() => import("@/components/seo/RedirectEnforcer"));
+const FacebookPixel = lazy(() => import("@/components/store/FacebookPixel"));
 
 // Critical pages — eager load
 import Index from "./pages/Index";
