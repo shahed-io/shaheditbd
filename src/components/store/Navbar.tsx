@@ -55,6 +55,10 @@ const Navbar = () => {
   const [mobileSearch,  setMobileSearch]  = useState(false);
   const [desktopSearch, setDesktopSearch] = useState(false);
   const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
+  const [canInstall, setCanInstall] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showIOSTip, setShowIOSTip] = useState(false);
+  const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
   
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
