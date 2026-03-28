@@ -392,65 +392,117 @@ const Navbar = () => {
           <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
         )}
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu — Dashboard Style */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
-          <div className="border-t px-4 py-4 space-y-1"
-            style={{ background: 'hsla(0,0%,100%,0.92)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
-            {NAV_LINKS.map(link => (
-              <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-colors"
-                style={{ color: 'hsl(226,35%,28%)' }}>
-                {link.label}
-              </a>
-            ))}
-            {/* Install App Button */}
-            {canInstall && (
-              <div className="pb-1">
-                <button onClick={handleInstall}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all"
-                  style={{ color: 'hsl(258,78%,50%)', background: 'hsla(258,78%,55%,0.08)' }}>
-                  <Download size={16} />
-                  Install App
-                </button>
+          <div className="border-t px-3 py-3"
+            style={{ background: 'hsla(0,0%,100%,0.95)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
+            
+            {user ? (
+              <>
+                {/* MENU label */}
+                <p className="text-[10px] font-bold tracking-widest uppercase px-3 pt-1 pb-2" style={{ color: 'hsl(226,35%,55%)' }}>Menu</p>
+
+                {/* Menu Items */}
+                {[
+                  { label: 'Profile',       icon: User,    tab: 'profile' },
+                  { label: 'My Orders',     icon: Package, tab: 'orders' },
+                  { label: 'My Licenses',   icon: Key,     tab: 'licenses' },
+                  { label: 'Wallet',        icon: Wallet,  tab: 'wallet' },
+                  { label: 'Points',        icon: Award,   tab: 'points' },
+                  { label: 'Wishlist',      icon: Heart,   tab: 'wishlist' },
+                  { label: 'Addresses',     icon: MapPin,  tab: 'addresses' },
+                  { label: 'Notifications', icon: Bell,    tab: 'notifications' },
+                  { label: 'Referral',      icon: Gift,    tab: 'referral' },
+                  { label: 'Security',      icon: Lock,    tab: 'security' },
+                  { label: 'Language',      icon: Globe,   tab: 'language' },
+                ].map((item, i) => (
+                  <button
+                    key={item.tab}
+                    onClick={() => { navigate(`/dashboard?tab=${item.tab}`); setMobileOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-accent/50"
+                    style={{
+                      color: 'hsl(226,35%,25%)',
+                      ...(i === 0 ? { background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,60%,0.15)' } : {}),
+                    }}>
+                    <item.icon size={17} style={{ color: 'hsl(258,78%,50%)' }} />
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {i === 0 && <ChevronRight size={15} style={{ color: 'hsl(226,35%,65%)' }} />}
+                  </button>
+                ))}
+
+                {/* Install App */}
+                {canInstall && (
+                  <button onClick={() => { handleInstall(); if (!isIOS) setMobileOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-accent/50"
+                    style={{ color: 'hsl(226,35%,25%)' }}>
+                    <Download size={17} style={{ color: 'hsl(258,78%,50%)' }} />
+                    <span className="flex-1 text-left">Install App</span>
+                  </button>
+                )}
                 {showIOSTip && (
-                  <div className="mx-2 mt-1.5 rounded-xl p-3 text-[12px] leading-relaxed"
+                  <div className="mx-2 mt-1 mb-1 rounded-xl p-3 text-[12px] leading-relaxed"
                     style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.15)' }}>
                     <p className="font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
                       <Share2 size={13} /> Install on iOS:
                     </p>
                     <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
-                      1. Tap the <Share2 size={12} className="text-blue-500" /> Share button below
+                      1. Tap the <Share2 size={12} className="text-blue-500" /> Share button
                     </p>
                     <p className="flex items-center gap-1.5 mt-1" style={{ color: 'hsl(226,35%,45%)' }}>
                       2. Select <PlusSquare size={12} className="text-blue-500" /> "Add to Home Screen"
                     </p>
                   </div>
                 )}
-              </div>
-            )}
 
-            <div className="pt-2 border-t" style={{ borderColor: 'hsl(220,20%,90%)' }}>
-              {user ? (
-                <div className="flex gap-2">
-                  <button onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold text-white"
-                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
-                    <LayoutDashboard size={15} /> Dashboard
+                {/* Admin Panel */}
+                {isAdmin && (
+                  <button
+                    onClick={() => { navigate('/ceo'); setMobileOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 mt-2 rounded-xl text-sm font-bold text-white"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(270,70%,50%))',
+                      boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)',
+                    }}>
+                    <ShieldCheck size={17} />
+                    <span className="flex-1 text-left">Admin Panel</span>
                   </button>
-                  <button onClick={() => supabase.auth.signOut()}
-                    className="px-4 py-3 rounded-2xl text-sm font-semibold border transition-all"
-                    style={{ color: 'hsl(226,35%,35%)', borderColor: 'hsl(220,20%,88%)' }}>
-                    Logout
+                )}
+
+                {/* Logout */}
+                <button
+                  onClick={() => { supabase.auth.signOut(); setMobileOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-3 mt-1 rounded-xl text-sm font-medium transition-all hover:bg-destructive/5"
+                  style={{ color: 'hsl(0,84%,55%)' }}>
+                  <LogOut size={17} />
+                  <span className="flex-1 text-left">Logout</span>
+                </button>
+              </>
+            ) : (
+              <>
+                {NAV_LINKS.map(link => (
+                  <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors"
+                    style={{ color: 'hsl(226,35%,28%)' }}>
+                    {link.label}
+                  </a>
+                ))}
+                {canInstall && (
+                  <button onClick={handleInstall}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
+                    style={{ color: 'hsl(258,78%,50%)', background: 'hsla(258,78%,55%,0.08)' }}>
+                    <Download size={16} />
+                    Install App
+                  </button>
+                )}
+                <div className="pt-2 border-t mt-1" style={{ borderColor: 'hsl(220,20%,90%)' }}>
+                  <button onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
+                    className="w-full py-3.5 rounded-xl text-sm font-bold text-white"
+                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
+                    Sign In / Register
                   </button>
                 </div>
-              ) : (
-                <button onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                  className="w-full py-3.5 rounded-2xl text-sm font-bold text-white"
-                  style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
-                  Sign In / Register
-                </button>
-              )}
-            </div>
+              </>
+            )}
           </div>
         </div>
       </nav>
