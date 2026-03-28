@@ -49,6 +49,7 @@ const menuItems = [
   { icon: Mail, label: 'Newsletter', path: '/ceo/newsletter' },
   { icon: FileText, label: 'Product Reviews', path: '/ceo/product-reviews' },
   { icon: ArrowLeftRight, label: 'Import / Export', path: '/ceo/import-export' },
+  { icon: FileText, label: 'Invoice Generator', path: '/ceo/invoices' },
   {
     icon: Globe, label: 'SEO Settings', path: '/ceo/seo',
     children: [
