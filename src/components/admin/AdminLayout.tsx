@@ -3,6 +3,7 @@ import BrandLogo from '@/components/store/BrandLogo';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
+import { useAdminOrderNotification } from '@/hooks/useAdminOrderNotification';
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
   LogOut, Menu, X, BarChart3, Bell, Search, ChevronDown,
@@ -86,6 +87,9 @@ const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['Products', 'Orders']);
   const location = useLocation();
+
+  // Real-time order notification with sound
+  useAdminOrderNotification();
 
   if (loading) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
