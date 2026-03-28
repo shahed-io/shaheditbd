@@ -9,7 +9,7 @@ import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
 import SplashScreen from "@/components/store/SplashScreen";
-import InstallBanner from "@/components/store/InstallBanner";
+
 
 import CartDrawer from "@/components/store/CartDrawer";
 import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
