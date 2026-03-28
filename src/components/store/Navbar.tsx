@@ -316,7 +316,7 @@ const Navbar = () => {
             {/* Actions */}
             <div className="flex items-center gap-1.5">
               {user ? (
-                <div className="hidden lg:flex items-center gap-1">
+                <div className="hidden sm:flex items-center gap-1">
                   <button onClick={() => navigate('/dashboard')}
                     className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
                     style={{ color: 'hsl(226,35%,28%)' }}
@@ -326,7 +326,7 @@ const Navbar = () => {
                       style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
                       {avatarUrl ? <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" /> : initials}
                     </div>
-                    <span>Dashboard</span>
+                    <span className="hidden lg:inline">Dashboard</span>
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
                     className="p-2 rounded-xl transition-all"
@@ -338,12 +338,12 @@ const Navbar = () => {
                 </div>
               ) : (
                 <button onClick={() => setAuthOpen(true)}
-                  className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border"
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border"
                   style={{ color: 'hsl(258,78%,50%)', borderColor: 'hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.05)' }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.55)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.10)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.30)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.05)'; }}>
                   <User size={16} />
-                  <span>Login</span>
+                  <span className="hidden lg:inline">Login</span>
                 </button>
               )}
 

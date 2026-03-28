@@ -655,9 +655,9 @@ const UserDashboard = () => {
                     {avatarUploading ? <RefreshCw size={13} className="text-white animate-spin" /> : <Camera size={13} className="text-white" />}
                   </button>
                 </div>
-                <div className="pb-1 min-w-0 flex-1">
-                  <h1 className="text-lg sm:text-2xl font-black text-foreground truncate">{displayName}</h1>
-                  <p className="text-sm text-muted-foreground break-all">{user?.email}</p>
+                <div className="pb-1">
+                  <h1 className="text-lg sm:text-2xl font-black text-foreground">{displayName}</h1>
+                  <p className="text-sm text-muted-foreground">{user?.email}</p>
                   <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                     <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
                       <ShieldCheck size={11} /> Verified
