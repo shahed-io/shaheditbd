@@ -33,6 +33,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_referral: 'Referral',
     tab_security: 'Security',
     tab_language: 'Language',
+    tab_install: 'Install App',
     tab_logout: 'Logout',
     menu: 'Menu',
 
@@ -259,6 +260,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_referral: 'রেফারেল',
     tab_security: 'নিরাপত্তা',
     tab_language: 'ভাষা',
+    tab_install: 'অ্যাপ ইন্সটল',
     tab_logout: 'লগআউট',
     menu: 'মেনু',
     profile_title: 'প্রোফাইল',
