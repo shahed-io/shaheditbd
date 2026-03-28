@@ -128,7 +128,10 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    loadNavCategories();
+    // Defer category load to not block initial render
+    const t = setTimeout(() => {
+      loadNavCategories();
+    }, 100);
     // Realtime: bust cache and reload when categories change
     const channel = supabase
       .channel('navbar-cats-rt')
@@ -137,7 +140,7 @@ const Navbar = () => {
         loadNavCategories(true);
       })
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { clearTimeout(t); supabase.removeChannel(channel); };
   }, []);
 
   // PWA Install detection

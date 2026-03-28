@@ -31,7 +31,6 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        // Simple chunk splitting — reliable on all CDNs including Hostinger
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-supabase': ['@supabase/supabase-js'],
@@ -45,10 +44,10 @@ export default defineConfig(({ mode }) => ({
     target: 'es2020',
     sourcemap: false,
     cssMinify: true,
-    assetsInlineLimit: 4096,
+    assetsInlineLimit: 8192,  // Inline larger assets to reduce requests
     cssCodeSplit: true,
+    modulePreload: { polyfill: false }, // Modern browsers don't need polyfill
   },
-  // Pre-bundle critical deps so first HMR is instant in dev
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'lucide-react', '@tanstack/react-query'],
   },

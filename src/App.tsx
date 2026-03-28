@@ -3,20 +3,19 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect, lazy, Suspense, useState, useCallback } from "react";
+import { useEffect, lazy, Suspense, useState } from "react";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
-import SplashScreen from "@/components/store/SplashScreen";
-
-
-import CartDrawer from "@/components/store/CartDrawer";
-import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
-import FacebookPixel from "@/components/store/FacebookPixel";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
+
+// Deferred non-critical components — lazy loaded
+const CartDrawer = lazy(() => import("@/components/store/CartDrawer"));
+const RedirectEnforcer = lazy(() => import("@/components/seo/RedirectEnforcer"));
+const FacebookPixel = lazy(() => import("@/components/store/FacebookPixel"));
 
 // All other pages — lazy loaded
 const Checkout              = lazy(() => import("./pages/Checkout"));
@@ -97,10 +96,12 @@ const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoice
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 10,   // 10 minutes — reduce redundant refetches
-      gcTime:    1000 * 60 * 30,   // 30 minutes cache
+      staleTime: 1000 * 60 * 10,
+      gcTime:    1000 * 60 * 30,
       retry: 1,
-      refetchOnWindowFocus: false, // Don't refetch on tab switch
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,       // Don't refetch if data is fresh
+      refetchOnReconnect: false,   // Don't refetch on reconnect
     },
   },
 });
@@ -123,17 +124,14 @@ const AdminNotificationListener = () => {
 // Admin body class management
 const AppContent = () => {
   const location = useLocation();
-  const [showSplash, setShowSplash] = useState(() => {
-    // Show splash only on first visit per session and on mobile-sized screens
-    if (typeof window === 'undefined') return false;
-    const isMobile = window.innerWidth < 768;
-    const alreadyShown = sessionStorage.getItem('splash_shown');
-    return isMobile && !alreadyShown;
-  });
+  const [deferReady, setDeferReady] = useState(false);
 
-  const handleSplashFinish = useCallback(() => {
-    setShowSplash(false);
-    sessionStorage.setItem('splash_shown', '1');
+  useEffect(() => {
+    // Defer non-critical components until after first paint (~20ms)
+    const id = requestAnimationFrame(() => {
+      setDeferReady(true);
+    });
+    return () => cancelAnimationFrame(id);
   }, []);
 
   useEffect(() => {
@@ -147,11 +145,14 @@ const AppContent = () => {
 
   return (
     <>
-      
-      <AdminNotificationListener />
-      <FacebookPixel />
-      <CartDrawer />
-      <RedirectEnforcer />
+      {deferReady && (
+        <Suspense fallback={null}>
+          <AdminNotificationListener />
+          <FacebookPixel />
+          <CartDrawer />
+          <RedirectEnforcer />
+        </Suspense>
+      )}
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Index />} />
