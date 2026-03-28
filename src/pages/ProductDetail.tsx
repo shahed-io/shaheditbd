@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import BrandLoader from '@/components/store/BrandLoader';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const ReactMarkdown = lazy(() => import('react-markdown'));
