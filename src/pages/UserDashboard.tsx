@@ -581,7 +581,7 @@ const UserDashboard = () => {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
+      <BrandLoader size="md" />
     </div>
   );
 
