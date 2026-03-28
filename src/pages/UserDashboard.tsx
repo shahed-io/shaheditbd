@@ -244,6 +244,8 @@ const UserDashboard = () => {
     const tab = searchParams.get('tab') as TabId;
     return TAB_IDS.some(t => t.id === tab) ? tab : 'profile';
   });
+  // On mobile: if a tab param is provided via URL, go directly to content view
+  const [mobileShowContent, setMobileShowContent] = useState(() => !!searchParams.get('tab'));
   const [profile, setProfile] = useState<Profile>({ display_name: '', email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -287,6 +289,13 @@ const UserDashboard = () => {
   const [myLicenses, setMyLicenses] = useState<any[]>([]);
   const [licensesLoading, setLicensesLoading] = useState(false);
   const [licenseVisibility, setLicenseVisibility] = useState<Record<string, boolean>>({});
+
+  // Mobile-friendly tab switch: also show content panel
+  const handleTabSwitch = (tab: TabId) => {
+    setActiveTab(tab);
+    setMobileShowContent(true);
+    window.scrollTo({ top: 0 });
+  };
 
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
   useEffect(() => { if (user) fetchProfile(); }, [user]);
@@ -685,10 +694,10 @@ const UserDashboard = () => {
         <div className="grid md:grid-cols-[240px_1fr] gap-5 sm:gap-6">
 
           {/* Sidebar */}
-          <div className="rounded-2xl p-3 h-fit" style={glassCard}>
+          <div className={`rounded-2xl p-3 h-fit ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
             <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">{t(selectedLang, 'menu')}</p>
             {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
-              <button key={id} onClick={() => setActiveTab(id)}
+              <button key={id} onClick={() => handleTabSwitch(id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${
                   activeTab === id
                     ? 'text-primary shadow-sm'
@@ -720,7 +729,15 @@ const UserDashboard = () => {
           </div>
 
           {/* Content Panel */}
-          <div className="rounded-2xl overflow-hidden" style={glassCardStrong}>
+          <div className={`rounded-2xl overflow-hidden ${!mobileShowContent ? 'hidden md:block' : ''}`} style={glassCardStrong}>
+
+            {/* Mobile Back Button */}
+            <button
+              onClick={() => { setMobileShowContent(false); window.scrollTo({ top: 0 }); }}
+              className="md:hidden flex items-center gap-2 px-4 py-3 text-sm font-semibold text-primary w-full"
+              style={{ borderBottom: '1px solid hsla(258,78%,75%,0.15)', background: 'rgba(255,255,255,0.5)' }}>
+              <ChevronRight size={16} className="rotate-180" /> Back to Menu
+            </button>
 
             {/* Tab Header */}
             <div className="px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'rgba(255,255,255,0.4)' }}>
