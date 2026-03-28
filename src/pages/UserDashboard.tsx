@@ -158,8 +158,8 @@ const InstallAppTab = () => {
         <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
           <CheckCircle2 size={28} className="text-green-600" />
         </div>
-        <h3 className="text-lg font-bold text-foreground">অ্যাপ ইতোমধ্যে ইন্সটল করা আছে!</h3>
-        <p className="text-sm text-muted-foreground">আপনি Shahed Store অ্যাপ ব্যবহার করছেন</p>
+        <h3 className="text-lg font-bold text-foreground">App is already installed!</h3>
+        <p className="text-sm text-muted-foreground">You are using the Shahed Store app</p>
       </div>
     );
   }
@@ -174,17 +174,17 @@ const InstallAppTab = () => {
         <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden shadow-lg" style={{ boxShadow: '0 4px 20px hsla(258,78%,55%,0.3)' }}>
           <img src="/favicon.png" alt="Shahed Store" className="w-full h-full" />
         </div>
-        <h3 className="text-lg font-black text-foreground">Shahed Store অ্যাপ ইন্সটল করুন</h3>
-        <p className="text-sm text-muted-foreground mt-1">আপনার ফোনে সরাসরি অ্যাক্সেস করুন</p>
+        <h3 className="text-lg font-black text-foreground">Install Shahed Store App</h3>
+        <p className="text-sm text-muted-foreground mt-1">Get direct access on your phone</p>
       </div>
 
       {/* Benefits */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {[
-          { icon: Zap, title: 'দ্রুত লোডিং', desc: 'ওয়েবসাইটের চেয়ে ফাস্ট' },
-          { icon: Bell, title: 'অর্ডার নোটিফিকেশন', desc: 'রিয়েল-টাইম আপডেট পান' },
-          { icon: Smartphone, title: 'অ্যাপের মতো অভিজ্ঞতা', desc: 'ফুলস্ক্রিন, নো অ্যাড্রেস বার' },
-          { icon: ShieldCheck, title: 'নিরাপদ ও বিশ্বস্ত', desc: '100% অফিসিয়াল অ্যাপ' },
+          { icon: Zap, title: 'Fast Loading', desc: 'Faster than the website' },
+          { icon: Bell, title: 'Order Notifications', desc: 'Get real-time updates' },
+          { icon: Smartphone, title: 'App-like Experience', desc: 'Fullscreen, no address bar' },
+          { icon: ShieldCheck, title: 'Safe & Trusted', desc: '100% official app' },
         ].map((b, i) => (
           <div key={i} className="flex items-start gap-3 p-3.5 rounded-xl" style={{
             background: 'rgba(255,255,255,0.65)',
@@ -209,23 +209,23 @@ const InstallAppTab = () => {
             background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))',
             boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
           }}>
-          <Download size={16} /> এখনই ইন্সটল করুন
+          <Download size={16} /> Install Now
         </button>
       ) : isIOS ? (
         <div className="rounded-xl p-4 space-y-2" style={{
           background: 'rgba(255,255,255,0.7)',
           border: '1px solid hsla(258,78%,75%,0.2)',
         }}>
-          <p className="text-sm font-bold text-foreground flex items-center gap-2"><Share2 size={14} className="text-primary" /> iOS-এ ইন্সটল করুন:</p>
-          <p className="text-xs text-muted-foreground flex items-center gap-2">1. Safari-তে <Share2 size={12} className="text-blue-500" /> Share বাটনে ট্যাপ করুন</p>
-          <p className="text-xs text-muted-foreground flex items-center gap-2">2. <PlusSquare size={12} className="text-blue-500" /> "Add to Home Screen" সিলেক্ট করুন</p>
+          <p className="text-sm font-bold text-foreground flex items-center gap-2"><Share2 size={14} className="text-primary" /> Install on iOS:</p>
+          <p className="text-xs text-muted-foreground flex items-center gap-2">1. Tap the <Share2 size={12} className="text-blue-500" /> Share button in Safari</p>
+          <p className="text-xs text-muted-foreground flex items-center gap-2">2. Select <PlusSquare size={12} className="text-blue-500" /> "Add to Home Screen"</p>
         </div>
       ) : (
         <div className="rounded-xl p-4 text-center" style={{
           background: 'rgba(255,255,255,0.7)',
           border: '1px solid hsla(258,78%,75%,0.2)',
         }}>
-          <p className="text-sm text-muted-foreground">Chrome/Edge ব্রাউজারে ওপেন করে ইন্সটল করুন</p>
+          <p className="text-sm text-muted-foreground">Open in Chrome/Edge browser to install</p>
         </div>
       )}
     </div>
