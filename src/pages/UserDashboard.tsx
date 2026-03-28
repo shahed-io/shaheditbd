@@ -639,8 +639,8 @@ const UserDashboard = () => {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
-        {/* Hero Profile Card */}
-        <div className="rounded-2xl overflow-hidden mb-6 sm:mb-8 p-4 sm:p-5" style={glassCardStrong}>
+        {/* Hero Profile Card - hide on mobile when viewing content */}
+        <div className={`rounded-2xl overflow-hidden mb-6 sm:mb-8 p-4 sm:p-5 ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCardStrong}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="relative flex-shrink-0">
