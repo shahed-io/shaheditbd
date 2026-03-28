@@ -476,30 +476,69 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                {NAV_LINKS.map(link => (
-                  <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors"
-                    style={{ color: 'hsl(226,35%,28%)' }}>
-                    {link.label}
-                  </a>
+                {/* MENU label */}
+                <p className="text-[10px] font-bold tracking-widest uppercase px-3 pt-1 pb-2" style={{ color: 'hsl(226,35%,55%)' }}>Menu</p>
+
+                {/* Dashboard-style menu items for guests — clicking opens auth */}
+                {[
+                  { label: 'Profile',       icon: User,    tab: 'profile' },
+                  { label: 'My Orders',     icon: Package, tab: 'orders' },
+                  { label: 'My Licenses',   icon: Key,     tab: 'licenses' },
+                  { label: 'Wallet',        icon: Wallet,  tab: 'wallet' },
+                  { label: 'Points',        icon: Award,   tab: 'points' },
+                  { label: 'Wishlist',      icon: Heart,   tab: 'wishlist' },
+                  { label: 'Addresses',     icon: MapPin,  tab: 'addresses' },
+                  { label: 'Notifications', icon: Bell,    tab: 'notifications' },
+                  { label: 'Referral',      icon: Gift,    tab: 'referral' },
+                  { label: 'Security',      icon: Lock,    tab: 'security' },
+                  { label: 'Language',      icon: Globe,   tab: 'language' },
+                ].map((item) => (
+                  <button
+                    key={item.tab}
+                    onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-accent/50"
+                    style={{ color: 'hsl(226,35%,25%)' }}>
+                    <item.icon size={17} style={{ color: 'hsl(258,78%,50%)' }} />
+                    <span className="flex-1 text-left">{item.label}</span>
+                    <ChevronRight size={15} style={{ color: 'hsl(226,35%,65%)' }} />
+                  </button>
                 ))}
+
+                {/* Install App */}
                 {canInstall && (
-                  <button onClick={handleInstall}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all"
-                    style={{ color: 'hsl(258,78%,50%)', background: 'hsla(258,78%,55%,0.08)' }}>
-                    <Download size={16} />
-                    Install App
+                  <button onClick={() => { handleInstall(); if (!isIOS) setMobileOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-accent/50"
+                    style={{ color: 'hsl(226,35%,25%)' }}>
+                    <Download size={17} style={{ color: 'hsl(258,78%,50%)' }} />
+                    <span className="flex-1 text-left">Install App</span>
                   </button>
                 )}
-                <div className="pt-2 border-t mt-1" style={{ borderColor: 'hsl(220,20%,90%)' }}>
+                {showIOSTip && (
+                  <div className="mx-2 mt-1 mb-1 rounded-xl p-3 text-[12px] leading-relaxed"
+                    style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.15)' }}>
+                    <p className="font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
+                      <Share2 size={13} /> Install on iOS:
+                    </p>
+                    <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
+                      1. Tap the <Share2 size={12} className="text-blue-500" /> Share button
+                    </p>
+                    <p className="flex items-center gap-1.5 mt-1" style={{ color: 'hsl(226,35%,45%)' }}>
+                      2. Select <PlusSquare size={12} className="text-blue-500" /> "Add to Home Screen"
+                    </p>
+                  </div>
+                )}
+
+                {/* Sign In / Register */}
+                <div className="pt-2 mt-1">
                   <button onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                    className="w-full py-3.5 rounded-xl text-sm font-bold text-white"
+                    className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2"
                     style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
+                    <User size={17} />
                     Sign In / Register
                   </button>
                 </div>
               </>
-            )}
+            )
           </div>
         </div>
       </nav>
