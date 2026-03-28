@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import BrandLoader from '@/components/store/BrandLoader';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
@@ -277,10 +278,8 @@ const Blog = () => {
 
             {/* Posts Grid */}
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-72 bg-muted/20 rounded-3xl animate-pulse" />
-                ))}
+              <div className="flex items-center justify-center py-20">
+                <BrandLoader size="md" />
               </div>
             ) : filtered.length === 0 ? (
               <div className="text-center py-24 text-muted-foreground">
