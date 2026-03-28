@@ -146,7 +146,7 @@ const AppContent = () => {
 
   return (
     <>
-      {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+      
       <AdminNotificationListener />
       <FacebookPixel />
       <CartDrawer />
