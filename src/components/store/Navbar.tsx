@@ -58,6 +58,7 @@ const Navbar = () => {
   const [canInstall, setCanInstall] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [showIOSTip, setShowIOSTip] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
   
   const { user } = useAuth();
