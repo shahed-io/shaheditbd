@@ -122,17 +122,14 @@ const AdminNotificationListener = () => {
 // Admin body class management
 const AppContent = () => {
   const location = useLocation();
-  const [showSplash, setShowSplash] = useState(() => {
-    // Show splash only on first visit per session and on mobile-sized screens
-    if (typeof window === 'undefined') return false;
-    const isMobile = window.innerWidth < 768;
-    const alreadyShown = sessionStorage.getItem('splash_shown');
-    return isMobile && !alreadyShown;
-  });
+  const [deferReady, setDeferReady] = useState(false);
 
-  const handleSplashFinish = useCallback(() => {
-    setShowSplash(false);
-    sessionStorage.setItem('splash_shown', '1');
+  useEffect(() => {
+    // Defer non-critical components until after first paint (~20ms)
+    const id = requestAnimationFrame(() => {
+      setDeferReady(true);
+    });
+    return () => cancelAnimationFrame(id);
   }, []);
 
   useEffect(() => {
@@ -146,11 +143,14 @@ const AppContent = () => {
 
   return (
     <>
-      
-      <AdminNotificationListener />
-      <FacebookPixel />
-      <CartDrawer />
-      <RedirectEnforcer />
+      {deferReady && (
+        <Suspense fallback={null}>
+          <AdminNotificationListener />
+          <FacebookPixel />
+          <CartDrawer />
+          <RedirectEnforcer />
+        </Suspense>
+      )}
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Index />} />
