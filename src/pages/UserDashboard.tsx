@@ -634,57 +634,50 @@ const UserDashboard = () => {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
         {/* Hero Profile Card */}
-        <div className="rounded-3xl overflow-hidden mb-6 sm:mb-8" style={glassCardStrong}>
-          <div className="h-28 sm:h-36 relative" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 50%, hsl(283,65%,52%) 100%)' }}>
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-            {/* Glassmorphism overlay at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: 'linear-gradient(to top, rgba(255,255,255,0.4), transparent)' }} />
-          </div>
-          <div className="px-5 sm:px-8 pb-5 sm:pb-6" style={{ background: 'rgba(255,255,255,0.5)' }}>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 -mt-10 sm:-mt-12">
-              <div className="flex items-end gap-4">
-                <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-4 shadow-xl flex items-center justify-center text-2xl font-black text-white"
-                    style={{ borderColor: 'rgba(255,255,255,0.85)', background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                    {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
-                  </div>
-                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-                  <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
-                    className="absolute -bottom-1 -right-1 w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 transition-transform hover:scale-110"
-                    style={{ background: 'hsl(var(--primary))', borderColor: 'white' }}>
-                    {avatarUploading ? <RefreshCw size={13} className="text-white animate-spin" /> : <Camera size={13} className="text-white" />}
-                  </button>
+        <div className="rounded-2xl overflow-hidden mb-6 sm:mb-8 p-4 sm:p-5" style={glassCardStrong}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="relative flex-shrink-0">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 shadow-lg flex items-center justify-center text-lg font-black text-white"
+                  style={{ borderColor: 'hsla(258,78%,65%,0.3)', background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                  {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
                 </div>
-                <div className="pb-1">
-                  <h1 className="text-lg sm:text-2xl font-black text-foreground">{displayName}</h1>
-                  <p className="text-sm text-muted-foreground">{user?.email}</p>
-                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
-                      <ShieldCheck size={11} /> Verified
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
+                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-lg flex items-center justify-center shadow-md border-2 transition-transform hover:scale-110"
+                  style={{ background: 'hsl(var(--primary))', borderColor: 'white' }}>
+                  {avatarUploading ? <RefreshCw size={10} className="text-white animate-spin" /> : <Camera size={10} className="text-white" />}
+                </button>
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-black text-foreground truncate">{displayName}</h1>
+                <p className="text-xs sm:text-sm font-medium text-foreground/70 truncate">{user?.email}</p>
+                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
+                    <ShieldCheck size={10} /> Verified
+                  </span>
+                  {completedOrders > 0 && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-primary/25 bg-primary/10 text-primary">
+                      <Star size={9} fill="currentColor" /> {completedOrders} {t(selectedLang, 'tab_orders')}
                     </span>
-                    {completedOrders > 0 && (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-primary/25 bg-primary/10 text-primary">
-                        <Star size={10} fill="currentColor" /> {completedOrders} {t(selectedLang, 'tab_orders')}
-                      </span>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
-              <div className="flex gap-4 sm:gap-6 pb-1">
-                <div className="text-center">
-                  <div className="text-xl font-black text-foreground">{orders.length}</div>
-                  <div className="text-xs text-muted-foreground">{t(selectedLang, 'order')}</div>
-                </div>
-                <div className="w-px bg-border" />
-                <div className="text-center">
-                  <div className="text-xl font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div>
-                  <div className="text-xs text-muted-foreground">{t(selectedLang, 'total')}</div>
-                </div>
-                <div className="w-px bg-border" />
-                <div className="text-center">
-                  <div className="text-xl font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div>
-                  <div className="text-xs text-muted-foreground">{t(selectedLang, 'tab_wishlist')}</div>
-                </div>
+            </div>
+            <div className="flex gap-4 sm:gap-5">
+              <div className="text-center">
+                <div className="text-lg font-black text-foreground">{orders.length}</div>
+                <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'order')}</div>
+              </div>
+              <div className="w-px bg-border" />
+              <div className="text-center">
+                <div className="text-lg font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div>
+                <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'total')}</div>
+              </div>
+              <div className="w-px bg-border" />
+              <div className="text-center">
+                <div className="text-lg font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div>
+                <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'tab_wishlist')}</div>
               </div>
             </div>
           </div>
