@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -85,9 +85,14 @@ const menuItems = [
 const AdminLayout = () => {
   const { user, isAdmin, loading, signOut } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['Products', 'Orders']);
   const location = useLocation();
 
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileSidebarOpen(false);
+  }, [location.pathname]);
 
   if (loading) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -103,120 +108,157 @@ const AdminLayout = () => {
     );
   };
 
+  const sidebarContent = (isMobile: boolean) => (
+    <>
+      {/* Logo */}
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-border/50 min-h-[68px] overflow-hidden">
+        {(isMobile || sidebarOpen) ? (
+          <div className="flex items-center justify-between w-full">
+            <BrandLogo size="sm" />
+            {isMobile && (
+              <button onClick={() => setMobileSidebarOpen(false)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
+                <X size={20} />
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,50%), hsl(340,100%,40%) 60%, hsl(222,30%,14%))' }}>
+            <span className="text-white text-xs font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
+          </div>
+        )}
+      </div>
+
+      {/* Nav */}
+      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+          const hasChildren = item.children && item.children.length > 0;
+          const isExpanded = expandedMenus.includes(item.label);
+          const showLabel = isMobile || sidebarOpen;
+
+          return (
+            <div key={item.label}>
+              {hasChildren ? (
+                <button
+                  onClick={() => showLabel && toggleMenu(item.label)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
+                    isActive
+                      ? 'bg-primary/20 text-primary border border-primary/30'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                  }`}
+                >
+                  <item.icon size={18} className="flex-shrink-0" />
+                  {showLabel && (
+                    <>
+                      <span className="flex-1 text-left font-medium">{item.label}</span>
+                      <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </>
+                  )}
+                </button>
+              ) : (
+                <NavLink
+                  to={item.path}
+                  end={item.path === '/ceo'}
+                  className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
+                    isActive
+                      ? 'bg-primary/20 text-primary border border-primary/30'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                  }`}
+                >
+                  <item.icon size={18} className="flex-shrink-0" />
+                  {showLabel && <span className="font-medium">{item.label}</span>}
+                </NavLink>
+              )}
+
+              {/* Sub-menu */}
+              {hasChildren && showLabel && isExpanded && (
+                <div className="ml-8 mt-1 space-y-1">
+                  {item.children!.map((child) => (
+                    <NavLink
+                      key={child.path}
+                      to={child.path}
+                      end
+                      className={({ isActive }) => `block px-3 py-1.5 rounded-lg text-xs transition-all ${
+                        isActive ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      → {child.label}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </nav>
+
+      {/* User info */}
+      <div className="border-t border-border/50 p-3">
+        {(isMobile || sidebarOpen) ? (
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-background text-sm font-bold">
+              A
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-medium text-foreground truncate">Admin</div>
+              <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
+            </div>
+            <button onClick={signOut} className="text-muted-foreground hover:text-destructive transition-colors" title="Sign Out">
+              <LogOut size={16} />
+            </button>
+          </div>
+        ) : (
+          <button onClick={signOut} className="w-full flex justify-center text-muted-foreground hover:text-destructive transition-colors p-2">
+            <LogOut size={18} />
+          </button>
+        )}
+      </div>
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
-      <aside className={`fixed left-0 top-0 h-full z-40 transition-all duration-300 flex flex-col ${sidebarOpen ? 'w-64' : 'w-16'} glass-card border-r border-border/50`}>
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-border/50 min-h-[68px] overflow-hidden">
-          {sidebarOpen ? (
-            <BrandLogo size="sm" />
-          ) : (
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,50%), hsl(340,100%,40%) 60%, hsl(222,30%,14%))' }}>
-              <span className="text-white text-xs font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
-            </div>
-          )}
-        </div>
+      {/* Mobile overlay */}
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}
 
-        {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
-            const hasChildren = item.children && item.children.length > 0;
-            const isExpanded = expandedMenus.includes(item.label);
+      {/* Mobile Sidebar (overlay drawer) */}
+      <aside className={`fixed left-0 top-0 h-full z-50 w-[280px] flex flex-col glass-card border-r border-border/50 transition-transform duration-300 md:hidden ${
+        mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        {sidebarContent(true)}
+      </aside>
 
-            return (
-              <div key={item.label}>
-                {hasChildren ? (
-                  <button
-                    onClick={() => sidebarOpen && toggleMenu(item.label)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
-                      isActive
-                        ? 'bg-primary/20 text-primary border border-primary/30'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
-                    }`}
-                  >
-                    <item.icon size={18} className="flex-shrink-0" />
-                    {sidebarOpen && (
-                      <>
-                        <span className="flex-1 text-left font-medium">{item.label}</span>
-                        <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                      </>
-                    )}
-                  </button>
-                ) : (
-                  <NavLink
-                    to={item.path}
-                    end={item.path === '/ceo'}
-                    className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
-                      isActive
-                        ? 'bg-primary/20 text-primary border border-primary/30'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
-                    }`}
-                  >
-                    <item.icon size={18} className="flex-shrink-0" />
-                    {sidebarOpen && <span className="font-medium">{item.label}</span>}
-                  </NavLink>
-                )}
-
-                {/* Sub-menu */}
-                {hasChildren && sidebarOpen && isExpanded && (
-                  <div className="ml-8 mt-1 space-y-1">
-                    {item.children!.map((child) => (
-                      <NavLink
-                        key={child.path}
-                        to={child.path}
-                        end
-                        className={({ isActive }) => `block px-3 py-1.5 rounded-lg text-xs transition-all ${
-                          isActive ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                      >
-                        → {child.label}
-                      </NavLink>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-
-        {/* User info */}
-        <div className="border-t border-border/50 p-3">
-          {sidebarOpen ? (
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-background text-sm font-bold">
-                A
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-medium text-foreground truncate">Admin</div>
-                <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
-              </div>
-              <button onClick={signOut} className="text-muted-foreground hover:text-destructive transition-colors" title="Sign Out">
-                <LogOut size={16} />
-              </button>
-            </div>
-          ) : (
-            <button onClick={signOut} className="w-full flex justify-center text-muted-foreground hover:text-destructive transition-colors p-2">
-              <LogOut size={18} />
-            </button>
-          )}
-        </div>
+      {/* Desktop Sidebar */}
+      <aside className={`hidden md:flex fixed left-0 top-0 h-full z-40 transition-all duration-300 flex-col ${sidebarOpen ? 'w-64' : 'w-16'} glass-card border-r border-border/50`}>
+        {sidebarContent(false)}
       </aside>
 
       {/* Main content */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
+      <div className={`flex-1 flex flex-col transition-all duration-300 w-full ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
         {/* Top bar */}
-        <header className="glass-card border-b border-border/50 px-6 py-4 flex items-center gap-4 sticky top-0 z-30">
+        <header className="glass-card border-b border-border/50 px-3 sm:px-6 py-3 sm:py-4 flex items-center gap-2 sm:gap-4 sticky top-0 z-30">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileSidebarOpen(true)}
+            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary md:hidden"
+          >
+            <Menu size={18} />
+          </button>
+          {/* Desktop sidebar toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary"
+            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary hidden md:block"
           >
             {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
 
-          <div className="flex-1 max-w-md">
+          <div className="flex-1 max-w-md min-w-0">
             <div className="relative">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -227,19 +269,19 @@ const AdminLayout = () => {
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <button className="relative p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary">
               <Bell size={18} />
               <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
             </button>
-            <a href="/" target="_blank" className="text-xs text-primary hover:underline glass-card px-3 py-2 rounded-xl border-primary/30">
+            <a href="/" target="_blank" className="text-xs text-primary hover:underline glass-card px-2 sm:px-3 py-2 rounded-xl border-primary/30 hidden sm:block">
               View Store →
             </a>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-3 sm:p-6 overflow-x-auto">
           <Outlet />
         </main>
       </div>
