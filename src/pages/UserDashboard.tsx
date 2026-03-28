@@ -781,20 +781,27 @@ const UserDashboard = () => {
               {/* ── Profile Tab ── */}
               {activeTab === 'profile' && (
                 <div className="space-y-4 max-w-lg">
-                  {editing && (
-                    <div className="flex items-center gap-4 p-4 rounded-2xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
-                      <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center text-lg font-black text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                  {/* Avatar section - always visible on mobile, only in edit mode on desktop */}
+                  <div className={`flex items-center gap-4 p-4 rounded-2xl ${!editing ? 'md:hidden' : ''}`} style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                    <div className="relative flex-shrink-0">
+                      <div className="w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center text-lg font-black text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
                         {profile.avatar_url ? <img src={profile.avatar_url} alt="av" className="w-full h-full object-cover" /> : initials}
                       </div>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{t(selectedLang, 'avatar_change')}</p>
-                        <p className="text-xs mb-2 text-muted-foreground">JPG, PNG — Max 2MB</p>
-                        <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-                          <Upload size={12} /> {t(selectedLang, 'avatar_change')}
-                        </button>
-                      </div>
+                      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                      <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
+                        className="absolute -bottom-1 -right-1 w-7 h-7 rounded-lg flex items-center justify-center shadow-md border-2 transition-transform hover:scale-110"
+                        style={{ background: 'hsl(var(--primary))', borderColor: 'white' }}>
+                        {avatarUploading ? <RefreshCw size={11} className="text-white animate-spin" /> : <Camera size={11} className="text-white" />}
+                      </button>
                     </div>
-                  )}
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{t(selectedLang, 'avatar_change')}</p>
+                      <p className="text-xs mb-2 text-muted-foreground">JPG, PNG — Max 2MB</p>
+                      <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                        {avatarUploading ? <RefreshCw size={12} className="animate-spin" /> : <Upload size={12} />} {t(selectedLang, 'avatar_change')}
+                      </button>
+                    </div>
+                  </div>
                   {[
                     { label: t(selectedLang, 'full_name'), icon: User, field: 'display_name', editable: true, value: profile.display_name || '', type: 'text', placeholder: t(selectedLang, 'enter_name'), extra: null },
                   ].map(item => (
