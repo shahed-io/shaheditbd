@@ -25,7 +25,8 @@ import {
   Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
   History, BellRing, BellOff, ExternalLink, Wallet, Globe,
-  ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle
+  ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle,
+  Download, Share2, PlusSquare, Smartphone
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
@@ -89,7 +90,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'licenses' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language';
+type TabId = 'profile' | 'orders' | 'licenses' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language' | 'install';
 
 const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'profile',       key: 'tab_profile',       icon: User },
@@ -103,6 +104,7 @@ const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'referral',      key: 'tab_referral',      icon: Gift },
   { id: 'security',      key: 'tab_security',      icon: Lock },
   { id: 'language',      key: 'tab_language',      icon: Globe },
+  { id: 'install',       key: 'tab_install',       icon: Download },
 ];
 
 // Glassmorphism card style helper
