@@ -244,6 +244,8 @@ const UserDashboard = () => {
     const tab = searchParams.get('tab') as TabId;
     return TAB_IDS.some(t => t.id === tab) ? tab : 'profile';
   });
+  // On mobile: if a tab param is provided via URL, go directly to content view
+  const [mobileShowContent, setMobileShowContent] = useState(() => !!searchParams.get('tab'));
   const [profile, setProfile] = useState<Profile>({ display_name: '', email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
