@@ -87,6 +87,7 @@ const AdminTestimonials     = lazy(() => import("./pages/admin/AdminTestimonials
 const AdminAnnouncementBar  = lazy(() => import("./pages/admin/AdminAnnouncementBar"));
 const AdminNewsletterSubscribers = lazy(() => import("./pages/admin/AdminNewsletterSubscribers"));
 const AdminProductImportExport   = lazy(() => import("./pages/admin/AdminProductImportExport"));
+const AdminMediaLibrary          = lazy(() => import("./pages/admin/AdminMediaLibrary"));
 const AdminProductReviews        = lazy(() => import("./pages/admin/AdminProductReviews"));
 const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFacebookPixel"));
 const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
@@ -204,6 +205,7 @@ const AppContent = () => {
             <Route path="attributes" element={<AdminAttributes />} />
             <Route path="pages" element={<AdminPages />} />
             <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
+            <Route path="media-library" element={<AdminMediaLibrary />} />
             <Route path="wallet" element={<AdminWallet />} />
             <Route path="hero-banner" element={<AdminHeroBanner />} />
             <Route path="flash-sale" element={<AdminFlashSale />} />

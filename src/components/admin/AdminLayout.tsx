@@ -47,6 +47,7 @@ const menuItems = [
   { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
   { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
   { icon: FolderDown, label: 'Software Downloads', path: '/ceo/software-downloads' },
+  { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
   { icon: Mail, label: 'Newsletter', path: '/ceo/newsletter' },
   { icon: FileText, label: 'Product Reviews', path: '/ceo/product-reviews' },
   { icon: ArrowLeftRight, label: 'Import / Export', path: '/ceo/import-export' },
