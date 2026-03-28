@@ -209,21 +209,8 @@ const ProductDetail = () => {
   if (loading) return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Skeleton image */}
-          <div className="aspect-square rounded-3xl relative overflow-hidden shimmer" />
-          <div className="space-y-4 pt-4">
-            {[70, 100, 50, 80, 40, 90, 60].map((w, i) => (
-              <div key={i} className="rounded-xl shimmer h-5" style={{ width: `${w}%`, animationDelay: `${i * 0.08}s` }} />
-            ))}
-            <div className="h-14 rounded-2xl shimmer mt-6" />
-            <div className="grid grid-cols-2 gap-3 mt-2">
-              <div className="h-12 rounded-2xl shimmer" />
-              <div className="h-12 rounded-2xl shimmer" />
-            </div>
-          </div>
-        </div>
+      <div className="flex items-center justify-center py-32">
+        <BrandLoader size="lg" />
       </div>
     </div>
   );
