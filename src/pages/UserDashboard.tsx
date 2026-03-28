@@ -589,11 +589,7 @@ const UserDashboard = () => {
     badge: tab.id === 'wishlist' ? wishlistItems.length : tab.id === 'notifications' ? unreadCount : undefined,
   }));
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <BrandLoader size="md" />
-    </div>
-  );
+  if (loading) return <div className="min-h-screen bg-background" />;
 
   const inputCls = "w-full rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-all border bg-white/60 text-foreground border-border focus:border-primary focus:bg-white/80 placeholder:text-muted-foreground";
   const labelCls = "block text-xs font-semibold uppercase tracking-wide mb-2 text-muted-foreground";

@@ -23,11 +23,7 @@ const AdminLogin = () => {
 
   // Only show spinner during initial auth load (not during admin check after login)
   if (loading && !user) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <BrandLoader size="md" />
-      </div>
-    );
+    return <div className="min-h-screen bg-background" />;
   }
 
   // Non-admin logged-in user
@@ -45,11 +41,7 @@ const AdminLogin = () => {
 
   // Show spinner while admin check is in progress after login
   if (submitting || (user && loading)) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <BrandLoader size="md" />
-      </div>
-    );
+    return <div className="min-h-screen bg-background" />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
