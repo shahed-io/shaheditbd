@@ -694,7 +694,7 @@ const UserDashboard = () => {
         <div className="grid md:grid-cols-[240px_1fr] gap-5 sm:gap-6">
 
           {/* Sidebar */}
-          <div className="rounded-2xl p-3 h-fit" style={glassCard}>
+          <div className={`rounded-2xl p-3 h-fit ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
             <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">{t(selectedLang, 'menu')}</p>
             {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
               <button key={id} onClick={() => setActiveTab(id)}
