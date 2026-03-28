@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search, Download, Share2, PlusSquare } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
 import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
