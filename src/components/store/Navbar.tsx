@@ -110,11 +110,12 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) { setAvatarUrl(null); return; }
-    // Defer avatar fetch slightly — not critical for initial render
+    if (!user) { setAvatarUrl(null); setIsAdmin(false); return; }
     const t = setTimeout(() => {
       supabase.from('profiles').select('avatar_url, display_name').eq('user_id', user.id).single()
         .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
+      supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle()
+        .then(({ data }) => { setIsAdmin(!!data); });
     }, 500);
     return () => clearTimeout(t);
   }, [user]);
