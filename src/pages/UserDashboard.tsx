@@ -697,7 +697,7 @@ const UserDashboard = () => {
           <div className={`rounded-2xl p-3 h-fit ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
             <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">{t(selectedLang, 'menu')}</p>
             {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
-              <button key={id} onClick={() => setActiveTab(id)}
+              <button key={id} onClick={() => handleTabSwitch(id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${
                   activeTab === id
                     ? 'text-primary shadow-sm'
