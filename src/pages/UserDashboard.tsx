@@ -608,8 +608,20 @@ const UserDashboard = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <a href="/" className="flex items-center group"><BrandLogo size="sm" /></a>
           <div className="flex items-center gap-2 sm:gap-3">
-            <a href="/" className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-xl transition-colors hover:bg-primary/8 text-muted-foreground">
-              <Home size={14} /> <span className="hidden sm:inline">Home</span>
+            <a href="/" className="flex items-center gap-1.5 text-sm font-bold px-3 py-1.5 rounded-xl transition-all hover:scale-105"
+              style={{
+                background: 'hsla(0,0%,100%,0.70)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid hsla(258,78%,75%,0.22)',
+                boxShadow: '0 1px 4px hsla(226,35%,12%,0.05)',
+              }}>
+              <Home size={14} style={{ color: 'hsl(258,78%,50%)' }} />
+              <span className="hidden sm:inline" style={{
+                background: 'linear-gradient(135deg, hsl(25,100%,58%) 0%, hsl(38,100%,52%) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>Home</span>
             </a>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
               <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
