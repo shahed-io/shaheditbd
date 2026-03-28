@@ -231,7 +231,7 @@ const InstallAppTab = () => {
   );
 };
 
-
+const UserDashboard = () => {
   const { user, signOut, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
