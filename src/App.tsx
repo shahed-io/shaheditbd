@@ -89,6 +89,7 @@ const AdminProductReviews        = lazy(() => import("./pages/admin/AdminProduct
 const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFacebookPixel"));
 const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
+const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -188,6 +189,7 @@ const AppContent = () => {
             <Route path="facebook-pixel" element={<AdminFacebookPixel />} />
             <Route path="licenses" element={<AdminLicenses />} />
             <Route path="popup-banner" element={<AdminPopupBanner />} />
+            <Route path="invoices" element={<AdminInvoiceGenerator />} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
