@@ -290,6 +290,13 @@ const UserDashboard = () => {
   const [licensesLoading, setLicensesLoading] = useState(false);
   const [licenseVisibility, setLicenseVisibility] = useState<Record<string, boolean>>({});
 
+  // Mobile-friendly tab switch: also show content panel
+  const handleTabSwitch = (tab: TabId) => {
+    setActiveTab(tab);
+    setMobileShowContent(true);
+    window.scrollTo({ top: 0 });
+  };
+
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
   useEffect(() => { if (user) fetchProfile(); }, [user]);
   useEffect(() => {
