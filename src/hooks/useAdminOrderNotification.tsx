@@ -36,6 +36,8 @@ export const useAdminOrderNotification = (enabled: boolean = true) => {
   }, []);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const channel = supabase
       .channel('admin-new-orders')
       .on(
@@ -71,5 +73,5 @@ export const useAdminOrderNotification = (enabled: boolean = true) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [playNotificationSound]);
+  }, [enabled, playNotificationSound]);
 };
