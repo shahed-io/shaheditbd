@@ -3,10 +3,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect, lazy, Suspense } from "react";
-import { AuthProvider } from "@/hooks/useAuth";
+import { useEffect, lazy, Suspense, useState, useCallback } from "react";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
+import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
+import SplashScreen from "@/components/store/SplashScreen";
 
 import CartDrawer from "@/components/store/CartDrawer";
 import RedirectEnforcer from "@/components/seo/RedirectEnforcer";
@@ -109,9 +111,28 @@ const PageLoader = () => (
   </div>
 );
 
+// Admin notification listener (only active when user is admin)
+const AdminNotificationListener = () => {
+  const { isAdmin } = useAuth();
+  useAdminOrderNotification(isAdmin);
+  return null;
+};
+
 // Admin body class management
 const AppContent = () => {
   const location = useLocation();
+  const [showSplash, setShowSplash] = useState(() => {
+    // Show splash only on first visit per session and on mobile-sized screens
+    if (typeof window === 'undefined') return false;
+    const isMobile = window.innerWidth < 768;
+    const alreadyShown = sessionStorage.getItem('splash_shown');
+    return isMobile && !alreadyShown;
+  });
+
+  const handleSplashFinish = useCallback(() => {
+    setShowSplash(false);
+    sessionStorage.setItem('splash_shown', '1');
+  }, []);
 
   useEffect(() => {
     const isAdmin = location.pathname.startsWith('/ceo');
@@ -124,6 +145,8 @@ const AppContent = () => {
 
   return (
     <>
+      {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+      <AdminNotificationListener />
       <FacebookPixel />
       <CartDrawer />
       <RedirectEnforcer />
