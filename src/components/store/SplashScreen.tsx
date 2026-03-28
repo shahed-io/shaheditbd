@@ -75,7 +75,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
           }}
         />
         <img
-          src="/pwa-192.png"
+          src="/pwa-512.png"
           alt="Shahed Store"
           className="relative w-[80px] h-[80px] rounded-2xl object-cover"
           style={{
