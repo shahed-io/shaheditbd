@@ -398,6 +398,32 @@ const Navbar = () => {
                 {link.label}
               </a>
             ))}
+            {/* Install App Button */}
+            {canInstall && (
+              <div className="pb-1">
+                <button onClick={handleInstall}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all"
+                  style={{ color: 'hsl(258,78%,50%)', background: 'hsla(258,78%,55%,0.08)' }}>
+                  <Download size={16} />
+                  অ্যাপ ইন্সটল করুন
+                </button>
+                {showIOSTip && (
+                  <div className="mx-2 mt-1.5 rounded-xl p-3 text-[12px] leading-relaxed"
+                    style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.15)' }}>
+                    <p className="font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
+                      <Share2 size={13} /> iOS-এ ইন্সটল করুন:
+                    </p>
+                    <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
+                      1. নিচের <Share2 size={12} className="text-blue-500" /> Share বাটনে ক্লিক করুন
+                    </p>
+                    <p className="flex items-center gap-1.5 mt-1" style={{ color: 'hsl(226,35%,45%)' }}>
+                      2. <PlusSquare size={12} className="text-blue-500" /> "Add to Home Screen" সিলেক্ট করুন
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="pt-2 border-t" style={{ borderColor: 'hsl(220,20%,90%)' }}>
               {user ? (
                 <div className="flex gap-2">
