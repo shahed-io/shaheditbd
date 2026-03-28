@@ -420,13 +420,10 @@ const Navbar = () => {
                     key={item.tab}
                     onClick={() => { navigate(`/dashboard?tab=${item.tab}`); setMobileOpen(false); }}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-accent/50"
-                    style={{
-                      color: 'hsl(226,35%,25%)',
-                      ...(i === 0 ? { background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,60%,0.15)' } : {}),
-                    }}>
+                    style={{ color: 'hsl(226,35%,25%)' }}>
                     <item.icon size={17} style={{ color: 'hsl(258,78%,50%)' }} />
                     <span className="flex-1 text-left">{item.label}</span>
-                    {i === 0 && <ChevronRight size={15} style={{ color: 'hsl(226,35%,65%)' }} />}
+                    <ChevronRight size={15} style={{ color: 'hsl(226,35%,65%)' }} />
                   </button>
                 ))}
 
