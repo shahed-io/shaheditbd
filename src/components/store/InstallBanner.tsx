@@ -75,7 +75,7 @@ const InstallBanner = () => {
       >
         {/* App icon */}
         <img
-          src="/favicon.png"
+          src="/pwa-192.png"
           alt="Shahed Store"
           className="w-11 h-11 rounded-xl flex-shrink-0"
           style={{ boxShadow: '0 2px 12px hsla(258,78%,55%,0.4)' }}
