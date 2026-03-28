@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import BrandLoader from '@/components/store/BrandLoader';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
@@ -330,10 +331,8 @@ const Shop = () => {
 
             {/* Products */}
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'hsl(var(--muted))', height: '280px' }} />
-                ))}
+              <div className="flex items-center justify-center py-20">
+                <BrandLoader size="md" />
               </div>
             ) : products.length === 0 ? (
               <div className="text-center py-24 text-muted-foreground">

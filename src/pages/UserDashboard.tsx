@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import BrandLoader from '@/components/store/BrandLoader';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
 import { usePaymentSettings } from '@/hooks/usePaymentSettings';
 import bkashLogo from '@/assets/payment/bkash.png';
@@ -581,7 +582,7 @@ const UserDashboard = () => {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
+      <BrandLoader size="md" />
     </div>
   );
 
@@ -826,7 +827,7 @@ const UserDashboard = () => {
                 <div>
                   {ordersLoading ? (
                     <div className="flex flex-col items-center justify-center py-16 gap-3">
-                      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
+                      <BrandLoader size="sm" />
                       <p className="text-sm text-muted-foreground">{t(selectedLang, 'loading_text')}</p>
                     </div>
                   ) : orders.length === 0 ? (
@@ -1058,7 +1059,7 @@ const UserDashboard = () => {
                       </div>
                     </div>
                   ) : addressLoading ? (
-                    <div className="flex justify-center py-12"><div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} /></div>
+                    <div className="flex justify-center py-12"><BrandLoader size="sm" /></div>
                   ) : addresses.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><MapPin size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
@@ -1099,7 +1100,7 @@ const UserDashboard = () => {
               {activeTab === 'notifications' && (
                 <div>
                   {notiLoading ? (
-                    <div className="flex justify-center py-12"><div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} /></div>
+                    <div className="flex justify-center py-12"><BrandLoader size="sm" /></div>
                   ) : notifications.length === 0 ? (
                     <div className="text-center py-16">
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(243,75%,97%)' }}><Bell size={28} style={{ color: 'hsl(var(--primary))' }} /></div>
@@ -1139,7 +1140,7 @@ const UserDashboard = () => {
                 <div className="space-y-5">
                   {pointsLoading ? (
                     <div className="flex flex-col items-center justify-center py-16 gap-3">
-                      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} />
+                      <BrandLoader size="sm" />
                       <p className="text-sm text-muted-foreground">{t(selectedLang, 'loading_text')}</p>
                     </div>
                   ) : (
@@ -1432,7 +1433,7 @@ const UserDashboard = () => {
 
                     {/* Referral History */}
                     {referralLoading ? (
-                      <div className="flex justify-center py-4"><div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }} /></div>
+                      <div className="flex justify-center py-4"><BrandLoader size="sm" /></div>
                     ) : referrals.length > 0 ? (
                       <div>
                         <p className="text-sm font-bold mb-3 text-foreground flex items-center gap-2">
