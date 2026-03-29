@@ -582,7 +582,14 @@ const AiToolBase = ({ tool, placeholder, btnLabel, extraFields, getPromptPayload
       <ToolInput value={input} onChange={e => setInput(e.target.value)} placeholder={placeholder} rows={4} />
       {extraFields}
       <PrimaryBtn onClick={generate} loading={loading}><Wand2 size={14} />{btnLabel}</PrimaryBtn>
-      {result && <ResultBox value={result} />}
+      {result && (
+        <div className="relative rounded-xl p-5" style={{ background: 'hsla(162,72%,38%,0.06)', border: '1.5px solid hsla(162,72%,38%,0.22)' }}>
+          <div className="absolute top-3 right-3"><CopyBtn text={result} /></div>
+          <div className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground prose-headings:font-bold prose-h2:text-base prose-h3:text-sm prose-p:leading-relaxed prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5">
+            <ReactMarkdown>{result}</ReactMarkdown>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
