@@ -218,6 +218,7 @@ const AppContent = () => {
             <Route path="licenses" element={<AdminLicenses />} />
             <Route path="popup-banner" element={<AdminPopupBanner />} />
             <Route path="invoices" element={<AdminInvoiceGenerator />} />
+            <Route path="footer-settings" element={<AdminFooterSettings />} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
