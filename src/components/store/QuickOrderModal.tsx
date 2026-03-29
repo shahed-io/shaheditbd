@@ -35,6 +35,7 @@ interface Product {
 interface QuickOrderModalProps {
   product: Product;
   onClose: () => void;
+  quantity?: number;
 }
 
 const schema = z.object({
