@@ -221,76 +221,23 @@ OVERALL AESTHETIC:
   glassmorphism_ui: {
     label: "Glassmorphism UI",
     prompt: (name: string, brand: string, price: string, category: string) => `
-Create a premium square (1:1) product promotional card image with this EXACT design:
+Create a clean, premium square (1:1) product card image. Follow these instructions precisely:
 
-BACKGROUND:
-- Rich layered depth background with multiple floating soft-focus glass layers
-- Base: smooth gradient from soft cool white (#f0f2f8) top to warm pearl (#f8f6f2) bottom
-- 3-4 large translucent floating glass panels at different angles and sizes in the background:
-  - Each panel is semi-transparent white (rgba(255,255,255,0.3-0.5)) with visible frosted blur edges
-  - Panels overlap slightly, creating depth like stacked glass sheets
-- Subtle colored light reflections: a soft amber glow (hsla(42,96%,58%,0.08)) from top-right, a soft indigo glow (hsla(258,78%,60%,0.06)) from bottom-left
-- Very subtle fine dot grid pattern at 3% opacity for texture
+LAYOUT: Single white frosted-glass card centered on a soft gradient background. Simple, minimal, no clutter.
 
-MAIN CARD:
-- A large rounded rectangle card in the CENTER (takes up ~74% of space)
-- Card has generous rounded corners (~28px border-radius)
-- Card background: premium white glassmorphism — rgba(255,255,255,0.72) with heavy 28px backdrop blur
-- Border: 1.5px solid rgba(255,255,255,0.85) — crisp glass edge with inner light reflection
-- ACCENT BORDER DETAIL: A very thin (1px) inner accent line at the TOP of the card:
-  - Gradient from amber/orange (hsl(42,96%,58%)) through transparent to indigo/purple (hsl(258,78%,60%))
-  - This is subtle but distinctive — like a premium status indicator
-- Shadow: layered — 0 8px 32px rgba(258,78%,55%,0.08), 0 2px 8px rgba(0,0,0,0.04)
-- The card should feel like a physical glass card floating with depth
+BACKGROUND: Smooth diagonal gradient from light lavender (#e8e0f0) top-left to soft peach (#f5e6dc) bottom-right. Clean and simple, no patterns, no dots, no extra shapes.
 
-INSIDE THE CARD - TOP ROW:
-- Top-left: "SHAHED STORE" brand badge:
-  - Small rounded pill (~28px height)
-  - Background: subtle gradient from warm amber (hsl(25,100%,58%)) to rich orange (hsl(38,100%,52%))
-  - White bold text, clean sans-serif font
-  - Micro drop shadow for depth
-- Top-right: "${brand || name}" brand badge:
-  - Small rounded pill with frosted glass background (rgba(255,255,255,0.6), blur)
-  - Dark charcoal text (#1f2937)
-  - Subtle border (rgba(0,0,0,0.06))
-  - Small brand icon if applicable
+CARD: Large white rounded rectangle (75% of image, 24px rounded corners). Background: solid white with slight transparency like frosted glass. Border: thin 1.5px white border. Shadow: soft subtle drop shadow below the card. At the very top edge of the card: a thin 2px horizontal accent line, gradient from orange (#f59e0b) on the left to indigo (#6366f1) on the right.
 
-INSIDE THE CARD - CENTER:
-- The product logo/icon for "${name}" placed LARGE and prominently in the center
-- The product icon sits inside a subtle INNER GLASS CONTAINER:
-  - Rounded rectangle (~20px radius)
-  - Background: rgba(255,255,255,0.5), slight blur
-  - Very thin border with gradient: from amber to indigo (matching the top accent)
-  - Subtle inner shadow creating a "recessed glass" feel
-- Product icon is clean, sharp, with a soft drop shadow (0 4px 20px rgba(0,0,0,0.1))
-- Generous white space around — premium breathing room
+TOP OF CARD: Left side — small rounded orange pill badge with white text "SHAHED STORE". Right side — small rounded light gray pill with dark text "${brand || name}".
 
-${price ? `PRICE BADGE:
-- A small elegant rounded pill showing "৳${price}"
-- Background: gradient from indigo (hsl(210,90%,52%)) to deep purple (hsl(243,80%,55%))
-- White text, clean font
-- Positioned below the product icon with some spacing
-- Micro glow: 0 2px 12px hsla(258,78%,55%,0.2)` : ""}
+CENTER OF CARD: The product "${name}" logo/icon displayed LARGE and centered. The icon should be a clean square with rounded corners (like a mobile app icon). Below the icon, generous empty white space.
 
-BOTTOM OF CARD:
-- A thin elegant divider: gradient line from transparent → rgba(0,0,0,0.06) → transparent
-- Below the divider, clean minimal contact info:
-  - Left: globe icon + "www.shahedstore.com.bd" in muted text (hsl(220,15%,52%))
-  - Right: phone icon + "+880 1840-099853" in muted text (hsl(220,15%,52%))
-  - Font: small, clean monospace or sans-serif
-  - Very subtle, professional, does not distract from the product
+${price ? `PRICE: Below the product icon, a small rounded indigo pill badge showing "৳${price}" in white text.` : ""}
 
-DECORATIVE ELEMENTS:
-- 2-3 very subtle floating translucent circles in the background corners (5-8% opacity, different sizes)
-- A very faint light streak/reflection across the top-right of the card (like light hitting glass)
+BOTTOM OF CARD: A thin light gray horizontal line. Below it: left side "www.shahedstore.com.bd", right side "+880 1840-099853" — both in small gray text.
 
-OVERALL AESTHETIC:
-- Premium WHITE GLASSMORPHISM — inspired by Apple's Vision Pro UI and modern glass interfaces
-- Multi-layered depth with stacked glass panels creating visual richness
-- Warm amber + cool indigo accent colors create sophisticated contrast
-- The card feels PHYSICAL — like holding a frosted glass card with light passing through
-- Ultra-clean, minimal, lots of white space, professional
-- Social media promotional style. Square format exactly.
+STYLE: Clean, bright, minimal. White glass card on soft pastel background. Professional e-commerce promotional card. The orange-to-indigo accent line at top is the signature design element. No busy textures, no complex layering — just clean premium simplicity. Square format exactly.
 `.trim(),
   },
 };
