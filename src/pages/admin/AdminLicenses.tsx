@@ -549,6 +549,13 @@ const AdminLicenses = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
+                          {lic.status === 'assigned' && (
+                            <button onClick={() => openEmailModal(lic)}
+                              title="ইমেইল পাঠান"
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
+                              <Mail size={13} />
+                            </button>
+                          )}
                           {lic.status === 'available' && (
                             <button onClick={() => handleRevoke(lic.id)}
                               className="px-2.5 py-1 rounded-lg text-[10px] font-medium border border-border text-muted-foreground hover:border-destructive/50 hover:text-destructive transition-all">
