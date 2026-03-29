@@ -221,49 +221,56 @@ OVERALL AESTHETIC:
   glassmorphism_ui: {
     label: "Glassmorphism UI",
     prompt: (name: string, brand: string, price: string, category: string) => `
-Design a ultra-premium, award-winning square (1:1) product showcase card. This must look like a real high-end Apple or Samsung marketing material — NOT AI-generated art.
+Create a stunning, eye-catching square (1:1) product promotional card. This MUST look like a professionally designed social media ad — sharp, vibrant, attention-grabbing.
 
 BACKGROUND:
-- Rich deep gradient: from deep midnight navy (#0f0c29) through rich royal purple (#302b63) to dark teal (#24243e)
-- 2-3 very large soft blurred luminous orbs floating behind the card:
-  - One warm amber/gold orb (#f59e0b at 15% opacity) top-right
-  - One cool electric blue orb (#3b82f6 at 12% opacity) bottom-left  
-  - One soft violet orb (#8b5cf6 at 10% opacity) center-top
-- These orbs create a luxurious ambient lighting effect like studio photography
+- Vivid rich gradient: from deep electric indigo (#1e0a3c) to rich purple (#4a1a7a) to dark royal blue (#0c2461)
+- 3 large colorful luminous bokeh orbs behind the card for visual impact:
+  - Bright golden-amber orb (#fbbf24 at 25% opacity, 200px blur) — top-right area
+  - Vibrant electric cyan orb (#06b6d4 at 20% opacity, 180px blur) — bottom-left area
+  - Hot magenta/pink orb (#ec4899 at 15% opacity, 160px blur) — top-left area
+- These orbs should be VISIBLE and create a colorful, vibrant ambient glow — not too faint
 
 MAIN CARD:
-- Large frosted glass card centered (72% of image), 28px rounded corners
-- Card background: rgba(255,255,255,0.08) with heavy 40px backdrop blur — dark frosted glass
-- Border: 1px solid rgba(255,255,255,0.15) — subtle white edge catching light
-- Very soft outer glow: 0 30px 80px rgba(0,0,0,0.4)
-- At top edge: a thin 2px accent line, gradient from warm gold (#f59e0b) to electric blue (#3b82f6)
+- Large frosted dark glass card centered (74% of image), 24px rounded corners
+- Card background: rgba(15,10,40,0.75) with 30px backdrop blur — dark semi-transparent
+- Border: 1.5px solid rgba(255,255,255,0.20) — clearly visible white glass edge
+- Soft purple outer glow: 0 20px 60px rgba(100,50,200,0.3)
+- TOP ACCENT LINE: A bold 3px horizontal gradient line at the very top of the card — gradient from bright gold (#fbbf24) through hot pink (#ec4899) to electric cyan (#06b6d4). This line must be clearly visible.
 
-TOP ROW (inside card):
-- Left: "SHAHED STORE" in a small frosted pill badge (rgba(255,255,255,0.12) background, white bold text, 0.5px white border)
-- Right: "${brand || name}" in a matching frosted pill badge, white text with small brand icon
+TOP ROW (inside card, 20px padding):
+- Left: "SHAHED STORE" in a rounded pill badge — background gradient gold-to-pink, WHITE BOLD text, 12px font size, clearly readable
+- Right: "${brand || name}" in a rounded pill badge — rgba(255,255,255,0.15) background, white text, subtle white border
 
 CENTER (inside card):
-- The product "${name}" logo/icon displayed VERY LARGE and centered
-- Clean square app icon with rounded corners (like iOS app icon style)
-- The icon has a subtle reflective glass sheen effect
-- A very soft white glow/halo behind the product icon (rgba(255,255,255,0.05), 60px blur)
-- Below icon: generous dark breathing space
+- The product "${name}" displayed as a VERY LARGE clean square icon with rounded corners (like an app icon)
+- The icon should be the hero element — taking up significant space
+- Subtle white glow halo behind the icon (rgba(255,255,255,0.08), 40px spread)
+- Clean empty space around the icon
 
-${price ? `PRICE: Below the product icon, an elegant small pill with frosted glass background showing "৳${price}" in white text with subtle gold accent` : ""}
+${price ? `PRICE: A clearly visible rounded pill below the icon — gradient background (gold to cyan), "৳${price}" in WHITE BOLD text, 14px font size` : ""}
 
-BOTTOM (inside card):
-- Thin separator line (rgba(255,255,255,0.08))
-- Left: globe icon + "www.shahedstore.com.bd" in soft gray-white text (rgba(255,255,255,0.5))
-- Right: phone icon + "+880 1840-099853" in matching soft text
+BOTTOM SECTION (inside card):
+- A clearly visible thin separator line (rgba(255,255,255,0.15)) — 1px solid
+- Below the line, TWO lines of contact info in BRIGHT WHITE text (not faded gray):
+  - 🌐 "www.shahedstore.com.bd" — white color (#ffffff), 13px font, clearly legible
+  - 📞 "+880 1840-099853" — white color (#ffffff), 13px font, clearly legible
+- The website and phone number MUST be sharp, crisp, and easy to read against the dark background
+- Use SOLID WHITE (#ffffff) text, NOT transparent/faded text
 
-CRITICAL RULES:
-- This must look like a REAL premium brand advertisement, not AI art
-- Clean, sharp, professional — like Apple's product hero images
-- The dark glass card with ambient colored orbs creates depth and luxury
-- Typography must be crisp, modern, and readable
-- NO cluttered elements, NO busy textures, NO cartoonish effects
-- Think: Samsung Galaxy Unpacked event graphics meets Apple product page
-- Square format exactly. Photorealistic quality.
+CRITICAL TYPOGRAPHY RULES:
+- ALL text must be CRISP, SHARP, and HIGHLY READABLE
+- Website URL and phone number must use PURE WHITE (#ffffff) — no transparency, no fading
+- "SHAHED STORE" badge text must be BOLD and clear
+- Font style: clean sans-serif (like Inter, SF Pro, or Helvetica)
+- Text must have enough contrast to be instantly readable at any size
+
+OVERALL STYLE:
+- Vibrant, colorful, eye-catching — this should STOP someone while scrolling social media
+- The colorful bokeh orbs behind the dark glass card create depth and visual interest
+- Premium but BOLD — not subtle or muted
+- Think: high-end gaming brand launch graphics or premium tech product reveal
+- Square format exactly. Professional graphic design quality.
 `.trim(),
   },
 };
