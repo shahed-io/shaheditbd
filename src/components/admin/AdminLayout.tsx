@@ -10,7 +10,7 @@ import {
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
   Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Map, Bot, Code2, KeyRound, FileSearch, PackageSearch, Star, BarChart2,
-  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck
+  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle
 } from 'lucide-react';
 
 const menuItems = [
