@@ -578,6 +578,68 @@ const AdminLicenses = () => {
           </div>
         )}
       </div>
+
+      {/* Email Resend Modal */}
+      {emailModal.open && emailModal.license && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setEmailModal({ open: false, license: null, email: '' })}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Mail size={16} className="text-primary" /> লাইসেন্স ইমেইল পাঠান
+              </h3>
+              <button onClick={() => setEmailModal({ open: false, license: null, email: '' })}
+                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-5">
+              <div className="bg-muted/20 rounded-xl p-3 border border-border">
+                <p className="text-[10px] text-muted-foreground mb-1">প্রোডাক্ট</p>
+                <p className="text-sm font-semibold text-foreground">{emailModal.license.product_name}</p>
+              </div>
+              <div className="bg-muted/20 rounded-xl p-3 border border-border">
+                <p className="text-[10px] text-muted-foreground mb-1">License Key</p>
+                <code className="text-xs font-mono text-primary break-all">{emailModal.license.key_value}</code>
+                {emailModal.license.extra_info && (
+                  <p className="text-[10px] text-muted-foreground mt-1 font-mono">{emailModal.license.extra_info}</p>
+                )}
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
+                  প্রাপকের ইমেইল ঠিকানা *
+                </label>
+                <input
+                  type="email"
+                  value={emailModal.email}
+                  onChange={e => setEmailModal(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="customer@example.com"
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+                />
+                {emailModal.license.customer_email && emailModal.email !== emailModal.license.customer_email && (
+                  <button onClick={() => setEmailModal(prev => ({ ...prev, email: prev.license?.customer_email || '' }))}
+                    className="text-[10px] text-primary hover:underline mt-1">
+                    মূল ইমেইল ব্যবহার করুন ({emailModal.license.customer_email})
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={handleSendEmail} disabled={sendingEmail || !emailModal.email}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
+                {sendingEmail ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                ইমেইল পাঠান
+              </button>
+              <button onClick={() => setEmailModal({ open: false, license: null, email: '' })}
+                className="px-4 py-2.5 rounded-xl text-sm border border-border text-muted-foreground hover:border-primary/40">
+                বাতিল
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
