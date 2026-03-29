@@ -192,6 +192,9 @@ const Navbar = () => {
         </div>
       )}
 
+      {/* ── Fixed wrapper for announcement + navbar ── */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+
       {/* ── Top Announcement Bar ── */}
       <div className="w-full text-white text-xs font-medium py-2 flex items-center overflow-hidden relative"
         style={{ background: 'linear-gradient(90deg, hsl(258,78%,50%), hsl(200,90%,42%), hsl(258,78%,50%))' }}>
@@ -233,7 +236,7 @@ const Navbar = () => {
       `}</style>
 
       {/* ── Main Navbar — Glassmorphism Card ── */}
-      <div className="fixed top-0 left-0 right-0 z-50 px-4 py-2 backdrop-blur-xl"
+      <div className="px-4 py-2 backdrop-blur-xl"
         style={{
           background: 'hsla(0,0%,100%,0.60)',
         }}>
