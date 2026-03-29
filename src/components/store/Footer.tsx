@@ -1,6 +1,7 @@
 import { Phone, Mail, MapPin, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText, Send } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 import dbidLogo from '@/assets/dbid-logo.png';
+import { useFooterSettings } from '@/hooks/useFooterSettings';
 
 const NAV_COL = [
   {
@@ -44,7 +45,11 @@ const NAV_COL = [
   },
 ];
 
-const Footer = () => (
+const Footer = () => {
+  const { settings } = useFooterSettings();
+  const paymentMethods = settings.payment_methods.split(',').map(s => s.trim()).filter(Boolean);
+
+  return (
   <footer className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
 
     {/* Decorative background */}
@@ -79,7 +84,7 @@ const Footer = () => (
             </div>
           </div>
           <div className="flex items-center gap-3 flex-shrink-0">
-            <a href="https://wa.me/8801840099853" target="_blank" rel="noopener noreferrer"
+            <a href={`https://wa.me/${settings.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all hover:scale-105"
               style={{
                 color: 'hsl(226,35%,28%)',
@@ -118,17 +123,17 @@ const Footer = () => (
           <BrandLogo size="lg" />
         </a>
         <p className="text-[13px] leading-relaxed md:whitespace-nowrap" style={{ color: 'hsl(226,35%,42%)' }}>
-          বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার স্টোর। অরিজিনাল সফটওয়্যার, সেরা দামে, ইনস্ট্যান্ট ডেলিভারি।
+          {settings.tagline}
         </p>
 
         {/* Contact pills — centered */}
         <div className="flex flex-col items-center gap-2 w-full">
           {[
-            { icon: <Phone size={13} />, href: 'tel:01840099853',                   label: '01840-099853',            color: 'hsl(258,78%,55%)' },
-            { icon: <Mail size={13} />,  href: 'mailto:info@shahedstore.com.bd',     label: 'info@shahedstore.com.bd', color: 'hsl(200,90%,45%)' },
-            { icon: <MapPin size={13} />, href: '#',                                  label: 'Ishwardi, Pabna',         color: 'hsl(162,72%,38%)' },
+            { icon: <Phone size={13} />, href: `tel:${settings.phone.replace(/\D/g, '')}`, label: settings.phone, color: 'hsl(258,78%,55%)' },
+            { icon: <Mail size={13} />,  href: `mailto:${settings.email}`, label: settings.email, color: 'hsl(200,90%,45%)' },
+            { icon: <MapPin size={13} />, href: '#', label: settings.address, color: 'hsl(162,72%,38%)' },
           ].map((c, i) => (
-            <a key={i} href={c.href} target={(c as any).ext ? '_blank' : undefined} rel={(c as any).ext ? 'noopener noreferrer' : undefined}
+            <a key={i} href={c.href}
               className="flex items-center gap-3 text-sm transition-all group hover:translate-x-1"
               style={{ color: 'hsl(226,35%,42%)' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = c.color; }}
@@ -149,10 +154,10 @@ const Footer = () => (
         {/* Social icons — centered */}
         <div className="flex gap-3 justify-center">
           {[
-            { icon: <Facebook size={17} />,      href: 'https://www.facebook.com/Shahed.Store365',       label: 'Facebook',  color: 'hsl(258,78%,55%)' },
-            { icon: <MessageCircle size={17} />, href: 'https://wa.me/shahedstore',                        label: 'WhatsApp',  color: 'hsl(162,72%,38%)' },
-            { icon: <Instagram size={17} />,     href: 'https://www.instagram.com/shahedstore.com.bd/',    label: 'Instagram', color: 'hsl(330,85%,55%)' },
-            { icon: <Send size={17} />,          href: 'https://t.me/Shahed_Store',                        label: 'Telegram',  color: 'hsl(200,80%,50%)' },
+            { icon: <Facebook size={17} />,      href: settings.facebook_url,  label: 'Facebook',  color: 'hsl(258,78%,55%)' },
+            { icon: <MessageCircle size={17} />, href: settings.whatsapp_url,  label: 'WhatsApp',  color: 'hsl(162,72%,38%)' },
+            { icon: <Instagram size={17} />,     href: settings.instagram_url, label: 'Instagram', color: 'hsl(330,85%,55%)' },
+            { icon: <Send size={17} />,          href: settings.telegram_url,  label: 'Telegram',  color: 'hsl(200,80%,50%)' },
           ].map((s, i) => (
             <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
               className="w-11 h-11 rounded-xl flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5"
@@ -182,7 +187,7 @@ const Footer = () => (
         </div>
       </div>
 
-      {/* Nav columns — 1 col on mobile (glassmorphism cards), 3 cols on desktop */}
+      {/* Nav columns */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {NAV_COL.map((col, ci) => (
           <div key={ci} className="rounded-2xl p-5 space-y-4"
@@ -193,7 +198,6 @@ const Footer = () => (
               border: `1px solid ${col.accent.replace('hsl(','hsla(').replace(')',',0.18)')}`,
               boxShadow: `0 4px 20px ${col.accent.replace('hsl(','hsla(').replace(')',',0.07)')}, 0 1px 0 rgba(255,255,255,0.9) inset`,
             }}>
-            {/* Column header */}
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                 style={{
@@ -208,12 +212,8 @@ const Footer = () => (
                 {col.title}
               </h4>
             </div>
-
-            {/* Divider */}
             <div className="h-px rounded-full"
               style={{ background: `linear-gradient(90deg, ${col.accent.replace('hsl(','hsla(').replace(')',',0.40)')}, transparent)` }} />
-
-            {/* Links — 2-column grid on mobile for compact look */}
             <ul className="grid grid-cols-2 md:grid-cols-1 gap-x-2 gap-y-0.5">
               {col.links.map((link: any) => (
                 <li key={link.label}>
@@ -242,7 +242,6 @@ const Footer = () => (
                     <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all group-hover:scale-125"
                       style={{ background: col.accent.replace('hsl(','hsla(').replace(')',',0.45)') }} />
                     <span className="truncate">{link.label}</span>
-                    
                   </a>
                 </li>
               ))}
@@ -269,22 +268,16 @@ const Footer = () => (
             <img src={dbidLogo} alt="DBID Logo" className="w-8 h-8 object-contain" />
           </div>
           <div>
-            <p className="text-[11px] font-black font-sora tracking-widest" style={{ color: 'hsl(226,35%,15%)' }}>GOVT. CERTIFIED BUSINESS</p>
-            <p className="text-[10px] font-fira mt-0.5" style={{ color: 'hsl(226,35%,48%)' }}>DBID: 586772174</p>
+            <p className="text-[11px] font-black font-sora tracking-widest" style={{ color: 'hsl(226,35%,15%)' }}>{settings.cert_title}</p>
+            <p className="text-[10px] font-fira mt-0.5" style={{ color: 'hsl(226,35%,48%)' }}>{settings.cert_id}</p>
           </div>
         </div>
 
         {/* Payments */}
         <div className="flex items-center gap-2 flex-wrap justify-center">
           <span className="text-[10px] font-fira font-bold tracking-widest mr-1" style={{ color: 'hsl(226,35%,50%)' }}>PAYMENTS:</span>
-          {[
-            { name: 'bKash', num: '01820060046' },
-            { name: 'Nagad', num: '01840099853' },
-            { name: 'Rocket', num: '01840099853' },
-            { name: 'Upay', num: '01840099853' },
-            { name: 'bKash Merchant', num: '01840099853' },
-          ].map(pm => (
-            <span key={pm.name}
+          {paymentMethods.map(pm => (
+            <span key={pm}
               className="px-3 py-1.5 rounded-lg text-[10.5px] font-bold font-fira cursor-default transition-all hover:scale-105"
               style={{
                 background: 'hsla(0,0%,100%,0.70)',
@@ -292,9 +285,8 @@ const Footer = () => (
                 color: 'hsl(258,78%,45%)',
                 border: '1px solid hsla(258,78%,75%,0.22)',
                 boxShadow: '0 1px 4px hsla(226,35%,12%,0.05)',
-              }}
-              title={pm.num}>
-              {pm.name}
+              }}>
+              {pm}
             </span>
           ))}
         </div>
@@ -303,7 +295,7 @@ const Footer = () => (
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
           style={{ background: 'hsla(162,72%,38%,0.08)', border: '1px solid hsla(162,72%,38%,0.20)' }}>
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[11px] font-fira font-medium" style={{ color: 'hsl(162,72%,30%)' }}>Trusted Digital Product Store</span>
+          <span className="text-[11px] font-fira font-medium" style={{ color: 'hsl(162,72%,30%)' }}>{settings.status_text}</span>
         </div>
       </div>
     </div>
@@ -312,18 +304,19 @@ const Footer = () => (
     <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.12)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <p className="text-[11px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>
-          © 2026 <strong style={{ color: 'hsl(226,35%,20%)' }}>Shahed Store</strong> · All rights reserved.
+          © {new Date().getFullYear()} <strong style={{ color: 'hsl(226,35%,20%)' }}>{settings.store_name}</strong> · All rights reserved.
         </p>
-        <a href="https://www.shahedstore.com.bd" target="_blank" rel="noopener noreferrer"
+        <a href={settings.website_url} target="_blank" rel="noopener noreferrer"
           className="flex items-center gap-1 text-[11px] font-fira transition-all hover:gap-1.5"
           style={{ color: 'hsl(226,35%,48%)' }}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,48%)'; }}>
-          www.shahedstore.com.bd <ExternalLink size={10} />
+          {settings.website_url.replace('https://','').replace('http://','')} <ExternalLink size={10} />
         </a>
       </div>
     </div>
   </footer>
-);
+  );
+};
 
 export default Footer;
