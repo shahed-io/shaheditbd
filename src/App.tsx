@@ -62,6 +62,7 @@ const FreeTools             = lazy(() => import("./pages/FreeTools"));
 const RefundRequest         = lazy(() => import("./pages/RefundRequest"));
 const InstallApp            = lazy(() => import("./pages/InstallApp"));
 const Reseller              = lazy(() => import("./pages/Reseller"));
+const AdminResellerAccounts = lazy(() => import("./pages/admin/AdminResellerAccounts"));
 
 // SEO sub-pages
 const AdminMetaTags         = lazy(() => import("./pages/admin/seo/AdminMetaTags"));
@@ -221,6 +222,7 @@ const AppContent = () => {
             <Route path="invoices" element={<AdminInvoiceGenerator />} />
             <Route path="footer-settings" element={<AdminFooterSettings />} />
             <Route path="reseller" element={<Reseller />} />
+            <Route path="reseller-accounts" element={<AdminResellerAccounts />} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
