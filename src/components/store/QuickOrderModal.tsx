@@ -109,7 +109,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
     setCouponError('');
     try {
       const { data, error } = await supabase.functions.invoke('validate-coupon', {
-        body: { code: couponCode.trim().toUpperCase(), orderTotal: product.price },
+        body: { code: couponCode.trim().toUpperCase(), orderTotal: itemTotal },
       });
       if (error || !data?.valid) {
         setCouponError(data?.message || 'কুপন কোড সঠিক নয়');
@@ -180,7 +180,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
           customer_name: form.name,
           customer_email: form.email,
           customer_phone: form.phone,
-          subtotal: product.price,
+          subtotal: itemTotal,
           discount_amount: couponDiscount,
           total: finalTotal,
           payment_method: paymentMethod,
@@ -215,8 +215,8 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         product_name: product.name,
         product_id: typeof product.id === 'string' ? product.id : null,
         price: product.price,
-        quantity: 1,
-        total: finalTotal,
+        quantity: initialQty,
+        total: itemTotal,
         custom_field_values: customFields.length > 0 ? customFieldValues : {},
       } as any);
 
