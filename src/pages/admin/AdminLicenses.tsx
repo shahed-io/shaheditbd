@@ -183,6 +183,79 @@ const AdminLicenses = () => {
   const toggleShow = (id: string) => setShowValues(prev => ({ ...prev, [id]: !prev[id] }));
   const maskValue = (val: string) => val.length > 8 ? val.slice(0, 4) + '•'.repeat(Math.min(val.length - 8, 12)) + val.slice(-4) : '••••••••';
 
+  const handlePrint = () => {
+    const printContent = `
+      <!DOCTYPE html><html><head><meta charset="UTF-8">
+      <title>License Keys - Shahed Store</title>
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; color: #1a1a2e; }
+        h1 { font-size: 20px; color: hsl(258,78%,55%); margin-bottom: 5px; }
+        .subtitle { color: #888; font-size: 12px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: hsl(258,78%,55%); color: white; padding: 8px 12px; text-align: left; font-size: 11px; }
+        td { padding: 8px 12px; border-bottom: 1px solid #eee; }
+        tr:nth-child(even) { background: #faf8ff; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+        .mono { font-family: 'Courier New', monospace; font-size: 11px; }
+        @media print { body { padding: 10px; } }
+      </style></head><body>
+      <h1>🔑 License Keys — Shahed Store</h1>
+      <p class="subtitle">${filtered.length} টি লাইসেন্স • প্রিন্ট তারিখ: ${new Date().toLocaleDateString('bn-BD')}</p>
+      <table>
+        <thead><tr>
+          <th>#</th><th>Type</th><th>Key / Credentials</th><th>প্রোডাক্ট</th><th>Status</th><th>কাস্টমার</th><th>অর্ডার</th>
+        </tr></thead>
+        <tbody>${filtered.map((lic, i) => {
+          const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label || lic.key_type;
+          const stLabel = STATUS_CONFIG[lic.status]?.label || lic.status;
+          return `<tr>
+            <td>${i + 1}</td>
+            <td>${typeLabel}</td>
+            <td class="mono">${lic.key_value}${lic.extra_info ? '<br><small style="color:#888">' + lic.extra_info + '</small>' : ''}</td>
+            <td>${lic.product_name}</td>
+            <td><span class="badge" style="background:${(STATUS_CONFIG[lic.status]?.color || '#888')}22;color:${STATUS_CONFIG[lic.status]?.color || '#888'}">${stLabel}</span></td>
+            <td>${lic.customer_name || '—'}</td>
+            <td>${lic.order_number ? '#' + lic.order_number : '—'}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></body></html>`;
+    const w = window.open('', '_blank');
+    if (w) { w.document.write(printContent); w.document.close(); w.print(); }
+  };
+
+  const openEmailModal = (lic: LicenseKey) => {
+    setEmailModal({ open: true, license: lic, email: lic.customer_email || '' });
+  };
+
+  const handleSendEmail = async () => {
+    if (!emailModal.license || !emailModal.email) return toast.error('ইমেইল ঠিকানা দিন');
+    setSendingEmail(true);
+    try {
+      const lic = emailModal.license;
+      const { error } = await supabase.functions.invoke('send-order-email', {
+        body: {
+          type: 'license-resend',
+          recipientEmail: emailModal.email,
+          licenseData: {
+            key_value: lic.key_value,
+            key_type: lic.key_type,
+            extra_info: lic.extra_info,
+            product_name: lic.product_name,
+            customer_name: lic.customer_name || 'Customer',
+            order_number: lic.order_number || '',
+          }
+        }
+      });
+      if (error) throw error;
+      toast.success('লাইসেন্স ইমেইল পাঠানো হয়েছে!');
+      setEmailModal({ open: false, license: null, email: '' });
+    } catch (err: any) {
+      toast.error('ইমেইল পাঠাতে ব্যর্থ: ' + (err.message || 'Unknown error'));
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
