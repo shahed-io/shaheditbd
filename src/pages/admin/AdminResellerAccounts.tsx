@@ -31,7 +31,7 @@ interface Stats {
 
 const callAdmin = async (body: object) => {
   const token = localStorage.getItem('rs_token');
-  if (!token) throw new Error('রিসেলার সেশন নেই। আগে CID For Reseller পেজে লগইন করুন।');
+  if (!token) throw new Error('No reseller session. Please login on the CID For Reseller page first.');
   const { data, error } = await supabase.functions.invoke('reseller-admin', { body: { ...body, token } });
   if (error) throw new Error(error.message);
   if (data?.error) throw new Error(data.error);
@@ -44,14 +44,12 @@ const AdminResellerAccounts = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
-  // Dialogs
   const [createOpen, setCreateOpen] = useState(false);
   const [topupOpen, setTopupOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
-  // Form states
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newIsAdmin, setNewIsAdmin] = useState(false);
@@ -89,7 +87,7 @@ const AdminResellerAccounts = () => {
         is_admin: newIsAdmin,
         balance_cents: parseInt(newBalance) || 0,
       });
-      toast.success('ইউজার তৈরি হয়েছে');
+      toast.success('User created successfully');
       setCreateOpen(false);
       setNewUsername(''); setNewPassword(''); setNewIsAdmin(false); setNewBalance('0');
       fetchData();
@@ -102,7 +100,7 @@ const AdminResellerAccounts = () => {
     setActionLoading(true);
     try {
       await callAdmin({ action: 'topup', user_id: selectedUser.id, amount_cents: parseInt(topupAmount) });
-      toast.success('ব্যালেন্স যোগ হয়েছে');
+      toast.success('Balance added successfully');
       setTopupOpen(false); setTopupAmount('');
       fetchData();
     } catch (err: any) { toast.error(err.message); }
@@ -114,7 +112,7 @@ const AdminResellerAccounts = () => {
     setActionLoading(true);
     try {
       await callAdmin({ action: 'change_password', user_id: selectedUser.id, new_password: changePassword });
-      toast.success('পাসওয়ার্ড পরিবর্তন হয়েছে');
+      toast.success('Password changed successfully');
       setPasswordOpen(false); setChangePassword('');
     } catch (err: any) { toast.error(err.message); }
     finally { setActionLoading(false); }
@@ -125,7 +123,7 @@ const AdminResellerAccounts = () => {
     setActionLoading(true);
     try {
       await callAdmin({ action: 'delete_user', user_id: selectedUser.id });
-      toast.success('ইউজার ডিলিট হয়েছে');
+      toast.success('User deleted successfully');
       setDeleteOpen(false);
       fetchData();
     } catch (err: any) { toast.error(err.message); }
@@ -138,20 +136,19 @@ const AdminResellerAccounts = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">রিসেলার একাউন্ট</h1>
-          <p className="text-muted-foreground text-sm">রিসেলার ইউজার ম্যানেজমেন্ট</p>
+          <h1 className="text-2xl font-bold text-foreground">Reseller Accounts</h1>
+          <p className="text-muted-foreground text-sm">Reseller user management</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} /> রিফ্রেশ
+            <RefreshCw className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
           <Button size="sm" onClick={() => setCreateOpen(true)}>
-            <Plus className="h-4 w-4 mr-1" /> নতুন ইউজার
+            <Plus className="h-4 w-4 mr-1" /> New User
           </Button>
         </div>
       </div>
 
-      {/* Stats */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
@@ -159,7 +156,7 @@ const AdminResellerAccounts = () => {
               <div className="flex items-center gap-3">
                 <Users className="h-8 w-8 text-primary" />
                 <div>
-                  <p className="text-sm text-muted-foreground">মোট ইউজার</p>
+                  <p className="text-sm text-muted-foreground">Total Users</p>
                   <p className="text-2xl font-bold">{stats.total_users}</p>
                 </div>
               </div>
@@ -170,7 +167,7 @@ const AdminResellerAccounts = () => {
               <div className="flex items-center gap-3">
                 <ShieldCheck className="h-8 w-8 text-primary" />
                 <div>
-                  <p className="text-sm text-muted-foreground">মোট CID</p>
+                  <p className="text-sm text-muted-foreground">Total CIDs</p>
                   <p className="text-2xl font-bold">{stats.total_cids}</p>
                 </div>
               </div>
@@ -181,7 +178,7 @@ const AdminResellerAccounts = () => {
               <div className="flex items-center gap-3">
                 <Wallet className="h-8 w-8 text-primary" />
                 <div>
-                  <p className="text-sm text-muted-foreground">মোট ব্যালেন্স</p>
+                  <p className="text-sm text-muted-foreground">Total Balance</p>
                   <p className="text-2xl font-bold">৳{(stats.total_balance_cents / 100).toFixed(2)}</p>
                 </div>
               </div>
@@ -190,15 +187,14 @@ const AdminResellerAccounts = () => {
         </div>
       )}
 
-      {/* Search & Table */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">ইউজার তালিকা</CardTitle>
+            <CardTitle className="text-lg">User List</CardTitle>
             <div className="relative w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="ইউজার খুঁজুন..."
+                placeholder="Search users..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="pl-9"
@@ -214,32 +210,32 @@ const AdminResellerAccounts = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ইউজারনেম</TableHead>
-                    <TableHead>রোল</TableHead>
-                    <TableHead>ব্যালেন্স</TableHead>
-                    <TableHead>যোগদান</TableHead>
-                    <TableHead className="text-right">অ্যাকশন</TableHead>
+                    <TableHead>Username</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Balance</TableHead>
+                    <TableHead>Joined</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.length === 0 ? (
-                    <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">কোনো ইউজার পাওয়া যায়নি</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">No users found</TableCell></TableRow>
                   ) : filtered.map(u => (
                     <TableRow key={u.id}>
                       <TableCell className="font-medium">{u.username}</TableCell>
                       <TableCell>
                         <Badge variant={u.is_admin ? 'default' : 'secondary'}>
-                          {u.is_admin ? 'অ্যাডমিন' : 'রিসেলার'}
+                          {u.is_admin ? 'Admin' : 'Reseller'}
                         </Badge>
                       </TableCell>
                       <TableCell>৳{(u.balance_cents / 100).toFixed(2)}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {new Date(u.created_at).toLocaleDateString('bn-BD')}
+                        {new Date(u.created_at).toLocaleDateString('en-US')}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="outline" size="sm" onClick={() => { setSelectedUser(u); setTopupOpen(true); }}>
-                            <Wallet className="h-3.5 w-3.5 mr-1" /> টপআপ
+                            <Wallet className="h-3.5 w-3.5 mr-1" /> Top Up
                           </Button>
                           <Button variant="outline" size="sm" onClick={() => { setSelectedUser(u); setPasswordOpen(true); }}>
                             <KeyRound className="h-3.5 w-3.5" />
@@ -261,29 +257,29 @@ const AdminResellerAccounts = () => {
       {/* Create User Dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>নতুন রিসেলার তৈরি করুন</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Create New Reseller</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2">
             <div>
-              <label className="text-sm font-medium">ইউজারনেম</label>
-              <Input value={newUsername} onChange={e => setNewUsername(e.target.value)} placeholder="ইউজারনেম" />
+              <label className="text-sm font-medium">Username</label>
+              <Input value={newUsername} onChange={e => setNewUsername(e.target.value)} placeholder="Username" />
             </div>
             <div>
-              <label className="text-sm font-medium">পাসওয়ার্ড</label>
-              <Input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="ন্যূনতম ৬ অক্ষর" />
+              <label className="text-sm font-medium">Password</label>
+              <Input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Minimum 6 characters" />
             </div>
             <div>
-              <label className="text-sm font-medium">প্রাথমিক ব্যালেন্স (সেন্ট)</label>
+              <label className="text-sm font-medium">Initial Balance (cents)</label>
               <Input type="number" value={newBalance} onChange={e => setNewBalance(e.target.value)} />
             </div>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={newIsAdmin} onChange={e => setNewIsAdmin(e.target.checked)} />
-              অ্যাডমিন হিসেবে তৈরি করুন
+              Create as Admin
             </label>
           </div>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline">বাতিল</Button></DialogClose>
+            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
             <Button onClick={handleCreate} disabled={actionLoading}>
-              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} তৈরি করুন
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Create
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -292,18 +288,18 @@ const AdminResellerAccounts = () => {
       {/* Topup Dialog */}
       <Dialog open={topupOpen} onOpenChange={setTopupOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>ব্যালেন্স টপআপ — {selectedUser?.username}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Balance Top Up — {selectedUser?.username}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2">
-            <p className="text-sm text-muted-foreground">বর্তমান ব্যালেন্স: ৳{((selectedUser?.balance_cents || 0) / 100).toFixed(2)}</p>
+            <p className="text-sm text-muted-foreground">Current Balance: ৳{((selectedUser?.balance_cents || 0) / 100).toFixed(2)}</p>
             <div>
-              <label className="text-sm font-medium">টপআপ পরিমাণ (সেন্ট)</label>
-              <Input type="number" value={topupAmount} onChange={e => setTopupAmount(e.target.value)} placeholder="যেমন: 1000 = ৳10" />
+              <label className="text-sm font-medium">Top Up Amount (cents)</label>
+              <Input type="number" value={topupAmount} onChange={e => setTopupAmount(e.target.value)} placeholder="e.g. 1000 = ৳10" />
             </div>
           </div>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline">বাতিল</Button></DialogClose>
+            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
             <Button onClick={handleTopup} disabled={actionLoading}>
-              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} টপআপ করুন
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Top Up
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -312,17 +308,17 @@ const AdminResellerAccounts = () => {
       {/* Change Password Dialog */}
       <Dialog open={passwordOpen} onOpenChange={setPasswordOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>পাসওয়ার্ড পরিবর্তন — {selectedUser?.username}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Change Password — {selectedUser?.username}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2">
             <div>
-              <label className="text-sm font-medium">নতুন পাসওয়ার্ড</label>
-              <Input type="password" value={changePassword} onChange={e => setChangePassword(e.target.value)} placeholder="ন্যূনতম ৬ অক্ষর" />
+              <label className="text-sm font-medium">New Password</label>
+              <Input type="password" value={changePassword} onChange={e => setChangePassword(e.target.value)} placeholder="Minimum 6 characters" />
             </div>
           </div>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline">বাতিল</Button></DialogClose>
+            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
             <Button onClick={handleChangePassword} disabled={actionLoading}>
-              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} পরিবর্তন করুন
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Change
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -331,14 +327,14 @@ const AdminResellerAccounts = () => {
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>ইউজার ডিলিট করুন</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Delete User</DialogTitle></DialogHeader>
           <p className="text-sm text-muted-foreground py-2">
-            আপনি কি নিশ্চিত <strong>{selectedUser?.username}</strong> ইউজারটি ডিলিট করতে চান? এই অ্যাকশন পূর্বাবস্থায় ফেরানো যাবে না।
+            Are you sure you want to delete <strong>{selectedUser?.username}</strong>? This action cannot be undone.
           </p>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline">বাতিল</Button></DialogClose>
+            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
             <Button variant="destructive" onClick={handleDelete} disabled={actionLoading}>
-              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} ডিলিট করুন
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Delete
             </Button>
           </DialogFooter>
         </DialogContent>
