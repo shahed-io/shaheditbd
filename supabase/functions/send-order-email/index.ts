@@ -573,8 +573,23 @@ Deno.serve(async (req) => {
       })
     }
 
-    // ── PROMO BULK EMAIL ────────────────────────────────────────────
+    // ── PROMO BULK EMAIL (Admin only) ─────────────────────────────
     if (type === 'promotional') {
+      // Auth guard: only admins can send promotional emails
+      const authHeader = req.headers.get('Authorization');
+      const token = authHeader?.replace('Bearer ', '');
+      if (!token) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const { data: { user: authUser } } = await supabaseAdmin.auth.getUser(token);
+      if (!authUser) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const { data: adminRole } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', authUser.id).eq('role', 'admin').maybeSingle();
+      if (!adminRole) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin only' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+
       const emails: string[] = recipientEmails || []
       const html = buildPromoHtml(promoSubject, promoBody, ctaText, ctaUrl)
 
