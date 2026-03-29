@@ -56,7 +56,7 @@ interface PaymentOption {
 
 const inputClass = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all";
 
-const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
+const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOrderModalProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { configs: paymentConfigs } = usePaymentSettings();
@@ -80,7 +80,8 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
   const [customFieldErrors, setCustomFieldErrors] = useState<Record<string, string>>({});
 
   const customFields: CustomField[] = product.customFields || [];
-  const finalTotal = Math.max(0, product.price - couponDiscount);
+  const itemTotal = product.price * initialQty;
+  const finalTotal = Math.max(0, itemTotal - couponDiscount);
 
   // Auto-fill user info and fetch wallet balance
   useEffect(() => {
