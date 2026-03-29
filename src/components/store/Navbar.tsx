@@ -315,19 +315,20 @@ const Navbar = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-1.5">
-              {user ? (
-                <div className="hidden sm:flex items-center gap-1">
-                  <button onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
-                    style={{ color: 'hsl(226,35%,28%)' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.08)'; e.currentTarget.style.color = 'hsl(258,78%,48%)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
-                    <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-                      style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
-                      {avatarUrl ? <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" /> : initials}
-                    </div>
-                    <span className="hidden lg:inline">Dashboard</span>
-                  </button>
+              {/* Dashboard button — always visible */}
+              <div className="hidden sm:flex items-center gap-1">
+                <button onClick={() => user ? navigate('/dashboard') : setAuthOpen(true)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
+                  style={{ color: 'hsl(226,35%,28%)' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.08)'; e.currentTarget.style.color = 'hsl(258,78%,48%)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+                    {user && avatarUrl ? <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" /> : user ? initials : <User size={14} />}
+                  </div>
+                  <span className="hidden lg:inline">Dashboard</span>
+                </button>
+                {user && (
                   <button onClick={() => supabase.auth.signOut()}
                     className="p-2 rounded-xl transition-all"
                     style={{ color: 'hsl(226,35%,45%)' }}
@@ -335,17 +336,8 @@ const Navbar = () => {
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,45%)'; (e.currentTarget as HTMLElement).style.background = ''; }}>
                     <LogOut size={15} />
                   </button>
-                </div>
-              ) : (
-                <button onClick={() => setAuthOpen(true)}
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border"
-                  style={{ color: 'hsl(258,78%,50%)', borderColor: 'hsla(258,78%,55%,0.30)', background: 'hsla(258,78%,55%,0.05)' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.55)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.10)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.30)'; e.currentTarget.style.background = 'hsla(258,78%,55%,0.05)'; }}>
-                  <User size={16} />
-                  <span className="hidden lg:inline">Login</span>
-                </button>
-              )}
+                )}
+              </div>
 
               {/* Mobile Search Button — only on xs/sm */}
               <button
