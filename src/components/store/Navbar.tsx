@@ -47,6 +47,7 @@ interface NavCategory {
 }
 
 const Navbar = () => {
+  const { settings: footerSettings } = useFooterSettings();
   const [mobileOpen,    setMobileOpen]    = useState(false);
   const [authOpen,      setAuthOpen]      = useState(false);
   const [scrolled,      setScrolled]      = useState(false);
