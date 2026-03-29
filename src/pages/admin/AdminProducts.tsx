@@ -200,7 +200,7 @@ const AdminProducts = () => {
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [aiCardLoading, setAiCardLoading] = useState(false);
   const [aiCardPreview, setAiCardPreview] = useState<string | null>(null);
-  const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo' | 'glass_gradient'>('dark_neon');
+  const [cardStyle, setCardStyle] = useState<'dark_neon' | 'light_glass' | 'clean_light' | 'vibrant_promo' | 'glass_gradient' | 'glassmorphism_ui'>('dark_neon');
   const [demoDescription, setDemoDescription] = useState('');
   const [showDemoPanel, setShowDemoPanel] = useState(false);
   const [shortDescOptions, setShortDescOptions] = useState<string[]>([]);
@@ -388,6 +388,7 @@ const AdminProducts = () => {
     { value: 'clean_light', label: '🩵 Clean Light', desc: 'ক্লিন হোয়াইট, বোকে এফেক্ট' },
     { value: 'vibrant_promo', label: '🌈 Soft Aurora', desc: 'সফট অরোরা গ্রেডিয়েন্ট, লাইট প্রিমিয়াম' },
     { value: 'glass_gradient', label: '✨ Glass Gradient', desc: 'গ্লাসমরফিজম গ্রেডিয়েন্ট বর্ডার' },
+    { value: 'glassmorphism_ui', label: '🪟 Glassmorphism UI', desc: 'প্রিমিয়াম হোয়াইট গ্লাস, অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট' },
   ] as const;
 
   // ── AI Glassmorphism Card Generator ──────────────────────────
@@ -1697,6 +1698,7 @@ const AdminProducts = () => {
                             {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল Shahed Store ব্যাজ — রেফারেন্স: CamScanner clean card'}
                             {cardStyle === 'vibrant_promo' && 'সফট অরোরা গ্রেডিয়েন্ট + হোয়াইট গ্লাস কার্ড, লাইট প্রিমিয়াম প্রোডাক্ট শোকেস'}
                             {cardStyle === 'glass_gradient' && 'ডার্ক ব্যাকগ্রাউন্ড + মাল্টি-কালার গ্লোয়িং গ্রেডিয়েন্ট বর্ডার, প্রিমিয়াম গ্লাসমরফিজম'}
+                            {cardStyle === 'glassmorphism_ui' && 'প্রিমিয়াম হোয়াইট গ্লাস কার্ড + অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট, Apple Vision Pro স্টাইল'}
                           </span>
                         </div>
 
