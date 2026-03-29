@@ -5,7 +5,7 @@ import {
   Plus, Trash2, Key, Eye, EyeOff, Search, Filter,
   CheckCircle2, Clock, XCircle, Upload, Download,
   Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag,
-  Printer, Mail, Send, X
+  Printer, Mail, Send, X, FileText
 } from 'lucide-react';
 
 type LicenseKey = {
@@ -225,6 +225,110 @@ const AdminLicenses = () => {
       </table></body></html>`;
     const w = window.open('', '_blank');
     if (w) { w.document.write(printContent); w.document.close(); w.print(); }
+  };
+
+  const handleInvoicePrint = (lic: LicenseKey) => {
+    const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label || lic.key_type;
+    const invoiceNo = `INV-${lic.order_number || Date.now()}`;
+    const date = lic.assigned_at ? new Date(lic.assigned_at).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('bn-BD');
+    
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>License Invoice - ${invoiceNo}</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #1a1a2e; background: #fff; }
+      .invoice { max-width: 700px; margin: 0 auto; }
+      .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 35px; padding-bottom: 20px; border-bottom: 3px solid #7c3aed; }
+      .brand h1 { font-size: 22px; color: #7c3aed; font-weight: 900; }
+      .brand p { font-size: 11px; color: #888; margin-top: 3px; }
+      .invoice-info { text-align: right; }
+      .invoice-info h2 { font-size: 24px; font-weight: 900; color: #1a1a2e; text-transform: uppercase; letter-spacing: 2px; }
+      .invoice-info .meta { font-size: 11px; color: #666; margin-top: 5px; }
+      .invoice-info .meta span { font-weight: 700; color: #1a1a2e; }
+      .parties { display: flex; justify-content: space-between; margin-bottom: 30px; }
+      .party { flex: 1; }
+      .party h4 { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: #7c3aed; font-weight: 800; margin-bottom: 8px; }
+      .party p { font-size: 12px; color: #444; line-height: 1.6; }
+      .party .name { font-weight: 700; color: #1a1a2e; font-size: 14px; }
+      .license-box { background: #f8f5ff; border: 2px solid #e9e0ff; border-radius: 12px; padding: 24px; margin-bottom: 25px; }
+      .license-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #7c3aed; font-weight: 800; margin-bottom: 15px; }
+      .license-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e9e0ff; }
+      .license-row:last-child { border-bottom: none; }
+      .license-row .label { font-size: 11px; color: #888; font-weight: 600; }
+      .license-row .value { font-size: 13px; color: #1a1a2e; font-weight: 700; text-align: right; max-width: 65%; word-break: break-all; }
+      .license-row .value.mono { font-family: 'Courier New', monospace; color: #7c3aed; font-size: 14px; }
+      .footer { margin-top: 35px; padding-top: 20px; border-top: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+      .footer .note { font-size: 10px; color: #999; max-width: 60%; line-height: 1.5; }
+      .footer .stamp { text-align: center; }
+      .footer .stamp .delivered { display: inline-block; border: 2px solid #22c55e; color: #22c55e; padding: 5px 16px; border-radius: 6px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; transform: rotate(-5deg); }
+      .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 80px; color: rgba(124,58,237,0.04); font-weight: 900; pointer-events: none; z-index: 0; }
+      @media print { body { padding: 20px; } .invoice { max-width: 100%; } }
+    </style></head><body>
+    <div class="watermark">SHAHED STORE</div>
+    <div class="invoice">
+      <div class="header">
+        <div class="brand">
+          <h1>🔑 Shahed Store</h1>
+          <p>Digital License & Software Store</p>
+        </div>
+        <div class="invoice-info">
+          <h2>Invoice</h2>
+          <div class="meta">
+            Invoice No: <span>${invoiceNo}</span><br/>
+            Date: <span>${date}</span>
+          </div>
+        </div>
+      </div>
+      <div class="parties">
+        <div class="party">
+          <h4>Bill To</h4>
+          <p class="name">${lic.customer_name || 'Customer'}</p>
+          <p>${lic.customer_email || '—'}</p>
+          ${lic.order_number ? `<p>Order: #${lic.order_number}</p>` : ''}
+        </div>
+        <div class="party" style="text-align:right;">
+          <h4>From</h4>
+          <p class="name">Shahed Store</p>
+          <p>support@shahedstore.com</p>
+        </div>
+      </div>
+      <div class="license-box">
+        <h3>License Details</h3>
+        <div class="license-row">
+          <span class="label">Product</span>
+          <span class="value">${lic.product_name}</span>
+        </div>
+        <div class="license-row">
+          <span class="label">License Type</span>
+          <span class="value">${typeLabel}</span>
+        </div>
+        <div class="license-row">
+          <span class="label">${lic.key_type === 'subscription' || lic.key_type === 'account' ? 'Credentials' : 'Key / Serial'}</span>
+          <span class="value mono">${lic.key_value}</span>
+        </div>
+        ${lic.extra_info ? `<div class="license-row"><span class="label">Additional Info</span><span class="value mono">${lic.extra_info}</span></div>` : ''}
+        <div class="license-row">
+          <span class="label">Status</span>
+          <span class="value" style="color:#22c55e;">✅ Delivered</span>
+        </div>
+        <div class="license-row">
+          <span class="label">Delivery Date</span>
+          <span class="value">${date}</span>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="note">
+          এই লাইসেন্সটি সফলভাবে ডেলিভারি করা হয়েছে। কোনো সমস্যা হলে আমাদের সাপোর্টে যোগাযোগ করুন।<br/>
+          This license has been successfully delivered. Contact support for any issues.
+        </div>
+        <div class="stamp">
+          <span class="delivered">✓ Delivered</span>
+        </div>
+      </div>
+    </div></body></html>`;
+    
+    const w = window.open('', '_blank');
+    if (w) { w.document.write(html); w.document.close(); w.print(); }
   };
 
   const openEmailModal = (lic: LicenseKey) => {
@@ -621,11 +725,18 @@ const AdminLicenses = () => {
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
                           {lic.status === 'assigned' && (
-                            <button onClick={() => openEmailModal(lic)}
-                              title="ইমেইল পাঠান"
-                              className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
-                              <Mail size={13} />
-                            </button>
+                            <>
+                              <button onClick={() => handleInvoicePrint(lic)}
+                                title="ইনভয়েস প্রিন্ট"
+                                className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
+                                <FileText size={13} />
+                              </button>
+                              <button onClick={() => openEmailModal(lic)}
+                                title="ইমেইল পাঠান"
+                                className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
+                                <Mail size={13} />
+                              </button>
+                            </>
                           )}
                           {lic.status === 'available' && (
                             <button onClick={() => handleRevoke(lic.id)}
