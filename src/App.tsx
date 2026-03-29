@@ -220,7 +220,7 @@ const AppContent = () => {
             <Route path="popup-banner" element={<AdminPopupBanner />} />
             <Route path="invoices" element={<AdminInvoiceGenerator />} />
             <Route path="footer-settings" element={<AdminFooterSettings />} />
-            <Route path="reseller" element={<Reseller />} />
+            
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />

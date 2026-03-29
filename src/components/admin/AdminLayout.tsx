@@ -82,7 +82,7 @@ const menuItems = [
   { icon: Settings, label: 'Settings', path: '/ceo/settings' },
   { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
   { icon: Database, label: 'Backup', path: '/ceo/backup' },
-  { icon: ShieldCheck, label: 'CID For Reseller', path: '/ceo/reseller' },
+  
 ];
 
 const AdminLayout = () => {
