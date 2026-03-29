@@ -438,11 +438,45 @@ const AdminLicenses = () => {
           </h3>
           <p className="text-xs text-muted-foreground mb-3">প্রতি লাইনে একটি করে key লিখুন। একসাথে অনেকগুলো যোগ করতে পারবেন।</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
-            <select value={bulkProductId} onChange={e => setBulkProductId(e.target.value)}
-              className="bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
-              <option value="">— প্রোডাক্ট বেছে নিন —</option>
-              {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-            </select>
+            <div className="relative">
+              <div
+                onClick={() => setBulkProductDropdownOpen(!bulkProductDropdownOpen)}
+                className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm cursor-pointer flex items-center justify-between"
+              >
+                <span className={bulkProductId ? 'text-foreground' : 'text-muted-foreground'}>
+                  {bulkProductId ? products.find(p => p.id === bulkProductId)?.name || '—' : '— প্রোডাক্ট বেছে নিন —'}
+                </span>
+                <ChevronDown size={14} className={`text-muted-foreground transition-transform ${bulkProductDropdownOpen ? 'rotate-180' : ''}`} />
+              </div>
+              {bulkProductDropdownOpen && (
+                <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-60 overflow-hidden">
+                  <div className="p-2 border-b border-border">
+                    <div className="relative">
+                      <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <input
+                        value={bulkProductSearch}
+                        onChange={e => setBulkProductSearch(e.target.value)}
+                        placeholder="প্রোডাক্ট খুঁজুন..."
+                        className="w-full bg-muted/20 border border-border rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
+                        autoFocus
+                        onClick={e => e.stopPropagation()}
+                      />
+                    </div>
+                  </div>
+                  <div className="overflow-y-auto max-h-44">
+                    {products.filter(p => !bulkProductSearch || p.name.toLowerCase().includes(bulkProductSearch.toLowerCase())).map(p => (
+                      <button
+                        key={p.id}
+                        onClick={(e) => { e.stopPropagation(); setBulkProductId(p.id); setBulkProductDropdownOpen(false); setBulkProductSearch(''); }}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-primary/10 transition-colors ${bulkProductId === p.id ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'}`}
+                      >
+                        {p.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             <select value={bulkType} onChange={e => setBulkType(e.target.value)}
               className="bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
               {KEY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
