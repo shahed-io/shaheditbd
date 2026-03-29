@@ -1884,7 +1884,6 @@ export type Database = {
           parent_id: string | null
           post_id: string | null
           status: string | null
-          user_id: string | null
         }
         Insert: {
           author_name?: string | null
@@ -1894,7 +1893,6 @@ export type Database = {
           parent_id?: string | null
           post_id?: string | null
           status?: string | null
-          user_id?: string | null
         }
         Update: {
           author_name?: string | null
@@ -1904,7 +1902,6 @@ export type Database = {
           parent_id?: string | null
           post_id?: string | null
           status?: string | null
-          user_id?: string | null
         }
         Relationships: [
           {

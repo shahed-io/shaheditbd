@@ -573,8 +573,23 @@ Deno.serve(async (req) => {
       })
     }
 
-    // ── PROMO BULK EMAIL ────────────────────────────────────────────
+    // ── PROMO BULK EMAIL (Admin only) ─────────────────────────────
     if (type === 'promotional') {
+      // Auth guard: only admins can send promotional emails
+      const authHeader = req.headers.get('Authorization');
+      const token = authHeader?.replace('Bearer ', '');
+      if (!token) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const { data: { user: authUser } } = await supabaseAdmin.auth.getUser(token);
+      if (!authUser) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const { data: adminRole } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', authUser.id).eq('role', 'admin').maybeSingle();
+      if (!adminRole) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin only' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+
       const emails: string[] = recipientEmails || []
       const html = buildPromoHtml(promoSubject, promoBody, ctaText, ctaUrl)
 
@@ -608,8 +623,23 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ success: true, sent }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
-    // ── LICENSE RESEND EMAIL ────────────────────────────────────────
+    // ── LICENSE RESEND EMAIL (Admin only) ──────────────────────────
     if (type === 'license-resend') {
+      // Auth guard
+      const authHeader2 = req.headers.get('Authorization');
+      const token2 = authHeader2?.replace('Bearer ', '');
+      if (!token2) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const { data: { user: authUser2 } } = await supabaseAdmin.auth.getUser(token2);
+      if (!authUser2) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const { data: adminRole2 } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', authUser2.id).eq('role', 'admin').maybeSingle();
+      if (!adminRole2) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin only' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+
       const { recipientEmail, licenseData } = body
       if (!recipientEmail || !licenseData) {
         return new Response(JSON.stringify({ error: 'Missing recipientEmail or licenseData' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
