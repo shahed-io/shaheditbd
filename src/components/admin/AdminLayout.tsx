@@ -78,6 +78,7 @@ const menuItems = [
   { icon: TrendingUp, label: 'Reports', path: '/ceo/reports' },
   { icon: Megaphone, label: 'Marketing', path: '/ceo/marketing' },
   { icon: Facebook, label: 'Facebook Pixel', path: '/ceo/facebook-pixel' },
+  { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
   { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
   { icon: Settings, label: 'Settings', path: '/ceo/settings' },
   { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
