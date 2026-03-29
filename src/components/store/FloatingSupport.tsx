@@ -1,21 +1,86 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Loader2, Minimize2, MessageCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 
+interface LiveSet {
+  id: string;
+  type: 'whatsapp' | 'messenger' | 'telegram' | 'custom_link';
+  value: string;
+  label: string;
+  subtitle: string;
+  icon_color: string;
+  is_active: boolean;
+}
+
+interface LiveChatConfig {
+  chat_enabled: boolean;
+  whatsapp_enabled: boolean;
+  whatsapp_number: string;
+  whatsapp_label: string;
+  whatsapp_subtitle: string;
+  ai_label: string;
+  ai_subtitle: string;
+  ai_welcome_message: string;
+  ai_placeholder: string;
+  quick_suggestions: string[];
+  fab_label: string;
+  live_sets: LiveSet[];
+}
+
+const DEFAULTS: LiveChatConfig = {
+  chat_enabled: true,
+  whatsapp_enabled: true,
+  whatsapp_number: '8801840099853',
+  whatsapp_label: 'WhatsApp',
+  whatsapp_subtitle: 'সরাসরি কথা বলুন',
+  ai_label: 'AI Support',
+  ai_subtitle: 'তাৎক্ষণিক উত্তর পান',
+  ai_welcome_message: 'হ্যালো! 👋 আমি Shahed Store-এর AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!',
+  ai_placeholder: 'আপনার প্রশ্ন লিখুন...',
+  quick_suggestions: ['💰 দাম জানতে চাই', '📦 কোন প্রোডাক্ট ভালো?', '🚚 ডেলিভারি কতক্ষণ?'],
+  fab_label: 'কোনটি পছন্দ করবেন?',
+  live_sets: [],
+};
+
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-support-chat`;
-const WHATSAPP_NUMBER = '8801840099853';
 
 const FloatingSupport = () => {
+  const [config, setConfig] = useState<LiveChatConfig>(DEFAULTS);
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'হ্যালো! 👋 আমি Shahed Store-এর AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!' }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const configLoaded = useRef(false);
+
+  // Load settings once
+  useEffect(() => {
+    if (configLoaded.current) return;
+    configLoaded.current = true;
+    supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'live_chat_settings')
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.value) {
+          try {
+            const parsed = JSON.parse(data.value);
+            const merged = { ...DEFAULTS, ...parsed };
+            setConfig(merged);
+            setMessages([{ role: 'assistant', content: merged.ai_welcome_message }]);
+          } catch {
+            setMessages([{ role: 'assistant', content: DEFAULTS.ai_welcome_message }]);
+          }
+        } else {
+          setMessages([{ role: 'assistant', content: DEFAULTS.ai_welcome_message }]);
+        }
+      });
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -32,7 +97,27 @@ const FloatingSupport = () => {
 
   const openWhatsApp = () => {
     setMenuOpen(false);
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank');
+    window.open(`https://wa.me/${config.whatsapp_number}`, '_blank');
+  };
+
+  const openLiveSet = (set: LiveSet) => {
+    setMenuOpen(false);
+    let url = '';
+    switch (set.type) {
+      case 'whatsapp':
+        url = `https://wa.me/${set.value}`;
+        break;
+      case 'messenger':
+        url = `https://m.me/${set.value}`;
+        break;
+      case 'telegram':
+        url = `https://t.me/${set.value.replace('@', '')}`;
+        break;
+      case 'custom_link':
+        url = set.value;
+        break;
+    }
+    if (url) window.open(url, '_blank');
   };
 
   const send = async () => {
@@ -107,10 +192,13 @@ const FloatingSupport = () => {
     }
   };
 
+  // Get active live sets
+  const activeSets = config.live_sets.filter(s => s.is_active);
+
   return (
     <>
       {/* ── AI Chat Window ── */}
-      {chatOpen && (
+      {chatOpen && config.chat_enabled && (
         <div className="fixed right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-w-sm flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-border/60 bg-background"
           style={{
             animation: 'slideUpIn 0.2s ease-out',
@@ -123,10 +211,10 @@ const FloatingSupport = () => {
                 <Bot size={18} className="text-white" />
               </div>
               <div>
-                <p className="text-white text-sm font-bold">AI Support</p>
+                <p className="text-white text-sm font-bold">{config.ai_label}</p>
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                  <p className="text-white/80 text-xs">তাৎক্ষণিক উত্তর পান</p>
+                  <p className="text-white/80 text-xs">{config.ai_subtitle}</p>
                 </div>
               </div>
             </div>
@@ -160,9 +248,9 @@ const FloatingSupport = () => {
           </div>
 
           {/* Quick suggestions */}
-          {messages.length <= 1 && (
+          {messages.length <= 1 && config.quick_suggestions.length > 0 && (
             <div className="px-3 pb-2 flex flex-wrap gap-1.5">
-              {['💰 দাম জানতে চাই', '📦 কোন প্রোডাক্ট ভালো?', '🚚 ডেলিভারি কতক্ষণ?'].map(q => (
+              {config.quick_suggestions.map(q => (
                 <button key={q} onClick={() => { setInput(q); setTimeout(() => inputRef.current?.focus(), 50); }}
                   className="text-xs px-2.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors">
                   {q}
@@ -178,7 +266,7 @@ const FloatingSupport = () => {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-              placeholder="আপনার প্রশ্ন লিখুন..."
+              placeholder={config.ai_placeholder}
               className="flex-1 text-sm bg-muted/40 border border-border rounded-xl px-3 py-2 outline-none focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
               disabled={loading}
             />
@@ -194,33 +282,52 @@ const FloatingSupport = () => {
       {menuOpen && !chatOpen && (
         <div className="fixed right-4 sm:right-6 z-50 flex flex-col gap-3" style={{ animation: 'slideUpIn 0.15s ease-out', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 80px)' }}>
           {/* AI Support */}
-          <button onClick={openChat}
-            className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/40 shadow-xl hover:border-primary/50 transition-all group w-56">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #5b21b6)' }}>
-              <Bot size={20} className="text-white" />
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-semibold text-foreground">AI Support</p>
-              <p className="text-xs text-muted-foreground">তাৎক্ষণিক উত্তর পান</p>
-            </div>
-          </button>
+          {config.chat_enabled && (
+            <button onClick={openChat}
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/40 shadow-xl hover:border-primary/50 transition-all group w-56">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, #7c3aed, #5b21b6)' }}>
+                <Bot size={20} className="text-white" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-foreground">{config.ai_label}</p>
+                <p className="text-xs text-muted-foreground">{config.ai_subtitle}</p>
+              </div>
+            </button>
+          )}
 
           {/* WhatsApp */}
-          <button onClick={openWhatsApp}
-            className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/40 shadow-xl hover:border-green-500/50 transition-all group w-56">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}>
-              <MessageCircle size={20} className="text-white" />
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-semibold text-foreground">WhatsApp</p>
-              <p className="text-xs text-muted-foreground">সরাসরি কথা বলুন</p>
-            </div>
-          </button>
+          {config.whatsapp_enabled && (
+            <button onClick={openWhatsApp}
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/40 shadow-xl hover:border-green-500/50 transition-all group w-56">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}>
+                <MessageCircle size={20} className="text-white" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-foreground">{config.whatsapp_label}</p>
+                <p className="text-xs text-muted-foreground">{config.whatsapp_subtitle}</p>
+              </div>
+            </button>
+          )}
+
+          {/* Live Sets */}
+          {activeSets.map(set => (
+            <button key={set.id} onClick={() => openLiveSet(set)}
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/40 shadow-xl hover:border-primary/50 transition-all group w-56">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)` }}>
+                <MessageCircle size={20} className="text-white" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-foreground">{set.label}</p>
+                <p className="text-xs text-muted-foreground">{set.subtitle}</p>
+              </div>
+            </button>
+          ))}
 
           {/* Label */}
-          <p className="text-center text-xs text-muted-foreground">কোনটি পছন্দ করবেন?</p>
+          <p className="text-center text-xs text-muted-foreground">{config.fab_label}</p>
         </div>
       )}
 
@@ -229,7 +336,6 @@ const FloatingSupport = () => {
         className="fixed right-4 sm:right-6 z-50 flex items-center justify-center"
         style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)' }}
       >
-        {/* Animated rings (only when idle / not open) */}
         {!menuOpen && !chatOpen && (
           <>
             <span className="fab-ring fab-ring-1" />
@@ -238,7 +344,6 @@ const FloatingSupport = () => {
           </>
         )}
 
-        {/* Orbit comet */}
         {!menuOpen && !chatOpen && (
           <span className="fab-comet" />
         )}
@@ -256,7 +361,6 @@ const FloatingSupport = () => {
           }}
           title="সাপোর্ট"
         >
-          {/* Inner glow dot */}
           {!menuOpen && !chatOpen && (
             <span className="absolute inset-0 rounded-full fab-pulse-inner" />
           )}
@@ -272,8 +376,6 @@ const FloatingSupport = () => {
           from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-
-        /* Pulse rings */
         .fab-ring {
           position: absolute;
           border-radius: 9999px;
@@ -284,13 +386,10 @@ const FloatingSupport = () => {
         .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; }
         .fab-ring-2 { width: 56px; height: 56px; animation-delay: 0.7s; border-color: hsla(185,90%,52%,0.4); }
         .fab-ring-3 { width: 56px; height: 56px; animation-delay: 1.4s; border-color: hsla(320,90%,62%,0.35); }
-
         @keyframes fab-ring-out {
           0%   { transform: scale(1);   opacity: 0.9; }
           100% { transform: scale(2.5); opacity: 0; }
         }
-
-        /* Inner soft pulse */
         .fab-pulse-inner {
           background: radial-gradient(circle, hsla(271,91%,65%,0.35) 0%, transparent 70%);
           animation: fab-inner-pulse 2s ease-in-out infinite;
@@ -299,8 +398,6 @@ const FloatingSupport = () => {
           0%, 100% { opacity: 0.4; transform: scale(0.8); }
           50%       { opacity: 1;   transform: scale(1.1); }
         }
-
-        /* Orbiting comet */
         .fab-comet {
           position: absolute;
           width: 8px;
