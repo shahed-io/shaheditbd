@@ -289,7 +289,7 @@ const AdminLicenses = () => {
         <div class="party" style="text-align:right;">
           <h4>From</h4>
           <p class="name">Shahed Store</p>
-          <p>support@shahedstore.com</p>
+          <p>info@shahedstore.com.bd</p>
         </div>
       </div>
       <div class="license-box">

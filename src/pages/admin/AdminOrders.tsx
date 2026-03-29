@@ -202,7 +202,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
             <div style={{ marginTop: '28px', textAlign: 'center', borderTop: `2px solid ${brandLight}`, paddingTop: '18px' }}>
               <div style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!</div>
               <div style={{ fontSize: '11px', color: '#aaa' }}>
-                🌐 shahedstore.com.bd &nbsp;•&nbsp; 📧 support@shahedstore.com.bd
+                🌐 shahedstore.com.bd &nbsp;•&nbsp; 📧 info@shahedstore.com.bd
               </div>
               <div style={{ fontSize: '10px', color: '#ccc', marginTop: '8px' }}>This is a computer-generated invoice and does not require a signature.</div>
             </div>

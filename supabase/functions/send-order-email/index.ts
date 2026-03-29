@@ -180,7 +180,7 @@ function buildInvoiceHtml(order: any, items: any[]) {
       </div>
       <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:12px;line-height:1.8;">
         <a href="${SITE_URL}" style="color:#818cf8;text-decoration:none;font-weight:600;">${SITE_URL}</a>
-        &nbsp;•&nbsp; support@shahedstore.com.bd
+        &nbsp;•&nbsp; info@shahedstore.com.bd
       </div>
     </div>
 
