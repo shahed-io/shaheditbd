@@ -1,0 +1,350 @@
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose,
+} from '@/components/ui/dialog';
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '@/components/ui/table';
+import {
+  Users, Plus, Trash2, KeyRound, Wallet, ShieldCheck, Loader2, RefreshCw, Search,
+} from 'lucide-react';
+
+interface AdminUser {
+  id: string;
+  username: string;
+  is_admin: boolean;
+  balance_cents: number;
+  created_at: string;
+}
+
+interface Stats {
+  total_users: number;
+  total_cids: number;
+  total_balance_cents: number;
+}
+
+const callAdmin = async (body: object) => {
+  const token = localStorage.getItem('rs_token');
+  if (!token) throw new Error('রিসেলার সেশন নেই। আগে CID For Reseller পেজে লগইন করুন।');
+  const { data, error } = await supabase.functions.invoke('reseller-admin', { body: { ...body, token } });
+  if (error) throw new Error(error.message);
+  if (data?.error) throw new Error(data.error);
+  return data;
+};
+
+const AdminResellerAccounts = () => {
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+
+  // Dialogs
+  const [createOpen, setCreateOpen] = useState(false);
+  const [topupOpen, setTopupOpen] = useState(false);
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
+
+  // Form states
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newIsAdmin, setNewIsAdmin] = useState(false);
+  const [newBalance, setNewBalance] = useState('0');
+  const [topupAmount, setTopupAmount] = useState('');
+  const [changePassword, setChangePassword] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [usersRes, statsRes] = await Promise.all([
+        callAdmin({ action: 'list_users' }),
+        callAdmin({ action: 'stats' }),
+      ]);
+      setUsers(usersRes.users || []);
+      setStats(statsRes);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  const handleCreate = async () => {
+    if (!newUsername.trim() || !newPassword) return;
+    setActionLoading(true);
+    try {
+      await callAdmin({
+        action: 'create_user',
+        username: newUsername.trim(),
+        password: newPassword,
+        is_admin: newIsAdmin,
+        balance_cents: parseInt(newBalance) || 0,
+      });
+      toast.success('ইউজার তৈরি হয়েছে');
+      setCreateOpen(false);
+      setNewUsername(''); setNewPassword(''); setNewIsAdmin(false); setNewBalance('0');
+      fetchData();
+    } catch (err: any) { toast.error(err.message); }
+    finally { setActionLoading(false); }
+  };
+
+  const handleTopup = async () => {
+    if (!selectedUser || !topupAmount) return;
+    setActionLoading(true);
+    try {
+      await callAdmin({ action: 'topup', user_id: selectedUser.id, amount_cents: parseInt(topupAmount) });
+      toast.success('ব্যালেন্স যোগ হয়েছে');
+      setTopupOpen(false); setTopupAmount('');
+      fetchData();
+    } catch (err: any) { toast.error(err.message); }
+    finally { setActionLoading(false); }
+  };
+
+  const handleChangePassword = async () => {
+    if (!selectedUser || !changePassword) return;
+    setActionLoading(true);
+    try {
+      await callAdmin({ action: 'change_password', user_id: selectedUser.id, new_password: changePassword });
+      toast.success('পাসওয়ার্ড পরিবর্তন হয়েছে');
+      setPasswordOpen(false); setChangePassword('');
+    } catch (err: any) { toast.error(err.message); }
+    finally { setActionLoading(false); }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedUser) return;
+    setActionLoading(true);
+    try {
+      await callAdmin({ action: 'delete_user', user_id: selectedUser.id });
+      toast.success('ইউজার ডিলিট হয়েছে');
+      setDeleteOpen(false);
+      fetchData();
+    } catch (err: any) { toast.error(err.message); }
+    finally { setActionLoading(false); }
+  };
+
+  const filtered = users.filter(u => u.username.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">রিসেলার একাউন্ট</h1>
+          <p className="text-muted-foreground text-sm">রিসেলার ইউজার ম্যানেজমেন্ট</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
+            <RefreshCw className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} /> রিফ্রেশ
+          </Button>
+          <Button size="sm" onClick={() => setCreateOpen(true)}>
+            <Plus className="h-4 w-4 mr-1" /> নতুন ইউজার
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <Users className="h-8 w-8 text-primary" />
+                <div>
+                  <p className="text-sm text-muted-foreground">মোট ইউজার</p>
+                  <p className="text-2xl font-bold">{stats.total_users}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <ShieldCheck className="h-8 w-8 text-primary" />
+                <div>
+                  <p className="text-sm text-muted-foreground">মোট CID</p>
+                  <p className="text-2xl font-bold">{stats.total_cids}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <Wallet className="h-8 w-8 text-primary" />
+                <div>
+                  <p className="text-sm text-muted-foreground">মোট ব্যালেন্স</p>
+                  <p className="text-2xl font-bold">৳{(stats.total_balance_cents / 100).toFixed(2)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Search & Table */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg">ইউজার তালিকা</CardTitle>
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="ইউজার খুঁজুন..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ইউজারনেম</TableHead>
+                    <TableHead>রোল</TableHead>
+                    <TableHead>ব্যালেন্স</TableHead>
+                    <TableHead>যোগদান</TableHead>
+                    <TableHead className="text-right">অ্যাকশন</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filtered.length === 0 ? (
+                    <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">কোনো ইউজার পাওয়া যায়নি</TableCell></TableRow>
+                  ) : filtered.map(u => (
+                    <TableRow key={u.id}>
+                      <TableCell className="font-medium">{u.username}</TableCell>
+                      <TableCell>
+                        <Badge variant={u.is_admin ? 'default' : 'secondary'}>
+                          {u.is_admin ? 'অ্যাডমিন' : 'রিসেলার'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>৳{(u.balance_cents / 100).toFixed(2)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(u.created_at).toLocaleDateString('bn-BD')}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="outline" size="sm" onClick={() => { setSelectedUser(u); setTopupOpen(true); }}>
+                            <Wallet className="h-3.5 w-3.5 mr-1" /> টপআপ
+                          </Button>
+                          <Button variant="outline" size="sm" onClick={() => { setSelectedUser(u); setPasswordOpen(true); }}>
+                            <KeyRound className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="destructive" size="sm" onClick={() => { setSelectedUser(u); setDeleteOpen(true); }}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Create User Dialog */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>নতুন রিসেলার তৈরি করুন</DialogTitle></DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="text-sm font-medium">ইউজারনেম</label>
+              <Input value={newUsername} onChange={e => setNewUsername(e.target.value)} placeholder="ইউজারনেম" />
+            </div>
+            <div>
+              <label className="text-sm font-medium">পাসওয়ার্ড</label>
+              <Input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="ন্যূনতম ৬ অক্ষর" />
+            </div>
+            <div>
+              <label className="text-sm font-medium">প্রাথমিক ব্যালেন্স (সেন্ট)</label>
+              <Input type="number" value={newBalance} onChange={e => setNewBalance(e.target.value)} />
+            </div>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={newIsAdmin} onChange={e => setNewIsAdmin(e.target.checked)} />
+              অ্যাডমিন হিসেবে তৈরি করুন
+            </label>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild><Button variant="outline">বাতিল</Button></DialogClose>
+            <Button onClick={handleCreate} disabled={actionLoading}>
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} তৈরি করুন
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Topup Dialog */}
+      <Dialog open={topupOpen} onOpenChange={setTopupOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>ব্যালেন্স টপআপ — {selectedUser?.username}</DialogTitle></DialogHeader>
+          <div className="space-y-4 py-2">
+            <p className="text-sm text-muted-foreground">বর্তমান ব্যালেন্স: ৳{((selectedUser?.balance_cents || 0) / 100).toFixed(2)}</p>
+            <div>
+              <label className="text-sm font-medium">টপআপ পরিমাণ (সেন্ট)</label>
+              <Input type="number" value={topupAmount} onChange={e => setTopupAmount(e.target.value)} placeholder="যেমন: 1000 = ৳10" />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild><Button variant="outline">বাতিল</Button></DialogClose>
+            <Button onClick={handleTopup} disabled={actionLoading}>
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} টপআপ করুন
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Password Dialog */}
+      <Dialog open={passwordOpen} onOpenChange={setPasswordOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>পাসওয়ার্ড পরিবর্তন — {selectedUser?.username}</DialogTitle></DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="text-sm font-medium">নতুন পাসওয়ার্ড</label>
+              <Input type="password" value={changePassword} onChange={e => setChangePassword(e.target.value)} placeholder="ন্যূনতম ৬ অক্ষর" />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild><Button variant="outline">বাতিল</Button></DialogClose>
+            <Button onClick={handleChangePassword} disabled={actionLoading}>
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} পরিবর্তন করুন
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>ইউজার ডিলিট করুন</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground py-2">
+            আপনি কি নিশ্চিত <strong>{selectedUser?.username}</strong> ইউজারটি ডিলিট করতে চান? এই অ্যাকশন পূর্বাবস্থায় ফেরানো যাবে না।
+          </p>
+          <DialogFooter>
+            <DialogClose asChild><Button variant="outline">বাতিল</Button></DialogClose>
+            <Button variant="destructive" onClick={handleDelete} disabled={actionLoading}>
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} ডিলিট করুন
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default AdminResellerAccounts;
