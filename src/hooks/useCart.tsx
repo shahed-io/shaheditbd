@@ -28,8 +28,8 @@ export const DEFAULT_SERVICE_FEE = 0;
 interface CartContextType {
   items: CartItem[];
   wishlist: CartItem[];
-  addToCart: (item: Omit<CartItem, 'quantity'>) => void;
-  buyNow: (item: Omit<CartItem, 'quantity'>) => void;
+  addToCart: (item: Omit<CartItem, 'quantity'>, qty?: number) => void;
+  buyNow: (item: Omit<CartItem, 'quantity'>, qty?: number) => void;
   removeFromCart: (id: number | string) => void;
   updateQuantity: (id: number | string, quantity: number) => void;
   clearCart: () => void;
@@ -100,18 +100,18 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     } catch { /* silent */ }
   }, [items]);
 
-  const addToCart = (item: Omit<CartItem, 'quantity'>) => {
+  const addToCart = (item: Omit<CartItem, 'quantity'>, qty: number = 1) => {
     setItems(prev => {
       const existing = prev.find(i => i.id === item.id && i.variant === item.variant);
-      if (existing) return prev.map(i => (i.id === item.id && i.variant === item.variant) ? { ...i, quantity: i.quantity + 1 } : i);
-      return [...prev, { ...item, quantity: 1 }];
+      if (existing) return prev.map(i => (i.id === item.id && i.variant === item.variant) ? { ...i, quantity: i.quantity + qty } : i);
+      return [...prev, { ...item, quantity: qty }];
     });
     setCartOpen(true);
   };
 
   // Buy now: clear cart, add single item, go to checkout
-  const buyNow = (item: Omit<CartItem, 'quantity'>) => {
-    setItems([{ ...item, quantity: 1 }]);
+  const buyNow = (item: Omit<CartItem, 'quantity'>, qty: number = 1) => {
+    setItems([{ ...item, quantity: qty }]);
     // Navigation handled by caller
   };
 
