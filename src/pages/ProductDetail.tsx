@@ -1084,8 +1084,9 @@ const ProductDetail = () => {
 
       {showModal && (
         <QuickOrderModal
-          product={{ id: product.id, name: product.name, price: product.price, originalPrice: product.original_price || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '' }}
+          product={{ id: product.id, name: product.name, price: displayPrice, originalPrice: displayOriginalPrice || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '' }}
           onClose={() => setShowModal(false)}
+          quantity={quantity}
         />
       )}
     </>
