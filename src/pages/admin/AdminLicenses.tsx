@@ -270,6 +270,12 @@ const AdminLicenses = () => {
         </div>
         <div className="flex gap-2">
           <button
+            onClick={handlePrint}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-medium hover:border-primary/40 transition-all text-muted-foreground"
+          >
+            <Printer size={14} /> প্রিন্ট
+          </button>
+          <button
             onClick={() => setShowBulk(!showBulk)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-medium hover:border-primary/40 transition-all text-muted-foreground"
           >
