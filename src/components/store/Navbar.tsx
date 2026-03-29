@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search, Download, Share2, PlusSquare, Package, Key, Wallet, Award, Heart, MapPin, Bell, Gift, Lock, Globe, ShieldCheck, ChevronRight } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search, Download, Share2, PlusSquare, Package, Key, Wallet, Award, Heart, MapPin, Bell, Gift, Lock, Globe, ShieldCheck, ChevronRight, Facebook, MessageCircle, Instagram, Send } from 'lucide-react';
+import { useFooterSettings } from '@/hooks/useFooterSettings';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
 import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
@@ -46,6 +47,7 @@ interface NavCategory {
 }
 
 const Navbar = () => {
+  const { settings: footerSettings } = useFooterSettings();
   const [mobileOpen,    setMobileOpen]    = useState(false);
   const [authOpen,      setAuthOpen]      = useState(false);
   const [scrolled,      setScrolled]      = useState(false);
@@ -228,11 +230,33 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 text-[11px] pr-4 flex-shrink-0 relative z-10">
+        <div className="flex items-center gap-2 text-[11px] pr-4 flex-shrink-0 relative z-10">
           <span className="hidden md:flex items-center gap-1"><Star size={10} fill="currentColor" /> 4.9/5</span>
           <span className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: 'hsla(0,0%,100%,0.18)' }}>
             <Shield size={10} /> Secured
           </span>
+          <div className="hidden sm:flex items-center gap-1.5 ml-1 border-l border-white/30 pl-2">
+            {footerSettings.facebook_url && (
+              <a href={footerSettings.facebook_url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors" title="Facebook">
+                <Facebook size={13} />
+              </a>
+            )}
+            {footerSettings.whatsapp_url && (
+              <a href={footerSettings.whatsapp_url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors" title="WhatsApp">
+                <MessageCircle size={13} />
+              </a>
+            )}
+            {footerSettings.instagram_url && (
+              <a href={footerSettings.instagram_url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors" title="Instagram">
+                <Instagram size={13} />
+              </a>
+            )}
+            {footerSettings.telegram_url && (
+              <a href={footerSettings.telegram_url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors" title="Telegram">
+                <Send size={13} />
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
