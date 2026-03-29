@@ -922,7 +922,7 @@ const ProductDetail = () => {
 
                     {/* Cart */}
                     <button
-                      onClick={() => addToCart(cartItem)}
+                      onClick={() => addToCart(cartItem, quantity)}
                       className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={{
                         background: inCart
