@@ -397,7 +397,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
               {/* Price Summary */}
               <div className="glass-card rounded-xl p-3 space-y-1.5">
                 <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>মূল্য</span><span>৳{product.price.toLocaleString()}</span>
+                  <span>মূল্য {initialQty > 1 ? `(${initialQty}×৳${product.price.toLocaleString()})` : ''}</span><span>৳{itemTotal.toLocaleString()}</span>
                 </div>
                 {couponDiscount > 0 && (
                   <div className="flex justify-between text-sm text-green-500">
