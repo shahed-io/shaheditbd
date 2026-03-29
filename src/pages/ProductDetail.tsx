@@ -922,7 +922,7 @@ const ProductDetail = () => {
 
                     {/* Cart */}
                     <button
-                      onClick={() => addToCart(cartItem)}
+                      onClick={() => addToCart(cartItem, quantity)}
                       className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={{
                         background: inCart
@@ -1084,8 +1084,9 @@ const ProductDetail = () => {
 
       {showModal && (
         <QuickOrderModal
-          product={{ id: product.id, name: product.name, price: product.price, originalPrice: product.original_price || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '' }}
+          product={{ id: product.id, name: product.name, price: displayPrice, originalPrice: displayOriginalPrice || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '' }}
           onClose={() => setShowModal(false)}
+          quantity={quantity}
         />
       )}
     </>

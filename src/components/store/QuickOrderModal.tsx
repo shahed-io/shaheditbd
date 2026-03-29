@@ -35,6 +35,7 @@ interface Product {
 interface QuickOrderModalProps {
   product: Product;
   onClose: () => void;
+  quantity?: number;
 }
 
 const schema = z.object({
@@ -55,7 +56,7 @@ interface PaymentOption {
 
 const inputClass = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all";
 
-const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
+const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOrderModalProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { configs: paymentConfigs } = usePaymentSettings();
@@ -79,7 +80,8 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
   const [customFieldErrors, setCustomFieldErrors] = useState<Record<string, string>>({});
 
   const customFields: CustomField[] = product.customFields || [];
-  const finalTotal = Math.max(0, product.price - couponDiscount);
+  const itemTotal = product.price * initialQty;
+  const finalTotal = Math.max(0, itemTotal - couponDiscount);
 
   // Auto-fill user info and fetch wallet balance
   useEffect(() => {
@@ -107,7 +109,7 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
     setCouponError('');
     try {
       const { data, error } = await supabase.functions.invoke('validate-coupon', {
-        body: { code: couponCode.trim().toUpperCase(), orderTotal: product.price },
+        body: { code: couponCode.trim().toUpperCase(), orderTotal: itemTotal },
       });
       if (error || !data?.valid) {
         setCouponError(data?.message || 'কুপন কোড সঠিক নয়');
@@ -178,7 +180,7 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
           customer_name: form.name,
           customer_email: form.email,
           customer_phone: form.phone,
-          subtotal: product.price,
+          subtotal: itemTotal,
           discount_amount: couponDiscount,
           total: finalTotal,
           payment_method: paymentMethod,
@@ -213,8 +215,8 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
         product_name: product.name,
         product_id: typeof product.id === 'string' ? product.id : null,
         price: product.price,
-        quantity: 1,
-        total: finalTotal,
+        quantity: initialQty,
+        total: itemTotal,
         custom_field_values: customFields.length > 0 ? customFieldValues : {},
       } as any);
 
@@ -395,7 +397,7 @@ const QuickOrderModal = ({ product, onClose }: QuickOrderModalProps) => {
               {/* Price Summary */}
               <div className="glass-card rounded-xl p-3 space-y-1.5">
                 <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>মূল্য</span><span>৳{product.price.toLocaleString()}</span>
+                  <span>মূল্য {initialQty > 1 ? `(${initialQty}×৳${product.price.toLocaleString()})` : ''}</span><span>৳{itemTotal.toLocaleString()}</span>
                 </div>
                 {couponDiscount > 0 && (
                   <div className="flex justify-between text-sm text-green-500">
