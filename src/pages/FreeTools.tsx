@@ -3,6 +3,7 @@ import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import { FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
+import ReactMarkdown from 'react-markdown';
 import {
   Hash, FileText, Type, Clock, Calculator, Link2, Image as ImageIcon,
   Copy, Check, RefreshCw, Trash2, ArrowRight, Sparkles, Zap, Gift, Shield,
