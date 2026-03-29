@@ -608,6 +608,84 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ success: true, sent }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
+    // ── LICENSE RESEND EMAIL ────────────────────────────────────────
+    if (type === 'license-resend') {
+      const { recipientEmail, licenseData } = body
+      if (!recipientEmail || !licenseData) {
+        return new Response(JSON.stringify({ error: 'Missing recipientEmail or licenseData' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+
+      const typeLabels: Record<string, string> = {
+        license: '🔑 License Key',
+        subscription: '👤 Subscription',
+        account: '📧 Account Credentials',
+        serial: '🔢 Serial Number',
+        custom: '📝 Custom Info',
+      }
+      const typeLabel = typeLabels[licenseData.key_type] || licenseData.key_type
+
+      const licenseHtml = `<!DOCTYPE html>
+<html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f5f5f7;font-family:'Segoe UI',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f7;padding:32px 16px;">
+<tr><td align="center">
+<table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(100,60,200,0.10);">
+  <tr><td style="background:${BRAND_GRADIENT};padding:24px 28px;">
+    <h1 style="margin:0;font-size:20px;color:#ffffff;">🔑 আপনার লাইসেন্স কী</h1>
+    <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.85);">${SITE_NAME}</p>
+  </td></tr>
+  <tr><td style="padding:28px;">
+    <p style="font-size:14px;color:#4b5563;margin:0 0 20px;">প্রিয় <strong>${licenseData.customer_name}</strong>,</p>
+    <p style="font-size:14px;color:#4b5563;margin:0 0 20px;">আপনার পণ্যের লাইসেন্স তথ্য নিচে দেওয়া হলো:</p>
+    
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f7ff;border:1px solid #ede9fe;border-radius:12px;overflow:hidden;margin-bottom:20px;">
+      <tr><td style="padding:14px 18px;border-bottom:1px solid #ede9fe;">
+        <span style="font-size:11px;color:#888;">প্রোডাক্ট</span><br>
+        <strong style="font-size:14px;color:#1a1a2e;">${licenseData.product_name}</strong>
+      </td></tr>
+      <tr><td style="padding:14px 18px;border-bottom:1px solid #ede9fe;">
+        <span style="font-size:11px;color:#888;">টাইপ</span><br>
+        <strong style="font-size:13px;color:${BRAND_COLOR};">${typeLabel}</strong>
+      </td></tr>
+      <tr><td style="padding:14px 18px;${licenseData.extra_info ? 'border-bottom:1px solid #ede9fe;' : ''}">
+        <span style="font-size:11px;color:#888;">${licenseData.key_type === 'subscription' || licenseData.key_type === 'account' ? 'Username / Email' : 'License Key'}</span><br>
+        <code style="font-size:14px;font-family:'Courier New',monospace;color:#7c3aed;background:#f5f3ff;padding:4px 10px;border-radius:6px;display:inline-block;margin-top:4px;word-break:break-all;">${licenseData.key_value}</code>
+      </td></tr>
+      ${licenseData.extra_info ? `<tr><td style="padding:14px 18px;">
+        <span style="font-size:11px;color:#888;">${licenseData.key_type === 'subscription' || licenseData.key_type === 'account' ? 'Password' : 'Extra Info'}</span><br>
+        <code style="font-size:14px;font-family:'Courier New',monospace;color:#7c3aed;background:#f5f3ff;padding:4px 10px;border-radius:6px;display:inline-block;margin-top:4px;">${licenseData.extra_info}</code>
+      </td></tr>` : ''}
+    </table>
+
+    ${licenseData.order_number ? `<p style="font-size:12px;color:#888;margin:0 0 20px;">অর্ডার নম্বর: <strong>#${licenseData.order_number}</strong></p>` : ''}
+    
+    <p style="font-size:12px;color:#888;margin:20px 0 0;border-top:1px solid #f0f0f5;padding-top:16px;">
+      কোনো সমস্যা হলে আমাদের সাথে যোগাযোগ করুন।<br>
+      <a href="${SITE_URL}" style="color:${BRAND_COLOR};text-decoration:none;">${SITE_URL}</a>
+    </p>
+  </td></tr>
+</table>
+</td></tr></table>
+</body></html>`
+
+      await sendLovableEmail(
+        {
+          idempotency_key: `license-resend-${licenseData.key_value.slice(0, 10)}-${Date.now()}`,
+          to: recipientEmail,
+          from: `${SITE_NAME} <noreply@notify.mail.shahedstore.com.bd>`,
+          sender_domain: 'notify.mail.shahedstore.com.bd',
+          subject: `🔑 আপনার লাইসেন্স কী — ${licenseData.product_name}`,
+          html: licenseHtml,
+          text: `আপনার ${licenseData.product_name} এর লাইসেন্স: ${licenseData.key_value}`,
+          purpose: 'transactional',
+          label: 'license_resend',
+        },
+        { apiKey: LOVABLE_API_KEY }
+      )
+
+      return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
     return new Response(JSON.stringify({ error: 'Invalid type' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
   } catch (err) {

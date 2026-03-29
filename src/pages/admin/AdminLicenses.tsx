@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   Plus, Trash2, Key, Eye, EyeOff, Search, Filter,
   CheckCircle2, Clock, XCircle, Upload, Download,
-  Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag
+  Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag,
+  Printer, Mail, Send, X
 } from 'lucide-react';
 
 type LicenseKey = {
@@ -20,6 +21,7 @@ type LicenseKey = {
   product_name?: string;
   order_number?: string;
   customer_name?: string;
+  customer_email?: string;
 };
 
 type Product = { id: string; name: string; slug: string };
@@ -62,7 +64,8 @@ const AdminLicenses = () => {
   const [bulkProductId, setBulkProductId] = useState('');
   const [bulkType, setBulkType] = useState('license');
   const [bulkSaving, setBulkSaving] = useState(false);
-
+  const [emailModal, setEmailModal] = useState<{ open: boolean; license: LicenseKey | null; email: string }>({ open: false, license: null, email: '' });
+  const [sendingEmail, setSendingEmail] = useState(false);
   const fetchAll = async () => {
     setLoading(true);
     const { data } = await supabase
@@ -72,7 +75,7 @@ const AdminLicenses = () => {
         products(name),
         order_items(
           order_id,
-          orders(order_number, customer_name)
+          orders(order_number, customer_name, customer_email)
         )
       `)
       .order('created_at', { ascending: false });
@@ -83,6 +86,7 @@ const AdminLicenses = () => {
         product_name: l.products?.name || '—',
         order_number: l.order_items?.orders?.order_number || null,
         customer_name: l.order_items?.orders?.customer_name || null,
+        customer_email: l.order_items?.orders?.customer_email || null,
       })));
     }
 
@@ -179,6 +183,79 @@ const AdminLicenses = () => {
   const toggleShow = (id: string) => setShowValues(prev => ({ ...prev, [id]: !prev[id] }));
   const maskValue = (val: string) => val.length > 8 ? val.slice(0, 4) + '•'.repeat(Math.min(val.length - 8, 12)) + val.slice(-4) : '••••••••';
 
+  const handlePrint = () => {
+    const printContent = `
+      <!DOCTYPE html><html><head><meta charset="UTF-8">
+      <title>License Keys - Shahed Store</title>
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; color: #1a1a2e; }
+        h1 { font-size: 20px; color: hsl(258,78%,55%); margin-bottom: 5px; }
+        .subtitle { color: #888; font-size: 12px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: hsl(258,78%,55%); color: white; padding: 8px 12px; text-align: left; font-size: 11px; }
+        td { padding: 8px 12px; border-bottom: 1px solid #eee; }
+        tr:nth-child(even) { background: #faf8ff; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+        .mono { font-family: 'Courier New', monospace; font-size: 11px; }
+        @media print { body { padding: 10px; } }
+      </style></head><body>
+      <h1>🔑 License Keys — Shahed Store</h1>
+      <p class="subtitle">${filtered.length} টি লাইসেন্স • প্রিন্ট তারিখ: ${new Date().toLocaleDateString('bn-BD')}</p>
+      <table>
+        <thead><tr>
+          <th>#</th><th>Type</th><th>Key / Credentials</th><th>প্রোডাক্ট</th><th>Status</th><th>কাস্টমার</th><th>অর্ডার</th>
+        </tr></thead>
+        <tbody>${filtered.map((lic, i) => {
+          const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label || lic.key_type;
+          const stLabel = STATUS_CONFIG[lic.status]?.label || lic.status;
+          return `<tr>
+            <td>${i + 1}</td>
+            <td>${typeLabel}</td>
+            <td class="mono">${lic.key_value}${lic.extra_info ? '<br><small style="color:#888">' + lic.extra_info + '</small>' : ''}</td>
+            <td>${lic.product_name}</td>
+            <td><span class="badge" style="background:${(STATUS_CONFIG[lic.status]?.color || '#888')}22;color:${STATUS_CONFIG[lic.status]?.color || '#888'}">${stLabel}</span></td>
+            <td>${lic.customer_name || '—'}</td>
+            <td>${lic.order_number ? '#' + lic.order_number : '—'}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></body></html>`;
+    const w = window.open('', '_blank');
+    if (w) { w.document.write(printContent); w.document.close(); w.print(); }
+  };
+
+  const openEmailModal = (lic: LicenseKey) => {
+    setEmailModal({ open: true, license: lic, email: lic.customer_email || '' });
+  };
+
+  const handleSendEmail = async () => {
+    if (!emailModal.license || !emailModal.email) return toast.error('ইমেইল ঠিকানা দিন');
+    setSendingEmail(true);
+    try {
+      const lic = emailModal.license;
+      const { error } = await supabase.functions.invoke('send-order-email', {
+        body: {
+          type: 'license-resend',
+          recipientEmail: emailModal.email,
+          licenseData: {
+            key_value: lic.key_value,
+            key_type: lic.key_type,
+            extra_info: lic.extra_info,
+            product_name: lic.product_name,
+            customer_name: lic.customer_name || 'Customer',
+            order_number: lic.order_number || '',
+          }
+        }
+      });
+      if (error) throw error;
+      toast.success('লাইসেন্স ইমেইল পাঠানো হয়েছে!');
+      setEmailModal({ open: false, license: null, email: '' });
+    } catch (err: any) {
+      toast.error('ইমেইল পাঠাতে ব্যর্থ: ' + (err.message || 'Unknown error'));
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -192,6 +269,12 @@ const AdminLicenses = () => {
           </p>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={handlePrint}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-medium hover:border-primary/40 transition-all text-muted-foreground"
+          >
+            <Printer size={14} /> প্রিন্ট
+          </button>
           <button
             onClick={() => setShowBulk(!showBulk)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-medium hover:border-primary/40 transition-all text-muted-foreground"
@@ -466,6 +549,13 @@ const AdminLicenses = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
+                          {lic.status === 'assigned' && (
+                            <button onClick={() => openEmailModal(lic)}
+                              title="ইমেইল পাঠান"
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
+                              <Mail size={13} />
+                            </button>
+                          )}
                           {lic.status === 'available' && (
                             <button onClick={() => handleRevoke(lic.id)}
                               className="px-2.5 py-1 rounded-lg text-[10px] font-medium border border-border text-muted-foreground hover:border-destructive/50 hover:text-destructive transition-all">
@@ -488,6 +578,68 @@ const AdminLicenses = () => {
           </div>
         )}
       </div>
+
+      {/* Email Resend Modal */}
+      {emailModal.open && emailModal.license && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setEmailModal({ open: false, license: null, email: '' })}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Mail size={16} className="text-primary" /> লাইসেন্স ইমেইল পাঠান
+              </h3>
+              <button onClick={() => setEmailModal({ open: false, license: null, email: '' })}
+                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-5">
+              <div className="bg-muted/20 rounded-xl p-3 border border-border">
+                <p className="text-[10px] text-muted-foreground mb-1">প্রোডাক্ট</p>
+                <p className="text-sm font-semibold text-foreground">{emailModal.license.product_name}</p>
+              </div>
+              <div className="bg-muted/20 rounded-xl p-3 border border-border">
+                <p className="text-[10px] text-muted-foreground mb-1">License Key</p>
+                <code className="text-xs font-mono text-primary break-all">{emailModal.license.key_value}</code>
+                {emailModal.license.extra_info && (
+                  <p className="text-[10px] text-muted-foreground mt-1 font-mono">{emailModal.license.extra_info}</p>
+                )}
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
+                  প্রাপকের ইমেইল ঠিকানা *
+                </label>
+                <input
+                  type="email"
+                  value={emailModal.email}
+                  onChange={e => setEmailModal(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="customer@example.com"
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+                />
+                {emailModal.license.customer_email && emailModal.email !== emailModal.license.customer_email && (
+                  <button onClick={() => setEmailModal(prev => ({ ...prev, email: prev.license?.customer_email || '' }))}
+                    className="text-[10px] text-primary hover:underline mt-1">
+                    মূল ইমেইল ব্যবহার করুন ({emailModal.license.customer_email})
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={handleSendEmail} disabled={sendingEmail || !emailModal.email}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
+                {sendingEmail ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                ইমেইল পাঠান
+              </button>
+              <button onClick={() => setEmailModal({ open: false, license: null, email: '' })}
+                className="px-4 py-2.5 rounded-xl text-sm border border-border text-muted-foreground hover:border-primary/40">
+                বাতিল
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
