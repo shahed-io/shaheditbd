@@ -66,6 +66,10 @@ const AdminLicenses = () => {
   const [bulkSaving, setBulkSaving] = useState(false);
   const [emailModal, setEmailModal] = useState<{ open: boolean; license: LicenseKey | null; email: string }>({ open: false, license: null, email: '' });
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [productSearch, setProductSearch] = useState('');
+  const [productDropdownOpen, setProductDropdownOpen] = useState(false);
+  const [bulkProductSearch, setBulkProductSearch] = useState('');
+  const [bulkProductDropdownOpen, setBulkProductDropdownOpen] = useState(false);
   const fetchAll = async () => {
     setLoading(true);
     const { data } = await supabase
