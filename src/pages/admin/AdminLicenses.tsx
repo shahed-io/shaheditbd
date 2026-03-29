@@ -66,6 +66,10 @@ const AdminLicenses = () => {
   const [bulkSaving, setBulkSaving] = useState(false);
   const [emailModal, setEmailModal] = useState<{ open: boolean; license: LicenseKey | null; email: string }>({ open: false, license: null, email: '' });
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [productSearch, setProductSearch] = useState('');
+  const [productDropdownOpen, setProductDropdownOpen] = useState(false);
+  const [bulkProductSearch, setBulkProductSearch] = useState('');
+  const [bulkProductDropdownOpen, setBulkProductDropdownOpen] = useState(false);
   const fetchAll = async () => {
     setLoading(true);
     const { data } = await supabase
@@ -315,16 +319,49 @@ const AdminLicenses = () => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Product */}
-            <div>
+            <div className="relative">
               <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">প্রোডাক্ট *</label>
-              <select
-                value={form.product_id}
-                onChange={e => setForm(p => ({ ...p, product_id: e.target.value }))}
-                className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+              <div
+                onClick={() => setProductDropdownOpen(!productDropdownOpen)}
+                className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm cursor-pointer focus:outline-none focus:border-primary flex items-center justify-between"
               >
-                <option value="">— প্রোডাক্ট বেছে নিন —</option>
-                {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-              </select>
+                <span className={form.product_id ? 'text-foreground' : 'text-muted-foreground'}>
+                  {form.product_id ? products.find(p => p.id === form.product_id)?.name || '—' : '— প্রোডাক্ট বেছে নিন —'}
+                </span>
+                <ChevronDown size={14} className={`text-muted-foreground transition-transform ${productDropdownOpen ? 'rotate-180' : ''}`} />
+              </div>
+              {productDropdownOpen && (
+                <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-60 overflow-hidden">
+                  <div className="p-2 border-b border-border">
+                    <div className="relative">
+                      <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <input
+                        value={productSearch}
+                        onChange={e => setProductSearch(e.target.value)}
+                        placeholder="প্রোডাক্ট খুঁজুন..."
+                        className="w-full bg-muted/20 border border-border rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
+                        autoFocus
+                        onClick={e => e.stopPropagation()}
+                      />
+                    </div>
+                  </div>
+                  <div className="overflow-y-auto max-h-44">
+                    {products.filter(p => !productSearch || p.name.toLowerCase().includes(productSearch.toLowerCase())).length === 0 ? (
+                      <p className="text-xs text-muted-foreground text-center py-3">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
+                    ) : (
+                      products.filter(p => !productSearch || p.name.toLowerCase().includes(productSearch.toLowerCase())).map(p => (
+                        <button
+                          key={p.id}
+                          onClick={(e) => { e.stopPropagation(); setForm(prev => ({ ...prev, product_id: p.id })); setProductDropdownOpen(false); setProductSearch(''); }}
+                          className={`w-full text-left px-3 py-2 text-xs hover:bg-primary/10 transition-colors ${form.product_id === p.id ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'}`}
+                        >
+                          {p.name}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             {/* Type */}
             <div>
@@ -401,11 +438,45 @@ const AdminLicenses = () => {
           </h3>
           <p className="text-xs text-muted-foreground mb-3">প্রতি লাইনে একটি করে key লিখুন। একসাথে অনেকগুলো যোগ করতে পারবেন।</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
-            <select value={bulkProductId} onChange={e => setBulkProductId(e.target.value)}
-              className="bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
-              <option value="">— প্রোডাক্ট বেছে নিন —</option>
-              {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-            </select>
+            <div className="relative">
+              <div
+                onClick={() => setBulkProductDropdownOpen(!bulkProductDropdownOpen)}
+                className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm cursor-pointer flex items-center justify-between"
+              >
+                <span className={bulkProductId ? 'text-foreground' : 'text-muted-foreground'}>
+                  {bulkProductId ? products.find(p => p.id === bulkProductId)?.name || '—' : '— প্রোডাক্ট বেছে নিন —'}
+                </span>
+                <ChevronDown size={14} className={`text-muted-foreground transition-transform ${bulkProductDropdownOpen ? 'rotate-180' : ''}`} />
+              </div>
+              {bulkProductDropdownOpen && (
+                <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-60 overflow-hidden">
+                  <div className="p-2 border-b border-border">
+                    <div className="relative">
+                      <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <input
+                        value={bulkProductSearch}
+                        onChange={e => setBulkProductSearch(e.target.value)}
+                        placeholder="প্রোডাক্ট খুঁজুন..."
+                        className="w-full bg-muted/20 border border-border rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
+                        autoFocus
+                        onClick={e => e.stopPropagation()}
+                      />
+                    </div>
+                  </div>
+                  <div className="overflow-y-auto max-h-44">
+                    {products.filter(p => !bulkProductSearch || p.name.toLowerCase().includes(bulkProductSearch.toLowerCase())).map(p => (
+                      <button
+                        key={p.id}
+                        onClick={(e) => { e.stopPropagation(); setBulkProductId(p.id); setBulkProductDropdownOpen(false); setBulkProductSearch(''); }}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-primary/10 transition-colors ${bulkProductId === p.id ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'}`}
+                      >
+                        {p.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             <select value={bulkType} onChange={e => setBulkType(e.target.value)}
               className="bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
               {KEY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
