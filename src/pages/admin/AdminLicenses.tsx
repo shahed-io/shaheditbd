@@ -85,6 +85,7 @@ const AdminLicenses = () => {
         product_name: l.products?.name || '—',
         order_number: l.order_items?.orders?.order_number || null,
         customer_name: l.order_items?.orders?.customer_name || null,
+        customer_email: l.order_items?.orders?.customer_email || null,
       })));
     }
 
