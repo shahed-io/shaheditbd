@@ -221,23 +221,49 @@ OVERALL AESTHETIC:
   glassmorphism_ui: {
     label: "Glassmorphism UI",
     prompt: (name: string, brand: string, price: string, category: string) => `
-Create a clean, premium square (1:1) product card image. Follow these instructions precisely:
+Design a ultra-premium, award-winning square (1:1) product showcase card. This must look like a real high-end Apple or Samsung marketing material — NOT AI-generated art.
 
-LAYOUT: Single white frosted-glass card centered on a soft gradient background. Simple, minimal, no clutter.
+BACKGROUND:
+- Rich deep gradient: from deep midnight navy (#0f0c29) through rich royal purple (#302b63) to dark teal (#24243e)
+- 2-3 very large soft blurred luminous orbs floating behind the card:
+  - One warm amber/gold orb (#f59e0b at 15% opacity) top-right
+  - One cool electric blue orb (#3b82f6 at 12% opacity) bottom-left  
+  - One soft violet orb (#8b5cf6 at 10% opacity) center-top
+- These orbs create a luxurious ambient lighting effect like studio photography
 
-BACKGROUND: Smooth diagonal gradient from light lavender (#e8e0f0) top-left to soft peach (#f5e6dc) bottom-right. Clean and simple, no patterns, no dots, no extra shapes.
+MAIN CARD:
+- Large frosted glass card centered (72% of image), 28px rounded corners
+- Card background: rgba(255,255,255,0.08) with heavy 40px backdrop blur — dark frosted glass
+- Border: 1px solid rgba(255,255,255,0.15) — subtle white edge catching light
+- Very soft outer glow: 0 30px 80px rgba(0,0,0,0.4)
+- At top edge: a thin 2px accent line, gradient from warm gold (#f59e0b) to electric blue (#3b82f6)
 
-CARD: Large white rounded rectangle (75% of image, 24px rounded corners). Background: solid white with slight transparency like frosted glass. Border: thin 1.5px white border. Shadow: soft subtle drop shadow below the card. At the very top edge of the card: a thin 2px horizontal accent line, gradient from orange (#f59e0b) on the left to indigo (#6366f1) on the right.
+TOP ROW (inside card):
+- Left: "SHAHED STORE" in a small frosted pill badge (rgba(255,255,255,0.12) background, white bold text, 0.5px white border)
+- Right: "${brand || name}" in a matching frosted pill badge, white text with small brand icon
 
-TOP OF CARD: Left side — small rounded orange pill badge with white text "SHAHED STORE". Right side — small rounded light gray pill with dark text "${brand || name}".
+CENTER (inside card):
+- The product "${name}" logo/icon displayed VERY LARGE and centered
+- Clean square app icon with rounded corners (like iOS app icon style)
+- The icon has a subtle reflective glass sheen effect
+- A very soft white glow/halo behind the product icon (rgba(255,255,255,0.05), 60px blur)
+- Below icon: generous dark breathing space
 
-CENTER OF CARD: The product "${name}" logo/icon displayed LARGE and centered. The icon should be a clean square with rounded corners (like a mobile app icon). Below the icon, generous empty white space.
+${price ? `PRICE: Below the product icon, an elegant small pill with frosted glass background showing "৳${price}" in white text with subtle gold accent` : ""}
 
-${price ? `PRICE: Below the product icon, a small rounded indigo pill badge showing "৳${price}" in white text.` : ""}
+BOTTOM (inside card):
+- Thin separator line (rgba(255,255,255,0.08))
+- Left: globe icon + "www.shahedstore.com.bd" in soft gray-white text (rgba(255,255,255,0.5))
+- Right: phone icon + "+880 1840-099853" in matching soft text
 
-BOTTOM OF CARD: A thin light gray horizontal line. Below it: left side "www.shahedstore.com.bd", right side "+880 1840-099853" — both in small gray text.
-
-STYLE: Clean, bright, minimal. White glass card on soft pastel background. Professional e-commerce promotional card. The orange-to-indigo accent line at top is the signature design element. No busy textures, no complex layering — just clean premium simplicity. Square format exactly.
+CRITICAL RULES:
+- This must look like a REAL premium brand advertisement, not AI art
+- Clean, sharp, professional — like Apple's product hero images
+- The dark glass card with ambient colored orbs creates depth and luxury
+- Typography must be crisp, modern, and readable
+- NO cluttered elements, NO busy textures, NO cartoonish effects
+- Think: Samsung Galaxy Unpacked event graphics meets Apple product page
+- Square format exactly. Photorealistic quality.
 `.trim(),
   },
 };
