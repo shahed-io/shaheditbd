@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BrandLoader from '@/components/store/BrandLoader';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
 import { usePaymentSettings } from '@/hooks/usePaymentSettings';
@@ -91,9 +91,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'licenses' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'reseller' | 'security' | 'language' | 'install';
-
-const LazyReseller = lazy(() => import('./Reseller'));
+type TabId = 'profile' | 'orders' | 'licenses' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language' | 'install';
 
 const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'profile',       key: 'tab_profile',       icon: User },
@@ -105,7 +103,6 @@ const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'addresses',     key: 'tab_addresses',     icon: MapPin },
   { id: 'notifications', key: 'tab_notifications', icon: Bell },
   { id: 'referral',      key: 'tab_referral',      icon: Gift },
-  { id: 'reseller',      key: 'tab_reseller',      icon: ShieldCheck },
   { id: 'security',      key: 'tab_security',      icon: Lock },
   { id: 'language',      key: 'tab_language',      icon: Globe },
   { id: 'install',       key: 'tab_install',       icon: Download },
@@ -1885,13 +1882,6 @@ const UserDashboard = () => {
                     </p>
                   </div>
                 </div>
-              )}
-
-              {/* ── CID Reseller Tab ── */}
-              {activeTab === 'reseller' && (
-                <Suspense fallback={<div className="flex items-center justify-center py-20"><RefreshCw size={20} className="animate-spin text-primary" /></div>}>
-                  <LazyReseller />
-                </Suspense>
               )}
 
               {/* ── Install App Tab ── */}
