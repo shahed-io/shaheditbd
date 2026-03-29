@@ -93,6 +93,7 @@ const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFaceboo
 const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
+const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterSettings"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
