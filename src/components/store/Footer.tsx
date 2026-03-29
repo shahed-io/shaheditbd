@@ -12,7 +12,7 @@ const NAV_COL = [
       { label: 'Windows Keys',     href: '/shop?category=windows' },
       { label: 'Office 365',       href: '/shop?category=office' },
       { label: 'All Products',     href: '/shop' },
-      { label: 'CID For Reseller', href: '/reseller' },
+      { label: 'CID For Reseller', href: 'https://ss.shahedit.com/getcid/login.php', external: true },
       { label: 'VPN & Security',   href: '/shop?category=vpn' },
       { label: 'Free Tools',       href: '/free-tools' },
     ]
