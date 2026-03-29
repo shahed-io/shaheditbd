@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   Plus, Trash2, Key, Eye, EyeOff, Search, Filter,
   CheckCircle2, Clock, XCircle, Upload, Download,
-  Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag
+  Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag,
+  Printer, Mail, Send, X
 } from 'lucide-react';
 
 type LicenseKey = {
