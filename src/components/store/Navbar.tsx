@@ -233,7 +233,7 @@ const Navbar = () => {
       `}</style>
 
       {/* ── Main Navbar — Glassmorphism Card ── */}
-      <div className="sticky top-0 z-50 px-4 py-2 backdrop-blur-xl"
+      <div className="fixed top-0 left-0 right-0 z-50 px-4 py-2 backdrop-blur-xl"
         style={{
           background: 'hsla(0,0%,100%,0.60)',
         }}>
@@ -543,6 +543,8 @@ const Navbar = () => {
         </div>
       </nav>
       </div>
+      {/* Spacer for fixed navbar */}
+      <div className="h-[60px]" />
     </>
   );
 };
