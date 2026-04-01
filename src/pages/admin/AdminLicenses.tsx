@@ -376,6 +376,109 @@ const AdminLicenses = () => {
     }
   };
 
+  // ── Edit License ──
+  const openEditModal = (lic: LicenseKey) => {
+    setEditForm({
+      key_value: lic.key_value,
+      extra_info: lic.extra_info || '',
+      key_type: lic.key_type,
+      product_id: lic.product_id || '',
+      status: lic.status,
+    });
+    setEditModal({ open: true, license: lic });
+  };
+
+  const handleEditSave = async () => {
+    if (!editModal.license) return;
+    if (!editForm.key_value.trim()) return toast.error('Key Value খালি রাখা যাবে না');
+    setEditSaving(true);
+    const { error } = await supabase
+      .from('license_keys')
+      .update({
+        key_value: editForm.key_value.trim(),
+        extra_info: editForm.extra_info.trim() || null,
+        key_type: editForm.key_type,
+        product_id: editForm.product_id || null,
+        status: editForm.status,
+      })
+      .eq('id', editModal.license.id);
+    setEditSaving(false);
+    if (error) return toast.error('আপডেট ব্যর্থ: ' + error.message);
+    toast.success('লাইসেন্স আপডেট হয়েছে!');
+    setEditModal({ open: false, license: null });
+    fetchAll();
+  };
+
+  // ── Assign to User/Order ──
+  const openAssignModal = (lic: LicenseKey) => {
+    setAssignModal({ open: true, license: lic });
+    setAssignSearch('');
+    setAssignResults([]);
+  };
+
+  const searchOrders = async (q: string) => {
+    setAssignSearch(q);
+    if (q.length < 2) { setAssignResults([]); return; }
+    setAssignSearching(true);
+    const { data } = await supabase
+      .from('orders')
+      .select('id, order_number, customer_name, customer_email, order_items(id, product_id, product_name, license_key)')
+      .or(`order_number.ilike.%${q}%,customer_name.ilike.%${q}%,customer_email.ilike.%${q}%`)
+      .order('created_at', { ascending: false })
+      .limit(10);
+    setAssignResults(data || []);
+    setAssignSearching(false);
+  };
+
+  const handleAssign = async (orderItemId: string) => {
+    if (!assignModal.license) return;
+    setAssigning(true);
+    const { error } = await supabase
+      .from('license_keys')
+      .update({
+        status: 'assigned',
+        order_item_id: orderItemId,
+        assigned_at: new Date().toISOString(),
+      })
+      .eq('id', assignModal.license.id);
+
+    if (!error) {
+      // Also update order_items.license_key
+      const lic = assignModal.license;
+      const keyDisplay = lic.extra_info ? `${lic.key_value}|${lic.extra_info}` : lic.key_value;
+      await supabase
+        .from('order_items')
+        .update({ license_key: keyDisplay })
+        .eq('id', orderItemId);
+    }
+
+    setAssigning(false);
+    if (error) return toast.error('অ্যাসাইন ব্যর্থ: ' + error.message);
+    toast.success('লাইসেন্স সফলভাবে অ্যাসাইন হয়েছে!');
+    setAssignModal({ open: false, license: null });
+    fetchAll();
+  };
+
+  // ── Unassign ──
+  const handleUnassign = async (lic: LicenseKey) => {
+    if (!confirm('এই লাইসেন্সটি কাস্টমারের অ্যাকাউন্ট থেকে সরিয়ে দেবেন?')) return;
+    // Remove from order_items
+    if (lic.order_item_id) {
+      await supabase
+        .from('order_items')
+        .update({ license_key: null })
+        .eq('id', lic.order_item_id);
+    }
+    // Reset license key
+    const { error } = await supabase
+      .from('license_keys')
+      .update({ status: 'available', order_item_id: null, assigned_at: null })
+      .eq('id', lic.id);
+    if (error) return toast.error('আনঅ্যাসাইন ব্যর্থ');
+    toast.success('লাইসেন্স আনঅ্যাসাইন হয়েছে!');
+    fetchAll();
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
