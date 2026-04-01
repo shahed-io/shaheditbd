@@ -83,6 +83,11 @@ const AdminLicenses = () => {
   const [assignResults, setAssignResults] = useState<any[]>([]);
   const [assignSearching, setAssignSearching] = useState(false);
   const [assigning, setAssigning] = useState(false);
+
+  // Manual Take modal state
+  const [takeModal, setTakeModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
+  const [takeNote, setTakeNote] = useState('');
+  const [taking, setTaking] = useState(false);
   const fetchAll = async () => {
     setLoading(true);
     const { data } = await supabase
