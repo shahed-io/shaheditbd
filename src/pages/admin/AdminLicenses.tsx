@@ -957,6 +957,149 @@ const AdminLicenses = () => {
           </div>
         </div>
       )}
+
+      {/* Edit License Modal */}
+      {editModal.open && editModal.license && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setEditModal({ open: false, license: null })}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Edit3 size={16} className="text-primary" /> লাইসেন্স এডিট করুন
+              </h3>
+              <button onClick={() => setEditModal({ open: false, license: null })}
+                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                <X size={16} />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">প্রোডাক্ট</label>
+                  <select value={editForm.product_id} onChange={e => setEditForm(p => ({ ...p, product_id: e.target.value }))}
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
+                    <option value="">— বেছে নিন —</option>
+                    {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Key Type</label>
+                  <select value={editForm.key_type} onChange={e => setEditForm(p => ({ ...p, key_type: e.target.value }))}
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
+                    {KEY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({ ...p, status: e.target.value }))}
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
+                  {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Key / Credentials *</label>
+                <input value={editForm.key_value} onChange={e => setEditForm(p => ({ ...p, key_value: e.target.value }))}
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Extra Info / Password</label>
+                <textarea value={editForm.extra_info} onChange={e => setEditForm(p => ({ ...p, extra_info: e.target.value }))}
+                  rows={2}
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary resize-none" />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-5">
+              <button onClick={handleEditSave} disabled={editSaving}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
+                {editSaving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                সেভ করুন
+              </button>
+              <button onClick={() => setEditModal({ open: false, license: null })}
+                className="px-4 py-2.5 rounded-xl text-sm border border-border text-muted-foreground hover:border-primary/40">
+                বাতিল
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign to User Modal */}
+      {assignModal.open && assignModal.license && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setAssignModal({ open: false, license: null })}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <UserPlus size={16} className="text-primary" /> কাস্টমারকে অ্যাসাইন করুন
+              </h3>
+              <button onClick={() => setAssignModal({ open: false, license: null })}
+                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="bg-muted/20 rounded-xl p-3 border border-border mb-4">
+              <p className="text-[10px] text-muted-foreground mb-0.5">লাইসেন্স</p>
+              <code className="text-xs font-mono text-primary break-all">{assignModal.license.key_value}</code>
+              <p className="text-[10px] text-muted-foreground mt-1">{assignModal.license.product_name}</p>
+            </div>
+
+            <div className="mb-4">
+              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
+                অর্ডার নম্বর, কাস্টমারের নাম বা ইমেইল দিয়ে খুঁজুন
+              </label>
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  value={assignSearch}
+                  onChange={e => searchOrders(e.target.value)}
+                  placeholder="অর্ডার নম্বর / নাম / ইমেইল..."
+                  className="w-full bg-muted/20 border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary"
+                  autoFocus
+                />
+                {assignSearching && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-primary" />}
+              </div>
+            </div>
+
+            {assignResults.length > 0 && (
+              <div className="max-h-60 overflow-y-auto space-y-2">
+                {assignResults.map((order: any) => (
+                  <div key={order.id} className="border border-border rounded-xl p-3 hover:border-primary/40 transition-all">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <span className="text-xs font-bold text-foreground">#{order.order_number}</span>
+                        <span className="text-xs text-muted-foreground ml-2">{order.customer_name}</span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">{order.customer_email}</span>
+                    </div>
+                    {order.order_items?.map((item: any) => (
+                      <div key={item.id} className="flex items-center justify-between bg-muted/10 rounded-lg px-3 py-2 mt-1">
+                        <div>
+                          <p className="text-xs font-medium text-foreground">{item.product_name}</p>
+                          {item.license_key && <p className="text-[10px] text-muted-foreground font-mono">Key: {item.license_key.slice(0, 15)}...</p>}
+                        </div>
+                        <button
+                          onClick={() => handleAssign(item.id)}
+                          disabled={assigning}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+                          style={{ background: 'hsla(162,72%,46%,0.15)', color: 'hsl(162,72%,36%)' }}
+                        >
+                          {assigning ? <Loader2 size={10} className="animate-spin" /> : <UserPlus size={10} />}
+                          অ্যাসাইন
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {assignSearch.length >= 2 && !assignSearching && assignResults.length === 0 && (
+              <p className="text-xs text-muted-foreground text-center py-6">কোনো অর্ডার পাওয়া যায়নি</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
