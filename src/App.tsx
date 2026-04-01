@@ -96,7 +96,7 @@ const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBa
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
 const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterSettings"));
 const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveChat"));
-const AdminPersonalLicenses      = lazy(() => import("./pages/admin/AdminPersonalLicenses"));
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -224,7 +224,7 @@ const AppContent = () => {
             <Route path="invoices" element={<AdminInvoiceGenerator />} />
             <Route path="footer-settings" element={<AdminFooterSettings />} />
             <Route path="live-chat" element={<AdminLiveChat />} />
-            <Route path="personal-licenses" element={<AdminPersonalLicenses />} />
+            
             <Route path="reseller" element={<Reseller />} />
             <Route path="reseller-accounts" element={<AdminResellerAccounts />} />
           </Route>
