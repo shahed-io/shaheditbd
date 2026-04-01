@@ -891,6 +891,24 @@ const AdminLicenses = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
+                          {/* ★ Manual Take - prominent for available */}
+                          {lic.status === 'available' && (
+                            <button onClick={() => openTakeModal(lic)}
+                              title="ম্যানুয়ালি নিন"
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all"
+                              style={{ background: 'hsla(162,72%,46%,0.15)', color: 'hsl(162,72%,36%)' }}>
+                              <Download size={12} /> নিন
+                            </button>
+                          )}
+                          {/* Undo take */}
+                          {lic.status === 'taken' && (
+                            <button onClick={() => handleUntake(lic)}
+                              title="আবার Available করুন"
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all"
+                              style={{ background: 'hsla(200,90%,55%,0.12)', color: 'hsl(200,90%,45%)' }}>
+                              <RefreshCw size={11} /> ফেরত
+                            </button>
+                          )}
                           {/* Edit */}
                           <button onClick={() => openEditModal(lic)}
                             title="এডিট করুন"
@@ -900,8 +918,8 @@ const AdminLicenses = () => {
                           {/* Assign - only for available */}
                           {lic.status === 'available' && (
                             <button onClick={() => openAssignModal(lic)}
-                              title="কাস্টমারকে অ্যাসাইন করুন"
-                              className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
+                              title="অর্ডারে অ্যাসাইন করুন"
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
                               <UserPlus size={13} />
                             </button>
                           )}
@@ -931,7 +949,7 @@ const AdminLicenses = () => {
                               Revoke
                             </button>
                           )}
-                          {lic.status !== 'assigned' && (
+                          {(lic.status !== 'assigned') && (
                             <button onClick={() => handleDelete(lic.id)}
                               className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
                               <Trash2 size={13} />
