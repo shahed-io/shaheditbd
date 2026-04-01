@@ -110,12 +110,9 @@ const queryClient = new QueryClient({
   },
 });
 
-// Branded loader for Suspense fallback
-import BrandLoader from "@/components/store/BrandLoader";
+// Minimal fallback — no visible loader for instant feel
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <BrandLoader size="md" />
-  </div>
+  <div className="min-h-screen bg-background" />
 );
 
 // Admin notification listener (only active when user is admin)
