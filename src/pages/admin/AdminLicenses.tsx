@@ -127,6 +127,9 @@ const AdminLicenses = () => {
    const [pProductSearch, setPProductSearch] = useState('');
    const [pProductDropdownOpen, setPProductDropdownOpen] = useState(false);
    const pDropdownRef = useRef<HTMLDivElement>(null);
+   const pCatDropdownRef = useRef<HTMLDivElement>(null);
+   const [pCatSearch, setPCatSearch] = useState('');
+   const [pCatDropdownOpen, setPCatDropdownOpen] = useState(false);
 
   const { data: personalLicenses = [], isLoading: pLoading } = useQuery({
     queryKey: ['personal-licenses'],
