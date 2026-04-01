@@ -111,6 +111,12 @@ const AdminLicenses = () => {
   const [assignSearching, setAssignSearching] = useState(false);
   const [assigning, setAssigning] = useState(false);
 
+  // ── Bulk Selection States ──
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [pSelectedIds, setPSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [pBulkDeleting, setPBulkDeleting] = useState(false);
+
   // ── Personal Inventory States ──
   const [pOpen, setPOpen] = useState(false);
   const [pEditing, setPEditing] = useState<PersonalLicense | null>(null);
@@ -324,7 +330,66 @@ const AdminLicenses = () => {
     if (!confirm('এই license key ডিলিট করবেন?')) return;
     await supabase.from('license_keys').delete().eq('id', id);
     toast.success('Deleted');
+    setSelectedIds(prev => { const n = new Set(prev); n.delete(id); return n; });
     fetchAll();
+  };
+
+  // ── Bulk Delete (Product) ──
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`${selectedIds.size}টি লাইসেন্স কি ডিলিট করবেন?`)) return;
+    setBulkDeleting(true);
+    const { error } = await supabase.from('license_keys').delete().in('id', Array.from(selectedIds));
+    setBulkDeleting(false);
+    if (error) return toast.error('বাল্ক ডিলিট ব্যর্থ');
+    toast.success(`${selectedIds.size}টি লাইসেন্স ডিলিট হয়েছে`);
+    setSelectedIds(new Set());
+    fetchAll();
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id); else n.add(id);
+      return n;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map(l => l.id)));
+    }
+  };
+
+  // ── Bulk Delete (Personal) ──
+  const handlePBulkDelete = async () => {
+    if (pSelectedIds.size === 0) return;
+    if (!confirm(`${pSelectedIds.size}টি পার্সোনাল লাইসেন্স ডিলিট করবেন?`)) return;
+    setPBulkDeleting(true);
+    const { error } = await supabase.from('personal_licenses').delete().in('id', Array.from(pSelectedIds));
+    setPBulkDeleting(false);
+    if (error) return toast.error('বাল্ক ডিলিট ব্যর্থ');
+    toast.success(`${pSelectedIds.size}টি পার্সোনাল লাইসেন্স ডিলিট হয়েছে`);
+    setPSelectedIds(new Set());
+    qc.invalidateQueries({ queryKey: ['personal-licenses'] });
+  };
+
+  const togglePSelect = (id: string) => {
+    setPSelectedIds(prev => {
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id); else n.add(id);
+      return n;
+    });
+  };
+
+  const togglePSelectAll = () => {
+    if (pSelectedIds.size === pFiltered.length) {
+      setPSelectedIds(new Set());
+    } else {
+      setPSelectedIds(new Set(pFiltered.map(l => l.id)));
+    }
   };
 
   const handleRevoke = async (id: string) => {
@@ -943,6 +1008,18 @@ const AdminLicenses = () => {
           <span className="text-xs font-semibold text-muted-foreground">
             {filtered.length} টি license key দেখানো হচ্ছে
           </span>
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-bold text-primary">{selectedIds.size}টি সিলেক্টেড</span>
+              <button onClick={() => setSelectedIds(new Set())}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors">সব বাদ দিন</button>
+              <button onClick={handleBulkDelete} disabled={bulkDeleting}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all">
+                {bulkDeleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
+                ডিলিট ({selectedIds.size})
+              </button>
+            </div>
+          )}
         </div>
 
         {loading ? (
@@ -959,6 +1036,11 @@ const AdminLicenses = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
+                  <th className="w-10 px-3 py-3">
+                    <input type="checkbox" checked={selectedIds.size === filtered.length && filtered.length > 0}
+                      onChange={toggleSelectAll}
+                      className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
+                  </th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Type</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Key / Credentials</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">প্রোডাক্ট</th>
@@ -974,7 +1056,12 @@ const AdminLicenses = () => {
                   const isVisible = showValues[lic.id];
                   const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label || lic.key_type;
                   return (
-                    <tr key={lic.id} className="border-b border-border/40 hover:bg-muted/10 transition-colors">
+                    <tr key={lic.id} className={`border-b border-border/40 hover:bg-muted/10 transition-colors ${selectedIds.has(lic.id) ? 'bg-primary/5' : ''}`}>
+                      <td className="w-10 px-3 py-3">
+                        <input type="checkbox" checked={selectedIds.has(lic.id)}
+                          onChange={() => toggleSelect(lic.id)}
+                          className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
+                      </td>
                       <td className="px-4 py-3">
                         <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
                           style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
@@ -1135,8 +1222,20 @@ const AdminLicenses = () => {
 
           {/* Personal Table */}
           <div className="glass-card rounded-2xl overflow-hidden border border-border">
-            <div className="px-5 py-3 border-b border-border">
+            <div className="px-5 py-3 border-b border-border flex items-center justify-between">
               <span className="text-xs font-semibold text-muted-foreground">{pFiltered.length} টি পার্সোনাল লাইসেন্স</span>
+              {pSelectedIds.size > 0 && (
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-primary">{pSelectedIds.size}টি সিলেক্টেড</span>
+                  <button onClick={() => setPSelectedIds(new Set())}
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors">সব বাদ দিন</button>
+                  <button onClick={handlePBulkDelete} disabled={pBulkDeleting}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all">
+                    {pBulkDeleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
+                    ডিলিট ({pSelectedIds.size})
+                  </button>
+                </div>
+              )}
             </div>
             {pLoading ? (
               <div className="flex items-center justify-center py-20"><Loader2 size={24} className="animate-spin text-primary" /></div>
@@ -1150,6 +1249,11 @@ const AdminLicenses = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border">
+                      <th className="w-10 px-3 py-3">
+                        <input type="checkbox" checked={pSelectedIds.size === pFiltered.length && pFiltered.length > 0}
+                          onChange={togglePSelectAll}
+                          className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
+                      </th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">নাম</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">ক্যাটাগরি</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কি / পাসওয়ার্ড</th>
@@ -1161,7 +1265,12 @@ const AdminLicenses = () => {
                   </thead>
                   <tbody>
                     {pFiltered.map(lic => (
-                      <tr key={lic.id} className="border-b border-border/40 hover:bg-muted/10 transition-colors">
+                      <tr key={lic.id} className={`border-b border-border/40 hover:bg-muted/10 transition-colors ${pSelectedIds.has(lic.id) ? 'bg-primary/5' : ''}`}>
+                        <td className="w-10 px-3 py-3">
+                          <input type="checkbox" checked={pSelectedIds.has(lic.id)}
+                            onChange={() => togglePSelect(lic.id)}
+                            className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
+                        </td>
                         <td className="px-4 py-3 font-medium text-foreground">{lic.name}</td>
                         <td className="px-4 py-3">
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
