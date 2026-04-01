@@ -316,6 +316,9 @@ const AdminLicenses = () => {
        if (pDropdownRef.current && !pDropdownRef.current.contains(e.target as Node)) {
          setPProductDropdownOpen(false);
        }
+       if (pCatDropdownRef.current && !pCatDropdownRef.current.contains(e.target as Node)) {
+         setPCatDropdownOpen(false);
+       }
      };
      document.addEventListener('mousedown', handler);
      return () => document.removeEventListener('mousedown', handler);
