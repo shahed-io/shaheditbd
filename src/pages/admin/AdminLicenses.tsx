@@ -34,11 +34,12 @@ const KEY_TYPES = [
   { value: 'custom',       label: '📝 Custom Info',         desc: 'Any custom delivery info' },
 ];
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  available: { label: 'Available',  color: 'hsl(162,72%,46%)',  icon: CheckCircle2 },
-  assigned:  { label: 'Assigned',   color: 'hsl(258,78%,68%)',  icon: User },
-  reserved:  { label: 'Reserved',   color: 'hsl(42,96%,58%)',   icon: Clock },
-  revoked:   { label: 'Revoked',    color: 'hsl(0,72%,51%)',    icon: XCircle },
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any; labelBn: string }> = {
+  available: { label: 'Available',  labelBn: 'এভেইলেবল',  color: 'hsl(162,72%,46%)',  icon: CheckCircle2 },
+  taken:     { label: 'Taken',      labelBn: 'নেওয়া হয়েছে', color: 'hsl(200,90%,55%)',  icon: Download },
+  assigned:  { label: 'Assigned',   labelBn: 'অ্যাসাইনড',  color: 'hsl(258,78%,68%)',  icon: User },
+  reserved:  { label: 'Reserved',   labelBn: 'রিজার্ভড',   color: 'hsl(42,96%,58%)',   icon: Clock },
+  revoked:   { label: 'Revoked',    labelBn: 'বাতিল',       color: 'hsl(0,72%,51%)',    icon: XCircle },
 };
 
 const emptyForm = {
@@ -82,6 +83,11 @@ const AdminLicenses = () => {
   const [assignResults, setAssignResults] = useState<any[]>([]);
   const [assignSearching, setAssignSearching] = useState(false);
   const [assigning, setAssigning] = useState(false);
+
+  // Manual Take modal state
+  const [takeModal, setTakeModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
+  const [takeNote, setTakeNote] = useState('');
+  const [taking, setTaking] = useState(false);
   const fetchAll = async () => {
     setLoading(true);
     const { data } = await supabase
@@ -174,10 +180,55 @@ const AdminLicenses = () => {
     toast.success('কপি হয়েছে!');
   };
 
+  // ── Manual Take ──
+  const openTakeModal = (lic: LicenseKey) => {
+    setTakeModal({ open: true, license: lic });
+    setTakeNote('');
+  };
+
+  const handleTake = async () => {
+    if (!takeModal.license) return;
+    setTaking(true);
+    const lic = takeModal.license;
+    
+    // Copy to clipboard
+    const fullKey = lic.extra_info ? `${lic.key_value}\n${lic.extra_info}` : lic.key_value;
+    try { await navigator.clipboard.writeText(fullKey); } catch {}
+
+    // Mark as taken with note
+    const { error } = await supabase
+      .from('license_keys')
+      .update({
+        status: 'taken',
+        assigned_at: new Date().toISOString(),
+        extra_info: takeNote
+          ? (lic.extra_info ? `${lic.extra_info}\n[নোট: ${takeNote}]` : `[নোট: ${takeNote}]`)
+          : lic.extra_info,
+      })
+      .eq('id', lic.id);
+
+    setTaking(false);
+    if (error) return toast.error('ব্যর্থ: ' + error.message);
+    toast.success('✅ লাইসেন্স নেওয়া হয়েছে ও ক্লিপবোর্ডে কপি হয়েছে!');
+    setTakeModal({ open: false, license: null });
+    fetchAll();
+  };
+
+  const handleUntake = async (lic: LicenseKey) => {
+    if (!confirm('এই লাইসেন্সটি আবার Available করবেন?')) return;
+    await supabase
+      .from('license_keys')
+      .update({ status: 'available', assigned_at: null })
+      .eq('id', lic.id);
+    toast.success('লাইসেন্স আবার Available!');
+    fetchAll();
+  };
+
   // Stats
   const stats = {
     total:     licenses.length,
     available: licenses.filter(l => l.status === 'available').length,
+    taken:     licenses.filter(l => l.status === 'taken').length,
     assigned:  licenses.filter(l => l.status === 'assigned').length,
     revoked:   licenses.filter(l => l.status === 'revoked').length,
   };
@@ -515,12 +566,13 @@ const AdminLicenses = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         {[
-          { label: 'মোট Keys', value: stats.total,     color: 'hsl(258,78%,68%)',  bg: 'hsla(258,78%,68%,0.1)' },
-          { label: 'Available', value: stats.available, color: 'hsl(162,72%,46%)',  bg: 'hsla(162,72%,46%,0.1)' },
-          { label: 'Assigned',  value: stats.assigned,  color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)' },
-          { label: 'Revoked',   value: stats.revoked,   color: 'hsl(0,72%,51%)',    bg: 'hsla(0,72%,51%,0.1)' },
+          { label: 'মোট Keys',    value: stats.total,     color: 'hsl(258,78%,68%)',  bg: 'hsla(258,78%,68%,0.1)' },
+          { label: 'এভেইলেবল',    value: stats.available, color: 'hsl(162,72%,46%)',  bg: 'hsla(162,72%,46%,0.1)' },
+          { label: 'নেওয়া হয়েছে', value: stats.taken,     color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)' },
+          { label: 'অ্যাসাইনড',   value: stats.assigned,  color: 'hsl(42,96%,58%)',   bg: 'hsla(42,96%,58%,0.1)' },
+          { label: 'বাতিল',        value: stats.revoked,   color: 'hsl(0,72%,51%)',    bg: 'hsla(0,72%,51%,0.1)' },
         ].map(s => (
           <div key={s.label} className="glass-card rounded-2xl p-4 border"
             style={{ borderColor: `${s.color}30`, background: s.bg }}>
@@ -824,7 +876,12 @@ const AdminLicenses = () => {
                         <span className="flex items-center gap-1.5 text-xs font-semibold"
                           style={{ color: st.color }}>
                           <StIcon size={11} />
-                          {st.label}
+                          {st.labelBn}
+                          {lic.status === 'taken' && lic.assigned_at && (
+                            <span className="text-[9px] font-normal text-muted-foreground ml-1">
+                              ({new Date(lic.assigned_at).toLocaleDateString('bn-BD')})
+                            </span>
+                          )}
                         </span>
                       </td>
                       <td className="px-4 py-3">
@@ -839,6 +896,24 @@ const AdminLicenses = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
+                          {/* ★ Manual Take - prominent for available */}
+                          {lic.status === 'available' && (
+                            <button onClick={() => openTakeModal(lic)}
+                              title="ম্যানুয়ালি নিন"
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all"
+                              style={{ background: 'hsla(162,72%,46%,0.15)', color: 'hsl(162,72%,36%)' }}>
+                              <Download size={12} /> নিন
+                            </button>
+                          )}
+                          {/* Undo take */}
+                          {lic.status === 'taken' && (
+                            <button onClick={() => handleUntake(lic)}
+                              title="আবার Available করুন"
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all"
+                              style={{ background: 'hsla(200,90%,55%,0.12)', color: 'hsl(200,90%,45%)' }}>
+                              <RefreshCw size={11} /> ফেরত
+                            </button>
+                          )}
                           {/* Edit */}
                           <button onClick={() => openEditModal(lic)}
                             title="এডিট করুন"
@@ -848,8 +923,8 @@ const AdminLicenses = () => {
                           {/* Assign - only for available */}
                           {lic.status === 'available' && (
                             <button onClick={() => openAssignModal(lic)}
-                              title="কাস্টমারকে অ্যাসাইন করুন"
-                              className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
+                              title="অর্ডারে অ্যাসাইন করুন"
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
                               <UserPlus size={13} />
                             </button>
                           )}
@@ -879,7 +954,7 @@ const AdminLicenses = () => {
                               Revoke
                             </button>
                           )}
-                          {lic.status !== 'assigned' && (
+                          {(lic.status !== 'assigned') && (
                             <button onClick={() => handleDelete(lic.id)}
                               className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
                               <Trash2 size={13} />
@@ -1097,6 +1172,73 @@ const AdminLicenses = () => {
             {assignSearch.length >= 2 && !assignSearching && assignResults.length === 0 && (
               <p className="text-xs text-muted-foreground text-center py-6">কোনো অর্ডার পাওয়া যায়নি</p>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Manual Take Modal */}
+      {takeModal.open && takeModal.license && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setTakeModal({ open: false, license: null })}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Download size={16} style={{ color: 'hsl(162,72%,46%)' }} /> লাইসেন্স ম্যানুয়ালি নিন
+              </h3>
+              <button onClick={() => setTakeModal({ open: false, license: null })}
+                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-5">
+              <div className="rounded-xl p-4 border border-border" style={{ background: 'hsla(162,72%,46%,0.06)' }}>
+                <p className="text-[10px] text-muted-foreground mb-1">প্রোডাক্ট</p>
+                <p className="text-sm font-bold text-foreground">{takeModal.license.product_name}</p>
+              </div>
+
+              <div className="rounded-xl p-4 border border-border" style={{ background: 'hsla(258,78%,68%,0.06)' }}>
+                <p className="text-[10px] text-muted-foreground mb-1">
+                  {takeModal.license.key_type === 'subscription' || takeModal.license.key_type === 'account' ? 'Credentials' : 'License Key'}
+                </p>
+                <code className="text-sm font-mono font-bold break-all" style={{ color: 'hsl(258,78%,68%)' }}>
+                  {takeModal.license.key_value}
+                </code>
+                {takeModal.license.extra_info && (
+                  <p className="text-xs text-muted-foreground mt-2 font-mono border-t border-border/50 pt-2">{takeModal.license.extra_info}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
+                  নোট (ঐচ্ছিক) — কাকে দিচ্ছেন বা কেন নিচ্ছেন
+                </label>
+                <input
+                  value={takeNote}
+                  onChange={e => setTakeNote(e.target.value)}
+                  placeholder="যেমন: মোবাইলে কাস্টমারকে দিয়েছি, নাম: ..."
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+                />
+              </div>
+            </div>
+
+            <div className="rounded-xl p-3 mb-4 border" style={{ background: 'hsla(42,96%,58%,0.08)', borderColor: 'hsla(42,96%,58%,0.25)' }}>
+              <p className="text-[11px] font-medium" style={{ color: 'hsl(42,96%,42%)' }}>
+                ⚠️ নিলে এটি "নেওয়া হয়েছে" হিসেবে মার্ক হবে এবং Key ক্লিপবোর্ডে কপি হবে।
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={handleTake} disabled={taking}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, hsl(162,72%,46%), hsl(200,90%,55%))', color: 'white' }}>
+                {taking ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                নিন ও কপি করুন
+              </button>
+              <button onClick={() => setTakeModal({ open: false, license: null })}
+                className="px-4 py-3 rounded-xl text-sm border border-border text-muted-foreground hover:border-primary/40">
+                বাতিল
+              </button>
+            </div>
           </div>
         </div>
       )}
