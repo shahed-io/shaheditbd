@@ -1249,6 +1249,11 @@ const AdminLicenses = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border">
+                      <th className="w-10 px-3 py-3">
+                        <input type="checkbox" checked={pSelectedIds.size === pFiltered.length && pFiltered.length > 0}
+                          onChange={togglePSelectAll}
+                          className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
+                      </th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">নাম</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">ক্যাটাগরি</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কি / পাসওয়ার্ড</th>
@@ -1260,7 +1265,12 @@ const AdminLicenses = () => {
                   </thead>
                   <tbody>
                     {pFiltered.map(lic => (
-                      <tr key={lic.id} className="border-b border-border/40 hover:bg-muted/10 transition-colors">
+                      <tr key={lic.id} className={`border-b border-border/40 hover:bg-muted/10 transition-colors ${pSelectedIds.has(lic.id) ? 'bg-primary/5' : ''}`}>
+                        <td className="w-10 px-3 py-3">
+                          <input type="checkbox" checked={pSelectedIds.has(lic.id)}
+                            onChange={() => togglePSelect(lic.id)}
+                            className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
+                        </td>
                         <td className="px-4 py-3 font-medium text-foreground">{lic.name}</td>
                         <td className="px-4 py-3">
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
