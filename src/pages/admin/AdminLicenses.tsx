@@ -1222,8 +1222,20 @@ const AdminLicenses = () => {
 
           {/* Personal Table */}
           <div className="glass-card rounded-2xl overflow-hidden border border-border">
-            <div className="px-5 py-3 border-b border-border">
+            <div className="px-5 py-3 border-b border-border flex items-center justify-between">
               <span className="text-xs font-semibold text-muted-foreground">{pFiltered.length} টি পার্সোনাল লাইসেন্স</span>
+              {pSelectedIds.size > 0 && (
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-primary">{pSelectedIds.size}টি সিলেক্টেড</span>
+                  <button onClick={() => setPSelectedIds(new Set())}
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors">সব বাদ দিন</button>
+                  <button onClick={handlePBulkDelete} disabled={pBulkDeleting}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all">
+                    {pBulkDeleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
+                    ডিলিট ({pSelectedIds.size})
+                  </button>
+                </div>
+              )}
             </div>
             {pLoading ? (
               <div className="flex items-center justify-center py-20"><Loader2 size={24} className="animate-spin text-primary" /></div>
