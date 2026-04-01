@@ -1083,6 +1083,203 @@ const AdminLicenses = () => {
         )}
       </div>
 
+      </>)}
+
+      {/* ═══════════ Personal Inventory Tab ═══════════ */}
+      {activeTab === 'personal' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">ওয়েবসাইটের বাইরে আপনার ব্যক্তিগত লাইসেন্স ও সাবস্ক্রিপশন</p>
+            <button onClick={pOpenAdd}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all"
+              style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
+              <Plus size={14} /> নতুন যোগ করুন
+            </button>
+          </div>
+
+          {/* Personal Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: 'মোট', value: pStats.total, color: 'hsl(258,78%,68%)', bg: 'hsla(258,78%,68%,0.1)' },
+              { label: 'সক্রিয়', value: pStats.active, color: 'hsl(162,72%,46%)', bg: 'hsla(162,72%,46%,0.1)' },
+              { label: 'ডেলিভার্ড', value: pStats.delivered, color: 'hsl(200,90%,55%)', bg: 'hsla(200,90%,55%,0.1)' },
+              { label: 'মেয়াদোত্তীর্ণ', value: pStats.expired, color: 'hsl(0,72%,51%)', bg: 'hsla(0,72%,51%,0.1)' },
+            ].map(s => (
+              <div key={s.label} className="glass-card rounded-2xl p-4 border" style={{ borderColor: `${s.color}30`, background: s.bg }}>
+                <p className="text-xs text-muted-foreground">{s.label}</p>
+                <p className="text-2xl font-black mt-1" style={{ color: s.color }}>{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Personal Filters */}
+          <div className="flex flex-wrap gap-3">
+            <div className="relative flex-1 min-w-48">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input value={pSearch} onChange={e => setPSearch(e.target.value)}
+                placeholder="নাম, কি, কাস্টমার খুঁজুন..."
+                className="w-full bg-card border border-border rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary" />
+            </div>
+            <select value={pFilterStatus} onChange={e => setPFilterStatus(e.target.value)}
+              className="bg-card border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary">
+              <option value="all">সব স্ট্যাটাস</option>
+              <option value="active">সক্রিয়</option>
+              <option value="delivered">ডেলিভার্ড</option>
+              <option value="expired">মেয়াদোত্তীর্ণ</option>
+            </select>
+            <select value={pFilterCategory} onChange={e => setPFilterCategory(e.target.value)}
+              className="bg-card border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary max-w-48">
+              <option value="all">সব ক্যাটাগরি</option>
+              {pCategories.map(c => <option key={c} value={c!}>{c}</option>)}
+            </select>
+          </div>
+
+          {/* Personal Table */}
+          <div className="glass-card rounded-2xl overflow-hidden border border-border">
+            <div className="px-5 py-3 border-b border-border">
+              <span className="text-xs font-semibold text-muted-foreground">{pFiltered.length} টি পার্সোনাল লাইসেন্স</span>
+            </div>
+            {pLoading ? (
+              <div className="flex items-center justify-center py-20"><Loader2 size={24} className="animate-spin text-primary" /></div>
+            ) : pFiltered.length === 0 ? (
+              <div className="text-center py-16 text-muted-foreground">
+                <Box size={40} className="mx-auto mb-3 opacity-20" />
+                <p className="font-medium text-sm">কোনো পার্সোনাল লাইসেন্স পাওয়া যায়নি</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">নাম</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">ক্যাটাগরি</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কি / পাসওয়ার্ড</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">মেয়াদ</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">স্ট্যাটাস</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কাস্টমার</th>
+                      <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground">অ্যাকশন</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pFiltered.map(lic => (
+                      <tr key={lic.id} className="border-b border-border/40 hover:bg-muted/10 transition-colors">
+                        <td className="px-4 py-3 font-medium text-foreground">{lic.name}</td>
+                        <td className="px-4 py-3">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
+                            {lic.category}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="space-y-0.5 text-xs font-mono max-w-[200px] truncate">
+                            {lic.key_value && <div title={lic.key_value}>🔑 {lic.key_value.substring(0, 20)}{lic.key_value.length > 20 ? '...' : ''}</div>}
+                            {lic.password && <div>🔒 ••••••</div>}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          {lic.expires_at ? (
+                            <span className={`text-xs flex items-center gap-1 ${new Date(lic.expires_at) < new Date() ? 'text-destructive' : 'text-muted-foreground'}`}>
+                              <Clock size={11} />{new Date(lic.expires_at).toLocaleDateString('bn-BD')}
+                            </span>
+                          ) : <span className="text-xs text-muted-foreground">—</span>}
+                        </td>
+                        <td className="px-4 py-3">{pStatusBadge(lic.status)}</td>
+                        <td className="px-4 py-3">
+                          {lic.customer_name ? (
+                            <div><div className="text-xs font-medium text-foreground">{lic.customer_name}</div>
+                            {lic.customer_phone && <div className="text-[10px] text-muted-foreground">{lic.customer_phone}</div>}</div>
+                          ) : <span className="text-xs text-muted-foreground">—</span>}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-end gap-1">
+                            <button onClick={() => pCopyText(lic)} title="কপি"
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
+                              <Copy size={13} />
+                            </button>
+                            <button onClick={() => pSendWhatsApp(lic)} title="WhatsApp ডেলিভারি"
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
+                              <MessageCircle size={13} />
+                            </button>
+                            <button onClick={() => pOpenEdit(lic)} title="এডিট"
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
+                              <Edit3 size={13} />
+                            </button>
+                            <button onClick={() => { if (confirm('ডিলিট করতে চান?')) pDeleteMut.mutate(lic.id); }}
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Personal Add/Edit Dialog */}
+          <Dialog open={pOpen} onOpenChange={v => { if (!v) pCloseDialog(); }}>
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>{pEditing ? 'লাইসেন্স এডিট' : 'নতুন পার্সোনাল লাইসেন্স যোগ'}</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={e => { e.preventDefault(); pSaveMut.mutate(pForm); }} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <Label>নাম *</Label>
+                    <Input required value={pForm.name} onChange={e => setPForm(f => ({ ...f, name: e.target.value }))} placeholder="যেমন: Office 365, Canva Pro" />
+                  </div>
+                  <div>
+                    <Label>ক্যাটাগরি</Label>
+                    <Input value={pForm.category} onChange={e => setPForm(f => ({ ...f, category: e.target.value }))} placeholder="general" list="pcat-list" />
+                    <datalist id="pcat-list">{pCategories.map(c => <option key={c} value={c!} />)}</datalist>
+                  </div>
+                  <div>
+                    <Label>স্ট্যাটাস</Label>
+                    <Select value={pForm.status} onValueChange={v => setPForm(f => ({ ...f, status: v }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">সক্রিয়</SelectItem>
+                        <SelectItem value="delivered">ডেলিভার্ড</SelectItem>
+                        <SelectItem value="expired">মেয়াদোত্তীর্ণ</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="col-span-2">
+                    <Label>লাইসেন্স কি / ইমেইল</Label>
+                    <Input value={pForm.key_value} onChange={e => setPForm(f => ({ ...f, key_value: e.target.value }))} placeholder="XXXXX-XXXXX-XXXXX" />
+                  </div>
+                  <div className="col-span-2">
+                    <Label>পাসওয়ার্ড</Label>
+                    <Input value={pForm.password} onChange={e => setPForm(f => ({ ...f, password: e.target.value }))} placeholder="পাসওয়ার্ড (ঐচ্ছিক)" />
+                  </div>
+                  <div>
+                    <Label>মেয়াদ শেষ</Label>
+                    <Input type="date" value={pForm.expires_at} onChange={e => setPForm(f => ({ ...f, expires_at: e.target.value }))} />
+                  </div>
+                  <div>
+                    <Label>কাস্টমার ফোন</Label>
+                    <Input value={pForm.customer_phone} onChange={e => setPForm(f => ({ ...f, customer_phone: e.target.value }))} placeholder="01XXXXXXXXX" />
+                  </div>
+                  <div className="col-span-2">
+                    <Label>কাস্টমার নাম</Label>
+                    <Input value={pForm.customer_name} onChange={e => setPForm(f => ({ ...f, customer_name: e.target.value }))} />
+                  </div>
+                  <div className="col-span-2">
+                    <Label>নোট</Label>
+                    <Textarea value={pForm.note} onChange={e => setPForm(f => ({ ...f, note: e.target.value }))} rows={2} placeholder="অতিরিক্ত তথ্য..." />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="outline" onClick={pCloseDialog}>বাতিল</Button>
+                  <Button type="submit" disabled={pSaveMut.isPending}>{pSaveMut.isPending ? 'সেভ হচ্ছে...' : 'সেভ করুন'}</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
+
       {/* Email Resend Modal */}
       {emailModal.open && emailModal.license && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setEmailModal({ open: false, license: null, email: '' })}>
