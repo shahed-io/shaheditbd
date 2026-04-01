@@ -85,6 +85,7 @@ const AdminLicenses = () => {
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
   const [bulkProductSearch, setBulkProductSearch] = useState('');
   const [bulkProductDropdownOpen, setBulkProductDropdownOpen] = useState(false);
+  const [bulkTypeDropdownOpen, setBulkTypeDropdownOpen] = useState(false);
 
   // Edit modal state
   const [editModal, setEditModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
@@ -754,10 +755,28 @@ const AdminLicenses = () => {
                 </div>
               )}
             </div>
-            <select value={bulkType} onChange={e => setBulkType(e.target.value)}
-              className="bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
-              {KEY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-            </select>
+            <div className="relative">
+              <div
+                onClick={() => setBulkTypeDropdownOpen(!bulkTypeDropdownOpen)}
+                className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm cursor-pointer flex items-center justify-between"
+              >
+                <span className="text-foreground">{KEY_TYPES.find(t => t.value === bulkType)?.label || 'Key Type'}</span>
+                <ChevronDown size={14} className={`text-muted-foreground transition-transform ${bulkTypeDropdownOpen ? 'rotate-180' : ''}`} />
+              </div>
+              {bulkTypeDropdownOpen && (
+                <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl overflow-hidden">
+                  {KEY_TYPES.map(t => (
+                    <button
+                      key={t.value}
+                      onClick={() => { setBulkType(t.value); setBulkTypeDropdownOpen(false); }}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-primary/10 transition-colors ${bulkType === t.value ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'}`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* CSV/TXT File Upload */}
