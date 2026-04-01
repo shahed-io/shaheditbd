@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useQuery } from '@tanstack/react-query';
 import { useReveal } from '@/hooks/useReveal';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
@@ -22,38 +21,56 @@ const mapProduct = (p: any): Product => ({
 });
 
 const LIMIT = 8;
-const HIDDEN_CATS = ['Streaming', 'Adobe', 'Antivirus'];
-
-const fetchProducts = async () => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('id, slug, name, price, original_price, discount_percent, image_url, is_featured, total_sales, created_at, status, category:category_id(name, sort_order)')
-    .eq('status', 'active')
-    .order('sort_order', { ascending: true })
-    .limit(80);
-  if (error) throw error;
-  const rows = (data ?? []).filter((p: any) => !HIDDEN_CATS.includes(p.category?.name));
-  const products = rows.map(mapProduct);
-  const map = new Map<string, number>();
-  rows.forEach((p: any) => { if (p.category?.name) map.set(p.category.name, p.category.sort_order ?? 999); });
-  const tabs = ['All', ...[...map.entries()].sort((a, b) => a[1] - b[1]).map(([n]) => n)];
-  return { products, tabs };
-};
 
 const TopProducts = () => {
   const [activeTab,    setActiveTab]    = useState('All');
+  const [products,     setProducts]     = useState<Product[]>([]);
+  const [tabs,         setTabs]         = useState<string[]>(['All']);
+  const [loading,      setLoading]      = useState(true);
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
-  const { ref: sectionRef } = useReveal({ threshold: 0.05 });
+  const [error,        setError]        = useState(false);
+  const [retry,        setRetry]        = useState(0);
+  const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.05 });
 
-  const { data, isError, refetch } = useQuery({
-    queryKey: ['top-products'],
-    queryFn: fetchProducts,
-    staleTime: 1000 * 60 * 10,
-    gcTime: 1000 * 60 * 30,
-  });
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      setLoading(true);
+      setError(false);
+      try {
+        const { data, error: err } = await supabase
+          .from('products')
+          .select('id, slug, name, price, original_price, discount_percent, image_url, is_featured, total_sales, created_at, status, category:category_id(name, sort_order)')
+          .eq('status', 'active')
+          .order('sort_order', { ascending: true })
+          .limit(80);
+        if (cancelled) return;
+        if (err) {
+          console.error('[TopProducts] Supabase error:', err);
+          throw err;
+        }
+        const rows = data ?? [];
+        console.log('[TopProducts] Loaded products:', rows.length);
+        const hiddenCats = ['Streaming', 'Adobe', 'Antivirus'];
+        const filteredRows = rows.filter((p: any) => !hiddenCats.includes(p.category?.name));
+        setProducts(filteredRows.map(mapProduct));
+        const map = new Map<string, number>();
+        filteredRows.forEach((p: any) => { if (p.category?.name) map.set(p.category.name, p.category.sort_order ?? 999); });
+        const sorted = [...map.entries()].sort((a, b) => a[1] - b[1]).map(([n]) => n);
+        setTabs(['All', ...sorted]);
+      } catch (e) {
+        if (!cancelled) {
+          console.error('[TopProducts] Failed to load:', e);
+          setError(true);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    load();
+    return () => { cancelled = true; };
+  }, [retry]);
 
-  const products = data?.products ?? [];
-  const tabs = data?.tabs ?? ['All'];
   const filtered  = activeTab === 'All' ? products : products.filter(p => p.category === activeTab);
   const catOrder  = tabs.filter(t => t !== 'All');
   const toggleCat = (c: string) => setExpandedCats(p => ({ ...p, [c]: !p[c] }));
@@ -74,37 +91,33 @@ const TopProducts = () => {
             </h2>
             <p className="text-muted-foreground mt-2 max-w-md">Handpicked bestsellers with guaranteed authenticity.</p>
           </div>
-          {products.length > 0 && (
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Sparkles size={14} className="text-brand-indigo" />
-              {products.length} products available
-            </div>
-          )}
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Sparkles size={14} className="text-brand-indigo" />
+            {products.length} products available
+          </div>
         </div>
 
-        {/* Tab Bar — only show when we have data */}
-        {tabs.length > 1 && (
-          <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border">
-            {tabs.map((tab) => (
-              <button key={tab} onClick={() => setActiveTab(tab)}
-                style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200 ${
-                  activeTab === tab
-                    ? 'text-white shadow-indigo'
-                    : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
-                }`}>
-                {tab}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Tab Bar */}
+        <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border">
+          {tabs.map((tab) => (
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200 ${
+                activeTab === tab
+                  ? 'text-white shadow-indigo'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
+              }`}>
+              {tab}
+            </button>
+          ))}
+        </div>
 
         {/* Error */}
-        {isError && products.length === 0 && (
+        {error && !loading && (
           <div className="text-center py-20 space-y-4">
             <div className="text-6xl">😕</div>
             <p className="text-muted-foreground">Failed to load products. Please try again.</p>
-            <button onClick={() => refetch()}
+            <button onClick={() => setRetry(c => c + 1)}
               className="px-6 py-2.5 rounded-2xl text-sm font-bold text-white shadow-indigo"
               style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
               Retry
@@ -112,8 +125,17 @@ const TopProducts = () => {
           </div>
         )}
 
+        {/* Loading skeleton */}
+        {!error && loading && (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[0,1,2,3,4,5,6,7].map(i => (
+              <div key={i} className="rounded-2xl shimmer" style={{ height: '22rem', animationDelay: `${i * 0.08}s` }} />
+            ))}
+          </div>
+        )}
+
         {/* All Products grouped */}
-        {activeTab === 'All' && products.length > 0 && (
+        {!error && !loading && activeTab === 'All' && (
           <div className="space-y-14">
             {catOrder.map((cat, catIdx) => {
               const items      = products.filter(p => p.category === cat);
@@ -161,7 +183,7 @@ const TopProducts = () => {
         )}
 
         {/* Filtered by tab */}
-        {activeTab !== 'All' && filtered.length > 0 && (
+        {!error && !loading && activeTab !== 'All' && (
           <div>
             <p className="text-sm text-muted-foreground mb-6 font-fira">{filtered.length} products in "{activeTab}"</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
