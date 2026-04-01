@@ -5,7 +5,7 @@ import {
   Plus, Trash2, Key, Eye, EyeOff, Search, Filter,
   CheckCircle2, Clock, XCircle, Upload, Download,
   Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag,
-  Printer, Mail, Send, X, FileText
+  Printer, Mail, Send, X, FileText, Edit3, UserPlus, UserMinus
 } from 'lucide-react';
 
 type LicenseKey = {
