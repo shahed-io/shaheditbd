@@ -699,7 +699,6 @@ const AdminLicenses = () => {
             <Plus size={14} /> Add License
           </button>
         </div>
-      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
