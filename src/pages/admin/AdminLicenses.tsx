@@ -1056,8 +1056,12 @@ const AdminLicenses = () => {
                   const isVisible = showValues[lic.id];
                   const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label || lic.key_type;
                   return (
-                    <tr key={lic.id} className="border-b border-border/40 hover:bg-muted/10 transition-colors">
-                      <td className="px-4 py-3">
+                    <tr key={lic.id} className={`border-b border-border/40 hover:bg-muted/10 transition-colors ${selectedIds.has(lic.id) ? 'bg-primary/5' : ''}`}>
+                      <td className="w-10 px-3 py-3">
+                        <input type="checkbox" checked={selectedIds.has(lic.id)}
+                          onChange={() => toggleSelect(lic.id)}
+                          className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
+                      </td>
                         <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
                           style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
                           {typeLabel}
