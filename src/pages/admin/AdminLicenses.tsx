@@ -127,20 +127,40 @@ const AdminLicenses = () => {
    const [pProductSearch, setPProductSearch] = useState('');
    const [pProductDropdownOpen, setPProductDropdownOpen] = useState(false);
    const pDropdownRef = useRef<HTMLDivElement>(null);
+   const pCatDropdownRef = useRef<HTMLDivElement>(null);
+   const [pCatSearch, setPCatSearch] = useState('');
+   const [pCatDropdownOpen, setPCatDropdownOpen] = useState(false);
 
-  const { data: personalLicenses = [], isLoading: pLoading } = useQuery({
-    queryKey: ['personal-licenses'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('personal_licenses')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data as PersonalLicense[];
-    },
-  });
+   const { data: personalLicenses = [], isLoading: pLoading } = useQuery({
+     queryKey: ['personal-licenses'],
+     queryFn: async () => {
+       const { data, error } = await supabase
+         .from('personal_licenses')
+         .select('*')
+         .order('created_at', { ascending: false });
+       if (error) throw error;
+       return data as PersonalLicense[];
+     },
+   });
 
-  const pCategories = [...new Set(personalLicenses.map(l => l.category))].filter(Boolean);
+   // Fetch DB categories
+   const { data: dbCategories = [] } = useQuery({
+     queryKey: ['categories-list'],
+     queryFn: async () => {
+       const { data, error } = await supabase
+         .from('categories')
+         .select('id, name, slug')
+         .eq('is_active', true)
+         .order('sort_order');
+       if (error) throw error;
+       return data;
+     },
+   });
+
+   const pCategories = [...new Set([
+     ...dbCategories.map(c => c.name),
+     ...personalLicenses.map(l => l.category).filter(Boolean),
+   ])];
 
   const pSaveMut = useMutation({
     mutationFn: async (vals: typeof personalEmptyForm) => {
@@ -295,6 +315,9 @@ const AdminLicenses = () => {
      const handler = (e: MouseEvent) => {
        if (pDropdownRef.current && !pDropdownRef.current.contains(e.target as Node)) {
          setPProductDropdownOpen(false);
+       }
+       if (pCatDropdownRef.current && !pCatDropdownRef.current.contains(e.target as Node)) {
+         setPCatDropdownOpen(false);
        }
      };
      document.addEventListener('mousedown', handler);
@@ -1387,25 +1410,56 @@ const AdminLicenses = () => {
                       </div>
                     )}
                   </div>
-                  <div className="relative">
+                  <div className="relative" ref={pCatDropdownRef}>
                     <Label>ক্যাটাগরি</Label>
-                    <div className="relative">
-                      <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                      <Input
-                        value={pForm.category}
-                        onChange={e => { setPForm(f => ({ ...f, category: e.target.value })); }}
-                        onFocus={e => e.target.select()}
-                        placeholder="ক্যাটাগরি সার্চ বা লিখুন..."
-                        className="pl-9"
-                        autoComplete="off"
-                        list="pcat-suggestions"
-                      />
+                    <div
+                      onClick={() => { setPCatDropdownOpen(!pCatDropdownOpen); setPCatSearch(''); }}
+                      className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm cursor-pointer flex items-center justify-between"
+                    >
+                      <span className={pForm.category ? 'text-foreground' : 'text-muted-foreground'}>
+                        {pForm.category || 'ক্যাটাগরি বেছে নিন'}
+                      </span>
+                      <ChevronDown size={14} className={`text-muted-foreground transition-transform ${pCatDropdownOpen ? 'rotate-180' : ''}`} />
                     </div>
-                    <datalist id="pcat-suggestions">
-                      {pCategories.filter(c => !pForm.category || c!.toLowerCase().includes(pForm.category.toLowerCase())).map(c => (
-                        <option key={c} value={c!} />
-                      ))}
-                    </datalist>
+                    {pCatDropdownOpen && (
+                      <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-52 overflow-hidden">
+                        <div className="p-2 border-b border-border">
+                          <div className="relative">
+                            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                            <input
+                              value={pCatSearch}
+                              onChange={e => setPCatSearch(e.target.value)}
+                              placeholder="ক্যাটাগরি খুঁজুন..."
+                              className="w-full bg-muted/20 border border-border rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
+                              autoFocus
+                              onClick={e => e.stopPropagation()}
+                            />
+                          </div>
+                        </div>
+                        <div className="overflow-y-auto max-h-40">
+                          {pCategories.filter(c => !pCatSearch || c.toLowerCase().includes(pCatSearch.toLowerCase())).length > 0 ? (
+                            pCategories.filter(c => !pCatSearch || c.toLowerCase().includes(pCatSearch.toLowerCase())).map(c => (
+                              <button key={c} type="button"
+                                onClick={e => { e.stopPropagation(); setPForm(f => ({ ...f, category: c })); setPCatDropdownOpen(false); }}
+                                className={`w-full text-left px-3 py-2 text-xs hover:bg-primary/10 transition-colors ${pForm.category === c ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'}`}>
+                                {c}
+                              </button>
+                            ))
+                          ) : (
+                            <div className="text-center py-3">
+                              <p className="text-xs text-muted-foreground mb-1">পাওয়া যায়নি</p>
+                              {pCatSearch && (
+                                <button type="button"
+                                  onClick={() => { setPForm(f => ({ ...f, category: pCatSearch })); setPCatDropdownOpen(false); }}
+                                  className="text-xs text-primary hover:underline">
+                                  "{pCatSearch}" নতুন হিসেবে ব্যবহার করুন
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <Label>স্ট্যাটাস</Label>
