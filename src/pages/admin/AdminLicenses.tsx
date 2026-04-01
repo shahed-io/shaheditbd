@@ -1188,12 +1188,15 @@ const AdminLicenses = () => {
           {/* Personal Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: 'মোট', value: pStats.total, color: 'hsl(258,78%,68%)', bg: 'hsla(258,78%,68%,0.1)' },
-              { label: 'সক্রিয়', value: pStats.active, color: 'hsl(162,72%,46%)', bg: 'hsla(162,72%,46%,0.1)' },
-              { label: 'ডেলিভার্ড', value: pStats.delivered, color: 'hsl(200,90%,55%)', bg: 'hsla(200,90%,55%,0.1)' },
-              { label: 'মেয়াদোত্তীর্ণ', value: pStats.expired, color: 'hsl(0,72%,51%)', bg: 'hsla(0,72%,51%,0.1)' },
+              { label: 'মোট', value: pStats.total, color: 'hsl(258,78%,68%)', bg: 'hsla(258,78%,68%,0.1)', filter: 'all' },
+              { label: 'সক্রিয়', value: pStats.active, color: 'hsl(162,72%,46%)', bg: 'hsla(162,72%,46%,0.1)', filter: 'active' },
+              { label: 'ডেলিভার্ড', value: pStats.delivered, color: 'hsl(200,90%,55%)', bg: 'hsla(200,90%,55%,0.1)', filter: 'delivered' },
+              { label: 'মেয়াদোত্তীর্ণ', value: pStats.expired, color: 'hsl(0,72%,51%)', bg: 'hsla(0,72%,51%,0.1)', filter: 'expired' },
             ].map(s => (
-              <div key={s.label} className="glass-card rounded-2xl p-4 border" style={{ borderColor: `${s.color}30`, background: s.bg }}>
+              <div key={s.label}
+                onClick={() => setPFilterStatus(pFilterStatus === s.filter ? 'all' : s.filter)}
+                className={`glass-card rounded-2xl p-4 border cursor-pointer transition-all hover:scale-[1.02] ${pFilterStatus === s.filter ? 'ring-2 ring-offset-2 ring-offset-background' : ''}`}
+                style={{ borderColor: `${s.color}30`, background: s.bg }}>
                 <p className="text-xs text-muted-foreground">{s.label}</p>
                 <p className="text-2xl font-black mt-1" style={{ color: s.color }}>{s.value}</p>
               </div>
