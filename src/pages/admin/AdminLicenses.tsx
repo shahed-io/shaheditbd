@@ -131,19 +131,36 @@ const AdminLicenses = () => {
    const [pCatSearch, setPCatSearch] = useState('');
    const [pCatDropdownOpen, setPCatDropdownOpen] = useState(false);
 
-  const { data: personalLicenses = [], isLoading: pLoading } = useQuery({
-    queryKey: ['personal-licenses'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('personal_licenses')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data as PersonalLicense[];
-    },
-  });
+   const { data: personalLicenses = [], isLoading: pLoading } = useQuery({
+     queryKey: ['personal-licenses'],
+     queryFn: async () => {
+       const { data, error } = await supabase
+         .from('personal_licenses')
+         .select('*')
+         .order('created_at', { ascending: false });
+       if (error) throw error;
+       return data as PersonalLicense[];
+     },
+   });
 
-  const pCategories = [...new Set(personalLicenses.map(l => l.category))].filter(Boolean);
+   // Fetch DB categories
+   const { data: dbCategories = [] } = useQuery({
+     queryKey: ['categories-list'],
+     queryFn: async () => {
+       const { data, error } = await supabase
+         .from('categories')
+         .select('id, name, slug')
+         .eq('is_active', true)
+         .order('sort_order');
+       if (error) throw error;
+       return data;
+     },
+   });
+
+   const pCategories = [...new Set([
+     ...dbCategories.map(c => c.name),
+     ...personalLicenses.map(l => l.category).filter(Boolean),
+   ])];
 
   const pSaveMut = useMutation({
     mutationFn: async (vals: typeof personalEmptyForm) => {
