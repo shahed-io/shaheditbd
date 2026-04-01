@@ -224,7 +224,7 @@ const AppContent = () => {
             <Route path="invoices" element={<AdminInvoiceGenerator />} />
             <Route path="footer-settings" element={<AdminFooterSettings />} />
             <Route path="live-chat" element={<AdminLiveChat />} />
-            <Route path="personal-licenses" element={<AdminPersonalLicenses />} />
+            
             <Route path="reseller" element={<Reseller />} />
             <Route path="reseller-accounts" element={<AdminResellerAccounts />} />
           </Route>
