@@ -768,13 +768,15 @@ const AdminLicenses = () => {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'মোট Keys', value: stats.total,     color: 'hsl(258,78%,68%)',  bg: 'hsla(258,78%,68%,0.1)' },
-          { label: 'Available', value: stats.available, color: 'hsl(162,72%,46%)',  bg: 'hsla(162,72%,46%,0.1)' },
-          { label: 'Assigned',  value: stats.assigned,  color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)' },
-          { label: 'Revoked',   value: stats.revoked,   color: 'hsl(0,72%,51%)',    bg: 'hsla(0,72%,51%,0.1)' },
+          { label: 'মোট Keys', value: stats.total,     color: 'hsl(258,78%,68%)',  bg: 'hsla(258,78%,68%,0.1)', filter: 'all' },
+          { label: 'Available', value: stats.available, color: 'hsl(162,72%,46%)',  bg: 'hsla(162,72%,46%,0.1)', filter: 'available' },
+          { label: 'Assigned',  value: stats.assigned,  color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)', filter: 'assigned' },
+          { label: 'Revoked',   value: stats.revoked,   color: 'hsl(0,72%,51%)',    bg: 'hsla(0,72%,51%,0.1)',   filter: 'revoked' },
         ].map(s => (
-          <div key={s.label} className="glass-card rounded-2xl p-4 border"
-            style={{ borderColor: `${s.color}30`, background: s.bg }}>
+          <div key={s.label}
+            onClick={() => setFilterStatus(filterStatus === s.filter ? 'all' : s.filter)}
+            className={`glass-card rounded-2xl p-4 border cursor-pointer transition-all hover:scale-[1.02] ${filterStatus === s.filter ? 'ring-2 ring-offset-2 ring-offset-background' : ''}`}
+            style={{ borderColor: `${s.color}30`, background: s.bg, ...(filterStatus === s.filter ? { ringColor: s.color } : {}) }}>
             <p className="text-xs text-muted-foreground">{s.label}</p>
             <p className="text-2xl font-black mt-1" style={{ color: s.color }}>{s.value}</p>
           </div>
