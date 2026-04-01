@@ -34,11 +34,12 @@ const KEY_TYPES = [
   { value: 'custom',       label: '📝 Custom Info',         desc: 'Any custom delivery info' },
 ];
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  available: { label: 'Available',  color: 'hsl(162,72%,46%)',  icon: CheckCircle2 },
-  assigned:  { label: 'Assigned',   color: 'hsl(258,78%,68%)',  icon: User },
-  reserved:  { label: 'Reserved',   color: 'hsl(42,96%,58%)',   icon: Clock },
-  revoked:   { label: 'Revoked',    color: 'hsl(0,72%,51%)',    icon: XCircle },
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any; labelBn: string }> = {
+  available: { label: 'Available',  labelBn: 'এভেইলেবল',  color: 'hsl(162,72%,46%)',  icon: CheckCircle2 },
+  taken:     { label: 'Taken',      labelBn: 'নেওয়া হয়েছে', color: 'hsl(200,90%,55%)',  icon: Download },
+  assigned:  { label: 'Assigned',   labelBn: 'অ্যাসাইনড',  color: 'hsl(258,78%,68%)',  icon: User },
+  reserved:  { label: 'Reserved',   labelBn: 'রিজার্ভড',   color: 'hsl(42,96%,58%)',   icon: Clock },
+  revoked:   { label: 'Revoked',    labelBn: 'বাতিল',       color: 'hsl(0,72%,51%)',    icon: XCircle },
 };
 
 const emptyForm = {
