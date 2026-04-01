@@ -1387,10 +1387,25 @@ const AdminLicenses = () => {
                       </div>
                     )}
                   </div>
-                  <div>
+                  <div className="relative">
                     <Label>ক্যাটাগরি</Label>
-                    <Input value={pForm.category} onChange={e => setPForm(f => ({ ...f, category: e.target.value }))} placeholder="general" list="pcat-list" />
-                    <datalist id="pcat-list">{pCategories.map(c => <option key={c} value={c!} />)}</datalist>
+                    <div className="relative">
+                      <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                      <Input
+                        value={pForm.category}
+                        onChange={e => { setPForm(f => ({ ...f, category: e.target.value })); }}
+                        onFocus={e => e.target.select()}
+                        placeholder="ক্যাটাগরি সার্চ বা লিখুন..."
+                        className="pl-9"
+                        autoComplete="off"
+                        list="pcat-suggestions"
+                      />
+                    </div>
+                    <datalist id="pcat-suggestions">
+                      {pCategories.filter(c => !pForm.category || c!.toLowerCase().includes(pForm.category.toLowerCase())).map(c => (
+                        <option key={c} value={c!} />
+                      ))}
+                    </datalist>
                   </div>
                   <div>
                     <Label>স্ট্যাটাস</Label>
