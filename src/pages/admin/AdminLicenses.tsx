@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
@@ -7,7 +7,7 @@ import {
   CheckCircle2, Clock, XCircle, Upload, Download,
   Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag,
   Printer, Mail, Send, X, FileText, Edit3, UserPlus, UserMinus,
-  MessageCircle, Box
+  MessageCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,21 +59,8 @@ const emptyForm = {
   extra_info: '',
 };
 
-// ── Personal License Type ──
-type PersonalLicense = {
-  id: string; name: string; category: string; key_value: string | null;
-  password: string | null; expires_at: string | null; note: string | null;
-  status: string; customer_name: string | null; customer_phone: string | null;
-  delivered_at: string | null; created_at: string; updated_at: string;
-};
-
-const personalEmptyForm = {
-  name: '', category: 'general', key_value: '', password: '',
-  expires_at: '', note: '', status: 'active', customer_name: '', customer_phone: '',
-};
 
 const AdminLicenses = () => {
-  const [activeTab, setActiveTab] = useState<'product' | 'personal'>('product');
   const qc = useQueryClient();
 
   // ── Product License States ──
@@ -113,167 +100,8 @@ const AdminLicenses = () => {
 
   // ── Bulk Selection States ──
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [pSelectedIds, setPSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
-  const [pBulkDeleting, setPBulkDeleting] = useState(false);
 
-  // ── Personal Inventory States ──
-  const [pOpen, setPOpen] = useState(false);
-  const [pEditing, setPEditing] = useState<PersonalLicense | null>(null);
-  const [pForm, setPForm] = useState(personalEmptyForm);
-  const [pSearch, setPSearch] = useState('');
-  const [pFilterStatus, setPFilterStatus] = useState('all');
-   const [pFilterCategory, setPFilterCategory] = useState('all');
-   const [pProductSearch, setPProductSearch] = useState('');
-   const [pProductDropdownOpen, setPProductDropdownOpen] = useState(false);
-   const pDropdownRef = useRef<HTMLDivElement>(null);
-   const pCatDropdownRef = useRef<HTMLDivElement>(null);
-   const [pCatSearch, setPCatSearch] = useState('');
-   const [pCatDropdownOpen, setPCatDropdownOpen] = useState(false);
-
-   const { data: personalLicenses = [], isLoading: pLoading } = useQuery({
-     queryKey: ['personal-licenses'],
-     queryFn: async () => {
-       const { data, error } = await supabase
-         .from('personal_licenses')
-         .select('*')
-         .order('created_at', { ascending: false });
-       if (error) throw error;
-       return data as PersonalLicense[];
-     },
-   });
-
-   // Fetch DB categories
-   const { data: dbCategories = [] } = useQuery({
-     queryKey: ['categories-list'],
-     queryFn: async () => {
-       const { data, error } = await supabase
-         .from('categories')
-         .select('id, name, slug')
-         .eq('is_active', true)
-         .order('sort_order');
-       if (error) throw error;
-       return data;
-     },
-   });
-
-   const pCategories = [...new Set([
-     ...dbCategories.map(c => c.name),
-     ...personalLicenses.map(l => l.category).filter(Boolean),
-   ])];
-
-  const pSaveMut = useMutation({
-    mutationFn: async (vals: typeof personalEmptyForm) => {
-      const payload: any = {
-        name: vals.name, category: vals.category || 'general',
-        key_value: vals.key_value || null, password: vals.password || null,
-        expires_at: vals.expires_at || null, note: vals.note || null,
-        status: vals.status, customer_name: vals.customer_name || null,
-        customer_phone: vals.customer_phone || null,
-      };
-      if (pEditing) {
-        const { error } = await supabase.from('personal_licenses').update(payload).eq('id', pEditing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('personal_licenses').insert(payload);
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['personal-licenses'] });
-      toast.success(pEditing ? 'আপডেট হয়েছে' : 'যোগ হয়েছে');
-      pCloseDialog();
-    },
-    onError: (e: any) => toast.error(e.message),
-  });
-
-  const pDeleteMut = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('personal_licenses').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['personal-licenses'] });
-      toast.success('ডিলিট হয়েছে');
-    },
-  });
-
-  const pDeliverMut = useMutation({
-    mutationFn: async (lic: PersonalLicense) => {
-      const { error } = await supabase.from('personal_licenses').update({
-        status: 'delivered', delivered_at: new Date().toISOString(),
-      }).eq('id', lic.id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['personal-licenses'] });
-      toast.success('ডেলিভারি মার্ক হয়েছে');
-    },
-  });
-
-  function pOpenAdd() { setPEditing(null); setPForm(personalEmptyForm); setPOpen(true); }
-  function pOpenEdit(lic: PersonalLicense) {
-    setPEditing(lic);
-    setPForm({
-      name: lic.name, category: lic.category || 'general',
-      key_value: lic.key_value || '', password: lic.password || '',
-      expires_at: lic.expires_at ? lic.expires_at.split('T')[0] : '',
-      note: lic.note || '', status: lic.status,
-      customer_name: lic.customer_name || '', customer_phone: lic.customer_phone || '',
-    });
-    setPOpen(true);
-  }
-  function pCloseDialog() { setPOpen(false); setPEditing(null); setPForm(personalEmptyForm); }
-
-  function pCopyText(lic: PersonalLicense) {
-    const lines = [`📦 ${lic.name}`];
-    if (lic.key_value) lines.push(`🔑 Key: ${lic.key_value}`);
-    if (lic.password) lines.push(`🔒 Password: ${lic.password}`);
-    if (lic.expires_at) lines.push(`📅 মেয়াদ: ${new Date(lic.expires_at).toLocaleDateString('bn-BD')}`);
-    if (lic.note) lines.push(`📝 নোট: ${lic.note}`);
-    navigator.clipboard.writeText(lines.join('\n'));
-    toast.success('কপি হয়েছে');
-  }
-
-  function pSendWhatsApp(lic: PersonalLicense) {
-    const lines = [`📦 *${lic.name}*`];
-    if (lic.key_value) lines.push(`🔑 Key: \`${lic.key_value}\``);
-    if (lic.password) lines.push(`🔒 Password: \`${lic.password}\``);
-    if (lic.expires_at) lines.push(`📅 মেয়াদ: ${new Date(lic.expires_at).toLocaleDateString('bn-BD')}`);
-    if (lic.note) lines.push(`📝 ${lic.note}`);
-    lines.push('\n✅ Shahed Store থেকে ডেলিভারি করা হলো।');
-    const phone = lic.customer_phone?.replace(/[^0-9]/g, '') || '';
-    const intlPhone = phone.startsWith('0') ? '88' + phone : phone;
-    window.open(`https://wa.me/${intlPhone}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
-    pDeliverMut.mutate(lic);
-  }
-
-  const pFiltered = personalLicenses.filter(l => {
-    if (pFilterStatus !== 'all' && l.status !== pFilterStatus) return false;
-    if (pFilterCategory !== 'all' && l.category !== pFilterCategory) return false;
-    if (pSearch) {
-      const q = pSearch.toLowerCase();
-      return l.name.toLowerCase().includes(q) || (l.key_value || '').toLowerCase().includes(q) ||
-        (l.customer_name || '').toLowerCase().includes(q) || (l.customer_phone || '').includes(q);
-    }
-    return true;
-  });
-
-  const pStats = {
-    total: personalLicenses.length,
-    active: personalLicenses.filter(l => l.status === 'active').length,
-    delivered: personalLicenses.filter(l => l.status === 'delivered').length,
-    expired: personalLicenses.filter(l => l.status === 'expired').length,
-  };
-
-  const pStatusBadge = (s: string) => {
-    switch (s) {
-      case 'active': return <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(162,72%,46%,0.12)', color: 'hsl(162,72%,36%)' }}><CheckCircle2 size={10} />সক্রিয়</span>;
-      case 'expired': return <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(0,72%,51%,0.12)', color: 'hsl(0,72%,51%)' }}><XCircle size={10} />মেয়াদোত্তীর্ণ</span>;
-      case 'delivered': return <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(200,90%,55%,0.12)', color: 'hsl(200,90%,45%)' }}><Package size={10} />ডেলিভার্ড</span>;
-      default: return <span className="text-[10px] text-muted-foreground">{s}</span>;
-    }
-  };
 
   const fetchAll = async () => {
     setLoading(true);
@@ -310,19 +138,6 @@ const AdminLicenses = () => {
 
    useEffect(() => { fetchAll(); }, []);
 
-   // Close personal product dropdown on outside click
-   useEffect(() => {
-     const handler = (e: MouseEvent) => {
-       if (pDropdownRef.current && !pDropdownRef.current.contains(e.target as Node)) {
-         setPProductDropdownOpen(false);
-       }
-       if (pCatDropdownRef.current && !pCatDropdownRef.current.contains(e.target as Node)) {
-         setPCatDropdownOpen(false);
-       }
-     };
-     document.addEventListener('mousedown', handler);
-     return () => document.removeEventListener('mousedown', handler);
-   }, []);
 
   const handleSave = async () => {
     if (!form.product_id) return toast.error('প্রোডাক্ট সিলেক্ট করুন');
@@ -400,34 +215,6 @@ const AdminLicenses = () => {
     }
   };
 
-  // ── Bulk Delete (Personal) ──
-  const handlePBulkDelete = async () => {
-    if (pSelectedIds.size === 0) return;
-    if (!confirm(`${pSelectedIds.size}টি পার্সোনাল লাইসেন্স ডিলিট করবেন?`)) return;
-    setPBulkDeleting(true);
-    const { error } = await supabase.from('personal_licenses').delete().in('id', Array.from(pSelectedIds));
-    setPBulkDeleting(false);
-    if (error) return toast.error('বাল্ক ডিলিট ব্যর্থ');
-    toast.success(`${pSelectedIds.size}টি পার্সোনাল লাইসেন্স ডিলিট হয়েছে`);
-    setPSelectedIds(new Set());
-    qc.invalidateQueries({ queryKey: ['personal-licenses'] });
-  };
-
-  const togglePSelect = (id: string) => {
-    setPSelectedIds(prev => {
-      const n = new Set(prev);
-      if (n.has(id)) n.delete(id); else n.add(id);
-      return n;
-    });
-  };
-
-  const togglePSelectAll = () => {
-    if (pSelectedIds.size === pFiltered.length) {
-      setPSelectedIds(new Set());
-    } else {
-      setPSelectedIds(new Set(pFiltered.map(l => l.id)));
-    }
-  };
 
   const handleRevoke = async (id: string) => {
     await supabase.from('license_keys').update({ status: 'revoked' }).eq('id', id);
@@ -754,31 +541,12 @@ const AdminLicenses = () => {
             <Key size={24} className="text-primary" /> License Manager
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            প্রোডাক্ট লাইসেন্স ও পার্সোনাল ইনভেন্টরি এক জায়গায় ম্যানেজ করুন
+            প্রোডাক্ট লাইসেন্স ম্যানেজ করুন
           </p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-muted/30 p-1 rounded-xl border border-border w-fit">
-        <button
-          onClick={() => setActiveTab('product')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'product' ? 'bg-card shadow-sm text-foreground border border-border' : 'text-muted-foreground hover:text-foreground'}`}
-        >
-          <Key size={14} /> প্রোডাক্ট লাইসেন্স
-        </button>
-        <button
-          onClick={() => setActiveTab('personal')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'personal' ? 'bg-card shadow-sm text-foreground border border-border' : 'text-muted-foreground hover:text-foreground'}`}
-        >
-          <Box size={14} /> পার্সোনাল ইনভেন্টরি
-          {pStats.total > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">{pStats.total}</span>
-          )}
-        </button>
-      </div>
-
-      {activeTab === 'product' && (<>
+      {/* Product Licenses */}
       {/* Product Licenses Header Actions */}
       <div className="flex justify-end gap-2">
           <button
@@ -1208,304 +976,6 @@ const AdminLicenses = () => {
         )}
       </div>
 
-      </>)}
-
-      {/* ═══════════ Personal Inventory Tab ═══════════ */}
-      {activeTab === 'personal' && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">ওয়েবসাইটের বাইরে আপনার ব্যক্তিগত লাইসেন্স ও সাবস্ক্রিপশন</p>
-            <button onClick={pOpenAdd}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all"
-              style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
-              <Plus size={14} /> নতুন যোগ করুন
-            </button>
-          </div>
-
-          {/* Personal Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { label: 'মোট', value: pStats.total, color: 'hsl(258,78%,68%)', bg: 'hsla(258,78%,68%,0.1)', filter: 'all' },
-              { label: 'সক্রিয়', value: pStats.active, color: 'hsl(162,72%,46%)', bg: 'hsla(162,72%,46%,0.1)', filter: 'active' },
-              { label: 'ডেলিভার্ড', value: pStats.delivered, color: 'hsl(200,90%,55%)', bg: 'hsla(200,90%,55%,0.1)', filter: 'delivered' },
-              { label: 'মেয়াদোত্তীর্ণ', value: pStats.expired, color: 'hsl(0,72%,51%)', bg: 'hsla(0,72%,51%,0.1)', filter: 'expired' },
-            ].map(s => (
-              <div key={s.label}
-                onClick={() => setPFilterStatus(pFilterStatus === s.filter ? 'all' : s.filter)}
-                className={`glass-card rounded-2xl p-4 border cursor-pointer transition-all hover:scale-[1.02] ${pFilterStatus === s.filter ? 'ring-2 ring-offset-2 ring-offset-background' : ''}`}
-                style={{ borderColor: `${s.color}30`, background: s.bg }}>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
-                <p className="text-2xl font-black mt-1" style={{ color: s.color }}>{s.value}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Personal Filters */}
-          <div className="flex flex-wrap gap-3">
-            <div className="relative flex-1 min-w-48">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input value={pSearch} onChange={e => setPSearch(e.target.value)}
-                placeholder="নাম, কি, কাস্টমার খুঁজুন..."
-                className="w-full bg-card border border-border rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary" />
-            </div>
-            <select value={pFilterStatus} onChange={e => setPFilterStatus(e.target.value)}
-              className="bg-card border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary">
-              <option value="all">সব স্ট্যাটাস</option>
-              <option value="active">সক্রিয়</option>
-              <option value="delivered">ডেলিভার্ড</option>
-              <option value="expired">মেয়াদোত্তীর্ণ</option>
-            </select>
-            <select value={pFilterCategory} onChange={e => setPFilterCategory(e.target.value)}
-              className="bg-card border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary max-w-48">
-              <option value="all">সব ক্যাটাগরি</option>
-              {pCategories.map(c => <option key={c} value={c!}>{c}</option>)}
-            </select>
-          </div>
-
-          {/* Personal Table */}
-          <div className="glass-card rounded-2xl overflow-hidden border border-border">
-            <div className="px-5 py-3 border-b border-border flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">{pFiltered.length} টি পার্সোনাল লাইসেন্স</span>
-              {pSelectedIds.size > 0 && (
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-primary">{pSelectedIds.size}টি সিলেক্টেড</span>
-                  <button onClick={() => setPSelectedIds(new Set())}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors">সব বাদ দিন</button>
-                  <button onClick={handlePBulkDelete} disabled={pBulkDeleting}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all">
-                    {pBulkDeleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
-                    ডিলিট ({pSelectedIds.size})
-                  </button>
-                </div>
-              )}
-            </div>
-            {pLoading ? (
-              <div className="flex items-center justify-center py-20"><Loader2 size={24} className="animate-spin text-primary" /></div>
-            ) : pFiltered.length === 0 ? (
-              <div className="text-center py-16 text-muted-foreground">
-                <Box size={40} className="mx-auto mb-3 opacity-20" />
-                <p className="font-medium text-sm">কোনো পার্সোনাল লাইসেন্স পাওয়া যায়নি</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="w-10 px-3 py-3">
-                        <input type="checkbox" checked={pSelectedIds.size === pFiltered.length && pFiltered.length > 0}
-                          onChange={togglePSelectAll}
-                          className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
-                      </th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">নাম</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">ক্যাটাগরি</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কি / পাসওয়ার্ড</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">মেয়াদ</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">স্ট্যাটাস</th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কাস্টমার</th>
-                      <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground">অ্যাকশন</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pFiltered.map(lic => (
-                      <tr key={lic.id} className={`border-b border-border/40 hover:bg-muted/10 transition-colors ${pSelectedIds.has(lic.id) ? 'bg-primary/5' : ''}`}>
-                        <td className="w-10 px-3 py-3">
-                          <input type="checkbox" checked={pSelectedIds.has(lic.id)}
-                            onChange={() => togglePSelect(lic.id)}
-                            className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
-                        </td>
-                        <td className="px-4 py-3 font-medium text-foreground">{lic.name}</td>
-                        <td className="px-4 py-3">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
-                            {lic.category}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="space-y-0.5 text-xs font-mono max-w-[200px] truncate">
-                            {lic.key_value && <div title={lic.key_value}>🔑 {lic.key_value.substring(0, 20)}{lic.key_value.length > 20 ? '...' : ''}</div>}
-                            {lic.password && <div>🔒 ••••••</div>}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          {lic.expires_at ? (
-                            <span className={`text-xs flex items-center gap-1 ${new Date(lic.expires_at) < new Date() ? 'text-destructive' : 'text-muted-foreground'}`}>
-                              <Clock size={11} />{new Date(lic.expires_at).toLocaleDateString('bn-BD')}
-                            </span>
-                          ) : <span className="text-xs text-muted-foreground">—</span>}
-                        </td>
-                        <td className="px-4 py-3">{pStatusBadge(lic.status)}</td>
-                        <td className="px-4 py-3">
-                          {lic.customer_name ? (
-                            <div><div className="text-xs font-medium text-foreground">{lic.customer_name}</div>
-                            {lic.customer_phone && <div className="text-[10px] text-muted-foreground">{lic.customer_phone}</div>}</div>
-                          ) : <span className="text-xs text-muted-foreground">—</span>}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center justify-end gap-1">
-                            <button onClick={() => pCopyText(lic)} title="কপি"
-                              className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
-                              <Copy size={13} />
-                            </button>
-                            <button onClick={() => pSendWhatsApp(lic)} title="WhatsApp ডেলিভারি"
-                              className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
-                              <MessageCircle size={13} />
-                            </button>
-                            <button onClick={() => pOpenEdit(lic)} title="এডিট"
-                              className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
-                              <Edit3 size={13} />
-                            </button>
-                            <button onClick={() => { if (confirm('ডিলিট করতে চান?')) pDeleteMut.mutate(lic.id); }}
-                              className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
-                              <Trash2 size={13} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-
-          {/* Personal Add/Edit Dialog */}
-          <Dialog open={pOpen} onOpenChange={v => { if (!v) pCloseDialog(); }}>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>{pEditing ? 'লাইসেন্স এডিট' : 'নতুন পার্সোনাল লাইসেন্স যোগ'}</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={e => { e.preventDefault(); pSaveMut.mutate(pForm); }} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2 relative" ref={pDropdownRef}>
-                    <Label>নাম *</Label>
-                    <div className="relative">
-                      <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                      <Input
-                        value={pProductDropdownOpen ? pProductSearch : pForm.name}
-                        onChange={e => {
-                          const val = e.target.value;
-                          setPProductSearch(val);
-                          setPForm(f => ({ ...f, name: val }));
-                          if (!pProductDropdownOpen) setPProductDropdownOpen(true);
-                        }}
-                        onFocus={() => { setPProductSearch(pForm.name); setPProductDropdownOpen(true); }}
-                        placeholder="প্রোডাক্ট সার্চ করুন বা নাম লিখুন..."
-                        className="pl-9"
-                        autoComplete="off"
-                      />
-                    </div>
-                    {pProductDropdownOpen && (
-                      <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-52 overflow-y-auto">
-                        {products.filter(p => !pProductSearch || p.name.toLowerCase().includes(pProductSearch.toLowerCase())).length > 0 ? (
-                          products.filter(p => !pProductSearch || p.name.toLowerCase().includes(pProductSearch.toLowerCase())).map(p => (
-                            <button key={p.id} type="button"
-                              onClick={() => { setPForm(f => ({ ...f, name: p.name })); setPProductDropdownOpen(false); setPProductSearch(''); }}
-                              className={`w-full text-left px-3 py-2 text-xs hover:bg-primary/10 transition-colors flex items-center gap-2 ${pForm.name === p.name ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'}`}>
-                              <Package size={12} className="text-muted-foreground shrink-0" />
-                              {p.name}
-                            </button>
-                          ))
-                        ) : (
-                          <p className="text-xs text-muted-foreground text-center py-3">কোনো প্রোডাক্ট পাওয়া যায়নি — কাস্টম নাম ব্যবহার করুন</p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div className="relative" ref={pCatDropdownRef}>
-                    <Label>ক্যাটাগরি</Label>
-                    <div
-                      onClick={() => { setPCatDropdownOpen(!pCatDropdownOpen); setPCatSearch(''); }}
-                      className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm cursor-pointer flex items-center justify-between"
-                    >
-                      <span className={pForm.category ? 'text-foreground' : 'text-muted-foreground'}>
-                        {pForm.category || 'ক্যাটাগরি বেছে নিন'}
-                      </span>
-                      <ChevronDown size={14} className={`text-muted-foreground transition-transform ${pCatDropdownOpen ? 'rotate-180' : ''}`} />
-                    </div>
-                    {pCatDropdownOpen && (
-                      <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-52 overflow-hidden">
-                        <div className="p-2 border-b border-border">
-                          <div className="relative">
-                            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                            <input
-                              value={pCatSearch}
-                              onChange={e => setPCatSearch(e.target.value)}
-                              placeholder="ক্যাটাগরি খুঁজুন..."
-                              className="w-full bg-muted/20 border border-border rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
-                              autoFocus
-                              onClick={e => e.stopPropagation()}
-                            />
-                          </div>
-                        </div>
-                        <div className="overflow-y-auto max-h-40">
-                          {pCategories.filter(c => !pCatSearch || c.toLowerCase().includes(pCatSearch.toLowerCase())).length > 0 ? (
-                            pCategories.filter(c => !pCatSearch || c.toLowerCase().includes(pCatSearch.toLowerCase())).map(c => (
-                              <button key={c} type="button"
-                                onClick={e => { e.stopPropagation(); setPForm(f => ({ ...f, category: c })); setPCatDropdownOpen(false); }}
-                                className={`w-full text-left px-3 py-2 text-xs hover:bg-primary/10 transition-colors ${pForm.category === c ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'}`}>
-                                {c}
-                              </button>
-                            ))
-                          ) : (
-                            <div className="text-center py-3">
-                              <p className="text-xs text-muted-foreground mb-1">পাওয়া যায়নি</p>
-                              {pCatSearch && (
-                                <button type="button"
-                                  onClick={() => { setPForm(f => ({ ...f, category: pCatSearch })); setPCatDropdownOpen(false); }}
-                                  className="text-xs text-primary hover:underline">
-                                  "{pCatSearch}" নতুন হিসেবে ব্যবহার করুন
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <Label>স্ট্যাটাস</Label>
-                    <Select value={pForm.status} onValueChange={v => setPForm(f => ({ ...f, status: v }))}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">সক্রিয়</SelectItem>
-                        <SelectItem value="delivered">ডেলিভার্ড</SelectItem>
-                        <SelectItem value="expired">মেয়াদোত্তীর্ণ</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="col-span-2">
-                    <Label>লাইসেন্স কি / ইমেইল</Label>
-                    <Input value={pForm.key_value} onChange={e => setPForm(f => ({ ...f, key_value: e.target.value }))} placeholder="XXXXX-XXXXX-XXXXX" />
-                  </div>
-                  <div className="col-span-2">
-                    <Label>পাসওয়ার্ড</Label>
-                    <Input value={pForm.password} onChange={e => setPForm(f => ({ ...f, password: e.target.value }))} placeholder="পাসওয়ার্ড (ঐচ্ছিক)" />
-                  </div>
-                  <div>
-                    <Label>মেয়াদ শেষ</Label>
-                    <Input type="date" value={pForm.expires_at} onChange={e => setPForm(f => ({ ...f, expires_at: e.target.value }))} />
-                  </div>
-                  <div>
-                    <Label>কাস্টমার ফোন</Label>
-                    <Input value={pForm.customer_phone} onChange={e => setPForm(f => ({ ...f, customer_phone: e.target.value }))} placeholder="01XXXXXXXXX" />
-                  </div>
-                  <div className="col-span-2">
-                    <Label>কাস্টমার নাম</Label>
-                    <Input value={pForm.customer_name} onChange={e => setPForm(f => ({ ...f, customer_name: e.target.value }))} />
-                  </div>
-                  <div className="col-span-2">
-                    <Label>নোট</Label>
-                    <Textarea value={pForm.note} onChange={e => setPForm(f => ({ ...f, note: e.target.value }))} rows={2} placeholder="অতিরিক্ত তথ্য..." />
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={pCloseDialog}>বাতিল</Button>
-                  <Button type="submit" disabled={pSaveMut.isPending}>{pSaveMut.isPending ? 'সেভ হচ্ছে...' : 'সেভ করুন'}</Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-      )}
 
       {/* Email Resend Modal */}
       {emailModal.open && emailModal.license && (
