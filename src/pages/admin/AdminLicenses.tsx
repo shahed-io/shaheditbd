@@ -876,7 +876,12 @@ const AdminLicenses = () => {
                         <span className="flex items-center gap-1.5 text-xs font-semibold"
                           style={{ color: st.color }}>
                           <StIcon size={11} />
-                          {st.label}
+                          {st.labelBn}
+                          {lic.status === 'taken' && lic.assigned_at && (
+                            <span className="text-[9px] font-normal text-muted-foreground ml-1">
+                              ({new Date(lic.assigned_at).toLocaleDateString('bn-BD')})
+                            </span>
+                          )}
                         </span>
                       </td>
                       <td className="px-4 py-3">
