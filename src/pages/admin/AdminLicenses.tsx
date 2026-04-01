@@ -123,7 +123,10 @@ const AdminLicenses = () => {
   const [pForm, setPForm] = useState(personalEmptyForm);
   const [pSearch, setPSearch] = useState('');
   const [pFilterStatus, setPFilterStatus] = useState('all');
-  const [pFilterCategory, setPFilterCategory] = useState('all');
+   const [pFilterCategory, setPFilterCategory] = useState('all');
+   const [pProductSearch, setPProductSearch] = useState('');
+   const [pProductDropdownOpen, setPProductDropdownOpen] = useState(false);
+   const pDropdownRef = useRef<HTMLDivElement>(null);
 
   const { data: personalLicenses = [], isLoading: pLoading } = useQuery({
     queryKey: ['personal-licenses'],
