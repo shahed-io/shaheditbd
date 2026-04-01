@@ -762,10 +762,48 @@ const AdminLicenses = () => {
           <textarea
             value={bulkText}
             onChange={e => setBulkText(e.target.value)}
-            rows={8}
+            rows={6}
             placeholder={'XXXXX-XXXXX-XXXXX-XXXXX\nYYYYY-YYYYY-YYYYY-YYYYY\nZZZZZ-ZZZZZ-ZZZZZ-ZZZZZ\n...'}
             className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary resize-none"
           />
+          {(() => {
+            const lines = bulkText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length === 0) return null;
+            return (
+              <div className="mt-3 bg-muted/30 border border-border rounded-xl p-3">
+                <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <Eye size={12} /> প্রিভিউ — {lines.length} টি key পাওয়া গেছে
+                </p>
+                <div className="flex items-center gap-2 bg-card border border-primary/20 rounded-lg px-3 py-2">
+                  <span className="text-xs font-bold text-primary">1.</span>
+                  <code className="text-xs font-mono text-foreground break-all">{lines[0]}</code>
+                  <Badge variant="outline" className="ml-auto text-[10px] shrink-0 border-primary/30 text-primary">উদাহরণ</Badge>
+                </div>
+                {lines.length > 1 && (
+                  <div className="mt-2 flex items-center gap-2 bg-muted/40 rounded-lg px-3 py-2">
+                    <span className="text-xs text-muted-foreground">
+                      + আরও <span className="font-bold text-foreground">{lines.length - 1}</span> টি key একই ফরম্যাটে
+                    </span>
+                    {lines.length > 1 && lines.length <= 5 && (
+                      <div className="ml-auto flex flex-col gap-0.5">
+                        {lines.slice(1).map((line, i) => (
+                          <code key={i} className="text-[10px] font-mono text-muted-foreground truncate max-w-[200px]">{line}</code>
+                        ))}
+                      </div>
+                    )}
+                    {lines.length > 5 && (
+                      <div className="ml-auto flex flex-col gap-0.5">
+                        {lines.slice(1, 4).map((line, i) => (
+                          <code key={i} className="text-[10px] font-mono text-muted-foreground truncate max-w-[200px]">{line}</code>
+                        ))}
+                        <span className="text-[10px] text-muted-foreground">...আরও {lines.length - 4} টি</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
           <div className="flex items-center justify-between mt-3">
             <span className="text-xs text-muted-foreground">
               {bulkText.split('\n').filter(l => l.trim()).length} টি key পাওয়া গেছে
