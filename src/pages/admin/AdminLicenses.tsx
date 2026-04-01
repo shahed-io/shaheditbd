@@ -1,12 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   Plus, Trash2, Key, Eye, EyeOff, Search, Filter,
   CheckCircle2, Clock, XCircle, Upload, Download,
   Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag,
-  Printer, Mail, Send, X, FileText, Edit3, UserPlus, UserMinus
+  Printer, Mail, Send, X, FileText, Edit3, UserPlus, UserMinus,
+  MessageCircle, Box
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 type LicenseKey = {
   id: string;
