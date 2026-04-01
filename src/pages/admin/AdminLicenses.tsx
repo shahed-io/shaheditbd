@@ -330,7 +330,66 @@ const AdminLicenses = () => {
     if (!confirm('এই license key ডিলিট করবেন?')) return;
     await supabase.from('license_keys').delete().eq('id', id);
     toast.success('Deleted');
+    setSelectedIds(prev => { const n = new Set(prev); n.delete(id); return n; });
     fetchAll();
+  };
+
+  // ── Bulk Delete (Product) ──
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`${selectedIds.size}টি লাইসেন্স কি ডিলিট করবেন?`)) return;
+    setBulkDeleting(true);
+    const { error } = await supabase.from('license_keys').delete().in('id', Array.from(selectedIds));
+    setBulkDeleting(false);
+    if (error) return toast.error('বাল্ক ডিলিট ব্যর্থ');
+    toast.success(`${selectedIds.size}টি লাইসেন্স ডিলিট হয়েছে`);
+    setSelectedIds(new Set());
+    fetchAll();
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id); else n.add(id);
+      return n;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map(l => l.id)));
+    }
+  };
+
+  // ── Bulk Delete (Personal) ──
+  const handlePBulkDelete = async () => {
+    if (pSelectedIds.size === 0) return;
+    if (!confirm(`${pSelectedIds.size}টি পার্সোনাল লাইসেন্স ডিলিট করবেন?`)) return;
+    setPBulkDeleting(true);
+    const { error } = await supabase.from('personal_licenses').delete().in('id', Array.from(pSelectedIds));
+    setPBulkDeleting(false);
+    if (error) return toast.error('বাল্ক ডিলিট ব্যর্থ');
+    toast.success(`${pSelectedIds.size}টি পার্সোনাল লাইসেন্স ডিলিট হয়েছে`);
+    setPSelectedIds(new Set());
+    qc.invalidateQueries({ queryKey: ['personal-licenses'] });
+  };
+
+  const togglePSelect = (id: string) => {
+    setPSelectedIds(prev => {
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id); else n.add(id);
+      return n;
+    });
+  };
+
+  const togglePSelectAll = () => {
+    if (pSelectedIds.size === pFiltered.length) {
+      setPSelectedIds(new Set());
+    } else {
+      setPSelectedIds(new Set(pFiltered.map(l => l.id)));
+    }
   };
 
   const handleRevoke = async (id: string) => {
