@@ -5,7 +5,7 @@ import {
   Plus, Trash2, Key, Eye, EyeOff, Search, Filter,
   CheckCircle2, Clock, XCircle, Upload, Download,
   Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag,
-  Printer, Mail, Send, X, FileText
+  Printer, Mail, Send, X, FileText, Edit3, UserPlus, UserMinus
 } from 'lucide-react';
 
 type LicenseKey = {
@@ -70,6 +70,18 @@ const AdminLicenses = () => {
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
   const [bulkProductSearch, setBulkProductSearch] = useState('');
   const [bulkProductDropdownOpen, setBulkProductDropdownOpen] = useState(false);
+
+  // Edit modal state
+  const [editModal, setEditModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
+  const [editForm, setEditForm] = useState({ key_value: '', extra_info: '', key_type: 'license', product_id: '', status: 'available' });
+  const [editSaving, setEditSaving] = useState(false);
+
+  // Assign modal state
+  const [assignModal, setAssignModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
+  const [assignSearch, setAssignSearch] = useState('');
+  const [assignResults, setAssignResults] = useState<any[]>([]);
+  const [assignSearching, setAssignSearching] = useState(false);
+  const [assigning, setAssigning] = useState(false);
   const fetchAll = async () => {
     setLoading(true);
     const { data } = await supabase
@@ -362,6 +374,109 @@ const AdminLicenses = () => {
     } finally {
       setSendingEmail(false);
     }
+  };
+
+  // ── Edit License ──
+  const openEditModal = (lic: LicenseKey) => {
+    setEditForm({
+      key_value: lic.key_value,
+      extra_info: lic.extra_info || '',
+      key_type: lic.key_type,
+      product_id: lic.product_id || '',
+      status: lic.status,
+    });
+    setEditModal({ open: true, license: lic });
+  };
+
+  const handleEditSave = async () => {
+    if (!editModal.license) return;
+    if (!editForm.key_value.trim()) return toast.error('Key Value খালি রাখা যাবে না');
+    setEditSaving(true);
+    const { error } = await supabase
+      .from('license_keys')
+      .update({
+        key_value: editForm.key_value.trim(),
+        extra_info: editForm.extra_info.trim() || null,
+        key_type: editForm.key_type,
+        product_id: editForm.product_id || null,
+        status: editForm.status,
+      })
+      .eq('id', editModal.license.id);
+    setEditSaving(false);
+    if (error) return toast.error('আপডেট ব্যর্থ: ' + error.message);
+    toast.success('লাইসেন্স আপডেট হয়েছে!');
+    setEditModal({ open: false, license: null });
+    fetchAll();
+  };
+
+  // ── Assign to User/Order ──
+  const openAssignModal = (lic: LicenseKey) => {
+    setAssignModal({ open: true, license: lic });
+    setAssignSearch('');
+    setAssignResults([]);
+  };
+
+  const searchOrders = async (q: string) => {
+    setAssignSearch(q);
+    if (q.length < 2) { setAssignResults([]); return; }
+    setAssignSearching(true);
+    const { data } = await supabase
+      .from('orders')
+      .select('id, order_number, customer_name, customer_email, order_items(id, product_id, product_name, license_key)')
+      .or(`order_number.ilike.%${q}%,customer_name.ilike.%${q}%,customer_email.ilike.%${q}%`)
+      .order('created_at', { ascending: false })
+      .limit(10);
+    setAssignResults(data || []);
+    setAssignSearching(false);
+  };
+
+  const handleAssign = async (orderItemId: string) => {
+    if (!assignModal.license) return;
+    setAssigning(true);
+    const { error } = await supabase
+      .from('license_keys')
+      .update({
+        status: 'assigned',
+        order_item_id: orderItemId,
+        assigned_at: new Date().toISOString(),
+      })
+      .eq('id', assignModal.license.id);
+
+    if (!error) {
+      // Also update order_items.license_key
+      const lic = assignModal.license;
+      const keyDisplay = lic.extra_info ? `${lic.key_value}|${lic.extra_info}` : lic.key_value;
+      await supabase
+        .from('order_items')
+        .update({ license_key: keyDisplay })
+        .eq('id', orderItemId);
+    }
+
+    setAssigning(false);
+    if (error) return toast.error('অ্যাসাইন ব্যর্থ: ' + error.message);
+    toast.success('লাইসেন্স সফলভাবে অ্যাসাইন হয়েছে!');
+    setAssignModal({ open: false, license: null });
+    fetchAll();
+  };
+
+  // ── Unassign ──
+  const handleUnassign = async (lic: LicenseKey) => {
+    if (!confirm('এই লাইসেন্সটি কাস্টমারের অ্যাকাউন্ট থেকে সরিয়ে দেবেন?')) return;
+    // Remove from order_items
+    if (lic.order_item_id) {
+      await supabase
+        .from('order_items')
+        .update({ license_key: null })
+        .eq('id', lic.order_item_id);
+    }
+    // Reset license key
+    const { error } = await supabase
+      .from('license_keys')
+      .update({ status: 'available', order_item_id: null, assigned_at: null })
+      .eq('id', lic.id);
+    if (error) return toast.error('আনঅ্যাসাইন ব্যর্থ');
+    toast.success('লাইসেন্স আনঅ্যাসাইন হয়েছে!');
+    fetchAll();
   };
 
   return (
@@ -724,8 +839,28 @@ const AdminLicenses = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
+                          {/* Edit */}
+                          <button onClick={() => openEditModal(lic)}
+                            title="এডিট করুন"
+                            className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
+                            <Edit3 size={13} />
+                          </button>
+                          {/* Assign - only for available */}
+                          {lic.status === 'available' && (
+                            <button onClick={() => openAssignModal(lic)}
+                              title="কাস্টমারকে অ্যাসাইন করুন"
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
+                              <UserPlus size={13} />
+                            </button>
+                          )}
+                          {/* Unassign - only for assigned */}
                           {lic.status === 'assigned' && (
                             <>
+                              <button onClick={() => handleUnassign(lic)}
+                                title="আনঅ্যাসাইন করুন"
+                                className="p-1.5 rounded-lg text-muted-foreground hover:text-orange-600 hover:bg-orange-500/10 transition-all">
+                                <UserMinus size={13} />
+                              </button>
                               <button onClick={() => handleInvoicePrint(lic)}
                                 title="ইনভয়েস প্রিন্ট"
                                 className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
@@ -819,6 +954,149 @@ const AdminLicenses = () => {
                 বাতিল
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit License Modal */}
+      {editModal.open && editModal.license && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setEditModal({ open: false, license: null })}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Edit3 size={16} className="text-primary" /> লাইসেন্স এডিট করুন
+              </h3>
+              <button onClick={() => setEditModal({ open: false, license: null })}
+                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                <X size={16} />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">প্রোডাক্ট</label>
+                  <select value={editForm.product_id} onChange={e => setEditForm(p => ({ ...p, product_id: e.target.value }))}
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
+                    <option value="">— বেছে নিন —</option>
+                    {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Key Type</label>
+                  <select value={editForm.key_type} onChange={e => setEditForm(p => ({ ...p, key_type: e.target.value }))}
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
+                    {KEY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({ ...p, status: e.target.value }))}
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary">
+                  {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Key / Credentials *</label>
+                <input value={editForm.key_value} onChange={e => setEditForm(p => ({ ...p, key_value: e.target.value }))}
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Extra Info / Password</label>
+                <textarea value={editForm.extra_info} onChange={e => setEditForm(p => ({ ...p, extra_info: e.target.value }))}
+                  rows={2}
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary resize-none" />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-5">
+              <button onClick={handleEditSave} disabled={editSaving}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(200,90%,55%))', color: 'white' }}>
+                {editSaving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                সেভ করুন
+              </button>
+              <button onClick={() => setEditModal({ open: false, license: null })}
+                className="px-4 py-2.5 rounded-xl text-sm border border-border text-muted-foreground hover:border-primary/40">
+                বাতিল
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign to User Modal */}
+      {assignModal.open && assignModal.license && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setAssignModal({ open: false, license: null })}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <UserPlus size={16} className="text-primary" /> কাস্টমারকে অ্যাসাইন করুন
+              </h3>
+              <button onClick={() => setAssignModal({ open: false, license: null })}
+                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="bg-muted/20 rounded-xl p-3 border border-border mb-4">
+              <p className="text-[10px] text-muted-foreground mb-0.5">লাইসেন্স</p>
+              <code className="text-xs font-mono text-primary break-all">{assignModal.license.key_value}</code>
+              <p className="text-[10px] text-muted-foreground mt-1">{assignModal.license.product_name}</p>
+            </div>
+
+            <div className="mb-4">
+              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
+                অর্ডার নম্বর, কাস্টমারের নাম বা ইমেইল দিয়ে খুঁজুন
+              </label>
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  value={assignSearch}
+                  onChange={e => searchOrders(e.target.value)}
+                  placeholder="অর্ডার নম্বর / নাম / ইমেইল..."
+                  className="w-full bg-muted/20 border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary"
+                  autoFocus
+                />
+                {assignSearching && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-primary" />}
+              </div>
+            </div>
+
+            {assignResults.length > 0 && (
+              <div className="max-h-60 overflow-y-auto space-y-2">
+                {assignResults.map((order: any) => (
+                  <div key={order.id} className="border border-border rounded-xl p-3 hover:border-primary/40 transition-all">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <span className="text-xs font-bold text-foreground">#{order.order_number}</span>
+                        <span className="text-xs text-muted-foreground ml-2">{order.customer_name}</span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">{order.customer_email}</span>
+                    </div>
+                    {order.order_items?.map((item: any) => (
+                      <div key={item.id} className="flex items-center justify-between bg-muted/10 rounded-lg px-3 py-2 mt-1">
+                        <div>
+                          <p className="text-xs font-medium text-foreground">{item.product_name}</p>
+                          {item.license_key && <p className="text-[10px] text-muted-foreground font-mono">Key: {item.license_key.slice(0, 15)}...</p>}
+                        </div>
+                        <button
+                          onClick={() => handleAssign(item.id)}
+                          disabled={assigning}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+                          style={{ background: 'hsla(162,72%,46%,0.15)', color: 'hsl(162,72%,36%)' }}
+                        >
+                          {assigning ? <Loader2 size={10} className="animate-spin" /> : <UserPlus size={10} />}
+                          অ্যাসাইন
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {assignSearch.length >= 2 && !assignSearching && assignResults.length === 0 && (
+              <p className="text-xs text-muted-foreground text-center py-6">কোনো অর্ডার পাওয়া যায়নি</p>
+            )}
           </div>
         </div>
       )}
