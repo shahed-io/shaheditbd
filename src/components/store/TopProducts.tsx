@@ -174,7 +174,7 @@ const TopProducts = () => {
         )}
 
         {/* Filtered by tab */}
-        {!error && !loading && activeTab !== 'All' && (
+        {activeTab !== 'All' && (
           <div>
             <p className="text-sm text-muted-foreground mb-6 font-fira">{filtered.length} products in "{activeTab}"</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
