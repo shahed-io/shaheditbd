@@ -839,8 +839,28 @@ const AdminLicenses = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
+                          {/* Edit */}
+                          <button onClick={() => openEditModal(lic)}
+                            title="এডিট করুন"
+                            className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
+                            <Edit3 size={13} />
+                          </button>
+                          {/* Assign - only for available */}
+                          {lic.status === 'available' && (
+                            <button onClick={() => openAssignModal(lic)}
+                              title="কাস্টমারকে অ্যাসাইন করুন"
+                              className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
+                              <UserPlus size={13} />
+                            </button>
+                          )}
+                          {/* Unassign - only for assigned */}
                           {lic.status === 'assigned' && (
                             <>
+                              <button onClick={() => handleUnassign(lic)}
+                                title="আনঅ্যাসাইন করুন"
+                                className="p-1.5 rounded-lg text-muted-foreground hover:text-orange-600 hover:bg-orange-500/10 transition-all">
+                                <UserMinus size={13} />
+                              </button>
                               <button onClick={() => handleInvoicePrint(lic)}
                                 title="ইনভয়েস প্রিন্ট"
                                 className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
