@@ -111,6 +111,12 @@ const AdminLicenses = () => {
   const [assignSearching, setAssignSearching] = useState(false);
   const [assigning, setAssigning] = useState(false);
 
+  // ── Bulk Selection States ──
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [pSelectedIds, setPSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [pBulkDeleting, setPBulkDeleting] = useState(false);
+
   // ── Personal Inventory States ──
   const [pOpen, setPOpen] = useState(false);
   const [pEditing, setPEditing] = useState<PersonalLicense | null>(null);
