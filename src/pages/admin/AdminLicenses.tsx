@@ -327,34 +327,6 @@ const AdminLicenses = () => {
     }
   };
 
-  // ── Bulk Delete (Personal) ──
-  const handlePBulkDelete = async () => {
-    if (pSelectedIds.size === 0) return;
-    if (!confirm(`${pSelectedIds.size}টি পার্সোনাল লাইসেন্স ডিলিট করবেন?`)) return;
-    setPBulkDeleting(true);
-    const { error } = await supabase.from('personal_licenses').delete().in('id', Array.from(pSelectedIds));
-    setPBulkDeleting(false);
-    if (error) return toast.error('বাল্ক ডিলিট ব্যর্থ');
-    toast.success(`${pSelectedIds.size}টি পার্সোনাল লাইসেন্স ডিলিট হয়েছে`);
-    setPSelectedIds(new Set());
-    qc.invalidateQueries({ queryKey: ['personal-licenses'] });
-  };
-
-  const togglePSelect = (id: string) => {
-    setPSelectedIds(prev => {
-      const n = new Set(prev);
-      if (n.has(id)) n.delete(id); else n.add(id);
-      return n;
-    });
-  };
-
-  const togglePSelectAll = () => {
-    if (pSelectedIds.size === pFiltered.length) {
-      setPSelectedIds(new Set());
-    } else {
-      setPSelectedIds(new Set(pFiltered.map(l => l.id)));
-    }
-  };
 
   const handleRevoke = async (id: string) => {
     await supabase.from('license_keys').update({ status: 'revoked' }).eq('id', id);
