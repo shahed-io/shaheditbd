@@ -1008,6 +1008,18 @@ const AdminLicenses = () => {
           <span className="text-xs font-semibold text-muted-foreground">
             {filtered.length} টি license key দেখানো হচ্ছে
           </span>
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-bold text-primary">{selectedIds.size}টি সিলেক্টেড</span>
+              <button onClick={() => setSelectedIds(new Set())}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors">সব বাদ দিন</button>
+              <button onClick={handleBulkDelete} disabled={bulkDeleting}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all">
+                {bulkDeleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
+                ডিলিট ({selectedIds.size})
+              </button>
+            </div>
+          )}
         </div>
 
         {loading ? (
