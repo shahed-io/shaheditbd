@@ -180,10 +180,55 @@ const AdminLicenses = () => {
     toast.success('কপি হয়েছে!');
   };
 
+  // ── Manual Take ──
+  const openTakeModal = (lic: LicenseKey) => {
+    setTakeModal({ open: true, license: lic });
+    setTakeNote('');
+  };
+
+  const handleTake = async () => {
+    if (!takeModal.license) return;
+    setTaking(true);
+    const lic = takeModal.license;
+    
+    // Copy to clipboard
+    const fullKey = lic.extra_info ? `${lic.key_value}\n${lic.extra_info}` : lic.key_value;
+    try { await navigator.clipboard.writeText(fullKey); } catch {}
+
+    // Mark as taken with note
+    const { error } = await supabase
+      .from('license_keys')
+      .update({
+        status: 'taken',
+        assigned_at: new Date().toISOString(),
+        extra_info: takeNote
+          ? (lic.extra_info ? `${lic.extra_info}\n[নোট: ${takeNote}]` : `[নোট: ${takeNote}]`)
+          : lic.extra_info,
+      })
+      .eq('id', lic.id);
+
+    setTaking(false);
+    if (error) return toast.error('ব্যর্থ: ' + error.message);
+    toast.success('✅ লাইসেন্স নেওয়া হয়েছে ও ক্লিপবোর্ডে কপি হয়েছে!');
+    setTakeModal({ open: false, license: null });
+    fetchAll();
+  };
+
+  const handleUntake = async (lic: LicenseKey) => {
+    if (!confirm('এই লাইসেন্সটি আবার Available করবেন?')) return;
+    await supabase
+      .from('license_keys')
+      .update({ status: 'available', assigned_at: null })
+      .eq('id', lic.id);
+    toast.success('লাইসেন্স আবার Available!');
+    fetchAll();
+  };
+
   // Stats
   const stats = {
     total:     licenses.length,
     available: licenses.filter(l => l.status === 'available').length,
+    taken:     licenses.filter(l => l.status === 'taken').length,
     assigned:  licenses.filter(l => l.status === 'assigned').length,
     revoked:   licenses.filter(l => l.status === 'revoked').length,
   };
