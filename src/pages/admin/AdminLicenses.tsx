@@ -1036,6 +1036,11 @@ const AdminLicenses = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
+                  <th className="w-10 px-3 py-3">
+                    <input type="checkbox" checked={selectedIds.size === filtered.length && filtered.length > 0}
+                      onChange={toggleSelectAll}
+                      className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
+                  </th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Type</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Key / Credentials</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">প্রোডাক্ট</th>
