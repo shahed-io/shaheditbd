@@ -7,7 +7,7 @@ import {
   CheckCircle2, Clock, XCircle, Upload, Download,
   Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag,
   Printer, Mail, Send, X, FileText, Edit3, UserPlus, UserMinus,
-  MessageCircle
+  MessageCircle, File
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -713,7 +713,7 @@ const AdminLicenses = () => {
           <h3 className="font-bold text-sm mb-4 flex items-center gap-2">
             <Upload size={14} className="text-amber-500" /> Bulk License Import
           </h3>
-          <p className="text-xs text-muted-foreground mb-3">প্রতি লাইনে একটি করে key লিখুন। একসাথে অনেকগুলো যোগ করতে পারবেন।</p>
+           <p className="text-xs text-muted-foreground mb-3">প্রতি লাইনে একটি করে key লিখুন, অথবা CSV/TXT ফাইল আপলোড করুন।</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
             <div className="relative">
               <div
@@ -759,6 +759,56 @@ const AdminLicenses = () => {
               {KEY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
           </div>
+
+          {/* CSV/TXT File Upload */}
+          <div className="mb-3">
+            <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 cursor-pointer transition-colors bg-muted/10">
+              <File size={14} className="text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">CSV বা TXT ফাইল আপলোড করুন</span>
+              <input
+                type="file"
+                accept=".csv,.txt,.text"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  if (file.size > 5 * 1024 * 1024) {
+                    toast.error('ফাইল সাইজ ৫MB এর বেশি হতে পারবে না');
+                    return;
+                  }
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    const text = ev.target?.result as string;
+                    if (!text) return;
+                    // Parse CSV: take first column of each row, skip header if it looks like one
+                    const rawLines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+                    const keys: string[] = [];
+                    for (const line of rawLines) {
+                      // Split by comma, semicolon, or tab
+                      const parts = line.split(/[,;\t]/);
+                      const val = parts[0]?.trim();
+                      if (!val) continue;
+                      // Skip header-like rows
+                      if (keys.length === 0 && /^(key|license|serial|id|name|product)/i.test(val)) continue;
+                      keys.push(val);
+                    }
+                    if (keys.length === 0) {
+                      toast.error('ফাইলে কোনো key পাওয়া যায়নি');
+                      return;
+                    }
+                    const existing = bulkText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                    const merged = [...existing, ...keys];
+                    setBulkText(merged.join('\n'));
+                    toast.success(`${keys.length}টি key ফাইল থেকে লোড হয়েছে`);
+                  };
+                  reader.readAsText(file);
+                  e.target.value = '';
+                }}
+              />
+              <span className="ml-auto text-[10px] text-muted-foreground">.csv, .txt • সর্বোচ্চ ৫MB</span>
+            </label>
+          </div>
+
           <textarea
             value={bulkText}
             onChange={e => setBulkText(e.target.value)}
