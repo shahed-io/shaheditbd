@@ -566,12 +566,13 @@ const AdminLicenses = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         {[
-          { label: 'মোট Keys', value: stats.total,     color: 'hsl(258,78%,68%)',  bg: 'hsla(258,78%,68%,0.1)' },
-          { label: 'Available', value: stats.available, color: 'hsl(162,72%,46%)',  bg: 'hsla(162,72%,46%,0.1)' },
-          { label: 'Assigned',  value: stats.assigned,  color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)' },
-          { label: 'Revoked',   value: stats.revoked,   color: 'hsl(0,72%,51%)',    bg: 'hsla(0,72%,51%,0.1)' },
+          { label: 'মোট Keys',    value: stats.total,     color: 'hsl(258,78%,68%)',  bg: 'hsla(258,78%,68%,0.1)' },
+          { label: 'এভেইলেবল',    value: stats.available, color: 'hsl(162,72%,46%)',  bg: 'hsla(162,72%,46%,0.1)' },
+          { label: 'নেওয়া হয়েছে', value: stats.taken,     color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)' },
+          { label: 'অ্যাসাইনড',   value: stats.assigned,  color: 'hsl(42,96%,58%)',   bg: 'hsla(42,96%,58%,0.1)' },
+          { label: 'বাতিল',        value: stats.revoked,   color: 'hsl(0,72%,51%)',    bg: 'hsla(0,72%,51%,0.1)' },
         ].map(s => (
           <div key={s.label} className="glass-card rounded-2xl p-4 border"
             style={{ borderColor: `${s.color}30`, background: s.bg }}>
