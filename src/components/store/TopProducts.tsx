@@ -113,11 +113,11 @@ const TopProducts = () => {
         </div>
 
         {/* Error */}
-        {error && !loading && (
+        {isError && products.length === 0 && (
           <div className="text-center py-20 space-y-4">
             <div className="text-6xl">😕</div>
             <p className="text-muted-foreground">Failed to load products. Please try again.</p>
-            <button onClick={() => setRetry(c => c + 1)}
+            <button onClick={() => refetch()}
               className="px-6 py-2.5 rounded-2xl text-sm font-bold text-white shadow-indigo"
               style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
               Retry
@@ -125,17 +125,8 @@ const TopProducts = () => {
           </div>
         )}
 
-        {/* Loading skeleton */}
-        {!error && loading && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[0,1,2,3,4,5,6,7].map(i => (
-              <div key={i} className="rounded-2xl shimmer" style={{ height: '22rem', animationDelay: `${i * 0.08}s` }} />
-            ))}
-          </div>
-        )}
-
         {/* All Products grouped */}
-        {!error && !loading && activeTab === 'All' && (
+        {activeTab === 'All' && products.length > 0 && (
           <div className="space-y-14">
             {catOrder.map((cat, catIdx) => {
               const items      = products.filter(p => p.category === cat);
