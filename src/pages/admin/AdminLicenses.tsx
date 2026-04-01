@@ -1341,9 +1341,40 @@ const AdminLicenses = () => {
               </DialogHeader>
               <form onSubmit={e => { e.preventDefault(); pSaveMut.mutate(pForm); }} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
+                  <div className="col-span-2 relative" ref={pDropdownRef}>
                     <Label>নাম *</Label>
-                    <Input required value={pForm.name} onChange={e => setPForm(f => ({ ...f, name: e.target.value }))} placeholder="যেমন: Office 365, Canva Pro" />
+                    <div className="relative">
+                      <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                      <Input
+                        value={pProductDropdownOpen ? pProductSearch : pForm.name}
+                        onChange={e => {
+                          const val = e.target.value;
+                          setPProductSearch(val);
+                          setPForm(f => ({ ...f, name: val }));
+                          if (!pProductDropdownOpen) setPProductDropdownOpen(true);
+                        }}
+                        onFocus={() => { setPProductSearch(pForm.name); setPProductDropdownOpen(true); }}
+                        placeholder="প্রোডাক্ট সার্চ করুন বা নাম লিখুন..."
+                        className="pl-9"
+                        autoComplete="off"
+                      />
+                    </div>
+                    {pProductDropdownOpen && (
+                      <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-52 overflow-y-auto">
+                        {products.filter(p => !pProductSearch || p.name.toLowerCase().includes(pProductSearch.toLowerCase())).length > 0 ? (
+                          products.filter(p => !pProductSearch || p.name.toLowerCase().includes(pProductSearch.toLowerCase())).map(p => (
+                            <button key={p.id} type="button"
+                              onClick={() => { setPForm(f => ({ ...f, name: p.name })); setPProductDropdownOpen(false); setPProductSearch(''); }}
+                              className={`w-full text-left px-3 py-2 text-xs hover:bg-primary/10 transition-colors flex items-center gap-2 ${pForm.name === p.name ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'}`}>
+                              <Package size={12} className="text-muted-foreground shrink-0" />
+                              {p.name}
+                            </button>
+                          ))
+                        ) : (
+                          <p className="text-xs text-muted-foreground text-center py-3">কোনো প্রোডাক্ট পাওয়া যায়নি — কাস্টম নাম ব্যবহার করুন</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div>
                     <Label>ক্যাটাগরি</Label>
