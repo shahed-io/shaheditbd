@@ -59,18 +59,6 @@ const emptyForm = {
   extra_info: '',
 };
 
-// ── Personal License Type ──
-type PersonalLicense = {
-  id: string; name: string; category: string; key_value: string | null;
-  password: string | null; expires_at: string | null; note: string | null;
-  status: string; customer_name: string | null; customer_phone: string | null;
-  delivered_at: string | null; created_at: string; updated_at: string;
-};
-
-const personalEmptyForm = {
-  name: '', category: 'general', key_value: '', password: '',
-  expires_at: '', note: '', status: 'active', customer_name: '', customer_phone: '',
-};
 
 const AdminLicenses = () => {
   const [activeTab, setActiveTab] = useState<'product' | 'personal'>('product');
