@@ -930,6 +930,54 @@ export type Database = {
           },
         ]
       }
+      personal_licenses: {
+        Row: {
+          category: string | null
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          delivered_at: string | null
+          expires_at: string | null
+          id: string
+          key_value: string | null
+          name: string
+          note: string | null
+          password: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivered_at?: string | null
+          expires_at?: string | null
+          id?: string
+          key_value?: string | null
+          name: string
+          note?: string | null
+          password?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivered_at?: string | null
+          expires_at?: string | null
+          id?: string
+          key_value?: string | null
+          name?: string
+          note?: string | null
+          password?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       point_transactions: {
         Row: {
           balance_after: number
