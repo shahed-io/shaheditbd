@@ -1062,6 +1062,7 @@ const AdminLicenses = () => {
                           onChange={() => toggleSelect(lic.id)}
                           className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
                       </td>
+                      <td className="px-4 py-3">
                         <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
                           style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
                           {typeLabel}
