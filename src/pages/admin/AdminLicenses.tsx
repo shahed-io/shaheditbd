@@ -1170,6 +1170,73 @@ const AdminLicenses = () => {
           </div>
         </div>
       )}
+
+      {/* Manual Take Modal */}
+      {takeModal.open && takeModal.license && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setTakeModal({ open: false, license: null })}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Download size={16} style={{ color: 'hsl(162,72%,46%)' }} /> লাইসেন্স ম্যানুয়ালি নিন
+              </h3>
+              <button onClick={() => setTakeModal({ open: false, license: null })}
+                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-5">
+              <div className="rounded-xl p-4 border border-border" style={{ background: 'hsla(162,72%,46%,0.06)' }}>
+                <p className="text-[10px] text-muted-foreground mb-1">প্রোডাক্ট</p>
+                <p className="text-sm font-bold text-foreground">{takeModal.license.product_name}</p>
+              </div>
+
+              <div className="rounded-xl p-4 border border-border" style={{ background: 'hsla(258,78%,68%,0.06)' }}>
+                <p className="text-[10px] text-muted-foreground mb-1">
+                  {takeModal.license.key_type === 'subscription' || takeModal.license.key_type === 'account' ? 'Credentials' : 'License Key'}
+                </p>
+                <code className="text-sm font-mono font-bold break-all" style={{ color: 'hsl(258,78%,68%)' }}>
+                  {takeModal.license.key_value}
+                </code>
+                {takeModal.license.extra_info && (
+                  <p className="text-xs text-muted-foreground mt-2 font-mono border-t border-border/50 pt-2">{takeModal.license.extra_info}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
+                  নোট (ঐচ্ছিক) — কাকে দিচ্ছেন বা কেন নিচ্ছেন
+                </label>
+                <input
+                  value={takeNote}
+                  onChange={e => setTakeNote(e.target.value)}
+                  placeholder="যেমন: মোবাইলে কাস্টমারকে দিয়েছি, নাম: ..."
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+                />
+              </div>
+            </div>
+
+            <div className="rounded-xl p-3 mb-4 border" style={{ background: 'hsla(42,96%,58%,0.08)', borderColor: 'hsla(42,96%,58%,0.25)' }}>
+              <p className="text-[11px] font-medium" style={{ color: 'hsl(42,96%,42%)' }}>
+                ⚠️ নিলে এটি "নেওয়া হয়েছে" হিসেবে মার্ক হবে এবং Key ক্লিপবোর্ডে কপি হবে।
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={handleTake} disabled={taking}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, hsl(162,72%,46%), hsl(200,90%,55%))', color: 'white' }}>
+                {taking ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                নিন ও কপি করুন
+              </button>
+              <button onClick={() => setTakeModal({ open: false, license: null })}
+                className="px-4 py-3 rounded-xl text-sm border border-border text-muted-foreground hover:border-primary/40">
+                বাতিল
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
