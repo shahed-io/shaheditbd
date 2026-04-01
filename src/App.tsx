@@ -96,6 +96,7 @@ const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBa
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
 const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterSettings"));
 const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveChat"));
+const AdminPersonalLicenses      = lazy(() => import("./pages/admin/AdminPersonalLicenses"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
