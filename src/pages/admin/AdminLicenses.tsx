@@ -653,7 +653,7 @@ const AdminLicenses = () => {
             <Key size={24} className="text-primary" /> License Manager
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            প্রোডাক্ট লাইসেন্স ও পার্সোনাল ইনভেন্টরি এক জায়গায় ম্যানেজ করুন
+            প্রোডাক্ট লাইসেন্স ম্যানেজ করুন
           </p>
         </div>
       </div>
