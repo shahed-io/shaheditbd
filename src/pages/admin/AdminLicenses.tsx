@@ -250,19 +250,6 @@ const AdminLicenses = () => {
 
    useEffect(() => { fetchAll(); }, []);
 
-   // Close personal product dropdown on outside click
-   useEffect(() => {
-     const handler = (e: MouseEvent) => {
-       if (pDropdownRef.current && !pDropdownRef.current.contains(e.target as Node)) {
-         setPProductDropdownOpen(false);
-       }
-       if (pCatDropdownRef.current && !pCatDropdownRef.current.contains(e.target as Node)) {
-         setPCatDropdownOpen(false);
-       }
-     };
-     document.addEventListener('mousedown', handler);
-     return () => document.removeEventListener('mousedown', handler);
-   }, []);
 
   const handleSave = async () => {
     if (!form.product_id) return toast.error('প্রোডাক্ট সিলেক্ট করুন');
