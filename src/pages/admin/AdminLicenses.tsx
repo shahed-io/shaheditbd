@@ -85,6 +85,7 @@ const AdminLicenses = () => {
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
   const [bulkProductSearch, setBulkProductSearch] = useState('');
   const [bulkProductDropdownOpen, setBulkProductDropdownOpen] = useState(false);
+  const [bulkTypeDropdownOpen, setBulkTypeDropdownOpen] = useState(false);
 
   // Edit modal state
   const [editModal, setEditModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
