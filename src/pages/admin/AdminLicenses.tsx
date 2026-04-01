@@ -61,7 +61,6 @@ const emptyForm = {
 
 
 const AdminLicenses = () => {
-  const [activeTab, setActiveTab] = useState<'product' | 'personal'>('product');
   const qc = useQueryClient();
 
   // ── Product License States ──
