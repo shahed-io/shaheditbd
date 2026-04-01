@@ -70,6 +70,18 @@ const AdminLicenses = () => {
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
   const [bulkProductSearch, setBulkProductSearch] = useState('');
   const [bulkProductDropdownOpen, setBulkProductDropdownOpen] = useState(false);
+
+  // Edit modal state
+  const [editModal, setEditModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
+  const [editForm, setEditForm] = useState({ key_value: '', extra_info: '', key_type: 'license', product_id: '', status: 'available' });
+  const [editSaving, setEditSaving] = useState(false);
+
+  // Assign modal state
+  const [assignModal, setAssignModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
+  const [assignSearch, setAssignSearch] = useState('');
+  const [assignResults, setAssignResults] = useState<any[]>([]);
+  const [assignSearching, setAssignSearching] = useState(false);
+  const [assigning, setAssigning] = useState(false);
   const fetchAll = async () => {
     setLoading(true);
     const { data } = await supabase
