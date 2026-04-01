@@ -652,10 +652,33 @@ const AdminLicenses = () => {
             <Key size={24} className="text-primary" /> License Manager
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            License Key, Subscription, Account Credentials ম্যানেজ করুন
+            প্রোডাক্ট লাইসেন্স ও পার্সোনাল ইনভেন্টরি এক জায়গায় ম্যানেজ করুন
           </p>
         </div>
-        <div className="flex gap-2">
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 bg-muted/30 p-1 rounded-xl border border-border w-fit">
+        <button
+          onClick={() => setActiveTab('product')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'product' ? 'bg-card shadow-sm text-foreground border border-border' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          <Key size={14} /> প্রোডাক্ট লাইসেন্স
+        </button>
+        <button
+          onClick={() => setActiveTab('personal')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'personal' ? 'bg-card shadow-sm text-foreground border border-border' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          <Box size={14} /> পার্সোনাল ইনভেন্টরি
+          {pStats.total > 0 && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">{pStats.total}</span>
+          )}
+        </button>
+      </div>
+
+      {activeTab === 'product' && (<>
+      {/* Product Licenses Header Actions */}
+      <div className="flex justify-end gap-2">
           <button
             onClick={handlePrint}
             className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-medium hover:border-primary/40 transition-all text-muted-foreground"
