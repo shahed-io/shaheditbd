@@ -7,6 +7,7 @@ type SlideFeature = string;
 type Slide = {
   id: string;
   tag: string;
+  tagIcon: string;
   title: string;
   titleAccent: string;
   subtitle: string;
@@ -18,6 +19,7 @@ type Slide = {
   accentFrom: string;
   accentTo: string;
   emoji: string;
+  logoImg: string;
   features: SlideFeature[];
   enabled: boolean;
   productSlug: string;
@@ -63,7 +65,8 @@ const DEFAULT_TRUST: TrustItem[] = [
 
 const EMPTY_SLIDE = (): Slide => ({
   id: crypto.randomUUID(),
-  tag: '🔥 New Deal',
+  tag: 'New Deal',
+  tagIcon: '🔥',
   title: 'Product',
   titleAccent: 'Name',
   subtitle: 'Short subtitle here',
@@ -75,6 +78,7 @@ const EMPTY_SLIDE = (): Slide => ({
   accentFrom: 'hsl(243,75%,55%)',
   accentTo: 'hsl(263,70%,52%)',
   emoji: '🛍️',
+  logoImg: '',
   features: ['Feature 1', 'Feature 2', 'Feature 3'],
   enabled: true,
   productSlug: '',
@@ -242,15 +246,33 @@ const AdminHeroBanner = () => {
               {editingSlide === slide.id && (
                 <div className="border-t border-border/50 p-5 space-y-5 bg-muted/10">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Field label="ট্যাগ (Tag)"           value={slide.tag}          onChange={v => updateSlide(slide.id, 'tag', v)}          placeholder="🔥 Best Seller" />
+                    <Field label="ট্যাগ (Tag)"           value={slide.tag}          onChange={v => updateSlide(slide.id, 'tag', v)}          placeholder="Best Seller" />
+                    <Field label="ট্যাগ আইকন (Tag Icon)" value={slide.tagIcon}       onChange={v => updateSlide(slide.id, 'tagIcon', v)}       placeholder="🔥" />
                     <Field label="ব্যাজ (Badge)"          value={slide.badge}        onChange={v => updateSlide(slide.id, 'badge', v)}        placeholder="MOST POPULAR" />
+                    <Field label="ইমোজি (Card Icon)"      value={slide.emoji}        onChange={v => updateSlide(slide.id, 'emoji', v)}        placeholder="🪟" />
                     <Field label="টাইটেল (Title)"        value={slide.title}        onChange={v => updateSlide(slide.id, 'title', v)}        placeholder="Windows 11" />
                     <Field label="টাইটেল অ্যাকসেন্ট"   value={slide.titleAccent}  onChange={v => updateSlide(slide.id, 'titleAccent', v)}  placeholder="Pro" />
                     <Field label="সাবটাইটেল"            value={slide.subtitle}     onChange={v => updateSlide(slide.id, 'subtitle', v)}     placeholder="Original License Key" />
-                    <Field label="ইমোজি"                value={slide.emoji}        onChange={v => updateSlide(slide.id, 'emoji', v)}        placeholder="🪟" />
                     <Field label="মূল্য (Price)"         value={slide.price}        onChange={v => updateSlide(slide.id, 'price', v)}        placeholder="৳599" />
                     <Field label="আসল মূল্য (Original)" value={slide.original}     onChange={v => updateSlide(slide.id, 'original', v)}     placeholder="৳9,999" />
                     <Field label="ছাড় (% Off)"           value={slide.off}          onChange={v => updateSlide(slide.id, 'off', v)}          placeholder="94%" />
+                    {/* Logo Image URL */}
+                    <div className="md:col-span-2">
+                      <label className="text-xs text-muted-foreground mb-1.5 block">
+                        🖼️ লোগো ইমেজ URL <span className="text-[10px] text-primary/60">(ঐচ্ছিক — খালি রাখলে ইমোজি দেখাবে)</span>
+                      </label>
+                      <input value={slide.logoImg || ''} onChange={e => updateSlide(slide.id, 'logoImg', e.target.value)}
+                        placeholder="https://example.com/logo.png"
+                        className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors font-mono" />
+                      {slide.logoImg && (
+                        <div className="mt-2 flex items-center gap-3">
+                          <img src={slide.logoImg} alt="Logo preview" className="w-10 h-10 object-contain rounded-lg border border-border" />
+                          <span className="text-[11px] text-muted-foreground">Logo Preview</span>
+                          <button onClick={() => updateSlide(slide.id, 'logoImg', '')}
+                            className="text-[11px] text-destructive hover:underline ml-auto">রিমুভ</button>
+                        </div>
+                      )}
+                    </div>
                     {/* Product Slug */}
                     <div className="md:col-span-2">
                       <label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5 block">
@@ -332,9 +354,11 @@ const AdminHeroBanner = () => {
                   {/* Mini preview */}
                   <div className="rounded-2xl p-4 flex items-center gap-4"
                     style={{ background: `linear-gradient(135deg, ${slide.accentFrom}12, ${slide.accentTo}08)`, border: `1px solid ${slide.accentFrom}25` }}>
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl overflow-hidden"
                       style={{ background: 'rgba(255,255,255,0.8)', border: `1px solid ${slide.accentFrom}30` }}>
-                      {slide.emoji}
+                      {slide.logoImg
+                        ? <img src={slide.logoImg} alt="logo" className="w-8 h-8 object-contain" />
+                        : slide.emoji}
                     </div>
                     <div>
                       <div className="font-bold text-sm text-foreground">{slide.title} <span style={{ color: slide.accentFrom }}>{slide.titleAccent}</span></div>

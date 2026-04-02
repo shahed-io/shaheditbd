@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 export type SlideData = {
   id: string;
   tag: string;
+  tagIcon: string;
   title: string;
   titleAccent: string;
   subtitle: string;
@@ -15,6 +16,7 @@ export type SlideData = {
   accentFrom: string;
   accentTo: string;
   emoji: string;
+  logoImg: string;
   features: string[];
   enabled: boolean;
   productSlug: string;
