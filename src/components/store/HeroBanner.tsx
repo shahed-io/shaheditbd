@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag, TrendingUp, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, CheckCircle2, Package } from 'lucide-react';
 import idmLogo from '@/assets/idm.webp';
 import ms365Logo from '@/assets/ms365-logo.png';
+import winLogo from '@/assets/windows-logo.png';
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
 
 type Slide = {
