@@ -33,6 +33,7 @@ type LicenseKey = {
   order_number?: string;
   customer_name?: string;
   customer_email?: string;
+  customer_phone?: string;
 };
 
 type Product = { id: string; name: string; slug: string };
