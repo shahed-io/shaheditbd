@@ -244,6 +244,7 @@ const AdminLicenses = () => {
   };
 
 
+  const handleDelete = async (id: string) => {
     if (!confirm('এই license key ডিলিট করবেন?')) return;
     await supabase.from('license_keys').delete().eq('id', id);
     toast.success('Deleted');
