@@ -242,8 +242,8 @@ const AdminQuickSale = () => {
           msg += `*${entry.product!.name}*\n`;
           msg += `Price: ${entry.custom_price} BDT x ${entry.quantity}\n`;
           if (entry.manual_key) {
-            msg += `\n*Key / Credentials:*\n\`${entry.manual_key}\`\n`;
-            if (entry.manual_extra) msg += `*Password / Extra:*\n\`${entry.manual_extra}\`\n`;
+            msg += `\n*Email:*\n\`${entry.manual_key}\`\n`;
+            if (entry.manual_extra) msg += `*Temporary Password:*\n\`${entry.manual_extra}\`\n`;
           }
           msg += `\n`;
         }

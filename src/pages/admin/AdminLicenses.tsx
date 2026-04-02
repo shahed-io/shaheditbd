@@ -506,7 +506,7 @@ const AdminLicenses = () => {
     if (!waModal.license || !waModal.phone.trim()) return toast.error('ফোন নম্বর দিন');
     const lic = waModal.license;
     const phone = waModal.phone.replace(/\D/g, '').replace(/^0/, '880');
-    const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label || lic.key_type;
+    const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label?.replace(/^[^\w\s]+\s*/, '') || lic.key_type;
     
     let msg = `*SHAHED STORE*\n`;
     msg += `________________________\n\n`;
@@ -515,8 +515,8 @@ const AdminLicenses = () => {
     msg += `Type: ${typeLabel}\n`;
     if (lic.order_number) msg += `Order: #${lic.order_number}\n`;
     msg += `\n________________________\n\n`;
-    msg += `*Key / Credentials:*\n\`${lic.key_value}\`\n`;
-    if (lic.extra_info) msg += `\n*Password / Extra:*\n\`${lic.extra_info}\`\n`;
+    msg += `*Email:*\n\`${lic.key_value}\`\n`;
+    if (lic.extra_info) msg += `\n*Temporary Password:*\n\`${lic.extra_info}\`\n`;
     msg += `\n________________________\n\n`;
     msg += `Thank you for choosing *Shahed Store*\n`;
     msg += `_www.shahedstore.com.bd_`;
