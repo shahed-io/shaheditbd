@@ -1073,11 +1073,18 @@ const AdminLicenses = () => {
                           </button>
                           {/* Assign - only for available */}
                           {lic.status === 'available' && (
-                            <button onClick={() => openAssignModal(lic)}
-                              title="কাস্টমারকে অ্যাসাইন করুন"
-                              className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
-                              <UserPlus size={13} />
-                            </button>
+                            <>
+                              <button onClick={() => openAssignModal(lic)}
+                                title="কাস্টমারকে অ্যাসাইন করুন"
+                                className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
+                                <UserPlus size={13} />
+                              </button>
+                              <button onClick={() => openWaModal(lic)}
+                                title="WhatsApp এ পাঠান"
+                                className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
+                                <MessageCircle size={13} />
+                              </button>
+                            </>
                           )}
                           {/* Unassign - only for assigned */}
                           {lic.status === 'assigned' && (
