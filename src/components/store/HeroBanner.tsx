@@ -83,17 +83,11 @@ const DEFAULT_TRUST = [
 const HeroBanner = () => {
   const [active, setActive] = useState(0);
   const [dir, setDir] = useState<'in' | 'out'>('in');
-  const { data: bannerData, isLoading } = useHeroBanner();
+  const { data: bannerData } = useHeroBanner();
 
-  // Use a ref to track if we've already shown DB slides — prevents flash
-  const hasShownDb = useState(() => false);
-
-  const dbSlides = bannerData?.slides && bannerData.slides.length > 0
+  const SLIDES: Slide[] = bannerData?.slides && bannerData.slides.length > 0
     ? bannerData.slides.filter(s => s.enabled).map(dbSlideToSlide)
-    : null;
-
-  // Once DB data arrives, lock it in so we never flash back to static
-  const SLIDES: Slide[] = dbSlides || STATIC_SLIDES;
+    : STATIC_SLIDES;
 
   const STATS    = bannerData?.stats    ?? DEFAULT_STATS;
   const FLOATING = bannerData?.floating ?? DEFAULT_FLOATING;
