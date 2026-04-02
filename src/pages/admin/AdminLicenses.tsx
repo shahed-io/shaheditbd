@@ -114,7 +114,7 @@ const AdminLicenses = () => {
         products(name),
         order_items(
           order_id,
-          orders(order_number, customer_name, customer_email)
+          orders(order_number, customer_name, customer_email, customer_phone)
         )
       `)
       .order('created_at', { ascending: false });
