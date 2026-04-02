@@ -1097,6 +1097,11 @@ const AdminLicenses = () => {
                                 className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all">
                                 <Mail size={13} />
                               </button>
+                              <button onClick={() => openWaModal(lic)}
+                                title="WhatsApp এ পাঠান"
+                                className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10 transition-all">
+                                <MessageCircle size={13} />
+                              </button>
                             </>
                           )}
                           {lic.status === 'available' && (
