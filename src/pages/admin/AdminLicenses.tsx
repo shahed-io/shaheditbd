@@ -502,7 +502,7 @@ const AdminLicenses = () => {
     setWaModal({ open: true, license: lic, phone: lic.customer_phone || '' });
   };
 
-  const handleWhatsAppSend = () => {
+  const handleWhatsAppSend = async () => {
     if (!waModal.license || !waModal.phone.trim()) return toast.error('ফোন নম্বর দিন');
     const lic = waModal.license;
     const phone = waModal.phone.replace(/\D/g, '').replace(/^0/, '880');
@@ -520,8 +520,16 @@ const AdminLicenses = () => {
 
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
-    toast.success('WhatsApp ওপেন হচ্ছে...');
+
+    // Mark license as whatsapp_delivered
+    await supabase
+      .from('license_keys')
+      .update({ status: 'whatsapp_delivered', assigned_at: new Date().toISOString() })
+      .eq('id', lic.id);
+
+    toast.success('WhatsApp এ ডেলিভারি হয়েছে!');
     setWaModal({ open: false, license: null, phone: '' });
+    fetchAll();
   };
 
   // ── Edit License ──
