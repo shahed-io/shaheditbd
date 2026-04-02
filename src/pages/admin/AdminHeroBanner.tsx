@@ -354,9 +354,11 @@ const AdminHeroBanner = () => {
                   {/* Mini preview */}
                   <div className="rounded-2xl p-4 flex items-center gap-4"
                     style={{ background: `linear-gradient(135deg, ${slide.accentFrom}12, ${slide.accentTo}08)`, border: `1px solid ${slide.accentFrom}25` }}>
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl overflow-hidden"
                       style={{ background: 'rgba(255,255,255,0.8)', border: `1px solid ${slide.accentFrom}30` }}>
-                      {slide.emoji}
+                      {slide.logoImg
+                        ? <img src={slide.logoImg} alt="logo" className="w-8 h-8 object-contain" />
+                        : slide.emoji}
                     </div>
                     <div>
                       <div className="font-bold text-sm text-foreground">{slide.title} <span style={{ color: slide.accentFrom }}>{slide.titleAccent}</span></div>
