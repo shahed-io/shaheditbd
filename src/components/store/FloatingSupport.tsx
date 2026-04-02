@@ -56,6 +56,7 @@ const FloatingSupport = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const configLoaded = useRef(false);
+  const sessionIdRef = useRef(crypto.randomUUID());
 
   // Load settings once
   useEffect(() => {
