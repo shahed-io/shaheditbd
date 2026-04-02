@@ -231,25 +231,28 @@ const AdminQuickSale = () => {
       // 4. Delivery
       if ((deliveryMethod === 'whatsapp' || deliveryMethod === 'both') && customerPhone.trim()) {
         const phone = customerPhone.replace(/\D/g, '').replace(/^0/, '880');
-        let msg = `🛒 *Quick Sale — অর্ডার কনফার্ম*\n\n`;
-        msg += `📋 *অর্ডার:* #${orderNumber}\n`;
-        msg += `👤 *নাম:* ${customerName}\n\n`;
-        msg += `━━━━━━━━━━━━━━━\n`;
+        let msg = `*SHAHED STORE*\n`;
+        msg += `________________________\n\n`;
+        msg += `*Order Confirmation*\n\n`;
+        msg += `Order: *#${orderNumber}*\n`;
+        msg += `Customer: ${customerName}\n`;
+        msg += `\n________________________\n\n`;
 
         for (const entry of validEntries) {
-          msg += `📦 *${entry.product!.name}*\n`;
-          msg += `💰 মূল্য: ৳${entry.custom_price} × ${entry.quantity}\n`;
+          msg += `*${entry.product!.name}*\n`;
+          msg += `Price: ${entry.custom_price} BDT x ${entry.quantity}\n`;
           if (entry.manual_key) {
-            msg += `🔐 *Key:* ${entry.manual_key}\n`;
-            if (entry.manual_extra) msg += `🔒 *Extra:* ${entry.manual_extra}\n`;
+            msg += `\n*Key / Credentials:*\n\`${entry.manual_key}\`\n`;
+            if (entry.manual_extra) msg += `*Password / Extra:*\n\`${entry.manual_extra}\`\n`;
           }
           msg += `\n`;
         }
 
-        msg += `━━━━━━━━━━━━━━━\n`;
-        msg += `💵 *মোট:* ৳${subtotal}\n`;
-        msg += `✅ *পেমেন্ট:* ${paymentStatus === 'paid' ? 'পেইড' : 'পেন্ডিং'}\n\n`;
-        msg += `ধন্যবাদ! — *ShahedStore*`;
+        msg += `________________________\n\n`;
+        msg += `*Total: ${subtotal} BDT*\n`;
+        msg += `Payment: ${paymentStatus === 'paid' ? 'Paid' : 'Pending'}\n\n`;
+        msg += `Thank you for choosing *Shahed Store*\n`;
+        msg += `_www.shahedstore.com.bd_`;
 
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
       }
