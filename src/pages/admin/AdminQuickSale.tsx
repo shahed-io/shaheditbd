@@ -87,7 +87,7 @@ const AdminQuickSale = () => {
   const [saving, setSaving] = useState(false);
   const [totalOrders, setTotalOrders] = useState(0);
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   useEffect(() => {
     fetchData();
@@ -95,9 +95,12 @@ const AdminQuickSale = () => {
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (activeIdx !== null && dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setActiveIdx(null);
-        setProductSearch('');
+      if (activeIdx !== null) {
+        const ref = dropdownRefs.current[activeIdx];
+        if (ref && !ref.contains(e.target as Node)) {
+          setActiveIdx(null);
+          setProductSearch('');
+        }
       }
     };
     document.addEventListener('mousedown', handler);
@@ -441,7 +444,7 @@ const AdminQuickSale = () => {
                 ) : (
                   /* Store product selector */
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                    <div className="sm:col-span-6 relative" ref={activeIdx === idx ? dropdownRef : undefined}>
+                    <div className="sm:col-span-6 relative" ref={el => { dropdownRefs.current[idx] = el; }}>
                       <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">প্রোডাক্ট <span className="text-destructive">*</span></label>
                       {entry.product ? (
                         <div className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm flex items-center justify-between">
@@ -464,20 +467,20 @@ const AdminQuickSale = () => {
                             <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                             <input
                               value={activeIdx === idx ? productSearch : ''}
-                              onChange={e => { setProductSearch(e.target.value); if (activeIdx !== idx) setActiveIdx(idx); }}
-                              onFocus={() => setActiveIdx(idx)}
+                              onChange={e => { setProductSearch(e.target.value); setActiveIdx(idx); }}
+                              onFocus={() => { setActiveIdx(idx); }}
                               placeholder="প্রোডাক্ট নাম লিখে সার্চ করুন..."
                               className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                             />
                           </div>
-                          {activeIdx === idx && productSearch.trim().length > 0 && (
+                          {activeIdx === idx && (
                             <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-2xl max-h-72 flex flex-col overflow-hidden">
                               <div className="overflow-y-auto flex-1 min-h-0">
                                 {filteredProducts.length === 0 ? (
                                   <p className="text-xs text-muted-foreground text-center py-6">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
-                                ) : filteredProducts.map(p => (
+                                ) : filteredProducts.slice(0, 20).map(p => (
                                   <button key={p.id}
-                                    onClick={() => selectProduct(idx, p)}
+                                    onMouseDown={(e) => { e.preventDefault(); selectProduct(idx, p); }}
                                     className="w-full text-left px-3 py-2.5 text-xs hover:bg-primary/5 transition-colors flex items-center justify-between border-b border-border/50 last:border-0 text-foreground">
                                     <div className="flex items-center gap-2 min-w-0">
                                       {p.image_url ? (
