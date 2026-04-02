@@ -7,6 +7,7 @@ type SlideFeature = string;
 type Slide = {
   id: string;
   tag: string;
+  tagIcon: string;
   title: string;
   titleAccent: string;
   subtitle: string;
@@ -18,6 +19,7 @@ type Slide = {
   accentFrom: string;
   accentTo: string;
   emoji: string;
+  logoImg: string;
   features: SlideFeature[];
   enabled: boolean;
   productSlug: string;
