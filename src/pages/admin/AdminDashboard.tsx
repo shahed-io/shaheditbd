@@ -112,7 +112,7 @@ const AdminDashboard = () => {
     setStats({
       todaySales, monthRevenue, yearRevenue, totalOrders: orders.length,
       pendingOrders, paymentPending, deliveredOrders, cancelledOrders,
-      totalCustomers: (profiles || []).length,
+      totalCustomers: customerCount || 0,
       totalRevenue, prevMonthRevenue, prevMonthOrders,
     });
 
