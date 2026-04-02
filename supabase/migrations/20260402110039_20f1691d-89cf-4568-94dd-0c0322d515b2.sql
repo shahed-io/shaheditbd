@@ -1,0 +1,1 @@
+UPDATE categories SET image_url = 'https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/category-icons/ms365-logo.png' WHERE id = 'd6f69207-e9e3-4a0a-9faa-774d81b6dd96';
