@@ -430,10 +430,10 @@ const OrderDetailModal = ({
   };
 
   const sendWhatsApp = (customNote?: string) => {
-    const items = order.order_items?.map((i: any) => `• ${i.product_name}`).join('\n') || '';
+    const items = order.order_items?.map((i: any) => `- ${i.product_name}`).join('\n') || '';
     const statusLabel = STATUS_CONFIG[order.status]?.label || order.status;
     const msg = encodeURIComponent(
-      `📦 অর্ডার আপডেট!\n\nঅর্ডার: ${order.order_number}\nস্ট্যাটাস: ${statusLabel}\n\n${items}${customNote ? '\n\n' + customNote : ''}\n\nধন্যবাদ! 🙏\n— Shahed Store`
+      `Order Update\n\nOrder: ${order.order_number}\nStatus: ${statusLabel}\n\n${items}${customNote ? '\n\n' + customNote : ''}\n\nThank you!\n-- Shahed Store`
     );
     const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');

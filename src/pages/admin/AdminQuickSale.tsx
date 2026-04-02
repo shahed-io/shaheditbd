@@ -250,29 +250,29 @@ const AdminQuickSale = () => {
 
       if ((deliveryMethod === 'whatsapp' || deliveryMethod === 'both') && customerPhone.trim()) {
         const phone = customerPhone.replace(/\D/g, '').replace(/^0/, '880');
-        let msg = `*SHAHED STORE*\n`;
+        let msg = `SHAHED STORE\n`;
         msg += `________________________\n\n`;
-        msg += `*Order Confirmation*\n\n`;
-        msg += `Order: *#${orderNumber}*\n`;
+        msg += `Order Confirmation\n\n`;
+        msg += `Order: #${orderNumber}\n`;
         msg += `Customer: ${customerName}\n`;
         msg += `\n________________________\n\n`;
 
         for (const entry of validEntries) {
           const itemName = entry.is_custom ? entry.custom_name : entry.product!.name;
-          msg += `*${itemName}*\n`;
+          msg += `${itemName}\n`;
           msg += `Price: ${entry.custom_price} BDT x ${entry.quantity}\n`;
           if (entry.manual_key) {
-            msg += `\n*Email:*\n\`${entry.manual_key}\`\n`;
-            if (entry.manual_extra) msg += `*Temporary Password:*\n\`${entry.manual_extra}\`\n`;
+            msg += `\nEmail:\n${entry.manual_key}\n`;
+            if (entry.manual_extra) msg += `Temporary Password:\n${entry.manual_extra}\n`;
           }
           msg += `\n`;
         }
 
         msg += `________________________\n\n`;
-        msg += `*Total: ${subtotal} BDT*\n`;
+        msg += `Total: ${subtotal} BDT\n`;
         msg += `Payment: ${paymentStatus === 'paid' ? 'Paid' : 'Pending'}\n\n`;
-        msg += `Thank you for choosing *Shahed Store*\n`;
-        msg += `_www.shahedstore.com.bd_`;
+        msg += `Thank you for choosing Shahed Store\n`;
+        msg += `www.shahedstore.com.bd`;
 
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
       }
