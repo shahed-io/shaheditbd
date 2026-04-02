@@ -362,9 +362,9 @@ const AdminQuickSale = () => {
                     <ChevronDown size={14} className={`text-muted-foreground transition-transform ${activeIdx === idx ? 'rotate-180' : ''}`} />
                   </div>
                   {activeIdx === idx && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-72 overflow-hidden"
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-96 flex flex-col"
                       onClick={e => e.stopPropagation()}>
-                      <div className="p-2 border-b border-border space-y-2">
+                      <div className="p-2 border-b border-border space-y-2 shrink-0">
                         <div className="relative">
                           <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                           <input value={productSearch} onChange={e => setProductSearch(e.target.value)}
@@ -379,7 +379,7 @@ const AdminQuickSale = () => {
                           {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                       </div>
-                      <div className="overflow-y-auto max-h-48">
+                      <div className="overflow-y-auto flex-1 min-h-0">
                         {filteredProducts.length === 0 ? (
                           <p className="text-xs text-muted-foreground text-center py-3">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
                         ) : filteredProducts.map(p => (
