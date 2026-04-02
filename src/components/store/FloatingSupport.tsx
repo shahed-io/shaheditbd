@@ -56,6 +56,7 @@ const FloatingSupport = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const configLoaded = useRef(false);
+  const sessionIdRef = useRef(crypto.randomUUID());
 
   // Load settings once
   useEffect(() => {
@@ -181,6 +182,19 @@ const FloatingSupport = () => {
             }
           } catch { /* partial */ }
         }
+      }
+
+      // Save chat Q&A to database
+      if (assistantContent) {
+        try {
+          await supabase.from('chat_conversations' as any).insert({
+            session_id: sessionIdRef.current,
+            user_message: text,
+            ai_response: assistantContent,
+            user_agent: navigator.userAgent,
+            page_url: window.location.pathname,
+          });
+        } catch { /* silent */ }
       }
     } catch (err: any) {
       const msg = err?.message?.includes('রিকোয়েস্ট') || err?.message?.includes('AI')

@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Bot, MessageCircle, Plus, Trash2, Save, Loader2, Smartphone, Globe } from 'lucide-react';
+import { Bot, MessageCircle, Plus, Trash2, Save, Loader2, Smartphone, Globe, History, Search, ChevronDown, ChevronUp, User, Clock, Monitor } from 'lucide-react';
 
 interface LiveChatSettings {
   // General
@@ -63,6 +63,294 @@ const LIVE_SET_TYPES = [
   { value: 'telegram', label: 'Telegram', color: '#0088CC' },
   { value: 'custom_link', label: 'Custom Link', color: '#7c3aed' },
 ];
+
+// ── Chat History Panel ──
+interface ChatConversation {
+  id: string;
+  session_id: string;
+  user_message: string;
+  ai_response: string;
+  user_agent: string | null;
+  page_url: string | null;
+  created_at: string;
+}
+
+interface GroupedSession {
+  session_id: string;
+  messages: ChatConversation[];
+  first_at: string;
+  last_at: string;
+  device: string;
+}
+
+const getDeviceFromUA = (ua: string | null): string => {
+  if (!ua) return 'Unknown';
+  if (/mobile|android|iphone/i.test(ua)) return 'Mobile';
+  if (/tablet|ipad/i.test(ua)) return 'Tablet';
+  return 'Desktop';
+};
+
+const ChatHistoryPanel = () => {
+  const [sessions, setSessions] = useState<GroupedSession[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [expandedSession, setExpandedSession] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const loadHistory = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('chat_conversations' as any)
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(500);
+
+      if (error) throw error;
+
+      const convos = (data || []) as unknown as ChatConversation[];
+
+      // Group by session_id
+      const grouped: Record<string, ChatConversation[]> = {};
+      for (const c of convos) {
+        if (!grouped[c.session_id]) grouped[c.session_id] = [];
+        grouped[c.session_id].push(c);
+      }
+
+      const sessionList: GroupedSession[] = Object.entries(grouped).map(([sid, msgs]) => {
+        const sorted = msgs.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        return {
+          session_id: sid,
+          messages: sorted,
+          first_at: sorted[0].created_at,
+          last_at: sorted[sorted.length - 1].created_at,
+          device: getDeviceFromUA(sorted[0].user_agent),
+        };
+      });
+
+      sessionList.sort((a, b) => new Date(b.last_at).getTime() - new Date(a.last_at).getTime());
+      setSessions(sessionList);
+    } catch (err: any) {
+      console.error('Failed to load chat history:', err);
+      toast.error('চ্যাট হিস্ট্রি লোড করতে সমস্যা হয়েছে');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteSession = async (sessionId: string) => {
+    setDeleting(sessionId);
+    try {
+      const { error } = await supabase
+        .from('chat_conversations' as any)
+        .delete()
+        .eq('session_id', sessionId);
+      if (error) throw error;
+      setSessions(prev => prev.filter(s => s.session_id !== sessionId));
+      toast.success('সেশন ডিলিট হয়েছে');
+    } catch (err: any) {
+      toast.error('ডিলিট করতে সমস্যা: ' + err.message);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const formatTime = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return 'এইমাত্র';
+    if (diffMin < 60) return `${diffMin} মিনিট আগে`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `${diffHr} ঘণ্টা আগে`;
+    const diffDay = Math.floor(diffHr / 24);
+    if (diffDay < 7) return `${diffDay} দিন আগে`;
+    return d.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const filtered = search.trim()
+    ? sessions.filter(s => s.messages.some(m =>
+        m.user_message.toLowerCase().includes(search.toLowerCase()) ||
+        m.ai_response.toLowerCase().includes(search.toLowerCase())
+      ))
+    : sessions;
+
+  const totalMessages = sessions.reduce((sum, s) => sum + s.messages.length, 0);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <History className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-foreground">{sessions.length}</p>
+              <p className="text-xs text-muted-foreground">মোট সেশন</p>
+            </div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+              <MessageCircle className="w-5 h-5 text-blue-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-foreground">{totalMessages}</p>
+              <p className="text-xs text-muted-foreground">মোট প্রশ্ন-উত্তর</p>
+            </div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+              <Clock className="w-5 h-5 text-green-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-foreground">
+                {sessions.length > 0 ? formatTime(sessions[0].last_at) : '—'}
+              </p>
+              <p className="text-xs text-muted-foreground">সর্বশেষ চ্যাট</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="চ্যাটে সার্চ করুন..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      {/* Session List */}
+      {filtered.length === 0 && (
+        <div className="text-center py-12 text-muted-foreground border border-dashed rounded-xl">
+          <History className="w-12 h-12 mx-auto mb-3 opacity-30" />
+          <p className="font-medium">কোনো চ্যাট হিস্ট্রি নেই</p>
+          <p className="text-xs mt-1">ওয়েবসাইটে কেউ AI চ্যাট ব্যবহার করলে এখানে দেখাবে</p>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {filtered.map(session => {
+          const isExpanded = expandedSession === session.session_id;
+          const firstMsg = session.messages[0];
+          return (
+            <Card key={session.session_id} className="overflow-hidden">
+              {/* Session Header */}
+              <button
+                onClick={() => setExpandedSession(isExpanded ? null : session.session_id)}
+                className="w-full flex items-center justify-between p-4 hover:bg-muted/30 transition-colors text-left"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {firstMsg.user_message.length > 60 ? firstMsg.user_message.slice(0, 60) + '...' : firstMsg.user_message}
+                    </p>
+                    <div className="flex items-center gap-3 mt-0.5">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {formatTime(session.last_at)}
+                      </span>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MessageCircle className="w-3 h-3" /> {session.messages.length} টি প্রশ্ন
+                      </span>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Monitor className="w-3 h-3" /> {session.device}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => { e.stopPropagation(); deleteSession(session.session_id); }}
+                    disabled={deleting === session.session_id}
+                    className="text-destructive hover:text-destructive h-8 w-8"
+                  >
+                    {deleting === session.session_id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                  </Button>
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                </div>
+              </button>
+
+              {/* Expanded Messages */}
+              {isExpanded && (
+                <div className="border-t border-border px-4 py-3 space-y-3 bg-muted/10 max-h-96 overflow-y-auto">
+                  {session.messages.map((msg, idx) => (
+                    <div key={msg.id || idx} className="space-y-2">
+                      {/* User question */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-6 h-6 rounded-full bg-blue-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <User className="w-3 h-3 text-blue-500" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs font-medium text-blue-600 mb-0.5">ভিজিটর</p>
+                          <p className="text-sm text-foreground bg-blue-500/5 rounded-xl px-3 py-2 border border-blue-500/10">
+                            {msg.user_message}
+                          </p>
+                        </div>
+                      </div>
+                      {/* AI response */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Bot className="w-3 h-3 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs font-medium text-primary mb-0.5">Shahed AI</p>
+                          <p className="text-sm text-foreground bg-primary/5 rounded-xl px-3 py-2 border border-primary/10 whitespace-pre-wrap">
+                            {msg.ai_response}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground text-right">
+                        {new Date(msg.created_at).toLocaleString('bn-BD')}
+                        {msg.page_url && msg.page_url !== '/' ? ` · ${msg.page_url}` : ''}
+                      </p>
+                      {idx < session.messages.length - 1 && <hr className="border-border/50" />}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Refresh */}
+      {sessions.length > 0 && (
+        <div className="text-center">
+          <Button variant="outline" size="sm" onClick={loadHistory}>
+            <Loader2 className="w-3.5 h-3.5 mr-1.5" /> রিফ্রেশ করুন
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const AdminLiveChat = () => {
   const [settings, setSettings] = useState<LiveChatSettings>(DEFAULT_SETTINGS);
@@ -192,11 +480,12 @@ const AdminLiveChat = () => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="grid grid-cols-4 w-full max-w-2xl">
+        <TabsList className="grid grid-cols-5 w-full max-w-3xl">
           <TabsTrigger value="general">সাধারণ</TabsTrigger>
           <TabsTrigger value="ai-chat">AI চ্যাট</TabsTrigger>
           <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
           <TabsTrigger value="live-sets">লাইভ সেট</TabsTrigger>
+          <TabsTrigger value="chat-history" className="flex items-center gap-1"><History className="w-3.5 h-3.5" /> হিস্ট্রি</TabsTrigger>
         </TabsList>
 
         {/* General Tab */}
@@ -465,6 +754,11 @@ const AdminLiveChat = () => {
               ))}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Chat History Tab */}
+        <TabsContent value="chat-history">
+          <ChatHistoryPanel />
         </TabsContent>
       </Tabs>
     </div>
