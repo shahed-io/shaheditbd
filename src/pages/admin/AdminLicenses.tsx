@@ -435,6 +435,33 @@ const AdminLicenses = () => {
     }
   };
 
+  // ── WhatsApp Delivery ──
+  const openWaModal = (lic: LicenseKey) => {
+    setWaModal({ open: true, license: lic, phone: lic.customer_phone || '' });
+  };
+
+  const handleWhatsAppSend = () => {
+    if (!waModal.license || !waModal.phone.trim()) return toast.error('ফোন নম্বর দিন');
+    const lic = waModal.license;
+    const phone = waModal.phone.replace(/\D/g, '').replace(/^0/, '880');
+    const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label || lic.key_type;
+    
+    let msg = `🔑 *লাইসেন্স ডেলিভারি*\n\n`;
+    msg += `📦 *প্রোডাক্ট:* ${lic.product_name}\n`;
+    msg += `📝 *টাইপ:* ${typeLabel}\n`;
+    if (lic.order_number) msg += `🧾 *অর্ডার:* #${lic.order_number}\n`;
+    msg += `\n━━━━━━━━━━━━━━━\n`;
+    msg += `🔐 *Key/Credentials:*\n${lic.key_value}\n`;
+    if (lic.extra_info) msg += `🔒 *Password/Extra:*\n${lic.extra_info}\n`;
+    msg += `━━━━━━━━━━━━━━━\n\n`;
+    msg += `✅ ধন্যবাদ! — *ShahedStore*`;
+
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+    toast.success('WhatsApp ওপেন হচ্ছে...');
+    setWaModal({ open: false, license: null, phone: '' });
+  };
+
   // ── Edit License ──
   const openEditModal = (lic: LicenseKey) => {
     setEditForm({
