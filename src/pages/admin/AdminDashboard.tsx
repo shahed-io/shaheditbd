@@ -135,8 +135,8 @@ const AdminDashboard = () => {
     if (paymentPending > 0) {
       notifs.push({ id: 'payments', type: 'payment', message: `${paymentPending} payment verification pending`, time: 'Action needed', read: false });
     }
-    const newTickets = (tickets || []).filter(t => t.status === 'open');
-    if (newTickets.length > 0) {
+    const openTickets = (tickets || []);
+    if (openTickets.length > 0) {
       notifs.push({ id: 'tickets', type: 'ticket', message: `${newTickets.length} open support ticket(s)`, time: 'Needs reply', read: false });
     }
     const lowStock = (products || []).filter(p => p.stock_quantity !== null && p.stock_quantity <= 5 && p.status === 'active');
