@@ -100,6 +100,9 @@ const AdminLicenses = () => {
   const [assignSearching, setAssignSearching] = useState(false);
   const [assigning, setAssigning] = useState(false);
 
+  // WhatsApp modal state
+  const [waModal, setWaModal] = useState<{ open: boolean; license: LicenseKey | null; phone: string }>({ open: false, license: null, phone: '' });
+
   // ── Bulk Selection States ──
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
