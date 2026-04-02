@@ -223,6 +223,7 @@ const AppContent = () => {
             <Route path="import-export" element={<AdminProductImportExport />} />
             <Route path="facebook-pixel" element={<AdminFacebookPixel />} />
             <Route path="licenses" element={<AdminLicenses />} />
+            <Route path="quick-sale" element={<AdminQuickSale />} />
             <Route path="popup-banner" element={<AdminPopupBanner />} />
             <Route path="invoices" element={<AdminInvoiceGenerator />} />
             <Route path="footer-settings" element={<AdminFooterSettings />} />
