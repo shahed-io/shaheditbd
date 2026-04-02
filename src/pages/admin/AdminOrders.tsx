@@ -746,12 +746,12 @@ const AdminOrders = () => {
           `🛍️ নতুন অর্ডার! #${newOrder.order_number}`,
           {
             duration: 10000,
-            action: adminWhatsapp ? {
-              label: '📱 WhatsApp',
+            action: newOrder.customer_phone ? {
+              label: 'WhatsApp',
               onClick: () => {
-                const phone = adminWhatsapp.replace(/\D/g, '').replace(/^0/, '880');
+                const phone = newOrder.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
                 const msg = encodeURIComponent(
-                  `🛍️ নতুন অর্ডার!\n📦 #${newOrder.order_number}\n👤 ${newOrder.customer_name}\n💰 ৳${Number(newOrder.total).toLocaleString()}\n💳 ${PM_LABELS[newOrder.payment_method] || newOrder.payment_method}${newOrder.transaction_id ? '\n🔑 TrxID: ' + newOrder.transaction_id : ''}`
+                  `SHAHED STORE\n\nOrder: #${newOrder.order_number}\nName: ${newOrder.customer_name}\nTotal: ${Number(newOrder.total).toLocaleString()} BDT\nPayment: ${PM_LABELS[newOrder.payment_method] || newOrder.payment_method}${newOrder.transaction_id ? '\nTrxID: ' + newOrder.transaction_id : ''}\n\nThank you!\n-- Shahed Store`
                 );
                 window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
               }
