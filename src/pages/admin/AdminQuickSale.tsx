@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
@@ -6,7 +6,7 @@ import {
   MessageCircle, Send, Save, Plus, Minus, X, Package,
   CreditCard, CheckCircle2, Loader2, Eye, EyeOff,
   Key, Zap, ArrowRight, Sparkles, Hash, FileText,
-  DollarSign, Truck, ClipboardList
+  DollarSign, Truck, ClipboardList, PenLine, Tag
 } from 'lucide-react';
 
 type Product = {
@@ -16,8 +16,8 @@ type Product = {
   price: number;
   original_price: number | null;
   image_url: string | null;
-  category_id: string | null;
-  category_name?: string;
+  category_ids: string[];
+  category_names: string[];
 };
 
 type Category = { id: string; name: string };
@@ -37,6 +37,8 @@ type OrderEntry = {
   license: LicenseKey | null;
   manual_key: string;
   manual_extra: string;
+  is_custom: boolean;
+  custom_name: string;
 };
 
 const emptyEntry = (): OrderEntry => ({
@@ -46,6 +48,8 @@ const emptyEntry = (): OrderEntry => ({
   license: null,
   manual_key: '',
   manual_extra: '',
+  is_custom: false,
+  custom_name: '',
 });
 
 const KEY_TYPES: Record<string, string> = {
@@ -89,7 +93,6 @@ const AdminQuickSale = () => {
     fetchData();
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (activeIdx !== null && dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -103,37 +106,55 @@ const AdminQuickSale = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const [prodRes, catRes, orderCountRes] = await Promise.all([
-      supabase.from('products').select('id, name, slug, price, original_price, image_url, category_id').eq('status', 'active').order('name'),
+    const [prodRes, catRes, pcRes, orderCountRes] = await Promise.all([
+      supabase.from('products').select('id, name, slug, price, original_price, image_url').eq('status', 'active').order('name'),
       supabase.from('categories').select('id, name').eq('is_active', true).order('name'),
+      supabase.from('product_categories').select('product_id, category_id'),
       supabase.from('orders').select('id', { count: 'exact', head: true }),
     ]);
 
+    const cats = catRes.data || [];
+    const pcData = pcRes.data || [];
+    const catMap = new Map(cats.map(c => [c.id, c.name]));
+
     if (prodRes.data) {
-      const cats = catRes.data || [];
-      setProducts(prodRes.data.map((p: any) => ({
-        ...p,
-        category_name: cats.find((c: any) => c.id === p.category_id)?.name || '',
-      })));
+      setProducts(prodRes.data.map((p: any) => {
+        const pCatIds = pcData.filter(pc => pc.product_id === p.id).map(pc => pc.category_id);
+        return {
+          ...p,
+          category_ids: pCatIds,
+          category_names: pCatIds.map(id => catMap.get(id) || '').filter(Boolean),
+        };
+      }));
     }
-    setCategories(catRes.data || []);
+    setCategories(cats);
     setTotalOrders(orderCountRes.count || 0);
     setLoading(false);
   };
 
-  const filteredProducts = products.filter(p => {
-    const matchesSearch = !productSearch || p.name.toLowerCase().includes(productSearch.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || p.category_id === filterCategory;
-    if (productSearch.trim()) return matchesSearch;
-    return matchesCategory;
-  });
+  const filteredProducts = useMemo(() => {
+    const search = productSearch.trim().toLowerCase();
+    return products.filter(p => {
+      const matchesSearch = !search || p.name.toLowerCase().includes(search) || p.category_names.some(cn => cn.toLowerCase().includes(search));
+      const matchesCategory = filterCategory === 'all' || p.category_ids.includes(filterCategory);
+      if (search) return matchesSearch;
+      return matchesCategory;
+    });
+  }, [products, productSearch, filterCategory]);
 
   const selectProduct = (idx: number, product: Product) => {
     setEntries(prev => prev.map((e, i) =>
-      i === idx ? { ...e, product, custom_price: product.price, license: null, manual_key: '', manual_extra: '' } : e
+      i === idx ? { ...e, product, custom_price: product.price, license: null, manual_key: '', manual_extra: '', is_custom: false, custom_name: '' } : e
     ));
     setActiveIdx(null);
     setProductSearch('');
+  };
+
+  const toggleCustomProduct = (idx: number) => {
+    setEntries(prev => prev.map((e, i) =>
+      i === idx ? { ...e, is_custom: !e.is_custom, product: null, custom_name: '', custom_price: 0, license: null, manual_key: '', manual_extra: '' } : e
+    ));
+    setActiveIdx(null);
   };
 
   const updateEntry = (idx: number, updates: Partial<OrderEntry>) => {
@@ -181,8 +202,8 @@ const AdminQuickSale = () => {
   const handleSubmit = async () => {
     if (!customerName.trim()) return toast.error('কাস্টমার নাম দিন');
     if (!customerPhone.trim() && !customerEmail.trim()) return toast.error('ফোন বা ইমেইল দিন');
-    const validEntries = entries.filter(e => e.product);
-    if (validEntries.length === 0) return toast.error('কমপক্ষে একটি প্রোডাক্ট সিলেক্ট করুন');
+    const validEntries = entries.filter(e => e.product || (e.is_custom && e.custom_name.trim()));
+    if (validEntries.length === 0) return toast.error('কমপক্ষে একটি প্রোডাক্ট সিলেক্ট বা তৈরি করুন');
 
     setSaving(true);
     try {
@@ -205,14 +226,15 @@ const AdminQuickSale = () => {
       if (orderErr || !order) throw orderErr || new Error('Order creation failed');
 
       for (const entry of validEntries) {
+        const itemName = entry.is_custom ? entry.custom_name : entry.product!.name;
         const keyDisplay = entry.manual_key
           ? (entry.manual_extra ? `${entry.manual_key}|${entry.manual_extra}` : entry.manual_key)
           : null;
 
         await supabase.from('order_items').insert({
           order_id: order.id,
-          product_id: entry.product!.id,
-          product_name: entry.product!.name,
+          product_id: entry.is_custom ? null : entry.product!.id,
+          product_name: itemName,
           price: entry.custom_price,
           quantity: entry.quantity,
           total: entry.custom_price * entry.quantity,
@@ -237,7 +259,8 @@ const AdminQuickSale = () => {
         msg += `\n________________________\n\n`;
 
         for (const entry of validEntries) {
-          msg += `*${entry.product!.name}*\n`;
+          const itemName = entry.is_custom ? entry.custom_name : entry.product!.name;
+          msg += `*${itemName}*\n`;
           msg += `Price: ${entry.custom_price} BDT x ${entry.quantity}\n`;
           if (entry.manual_key) {
             msg += `\n*Email:*\n\`${entry.manual_key}\`\n`;
@@ -284,21 +307,19 @@ const AdminQuickSale = () => {
     );
   }
 
-  const validItemCount = entries.filter(e => e.product).length;
+  const validItemCount = entries.filter(e => e.product || (e.is_custom && e.custom_name.trim())).length;
 
   return (
     <div className="space-y-5 max-w-5xl mx-auto pb-8">
       {/* Header */}
       <div className="flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Zap size={18} className="text-primary" />
-            </div>
-            <div>
-              <h1 className="text-xl font-black text-foreground tracking-tight">Quick Sale</h1>
-              <p className="text-xs text-muted-foreground">দ্রুত অর্ডার তৈরি ও ডেলিভারি</p>
-            </div>
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Zap size={18} className="text-primary" />
+          </div>
+          <div>
+            <h1 className="text-xl font-black text-foreground tracking-tight">Quick Sale</h1>
+            <p className="text-xs text-muted-foreground">দ্রুত অর্ডার তৈরি ও ডেলিভারি</p>
           </div>
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-lg border border-border">
@@ -307,7 +328,7 @@ const AdminQuickSale = () => {
         </div>
       </div>
 
-      {/* ─── STEP 1: Customer ─── */}
+      {/* STEP 1: Customer */}
       <section>
         <div className="flex items-center gap-2 mb-3">
           <div className="w-5 h-5 rounded-md bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-black">1</div>
@@ -315,7 +336,6 @@ const AdminQuickSale = () => {
         </div>
         <div className="bg-card rounded-xl border border-border p-4 shadow-sm">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {/* Name */}
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">নাম <span className="text-destructive">*</span></label>
               <div className="relative group">
@@ -325,7 +345,6 @@ const AdminQuickSale = () => {
                   className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
               </div>
             </div>
-            {/* Phone */}
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">ফোন <span className="text-destructive">*</span></label>
               <div className="relative group">
@@ -335,7 +354,6 @@ const AdminQuickSale = () => {
                   className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
               </div>
             </div>
-            {/* Email */}
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">ইমেইল</label>
               <div className="relative group">
@@ -349,7 +367,7 @@ const AdminQuickSale = () => {
         </div>
       </section>
 
-      {/* ─── STEP 2: Products ─── */}
+      {/* STEP 2: Products */}
       <section>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -370,115 +388,178 @@ const AdminQuickSale = () => {
                 <div className="flex items-center gap-2">
                   <Package size={13} className="text-primary" />
                   <span className="text-xs font-bold text-foreground">আইটেম #{idx + 1}</span>
-                  {entry.product && (
-                    <span className="text-xs text-muted-foreground">— {entry.product.name}</span>
+                  {entry.product && <span className="text-xs text-muted-foreground">— {entry.product.name}</span>}
+                  {entry.is_custom && entry.custom_name && <span className="text-xs text-muted-foreground">— {entry.custom_name} (কাস্টম)</span>}
+                </div>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => toggleCustomProduct(idx)}
+                    title={entry.is_custom ? 'স্টোর প্রোডাক্ট ব্যবহার করুন' : 'কাস্টম প্রোডাক্ট তৈরি করুন'}
+                    className={`p-1.5 rounded-md text-xs transition-all ${entry.is_custom ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-primary hover:bg-primary/5'}`}>
+                    <PenLine size={13} />
+                  </button>
+                  {entries.length > 1 && (
+                    <button onClick={() => removeEntry(idx)}
+                      className="p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
+                      <X size={13} />
+                    </button>
                   )}
                 </div>
-                {entries.length > 1 && (
-                  <button onClick={() => removeEntry(idx)}
-                    className="p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
-                    <X size={13} />
-                  </button>
-                )}
               </div>
 
               <div className="p-4 space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                  {/* Product selector — takes 6 cols */}
-                  <div className="sm:col-span-6 relative" ref={activeIdx === idx ? dropdownRef : undefined}>
-                    <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">প্রোডাক্ট <span className="text-destructive">*</span></label>
-                    <div
-                      onClick={() => setActiveIdx(activeIdx === idx ? null : idx)}
-                      className={`w-full bg-background border rounded-lg px-3 py-2.5 text-sm cursor-pointer flex items-center justify-between transition-all ${
-                        activeIdx === idx ? 'border-primary ring-2 ring-primary/20' : 'border-border hover:border-primary/40'
-                      }`}>
-                      <span className={entry.product ? 'text-foreground font-medium' : 'text-muted-foreground'}>
-                        {entry.product ? entry.product.name : 'প্রোডাক্ট বেছে নিন'}
-                      </span>
-                      <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${activeIdx === idx ? 'rotate-180' : ''}`} />
-                    </div>
-                    {activeIdx === idx && (
-                      <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-2xl max-h-80 flex flex-col overflow-hidden">
-                        <div className="p-2.5 border-b border-border space-y-2 shrink-0">
-                          <div className="relative">
-                            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                            <input value={productSearch} onChange={e => setProductSearch(e.target.value)}
-                              placeholder="প্রোডাক্ট খুঁজুন..."
-                              className="w-full bg-muted/30 border border-border rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-none focus:border-primary transition-all"
-                              autoFocus onClick={e => e.stopPropagation()} />
-                          </div>
-                          <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)}
-                            onClick={e => e.stopPropagation()}
-                            className="w-full bg-muted/30 border border-border rounded-lg px-2.5 py-1.5 text-xs focus:outline-none">
-                            <option value="all">সকল ক্যাটাগরি</option>
-                            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                          </select>
-                        </div>
-                        <div className="overflow-y-auto flex-1 min-h-0">
-                          {filteredProducts.length === 0 ? (
-                            <p className="text-xs text-muted-foreground text-center py-6">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
-                          ) : filteredProducts.map(p => (
-                            <button key={p.id}
-                              onClick={(e) => { e.stopPropagation(); selectProduct(idx, p); }}
-                              className={`w-full text-left px-3 py-2.5 text-xs hover:bg-primary/5 transition-colors flex items-center justify-between border-b border-border/50 last:border-0 ${
-                                entry.product?.id === p.id ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'
-                              }`}>
-                              <div className="flex items-center gap-2 min-w-0">
-                                {p.image_url && (
-                                  <img src={p.image_url} alt="" className="w-7 h-7 rounded-md object-cover shrink-0 border border-border" />
-                                )}
-                                <div className="min-w-0">
-                                  <span className="font-medium block truncate">{p.name}</span>
-                                  {p.category_name && <span className="text-[10px] text-muted-foreground">{p.category_name}</span>}
-                                </div>
-                              </div>
-                              <span className="text-muted-foreground font-mono shrink-0 ml-2">৳{p.price}</span>
-                            </button>
-                          ))}
-                        </div>
+                {entry.is_custom ? (
+                  /* Custom product inputs */
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                    <div className="sm:col-span-6">
+                      <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">কাস্টম প্রোডাক্ট নাম <span className="text-destructive">*</span></label>
+                      <div className="relative group">
+                        <PenLine size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                        <input value={entry.custom_name} onChange={e => updateEntry(idx, { custom_name: e.target.value })}
+                          placeholder="প্রোডাক্টের নাম লিখুন"
+                          className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                       </div>
-                    )}
-                  </div>
-
-                  {/* Price — 3 cols */}
-                  <div className="sm:col-span-3">
-                    <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">মূল্য (৳)</label>
-                    <div className="relative group">
-                      <DollarSign size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                      <input type="number" value={entry.custom_price} onChange={e => updateEntry(idx, { custom_price: Number(e.target.value) })}
-                        className="w-full bg-background border border-border rounded-lg pl-8 pr-3 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                    </div>
+                    <div className="sm:col-span-3">
+                      <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">মূল্য (৳)</label>
+                      <div className="relative group">
+                        <DollarSign size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                        <input type="number" value={entry.custom_price} onChange={e => updateEntry(idx, { custom_price: Number(e.target.value) })}
+                          className="w-full bg-background border border-border rounded-lg pl-8 pr-3 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                      </div>
+                    </div>
+                    <div className="sm:col-span-3">
+                      <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">পরিমাণ</label>
+                      <div className="flex items-center bg-background border border-border rounded-lg overflow-hidden">
+                        <button onClick={() => updateEntry(idx, { quantity: Math.max(1, entry.quantity - 1) })}
+                          className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-r border-border">
+                          <Minus size={13} />
+                        </button>
+                        <span className="flex-1 text-center text-sm font-bold tabular-nums">{entry.quantity}</span>
+                        <button onClick={() => updateEntry(idx, { quantity: entry.quantity + 1 })}
+                          className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-l border-border">
+                          <Plus size={13} />
+                        </button>
+                      </div>
                     </div>
                   </div>
+                ) : (
+                  /* Store product selector */
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                    <div className="sm:col-span-6 relative" ref={activeIdx === idx ? dropdownRef : undefined}>
+                      <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">প্রোডাক্ট <span className="text-destructive">*</span></label>
+                      <div
+                        onClick={() => { setActiveIdx(activeIdx === idx ? null : idx); setProductSearch(''); setFilterCategory('all'); }}
+                        className={`w-full bg-background border rounded-lg px-3 py-2.5 text-sm cursor-pointer flex items-center justify-between transition-all ${
+                          activeIdx === idx ? 'border-primary ring-2 ring-primary/20' : 'border-border hover:border-primary/40'
+                        }`}>
+                        <span className={entry.product ? 'text-foreground font-medium truncate' : 'text-muted-foreground'}>
+                          {entry.product ? entry.product.name : 'প্রোডাক্ট বেছে নিন'}
+                        </span>
+                        <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 shrink-0 ml-1 ${activeIdx === idx ? 'rotate-180' : ''}`} />
+                      </div>
 
-                  {/* Quantity — 3 cols */}
-                  <div className="sm:col-span-3">
-                    <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">পরিমাণ</label>
-                    <div className="flex items-center bg-background border border-border rounded-lg overflow-hidden">
-                      <button onClick={() => updateEntry(idx, { quantity: Math.max(1, entry.quantity - 1) })}
-                        className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-r border-border">
-                        <Minus size={13} />
-                      </button>
-                      <span className="flex-1 text-center text-sm font-bold tabular-nums">{entry.quantity}</span>
-                      <button onClick={() => updateEntry(idx, { quantity: entry.quantity + 1 })}
-                        className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-l border-border">
-                        <Plus size={13} />
-                      </button>
+                      {activeIdx === idx && (
+                        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-2xl max-h-80 flex flex-col overflow-hidden">
+                          <div className="p-2.5 border-b border-border space-y-2 shrink-0">
+                            <div className="relative">
+                              <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                              <input value={productSearch} onChange={e => setProductSearch(e.target.value)}
+                                placeholder="প্রোডাক্ট খুঁজুন..."
+                                className="w-full bg-muted/30 border border-border rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-none focus:border-primary transition-all"
+                                autoFocus onClick={e => e.stopPropagation()} />
+                            </div>
+                            {/* Category filter chips */}
+                            <div className="flex flex-wrap gap-1.5">
+                              <button onClick={e => { e.stopPropagation(); setFilterCategory('all'); }}
+                                className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all ${filterCategory === 'all' ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
+                                সকল
+                              </button>
+                              {categories.map(c => (
+                                <button key={c.id} onClick={e => { e.stopPropagation(); setFilterCategory(c.id); }}
+                                  className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all ${filterCategory === c.id ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
+                                  {c.name}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="overflow-y-auto flex-1 min-h-0">
+                            {filteredProducts.length === 0 ? (
+                              <p className="text-xs text-muted-foreground text-center py-6">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
+                            ) : filteredProducts.map(p => (
+                              <button key={p.id}
+                                onClick={(e) => { e.stopPropagation(); selectProduct(idx, p); }}
+                                className={`w-full text-left px-3 py-2.5 text-xs hover:bg-primary/5 transition-colors flex items-center justify-between border-b border-border/50 last:border-0 ${
+                                  entry.product?.id === p.id ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'
+                                }`}>
+                                <div className="flex items-center gap-2 min-w-0">
+                                  {p.image_url ? (
+                                    <img src={p.image_url} alt="" className="w-7 h-7 rounded-md object-cover shrink-0 border border-border" />
+                                  ) : (
+                                    <div className="w-7 h-7 rounded-md bg-muted/50 flex items-center justify-center shrink-0">
+                                      <Package size={12} className="text-muted-foreground" />
+                                    </div>
+                                  )}
+                                  <div className="min-w-0">
+                                    <span className="font-medium block truncate">{p.name}</span>
+                                    {p.category_names.length > 0 && (
+                                      <div className="flex items-center gap-1 mt-0.5">
+                                        <Tag size={8} className="text-muted-foreground shrink-0" />
+                                        <span className="text-[10px] text-muted-foreground truncate">{p.category_names.join(', ')}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <span className="text-muted-foreground font-mono shrink-0 ml-2">৳{p.price}</span>
+                              </button>
+                            ))}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground text-center py-1.5 border-t border-border bg-muted/10">
+                            {filteredProducts.length}/{products.length} প্রোডাক্ট
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="sm:col-span-3">
+                      <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">মূল্য (৳)</label>
+                      <div className="relative group">
+                        <DollarSign size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                        <input type="number" value={entry.custom_price} onChange={e => updateEntry(idx, { custom_price: Number(e.target.value) })}
+                          className="w-full bg-background border border-border rounded-lg pl-8 pr-3 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-3">
+                      <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">পরিমাণ</label>
+                      <div className="flex items-center bg-background border border-border rounded-lg overflow-hidden">
+                        <button onClick={() => updateEntry(idx, { quantity: Math.max(1, entry.quantity - 1) })}
+                          className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-r border-border">
+                          <Minus size={13} />
+                        </button>
+                        <span className="flex-1 text-center text-sm font-bold tabular-nums">{entry.quantity}</span>
+                        <button onClick={() => updateEntry(idx, { quantity: entry.quantity + 1 })}
+                          className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-l border-border">
+                          <Plus size={13} />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* License section */}
-                {entry.product && (
+                {(entry.product || (entry.is_custom && entry.custom_name.trim())) && (
                   <div className="bg-muted/20 rounded-lg border border-border/60 p-3">
                     <div className="flex items-center justify-between mb-2.5">
                       <div className="flex items-center gap-1.5">
                         <Key size={12} className="text-primary" />
                         <span className="text-[11px] font-bold text-foreground">লাইসেন্স / অ্যাকাউন্ট</span>
                       </div>
-                      <button onClick={() => openLicensePicker(idx)}
-                        className="text-[11px] px-2.5 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-all font-semibold flex items-center gap-1">
-                        <Package size={10} /> স্টক থেকে নিন
-                      </button>
+                      {entry.product && !entry.is_custom && (
+                        <button onClick={() => openLicensePicker(idx)}
+                          className="text-[11px] px-2.5 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-all font-semibold flex items-center gap-1">
+                          <Package size={10} /> স্টক থেকে নিন
+                        </button>
+                      )}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       <div>
@@ -503,7 +584,7 @@ const AdminQuickSale = () => {
                 )}
 
                 {/* Subtotal per item */}
-                {entry.product && (
+                {(entry.product || (entry.is_custom && entry.custom_name.trim())) && entry.custom_price > 0 && (
                   <div className="flex justify-end">
                     <span className="text-xs text-muted-foreground">
                       সাবটোটাল: <span className="font-bold text-foreground">৳{(entry.custom_price * entry.quantity).toLocaleString()}</span>
@@ -516,7 +597,7 @@ const AdminQuickSale = () => {
         </div>
       </section>
 
-      {/* ─── STEP 3: Payment & Delivery ─── */}
+      {/* STEP 3: Payment & Delivery */}
       <section>
         <div className="flex items-center gap-2 mb-3">
           <div className="w-5 h-5 rounded-md bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-black">3</div>
@@ -524,7 +605,6 @@ const AdminQuickSale = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {/* Payment */}
           <div className="bg-card rounded-xl border border-border p-4 shadow-sm space-y-3">
             <div className="flex items-center gap-2 pb-2 border-b border-border">
               <CreditCard size={14} className="text-primary" />
@@ -561,7 +641,6 @@ const AdminQuickSale = () => {
             </div>
           </div>
 
-          {/* Delivery */}
           <div className="bg-card rounded-xl border border-border p-4 shadow-sm space-y-3">
             <div className="flex items-center gap-2 pb-2 border-b border-border">
               <Truck size={14} className="text-primary" />
@@ -604,7 +683,7 @@ const AdminQuickSale = () => {
         </div>
       </section>
 
-      {/* ─── SUBMIT ─── */}
+      {/* SUBMIT */}
       <div className="bg-card rounded-xl border-2 border-primary/20 p-4 shadow-sm">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="space-y-0.5">
@@ -618,11 +697,7 @@ const AdminQuickSale = () => {
           </div>
           <button onClick={handleSubmit} disabled={saving}
             className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition-all disabled:opacity-50 shadow-lg shadow-primary/20 hover:shadow-primary/30">
-            {saving ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Sparkles size={16} />
-            )}
+            {saving ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
             {saving ? 'প্রসেসিং...' : 'অর্ডার তৈরি ও ডেলিভারি'}
             {!saving && <ArrowRight size={14} />}
           </button>
