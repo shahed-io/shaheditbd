@@ -87,7 +87,7 @@ const AdminQuickSale = () => {
   const [saving, setSaving] = useState(false);
   const [totalOrders, setTotalOrders] = useState(0);
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   useEffect(() => {
     fetchData();
@@ -95,9 +95,12 @@ const AdminQuickSale = () => {
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (activeIdx !== null && dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setActiveIdx(null);
-        setProductSearch('');
+      if (activeIdx !== null) {
+        const ref = dropdownRefs.current[activeIdx];
+        if (ref && !ref.contains(e.target as Node)) {
+          setActiveIdx(null);
+          setProductSearch('');
+        }
       }
     };
     document.addEventListener('mousedown', handler);
