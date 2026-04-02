@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export type SlideData = {
@@ -33,14 +34,44 @@ export type HeroStatCard  = { label: string; value: string; icon: string };
 export type HeroFloatCard = { label: string; value: string; icon: string };
 export type HeroTrustItem = { text: string; icon: string };
 
+const HERO_KEYS = ['hero_slides', 'hero_background', 'hero_stats', 'hero_floating', 'hero_trust'];
+const QUERY_KEY = ['hero-banner-settings'];
+
 export const useHeroBanner = () => {
+  const queryClient = useQueryClient();
+
+  // Subscribe to realtime changes on site_settings for hero keys
+  useEffect(() => {
+    const channel = supabase
+      .channel('hero-banner-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'site_settings',
+        },
+        (payload) => {
+          const row = payload.new as { key?: string } | undefined;
+          if (row?.key && HERO_KEYS.includes(row.key)) {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   return useQuery({
-    queryKey: ['hero-banner-settings'],
+    queryKey: QUERY_KEY,
     queryFn: async () => {
       const { data } = await supabase
         .from('site_settings')
         .select('key, value')
-        .in('key', ['hero_slides', 'hero_background', 'hero_stats', 'hero_floating', 'hero_trust']);
+        .in('key', HERO_KEYS);
 
       const get = (key: string) => data?.find(r => r.key === key)?.value;
 
