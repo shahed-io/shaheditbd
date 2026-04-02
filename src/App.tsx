@@ -100,8 +100,6 @@ const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterS
 const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveChat"));
 
 
-import { supabase } from "@/integrations/supabase/client";
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -109,27 +107,9 @@ const queryClient = new QueryClient({
       gcTime:    1000 * 60 * 30,
       retry: 1,
       refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
+      refetchOnMount: false,       // Don't refetch if data is fresh
+      refetchOnReconnect: false,   // Don't refetch on reconnect
     },
-  },
-});
-
-// Prefetch hero banner data immediately so it's cached before HeroBanner mounts
-queryClient.prefetchQuery({
-  queryKey: ['hero-banner-settings'],
-  queryFn: async () => {
-    const { data } = await supabase
-      .from('site_settings')
-      .select('key, value')
-      .in('key', ['hero_slides', 'hero_background', 'hero_stats', 'hero_floating', 'hero_trust']);
-    const get = (key: string) => data?.find(r => r.key === key)?.value;
-    const slides   = get('hero_slides')     ? JSON.parse(get('hero_slides')!)     : null;
-    const bg       = get('hero_background') ? JSON.parse(get('hero_background')!) : null;
-    const stats    = get('hero_stats')      ? JSON.parse(get('hero_stats')!)      : null;
-    const floating = get('hero_floating')   ? JSON.parse(get('hero_floating')!)   : null;
-    const trust    = get('hero_trust')      ? JSON.parse(get('hero_trust')!)      : null;
-    return { slides, bg, stats, floating, trust };
   },
 });
 
