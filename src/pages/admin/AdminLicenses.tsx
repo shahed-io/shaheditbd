@@ -674,12 +674,13 @@ const AdminLicenses = () => {
         </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         {[
-          { label: 'মোট Keys', value: stats.total,     color: 'hsl(258,78%,68%)',  bg: 'hsla(258,78%,68%,0.1)', filter: 'all' },
-          { label: 'Available', value: stats.available, color: 'hsl(162,72%,46%)',  bg: 'hsla(162,72%,46%,0.1)', filter: 'available' },
-          { label: 'Assigned',  value: stats.assigned,  color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)', filter: 'assigned' },
-          { label: 'Revoked',   value: stats.revoked,   color: 'hsl(0,72%,51%)',    bg: 'hsla(0,72%,51%,0.1)',   filter: 'revoked' },
+          { label: 'মোট Keys',            value: stats.total,              color: 'hsl(258,78%,68%)',  bg: 'hsla(258,78%,68%,0.1)', filter: 'all' },
+          { label: 'Available',            value: stats.available,          color: 'hsl(162,72%,46%)',  bg: 'hsla(162,72%,46%,0.1)', filter: 'available' },
+          { label: 'Assigned',             value: stats.assigned,           color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)', filter: 'assigned' },
+          { label: 'WhatsApp Delivered',   value: stats.whatsapp_delivered, color: 'hsl(142,70%,45%)',  bg: 'hsla(142,70%,45%,0.1)', filter: 'whatsapp_delivered' },
+          { label: 'Revoked',              value: stats.revoked,            color: 'hsl(0,72%,51%)',    bg: 'hsla(0,72%,51%,0.1)',   filter: 'revoked' },
         ].map(s => (
         <div key={s.label}
             onClick={() => setFilterStatus(filterStatus === s.filter ? 'all' : s.filter)}
