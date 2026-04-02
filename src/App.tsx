@@ -117,7 +117,7 @@ const queryClient = new QueryClient({
 import BrandLoader from "@/components/store/BrandLoader";
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
-    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+    <BrandLoader size="md" />
   </div>
 );
 

@@ -60,22 +60,19 @@ const AdminDashboard = () => {
     const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
     const yearStart = new Date(now.getFullYear(), 0, 1).toISOString();
 
-    // Fetch only recent orders (last 90 days) instead of ALL orders for faster load
-    const ninetyDaysAgo = new Date(Date.now() - 90 * 86400000).toISOString();
-
     const [
       { data: allOrders },
-      { count: customerCount },
+      { data: profiles },
       { data: paymentProofs },
       { data: tickets },
       { data: products },
       { data: recentOrderData },
     ] = await Promise.all([
-      supabase.from('orders').select('id, total, status, created_at').gte('created_at', ninetyDaysAgo),
-      supabase.from('profiles').select('id', { count: 'exact', head: true }),
-      supabase.from('payment_proofs').select('id, status').eq('status', 'pending'),
-      supabase.from('support_tickets').select('id, status, created_at, subject, ticket_number').eq('status', 'open').order('created_at', { ascending: false }).limit(5),
-      supabase.from('products').select('id, name, total_sales, price, stock_quantity, status').order('total_sales', { ascending: false }).limit(10),
+      supabase.from('orders').select('id, total, status, payment_status, created_at, customer_name, customer_email, order_number'),
+      supabase.from('profiles').select('id', { count: 'exact', head: false }),
+      supabase.from('payment_proofs').select('id, status, submitted_at, order_id'),
+      supabase.from('support_tickets').select('id, status, created_at, subject, ticket_number').order('created_at', { ascending: false }).limit(5),
+      supabase.from('products').select('id, name, total_sales, price, stock_quantity, status'),
       supabase.from('orders').select('id, order_number, customer_name, customer_email, total, status, created_at').order('created_at', { ascending: false }).limit(8),
     ]);
 
@@ -107,12 +104,12 @@ const AdminDashboard = () => {
     const pendingOrders = orders.filter(o => o.status === 'pending').length;
     const deliveredOrders = orders.filter(o => o.status === 'completed').length;
     const cancelledOrders = orders.filter(o => o.status === 'cancelled').length;
-    const paymentPending = (paymentProofs || []).length;
+    const paymentPending = (paymentProofs || []).filter(p => p.status === 'pending').length;
 
     setStats({
       todaySales, monthRevenue, yearRevenue, totalOrders: orders.length,
       pendingOrders, paymentPending, deliveredOrders, cancelledOrders,
-      totalCustomers: customerCount || 0,
+      totalCustomers: (profiles || []).length,
       totalRevenue, prevMonthRevenue, prevMonthOrders,
     });
 
@@ -135,9 +132,9 @@ const AdminDashboard = () => {
     if (paymentPending > 0) {
       notifs.push({ id: 'payments', type: 'payment', message: `${paymentPending} payment verification pending`, time: 'Action needed', read: false });
     }
-    const openTickets = (tickets || []);
-    if (openTickets.length > 0) {
-      notifs.push({ id: 'tickets', type: 'ticket', message: `${openTickets.length} open support ticket(s)`, time: 'Needs reply', read: false });
+    const newTickets = (tickets || []).filter(t => t.status === 'open');
+    if (newTickets.length > 0) {
+      notifs.push({ id: 'tickets', type: 'ticket', message: `${newTickets.length} open support ticket(s)`, time: 'Needs reply', read: false });
     }
     const lowStock = (products || []).filter(p => p.stock_quantity !== null && p.stock_quantity <= 5 && p.status === 'active');
     if (lowStock.length > 0) {
