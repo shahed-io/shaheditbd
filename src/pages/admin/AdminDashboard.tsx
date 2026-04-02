@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import {
   ShoppingCart, Package, Users, TrendingUp, DollarSign, Clock,
@@ -36,6 +37,7 @@ interface Notification {
 const toastStyle = { background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 12, color: 'hsl(var(--foreground))' };
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<Stats>({
     todaySales: 0, monthRevenue: 0, yearRevenue: 0,
     totalOrders: 0, pendingOrders: 0, paymentPending: 0,
@@ -221,8 +223,11 @@ const AdminDashboard = () => {
     stock: { icon: AlertTriangle, color: 'text-destructive bg-destructive/10' },
   };
 
-  const StatCard = ({ label, value, icon: Icon, gradient, change, changePct, prefix = '' }: any) => (
-    <div className="glass-card rounded-2xl p-5">
+  const StatCard = ({ label, value, icon: Icon, gradient, change, changePct, prefix = '', onClick }: any) => (
+    <div
+      className={`glass-card rounded-2xl p-5 transition-all duration-200 ${onClick ? 'cursor-pointer hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]' : ''}`}
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between mb-3">
         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0`}>
           <Icon size={18} className="text-white" />
@@ -293,21 +298,21 @@ const AdminDashboard = () => {
 
       {/* ── Row 1: Today + Key Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Today's Sales" value={stats.todaySales} icon={TrendingUp} gradient="from-primary to-primary/60" prefix="৳" />
-        <StatCard label="This Month Revenue" value={stats.monthRevenue} icon={DollarSign} gradient="from-purple-500 to-violet-600" prefix="৳" changePct={revenueGrowth} change="vs last month" />
-        <StatCard label="This Year Revenue" value={stats.yearRevenue} icon={TrendingUp} gradient="from-green-500 to-emerald-600" prefix="৳" />
-        <StatCard label="Total Revenue (All)" value={stats.totalRevenue} icon={DollarSign} gradient="from-orange-500 to-amber-500" prefix="৳" />
+        <StatCard label="Today's Sales" value={stats.todaySales} icon={TrendingUp} gradient="from-primary to-primary/60" prefix="৳" onClick={() => navigate('/ceo/orders?filter=today')} />
+        <StatCard label="This Month Revenue" value={stats.monthRevenue} icon={DollarSign} gradient="from-purple-500 to-violet-600" prefix="৳" changePct={revenueGrowth} change="vs last month" onClick={() => navigate('/ceo/orders?filter=month')} />
+        <StatCard label="This Year Revenue" value={stats.yearRevenue} icon={TrendingUp} gradient="from-green-500 to-emerald-600" prefix="৳" onClick={() => navigate('/ceo/orders?filter=year')} />
+        <StatCard label="Total Revenue (All)" value={stats.totalRevenue} icon={DollarSign} gradient="from-orange-500 to-amber-500" prefix="৳" onClick={() => navigate('/ceo/orders')} />
       </div>
 
       {/* ── Row 2: Order Stats ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
-          { label: 'Total Orders', value: stats.totalOrders, icon: ShoppingCart, gradient: 'from-primary to-primary/70', changePct: ordersGrowth },
-          { label: 'Pending', value: stats.pendingOrders, icon: Clock, gradient: 'from-yellow-500 to-amber-500' },
-          { label: 'Payment Pending', value: stats.paymentPending, icon: CreditCard, gradient: 'from-orange-500 to-red-500' },
-          { label: 'Delivered', value: stats.deliveredOrders, icon: CheckCircle, gradient: 'from-green-500 to-emerald-600' },
-          { label: 'Cancelled', value: stats.cancelledOrders, icon: XCircle, gradient: 'from-destructive to-red-700' },
-          { label: 'Customers', value: stats.totalCustomers, icon: Users, gradient: 'from-blue-500 to-cyan-500' },
+          { label: 'Total Orders', value: stats.totalOrders, icon: ShoppingCart, gradient: 'from-primary to-primary/70', changePct: ordersGrowth, onClick: () => navigate('/ceo/orders') },
+          { label: 'Pending', value: stats.pendingOrders, icon: Clock, gradient: 'from-yellow-500 to-amber-500', onClick: () => navigate('/ceo/orders?status=pending') },
+          { label: 'Payment Pending', value: stats.paymentPending, icon: CreditCard, gradient: 'from-orange-500 to-red-500', onClick: () => navigate('/ceo/orders?status=payment_pending') },
+          { label: 'Delivered', value: stats.deliveredOrders, icon: CheckCircle, gradient: 'from-green-500 to-emerald-600', onClick: () => navigate('/ceo/orders?status=completed') },
+          { label: 'Cancelled', value: stats.cancelledOrders, icon: XCircle, gradient: 'from-destructive to-red-700', onClick: () => navigate('/ceo/orders?status=cancelled') },
+          { label: 'Customers', value: stats.totalCustomers, icon: Users, gradient: 'from-blue-500 to-cyan-500', onClick: () => navigate('/ceo/customers') },
         ].map((s, i) => (
           <StatCard key={i} {...s} />
         ))}

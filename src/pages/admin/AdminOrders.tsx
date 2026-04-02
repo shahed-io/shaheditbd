@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Search, Eye, CheckCircle, XCircle, Truck, RefreshCw, RotateCcw,
@@ -647,6 +648,7 @@ const OrderDetailModal = ({
 
 // ─── Main AdminOrders Component ─────────────────────────────────────────────
 const AdminOrders = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -660,6 +662,40 @@ const AdminOrders = () => {
   const [copiedTrx, setCopiedTrx] = useState<string | null>(null);
   const [adminWhatsapp, setAdminWhatsapp] = useState('');
   const [newOrderIds, setNewOrderIds] = useState<Set<string>>(new Set());
+
+  // Apply query param filters on mount
+  useEffect(() => {
+    const status = searchParams.get('status');
+    const filter = searchParams.get('filter');
+    if (status) {
+      if (status === 'payment_pending') {
+        setPaymentFilter('pending');
+      } else {
+        setStatusFilter(status);
+      }
+      // Clear the param so it doesn't persist on manual filter change
+      searchParams.delete('status');
+      setSearchParams(searchParams, { replace: true });
+    }
+    if (filter) {
+      const now = new Date();
+      if (filter === 'today') {
+        const todayStr = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().slice(0, 10);
+        setDateFrom(todayStr);
+        setDateTo(now.toISOString().slice(0, 10));
+      } else if (filter === 'month') {
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+        setDateFrom(monthStart);
+        setDateTo(now.toISOString().slice(0, 10));
+      } else if (filter === 'year') {
+        const yearStart = new Date(now.getFullYear(), 0, 1).toISOString().slice(0, 10);
+        setDateFrom(yearStart);
+        setDateTo(now.toISOString().slice(0, 10));
+      }
+      searchParams.delete('filter');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, []);
 
   // Load admin WhatsApp from settings
   useEffect(() => {
