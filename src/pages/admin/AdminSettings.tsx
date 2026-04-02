@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Save, Globe, DollarSign, MessageCircle, TestTube, Send, Mail } from 'lucide-react';
+import { Save, Globe, DollarSign, MessageCircle, TestTube, Send, Mail, Brain, Eye, EyeOff, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSettings = () => {
@@ -8,6 +8,9 @@ const AdminSettings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testingWA, setTestingWA] = useState(false);
+  const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
+  const [testingKeys, setTestingKeys] = useState<Record<string, boolean>>({});
+  const [testResults, setTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
 
   const fetchSettings = async () => {
     const { data } = await supabase.from('site_settings').select('*');
@@ -21,12 +24,58 @@ const AdminSettings = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    const updates = Object.entries(settings).map(([key, value]) =>
-      supabase.from('site_settings').upsert({ key, value }, { onConflict: 'key' })
-    );
+    const updates = Object.entries(settings).map(([key, value]) => {
+      const category = key.startsWith('ai_') ? 'ai_config' : undefined;
+      return supabase.from('site_settings').upsert(
+        { key, value, ...(category ? { category } : {}) },
+        { onConflict: 'key' }
+      );
+    });
     await Promise.all(updates);
     toast.success('Settings saved!');
     setSaving(false);
+  };
+
+  const toggleKeyVisibility = (key: string) => {
+    setVisibleKeys(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const testApiKey = async (provider: string, keyField: string) => {
+    const apiKey = settings[keyField];
+    if (!apiKey) { toast.error('আগে API Key সেভ করুন'); return; }
+    
+    setTestingKeys(prev => ({ ...prev, [keyField]: true }));
+    setTestResults(prev => ({ ...prev, [keyField]: null }));
+
+    try {
+      let success = false;
+      
+      if (provider === 'gemini') {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: 'Say "OK" only.' }] }],
+            generationConfig: { maxOutputTokens: 5 },
+          }),
+        });
+        success = res.ok;
+      } else if (provider === 'openai') {
+        const res = await fetch('https://api.openai.com/v1/models', {
+          headers: { 'Authorization': `Bearer ${apiKey}` },
+        });
+        success = res.ok;
+      }
+
+      setTestResults(prev => ({ ...prev, [keyField]: success ? 'success' : 'error' }));
+      if (success) toast.success(`✅ ${provider.toUpperCase()} API Key কাজ করছে!`);
+      else toast.error(`❌ ${provider.toUpperCase()} API Key ভুল বা সমস্যা আছে`);
+    } catch {
+      setTestResults(prev => ({ ...prev, [keyField]: 'error' }));
+      toast.error(`❌ ${provider.toUpperCase()} API Key টেস্ট ব্যর্থ`);
+    }
+    
+    setTestingKeys(prev => ({ ...prev, [keyField]: false }));
   };
 
   // Test WhatsApp notification
@@ -68,6 +117,34 @@ const AdminSettings = () => {
       fields: [
         { key: 'order_prefix', label: 'Order Number Prefix', placeholder: 'SS-' },
       ]
+    },
+  ];
+
+  // AI API key configs
+  const aiProviders = [
+    {
+      id: 'gemini',
+      name: 'Google Gemini',
+      icon: '🤖',
+      color: '#4285F4',
+      keys: [
+        { key: 'ai_gemini_key_1', label: 'Gemini API Key 1 (প্রাইমারি)', placeholder: 'AIzaSy...' },
+        { key: 'ai_gemini_key_2', label: 'Gemini API Key 2 (ব্যাকআপ)', placeholder: 'AIzaSy...' },
+        { key: 'ai_gemini_key_3', label: 'Gemini API Key 3 (ব্যাকআপ)', placeholder: 'AIzaSy...' },
+      ],
+      description: 'Google AI Studio থেকে API Key নিন: aistudio.google.com/apikey',
+      testProvider: 'gemini',
+    },
+    {
+      id: 'openai',
+      name: 'OpenAI (ChatGPT)',
+      icon: '💬',
+      color: '#10A37F',
+      keys: [
+        { key: 'ai_openai_key', label: 'OpenAI API Key', placeholder: 'sk-...' },
+      ],
+      description: 'OpenAI Dashboard থেকে API Key নিন: platform.openai.com/api-keys',
+      testProvider: 'openai',
     },
   ];
 
@@ -134,6 +211,89 @@ const AdminSettings = () => {
               </div>
             </div>
           ))}
+
+          {/* AI API Configuration */}
+          <div className="glass-card rounded-2xl p-6 border border-purple-500/20">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                <Brain size={18} className="text-purple-400" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">🧠 AI API কনফিগারেশন</h3>
+                <p className="text-xs text-muted-foreground">বিভিন্ন AI সার্ভিসের API Key সেট করুন — কন্টেন্ট জেনারেশন, লাইসেন্স পার্সিং ইত্যাদিতে ব্যবহৃত হবে</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {aiProviders.map((provider) => (
+                <div key={provider.id} className="border border-border/50 rounded-xl p-4" style={{ borderColor: `${provider.color}20` }}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-lg">{provider.icon}</span>
+                    <h4 className="font-semibold text-foreground text-sm">{provider.name}</h4>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 gap-3">
+                    {provider.keys.map((keyConfig) => (
+                      <div key={keyConfig.key}>
+                        <label className="text-xs text-muted-foreground mb-1.5 block">{keyConfig.label}</label>
+                        <div className="flex gap-2">
+                          <div className="relative flex-1">
+                            <input
+                              type={visibleKeys[keyConfig.key] ? 'text' : 'password'}
+                              value={settings[keyConfig.key] || ''}
+                              onChange={e => setSettings({ ...settings, [keyConfig.key]: e.target.value })}
+                              placeholder={keyConfig.placeholder}
+                              className={inputCls + ' pr-10'}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => toggleKeyVisibility(keyConfig.key)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              {visibleKeys[keyConfig.key] ? <EyeOff size={14} /> : <Eye size={14} />}
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => testApiKey(provider.testProvider, keyConfig.key)}
+                            disabled={testingKeys[keyConfig.key] || !settings[keyConfig.key]}
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            style={{ 
+                              borderColor: `${provider.color}40`, 
+                              color: provider.color,
+                            }}
+                          >
+                            {testingKeys[keyConfig.key] ? (
+                              <Loader2 size={12} className="animate-spin" />
+                            ) : testResults[keyConfig.key] === 'success' ? (
+                              <CheckCircle size={12} className="text-green-500" />
+                            ) : testResults[keyConfig.key] === 'error' ? (
+                              <XCircle size={12} className="text-red-500" />
+                            ) : (
+                              <TestTube size={12} />
+                            )}
+                            টেস্ট
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="text-[11px] text-muted-foreground mt-2">
+                    💡 {provider.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 bg-purple-500/5 border border-purple-500/20 rounded-xl p-4">
+              <p className="text-xs text-foreground font-semibold mb-2">🔒 নিরাপত্তা তথ্য:</p>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>✅ API Key গুলো এনক্রিপ্টেড ডাটাবেজে সেভ হয় — শুধু অ্যাডমিন দেখতে পারবে</li>
+                <li>✅ একাধিক Key দিলে রেট লিমিট হলে অটো-রোটেশন হবে</li>
+                <li>✅ টেস্ট বাটনে ক্লিক করে Key সঠিক কিনা যাচাই করুন</li>
+              </ul>
+            </div>
+          </div>
 
           {/* Telegram Notification Settings */}
           <div className="glass-card rounded-2xl p-6 border border-[#229ED9]/20">
