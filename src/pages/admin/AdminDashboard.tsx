@@ -307,12 +307,12 @@ const AdminDashboard = () => {
       {/* ── Row 2: Order Stats ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
-          { label: 'Total Orders', value: stats.totalOrders, icon: ShoppingCart, gradient: 'from-primary to-primary/70', changePct: ordersGrowth },
-          { label: 'Pending', value: stats.pendingOrders, icon: Clock, gradient: 'from-yellow-500 to-amber-500' },
-          { label: 'Payment Pending', value: stats.paymentPending, icon: CreditCard, gradient: 'from-orange-500 to-red-500' },
-          { label: 'Delivered', value: stats.deliveredOrders, icon: CheckCircle, gradient: 'from-green-500 to-emerald-600' },
-          { label: 'Cancelled', value: stats.cancelledOrders, icon: XCircle, gradient: 'from-destructive to-red-700' },
-          { label: 'Customers', value: stats.totalCustomers, icon: Users, gradient: 'from-blue-500 to-cyan-500' },
+          { label: 'Total Orders', value: stats.totalOrders, icon: ShoppingCart, gradient: 'from-primary to-primary/70', changePct: ordersGrowth, onClick: () => navigate('/ceo/orders') },
+          { label: 'Pending', value: stats.pendingOrders, icon: Clock, gradient: 'from-yellow-500 to-amber-500', onClick: () => navigate('/ceo/orders?status=pending') },
+          { label: 'Payment Pending', value: stats.paymentPending, icon: CreditCard, gradient: 'from-orange-500 to-red-500', onClick: () => navigate('/ceo/orders?status=payment_pending') },
+          { label: 'Delivered', value: stats.deliveredOrders, icon: CheckCircle, gradient: 'from-green-500 to-emerald-600', onClick: () => navigate('/ceo/orders?status=completed') },
+          { label: 'Cancelled', value: stats.cancelledOrders, icon: XCircle, gradient: 'from-destructive to-red-700', onClick: () => navigate('/ceo/orders?status=cancelled') },
+          { label: 'Customers', value: stats.totalCustomers, icon: Users, gradient: 'from-blue-500 to-cyan-500', onClick: () => navigate('/ceo/customers') },
         ].map((s, i) => (
           <StatCard key={i} {...s} />
         ))}
