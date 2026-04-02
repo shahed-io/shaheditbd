@@ -10,7 +10,7 @@ import {
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
   Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Map, Bot, Code2, KeyRound, FileSearch, PackageSearch, Star, BarChart2,
-  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle
+  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain
 } from 'lucide-react';
 
 const menuItems = [
@@ -81,6 +81,7 @@ const menuItems = [
   { icon: Facebook, label: 'Facebook Pixel', path: '/ceo/facebook-pixel' },
   { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
   { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
+  { icon: Brain, label: 'AI API Config', path: '/ceo/ai-config' },
   { icon: Settings, label: 'Settings', path: '/ceo/settings' },
   { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
   { icon: Database, label: 'Backup', path: '/ceo/backup' },
