@@ -379,7 +379,7 @@ const AdminQuickSale = () => {
                           {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                       </div>
-                      <div className="overflow-y-auto max-h-48">
+                      <div className="overflow-y-auto flex-1 min-h-0">
                         {filteredProducts.length === 0 ? (
                           <p className="text-xs text-muted-foreground text-center py-3">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
                         ) : filteredProducts.map(p => (
