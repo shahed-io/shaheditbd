@@ -37,6 +37,7 @@ interface Notification {
 const toastStyle = { background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 12, color: 'hsl(var(--foreground))' };
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<Stats>({
     todaySales: 0, monthRevenue: 0, yearRevenue: 0,
     totalOrders: 0, pendingOrders: 0, paymentPending: 0,
