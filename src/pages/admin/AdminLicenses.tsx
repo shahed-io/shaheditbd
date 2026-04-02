@@ -103,6 +103,15 @@ const AdminLicenses = () => {
   // WhatsApp modal state
   const [waModal, setWaModal] = useState<{ open: boolean; license: LicenseKey | null; phone: string }>({ open: false, license: null, phone: '' });
 
+  // ── AI Smart Import States ──
+  const [aiMode, setAiMode] = useState(false);
+  const [aiDemoKey, setAiDemoKey] = useState('');
+  const [aiDemoExtra, setAiDemoExtra] = useState('');
+  const [aiRawText, setAiRawText] = useState('');
+  const [aiParsing, setAiParsing] = useState(false);
+  const [aiParsed, setAiParsed] = useState<{ key_value: string; extra_info: string }[] | null>(null);
+  const [aiImporting, setAiImporting] = useState(false);
+
   // ── Bulk Selection States ──
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
