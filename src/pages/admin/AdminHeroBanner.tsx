@@ -65,7 +65,8 @@ const DEFAULT_TRUST: TrustItem[] = [
 
 const EMPTY_SLIDE = (): Slide => ({
   id: crypto.randomUUID(),
-  tag: '🔥 New Deal',
+  tag: 'New Deal',
+  tagIcon: '🔥',
   title: 'Product',
   titleAccent: 'Name',
   subtitle: 'Short subtitle here',
@@ -77,6 +78,7 @@ const EMPTY_SLIDE = (): Slide => ({
   accentFrom: 'hsl(243,75%,55%)',
   accentTo: 'hsl(263,70%,52%)',
   emoji: '🛍️',
+  logoImg: '',
   features: ['Feature 1', 'Feature 2', 'Feature 3'],
   enabled: true,
   productSlug: '',
