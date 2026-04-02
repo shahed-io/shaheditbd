@@ -134,13 +134,9 @@ const AdminQuickSale = () => {
 
   const filteredProducts = useMemo(() => {
     const search = productSearch.trim().toLowerCase();
-    return products.filter(p => {
-      const matchesSearch = !search || p.name.toLowerCase().includes(search) || p.category_names.some(cn => cn.toLowerCase().includes(search));
-      const matchesCategory = filterCategory === 'all' || p.category_ids.includes(filterCategory);
-      if (search) return matchesSearch;
-      return matchesCategory;
-    });
-  }, [products, productSearch, filterCategory]);
+    if (!search) return products;
+    return products.filter(p => p.name.toLowerCase().includes(search));
+  }, [products, productSearch]);
 
   const selectProduct = (idx: number, product: Product) => {
     setEntries(prev => prev.map((e, i) =>
