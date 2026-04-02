@@ -180,6 +180,7 @@ const AppContent = () => {
             <Route path="orders" element={<AdminOrders />} />
             <Route path="coupons" element={<AdminCoupons />} />
             <Route path="settings" element={<AdminSettings />} />
+            <Route path="ai-config" element={<AdminAiConfig />} />
             <Route path="customers" element={<AdminCustomers />} />
             <Route path="payments" element={<AdminPayments />} />
             <Route path="tickets" element={<AdminTickets />} />
