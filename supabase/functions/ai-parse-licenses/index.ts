@@ -11,9 +11,6 @@ serve(async (req) => {
   try {
     const { demoKeyValue, demoExtraInfo, rawLines, keyType } = await req.json();
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
     const systemPrompt = `You are a data parser. The user will give you a DEMO example of how license data should be structured, and then raw lines of similar data.
 
 Your job: Parse each raw line into two fields:
