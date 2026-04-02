@@ -341,7 +341,7 @@ const AdminQuickSale = () => {
 
         <div className="space-y-4">
           {entries.map((entry, idx) => (
-            <div key={idx} className="border border-border rounded-xl p-4 bg-muted/5 relative">
+            <div key={idx} className={`border border-border rounded-xl p-4 bg-muted/5 relative ${activeIdx === idx ? 'z-40' : ''}`}>
               {entries.length > 1 && (
                 <button onClick={() => removeEntry(idx)}
                   className="absolute top-2 right-2 p-1 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
