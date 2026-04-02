@@ -298,10 +298,10 @@ const AdminDashboard = () => {
 
       {/* ── Row 1: Today + Key Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Today's Sales" value={stats.todaySales} icon={TrendingUp} gradient="from-primary to-primary/60" prefix="৳" />
-        <StatCard label="This Month Revenue" value={stats.monthRevenue} icon={DollarSign} gradient="from-purple-500 to-violet-600" prefix="৳" changePct={revenueGrowth} change="vs last month" />
-        <StatCard label="This Year Revenue" value={stats.yearRevenue} icon={TrendingUp} gradient="from-green-500 to-emerald-600" prefix="৳" />
-        <StatCard label="Total Revenue (All)" value={stats.totalRevenue} icon={DollarSign} gradient="from-orange-500 to-amber-500" prefix="৳" />
+        <StatCard label="Today's Sales" value={stats.todaySales} icon={TrendingUp} gradient="from-primary to-primary/60" prefix="৳" onClick={() => navigate('/ceo/orders?filter=today')} />
+        <StatCard label="This Month Revenue" value={stats.monthRevenue} icon={DollarSign} gradient="from-purple-500 to-violet-600" prefix="৳" changePct={revenueGrowth} change="vs last month" onClick={() => navigate('/ceo/orders?filter=month')} />
+        <StatCard label="This Year Revenue" value={stats.yearRevenue} icon={TrendingUp} gradient="from-green-500 to-emerald-600" prefix="৳" onClick={() => navigate('/ceo/orders?filter=year')} />
+        <StatCard label="Total Revenue (All)" value={stats.totalRevenue} icon={DollarSign} gradient="from-orange-500 to-amber-500" prefix="৳" onClick={() => navigate('/ceo/orders')} />
       </div>
 
       {/* ── Row 2: Order Stats ── */}
