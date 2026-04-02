@@ -22,9 +22,9 @@ const AdminReports = () => {
 
     const [ordersRes, customersRes, productsRes, orderItemsRes] = await Promise.all([
       supabase.from('orders').select('id, total, status, created_at').gte('created_at', since),
-      supabase.from('profiles').select('id, created_at'),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }),
       supabase.from('products').select('id, name, total_sales, price').order('total_sales', { ascending: false }).limit(5),
-      supabase.from('order_items').select('product_name, quantity, total'),
+      supabase.from('order_items').select('product_name, quantity, total').limit(500),
     ]);
 
     const orders = ordersRes.data || [];
@@ -32,7 +32,7 @@ const AdminReports = () => {
     setStats({
       totalRevenue: revenue,
       totalOrders: orders.length,
-      totalCustomers: (customersRes.data || []).length,
+      totalCustomers: customersRes.count || 0,
       totalProducts: (productsRes.data || []).length,
     });
 
