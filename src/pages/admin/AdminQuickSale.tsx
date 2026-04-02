@@ -381,7 +381,7 @@ const AdminQuickSale = () => {
 
         <div className="space-y-3">
           {entries.map((entry, idx) => (
-            <div key={idx} className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+            <div key={idx} className="bg-card rounded-xl border border-border shadow-sm">
               {/* Item header */}
               <div className="flex items-center justify-between px-4 py-2.5 bg-muted/30 border-b border-border">
                 <div className="flex items-center gap-2">
