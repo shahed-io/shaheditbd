@@ -810,10 +810,27 @@ const AdminLicenses = () => {
       {showBulk && (
         <div className="glass-card rounded-2xl p-5 border border-amber-500/20"
           style={{ background: 'hsla(42,96%,58%,0.04)' }}>
-          <h3 className="font-bold text-sm mb-4 flex items-center gap-2">
-            <Upload size={14} className="text-amber-500" /> Bulk License Import
-          </h3>
-           <p className="text-xs text-muted-foreground mb-3">প্রতি লাইনে একটি করে key লিখুন, অথবা CSV/TXT ফাইল আপলোড করুন।</p>
+           <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-sm flex items-center gap-2">
+              <Upload size={14} className="text-amber-500" /> Bulk License Import
+            </h3>
+            <button
+              onClick={() => { setAiMode(!aiMode); setAiParsed(null); }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                aiMode
+                  ? 'bg-primary/15 border-primary/40 text-primary'
+                  : 'border-border text-muted-foreground hover:border-primary/30 hover:text-primary'
+              }`}
+            >
+              <Sparkles size={13} />
+              AI Smart Import
+            </button>
+          </div>
+           <p className="text-xs text-muted-foreground mb-3">
+            {aiMode
+              ? '🤖 একটি ডেমো উদাহরণ দিন, তারপর বাকি ডেটা পেস্ট করুন — AI অটো পার্স করবে।'
+              : 'প্রতি লাইনে একটি করে key লিখুন, অথবা CSV/TXT ফাইল আপলোড করুন।'}
+           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
             <div className="relative">
               <div
