@@ -362,7 +362,7 @@ const AdminQuickSale = () => {
                     <ChevronDown size={14} className={`text-muted-foreground transition-transform ${activeIdx === idx ? 'rotate-180' : ''}`} />
                   </div>
                   {activeIdx === idx && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-72 overflow-hidden"
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-96 flex flex-col"
                       onClick={e => e.stopPropagation()}>
                       <div className="p-2 border-b border-border space-y-2">
                         <div className="relative">
