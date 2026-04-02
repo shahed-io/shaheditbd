@@ -137,7 +137,7 @@ const AdminDashboard = () => {
     }
     const openTickets = (tickets || []);
     if (openTickets.length > 0) {
-      notifs.push({ id: 'tickets', type: 'ticket', message: `${newTickets.length} open support ticket(s)`, time: 'Needs reply', read: false });
+      notifs.push({ id: 'tickets', type: 'ticket', message: `${openTickets.length} open support ticket(s)`, time: 'Needs reply', read: false });
     }
     const lowStock = (products || []).filter(p => p.stock_quantity !== null && p.stock_quantity <= 5 && p.status === 'active');
     if (lowStock.length > 0) {
