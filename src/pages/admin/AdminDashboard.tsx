@@ -107,7 +107,7 @@ const AdminDashboard = () => {
     const pendingOrders = orders.filter(o => o.status === 'pending').length;
     const deliveredOrders = orders.filter(o => o.status === 'completed').length;
     const cancelledOrders = orders.filter(o => o.status === 'cancelled').length;
-    const paymentPending = (paymentProofs || []).filter(p => p.status === 'pending').length;
+    const paymentPending = (paymentProofs || []).length;
 
     setStats({
       todaySales, monthRevenue, yearRevenue, totalOrders: orders.length,
