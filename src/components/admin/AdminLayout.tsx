@@ -46,6 +46,7 @@ const menuItems = [
   { icon: Layout, label: 'Pages', path: '/ceo/pages' },
   { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
   { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
+  { icon: ShoppingCart, label: 'Quick Sale', path: '/ceo/quick-sale' },
   
   { icon: FolderDown, label: 'Software Downloads', path: '/ceo/software-downloads' },
   { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
