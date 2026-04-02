@@ -715,26 +715,26 @@ const AdminOrders = () => {
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
-  // Send admin WhatsApp notification for new order
-  const sendAdminWhatsApp = useCallback((order: any) => {
-    const phone = adminWhatsapp.replace(/\D/g, '').replace(/^0/, '880');
-    if (!phone) { toast.error('Admin WhatsApp নম্বর সেট করুন (Settings থেকে)'); return; }
-    const items = order.order_items?.map((i: any) => `• ${i.product_name} ×${i.quantity}`).join('\n') || '';
+  // Send WhatsApp to customer's phone number
+  const sendCustomerWhatsApp = useCallback((order: any) => {
+    const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
+    if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
+    const items = order.order_items?.map((i: any) => `- ${i.product_name} x${i.quantity}`).join('\n') || '';
     const msg = encodeURIComponent(
-      `🛍️ নতুন অর্ডার!\n\n` +
-      `📦 অর্ডার: #${order.order_number}\n` +
-      `👤 নাম: ${order.customer_name}\n` +
-      `📱 ফোন: ${order.customer_phone || 'নেই'}\n` +
-      `✉️ ইমেইল: ${order.customer_email}\n\n` +
-      `🛒 পণ্যসমূহ:\n${items}\n\n` +
-      `💳 পেমেন্ট: ${PM_LABELS[order.payment_method] || order.payment_method}\n` +
-      (order.transaction_id ? `🔑 TrxID: ${order.transaction_id}\n` : '') +
-      `💰 মোট: ৳${Number(order.total).toLocaleString()}\n\n` +
-      `⏰ সময়: ${new Date(order.created_at).toLocaleString('en-BD')}\n\n` +
-      `— Shahed Store Admin Panel`
+      `SHAHED STORE\n` +
+      `________________________\n\n` +
+      `Order Confirmation\n\n` +
+      `Order: #${order.order_number}\n` +
+      `Name: ${order.customer_name}\n\n` +
+      `Products:\n${items}\n\n` +
+      `Payment: ${PM_LABELS[order.payment_method] || order.payment_method}\n` +
+      (order.transaction_id ? `TrxID: ${order.transaction_id}\n` : '') +
+      `Total: ${Number(order.total).toLocaleString()} BDT\n\n` +
+      `Thank you for choosing Shahed Store\n` +
+      `www.shahedstore.com.bd`
     );
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-  }, [adminWhatsapp]);
+  }, []);
 
   // Realtime — detect new orders and play sound
   useEffect(() => {
