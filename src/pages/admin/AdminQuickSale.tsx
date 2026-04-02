@@ -134,13 +134,9 @@ const AdminQuickSale = () => {
 
   const filteredProducts = useMemo(() => {
     const search = productSearch.trim().toLowerCase();
-    return products.filter(p => {
-      const matchesSearch = !search || p.name.toLowerCase().includes(search) || p.category_names.some(cn => cn.toLowerCase().includes(search));
-      const matchesCategory = filterCategory === 'all' || p.category_ids.includes(filterCategory);
-      if (search) return matchesSearch;
-      return matchesCategory;
-    });
-  }, [products, productSearch, filterCategory]);
+    if (!search) return products;
+    return products.filter(p => p.name.toLowerCase().includes(search));
+  }, [products, productSearch]);
 
   const selectProduct = (idx: number, product: Product) => {
     setEntries(prev => prev.map((e, i) =>
@@ -469,35 +465,20 @@ const AdminQuickSale = () => {
                             <input
                               value={activeIdx === idx ? productSearch : ''}
                               onChange={e => { setProductSearch(e.target.value); if (activeIdx !== idx) setActiveIdx(idx); }}
-                              onFocus={() => { setActiveIdx(idx); setFilterCategory('all'); }}
-                              placeholder="প্রোডাক্ট খুঁজুন বা বেছে নিন..."
+                              onFocus={() => setActiveIdx(idx)}
+                              placeholder="প্রোডাক্ট নাম লিখে সার্চ করুন..."
                               className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                             />
                           </div>
-                          {activeIdx === idx && (
+                          {activeIdx === idx && productSearch.trim().length > 0 && (
                             <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-2xl max-h-72 flex flex-col overflow-hidden">
-                              {/* Category filter chips */}
-                              {!productSearch.trim() && categories.length > 0 && (
-                                <div className="p-2 border-b border-border flex flex-wrap gap-1.5 shrink-0">
-                                  <button onClick={() => setFilterCategory('all')}
-                                    className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all ${filterCategory === 'all' ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
-                                    সকল
-                                  </button>
-                                  {categories.map(c => (
-                                    <button key={c.id} onClick={() => setFilterCategory(c.id)}
-                                      className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all ${filterCategory === c.id ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
-                                      {c.name}
-                                    </button>
-                                  ))}
-                                </div>
-                              )}
                               <div className="overflow-y-auto flex-1 min-h-0">
                                 {filteredProducts.length === 0 ? (
                                   <p className="text-xs text-muted-foreground text-center py-6">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
                                 ) : filteredProducts.map(p => (
                                   <button key={p.id}
                                     onClick={() => selectProduct(idx, p)}
-                                    className={`w-full text-left px-3 py-2.5 text-xs hover:bg-primary/5 transition-colors flex items-center justify-between border-b border-border/50 last:border-0 text-foreground`}>
+                                    className="w-full text-left px-3 py-2.5 text-xs hover:bg-primary/5 transition-colors flex items-center justify-between border-b border-border/50 last:border-0 text-foreground">
                                     <div className="flex items-center gap-2 min-w-0">
                                       {p.image_url ? (
                                         <img src={p.image_url} alt="" className="w-7 h-7 rounded-md object-cover shrink-0 border border-border" />
@@ -506,22 +487,11 @@ const AdminQuickSale = () => {
                                           <Package size={12} className="text-muted-foreground" />
                                         </div>
                                       )}
-                                      <div className="min-w-0">
-                                        <span className="font-medium block truncate">{p.name}</span>
-                                        {p.category_names.length > 0 && (
-                                          <div className="flex items-center gap-1 mt-0.5">
-                                            <Tag size={8} className="text-muted-foreground shrink-0" />
-                                            <span className="text-[10px] text-muted-foreground truncate">{p.category_names.join(', ')}</span>
-                                          </div>
-                                        )}
-                                      </div>
+                                      <span className="font-medium block truncate">{p.name}</span>
                                     </div>
                                     <span className="text-muted-foreground font-mono shrink-0 ml-2">৳{p.price}</span>
                                   </button>
                                 ))}
-                              </div>
-                              <div className="text-[10px] text-muted-foreground text-center py-1.5 border-t border-border bg-muted/10">
-                                {filteredProducts.length}/{products.length} প্রোডাক্ট
                               </div>
                             </div>
                           )}
