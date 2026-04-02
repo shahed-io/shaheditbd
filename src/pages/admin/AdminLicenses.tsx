@@ -1530,7 +1530,7 @@ const AdminLicenses = () => {
                   className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary" />
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Extra Info / Password</label>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Temporary Password</label>
                 <textarea value={editForm.extra_info} onChange={e => setEditForm(p => ({ ...p, extra_info: e.target.value }))}
                   rows={2}
                   className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary resize-none" />
