@@ -1190,6 +1190,96 @@ const AdminLicenses = () => {
         </div>
       )}
 
+      {/* WhatsApp Delivery Modal */}
+      {waModal.open && waModal.license && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setWaModal({ open: false, license: null, phone: '' })}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <MessageCircle size={16} className="text-green-500" /> WhatsApp এ লাইসেন্স পাঠান
+              </h3>
+              <button onClick={() => setWaModal({ open: false, license: null, phone: '' })}
+                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-5">
+              <div className="bg-muted/20 rounded-xl p-3 border border-border">
+                <p className="text-[10px] text-muted-foreground mb-1">প্রোডাক্ট</p>
+                <p className="text-sm font-semibold text-foreground">{waModal.license.product_name}</p>
+              </div>
+              <div className="bg-muted/20 rounded-xl p-3 border border-border">
+                <p className="text-[10px] text-muted-foreground mb-1">License Key</p>
+                <code className="text-xs font-mono text-primary break-all">{waModal.license.key_value}</code>
+                {waModal.license.extra_info && (
+                  <p className="text-[10px] text-muted-foreground mt-1 font-mono">{waModal.license.extra_info}</p>
+                )}
+              </div>
+              {waModal.license.customer_name && (
+                <div className="bg-muted/20 rounded-xl p-3 border border-border">
+                  <p className="text-[10px] text-muted-foreground mb-1">কাস্টমার</p>
+                  <p className="text-sm font-medium text-foreground">{waModal.license.customer_name}</p>
+                  {waModal.license.order_number && (
+                    <p className="text-[10px] text-muted-foreground">#{waModal.license.order_number}</p>
+                  )}
+                </div>
+              )}
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
+                  কাস্টমারের ফোন নম্বর *
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground bg-muted/30 border border-border rounded-l-xl px-3 py-2.5">+880</span>
+                  <input
+                    type="tel"
+                    value={waModal.phone}
+                    onChange={e => setWaModal(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="01XXXXXXXXX"
+                    className="w-full bg-muted/20 border border-border rounded-r-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-500"
+                  />
+                </div>
+                {waModal.license.customer_phone && waModal.phone !== waModal.license.customer_phone && (
+                  <button onClick={() => setWaModal(prev => ({ ...prev, phone: prev.license?.customer_phone || '' }))}
+                    className="text-[10px] text-green-600 hover:underline mt-1">
+                    অর্ডারের নম্বর ব্যবহার করুন ({waModal.license.customer_phone})
+                  </button>
+                )}
+              </div>
+              
+              {/* Message Preview */}
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">মেসেজ প্রিভিউ</label>
+                <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-3 text-xs text-foreground whitespace-pre-line leading-relaxed max-h-40 overflow-y-auto">
+                  🔑 <strong>লাইসেন্স ডেলিভারি</strong>{'\n\n'}
+                  📦 প্রোডাক্ট: {waModal.license.product_name}{'\n'}
+                  📝 টাইপ: {KEY_TYPES.find(t => t.value === waModal.license!.key_type)?.label || waModal.license.key_type}{'\n'}
+                  {waModal.license.order_number && <>🧾 অর্ডার: #{waModal.license.order_number}{'\n'}</>}
+                  {'\n'}━━━━━━━━━━━━{'\n'}
+                  🔐 Key: {waModal.license.key_value}{'\n'}
+                  {waModal.license.extra_info && <>🔒 Password: {waModal.license.extra_info}{'\n'}</>}
+                  ━━━━━━━━━━━━{'\n\n'}
+                  ✅ ধন্যবাদ! — ShahedStore
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={handleWhatsAppSend} disabled={!waModal.phone.trim()}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, hsl(142,70%,45%), hsl(142,70%,35%))' }}>
+                <MessageCircle size={14} />
+                WhatsApp এ পাঠান
+              </button>
+              <button onClick={() => setWaModal({ open: false, license: null, phone: '' })}
+                className="px-4 py-2.5 rounded-xl text-sm border border-border text-muted-foreground hover:border-primary/40">
+                বাতিল
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Edit License Modal */}
       {editModal.open && editModal.license && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setEditModal({ open: false, license: null })}>
