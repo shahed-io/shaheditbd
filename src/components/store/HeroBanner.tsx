@@ -47,6 +47,7 @@ const STATIC_SLIDES: Slide[] = [
 
 // Map known slide IDs to their bundled logo assets
 const LOGO_MAP: Record<string, string> = {
+  'slide-win11': winLogo,
   'slide-ms365': ms365Logo,
   'slide-idm': idmLogo,
 };
