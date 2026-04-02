@@ -7,7 +7,7 @@ import {
   CheckCircle2, Clock, XCircle, Upload, Download,
   Package, RefreshCw, Copy, Loader2, ChevronDown, User, Tag,
   Printer, Mail, Send, X, FileText, Edit3, UserPlus, UserMinus,
-  MessageCircle, File, Phone
+  MessageCircle, File, Phone, Sparkles, Wand2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
