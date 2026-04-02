@@ -579,11 +579,18 @@ const AdminLicenses = () => {
           { label: 'Assigned',  value: stats.assigned,  color: 'hsl(200,90%,55%)',  bg: 'hsla(200,90%,55%,0.1)', filter: 'assigned' },
           { label: 'Revoked',   value: stats.revoked,   color: 'hsl(0,72%,51%)',    bg: 'hsla(0,72%,51%,0.1)',   filter: 'revoked' },
         ].map(s => (
-          <div key={s.label}
+        <div key={s.label}
             onClick={() => setFilterStatus(filterStatus === s.filter ? 'all' : s.filter)}
-            className={`glass-card rounded-2xl p-4 border cursor-pointer transition-all hover:scale-[1.02] ${filterStatus === s.filter ? 'ring-2 ring-offset-2 ring-offset-background' : ''}`}
-            style={{ borderColor: `${s.color}30`, background: s.bg, ...(filterStatus === s.filter ? { ringColor: s.color } : {}) }}>
-            <p className="text-xs text-muted-foreground">{s.label}</p>
+            className="glass-card rounded-2xl p-4 border cursor-pointer transition-all hover:scale-[1.02] active:scale-95"
+            style={{
+              borderColor: filterStatus === s.filter ? s.color : `${s.color}30`,
+              background: s.bg,
+              boxShadow: filterStatus === s.filter ? `0 0 0 2px ${s.color}40, inset 0 0 12px ${s.color}15` : 'none',
+            }}>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground font-medium">{s.label}</p>
+              {filterStatus === s.filter && <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: s.color }} />}
+            </div>
             <p className="text-2xl font-black mt-1" style={{ color: s.color }}>{s.value}</p>
           </div>
         ))}
