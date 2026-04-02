@@ -223,8 +223,11 @@ const AdminDashboard = () => {
     stock: { icon: AlertTriangle, color: 'text-destructive bg-destructive/10' },
   };
 
-  const StatCard = ({ label, value, icon: Icon, gradient, change, changePct, prefix = '' }: any) => (
-    <div className="glass-card rounded-2xl p-5">
+  const StatCard = ({ label, value, icon: Icon, gradient, change, changePct, prefix = '', onClick }: any) => (
+    <div
+      className={`glass-card rounded-2xl p-5 transition-all duration-200 ${onClick ? 'cursor-pointer hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]' : ''}`}
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between mb-3">
         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0`}>
           <Icon size={18} className="text-white" />
