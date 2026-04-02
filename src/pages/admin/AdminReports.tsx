@@ -32,7 +32,7 @@ const AdminReports = () => {
     setStats({
       totalRevenue: revenue,
       totalOrders: orders.length,
-      totalCustomers: (customersRes.data || []).length,
+      totalCustomers: customersRes.count || 0,
       totalProducts: (productsRes.data || []).length,
     });
 
