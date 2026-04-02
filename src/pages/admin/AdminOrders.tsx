@@ -1016,10 +1016,10 @@ const AdminOrders = () => {
                               <Truck size={14} />
                             </button>
                           )}
-                          {/* Admin WhatsApp Notification Button */}
+                          {/* Customer WhatsApp Button */}
                           <button
-                            onClick={() => sendAdminWhatsApp(order)}
-                            title="Admin WhatsApp নোটিফিকেশন"
+                            onClick={() => sendCustomerWhatsApp(order)}
+                            title="কাস্টমারকে WhatsApp মেসেজ পাঠান"
                             className={`p-1.5 transition-colors rounded-lg ${newOrderIds.has(order.id) ? 'text-[#25D366] bg-[#25D366]/10 animate-pulse' : 'text-muted-foreground hover:text-[#25D366] hover:bg-[#25D366]/10'}`}>
                             <MessageCircle size={14} />
                           </button>
