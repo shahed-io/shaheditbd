@@ -193,7 +193,57 @@ const AdminLicenses = () => {
     fetchAll();
   };
 
-  const handleDelete = async (id: string) => {
+  // ── AI Smart Parse ──
+  const handleAiParse = async () => {
+    if (!aiDemoKey.trim()) return toast.error('ডেমো Key Value দিন');
+    const rawLines = aiRawText.trim();
+    if (!rawLines) return toast.error('Raw ডেটা পেস্ট করুন');
+    setAiParsing(true);
+    setAiParsed(null);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-parse-licenses', {
+        body: {
+          demoKeyValue: aiDemoKey.trim(),
+          demoExtraInfo: aiDemoExtra.trim(),
+          rawLines,
+          keyType: bulkType,
+        },
+      });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'AI parse failed');
+      setAiParsed(data.parsed || []);
+      toast.success(`${(data.parsed || []).length}টি লাইসেন্স AI দ্বারা পার্স হয়েছে!`);
+    } catch (err: any) {
+      toast.error('AI পার্স ব্যর্থ: ' + (err.message || 'Unknown error'));
+    }
+    setAiParsing(false);
+  };
+
+  const handleAiImport = async () => {
+    if (!bulkProductId) return toast.error('প্রোডাক্ট সিলেক্ট করুন');
+    if (!aiParsed || aiParsed.length === 0) return toast.error('আগে AI দিয়ে পার্স করুন');
+    setAiImporting(true);
+    const rows = aiParsed.map(item => ({
+      product_id: bulkProductId,
+      key_type: bulkType,
+      key_value: item.key_value,
+      extra_info: item.extra_info || null,
+      status: 'available' as const,
+    }));
+    const { error } = await supabase.from('license_keys').insert(rows);
+    setAiImporting(false);
+    if (error) { toast.error('Import failed: ' + error.message); return; }
+    toast.success(`${rows.length}টি license key AI থেকে যোগ হয়েছে!`);
+    setAiMode(false);
+    setAiDemoKey('');
+    setAiDemoExtra('');
+    setAiRawText('');
+    setAiParsed(null);
+    setShowBulk(false);
+    fetchAll();
+  };
+
+
     if (!confirm('এই license key ডিলিট করবেন?')) return;
     await supabase.from('license_keys').delete().eq('id', id);
     toast.success('Deleted');
