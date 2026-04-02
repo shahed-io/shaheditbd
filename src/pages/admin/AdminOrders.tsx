@@ -430,10 +430,10 @@ const OrderDetailModal = ({
   };
 
   const sendWhatsApp = (customNote?: string) => {
-    const items = order.order_items?.map((i: any) => `• ${i.product_name}`).join('\n') || '';
+    const items = order.order_items?.map((i: any) => `- ${i.product_name}`).join('\n') || '';
     const statusLabel = STATUS_CONFIG[order.status]?.label || order.status;
     const msg = encodeURIComponent(
-      `📦 অর্ডার আপডেট!\n\nঅর্ডার: ${order.order_number}\nস্ট্যাটাস: ${statusLabel}\n\n${items}${customNote ? '\n\n' + customNote : ''}\n\nধন্যবাদ! 🙏\n— Shahed Store`
+      `Order Update\n\nOrder: ${order.order_number}\nStatus: ${statusLabel}\n\n${items}${customNote ? '\n\n' + customNote : ''}\n\nThank you!\n-- Shahed Store`
     );
     const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
@@ -715,26 +715,26 @@ const AdminOrders = () => {
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
-  // Send admin WhatsApp notification for new order
-  const sendAdminWhatsApp = useCallback((order: any) => {
-    const phone = adminWhatsapp.replace(/\D/g, '').replace(/^0/, '880');
-    if (!phone) { toast.error('Admin WhatsApp নম্বর সেট করুন (Settings থেকে)'); return; }
-    const items = order.order_items?.map((i: any) => `• ${i.product_name} ×${i.quantity}`).join('\n') || '';
+  // Send WhatsApp to customer's phone number
+  const sendCustomerWhatsApp = useCallback((order: any) => {
+    const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
+    if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
+    const items = order.order_items?.map((i: any) => `- ${i.product_name} x${i.quantity}`).join('\n') || '';
     const msg = encodeURIComponent(
-      `🛍️ নতুন অর্ডার!\n\n` +
-      `📦 অর্ডার: #${order.order_number}\n` +
-      `👤 নাম: ${order.customer_name}\n` +
-      `📱 ফোন: ${order.customer_phone || 'নেই'}\n` +
-      `✉️ ইমেইল: ${order.customer_email}\n\n` +
-      `🛒 পণ্যসমূহ:\n${items}\n\n` +
-      `💳 পেমেন্ট: ${PM_LABELS[order.payment_method] || order.payment_method}\n` +
-      (order.transaction_id ? `🔑 TrxID: ${order.transaction_id}\n` : '') +
-      `💰 মোট: ৳${Number(order.total).toLocaleString()}\n\n` +
-      `⏰ সময়: ${new Date(order.created_at).toLocaleString('en-BD')}\n\n` +
-      `— Shahed Store Admin Panel`
+      `SHAHED STORE\n` +
+      `________________________\n\n` +
+      `Order Confirmation\n\n` +
+      `Order: #${order.order_number}\n` +
+      `Name: ${order.customer_name}\n\n` +
+      `Products:\n${items}\n\n` +
+      `Payment: ${PM_LABELS[order.payment_method] || order.payment_method}\n` +
+      (order.transaction_id ? `TrxID: ${order.transaction_id}\n` : '') +
+      `Total: ${Number(order.total).toLocaleString()} BDT\n\n` +
+      `Thank you for choosing Shahed Store\n` +
+      `www.shahedstore.com.bd`
     );
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-  }, [adminWhatsapp]);
+  }, []);
 
   // Realtime — detect new orders and play sound
   useEffect(() => {
@@ -746,12 +746,12 @@ const AdminOrders = () => {
           `🛍️ নতুন অর্ডার! #${newOrder.order_number}`,
           {
             duration: 10000,
-            action: adminWhatsapp ? {
-              label: '📱 WhatsApp',
+            action: newOrder.customer_phone ? {
+              label: 'WhatsApp',
               onClick: () => {
-                const phone = adminWhatsapp.replace(/\D/g, '').replace(/^0/, '880');
+                const phone = newOrder.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
                 const msg = encodeURIComponent(
-                  `🛍️ নতুন অর্ডার!\n📦 #${newOrder.order_number}\n👤 ${newOrder.customer_name}\n💰 ৳${Number(newOrder.total).toLocaleString()}\n💳 ${PM_LABELS[newOrder.payment_method] || newOrder.payment_method}${newOrder.transaction_id ? '\n🔑 TrxID: ' + newOrder.transaction_id : ''}`
+                  `SHAHED STORE\n\nOrder: #${newOrder.order_number}\nName: ${newOrder.customer_name}\nTotal: ${Number(newOrder.total).toLocaleString()} BDT\nPayment: ${PM_LABELS[newOrder.payment_method] || newOrder.payment_method}${newOrder.transaction_id ? '\nTrxID: ' + newOrder.transaction_id : ''}\n\nThank you!\n-- Shahed Store`
                 );
                 window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
               }
@@ -1016,10 +1016,10 @@ const AdminOrders = () => {
                               <Truck size={14} />
                             </button>
                           )}
-                          {/* Admin WhatsApp Notification Button */}
+                          {/* Customer WhatsApp Button */}
                           <button
-                            onClick={() => sendAdminWhatsApp(order)}
-                            title="Admin WhatsApp নোটিফিকেশন"
+                            onClick={() => sendCustomerWhatsApp(order)}
+                            title="কাস্টমারকে WhatsApp মেসেজ পাঠান"
                             className={`p-1.5 transition-colors rounded-lg ${newOrderIds.has(order.id) ? 'text-[#25D366] bg-[#25D366]/10 animate-pulse' : 'text-muted-foreground hover:text-[#25D366] hover:bg-[#25D366]/10'}`}>
                             <MessageCircle size={14} />
                           </button>
