@@ -81,6 +81,7 @@ const menuItems = [
   { icon: Facebook, label: 'Facebook Pixel', path: '/ceo/facebook-pixel' },
   { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
   { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
+  { icon: Brain, label: 'AI API Config', path: '/ceo/ai-config' },
   { icon: Settings, label: 'Settings', path: '/ceo/settings' },
   { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
   { icon: Database, label: 'Backup', path: '/ceo/backup' },
