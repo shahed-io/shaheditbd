@@ -944,66 +944,174 @@ const AdminLicenses = () => {
             </label>
           </div>
 
-          <textarea
-            value={bulkText}
-            onChange={e => setBulkText(e.target.value)}
-            rows={6}
-            placeholder={'XXXXX-XXXXX-XXXXX-XXXXX\nYYYYY-YYYYY-YYYYY-YYYYY\nZZZZZ-ZZZZZ-ZZZZZ-ZZZZZ\n...'}
-            className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary resize-none"
-          />
-          {(() => {
-            const lines = bulkText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-            if (lines.length === 0) return null;
-            return (
-              <div className="mt-3 bg-muted/30 border border-border rounded-xl p-3">
-                <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
-                  <Eye size={12} /> প্রিভিউ — {lines.length} টি key পাওয়া গেছে
-                </p>
-                <div className="flex items-center gap-2 bg-card border border-primary/20 rounded-lg px-3 py-2">
-                  <span className="text-xs font-bold text-primary">1.</span>
-                  <code className="text-xs font-mono text-foreground break-all">{lines[0]}</code>
-                  <Badge variant="outline" className="ml-auto text-[10px] shrink-0 border-primary/30 text-primary">উদাহরণ</Badge>
+          {aiMode ? (
+            /* ── AI Smart Import Mode ── */
+            <div className="space-y-4">
+              {/* Demo Example */}
+              <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
+                <h4 className="text-xs font-bold text-primary mb-3 flex items-center gap-1.5">
+                  <Wand2 size={13} /> ডেমো উদাহরণ দিন (AI এই প্যাটার্ন অনুসরণ করবে)
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
+                      {bulkType === 'subscription' || bulkType === 'account' ? 'Username / Email *' : 'Key Value *'}
+                    </label>
+                    <input
+                      value={aiDemoKey}
+                      onChange={e => setAiDemoKey(e.target.value)}
+                      placeholder={bulkType === 'subscription' ? 'username@example.com' : 'XXXXX-XXXXX-XXXXX'}
+                      className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">
+                      {bulkType === 'subscription' || bulkType === 'account' ? 'Password' : 'Extra Info'}
+                    </label>
+                    <input
+                      value={aiDemoExtra}
+                      onChange={e => setAiDemoExtra(e.target.value)}
+                      placeholder={bulkType === 'subscription' ? 'password123' : 'অতিরিক্ত তথ্য (ঐচ্ছিক)'}
+                      className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-primary"
+                    />
+                  </div>
                 </div>
-                {lines.length > 1 && (
-                  <div className="mt-2 flex items-center gap-2 bg-muted/40 rounded-lg px-3 py-2">
-                    <span className="text-xs text-muted-foreground">
-                      + আরও <span className="font-bold text-foreground">{lines.length - 1}</span> টি key একই ফরম্যাটে
-                    </span>
-                    {lines.length > 1 && lines.length <= 5 && (
-                      <div className="ml-auto flex flex-col gap-0.5">
-                        {lines.slice(1).map((line, i) => (
-                          <code key={i} className="text-[10px] font-mono text-muted-foreground truncate max-w-[200px]">{line}</code>
-                        ))}
+              </div>
+
+              {/* Raw Data */}
+              <div>
+                <label className="text-[11px] font-semibold text-muted-foreground mb-1.5 block">
+                  📋 বাকি সব ডেটা পেস্ট করুন (প্রতি লাইনে একটি)
+                </label>
+                <textarea
+                  value={aiRawText}
+                  onChange={e => { setAiRawText(e.target.value); setAiParsed(null); }}
+                  rows={8}
+                  placeholder={'user1@gmail.com:pass123\nuser2@gmail.com pass456\nuser3@gmail.com|pass789\n...\n\nযেকোনো ফরম্যাটে দিন, AI ঠিক করে নিবে!'}
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary resize-none"
+                />
+              </div>
+
+              {/* Parse Button */}
+              <button
+                onClick={handleAiParse}
+                disabled={aiParsing || !aiDemoKey.trim() || !aiRawText.trim()}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-primary-foreground transition-all disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, hsl(258,78%,58%), hsl(200,90%,55%))' }}
+              >
+                {aiParsing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                {aiParsing ? 'AI পার্স করছে...' : 'AI দিয়ে পার্স করুন'}
+              </button>
+
+              {/* AI Parsed Results Preview */}
+              {aiParsed && aiParsed.length > 0 && (
+                <div className="bg-muted/30 border border-primary/20 rounded-xl p-4">
+                  <p className="text-xs font-bold text-primary mb-3 flex items-center gap-1.5">
+                    <CheckCircle2 size={13} /> AI পার্স ফলাফল — {aiParsed.length} টি লাইসেন্স
+                  </p>
+                  <div className="max-h-60 overflow-y-auto space-y-1.5">
+                    {aiParsed.map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 bg-card border border-border rounded-lg px-3 py-2">
+                        <span className="text-[10px] font-bold text-muted-foreground w-6 shrink-0">{i + 1}.</span>
+                        <div className="flex-1 min-w-0">
+                          <code className="text-xs font-mono text-foreground break-all">{item.key_value}</code>
+                          {item.extra_info && (
+                            <code className="text-[11px] font-mono text-muted-foreground block mt-0.5 break-all">
+                              → {item.extra_info}
+                            </code>
+                          )}
+                        </div>
+                        {i === 0 && (
+                          <Badge variant="outline" className="text-[10px] shrink-0 border-primary/30 text-primary">ডেমো ম্যাচ</Badge>
+                        )}
                       </div>
-                    )}
-                    {lines.length > 5 && (
-                      <div className="ml-auto flex flex-col gap-0.5">
-                        {lines.slice(1, 4).map((line, i) => (
-                          <code key={i} className="text-[10px] font-mono text-muted-foreground truncate max-w-[200px]">{line}</code>
-                        ))}
-                        <span className="text-[10px] text-muted-foreground">...আরও {lines.length - 4} টি</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* AI Import Actions */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">
+                  {aiParsed ? `${aiParsed.length} টি রেডি` : 'আগে AI দিয়ে পার্স করুন'}
+                </span>
+                <div className="flex gap-2">
+                  <button onClick={() => { setShowBulk(false); setAiMode(false); setAiParsed(null); setAiDemoKey(''); setAiDemoExtra(''); setAiRawText(''); }}
+                    className="px-4 py-2 rounded-xl text-sm border border-border text-muted-foreground">বাতিল</button>
+                  <button onClick={handleAiImport} disabled={aiImporting || !aiParsed || aiParsed.length === 0}
+                    className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold text-primary-foreground disabled:opacity-50"
+                    style={{ background: 'linear-gradient(135deg, hsl(162,72%,46%), hsl(200,90%,55%))' }}>
+                    {aiImporting ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+                    Import করুন ({aiParsed?.length || 0})
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* ── Manual Mode ── */
+            <>
+              <textarea
+                value={bulkText}
+                onChange={e => setBulkText(e.target.value)}
+                rows={6}
+                placeholder={'XXXXX-XXXXX-XXXXX-XXXXX\nYYYYY-YYYYY-YYYYY-YYYYY\nZZZZZ-ZZZZZ-ZZZZZ-ZZZZZ\n...'}
+                className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary resize-none"
+              />
+              {(() => {
+                const lines = bulkText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                if (lines.length === 0) return null;
+                return (
+                  <div className="mt-3 bg-muted/30 border border-border rounded-xl p-3">
+                    <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
+                      <Eye size={12} /> প্রিভিউ — {lines.length} টি key পাওয়া গেছে
+                    </p>
+                    <div className="flex items-center gap-2 bg-card border border-primary/20 rounded-lg px-3 py-2">
+                      <span className="text-xs font-bold text-primary">1.</span>
+                      <code className="text-xs font-mono text-foreground break-all">{lines[0]}</code>
+                      <Badge variant="outline" className="ml-auto text-[10px] shrink-0 border-primary/30 text-primary">উদাহরণ</Badge>
+                    </div>
+                    {lines.length > 1 && (
+                      <div className="mt-2 flex items-center gap-2 bg-muted/40 rounded-lg px-3 py-2">
+                        <span className="text-xs text-muted-foreground">
+                          + আরও <span className="font-bold text-foreground">{lines.length - 1}</span> টি key একই ফরম্যাটে
+                        </span>
+                        {lines.length <= 5 && (
+                          <div className="ml-auto flex flex-col gap-0.5">
+                            {lines.slice(1).map((line, i) => (
+                              <code key={i} className="text-[10px] font-mono text-muted-foreground truncate max-w-[200px]">{line}</code>
+                            ))}
+                          </div>
+                        )}
+                        {lines.length > 5 && (
+                          <div className="ml-auto flex flex-col gap-0.5">
+                            {lines.slice(1, 4).map((line, i) => (
+                              <code key={i} className="text-[10px] font-mono text-muted-foreground truncate max-w-[200px]">{line}</code>
+                            ))}
+                            <span className="text-[10px] text-muted-foreground">...আরও {lines.length - 4} টি</span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-                )}
+                );
+              })()}
+              <div className="flex items-center justify-between mt-3">
+                <span className="text-xs text-muted-foreground">
+                  {bulkText.split('\n').filter(l => l.trim()).length} টি key পাওয়া গেছে
+                </span>
+                <div className="flex gap-2">
+                  <button onClick={() => { setShowBulk(false); setBulkText(''); }}
+                    className="px-4 py-2 rounded-xl text-sm border border-border text-muted-foreground">বাতিল</button>
+                  <button onClick={handleBulkImport} disabled={bulkSaving}
+                    className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold"
+                    style={{ background: 'linear-gradient(135deg, hsl(42,96%,58%), hsl(330,85%,62%))', color: 'white' }}>
+                    {bulkSaving ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+                    Import করুন
+                  </button>
+                </div>
               </div>
-            );
-          })()}
-          <div className="flex items-center justify-between mt-3">
-            <span className="text-xs text-muted-foreground">
-              {bulkText.split('\n').filter(l => l.trim()).length} টি key পাওয়া গেছে
-            </span>
-            <div className="flex gap-2">
-              <button onClick={() => { setShowBulk(false); setBulkText(''); }}
-                className="px-4 py-2 rounded-xl text-sm border border-border text-muted-foreground">বাতিল</button>
-              <button onClick={handleBulkImport} disabled={bulkSaving}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold"
-                style={{ background: 'linear-gradient(135deg, hsl(42,96%,58%), hsl(330,85%,62%))', color: 'white' }}>
-                {bulkSaving ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
-                Import করুন
-              </button>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       )}
 
