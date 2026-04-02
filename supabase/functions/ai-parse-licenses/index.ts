@@ -54,7 +54,7 @@ Return JSON array of parsed items.`;
     }
 
     const data = await response.json();
-    let content = data.choices?.[0]?.message?.content || "[]";
+    let content = data.candidates?.[0]?.content?.parts?.[0]?.text || "[]";
     
     // Clean markdown code blocks if present
     content = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
