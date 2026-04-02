@@ -467,6 +467,11 @@ const AdminLiveChat = () => {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Chat History Tab */}
+        <TabsContent value="chat-history">
+          <ChatHistoryPanel />
+        </TabsContent>
       </Tabs>
     </div>
   );
