@@ -60,19 +60,22 @@ const AdminDashboard = () => {
     const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
     const yearStart = new Date(now.getFullYear(), 0, 1).toISOString();
 
+    // Fetch only recent orders (last 90 days) instead of ALL orders for faster load
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 86400000).toISOString();
+
     const [
       { data: allOrders },
-      { data: profiles },
+      { count: customerCount },
       { data: paymentProofs },
       { data: tickets },
       { data: products },
       { data: recentOrderData },
     ] = await Promise.all([
-      supabase.from('orders').select('id, total, status, payment_status, created_at, customer_name, customer_email, order_number'),
-      supabase.from('profiles').select('id', { count: 'exact', head: false }),
-      supabase.from('payment_proofs').select('id, status, submitted_at, order_id'),
-      supabase.from('support_tickets').select('id, status, created_at, subject, ticket_number').order('created_at', { ascending: false }).limit(5),
-      supabase.from('products').select('id, name, total_sales, price, stock_quantity, status'),
+      supabase.from('orders').select('id, total, status, created_at').gte('created_at', ninetyDaysAgo),
+      supabase.from('profiles').select('id', { count: 'exact', head: true }),
+      supabase.from('payment_proofs').select('id, status').eq('status', 'pending'),
+      supabase.from('support_tickets').select('id, status, created_at, subject, ticket_number').eq('status', 'open').order('created_at', { ascending: false }).limit(5),
+      supabase.from('products').select('id, name, total_sales, price, stock_quantity, status').order('total_sales', { ascending: false }).limit(10),
       supabase.from('orders').select('id, order_number, customer_name, customer_email, total, status, created_at').order('created_at', { ascending: false }).limit(8),
     ]);
 
