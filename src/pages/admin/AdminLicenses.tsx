@@ -47,10 +47,11 @@ const KEY_TYPES = [
 ];
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  available: { label: 'Available',  color: 'hsl(162,72%,46%)',  icon: CheckCircle2 },
-  assigned:  { label: 'Assigned',   color: 'hsl(258,78%,68%)',  icon: User },
-  reserved:  { label: 'Reserved',   color: 'hsl(42,96%,58%)',   icon: Clock },
-  revoked:   { label: 'Revoked',    color: 'hsl(0,72%,51%)',    icon: XCircle },
+  available:           { label: 'Available',           color: 'hsl(162,72%,46%)',  icon: CheckCircle2 },
+  assigned:            { label: 'Assigned',            color: 'hsl(258,78%,68%)',  icon: User },
+  whatsapp_delivered:  { label: 'WhatsApp Delivered',  color: 'hsl(142,70%,45%)',  icon: MessageCircle },
+  reserved:            { label: 'Reserved',            color: 'hsl(42,96%,58%)',   icon: Clock },
+  revoked:             { label: 'Revoked',             color: 'hsl(0,72%,51%)',    icon: XCircle },
 };
 
 const emptyForm = {
