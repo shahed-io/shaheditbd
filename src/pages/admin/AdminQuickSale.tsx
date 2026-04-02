@@ -364,7 +364,7 @@ const AdminQuickSale = () => {
                   {activeIdx === idx && (
                     <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl max-h-96 flex flex-col"
                       onClick={e => e.stopPropagation()}>
-                      <div className="p-2 border-b border-border space-y-2">
+                      <div className="p-2 border-b border-border space-y-2 shrink-0">
                         <div className="relative">
                           <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                           <input value={productSearch} onChange={e => setProductSearch(e.target.value)}
