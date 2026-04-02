@@ -447,76 +447,85 @@ const AdminQuickSale = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                     <div className="sm:col-span-6 relative" ref={activeIdx === idx ? dropdownRef : undefined}>
                       <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">প্রোডাক্ট <span className="text-destructive">*</span></label>
-                      <div
-                        onClick={() => { setActiveIdx(activeIdx === idx ? null : idx); setProductSearch(''); setFilterCategory('all'); }}
-                        className={`w-full bg-background border rounded-lg px-3 py-2.5 text-sm cursor-pointer flex items-center justify-between transition-all ${
-                          activeIdx === idx ? 'border-primary ring-2 ring-primary/20' : 'border-border hover:border-primary/40'
-                        }`}>
-                        <span className={entry.product ? 'text-foreground font-medium truncate' : 'text-muted-foreground'}>
-                          {entry.product ? entry.product.name : 'প্রোডাক্ট বেছে নিন'}
-                        </span>
-                        <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 shrink-0 ml-1 ${activeIdx === idx ? 'rotate-180' : ''}`} />
-                      </div>
-
-                      {activeIdx === idx && (
-                        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-2xl max-h-80 flex flex-col overflow-hidden">
-                          <div className="p-2.5 border-b border-border space-y-2 shrink-0">
-                            <div className="relative">
-                              <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                              <input value={productSearch} onChange={e => setProductSearch(e.target.value)}
-                                placeholder="প্রোডাক্ট খুঁজুন..."
-                                className="w-full bg-muted/30 border border-border rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-none focus:border-primary transition-all"
-                                autoFocus onClick={e => e.stopPropagation()} />
-                            </div>
-                            {/* Category filter chips */}
-                            <div className="flex flex-wrap gap-1.5">
-                              <button onClick={e => { e.stopPropagation(); setFilterCategory('all'); }}
-                                className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all ${filterCategory === 'all' ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
-                                সকল
-                              </button>
-                              {categories.map(c => (
-                                <button key={c.id} onClick={e => { e.stopPropagation(); setFilterCategory(c.id); }}
-                                  className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all ${filterCategory === c.id ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
-                                  {c.name}
-                                </button>
-                              ))}
-                            </div>
+                      {entry.product ? (
+                        <div className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm flex items-center justify-between">
+                          <div className="flex items-center gap-2 min-w-0">
+                            {entry.product.image_url ? (
+                              <img src={entry.product.image_url} alt="" className="w-6 h-6 rounded object-cover shrink-0 border border-border" />
+                            ) : (
+                              <div className="w-6 h-6 rounded bg-muted/50 flex items-center justify-center shrink-0"><Package size={10} className="text-muted-foreground" /></div>
+                            )}
+                            <span className="font-medium truncate text-foreground">{entry.product.name}</span>
                           </div>
-                          <div className="overflow-y-auto flex-1 min-h-0">
-                            {filteredProducts.length === 0 ? (
-                              <p className="text-xs text-muted-foreground text-center py-6">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
-                            ) : filteredProducts.map(p => (
-                              <button key={p.id}
-                                onClick={(e) => { e.stopPropagation(); selectProduct(idx, p); }}
-                                className={`w-full text-left px-3 py-2.5 text-xs hover:bg-primary/5 transition-colors flex items-center justify-between border-b border-border/50 last:border-0 ${
-                                  entry.product?.id === p.id ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground'
-                                }`}>
-                                <div className="flex items-center gap-2 min-w-0">
-                                  {p.image_url ? (
-                                    <img src={p.image_url} alt="" className="w-7 h-7 rounded-md object-cover shrink-0 border border-border" />
-                                  ) : (
-                                    <div className="w-7 h-7 rounded-md bg-muted/50 flex items-center justify-center shrink-0">
-                                      <Package size={12} className="text-muted-foreground" />
-                                    </div>
-                                  )}
-                                  <div className="min-w-0">
-                                    <span className="font-medium block truncate">{p.name}</span>
-                                    {p.category_names.length > 0 && (
-                                      <div className="flex items-center gap-1 mt-0.5">
-                                        <Tag size={8} className="text-muted-foreground shrink-0" />
-                                        <span className="text-[10px] text-muted-foreground truncate">{p.category_names.join(', ')}</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                                <span className="text-muted-foreground font-mono shrink-0 ml-2">৳{p.price}</span>
-                              </button>
-                            ))}
-                          </div>
-                          <div className="text-[10px] text-muted-foreground text-center py-1.5 border-t border-border bg-muted/10">
-                            {filteredProducts.length}/{products.length} প্রোডাক্ট
-                          </div>
+                          <button onClick={() => updateEntry(idx, { product: null, custom_price: 0, license: null, manual_key: '', manual_extra: '' })}
+                            className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all shrink-0 ml-2">
+                            <X size={14} />
+                          </button>
                         </div>
+                      ) : (
+                        <>
+                          <div className="relative">
+                            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                            <input
+                              value={activeIdx === idx ? productSearch : ''}
+                              onChange={e => { setProductSearch(e.target.value); if (activeIdx !== idx) setActiveIdx(idx); }}
+                              onFocus={() => { setActiveIdx(idx); setFilterCategory('all'); }}
+                              placeholder="প্রোডাক্ট খুঁজুন বা বেছে নিন..."
+                              className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                            />
+                          </div>
+                          {activeIdx === idx && (
+                            <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-2xl max-h-72 flex flex-col overflow-hidden">
+                              {/* Category filter chips */}
+                              {!productSearch.trim() && categories.length > 0 && (
+                                <div className="p-2 border-b border-border flex flex-wrap gap-1.5 shrink-0">
+                                  <button onClick={() => setFilterCategory('all')}
+                                    className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all ${filterCategory === 'all' ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
+                                    সকল
+                                  </button>
+                                  {categories.map(c => (
+                                    <button key={c.id} onClick={() => setFilterCategory(c.id)}
+                                      className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all ${filterCategory === c.id ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
+                                      {c.name}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                              <div className="overflow-y-auto flex-1 min-h-0">
+                                {filteredProducts.length === 0 ? (
+                                  <p className="text-xs text-muted-foreground text-center py-6">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
+                                ) : filteredProducts.map(p => (
+                                  <button key={p.id}
+                                    onClick={() => selectProduct(idx, p)}
+                                    className={`w-full text-left px-3 py-2.5 text-xs hover:bg-primary/5 transition-colors flex items-center justify-between border-b border-border/50 last:border-0 text-foreground`}>
+                                    <div className="flex items-center gap-2 min-w-0">
+                                      {p.image_url ? (
+                                        <img src={p.image_url} alt="" className="w-7 h-7 rounded-md object-cover shrink-0 border border-border" />
+                                      ) : (
+                                        <div className="w-7 h-7 rounded-md bg-muted/50 flex items-center justify-center shrink-0">
+                                          <Package size={12} className="text-muted-foreground" />
+                                        </div>
+                                      )}
+                                      <div className="min-w-0">
+                                        <span className="font-medium block truncate">{p.name}</span>
+                                        {p.category_names.length > 0 && (
+                                          <div className="flex items-center gap-1 mt-0.5">
+                                            <Tag size={8} className="text-muted-foreground shrink-0" />
+                                            <span className="text-[10px] text-muted-foreground truncate">{p.category_names.join(', ')}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <span className="text-muted-foreground font-mono shrink-0 ml-2">৳{p.price}</span>
+                                  </button>
+                                ))}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground text-center py-1.5 border-t border-border bg-muted/10">
+                                {filteredProducts.length}/{products.length} প্রোডাক্ট
+                              </div>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
 
