@@ -296,10 +296,11 @@ const AdminLicenses = () => {
 
   // Stats
   const stats = {
-    total:     licenses.length,
-    available: licenses.filter(l => l.status === 'available').length,
-    assigned:  licenses.filter(l => l.status === 'assigned').length,
-    revoked:   licenses.filter(l => l.status === 'revoked').length,
+    total:              licenses.length,
+    available:          licenses.filter(l => l.status === 'available').length,
+    assigned:           licenses.filter(l => l.status === 'assigned').length,
+    whatsapp_delivered: licenses.filter(l => l.status === 'whatsapp_delivered').length,
+    revoked:            licenses.filter(l => l.status === 'revoked').length,
   };
 
   // Filter
