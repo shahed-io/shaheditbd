@@ -508,15 +508,18 @@ const AdminLicenses = () => {
     const phone = waModal.phone.replace(/\D/g, '').replace(/^0/, '880');
     const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label || lic.key_type;
     
-    let msg = `🔑 *লাইসেন্স ডেলিভারি*\n\n`;
-    msg += `📦 *প্রোডাক্ট:* ${lic.product_name}\n`;
-    msg += `📝 *টাইপ:* ${typeLabel}\n`;
-    if (lic.order_number) msg += `🧾 *অর্ডার:* #${lic.order_number}\n`;
-    msg += `\n━━━━━━━━━━━━━━━\n`;
-    msg += `🔐 *Key/Credentials:*\n${lic.key_value}\n`;
-    if (lic.extra_info) msg += `🔒 *Password/Extra:*\n${lic.extra_info}\n`;
-    msg += `━━━━━━━━━━━━━━━\n\n`;
-    msg += `✅ ধন্যবাদ! — *ShahedStore*`;
+    let msg = `*SHAHED STORE*\n`;
+    msg += `________________________\n\n`;
+    msg += `*License Delivery*\n\n`;
+    msg += `Product: *${lic.product_name}*\n`;
+    msg += `Type: ${typeLabel}\n`;
+    if (lic.order_number) msg += `Order: #${lic.order_number}\n`;
+    msg += `\n________________________\n\n`;
+    msg += `*Key / Credentials:*\n\`${lic.key_value}\`\n`;
+    if (lic.extra_info) msg += `\n*Password / Extra:*\n\`${lic.extra_info}\`\n`;
+    msg += `\n________________________\n\n`;
+    msg += `Thank you for choosing *Shahed Store*\n`;
+    msg += `_www.shahedstore.com.bd_`;
 
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
