@@ -117,11 +117,11 @@ const AdminQuickSale = () => {
   };
 
   const filteredProducts = products.filter(p => {
-    if (filterCategory !== 'all' && p.category_id !== filterCategory) return false;
-    if (productSearch) {
-      return p.name.toLowerCase().includes(productSearch.toLowerCase());
-    }
-    return true;
+    const matchesSearch = !productSearch || p.name.toLowerCase().includes(productSearch.toLowerCase());
+    const matchesCategory = filterCategory === 'all' || p.category_id === filterCategory;
+    // If searching, ignore category filter to show all matching products
+    if (productSearch.trim()) return matchesSearch;
+    return matchesCategory;
   });
 
   const selectProduct = (idx: number, product: Product) => {
