@@ -525,10 +525,10 @@ const AdminLicenses = () => {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
 
-    // Mark license as whatsapp_delivered
+    // Mark license as whatsapp_delivered with delivery phone
     await supabase
       .from('license_keys')
-      .update({ status: 'whatsapp_delivered', assigned_at: new Date().toISOString() })
+      .update({ status: 'whatsapp_delivered', assigned_at: new Date().toISOString(), delivered_to_phone: phone } as any)
       .eq('id', lic.id);
 
     toast.success('WhatsApp এ ডেলিভারি হয়েছে!');
