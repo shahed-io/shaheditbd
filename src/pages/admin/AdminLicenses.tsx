@@ -1199,6 +1199,7 @@ const AdminLicenses = () => {
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">প্রোডাক্ট</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Status</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কাস্টমার / অর্ডার</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">ডেলিভারি নম্বর</th>
                   <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground">Action</th>
                 </tr>
               </thead>
