@@ -241,10 +241,14 @@ const AdminQuickSale = () => {
         });
 
         if (entry.license) {
+          const deliveryPhone = (deliveryMethod === 'whatsapp' || deliveryMethod === 'both') && customerPhone.trim()
+            ? customerPhone.replace(/\D/g, '').replace(/^0/, '880')
+            : null;
           await supabase.from('license_keys').update({
             status: deliveryMethod === 'save' ? 'assigned' : 'whatsapp_delivered',
             assigned_at: new Date().toISOString(),
-          }).eq('id', entry.license.id);
+            ...(deliveryPhone ? { delivered_to_phone: deliveryPhone } : {}),
+          } as any).eq('id', entry.license.id);
         }
       }
 

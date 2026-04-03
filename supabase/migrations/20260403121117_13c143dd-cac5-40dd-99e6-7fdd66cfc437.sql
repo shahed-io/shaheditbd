@@ -1,0 +1,1 @@
+ALTER TABLE public.license_keys ADD COLUMN delivered_to_phone text DEFAULT NULL;

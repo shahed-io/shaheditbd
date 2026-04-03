@@ -29,6 +29,7 @@ type LicenseKey = {
   order_item_id: string | null;
   assigned_at: string | null;
   created_at: string;
+  delivered_to_phone: string | null;
   product_name?: string;
   order_number?: string;
   customer_name?: string;
@@ -524,10 +525,10 @@ const AdminLicenses = () => {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
 
-    // Mark license as whatsapp_delivered
+    // Mark license as whatsapp_delivered with delivery phone
     await supabase
       .from('license_keys')
-      .update({ status: 'whatsapp_delivered', assigned_at: new Date().toISOString() })
+      .update({ status: 'whatsapp_delivered', assigned_at: new Date().toISOString(), delivered_to_phone: phone } as any)
       .eq('id', lic.id);
 
     toast.success('WhatsApp এ ডেলিভারি হয়েছে!');
@@ -1198,6 +1199,7 @@ const AdminLicenses = () => {
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">প্রোডাক্ট</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Status</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কাস্টমার / অর্ডার</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">ডেলিভারি নম্বর</th>
                   <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground">Action</th>
                 </tr>
               </thead>
@@ -1253,10 +1255,20 @@ const AdminLicenses = () => {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        {lic.customer_name ? (
+                      {lic.customer_name ? (
                           <div>
                             <div className="text-xs font-medium text-foreground">{lic.customer_name}</div>
                             <div className="text-[10px] text-muted-foreground">#{lic.order_number}</div>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {lic.delivered_to_phone ? (
+                          <div className="flex items-center gap-1.5">
+                            <Phone size={11} className="text-green-500" />
+                            <span className="text-xs font-mono text-foreground">{lic.delivered_to_phone}</span>
                           </div>
                         ) : (
                           <span className="text-xs text-muted-foreground">—</span>
