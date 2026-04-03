@@ -1255,10 +1255,20 @@ const AdminLicenses = () => {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        {lic.customer_name ? (
+                      {lic.customer_name ? (
                           <div>
                             <div className="text-xs font-medium text-foreground">{lic.customer_name}</div>
                             <div className="text-[10px] text-muted-foreground">#{lic.order_number}</div>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {lic.delivered_to_phone ? (
+                          <div className="flex items-center gap-1.5">
+                            <Phone size={11} className="text-green-500" />
+                            <span className="text-xs font-mono text-foreground">{lic.delivered_to_phone}</span>
                           </div>
                         ) : (
                           <span className="text-xs text-muted-foreground">—</span>
