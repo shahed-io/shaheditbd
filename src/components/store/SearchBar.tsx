@@ -1040,7 +1040,7 @@ const CompactDropdown = ({
         <div className="px-4 pt-3 pb-2 flex items-center justify-between border-b border-border/50">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <TrendingUp size={11} />
-            <span><span className="font-semibold text-foreground">{results.length}</span> টি প-্রোডাক্ট</span>
+            <span><span className="font-semibold text-foreground">{results.length}</span> <span><span className="font-semibold text-foreground">{results.length}</span> টি প্রোডাক্ট</span></span>
           </div>
         </div>
         <ul className="max-h-[360px] overflow-y-auto">
