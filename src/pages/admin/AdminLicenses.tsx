@@ -29,6 +29,7 @@ type LicenseKey = {
   order_item_id: string | null;
   assigned_at: string | null;
   created_at: string;
+  delivered_to_phone: string | null;
   product_name?: string;
   order_number?: string;
   customer_name?: string;
