@@ -79,7 +79,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
       </html>
     `);
     win.document.close();
-    setTimeout(() => { win.print(); win.close(); }, 400);
+    setTimeout(() => { win.print(); }, 400);
   };
 
   const items = order.order_items || [];
