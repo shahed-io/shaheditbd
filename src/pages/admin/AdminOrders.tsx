@@ -79,7 +79,34 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
       </html>
     `);
     win.document.close();
-    setTimeout(() => { win.print(); win.close(); }, 400);
+    setTimeout(() => { win.print(); }, 400);
+  };
+
+  const sendInvoiceWhatsApp = () => {
+    const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
+    if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
+    const itemsList = (order.order_items || []).map((i: any, idx: number) => 
+      `${idx + 1}. ${i.product_name} ×${i.quantity} — ৳${Number(i.total).toLocaleString()}${i.license_key ? '\n   🔑 ' + i.license_key : ''}`
+    ).join('\n');
+    const msg = encodeURIComponent(
+      `📄 *INVOICE — SHAHED STORE*\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `🧾 Invoice: #${order.order_number}\n` +
+      `📅 তারিখ: ${new Date(order.created_at).toLocaleDateString('bn-BD')}\n\n` +
+      `👤 *গ্রাহক:* ${order.customer_name}\n` +
+      `📱 ${order.customer_phone}\n` +
+      (order.customer_email ? `✉️ ${order.customer_email}\n` : '') +
+      `\n📦 *পণ্যসমূহ:*\n${itemsList}\n\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      (Number(order.discount_amount) > 0 ? `সাবটোটাল: ৳${Number(order.subtotal).toLocaleString()}\n🎉 ডিসকাউন্ট: -৳${Number(order.discount_amount).toLocaleString()}\n` : '') +
+      `💰 *সর্বমোট: ৳${Number(order.total).toLocaleString()}*\n\n` +
+      `💳 পেমেন্ট: ${PM_LABELS[order.payment_method] || order.payment_method}\n` +
+      (order.transaction_id ? `TrxID: ${order.transaction_id}\n` : '') +
+      `\n✅ ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!\n` +
+      `🌐 shahedstore.com.bd`
+    );
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    toast.success('WhatsApp এ ইনভয়েস পাঠানো হচ্ছে...');
   };
 
   const items = order.order_items || [];
@@ -98,8 +125,11 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
         <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-shrink-0">
           <h3 className="font-bold text-foreground text-sm">Invoice #{order.order_number}</h3>
           <div className="flex gap-2">
+            <button onClick={sendInvoiceWhatsApp} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-[#25D366]/30 text-[#25D366] hover:bg-[#25D366]/10 text-xs font-semibold transition-colors">
+              <Send size={13} /> WhatsApp এ পাঠান
+            </button>
             <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-glow text-xs font-semibold">
-              <Printer size={13} /> Print / Save PDF
+              <Printer size={13} /> Print / PDF
             </button>
             <button onClick={onClose} className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30">
               <X size={15} />
@@ -560,6 +590,30 @@ const OrderDetailModal = ({
                       <button onClick={() => sendWhatsApp(deliveryNote)}
                         className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-[#25D366]/30 text-[#25D366] hover:bg-[#25D366]/10 transition-colors">
                         <MessageCircle size={12} /> WhatsApp
+                      </button>
+                    )}
+                    {order.customer_phone && (
+                      <button onClick={() => {
+                        const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
+                        const itemsList = (order.order_items || []).map((i: any, idx: number) => 
+                          `${idx + 1}. ${i.product_name} ×${i.quantity} — ৳${Number(i.total).toLocaleString()}${i.license_key ? '\n   🔑 ' + i.license_key : ''}`
+                        ).join('\n');
+                        const msg = encodeURIComponent(
+                          `📄 *INVOICE — SHAHED STORE*\n━━━━━━━━━━━━━━━━━━━━\n\n` +
+                          `🧾 Invoice: #${order.order_number}\n📅 ${new Date(order.created_at).toLocaleDateString('bn-BD')}\n\n` +
+                          `👤 *${order.customer_name}*\n\n📦 *পণ্যসমূহ:*\n${itemsList}\n\n` +
+                          `━━━━━━━━━━━━━━━━━━━━\n` +
+                          (Number(order.discount_amount) > 0 ? `সাবটোটাল: ৳${Number(order.subtotal).toLocaleString()}\n🎉 ছাড়: -৳${Number(order.discount_amount).toLocaleString()}\n` : '') +
+                          `💰 *সর্বমোট: ৳${Number(order.total).toLocaleString()}*\n\n` +
+                          `💳 ${PM_LABELS[order.payment_method] || order.payment_method}` +
+                          (order.transaction_id ? ` | TrxID: ${order.transaction_id}` : '') +
+                          `\n\n✅ ধন্যবাদ!\n🌐 shahedstore.com.bd`
+                        );
+                        window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+                        toast.success('ইনভয়েস WhatsApp এ পাঠানো হচ্ছে...');
+                      }}
+                        className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-primary/30 text-primary hover:bg-primary/10 transition-colors">
+                        <FileText size={12} /> ইনভয়েস পাঠান
                       </button>
                     )}
                     {!['cancelled', 'refunded', 'failed'].includes(order.status) && (
