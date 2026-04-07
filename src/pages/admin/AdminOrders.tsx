@@ -125,8 +125,11 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
         <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-shrink-0">
           <h3 className="font-bold text-foreground text-sm">Invoice #{order.order_number}</h3>
           <div className="flex gap-2">
+            <button onClick={sendInvoiceWhatsApp} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-[#25D366]/30 text-[#25D366] hover:bg-[#25D366]/10 text-xs font-semibold transition-colors">
+              <Send size={13} /> WhatsApp এ পাঠান
+            </button>
             <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-glow text-xs font-semibold">
-              <Printer size={13} /> Print / Save PDF
+              <Printer size={13} /> Print / PDF
             </button>
             <button onClick={onClose} className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30">
               <X size={15} />
