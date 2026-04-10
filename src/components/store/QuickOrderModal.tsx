@@ -154,6 +154,12 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   const handlePlaceOrder = async () => {
     setSubmitError('');
 
+    if (!user) {
+      setSubmitError('অর্ডার করতে প্রথমে লগইন করুন');
+      setShowAuthModal(true);
+      return;
+    }
+
     // Wallet checks
     if (paymentMethod === 'wallet') {
       if (!user) { setSubmitError('Wallet পেমেন্টের জন্য লগইন করতে হবে'); return; }
