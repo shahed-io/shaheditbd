@@ -567,6 +567,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         </div>
       </div>
     </div>
+    </>
   );
 };
 
