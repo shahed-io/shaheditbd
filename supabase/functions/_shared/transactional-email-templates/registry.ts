@@ -8,4 +8,10 @@ export interface TemplateEntry {
   to?: string | ((data: any) => string);
 }
 
-export const TEMPLATES: Record<string, TemplateEntry> = {};
+import { template as orderConfirmation } from './order-confirmation.tsx'
+import { template as welcome } from './welcome.tsx'
+
+export const TEMPLATES: Record<string, TemplateEntry> = {
+  'order-confirmation': orderConfirmation,
+  'welcome': welcome,
+};
