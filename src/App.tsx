@@ -64,6 +64,7 @@ const RefundRequest         = lazy(() => import("./pages/RefundRequest"));
 const InstallApp            = lazy(() => import("./pages/InstallApp"));
 const Reseller              = lazy(() => import("./pages/Reseller"));
 const AdminResellerAccounts = lazy(() => import("./pages/admin/AdminResellerAccounts"));
+const Unsubscribe           = lazy(() => import("./pages/Unsubscribe"));
 
 // SEO sub-pages
 const AdminMetaTags         = lazy(() => import("./pages/admin/seo/AdminMetaTags"));
