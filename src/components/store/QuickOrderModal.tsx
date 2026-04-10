@@ -317,6 +317,16 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
           {/* ══ STEP 1: Customer Info ══ */}
           {step === 'info' && (
             <>
+              {/* Login banner for guests */}
+              {!user && (
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/10 border border-primary/30 mb-2">
+                  <LogIn size={16} className="text-primary shrink-0" />
+                  <p className="text-xs text-foreground flex-1">অর্ডার করতে লগইন আবশ্যক</p>
+                  <button type="button" onClick={() => setShowAuthModal(true)} className="btn-glow px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">
+                    লগইন
+                  </button>
+                </div>
+              )}
               {/* Step indicator */}
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">1</span>
