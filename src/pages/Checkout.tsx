@@ -306,8 +306,17 @@ const Checkout = () => {
       setOrderNumber(orderNum);
       setOrderPlaced(true);
     } catch (err: unknown) {
-      console.error(err);
-      setSubmitError('অর্ডার দিতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+      console.error('[Checkout] Order error:', err);
+      const msg = err instanceof Error ? err.message : (err as any)?.message || String(err);
+      if (msg.includes('row-level security') || msg.includes('RLS')) {
+        setSubmitError('অনুমতি সমস্যা। দয়া করে লগইন করে আবার চেষ্টা করুন।');
+      } else if (msg.includes('duplicate') || msg.includes('unique')) {
+        setSubmitError('এই অর্ডার নম্বরটি ইতিমধ্যে ব্যবহৃত হয়েছে। আবার চেষ্টা করুন।');
+      } else if (msg.includes('Wallet debit failed')) {
+        setSubmitError('ওয়ালেট থেকে টাকা কাটা যায়নি। ব্যালেন্স চেক করুন।');
+      } else {
+        setSubmitError(`অর্ডার দিতে সমস্যা হয়েছে: ${msg}`);
+      }
     } finally {
       setLoading(false);
     }
