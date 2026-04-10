@@ -9,6 +9,7 @@ import {
   ArrowLeft, ShoppingCart, Tag, CheckCircle, Smartphone,
   Minus, Plus, Trash2, X, Loader2, Shield, Info, ChevronDown, User, LogIn, FileText, Wallet, Package
 } from 'lucide-react';
+import AuthModal from '@/components/store/AuthModal';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { usePaymentSettings, DEFAULT_PAYMENT_CONFIGS } from '@/hooks/usePaymentSettings';
@@ -79,6 +80,7 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [summaryOpen, setSummaryOpen] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
   const [walletBalance, setWalletBalance] = useState(0);
 
@@ -151,6 +153,12 @@ const Checkout = () => {
     e.preventDefault();
     setSubmitError('');
     setErrors({});
+
+    if (!user) {
+      setSubmitError('অর্ডার করতে প্রথমে লগইন করুন');
+      setShowAuthModal(true);
+      return;
+    }
 
     if (!termsAccepted) {
       setSubmitError('Terms & Conditions মেনে নিতে হবে');
