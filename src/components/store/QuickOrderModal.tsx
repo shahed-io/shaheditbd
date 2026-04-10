@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { X, MessageCircle, CreditCard, CheckCircle, Tag, ChevronDown, Wallet, Loader2, Shield, Package } from 'lucide-react';
+import { X, MessageCircle, CreditCard, CheckCircle, Tag, ChevronDown, Wallet, Loader2, Shield, Package, LogIn } from 'lucide-react';
+import AuthModal from '@/components/store/AuthModal';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -75,6 +76,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   const [submitError, setSubmitError] = useState('');
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletLoading, setWalletLoading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   // Custom field values: { fieldId: value }
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>({});
   const [customFieldErrors, setCustomFieldErrors] = useState<Record<string, string>>({});
@@ -151,6 +153,12 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
 
   const handlePlaceOrder = async () => {
     setSubmitError('');
+
+    if (!user) {
+      setSubmitError('অর্ডার করতে প্রথমে লগইন করুন');
+      setShowAuthModal(true);
+      return;
+    }
 
     // Wallet checks
     if (paymentMethod === 'wallet') {
@@ -245,6 +253,8 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
     : dynamicMethods;
 
   return (
+    <>
+    <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-card border border-border rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md max-h-[92vh] overflow-y-auto shadow-2xl">
 
@@ -307,6 +317,16 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
           {/* ══ STEP 1: Customer Info ══ */}
           {step === 'info' && (
             <>
+              {/* Login banner for guests */}
+              {!user && (
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/10 border border-primary/30 mb-2">
+                  <LogIn size={16} className="text-primary shrink-0" />
+                  <p className="text-xs text-foreground flex-1">অর্ডার করতে লগইন আবশ্যক</p>
+                  <button type="button" onClick={() => setShowAuthModal(true)} className="btn-glow px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">
+                    লগইন
+                  </button>
+                </div>
+              )}
               {/* Step indicator */}
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">1</span>
@@ -557,6 +577,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         </div>
       </div>
     </div>
+    </>
   );
 };
 
