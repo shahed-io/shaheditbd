@@ -169,6 +169,7 @@ const Checkout = () => {
     setErrors({});
 
     if (!user) {
+      pendingSubmitRef.current = true;
       setSubmitError('অর্ডার করতে প্রথমে লগইন করুন');
       setShowAuthModal(true);
       return;
