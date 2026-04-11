@@ -779,6 +779,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
 
       <Footer />
       <FloatingButtons />
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
     </div>
   );
 }
