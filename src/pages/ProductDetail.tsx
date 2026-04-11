@@ -113,8 +113,8 @@ const ProductDetail = () => {
   const [reviewStats, setReviewStats] = useState<{ avg: number; count: number } | null>(null);
 
   // Section reveals
-  const descReveal   = useReveal(0.05);
-  const faqReveal    = useReveal(0.05);
+  const descReveal   = useReveal({ threshold: 0.05 });
+  const faqReveal    = useReveal({ threshold: 0.05 });
 
   useEffect(() => {
     if (!slug) return;
@@ -1033,8 +1033,8 @@ const ProductDetail = () => {
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-3"
                         style={{
-                          opacity: descReveal.revealed ? 1 : 0,
-                          transform: descReveal.revealed ? 'none' : 'translateX(-12px)',
+                          opacity: descReveal.visible ? 1 : 0,
+                          transform: descReveal.visible ? 'none' : 'translateX(-12px)',
                           transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.1 + i * 0.08}s`,
                         }}>
                         <span className="text-base">{item.icon}</span>
@@ -1051,8 +1051,8 @@ const ProductDetail = () => {
               <div
                 ref={faqReveal.ref}
                 style={{
-                  opacity: faqReveal.revealed ? 1 : 0,
-                  transform: faqReveal.revealed ? 'none' : 'translateY(20px)',
+                  opacity: faqReveal.visible ? 1 : 0,
+                  transform: faqReveal.visible ? 'none' : 'translateY(20px)',
                   transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s',
                 }}
               >
@@ -1062,7 +1062,7 @@ const ProductDetail = () => {
                 </h2>
                 <div className="space-y-3">
                   {faqs.map((f, i) => (
-                    <FAQItem key={i} q={f.q} a={f.a} delay={i * 0.07} revealed={faqReveal.revealed} />
+                    <FAQItem key={i} q={f.q} a={f.a} delay={i * 0.07} revealed={faqReveal.visible} />
                   ))}
                 </div>
               </div>
@@ -1109,7 +1109,7 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
   const [products, setProducts] = useState<RelatedProduct[]>([]);
   const [loading, setLoading]   = useState(true);
   const [page, setPage] = useState(0);
-  const sectionReveal = useReveal(0.05);
+  const sectionReveal = useReveal({ threshold: 0.05 });
 
   useEffect(() => {
     const query = supabase
@@ -1139,8 +1139,8 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
       ref={sectionReveal.ref}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8"
       style={{
-        opacity: sectionReveal.revealed ? 1 : 0,
-        transform: sectionReveal.revealed ? 'none' : 'translateY(30px)',
+        opacity: sectionReveal.visible ? 1 : 0,
+        transform: sectionReveal.visible ? 'none' : 'translateY(30px)',
         transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
       }}
     >
@@ -1169,8 +1169,8 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
                   onClick={() => navigate(`/product/${p.slug}`)}
                   className="group cursor-pointer flex flex-col"
                   style={{
-                    opacity: sectionReveal.revealed ? 1 : 0,
-                    transform: sectionReveal.revealed ? 'translateY(0)' : 'translateY(16px)',
+                    opacity: sectionReveal.visible ? 1 : 0,
+                    transform: sectionReveal.visible ? 'translateY(0)' : 'translateY(16px)',
                     transition: `opacity 0.5s ease ${i * 0.08}s, transform 0.5s ease ${i * 0.08}s`,
                   }}
                 >
@@ -1378,7 +1378,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
   const [showForm, setShowForm]   = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const sectionReveal             = useReveal(0.05);
+  const sectionReveal             = useReveal({ threshold: 0.05 });
 
   // Form state
   const [rating, setRating]       = useState(5);
@@ -1443,8 +1443,8 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
       ref={sectionReveal.ref}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       style={{
-        opacity: loading ? 0 : (sectionReveal.revealed ? 1 : 0),
-        transform: sectionReveal.revealed ? 'none' : 'translateY(30px)',
+        opacity: loading ? 0 : (sectionReveal.visible ? 1 : 0),
+        transform: sectionReveal.visible ? 'none' : 'translateY(30px)',
         transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1)',
       }}
     >
@@ -1584,8 +1584,8 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
               className="rounded-2xl p-5"
               style={{
                 ...glassStyle,
-                opacity: sectionReveal.revealed ? 1 : 0,
-                transform: sectionReveal.revealed ? 'none' : 'translateY(12px)',
+                opacity: sectionReveal.visible ? 1 : 0,
+                transform: sectionReveal.visible ? 'none' : 'translateY(12px)',
                 transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${i * 0.06}s`,
               }}
             >
