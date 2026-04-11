@@ -119,7 +119,7 @@ const ProductDetail = () => {
 
   // Section reveals
   const descReveal   = useReveal({ threshold: 0.05 });
-  const faqReveal    = useReveal({ threshold: 0.05 });
+  const faqReveal    = useReveal({ threshold: 0.05 }); // kept for hook order stability
 
   useEffect(() => {
     if (!slug) return;
