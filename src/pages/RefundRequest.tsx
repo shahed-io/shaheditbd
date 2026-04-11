@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2, Calculator } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2, Calculator, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
@@ -7,6 +7,8 @@ import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
 import { FloatingButtons } from '@/components/store/Extras';
 import { GlassCard, SectionCard, Bullet } from '@/components/store/PolicyLayout';
+import { useAuth } from '@/hooks/useAuth';
+import AuthModal from '@/components/store/AuthModal';
 
 const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
