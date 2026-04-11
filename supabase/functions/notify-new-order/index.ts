@@ -123,8 +123,27 @@ Deno.serve(async (req) => {
       if (order.transaction_id) msg += `\n🔖 TrxID: ${order.transaction_id}`;
       msg += `\n⏰ ${new Date(order.created_at).toLocaleString('bn-BD')}`;
 
+      // Add reply instructions to the message
+      msg += `\n\n💬 রিপ্লাই দিয়ে স্ট্যাটাস পরিবর্তন করুন:`;
+      msg += `\n• completed / সম্পন্ন`;
+      msg += `\n• delivered / ডেলিভারি`;
+      msg += `\n• processing / প্রসেসিং`;
+      msg += `\n• cancelled / বাতিল`;
+
       console.log('Sending Telegram message to:', telegramChatId);
       const { ok, data: tgData } = await sendTelegramMessage(BOT_TOKEN, telegramChatId, msg);
+      
+      // Store message_id → order mapping for reply-based status changes
+      if (ok && tgData?.result?.message_id) {
+        await supabase.from('telegram_order_messages').upsert({
+          telegram_message_id: tgData.result.message_id,
+          telegram_chat_id: telegramChatId,
+          order_id: order.id,
+          order_number: order.order_number,
+        }, { onConflict: 'telegram_message_id,telegram_chat_id' });
+        console.log('Stored telegram message mapping:', tgData.result.message_id, '->', order.order_number);
+      }
+      
       results.telegram = ok ? { success: true } : { success: false, error: tgData };
       console.log('Telegram result:', JSON.stringify(results.telegram));
     } else {
