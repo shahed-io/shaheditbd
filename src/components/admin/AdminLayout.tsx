@@ -237,21 +237,21 @@ const AdminLayout = () => {
       )}
 
       {/* Mobile Sidebar (overlay drawer) */}
-      <aside className={`fixed left-0 top-0 h-full z-50 w-[280px] flex flex-col glass-card border-r border-border/50 transition-transform duration-300 md:hidden ${
+      <aside className={`fixed left-0 top-0 h-full z-50 w-[280px] flex flex-col admin-glass-sidebar transition-transform duration-300 md:hidden ${
         mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         {sidebarContent(true)}
       </aside>
 
       {/* Desktop Sidebar */}
-      <aside className={`hidden md:flex fixed left-0 top-0 h-full z-40 transition-all duration-300 flex-col ${sidebarOpen ? 'w-64' : 'w-16'} glass-card border-r border-border/50`}>
+      <aside className={`hidden md:flex fixed left-0 top-0 h-full z-40 transition-all duration-300 flex-col ${sidebarOpen ? 'w-64' : 'w-16'} admin-glass-sidebar`}>
         {sidebarContent(false)}
       </aside>
 
       {/* Main content */}
       <div className={`flex-1 flex flex-col transition-all duration-300 w-full ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
         {/* Top bar */}
-        <header className="glass-card border-b border-border/50 px-3 sm:px-6 py-3 sm:py-4 flex items-center gap-2 sm:gap-4 sticky top-0 z-30">
+        <header className="admin-glass-header px-3 sm:px-6 py-3 sm:py-4 flex items-center gap-2 sm:gap-4 sticky top-0 z-30">
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileSidebarOpen(true)}
