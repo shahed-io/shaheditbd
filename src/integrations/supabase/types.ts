@@ -1825,6 +1825,59 @@ export type Database = {
         }
         Relationships: []
       }
+      telegram_bot_state: {
+        Row: {
+          id: number
+          update_offset: number
+          updated_at: string
+        }
+        Insert: {
+          id: number
+          update_offset?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          update_offset?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      telegram_order_messages: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          order_number: string
+          telegram_chat_id: string
+          telegram_message_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          order_number: string
+          telegram_chat_id: string
+          telegram_message_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          order_number?: string
+          telegram_chat_id?: string
+          telegram_message_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telegram_order_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
