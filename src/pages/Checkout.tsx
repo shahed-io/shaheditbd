@@ -38,7 +38,7 @@ type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 
 const Checkout = () => {
   const {
     items, subtotal, discountAmount, taxAmount, serviceFee, finalTotal,
-    clearCart, updateQuantity, removeFromCart,
+    clearCart, updateQuantity, removeFromCart, addToCart,
     coupon, setCoupon, resetCoupon,
     orderNotes, setOrderNotes,
     termsAccepted, setTermsAccepted,
