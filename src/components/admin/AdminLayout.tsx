@@ -81,6 +81,7 @@ const menuItems = [
   { icon: Megaphone, label: 'Marketing', path: '/ceo/marketing' },
   { icon: Facebook, label: 'Facebook Pixel', path: '/ceo/facebook-pixel' },
   { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
+  { icon: Bot, label: 'Telegram Shop Bot', path: '/ceo/telegram-bot' },
   { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
   { icon: Brain, label: 'AI API Config', path: '/ceo/ai-config' },
   { icon: Settings, label: 'Settings', path: '/ceo/settings' },
