@@ -61,7 +61,7 @@ function inlineKb(buttons: { text: string; callback_data: string }[][]) {
 
 // ─── SITE URL HELPER ──────────────────────────────────────────────────────
 function getSiteUrl(): string {
-  return 'https://shahedstore.lovable.app';
+  return 'https://shahedstore.com.bd';
 }
 
 // ─── COMMAND HANDLERS ─────────────────────────────────────────────────────
