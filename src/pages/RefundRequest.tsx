@@ -421,6 +421,22 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
               নতুন রিকোয়েস্ট করুন
             </button>
           </GlassCard>
+        ) : !user ? (
+          <GlassCard className="p-6 sm:p-8 text-center">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: `linear-gradient(135deg, ${A}20, ${B}20)` }}>
+              <LogIn size={28} style={{ color: A }} />
+            </div>
+            <h2 className="font-sora font-bold text-[18px] mb-2" style={{ color: 'hsl(226,35%,14%)' }}>লগইন আবশ্যক</h2>
+            <p className="text-[13px] mb-5" style={{ color: 'hsl(226,25%,52%)' }}>
+              রিফান্ড রিকোয়েস্ট করতে আপনাকে অবশ্যই লগইন করতে হবে। এটি আপনার অর্ডার যাচাই এবং রিফান্ড প্রক্রিয়া নিরাপদ করতে সাহায্য করে।
+            </p>
+            <button
+              onClick={() => setAuthModalOpen(true)}
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-[14px] font-bold text-white transition-all hover:scale-105"
+              style={{ background: `linear-gradient(135deg, ${A}, ${B})`, boxShadow: `0 4px 16px ${A}30` }}>
+              <LogIn size={16} /> লগইন করুন
+            </button>
+          </GlassCard>
         ) : (
           <GlassCard className="p-6 sm:p-8">
             <div className="flex items-center gap-3 mb-6 pb-5 border-b border-white/40">
