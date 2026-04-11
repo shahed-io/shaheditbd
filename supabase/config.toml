@@ -29,3 +29,5 @@ project_id = "dpvdavjwqyviredzoorj"
     verify_jwt = false
   [functions.telegram-poll]
     verify_jwt = false
+  [functions.telegram-poll-admin]
+    verify_jwt = false
