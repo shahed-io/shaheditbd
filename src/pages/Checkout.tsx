@@ -121,6 +121,43 @@ const Checkout = () => {
       });
   }, [user?.id]);
 
+  // Load cart from Telegram checkout token
+  const { addToCart } = useCart();
+  useEffect(() => {
+    const tgToken = searchParams.get('tg_token');
+    if (!tgToken) return;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('telegram_checkout_tokens')
+          .select('cart_data, is_used')
+          .eq('token', tgToken)
+          .gt('expires_at', new Date().toISOString())
+          .single();
+        if (error || !data || data.is_used) return;
+        // Mark token as used
+        await supabase.from('telegram_checkout_tokens').update({ is_used: true }).eq('token', tgToken);
+        // Load cart items
+        const cartItems = data.cart_data as any[];
+        if (Array.isArray(cartItems)) {
+          clearCart();
+          for (const item of cartItems) {
+            addToCart({
+              id: item.product_id,
+              name: item.product_name,
+              category: '',
+              price: item.price,
+              image: '',
+            }, item.quantity);
+          }
+          toast.success('টেলিগ্রাম কার্ট লোড হয়েছে!');
+        }
+      } catch (e) {
+        console.error('Telegram token load error:', e);
+      }
+    })();
+  }, []);
+
   // Auto-apply coupon from URL ?coupon=CODE
   useEffect(() => {
     const urlCoupon = searchParams.get('coupon');

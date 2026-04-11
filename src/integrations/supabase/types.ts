@@ -1884,6 +1884,33 @@ export type Database = {
           },
         ]
       }
+      telegram_checkout_state: {
+        Row: {
+          chat_id: string
+          collected_data: Json
+          created_at: string
+          id: string
+          step: string
+          updated_at: string
+        }
+        Insert: {
+          chat_id: string
+          collected_data?: Json
+          created_at?: string
+          id?: string
+          step?: string
+          updated_at?: string
+        }
+        Update: {
+          chat_id?: string
+          collected_data?: Json
+          created_at?: string
+          id?: string
+          step?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       telegram_checkout_tokens: {
         Row: {
           cart_data: Json
