@@ -56,6 +56,9 @@ const getCurrentTier = (count: number) => TIERS.find(t => count >= t.min && coun
 interface OrderItem {
   id: string; product_name: string; price: number; quantity: number; total: number; license_key: string | null;
 }
+interface TimelineEvent {
+  id: string; status: string; note: string | null; created_at: string;
+}
 interface Order {
   id: string; order_number: string; status: string;
   total: number; subtotal: number; discount_amount: number | null;
@@ -63,6 +66,7 @@ interface Order {
   payment_method: string | null; transaction_id: string | null;
   notes: string | null; coupon_code: string | null;
   items?: OrderItem[];
+  timeline?: TimelineEvent[];
 }
 interface Address {
   id: string; label: string; recipient_name: string; phone: string;
