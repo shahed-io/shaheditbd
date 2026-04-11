@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2, Calculator } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { RefreshCw, CheckCircle, XCircle, Clock, AlertTriangle, Send, ChevronDown, ChevronUp, Info, ImagePlus, X, Loader2, Calculator, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
@@ -7,6 +7,8 @@ import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
 import { FloatingButtons } from '@/components/store/Extras';
 import { GlassCard, SectionCard, Bullet } from '@/components/store/PolicyLayout';
+import { useAuth } from '@/hooks/useAuth';
+import AuthModal from '@/components/store/AuthModal';
 
 const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
@@ -85,6 +87,8 @@ function calcRefund(purchaseDate: string, period: string, amount: string): CalcR
 }
 
 export default function RefundRequest() {
+  const { user } = useAuth();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [policyOpen, setPolicyOpen] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -92,6 +96,18 @@ export default function RefundRequest() {
   const [screenshots, setScreenshots] = useState<{ file: File; preview: string; url?: string }[]>([]);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-fill user info when logged in
+  useEffect(() => {
+    if (user) {
+      setForm(p => ({
+        ...p,
+        customer_name: p.customer_name || user.user_metadata?.display_name || user.user_metadata?.full_name || '',
+        customer_email: p.customer_email || user.email || '',
+        customer_phone: p.customer_phone || user.user_metadata?.phone || '',
+      }));
+    }
+  }, [user]);
 
   const [form, setForm] = useState({
     customer_name: '',
@@ -403,6 +419,22 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
               className="mt-6 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-105"
               style={{ background: `linear-gradient(135deg, ${A}, ${B})`, color: '#fff', boxShadow: `0 4px 16px ${A}30` }}>
               নতুন রিকোয়েস্ট করুন
+            </button>
+          </GlassCard>
+        ) : !user ? (
+          <GlassCard className="p-6 sm:p-8 text-center">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: `linear-gradient(135deg, ${A}20, ${B}20)` }}>
+              <LogIn size={28} style={{ color: A }} />
+            </div>
+            <h2 className="font-sora font-bold text-[18px] mb-2" style={{ color: 'hsl(226,35%,14%)' }}>লগইন আবশ্যক</h2>
+            <p className="text-[13px] mb-5" style={{ color: 'hsl(226,25%,52%)' }}>
+              রিফান্ড রিকোয়েস্ট করতে আপনাকে অবশ্যই লগইন করতে হবে। এটি আপনার অর্ডার যাচাই এবং রিফান্ড প্রক্রিয়া নিরাপদ করতে সাহায্য করে।
+            </p>
+            <button
+              onClick={() => setAuthModalOpen(true)}
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-[14px] font-bold text-white transition-all hover:scale-105"
+              style={{ background: `linear-gradient(135deg, ${A}, ${B})`, boxShadow: `0 4px 16px ${A}30` }}>
+              <LogIn size={16} /> লগইন করুন
             </button>
           </GlassCard>
         ) : (
@@ -747,6 +779,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
 
       <Footer />
       <FloatingButtons />
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
 }
