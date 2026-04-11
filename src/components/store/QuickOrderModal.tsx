@@ -106,6 +106,17 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
       });
   }, [user?.id]);
 
+  // Auto-submit after login if there was a pending submit
+  useEffect(() => {
+    if (user && pendingSubmitRef.current) {
+      pendingSubmitRef.current = false;
+      const timer = setTimeout(() => {
+        handlePlaceOrder();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
+
   const applyCoupon = async () => {
     if (!couponCode.trim()) return;
     setCouponLoading(true);
@@ -156,6 +167,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
     setSubmitError('');
 
     if (!user) {
+      pendingSubmitRef.current = true;
       setSubmitError('অর্ডার করতে প্রথমে লগইন করুন');
       setShowAuthModal(true);
       return;
