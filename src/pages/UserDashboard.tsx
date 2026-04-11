@@ -1043,6 +1043,38 @@ const UserDashboard = () => {
                                     <span className="text-muted-foreground">{order.notes}</span>
                                   </div>
                                 )}
+
+                                {/* Order Timeline */}
+                                {order.timeline && order.timeline.length > 0 && (
+                                  <div>
+                                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">📋 অর্ডার ট্র্যাকিং</p>
+                                    <div className="relative pl-5">
+                                      <div className="absolute left-[7px] top-1 bottom-1 w-0.5 rounded-full" style={{ background: 'linear-gradient(to bottom, hsl(var(--primary)), hsla(258,78%,75%,0.3))' }} />
+                                      {order.timeline.map((event, idx) => {
+                                        const evStatus = STATUS_MAP[event.status] || { label: event.status, color: 'text-muted-foreground bg-muted border-border', icon: <Clock size={11} /> };
+                                        const isLast = idx === order.timeline!.length - 1;
+                                        return (
+                                          <div key={event.id} className="relative flex items-start gap-3 pb-3 last:pb-0">
+                                            <div className={`absolute -left-5 top-0.5 w-4 h-4 rounded-full flex items-center justify-center border-2 ${isLast ? 'border-primary bg-primary text-white' : 'border-muted-foreground/30 bg-background text-muted-foreground'}`}>
+                                              <div className={`${isLast ? 'w-1.5 h-1.5 rounded-full bg-white' : 'w-1 h-1 rounded-full bg-muted-foreground/50'}`} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                              <div className="flex items-center gap-2 flex-wrap">
+                                                <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full border ${evStatus.color}`}>
+                                                  {evStatus.icon} {evStatus.label}
+                                                </span>
+                                                <span className="text-[10px] text-muted-foreground">
+                                                  {new Date(event.created_at).toLocaleDateString('bn-BD', { day: 'numeric', month: 'short', year: 'numeric' })} — {new Date(event.created_at).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                              </div>
+                                              {event.note && <p className="text-xs text-muted-foreground mt-0.5">{event.note}</p>}
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
