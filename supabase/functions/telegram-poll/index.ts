@@ -65,8 +65,24 @@ function getSiteUrl(): string {
 }
 
 // ─── COMMAND HANDLERS ─────────────────────────────────────────────────────
-async function handleStart(bot: string, chatId: number) {
-  const text = `🛍️ *Shahed Store* এ স্বাগতম!\n\nআমাদের টেলিগ্রাম বট দিয়ে সরাসরি শপিং করুন:\n\n` +
+async function handleStart(bot: string, chatId: number, supabase: any) {
+  // Fetch customizable welcome message from settings
+  const { data: settingsData } = await supabase
+    .from('site_settings')
+    .select('key, value')
+    .in('key', ['telegram_shop_bot_welcome', 'telegram_shop_bot_footer', 'telegram_shop_bot_enabled']);
+  
+  const s: Record<string, string> = {};
+  settingsData?.forEach((r: any) => { s[r.key] = r.value || ''; });
+
+  // Check if bot is disabled
+  if (s['telegram_shop_bot_enabled'] === 'false') {
+    await sendMsg(bot, chatId, '⏸️ শপিং বট বর্তমানে নিষ্ক্রিয়। পরে আবার চেষ্টা করুন।');
+    return;
+  }
+
+  const welcome = s['telegram_shop_bot_welcome'] || '🛍️ *Shahed Store* এ স্বাগতম!\n\nআমাদের টেলিগ্রাম বট দিয়ে সরাসরি শপিং করুন:';
+  const text = `${welcome}\n\n` +
     `📦 /shop — প্রোডাক্ট দেখুন\n` +
     `🔍 /search <নাম> — প্রোডাক্ট খুঁজুন\n` +
     `🛒 /cart — কার্ট দেখুন\n` +
@@ -782,7 +798,7 @@ Deno.serve(async (req) => {
 
             if (cbData === 'start') {
               await answerCb(BOT_TOKEN, cb.id);
-              await handleStart(BOT_TOKEN, chatId);
+              await handleStart(BOT_TOKEN, chatId, supabase);
             } else if (cbData === 'shop') {
               await answerCb(BOT_TOKEN, cb.id);
               await handleShop(BOT_TOKEN, chatId, supabase, msgId);
@@ -864,7 +880,7 @@ Deno.serve(async (req) => {
 
           // Commands
           if (text === '/start' || text.startsWith('/start ')) {
-            await handleStart(BOT_TOKEN, chatId);
+            await handleStart(BOT_TOKEN, chatId, supabase);
           } else if (text === '/shop' || text === '/products' || text === '/menu') {
             await handleShop(BOT_TOKEN, chatId, supabase);
           } else if (text.startsWith('/search')) {
