@@ -61,12 +61,16 @@ const useReveal = (thresholdOrOpts: number | { threshold?: number } = 0.1) => {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // Fallback: reveal after 800ms even if IO doesn't fire
+    const fallback = setTimeout(() => setVisible(true), 800);
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold }
+      ([e]) => { if (e.isIntersecting) { clearTimeout(fallback); setVisible(true); obs.disconnect(); } },
+      { threshold, rootMargin: '0px 0px -20px 0px' }
     );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
+    obs.observe(el);
+    return () => { obs.disconnect(); clearTimeout(fallback); };
   }, [threshold]);
   return { ref, visible };
 };
@@ -115,7 +119,7 @@ const ProductDetail = () => {
 
   // Section reveals
   const descReveal   = useReveal({ threshold: 0.05 });
-  const faqReveal    = useReveal({ threshold: 0.05 });
+  const faqReveal    = useReveal({ threshold: 0.05 }); // kept for hook order stability
 
   useEffect(() => {
     if (!slug) return;
@@ -1049,21 +1053,14 @@ const ProductDetail = () => {
 
             {/* FAQ — full width, below description */}
             {faqs.length > 0 && (
-              <div
-                ref={faqReveal.ref}
-                style={{
-                  opacity: faqReveal.visible ? 1 : 0,
-                  transform: faqReveal.visible ? 'none' : 'translateY(20px)',
-                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s',
-                }}
-              >
+              <div className="animate-fade-in">
                 <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
                   <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
                   FAQ
                 </h2>
                 <div className="space-y-3">
                   {faqs.map((f, i) => (
-                    <FAQItem key={i} q={f.q} a={f.a} delay={i * 0.07} revealed={faqReveal.visible} />
+                    <FAQItem key={i} q={f.q} a={f.a} delay={i * 0.07} revealed={true} />
                   ))}
                 </div>
               </div>
