@@ -61,12 +61,16 @@ const useReveal = (thresholdOrOpts: number | { threshold?: number } = 0.1) => {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // Fallback: reveal after 800ms even if IO doesn't fire
+    const fallback = setTimeout(() => setVisible(true), 800);
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold }
+      ([e]) => { if (e.isIntersecting) { clearTimeout(fallback); setVisible(true); obs.disconnect(); } },
+      { threshold, rootMargin: '0px 0px -20px 0px' }
     );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
+    obs.observe(el);
+    return () => { obs.disconnect(); clearTimeout(fallback); };
   }, [threshold]);
   return { ref, visible };
 };
