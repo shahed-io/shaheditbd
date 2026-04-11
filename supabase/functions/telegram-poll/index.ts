@@ -720,9 +720,9 @@ Deno.serve(async (req) => {
   const startTime = Date.now();
 
   try {
-    const BOT_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
+    const BOT_TOKEN = Deno.env.get('TELEGRAM_SHOP_BOT_TOKEN');
     if (!BOT_TOKEN) {
-      return new Response(JSON.stringify({ error: 'TELEGRAM_BOT_TOKEN not set' }), {
+      return new Response(JSON.stringify({ error: 'TELEGRAM_SHOP_BOT_TOKEN not set' }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
