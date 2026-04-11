@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, MessageCircle, CreditCard, CheckCircle, Tag, ChevronDown, Wallet, Loader2, Shield, Package, LogIn } from 'lucide-react';
 import AuthModal from '@/components/store/AuthModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -77,6 +77,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletLoading, setWalletLoading] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const pendingSubmitRef = useRef(false);
   // Custom field values: { fieldId: value }
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>({});
   const [customFieldErrors, setCustomFieldErrors] = useState<Record<string, string>>({});
@@ -104,6 +105,17 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         }
       });
   }, [user?.id]);
+
+  // Auto-submit after login if there was a pending submit
+  useEffect(() => {
+    if (user && pendingSubmitRef.current) {
+      pendingSubmitRef.current = false;
+      const timer = setTimeout(() => {
+        handlePlaceOrder();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
 
   const applyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -155,6 +167,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
     setSubmitError('');
 
     if (!user) {
+      pendingSubmitRef.current = true;
       setSubmitError('অর্ডার করতে প্রথমে লগইন করুন');
       setShowAuthModal(true);
       return;

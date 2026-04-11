@@ -83,11 +83,25 @@ const Checkout = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
   const [walletBalance, setWalletBalance] = useState(0);
+  const pendingSubmitRef = useRef(false);
 
   // If user logs out while wallet is selected, switch to bkash
   useEffect(() => {
     if (!user && paymentMethod === 'wallet') {
       setPaymentMethod('bkash');
+    }
+  }, [user]);
+
+  // Auto-submit after login if there was a pending submit
+  useEffect(() => {
+    if (user && pendingSubmitRef.current) {
+      pendingSubmitRef.current = false;
+      // Small delay to let profile auto-fill complete
+      const timer = setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+        handleSubmit(fakeEvent);
+      }, 1500);
+      return () => clearTimeout(timer);
     }
   }, [user]);
 
@@ -155,6 +169,7 @@ const Checkout = () => {
     setErrors({});
 
     if (!user) {
+      pendingSubmitRef.current = true;
       setSubmitError('অর্ডার করতে প্রথমে লগইন করুন');
       setShowAuthModal(true);
       return;
