@@ -423,8 +423,11 @@ const UserDashboard = () => {
   };
 
   const fetchOrderItems = async (orderId: string) => {
-    const { data } = await supabase.from('order_items').select('id, product_name, price, quantity, total, license_key').eq('order_id', orderId);
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, items: (data || []) as OrderItem[] } : o));
+    const [itemsRes, timelineRes] = await Promise.all([
+      supabase.from('order_items').select('id, product_name, price, quantity, total, license_key').eq('order_id', orderId),
+      supabase.from('order_timeline').select('id, status, note, created_at').eq('order_id', orderId).order('created_at', { ascending: true }),
+    ]);
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, items: (itemsRes.data || []) as OrderItem[], timeline: (timelineRes.data || []) as TimelineEvent[] } : o));
   };
 
   const fetchAddresses = async () => {
