@@ -513,14 +513,17 @@ async function handlePaymentSelect(bot: string, chatId: number, method: string, 
   const data = state.collected_data || {};
   data.paymentMethod = method;
 
-  // Get payment number from site_settings
-  const { data: settings } = await supabase
+  // Get payment config from site_settings (stored as JSON array in payment_methods_config)
+  const { data: pmcRow } = await supabase
     .from('site_settings')
-    .select('key, value')
-    .in('key', [`${method}_number`, `${method}_name`, 'bank_account_name', 'bank_account_number', 'bank_name', 'bank_branch']);
+    .select('value')
+    .eq('key', 'payment_methods_config')
+    .single();
 
-  const s: Record<string, string> = {};
-  settings?.forEach((r: any) => { s[r.key] = r.value || ''; });
+  let paymentMethods: any[] = [];
+  try { paymentMethods = JSON.parse(pmcRow?.value || '[]'); } catch {}
+
+  const pm = paymentMethods.find((m: any) => m.id === method);
 
   // Get cart total
   const { data: items } = await supabase
@@ -532,14 +535,16 @@ async function handlePaymentSelect(bot: string, chatId: number, method: string, 
 
   let payInfo = '';
   if (method === 'bank') {
-    payInfo = `🏦 ব্যাংক: ${s.bank_name || 'N/A'}\n` +
-      `👤 নাম: ${s.bank_account_name || 'N/A'}\n` +
-      `🔢 নম্বর: ${s.bank_account_number || 'N/A'}\n` +
-      `📍 ব্রাঞ্চ: ${s.bank_branch || 'N/A'}`;
+    const bankCfg = paymentMethods.find((m: any) => m.id === 'bank' || m.id === 'bank_transfer');
+    payInfo = `🏦 ব্যাংক: ${bankCfg?.bankName || 'N/A'}\n` +
+      `👤 নাম: ${bankCfg?.accountName || 'N/A'}\n` +
+      `🔢 নম্বর: ${bankCfg?.accountNumber || 'N/A'}\n` +
+      `📍 ব্রাঞ্চ: ${bankCfg?.branch || 'N/A'}`;
   } else {
-    const number = s[`${method}_number`] || 'N/A';
-    const label = method === 'bkash' ? 'বিকাশ' : method === 'nagad' ? 'নগদ' : method === 'rocket' ? 'রকেট' : 'উপায়';
-    payInfo = `💳 ${label} নম্বর: ${number}`;
+    const number = pm?.number || 'N/A';
+    const label = pm?.label || (method === 'bkash' ? 'বিকাশ' : method === 'nagad' ? 'নগদ' : method === 'rocket' ? 'রকেট' : 'উপায়');
+    const type = pm?.type ? ` (${pm.type})` : '';
+    payInfo = `💳 ${label} নম্বর: ${number}${type}`;
   }
 
   await supabase.from('telegram_checkout_state')
