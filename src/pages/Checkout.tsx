@@ -38,7 +38,7 @@ type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 
 const Checkout = () => {
   const {
     items, subtotal, discountAmount, taxAmount, serviceFee, finalTotal,
-    clearCart, updateQuantity, removeFromCart,
+    clearCart, updateQuantity, removeFromCart, addToCart,
     coupon, setCoupon, resetCoupon,
     orderNotes, setOrderNotes,
     termsAccepted, setTermsAccepted,
@@ -120,6 +120,36 @@ const Checkout = () => {
         }
       });
   }, [user?.id]);
+
+  // Load Telegram cart from tg_token
+  useEffect(() => {
+    const tgToken = searchParams.get('tg_token');
+    if (!tgToken || items.length > 0) return;
+
+    (async () => {
+      const { data } = await supabase
+        .from('telegram_checkout_tokens')
+        .select('cart_data')
+        .eq('token', tgToken)
+        .eq('is_used', false)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (data?.cart_data && Array.isArray(data.cart_data)) {
+        // Add each item from telegram cart to the website cart
+        for (const item of data.cart_data as any[]) {
+          addToCart({
+            id: item.id || item.slug,
+            name: item.name,
+            category: '',
+            price: item.price,
+            image: '',
+          }, item.quantity || 1);
+        }
+        toast.success('টেলিগ্রাম কার্ট লোড হয়েছে!');
+      }
+    })();
+  }, []);
 
   // Auto-apply coupon from URL ?coupon=CODE
   useEffect(() => {

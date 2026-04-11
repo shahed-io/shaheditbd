@@ -1843,6 +1843,77 @@ export type Database = {
         }
         Relationships: []
       }
+      telegram_cart: {
+        Row: {
+          chat_id: string
+          created_at: string
+          id: string
+          price: number
+          product_id: string | null
+          product_name: string
+          product_slug: string
+          quantity: number
+        }
+        Insert: {
+          chat_id: string
+          created_at?: string
+          id?: string
+          price?: number
+          product_id?: string | null
+          product_name: string
+          product_slug: string
+          quantity?: number
+        }
+        Update: {
+          chat_id?: string
+          created_at?: string
+          id?: string
+          price?: number
+          product_id?: string | null
+          product_name?: string
+          product_slug?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telegram_cart_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      telegram_checkout_tokens: {
+        Row: {
+          cart_data: Json
+          chat_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          is_used: boolean
+          token: string
+        }
+        Insert: {
+          cart_data?: Json
+          chat_id: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          token: string
+        }
+        Update: {
+          cart_data?: Json
+          chat_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          token?: string
+        }
+        Relationships: []
+      }
       telegram_order_messages: {
         Row: {
           created_at: string
