@@ -102,8 +102,192 @@ async function handleOrderReply(bot: string, chatId: number, msg: any, supabase:
   return true;
 }
 
+// ─── ADMIN COMMANDS ───────────────────────────────────────────────────────
+async function handleAdminStart(bot: string, chatId: number, supabase: any) {
+  // Fetch recent order stats
+  const { count: totalOrders } = await supabase
+    .from('orders')
+    .select('*', { count: 'exact', head: true });
+
+  const { count: pendingOrders } = await supabase
+    .from('orders')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'pending');
+
+  const { count: todayOrders } = await supabase
+    .from('orders')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', new Date().toISOString().split('T')[0]);
+
+  let msg = `🔐 Shahed Store — Admin Order Management\n\n`;
+  msg += `📊 অর্ডার সামারি:\n`;
+  msg += `━━━━━━━━━━━━━━━━━━\n`;
+  msg += `📦 মোট অর্ডার: ${totalOrders || 0}\n`;
+  msg += `⏳ পেন্ডিং: ${pendingOrders || 0}\n`;
+  msg += `📅 আজকের অর্ডার: ${todayOrders || 0}\n`;
+  msg += `━━━━━━━━━━━━━━━━━━\n\n`;
+  msg += `📌 কমান্ড:\n`;
+  msg += `/start — ড্যাশবোর্ড\n`;
+  msg += `/pending — পেন্ডিং অর্ডার\n`;
+  msg += `/today — আজকের অর্ডার\n`;
+  msg += `/recent — সর্বশেষ ১০টি অর্ডার\n`;
+  msg += `/order <নম্বর> — অর্ডারের বিবরণ\n\n`;
+  msg += `💬 অর্ডার নোটিফিকেশনে রিপ্লাই দিয়ে স্ট্যাটাস পরিবর্তন করুন।\n`;
+  msg += `✅ নতুন অর্ডার ও স্ট্যাটাস আপডেটের নোটিফিকেশন স্বয়ংক্রিয়ভাবে আসবে।`;
+
+  await sendMsg(bot, chatId, msg);
+}
+
+async function handlePendingOrders(bot: string, chatId: number, supabase: any) {
+  const { data: orders } = await supabase
+    .from('orders')
+    .select('order_number, customer_name, customer_phone, total, payment_method, created_at, order_items(product_name, quantity, price, total)')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+    .limit(15);
+
+  if (!orders?.length) {
+    return sendMsg(bot, chatId, '✅ কোনো পেন্ডিং অর্ডার নেই! 🎉');
+  }
+
+  let msg = `⏳ পেন্ডিং অর্ডার (${orders.length}টি):\n━━━━━━━━━━━━━━━━━━\n\n`;
+
+  for (const o of orders) {
+    const items = (o.order_items || []).map((i: any) => `  • ${i.product_name} ×${i.quantity}`).join('\n');
+    const time = new Date(o.created_at).toLocaleString('bn-BD');
+    const pm = (o.payment_method || 'N/A').toUpperCase();
+
+    msg += `🔢 #${o.order_number}\n`;
+    msg += `👤 ${o.customer_name}`;
+    if (o.customer_phone) msg += ` | 📱 ${o.customer_phone}`;
+    msg += `\n📦 পণ্য:\n${items}\n`;
+    msg += `💵 ৳${Number(o.total).toLocaleString()} | 💳 ${pm}\n`;
+    msg += `⏰ ${time}\n\n`;
+  }
+
+  return sendMsg(bot, chatId, msg);
+}
+
+async function handleTodayOrders(bot: string, chatId: number, supabase: any) {
+  const today = new Date().toISOString().split('T')[0];
+  const { data: orders } = await supabase
+    .from('orders')
+    .select('order_number, customer_name, customer_phone, total, status, payment_method, created_at, order_items(product_name, quantity, price, total)')
+    .gte('created_at', today)
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  if (!orders?.length) {
+    return sendMsg(bot, chatId, '📅 আজ কোনো অর্ডার আসেনি।');
+  }
+
+  let msg = `📅 আজকের অর্ডার (${orders.length}টি):\n━━━━━━━━━━━━━━━━━━\n\n`;
+
+  for (const o of orders) {
+    const items = (o.order_items || []).map((i: any) => `  • ${i.product_name} ×${i.quantity}`).join('\n');
+    const statusLabel = STATUS_LABELS[o.status] || o.status;
+    const statusEmoji = STATUS_EMOJI[o.status] || '📦';
+    const time = new Date(o.created_at).toLocaleTimeString('bn-BD');
+    const pm = (o.payment_method || 'N/A').toUpperCase();
+
+    msg += `${statusEmoji} #${o.order_number} — ${statusLabel}\n`;
+    msg += `👤 ${o.customer_name}`;
+    if (o.customer_phone) msg += ` | 📱 ${o.customer_phone}`;
+    msg += `\n📦 পণ্য:\n${items}\n`;
+    msg += `💵 ৳${Number(o.total).toLocaleString()} | 💳 ${pm}\n`;
+    msg += `⏰ ${time}\n\n`;
+  }
+
+  return sendMsg(bot, chatId, msg);
+}
+
+async function handleRecentOrders(bot: string, chatId: number, supabase: any) {
+  const { data: orders } = await supabase
+    .from('orders')
+    .select('order_number, customer_name, customer_phone, total, status, payment_method, created_at, order_items(product_name, quantity, price, total)')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (!orders?.length) {
+    return sendMsg(bot, chatId, '📦 কোনো অর্ডার পাওয়া যায়নি।');
+  }
+
+  let msg = `📦 সর্বশেষ ১০টি অর্ডার:\n━━━━━━━━━━━━━━━━━━\n\n`;
+
+  for (const o of orders) {
+    const items = (o.order_items || []).map((i: any) => `  • ${i.product_name} ×${i.quantity}`).join('\n');
+    const statusLabel = STATUS_LABELS[o.status] || o.status;
+    const statusEmoji = STATUS_EMOJI[o.status] || '📦';
+    const pm = (o.payment_method || 'N/A').toUpperCase();
+    const time = new Date(o.created_at).toLocaleString('bn-BD');
+
+    msg += `${statusEmoji} #${o.order_number} — ${statusLabel}\n`;
+    msg += `👤 ${o.customer_name}`;
+    if (o.customer_phone) msg += ` | 📱 ${o.customer_phone}`;
+    msg += `\n📦 পণ্য:\n${items}\n`;
+    msg += `💵 ৳${Number(o.total).toLocaleString()} | 💳 ${pm}\n`;
+    msg += `⏰ ${time}\n\n`;
+  }
+
+  return sendMsg(bot, chatId, msg);
+}
+
+async function handleOrderDetail(bot: string, chatId: number, orderNum: string, supabase: any) {
+  if (!orderNum.trim()) {
+    return sendMsg(bot, chatId, '📋 অর্ডারের বিবরণ দেখতে:\n/order <অর্ডার নম্বর>\n\nউদাহরণ: /order ORD-12345');
+  }
+
+  const { data: order } = await supabase
+    .from('orders')
+    .select('*, order_items(product_name, quantity, price, total, license_key)')
+    .eq('order_number', orderNum.toUpperCase())
+    .single();
+
+  if (!order) {
+    return sendMsg(bot, chatId, `❌ অর্ডার #${orderNum} পাওয়া যায়নি।`);
+  }
+
+  const statusLabel = STATUS_LABELS[order.status] || order.status;
+  const statusEmoji = STATUS_EMOJI[order.status] || '📦';
+  const pm = (order.payment_method || 'N/A').toUpperCase();
+
+  let msg = `${statusEmoji} অর্ডার #${order.order_number}\n`;
+  msg += `━━━━━━━━━━━━━━━━━━\n\n`;
+  msg += `👤 গ্রাহক: ${order.customer_name}\n`;
+  msg += `📧 ইমেইল: ${order.customer_email}\n`;
+  if (order.customer_phone) msg += `📱 ফোন: ${order.customer_phone}\n`;
+  msg += `\n📋 স্ট্যাটাস: ${statusLabel}\n`;
+  msg += `💳 পেমেন্ট: ${pm}`;
+  if (order.transaction_id) msg += ` | TrxID: ${order.transaction_id}`;
+  msg += `\n💰 পেমেন্ট স্ট্যাটাস: ${order.payment_status || 'N/A'}\n`;
+
+  msg += `\n📦 পণ্য:\n`;
+  for (const item of (order.order_items || [])) {
+    msg += `  • ${item.product_name} ×${item.quantity} — ৳${Number(item.total).toLocaleString()}\n`;
+    if (item.license_key) {
+      msg += `    🔑 ${item.license_key}\n`;
+    }
+  }
+
+  if (order.discount_amount && Number(order.discount_amount) > 0) {
+    msg += `\n💰 সাবটোটাল: ৳${Number(order.subtotal).toLocaleString()}\n`;
+    msg += `🎉 ছাড়: -৳${Number(order.discount_amount).toLocaleString()}`;
+    if (order.coupon_code) msg += ` (${order.coupon_code})`;
+    msg += `\n`;
+  }
+  msg += `💵 মোট: ৳${Number(order.total).toLocaleString()}\n`;
+
+  if (order.notes) msg += `\n📝 কাস্টমার নোট: ${order.notes}\n`;
+  if (order.admin_notes) msg += `📝 এডমিন নোট: ${order.admin_notes}\n`;
+
+  msg += `\n⏰ তৈরি: ${new Date(order.created_at).toLocaleString('bn-BD')}`;
+  msg += `\n🔄 আপডেট: ${new Date(order.updated_at).toLocaleString('bn-BD')}`;
+
+  return sendMsg(bot, chatId, msg);
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
-// ADMIN BOT POLLING — Only handles order reply status changes
+// ADMIN BOT POLLING — Admin-only, handles commands + order reply status
 // ═══════════════════════════════════════════════════════════════════════════
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
@@ -124,6 +308,15 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
+
+    // Fetch admin chat ID from site_settings
+    const { data: chatIdSetting } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'telegram_chat_id')
+      .single();
+
+    const adminChatId = chatIdSetting?.value?.trim();
 
     // Admin bot uses state id=1
     const { data: state, error: stateErr } = await supabase
@@ -172,9 +365,50 @@ Deno.serve(async (req) => {
 
           const chatId = msg.chat.id;
 
-          // Only handle replies to order notifications
+          // ─── ADMIN ACCESS CHECK ───────────────────────────────────────
+          // Only the configured admin chat ID can use this bot
+          if (!adminChatId || String(chatId) !== adminChatId) {
+            await sendMsg(BOT_TOKEN, chatId,
+              `🔒 এই বটটি শুধুমাত্র এডমিনের জন্য।\n\n` +
+              `আপনার অ্যাক্সেস নেই।\n\n` +
+              `🛍️ শপিংয়ের জন্য @Shahed_Store_bot ব্যবহার করুন।`
+            );
+            totalProcessed++;
+            continue;
+          }
+
+          // ─── ADMIN COMMANDS ───────────────────────────────────────────
+          const text = msg.text.trim();
+
+          // Check order reply first
           if (msg.reply_to_message) {
-            await handleOrderReply(BOT_TOKEN, chatId, msg, supabase);
+            const handled = await handleOrderReply(BOT_TOKEN, chatId, msg, supabase);
+            if (handled) { totalProcessed++; continue; }
+          }
+
+          if (text === '/start' || text.startsWith('/start ')) {
+            await handleAdminStart(BOT_TOKEN, chatId, supabase);
+          } else if (text === '/pending') {
+            await handlePendingOrders(BOT_TOKEN, chatId, supabase);
+          } else if (text === '/today') {
+            await handleTodayOrders(BOT_TOKEN, chatId, supabase);
+          } else if (text === '/recent') {
+            await handleRecentOrders(BOT_TOKEN, chatId, supabase);
+          } else if (text.startsWith('/order')) {
+            const orderNum = text.replace(/^\/order\s*/i, '');
+            await handleOrderDetail(BOT_TOKEN, chatId, orderNum, supabase);
+          } else {
+            // Unknown command — maybe a status word for general use
+            await sendMsg(BOT_TOKEN, chatId,
+              `🤔 কমান্ড বুঝতে পারিনি।\n\n` +
+              `📌 উপলব্ধ কমান্ড:\n` +
+              `/start — ড্যাশবোর্ড\n` +
+              `/pending — পেন্ডিং অর্ডার\n` +
+              `/today — আজকের অর্ডার\n` +
+              `/recent — সর্বশেষ ১০টি অর্ডার\n` +
+              `/order <নম্বর> — অর্ডারের বিবরণ\n\n` +
+              `💬 অর্ডার নোটিফিকেশনে রিপ্লাই দিয়ে স্ট্যাটাস পরিবর্তন করুন।`
+            );
           }
 
           totalProcessed++;
