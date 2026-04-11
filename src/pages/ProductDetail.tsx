@@ -56,18 +56,19 @@ interface ProductFull {
 }
 
 // ── Custom hook: trigger reveal when element enters viewport ──
-const useReveal = (threshold = 0.1) => {
+const useReveal = (thresholdOrOpts: number | { threshold?: number } = 0.1) => {
+  const threshold = typeof thresholdOrOpts === 'number' ? thresholdOrOpts : (thresholdOrOpts.threshold ?? 0.1);
   const ref = useRef<HTMLDivElement>(null);
-  const [revealed, setRevealed] = useState(false);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setRevealed(true); obs.disconnect(); } },
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
       { threshold }
     );
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, [threshold]);
-  return { ref, revealed };
+  return { ref, visible };
 };
 
 // ── Custom Option types ──────────────────────────────────────
