@@ -1053,21 +1053,14 @@ const ProductDetail = () => {
 
             {/* FAQ — full width, below description */}
             {faqs.length > 0 && (
-              <div
-                ref={faqReveal.ref}
-                style={{
-                  opacity: faqReveal.visible ? 1 : 0,
-                  transform: faqReveal.visible ? 'none' : 'translateY(20px)',
-                  transition: 'all 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s',
-                }}
-              >
+              <div className="animate-fade-in">
                 <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
                   <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
                   FAQ
                 </h2>
                 <div className="space-y-3">
                   {faqs.map((f, i) => (
-                    <FAQItem key={i} q={f.q} a={f.a} delay={i * 0.07} revealed={faqReveal.visible} />
+                    <FAQItem key={i} q={f.q} a={f.a} delay={i * 0.07} revealed={true} />
                   ))}
                 </div>
               </div>
