@@ -378,6 +378,17 @@ function buildAdminOrderHtml(order: any, items: any[], adminCount: number) {
 </html>`
 }
 
+// Helper: extract and verify caller identity
+async function getCallerAuth(req: Request, supabaseAdmin: any): Promise<{ user: any; isAdmin: boolean } | null> {
+  const authHeader = req.headers.get('Authorization');
+  const token = authHeader?.replace('Bearer ', '');
+  if (!token) return null;
+  const { data: { user } } = await supabaseAdmin.auth.getUser(token);
+  if (!user) return null;
+  const { data: adminRole } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
+  return { user, isAdmin: !!adminRole };
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -391,6 +402,49 @@ Deno.serve(async (req) => {
 
     const body = await req.json()
     const { type, orderId, newStatus, promoSubject, promoBody, ctaText, ctaUrl, recipientEmails } = body
+
+    // Auth guard for admin-only types
+    const adminOnlyTypes = ['status_update', 'admin_notify'];
+    if (adminOnlyTypes.includes(type)) {
+      const caller = await getCallerAuth(req, supabaseAdmin);
+      if (!caller || !caller.isAdmin) {
+        return new Response(JSON.stringify({ error: 'Admin access required' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
+    // Auth guard for order_confirmation: caller must own the order or be admin
+    if (type === 'order_confirmation') {
+      const caller = await getCallerAuth(req, supabaseAdmin);
+      if (caller) {
+        // Authenticated: verify they own the order or are admin
+        if (!caller.isAdmin) {
+          const { data: ownerCheck } = await supabaseAdmin
+            .from('orders').select('user_id').eq('id', orderId).single();
+          if (!ownerCheck || ownerCheck.user_id !== caller.user.id) {
+            return new Response(JSON.stringify({ error: 'Forbidden' }), {
+              status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+        }
+      } else {
+        // Unauthenticated (guest): verify the order has no user_id and was created recently (< 5 min)
+        const { data: guestOrder } = await supabaseAdmin
+          .from('orders').select('user_id, created_at').eq('id', orderId).single();
+        if (!guestOrder || guestOrder.user_id !== null) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        const createdAt = new Date(guestOrder.created_at).getTime();
+        if (Date.now() - createdAt > 5 * 60 * 1000) {
+          return new Response(JSON.stringify({ error: 'Forbidden: order too old for guest confirmation' }), {
+            status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+      }
+    }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!
 
