@@ -104,8 +104,11 @@ const AdminLayout = () => {
   }, [location.pathname]);
 
   if (loading) return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen admin-gradient-bg flex items-center justify-center">
+      <div className="admin-glass-card p-8 flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
+        <p className="text-sm text-muted-foreground font-medium">Loading Dashboard...</p>
+      </div>
     </div>
   );
 
