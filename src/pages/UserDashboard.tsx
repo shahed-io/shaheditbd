@@ -316,6 +316,42 @@ const UserDashboard = () => {
     if (activeTab === 'licenses') fetchLicenses();
   }, [activeTab, user]);
 
+  // Realtime order updates - live preview
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel('user-orders-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'orders', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newOrder = payload.new as any;
+            setOrders(prev => [{ ...newOrder, items: undefined } as Order, ...prev]);
+            toast.success('🛒 নতুন অর্ডার তৈরি হয়েছে!', { description: `#${newOrder.order_number}` });
+          } else if (payload.eventType === 'UPDATE') {
+            const updated = payload.new as any;
+            setOrders(prev => prev.map(o => o.id === updated.id ? { ...o, ...updated } : o));
+            const statusLabel = STATUS_MAP[updated.status]?.label || updated.status;
+            toast.info(`📦 অর্ডার #${updated.order_number} আপডেট হয়েছে`, { description: `Status: ${statusLabel}` });
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'order_items' },
+        (payload) => {
+          const updated = payload.new as any;
+          setOrders(prev => prev.map(o => {
+            if (!o.items) return o;
+            return { ...o, items: o.items.map(item => item.id === updated.id ? { ...item, ...updated } : item) };
+          }));
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
+
   const fetchLicenses = async () => {
     if (!user) return;
     setLicensesLoading(true);
