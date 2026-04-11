@@ -87,6 +87,8 @@ function calcRefund(purchaseDate: string, period: string, amount: string): CalcR
 }
 
 export default function RefundRequest() {
+  const { user } = useAuth();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [policyOpen, setPolicyOpen] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -94,6 +96,18 @@ export default function RefundRequest() {
   const [screenshots, setScreenshots] = useState<{ file: File; preview: string; url?: string }[]>([]);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-fill user info when logged in
+  useEffect(() => {
+    if (user) {
+      setForm(p => ({
+        ...p,
+        customer_name: p.customer_name || user.user_metadata?.display_name || user.user_metadata?.full_name || '',
+        customer_email: p.customer_email || user.email || '',
+        customer_phone: p.customer_phone || user.user_metadata?.phone || '',
+      }));
+    }
+  }, [user]);
 
   const [form, setForm] = useState({
     customer_name: '',
