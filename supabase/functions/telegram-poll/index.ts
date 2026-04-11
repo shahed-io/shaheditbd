@@ -735,7 +735,7 @@ Deno.serve(async (req) => {
     const { data: state, error: stateErr } = await supabase
       .from('telegram_bot_state')
       .select('update_offset')
-      .eq('id', 1)
+      .eq('id', 2)
       .single();
 
     if (stateErr) {
@@ -860,11 +860,7 @@ Deno.serve(async (req) => {
           const handled = await handleCheckoutStep(BOT_TOKEN, chatId, text, supabase);
           if (handled) { totalProcessed++; continue; }
 
-          // Check if reply to order notification
-          if (msg.reply_to_message) {
-            const statusHandled = await handleOrderReply(BOT_TOKEN, chatId, msg, supabase);
-            if (statusHandled) { totalProcessed++; continue; }
-          }
+          // Skip order replies — handled by admin bot
 
           // Commands
           if (text === '/start' || text.startsWith('/start ')) {
@@ -912,7 +908,7 @@ Deno.serve(async (req) => {
       await supabase
         .from('telegram_bot_state')
         .update({ update_offset: newOffset, updated_at: new Date().toISOString() })
-        .eq('id', 1);
+        .eq('id', 2);
       currentOffset = newOffset;
     }
 
