@@ -798,7 +798,7 @@ Deno.serve(async (req) => {
 
             if (cbData === 'start') {
               await answerCb(BOT_TOKEN, cb.id);
-              await handleStart(BOT_TOKEN, chatId);
+              await handleStart(BOT_TOKEN, chatId, supabase);
             } else if (cbData === 'shop') {
               await answerCb(BOT_TOKEN, cb.id);
               await handleShop(BOT_TOKEN, chatId, supabase, msgId);
@@ -880,7 +880,7 @@ Deno.serve(async (req) => {
 
           // Commands
           if (text === '/start' || text.startsWith('/start ')) {
-            await handleStart(BOT_TOKEN, chatId);
+            await handleStart(BOT_TOKEN, chatId, supabase);
           } else if (text === '/shop' || text === '/products' || text === '/menu') {
             await handleShop(BOT_TOKEN, chatId, supabase);
           } else if (text.startsWith('/search')) {
