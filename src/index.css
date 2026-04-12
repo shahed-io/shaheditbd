@@ -329,6 +329,76 @@ html[data-theme="rose-gold"] body::after {
 }
 
 /* ══════════════════════════════════════
+   THEME-SPECIFIC GLASSMORPHISM OVERRIDES
+══════════════════════════════════════ */
+
+/* Dark Cyber — dark glass */
+html[data-theme="dark-cyber"] .product-card-new {
+  background: hsla(260, 40%, 10%, 0.65);
+  border-color: hsla(263, 70%, 65%, 0.25);
+  box-shadow: 0 2px 16px hsla(263,70%,55%,0.12), inset 0 1px 0 hsla(263,70%,70%,0.1);
+}
+html[data-theme="dark-cyber"] .product-card-new::before {
+  background: linear-gradient(135deg, hsla(263,70%,55%,0.06) 0%, transparent 50%, hsla(186,78%,50%,0.04) 100%);
+}
+html[data-theme="dark-cyber"] .product-card-new:hover {
+  border-color: hsla(263, 70%, 65%, 0.5);
+  box-shadow: 0 12px 32px hsla(263,70%,55%,0.25), 0 0 0 1px hsla(263,70%,65%,0.3), inset 0 1px 0 hsla(263,70%,70%,0.15);
+}
+html[data-theme="dark-cyber"] .product-card-new:hover::after {
+  background: linear-gradient(135deg, hsl(263,70%,60%), hsl(186,78%,50%));
+}
+html[data-theme="dark-cyber"] .glass-card {
+  background: hsla(260, 40%, 10%, 0.55);
+  border-color: hsla(263, 70%, 65%, 0.2);
+  box-shadow: 0 4px 24px hsla(260,40%,6%,0.3), inset 0 1px 0 hsla(263,70%,70%,0.08);
+}
+
+/* Ocean Blue — blue-tinted glass */
+html[data-theme="ocean-blue"] .product-card-new {
+  background: hsla(204, 80%, 99%, 0.65);
+  border-color: hsla(200, 90%, 45%, 0.2);
+  box-shadow: 0 2px 16px hsla(200,90%,40%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.7);
+}
+html[data-theme="ocean-blue"] .product-card-new::before {
+  background: linear-gradient(135deg, hsla(200,90%,45%,0.04) 0%, transparent 50%, hsla(162,72%,40%,0.03) 100%);
+}
+html[data-theme="ocean-blue"] .product-card-new:hover {
+  border-color: hsla(200, 90%, 45%, 0.4);
+  box-shadow: 0 12px 32px hsla(200,90%,40%,0.15), 0 0 0 1px hsla(200,90%,45%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.8);
+}
+html[data-theme="ocean-blue"] .product-card-new:hover::after {
+  background: linear-gradient(135deg, hsl(200,90%,40%), hsl(162,72%,40%));
+}
+html[data-theme="ocean-blue"] .glass-card {
+  background: hsla(204, 80%, 99%, 0.55);
+  border-color: hsla(200, 90%, 45%, 0.18);
+  box-shadow: 0 4px 24px hsla(204,60%,16%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.7);
+}
+
+/* Rose Gold — warm-tinted glass */
+html[data-theme="rose-gold"] .product-card-new {
+  background: hsla(15, 50%, 99%, 0.65);
+  border-color: hsla(347, 77%, 55%, 0.18);
+  box-shadow: 0 2px 16px hsla(347,77%,50%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.7);
+}
+html[data-theme="rose-gold"] .product-card-new::before {
+  background: linear-gradient(135deg, hsla(347,77%,50%,0.04) 0%, transparent 50%, hsla(38,92%,50%,0.03) 100%);
+}
+html[data-theme="rose-gold"] .product-card-new:hover {
+  border-color: hsla(347, 77%, 55%, 0.4);
+  box-shadow: 0 12px 32px hsla(347,77%,50%,0.15), 0 0 0 1px hsla(347,77%,55%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.8);
+}
+html[data-theme="rose-gold"] .product-card-new:hover::after {
+  background: linear-gradient(135deg, hsl(347,77%,50%), hsl(38,92%,50%));
+}
+html[data-theme="rose-gold"] .glass-card {
+  background: hsla(15, 50%, 99%, 0.55);
+  border-color: hsla(347, 77%, 55%, 0.16);
+  box-shadow: 0 4px 24px hsla(24,20%,20%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.7);
+}
+
+/* ══════════════════════════════════════
    NEON BORDER GLOW ANIMATION
 ══════════════════════════════════════ */
 @keyframes neon-border-flow {
