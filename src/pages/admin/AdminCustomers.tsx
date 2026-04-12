@@ -117,6 +117,10 @@ export default function AdminCustomers() {
   const [newPassword, setNewPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importData, setImportData] = useState<Array<{display_name: string; email: string; phone: string; password: string}>>([]);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importing, setImporting] = useState(false);
 
   const { data: customers = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-customers'],
