@@ -102,6 +102,7 @@ const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveCha
 const AdminTelegramBot           = lazy(() => import("./pages/admin/AdminTelegramBot"));
 const AdminStaffManagement       = lazy(() => import("./pages/admin/AdminStaffManagement"));
 const AdminInventoryAlerts       = lazy(() => import("./pages/admin/AdminInventoryAlerts"));
+const AdminThemes                = lazy(() => import("./pages/admin/AdminThemes"));
 
 
 const queryClient = new QueryClient({
