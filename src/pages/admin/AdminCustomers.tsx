@@ -617,7 +617,7 @@ export default function AdminCustomers() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Users size={24} className="text-primary" />
@@ -625,10 +625,49 @@ export default function AdminCustomers() {
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">রেজিস্টার্ড কাস্টমার ও অর্ডার হিস্ট্রি</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
-          <RefreshCw size={14} /> Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" onClick={() => setShowAddModal(true)} className="gap-2">
+            <UserPlus size={14} /> কাস্টমার যোগ করুন
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
+            <RefreshCw size={14} /> Refresh
+          </Button>
+        </div>
       </div>
+
+      {/* Add Customer Modal */}
+      {showAddModal && (
+        <div className="bg-card rounded-xl border border-primary/30 p-5 space-y-4">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <UserPlus size={14} className="text-primary" /> নতুন কাস্টমার যোগ করুন
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">নাম</label>
+              <Input value={addForm.display_name} onChange={e => setAddForm(p => ({ ...p, display_name: e.target.value }))}
+                placeholder="কাস্টমারের নাম" className="bg-muted/30 text-sm" />
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ইমেইল</label>
+              <Input value={addForm.email} onChange={e => setAddForm(p => ({ ...p, email: e.target.value }))}
+                placeholder="email@example.com" className="bg-muted/30 text-sm" />
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ফোন</label>
+              <Input value={addForm.phone} onChange={e => setAddForm(p => ({ ...p, phone: e.target.value }))}
+                placeholder="01XXXXXXXXX" className="bg-muted/30 text-sm" />
+            </div>
+          </div>
+          <div className="flex gap-2 justify-end">
+            <Button size="sm" variant="outline" onClick={() => setShowAddModal(false)} className="h-8 text-xs gap-1">
+              <X size={12} /> বাতিল
+            </Button>
+            <Button size="sm" onClick={addCustomer} className="h-8 text-xs gap-1">
+              <Save size={12} /> যোগ করুন
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
