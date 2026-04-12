@@ -382,10 +382,14 @@ export default function AdminCustomers() {
               <p className="text-xs text-muted-foreground truncate">{selected.email}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button onClick={startEditCustomer}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/20">
               <Edit3 size={13} /> এডিট
+            </button>
+            <button onClick={() => { setResetPasswordModal(selected.user_id); setNewPassword(''); setShowNewPassword(false); }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 transition-colors border border-amber-500/20">
+              <Lock size={13} /> পাসওয়ার্ড রিসেট
             </button>
             <button onClick={() => deleteCustomer(selected)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors border border-destructive/20">
