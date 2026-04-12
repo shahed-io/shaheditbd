@@ -737,18 +737,39 @@ export default function AdminCustomers() {
       {showAddModal && (
         <div className="bg-card rounded-xl border border-primary/30 p-5 space-y-4">
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <UserPlus size={14} className="text-primary" /> নতুন কাস্টমার যোগ করুন
+            <UserPlus size={14} className="text-primary" /> নতুন কাস্টমার অ্যাকাউন্ট তৈরি করুন
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <Shield size={11} /> ইমেইল ভেরিফিকেশন ছাড়াই অ্যাকাউন্ট সক্রিয় হবে
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">নাম</label>
               <Input value={addForm.display_name} onChange={e => setAddForm(p => ({ ...p, display_name: e.target.value }))}
                 placeholder="কাস্টমারের নাম" className="bg-muted/30 text-sm" />
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ইমেইল</label>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ইমেইল *</label>
               <Input value={addForm.email} onChange={e => setAddForm(p => ({ ...p, email: e.target.value }))}
-                placeholder="email@example.com" className="bg-muted/30 text-sm" />
+                placeholder="email@example.com" className="bg-muted/30 text-sm" type="email" />
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">পাসওয়ার্ড *</label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  value={addForm.password}
+                  onChange={e => setAddForm(p => ({ ...p, password: e.target.value }))}
+                  placeholder="কমপক্ষে ৬ অক্ষর"
+                  className="bg-muted/30 text-sm pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  {showPassword ? <EyeOff size={14} /> : <EyeIcon size={14} />}
+                </button>
+              </div>
             </div>
             <div>
               <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ফোন</label>
@@ -757,11 +778,11 @@ export default function AdminCustomers() {
             </div>
           </div>
           <div className="flex gap-2 justify-end">
-            <Button size="sm" variant="outline" onClick={() => setShowAddModal(false)} className="h-8 text-xs gap-1">
+            <Button size="sm" variant="outline" onClick={() => { setShowAddModal(false); setShowPassword(false); }} className="h-8 text-xs gap-1">
               <X size={12} /> বাতিল
             </Button>
-            <Button size="sm" onClick={addCustomer} className="h-8 text-xs gap-1">
-              <Save size={12} /> যোগ করুন
+            <Button size="sm" onClick={addCustomer} disabled={actionLoading} className="h-8 text-xs gap-1">
+              <UserPlus size={12} /> {actionLoading ? 'তৈরি হচ্ছে...' : 'অ্যাকাউন্ট তৈরি করুন'}
             </Button>
           </div>
         </div>
