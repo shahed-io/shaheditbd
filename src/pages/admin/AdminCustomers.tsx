@@ -106,6 +106,12 @@ export default function AdminCustomers() {
   const [editingNote, setEditingNote] = useState<string | null>(null);
   const [editNoteValue, setEditNoteValue] = useState('');
 
+  // Add/Edit/Delete customer states
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(false);
+  const [editForm, setEditForm] = useState({ display_name: '', email: '', phone: '' });
+  const [addForm, setAddForm] = useState({ display_name: '', email: '', phone: '' });
+
   const { data: customers = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-customers'],
     queryFn: async () => {
