@@ -295,14 +295,53 @@ export default function AdminCustomers() {
     refetch();
   };
 
-  // Delete customer
+  // Delete customer (auth + profile)
   const deleteCustomer = async (c: Customer) => {
-    if (!confirm(`"${c.display_name ?? c.email ?? 'No Name'}" কাস্টমার ডিলিট করতে চান?`)) return;
-    const { error } = await supabase.from('profiles').delete().eq('id', c.id);
-    if (error) { toast.error('ডিলিট ব্যর্থ'); return; }
-    toast.success('কাস্টমার ডিলিট হয়েছে!');
-    if (selected?.id === c.id) setSelected(null);
-    refetch();
+    if (!confirm(`"${c.display_name ?? c.email ?? 'No Name'}" কাস্টমার সম্পূর্ণ ডিলিট করতে চান? (অ্যাকাউন্ট + প্রোফাইল + ডেটা সব মুছে যাবে)`)) return;
+    setActionLoading(true);
+    try {
+      const res = await supabase.functions.invoke('admin-manage-users', {
+        body: { action: 'delete_user', user_id: c.user_id },
+      });
+      if (res.error || res.data?.error) {
+        // Fallback: delete profile only if auth user doesn't exist
+        const { error: profileError } = await supabase.from('profiles').delete().eq('id', c.id);
+        if (profileError) { toast.error('ডিলিট ব্যর্থ'); return; }
+      }
+      toast.success('কাস্টমার সম্পূর্ণ ডিলিট হয়েছে!');
+      if (selected?.id === c.id) setSelected(null);
+      refetch();
+    } catch (e: any) {
+      toast.error(e.message || 'ডিলিট ব্যর্থ');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Reset password
+  const resetPassword = async () => {
+    if (!resetPasswordModal || !newPassword) return;
+    if (newPassword.length < 6) {
+      toast.error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে');
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await supabase.functions.invoke('admin-manage-users', {
+        body: { action: 'reset_password', user_id: resetPasswordModal, new_password: newPassword },
+      });
+      if (res.error || res.data?.error) {
+        toast.error(res.data?.error || 'পাসওয়ার্ড রিসেট ব্যর্থ');
+        return;
+      }
+      toast.success('পাসওয়ার্ড সফলভাবে রিসেট হয়েছে!');
+      setResetPasswordModal(null);
+      setNewPassword('');
+    } catch (e: any) {
+      toast.error(e.message || 'ত্রুটি');
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const filtered = customers
