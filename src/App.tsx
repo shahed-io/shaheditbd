@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense, useState } from "react";
+import { useTheme } from "@/hooks/useTheme";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
@@ -236,6 +237,7 @@ const AppContent = () => {
             <Route path="telegram-bot" element={<AdminTelegramBot />} />
             <Route path="staff" element={<AdminStaffManagement />} />
             <Route path="inventory-alerts" element={<AdminInventoryAlerts />} />
+            <Route path="themes" element={<AdminThemes />} />
             
             <Route path="reseller" element={<Reseller />} />
             <Route path="reseller-accounts" element={<AdminResellerAccounts />} />
