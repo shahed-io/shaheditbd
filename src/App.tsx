@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense, useState } from "react";
+import { useTheme } from "@/hooks/useTheme";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
@@ -102,6 +103,7 @@ const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveCha
 const AdminTelegramBot           = lazy(() => import("./pages/admin/AdminTelegramBot"));
 const AdminStaffManagement       = lazy(() => import("./pages/admin/AdminStaffManagement"));
 const AdminInventoryAlerts       = lazy(() => import("./pages/admin/AdminInventoryAlerts"));
+const AdminThemes                = lazy(() => import("./pages/admin/AdminThemes"));
 
 
 const queryClient = new QueryClient({
@@ -136,6 +138,7 @@ const AdminNotificationListener = () => {
 const AppContent = () => {
   const location = useLocation();
   const [deferReady, setDeferReady] = useState(false);
+  useTheme(); // Apply saved theme on load
 
   useEffect(() => {
     // Defer non-critical components until after first paint (~20ms)
@@ -235,6 +238,7 @@ const AppContent = () => {
             <Route path="telegram-bot" element={<AdminTelegramBot />} />
             <Route path="staff" element={<AdminStaffManagement />} />
             <Route path="inventory-alerts" element={<AdminInventoryAlerts />} />
+            <Route path="themes" element={<AdminThemes />} />
             
             <Route path="reseller" element={<Reseller />} />
             <Route path="reseller-accounts" element={<AdminResellerAccounts />} />
