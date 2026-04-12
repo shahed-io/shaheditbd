@@ -7,7 +7,7 @@ import {
   Users, Search, RefreshCw, Eye, ShoppingBag,
   Mail, Phone, Calendar, TrendingUp, TrendingDown, UserCheck, Award, Star,
   Key, Package, ChevronDown, ChevronRight, MessageCircle, Copy, Check,
-  Edit3, Save, X, ArrowLeft, UserPlus, Trash2
+  Edit3, Save, X, ArrowLeft, UserPlus, Trash2, Lock, Shield, EyeOff, EyeIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -110,7 +110,12 @@ export default function AdminCustomers() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(false);
   const [editForm, setEditForm] = useState({ display_name: '', email: '', phone: '' });
-  const [addForm, setAddForm] = useState({ display_name: '', email: '', phone: '' });
+  const [addForm, setAddForm] = useState({ display_name: '', email: '', phone: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [resetPasswordModal, setResetPasswordModal] = useState<string | null>(null); // user_id
+  const [newPassword, setNewPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const { data: customers = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-customers'],
@@ -223,24 +228,41 @@ export default function AdminCustomers() {
     window.open(`https://wa.me/${p}?text=${msg}`, '_blank');
   };
 
-  // Add new customer
+  // Add new customer with real auth account
   const addCustomer = async () => {
-    if (!addForm.display_name.trim() && !addForm.email.trim()) {
-      toast.error('নাম অথবা ইমেইল দিন');
+    if (!addForm.email.trim() || !addForm.password.trim()) {
+      toast.error('ইমেইল এবং পাসওয়ার্ড আবশ্যক');
       return;
     }
-    const newId = crypto.randomUUID();
-    const { error } = await supabase.from('profiles').insert({
-      user_id: newId,
-      display_name: addForm.display_name.trim() || null,
-      email: addForm.email.trim() || null,
-      phone: addForm.phone.trim() || null,
-    });
-    if (error) { toast.error('কাস্টমার যোগ করা যায়নি'); return; }
-    toast.success('কাস্টমার যোগ হয়েছে!');
-    setShowAddModal(false);
-    setAddForm({ display_name: '', email: '', phone: '' });
-    refetch();
+    if (addForm.password.length < 6) {
+      toast.error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে');
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await supabase.functions.invoke('admin-manage-users', {
+        body: {
+          action: 'create_user',
+          email: addForm.email.trim(),
+          password: addForm.password,
+          display_name: addForm.display_name.trim() || null,
+          phone: addForm.phone.trim() || null,
+        },
+      });
+      if (res.error || res.data?.error) {
+        toast.error(res.data?.error || res.error?.message || 'অ্যাকাউন্ট তৈরি ব্যর্থ');
+        return;
+      }
+      toast.success('কাস্টমার অ্যাকাউন্ট তৈরি হয়েছে! (ইমেইল ভেরিফাই ছাড়াই ব্যবহারযোগ্য)');
+      setShowAddModal(false);
+      setAddForm({ display_name: '', email: '', phone: '', password: '' });
+      refetch();
+    } catch (e: any) {
+      toast.error(e.message || 'ত্রুটি হয়েছে');
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // Edit customer profile
@@ -273,14 +295,53 @@ export default function AdminCustomers() {
     refetch();
   };
 
-  // Delete customer
+  // Delete customer (auth + profile)
   const deleteCustomer = async (c: Customer) => {
-    if (!confirm(`"${c.display_name ?? c.email ?? 'No Name'}" কাস্টমার ডিলিট করতে চান?`)) return;
-    const { error } = await supabase.from('profiles').delete().eq('id', c.id);
-    if (error) { toast.error('ডিলিট ব্যর্থ'); return; }
-    toast.success('কাস্টমার ডিলিট হয়েছে!');
-    if (selected?.id === c.id) setSelected(null);
-    refetch();
+    if (!confirm(`"${c.display_name ?? c.email ?? 'No Name'}" কাস্টমার সম্পূর্ণ ডিলিট করতে চান? (অ্যাকাউন্ট + প্রোফাইল + ডেটা সব মুছে যাবে)`)) return;
+    setActionLoading(true);
+    try {
+      const res = await supabase.functions.invoke('admin-manage-users', {
+        body: { action: 'delete_user', user_id: c.user_id },
+      });
+      if (res.error || res.data?.error) {
+        // Fallback: delete profile only if auth user doesn't exist
+        const { error: profileError } = await supabase.from('profiles').delete().eq('id', c.id);
+        if (profileError) { toast.error('ডিলিট ব্যর্থ'); return; }
+      }
+      toast.success('কাস্টমার সম্পূর্ণ ডিলিট হয়েছে!');
+      if (selected?.id === c.id) setSelected(null);
+      refetch();
+    } catch (e: any) {
+      toast.error(e.message || 'ডিলিট ব্যর্থ');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Reset password
+  const resetPassword = async () => {
+    if (!resetPasswordModal || !newPassword) return;
+    if (newPassword.length < 6) {
+      toast.error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে');
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await supabase.functions.invoke('admin-manage-users', {
+        body: { action: 'reset_password', user_id: resetPasswordModal, new_password: newPassword },
+      });
+      if (res.error || res.data?.error) {
+        toast.error(res.data?.error || 'পাসওয়ার্ড রিসেট ব্যর্থ');
+        return;
+      }
+      toast.success('পাসওয়ার্ড সফলভাবে রিসেট হয়েছে!');
+      setResetPasswordModal(null);
+      setNewPassword('');
+    } catch (e: any) {
+      toast.error(e.message || 'ত্রুটি');
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const filtered = customers
@@ -321,10 +382,14 @@ export default function AdminCustomers() {
               <p className="text-xs text-muted-foreground truncate">{selected.email}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button onClick={startEditCustomer}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/20">
               <Edit3 size={13} /> এডিট
+            </button>
+            <button onClick={() => { setResetPasswordModal(selected.user_id); setNewPassword(''); setShowNewPassword(false); }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 transition-colors border border-amber-500/20">
+              <Lock size={13} /> পাসওয়ার্ড রিসেট
             </button>
             <button onClick={() => deleteCustomer(selected)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors border border-destructive/20">
@@ -339,7 +404,40 @@ export default function AdminCustomers() {
           </div>
         </div>
 
-        {/* Edit Customer Form */}
+        {/* Reset Password Modal */}
+        {resetPasswordModal && (
+          <div className="bg-card rounded-xl border border-amber-500/30 p-4 space-y-3">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Lock size={14} className="text-amber-500" /> পাসওয়ার্ড রিসেট করুন
+            </h3>
+            <p className="text-xs text-muted-foreground">নতুন পাসওয়ার্ড সেট করুন (কমপক্ষে ৬ অক্ষর)</p>
+            <div className="relative max-w-sm">
+              <Input
+                type={showNewPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                placeholder="নতুন পাসওয়ার্ড লিখুন"
+                className="bg-muted/30 text-sm pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                {showNewPassword ? <EyeOff size={14} /> : <EyeIcon size={14} />}
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={() => setResetPasswordModal(null)} className="h-8 text-xs gap-1">
+                <X size={12} /> বাতিল
+              </Button>
+              <Button size="sm" onClick={resetPassword} disabled={actionLoading || newPassword.length < 6}
+                className="h-8 text-xs gap-1 bg-amber-500 hover:bg-amber-600 text-white">
+                <Lock size={12} /> {actionLoading ? 'রিসেট হচ্ছে...' : 'পাসওয়ার্ড রিসেট করুন'}
+              </Button>
+            </div>
+          </div>
+        )}
+
         {editingCustomer && (
           <div className="bg-card rounded-xl border border-primary/30 p-4 space-y-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
@@ -639,18 +737,39 @@ export default function AdminCustomers() {
       {showAddModal && (
         <div className="bg-card rounded-xl border border-primary/30 p-5 space-y-4">
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <UserPlus size={14} className="text-primary" /> নতুন কাস্টমার যোগ করুন
+            <UserPlus size={14} className="text-primary" /> নতুন কাস্টমার অ্যাকাউন্ট তৈরি করুন
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <Shield size={11} /> ইমেইল ভেরিফিকেশন ছাড়াই অ্যাকাউন্ট সক্রিয় হবে
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">নাম</label>
               <Input value={addForm.display_name} onChange={e => setAddForm(p => ({ ...p, display_name: e.target.value }))}
                 placeholder="কাস্টমারের নাম" className="bg-muted/30 text-sm" />
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ইমেইল</label>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ইমেইল *</label>
               <Input value={addForm.email} onChange={e => setAddForm(p => ({ ...p, email: e.target.value }))}
-                placeholder="email@example.com" className="bg-muted/30 text-sm" />
+                placeholder="email@example.com" className="bg-muted/30 text-sm" type="email" />
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">পাসওয়ার্ড *</label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  value={addForm.password}
+                  onChange={e => setAddForm(p => ({ ...p, password: e.target.value }))}
+                  placeholder="কমপক্ষে ৬ অক্ষর"
+                  className="bg-muted/30 text-sm pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  {showPassword ? <EyeOff size={14} /> : <EyeIcon size={14} />}
+                </button>
+              </div>
             </div>
             <div>
               <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ফোন</label>
@@ -659,11 +778,11 @@ export default function AdminCustomers() {
             </div>
           </div>
           <div className="flex gap-2 justify-end">
-            <Button size="sm" variant="outline" onClick={() => setShowAddModal(false)} className="h-8 text-xs gap-1">
+            <Button size="sm" variant="outline" onClick={() => { setShowAddModal(false); setShowPassword(false); }} className="h-8 text-xs gap-1">
               <X size={12} /> বাতিল
             </Button>
-            <Button size="sm" onClick={addCustomer} className="h-8 text-xs gap-1">
-              <Save size={12} /> যোগ করুন
+            <Button size="sm" onClick={addCustomer} disabled={actionLoading} className="h-8 text-xs gap-1">
+              <UserPlus size={12} /> {actionLoading ? 'তৈরি হচ্ছে...' : 'অ্যাকাউন্ট তৈরি করুন'}
             </Button>
           </div>
         </div>
