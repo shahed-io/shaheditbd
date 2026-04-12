@@ -84,6 +84,8 @@ const menuItems = [
   { icon: Bot, label: 'Telegram Shop Bot', path: '/ceo/telegram-bot' },
   { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
   { icon: Brain, label: 'AI API Config', path: '/ceo/ai-config' },
+  { icon: Users, label: 'Staff Management', path: '/ceo/staff' },
+  { icon: AlertTriangle, label: 'Inventory Alerts', path: '/ceo/inventory-alerts' },
   { icon: Settings, label: 'Settings', path: '/ceo/settings' },
   { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
   { icon: Database, label: 'Backup', path: '/ceo/backup' },

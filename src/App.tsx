@@ -100,6 +100,8 @@ const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoice
 const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterSettings"));
 const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveChat"));
 const AdminTelegramBot           = lazy(() => import("./pages/admin/AdminTelegramBot"));
+const AdminStaffManagement       = lazy(() => import("./pages/admin/AdminStaffManagement"));
+const AdminInventoryAlerts       = lazy(() => import("./pages/admin/AdminInventoryAlerts"));
 
 
 const queryClient = new QueryClient({
@@ -231,6 +233,8 @@ const AppContent = () => {
             <Route path="footer-settings" element={<AdminFooterSettings />} />
             <Route path="live-chat" element={<AdminLiveChat />} />
             <Route path="telegram-bot" element={<AdminTelegramBot />} />
+            <Route path="staff" element={<AdminStaffManagement />} />
+            <Route path="inventory-alerts" element={<AdminInventoryAlerts />} />
             
             <Route path="reseller" element={<Reseller />} />
             <Route path="reseller-accounts" element={<AdminResellerAccounts />} />
