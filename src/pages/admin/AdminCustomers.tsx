@@ -950,6 +950,83 @@ export default function AdminCustomers() {
         </div>
       )}
 
+      {/* Import Modal */}
+      {showImportModal && (
+        <div className="bg-card rounded-xl border border-primary/30 p-5 space-y-4">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Upload size={14} className="text-primary" /> CSV থেকে কাস্টমার ইমপোর্ট করুন
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            CSV ফাইলে <strong>email</strong> কলাম আবশ্যক। ঐচ্ছিক কলাম: name, phone, password।
+            পাসওয়ার্ড না দিলে অটো-জেনারেট হবে।
+          </p>
+
+          {/* Sample format */}
+          <div className="bg-muted/30 rounded-lg p-3 text-xs font-mono text-muted-foreground">
+            <div className="font-semibold text-foreground mb-1">নমুনা ফরম্যাট:</div>
+            name,email,phone,password<br/>
+            রহিম,rahim@mail.com,01712345678,pass123<br/>
+            করিম,karim@mail.com,01812345678,
+          </div>
+
+          <div>
+            <input
+              type="file"
+              accept=".csv,.txt"
+              onChange={handleImportFile}
+              className="block w-full text-sm text-muted-foreground
+                file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0
+                file:text-sm file:font-semibold file:bg-primary/10 file:text-primary
+                hover:file:bg-primary/20 cursor-pointer"
+            />
+          </div>
+
+          {importData.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-xs font-semibold text-foreground">
+                প্রিভিউ: {importData.length} কাস্টমার পাওয়া গেছে
+              </div>
+              <div className="max-h-48 overflow-y-auto rounded-lg border border-border">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="bg-muted/30 border-b border-border">
+                      <th className="px-3 py-1.5 text-left text-muted-foreground">নাম</th>
+                      <th className="px-3 py-1.5 text-left text-muted-foreground">ইমেইল</th>
+                      <th className="px-3 py-1.5 text-left text-muted-foreground">ফোন</th>
+                      <th className="px-3 py-1.5 text-left text-muted-foreground">পাসওয়ার্ড</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {importData.slice(0, 10).map((r, i) => (
+                      <tr key={i} className="border-b border-border/30">
+                        <td className="px-3 py-1.5 text-foreground">{r.display_name || '—'}</td>
+                        <td className="px-3 py-1.5 text-foreground">{r.email}</td>
+                        <td className="px-3 py-1.5 text-muted-foreground">{r.phone || '—'}</td>
+                        <td className="px-3 py-1.5 text-muted-foreground font-mono">{r.password.slice(0, 6)}...</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {importData.length > 10 && (
+                  <div className="text-center text-xs text-muted-foreground py-2">
+                    ...আরো {importData.length - 10}টি
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-2 justify-end">
+            <Button size="sm" variant="outline" onClick={() => { setShowImportModal(false); setImportData([]); setImportFile(null); }} className="h-8 text-xs gap-1">
+              <X size={12} /> বাতিল
+            </Button>
+            <Button size="sm" onClick={executeImport} disabled={importing || importData.length === 0} className="h-8 text-xs gap-1">
+              <Upload size={12} /> {importing ? `ইমপোর্ট হচ্ছে...` : `${importData.length} কাস্টমার ইমপোর্ট করুন`}
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
