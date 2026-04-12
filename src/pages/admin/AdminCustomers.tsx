@@ -223,6 +223,65 @@ export default function AdminCustomers() {
     window.open(`https://wa.me/${p}?text=${msg}`, '_blank');
   };
 
+  // Add new customer
+  const addCustomer = async () => {
+    if (!addForm.display_name.trim() && !addForm.email.trim()) {
+      toast.error('নাম অথবা ইমেইল দিন');
+      return;
+    }
+    const newId = crypto.randomUUID();
+    const { error } = await supabase.from('profiles').insert({
+      user_id: newId,
+      display_name: addForm.display_name.trim() || null,
+      email: addForm.email.trim() || null,
+      phone: addForm.phone.trim() || null,
+    });
+    if (error) { toast.error('কাস্টমার যোগ করা যায়নি'); return; }
+    toast.success('কাস্টমার যোগ হয়েছে!');
+    setShowAddModal(false);
+    setAddForm({ display_name: '', email: '', phone: '' });
+    refetch();
+  };
+
+  // Edit customer profile
+  const startEditCustomer = () => {
+    if (!selected) return;
+    setEditForm({
+      display_name: selected.display_name ?? '',
+      email: selected.email ?? '',
+      phone: selected.phone ?? '',
+    });
+    setEditingCustomer(true);
+  };
+
+  const saveCustomerEdit = async () => {
+    if (!selected) return;
+    const { error } = await supabase.from('profiles').update({
+      display_name: editForm.display_name.trim() || null,
+      email: editForm.email.trim() || null,
+      phone: editForm.phone.trim() || null,
+    }).eq('id', selected.id);
+    if (error) { toast.error('আপডেট ব্যর্থ'); return; }
+    setSelected({
+      ...selected,
+      display_name: editForm.display_name.trim() || null,
+      email: editForm.email.trim() || null,
+      phone: editForm.phone.trim() || null,
+    });
+    setEditingCustomer(false);
+    toast.success('কাস্টমার তথ্য আপডেট হয়েছে!');
+    refetch();
+  };
+
+  // Delete customer
+  const deleteCustomer = async (c: Customer) => {
+    if (!confirm(`"${c.display_name ?? c.email ?? 'No Name'}" কাস্টমার ডিলিট করতে চান?`)) return;
+    const { error } = await supabase.from('profiles').delete().eq('id', c.id);
+    if (error) { toast.error('ডিলিট ব্যর্থ'); return; }
+    toast.success('কাস্টমার ডিলিট হয়েছে!');
+    if (selected?.id === c.id) setSelected(null);
+    refetch();
+
   const filtered = customers
     .filter(c => {
       const q = search.toLowerCase();
