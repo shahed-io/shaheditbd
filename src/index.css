@@ -326,14 +326,14 @@ body::after {
    PRODUCT CARD — Glassmorphism
 ══════════════════════════════════════ */
 .product-card-new {
-  background: hsla(0, 0%, 100%, 0.55);
-  border: 1px solid hsla(258, 78%, 75%, 0.18);
+  background: hsla(0, 0%, 100%, 0.6);
+  border: 1px solid hsla(258, 78%, 80%, 0.22);
   border-radius: 1.25rem;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 4px 24px hsla(226,35%,12%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.6);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 2px 16px hsla(258,78%,55%,0.06), inset 0 1px 0 hsla(0,0%,100%,0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   position: relative;
   cursor: pointer;
 }
@@ -369,11 +369,11 @@ body::after {
 
 .product-card-new:hover {
   transform: translateY(-8px) scale(1.02);
-  border-color: hsla(258, 78%, 55%, 0.4);
+  border-color: hsla(258, 78%, 65%, 0.35);
   box-shadow:
-    0 20px 50px hsla(226, 35%, 12%, 0.14),
-    0 0 0 1px hsla(258, 78%, 55%, 0.25),
-    var(--glow-violet);
+    0 12px 32px hsla(258, 78%, 55%, 0.12),
+    0 0 0 1px hsla(258, 78%, 65%, 0.2),
+    inset 0 1px 0 hsla(0,0%,100%,0.8);
 }
 
 .product-card-new:hover::after {
