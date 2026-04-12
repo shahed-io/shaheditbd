@@ -404,7 +404,40 @@ export default function AdminCustomers() {
           </div>
         </div>
 
-        {/* Edit Customer Form */}
+        {/* Reset Password Modal */}
+        {resetPasswordModal && (
+          <div className="bg-card rounded-xl border border-amber-500/30 p-4 space-y-3">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Lock size={14} className="text-amber-500" /> পাসওয়ার্ড রিসেট করুন
+            </h3>
+            <p className="text-xs text-muted-foreground">নতুন পাসওয়ার্ড সেট করুন (কমপক্ষে ৬ অক্ষর)</p>
+            <div className="relative max-w-sm">
+              <Input
+                type={showNewPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                placeholder="নতুন পাসওয়ার্ড লিখুন"
+                className="bg-muted/30 text-sm pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                {showNewPassword ? <EyeOff size={14} /> : <EyeIcon size={14} />}
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={() => setResetPasswordModal(null)} className="h-8 text-xs gap-1">
+                <X size={12} /> বাতিল
+              </Button>
+              <Button size="sm" onClick={resetPassword} disabled={actionLoading || newPassword.length < 6}
+                className="h-8 text-xs gap-1 bg-amber-500 hover:bg-amber-600 text-white">
+                <Lock size={12} /> {actionLoading ? 'রিসেট হচ্ছে...' : 'পাসওয়ার্ড রিসেট করুন'}
+              </Button>
+            </div>
+          </div>
+        )}
+
         {editingCustomer && (
           <div className="bg-card rounded-xl border border-primary/30 p-4 space-y-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
