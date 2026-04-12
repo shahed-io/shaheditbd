@@ -228,24 +228,41 @@ export default function AdminCustomers() {
     window.open(`https://wa.me/${p}?text=${msg}`, '_blank');
   };
 
-  // Add new customer
+  // Add new customer with real auth account
   const addCustomer = async () => {
-    if (!addForm.display_name.trim() && !addForm.email.trim()) {
-      toast.error('নাম অথবা ইমেইল দিন');
+    if (!addForm.email.trim() || !addForm.password.trim()) {
+      toast.error('ইমেইল এবং পাসওয়ার্ড আবশ্যক');
       return;
     }
-    const newId = crypto.randomUUID();
-    const { error } = await supabase.from('profiles').insert({
-      user_id: newId,
-      display_name: addForm.display_name.trim() || null,
-      email: addForm.email.trim() || null,
-      phone: addForm.phone.trim() || null,
-    });
-    if (error) { toast.error('কাস্টমার যোগ করা যায়নি'); return; }
-    toast.success('কাস্টমার যোগ হয়েছে!');
-    setShowAddModal(false);
-    setAddForm({ display_name: '', email: '', phone: '' });
-    refetch();
+    if (addForm.password.length < 6) {
+      toast.error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে');
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await supabase.functions.invoke('admin-manage-users', {
+        body: {
+          action: 'create_user',
+          email: addForm.email.trim(),
+          password: addForm.password,
+          display_name: addForm.display_name.trim() || null,
+          phone: addForm.phone.trim() || null,
+        },
+      });
+      if (res.error || res.data?.error) {
+        toast.error(res.data?.error || res.error?.message || 'অ্যাকাউন্ট তৈরি ব্যর্থ');
+        return;
+      }
+      toast.success('কাস্টমার অ্যাকাউন্ট তৈরি হয়েছে! (ইমেইল ভেরিফাই ছাড়াই ব্যবহারযোগ্য)');
+      setShowAddModal(false);
+      setAddForm({ display_name: '', email: '', phone: '', password: '' });
+      refetch();
+    } catch (e: any) {
+      toast.error(e.message || 'ত্রুটি হয়েছে');
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // Edit customer profile
