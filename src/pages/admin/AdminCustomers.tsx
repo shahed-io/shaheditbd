@@ -7,7 +7,7 @@ import {
   Users, Search, RefreshCw, Eye, ShoppingBag,
   Mail, Phone, Calendar, TrendingUp, TrendingDown, UserCheck, Award, Star,
   Key, Package, ChevronDown, ChevronRight, MessageCircle, Copy, Check,
-  Edit3, Save, X, ArrowLeft
+  Edit3, Save, X, ArrowLeft, UserPlus, Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -105,6 +105,12 @@ export default function AdminCustomers() {
   const [editLicenseStatus, setEditLicenseStatus] = useState('');
   const [editingNote, setEditingNote] = useState<string | null>(null);
   const [editNoteValue, setEditNoteValue] = useState('');
+
+  // Add/Edit/Delete customer states
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(false);
+  const [editForm, setEditForm] = useState({ display_name: '', email: '', phone: '' });
+  const [addForm, setAddForm] = useState({ display_name: '', email: '', phone: '' });
 
   const { data: customers = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-customers'],
@@ -217,6 +223,66 @@ export default function AdminCustomers() {
     window.open(`https://wa.me/${p}?text=${msg}`, '_blank');
   };
 
+  // Add new customer
+  const addCustomer = async () => {
+    if (!addForm.display_name.trim() && !addForm.email.trim()) {
+      toast.error('নাম অথবা ইমেইল দিন');
+      return;
+    }
+    const newId = crypto.randomUUID();
+    const { error } = await supabase.from('profiles').insert({
+      user_id: newId,
+      display_name: addForm.display_name.trim() || null,
+      email: addForm.email.trim() || null,
+      phone: addForm.phone.trim() || null,
+    });
+    if (error) { toast.error('কাস্টমার যোগ করা যায়নি'); return; }
+    toast.success('কাস্টমার যোগ হয়েছে!');
+    setShowAddModal(false);
+    setAddForm({ display_name: '', email: '', phone: '' });
+    refetch();
+  };
+
+  // Edit customer profile
+  const startEditCustomer = () => {
+    if (!selected) return;
+    setEditForm({
+      display_name: selected.display_name ?? '',
+      email: selected.email ?? '',
+      phone: selected.phone ?? '',
+    });
+    setEditingCustomer(true);
+  };
+
+  const saveCustomerEdit = async () => {
+    if (!selected) return;
+    const { error } = await supabase.from('profiles').update({
+      display_name: editForm.display_name.trim() || null,
+      email: editForm.email.trim() || null,
+      phone: editForm.phone.trim() || null,
+    }).eq('id', selected.id);
+    if (error) { toast.error('আপডেট ব্যর্থ'); return; }
+    setSelected({
+      ...selected,
+      display_name: editForm.display_name.trim() || null,
+      email: editForm.email.trim() || null,
+      phone: editForm.phone.trim() || null,
+    });
+    setEditingCustomer(false);
+    toast.success('কাস্টমার তথ্য আপডেট হয়েছে!');
+    refetch();
+  };
+
+  // Delete customer
+  const deleteCustomer = async (c: Customer) => {
+    if (!confirm(`"${c.display_name ?? c.email ?? 'No Name'}" কাস্টমার ডিলিট করতে চান?`)) return;
+    const { error } = await supabase.from('profiles').delete().eq('id', c.id);
+    if (error) { toast.error('ডিলিট ব্যর্থ'); return; }
+    toast.success('কাস্টমার ডিলিট হয়েছে!');
+    if (selected?.id === c.id) setSelected(null);
+    refetch();
+  };
+
   const filtered = customers
     .filter(c => {
       const q = search.toLowerCase();
@@ -242,7 +308,7 @@ export default function AdminCustomers() {
       <div className="space-y-5 max-w-5xl mx-auto">
         {/* Back button + header */}
         <div className="flex items-center gap-3">
-          <button onClick={() => setSelected(null)}
+          <button onClick={() => { setSelected(null); setEditingCustomer(false); }}
             className="p-2 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground hover:text-foreground">
             <ArrowLeft size={18} />
           </button>
@@ -255,13 +321,57 @@ export default function AdminCustomers() {
               <p className="text-xs text-muted-foreground truncate">{selected.email}</p>
             </div>
           </div>
-          {selected.phone && (
-            <button onClick={() => sendWhatsApp(selected.phone, selected.display_name ?? '', custOrders[0])}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors border border-emerald-500/20">
-              <MessageCircle size={13} /> WhatsApp
+          <div className="flex items-center gap-2">
+            <button onClick={startEditCustomer}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/20">
+              <Edit3 size={13} /> এডিট
             </button>
-          )}
+            <button onClick={() => deleteCustomer(selected)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors border border-destructive/20">
+              <Trash2 size={13} /> ডিলিট
+            </button>
+            {selected.phone && (
+              <button onClick={() => sendWhatsApp(selected.phone, selected.display_name ?? '', custOrders[0])}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors border border-emerald-500/20">
+                <MessageCircle size={13} /> WhatsApp
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Edit Customer Form */}
+        {editingCustomer && (
+          <div className="bg-card rounded-xl border border-primary/30 p-4 space-y-3">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Edit3 size={14} className="text-primary" /> কাস্টমার তথ্য এডিট করুন
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">নাম</label>
+                <Input value={editForm.display_name} onChange={e => setEditForm(p => ({ ...p, display_name: e.target.value }))}
+                  placeholder="কাস্টমারের নাম" className="bg-muted/30 text-sm" />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ইমেইল</label>
+                <Input value={editForm.email} onChange={e => setEditForm(p => ({ ...p, email: e.target.value }))}
+                  placeholder="email@example.com" className="bg-muted/30 text-sm" />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ফোন</label>
+                <Input value={editForm.phone} onChange={e => setEditForm(p => ({ ...p, phone: e.target.value }))}
+                  placeholder="01XXXXXXXXX" className="bg-muted/30 text-sm" />
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button size="sm" variant="outline" onClick={() => setEditingCustomer(false)} className="h-8 text-xs gap-1">
+                <X size={12} /> বাতিল
+              </Button>
+              <Button size="sm" onClick={saveCustomerEdit} className="h-8 text-xs gap-1">
+                <Save size={12} /> সেভ করুন
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Customer info cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -507,7 +617,7 @@ export default function AdminCustomers() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Users size={24} className="text-primary" />
@@ -515,10 +625,49 @@ export default function AdminCustomers() {
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">রেজিস্টার্ড কাস্টমার ও অর্ডার হিস্ট্রি</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
-          <RefreshCw size={14} /> Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" onClick={() => setShowAddModal(true)} className="gap-2">
+            <UserPlus size={14} /> কাস্টমার যোগ করুন
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
+            <RefreshCw size={14} /> Refresh
+          </Button>
+        </div>
       </div>
+
+      {/* Add Customer Modal */}
+      {showAddModal && (
+        <div className="bg-card rounded-xl border border-primary/30 p-5 space-y-4">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <UserPlus size={14} className="text-primary" /> নতুন কাস্টমার যোগ করুন
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">নাম</label>
+              <Input value={addForm.display_name} onChange={e => setAddForm(p => ({ ...p, display_name: e.target.value }))}
+                placeholder="কাস্টমারের নাম" className="bg-muted/30 text-sm" />
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ইমেইল</label>
+              <Input value={addForm.email} onChange={e => setAddForm(p => ({ ...p, email: e.target.value }))}
+                placeholder="email@example.com" className="bg-muted/30 text-sm" />
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ফোন</label>
+              <Input value={addForm.phone} onChange={e => setAddForm(p => ({ ...p, phone: e.target.value }))}
+                placeholder="01XXXXXXXXX" className="bg-muted/30 text-sm" />
+            </div>
+          </div>
+          <div className="flex gap-2 justify-end">
+            <Button size="sm" variant="outline" onClick={() => setShowAddModal(false)} className="h-8 text-xs gap-1">
+              <X size={12} /> বাতিল
+            </Button>
+            <Button size="sm" onClick={addCustomer} className="h-8 text-xs gap-1">
+              <Save size={12} /> যোগ করুন
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -616,9 +765,15 @@ export default function AdminCustomers() {
                       {c.last_order ? format(new Date(c.last_order), 'dd MMM yyyy') : '—'}
                     </td>
                     <td className="px-4 py-3">
-                      <Button size="sm" variant="outline" onClick={() => openDetail(c)} className="h-7 text-xs gap-1">
-                        <Eye size={12} /> বিস্তারিত
-                      </Button>
+                      <div className="flex items-center gap-1.5">
+                        <Button size="sm" variant="outline" onClick={() => openDetail(c)} className="h-7 text-xs gap-1">
+                          <Eye size={12} /> বিস্তারিত
+                        </Button>
+                        <button onClick={() => deleteCustomer(c)}
+                          className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
