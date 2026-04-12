@@ -281,6 +281,7 @@ export default function AdminCustomers() {
     toast.success('কাস্টমার ডিলিট হয়েছে!');
     if (selected?.id === c.id) setSelected(null);
     refetch();
+  };
 
   const filtered = customers
     .filter(c => {
