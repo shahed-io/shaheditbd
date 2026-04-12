@@ -308,7 +308,7 @@ export default function AdminCustomers() {
       <div className="space-y-5 max-w-5xl mx-auto">
         {/* Back button + header */}
         <div className="flex items-center gap-3">
-          <button onClick={() => setSelected(null)}
+          <button onClick={() => { setSelected(null); setEditingCustomer(false); }}
             className="p-2 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground hover:text-foreground">
             <ArrowLeft size={18} />
           </button>
@@ -321,13 +321,57 @@ export default function AdminCustomers() {
               <p className="text-xs text-muted-foreground truncate">{selected.email}</p>
             </div>
           </div>
-          {selected.phone && (
-            <button onClick={() => sendWhatsApp(selected.phone, selected.display_name ?? '', custOrders[0])}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors border border-emerald-500/20">
-              <MessageCircle size={13} /> WhatsApp
+          <div className="flex items-center gap-2">
+            <button onClick={startEditCustomer}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/20">
+              <Edit3 size={13} /> এডিট
             </button>
-          )}
+            <button onClick={() => deleteCustomer(selected)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors border border-destructive/20">
+              <Trash2 size={13} /> ডিলিট
+            </button>
+            {selected.phone && (
+              <button onClick={() => sendWhatsApp(selected.phone, selected.display_name ?? '', custOrders[0])}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors border border-emerald-500/20">
+                <MessageCircle size={13} /> WhatsApp
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Edit Customer Form */}
+        {editingCustomer && (
+          <div className="bg-card rounded-xl border border-primary/30 p-4 space-y-3">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Edit3 size={14} className="text-primary" /> কাস্টমার তথ্য এডিট করুন
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">নাম</label>
+                <Input value={editForm.display_name} onChange={e => setEditForm(p => ({ ...p, display_name: e.target.value }))}
+                  placeholder="কাস্টমারের নাম" className="bg-muted/30 text-sm" />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ইমেইল</label>
+                <Input value={editForm.email} onChange={e => setEditForm(p => ({ ...p, email: e.target.value }))}
+                  placeholder="email@example.com" className="bg-muted/30 text-sm" />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ফোন</label>
+                <Input value={editForm.phone} onChange={e => setEditForm(p => ({ ...p, phone: e.target.value }))}
+                  placeholder="01XXXXXXXXX" className="bg-muted/30 text-sm" />
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button size="sm" variant="outline" onClick={() => setEditingCustomer(false)} className="h-8 text-xs gap-1">
+                <X size={12} /> বাতিল
+              </Button>
+              <Button size="sm" onClick={saveCustomerEdit} className="h-8 text-xs gap-1">
+                <Save size={12} /> সেভ করুন
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Customer info cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
