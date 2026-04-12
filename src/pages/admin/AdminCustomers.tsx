@@ -869,11 +869,27 @@ export default function AdminCustomers() {
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">রেজিস্টার্ড কাস্টমার ও অর্ডার হিস্ট্রি</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button size="sm" onClick={() => setShowAddModal(true)} className="gap-2">
-            <UserPlus size={14} /> কাস্টমার যোগ করুন
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button size="sm" onClick={() => setShowAddModal(true)} className="gap-1.5">
+            <UserPlus size={14} /> কাস্টমার যোগ
           </Button>
-          <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
+          <Button size="sm" variant="outline" onClick={() => setShowImportModal(true)} className="gap-1.5">
+            <Upload size={14} /> ইমপোর্ট
+          </Button>
+          <div className="relative">
+            <Button size="sm" variant="outline" className="gap-1.5 pr-1">
+              <Download size={14} /> এক্সপোর্ট
+              <ChevronDown size={12} />
+            </Button>
+            <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-10 min-w-[140px] opacity-0 pointer-events-none group-focus-within:opacity-100 group-focus-within:pointer-events-auto peer-focus:opacity-100" />
+          </div>
+          <Button size="sm" variant="outline" onClick={exportCSV} className="gap-1.5">
+            <Download size={14} /> CSV
+          </Button>
+          <Button size="sm" variant="outline" onClick={exportXLSX} className="gap-1.5">
+            <FileSpreadsheet size={14} /> Excel
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-1.5">
             <RefreshCw size={14} /> Refresh
           </Button>
         </div>
