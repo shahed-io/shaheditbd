@@ -205,10 +205,10 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             ? `opacity 0.3s ease ${delay}s, box-shadow 0.3s ease`
             : `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s, box-shadow 0.4s ease`,
           boxShadow: clicked
-            ? '0 4px 60px hsla(185,90%,52%,0.6), 0 0 0 2px hsla(185,90%,52%,0.6)'
+            ? '0 4px 30px hsla(271,91%,65%,0.25), 0 0 0 2px hsla(185,90%,52%,0.4)'
             : isHovered
-            ? '0 16px 40px hsla(271,91%,65%,0.3), 0 0 0 1px hsla(271,91%,65%,0.4), 0 32px 60px hsla(215,40%,4%,0.5)'
-            : '0 4px 20px hsla(215,40%,4%,0.4)',
+            ? '0 8px 32px hsla(271,91%,65%,0.15), 0 0 0 1px hsla(271,91%,65%,0.25)'
+            : '0 2px 16px hsla(258,78%,55%,0.08), 0 0 0 1px hsla(258,78%,55%,0.1)',
           borderRadius: 'var(--radius)',
         }}
         onMouseEnter={() => setIsHovered(true)}
