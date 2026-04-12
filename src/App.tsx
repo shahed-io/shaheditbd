@@ -138,6 +138,7 @@ const AdminNotificationListener = () => {
 const AppContent = () => {
   const location = useLocation();
   const [deferReady, setDeferReady] = useState(false);
+  useTheme(); // Apply saved theme on load
 
   useEffect(() => {
     // Defer non-critical components until after first paint (~20ms)
