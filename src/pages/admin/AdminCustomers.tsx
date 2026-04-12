@@ -765,9 +765,15 @@ export default function AdminCustomers() {
                       {c.last_order ? format(new Date(c.last_order), 'dd MMM yyyy') : '—'}
                     </td>
                     <td className="px-4 py-3">
-                      <Button size="sm" variant="outline" onClick={() => openDetail(c)} className="h-7 text-xs gap-1">
-                        <Eye size={12} /> বিস্তারিত
-                      </Button>
+                      <div className="flex items-center gap-1.5">
+                        <Button size="sm" variant="outline" onClick={() => openDetail(c)} className="h-7 text-xs gap-1">
+                          <Eye size={12} /> বিস্তারিত
+                        </Button>
+                        <button onClick={() => deleteCustomer(c)}
+                          className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
