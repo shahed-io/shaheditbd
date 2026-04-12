@@ -7,7 +7,7 @@ import {
   Users, Search, RefreshCw, Eye, ShoppingBag,
   Mail, Phone, Calendar, TrendingUp, TrendingDown, UserCheck, Award, Star,
   Key, Package, ChevronDown, ChevronRight, MessageCircle, Copy, Check,
-  Edit3, Save, X, ArrowLeft
+  Edit3, Save, X, ArrowLeft, UserPlus, Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
