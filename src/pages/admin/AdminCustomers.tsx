@@ -435,7 +435,7 @@ export default function AdminCustomers() {
     }
   };
 
-
+  const filtered = customers
     .filter(c => {
       const q = search.toLowerCase();
       return !q
