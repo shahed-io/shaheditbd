@@ -265,23 +265,17 @@ const Navbar = () => {
       `}</style>
 
       {/* ── Main Navbar — Glassmorphism Card ── */}
-      <div className="px-4 py-2 backdrop-blur-xl"
-        style={{
-          background: 'hsla(0,0%,100%,0.60)',
-        }}>
+      <div className="px-4 py-2" style={{ backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', background: 'var(--glass-bg)' }}>
       <nav
-        className="transition-all duration-300 rounded-2xl mx-auto max-w-7xl backdrop-blur-2xl"
+        className="transition-all duration-300 rounded-2xl mx-auto max-w-7xl"
         style={{
-          background: scrolled
-            ? 'hsla(0,0%,100%,0.88)'
-            : 'hsla(0,0%,100%,0.78)',
-          border: '1.5px solid',
-          borderColor: scrolled
-            ? 'hsla(258,78%,60%,0.30)'
-            : 'hsla(258,78%,60%,0.20)',
+          background: 'var(--glass-bg)',
+          backdropFilter: 'blur(28px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(200%)',
+          border: '1.5px solid var(--glass-border)',
           boxShadow: scrolled
-            ? '0 8px 40px hsla(258,78%,55%,0.18), 0 2px 12px hsla(200,90%,45%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.80)'
-            : '0 4px 32px hsla(258,78%,55%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.70)',
+            ? '0 8px 40px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.18), inset 0 1px 0 hsla(0,0%,100%,0.6)'
+            : 'var(--glass-shadow)',
         }}>
         <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between h-[68px] gap-4">
