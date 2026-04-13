@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
@@ -7,7 +7,8 @@ import {
   Users, Search, RefreshCw, Eye, ShoppingBag,
   Mail, Phone, Calendar, TrendingUp, TrendingDown, UserCheck, Award, Star,
   Key, Package, ChevronDown, ChevronRight, MessageCircle, Copy, Check,
-  Edit3, Save, X, ArrowLeft, UserPlus, Trash2, Lock, Shield, EyeOff, EyeIcon
+  Edit3, Save, X, ArrowLeft, UserPlus, Trash2, Lock, Shield, EyeOff, EyeIcon,
+  Download, Upload
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
