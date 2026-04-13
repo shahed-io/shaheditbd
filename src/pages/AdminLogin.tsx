@@ -22,7 +22,7 @@ const AdminLogin = () => {
   }, [user, isAdmin, loading, navigate]);
 
   // Only show spinner during initial auth load (not during admin check after login)
-  if (loading && !user) {
+  if (loading && !user && !submitting) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <BrandLoader size="md" />

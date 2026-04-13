@@ -127,6 +127,18 @@ const PageLoader = () => (
   </div>
 );
 
+// Lightweight spinner for admin sub-pages (no full-screen loader)
+const AdminPageLoader = () => (
+  <div className="flex items-center justify-center py-20">
+    <div className="w-8 h-8 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
+  </div>
+);
+
+// Wrapper to use lighter fallback for admin child routes
+const AdminSuspense = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<AdminPageLoader />}>{children}</Suspense>
+);
+
 // Admin notification listener (only active when user is admin)
 const AdminNotificationListener = () => {
   const { isAdmin } = useAuth();
@@ -180,68 +192,68 @@ const AppContent = () => {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/ceo/login" element={<AdminLogin />} />
           <Route path="/ceo" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="products" element={<AdminProducts />} />
-            <Route path="products/new" element={<AdminProducts />} />
-            <Route path="categories" element={<AdminCategories />} />
-            <Route path="categories/new" element={<AdminCategories />} />
-            <Route path="orders" element={<AdminOrders />} />
-            <Route path="coupons" element={<AdminCoupons />} />
-            <Route path="settings" element={<AdminSettings />} />
-            <Route path="ai-config" element={<AdminAiConfig />} />
-            <Route path="customers" element={<AdminCustomers />} />
-            <Route path="payments" element={<AdminPayments />} />
-            <Route path="tickets" element={<AdminTickets />} />
-            <Route path="reports" element={<AdminReports />} />
-            <Route path="marketing" element={<AdminMarketing />} />
-            <Route path="roles" element={<AdminRoles />} />
-            <Route path="backup" element={<AdminBackup />} />
-            <Route path="referrals" element={<AdminReferrals />} />
-            <Route path="blog" element={<AdminBlog />} />
-            <Route path="help" element={<AdminHelp />} />
-            <Route path="seo" element={<AdminSEO />} />
-            <Route path="seo/meta-tags" element={<AdminMetaTags />} />
-            <Route path="seo/sitemap" element={<AdminSitemap />} />
-            <Route path="seo/robots" element={<AdminRobots />} />
-            <Route path="seo/schema" element={<AdminSchema />} />
-            <Route path="seo/keywords" element={<AdminKeywords />} />
-            <Route path="seo/pages" element={<AdminPageSeo />} />
-            <Route path="seo/products" element={<AdminProductSeo />} />
-            <Route path="seo/faq" element={<AdminFaqManager />} />
-            <Route path="seo/reviews" element={<AdminReviews />} />
-            <Route path="seo/analytics" element={<AdminGoogleAnalytics />} />
-            <Route path="seo/search-console" element={<AdminSearchConsole />} />
-            <Route path="seo/speed" element={<AdminSpeedOptimization />} />
-            <Route path="seo/images" element={<AdminImageSeo />} />
-            <Route path="seo/slugs" element={<AdminSlugEditor />} />
-            <Route path="seo/redirects" element={<AdminRedirects />} />
-            <Route path="seo/broken-links" element={<AdminBrokenLinks />} />
-            <Route path="attributes" element={<AdminAttributes />} />
-            <Route path="pages" element={<AdminPages />} />
-            <Route path="software-downloads" element={<AdminSoftwareDownloads />} />
-            <Route path="media-library" element={<AdminMediaLibrary />} />
-            <Route path="wallet" element={<AdminWallet />} />
-            <Route path="hero-banner" element={<AdminHeroBanner />} />
-            <Route path="flash-sale" element={<AdminFlashSale />} />
-            <Route path="testimonials" element={<AdminTestimonials />} />
-            <Route path="announcement-bar" element={<AdminAnnouncementBar />} />
-            <Route path="newsletter" element={<AdminNewsletterSubscribers />} />
-            <Route path="product-reviews" element={<AdminProductReviews />} />
-            <Route path="import-export" element={<AdminProductImportExport />} />
-            <Route path="facebook-pixel" element={<AdminFacebookPixel />} />
-            <Route path="licenses" element={<AdminLicenses />} />
-            <Route path="quick-sale" element={<AdminQuickSale />} />
-            <Route path="popup-banner" element={<AdminPopupBanner />} />
-            <Route path="invoices" element={<AdminInvoiceGenerator />} />
-            <Route path="footer-settings" element={<AdminFooterSettings />} />
-            <Route path="live-chat" element={<AdminLiveChat />} />
-            <Route path="telegram-bot" element={<AdminTelegramBot />} />
-            <Route path="staff" element={<AdminStaffManagement />} />
-            <Route path="inventory-alerts" element={<AdminInventoryAlerts />} />
-            <Route path="themes" element={<AdminThemes />} />
+            <Route index element={<AdminSuspense><AdminDashboard /></AdminSuspense>} />
+            <Route path="products" element={<AdminSuspense><AdminProducts /></AdminSuspense>} />
+            <Route path="products/new" element={<AdminSuspense><AdminProducts /></AdminSuspense>} />
+            <Route path="categories" element={<AdminSuspense><AdminCategories /></AdminSuspense>} />
+            <Route path="categories/new" element={<AdminSuspense><AdminCategories /></AdminSuspense>} />
+            <Route path="orders" element={<AdminSuspense><AdminOrders /></AdminSuspense>} />
+            <Route path="coupons" element={<AdminSuspense><AdminCoupons /></AdminSuspense>} />
+            <Route path="settings" element={<AdminSuspense><AdminSettings /></AdminSuspense>} />
+            <Route path="ai-config" element={<AdminSuspense><AdminAiConfig /></AdminSuspense>} />
+            <Route path="customers" element={<AdminSuspense><AdminCustomers /></AdminSuspense>} />
+            <Route path="payments" element={<AdminSuspense><AdminPayments /></AdminSuspense>} />
+            <Route path="tickets" element={<AdminSuspense><AdminTickets /></AdminSuspense>} />
+            <Route path="reports" element={<AdminSuspense><AdminReports /></AdminSuspense>} />
+            <Route path="marketing" element={<AdminSuspense><AdminMarketing /></AdminSuspense>} />
+            <Route path="roles" element={<AdminSuspense><AdminRoles /></AdminSuspense>} />
+            <Route path="backup" element={<AdminSuspense><AdminBackup /></AdminSuspense>} />
+            <Route path="referrals" element={<AdminSuspense><AdminReferrals /></AdminSuspense>} />
+            <Route path="blog" element={<AdminSuspense><AdminBlog /></AdminSuspense>} />
+            <Route path="help" element={<AdminSuspense><AdminHelp /></AdminSuspense>} />
+            <Route path="seo" element={<AdminSuspense><AdminSEO /></AdminSuspense>} />
+            <Route path="seo/meta-tags" element={<AdminSuspense><AdminMetaTags /></AdminSuspense>} />
+            <Route path="seo/sitemap" element={<AdminSuspense><AdminSitemap /></AdminSuspense>} />
+            <Route path="seo/robots" element={<AdminSuspense><AdminRobots /></AdminSuspense>} />
+            <Route path="seo/schema" element={<AdminSuspense><AdminSchema /></AdminSuspense>} />
+            <Route path="seo/keywords" element={<AdminSuspense><AdminKeywords /></AdminSuspense>} />
+            <Route path="seo/pages" element={<AdminSuspense><AdminPageSeo /></AdminSuspense>} />
+            <Route path="seo/products" element={<AdminSuspense><AdminProductSeo /></AdminSuspense>} />
+            <Route path="seo/faq" element={<AdminSuspense><AdminFaqManager /></AdminSuspense>} />
+            <Route path="seo/reviews" element={<AdminSuspense><AdminReviews /></AdminSuspense>} />
+            <Route path="seo/analytics" element={<AdminSuspense><AdminGoogleAnalytics /></AdminSuspense>} />
+            <Route path="seo/search-console" element={<AdminSuspense><AdminSearchConsole /></AdminSuspense>} />
+            <Route path="seo/speed" element={<AdminSuspense><AdminSpeedOptimization /></AdminSuspense>} />
+            <Route path="seo/images" element={<AdminSuspense><AdminImageSeo /></AdminSuspense>} />
+            <Route path="seo/slugs" element={<AdminSuspense><AdminSlugEditor /></AdminSuspense>} />
+            <Route path="seo/redirects" element={<AdminSuspense><AdminRedirects /></AdminSuspense>} />
+            <Route path="seo/broken-links" element={<AdminSuspense><AdminBrokenLinks /></AdminSuspense>} />
+            <Route path="attributes" element={<AdminSuspense><AdminAttributes /></AdminSuspense>} />
+            <Route path="pages" element={<AdminSuspense><AdminPages /></AdminSuspense>} />
+            <Route path="software-downloads" element={<AdminSuspense><AdminSoftwareDownloads /></AdminSuspense>} />
+            <Route path="media-library" element={<AdminSuspense><AdminMediaLibrary /></AdminSuspense>} />
+            <Route path="wallet" element={<AdminSuspense><AdminWallet /></AdminSuspense>} />
+            <Route path="hero-banner" element={<AdminSuspense><AdminHeroBanner /></AdminSuspense>} />
+            <Route path="flash-sale" element={<AdminSuspense><AdminFlashSale /></AdminSuspense>} />
+            <Route path="testimonials" element={<AdminSuspense><AdminTestimonials /></AdminSuspense>} />
+            <Route path="announcement-bar" element={<AdminSuspense><AdminAnnouncementBar /></AdminSuspense>} />
+            <Route path="newsletter" element={<AdminSuspense><AdminNewsletterSubscribers /></AdminSuspense>} />
+            <Route path="product-reviews" element={<AdminSuspense><AdminProductReviews /></AdminSuspense>} />
+            <Route path="import-export" element={<AdminSuspense><AdminProductImportExport /></AdminSuspense>} />
+            <Route path="facebook-pixel" element={<AdminSuspense><AdminFacebookPixel /></AdminSuspense>} />
+            <Route path="licenses" element={<AdminSuspense><AdminLicenses /></AdminSuspense>} />
+            <Route path="quick-sale" element={<AdminSuspense><AdminQuickSale /></AdminSuspense>} />
+            <Route path="popup-banner" element={<AdminSuspense><AdminPopupBanner /></AdminSuspense>} />
+            <Route path="invoices" element={<AdminSuspense><AdminInvoiceGenerator /></AdminSuspense>} />
+            <Route path="footer-settings" element={<AdminSuspense><AdminFooterSettings /></AdminSuspense>} />
+            <Route path="live-chat" element={<AdminSuspense><AdminLiveChat /></AdminSuspense>} />
+            <Route path="telegram-bot" element={<AdminSuspense><AdminTelegramBot /></AdminSuspense>} />
+            <Route path="staff" element={<AdminSuspense><AdminStaffManagement /></AdminSuspense>} />
+            <Route path="inventory-alerts" element={<AdminSuspense><AdminInventoryAlerts /></AdminSuspense>} />
+            <Route path="themes" element={<AdminSuspense><AdminThemes /></AdminSuspense>} />
             
-            <Route path="reseller" element={<Reseller />} />
-            <Route path="reseller-accounts" element={<AdminResellerAccounts />} />
+            <Route path="reseller" element={<AdminSuspense><Reseller /></AdminSuspense>} />
+            <Route path="reseller-accounts" element={<AdminSuspense><AdminResellerAccounts /></AdminSuspense>} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
