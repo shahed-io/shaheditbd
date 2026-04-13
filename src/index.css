@@ -867,7 +867,7 @@ html[data-theme="midnight-purple"] .hero-bg {
    BUTTONS
 ══════════════════════════════════════ */
 .btn-primary-new {
-  background: linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%));
+  background: linear-gradient(135deg, hsl(var(--brand-h),var(--brand-s),var(--brand-l)), hsl(var(--brand2-h),var(--brand2-s),var(--brand2-l)));
   color: hsl(0, 0%, 100%);
   font-family: 'Sora', sans-serif;
   font-weight: 700;
@@ -881,11 +881,11 @@ html[data-theme="midnight-purple"] .hero-bg {
 }
 .btn-primary-new:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px hsla(258,78%,55%,0.45);
+  box-shadow: 0 14px 40px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.45);
 }
 
 .btn-coral {
-  background: linear-gradient(135deg, hsl(330,85%,55%), hsl(42,96%,50%));
+  background: linear-gradient(135deg, hsl(var(--brand3-h),var(--brand3-s),var(--brand3-l)), hsl(var(--accent-h),var(--accent-s),var(--accent-l)));
   color: hsl(0, 0%, 100%);
   font-family: 'Sora', sans-serif;
   font-weight: 700;
@@ -896,7 +896,7 @@ html[data-theme="midnight-purple"] .hero-bg {
 }
 .btn-coral:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px hsla(330,85%,55%,0.45);
+  box-shadow: 0 14px 40px hsla(var(--brand3-h),var(--brand3-s),var(--brand3-l),0.45);
 }
 
 /* ══════════════════════════════════════
