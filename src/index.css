@@ -720,7 +720,7 @@ html[data-theme="midnight-purple"] .cat-card {
   background: hsla(0, 0%, 100%, 0.55);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid hsla(258, 78%, 75%, 0.18);
+  border: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.18);
   box-shadow: 0 4px 24px hsla(226,35%,12%,0.07), inset 0 1px 0 hsla(0,0%,100%,0.6);
 }
 
@@ -729,20 +729,24 @@ html[data-theme="midnight-purple"] .cat-card {
 ══════════════════════════════════════ */
 .admin-gradient-bg {
   background: linear-gradient(135deg,
-    hsl(258, 30%, 96%) 0%,
+    hsl(var(--brand-h), 30%, 96%) 0%,
     hsl(220, 35%, 97%) 25%,
-    hsl(200, 30%, 96%) 50%,
-    hsl(258, 25%, 97%) 75%,
-    hsl(330, 20%, 97%) 100%
+    hsl(var(--brand2-h), 30%, 96%) 50%,
+    hsl(var(--brand-h), 25%, 97%) 75%,
+    hsl(var(--brand3-h), 20%, 97%) 100%
   );
   position: relative;
+}
+html[data-theme="dark-cyber"] .admin-gradient-bg,
+html[data-theme="midnight-purple"] .admin-gradient-bg {
+  background: linear-gradient(135deg, hsl(var(--brand-h),30%,7%) 0%, hsl(var(--brand-h),25%,9%) 50%, hsl(var(--brand-h),20%,8%) 100%);
 }
 .admin-gradient-bg::before {
   content: '';
   position: fixed;
   width: 600px; height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, hsla(258,78%,65%,0.07) 0%, transparent 70%);
+  background: radial-gradient(circle, hsla(var(--brand-h),var(--brand-s),65%,0.07) 0%, transparent 70%);
   top: -150px; right: -100px;
   pointer-events: none;
   z-index: 0;
@@ -752,59 +756,66 @@ html[data-theme="midnight-purple"] .cat-card {
   position: fixed;
   width: 500px; height: 500px;
   border-radius: 50%;
-  background: radial-gradient(circle, hsla(200,90%,50%,0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, hsla(var(--brand2-h),var(--brand2-s),50%,0.06) 0%, transparent 70%);
   bottom: -100px; left: -80px;
   pointer-events: none;
   z-index: 0;
 }
 
 .admin-glass-card {
-  background: hsla(0, 0%, 100%, 0.60);
+  background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid hsla(258, 78%, 75%, 0.15);
+  border: 1px solid var(--glass-border);
   border-radius: 1rem;
-  box-shadow: 
-    0 4px 24px hsla(258,78%,55%,0.06),
-    0 1px 8px hsla(226,35%,12%,0.05),
-    inset 0 1px 0 hsla(0,0%,100%,0.8);
+  box-shadow: var(--glass-shadow);
 }
 
 .admin-glass-sidebar {
-  background: hsla(0, 0%, 100%, 0.72);
+  background: var(--glass-bg);
   backdrop-filter: blur(32px) saturate(200%);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border-right: 1px solid hsla(258, 78%, 75%, 0.12);
-  box-shadow: 4px 0 24px hsla(258,78%,55%,0.04);
+  border-right: 1px solid var(--glass-border);
+  box-shadow: 4px 0 24px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.04);
 }
 
 .admin-glass-header {
-  background: hsla(0, 0%, 100%, 0.65);
+  background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border-bottom: 1px solid hsla(258, 78%, 75%, 0.12);
+  border-bottom: 1px solid var(--glass-border);
   box-shadow: 0 2px 16px hsla(226,35%,12%,0.05);
 }
 
-/* ══════════════════════════════════════
-   HERO BACKGROUND — White Theme
-══════════════════════════════════════ */
 .hero-bg {
   background: linear-gradient(135deg,
     hsl(220, 40%, 97%) 0%,
     hsl(240, 50%, 98%) 40%,
-    hsl(258, 60%, 97%) 100%
+    hsl(var(--brand-h), 60%, 97%) 100%
   );
   position: relative;
   overflow: hidden;
+}
+html[data-theme="dark-cyber"] .hero-bg,
+html[data-theme="midnight-purple"] .hero-bg {
+  background: linear-gradient(135deg, hsl(var(--brand-h),30%,7%) 0%, hsl(var(--brand-h),25%,9%) 100%);
 }
 .hero-bg::before {
   content: '';
   position: absolute;
   width: 700px; height: 700px;
   border-radius: 50%;
-  background: radial-gradient(circle, hsla(258,78%,55%,0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.08) 0%, transparent 70%);
   top: -200px; right: -100px;
+  pointer-events: none;
+}
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(var(--accent-h),var(--accent-s),50%,0.07) 0%, transparent 70%);
+  bottom: -100px; left: -50px;
   pointer-events: none;
 }
 .hero-bg::after {
@@ -837,12 +848,12 @@ html[data-theme="midnight-purple"] .cat-card {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.22em;
-  color: hsl(258, 78%, 55%);
-  background: hsla(258, 78%, 55%, 0.10);
+  color: hsl(var(--primary));
+  background: hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.10);
   padding: 0.3rem 0.875rem;
   border-radius: 999px;
   display: inline-block;
-  border: 1px solid hsla(258, 78%, 55%, 0.22);
+  border: 1px solid hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.22);
 }
 
 .section-heading {
