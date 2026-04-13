@@ -83,11 +83,13 @@ const FeatureCard = ({ feature: f, index }: { feature: typeof FEATURES[0]; index
       ref={ref as React.RefObject<HTMLDivElement>}
       className="relative rounded-2xl overflow-hidden cursor-default transition-all duration-300"
       style={{
-        background: '#ffffff',
-        border: `1.5px solid ${hov ? f.accent + '55' : 'hsl(220,13%,91%)'}`,
+        background: 'var(--glass-bg)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        border: `1.5px solid ${hov ? f.accent + '55' : 'var(--glass-border)'}`,
         boxShadow: hov
-          ? `0 8px 32px ${f.accent}20, 0 2px 8px rgba(0,0,0,0.06)`
-          : '0 2px 12px rgba(0,0,0,0.05)',
+          ? `0 8px 32px ${f.accent}20, 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 hsla(0,0%,100%,0.6)`
+          : 'var(--glass-shadow)',
         transform: hov
           ? 'translateY(-3px)'
           : visible ? 'translateY(0) scale(1)' : 'translateY(28px) scale(0.97)',
@@ -135,11 +137,13 @@ const StepCard = ({ step, index }: { step: typeof STEPS[0]; index: number }) => 
       ref={ref as React.RefObject<HTMLDivElement>}
       className="relative rounded-2xl overflow-hidden cursor-default flex flex-col items-center text-center"
       style={{
-        background: '#ffffff',
-        border: `1.5px solid ${hov ? step.accent + '55' : 'hsl(220,13%,91%)'}`,
+        background: 'var(--glass-bg)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        border: `1.5px solid ${hov ? step.accent + '55' : 'var(--glass-border)'}`,
         boxShadow: hov
-          ? `0 8px 32px ${step.accent}20, 0 2px 8px rgba(0,0,0,0.06)`
-          : '0 2px 12px rgba(0,0,0,0.05)',
+          ? `0 8px 32px ${step.accent}20, 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 hsla(0,0%,100%,0.6)`
+          : 'var(--glass-shadow)',
         opacity: visible ? 1 : 0,
         transform: hov
           ? 'translateY(-3px) scale(1)'
@@ -188,9 +192,11 @@ const StepCard = ({ step, index }: { step: typeof STEPS[0]; index: number }) => 
 const StatsBar = ({ stats, visible }: { stats: typeof STATS; visible: boolean }) => (
   <div className="relative overflow-hidden rounded-2xl"
     style={{
-      background: '#ffffff',
-      border: '1.5px solid hsl(220,13%,90%)',
-      boxShadow: '0 4px 32px rgba(0,0,0,0.07)',
+      background: 'var(--glass-bg)',
+      backdropFilter: 'blur(24px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+      border: '1.5px solid var(--glass-border)',
+      boxShadow: 'var(--glass-shadow)',
     }}>
 
     <div className="absolute top-5 right-6 pointer-events-none">
