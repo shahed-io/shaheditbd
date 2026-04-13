@@ -814,10 +814,17 @@ export default function AdminCustomers() {
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">রেজিস্টার্ড কাস্টমার ও অর্ডার হিস্ট্রি</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button size="sm" onClick={() => setShowAddModal(true)} className="gap-2">
-            <UserPlus size={14} /> কাস্টমার যোগ করুন
+            <UserPlus size={14} /> কাস্টমার যোগ
           </Button>
+          <Button variant="outline" size="sm" onClick={exportCSV} disabled={filtered.length === 0} className="gap-2">
+            <Download size={14} /> CSV এক্সপোর্ট
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={importLoading} className="gap-2">
+            <Upload size={14} /> {importLoading ? 'ইমপোর্ট হচ্ছে...' : 'CSV ইমপোর্ট'}
+          </Button>
+          <input ref={fileInputRef} type="file" accept=".csv,.txt" className="hidden" onChange={handleImportCSV} />
           <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
             <RefreshCw size={14} /> Refresh
           </Button>
