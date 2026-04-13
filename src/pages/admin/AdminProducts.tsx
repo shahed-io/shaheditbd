@@ -239,7 +239,18 @@ const AdminProducts = () => {
           count: type === 'short_description' ? 3 : 1,
         },
       });
-      if (error) throw error;
+      if (error) {
+        // Extract meaningful message from FunctionsHttpError
+        let msg = error.message || 'Unknown error';
+        try {
+          const ctx = error.context;
+          if (ctx && typeof ctx.json === 'function') {
+            const body = await ctx.json();
+            if (body?.error) msg = body.error;
+          }
+        } catch {}
+        throw new Error(msg);
+      }
       if (data?.error) throw new Error(data.error);
       const result = data?.result;
       if (type === 'short_description') {
@@ -326,7 +337,17 @@ const AdminProducts = () => {
           demoDescription: demoDescription.trim(),
         },
       });
-      if (error) throw error;
+      if (error) {
+        let msg = error.message || 'Unknown error';
+        try {
+          const ctx = error.context;
+          if (ctx && typeof ctx.json === 'function') {
+            const body = await ctx.json();
+            if (body?.error) msg = body.error;
+          }
+        } catch {}
+        throw new Error(msg);
+      }
       if (data?.error) throw new Error(data.error);
       setForm(p => ({ ...p, description: data?.result || p.description }));
       toast.success('✨ Demo স্টাইলে Description তৈরি হয়েছে!');
