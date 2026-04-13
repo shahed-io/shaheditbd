@@ -18,6 +18,7 @@ const mapProduct = (p: any): Product => ({
   image:         p.image_url || 'https://placehold.co/300x300/f8f9ff/6366f1?text=Product',
   isBestseller:  p.is_featured,
   isNew:         new Date(p.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+  customFields:  Array.isArray(p.custom_fields) ? p.custom_fields : [],
 });
 
 const LIMIT = 8;
