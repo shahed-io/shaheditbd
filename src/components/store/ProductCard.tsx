@@ -436,7 +436,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
       {showModal && (
         <QuickOrderModal
-          product={{ id: product.id, name: product.name, price: product.price, originalPrice: product.originalPrice, image: product.image, category: product.category }}
+          product={{ id: product.id, name: product.name, price: product.price, originalPrice: product.originalPrice, image: product.image, category: product.category, customFields: product.customFields }}
           onClose={() => setShowModal(false)}
         />
       )}

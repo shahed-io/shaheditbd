@@ -1082,7 +1082,7 @@ const ProductDetail = () => {
 
       {showModal && (
         <QuickOrderModal
-          product={{ id: product.id, name: product.name, price: displayPrice, originalPrice: displayOriginalPrice || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '' }}
+          product={{ id: product.id, name: product.name, price: displayPrice, originalPrice: displayOriginalPrice || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '', customFields: Array.isArray((product as any).custom_fields) ? (product as any).custom_fields : [] }}
           onClose={() => setShowModal(false)}
           quantity={quantity}
         />
