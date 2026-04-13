@@ -541,27 +541,29 @@ html[data-theme="midnight-purple"] .cta-card-inner {
 ══════════════════════════════════════ */
 .product-card-new {
   background: hsla(0, 0%, 100%, 0.6);
-  border: 1px solid hsla(258, 78%, 80%, 0.22);
+  border: 1px solid hsla(var(--brand-h), var(--brand-s), 80%, 0.22);
   border-radius: 1.25rem;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 2px 16px hsla(258,78%,55%,0.06), inset 0 1px 0 hsla(0,0%,100%,0.7);
+  box-shadow: 0 2px 16px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.06), inset 0 1px 0 hsla(0,0%,100%,0.7);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   position: relative;
   cursor: pointer;
+}
+/* Dark themes */
+html[data-theme="dark-cyber"] .product-card-new,
+html[data-theme="midnight-purple"] .product-card-new {
+  background: hsla(var(--brand-h), 40%, 10%, 0.65);
+  border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.25);
+  box-shadow: 0 2px 16px hsla(var(--brand-h),var(--brand-s),55%,0.12), inset 0 1px 0 hsla(var(--brand-h),var(--brand-s),70%,0.1);
 }
 
 .product-card-new::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    hsla(258,78%,55%,0.03) 0%,
-    transparent 50%,
-    hsla(42,96%,50%,0.02) 100%
-  );
+  background: linear-gradient(135deg, hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.03) 0%, transparent 50%, hsla(var(--accent-h),var(--accent-s),50%,0.02) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -572,7 +574,7 @@ html[data-theme="midnight-purple"] .cta-card-inner {
   inset: -1px;
   border-radius: 1.25rem;
   padding: 1px;
-  background: linear-gradient(135deg, hsla(258,78%,55%,0), hsla(258,78%,55%,0));
+  background: linear-gradient(135deg, hsla(var(--brand-h),var(--brand-s),var(--brand-l),0), hsla(var(--brand-h),var(--brand-s),var(--brand-l),0));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -583,15 +585,20 @@ html[data-theme="midnight-purple"] .cta-card-inner {
 
 .product-card-new:hover {
   transform: translateY(-8px) scale(1.02);
-  border-color: hsla(258, 78%, 65%, 0.35);
+  border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.35);
   box-shadow:
-    0 12px 32px hsla(258, 78%, 55%, 0.12),
-    0 0 0 1px hsla(258, 78%, 65%, 0.2),
+    0 12px 32px hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.12),
+    0 0 0 1px hsla(var(--brand-h), var(--brand-s), 65%, 0.2),
     inset 0 1px 0 hsla(0,0%,100%,0.8);
+}
+html[data-theme="dark-cyber"] .product-card-new:hover,
+html[data-theme="midnight-purple"] .product-card-new:hover {
+  border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.5);
+  box-shadow: 0 12px 32px hsla(var(--brand-h),var(--brand-s),55%,0.25), 0 0 0 1px hsla(var(--brand-h),var(--brand-s),65%,0.3), inset 0 1px 0 hsla(var(--brand-h),var(--brand-s),70%,0.15);
 }
 
 .product-card-new:hover::after {
-  background: linear-gradient(135deg, hsl(258,78%,55%), hsl(42,96%,50%));
+  background: linear-gradient(135deg, hsl(var(--brand-h),var(--brand-s),var(--brand-l)), hsl(var(--accent-h),var(--accent-s),var(--accent-l)));
 }
 
 /* 3D Tilt effect via JS */
