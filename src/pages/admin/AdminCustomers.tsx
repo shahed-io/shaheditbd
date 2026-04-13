@@ -347,7 +347,95 @@ export default function AdminCustomers() {
     }
   };
 
-  const filtered = customers
+  // ─── Export CSV ───
+  const exportCSV = () => {
+    const headers = ['নাম', 'ইমেইল', 'ফোন', 'যোগদান', 'অর্ডার', 'মোট খরচ', 'ওয়ালেট', 'পয়েন্ট'];
+    const rows = filtered.map(c => [
+      c.display_name ?? '',
+      c.email ?? '',
+      c.phone ?? '',
+      format(new Date(c.created_at), 'yyyy-MM-dd'),
+      String(c.order_count ?? 0),
+      String(c.total_spent ?? 0),
+      String(c.wallet_balance ?? 0),
+      String(c.points_balance ?? 0),
+    ]);
+    const bom = '\uFEFF';
+    const csv = bom + [headers, ...rows].map(r => r.map(v => `"${v.replace(/"/g, '""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = `customers_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    toast.success(`${filtered.length} কাস্টমার CSV এক্সপোর্ট হয়েছে!`);
+  };
+
+  // ─── Import CSV ───
+  const handleImportCSV = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportLoading(true);
+    try {
+      const text = await file.text();
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) { toast.error('CSV ফাইলে কমপক্ষে ১টি ডেটা সারি দরকার'); return; }
+
+      const headerLine = lines[0].toLowerCase();
+      const hasEmail = headerLine.includes('email') || headerLine.includes('ইমেইল');
+      if (!hasEmail) { toast.error('CSV ফাইলে "email" বা "ইমেইল" কলাম থাকা আবশ্যক'); return; }
+
+      const parseCSVLine = (line: string) => {
+        const result: string[] = [];
+        let current = '', inQuotes = false;
+        for (const ch of line) {
+          if (ch === '"') { inQuotes = !inQuotes; }
+          else if (ch === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
+          else { current += ch; }
+        }
+        result.push(current.trim());
+        return result;
+      };
+
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/['"]/g, ''));
+      const emailIdx = headers.findIndex(h => h.includes('email') || h.includes('ইমেইল'));
+      const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('নাম'));
+      const phoneIdx = headers.findIndex(h => h.includes('phone') || h.includes('ফোন'));
+      const passIdx = headers.findIndex(h => h.includes('password') || h.includes('পাসওয়ার্ড'));
+
+      let successCount = 0, failCount = 0;
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        const email = cols[emailIdx]?.replace(/['"]/g, '').trim();
+        if (!email || !email.includes('@')) { failCount++; continue; }
+        const displayName = nameIdx >= 0 ? cols[nameIdx]?.replace(/['"]/g, '').trim() : '';
+        const phone = phoneIdx >= 0 ? cols[phoneIdx]?.replace(/['"]/g, '').trim() : '';
+        const password = passIdx >= 0 ? cols[passIdx]?.replace(/['"]/g, '').trim() : '';
+
+        if (password && password.length >= 6) {
+          const res = await supabase.functions.invoke('admin-manage-users', {
+            body: {
+              action: 'create_user',
+              email,
+              password,
+              display_name: displayName || null,
+              phone: phone || null,
+            },
+          });
+          if (res.error || res.data?.error) { failCount++; } else { successCount++; }
+        } else {
+          failCount++;
+        }
+      }
+      toast.success(`ইমপোর্ট সম্পন্ন: ${successCount} সফল, ${failCount} ব্যর্থ`);
+      refetch();
+    } catch (err: any) {
+      toast.error('CSV পার্স ব্যর্থ: ' + (err.message || 'Unknown error'));
+    } finally {
+      setImportLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+
     .filter(c => {
       const q = search.toLowerCase();
       return !q
