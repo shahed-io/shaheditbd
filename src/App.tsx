@@ -127,6 +127,18 @@ const PageLoader = () => (
   </div>
 );
 
+// Lightweight spinner for admin sub-pages (no full-screen loader)
+const AdminPageLoader = () => (
+  <div className="flex items-center justify-center py-20">
+    <div className="w-8 h-8 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
+  </div>
+);
+
+// Wrapper to use lighter fallback for admin child routes
+const AdminSuspense = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<AdminPageLoader />}>{children}</Suspense>
+);
+
 // Admin notification listener (only active when user is admin)
 const AdminNotificationListener = () => {
   const { isAdmin } = useAuth();
