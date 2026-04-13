@@ -55,13 +55,12 @@ const Footer = () => {
     {/* Decorative background */}
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       <div className="absolute top-0 right-0 w-[600px] h-[500px]"
-        style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(258,78%,55%,0.07), transparent 65%)' }} />
+        style={{ background: 'radial-gradient(ellipse at 80% 0%, hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.07), transparent 65%)' }} />
       <div className="absolute bottom-0 left-0 w-[500px] h-[400px]"
-        style={{ background: 'radial-gradient(ellipse at 0% 100%, hsla(200,90%,45%,0.06), transparent 65%)' }} />
+        style={{ background: 'radial-gradient(ellipse at 0% 100%, hsla(var(--brand2-h),var(--brand2-s),var(--brand2-l),0.06), transparent 65%)' }} />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px]"
-        style={{ background: 'radial-gradient(ellipse, hsla(162,72%,38%,0.03), transparent 70%)' }} />
-      <div className="absolute inset-0"
-        style={{ backgroundImage: 'radial-gradient(circle, hsla(258,78%,55%,0.035) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+        style={{ background: 'radial-gradient(ellipse, hsla(var(--brand4-h),var(--brand4-s),var(--brand4-l),0.03), transparent 70%)' }} />
+      <div className="absolute inset-0 dot-grid opacity-40" />
     </div>
 
     {/* CTA Strip */}

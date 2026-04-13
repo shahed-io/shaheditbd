@@ -88,14 +88,14 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
       className="flex-shrink-0 w-[290px] sm:w-[320px] cursor-default rounded-2xl relative"
       style={{
         background: hov
-          ? 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.78) 100%)'
-          : 'linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.50) 100%)',
+          ? 'var(--glass-bg)'
+          : 'var(--glass-bg)',
         backdropFilter: 'blur(24px) saturate(180%)',
         WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         border: `1px solid ${from.replace('hsl(','hsla(').replace(')',',0.22)')}`,
         boxShadow: hov
-          ? `0 12px 36px ${from.replace('hsl(','hsla(').replace(')',',0.15)')}, 0 1px 0 rgba(255,255,255,0.9) inset`
-          : `0 4px 20px ${from.replace('hsl(','hsla(').replace(')',',0.07)')}, 0 1px 0 rgba(255,255,255,0.9) inset`,
+          ? `0 12px 36px ${from.replace('hsl(','hsla(').replace(')',',0.15)')}, inset 0 1px 0 hsla(0,0%,100%,0.6)`
+          : `var(--glass-shadow)`,
         transform: hov ? 'translateY(-4px) scale(1.015)' : 'translateY(0) scale(1)',
         transition: 'all 0.32s cubic-bezier(0.23,1,0.32,1)',
       }}
@@ -256,11 +256,11 @@ const Testimonials = () => {
             {statsData.map((stat, i) => (
               <div key={i} className="rounded-3xl overflow-hidden"
                 style={{
-                  background: 'rgba(255,255,255,0.78)',
+                  background: 'var(--glass-bg)',
                   backdropFilter: 'blur(20px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                  border: '1.5px solid rgba(255,255,255,0.92)',
-                  boxShadow: `0 4px 22px ${stat.from}18, inset 0 1px 0 rgba(255,255,255,1)`,
+                  border: '1.5px solid var(--glass-border)',
+                  boxShadow: `var(--glass-shadow)`,
                 }}>
                 
                 <div className="text-center px-7 py-3">
