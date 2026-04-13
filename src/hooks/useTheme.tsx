@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-export type ThemeId = 'clean-white' | 'dark-cyber' | 'ocean-blue' | 'rose-gold';
+export type ThemeId = 'clean-white' | 'dark-cyber' | 'ocean-blue' | 'rose-gold' | 'midnight-purple' | 'forest-green';
 
 export interface ThemeInfo {
   id: ThemeId;
@@ -45,6 +45,20 @@ export const THEMES: ThemeInfo[] = [
     description: 'উষ্ণ গোলাপি-সোনালি টোন, প্রিমিয়াম ফিল',
     preview: { bg: '#fff7f5', primary: '#e11d48', accent: '#d97706', text: '#44403c' },
   },
+  {
+    id: 'midnight-purple',
+    name: 'Midnight Purple',
+    nameBn: 'মিডনাইট পার্পল',
+    description: 'গভীর বেগুনি রাত্রি, এলিগ্যান্ট ও মিস্টেরিয়াস',
+    preview: { bg: '#1a1025', primary: '#c084fc', accent: '#f472b6', text: '#e8e0f0' },
+  },
+  {
+    id: 'forest-green',
+    name: 'Forest Green',
+    nameBn: 'ফরেস্ট গ্রিন',
+    description: 'প্রকৃতির সবুজ, শান্ত ও চোখে আরামদায়ক',
+    preview: { bg: '#f0fdf4', primary: '#16a34a', accent: '#eab308', text: '#14532d' },
+  },
 ];
 
 const THEME_KEY = 'active_theme';
@@ -53,13 +67,11 @@ export const useTheme = () => {
   const [activeTheme, setActiveTheme] = useState<ThemeId>('clean-white');
   const [loading, setLoading] = useState(true);
 
-  // Apply theme to document
   const applyTheme = (themeId: ThemeId) => {
     document.documentElement.setAttribute('data-theme', themeId);
     setActiveTheme(themeId);
   };
 
-  // Fetch from DB
   useEffect(() => {
     const cached = localStorage.getItem('site_theme');
     if (cached && THEMES.some(t => t.id === cached)) {
@@ -81,7 +93,6 @@ export const useTheme = () => {
       });
   }, []);
 
-  // Save theme
   const saveTheme = async (themeId: ThemeId) => {
     applyTheme(themeId);
     localStorage.setItem('site_theme', themeId);
