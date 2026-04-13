@@ -113,10 +113,12 @@ export default function AdminCustomers() {
   const [editForm, setEditForm] = useState({ display_name: '', email: '', phone: '' });
   const [addForm, setAddForm] = useState({ display_name: '', email: '', phone: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
-  const [resetPasswordModal, setResetPasswordModal] = useState<string | null>(null); // user_id
+  const [resetPasswordModal, setResetPasswordModal] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: customers = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-customers'],
