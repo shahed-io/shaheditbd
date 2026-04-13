@@ -7,8 +7,7 @@ import {
   Users, Search, RefreshCw, Eye, ShoppingBag,
   Mail, Phone, Calendar, TrendingUp, TrendingDown, UserCheck, Award, Star,
   Key, Package, ChevronDown, ChevronRight, MessageCircle, Copy, Check,
-  Edit3, Save, X, ArrowLeft, UserPlus, Trash2, Lock, Shield, EyeOff, EyeIcon,
-  Download, Upload, FileSpreadsheet
+  Edit3, Save, X, ArrowLeft, UserPlus, Trash2, Lock, Shield, EyeOff, EyeIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -117,10 +116,6 @@ export default function AdminCustomers() {
   const [newPassword, setNewPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [importData, setImportData] = useState<Array<{display_name: string; email: string; phone: string; password: string}>>([]);
-  const [importFile, setImportFile] = useState<File | null>(null);
-  const [importing, setImporting] = useState(false);
 
   const { data: customers = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-customers'],
@@ -347,147 +342,6 @@ export default function AdminCustomers() {
     } finally {
       setActionLoading(false);
     }
-  };
-
-  // ─── Export CSV ───
-  const exportCSV = () => {
-    if (customers.length === 0) { toast.error('কোনো ডেটা নেই'); return; }
-    const headers = ['নাম', 'ইমেইল', 'ফোন', 'যোগদান', 'অর্ডার সংখ্যা', 'মোট খরচ (৳)', 'ওয়ালেট (৳)', 'পয়েন্ট', 'অর্জিত পয়েন্ট', 'রিডিম পয়েন্ট'];
-    const rows = filtered.map(c => [
-      c.display_name ?? '',
-      c.email ?? '',
-      c.phone ?? '',
-      format(new Date(c.created_at), 'yyyy-MM-dd'),
-      c.order_count ?? 0,
-      c.total_spent ?? 0,
-      c.wallet_balance ?? 0,
-      c.points_balance ?? 0,
-      c.total_points_earned ?? 0,
-      c.total_points_redeemed ?? 0,
-    ]);
-    const bom = '\uFEFF';
-    const csv = bom + [headers.join(','), ...rows.map(r => r.map(v => `"${v}"`).join(','))].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `customers_${format(new Date(), 'yyyyMMdd_HHmm')}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success(`${filtered.length} কাস্টমারের ডেটা CSV এক্সপোর্ট হয়েছে`);
-  };
-
-  // ─── Export XLSX (using CSV-compatible format with .xlsx extension trick — real XLSX via XML) ───
-  const exportXLSX = () => {
-    if (customers.length === 0) { toast.error('কোনো ডেটা নেই'); return; }
-    const headers = ['নাম', 'ইমেইল', 'ফোন', 'যোগদান', 'অর্ডার সংখ্যা', 'মোট খরচ (৳)', 'ওয়ালেট (৳)', 'পয়েন্ট', 'অর্জিত পয়েন্ট', 'রিডিম পয়েন্ট'];
-    const rows = filtered.map(c => [
-      c.display_name ?? '',
-      c.email ?? '',
-      c.phone ?? '',
-      format(new Date(c.created_at), 'yyyy-MM-dd'),
-      c.order_count ?? 0,
-      c.total_spent ?? 0,
-      c.wallet_balance ?? 0,
-      c.points_balance ?? 0,
-      c.total_points_earned ?? 0,
-      c.total_points_redeemed ?? 0,
-    ]);
-
-    // Build simple XML Spreadsheet
-    const escXml = (v: any) => String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    const xmlRows = [
-      '<Row>' + headers.map(h => `<Cell><Data ss:Type="String">${escXml(h)}</Data></Cell>`).join('') + '</Row>',
-      ...rows.map(r => '<Row>' + r.map((v, i) =>
-        typeof v === 'number'
-          ? `<Cell><Data ss:Type="Number">${v}</Data></Cell>`
-          : `<Cell><Data ss:Type="String">${escXml(v)}</Data></Cell>`
-      ).join('') + '</Row>')
-    ].join('\n');
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<?mso-application progid="Excel.Sheet"?>
-<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
-  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
-  <Worksheet ss:Name="Customers">
-    <Table>${xmlRows}</Table>
-  </Worksheet>
-</Workbook>`;
-    const blob = new Blob([xml], { type: 'application/vnd.ms-excel' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `customers_${format(new Date(), 'yyyyMMdd_HHmm')}.xls`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success(`${filtered.length} কাস্টমারের ডেটা Excel এক্সপোর্ট হয়েছে`);
-  };
-
-  // ─── Import CSV ───
-  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImportFile(file);
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const text = ev.target?.result as string;
-      if (!text) return;
-      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-      if (lines.length < 2) { toast.error('CSV ফাইলে কমপক্ষে ১ সারি ডেটা থাকতে হবে'); return; }
-      
-      const headerLine = lines[0].toLowerCase();
-      // Auto-detect columns
-      const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
-      const nameIdx = headers.findIndex(h => ['name', 'নাম', 'display_name'].includes(h));
-      const emailIdx = headers.findIndex(h => ['email', 'ইমেইল', 'mail'].includes(h));
-      const phoneIdx = headers.findIndex(h => ['phone', 'ফোন', 'mobile', 'number'].includes(h));
-      const passIdx = headers.findIndex(h => ['password', 'পাসওয়ার্ড', 'pass'].includes(h));
-
-      if (emailIdx === -1) {
-        toast.error('CSV-তে "email" কলাম পাওয়া যায়নি');
-        return;
-      }
-
-      const parsed = lines.slice(1).map(line => {
-        const cols = line.split(',').map(c => c.replace(/"/g, '').trim());
-        return {
-          display_name: nameIdx >= 0 ? cols[nameIdx] ?? '' : '',
-          email: cols[emailIdx] ?? '',
-          phone: phoneIdx >= 0 ? cols[phoneIdx] ?? '' : '',
-          password: passIdx >= 0 ? cols[passIdx] ?? '' : Math.random().toString(36).slice(-8) + 'A1!',
-        };
-      }).filter(r => r.email);
-
-      setImportData(parsed);
-      toast.success(`${parsed.length} কাস্টমার পাওয়া গেছে`);
-    };
-    reader.readAsText(file);
-  };
-
-  const executeImport = async () => {
-    if (importData.length === 0) return;
-    setImporting(true);
-    let success = 0, failed = 0;
-    for (const row of importData) {
-      try {
-        const res = await supabase.functions.invoke('admin-manage-users', {
-          body: {
-            action: 'create_user',
-            email: row.email,
-            password: row.password,
-            display_name: row.display_name || null,
-            phone: row.phone || null,
-          },
-        });
-        if (res.error || res.data?.error) { failed++; }
-        else { success++; }
-      } catch { failed++; }
-    }
-    setImporting(false);
-    setShowImportModal(false);
-    setImportData([]);
-    setImportFile(null);
-    toast.success(`ইমপোর্ট সম্পন্ন: ${success} সফল, ${failed} ব্যর্থ`);
-    refetch();
   };
 
   const filtered = customers
@@ -869,27 +723,11 @@ export default function AdminCustomers() {
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">রেজিস্টার্ড কাস্টমার ও অর্ডার হিস্ট্রি</p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <Button size="sm" onClick={() => setShowAddModal(true)} className="gap-1.5">
-            <UserPlus size={14} /> কাস্টমার যোগ
+        <div className="flex items-center gap-2">
+          <Button size="sm" onClick={() => setShowAddModal(true)} className="gap-2">
+            <UserPlus size={14} /> কাস্টমার যোগ করুন
           </Button>
-          <Button size="sm" variant="outline" onClick={() => setShowImportModal(true)} className="gap-1.5">
-            <Upload size={14} /> ইমপোর্ট
-          </Button>
-          <div className="relative">
-            <Button size="sm" variant="outline" className="gap-1.5 pr-1">
-              <Download size={14} /> এক্সপোর্ট
-              <ChevronDown size={12} />
-            </Button>
-            <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-10 min-w-[140px] opacity-0 pointer-events-none group-focus-within:opacity-100 group-focus-within:pointer-events-auto peer-focus:opacity-100" />
-          </div>
-          <Button size="sm" variant="outline" onClick={exportCSV} className="gap-1.5">
-            <Download size={14} /> CSV
-          </Button>
-          <Button size="sm" variant="outline" onClick={exportXLSX} className="gap-1.5">
-            <FileSpreadsheet size={14} /> Excel
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-1.5">
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
             <RefreshCw size={14} /> Refresh
           </Button>
         </div>
@@ -945,83 +783,6 @@ export default function AdminCustomers() {
             </Button>
             <Button size="sm" onClick={addCustomer} disabled={actionLoading} className="h-8 text-xs gap-1">
               <UserPlus size={12} /> {actionLoading ? 'তৈরি হচ্ছে...' : 'অ্যাকাউন্ট তৈরি করুন'}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Import Modal */}
-      {showImportModal && (
-        <div className="bg-card rounded-xl border border-primary/30 p-5 space-y-4">
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <Upload size={14} className="text-primary" /> CSV থেকে কাস্টমার ইমপোর্ট করুন
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            CSV ফাইলে <strong>email</strong> কলাম আবশ্যক। ঐচ্ছিক কলাম: name, phone, password।
-            পাসওয়ার্ড না দিলে অটো-জেনারেট হবে।
-          </p>
-
-          {/* Sample format */}
-          <div className="bg-muted/30 rounded-lg p-3 text-xs font-mono text-muted-foreground">
-            <div className="font-semibold text-foreground mb-1">নমুনা ফরম্যাট:</div>
-            name,email,phone,password<br/>
-            রহিম,rahim@mail.com,01712345678,pass123<br/>
-            করিম,karim@mail.com,01812345678,
-          </div>
-
-          <div>
-            <input
-              type="file"
-              accept=".csv,.txt"
-              onChange={handleImportFile}
-              className="block w-full text-sm text-muted-foreground
-                file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0
-                file:text-sm file:font-semibold file:bg-primary/10 file:text-primary
-                hover:file:bg-primary/20 cursor-pointer"
-            />
-          </div>
-
-          {importData.length > 0 && (
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-foreground">
-                প্রিভিউ: {importData.length} কাস্টমার পাওয়া গেছে
-              </div>
-              <div className="max-h-48 overflow-y-auto rounded-lg border border-border">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="bg-muted/30 border-b border-border">
-                      <th className="px-3 py-1.5 text-left text-muted-foreground">নাম</th>
-                      <th className="px-3 py-1.5 text-left text-muted-foreground">ইমেইল</th>
-                      <th className="px-3 py-1.5 text-left text-muted-foreground">ফোন</th>
-                      <th className="px-3 py-1.5 text-left text-muted-foreground">পাসওয়ার্ড</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {importData.slice(0, 10).map((r, i) => (
-                      <tr key={i} className="border-b border-border/30">
-                        <td className="px-3 py-1.5 text-foreground">{r.display_name || '—'}</td>
-                        <td className="px-3 py-1.5 text-foreground">{r.email}</td>
-                        <td className="px-3 py-1.5 text-muted-foreground">{r.phone || '—'}</td>
-                        <td className="px-3 py-1.5 text-muted-foreground font-mono">{r.password.slice(0, 6)}...</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {importData.length > 10 && (
-                  <div className="text-center text-xs text-muted-foreground py-2">
-                    ...আরো {importData.length - 10}টি
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          <div className="flex gap-2 justify-end">
-            <Button size="sm" variant="outline" onClick={() => { setShowImportModal(false); setImportData([]); setImportFile(null); }} className="h-8 text-xs gap-1">
-              <X size={12} /> বাতিল
-            </Button>
-            <Button size="sm" onClick={executeImport} disabled={importing || importData.length === 0} className="h-8 text-xs gap-1">
-              <Upload size={12} /> {importing ? `ইমপোর্ট হচ্ছে...` : `${importData.length} কাস্টমার ইমপোর্ট করুন`}
             </Button>
           </div>
         </div>
