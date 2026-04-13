@@ -665,7 +665,7 @@ html[data-theme="midnight-purple"] .product-card-new:hover {
 ══════════════════════════════════════ */
 .cat-card {
   background: hsla(0, 0%, 100%, 0.55);
-  border: 1px solid hsla(258, 78%, 75%, 0.18);
+  border: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.18);
   border-radius: 1.5rem;
   transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
@@ -675,17 +675,22 @@ html[data-theme="midnight-purple"] .product-card-new:hover {
   overflow: hidden;
   position: relative;
 }
+html[data-theme="dark-cyber"] .cat-card,
+html[data-theme="midnight-purple"] .cat-card {
+  background: hsla(var(--brand-h), 30%, 12%, 0.55);
+  border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.2);
+}
 .cat-card::after {
   content: '';
   position: absolute;
   inset: 0;
   opacity: 0;
   transition: opacity 0.35s;
-  background: linear-gradient(145deg, hsla(258,78%,55%,0.05), hsla(42,96%,50%,0.03));
+  background: linear-gradient(145deg, hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.05), hsla(var(--accent-h),var(--accent-s),50%,0.03));
 }
 .cat-card:hover {
   transform: translateY(-6px);
-  border-color: hsla(258, 78%, 55%, 0.35);
+  border-color: hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.35);
   box-shadow: 0 16px 40px hsla(226,35%,12%,0.12), var(--glow-violet);
 }
 .cat-card:hover::after { opacity: 1; }
