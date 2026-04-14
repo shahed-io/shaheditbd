@@ -1068,7 +1068,11 @@ const AdminOrders = () => {
                 {filtered.map((order) => {
                   const cfg = STATUS_CONFIG[order.status];
                   return (
-                    <tr key={order.id} className="hover:bg-muted/10 transition-colors group">
+                    <tr key={order.id} className={`hover:bg-muted/10 transition-colors group ${selectedIds.has(order.id) ? 'bg-primary/5' : ''}`}>
+                      <td className="px-3 py-3">
+                        <input type="checkbox" checked={selectedIds.has(order.id)}
+                          onChange={() => toggleSelect(order.id)} className="w-3.5 h-3.5 accent-primary rounded" />
+                      </td>
                       <td className="px-4 py-3">
                         <span className="font-mono font-bold text-primary text-xs">{order.order_number}</span>
                         {order.payment_status === 'verified' && (
