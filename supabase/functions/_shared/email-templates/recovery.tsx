@@ -21,7 +21,7 @@ export const RecoveryEmail = ({
 }: RecoveryEmailProps) => (
   <Html lang="bn" dir="ltr">
     <Head />
-    <Preview>{siteName} — পাসওয়ার্ড রিসেট করুন</Preview>
+    <Preview>{siteName} - Password reset</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -31,19 +31,19 @@ export const RecoveryEmail = ({
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>পাসওয়ার্ড রিসেট করুন</Heading>
+          <Heading style={h1Style}>Password reset</Heading>
           <Text style={subtitleStyle}>
-            আপনার <strong>{siteName}</strong> অ্যাকাউন্টের পাসওয়ার্ড রিসেট করার অনুরোধ পাওয়া গেছে।
-            নিচের বাটনে ক্লিক করে নতুন পাসওয়ার্ড সেট করুন।
+            আপনার <strong>{siteName}</strong> account-এর Password বদল করার অনুরোধ এসেছে.
+            নিচের button-এ চাপ দিয়ে নতুন Password দিন.
           </Text>
 
           <Button style={buttonStyle} href={confirmationUrl}>
-            নতুন পাসওয়ার্ড সেট করুন
+            নতুন Password দিন
           </Button>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            যদি আপনি এই অনুরোধ না করে থাকেন, এই ইমেইলটি উপেক্ষা করুন। আপনার পাসওয়ার্ড পরিবর্তন হবে না।
+            আপনি যদি এই অনুরোধ না করে থাকেন, email ignore করুন.
           </Text>
         </Section>
 
@@ -52,7 +52,7 @@ export const RecoveryEmail = ({
             <Link href={siteUrl} style={linkStyle}>{siteUrl}</Link>
           </Text>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সর্বস্বত্ব সংরক্ষিত।
+            &copy; {new Date().getFullYear()} {siteName}. সব অধিকার রাখা আছে.
           </Text>
         </Section>
       </Container>

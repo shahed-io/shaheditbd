@@ -19,7 +19,7 @@ interface EmailChangeEmailProps {
 export const EmailChangeEmail = ({ siteName, email, newEmail, confirmationUrl }: EmailChangeEmailProps) => (
   <Html lang="bn" dir="ltr">
     <Head />
-    <Preview>{siteName} — ইমেইল পরিবর্তন নিশ্চিত করুন</Preview>
+    <Preview>{siteName} - Email বদল confirm করুন</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -29,22 +29,22 @@ export const EmailChangeEmail = ({ siteName, email, newEmail, confirmationUrl }:
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>ইমেইল পরিবর্তন নিশ্চিত করুন</Heading>
+          <Heading style={h1Style}>Email বদল confirm করুন</Heading>
           <Text style={subtitleStyle}>
-            আপনার {siteName} অ্যাকাউন্টের ইমেইল পরিবর্তনের অনুরোধ পাওয়া গেছে:
+            আপনার {siteName} account-এ email বদল করার অনুরোধ এসেছে.
           </Text>
           <Text style={textStyle}>
-            <strong>বর্তমান:</strong> {email}{'\n'}
-            <strong>নতুন:</strong> {newEmail}
+            <strong>এখনকার email:</strong> {email}{'\n'}
+            <strong>নতুন email:</strong> {newEmail}
           </Text>
 
           <Button style={buttonStyle} href={confirmationUrl}>
-            ইমেইল পরিবর্তন নিশ্চিত করুন
+            Email বদল confirm করুন
           </Button>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            যদি আপনি এই পরিবর্তন অনুরোধ না করে থাকেন, অনুগ্রহ করে অবিলম্বে আপনার অ্যাকাউন্ট সুরক্ষিত করুন।
+            আপনি যদি এই অনুরোধ না করে থাকেন, account safe রাখুন.
           </Text>
         </Section>
 
@@ -53,7 +53,7 @@ export const EmailChangeEmail = ({ siteName, email, newEmail, confirmationUrl }:
             <Link href={SITE_URL} style={linkStyle}>{SITE_URL}</Link>
           </Text>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সর্বস্বত্ব সংরক্ষিত।
+            &copy; {new Date().getFullYear()} {siteName}. সব অধিকার রাখা আছে.
           </Text>
         </Section>
       </Container>

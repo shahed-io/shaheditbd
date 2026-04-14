@@ -16,7 +16,7 @@ interface MagicLinkEmailProps {
 export const MagicLinkEmail = ({ siteName, confirmationUrl }: MagicLinkEmailProps) => (
   <Html lang="bn" dir="ltr">
     <Head />
-    <Preview>{siteName}-এ লগইন লিংক</Preview>
+    <Preview>{siteName}-এ Login link</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -26,18 +26,18 @@ export const MagicLinkEmail = ({ siteName, confirmationUrl }: MagicLinkEmailProp
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>লগইন লিংক</Heading>
+          <Heading style={h1Style}>Login link</Heading>
           <Text style={subtitleStyle}>
-            {siteName}-এ লগইন করতে নিচের বাটনে ক্লিক করুন। এই লিংকটি অল্প সময়ের জন্য কার্যকর থাকবে।
+            {siteName}-এ login করতে নিচের button-এ চাপ দিন. এই link কম time কাজ করবে.
           </Text>
 
           <Button style={buttonStyle} href={confirmationUrl}>
-            লগইন করুন
+            Login করুন
           </Button>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            যদি আপনি এই লিংক অনুরোধ না করে থাকেন, এই ইমেইলটি উপেক্ষা করুন।
+            আপনি যদি এই link না চান, email ignore করুন.
           </Text>
         </Section>
 
@@ -46,7 +46,7 @@ export const MagicLinkEmail = ({ siteName, confirmationUrl }: MagicLinkEmailProp
             <Link href={SITE_URL} style={linkStyle}>{SITE_URL}</Link>
           </Text>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সর্বস্বত্ব সংরক্ষিত।
+            &copy; {new Date().getFullYear()} {siteName}. সব অধিকার রাখা আছে.
           </Text>
         </Section>
       </Container>

@@ -39,10 +39,10 @@ const bullet = {
   verticalAlign: 'middle' as const,
 } as const;
 
-export const SignupEmail = ({ siteName, siteUrl, recipient, confirmationUrl }: SignupEmailProps) => (
+export const SignupEmail = ({ siteName, recipient, confirmationUrl }: SignupEmailProps) => (
   <Html lang="bn" dir="ltr">
     <Head />
-    <Preview>{siteName}-এ আপনার ইমেইল যাচাই করুন</Preview>
+    <Preview>{siteName}-এ email confirm করুন</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -52,44 +52,44 @@ export const SignupEmail = ({ siteName, siteUrl, recipient, confirmationUrl }: S
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>স্বাগতম! ইমেইল যাচাই করুন</Heading>
+          <Heading style={h1Style}>Email confirm করুন</Heading>
           <Text style={subtitleStyle}>
-            <strong>{siteName}</strong>-এ সাইন আপ করার জন্য ধন্যবাদ! আপনার অ্যাকাউন্ট সক্রিয় করতে নিচের বাটনে ক্লিক করুন।
+            <strong>{siteName}</strong>-এ join করার জন্য ধন্যবাদ. আপনার account চালু করতে নিচের button-এ চাপ দিন.
           </Text>
           <Text style={emailBadgeStyle}>{recipient}</Text>
 
           <Section style={featureBox}>
-            <Text style={featureTitle}>আপনার জন্য যা আছে:</Text>
+            <Text style={featureTitle}>আপনার জন্য আছে:</Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> নিরাপদ ও অথেন্টিক প্রোডাক্টস
+              <span style={bullet}>✓</span> নিরাপদ ও আসল item
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> দ্রুত ডেলিভারি (১-২৪ ঘন্টা)
+              <span style={bullet}>✓</span> 1-24 ঘন্টায় ডেলিভারি
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> সেরা মূল্য গ্যারান্টি
+              <span style={bullet}>✓</span> ভাল দাম
             </Text>
             <Text style={{ ...featureRow, margin: '0' }}>
-              <span style={bullet}>✓</span> রেফারেল বোনাস ও পয়েন্ট সিস্টেম
+              <span style={bullet}>✓</span> বোনাস ও point
             </Text>
           </Section>
 
           <Button style={buttonStyle} href={confirmationUrl}>
-            ইমেইল যাচাই করুন
+            Email confirm করুন
           </Button>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            যদি আপনি এই অ্যাকাউন্ট তৈরি না করে থাকেন, এই ইমেইলটি উপেক্ষা করুন।
+            আপনি যদি account না খুলে থাকেন, এই email ignore করুন.
           </Text>
         </Section>
 
         <Section style={footerSection}>
           <Text style={{ ...footerStyle, margin: '0' }}>
-            কোনো সাহায্যের প্রয়োজন হলে আমাদের সাপোর্ট টিমে যোগাযোগ করুন।
+            সাহায্য লাগলে support team-এ জানাবেন.
           </Text>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সর্বস্বত্ব সংরক্ষিত।
+            &copy; {new Date().getFullYear()} {siteName}. সব অধিকার রাখা আছে.
           </Text>
         </Section>
       </Container>
