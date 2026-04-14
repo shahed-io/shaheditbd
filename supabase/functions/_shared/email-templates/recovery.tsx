@@ -1,20 +1,12 @@
 /// <reference types="npm:@types/react@18.3.1" />
-
 import * as React from 'npm:react@18.3.1'
-
 import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Img,
-  Link,
-  Preview,
-  Section,
-  Text,
+  Body, Button, Container, Head, Heading, Hr, Html, Img, Link, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
+import {
+  main, wrapper, headerStyle, logoStyle, brandName, contentStyle, h1Style, subtitleStyle,
+  textStyle, buttonStyle, dividerStyle, footerStyle, footerSection, linkStyle, copyrightStyle, LOGO_URL,
+} from './_styles.ts'
 
 interface RecoveryEmailProps {
   siteName: string
@@ -31,23 +23,35 @@ export const RecoveryEmail = ({
     <Head />
     <Preview>{siteName} — পাসওয়ার্ড রিসেট করুন</Preview>
     <Body style={main}>
-      <Container style={container}>
-        <Section style={header}>
-          <Img src={`${siteUrl}/logo.png`} width="140" height="44" alt={siteName} style={{ display: 'block', objectFit: 'contain' }} />
+      <Container style={wrapper}>
+        <Section style={headerStyle}>
+          <Img src={LOGO_URL} width="48" height="48" alt={siteName} style={{ ...logoStyle, marginBottom: '8px' }} />
+          <Heading style={brandName}>{siteName}</Heading>
         </Section>
-        <Section style={content}>
-          <Heading style={h1}>পাসওয়ার্ড রিসেট 🔑</Heading>
-          <Text style={text}>
-            আপনার {siteName} অ্যাকাউন্টের পাসওয়ার্ড রিসেট করার অনুরোধ পাওয়া গেছে।
+
+        <Section style={contentStyle}>
+          <Heading style={h1Style}>পাসওয়ার্ড রিসেট করুন</Heading>
+          <Text style={subtitleStyle}>
+            আপনার <strong>{siteName}</strong> অ্যাকাউন্টের পাসওয়ার্ড রিসেট করার অনুরোধ পাওয়া গেছে।
+            নিচের বাটনে ক্লিক করে নতুন পাসওয়ার্ড সেট করুন।
           </Text>
-          <Button style={button} href={confirmationUrl}>
-            🔐 নতুন পাসওয়ার্ড সেট করুন
+
+          <Button style={buttonStyle} href={confirmationUrl}>
+            নতুন পাসওয়ার্ড সেট করুন
           </Button>
-          <Text style={footer}>
+
+          <Hr style={dividerStyle} />
+          <Text style={footerStyle}>
             যদি আপনি এই অনুরোধ না করে থাকেন, এই ইমেইলটি উপেক্ষা করুন। আপনার পাসওয়ার্ড পরিবর্তন হবে না।
           </Text>
-          <Text style={footerLink}>
-            <Link href={siteUrl} style={link}>{siteUrl}</Link>
+        </Section>
+
+        <Section style={footerSection}>
+          <Text style={{ ...footerStyle, margin: '0' }}>
+            <Link href={siteUrl} style={linkStyle}>{siteUrl}</Link>
+          </Text>
+          <Text style={copyrightStyle}>
+            &copy; {new Date().getFullYear()} {siteName}. সর্বস্বত্ব সংরক্ষিত।
           </Text>
         </Section>
       </Container>
@@ -56,14 +60,3 @@ export const RecoveryEmail = ({
 )
 
 export default RecoveryEmail
-
-const main = { backgroundColor: '#f5f5f7', fontFamily: "'Segoe UI', Arial, sans-serif" }
-const container = { maxWidth: '560px', margin: '32px auto', backgroundColor: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 24px rgba(100,60,200,0.10)' }
-const header = { background: '#ffffff', padding: '20px 28px', borderBottom: '3px solid hsl(258,78%,55%)' }
-const content = { padding: '28px 28px 20px' }
-const h1 = { fontSize: '20px', fontWeight: 'bold' as const, color: 'hsl(226,35%,12%)', margin: '0 0 14px' }
-const text = { fontSize: '14px', color: 'hsl(220,15%,40%)', lineHeight: '1.6', margin: '0 0 22px' }
-const button = { backgroundColor: 'hsl(258,78%,55%)', color: '#ffffff', fontSize: '15px', fontWeight: '700', borderRadius: '12px', padding: '13px 26px', textDecoration: 'none', display: 'inline-block' }
-const footer = { fontSize: '12px', color: '#999999', margin: '26px 0 4px' }
-const footerLink = { fontSize: '12px', margin: '0' }
-const link = { color: 'hsl(258,78%,55%)', textDecoration: 'none' }

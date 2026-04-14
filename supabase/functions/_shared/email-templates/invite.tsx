@@ -1,18 +1,13 @@
 /// <reference types="npm:@types/react@18.3.1" />
-
 import * as React from 'npm:react@18.3.1'
-
 import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
+  Body, Button, Container, Head, Heading, Hr, Html, Img, Link, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
+import {
+  main, wrapper, headerStyle, logoStyle, brandName, contentStyle, h1Style, subtitleStyle,
+  textStyle, featureBox, featureTitle, featureItem, buttonStyle, dividerStyle,
+  footerStyle, footerSection, linkStyle, copyrightStyle, LOGO_URL,
+} from './_styles.ts'
 
 interface InviteEmailProps {
   siteName: string
@@ -20,60 +15,55 @@ interface InviteEmailProps {
   confirmationUrl: string
 }
 
-export const InviteEmail = ({
-  siteName,
-  siteUrl,
-  confirmationUrl,
-}: InviteEmailProps) => (
-  <Html lang="en" dir="ltr">
+export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailProps) => (
+  <Html lang="bn" dir="ltr">
     <Head />
-    <Preview>You've been invited to join {siteName}</Preview>
+    <Preview>{siteName}-এ আপনাকে আমন্ত্রণ জানানো হয়েছে</Preview>
     <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>You've been invited</Heading>
-        <Text style={text}>
-          You've been invited to join{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          . Click the button below to accept the invitation and create your
-          account.
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Accept Invitation
-        </Button>
-        <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
-        </Text>
+      <Container style={wrapper}>
+        <Section style={headerStyle}>
+          <Img src={LOGO_URL} width="48" height="48" alt={siteName} style={{ ...logoStyle, marginBottom: '8px' }} />
+          <Heading style={brandName}>{siteName}</Heading>
+        </Section>
+
+        <Section style={contentStyle}>
+          <Heading style={h1Style}>আপনাকে আমন্ত্রণ জানানো হয়েছে</Heading>
+          <Text style={subtitleStyle}>
+            <Link href={siteUrl} style={linkStyle}><strong>{siteName}</strong></Link>-এ যোগ দিতে আপনাকে আমন্ত্রণ জানানো হয়েছে।
+            নিচের বাটনে ক্লিক করে আমন্ত্রণ গ্রহণ করুন এবং আপনার অ্যাকাউন্ট তৈরি করুন।
+          </Text>
+
+          <Section style={featureBox}>
+            <Text style={featureTitle}>আপনার জন্য যা আছে:</Text>
+            <Text style={featureItem}>
+              &#x2714;&#xFE0E; নিরাপদ ও অথেন্টিক প্রোডাক্টস{'\n'}
+              &#x26A1;&#xFE0E; দ্রুত ডেলিভারি (১-২৪ ঘন্টা){'\n'}
+              &#x1F4B0;&#xFE0E; সেরা মূল্য গ্যারান্টি{'\n'}
+              &#x1F381;&#xFE0E; রেফারেল বোনাস ও পয়েন্ট সিস্টেম
+            </Text>
+          </Section>
+
+          <Button style={buttonStyle} href={confirmationUrl}>
+            আমন্ত্রণ গ্রহণ করুন
+          </Button>
+
+          <Hr style={dividerStyle} />
+          <Text style={footerStyle}>
+            যদি আপনি এই আমন্ত্রণ আশা না করে থাকেন, এই ইমেইলটি উপেক্ষা করুন।
+          </Text>
+        </Section>
+
+        <Section style={footerSection}>
+          <Text style={{ ...footerStyle, margin: '0' }}>
+            কোনো সাহায্যের প্রয়োজন হলে আমাদের সাপোর্ট টিমে যোগাযোগ করুন।
+          </Text>
+          <Text style={copyrightStyle}>
+            &copy; {new Date().getFullYear()} {siteName}. সর্বস্বত্ব সংরক্ষিত।
+          </Text>
+        </Section>
       </Container>
     </Body>
   </Html>
 )
 
 export default InviteEmail
-
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
