@@ -1,13 +1,20 @@
 /// <reference types="npm:@types/react@18.3.1" />
+
 import * as React from 'npm:react@18.3.1'
+
 import {
-  Body, Button, Container, Head, Heading, Hr, Html, Img, Link, Preview, Section, Text,
+  Body,
+  Button,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Img,
+  Link,
+  Preview,
+  Section,
+  Text,
 } from 'npm:@react-email/components@0.0.22'
-import {
-  main, wrapper, headerStyle, logoStyle, brandName, contentStyle, h1Style, subtitleStyle,
-  featureBox, featureTitle, buttonStyle, emailBadgeStyle, dividerStyle,
-  footerStyle, footerSection, copyrightStyle, LOGO_URL,
-} from './_styles.ts'
 
 interface SignupEmailProps {
   siteName: string
@@ -16,79 +23,34 @@ interface SignupEmailProps {
   confirmationUrl: string
 }
 
-const featureRow = {
-  fontSize: '13px',
-  color: '#4b5563',
-  lineHeight: '1.4',
-  margin: '0 0 8px',
-  paddingLeft: '8px',
-} as const;
-
-const bullet = {
-  display: 'inline-block' as const,
-  width: '18px',
-  height: '18px',
-  borderRadius: '4px',
-  backgroundColor: '#7c3aed',
-  color: '#ffffff',
-  fontSize: '11px',
-  fontWeight: '700' as const,
-  textAlign: 'center' as const,
-  lineHeight: '18px',
-  marginRight: '10px',
-  verticalAlign: 'middle' as const,
-} as const;
-
-export const SignupEmail = ({ siteName, siteUrl, recipient, confirmationUrl }: SignupEmailProps) => (
+export const SignupEmail = ({
+  siteName,
+  siteUrl,
+  recipient,
+  confirmationUrl,
+}: SignupEmailProps) => (
   <Html lang="bn" dir="ltr">
     <Head />
     <Preview>{siteName}-এ আপনার ইমেইল যাচাই করুন</Preview>
     <Body style={main}>
-      <Container style={wrapper}>
-        <Section style={headerStyle}>
-          <Img src={LOGO_URL} width="48" height="48" alt={siteName} style={{ ...logoStyle, marginBottom: '8px' }} />
-          <Heading style={brandName}>{siteName}</Heading>
+      <Container style={container}>
+        <Section style={header}>
+          <Img src={`${siteUrl}/logo.png`} width="140" height="44" alt={siteName} style={{ display: 'block', objectFit: 'contain' }} />
         </Section>
-
-        <Section style={contentStyle}>
-          <Heading style={h1Style}>স্বাগতম! ইমেইল যাচাই করুন</Heading>
-          <Text style={subtitleStyle}>
+        <Section style={content}>
+          <Heading style={h1}>স্বাগতম! ইমেইল যাচাই করুন 🎉</Heading>
+          <Text style={text}>
             <strong>{siteName}</strong>-এ সাইন আপ করার জন্য ধন্যবাদ! আপনার অ্যাকাউন্ট সক্রিয় করতে নিচের বাটনে ক্লিক করুন।
           </Text>
-          <Text style={emailBadgeStyle}>{recipient}</Text>
-
-          <Section style={featureBox}>
-            <Text style={featureTitle}>আপনার জন্য যা আছে:</Text>
-            <Text style={featureRow}>
-              <span style={bullet}>&#10003;</span> নিরাপদ ও অথেন্টিক প্রোডাক্টস
-            </Text>
-            <Text style={featureRow}>
-              <span style={bullet}>&#10003;</span> দ্রুত ডেলিভারি (১-২৪ ঘন্টা)
-            </Text>
-            <Text style={featureRow}>
-              <span style={bullet}>&#10003;</span> সেরা মূল্য গ্যারান্টি
-            </Text>
-            <Text style={{ ...featureRow, margin: '0' }}>
-              <span style={bullet}>&#10003;</span> রেফারেল বোনাস ও পয়েন্ট সিস্টেম
-            </Text>
-          </Section>
-
-          <Button style={buttonStyle} href={confirmationUrl}>
-            ইমেইল যাচাই করুন
+          <Text style={emailBadge}>{recipient}</Text>
+          <Button style={button} href={confirmationUrl}>
+            ✉️ ইমেইল যাচাই করুন
           </Button>
-
-          <Hr style={dividerStyle} />
-          <Text style={footerStyle}>
+          <Text style={footer}>
             যদি আপনি এই অ্যাকাউন্ট তৈরি না করে থাকেন, এই ইমেইলটি উপেক্ষা করুন।
           </Text>
-        </Section>
-
-        <Section style={footerSection}>
-          <Text style={{ ...footerStyle, margin: '0' }}>
-            কোনো সাহায্যের প্রয়োজন হলে আমাদের সাপোর্ট টিমে যোগাযোগ করুন।
-          </Text>
-          <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সর্বস্বত্ব সংরক্ষিত।
+          <Text style={footerLink}>
+            <Link href={siteUrl} style={link}>{siteUrl}</Link>
           </Text>
         </Section>
       </Container>
@@ -97,3 +59,15 @@ export const SignupEmail = ({ siteName, siteUrl, recipient, confirmationUrl }: S
 )
 
 export default SignupEmail
+
+const main = { backgroundColor: '#f5f5f7', fontFamily: "'Segoe UI', Arial, sans-serif" }
+const container = { maxWidth: '560px', margin: '32px auto', backgroundColor: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 24px rgba(100,60,200,0.10)' }
+const header = { background: '#ffffff', padding: '20px 28px', borderBottom: '3px solid hsl(258,78%,55%)' }
+const content = { padding: '28px 28px 20px' }
+const h1 = { fontSize: '20px', fontWeight: 'bold' as const, color: 'hsl(226,35%,12%)', margin: '0 0 14px' }
+const text = { fontSize: '14px', color: 'hsl(220,15%,40%)', lineHeight: '1.6', margin: '0 0 18px' }
+const emailBadge = { fontSize: '13px', color: 'hsl(258,78%,50%)', background: 'hsla(258,78%,55%,0.08)', border: '1px solid hsla(258,78%,55%,0.20)', borderRadius: '8px', padding: '8px 14px', margin: '0 0 22px', display: 'inline-block' }
+const button = { backgroundColor: 'hsl(258,78%,55%)', color: '#ffffff', fontSize: '15px', fontWeight: '700', borderRadius: '12px', padding: '13px 26px', textDecoration: 'none', display: 'inline-block' }
+const footer = { fontSize: '12px', color: '#999999', margin: '26px 0 4px' }
+const footerLink = { fontSize: '12px', margin: '0' }
+const link = { color: 'hsl(258,78%,55%)', textDecoration: 'none' }
