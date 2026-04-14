@@ -167,10 +167,6 @@ INSIDE THE CARD - CENTER:
 - The product icon has a very subtle soft shadow beneath it
 - Generous white space around the product icon — let it breathe
 
-${price ? `PRICE BADGE:
-- A small elegant rounded pill showing "৳${price}"
-- Soft gradient background (mint to lavender), white text
-- Positioned subtly below or beside the product icon` : ""}
 
 BOTTOM OF CARD:
 - A FULL-WIDTH horizontal gradient strip/bar at the very bottom of the card
@@ -220,10 +216,6 @@ INSIDE THE CARD - CENTER:
 - Soft subtle shadow beneath the product icon
 - Generous white space around — let it breathe
 
-${price ? `PRICE BADGE:
-- A small elegant rounded pill showing "৳${price}"
-- Soft pastel gradient background (indigo to teal), white text
-- Positioned subtly below the product icon` : ""}
 
 BOTTOM OF CARD:
 - A FULL-WIDTH horizontal gradient strip/bar at the very bottom of the card
@@ -271,7 +263,7 @@ CENTER (inside card):
 - Subtle soft colored glow halo behind the icon (rgba(160,120,220,0.1), 40px spread)
 - Clean empty space around the icon
 
-${price ? `PRICE: A clearly visible rounded pill below the icon — gradient background (gold to cyan), "৳${price}" in WHITE BOLD text, 14px font size` : ""}
+
 
 BOTTOM SECTION (inside card):
 - A FULL-WIDTH horizontal gradient strip/bar at the very bottom of the card
