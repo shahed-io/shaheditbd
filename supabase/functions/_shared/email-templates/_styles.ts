@@ -23,18 +23,25 @@ export const wrapper = {
 } as const;
 
 export const headerStyle = {
-  background: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)',
-  padding: '28px 32px',
+  background: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 50%, #c4b5fd 100%)',
+  padding: '32px 32px',
   textAlign: 'center' as const,
+  borderRadius: '16px 16px 0 0',
+} as const;
+
+export const logoCardStyle = {
+  display: 'inline-block' as const,
+  backgroundColor: 'rgba(255,255,255,0.95)',
+  borderRadius: '16px',
+  padding: '12px 28px',
+  boxShadow: '0 8px 32px rgba(124,58,237,0.15), 0 2px 8px rgba(255,255,255,0.3) inset',
+  border: '1px solid rgba(255,255,255,0.6)',
 } as const;
 
 export const logoStyle = {
   display: 'block' as const,
   margin: '0 auto',
   objectFit: 'contain' as const,
-  backgroundColor: '#ffffff',
-  borderRadius: '12px',
-  padding: '8px 16px',
 } as const;
 
 export const brandName = {
