@@ -31,11 +31,11 @@ export const headerStyle = {
 
 export const logoCardStyle = {
   display: 'inline-block' as const,
-  backgroundColor: 'rgba(255,255,255,0.95)',
-  borderRadius: '16px',
-  padding: '12px 28px',
-  boxShadow: '0 8px 32px rgba(124,58,237,0.15), 0 2px 8px rgba(255,255,255,0.3) inset',
-  border: '1px solid rgba(255,255,255,0.6)',
+  backgroundColor: 'rgba(255,255,255,0.18)',
+  borderRadius: '14px',
+  padding: '10px 22px',
+  boxShadow: '0 4px 24px rgba(124,58,237,0.12), 0 1px 4px rgba(255,255,255,0.2) inset',
+  border: '1px solid rgba(255,255,255,0.35)',
 } as const;
 
 export const logoStyle = {
