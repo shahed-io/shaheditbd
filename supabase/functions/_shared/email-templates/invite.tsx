@@ -60,16 +60,16 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
           <Section style={featureBox}>
             <Text style={featureTitle}>আপনার জন্য যা আছে:</Text>
             <Text style={featureRow}>
-              <span style={bullet}>&#10003;</span> নিরাপদ ও অথেন্টিক প্রোডাক্টস
+              <span style={bullet}>✓</span> নিরাপদ ও অথেন্টিক প্রোডাক্টস
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>&#10003;</span> দ্রুত ডেলিভারি (১-২৪ ঘন্টা)
+              <span style={bullet}>✓</span> দ্রুত ডেলিভারি (১-২৪ ঘন্টা)
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>&#10003;</span> সেরা মূল্য গ্যারান্টি
+              <span style={bullet}>✓</span> সেরা মূল্য গ্যারান্টি
             </Text>
             <Text style={{ ...featureRow, margin: '0' }}>
-              <span style={bullet}>&#10003;</span> রেফারেল বোনাস ও পয়েন্ট সিস্টেম
+              <span style={bullet}>✓</span> রেফারেল বোনাস ও পয়েন্ট সিস্টেম
             </Text>
           </Section>
 
