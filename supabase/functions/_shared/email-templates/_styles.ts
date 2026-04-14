@@ -3,7 +3,7 @@ const BRAND_PURPLE = '#7c3aed';
 const BRAND_PURPLE_LIGHT = '#ede9fe';
 const BRAND_PURPLE_BORDER = '#c4b5fd';
 const SITE_URL = 'https://shahedstore.com.bd';
-const LOGO_URL = 'https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/email-assets/logo-email.png';
+const LOGO_URL = 'https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/email-assets/logo-navbar.png';
 
 export { BRAND_PURPLE, BRAND_PURPLE_LIGHT, BRAND_PURPLE_BORDER, SITE_URL, LOGO_URL };
 
