@@ -21,8 +21,7 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
-          <Img src={LOGO_URL} width="48" height="48" alt={SITE_NAME} style={{ ...logoStyle, marginBottom: '8px' }} />
-          <Heading style={brandName}>{SITE_NAME}</Heading>
+          <Img src={LOGO_URL} width="180" height="50" alt={SITE_NAME} style={logoStyle} />
         </Section>
 
         <Section style={contentStyle}>
