@@ -3,7 +3,7 @@ const BRAND_PURPLE = '#7c3aed';
 const BRAND_PURPLE_LIGHT = '#ede9fe';
 const BRAND_PURPLE_BORDER = '#c4b5fd';
 const SITE_URL = 'https://shahedstore.com.bd';
-const LOGO_URL = `${SITE_URL}/logo.png`;
+const LOGO_URL = `${SITE_URL}/logo-email.png`;
 
 export { BRAND_PURPLE, BRAND_PURPLE_LIGHT, BRAND_PURPLE_BORDER, SITE_URL, LOGO_URL };
 
@@ -23,10 +23,10 @@ export const wrapper = {
 } as const;
 
 export const headerStyle = {
-  background: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 50%, #c4b5fd 100%)',
-  padding: '32px 32px',
+  backgroundColor: '#ffffff',
+  padding: '28px 32px',
   textAlign: 'center' as const,
-  borderRadius: '16px 16px 0 0',
+  borderBottom: '1px solid #f3f0ff',
 } as const;
 
 export const logoCardStyle = {
@@ -37,6 +37,7 @@ export const logoStyle = {
   display: 'block' as const,
   margin: '0 auto',
   objectFit: 'contain' as const,
+  maxWidth: '280px',
 } as const;
 
 export const brandName = {
