@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
@@ -10,8 +11,18 @@ import {
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
   Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Map, Bot, Code2, KeyRound, FileSearch, PackageSearch, Star, BarChart2,
-  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette
+  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette,
+  ShoppingCart as ShopIcon, CreditCard as CreditIcon, Clock, Eye
 } from 'lucide-react';
+
+interface AdminNotif {
+  id: string;
+  type: 'order' | 'payment' | 'ticket' | 'stock';
+  title: string;
+  message: string;
+  time: string;
+  link?: string;
+}
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
