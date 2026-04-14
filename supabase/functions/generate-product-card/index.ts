@@ -224,52 +224,53 @@ OVERALL AESTHETIC:
 Create a stunning, eye-catching square (1:1) product promotional card. This MUST look like a professionally designed social media ad — sharp, vibrant, attention-grabbing.
 
 BACKGROUND:
-- Vivid rich gradient: from deep electric indigo (#1e0a3c) to rich purple (#4a1a7a) to dark royal blue (#0c2461)
-- 3 large colorful luminous bokeh orbs behind the card for visual impact:
-  - Bright golden-amber orb (#fbbf24 at 25% opacity, 200px blur) — top-right area
-  - Vibrant electric cyan orb (#06b6d4 at 20% opacity, 180px blur) — bottom-left area
-  - Hot magenta/pink orb (#ec4899 at 15% opacity, 160px blur) — top-left area
-- These orbs should be VISIBLE and create a colorful, vibrant ambient glow — not too faint
+- Clean WHITE base background (#ffffff) — pure white, bright and clean
+- 3 large colorful luminous bokeh orbs placed BEHIND the card for visual depth:
+  - Soft golden-amber orb (#fbbf24 at 18% opacity, 200px blur) — top-right area
+  - Soft electric cyan orb (#06b6d4 at 15% opacity, 180px blur) — bottom-left area
+  - Soft lavender/purple orb (#a78bfa at 12% opacity, 160px blur) — top-left area
+- These orbs should be SUBTLE but visible — creating a soft colorful ambient glow on the white background
+- Overall feel: BRIGHT, LIGHT, AIRY — like Apple product page aesthetic
 
 MAIN CARD:
-- Large frosted dark glass card centered (74% of image), 24px rounded corners
-- Card background: rgba(15,10,40,0.75) with 30px backdrop blur — dark semi-transparent
-- Border: 1.5px solid rgba(255,255,255,0.20) — clearly visible white glass edge
-- Soft purple outer glow: 0 20px 60px rgba(100,50,200,0.3)
+- Large frosted WHITE glass card centered (74% of image), 24px rounded corners
+- Card background: rgba(255,255,255,0.70) with 30px backdrop blur — bright semi-transparent white
+- Border: 1.5px solid rgba(200,180,240,0.35) — subtle lavender/purple glass edge
+- Soft colored outer glow: 0 20px 60px rgba(160,120,220,0.15)
 - TOP ACCENT LINE: A bold 3px horizontal gradient line at the very top of the card — gradient from bright gold (#fbbf24) through hot pink (#ec4899) to electric cyan (#06b6d4). This line must be clearly visible.
 
 TOP ROW (inside card, 20px padding):
 - Left: "SHAHED STORE" in a rounded pill badge — background gradient gold-to-pink, WHITE BOLD text, 12px font size, clearly readable
-- Right: "${brand || name}" in a rounded pill badge — rgba(255,255,255,0.15) background, white text, subtle white border
+- Right: "${brand || name}" in a rounded pill badge — rgba(0,0,0,0.06) background, dark charcoal text (#374151), subtle border
 
 CENTER (inside card):
 - The product "${name}" displayed as a VERY LARGE clean square icon with rounded corners (like an app icon)
 - The icon should be the hero element — taking up significant space
-- Subtle white glow halo behind the icon (rgba(255,255,255,0.08), 40px spread)
+- Subtle soft colored glow halo behind the icon (rgba(160,120,220,0.1), 40px spread)
 - Clean empty space around the icon
 
 ${price ? `PRICE: A clearly visible rounded pill below the icon — gradient background (gold to cyan), "৳${price}" in WHITE BOLD text, 14px font size` : ""}
 
 BOTTOM SECTION (inside card):
-- A clearly visible thin separator line (rgba(255,255,255,0.15)) — 1px solid
-- Below the line, TWO lines of contact info in BRIGHT WHITE text (not faded gray):
-  - 🌐 "www.shahedstore.com.bd" — white color (#ffffff), 13px font, clearly legible
-  - 📞 "+880 1840-099853" — white color (#ffffff), 13px font, clearly legible
-- The website and phone number MUST be sharp, crisp, and easy to read against the dark background
-- Use SOLID WHITE (#ffffff) text, NOT transparent/faded text
+- A clearly visible thin separator line (rgba(0,0,0,0.08)) — 1px solid
+- Below the line, TWO lines of contact info in DARK CHARCOAL text:
+  - 🌐 "www.shahedstore.com.bd" — dark gray color (#374151), 13px font, clearly legible
+  - 📞 "+880 1840-099853" — dark gray color (#374151), 13px font, clearly legible
+- The website and phone number MUST be sharp, crisp, and easy to read against the white/light background
 
 CRITICAL TYPOGRAPHY RULES:
 - ALL text must be CRISP, SHARP, and HIGHLY READABLE
-- Website URL and phone number must use PURE WHITE (#ffffff) — no transparency, no fading
-- "SHAHED STORE" badge text must be BOLD and clear
+- Website URL and phone number must use DARK CHARCOAL (#374151) for excellent contrast on white
+- "SHAHED STORE" badge text must be BOLD and clear (white text on gradient badge)
 - Font style: clean sans-serif (like Inter, SF Pro, or Helvetica)
 - Text must have enough contrast to be instantly readable at any size
 
 OVERALL STYLE:
-- Vibrant, colorful, eye-catching — this should STOP someone while scrolling social media
-- The colorful bokeh orbs behind the dark glass card create depth and visual interest
-- Premium but BOLD — not subtle or muted
-- Think: high-end gaming brand launch graphics or premium tech product reveal
+- BRIGHT WHITE background with soft colorful bokeh — elegant, premium, modern
+- White frosted glass card on white background creates a beautiful layered depth effect
+- Premium but CLEAN — like Apple or Samsung product launch graphics
+- The colorful bokeh orbs add visual interest without making it dark
+- Think: luxury brand product showcase, bright and inviting
 - Square format exactly. Professional graphic design quality.
 `.trim(),
   },
