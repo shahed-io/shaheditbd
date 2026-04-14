@@ -58,7 +58,7 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
           </Text>
 
           <Section style={featureBox}>
-            <Text style={featureTitle}>আপনার জন্য আছে:</Text>
+            <Text style={featureTitle}>কি কি পাবেন:</Text>
             <Text style={featureRow}>
               <span style={bullet}>✓</span> নিরাপদ ও আসল item
             </Text>

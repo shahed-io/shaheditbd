@@ -59,7 +59,7 @@ export const SignupEmail = ({ siteName, recipient, confirmationUrl }: SignupEmai
           <Text style={emailBadgeStyle}>{recipient}</Text>
 
           <Section style={featureBox}>
-            <Text style={featureTitle}>আপনার জন্য আছে:</Text>
+            <Text style={featureTitle}>কি কি পাবেন:</Text>
             <Text style={featureRow}>
               <span style={bullet}>✓</span> নিরাপদ ও আসল item
             </Text>
