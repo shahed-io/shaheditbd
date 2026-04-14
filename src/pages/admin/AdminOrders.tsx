@@ -1050,6 +1050,10 @@ const AdminOrders = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/20">
+                  <th className="px-3 py-3 w-8">
+                    <input type="checkbox" checked={selectedIds.size === filtered.length && filtered.length > 0}
+                      onChange={toggleSelectAll} className="w-3.5 h-3.5 accent-primary rounded" />
+                  </th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Order #</th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">কাস্টমার</th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden lg:table-cell">প্রোডাক্ট</th>
