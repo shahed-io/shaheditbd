@@ -5,7 +5,7 @@ import type { TemplateEntry } from './registry.ts'
 import {
   main, wrapper, headerStyle, logoCardStyle, logoStyle, contentStyle, h1Style, subtitleStyle,
   featureBox, featureTitle, buttonStyle, dividerStyle, footerStyle, footerSection,
-  copyrightStyle, LOGO_URL,
+  copyrightStyle, LOGO_URL, brandNameRow, brandNameShahed, brandNameStore, brandTagline,
 } from '../email-templates/_styles.ts'
 
 interface OrderConfirmationProps {

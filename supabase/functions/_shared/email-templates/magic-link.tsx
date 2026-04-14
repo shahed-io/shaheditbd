@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import {
   main, wrapper, headerStyle, logoCardStyle, logoStyle, contentStyle, h1Style, subtitleStyle,
-  buttonStyle, dividerStyle, footerStyle, footerSection, linkStyle, copyrightStyle, LOGO_URL, SITE_URL,
+  buttonStyle, dividerStyle, footerStyle, footerSection, linkStyle, copyrightStyle, LOGO_URL, brandNameRow, brandNameShahed, brandNameStore, brandTagline, SITE_URL,
 } from './_styles.ts'
 
 interface MagicLinkEmailProps {

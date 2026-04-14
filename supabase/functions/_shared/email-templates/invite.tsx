@@ -6,7 +6,7 @@ import {
 import {
   main, wrapper, headerStyle, logoCardStyle, logoStyle, contentStyle, h1Style, subtitleStyle,
   featureBox, featureTitle, buttonStyle, dividerStyle,
-  footerStyle, footerSection, linkStyle, copyrightStyle, LOGO_URL,
+  footerStyle, footerSection, linkStyle, copyrightStyle, LOGO_URL, brandNameRow, brandNameShahed, brandNameStore, brandTagline,
 } from './_styles.ts'
 
 interface InviteEmailProps {

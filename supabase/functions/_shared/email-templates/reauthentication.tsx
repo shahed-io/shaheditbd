@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import {
   main, wrapper, headerStyle, logoCardStyle, logoStyle, contentStyle, h1Style, subtitleStyle,
-  codeBlockStyle, dividerStyle, footerStyle, footerSection, copyrightStyle, LOGO_URL,
+  codeBlockStyle, dividerStyle, footerStyle, footerSection, copyrightStyle, LOGO_URL, brandNameRow, brandNameShahed, brandNameStore, brandTagline,
 } from './_styles.ts'
 
 interface ReauthenticationEmailProps {
