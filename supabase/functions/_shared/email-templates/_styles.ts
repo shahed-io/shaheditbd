@@ -31,6 +31,12 @@ export const headerStyle = {
 
 export const logoCardStyle = {
   display: 'inline-block' as const,
+  background: 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(237,233,254,0.9) 40%, rgba(196,181,253,0.7) 100%)',
+  borderRadius: '18px',
+  padding: '14px 18px',
+  boxShadow: '0 4px 20px rgba(124,58,237,0.15), 0 1px 6px rgba(212,175,55,0.12), inset 0 1px 0 rgba(255,255,255,0.9)',
+  border: '2px solid transparent',
+  borderImage: 'linear-gradient(135deg, #d4af37, #ff6b35, #7c3aed, #3b82f6) 1',
 } as const;
 
 export const logoStyle = {
@@ -39,12 +45,38 @@ export const logoStyle = {
   objectFit: 'contain' as const,
 } as const;
 
-export const brandName = {
-  fontSize: '22px',
-  fontWeight: '700' as const,
-  color: '#ffffff',
+export const brandNameRow = {
+  textAlign: 'center' as const,
+  margin: '12px 0 0',
+} as const;
+
+export const brandNameShahed = {
+  fontSize: '20px',
+  fontWeight: '800' as const,
+  color: '#d4af37',
+  letterSpacing: '-0.02em',
   margin: '0',
-  letterSpacing: '0.5px',
+  display: 'inline' as const,
+} as const;
+
+export const brandNameStore = {
+  fontSize: '20px',
+  fontWeight: '800' as const,
+  color: '#ffffff',
+  letterSpacing: '-0.02em',
+  margin: '0',
+  display: 'inline' as const,
+  marginLeft: '6px',
+} as const;
+
+export const brandTagline = {
+  fontSize: '9px',
+  fontWeight: '600' as const,
+  color: 'rgba(255,255,255,0.7)',
+  letterSpacing: '0.14em',
+  textTransform: 'uppercase' as const,
+  margin: '4px 0 0',
+  textAlign: 'center' as const,
 } as const;
 
 export const contentStyle = {
