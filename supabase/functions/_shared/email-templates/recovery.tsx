@@ -26,7 +26,7 @@ export const RecoveryEmail = ({
       <Container style={wrapper}>
         <Section style={headerStyle}>
           <div style={logoCardStyle}>
-            <Img src={LOGO_URL} width="160" height="44" alt={siteName} style={logoStyle} />
+            <Img src={LOGO_URL} width="240" height="65" alt={siteName} style={logoStyle} />
           </div>
         </Section>
 
