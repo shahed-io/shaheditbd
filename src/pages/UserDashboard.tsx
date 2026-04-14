@@ -760,6 +760,9 @@ const UserDashboard = () => {
               </button>
             ))}
             <div className="h-px my-2 bg-border/50" />
+            <button onClick={() => navigate('/free-tools')} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 hover:bg-white/50 text-muted-foreground" style={{ border: '1px solid transparent' }}>
+              <Zap size={16} /> Free Tools
+            </button>
             {isAdmin && (
               <button onClick={() => navigate('/ceo')} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', color: 'white', boxShadow: '0 2px 10px hsla(243,75%,59%,0.35)', border: '1px solid transparent' }}>
                 <ShieldCheck size={16} /> Admin Panel
