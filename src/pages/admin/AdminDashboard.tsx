@@ -71,7 +71,7 @@ const AdminDashboard = () => {
       { data: products },
       { data: recentOrderData },
     ] = await Promise.all([
-      supabase.from('orders').select('id, total, status, payment_status, created_at, customer_name, customer_email, order_number'),
+      supabase.from('orders').select('id, total, status, payment_status, payment_method, created_at, customer_name, customer_email, order_number'),
       supabase.from('profiles').select('id', { count: 'exact', head: false }),
       supabase.from('payment_proofs').select('id, status, submitted_at, order_id'),
       supabase.from('support_tickets').select('id, status, created_at, subject, ticket_number').order('created_at', { ascending: false }).limit(5),
