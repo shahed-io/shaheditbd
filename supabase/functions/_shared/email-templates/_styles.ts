@@ -31,11 +31,6 @@ export const headerStyle = {
 
 export const logoCardStyle = {
   display: 'inline-block' as const,
-  backgroundColor: 'rgba(255,255,255,0.18)',
-  borderRadius: '14px',
-  padding: '10px 22px',
-  boxShadow: '0 4px 24px rgba(124,58,237,0.12), 0 1px 4px rgba(255,255,255,0.2) inset',
-  border: '1px solid rgba(255,255,255,0.35)',
 } as const;
 
 export const logoStyle = {
