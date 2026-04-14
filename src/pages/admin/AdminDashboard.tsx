@@ -4,11 +4,12 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   ShoppingCart, Package, Users, TrendingUp, DollarSign, Clock,
   CheckCircle, XCircle, ArrowUpRight, ArrowDownRight, Bell,
-  AlertTriangle, Ticket, CreditCard, RefreshCw
+  AlertTriangle, Ticket, CreditCard, RefreshCw, Activity, Percent
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, LineChart, Line, AreaChart, Area
+  ResponsiveContainer, LineChart, Line, AreaChart, Area,
+  PieChart, Pie, Cell
 } from 'recharts';
 
 interface Stats {
@@ -48,6 +49,8 @@ const AdminDashboard = () => {
   const [dailyChart, setDailyChart] = useState<any[]>([]);
   const [bestSellers, setBestSellers] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [paymentBreakdown, setPaymentBreakdown] = useState<any[]>([]);
+  const [recentCustomers, setRecentCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [chartRange, setChartRange] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [lastRefresh, setLastRefresh] = useState(new Date());
