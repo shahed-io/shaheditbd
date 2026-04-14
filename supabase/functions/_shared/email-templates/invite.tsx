@@ -45,8 +45,7 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
-          <Img src={LOGO_URL} width="48" height="48" alt={siteName} style={{ ...logoStyle, marginBottom: '8px' }} />
-          <Heading style={brandName}>{siteName}</Heading>
+          <Img src={LOGO_URL} width="180" height="50" alt={siteName} style={logoStyle} />
         </Section>
 
         <Section style={contentStyle}>
