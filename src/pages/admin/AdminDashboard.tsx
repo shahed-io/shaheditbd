@@ -126,7 +126,35 @@ const AdminDashboard = () => {
     const maxSales = sortedProducts[0]?.total_sales || 1;
     setBestSellers(sortedProducts.map(p => ({ ...p, pct: Math.round(((p.total_sales || 0) / maxSales) * 100) })));
 
-    // --- Notifications ---
+    // --- Payment Method Breakdown ---
+    const pmCounts: Record<string, number> = {};
+    const PM_LABELS: Record<string, string> = { bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'Upay', bkash_merchant: 'bKash Merchant' };
+    const PM_COLORS = ['hsl(var(--primary))', '#e91e8a', '#8b5cf6', '#f59e0b', '#06b6d4', '#10b981'];
+    orders.filter(o => o.status !== 'cancelled').forEach(o => {
+      const pm = o.payment_method || 'other';
+      pmCounts[pm] = (pmCounts[pm] || 0) + 1;
+    });
+    setPaymentBreakdown(Object.entries(pmCounts).map(([key, count], i) => ({
+      name: PM_LABELS[key] || key,
+      value: count,
+      color: PM_COLORS[i % PM_COLORS.length],
+    })));
+
+    // --- Recent Customers ---
+    const uniqueCustomers = new Map<string, any>();
+    [...orders].sort((a, b) => b.created_at.localeCompare(a.created_at)).forEach(o => {
+      if (!uniqueCustomers.has(o.customer_email)) {
+        uniqueCustomers.set(o.customer_email, {
+          name: o.customer_name,
+          email: o.customer_email,
+          lastOrder: o.created_at,
+          totalSpent: orders.filter(x => x.customer_email === o.customer_email && x.status !== 'cancelled').reduce((s, x) => s + Number(x.total), 0),
+          orderCount: orders.filter(x => x.customer_email === o.customer_email).length,
+        });
+      }
+    });
+    setRecentCustomers(Array.from(uniqueCustomers.values()).slice(0, 5));
+
     const notifs: Notification[] = [];
     const newOrders = orders.filter(o => o.created_at >= new Date(Date.now() - 24 * 3600 * 1000).toISOString());
     if (newOrders.length > 0) {
