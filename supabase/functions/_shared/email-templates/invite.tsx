@@ -39,9 +39,9 @@ const bullet = {
 } as const;
 
 export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailProps) => (
-  <Html lang="bn" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>{siteName}-এ আপনাকে আমন্ত্রণ জানানো হয়েছে</Preview>
+    <Preview>You're invited to join {siteName}</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -51,44 +51,44 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>আপনাকে আমন্ত্রণ জানানো হয়েছে</Heading>
+          <Heading style={h1Style}>You're invited</Heading>
           <Text style={subtitleStyle}>
-            <Link href={siteUrl} style={linkStyle}><strong>{siteName}</strong></Link>-এ যোগ দিতে আপনাকে আমন্ত্রণ জানানো হয়েছে।
-            নিচের বাটনে ক্লিক করে আমন্ত্রণ গ্রহণ করুন এবং আপনার অ্যাকাউন্ট তৈরি করুন।
+            You have been invited to join <Link href={siteUrl} style={linkStyle}><strong>{siteName}</strong></Link>.
+            Click the button below to accept the invite and create your account.
           </Text>
 
           <Section style={featureBox}>
-            <Text style={featureTitle}>আপনার জন্য যা আছে:</Text>
+            <Text style={featureTitle}>What you get</Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> নিরাপদ ও অথেন্টিক প্রোডাক্টস
+              <span style={bullet}>✓</span> Safe and authentic items
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> দ্রুত ডেলিভারি (১-২৪ ঘন্টা)
+              <span style={bullet}>✓</span> Fast delivery in 1-24 hours
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> সেরা মূল্য গ্যারান্টি
+              <span style={bullet}>✓</span> Good prices
             </Text>
             <Text style={{ ...featureRow, margin: '0' }}>
-              <span style={bullet}>✓</span> রেফারেল বোনাস ও পয়েন্ট সিস্টেম
+              <span style={bullet}>✓</span> Bonus and points
             </Text>
           </Section>
 
           <Button style={buttonStyle} href={confirmationUrl}>
-            আমন্ত্রণ গ্রহণ করুন
+            Accept invite
           </Button>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            যদি আপনি এই আমন্ত্রণ আশা না করে থাকেন, এই ইমেইলটি উপেক্ষা করুন।
+            If you did not expect this email, you can ignore it.
           </Text>
         </Section>
 
         <Section style={footerSection}>
           <Text style={{ ...footerStyle, margin: '0' }}>
-            কোনো সাহায্যের প্রয়োজন হলে আমাদের সাপোর্ট টিমে যোগাযোগ করুন।
+            Need help? Contact our support team.
           </Text>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সর্বস্বত্ব সংরক্ষিত।
+            &copy; {new Date().getFullYear()} {siteName}. All rights reserved.
           </Text>
         </Section>
       </Container>
