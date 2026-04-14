@@ -32,6 +32,9 @@ export const logoStyle = {
   display: 'block' as const,
   margin: '0 auto',
   objectFit: 'contain' as const,
+  backgroundColor: '#ffffff',
+  borderRadius: '12px',
+  padding: '8px 16px',
 } as const;
 
 export const brandName = {
