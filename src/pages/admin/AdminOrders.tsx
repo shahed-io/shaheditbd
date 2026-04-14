@@ -716,6 +716,9 @@ const AdminOrders = () => {
   const [copiedTrx, setCopiedTrx] = useState<string | null>(null);
   const [adminWhatsapp, setAdminWhatsapp] = useState('');
   const [newOrderIds, setNewOrderIds] = useState<Set<string>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState('');
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   // Apply query param filters on mount
   useEffect(() => {
@@ -871,6 +874,40 @@ const AdminOrders = () => {
     setDateFrom(''); setDateTo('');
   };
   const hasActiveFilters = search || statusFilter !== 'all' || paymentFilter !== 'all' || dateFrom || dateTo;
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map(o => o.id)));
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const executeBulkAction = async () => {
+    if (!bulkAction || selectedIds.size === 0) return;
+    if (!confirm(`${selectedIds.size}টি অর্ডারের স্ট্যাটাস "${bulkAction}" এ পরিবর্তন করবেন?`)) return;
+    setBulkLoading(true);
+    try {
+      const { error } = await supabase.from('orders').update({ status: bulkAction as any }).in('id', Array.from(selectedIds));
+      if (error) throw error;
+      toast.success(`✅ ${selectedIds.size}টি অর্ডার আপডেট হয়েছে!`);
+      setSelectedIds(new Set());
+      setBulkAction('');
+      fetchOrders();
+    } catch (err: any) {
+      toast.error(handleDbError(err));
+    } finally {
+      setBulkLoading(false);
+    }
+  };
 
   // Status tabs shown
   const tabStatuses = ['all', 'pending', 'processing', 'delivered', 'completed', 'cancelled', 'refunded', 'failed'];
