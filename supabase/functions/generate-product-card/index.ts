@@ -28,10 +28,13 @@ TOP OF CARD:
 - Top-right corner inside the card: brand name "${brand || name}" in clean white text with a small logo/icon pill
 
 BOTTOM SECTION:
-- At the very bottom of the card (inside the glowing border, in a frosted glass strip):
-  - Left side: globe icon + "www.shahedstore.com.bd" in white text
-  - Right side: phone icon + "+880 1840-099853" in white text
-  - This bottom strip should be slightly lighter/frosted compared to the card body
+- At the very bottom of the card: a FULL-WIDTH horizontal gradient strip/bar
+- The gradient bar flows from soft sky blue (#a0c4f0, #7dd3fc) on the LEFT to soft pastel pink (#f9a8d4, #fbb6ce) on the RIGHT
+- The bar has rounded bottom corners matching the card, ~40px height
+- Inside the gradient bar, horizontally centered:
+  - Left: globe icon + "www.shahedstore.com.bd" in dark charcoal (#1f2937) bold text
+  - Right: phone icon + "+880 1840-099853" in dark charcoal (#1f2937) bold text
+- The gradient bar must be clearly visible, smooth, and professional
 
 TOP-LEFT CORNER (outside or at edge of card):
 - "SHAHED STORE" text in white, bold, clean font
@@ -66,10 +69,10 @@ INSIDE THE CARD - CENTER:
 - Subtle drop shadow on the product icon
 
 BOTTOM OF CARD:
-- At the bottom inside the frosted card: 
-  - globe icon + "www.shahedstore.com.bd"
-  - phone icon + "+880 1840-099853"
-  - Both in dark/charcoal text, clean readable font
+- A FULL-WIDTH horizontal gradient strip/bar at the very bottom of the card
+- Gradient: soft sky blue (#a0c4f0, #7dd3fc) LEFT → soft pastel pink (#f9a8d4, #fbb6ce) RIGHT
+- Rounded bottom corners matching the card, ~40px height
+- Inside: globe icon + "www.shahedstore.com.bd" (left) and phone icon + "+880 1840-099853" (right) in dark charcoal (#1f2937) bold text
 
 OVERALL: Dreamy pastel glassmorphism, soft colors, elegant frosted glass, professional social media promotional style. Square format exactly.
 `.trim(),
@@ -102,10 +105,10 @@ INSIDE THE CARD - CENTER:
 - The product image should be the focal point
 
 BOTTOM OF CARD:
-- At the bottom, separated by a subtle line:
-  - Left: globe icon + "www.shahedstore.com.bd" in dark gray text
-  - Right: phone icon + "+880 1840-099853" in dark gray text
-  - Clean, professional typography
+- A FULL-WIDTH horizontal gradient strip/bar at the very bottom of the card
+- Gradient: soft sky blue (#a0c4f0, #7dd3fc) LEFT → soft pastel pink (#f9a8d4, #fbb6ce) RIGHT
+- Rounded bottom corners matching the card, ~40px height
+- Inside: globe icon + "www.shahedstore.com.bd" (left) and phone icon + "+880 1840-099853" (right) in dark charcoal (#1f2937) bold text
 
 OVERALL: Clean, minimal, professional look with soft light backgrounds and bokeh orbs. White card aesthetic. Corporate/premium promotional style. Square format exactly.
 `.trim(),
@@ -149,11 +152,10 @@ ${price ? `PRICE BADGE:
 - Positioned subtly below or beside the product icon` : ""}
 
 BOTTOM OF CARD:
-- A thin subtle divider line (rgba(0,0,0,0.06))
-- Below the line, clean minimal info:
-  - Left: globe icon + "www.shahedstore.com.bd" in soft gray text (#6b7280)
-  - Right: phone icon + "+880 1840-099853" in soft gray text (#6b7280)
-- Small, professional, not distracting
+- A FULL-WIDTH horizontal gradient strip/bar at the very bottom of the card
+- Gradient: soft sky blue (#a0c4f0, #7dd3fc) LEFT → soft pastel pink (#f9a8d4, #fbb6ce) RIGHT
+- Rounded bottom corners matching the card, ~40px height
+- Inside: globe icon + "www.shahedstore.com.bd" (left) and phone icon + "+880 1840-099853" (right) in dark charcoal (#1f2937) bold text
 
 OVERALL AESTHETIC:
 - Light, bright, airy, premium — like a luxury skincare or Apple product ad
@@ -203,11 +205,10 @@ ${price ? `PRICE BADGE:
 - Positioned subtly below the product icon` : ""}
 
 BOTTOM OF CARD:
-- A thin subtle divider line (rgba(0,0,0,0.05))
-- Below the line:
-  - Left: globe icon + "www.shahedstore.com.bd" in soft gray text (#9ca3af)
-  - Right: phone icon + "+880 1840-099853" in soft gray text (#9ca3af)
-- Small, professional, minimal
+- A FULL-WIDTH horizontal gradient strip/bar at the very bottom of the card
+- Gradient: soft sky blue (#a0c4f0, #7dd3fc) LEFT → soft pastel pink (#f9a8d4, #fbb6ce) RIGHT
+- Rounded bottom corners matching the card, ~40px height
+- Inside: globe icon + "www.shahedstore.com.bd" (left) and phone icon + "+880 1840-099853" (right) in dark charcoal (#1f2937) bold text
 
 OVERALL AESTHETIC:
 - LIGHT, bright, airy premium glassmorphism
@@ -252,11 +253,13 @@ CENTER (inside card):
 ${price ? `PRICE: A clearly visible rounded pill below the icon — gradient background (gold to cyan), "৳${price}" in WHITE BOLD text, 14px font size` : ""}
 
 BOTTOM SECTION (inside card):
-- A clearly visible thin separator line (rgba(0,0,0,0.08)) — 1px solid
-- Below the line, TWO lines of contact info in DARK CHARCOAL text:
-  - 🌐 "www.shahedstore.com.bd" — dark gray color (#374151), 13px font, clearly legible
-  - 📞 "+880 1840-099853" — dark gray color (#374151), 13px font, clearly legible
-- The website and phone number MUST be sharp, crisp, and easy to read against the white/light background
+- A FULL-WIDTH horizontal gradient strip/bar at the very bottom of the card
+- Gradient: soft sky blue (#a0c4f0, #7dd3fc) on the LEFT → soft pastel pink (#f9a8d4, #fbb6ce) on the RIGHT
+- The bar has rounded bottom corners matching the card, ~40px height
+- Inside the gradient bar, horizontally spaced:
+  - Left: 🌐 globe icon + "www.shahedstore.com.bd" in dark charcoal (#1f2937) BOLD text
+  - Right: 📞 phone icon + "+880 1840-099853" in dark charcoal (#1f2937) BOLD text
+- The gradient bar MUST be clearly visible, smooth, and professional — NOT a thin line
 
 CRITICAL TYPOGRAPHY RULES:
 - ALL text must be CRISP, SHARP, and HIGHLY READABLE
