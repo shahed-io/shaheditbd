@@ -39,9 +39,9 @@ const bullet = {
 } as const;
 
 export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailProps) => (
-  <Html lang="bn" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>{siteName}-এ join করার ডাক</Preview>
+    <Preview>You're invited to join {siteName}</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -51,44 +51,44 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>Join করার ডাক</Heading>
+          <Heading style={h1Style}>You're invited</Heading>
           <Text style={subtitleStyle}>
-            <Link href={siteUrl} style={linkStyle}><strong>{siteName}</strong></Link>-এ join করার জন্য এই email পাঠানো হয়েছে.
-            নিচের button-এ চাপ দিয়ে account খুলুন.
+            You have been invited to join <Link href={siteUrl} style={linkStyle}><strong>{siteName}</strong></Link>.
+            Click the button below to accept the invite and create your account.
           </Text>
 
           <Section style={featureBox}>
-            <Text style={featureTitle}>কি কি পাবেন:</Text>
+            <Text style={featureTitle}>What you get</Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> নিরাপদ ও আসল item
+              <span style={bullet}>✓</span> Safe and authentic items
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> 1-24 ঘন্টায় ডেলিভারি
+              <span style={bullet}>✓</span> Fast delivery in 1-24 hours
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> ভাল দাম
+              <span style={bullet}>✓</span> Good prices
             </Text>
             <Text style={{ ...featureRow, margin: '0' }}>
-              <span style={bullet}>✓</span> বোনাস ও point
+              <span style={bullet}>✓</span> Bonus and points
             </Text>
           </Section>
 
           <Button style={buttonStyle} href={confirmationUrl}>
-            Join করুন
+            Accept invite
           </Button>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            আপনি যদি এই email আশা না করেন, তা হলে ignore করুন.
+            If you did not expect this email, you can ignore it.
           </Text>
         </Section>
 
         <Section style={footerSection}>
           <Text style={{ ...footerStyle, margin: '0' }}>
-            সাহায্য লাগলে support team-এ জানাবেন.
+            Need help? Contact our support team.
           </Text>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সব অধিকার রাখা আছে.
+            &copy; {new Date().getFullYear()} {siteName}. All rights reserved.
           </Text>
         </Section>
       </Container>

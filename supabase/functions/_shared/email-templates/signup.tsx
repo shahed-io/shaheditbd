@@ -40,9 +40,9 @@ const bullet = {
 } as const;
 
 export const SignupEmail = ({ siteName, recipient, confirmationUrl }: SignupEmailProps) => (
-  <Html lang="bn" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>{siteName}-এ email confirm করুন</Preview>
+    <Preview>Confirm your email for {siteName}</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -52,44 +52,44 @@ export const SignupEmail = ({ siteName, recipient, confirmationUrl }: SignupEmai
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>Email confirm করুন</Heading>
+          <Heading style={h1Style}>Confirm your email</Heading>
           <Text style={subtitleStyle}>
-            <strong>{siteName}</strong>-এ join করার জন্য ধন্যবাদ. আপনার account চালু করতে নিচের button-এ চাপ দিন.
+            Thanks for joining <strong>{siteName}</strong>. Click the button below to activate your account.
           </Text>
           <Text style={emailBadgeStyle}>{recipient}</Text>
 
           <Section style={featureBox}>
-            <Text style={featureTitle}>কি কি পাবেন:</Text>
+            <Text style={featureTitle}>What you get</Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> নিরাপদ ও আসল item
+              <span style={bullet}>✓</span> Safe and authentic items
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> 1-24 ঘন্টায় ডেলিভারি
+              <span style={bullet}>✓</span> Fast delivery in 1-24 hours
             </Text>
             <Text style={featureRow}>
-              <span style={bullet}>✓</span> ভাল দাম
+              <span style={bullet}>✓</span> Good prices
             </Text>
             <Text style={{ ...featureRow, margin: '0' }}>
-              <span style={bullet}>✓</span> বোনাস ও point
+              <span style={bullet}>✓</span> Bonus and points
             </Text>
           </Section>
 
           <Button style={buttonStyle} href={confirmationUrl}>
-            Email confirm করুন
+            Confirm email
           </Button>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            আপনি যদি account না খুলে থাকেন, এই email ignore করুন.
+            If you did not create this account, you can ignore this email.
           </Text>
         </Section>
 
         <Section style={footerSection}>
           <Text style={{ ...footerStyle, margin: '0' }}>
-            সাহায্য লাগলে support team-এ জানাবেন.
+            Need help? Contact our support team.
           </Text>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সব অধিকার রাখা আছে.
+            &copy; {new Date().getFullYear()} {siteName}. All rights reserved.
           </Text>
         </Section>
       </Container>

@@ -19,9 +19,9 @@ export const RecoveryEmail = ({
   siteUrl = 'https://shahedstore.com.bd',
   confirmationUrl,
 }: RecoveryEmailProps) => (
-  <Html lang="bn" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>{siteName} - Password reset</Preview>
+    <Preview>Reset your password for {siteName}</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -31,19 +31,19 @@ export const RecoveryEmail = ({
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>Password reset</Heading>
+          <Heading style={h1Style}>Reset your password</Heading>
           <Text style={subtitleStyle}>
-            আপনার <strong>{siteName}</strong> account-এর Password বদল করার অনুরোধ এসেছে.
-            নিচের button-এ চাপ দিয়ে নতুন Password দিন.
+            We received a request to reset the password for your <strong>{siteName}</strong> account.
+            Click the button below to set a new password.
           </Text>
 
           <Button style={buttonStyle} href={confirmationUrl}>
-            নতুন Password দিন
+            Set new password
           </Button>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            আপনি যদি এই অনুরোধ না করে থাকেন, email ignore করুন.
+            If you did not request this, you can ignore this email.
           </Text>
         </Section>
 
@@ -52,7 +52,7 @@ export const RecoveryEmail = ({
             <Link href={siteUrl} style={linkStyle}>{siteUrl}</Link>
           </Text>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সব অধিকার রাখা আছে.
+            &copy; {new Date().getFullYear()} {siteName}. All rights reserved.
           </Text>
         </Section>
       </Container>

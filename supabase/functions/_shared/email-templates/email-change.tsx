@@ -17,9 +17,9 @@ interface EmailChangeEmailProps {
 }
 
 export const EmailChangeEmail = ({ siteName, email, newEmail, confirmationUrl }: EmailChangeEmailProps) => (
-  <Html lang="bn" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>{siteName} - Email বদল confirm করুন</Preview>
+    <Preview>Confirm your email change for {siteName}</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -29,22 +29,22 @@ export const EmailChangeEmail = ({ siteName, email, newEmail, confirmationUrl }:
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>Email বদল confirm করুন</Heading>
+          <Heading style={h1Style}>Confirm your email change</Heading>
           <Text style={subtitleStyle}>
-            আপনার {siteName} account-এ email বদল করার অনুরোধ এসেছে.
+            We received a request to change the email on your {siteName} account.
           </Text>
           <Text style={textStyle}>
-            <strong>এখনকার email:</strong> {email}{'\n'}
-            <strong>নতুন email:</strong> {newEmail}
+            <strong>Current email:</strong> {email}{'\n'}
+            <strong>New email:</strong> {newEmail}
           </Text>
 
           <Button style={buttonStyle} href={confirmationUrl}>
-            Email বদল confirm করুন
+            Confirm email change
           </Button>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            আপনি যদি এই অনুরোধ না করে থাকেন, account safe রাখুন.
+            If you did not request this change, please secure your account.
           </Text>
         </Section>
 
@@ -53,7 +53,7 @@ export const EmailChangeEmail = ({ siteName, email, newEmail, confirmationUrl }:
             <Link href={SITE_URL} style={linkStyle}>{SITE_URL}</Link>
           </Text>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {siteName}. সব অধিকার রাখা আছে.
+            &copy; {new Date().getFullYear()} {siteName}. All rights reserved.
           </Text>
         </Section>
       </Container>

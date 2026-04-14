@@ -15,9 +15,9 @@ interface ReauthenticationEmailProps {
 const SITE_NAME = 'Shahed Store'
 
 export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
-  <Html lang="bn" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>আপনার code</Preview>
+    <Preview>Your verification code</Preview>
     <Body style={main}>
       <Container style={wrapper}>
         <Section style={headerStyle}>
@@ -27,21 +27,21 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
         </Section>
 
         <Section style={contentStyle}>
-          <Heading style={h1Style}>Code দিন</Heading>
+          <Heading style={h1Style}>Enter this code</Heading>
           <Text style={subtitleStyle}>
-            আপনার code নিচে দেওয়া আছে:
+            Use the code below to continue.
           </Text>
           <Text style={codeBlockStyle}>{token}</Text>
 
           <Hr style={dividerStyle} />
           <Text style={footerStyle}>
-            এই code কম time কাজ করবে. আপনি না চাইলে email ignore করুন.
+            This code will expire soon. If you did not request it, you can ignore this email.
           </Text>
         </Section>
 
         <Section style={footerSection}>
           <Text style={copyrightStyle}>
-            &copy; {new Date().getFullYear()} {SITE_NAME}. সব অধিকার রাখা আছে.
+            &copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
           </Text>
         </Section>
       </Container>
