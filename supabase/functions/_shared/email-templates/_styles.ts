@@ -9,7 +9,7 @@ export { BRAND_PURPLE, BRAND_PURPLE_LIGHT, BRAND_PURPLE_BORDER, SITE_URL, LOGO_U
 
 export const main = {
   backgroundColor: '#f3f0ff',
-  fontFamily: "'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
+  fontFamily: "'Noto Sans Bengali', 'Hind Siliguri', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
   padding: '24px 0',
 } as const;
 
