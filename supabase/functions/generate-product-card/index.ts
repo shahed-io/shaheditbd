@@ -46,35 +46,56 @@ OVERALL: Ultra-premium, cyberpunk/neon aesthetic, very dark background with elec
   light_glass: {
     label: "Light Glass",
     prompt: (name: string, brand: string, price: string, category: string) => `
-Create a premium square (1:1) product promotional card image with this EXACT design:
+Create a premium square (1:1) product promotional card image. This must look like a HIGH-END professional graphic designer created it — polished, refined, magazine-quality.
 
 BACKGROUND:
-- Beautiful soft colorful gradient background: flowing from soft lavender/purple (#c8b4f0) top-left, to soft pink (#f0b4d8) top-right, to soft blue (#a0c4f0) bottom-left, to soft peach/coral (#f0c8b4) bottom-right
-- The gradient is smooth, dreamy, pastel aesthetic
-- A few small translucent floating bubble/circle decorations scattered subtly
+- Sophisticated soft pastel gradient background with smooth flowing transitions:
+  - Top-left area: soft warm gold/amber (#f5d7a0, 40% opacity) gently blending into
+  - Top-right: soft rose/blush (#f0c4d4, 35% opacity) flowing into
+  - Bottom: soft sky blue (#b8d4f0, 30% opacity) merging with soft mint (#c8edd8, 25% opacity)
+- The gradient transitions must be VERY smooth and organic — like a watercolor wash, not harsh color blocks
+- Add 4-6 very subtle translucent floating circles/orbs (white at 8-12% opacity, varying sizes 40-120px) scattered throughout for depth and visual interest
+- The background should feel warm, inviting, and premium — like a luxury brand ad
 
 MAIN FROSTED GLASS CARD:
-- A large frosted glass rounded rectangle card covering most of the image
-- Frosted glass effect: white semi-transparent (rgba(255,255,255,0.55)), heavy blur backdrop, soft white border (1.5px rgba(255,255,255,0.8))
-- Rounded corners (border-radius ~30px)
-- Very subtle box shadow: soft purple/pink shadow
+- A large frosted glass rounded rectangle card covering ~75% of the image, perfectly centered
+- Frosted glass: rgba(255,255,255,0.62) with strong backdrop blur effect
+- Border: 1.5px solid rgba(255,255,255,0.85) — crisp clean glass edge
+- Rounded corners: 28px border-radius
+- Elegant multi-layered shadow:
+  - Outer: 0 24px 48px rgba(140,120,180,0.12)
+  - Inner subtle highlight: inset 0 1px 0 rgba(255,255,255,0.5) along top edge
+- The card should feel like it's floating elegantly above the background
 
-INSIDE THE CARD - TOP ROW:
-- Top-left: A small frosted glass pill/badge containing "SHAHED STORE" in bold white text (this pill has a slightly darker frosted background)
-- Top-right: A small frosted glass pill/badge containing "${brand || name}" brand name with a small icon, on clean white background
+TOP ROW (inside card, with proper padding ~18px):
+- Left side: A polished rounded pill badge with soft gradient background (warm gold #f5c870 to soft coral #f0a0a0), containing "SHAHED STORE" in crisp WHITE BOLD text (11-12px), with a tiny sparkle/star icon before the text
+- Right side: A clean rounded pill with very light background (rgba(255,255,255,0.7)) and subtle border (rgba(0,0,0,0.08)), containing "${brand || name}" in dark charcoal (#374151) medium-weight text with a small brand/product icon
 
-INSIDE THE CARD - CENTER:
-- The product logo/icon for "${name}" placed in the CENTER of the card, large and prominent
-- The product icon itself should be a clean square with rounded corners (like an app icon)
-- Subtle drop shadow on the product icon
+CENTER AREA (inside card):
+- "${name}" product logo/icon displayed VERY LARGE and prominently in the exact center
+- The icon should be a clean, crisp square with 16px rounded corners (app-icon style)
+- Subtle warm glow halo behind the icon: rgba(245,200,120,0.08) spread 30px — gives it a premium floating feel
+- Very soft drop shadow on the icon: 0 8px 24px rgba(0,0,0,0.1)
+- Generous breathing room / white space around the icon — DO NOT crowd it
+- NO price tag, NO price badge, NO pricing information anywhere on the card
 
-BOTTOM OF CARD:
-- A FULL-WIDTH horizontal gradient strip/bar at the very bottom of the card
-- Gradient: soft sky blue (#a0c4f0, #7dd3fc) LEFT → soft pastel pink (#f9a8d4, #fbb6ce) RIGHT
-- Rounded bottom corners matching the card, ~40px height
-- Inside: globe icon + "www.shahedstore.com.bd" (left) and phone icon + "+880 1840-099853" (right) in dark charcoal (#1f2937) bold text
+BOTTOM BAR (inside card):
+- A FULL-WIDTH horizontal gradient strip/bar flush with the bottom edge of the card
+- Gradient: soft sky blue (#a0c4f0, #7dd3fc) on LEFT smoothly transitioning to soft pastel pink (#f9a8d4, #fbb6ce) on RIGHT
+- Height: ~38-42px with rounded bottom corners matching the card (28px)
+- Inside the bar, vertically centered, horizontally distributed:
+  - Left side: small 🌐 globe icon + "www.shahedstore.com.bd" in dark charcoal (#1f2937) BOLD text
+  - Right side: small 📞 phone icon + "+880 1840-099853" in dark charcoal (#1f2937) BOLD text
+- Text size ~10-11px, clean sans-serif font
 
-OVERALL: Dreamy pastel glassmorphism, soft colors, elegant frosted glass, professional social media promotional style. Square format exactly.
+CRITICAL REQUIREMENTS:
+- NO price displayed anywhere — this is a brand showcase card, not a price card
+- All text must be CRISP, SHARP, and perfectly readable
+- The overall composition must feel balanced, luxurious, and intentional
+- Think: Apple product page meets luxury fashion brand social media post
+- Every element should have proper spacing and alignment — nothing cramped or awkward
+- Color harmony: warm golds, soft roses, cool blues — cohesive pastel palette
+- Square format exactly. Professional graphic design quality.
 `.trim(),
   },
 
