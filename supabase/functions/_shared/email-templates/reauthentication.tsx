@@ -22,7 +22,7 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
       <Container style={wrapper}>
         <Section style={headerStyle}>
           <div style={logoCardStyle}>
-            <Img src={LOGO_URL} width="160" height="44" alt={SITE_NAME} style={logoStyle} />
+            <Img src={LOGO_URL} width="240" height="65" alt={SITE_NAME} style={logoStyle} />
           </div>
         </Section>
 
