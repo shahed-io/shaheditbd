@@ -1014,6 +1014,25 @@ const AdminOrders = () => {
         )}
       </div>
 
+      {/* Bulk Action Toolbar */}
+      {selectedIds.size > 0 && (
+        <div className="glass-card rounded-2xl p-3 flex flex-wrap items-center gap-3">
+          <span className="text-xs font-semibold text-primary">{selectedIds.size}টি সিলেক্ট করা হয়েছে</span>
+          <select value={bulkAction} onChange={e => setBulkAction(e.target.value)}
+            className="bg-muted/30 border border-border rounded-xl px-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary">
+            <option value="">অ্যাকশন নির্বাচন করুন</option>
+            {ALL_STATUSES.map(s => <option key={s} value={s}>{STATUS_CONFIG[s]?.label || s}</option>)}
+          </select>
+          <button onClick={executeBulkAction} disabled={!bulkAction || bulkLoading}
+            className="btn-glow px-4 py-1.5 rounded-xl text-xs font-semibold disabled:opacity-50 flex items-center gap-1.5">
+            {bulkLoading ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle size={12} />}
+            প্রয়োগ করুন
+          </button>
+          <button onClick={() => { setSelectedIds(new Set()); setBulkAction(''); }}
+            className="text-xs text-muted-foreground hover:text-destructive transition-colors">বাতিল</button>
+        </div>
+      )}
+
       {/* Orders Table */}
       <div className="glass-card rounded-2xl overflow-hidden">
         {loading ? (
