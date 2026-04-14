@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import {
   main, wrapper, headerStyle, logoCardStyle, logoStyle, contentStyle, h1Style, subtitleStyle,
-  buttonStyle, dividerStyle, footerStyle, footerSection, linkStyle, copyrightStyle, LOGO_URL, SITE_URL,
+  buttonStyle, dividerStyle, footerStyle, footerSection, linkStyle, copyrightStyle, LOGO_URL, brandNameRow, brandNameShahed, brandNameStore, brandTagline, SITE_URL,
 } from './_styles.ts'
 
 interface MagicLinkEmailProps {
@@ -21,8 +21,13 @@ export const MagicLinkEmail = ({ siteName, confirmationUrl }: MagicLinkEmailProp
       <Container style={wrapper}>
         <Section style={headerStyle}>
           <div style={logoCardStyle}>
-            <Img src={LOGO_URL} width="240" height="65" alt={siteName} style={logoStyle} />
-          </div>
+              <Img src={LOGO_URL} width="56" height="56" alt="Shahed Store" style={logoStyle} />
+            </div>
+            <div style={brandNameRow}>
+              <span style={brandNameShahed}>Shahed</span>
+              <span style={brandNameStore}>Store</span>
+            </div>
+            <Text style={brandTagline}>shahedstore.com.bd</Text>
         </Section>
 
         <Section style={contentStyle}>
