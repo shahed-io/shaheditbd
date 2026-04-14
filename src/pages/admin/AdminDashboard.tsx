@@ -4,11 +4,12 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   ShoppingCart, Package, Users, TrendingUp, DollarSign, Clock,
   CheckCircle, XCircle, ArrowUpRight, ArrowDownRight, Bell,
-  AlertTriangle, Ticket, CreditCard, RefreshCw
+  AlertTriangle, Ticket, CreditCard, RefreshCw, Activity, Percent
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, LineChart, Line, AreaChart, Area
+  ResponsiveContainer, LineChart, Line, AreaChart, Area,
+  PieChart, Pie, Cell
 } from 'recharts';
 
 interface Stats {
@@ -48,6 +49,8 @@ const AdminDashboard = () => {
   const [dailyChart, setDailyChart] = useState<any[]>([]);
   const [bestSellers, setBestSellers] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [paymentBreakdown, setPaymentBreakdown] = useState<any[]>([]);
+  const [recentCustomers, setRecentCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [chartRange, setChartRange] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [lastRefresh, setLastRefresh] = useState(new Date());
@@ -68,7 +71,7 @@ const AdminDashboard = () => {
       { data: products },
       { data: recentOrderData },
     ] = await Promise.all([
-      supabase.from('orders').select('id, total, status, payment_status, created_at, customer_name, customer_email, order_number'),
+      supabase.from('orders').select('id, total, status, payment_status, payment_method, created_at, customer_name, customer_email, order_number'),
       supabase.from('profiles').select('id', { count: 'exact', head: false }),
       supabase.from('payment_proofs').select('id, status, submitted_at, order_id'),
       supabase.from('support_tickets').select('id, status, created_at, subject, ticket_number').order('created_at', { ascending: false }).limit(5),
@@ -123,7 +126,35 @@ const AdminDashboard = () => {
     const maxSales = sortedProducts[0]?.total_sales || 1;
     setBestSellers(sortedProducts.map(p => ({ ...p, pct: Math.round(((p.total_sales || 0) / maxSales) * 100) })));
 
-    // --- Notifications ---
+    // --- Payment Method Breakdown ---
+    const pmCounts: Record<string, number> = {};
+    const PM_LABELS: Record<string, string> = { bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'Upay', bkash_merchant: 'bKash Merchant' };
+    const PM_COLORS = ['hsl(var(--primary))', '#e91e8a', '#8b5cf6', '#f59e0b', '#06b6d4', '#10b981'];
+    orders.filter(o => o.status !== 'cancelled').forEach(o => {
+      const pm = o.payment_method || 'other';
+      pmCounts[pm] = (pmCounts[pm] || 0) + 1;
+    });
+    setPaymentBreakdown(Object.entries(pmCounts).map(([key, count], i) => ({
+      name: PM_LABELS[key] || key,
+      value: count,
+      color: PM_COLORS[i % PM_COLORS.length],
+    })));
+
+    // --- Recent Customers ---
+    const uniqueCustomers = new Map<string, any>();
+    [...orders].sort((a, b) => b.created_at.localeCompare(a.created_at)).forEach(o => {
+      if (!uniqueCustomers.has(o.customer_email)) {
+        uniqueCustomers.set(o.customer_email, {
+          name: o.customer_name,
+          email: o.customer_email,
+          lastOrder: o.created_at,
+          totalSpent: orders.filter(x => x.customer_email === o.customer_email && x.status !== 'cancelled').reduce((s, x) => s + Number(x.total), 0),
+          orderCount: orders.filter(x => x.customer_email === o.customer_email).length,
+        });
+      }
+    });
+    setRecentCustomers(Array.from(uniqueCustomers.values()).slice(0, 5));
+
     const notifs: Notification[] = [];
     const newOrders = orders.filter(o => o.created_at >= new Date(Date.now() - 24 * 3600 * 1000).toISOString());
     if (newOrders.length > 0) {
@@ -422,7 +453,67 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* ── Recent Orders ── */}
+      {/* ── Payment Breakdown + Recent Customers ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Payment Method Pie Chart */}
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-bold text-foreground mb-4 flex items-center gap-2"><Percent size={15} className="text-primary" /> Payment Method Breakdown</h3>
+          {paymentBreakdown.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">No payment data</p>
+          ) : (
+            <div className="flex items-center gap-4">
+              <ResponsiveContainer width="50%" height={180}>
+                <PieChart>
+                  <Pie data={paymentBreakdown} dataKey="value" cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} strokeWidth={0}>
+                    {paymentBreakdown.map((entry: any, i: number) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={toastStyle} formatter={(v: any, name: string) => [v, name]} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="space-y-2 flex-1">
+                {paymentBreakdown.map((pm: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ background: pm.color }} />
+                      <span className="text-foreground font-medium">{pm.name}</span>
+                    </div>
+                    <span className="text-muted-foreground font-bold">{pm.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Customers */}
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-bold text-foreground mb-4 flex items-center gap-2"><Activity size={15} className="text-primary" /> Top Recent Customers</h3>
+          {recentCustomers.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">No customer data</p>
+          ) : (
+            <div className="space-y-3">
+              {recentCustomers.map((c: any, i: number) => (
+                <div key={i} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/20 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-primary">{c.name?.charAt(0)?.toUpperCase() || '?'}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-foreground truncate">{c.name}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">{c.email}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-xs font-bold text-primary">৳{c.totalSpent.toLocaleString()}</p>
+                    <p className="text-[10px] text-muted-foreground">{c.orderCount} orders</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="glass-card rounded-2xl p-5">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-bold text-foreground">Recent Orders</h3>

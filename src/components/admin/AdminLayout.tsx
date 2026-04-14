@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
@@ -10,8 +11,18 @@ import {
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
   Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Map, Bot, Code2, KeyRound, FileSearch, PackageSearch, Star, BarChart2,
-  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette
+  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette,
+  ShoppingCart as ShopIcon, CreditCard as CreditIcon, Clock, Eye
 } from 'lucide-react';
+
+interface AdminNotif {
+  id: string;
+  type: 'order' | 'payment' | 'ticket' | 'stock';
+  title: string;
+  message: string;
+  time: string;
+  link?: string;
+}
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
@@ -99,7 +110,32 @@ const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['Products', 'Orders']);
+  const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const [adminNotifs, setAdminNotifs] = useState<AdminNotif[]>([]);
+  const [notifCount, setNotifCount] = useState(0);
   const location = useLocation();
+
+  // Fetch admin notifications
+  const fetchNotifs = useCallback(async () => {
+    const now = new Date();
+    const dayAgo = new Date(now.getTime() - 24 * 3600 * 1000).toISOString();
+    const [{ data: recentOrders }, { data: pendingPayments }, { data: openTickets }, { data: lowStock }] = await Promise.all([
+      supabase.from('orders').select('id, order_number, customer_name, total, created_at').gte('created_at', dayAgo).order('created_at', { ascending: false }).limit(5),
+      supabase.from('payment_proofs').select('id, order_id, submitted_at').eq('status', 'pending').order('submitted_at', { ascending: false }).limit(5),
+      supabase.from('support_tickets').select('id, ticket_number, subject, created_at').eq('status', 'open').order('created_at', { ascending: false }).limit(5),
+      supabase.from('products').select('id, name, stock_quantity').eq('status', 'active').lte('stock_quantity', 5).not('stock_quantity', 'is', null).limit(5),
+    ]);
+    const notifs: AdminNotif[] = [];
+    (recentOrders || []).forEach(o => notifs.push({ id: `o-${o.id}`, type: 'order', title: `নতুন অর্ডার #${o.order_number}`, message: `${o.customer_name} — ৳${Number(o.total).toLocaleString()}`, time: new Date(o.created_at).toLocaleTimeString('en-BD', { hour: '2-digit', minute: '2-digit' }), link: '/ceo/orders' }));
+    (pendingPayments || []).forEach(p => notifs.push({ id: `p-${p.id}`, type: 'payment', title: 'পেমেন্ট ভেরিফিকেশন বাকি', message: `Order ID: ${p.order_id?.slice(0, 8)}...`, time: new Date(p.submitted_at).toLocaleTimeString('en-BD', { hour: '2-digit', minute: '2-digit' }), link: '/ceo/orders?status=payment_pending' }));
+    (openTickets || []).forEach(t => notifs.push({ id: `t-${t.id}`, type: 'ticket', title: `টিকেট #${t.ticket_number}`, message: t.subject, time: new Date(t.created_at).toLocaleTimeString('en-BD', { hour: '2-digit', minute: '2-digit' }), link: '/ceo/tickets' }));
+    (lowStock || []).forEach(s => notifs.push({ id: `s-${s.id}`, type: 'stock', title: 'লো স্টক অ্যালার্ট', message: `${s.name} — ${s.stock_quantity} বাকি`, time: 'এখনই', link: '/ceo/inventory-alerts' }));
+    setAdminNotifs(notifs);
+    setNotifCount(notifs.length);
+  }, []);
+
+  useEffect(() => { fetchNotifs(); }, [fetchNotifs]);
+  useEffect(() => { const iv = setInterval(fetchNotifs, 60000); return () => clearInterval(iv); }, [fetchNotifs]);
 
   // Close mobile sidebar on route change
   useEffect(() => {
@@ -284,11 +320,51 @@ const AdminLayout = () => {
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <button className="relative p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary">
+          <div className="ml-auto flex items-center gap-2 sm:gap-3 flex-shrink-0 relative">
+            <button onClick={() => setShowNotifPanel(!showNotifPanel)} className="relative p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary">
               <Bell size={18} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+              {notifCount > 0 && <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary rounded-full text-[9px] font-bold text-primary-foreground flex items-center justify-center">{notifCount > 9 ? '9+' : notifCount}</span>}
             </button>
+
+            {/* Notification Dropdown */}
+            {showNotifPanel && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowNotifPanel(false)} />
+                <div className="absolute right-0 top-12 z-50 w-80 sm:w-96 glass-card rounded-2xl shadow-2xl border border-border overflow-hidden">
+                  <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+                    <h3 className="font-bold text-foreground text-sm">নোটিফিকেশন সেন্টার</h3>
+                    <span className="text-[10px] text-muted-foreground">{notifCount}টি আইটেম</span>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto divide-y divide-border/30">
+                    {adminNotifs.length === 0 ? (
+                      <div className="py-8 text-center text-muted-foreground text-sm">কোনো নোটিফিকেশন নেই</div>
+                    ) : adminNotifs.map(n => {
+                      const icons: Record<string, { icon: any; cls: string }> = {
+                        order: { icon: ShopIcon, cls: 'text-primary bg-primary/10' },
+                        payment: { icon: CreditIcon, cls: 'text-amber-500 bg-amber-500/10' },
+                        ticket: { icon: Headphones, cls: 'text-blue-500 bg-blue-500/10' },
+                        stock: { icon: AlertTriangle, cls: 'text-destructive bg-destructive/10' },
+                      };
+                      const { icon: NIcon, cls } = icons[n.type] || icons.order;
+                      return (
+                        <a key={n.id} href={n.link || '#'} onClick={() => setShowNotifPanel(false)}
+                          className="flex items-start gap-3 px-4 py-3 hover:bg-muted/20 transition-colors">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${cls}`}>
+                            <NIcon size={14} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-foreground">{n.title}</p>
+                            <p className="text-[11px] text-muted-foreground truncate">{n.message}</p>
+                          </div>
+                          <span className="text-[10px] text-muted-foreground flex-shrink-0">{n.time}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+
             <a href="/" target="_blank" className="text-xs text-primary hover:underline glass-card px-2 sm:px-3 py-2 rounded-xl border-primary/30 hidden sm:block">
               View Store →
             </a>

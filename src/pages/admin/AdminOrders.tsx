@@ -716,6 +716,9 @@ const AdminOrders = () => {
   const [copiedTrx, setCopiedTrx] = useState<string | null>(null);
   const [adminWhatsapp, setAdminWhatsapp] = useState('');
   const [newOrderIds, setNewOrderIds] = useState<Set<string>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState('');
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   // Apply query param filters on mount
   useEffect(() => {
@@ -872,6 +875,40 @@ const AdminOrders = () => {
   };
   const hasActiveFilters = search || statusFilter !== 'all' || paymentFilter !== 'all' || dateFrom || dateTo;
 
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map(o => o.id)));
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const executeBulkAction = async () => {
+    if (!bulkAction || selectedIds.size === 0) return;
+    if (!confirm(`${selectedIds.size}টি অর্ডারের স্ট্যাটাস "${bulkAction}" এ পরিবর্তন করবেন?`)) return;
+    setBulkLoading(true);
+    try {
+      const { error } = await supabase.from('orders').update({ status: bulkAction as any }).in('id', Array.from(selectedIds));
+      if (error) throw error;
+      toast.success(`✅ ${selectedIds.size}টি অর্ডার আপডেট হয়েছে!`);
+      setSelectedIds(new Set());
+      setBulkAction('');
+      fetchOrders();
+    } catch (err: any) {
+      toast.error(handleDbError(err));
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
   // Status tabs shown
   const tabStatuses = ['all', 'pending', 'processing', 'delivered', 'completed', 'cancelled', 'refunded', 'failed'];
 
@@ -977,6 +1014,25 @@ const AdminOrders = () => {
         )}
       </div>
 
+      {/* Bulk Action Toolbar */}
+      {selectedIds.size > 0 && (
+        <div className="glass-card rounded-2xl p-3 flex flex-wrap items-center gap-3">
+          <span className="text-xs font-semibold text-primary">{selectedIds.size}টি সিলেক্ট করা হয়েছে</span>
+          <select value={bulkAction} onChange={e => setBulkAction(e.target.value)}
+            className="bg-muted/30 border border-border rounded-xl px-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary">
+            <option value="">অ্যাকশন নির্বাচন করুন</option>
+            {ALL_STATUSES.map(s => <option key={s} value={s}>{STATUS_CONFIG[s]?.label || s}</option>)}
+          </select>
+          <button onClick={executeBulkAction} disabled={!bulkAction || bulkLoading}
+            className="btn-glow px-4 py-1.5 rounded-xl text-xs font-semibold disabled:opacity-50 flex items-center gap-1.5">
+            {bulkLoading ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle size={12} />}
+            প্রয়োগ করুন
+          </button>
+          <button onClick={() => { setSelectedIds(new Set()); setBulkAction(''); }}
+            className="text-xs text-muted-foreground hover:text-destructive transition-colors">বাতিল</button>
+        </div>
+      )}
+
       {/* Orders Table */}
       <div className="glass-card rounded-2xl overflow-hidden">
         {loading ? (
@@ -994,6 +1050,10 @@ const AdminOrders = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/20">
+                  <th className="px-3 py-3 w-8">
+                    <input type="checkbox" checked={selectedIds.size === filtered.length && filtered.length > 0}
+                      onChange={toggleSelectAll} className="w-3.5 h-3.5 accent-primary rounded" />
+                  </th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Order #</th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">কাস্টমার</th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden lg:table-cell">প্রোডাক্ট</th>
@@ -1008,7 +1068,11 @@ const AdminOrders = () => {
                 {filtered.map((order) => {
                   const cfg = STATUS_CONFIG[order.status];
                   return (
-                    <tr key={order.id} className="hover:bg-muted/10 transition-colors group">
+                    <tr key={order.id} className={`hover:bg-muted/10 transition-colors group ${selectedIds.has(order.id) ? 'bg-primary/5' : ''}`}>
+                      <td className="px-3 py-3">
+                        <input type="checkbox" checked={selectedIds.has(order.id)}
+                          onChange={() => toggleSelect(order.id)} className="w-3.5 h-3.5 accent-primary rounded" />
+                      </td>
                       <td className="px-4 py-3">
                         <span className="font-mono font-bold text-primary text-xs">{order.order_number}</span>
                         {order.payment_status === 'verified' && (
