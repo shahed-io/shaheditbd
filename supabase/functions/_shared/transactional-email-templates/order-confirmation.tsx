@@ -5,7 +5,7 @@ import type { TemplateEntry } from './registry.ts'
 import {
   main, wrapper, headerStyle, logoCardStyle, logoStyle, contentStyle, h1Style, subtitleStyle,
   featureBox, featureTitle, buttonStyle, dividerStyle, footerStyle, footerSection,
-  copyrightStyle, LOGO_URL, brandNameRow, brandNameShahed, brandNameStore, brandTagline,
+  copyrightStyle, LOGO_URL,
 } from '../email-templates/_styles.ts'
 
 interface OrderConfirmationProps {
@@ -61,13 +61,8 @@ const OrderConfirmation = ({
         <Container style={wrapper}>
           <Section style={headerStyle}>
             <div style={logoCardStyle}>
-              <Img src={LOGO_URL} width="56" height="56" alt="Shahed Store" style={logoStyle} />
+              <Img src={LOGO_URL} width="240" height="65" alt="Shahed Store" style={logoStyle} />
             </div>
-            <div style={brandNameRow}>
-              <span style={brandNameShahed}>Shahed</span>
-              <span style={brandNameStore}>Store</span>
-            </div>
-            <Text style={brandTagline}>shahedstore.com.bd</Text>
           </Section>
 
           <Section style={contentStyle}>

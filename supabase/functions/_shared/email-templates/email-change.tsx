@@ -6,7 +6,7 @@ import {
 import {
   main, wrapper, headerStyle, logoCardStyle, logoStyle, contentStyle, h1Style, subtitleStyle,
   textStyle, emailBadgeStyle, buttonStyle, dividerStyle, footerStyle, footerSection,
-  linkStyle, copyrightStyle, LOGO_URL, brandNameRow, brandNameShahed, brandNameStore, brandTagline, SITE_URL,
+  linkStyle, copyrightStyle, LOGO_URL, SITE_URL,
 } from './_styles.ts'
 
 interface EmailChangeEmailProps {
@@ -24,13 +24,8 @@ export const EmailChangeEmail = ({ siteName, email, newEmail, confirmationUrl }:
       <Container style={wrapper}>
         <Section style={headerStyle}>
           <div style={logoCardStyle}>
-              <Img src={LOGO_URL} width="56" height="56" alt="Shahed Store" style={logoStyle} />
-            </div>
-            <div style={brandNameRow}>
-              <span style={brandNameShahed}>Shahed</span>
-              <span style={brandNameStore}>Store</span>
-            </div>
-            <Text style={brandTagline}>shahedstore.com.bd</Text>
+            <Img src={LOGO_URL} width="240" height="65" alt={siteName} style={logoStyle} />
+          </div>
         </Section>
 
         <Section style={contentStyle}>
