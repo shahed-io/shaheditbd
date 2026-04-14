@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import {
   main, wrapper, headerStyle, logoStyle, brandName, contentStyle, h1Style, subtitleStyle,
-  textStyle, featureBox, featureTitle, featureItem, buttonStyle, dividerStyle,
+  featureBox, featureTitle, buttonStyle, dividerStyle,
   footerStyle, footerSection, linkStyle, copyrightStyle, LOGO_URL,
 } from './_styles.ts'
 
@@ -14,6 +14,29 @@ interface InviteEmailProps {
   siteUrl: string
   confirmationUrl: string
 }
+
+const featureRow = {
+  fontSize: '13px',
+  color: '#4b5563',
+  lineHeight: '1.4',
+  margin: '0 0 8px',
+  paddingLeft: '8px',
+} as const;
+
+const bullet = {
+  display: 'inline-block' as const,
+  width: '18px',
+  height: '18px',
+  borderRadius: '4px',
+  backgroundColor: '#7c3aed',
+  color: '#ffffff',
+  fontSize: '11px',
+  fontWeight: '700' as const,
+  textAlign: 'center' as const,
+  lineHeight: '18px',
+  marginRight: '10px',
+  verticalAlign: 'middle' as const,
+} as const;
 
 export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailProps) => (
   <Html lang="bn" dir="ltr">
@@ -35,11 +58,17 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
 
           <Section style={featureBox}>
             <Text style={featureTitle}>আপনার জন্য যা আছে:</Text>
-            <Text style={featureItem}>
-              &#x2714;&#xFE0E; নিরাপদ ও অথেন্টিক প্রোডাক্টস{'\n'}
-              &#x26A1;&#xFE0E; দ্রুত ডেলিভারি (১-২৪ ঘন্টা){'\n'}
-              &#x1F4B0;&#xFE0E; সেরা মূল্য গ্যারান্টি{'\n'}
-              &#x1F381;&#xFE0E; রেফারেল বোনাস ও পয়েন্ট সিস্টেম
+            <Text style={featureRow}>
+              <span style={bullet}>&#10003;</span> নিরাপদ ও অথেন্টিক প্রোডাক্টস
+            </Text>
+            <Text style={featureRow}>
+              <span style={bullet}>&#10003;</span> দ্রুত ডেলিভারি (১-২৪ ঘন্টা)
+            </Text>
+            <Text style={featureRow}>
+              <span style={bullet}>&#10003;</span> সেরা মূল্য গ্যারান্টি
+            </Text>
+            <Text style={{ ...featureRow, margin: '0' }}>
+              <span style={bullet}>&#10003;</span> রেফারেল বোনাস ও পয়েন্ট সিস্টেম
             </Text>
           </Section>
 
