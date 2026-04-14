@@ -453,7 +453,67 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* ── Recent Orders ── */}
+      {/* ── Payment Breakdown + Recent Customers ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Payment Method Pie Chart */}
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-bold text-foreground mb-4 flex items-center gap-2"><Percent size={15} className="text-primary" /> Payment Method Breakdown</h3>
+          {paymentBreakdown.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">No payment data</p>
+          ) : (
+            <div className="flex items-center gap-4">
+              <ResponsiveContainer width="50%" height={180}>
+                <PieChart>
+                  <Pie data={paymentBreakdown} dataKey="value" cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} strokeWidth={0}>
+                    {paymentBreakdown.map((entry: any, i: number) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={toastStyle} formatter={(v: any, name: string) => [v, name]} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="space-y-2 flex-1">
+                {paymentBreakdown.map((pm: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ background: pm.color }} />
+                      <span className="text-foreground font-medium">{pm.name}</span>
+                    </div>
+                    <span className="text-muted-foreground font-bold">{pm.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Customers */}
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-bold text-foreground mb-4 flex items-center gap-2"><Activity size={15} className="text-primary" /> Top Recent Customers</h3>
+          {recentCustomers.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">No customer data</p>
+          ) : (
+            <div className="space-y-3">
+              {recentCustomers.map((c: any, i: number) => (
+                <div key={i} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/20 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-primary">{c.name?.charAt(0)?.toUpperCase() || '?'}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-foreground truncate">{c.name}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">{c.email}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-xs font-bold text-primary">৳{c.totalSpent.toLocaleString()}</p>
+                    <p className="text-[10px] text-muted-foreground">{c.orderCount} orders</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="glass-card rounded-2xl p-5">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-bold text-foreground">Recent Orders</h3>
