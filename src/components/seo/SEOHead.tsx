@@ -127,6 +127,21 @@ const SEOHead = ({
     setMeta('meta[property="og:site_name"]', SITE_NAME);
     setMeta('meta[property="og:locale"]', 'bn_BD');
 
+    // Additional og:image tags for gallery images
+    document.querySelectorAll('meta[data-extra-og-image]').forEach(el => el.remove());
+    if (ogImages && ogImages.length > 0) {
+      ogImages.forEach(img => {
+        if (img && img !== ogImage) {
+          const imgUrl = img.startsWith('http') ? img : `${SITE_URL}${img}`;
+          const el = document.createElement('meta');
+          el.setAttribute('property', 'og:image');
+          el.setAttribute('content', imgUrl);
+          el.setAttribute('data-extra-og-image', 'true');
+          document.head.appendChild(el);
+        }
+      });
+    }
+
     // Twitter Card
     setMeta('meta[name="twitter:card"]', 'summary_large_image');
     setMeta('meta[name="twitter:title"]', fullTitle);
