@@ -217,36 +217,44 @@ export default function WelcomeDiscount() {
               {/* Coupon code card — single line */}
               <button
                 onClick={handleCopy}
-                className="w-full group relative rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full group relative rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.03] active:scale-[0.97]"
               >
-                {/* Border gradient */}
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[hsl(var(--primary)/0.35)] via-[hsl(var(--accent)/0.35)] to-[hsl(var(--primary)/0.35)] p-[1.5px]">
-                  <div className="w-full h-full rounded-[10.5px] bg-background" />
-                </div>
+                {/* Animated border gradient */}
+                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-[hsl(var(--primary))] via-[hsl(var(--accent))] to-[hsl(var(--primary))] opacity-60 group-hover:opacity-90 transition-opacity duration-500" style={{ backgroundSize: '200% 100%', animation: 'shimmer 3s linear infinite' }} />
+                <div className="absolute inset-[1.5px] rounded-[14.5px] bg-background" />
                 
-                <div className="relative flex items-center justify-between gap-2 px-4 py-3">
-                  <div className="absolute inset-0 bg-[hsl(var(--primary)/0.02)]" />
-                  {/* Ticket cutouts */}
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background border border-border" />
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-4 rounded-full bg-background border border-border" />
+                {/* Inner glow */}
+                <div className="absolute inset-[1.5px] rounded-[14.5px] bg-gradient-to-r from-[hsl(var(--primary)/0.06)] via-transparent to-[hsl(var(--accent)/0.06)] group-hover:from-[hsl(var(--primary)/0.12)] group-hover:to-[hsl(var(--accent)/0.12)] transition-all duration-500" />
+
+                {/* Sparkle dots */}
+                <div className="absolute top-2 left-4 w-1 h-1 rounded-full bg-[hsl(var(--primary)/0.4)] animate-pulse" />
+                <div className="absolute bottom-2 right-12 w-0.5 h-0.5 rounded-full bg-[hsl(var(--accent)/0.5)] animate-pulse" style={{ animationDelay: '0.5s' }} />
+
+                <div className="relative flex items-center justify-between gap-3 px-5 py-3.5">
+                  {/* Ticket cutouts with gradient ring */}
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-background shadow-[inset_0_0_4px_rgba(0,0,0,0.1)]" />
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-5 h-5 rounded-full bg-background shadow-[inset_0_0_4px_rgba(0,0,0,0.1)]" />
                   
-                  <span className="relative font-mono text-[15px] font-bold tracking-[0.12em] text-foreground whitespace-nowrap">
+                  {/* Dashed line between cutouts */}
+                  <div className="absolute left-3 right-3 top-1/2 -translate-y-1/2 border-t border-dashed border-[hsl(var(--primary)/0.1)]" />
+                  
+                  <span className="relative font-mono text-[15px] font-extrabold tracking-[0.15em] bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(258,78%,50%)] bg-clip-text text-transparent whitespace-nowrap">
                     {coupon.code}
                   </span>
-                  <div className={`relative flex items-center gap-1 px-2.5 py-1 rounded-md transition-all duration-300 shrink-0 ${
+                  <div className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-300 shrink-0 shadow-sm ${
                     copied 
-                      ? 'bg-green-500/10 text-green-600' 
-                      : 'bg-[hsl(var(--primary)/0.08)] text-[hsl(var(--primary))] group-hover:bg-[hsl(var(--primary)/0.15)]'
+                      ? 'bg-green-500/15 text-green-600 shadow-green-500/10' 
+                      : 'bg-gradient-to-r from-[hsl(var(--primary)/0.1)] to-[hsl(var(--accent)/0.1)] text-[hsl(var(--primary))] group-hover:from-[hsl(var(--primary)/0.2)] group-hover:to-[hsl(var(--accent)/0.2)] group-hover:shadow-md group-hover:shadow-[hsl(var(--primary)/0.1)]'
                   }`}>
                     {copied ? (
                       <>
                         <Check className="w-3.5 h-3.5" />
-                        <span className="text-[10px] font-bold">কপি!</span>
+                        <span className="text-[11px] font-bold">কপি!</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span className="text-[10px] font-bold">কপি</span>
+                        <Copy className="w-3.5 h-3.5 group-hover:animate-pulse" />
+                        <span className="text-[11px] font-bold">কপি</span>
                       </>
                     )}
                   </div>
