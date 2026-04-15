@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { X, Copy, Check, Gift, Clock } from 'lucide-react';
+import { X, Copy, Check, Gift, Clock, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -31,12 +31,10 @@ export default function WelcomeDiscount() {
   const [popupSubtitle, setPopupSubtitle] = useState('আপনার জন্য বিশেষ ডিসকাউন্ট');
   const [delayMs, setDelayMs] = useState(3000);
 
-  // Fetch settings & coupon
   const fetchCoupon = useCallback(async () => {
     if (sessionStorage.getItem(WELCOME_SHOWN_KEY)) return;
     if (localStorage.getItem(WELCOME_SHOWN_KEY)) return;
 
-    // Fetch admin settings for popup text & delay
     try {
       const { data: settingsRow } = await supabase
         .from('site_settings')
@@ -46,7 +44,7 @@ export default function WelcomeDiscount() {
 
       if (settingsRow?.value) {
         const cfg: WelcomeSettings = JSON.parse(settingsRow.value);
-        if (!cfg.enabled) return; // Admin disabled
+        if (!cfg.enabled) return;
         if (cfg.popup_title) setPopupTitle(cfg.popup_title);
         if (cfg.popup_subtitle) setPopupSubtitle(cfg.popup_subtitle);
         if (cfg.delay_seconds) setDelayMs(cfg.delay_seconds * 1000);
@@ -77,12 +75,10 @@ export default function WelcomeDiscount() {
   }, []);
 
   useEffect(() => {
-    // Use a two-stage delay: first fetch settings, then wait for configured delay
     const initialTimer = setTimeout(fetchCoupon, delayMs);
     return () => clearTimeout(initialTimer);
   }, [fetchCoupon, delayMs]);
 
-  // Countdown timer
   useEffect(() => {
     if (!coupon) return;
 
@@ -124,56 +120,131 @@ export default function WelcomeDiscount() {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={handleClose} />
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={handleClose} />
 
-      <div className="relative w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-500">
-        <div className="bg-gradient-to-br from-primary via-primary/85 to-accent p-6 pb-8 text-center relative">
-          <button
-            onClick={handleClose}
-            className="absolute top-3 right-3 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-          >
-            <X className="w-4 h-4 text-white" />
-          </button>
+      {/* Main Card */}
+      <div className="relative w-full max-w-[360px] animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+        {/* Outer glow */}
+        <div className="absolute -inset-1 rounded-[28px] bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--accent))] to-[hsl(var(--primary))] opacity-60 blur-xl animate-pulse" />
+        
+        {/* Card body */}
+        <div className="relative rounded-[24px] overflow-hidden border border-white/20 shadow-2xl">
+          
+          {/* ═══ Top Gradient Section ═══ */}
+          <div className="relative px-6 pt-7 pb-10 overflow-hidden">
+            {/* Animated gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(258,78%,45%)] to-[hsl(var(--accent))]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.15),transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(255,255,255,0.1),transparent_50%)]" />
+            
+            {/* Floating particles */}
+            <div className="absolute top-4 left-8 w-2 h-2 rounded-full bg-white/30 animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }} />
+            <div className="absolute top-12 right-12 w-1.5 h-1.5 rounded-full bg-white/25 animate-bounce" style={{ animationDelay: '1s', animationDuration: '2.5s' }} />
+            <div className="absolute bottom-8 left-16 w-1 h-1 rounded-full bg-white/20 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }} />
 
-          <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-            <Gift className="w-8 h-8 text-white" />
+            {/* Close button */}
+            <button
+              onClick={handleClose}
+              className="absolute top-3 right-3 p-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/25 transition-all duration-300 hover:scale-110 hover:rotate-90 z-10"
+            >
+              <X className="w-4 h-4 text-white" />
+            </button>
+
+            {/* Gift icon with glow */}
+            <div className="relative w-[72px] h-[72px] mx-auto mb-4">
+              <div className="absolute inset-0 rounded-2xl bg-white/20 blur-lg animate-pulse" />
+              <div className="relative w-full h-full rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-lg">
+                <Gift className="w-8 h-8 text-white drop-shadow-lg" />
+                <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-[hsl(var(--accent))] animate-pulse" />
+              </div>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-white text-xl font-bold text-center mb-1 drop-shadow-md">
+              {popupTitle}
+            </h2>
+            <p className="text-white/80 text-sm text-center font-medium">
+              {popupSubtitle}
+            </p>
           </div>
 
-          <h2 className="text-white text-xl font-bold mb-1">{popupTitle}</h2>
-          <p className="text-white/90 text-sm">{popupSubtitle}</p>
-        </div>
+          {/* ═══ Bottom Glass Section ═══ */}
+          <div className="relative -mt-5 rounded-t-[24px] overflow-hidden">
+            {/* Glassmorphism background */}
+            <div className="absolute inset-0 bg-background/95 backdrop-blur-2xl" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--primary)/0.03)] to-transparent" />
+            
+            <div className="relative px-6 pt-8 pb-6">
+              {/* Discount badge */}
+              <div className="text-center mb-5">
+                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[hsl(var(--accent)/0.12)] border border-[hsl(var(--accent)/0.2)] mb-3">
+                  <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--accent))]" />
+                  <span className="text-xs font-semibold text-[hsl(var(--accent))]">সীমিত অফার</span>
+                </div>
+                <div className="relative">
+                  <span className="text-6xl font-black bg-gradient-to-r from-[hsl(var(--primary))] via-[hsl(258,78%,50%)] to-[hsl(var(--accent))] bg-clip-text text-transparent leading-none">
+                    {coupon.discount}%
+                  </span>
+                  <div className="absolute -inset-4 bg-gradient-to-r from-[hsl(var(--primary)/0.08)] to-[hsl(var(--accent)/0.08)] blur-2xl rounded-full -z-10" />
+                </div>
+                <p className="text-muted-foreground text-sm mt-2 font-medium">ডিসকাউন্ট যেকোনো প্রোডাক্টে</p>
+              </div>
 
-        <div className="bg-background p-6 -mt-4 rounded-t-3xl relative">
-          <div className="text-center mb-4">
-            <span className="text-5xl font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              {coupon.discount}%
-            </span>
-            <p className="text-muted-foreground text-sm mt-1">ডিসকাউন্ট যেকোনো প্রোডাক্টে</p>
+              {/* Coupon code card */}
+              <button
+                onClick={handleCopy}
+                className="w-full group relative rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                {/* Border gradient */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[hsl(var(--primary)/0.4)] via-[hsl(var(--accent)/0.4)] to-[hsl(var(--primary)/0.4)] p-[1.5px]">
+                  <div className="w-full h-full rounded-[14.5px] bg-background" />
+                </div>
+                
+                <div className="relative flex items-center justify-between gap-3 px-5 py-4">
+                  {/* Dashed pattern overlay */}
+                  <div className="absolute inset-0 bg-[hsl(var(--primary)/0.03)]" />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-background border border-border" />
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-5 h-5 rounded-full bg-background border border-border" />
+                  
+                  <span className="relative font-mono text-lg font-bold tracking-[0.15em] text-foreground">
+                    {coupon.code}
+                  </span>
+                  <div className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-300 ${
+                    copied 
+                      ? 'bg-green-500/10 text-green-600' 
+                      : 'bg-[hsl(var(--primary)/0.08)] text-[hsl(var(--primary))] group-hover:bg-[hsl(var(--primary)/0.15)]'
+                  }`}>
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span className="text-xs font-semibold">কপি!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        <span className="text-xs font-semibold">কপি</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </button>
+
+              {/* Timer */}
+              <div className="flex items-center justify-center gap-2 mt-5">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/8 border border-destructive/15">
+                  <Clock className="w-4 h-4 text-destructive animate-pulse" />
+                  <span className="text-xs text-muted-foreground font-medium">মেয়াদ শেষ হবে:</span>
+                  <span className="font-mono font-bold text-destructive text-sm tabular-nums">{timeLeft}</span>
+                </div>
+              </div>
+
+              {/* Footer hint */}
+              <p className="text-center text-xs text-muted-foreground/70 mt-4 font-medium">
+                ✨ চেকআউটে কুপন কোড ব্যবহার করুন
+              </p>
+            </div>
           </div>
-
-          <button
-            onClick={handleCopy}
-            className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 hover:bg-primary/10 transition-colors group"
-          >
-            <span className="font-mono text-lg font-bold tracking-wider text-foreground">
-              {coupon.code}
-            </span>
-            {copied ? (
-              <Check className="w-5 h-5 text-green-500 shrink-0" />
-            ) : (
-              <Copy className="w-5 h-5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors" />
-            )}
-          </button>
-
-          <div className="flex items-center justify-center gap-2 mt-4 text-sm">
-            <Clock className="w-4 h-4 text-destructive" />
-            <span className="text-muted-foreground">মেয়াদ শেষ হবে:</span>
-            <span className="font-mono font-bold text-destructive">{timeLeft}</span>
-          </div>
-
-          <p className="text-center text-xs text-muted-foreground mt-3">
-            চেকআউটে কুপন কোড ব্যবহার করুন
-          </p>
         </div>
       </div>
     </div>
