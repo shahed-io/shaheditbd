@@ -63,6 +63,12 @@ const InstallApp = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEOHead
+        title="Install Shahed Store App – PWA"
+        description="Shahed Store অ্যাপটি আপনার ফোনে ইনস্টল করুন। দ্রুত লোডিং, অফলাইন সাপোর্ট এবং নেটিভ অ্যাপের মতো অভিজ্ঞতা পান।"
+        canonical="https://shahedstore.com.bd/install"
+        keywords="shahed store app install, pwa bangladesh, digital store app download"
+      />
       <Navbar />
 
       {/* Hero */}

@@ -244,13 +244,12 @@ const HelpCenter = () => {
   // ── Help Center Index ────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "Shahed Store Help Center",
-        "description": "সাধারণ প্রশ্ন ও সমাধান",
-        "url": window.location.origin + "/help",
-      })}} />
+      <SEOHead
+        title="Help Center – Software Guide & Support"
+        description="Shahed Store Help Center — সফটওয়্যার ব্যবহারের গাইড, অর্ডার সহায়তা, পেমেন্ট ও রিফান্ড সংক্রান্ত সকল সমাধান পান।"
+        canonical="https://shahedstore.com.bd/help"
+        keywords="shahed store help center, software guide bangladesh, digital software support, order help"
+      />
       <Navbar />
 
       {/* Hero */}

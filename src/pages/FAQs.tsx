@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronDown, ShoppingCart, CreditCard, Truck, RotateCcw, HelpCircle, MessageCircle, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
 import { FloatingButtons } from '@/components/store/Extras';
+import { faqSchema } from '@/components/seo/schemas';
 
 const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
