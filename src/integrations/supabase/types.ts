@@ -2075,6 +2075,47 @@ export type Database = {
         }
         Relationships: []
       }
+      welcome_coupons: {
+        Row: {
+          code: string
+          created_at: string
+          discount_percent: number
+          expires_at: string
+          id: string
+          is_used: boolean
+          used_by_order_id: string | null
+          visitor_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          discount_percent: number
+          expires_at: string
+          id?: string
+          is_used?: boolean
+          used_by_order_id?: string | null
+          visitor_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          discount_percent?: number
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          used_by_order_id?: string | null
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "welcome_coupons_used_by_order_id_fkey"
+            columns: ["used_by_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wishlists: {
         Row: {
           created_at: string

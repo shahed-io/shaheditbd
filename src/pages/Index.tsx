@@ -14,6 +14,7 @@ const WhyChooseUs  = lazy(() => import('@/components/store/WhyChooseUs'));
 const Testimonials = lazy(() => import('@/components/store/Testimonials'));
 const Footer       = lazy(() => import('@/components/store/Footer'));
 const PopupBanner  = lazy(() => import('@/components/store/PopupBanner'));
+const WelcomeDiscount = lazy(() => import('@/components/store/WelcomeDiscount'));
 
 // Lightweight skeleton placeholders
 const SectionSkeleton = () => (
@@ -73,6 +74,9 @@ const Index = () => {
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
       <Suspense fallback={null}>
         <PopupBanner />
+      </Suspense>
+      <Suspense fallback={null}>
+        <WelcomeDiscount />
       </Suspense>
     </div>
   );
