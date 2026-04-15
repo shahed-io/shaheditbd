@@ -26,6 +26,7 @@ interface AdminNotif {
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
+  { icon: Brain, label: '🤖 AI Assistant', path: '/ceo/ai-assistant' },
   { icon: ShoppingCart, label: 'Orders', path: '/ceo/orders' },
   {
     icon: Package, label: 'Products', path: '/ceo/products',
