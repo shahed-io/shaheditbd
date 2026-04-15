@@ -6,6 +6,22 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+interface WelcomeSettings {
+  enabled: boolean;
+  min_discount: number;
+  max_discount: number;
+  min_minutes: number;
+  max_minutes: number;
+}
+
+const DEFAULT_SETTINGS: WelcomeSettings = {
+  enabled: true,
+  min_discount: 5,
+  max_discount: 12,
+  min_minutes: 30,
+  max_minutes: 60,
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
@@ -23,6 +39,23 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
+    // Fetch admin settings
+    const { data: settingsRow } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'welcome_discount_config')
+      .single();
+
+    const settings: WelcomeSettings = settingsRow?.value
+      ? JSON.parse(settingsRow.value)
+      : DEFAULT_SETTINGS;
+
+    if (!settings.enabled) {
+      return new Response(JSON.stringify({ disabled: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
+      });
+    }
+
     // Check if this visitor already got a coupon
     const { data: existing } = await supabase
       .from('welcome_coupons')
@@ -33,7 +66,6 @@ serve(async (req) => {
       .single();
 
     if (existing) {
-      // If still valid and not used, return it
       if (!existing.is_used && new Date(existing.expires_at) > new Date()) {
         return new Response(JSON.stringify({
           code: existing.code,
@@ -44,17 +76,18 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
         });
       }
-      // Already used or expired — don't give another
       return new Response(JSON.stringify({ alreadyClaimed: true }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
       });
     }
 
-    // Generate random discount 5-12%
-    const discount = Math.floor(Math.random() * 8) + 5; // 5,6,7,8,9,10,11,12
+    // Generate random discount within admin-configured range
+    const range = settings.max_discount - settings.min_discount;
+    const discount = Math.floor(Math.random() * (range + 1)) + settings.min_discount;
 
-    // Random expiry 30-60 minutes
-    const minutesValid = Math.floor(Math.random() * 31) + 30; // 30-60
+    // Random expiry within admin-configured range
+    const minuteRange = settings.max_minutes - settings.min_minutes;
+    const minutesValid = Math.floor(Math.random() * (minuteRange + 1)) + settings.min_minutes;
     const expiresAt = new Date(Date.now() + minutesValid * 60 * 1000).toISOString();
 
     // Generate unique code
