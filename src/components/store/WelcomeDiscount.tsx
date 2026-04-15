@@ -6,6 +6,13 @@ import { toast } from 'sonner';
 const VISITOR_KEY = 'ss_visitor_id';
 const WELCOME_SHOWN_KEY = 'ss_welcome_shown';
 
+interface WelcomeSettings {
+  enabled: boolean;
+  delay_seconds: number;
+  popup_title: string;
+  popup_subtitle: string;
+}
+
 function getOrCreateVisitorId(): string {
   let id = localStorage.getItem(VISITOR_KEY);
   if (!id) {
@@ -20,11 +27,33 @@ export default function WelcomeDiscount() {
   const [coupon, setCoupon] = useState<{ code: string; discount: number; expiresAt: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const [timeLeft, setTimeLeft] = useState('');
+  const [popupTitle, setPopupTitle] = useState('🎉 স্বাগতম!');
+  const [popupSubtitle, setPopupSubtitle] = useState('আপনার জন্য বিশেষ ডিসকাউন্ট');
+  const [delayMs, setDelayMs] = useState(3000);
 
+  // Fetch settings & coupon
   const fetchCoupon = useCallback(async () => {
-    // Already shown this session or previously claimed
     if (sessionStorage.getItem(WELCOME_SHOWN_KEY)) return;
     if (localStorage.getItem(WELCOME_SHOWN_KEY)) return;
+
+    // Fetch admin settings for popup text & delay
+    try {
+      const { data: settingsRow } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'welcome_discount_config')
+        .single();
+
+      if (settingsRow?.value) {
+        const cfg: WelcomeSettings = JSON.parse(settingsRow.value);
+        if (!cfg.enabled) return; // Admin disabled
+        if (cfg.popup_title) setPopupTitle(cfg.popup_title);
+        if (cfg.popup_subtitle) setPopupSubtitle(cfg.popup_subtitle);
+        if (cfg.delay_seconds) setDelayMs(cfg.delay_seconds * 1000);
+      }
+    } catch {
+      // Use defaults
+    }
 
     const visitorId = getOrCreateVisitorId();
 
@@ -33,7 +62,7 @@ export default function WelcomeDiscount() {
         body: { visitorId },
       });
 
-      if (error || !data || data.alreadyClaimed || data.error) return;
+      if (error || !data || data.alreadyClaimed || data.error || data.disabled) return;
 
       setCoupon({
         code: data.code,
@@ -48,9 +77,10 @@ export default function WelcomeDiscount() {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(fetchCoupon, 3000);
-    return () => clearTimeout(timer);
-  }, [fetchCoupon]);
+    // Use a two-stage delay: first fetch settings, then wait for configured delay
+    const initialTimer = setTimeout(fetchCoupon, delayMs);
+    return () => clearTimeout(initialTimer);
+  }, [fetchCoupon, delayMs]);
 
   // Countdown timer
   useEffect(() => {
@@ -94,13 +124,10 @@ export default function WelcomeDiscount() {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={handleClose} />
 
-      {/* Modal */}
       <div className="relative w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-500">
-        {/* Gradient top */}
-        <div className="bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--primary)/0.85)] to-[hsl(270,70%,50%)] p-6 pb-8 text-center relative">
+        <div className="bg-gradient-to-br from-primary via-primary/85 to-accent p-6 pb-8 text-center relative">
           <button
             onClick={handleClose}
             className="absolute top-3 right-3 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
@@ -112,24 +139,21 @@ export default function WelcomeDiscount() {
             <Gift className="w-8 h-8 text-white" />
           </div>
 
-          <h2 className="text-white text-xl font-bold mb-1">🎉 স্বাগতম!</h2>
-          <p className="text-white/90 text-sm">আপনার জন্য বিশেষ ডিসকাউন্ট</p>
+          <h2 className="text-white text-xl font-bold mb-1">{popupTitle}</h2>
+          <p className="text-white/90 text-sm">{popupSubtitle}</p>
         </div>
 
-        {/* Content */}
         <div className="bg-background p-6 -mt-4 rounded-t-3xl relative">
-          {/* Discount badge */}
           <div className="text-center mb-4">
-            <span className="text-5xl font-extrabold bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(270,70%,50%)] bg-clip-text text-transparent">
+            <span className="text-5xl font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               {coupon.discount}%
             </span>
             <p className="text-muted-foreground text-sm mt-1">ডিসকাউন্ট যেকোনো প্রোডাক্টে</p>
           </div>
 
-          {/* Coupon code */}
           <button
             onClick={handleCopy}
-            className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-[hsl(var(--primary)/0.4)] bg-[hsl(var(--primary)/0.05)] hover:bg-[hsl(var(--primary)/0.1)] transition-colors group"
+            className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 hover:bg-primary/10 transition-colors group"
           >
             <span className="font-mono text-lg font-bold tracking-wider text-foreground">
               {coupon.code}
@@ -137,15 +161,14 @@ export default function WelcomeDiscount() {
             {copied ? (
               <Check className="w-5 h-5 text-green-500 shrink-0" />
             ) : (
-              <Copy className="w-5 h-5 text-muted-foreground group-hover:text-[hsl(var(--primary))] shrink-0 transition-colors" />
+              <Copy className="w-5 h-5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors" />
             )}
           </button>
 
-          {/* Timer */}
           <div className="flex items-center justify-center gap-2 mt-4 text-sm">
-            <Clock className="w-4 h-4 text-red-500" />
+            <Clock className="w-4 h-4 text-destructive" />
             <span className="text-muted-foreground">মেয়াদ শেষ হবে:</span>
-            <span className="font-mono font-bold text-red-500">{timeLeft}</span>
+            <span className="font-mono font-bold text-destructive">{timeLeft}</span>
           </div>
 
           <p className="text-center text-xs text-muted-foreground mt-3">
