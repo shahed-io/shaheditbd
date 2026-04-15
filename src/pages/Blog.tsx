@@ -457,7 +457,7 @@ const Blog = () => {
             )}
 
             {/* Newsletter / Help CTA */}
-            <Link to="/help"
+            <Link to="/link"
               className="group block rounded-3xl p-5 border relative overflow-hidden transition-all duration-300 hover:-translate-y-1"
               style={{
                 background: 'linear-gradient(135deg, hsla(271,91%,65%,0.08), hsla(200,90%,55%,0.06))',

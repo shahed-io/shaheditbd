@@ -71,7 +71,7 @@ const HelpCenter = () => {
         setCurrentArticle(art);
         supabase.from('help_articles').update({ views: (art.views || 0) + 1 }).eq('id', art.id);
       } else {
-        navigate('/help', { replace: true });
+        navigate('/link', { replace: true });
       }
     } else {
       setCurrentArticle(null);
@@ -118,7 +118,7 @@ const HelpCenter = () => {
         <SEOHead
           title={`${currentArticle.seo_title || currentArticle.title} – Help Center`}
           description={currentArticle.seo_description || currentArticle.excerpt || `${currentArticle.title} — Shahed Store Help Center`}
-          canonical={`https://shahedstore.com.bd/help/${currentArticle.slug}`}
+          canonical={`https://shahedstore.com.bd/link/${currentArticle.slug}`}
           keywords={`shahed store help, ${currentArticle.title}, ${(currentArticle.tags || []).join(', ')}`}
           schema={schema}
         />
@@ -128,7 +128,7 @@ const HelpCenter = () => {
           <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-6">
             <Link to="/" className="hover:text-primary transition-colors">হোম</Link>
             <ChevronRight size={12} />
-            <Link to="/help" className="hover:text-primary transition-colors">Help Center</Link>
+            <Link to="/link" className="hover:text-primary transition-colors">Help Center</Link>
             <ChevronRight size={12} />
             <span style={{ color: catCfg.color }}>{catCfg.label}</span>
           </nav>
@@ -202,7 +202,7 @@ const HelpCenter = () => {
 
             {/* Sidebar — related */}
             <aside className="lg:w-64 space-y-5 flex-shrink-0">
-              <Link to="/help" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors">
+              <Link to="/link" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors">
                 <ArrowLeft size={12} /> Help Center
               </Link>
               {relatedArticles.length > 0 && (
@@ -213,7 +213,7 @@ const HelpCenter = () => {
                       const cfg = CATEGORY_CONFIG[a.category] || CATEGORY_CONFIG['general'];
                       return (
                         <li key={a.id}>
-                          <Link to={`/help/${a.slug}`}
+                          <Link to={`/link/${a.slug}`}
                             className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-start gap-2 py-1">
                             <ChevronRight size={12} className="mt-0.5 flex-shrink-0" style={{ color: cfg.color }} />
                             {a.title}
@@ -247,7 +247,7 @@ const HelpCenter = () => {
       <SEOHead
         title="Help Center – Software Guide & Support"
         description="Shahed Store Help Center — সফটওয়্যার ব্যবহারের গাইড, অর্ডার সহায়তা, পেমেন্ট ও রিফান্ড সংক্রান্ত সকল সমাধান পান।"
-        canonical="https://shahedstore.com.bd/help"
+        canonical="https://shahedstore.com.bd/link"
         keywords="shahed store help center, software guide bangladesh, digital software support, order help"
       />
       <Navbar />
@@ -364,7 +364,7 @@ const HelpCenter = () => {
               {featured.map(a => {
                 const cfg = CATEGORY_CONFIG[a.category] || CATEGORY_CONFIG['general'];
                 return (
-                  <Link key={a.id} to={`/help/${a.slug}`}
+                  <Link key={a.id} to={`/link/${a.slug}`}
                     className="glass-card rounded-2xl p-4 hover:border-primary/30 transition-all hover:-translate-y-0.5 group">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -417,7 +417,7 @@ const HelpCenter = () => {
                 return (
                   <Link
                     key={a.id}
-                    to={`/help/${a.slug}`}
+                    to={`/link/${a.slug}`}
                     className="glass-card rounded-xl px-5 py-4 flex items-center gap-4 hover:border-primary/30 transition-all group"
                   >
                     <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"

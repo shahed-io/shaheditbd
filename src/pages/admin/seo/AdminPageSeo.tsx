@@ -16,7 +16,7 @@ const SITE_PAGES = [
   { key: 'home', label: 'Home Page', path: '/', icon: '🏠' },
   { key: 'shop', label: 'Shop Page', path: '/shop', icon: '🛒' },
   { key: 'blog', label: 'Blog Page', path: '/blog', icon: '📝' },
-  { key: 'help', label: 'Software Downloads', path: '/help', icon: '💾' },
+  { key: 'help', label: 'Software Downloads', path: '/link', icon: '💾' },
   { key: 'about', label: 'About Us', path: '/about', icon: 'ℹ️' },
   { key: 'contact', label: 'Contact Us', path: '/contact', icon: '📞' },
   { key: 'faqs', label: 'FAQs', path: '/faqs', icon: '❓' },

@@ -8,7 +8,7 @@ interface LinkCheck { url: string; label: string; status: 'ok' | 'broken' | 'che
 const SITE_URL = 'https://shahedstore.com.bd';
 const STATIC_PAGES = [
   { url: '/', label: 'Home' }, { url: '/shop', label: 'Shop' }, { url: '/blog', label: 'Blog' },
-  { url: '/help', label: 'Help Center' }, { url: '/about', label: 'About' }, { url: '/contact', label: 'Contact' },
+  { url: '/link', label: 'Help Center' }, { url: '/about', label: 'About' }, { url: '/contact', label: 'Contact' },
   { url: '/faqs', label: 'FAQs' }, { url: '/privacy-policy', label: 'Privacy Policy' },
   { url: '/terms-conditions', label: 'Terms' }, { url: '/refund-policy', label: 'Refund Policy' },
 ];
