@@ -26,7 +26,6 @@ interface AdminNotif {
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
-  { icon: Brain, label: '🤖 AI Assistant', path: '/ceo/ai-assistant' },
   { icon: ShoppingCart, label: 'Orders', path: '/ceo/orders' },
   {
     icon: Package, label: 'Products', path: '/ceo/products',
@@ -104,6 +103,7 @@ const menuItems = [
   { icon: Database, label: 'Backup', path: '/ceo/backup' },
   { icon: ShieldCheck, label: 'CID For Reseller', path: '/ceo/reseller' },
   { icon: Users, label: 'Reseller Accounts', path: '/ceo/reseller-accounts' },
+  { icon: Brain, label: '🤖 AI Assistant', path: '/ceo/ai-assistant' },
 ];
 
 const AdminLayout = () => {
