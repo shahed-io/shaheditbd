@@ -33,3 +33,7 @@ project_id = "dpvdavjwqyviredzoorj"
     verify_jwt = false
   [functions.prerender]
     verify_jwt = false
+  [functions.generate-welcome-coupon]
+    verify_jwt = false
+  [functions.validate-coupon]
+    verify_jwt = false
