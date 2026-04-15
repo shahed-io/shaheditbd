@@ -14,8 +14,7 @@ serve(async (req) => {
 
     if (!code || typeof code !== 'string' || code.length > 30) {
       return new Response(JSON.stringify({ valid: false, message: 'কুপন কোড সঠিক নয়' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
       });
     }
 
@@ -24,10 +23,57 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
+    const trimmedCode = code.trim().toUpperCase();
+
+    // --- Check welcome_coupons first if code starts with WELCOME- ---
+    if (trimmedCode.startsWith('WELCOME-')) {
+      const { data: wc, error: wcErr } = await supabase
+        .from('welcome_coupons')
+        .select('id, code, discount_percent, expires_at, is_used')
+        .eq('code', trimmedCode)
+        .single();
+
+      if (wcErr || !wc) {
+        return new Response(JSON.stringify({ valid: false, message: 'কুপন কোড সঠিক নয়' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
+        });
+      }
+
+      if (wc.is_used) {
+        return new Response(JSON.stringify({ valid: false, message: 'এই কুপন ইতিমধ্যে ব্যবহৃত হয়েছে' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
+        });
+      }
+
+      if (new Date(wc.expires_at) < new Date()) {
+        return new Response(JSON.stringify({ valid: false, message: 'কুপনের মেয়াদ শেষ হয়ে গেছে' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
+        });
+      }
+
+      const discount = Math.round(orderTotal * wc.discount_percent / 100);
+
+      // Mark as used
+      await supabase
+        .from('welcome_coupons')
+        .update({ is_used: true })
+        .eq('id', wc.id);
+
+      return new Response(JSON.stringify({
+        valid: true,
+        discount,
+        couponId: wc.id,
+        welcomeCoupon: true,
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
+      });
+    }
+
+    // --- Regular coupons table ---
     const { data, error } = await supabase
       .from('coupons')
       .select('id, code, discount_type, discount_value, min_order_amount, max_uses, uses_count, is_active, expires_at')
-      .eq('code', code.trim().toUpperCase())
+      .eq('code', trimmedCode)
       .eq('is_active', true)
       .single();
 
