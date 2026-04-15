@@ -50,7 +50,7 @@ const EDITABLE_PAGES = [
 /* ─── Default footer links ─── */
 const DEFAULT_LINKS: Omit<PageLink, 'id'>[] = [
   { section: 'information', label: 'Blog',             href: '/blog',             sort_order: 1,  is_active: true },
-  { section: 'information', label: 'Help Center',      href: '/help',             sort_order: 2,  is_active: true },
+  { section: 'information', label: 'Help Center',      href: '/link',             sort_order: 2,  is_active: true },
   { section: 'information', label: 'About Us',         href: '/about',            sort_order: 3,  is_active: true },
   { section: 'information', label: 'My Account',       href: '/dashboard',        sort_order: 4,  is_active: true },
   { section: 'information', label: 'Contact Us',       href: '/contact',          sort_order: 5,  is_active: true },
