@@ -404,6 +404,7 @@ const ProductDetail = () => {
         title={seoTitle}
         description={seoDescription}
         ogImage={product.image_url || undefined}
+        ogImages={(product.images || []).filter(Boolean)}
         ogType="product"
         canonical={`https://shahedstore.com.bd/product/${product.slug}`}
         schema={seoSchemas}
