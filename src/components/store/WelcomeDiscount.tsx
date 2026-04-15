@@ -78,14 +78,14 @@ export default function WelcomeDiscount() {
   useEffect(() => {
     if (sessionStorage.getItem(WELCOME_SHOWN_KEY) || localStorage.getItem(WELCOME_SHOWN_KEY)) return;
 
-    // If user already visited a product page, show immediately with short delay
+    // If user already visited a product page, show with short delay
     if (sessionStorage.getItem(PRODUCT_VISIT_KEY)) {
-      const t = setTimeout(fetchCoupon, 2000);
+      const t = setTimeout(fetchCoupon, 3000);
       return () => clearTimeout(t);
     }
 
-    // Random delay between 10-20 seconds
-    const randomDelay = (Math.floor(Math.random() * 11) + 10) * 1000;
+    // Random delay between 12-20 seconds to avoid competing with initial loads
+    const randomDelay = (Math.floor(Math.random() * 9) + 12) * 1000;
     const timer = setTimeout(fetchCoupon, randomDelay);
 
     // Also listen for product visit event
