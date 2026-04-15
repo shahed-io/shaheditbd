@@ -8,6 +8,7 @@ export const productSchema = (p: {
   name: string;
   description?: string | null;
   image?: string | null;
+  images?: string[];
   price: number;
   slug: string;
   rating?: number;
@@ -16,12 +17,23 @@ export const productSchema = (p: {
   sku?: string;
   originalPrice?: number | null;
   inStock?: boolean;
-}) => ({
+}) => {
+  // Build full image array for Google Image indexing
+  const allImages: string[] = [];
+  if (p.image) allImages.push(p.image);
+  if (p.images) {
+    for (const img of p.images) {
+      if (img && !allImages.includes(img)) allImages.push(img);
+    }
+  }
+  if (allImages.length === 0) allImages.push(`${SITE_URL}/favicon.png`);
+
+  return ({
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: p.name,
   description: p.description || p.name,
-  image: [p.image || `${SITE_URL}/favicon.png`],
+  image: allImages,
   url: `${SITE_URL}/product/${p.slug}`,
   sku: p.sku || p.slug,
   brand: { '@type': 'Brand', name: SITE_NAME },
@@ -61,6 +73,7 @@ export const productSchema = (p: {
       }
     : {}),
 });
+};
 
 
 /** Breadcrumb schema */

@@ -303,7 +303,8 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
           <img
             src={product.image}
-            alt={product.name}
+            alt={`${product.name} - Buy at ৳${product.price.toLocaleString()} in Bangladesh`}
+            title={`${product.name} - Shahed Store Bangladesh`}
             loading={priority ? 'eager' : 'lazy'}
             decoding="async"
             fetchPriority={priority ? 'high' : 'low'}

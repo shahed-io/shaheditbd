@@ -374,6 +374,7 @@ const ProductDetail = () => {
       name: product.name,
       description: seoDescription,
       image: product.image_url,
+      images: (product.images || []).filter(Boolean),
       price: displayPrice,
       slug: product.slug,
       category: product.categories?.name,
@@ -403,6 +404,7 @@ const ProductDetail = () => {
         title={seoTitle}
         description={seoDescription}
         ogImage={product.image_url || undefined}
+        ogImages={(product.images || []).filter(Boolean)}
         ogType="product"
         canonical={`https://shahedstore.com.bd/product/${product.slug}`}
         schema={seoSchemas}
@@ -454,7 +456,8 @@ const ProductDetail = () => {
                 <img
                   key={images[activeImg]}
                   src={images[activeImg]}
-                  alt={product.name}
+                  alt={`Buy ${product.name} at best price in Bangladesh - Shahed Store`}
+                  title={`${product.name} - ৳${displayPrice.toLocaleString()} | Shahed Store Bangladesh`}
                   onLoad={() => setImgLoaded(true)}
                   onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
@@ -519,7 +522,7 @@ const ProductDetail = () => {
                   {images.map((img, i) => (
                     <button key={i} onClick={() => { setActiveImg(i); setImgLoaded(false); }}
                       className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary shadow-[0_0_16px_hsla(271,91%,65%,0.5)]' : 'border-border hover:border-primary/50'}`}>
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <img src={img} alt={`${product.name} - Image ${i + 1}`} title={`${product.name} gallery image ${i + 1}`} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>

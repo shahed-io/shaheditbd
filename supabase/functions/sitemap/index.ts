@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
-    const urls: { loc: string; lastmod?: string; changefreq: string; priority: string }[] = [];
+    const urls: string[] = [];
 
     // ── Static pages ──────────────────────────────────────────────
     const staticPages = [
@@ -40,24 +40,45 @@ Deno.serve(async (req) => {
     ];
 
     for (const p of staticPages) {
-      urls.push({ loc: `${SITE_URL}${p.path}`, changefreq: p.changefreq, priority: p.priority });
+      urls.push(`  <url>
+    <loc>${SITE_URL}${p.path}</loc>
+    <changefreq>${p.changefreq}</changefreq>
+    <priority>${p.priority}</priority>
+  </url>`);
     }
 
-    // ── Products ─────────────────────────────────────────────────
+    // ── Products (with images for Google Image indexing) ──────────
     const { data: products } = await supabase
       .from('products')
-      .select('slug, updated_at, name')
+      .select('slug, updated_at, name, image_url, images, seo_title')
       .eq('status', 'active')
       .order('updated_at', { ascending: false })
       .limit(5000);
 
     for (const p of products || []) {
-      urls.push({
-        loc: `${SITE_URL}/product/${escape(p.slug)}`,
-        lastmod: p.updated_at?.split('T')[0],
-        changefreq: 'weekly',
-        priority: '0.9',
-      });
+      const allImages: string[] = [];
+      if (p.image_url) allImages.push(p.image_url);
+      if (Array.isArray(p.images)) {
+        for (const img of p.images) {
+          if (img && !allImages.includes(img)) allImages.push(img);
+        }
+      }
+
+      const imageTitle = escape(p.seo_title || `${p.name} - Buy at Best Price in Bangladesh | Shahed Store`);
+      const imageCaption = escape(`${p.name} - High quality product image from Shahed Store Bangladesh`);
+
+      const imageBlocks = allImages.map((img, i) => `
+    <image:image>
+      <image:loc>${escape(img)}</image:loc>
+      <image:title>${i === 0 ? imageTitle : escape(`${p.name} - Image ${i + 1}`)}</image:title>
+      <image:caption>${imageCaption}</image:caption>
+    </image:image>`).join('');
+
+      urls.push(`  <url>
+    <loc>${SITE_URL}/product/${escape(p.slug)}</loc>${p.updated_at ? `\n    <lastmod>${p.updated_at.split('T')[0]}</lastmod>` : ''}
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>${imageBlocks}
+  </url>`);
     }
 
     // ── Categories ───────────────────────────────────────────────
@@ -67,12 +88,11 @@ Deno.serve(async (req) => {
       .eq('is_active', true);
 
     for (const c of categories || []) {
-      urls.push({
-        loc: `${SITE_URL}/shop?category=${escape(c.slug)}`,
-        lastmod: c.updated_at?.split('T')[0],
-        changefreq: 'weekly',
-        priority: '0.8',
-      });
+      urls.push(`  <url>
+    <loc>${SITE_URL}/shop?category=${escape(c.slug)}</loc>${c.updated_at ? `\n    <lastmod>${c.updated_at.split('T')[0]}</lastmod>` : ''}
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`);
     }
 
     // ── Blog posts ───────────────────────────────────────────────
@@ -84,12 +104,11 @@ Deno.serve(async (req) => {
       .limit(1000);
 
     for (const b of blogPosts || []) {
-      urls.push({
-        loc: `${SITE_URL}/blog/${escape(b.slug)}`,
-        lastmod: b.updated_at?.split('T')[0],
-        changefreq: 'monthly',
-        priority: '0.7',
-      });
+      urls.push(`  <url>
+    <loc>${SITE_URL}/blog/${escape(b.slug)}</loc>${b.updated_at ? `\n    <lastmod>${b.updated_at.split('T')[0]}</lastmod>` : ''}
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`);
     }
 
     // ── Build XML ─────────────────────────────────────────────────
@@ -98,11 +117,7 @@ Deno.serve(async (req) => {
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${urls.map(u => `  <url>
-    <loc>${u.loc}</loc>${u.lastmod ? `\n    <lastmod>${u.lastmod}</lastmod>` : ''}
-    <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>
-  </url>`).join('\n')}
+${urls.join('\n')}
 </urlset>`;
 
     return new Response(xml, {

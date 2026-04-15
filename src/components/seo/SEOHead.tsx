@@ -6,6 +6,7 @@ interface SEOHeadProps {
   title?: string;
   description?: string;
   ogImage?: string;
+  ogImages?: string[];
   ogType?: 'website' | 'article' | 'product';
   canonical?: string;
   noIndex?: boolean;
@@ -26,6 +27,7 @@ const SEOHead = ({
   title,
   description = DEFAULT_DESC,
   ogImage = DEFAULT_OG,
+  ogImages,
   ogType = 'website',
   canonical,
   noIndex = false,
@@ -125,6 +127,21 @@ const SEOHead = ({
     setMeta('meta[property="og:site_name"]', SITE_NAME);
     setMeta('meta[property="og:locale"]', 'bn_BD');
 
+    // Additional og:image tags for gallery images
+    document.querySelectorAll('meta[data-extra-og-image]').forEach(el => el.remove());
+    if (ogImages && ogImages.length > 0) {
+      ogImages.forEach(img => {
+        if (img && img !== ogImage) {
+          const imgUrl = img.startsWith('http') ? img : `${SITE_URL}${img}`;
+          const el = document.createElement('meta');
+          el.setAttribute('property', 'og:image');
+          el.setAttribute('content', imgUrl);
+          el.setAttribute('data-extra-og-image', 'true');
+          document.head.appendChild(el);
+        }
+      });
+    }
+
     // Twitter Card
     setMeta('meta[name="twitter:card"]', 'summary_large_image');
     setMeta('meta[name="twitter:title"]', fullTitle);
@@ -150,10 +167,10 @@ const SEOHead = ({
     }
 
     return () => {
-      // cleanup schema on unmount
       document.querySelectorAll('script[data-seo-schema]').forEach(s => s.remove());
+      document.querySelectorAll('meta[data-extra-og-image]').forEach(el => el.remove());
     };
-  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, noIndex, schema, keywords]);
+  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, noIndex, schema, keywords, ogImages]);
 
   return null;
 };
