@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useReveal } from '@/hooks/useReveal';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
 import { ArrowRight, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 const mapProduct = (p: any): Product => ({
   id:            p.id,

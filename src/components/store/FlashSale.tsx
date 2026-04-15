@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Flame, Timer, ArrowRight, ShoppingCart, Zap, TrendingDown } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
+import { useQuery } from '@tanstack/react-query';
 
 interface FlashProduct {
   id: string;

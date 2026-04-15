@@ -78,10 +78,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (mounted) setLoading(false);
     });
 
-    // Fallback safety — max 8s
+    // Fallback safety — max 3s
     const timeout = setTimeout(() => {
       if (mounted) setLoading(false);
-    }, 8000);
+    }, 3000);
 
     return () => {
       mounted = false;
