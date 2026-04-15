@@ -105,6 +105,7 @@ const AdminStaffManagement       = lazy(() => import("./pages/admin/AdminStaffMa
 const AdminInventoryAlerts       = lazy(() => import("./pages/admin/AdminInventoryAlerts"));
 const AdminThemes                = lazy(() => import("./pages/admin/AdminThemes"));
 const AdminAiAssistant           = lazy(() => import("./pages/admin/AdminAiAssistant"));
+const AdminWelcomeDiscount       = lazy(() => import("./pages/admin/AdminWelcomeDiscount"));
 
 
 const queryClient = new QueryClient({
@@ -253,6 +254,7 @@ const AppContent = () => {
             <Route path="inventory-alerts" element={<AdminSuspense><AdminInventoryAlerts /></AdminSuspense>} />
             <Route path="themes" element={<AdminSuspense><AdminThemes /></AdminSuspense>} />
             <Route path="ai-assistant" element={<AdminSuspense><AdminAiAssistant /></AdminSuspense>} />
+            <Route path="welcome-discount" element={<AdminSuspense><AdminWelcomeDiscount /></AdminSuspense>} />
             
             <Route path="reseller" element={<AdminSuspense><Reseller /></AdminSuspense>} />
             <Route path="reseller-accounts" element={<AdminSuspense><AdminResellerAccounts /></AdminSuspense>} />

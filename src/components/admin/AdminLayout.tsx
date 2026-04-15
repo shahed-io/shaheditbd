@@ -51,6 +51,7 @@ const menuItems = [
   { icon: Layers, label: 'Popup Banner', path: '/ceo/popup-banner' },
   { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
   { icon: Percent, label: 'Coupons', path: '/ceo/coupons' },
+  { icon: Gift, label: 'Welcome Discount', path: '/ceo/welcome-discount' },
   { icon: Gift, label: 'Referrals', path: '/ceo/referrals' },
   { icon: Headphones, label: 'Tickets', path: '/ceo/tickets' },
   { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
