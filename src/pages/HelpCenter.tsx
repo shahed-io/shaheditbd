@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
+import SEOHead from '@/components/seo/SEOHead';
 import {
   Search, ChevronRight, ThumbsUp, ThumbsDown, Star, Package,
   CreditCard, RefreshCw, Shield, Headphones, BookOpen, ArrowLeft, ExternalLink, Download
@@ -114,7 +115,13 @@ const HelpCenter = () => {
 
     return (
       <div className="min-h-screen bg-background text-foreground">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        <SEOHead
+          title={`${currentArticle.seo_title || currentArticle.title} – Help Center`}
+          description={currentArticle.seo_description || currentArticle.excerpt || `${currentArticle.title} — Shahed Store Help Center`}
+          canonical={`https://shahedstore.com.bd/help/${currentArticle.slug}`}
+          keywords={`shahed store help, ${currentArticle.title}, ${(currentArticle.tags || []).join(', ')}`}
+          schema={schema}
+        />
         <Navbar />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-20">
           {/* Breadcrumb */}
@@ -237,13 +244,12 @@ const HelpCenter = () => {
   // ── Help Center Index ────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "Shahed Store Help Center",
-        "description": "সাধারণ প্রশ্ন ও সমাধান",
-        "url": window.location.origin + "/help",
-      })}} />
+      <SEOHead
+        title="Help Center – Software Guide & Support"
+        description="Shahed Store Help Center — সফটওয়্যার ব্যবহারের গাইড, অর্ডার সহায়তা, পেমেন্ট ও রিফান্ড সংক্রান্ত সকল সমাধান পান।"
+        canonical="https://shahedstore.com.bd/help"
+        keywords="shahed store help center, software guide bangladesh, digital software support, order help"
+      />
       <Navbar />
 
       {/* Hero */}

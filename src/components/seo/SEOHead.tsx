@@ -115,6 +115,22 @@ const SEOHead = ({
     setMeta('meta[name="description"]', description);
     setMeta('meta[name="robots"]', noIndex ? 'noindex,nofollow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
     setMeta('meta[name="keywords"]', keywords || DEFAULT_KEYWORDS);
+    setMeta('meta[name="author"]', 'Shahed Store');
+
+    // hreflang for Bangladesh bilingual SEO
+    const setHreflang = (lang: string, href: string) => {
+      let el = document.querySelector(`link[hreflang="${lang}"]`) as HTMLLinkElement | null;
+      if (!el) {
+        el = document.createElement('link');
+        el.setAttribute('rel', 'alternate');
+        el.setAttribute('hreflang', lang);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('href', href);
+    };
+    setHreflang('bn-BD', canonicalUrl);
+    setHreflang('en', canonicalUrl);
+    setHreflang('x-default', canonicalUrl);
 
     // Open Graph
     setMeta('meta[property="og:title"]', fullTitle);

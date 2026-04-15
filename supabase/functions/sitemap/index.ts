@@ -111,6 +111,22 @@ Deno.serve(async (req) => {
   </url>`);
     }
 
+    // ── Help Articles ─────────────────────────────────────────────
+    const { data: helpArticles } = await supabase
+      .from('help_articles')
+      .select('slug, updated_at')
+      .eq('status', 'published')
+      .order('updated_at', { ascending: false })
+      .limit(500);
+
+    for (const h of helpArticles || []) {
+      urls.push(`  <url>
+    <loc>${SITE_URL}/help/${escape(h.slug)}</loc>${h.updated_at ? `\n    <lastmod>${h.updated_at.split('T')[0]}</lastmod>` : ''}
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`);
+    }
+
     // ── Build XML ─────────────────────────────────────────────────
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronDown, ShoppingCart, CreditCard, Truck, RotateCcw, HelpCircle, MessageCircle, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
 import { FloatingButtons } from '@/components/store/Extras';
+import { faqSchema } from '@/components/seo/schemas';
 
 const A = 'hsl(258,78%,55%)';
 const B = 'hsl(200,90%,45%)';
@@ -200,6 +201,11 @@ const FAQs = () => {
 
   const currentCat = FAQ_CATS.find(c => c.id === activeCategory)!;
 
+  // Build FAQ schema from all categories
+  const allFaqItems = useMemo(() => 
+    FAQ_CATS.flatMap(cat => cat.items), []
+  );
+
   const handleCategoryChange = (id: string) => {
     setActiveCategory(id);
     setOpenIndex(0);
@@ -212,6 +218,7 @@ const FAQs = () => {
         description="Find answers to all your questions about orders, payment methods, delivery, license keys and refunds at Shahed Store – Bangladesh's trusted digital software shop."
         canonical="https://shahedstore.com.bd/faqs"
         keywords="shahed store faq, digital software faq bangladesh, order help, payment help"
+        schema={faqSchema(allFaqItems)}
       />
       <Navbar />
 
