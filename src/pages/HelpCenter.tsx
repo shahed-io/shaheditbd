@@ -283,7 +283,7 @@ const HelpCenter = () => {
 
         {/* ── Software Downloads Section ── */}
         {softwareDownloads.length > 0 && (
-          <section className="mb-10">
+          <section id="software-downloads" className="mb-10 scroll-mt-24">
             <h2 className="font-bold text-foreground flex items-center gap-2 mb-4 text-sm">
               <Download size={14} className="text-primary" /> সফটওয়্যার ডাউনলোড
             </h2>
