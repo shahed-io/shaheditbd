@@ -6,6 +6,7 @@ interface SEOHeadProps {
   title?: string;
   description?: string;
   ogImage?: string;
+  ogImages?: string[];
   ogType?: 'website' | 'article' | 'product';
   canonical?: string;
   noIndex?: boolean;
@@ -26,6 +27,7 @@ const SEOHead = ({
   title,
   description = DEFAULT_DESC,
   ogImage = DEFAULT_OG,
+  ogImages,
   ogType = 'website',
   canonical,
   noIndex = false,
