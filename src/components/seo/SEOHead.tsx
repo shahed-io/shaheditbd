@@ -167,10 +167,10 @@ const SEOHead = ({
     }
 
     return () => {
-      // cleanup schema on unmount
       document.querySelectorAll('script[data-seo-schema]').forEach(s => s.remove());
+      document.querySelectorAll('meta[data-extra-og-image]').forEach(el => el.remove());
     };
-  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, noIndex, schema, keywords]);
+  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, noIndex, schema, keywords, ogImages]);
 
   return null;
 };
