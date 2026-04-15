@@ -141,6 +141,10 @@ const ProductDetail = () => {
         if (!row) { setNotFound(true); setLoading(false); return; }
         setProduct(row as any);
 
+        // Signal product visit for welcome discount trigger
+        sessionStorage.setItem('ss_product_visited', '1');
+        window.dispatchEvent(new CustomEvent('ss:product-visited'));
+
         // Parse __duration_plans from attributes
         const attrRaw = Array.isArray((row as any).attributes) ? (row as any).attributes : [];
         const durationPlansAttr = attrRaw.find((a: any) => a.key === '__duration_plans');
