@@ -251,14 +251,15 @@ const HelpCenter = () => {
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at 50% 0%, hsla(185,90%,52%,0.1) 0%, transparent 70%)' }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold mb-5"
+          <a href="#software-downloads" className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold mb-5 cursor-pointer hover:opacity-90 transition-opacity"
             style={{
               background: 'linear-gradient(135deg, hsl(185,90%,42%), hsl(258,78%,55%))',
               color: '#fff',
               boxShadow: '0 4px 18px hsla(185,90%,42%,0.35), 0 1px 0 rgba(255,255,255,0.2) inset',
+              textDecoration: 'none',
             }}>
             <Headphones size={14} /> Software Download Link
-          </div>
+          </a>
           <h1 className="text-4xl sm:text-5xl font-black mb-4" style={{ fontFamily: 'Orbitron, sans-serif' }}>
             কিভাবে <span className="gradient-text">সাহায্য</span> করতে পারি?
           </h1>
@@ -282,7 +283,7 @@ const HelpCenter = () => {
 
         {/* ── Software Downloads Section ── */}
         {softwareDownloads.length > 0 && (
-          <section className="mb-10">
+          <section id="software-downloads" className="mb-10 scroll-mt-24">
             <h2 className="font-bold text-foreground flex items-center gap-2 mb-4 text-sm">
               <Download size={14} className="text-primary" /> সফটওয়্যার ডাউনলোড
             </h2>
