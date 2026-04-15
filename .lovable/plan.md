@@ -1,43 +1,41 @@
 
-## সমস্যা চিহ্নিত করা হয়েছে
 
-স্ক্রিনশটে দেখা যাচ্ছে প্রোডাক্ট লোড না হয়ে সবসময় skeleton (ফাঁকা বক্স) দেখাচ্ছে। এর কারণ দুটো:
+# প্রোডাক্ট ইমেজ গুগল র‍্যাংকিং অপটিমাইজেশন
 
-**মূল কারণ ১ — Error handling নেই:**
-`TopProducts.tsx`-এ Supabase query-তে কোনো error catch করা হয় না। যদি কোনো কারণে query fail করে, `setLoading(false)` call হয় না এবং skeleton loading state চিরকালের জন্য আটকে যায়।
+## সমস্যা
+বর্তমানে প্রোডাক্টের ছবিগুলো গুগল ইমেজ সার্চে ভালোভাবে র‍্যাংক করছে না কারণ:
+- সাইটম্যাপে `<image:image>` ট্যাগ নেই
+- ইমেজের `alt` টেক্সট শুধু প্রোডাক্টের নাম (SEO-optimized না)
+- Schema.org-তে `image` অ্যারেতে শুধু একটি ছবি থাকে, সব গ্যালারি ছবি নেই
+- ইমেজে `title`, `width`, `height` অ্যাট্রিবিউট নেই
 
-```js
-// বর্তমান কোড — এরর হলে loading কখনো false হয় না
-const { data } = await supabase.from('products')...
-if (data && data.length > 0) { ... }
-setLoading(false); // এটা data না থাকলেও call হয়
-```
+## পরিকল্পনা
 
-**মূল কারণ ২ — Retry mechanism নেই:**
-Network timeout বা temporary connection issue হলে পুনরায় fetch করার কোনো ব্যবস্থা নেই।
+### 1. সাইটম্যাপে ইমেজ ট্যাগ যোগ (sitemap edge function)
+- প্রোডাক্ট কুয়েরিতে `image_url, images, seo_title` ফিল্ড যোগ
+- প্রতিটি প্রোডাক্ট URL-এ `<image:image>` ব্লক: `<image:loc>`, `<image:title>`, `<image:caption>` সহ
+- মাল্টিপল ইমেজ (গ্যালারি) থাকলে সবগুলো আলাদা `<image:image>` ব্লকে
 
----
+### 2. প্রোডাক্ট ডিটেইল পেজে SEO-রিচ alt ও title (ProductDetail.tsx)
+- মেইন ও থাম্বনেইল ইমেজে SEO-optimized alt: `"Buy {product.name} at best price in Bangladesh - Shahed Store"`
+- `title` অ্যাট্রিবিউট যোগ
+- গ্যালারি ছবিতে ক্রমিক alt: `"{product.name} - Image 1/2/3"`
 
-## সমাধান পরিকল্পনা
+### 3. প্রোডাক্ট কার্ডে SEO alt উন্নত (ProductCard.tsx)
+- alt টেক্সট: `"{product.name} - Buy at ৳{price} in Bangladesh"`
+- `title` অ্যাট্রিবিউট যোগ
 
-### `src/components/store/TopProducts.tsx` পরিবর্তন:
+### 4. Schema.org-তে সব ইমেজ যোগ (schemas.ts)
+- `productSchema`-তে `image` ফিল্ডে গ্যালারি সব ছবি অ্যারে হিসেবে পাস
+- ProductDetail থেকে সব ইমেজ URL পাঠানো
 
-1. **Error handling যোগ করা** — `try/catch` ব্লক দিয়ে query wrap করা, যাতে error হলেও `setLoading(false)` অবশ্যই call হয় এবং error state সেট হয়।
+### 5. SEOHead-এ Open Graph multi-image সাপোর্ট
+- গ্যালারি ইমেজগুলো `og:image` হিসেবে যোগ (ফেসবুক/গুগল ডিসকভারের জন্য)
 
-2. **Retry logic যোগ করা** — fetch fail হলে ৩ বার পর্যন্ত retry করবে।
+## ফাইল পরিবর্তন
+- `supabase/functions/sitemap/index.ts` — ইমেজ ট্যাগ যোগ
+- `src/pages/ProductDetail.tsx` — SEO alt/title
+- `src/components/store/ProductCard.tsx` — SEO alt/title
+- `src/components/seo/schemas.ts` — multi-image schema
+- `src/components/seo/SEOHead.tsx` — og:image অ্যারে সাপোর্ট
 
-3. **Error UI দেখানো** — যদি সত্যিই data না আসে, তাহলে skeleton-এর বদলে একটা friendly error message এবং "পুনরায় চেষ্টা করুন" বাটন দেখাবে।
-
-4. **Error ও data উভয় ক্ষেত্রে `loading(false)` নিশ্চিত করা** — `finally` block ব্যবহার করে guarantee করা যে loading state সবসময় শেষ হবে।
-
-### Technical Changes (একটি ফাইল):
-
-```
-src/components/store/TopProducts.tsx
-- Add try/catch/finally around fetch
-- Add retry state (max 3 attempts)
-- Add error state and error UI
-- Use finally to always set loading(false)
-```
-
-এই পরিবর্তনগুলো দ্রুত প্রযোজ্য এবং পুরো প্রোডাক্ট লোডিং সিস্টেমকে নির্ভরযোগ্য করে তুলবে।
