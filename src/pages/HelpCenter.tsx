@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
+import SEOHead from '@/components/seo/SEOHead';
 import {
   Search, ChevronRight, ThumbsUp, ThumbsDown, Star, Package,
   CreditCard, RefreshCw, Shield, Headphones, BookOpen, ArrowLeft, ExternalLink, Download
