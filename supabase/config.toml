@@ -31,3 +31,5 @@ project_id = "dpvdavjwqyviredzoorj"
     verify_jwt = false
   [functions.telegram-poll-admin]
     verify_jwt = false
+  [functions.prerender]
+    verify_jwt = false

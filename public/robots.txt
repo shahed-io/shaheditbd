@@ -1,9 +1,11 @@
 User-agent: Googlebot
 Allow: /
+Allow: /product/
 Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Allow: /product/
 Crawl-delay: 1
 
 User-agent: Twitterbot

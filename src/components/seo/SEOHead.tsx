@@ -116,6 +116,10 @@ const SEOHead = ({
     setMeta('meta[name="robots"]', noIndex ? 'noindex,nofollow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
     setMeta('meta[name="keywords"]', keywords || DEFAULT_KEYWORDS);
     setMeta('meta[name="author"]', 'Shahed Store');
+    setMeta('meta[name="geo.region"]', 'BD');
+    setMeta('meta[name="geo.placename"]', 'Bangladesh');
+    setMeta('meta[name="geo.position"]', '23.8103;90.4125');
+    setMeta('meta[name="ICBM"]', '23.8103, 90.4125');
 
     // hreflang for Bangladesh bilingual SEO
     const setHreflang = (lang: string, href: string) => {
