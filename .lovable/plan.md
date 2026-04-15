@@ -1,44 +1,41 @@
 
 
-# প্রোডাক্ট সার্চ র‍্যাংকিং — চূড়ান্ত অপটিমাইজেশন
+# নতুন ভিজিটরদের জন্য র‍্যান্ডম ডিসকাউন্ট কুপন সিস্টেম
 
-## বর্তমান অবস্থা (ইতিমধ্যে করা হয়েছে)
-আপনার ওয়েবসাইটে ইতিমধ্যে অনেক SEO কাজ করা হয়েছে:
-- প্রতিটি প্রোডাক্টে বাংলা+ইংরেজি SEO টাইটেল ও ডেসক্রিপশন
-- Schema.org Product markup (BDT দাম, রিভিউ, FAQ সহ)
-- ইমেজ সাইটম্যাপ, hreflang, canonical URL
-- Google Analytics ও Search Console ইন্টিগ্রেশন
-
-## সমস্যা
-**React SPA সীমাবদ্ধতা**: গুগলবট JavaScript রেন্ডার করতে বিলম্ব করে (কয়েক দিন থেকে সপ্তাহ)। এই কারণে নতুন প্রোডাক্ট দ্রুত ইনডেক্স হয় না।
+## কনসেপ্ট
+নতুন ভিজিটর সাইটে প্রবেশ করলে ২-৩ সেকেন্ড পর একটি আকর্ষণীয় পপআপ দেখাবে যেখানে ৫-১২% র‍্যান্ডম ডিসকাউন্ট কুপন কোড থাকবে, ৩০-৬০ মিনিটের কাউন্টডাউন টাইমার সহ। কুপনটি চেকআউটে ব্যবহারযোগ্য হবে।
 
 ## পরিকল্পনা
 
-### 1. Dynamic Prerender Edge Function তৈরি
-একটি নতুন edge function (`prerender`) তৈরি করা যা সার্চ ইঞ্জিন বটদের জন্য প্রতিটি প্রোডাক্ট পেজের সম্পূর্ণ HTML জেনারেট করবে:
-- বটের User-Agent চেক করে (Googlebot, Bingbot, etc.)
-- ডাটাবেস থেকে প্রোডাক্টের সব তথ্য নিয়ে পূর্ণাঙ্গ HTML পেজ তৈরি করবে
-- টাইটেল, ডেসক্রিপশন, ইমেজ, দাম, রিভিউ, FAQ — সবকিছু সরাসরি HTML-এ থাকবে
-- Schema.org JSON-LD সম্পূর্ণ পেজে embed থাকবে
+### 1. ডাটাবেস — `welcome_coupons` টেবিল তৈরি
+নতুন টেবিল যেখানে অটো-জেনারেটেড কুপনগুলো সংরক্ষিত থাকবে:
+- `code`, `discount_percent` (5-12), `expires_at`, `is_used`, `visitor_id` (localStorage fingerprint)
+- RLS: service_role insert/update, anon/authenticated select by code
 
-### 2. প্রোডাক্ট পেজে `<link rel="alternate">` ডায়নামিক প্রিরেন্ডার URL
-SEOHead-এ প্রতিটি প্রোডাক্ট পেজের জন্য একটি alternate link যোগ করা যা বটদের prerender URL-এ redirect করবে
+### 2. Edge Function — `generate-welcome-coupon`
+- ভিজিটরের `visitor_id` চেক করে — আগে কুপন পেয়ে থাকলে আর দেবে না
+- র‍্যান্ডম ৫-১২% ডিসকাউন্ট ও ৩০-৬০ মিনিটের মেয়াদ নির্ধারণ
+- ইউনিক কুপন কোড জেনারেট করে (যেমন: `WELCOME-A3F8K2`)
+- ডাটাবেসে সেভ করে কুপন রিটার্ন
 
-### 3. সাইটম্যাপে `<xhtml:link>` Alternate URL
-সাইটম্যাপের প্রতিটি প্রোডাক্ট URL-এ alternate prerender link যোগ করা
+### 3. `validate-coupon` Edge Function আপডেট
+- বিদ্যমান `coupons` টেবিলের পাশাপাশি `welcome_coupons` টেবিলও চেক করবে
+- মেয়াদ ও ব্যবহারের অবস্থা যাচাই করবে
 
-### 4. robots.txt আপডেট
-প্রিরেন্ডার endpoint বটদের জন্য অ্যাক্সেসযোগ্য করা এবং সাইটম্যাপ URL যোগ করা
+### 4. নতুন কম্পোনেন্ট — `WelcomeDiscount.tsx`
+- গ্লাসমরফিজম পপআপ ডিজাইন (ব্র্যান্ডের সাথে সামঞ্জস্যপূর্ণ)
+- কুপন কোড কপি বাটন
+- লাইভ কাউন্টডাউন টাইমার (মিনিট:সেকেন্ড)
+- localStorage দিয়ে ট্র্যাকিং — একবার দেখানোর পর আবার দেখাবে না
+- বাংলা টেক্সট
 
-### 5. Index.html-এ প্রোডাক্ট লিস্ট noscript ব্লক উন্নত
-noscript ব্লকে ডাটাবেস থেকে টপ প্রোডাক্টগুলোর লিংক যোগ করার জন্য একটি static HTML generation স্ক্রিপ্ট
+### 5. Index.tsx-এ ইন্টিগ্রেশন
+- `WelcomeDiscount` কম্পোনেন্ট lazy load করে যোগ
 
 ## ফাইল পরিবর্তন
-- `supabase/functions/prerender/index.ts` — নতুন edge function (বটদের জন্য HTML পেজ জেনারেট)
-- `supabase/functions/sitemap/index.ts` — alternate prerender URL যোগ
-- `public/robots.txt` — সাইটম্যাপ URL ও prerender access
-- `src/components/seo/SEOHead.tsx` — geo.region ও product-specific meta enhancement
-
-## প্রযুক্তিগত বিবরণ
-Prerender edge function প্রতিটি `/product/:slug` URL-এর জন্য সম্পূর্ণ server-rendered HTML পাঠাবে। এতে গুগল সাথে সাথে কন্টেন্ট পড়তে পারবে, JavaScript রেন্ডারিং-এর জন্য অপেক্ষা করতে হবে না। এটি র‍্যাংকিং-এর জন্য সবচেয়ে কার্যকর পদক্ষেপ।
+- **নতুন মাইগ্রেশন** — `welcome_coupons` টেবিল তৈরি
+- **নতুন** `supabase/functions/generate-welcome-coupon/index.ts`
+- **এডিট** `supabase/functions/validate-coupon/index.ts` — welcome coupon সাপোর্ট
+- **নতুন** `src/components/store/WelcomeDiscount.tsx`
+- **এডিট** `src/pages/Index.tsx` — কম্পোনেন্ট যোগ
 
