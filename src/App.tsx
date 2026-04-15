@@ -188,8 +188,8 @@ const AppContent = () => {
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/help" element={<HelpCenter />} />
-          <Route path="/help/:slug" element={<HelpCenter />} />
+          <Route path="/link" element={<HelpCenter />} />
+          <Route path="/link/:slug" element={<HelpCenter />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/ceo/login" element={<AdminLogin />} />
           <Route path="/ceo" element={<AdminLayout />}>
