@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Flame, Timer, ArrowRight, ShoppingCart, Zap, TrendingDown } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
+import { useQuery } from '@tanstack/react-query';
 
 interface FlashProduct {
   id: string;
@@ -47,37 +48,28 @@ const useCountdown = (endTime: number) => {
 const pad = (n: number) => String(n).padStart(2, '0');
 
 const FlashSale = () => {
-  const [products, setProducts] = useState<FlashProduct[]>([]);
-  const [loading,  setLoading]  = useState(true);
   const endTimeRef = useRef(getSaleEndTime());
   const time = useCountdown(endTimeRef.current);
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { ref: headerRef, visible: headerVisible } = useReveal({ threshold: 0.1 });
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('id, name, slug, price, original_price, discount_percent, image_url, delivery_time, short_description')
-          .eq('status', 'active')
-          .not('discount_percent', 'is', null)
-          .order('discount_percent', { ascending: false })
-          .limit(8);
-        if (cancelled) return;
-        if (error) throw error;
-        if (data && data.length > 0) setProducts(data as FlashProduct[]);
-      } catch (e) {
-        console.error('[FlashSale] load error:', e);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    load();
-    return () => { cancelled = true; };
-  }, []);
+  const { data: products = [], isLoading: loading } = useQuery({
+    queryKey: ['flash-sale-products'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('id, name, slug, price, original_price, discount_percent, image_url, delivery_time, short_description')
+        .eq('status', 'active')
+        .not('discount_percent', 'is', null)
+        .order('discount_percent', { ascending: false })
+        .limit(8);
+      if (error) throw error;
+      return (data as FlashProduct[]) ?? [];
+    },
+    staleTime: 10 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+  });
 
   if (!loading && products.length === 0) return null;
 

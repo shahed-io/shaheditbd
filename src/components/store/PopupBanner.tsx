@@ -10,7 +10,9 @@ const PopupBanner = () => {
   const [linkUrl, setLinkUrl] = useState('');
 
   useEffect(() => {
-    fetchAndDecide();
+    // Defer popup banner fetch by 2s to not compete with critical content
+    const t = setTimeout(() => fetchAndDecide(), 2000);
+    return () => clearTimeout(t);
   }, []);
 
   const fetchAndDecide = async () => {
