@@ -497,17 +497,20 @@ const Navbar = () => {
                 {/* Install App */}
                 {canInstall && (
                   <button onClick={() => { handleInstall(); if (!isIOS) setMobileOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-accent/50"
-                    style={{ color: 'hsl(226,35%,25%)' }}>
-                    <Download size={17} style={{ color: 'hsl(258,78%,50%)' }} />
+                    className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                    style={{ color: 'hsl(226,35%,20%)', background: 'hsla(0,0%,100%,0.6)', border: '1px solid hsla(258,78%,60%,0.08)' }}>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110"
+                      style={{ background: 'linear-gradient(135deg, hsl(160,75%,45%), hsl(180,75%,45%))', boxShadow: '0 4px 10px hsla(160,40%,40%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      <Download size={16} className="text-white" strokeWidth={2.4} />
+                    </div>
                     <span className="flex-1 text-left">Install App</span>
                   </button>
                 )}
                 {showIOSTip && (
-                  <div className="mx-2 mt-1 mb-1 rounded-xl p-3 text-[12px] leading-relaxed"
-                    style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.15)' }}>
-                    <p className="font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
-                      <Share2 size={13} /> Install on iOS:
+                  <div className="mx-1 mt-2 mb-2 rounded-2xl p-3.5 text-[12px] leading-relaxed"
+                    style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.08), hsla(200,90%,50%,0.08))', border: '1px solid hsla(258,78%,55%,0.18)', backdropFilter: 'blur(10px)' }}>
+                    <p className="font-bold mb-2 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
+                      <Share2 size={13} style={{ color: 'hsl(258,78%,55%)' }} /> Install on iOS:
                     </p>
                     <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
                       1. Tap the <Share2 size={12} className="text-blue-500" /> Share button
@@ -518,56 +521,85 @@ const Navbar = () => {
                   </div>
                 )}
 
-                {/* Admin Panel */}
+                {/* Admin Panel — Premium Shimmer */}
                 {isAdmin && (
                   <button
                     onClick={() => { navigate('/ceo'); setMobileOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 mt-2 rounded-xl text-sm font-bold text-white"
+                    className="w-full group relative flex items-center gap-3 px-4 py-3.5 mt-3 rounded-2xl text-sm font-bold text-white overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                     style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(270,70%,50%))',
-                      boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)',
+                      background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(280,75%,55%) 50%, hsl(258,78%,55%) 100%)',
+                      backgroundSize: '200% 100%',
+                      boxShadow: '0 8px 24px hsla(258,78%,55%,0.40), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: 'shimmer 3s linear infinite',
                     }}>
-                    <ShieldCheck size={17} />
-                    <span className="flex-1 text-left">Admin Panel</span>
+                    <div className="absolute inset-0 opacity-30 pointer-events-none"
+                      style={{ background: 'radial-gradient(circle at 30% 50%, hsla(0,0%,100%,0.4), transparent 60%)' }} />
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 relative"
+                      style={{ background: 'hsla(0,0%,100%,0.20)', backdropFilter: 'blur(8px)' }}>
+                      <ShieldCheck size={17} strokeWidth={2.5} />
+                    </div>
+                    <span className="flex-1 text-left tracking-wide relative">Admin Panel</span>
+                    <ChevronRight size={16} className="transition-transform duration-300 group-hover:translate-x-1 relative" />
                   </button>
                 )}
 
-                {/* Logout */}
+                {/* Logout — Premium Card */}
                 <button
                   onClick={() => { supabase.auth.signOut(); setMobileOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 mt-1 rounded-xl text-sm font-medium transition-all hover:bg-destructive/5"
-                  style={{ color: 'hsl(0,84%,55%)' }}>
-                  <LogOut size={17} />
+                  className="w-full group flex items-center gap-3 px-3 py-2.5 mt-2 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                  style={{ color: 'hsl(0,75%,50%)', background: 'hsla(0,80%,98%,0.8)', border: '1px solid hsla(0,80%,60%,0.15)' }}>
+                  <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]"
+                    style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,85%,55%))', boxShadow: '0 4px 10px hsla(0,60%,45%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                    <LogOut size={16} className="text-white" strokeWidth={2.4} />
+                  </div>
                   <span className="flex-1 text-left">Logout</span>
                 </button>
               </>
             ) : (
               <>
-                {/* MENU label */}
-                <p className="text-[10px] font-bold tracking-widest uppercase px-3 pt-1 pb-2" style={{ color: 'hsl(226,35%,55%)' }}>Menu</p>
+                {/* MENU label with sparkle */}
+                <div className="flex items-center gap-2 px-3 pt-1 pb-3">
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.25), transparent)' }} />
+                  <p className="text-[10px] font-bold tracking-[0.2em] uppercase flex items-center gap-1.5"
+                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                    <Sparkles size={11} style={{ color: 'hsl(258,78%,55%)' }} />
+                    Menu
+                    <Sparkles size={11} style={{ color: 'hsl(200,90%,50%)' }} />
+                  </p>
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.25), transparent)' }} />
+                </div>
 
-                {/* Dashboard-style menu items for guests — clicking opens auth */}
+                {/* Guest menu items */}
                 {[
-                  { label: 'Profile',       icon: User,    tab: 'profile' },
-                  { label: 'My Orders',     icon: Package, tab: 'orders' },
-                  { label: 'My Licenses',   icon: Key,     tab: 'licenses' },
-                  { label: 'Wallet',        icon: Wallet,  tab: 'wallet' },
-                  { label: 'Points',        icon: Award,   tab: 'points' },
-                  { label: 'Wishlist',      icon: Heart,   tab: 'wishlist' },
-                  { label: 'Addresses',     icon: MapPin,  tab: 'addresses' },
-                  { label: 'Notifications', icon: Bell,    tab: 'notifications' },
-                  { label: 'Referral',      icon: Gift,    tab: 'referral' },
-                  { label: 'Security',      icon: Lock,    tab: 'security' },
-                  { label: 'Language',      icon: Globe,   tab: 'language' },
-                ].map((item) => (
+                  { label: 'Profile',       icon: User,    grad: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(280,70%,55%))' },
+                  { label: 'My Orders',     icon: Package, grad: 'linear-gradient(135deg, hsl(200,90%,50%), hsl(220,80%,55%))' },
+                  { label: 'My Licenses',   icon: Key,     grad: 'linear-gradient(135deg, hsl(45,95%,55%), hsl(30,90%,55%))' },
+                  { label: 'Wallet',        icon: Wallet,  grad: 'linear-gradient(135deg, hsl(150,70%,45%), hsl(170,75%,42%))' },
+                  { label: 'Points',        icon: Award,   grad: 'linear-gradient(135deg, hsl(330,85%,55%), hsl(350,80%,55%))' },
+                  { label: 'Wishlist',      icon: Heart,   grad: 'linear-gradient(135deg, hsl(0,80%,60%), hsl(340,80%,55%))' },
+                  { label: 'Addresses',     icon: MapPin,  grad: 'linear-gradient(135deg, hsl(190,85%,45%), hsl(210,85%,50%))' },
+                  { label: 'Notifications', icon: Bell,    grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,90%,55%))' },
+                  { label: 'Referral',      icon: Gift,    grad: 'linear-gradient(135deg, hsl(280,75%,55%), hsl(310,70%,55%))' },
+                  { label: 'Security',      icon: Lock,    grad: 'linear-gradient(135deg, hsl(220,30%,40%), hsl(240,35%,45%))' },
+                  { label: 'Language',      icon: Globe,   grad: 'linear-gradient(135deg, hsl(170,70%,42%), hsl(190,75%,45%))' },
+                ].map((item, i) => (
                   <button
-                    key={item.tab}
+                    key={item.label}
                     onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-accent/50"
-                    style={{ color: 'hsl(226,35%,25%)' }}>
-                    <item.icon size={17} style={{ color: 'hsl(258,78%,50%)' }} />
-                    <span className="flex-1 text-left">{item.label}</span>
-                    <ChevronRight size={15} style={{ color: 'hsl(226,35%,65%)' }} />
+                    className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                    style={{
+                      color: 'hsl(226,35%,20%)',
+                      background: 'hsla(0,0%,100%,0.6)',
+                      border: '1px solid hsla(258,78%,60%,0.08)',
+                      animation: mobileOpen ? `slideInRight 0.4s ease-out ${i * 0.04}s both` : undefined,
+                    }}>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]"
+                      style={{ background: item.grad, boxShadow: '0 4px 10px hsla(258,40%,40%,0.18), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      <item.icon size={16} className="text-white" strokeWidth={2.4} />
+                    </div>
+                    <span className="flex-1 text-left tracking-tight">{item.label}</span>
+                    <ChevronRight size={16} className="transition-all duration-300 group-hover:translate-x-1"
+                      style={{ color: 'hsl(258,78%,55%)' }} />
                   </button>
                 ))}
 
