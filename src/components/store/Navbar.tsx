@@ -418,38 +418,79 @@ const Navbar = () => {
           <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
         )}
 
-        {/* Mobile Menu — Dashboard Style */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-screen' : 'max-h-0'}`}>
-          <div className="border-t px-3 py-3"
-            style={{ background: 'hsla(0,0%,100%,0.95)', borderColor: 'hsla(258,78%,60%,0.15)', backdropFilter: 'blur(20px)', borderRadius: '0 0 16px 16px' }}>
-            
+        {/* Mobile Menu — Premium Dashboard Style */}
+        <div className={`lg:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'max-h-[calc(100vh-100px)] overflow-y-auto' : 'max-h-0'}`}>
+          <div className="border-t px-3 py-4 relative"
+            style={{
+              background: 'linear-gradient(180deg, hsla(0,0%,100%,0.98) 0%, hsla(258,40%,98%,0.98) 100%)',
+              borderColor: 'hsla(258,78%,60%,0.15)',
+              backdropFilter: 'blur(28px)',
+              WebkitBackdropFilter: 'blur(28px)',
+              borderRadius: '0 0 20px 20px',
+              boxShadow: '0 20px 40px -20px hsla(258,78%,40%,0.18), inset 0 1px 0 hsla(0,0%,100%,0.6)',
+            }}>
+            {/* Decorative gradient orb */}
+            <div className="absolute top-0 right-0 w-40 h-40 rounded-full pointer-events-none opacity-50"
+              style={{ background: 'radial-gradient(circle, hsla(258,78%,55%,0.10), transparent 70%)', filter: 'blur(20px)' }} />
+
             {user ? (
               <>
-                {/* MENU label */}
-                <p className="text-[10px] font-bold tracking-widest uppercase px-3 pt-1 pb-2" style={{ color: 'hsl(226,35%,55%)' }}>Menu</p>
+                {/* MENU label with sparkle */}
+                <div className="flex items-center gap-2 px-3 pt-1 pb-3">
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.25), transparent)' }} />
+                  <p className="text-[10px] font-bold tracking-[0.2em] uppercase flex items-center gap-1.5"
+                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                    <Sparkles size={11} style={{ color: 'hsl(258,78%,55%)' }} />
+                    Menu
+                    <Sparkles size={11} style={{ color: 'hsl(200,90%,50%)' }} />
+                  </p>
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.25), transparent)' }} />
+                </div>
 
-                {/* Menu Items */}
+                {/* Menu Items — Premium Cards */}
                 {[
-                  { label: 'Profile',       icon: User,    tab: 'profile' },
-                  { label: 'My Orders',     icon: Package, tab: 'orders' },
-                  { label: 'My Licenses',   icon: Key,     tab: 'licenses' },
-                  { label: 'Wallet',        icon: Wallet,  tab: 'wallet' },
-                  { label: 'Points',        icon: Award,   tab: 'points' },
-                  { label: 'Wishlist',      icon: Heart,   tab: 'wishlist' },
-                  { label: 'Addresses',     icon: MapPin,  tab: 'addresses' },
-                  { label: 'Notifications', icon: Bell,    tab: 'notifications' },
-                  { label: 'Referral',      icon: Gift,    tab: 'referral' },
-                  { label: 'Security',      icon: Lock,    tab: 'security' },
-                  { label: 'Language',      icon: Globe,   tab: 'language' },
+                  { label: 'Profile',       icon: User,    tab: 'profile',       grad: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(280,70%,55%))' },
+                  { label: 'My Orders',     icon: Package, tab: 'orders',        grad: 'linear-gradient(135deg, hsl(200,90%,50%), hsl(220,80%,55%))' },
+                  { label: 'My Licenses',   icon: Key,     tab: 'licenses',      grad: 'linear-gradient(135deg, hsl(45,95%,55%), hsl(30,90%,55%))' },
+                  { label: 'Wallet',        icon: Wallet,  tab: 'wallet',        grad: 'linear-gradient(135deg, hsl(150,70%,45%), hsl(170,75%,42%))' },
+                  { label: 'Points',        icon: Award,   tab: 'points',        grad: 'linear-gradient(135deg, hsl(330,85%,55%), hsl(350,80%,55%))' },
+                  { label: 'Wishlist',      icon: Heart,   tab: 'wishlist',      grad: 'linear-gradient(135deg, hsl(0,80%,60%), hsl(340,80%,55%))' },
+                  { label: 'Addresses',     icon: MapPin,  tab: 'addresses',     grad: 'linear-gradient(135deg, hsl(190,85%,45%), hsl(210,85%,50%))' },
+                  { label: 'Notifications', icon: Bell,    tab: 'notifications', grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,90%,55%))' },
+                  { label: 'Referral',      icon: Gift,    tab: 'referral',      grad: 'linear-gradient(135deg, hsl(280,75%,55%), hsl(310,70%,55%))' },
+                  { label: 'Security',      icon: Lock,    tab: 'security',      grad: 'linear-gradient(135deg, hsl(220,30%,40%), hsl(240,35%,45%))' },
+                  { label: 'Language',      icon: Globe,   tab: 'language',      grad: 'linear-gradient(135deg, hsl(170,70%,42%), hsl(190,75%,45%))' },
                 ].map((item, i) => (
                   <button
                     key={item.tab}
                     onClick={() => { navigate(`/dashboard?tab=${item.tab}`); setMobileOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-accent/50"
-                    style={{ color: 'hsl(226,35%,25%)' }}>
-                    <item.icon size={17} style={{ color: 'hsl(258,78%,50%)' }} />
-                    <span className="flex-1 text-left">{item.label}</span>
-                    <ChevronRight size={15} style={{ color: 'hsl(226,35%,65%)' }} />
+                    className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985] relative overflow-hidden"
+                    style={{
+                      color: 'hsl(226,35%,20%)',
+                      background: 'hsla(0,0%,100%,0.6)',
+                      border: '1px solid hsla(258,78%,60%,0.08)',
+                      backdropFilter: 'blur(8px)',
+                      animation: mobileOpen ? `slideInRight 0.4s ease-out ${i * 0.04}s both` : undefined,
+                      boxShadow: '0 1px 3px hsla(258,78%,40%,0.04)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'hsla(258,78%,98%,0.95)';
+                      e.currentTarget.style.boxShadow = '0 6px 16px hsla(258,78%,40%,0.12)';
+                      e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.20)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'hsla(0,0%,100%,0.6)';
+                      e.currentTarget.style.boxShadow = '0 1px 3px hsla(258,78%,40%,0.04)';
+                      e.currentTarget.style.borderColor = 'hsla(258,78%,60%,0.08)';
+                    }}>
+                    {/* Icon badge with gradient */}
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]"
+                      style={{ background: item.grad, boxShadow: '0 4px 10px hsla(258,40%,40%,0.18), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      <item.icon size={16} className="text-white" strokeWidth={2.4} />
+                    </div>
+                    <span className="flex-1 text-left tracking-tight">{item.label}</span>
+                    <ChevronRight size={16} className="transition-all duration-300 group-hover:translate-x-1"
+                      style={{ color: 'hsl(258,78%,55%)' }} />
                   </button>
                 ))}
 
