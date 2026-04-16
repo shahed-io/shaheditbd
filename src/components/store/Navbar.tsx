@@ -606,17 +606,20 @@ const Navbar = () => {
                 {/* Install App */}
                 {canInstall && (
                   <button onClick={() => { handleInstall(); if (!isIOS) setMobileOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-accent/50"
-                    style={{ color: 'hsl(226,35%,25%)' }}>
-                    <Download size={17} style={{ color: 'hsl(258,78%,50%)' }} />
+                    className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                    style={{ color: 'hsl(226,35%,20%)', background: 'hsla(0,0%,100%,0.6)', border: '1px solid hsla(258,78%,60%,0.08)' }}>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110"
+                      style={{ background: 'linear-gradient(135deg, hsl(160,75%,45%), hsl(180,75%,45%))', boxShadow: '0 4px 10px hsla(160,40%,40%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      <Download size={16} className="text-white" strokeWidth={2.4} />
+                    </div>
                     <span className="flex-1 text-left">Install App</span>
                   </button>
                 )}
                 {showIOSTip && (
-                  <div className="mx-2 mt-1 mb-1 rounded-xl p-3 text-[12px] leading-relaxed"
-                    style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.15)' }}>
-                    <p className="font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
-                      <Share2 size={13} /> Install on iOS:
+                  <div className="mx-1 mt-2 mb-2 rounded-2xl p-3.5 text-[12px] leading-relaxed"
+                    style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.08), hsla(200,90%,50%,0.08))', border: '1px solid hsla(258,78%,55%,0.18)', backdropFilter: 'blur(10px)' }}>
+                    <p className="font-bold mb-2 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
+                      <Share2 size={13} style={{ color: 'hsl(258,78%,55%)' }} /> Install on iOS:
                     </p>
                     <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
                       1. Tap the <Share2 size={12} className="text-blue-500" /> Share button
@@ -627,13 +630,21 @@ const Navbar = () => {
                   </div>
                 )}
 
-                {/* Sign In / Register */}
-                <div className="pt-2 mt-1">
+                {/* Sign In / Register — Premium Shimmer */}
+                <div className="pt-3 mt-2">
                   <button onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                    className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2"
-                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}>
-                    <User size={17} />
-                    Sign In / Register
+                    className="w-full group relative py-3.5 rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2.5 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(200,90%,50%) 50%, hsl(258,78%,55%) 100%)',
+                      backgroundSize: '200% 100%',
+                      boxShadow: '0 10px 28px hsla(258,78%,55%,0.40), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: 'shimmer 3s linear infinite',
+                    }}>
+                    <div className="absolute inset-0 opacity-30 pointer-events-none"
+                      style={{ background: 'radial-gradient(circle at 30% 50%, hsla(0,0%,100%,0.4), transparent 60%)' }} />
+                    <Sparkles size={15} className="relative" />
+                    <span className="relative tracking-wide">Sign In / Register</span>
+                    <Sparkles size={15} className="relative" />
                   </button>
                 </div>
               </>
