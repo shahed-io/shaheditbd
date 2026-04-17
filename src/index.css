@@ -17,6 +17,11 @@
 @media (min-width: 640px) {
   .container-fluid { padding-inline: 1.5rem; }
 }
+/* Tablet/iPad portrait — optimize spacing & breathing room */
+@media (min-width: 768px) {
+  .container-fluid { padding-inline: 1.75rem; max-width: 100%; }
+}
+/* Tablet landscape / small laptop */
 @media (min-width: 1024px) {
   .container-fluid { max-width: 1200px; padding-inline: 2rem; }
 }
@@ -28,6 +33,28 @@
 }
 @media (min-width: 1920px) {
   .container-fluid { max-width: 1800px; padding-inline: 3rem; }
+}
+
+/* ══════════════════════════════════════
+   TABLET / iPad — Targeted refinements (768-1023px)
+   - Better grid columns, spacing, typography
+   - Hero right card visible at md
+   - Sidebar becomes top horizontal scroll on tablet
+═══════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Section padding tighter */
+  .container-fluid section,
+  section.container-fluid { padding-inline: 0; }
+
+  /* Tablet-specific helpers */
+  .tablet-hide { display: none !important; }
+  .tablet-show { display: block !important; }
+  .tablet-flex { display: flex !important; }
+
+  /* Cards & buttons get slightly larger touch targets */
+  button, .btn, a[role="button"] {
+    min-height: 44px;
+  }
 }
 
 @layer base {
