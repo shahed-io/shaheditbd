@@ -257,7 +257,10 @@ const UserDashboard = () => {
   });
   // On mobile: if a tab param is provided via URL, go directly to content view
   const [mobileShowContent, setMobileShowContent] = useState(() => !!searchParams.get('tab'));
-  const [profile, setProfile] = useState<Profile>({ display_name: '', email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+  const [profile, setProfile] = useState<Profile>({ display_name: '', username: null, email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+  const [usernameInput, setUsernameInput] = useState('');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
+  const [usernameError, setUsernameError] = useState<string>('');
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -372,14 +375,15 @@ const UserDashboard = () => {
 
   const fetchProfile = async () => {
     if (!user) return;
-    const { data } = await supabase.from('profiles').select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned, total_points_redeemed').eq('user_id', user.id).single();
+    const { data } = await supabase.from('profiles').select('display_name, username, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned, total_points_redeemed').eq('user_id', user.id).single();
     if (data) {
-      setProfile({ display_name: data.display_name, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
+      setProfile({ display_name: data.display_name, username: (data as any).username || null, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
+      setUsernameInput((data as any).username || '');
       setPointsBalance((data as any).points_balance || 0);
       setTotalPointsEarned((data as any).total_points_earned || 0);
       setTotalPointsRedeemed((data as any).total_points_redeemed || 0);
     } else {
-      setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+      setProfile({ display_name: user.user_metadata?.display_name || '', username: null, email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
     }
   };
 
