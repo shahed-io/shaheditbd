@@ -246,7 +246,7 @@ const Navbar = () => {
     deferredPrompt.current = null;
   };
 
-  const displayName = profileName || user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
+  const displayName = profileName || profileUsername || user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
   const initials    = displayName[0].toUpperCase();
 
   return (
