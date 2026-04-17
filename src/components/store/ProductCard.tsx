@@ -5,6 +5,7 @@ import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import QuickOrderModal from './QuickOrderModal';
 import { useNavigate } from 'react-router-dom';
+import { prefetchRoute } from '@/hooks/usePrefetchRoute';
 
 interface ProductCardProps {
   product: Product;
