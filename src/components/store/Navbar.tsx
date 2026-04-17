@@ -495,14 +495,32 @@ const Navbar = () => {
                         style={{ background: 'hsl(150,80%,50%)', boxShadow: '0 0 8px hsla(150,80%,50%,0.6)' }} />
                     </div>
                     <div className="flex-1 text-left min-w-0">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Welcome back</p>
-                      <p className="text-base font-bold text-white truncate">{user.email?.split('@')[0]}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Welcome back 👋</p>
+                      <p className="text-base font-bold text-white truncate">{displayName}</p>
                       <div className="flex items-center gap-1.5 mt-1">
-                        <Sparkles size={11} className="text-white/90" />
-                        <span className="text-[11px] font-semibold text-white/90">View Dashboard</span>
+                        <div className="px-1.5 py-0.5 rounded-md flex items-center gap-1" style={{ background: 'hsla(0,0%,100%,0.22)', backdropFilter: 'blur(8px)' }}>
+                          <Star size={9} className="text-yellow-300" fill="currentColor" />
+                          <span className="text-[10px] font-bold text-white">VIP Member</span>
+                        </div>
                       </div>
                     </div>
                     <ChevronRight size={20} className="text-white/80 transition-transform group-hover:translate-x-1" />
+                  </div>
+
+                  {/* Live Stats Strip */}
+                  <div className="relative mt-3.5 pt-3 grid grid-cols-3 gap-2 border-t" style={{ borderColor: 'hsla(0,0%,100%,0.20)' }}>
+                    <div className="text-center">
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Wallet</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">৳{userStats?.wallet?.toFixed(0) ?? '—'}</p>
+                    </div>
+                    <div className="text-center border-x" style={{ borderColor: 'hsla(0,0%,100%,0.18)' }}>
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Points</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">{userStats?.points ?? '—'}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Orders</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">{userStats?.orders ?? '—'}</p>
+                    </div>
                   </div>
                 </button>
 
