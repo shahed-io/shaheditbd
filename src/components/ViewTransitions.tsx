@@ -19,12 +19,10 @@ export const ViewTransitions = () => {
     // already have native back animations on most browsers)
     if (navType === 'POP') return;
 
-    // @ts-expect-error - startViewTransition is not yet in TS lib but well-supported
-    if (typeof document !== 'undefined' && document.startViewTransition) {
-      // Trigger view transition on next paint to capture the new DOM state
-      // @ts-expect-error
-      document.startViewTransition(() => {
-        // No-op: React has already rendered. The browser snapshots old/new DOM.
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+    if (typeof doc !== 'undefined' && typeof doc.startViewTransition === 'function') {
+      doc.startViewTransition(() => {
+        // No-op: React has already rendered. Browser snapshots old/new DOM for fade.
       });
     }
   }, [location.pathname, navType]);
