@@ -11,7 +11,7 @@ const useRedirects = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.from('site_settings').select('value').eq('key', 'redirects').single()
+    supabase.from('site_settings').select('value').eq('key', 'redirects').maybeSingle()
       .then(({ data }) => {
         try {
           if (!data?.value) return;
@@ -22,7 +22,7 @@ const useRedirects = () => {
           }
         } catch {}
       });
-  }, [location.pathname]);
+  }, [location.pathname, navigate]);
 };
 
 const RedirectEnforcer = () => {

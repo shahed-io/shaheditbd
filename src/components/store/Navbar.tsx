@@ -1,14 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search, Download, Share2, PlusSquare, Package, Key, Wallet, Award, Heart, MapPin, Bell, Gift, Lock, Globe, ShieldCheck, ChevronRight, Facebook, MessageCircle, Instagram, Send } from 'lucide-react';
 import { useFooterSettings } from '@/hooks/useFooterSettings';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
-import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { prefetchRoute } from '@/hooks/usePrefetchRoute';
+
+const DesktopSearchPalette = lazy(() => import('./SearchBar').then((mod) => ({ default: mod.DesktopSearchPalette })));
+const MobileSearchOverlay = lazy(() => import('./SearchBar').then((mod) => ({ default: mod.MobileSearchOverlay })));
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -149,29 +151,28 @@ const Navbar = () => {
   }, [user, mobileOpen]);
 
   useEffect(() => {
-    // Defer announcement fetch — below-fold banner
-    const t = setTimeout(() => {
+    const run = () => {
       supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
         .then(({ data }) => { if (data?.value) setAnnouncement(data.value); });
-    }, 1000);
+    };
+
+    const t = setTimeout(() => {
+      if ('requestIdleCallback' in window) {
+        (window as Window & {
+          requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+        }).requestIdleCallback?.(() => run(), { timeout: 3000 });
+      } else {
+        run();
+      }
+    }, 2200);
+
     return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
-    // Defer category load to not block initial render
-    const t = setTimeout(() => {
-      loadNavCategories();
-    }, 500);
-    // Realtime: bust cache and reload when categories change
-    const channel = supabase
-      .channel('navbar-cats-rt')
-      .on('postgres_changes' as any, { event: '*', schema: 'public', table: 'categories' }, () => {
-        _catCache = null;
-        loadNavCategories(true);
-      })
-      .subscribe();
-    return () => { clearTimeout(t); supabase.removeChannel(channel); };
-  }, []);
+    if (!mobileOpen || navCategories.length > 0) return;
+    loadNavCategories();
+  }, [mobileOpen, navCategories.length]);
 
   // PWA Install detection
   useEffect(() => {
@@ -208,16 +209,17 @@ const Navbar = () => {
 
       {/* ── Desktop Search Overlay ── */}
       {desktopSearch && (
-        <div className="fixed inset-0 z-[999] hidden md:flex items-start justify-center pt-20 px-4"
-          style={{ background: 'hsla(226,35%,10%,0.55)', backdropFilter: 'blur(6px)' }}
-          onClick={(e) => { if (e.target === e.currentTarget) setDesktopSearch(false); }}>
-          <div className="w-full max-w-2xl xl:max-w-3xl rounded-3xl overflow-hidden shadow-[0_32px_80px_hsla(226,35%,10%,0.40)] flex flex-col"
-            style={{ background: 'hsl(var(--card))', border: '1.5px solid hsl(var(--border))', maxHeight: '80vh' }}>
-            {/* Top line */}
-            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
-            <DesktopSearchPalette onClose={() => setDesktopSearch(false)} />
+        <Suspense fallback={null}>
+          <div className="fixed inset-0 z-[999] hidden md:flex items-start justify-center pt-20 px-4"
+            style={{ background: 'hsla(226,35%,10%,0.55)', backdropFilter: 'blur(6px)' }}
+            onClick={(e) => { if (e.target === e.currentTarget) setDesktopSearch(false); }}>
+            <div className="w-full max-w-2xl xl:max-w-3xl rounded-3xl overflow-hidden shadow-[0_32px_80px_hsla(226,35%,10%,0.40)] flex flex-col"
+              style={{ background: 'hsl(var(--card))', border: '1.5px solid hsl(var(--border))', maxHeight: '80vh' }}>
+              <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
+              <DesktopSearchPalette onClose={() => setDesktopSearch(false)} />
+            </div>
           </div>
-        </div>
+        </Suspense>
       )}
 
       {/* ── Fixed wrapper for announcement + navbar ── */}
@@ -451,7 +453,9 @@ const Navbar = () => {
 
         {/* Mobile Search — full-screen overlay, xs/sm only */}
         {mobileSearch && (
-          <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
+          <Suspense fallback={null}>
+            <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
+          </Suspense>
         )}
 
         {/* Mobile Menu — Next-Gen Bento Design */}
