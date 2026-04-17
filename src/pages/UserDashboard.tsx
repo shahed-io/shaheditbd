@@ -559,10 +559,61 @@ const UserDashboard = () => {
     setTopupProcessing(false);
   };
 
+  // Live username availability check (debounced)
+  useEffect(() => {
+    if (!editing) return;
+    const trimmed = usernameInput.trim();
+    // No change → idle
+    if (trimmed === (profile.username || '')) { setUsernameStatus('idle'); setUsernameError(''); return; }
+    if (!trimmed) { setUsernameStatus('idle'); setUsernameError(''); return; }
+    // Format check
+    if (trimmed.length < 3 || trimmed.length > 20) {
+      setUsernameStatus('invalid'); setUsernameError('৩-২০ অক্ষরের মধ্যে হতে হবে'); return;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) {
+      setUsernameStatus('invalid'); setUsernameError('শুধু a-z, 0-9 এবং _ ব্যবহার করুন'); return;
+    }
+    setUsernameStatus('checking'); setUsernameError('');
+    const timer = setTimeout(async () => {
+      const { data, error } = await supabase.rpc('is_username_available', { p_username: trimmed, p_user_id: user?.id || null });
+      if (error) { setUsernameStatus('invalid'); setUsernameError('চেক করতে সমস্যা হয়েছে'); return; }
+      setUsernameStatus(data ? 'available' : 'taken');
+      setUsernameError(data ? '' : 'এই ইউজারনেমটি ইতিমধ্যে নেওয়া হয়েছে');
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [usernameInput, editing, profile.username, user?.id]);
+
   const handleSaveProfile = async () => {
-    if (!user) return; setEditing(false); toast.success(t(selectedLang, 'profile_saved')); setSaving(true);
-    const { error } = await supabase.from('profiles').upsert({ user_id: user.id, display_name: profile.display_name, phone: profile.phone, email: user.email, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-    if (error) toast.error(t(selectedLang, 'profile_save_error')); setSaving(false);
+    if (!user) return;
+    const trimmedUsername = usernameInput.trim();
+    // Block save if username invalid/taken
+    if (trimmedUsername && trimmedUsername !== (profile.username || '') && (usernameStatus === 'taken' || usernameStatus === 'invalid' || usernameStatus === 'checking')) {
+      toast.error(usernameError || 'ইউজারনেম সঠিক নয়');
+      return;
+    }
+    setSaving(true);
+    const payload: any = {
+      user_id: user.id,
+      display_name: profile.display_name,
+      phone: profile.phone,
+      email: user.email,
+      updated_at: new Date().toISOString(),
+    };
+    // Only include username if changed and valid
+    if (trimmedUsername !== (profile.username || '')) {
+      payload.username = trimmedUsername || null;
+    }
+    const { error } = await supabase.from('profiles').upsert(payload, { onConflict: 'user_id' });
+    if (error) {
+      toast.error(error.message || t(selectedLang, 'profile_save_error'));
+      setSaving(false);
+      return;
+    }
+    setProfile(p => ({ ...p, username: trimmedUsername || null }));
+    setEditing(false);
+    setUsernameStatus('idle');
+    toast.success(t(selectedLang, 'profile_saved'));
+    setSaving(false);
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
