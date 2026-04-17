@@ -10,6 +10,7 @@ import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
 import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
+import { ViewTransitions } from "@/components/ViewTransitions";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
