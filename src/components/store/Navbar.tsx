@@ -802,13 +802,78 @@ const Navbar = () => {
                   ))}
                 </div>
 
-                {/* Section Label */}
-                <div className="flex items-center gap-2 px-1 pb-2.5">
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
-                  <p className="text-[10px] font-bold tracking-[0.22em] uppercase flex items-center gap-1.5"
-                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    <Sparkles size={10} style={{ color: 'hsl(258,78%,55%)' }} />
-                    Explore
+                {/* Featured Strip — Guest version */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <button
+                    onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(0,82%,58%) 0%, hsl(20,90%,55%) 100%)',
+                      boxShadow: '0 8px 20px hsla(0,80%,50%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.22s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <span className="text-[14px]">🔥</span>
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Hot Deals</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Up to 70% OFF</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Shop trending →</p>
+                  </button>
+                  <button
+                    onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(150,72%,42%) 0%, hsl(170,75%,40%) 100%)',
+                      boxShadow: '0 8px 20px hsla(150,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.26s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center relative" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <MessageCircle size={14} className="text-white" strokeWidth={2.6} />
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: 'hsl(45,95%,55%)', boxShadow: '0 0 6px hsla(45,95%,55%,0.8)', animation: 'pulse 2s infinite' }} />
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Live 24/7</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Need Help?</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Chat with us →</p>
+                  </button>
+                </div>
+
+                {/* Trending Categories Chips — Guest */}
+                {navCategories.length > 0 && (
+                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.30s both' : undefined }}>
+                    <div className="flex items-center gap-2 px-1 pb-2">
+                      <span className="text-[10px]">🏷️</span>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'hsl(226,35%,40%)' }}>Trending Categories</p>
+                    </div>
+                    <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
+                      {navCategories.slice(0, 8).map(cat => {
+                        const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP.default;
+                        return (
+                          <button
+                            key={cat.id}
+                            onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
+                            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
+                            style={{
+                              background: 'hsla(0,0%,100%,0.85)',
+                              border: '1px solid hsla(258,78%,60%,0.18)',
+                              color: 'hsl(226,35%,22%)',
+                              backdropFilter: 'blur(10px)',
+                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
+                            }}>
+                            <span className="text-[13px]">{meta.icon}</span>
+                            <span>{cat.name}</span>
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                     <Sparkles size={10} style={{ color: 'hsl(200,90%,50%)' }} />
                   </p>
                   <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
