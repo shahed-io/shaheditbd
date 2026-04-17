@@ -922,6 +922,48 @@ const UserDashboard = () => {
                       )}
                     </div>
                   ))}
+
+                  {/* ── Username Field (custom @handle) ── */}
+                  <div>
+                    <label className={labelCls}>Username</label>
+                    {editing ? (
+                      <>
+                        <div className="relative">
+                          <AtSign size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <input
+                            type="text"
+                            value={usernameInput}
+                            onChange={e => setUsernameInput(e.target.value.replace(/\s/g, '').toLowerCase())}
+                            className={inputCls}
+                            placeholder="your_username"
+                            maxLength={20}
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                            spellCheck={false}
+                          />
+                          <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                            {usernameStatus === 'checking' && <Loader2 size={15} className="animate-spin text-muted-foreground" />}
+                            {usernameStatus === 'available' && <Check size={16} className="text-emerald-500" />}
+                            {(usernameStatus === 'taken' || usernameStatus === 'invalid') && <X size={16} className="text-rose-500" />}
+                          </div>
+                        </div>
+                        <p className="mt-1.5 text-[11px]"
+                          style={{ color: usernameStatus === 'available' ? 'hsl(160,70%,40%)' : (usernameStatus === 'taken' || usernameStatus === 'invalid') ? 'hsl(350,75%,55%)' : 'hsl(var(--muted-foreground))' }}>
+                          {usernameStatus === 'available' && '✓ এই ইউজারনেমটি ব্যবহারের জন্য উপলব্ধ'}
+                          {(usernameStatus === 'taken' || usernameStatus === 'invalid') && usernameError}
+                          {(usernameStatus === 'idle' || usernameStatus === 'checking') && '৩-২০ অক্ষর • শুধু a-z, 0-9, _ • যতবার ইচ্ছা পরিবর্তন করুন'}
+                        </p>
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                        <AtSign size={15} className="text-muted-foreground" />
+                        <span className="text-sm font-medium text-foreground">
+                          {profile.username ? `@${profile.username}` : <span className="text-muted-foreground italic">এডিট চাপুন এবং কাস্টম ইউজারনেম সেট করুন</span>}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
                   <div>
                     <label className={labelCls}>{t(selectedLang, 'email')}</label>
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
