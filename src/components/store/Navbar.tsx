@@ -137,6 +137,27 @@ const Navbar = () => {
     return () => clearTimeout(t);
   }, [user]);
 
+  // Lock body scroll when mobile menu is open to prevent background scrolling
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const scrollY = window.scrollY;
+    const originalOverflow = document.body.style.overflow;
+    const originalPosition = document.body.style.position;
+    const originalTop = document.body.style.top;
+    const originalWidth = document.body.style.width;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.position = originalPosition;
+      document.body.style.top = originalTop;
+      document.body.style.width = originalWidth;
+      window.scrollTo(0, scrollY);
+    };
+  }, [mobileOpen]);
+
   // Fetch order/wishlist counts only when mobile menu opens (lazy)
   useEffect(() => {
     if (!user || !mobileOpen) return;
@@ -458,7 +479,10 @@ const Navbar = () => {
         )}
 
         {/* Mobile Menu — Next-Gen Bento Design */}
-        <div className={`md:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'max-h-[calc(100vh-100px)] overflow-y-auto' : 'max-h-0'}`}>
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'max-h-[calc(100vh-100px)] overflow-y-auto overscroll-contain' : 'max-h-0'}`}
+          style={{ WebkitOverflowScrolling: 'touch', touchAction: mobileOpen ? 'pan-y' : 'auto' }}
+        >
           <div className="border-t px-3 py-4 relative"
             style={{
               background: 'linear-gradient(180deg, hsla(258,60%,99%,0.98) 0%, hsla(220,50%,98%,0.98) 50%, hsla(280,40%,99%,0.98) 100%)',
