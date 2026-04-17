@@ -27,7 +27,7 @@ import {
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
   History, BellRing, BellOff, ExternalLink, Wallet, Globe,
   ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle,
-  Download, Share2, PlusSquare, Smartphone
+  Download, Share2, PlusSquare, Smartphone, AtSign, Check, Loader2
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
