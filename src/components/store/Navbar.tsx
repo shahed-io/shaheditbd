@@ -63,6 +63,7 @@ const Navbar = () => {
   const [showIOSTip, setShowIOSTip] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStats, setUserStats] = useState<{ wallet: number; points: number; orders: number; wishlist: number } | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
   
   const { user } = useAuth();
