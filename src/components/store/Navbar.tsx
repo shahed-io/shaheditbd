@@ -874,6 +874,14 @@ const Navbar = () => {
                     </div>
                   </div>
                 )}
+
+                {/* Section Label */}
+                <div className="flex items-center gap-2 px-1 pb-2.5">
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                  <p className="text-[10px] font-bold tracking-[0.22em] uppercase flex items-center gap-1.5"
+                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <Sparkles size={10} style={{ color: 'hsl(258,78%,55%)' }} />
+                    Explore
                     <Sparkles size={10} style={{ color: 'hsl(200,90%,50%)' }} />
                   </p>
                   <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
