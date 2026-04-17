@@ -61,6 +61,7 @@ const Navbar = () => {
   const [isIOS, setIsIOS] = useState(false);
   const [showIOSTip, setShowIOSTip] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userStats, setUserStats] = useState<{ wallet: number; points: number; orders: number; wishlist: number } | null>(null);
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
   
   const { user } = useAuth();
@@ -112,15 +113,39 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) { setAvatarUrl(null); setIsAdmin(false); return; }
+    if (!user) { setAvatarUrl(null); setIsAdmin(false); setUserStats(null); return; }
     const t = setTimeout(() => {
-      supabase.from('profiles').select('avatar_url, display_name').eq('user_id', user.id).single()
-        .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
+      supabase.from('profiles').select('avatar_url, display_name, wallet_balance, points_balance').eq('user_id', user.id).single()
+        .then(({ data }) => {
+          if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+          if (data) {
+            setUserStats(prev => ({
+              wallet: Number(data.wallet_balance) || 0,
+              points: Number(data.points_balance) || 0,
+              orders: prev?.orders || 0,
+              wishlist: prev?.wishlist || 0,
+            }));
+          }
+        });
       supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle()
         .then(({ data }) => { setIsAdmin(!!data); });
     }, 500);
     return () => clearTimeout(t);
   }, [user]);
+
+  // Fetch order/wishlist counts only when mobile menu opens (lazy)
+  useEffect(() => {
+    if (!user || !mobileOpen) return;
+    let cancelled = false;
+    Promise.all([
+      supabase.from('orders').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+      supabase.from('wishlists').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+    ]).then(([o, w]) => {
+      if (cancelled) return;
+      setUserStats(prev => prev ? { ...prev, orders: o.count || 0, wishlist: w.count || 0 } : prev);
+    });
+    return () => { cancelled = true; };
+  }, [user, mobileOpen]);
 
   useEffect(() => {
     // Defer announcement fetch — below-fold banner
@@ -470,24 +495,42 @@ const Navbar = () => {
                         style={{ background: 'hsl(150,80%,50%)', boxShadow: '0 0 8px hsla(150,80%,50%,0.6)' }} />
                     </div>
                     <div className="flex-1 text-left min-w-0">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Welcome back</p>
-                      <p className="text-base font-bold text-white truncate">{user.email?.split('@')[0]}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Welcome back 👋</p>
+                      <p className="text-base font-bold text-white truncate">{displayName}</p>
                       <div className="flex items-center gap-1.5 mt-1">
-                        <Sparkles size={11} className="text-white/90" />
-                        <span className="text-[11px] font-semibold text-white/90">View Dashboard</span>
+                        <div className="px-1.5 py-0.5 rounded-md flex items-center gap-1" style={{ background: 'hsla(0,0%,100%,0.22)', backdropFilter: 'blur(8px)' }}>
+                          <Star size={9} className="text-yellow-300" fill="currentColor" />
+                          <span className="text-[10px] font-bold text-white">VIP Member</span>
+                        </div>
                       </div>
                     </div>
                     <ChevronRight size={20} className="text-white/80 transition-transform group-hover:translate-x-1" />
                   </div>
+
+                  {/* Live Stats Strip */}
+                  <div className="relative mt-3.5 pt-3 grid grid-cols-3 gap-2 border-t" style={{ borderColor: 'hsla(0,0%,100%,0.20)' }}>
+                    <div className="text-center">
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Wallet</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">৳{userStats?.wallet?.toFixed(0) ?? '—'}</p>
+                    </div>
+                    <div className="text-center border-x" style={{ borderColor: 'hsla(0,0%,100%,0.18)' }}>
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Points</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">{userStats?.points ?? '—'}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Orders</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">{userStats?.orders ?? '—'}</p>
+                    </div>
+                  </div>
                 </button>
 
-                {/* Quick Actions — Bento Grid (4 cols) */}
-                <div className="grid grid-cols-4 gap-2 mb-4">
+                {/* Quick Actions — Bento Grid (4 cols) with live counts */}
+                <div className="grid grid-cols-4 gap-2 mb-3">
                   {[
-                    { label: 'Orders',    icon: Package, tab: 'orders',   grad: 'linear-gradient(135deg, hsl(200,90%,55%), hsl(220,85%,55%))' },
-                    { label: 'Wallet',    icon: Wallet,  tab: 'wallet',   grad: 'linear-gradient(135deg, hsl(150,72%,45%), hsl(170,75%,42%))' },
-                    { label: 'Wishlist',  icon: Heart,   tab: 'wishlist', grad: 'linear-gradient(135deg, hsl(0,82%,60%), hsl(340,82%,55%))' },
-                    { label: 'Points',    icon: Award,   tab: 'points',   grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,92%,55%))' },
+                    { label: 'Orders',    icon: Package, tab: 'orders',   grad: 'linear-gradient(135deg, hsl(200,90%,55%), hsl(220,85%,55%))', count: userStats?.orders },
+                    { label: 'Wallet',    icon: Wallet,  tab: 'wallet',   grad: 'linear-gradient(135deg, hsl(150,72%,45%), hsl(170,75%,42%))', count: undefined },
+                    { label: 'Wishlist',  icon: Heart,   tab: 'wishlist', grad: 'linear-gradient(135deg, hsl(0,82%,60%), hsl(340,82%,55%))', count: userStats?.wishlist },
+                    { label: 'Points',    icon: Award,   tab: 'points',   grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,92%,55%))', count: undefined },
                   ].map((q, i) => (
                     <button
                       key={q.tab}
@@ -501,6 +544,13 @@ const Navbar = () => {
                         animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.05 + i * 0.04}s both` : undefined,
                       }}>
                       <div className="absolute inset-x-0 top-0 h-1/2 opacity-15 pointer-events-none" style={{ background: q.grad }} />
+                      {/* Live count badge */}
+                      {q.count !== undefined && q.count > 0 && (
+                        <div className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center text-[9px] font-extrabold text-white tabular-nums z-10"
+                          style={{ background: q.grad, boxShadow: '0 2px 6px hsla(258,40%,40%,0.3)' }}>
+                          {q.count > 99 ? '99+' : q.count}
+                        </div>
+                      )}
                       <div className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
                         style={{ background: q.grad, boxShadow: '0 6px 14px hsla(258,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
                         <q.icon size={17} className="text-white" strokeWidth={2.5} />
@@ -509,6 +559,79 @@ const Navbar = () => {
                     </button>
                   ))}
                 </div>
+
+                {/* Featured Strip — 2 premium horizontal cards */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <button
+                    onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(0,82%,58%) 0%, hsl(20,90%,55%) 100%)',
+                      boxShadow: '0 8px 20px hsla(0,80%,50%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.22s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <span className="text-[14px]">🔥</span>
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Hot Deals</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Up to 70% OFF</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Shop trending →</p>
+                  </button>
+                  <button
+                    onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(150,72%,42%) 0%, hsl(170,75%,40%) 100%)',
+                      boxShadow: '0 8px 20px hsla(150,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.26s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center relative" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <MessageCircle size={14} className="text-white" strokeWidth={2.6} />
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: 'hsl(45,95%,55%)', boxShadow: '0 0 6px hsla(45,95%,55%,0.8)', animation: 'pulse 2s infinite' }} />
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Live 24/7</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Need Help?</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Chat with us →</p>
+                  </button>
+                </div>
+
+                {/* Trending Categories Chips */}
+                {navCategories.length > 0 && (
+                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.30s both' : undefined }}>
+                    <div className="flex items-center gap-2 px-1 pb-2">
+                      <span className="text-[10px]">🏷️</span>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'hsl(226,35%,40%)' }}>Trending Categories</p>
+                    </div>
+                    <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
+                      {navCategories.slice(0, 8).map(cat => {
+                        const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP.default;
+                        return (
+                          <button
+                            key={cat.id}
+                            onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
+                            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
+                            style={{
+                              background: 'hsla(0,0%,100%,0.85)',
+                              border: '1px solid hsla(258,78%,60%,0.18)',
+                              color: 'hsl(226,35%,22%)',
+                              backdropFilter: 'blur(10px)',
+                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
+                            }}>
+                            <span className="text-[13px]">{meta.icon}</span>
+                            <span>{cat.name}</span>
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Section Label */}
                 <div className="flex items-center gap-2 px-1 pb-2.5">
@@ -678,6 +801,79 @@ const Navbar = () => {
                     </button>
                   ))}
                 </div>
+
+                {/* Featured Strip — Guest version */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <button
+                    onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(0,82%,58%) 0%, hsl(20,90%,55%) 100%)',
+                      boxShadow: '0 8px 20px hsla(0,80%,50%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.22s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <span className="text-[14px]">🔥</span>
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Hot Deals</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Up to 70% OFF</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Shop trending →</p>
+                  </button>
+                  <button
+                    onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(150,72%,42%) 0%, hsl(170,75%,40%) 100%)',
+                      boxShadow: '0 8px 20px hsla(150,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.26s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center relative" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <MessageCircle size={14} className="text-white" strokeWidth={2.6} />
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: 'hsl(45,95%,55%)', boxShadow: '0 0 6px hsla(45,95%,55%,0.8)', animation: 'pulse 2s infinite' }} />
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Live 24/7</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Need Help?</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Chat with us →</p>
+                  </button>
+                </div>
+
+                {/* Trending Categories Chips — Guest */}
+                {navCategories.length > 0 && (
+                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.30s both' : undefined }}>
+                    <div className="flex items-center gap-2 px-1 pb-2">
+                      <span className="text-[10px]">🏷️</span>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'hsl(226,35%,40%)' }}>Trending Categories</p>
+                    </div>
+                    <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
+                      {navCategories.slice(0, 8).map(cat => {
+                        const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP.default;
+                        return (
+                          <button
+                            key={cat.id}
+                            onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
+                            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
+                            style={{
+                              background: 'hsla(0,0%,100%,0.85)',
+                              border: '1px solid hsla(258,78%,60%,0.18)',
+                              color: 'hsl(226,35%,22%)',
+                              backdropFilter: 'blur(10px)',
+                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
+                            }}>
+                            <span className="text-[13px]">{meta.icon}</span>
+                            <span>{cat.name}</span>
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Section Label */}
                 <div className="flex items-center gap-2 px-1 pb-2.5">
