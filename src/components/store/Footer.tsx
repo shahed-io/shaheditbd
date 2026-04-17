@@ -65,7 +65,7 @@ const Footer = () => {
 
     {/* CTA Strip */}
     <div className="relative z-10 border-b" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7"
+      <div className="container-fluid py-7"
         style={{
           background: 'hsla(0,0%,100%,0.50)',
           backdropFilter: 'blur(24px) saturate(180%)',
@@ -105,7 +105,7 @@ const Footer = () => {
     </div>
 
     {/* ── Main footer ── */}
-    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10">
+    <div className="relative z-10 container-fluid pt-12 pb-10">
 
       {/* Brand section — always centered */}
       <div className="flex flex-col items-center text-center mb-10 space-y-5"
@@ -259,7 +259,7 @@ const Footer = () => {
         border: '1px solid hsla(258,78%,75%,0.18)',
         boxShadow: '0 4px 24px hsla(258,78%,55%,0.06)',
       }}>
-      <div className="max-w-7xl mx-auto px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Cert badge */}
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
@@ -301,7 +301,7 @@ const Footer = () => {
 
     {/* ── Copyright ── */}
     <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.12)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <p className="text-[11px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>
           © {new Date().getFullYear()} <strong style={{ color: 'hsl(226,35%,20%)' }}>{settings.store_name}</strong> · All rights reserved.
         </p>

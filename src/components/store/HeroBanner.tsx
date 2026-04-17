@@ -143,7 +143,7 @@ const HeroBanner = () => {
           style={{ background: 'linear-gradient(90deg, transparent 0%, hsla(258,78%,62%,0.4) 40%, hsla(200,90%,55%,0.4) 60%, transparent 100%)' }} />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative container-fluid">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0 pt-14 pb-10 lg:pt-20 lg:pb-14">
 
           {/* ══════════════════════════════════

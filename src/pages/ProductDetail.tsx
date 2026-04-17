@@ -420,7 +420,7 @@ const ProductDetail = () => {
 
         {/* ── Breadcrumb ── */}
         <div
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6"
+          className="container-fluid pt-6"
           style={{
             opacity: entered ? 1 : 0,
             transform: entered ? 'none' : 'translateY(-10px)',
@@ -431,7 +431,7 @@ const ProductDetail = () => {
         </div>
 
         {/* ── Main Content ── */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="container-fluid py-8">
           <div className="grid lg:grid-cols-2 gap-10 xl:gap-16">
 
             {/* ═══ LEFT: Image Gallery ═══ */}
@@ -1142,7 +1142,7 @@ const RelatedProducts = ({ categoryId, currentProductId }: { categoryId: string 
   return (
     <div
       ref={sectionReveal.ref}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8"
+      className="container-fluid pt-2 pb-8"
       style={{
         opacity: sectionReveal.visible ? 1 : 0,
         transform: sectionReveal.visible ? 'none' : 'translateY(30px)',
@@ -1446,7 +1446,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
   return (
     <div
       ref={sectionReveal.ref}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      className="container-fluid py-8"
       style={{
         opacity: loading ? 0 : (sectionReveal.visible ? 1 : 0),
         transform: sectionReveal.visible ? 'none' : 'translateY(30px)',

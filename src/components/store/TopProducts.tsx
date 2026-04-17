@@ -63,7 +63,7 @@ const TopProducts = () => {
 
   return (
     <section ref={sectionRef as React.RefObject<HTMLElement>} className="py-20 bg-transparent below-fold">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-fluid">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
@@ -113,7 +113,7 @@ const TopProducts = () => {
 
         {/* Loading skeleton */}
         {!error && loading && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 3xl:grid-cols-6 gap-4">
             {[0,1,2,3,4,5,6,7].map(i => (
               <div key={i} className="rounded-2xl shimmer" style={{ height: '22rem', animationDelay: `${i * 0.08}s` }} />
             ))}
@@ -172,7 +172,7 @@ const TopProducts = () => {
         {!error && !loading && activeTab !== 'All' && (
           <div>
             <p className="text-sm text-muted-foreground mb-6 font-fira">{filtered.length} products in "{activeTab}"</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 3xl:grid-cols-6 gap-4">
               {filtered.map((p, i) => <ProductCard key={p.id} product={p} delay={Math.min(i * 0.04, 0.4)} />)}
             </div>
           </div>

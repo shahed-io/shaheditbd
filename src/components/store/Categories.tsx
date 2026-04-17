@@ -71,7 +71,7 @@ const Categories = () => {
   if (loading) {
     return (
       <section className="py-20" style={{ background: 'hsl(var(--background))' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container-fluid">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="rounded-2xl h-44 bg-muted animate-pulse" />
@@ -90,7 +90,7 @@ const Categories = () => {
       <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.05), transparent)', filter: 'blur(80px)' }} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="container-fluid relative z-10">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">

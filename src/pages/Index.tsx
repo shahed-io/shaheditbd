@@ -18,9 +18,9 @@ const WelcomeDiscount = lazy(() => import('@/components/store/WelcomeDiscount'))
 
 // Lightweight skeleton placeholders
 const SectionSkeleton = () => (
-  <div className="py-16 px-4 max-w-7xl mx-auto">
+  <div className="py-16 container-fluid">
     <div className="h-8 w-48 rounded-xl bg-muted/40 animate-pulse mb-8 mx-auto" />
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 3xl:grid-cols-6 gap-4">
       {[1,2,3,4].map(i => (
         <div key={i} className="h-48 rounded-2xl bg-muted/30 animate-pulse" />
       ))}
