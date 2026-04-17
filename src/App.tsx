@@ -9,6 +9,8 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
+import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
+import { ViewTransitions } from "@/components/ViewTransitions";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
@@ -162,6 +164,21 @@ const AppContent = () => {
     return () => cancelAnimationFrame(id);
   }, []);
 
+  // Warm critical route chunks during browser idle time → instant navigation
+  useEffect(() => {
+    prefetchOnIdle([
+      '/shop',
+      '/product/',     // ProductDetail chunk
+      '/checkout',
+      '/blog',
+      '/free-tools',
+      '/dashboard',
+      '/contact',
+      '/about',
+      '/faqs',
+    ], 1500);
+  }, []);
+
   useEffect(() => {
     const isAdmin = location.pathname.startsWith('/ceo');
     if (isAdmin) {
@@ -181,6 +198,7 @@ const AppContent = () => {
           <RedirectEnforcer />
         </Suspense>
       )}
+      <ViewTransitions />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -287,7 +305,12 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>

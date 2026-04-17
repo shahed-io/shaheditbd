@@ -8,6 +8,7 @@ import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { prefetchRoute } from '@/hooks/usePrefetchRoute';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -332,6 +333,24 @@ const Navbar = () => {
                   <a
                     key={link.label}
                     href={link.href}
+                    onClick={e => {
+                      // SPA navigation — no full page reload
+                      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                      e.preventDefault();
+                      navigate(link.href);
+                    }}
+                    onMouseEnter={e => {
+                      // Prefetch route chunk for instant nav
+                      prefetchRoute(link.href);
+                      if (!isActive) {
+                        e.currentTarget.style.color = 'hsl(258,78%,45%)';
+                        e.currentTarget.style.border = '1px solid hsla(258,78%,75%,0.35)';
+                        e.currentTarget.style.boxShadow = '0 2px 10px hsla(258,78%,55%,0.12)';
+                        e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)';
+                      }
+                    }}
+                    onTouchStart={() => prefetchRoute(link.href)}
+                    onFocus={() => prefetchRoute(link.href)}
                     className="flex items-center px-4 py-1.5 rounded-lg transition-all duration-200 font-bold text-sm whitespace-nowrap hover:scale-105"
                     style={{
                       background: isActive ? 'linear-gradient(135deg, hsla(258,78%,55%,0.12), hsla(200,90%,45%,0.08))' : 'hsla(0,0%,100%,0.70)',
@@ -341,14 +360,6 @@ const Navbar = () => {
                       boxShadow: isActive
                         ? '0 2px 10px hsla(258,78%,55%,0.15)'
                         : '0 1px 4px hsla(226,35%,12%,0.05)',
-                    }}
-                    onMouseEnter={e => {
-                      if (!isActive) {
-                        e.currentTarget.style.color = 'hsl(258,78%,45%)';
-                        e.currentTarget.style.border = '1px solid hsla(258,78%,75%,0.35)';
-                        e.currentTarget.style.boxShadow = '0 2px 10px hsla(258,78%,55%,0.12)';
-                        e.currentTarget.style.background = 'hsla(258,78%,55%,0.07)';
-                      }
                     }}
                     onMouseLeave={e => {
                       if (!isActive) {
