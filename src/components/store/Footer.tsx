@@ -1,52 +1,18 @@
-import { Phone, Mail, MapPin, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Zap, Package, Info, FileText, Send, Download, Heart, Star, Gift, Tag, Globe, ShoppingBag, Sparkles, BookOpen, HelpCircle, type LucideIcon } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 import dbidLogo from '@/assets/dbid-logo.png';
 import { useFooterSettings } from '@/hooks/useFooterSettings';
+import { useFooterMenu } from '@/hooks/useFooterMenu';
 
-const NAV_COL = [
-  {
-    title: 'Products',
-    icon: <Package size={14} />,
-    accent: 'hsl(258,78%,55%)',
-    links: [
-      { label: 'Windows Keys',     href: '/shop?category=windows' },
-      { label: 'Office 365',       href: '/shop?category=office' },
-      { label: 'All Products',     href: '/shop' },
-      { label: 'CID For Reseller', href: 'https://ss.shahedit.com/getcid/login.php', external: true },
-      { label: 'VPN & Security',   href: '/shop?category=vpn' },
-      { label: 'Free Tools',       href: '/free-tools' },
-    ]
-  },
-  {
-    title: 'Information',
-    icon: <Info size={14} />,
-    accent: 'hsl(200,90%,45%)',
-    links: [
-      { label: 'FAQs',                   href: '/faqs' },
-      { label: 'About Us',               href: '/about' },
-      { label: 'My Account',             href: '/dashboard' },
-      { label: 'Contact Us',             href: '/contact' },
-      { label: 'Blog',                   href: '/blog' },
-      { label: 'Software Download Link', href: '/link' },
-    ]
-  },
-  {
-    title: 'Policies',
-    icon: <FileText size={14} />,
-    accent: 'hsl(162,72%,38%)',
-    links: [
-      { label: 'Privacy Policy',         href: '/privacy-policy' },
-      { label: 'Terms & Conditions',     href: '/terms-conditions' },
-      { label: 'Refund & Return Policy', href: '/refund-policy' },
-      { label: 'Order & Cancellation',   href: '/order-policy' },
-      { label: 'Delivery Info',          href: '/delivery-info' },
-      { label: 'Refund Request',         href: '/refund-request' },
-    ]
-  },
-];
+// Icon registry — admins can pick by name
+const ICON_MAP: Record<string, LucideIcon> = {
+  Package, Info, FileText, Shield, Globe, ShoppingBag, BookOpen, HelpCircle,
+  Sparkles, Gift, Tag, Star, Heart, Download, Mail, Phone, MessageCircle,
+};
 
 const Footer = () => {
   const { settings } = useFooterSettings();
+  const { sections } = useFooterMenu();
   const paymentMethods = settings.payment_methods.split(',').map(s => s.trim()).filter(Boolean);
 
   return (
