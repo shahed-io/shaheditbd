@@ -240,57 +240,60 @@ const Shop = () => {
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* Sidebar — horizontal scroll on tablet, vertical on desktop */}
           <aside className="w-full lg:w-56 flex-shrink-0">
-            <div className="rounded-2xl border p-4 sticky top-24"
+            <div className="rounded-2xl border p-3 lg:p-4 lg:sticky lg:top-24"
               style={{ background: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }}>
-              <div className="font-bold text-xs text-muted-foreground mb-3 uppercase tracking-widest">ক্যাটাগরি</div>
-              <button onClick={() => setCategory('')}
-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold mb-1 transition-all text-left"
-                style={{
-                  background: !activeCatSlug ? 'hsla(258,78%,55%,0.12)' : 'transparent',
-                  color: !activeCatSlug ? 'hsl(258,78%,50%)' : 'hsl(var(--muted-foreground))',
-                }}>
-                🛒 <span>সব প্রোডাক্ট</span>
-              </button>
-              {categories.map(cat => {
-                const meta = CAT_META[cat.name] || CAT_META.default;
-                const isActive = activeCatSlug === cat.slug;
-                // Append imgVersion timestamp so browser fetches fresh image after admin update
-                const imgSrc = cat.image_url
-                  ? `${cat.image_url.split('?')[0]}?v=${imgVersion}`
-                  : null;
-                return (
-                  <button key={cat.id} onClick={() => setCategory(cat.slug)}
-                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold mb-1 transition-all text-left"
-                    style={{
-                      background: isActive ? `${meta.accent}18` : 'transparent',
-                      color: isActive ? meta.accent : 'hsl(var(--muted-foreground))',
-                      border: isActive ? `1px solid ${meta.accent}40` : '1px solid transparent',
-                    }}>
-                    <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden text-lg"
-                      style={{ background: isActive ? `${meta.accent}18` : 'hsla(258,78%,55%,0.06)' }}>
-                      {imgSrc
-                        ? <img
-                            key={imgSrc}
-                            src={imgSrc}
-                            alt={cat.name}
-                            className="w-full h-full object-cover"
-                            onError={e => {
-                              const img = e.currentTarget as HTMLImageElement;
-                              img.style.display = 'none';
-                              const parent = img.parentElement;
-                              if (parent) parent.textContent = meta.icon;
-                            }}
-                          />
-                        : meta.icon
-                      }
-                    </span>
-                    <span>{cat.name}</span>
-                  </button>
-                );
-              })}
+              <div className="font-bold text-xs text-muted-foreground mb-3 uppercase tracking-widest hidden lg:block">ক্যাটাগরি</div>
+              {/* Horizontal scroll for tablet/mobile, vertical for desktop */}
+              <div className="flex lg:flex-col gap-2 lg:gap-0 overflow-x-auto lg:overflow-visible scrollbar-hide -mx-1 px-1 lg:mx-0 lg:px-0">
+                <button onClick={() => setCategory('')}
+                  className="flex-shrink-0 lg:flex-shrink flex items-center gap-2 px-3 py-2 lg:py-2.5 rounded-xl text-sm font-semibold lg:mb-1 transition-all text-left whitespace-nowrap"
+                  style={{
+                    background: !activeCatSlug ? 'hsla(258,78%,55%,0.12)' : 'transparent',
+                    color: !activeCatSlug ? 'hsl(258,78%,50%)' : 'hsl(var(--muted-foreground))',
+                    border: !activeCatSlug ? '1px solid hsla(258,78%,55%,0.30)' : '1px solid hsl(var(--border))',
+                  }}>
+                  🛒 <span>সব</span>
+                </button>
+                {categories.map(cat => {
+                  const meta = CAT_META[cat.name] || CAT_META.default;
+                  const isActive = activeCatSlug === cat.slug;
+                  const imgSrc = cat.image_url
+                    ? `${cat.image_url.split('?')[0]}?v=${imgVersion}`
+                    : null;
+                  return (
+                    <button key={cat.id} onClick={() => setCategory(cat.slug)}
+                      className="flex-shrink-0 lg:flex-shrink w-auto lg:w-full flex items-center gap-2 lg:gap-2.5 px-3 py-2 lg:py-2.5 rounded-xl text-sm font-semibold lg:mb-1 transition-all text-left whitespace-nowrap"
+                      style={{
+                        background: isActive ? `${meta.accent}18` : 'transparent',
+                        color: isActive ? meta.accent : 'hsl(var(--muted-foreground))',
+                        border: isActive ? `1px solid ${meta.accent}40` : '1px solid hsl(var(--border))',
+                      }}>
+                      <span className="w-6 h-6 lg:w-7 lg:h-7 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden text-base lg:text-lg"
+                        style={{ background: isActive ? `${meta.accent}18` : 'hsla(258,78%,55%,0.06)' }}>
+                        {imgSrc
+                          ? <img
+                              key={imgSrc}
+                              src={imgSrc}
+                              alt={cat.name}
+                              className="w-full h-full object-cover"
+                              onError={e => {
+                                const img = e.currentTarget as HTMLImageElement;
+                                img.style.display = 'none';
+                                const parent = img.parentElement;
+                                if (parent) parent.textContent = meta.icon;
+                              }}
+                            />
+                          : meta.icon
+                        }
+                      </span>
+                      <span>{cat.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </aside>
 
@@ -345,7 +348,7 @@ const Shop = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 4xl:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 3xl:grid-cols-5 4xl:grid-cols-6 gap-3 md:gap-4">
                 {products.map(p => <ShopProductCard key={p.id} product={p} />)}
               </div>
             )}

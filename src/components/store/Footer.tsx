@@ -187,7 +187,7 @@ const Footer = () => {
       </div>
 
       {/* Nav columns */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {NAV_COL.map((col, ci) => (
           <div key={ci} className="rounded-2xl p-5 space-y-4"
             style={{

@@ -253,7 +253,7 @@ const WhyChooseUs = () => {
           style={{ background: 'radial-gradient(circle, hsla(15,100%,60%,0.04), transparent)', filter: 'blur(90px)' }} />
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-20 relative z-10">
+      <div className="container-fluid space-y-20 relative z-10" style={{ maxWidth: '1280px' }}>
 
         {/* ══ WHY CHOOSE US ══ */}
         <div>
@@ -265,7 +265,7 @@ const WhyChooseUs = () => {
             }
             subtitle="Bangladesh's most trusted digital software marketplace since 2020."
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 md:gap-4">
             {FEATURES.map((f, i) => (
               <FeatureCard key={i} feature={f} index={i} />
             ))}
@@ -282,7 +282,7 @@ const WhyChooseUs = () => {
             }
             subtitle="চার ধাপে আপনার product পান — সহজ, দ্রুত, নিরাপদ।"
           />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 md:gap-4">
             {STEPS.map((step, i) => (
               <StepCard key={i} step={step} index={i} />
             ))}

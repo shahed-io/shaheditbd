@@ -326,7 +326,7 @@ const Navbar = () => {
 
             {/* Desktop Links */}
             {/* Desktop Links — footer chip style */}
-            <div className="hidden lg:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-1.5 lg:gap-2">
               {NAV_LINKS.map(link => {
                 const isActive = typeof window !== 'undefined' && window.location.pathname === link.href;
                 return (
@@ -351,7 +351,7 @@ const Navbar = () => {
                     }}
                     onTouchStart={() => prefetchRoute(link.href)}
                     onFocus={() => prefetchRoute(link.href)}
-                    className="flex items-center px-4 py-1.5 rounded-lg transition-all duration-200 font-bold text-sm whitespace-nowrap hover:scale-105"
+                    className="flex items-center px-2.5 lg:px-4 py-1.5 rounded-lg transition-all duration-200 font-bold text-xs lg:text-sm whitespace-nowrap hover:scale-105"
                     style={{
                       background: isActive ? 'linear-gradient(135deg, hsla(258,78%,55%,0.12), hsla(200,90%,45%,0.08))' : 'hsla(0,0%,100%,0.70)',
                       backdropFilter: 'blur(10px)',
@@ -425,13 +425,13 @@ const Navbar = () => {
 
               {/* Cart Button — hidden on mobile, visible on sm+ */}
               <button onClick={() => setCartOpen(true)}
-                className="hidden sm:relative sm:flex items-center gap-2 sm:px-4 sm:py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
+                className="hidden sm:relative sm:flex items-center gap-2 px-3 lg:px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
                   boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
                 }}>
                 <ShoppingCart size={18} />
-                <span className="hidden sm:inline">Cart</span>
+                <span className="hidden lg:inline">Cart</span>
                 {cartCount > 0 && (
                   <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full text-[9px] font-bold flex items-center justify-center border-2"
                     style={{ background: 'hsl(330,85%,55%)', borderColor: 'hsl(0,0%,100%)', boxShadow: '0 0 8px hsla(330,85%,55%,0.5)' }}>
@@ -440,7 +440,7 @@ const Navbar = () => {
                 )}
               </button>
 
-              <button className="lg:hidden p-2.5 rounded-xl transition-colors"
+              <button className="md:hidden p-2.5 rounded-xl transition-colors"
                 style={{ color: 'hsl(226,35%,30%)' }}
                 onClick={() => { setMobileOpen(!mobileOpen); setMobileSearch(false); }}>
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -455,7 +455,7 @@ const Navbar = () => {
         )}
 
         {/* Mobile Menu — Next-Gen Bento Design */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'max-h-[calc(100vh-100px)] overflow-y-auto' : 'max-h-0'}`}>
+        <div className={`md:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'max-h-[calc(100vh-100px)] overflow-y-auto' : 'max-h-0'}`}>
           <div className="border-t px-3 py-4 relative"
             style={{
               background: 'linear-gradient(180deg, hsla(258,60%,99%,0.98) 0%, hsla(220,50%,98%,0.98) 50%, hsla(280,40%,99%,0.98) 100%)',

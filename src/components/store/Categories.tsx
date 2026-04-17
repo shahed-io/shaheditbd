@@ -72,7 +72,7 @@ const Categories = () => {
     return (
       <section className="py-20" style={{ background: 'hsl(var(--background))' }}>
         <div className="container-fluid">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 3xl:grid-cols-6 gap-3 md:gap-4">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="rounded-2xl h-44 bg-muted animate-pulse" />
             ))}
@@ -116,7 +116,7 @@ const Categories = () => {
           </a>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 3xl:grid-cols-6 gap-3 md:gap-4">
           {cats.map((cat, i) => {
             const meta = CAT_META[cat.name] || CAT_META['default'];
             const isHov = hovered === i;

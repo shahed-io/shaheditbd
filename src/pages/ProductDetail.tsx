@@ -432,7 +432,7 @@ const ProductDetail = () => {
 
         {/* ── Main Content ── */}
         <div className="container-fluid py-8">
-          <div className="grid lg:grid-cols-2 gap-10 xl:gap-16">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-16">
 
             {/* ═══ LEFT: Image Gallery ═══ */}
             <div className="space-y-4">
