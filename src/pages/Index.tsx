@@ -7,12 +7,12 @@ import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
 import { organizationSchema, websiteSchema } from '@/components/seo/schemas';
 import AuthModal from '@/components/store/AuthModal';
+import Footer from '@/components/store/Footer';
 
 // Below-fold sections — lazy loaded after hero renders
 const FlashSale    = lazy(() => import('@/components/store/FlashSale'));
 const WhyChooseUs  = lazy(() => import('@/components/store/WhyChooseUs'));
 const Testimonials = lazy(() => import('@/components/store/Testimonials'));
-const Footer       = lazy(() => import('@/components/store/Footer'));
 const PopupBanner  = lazy(() => import('@/components/store/PopupBanner'));
 const WelcomeDiscount = lazy(() => import('@/components/store/WelcomeDiscount'));
 
@@ -66,9 +66,7 @@ const Index = () => {
       <Suspense fallback={<div className="py-12" />}>
         <Testimonials />
       </Suspense>
-      <Suspense fallback={<div className="py-8" />}>
-        <Footer />
-      </Suspense>
+      <Footer />
 
       <FloatingButtons />
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
