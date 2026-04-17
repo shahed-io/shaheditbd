@@ -430,6 +430,8 @@ export default function AdminPersonalLicenses() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <PasswordTypesManager open={typesManagerOpen} onOpenChange={setTypesManagerOpen} />
     </div>
   );
 }
