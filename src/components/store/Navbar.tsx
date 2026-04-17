@@ -855,8 +855,6 @@ const Navbar = () => {
                   <p className="text-[10px] font-medium uppercase tracking-[0.18em]" style={{ color: 'hsl(226,15%,48%)' }}>Explore</p>
                   <div className="h-px flex-1" style={{ background: 'hsl(226,18%,88%)' }} />
                 </div>
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
-                </div>
 
                 {/* Guest list — login-required items */}
                 {[
