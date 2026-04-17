@@ -212,7 +212,12 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             : '0 2px 16px hsla(258,78%,55%,0.08), 0 0 0 1px hsla(258,78%,55%,0.1)',
           borderRadius: 'var(--radius)',
         }}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          // Instant navigation: prefetch detail page chunk on hover
+          prefetchRoute(`/product/${product.slug || product.id}`);
+        }}
+        onTouchStart={() => prefetchRoute(`/product/${product.slug || product.id}`)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* ── Rotating orbit light beam on click ── */}
