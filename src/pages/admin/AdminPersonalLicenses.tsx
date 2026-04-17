@@ -277,9 +277,21 @@ export default function AdminPersonalLicenses() {
                   <TableCell className="font-medium">{lic.name}</TableCell>
                   <TableCell><Badge variant="outline">{lic.category}</Badge></TableCell>
                   <TableCell>
-                    <div className="space-y-0.5 text-xs font-mono max-w-[200px] truncate">
+                    <div className="space-y-1 text-xs font-mono max-w-[220px] truncate">
                       {lic.key_value && <div title={lic.key_value}>🔑 {lic.key_value.substring(0, 20)}{lic.key_value.length > 20 ? '...' : ''}</div>}
-                      {lic.password && <div>🔒 ••••••</div>}
+                      {lic.password && (
+                        <div className="flex items-center gap-1">
+                          <span>🔒 ••••••</span>
+                          {(() => {
+                            const pt = getType(lic.password_type);
+                            return pt ? (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4">
+                                {pt.emoji} {pt.label}
+                              </Badge>
+                            ) : null;
+                          })()}
+                        </div>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
