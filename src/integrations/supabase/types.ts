@@ -976,6 +976,7 @@ export type Database = {
           name: string
           note: string | null
           password: string | null
+          password_type: string | null
           status: string
           updated_at: string
         }
@@ -991,6 +992,7 @@ export type Database = {
           name: string
           note?: string | null
           password?: string | null
+          password_type?: string | null
           status?: string
           updated_at?: string
         }
@@ -1006,6 +1008,7 @@ export type Database = {
           name?: string
           note?: string | null
           password?: string | null
+          password_type?: string | null
           status?: string
           updated_at?: string
         }
