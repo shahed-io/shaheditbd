@@ -70,6 +70,7 @@ const Navbar = () => {
   
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
+  const { activeTheme, saveTheme } = useTheme();
   const navigate = useNavigate();
 
   const [imgVersion] = useState(() => Date.now());
