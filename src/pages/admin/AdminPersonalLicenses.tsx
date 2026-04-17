@@ -207,12 +207,17 @@ export default function AdminPersonalLicenses() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-foreground">পার্সোনাল লাইসেন্স ইনভেন্টরি</h1>
           <p className="text-sm text-muted-foreground">আপনার সকল লাইসেন্স ও সাবস্ক্রিপশন এক জায়গায়</p>
         </div>
-        <Button onClick={openAdd}><Plus className="w-4 h-4 mr-2" />নতুন যোগ করুন</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setTypesManagerOpen(true)}>
+            <Settings2 className="w-4 h-4 mr-2" />পাসওয়ার্ড টাইপ
+          </Button>
+          <Button onClick={openAdd}><Plus className="w-4 h-4 mr-2" />নতুন যোগ করুন</Button>
+        </div>
       </div>
 
       {/* Stats */}
