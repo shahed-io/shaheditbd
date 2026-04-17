@@ -115,11 +115,13 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) { setAvatarUrl(null); setIsAdmin(false); setUserStats(null); return; }
+    if (!user) { setAvatarUrl(null); setIsAdmin(false); setUserStats(null); setProfileName(null); return; }
     const t = setTimeout(() => {
-      supabase.from('profiles').select('avatar_url, display_name, wallet_balance, points_balance').eq('user_id', user.id).single()
+      supabase.from('profiles').select('avatar_url, display_name, username, wallet_balance, points_balance').eq('user_id', user.id).single()
         .then(({ data }) => {
           if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+          if (data?.display_name) setProfileName(data.display_name);
+          else if (data?.username) setProfileName(data.username);
           if (data) {
             setUserStats(prev => ({
               wallet: Number(data.wallet_balance) || 0,
