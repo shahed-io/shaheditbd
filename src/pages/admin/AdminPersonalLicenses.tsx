@@ -69,6 +69,7 @@ export default function AdminPersonalLicenses() {
         category: vals.category || 'general',
         key_value: vals.key_value || null,
         password: vals.password || null,
+        password_type: vals.password_type || null,
         expires_at: vals.expires_at || null,
         note: vals.note || null,
         status: vals.status,
