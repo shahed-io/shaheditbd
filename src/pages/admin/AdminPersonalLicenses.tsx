@@ -45,6 +45,8 @@ export default function AdminPersonalLicenses() {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
+  const [typesManagerOpen, setTypesManagerOpen] = useState(false);
+  const { types: passwordTypes, getType } = usePasswordTypes();
 
   const { data: licenses = [], isLoading } = useQuery({
     queryKey: ['personal-licenses'],
