@@ -374,6 +374,38 @@ export default function AdminPersonalLicenses() {
                 <Label>পাসওয়ার্ড</Label>
                 <Input value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} placeholder="পাসওয়ার্ড (ঐচ্ছিক)" />
               </div>
+              <div className="col-span-2">
+                <div className="flex items-center justify-between mb-1">
+                  <Label>পাসওয়ার্ডের ধরন (Type)</Label>
+                  <button
+                    type="button"
+                    onClick={() => setTypesManagerOpen(true)}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    + টাইপ ম্যানেজ করুন
+                  </button>
+                </div>
+                <Select
+                  value={form.password_type || '__none__'}
+                  onValueChange={v => setForm(f => ({ ...f, password_type: v === '__none__' ? '' : v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="টাইপ নির্বাচন করুন (ঐচ্ছিক)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">— কোনো টাইপ নয় —</SelectItem>
+                    {passwordTypes.map(pt => (
+                      <SelectItem key={pt.id} value={pt.id}>
+                        <span className="flex items-center gap-2">
+                          <span>{pt.emoji}</span>
+                          <span>{pt.label}</span>
+                          {pt.description && <span className="text-xs text-muted-foreground">— {pt.description}</span>}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div>
                 <Label>মেয়াদ শেষ</Label>
                 <Input type="date" value={form.expires_at} onChange={e => setForm(f => ({ ...f, expires_at: e.target.value }))} />
