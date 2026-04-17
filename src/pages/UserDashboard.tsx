@@ -593,7 +593,6 @@ const UserDashboard = () => {
     }
     setSaving(true);
     const payload: any = {
-      user_id: user.id,
       display_name: profile.display_name,
       phone: profile.phone,
       email: user.email,
@@ -603,12 +602,42 @@ const UserDashboard = () => {
     if (trimmedUsername !== (profile.username || '')) {
       payload.username = trimmedUsername || null;
     }
-    const { error } = await supabase.from('profiles').upsert(payload, { onConflict: 'user_id' });
+    // Use UPDATE (profile already exists via handle_new_user trigger)
+    const { data: updated, error } = await supabase
+      .from('profiles')
+      .update(payload)
+      .eq('user_id', user.id)
+      .select('user_id')
+      .maybeSingle();
+
     if (error) {
-      toast.error(error.message || t(selectedLang, 'profile_save_error'));
+      const msg = (error.message || '').toLowerCase();
+      if (msg.includes('username') && msg.includes('reserved')) {
+        toast.error('এই ইউজারনেমটি সংরক্ষিত — অন্য একটি বেছে নিন');
+      } else if (msg.includes('username') && (msg.includes('character') || msg.includes('between'))) {
+        toast.error('ইউজারনেম ৩-২০ অক্ষরের মধ্যে এবং শুধু a-z, 0-9, _ ব্যবহার করুন');
+      } else if (msg.includes('duplicate') || msg.includes('unique')) {
+        toast.error('এই ইউজারনেমটি ইতিমধ্যে নেওয়া হয়েছে');
+      } else {
+        toast.error(error.message || t(selectedLang, 'profile_save_error'));
+      }
       setSaving(false);
       return;
     }
+
+    // Safety: if profile row didn't exist, insert one
+    if (!updated) {
+      const { error: insertError } = await supabase.from('profiles').insert({
+        user_id: user.id,
+        ...payload,
+      });
+      if (insertError) {
+        toast.error(insertError.message || t(selectedLang, 'profile_save_error'));
+        setSaving(false);
+        return;
+      }
+    }
+
     setProfile(p => ({ ...p, username: trimmedUsername || null }));
     setEditing(false);
     setUsernameStatus('idle');
