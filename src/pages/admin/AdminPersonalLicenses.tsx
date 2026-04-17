@@ -130,6 +130,7 @@ export default function AdminPersonalLicenses() {
       category: lic.category || 'general',
       key_value: lic.key_value || '',
       password: lic.password || '',
+      password_type: lic.password_type || '',
       expires_at: lic.expires_at ? lic.expires_at.split('T')[0] : '',
       note: lic.note || '',
       status: lic.status,
