@@ -6,9 +6,10 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
-import { CartProvider, useCart } from "@/hooks/useCart";
+import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
+import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
 import { ViewTransitions } from "@/components/ViewTransitions";
 
 // Critical pages — eager load
@@ -152,43 +153,30 @@ const AdminNotificationListener = () => {
 // Admin body class management
 const AppContent = () => {
   const location = useLocation();
-  const { cartOpen, wishlistOpen } = useCart();
-  const [nonCriticalReady, setNonCriticalReady] = useState(false);
+  const [deferReady, setDeferReady] = useState(false);
   useTheme(); // Apply saved theme on load
 
   useEffect(() => {
-    let activated = false;
-    let idleId: number | null = null;
+    // Defer non-critical components until after first paint (~20ms)
+    const id = requestAnimationFrame(() => {
+      setDeferReady(true);
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
 
-    const activate = () => {
-      if (activated) return;
-      activated = true;
-      setNonCriticalReady(true);
-      window.removeEventListener('pointerdown', activate);
-      window.removeEventListener('keydown', activate);
-    };
-
-    const timer = window.setTimeout(() => {
-      if ('requestIdleCallback' in window) {
-        idleId = (window as Window & {
-          requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
-        }).requestIdleCallback?.(() => activate(), { timeout: 2500 }) ?? null;
-      } else {
-        activate();
-      }
-    }, 2200);
-
-    window.addEventListener('pointerdown', activate, { passive: true });
-    window.addEventListener('keydown', activate);
-
-    return () => {
-      window.clearTimeout(timer);
-      if (idleId !== null && 'cancelIdleCallback' in window) {
-        (window as Window & { cancelIdleCallback?: (handle: number) => void }).cancelIdleCallback?.(idleId);
-      }
-      window.removeEventListener('pointerdown', activate);
-      window.removeEventListener('keydown', activate);
-    };
+  // Warm critical route chunks during browser idle time → instant navigation
+  useEffect(() => {
+    prefetchOnIdle([
+      '/shop',
+      '/product/',     // ProductDetail chunk
+      '/checkout',
+      '/blog',
+      '/free-tools',
+      '/dashboard',
+      '/contact',
+      '/about',
+      '/faqs',
+    ], 1500);
   }, []);
 
   useEffect(() => {
@@ -202,16 +190,12 @@ const AppContent = () => {
 
   return (
     <>
-      {nonCriticalReady && (
+      {deferReady && (
         <Suspense fallback={null}>
           <AdminNotificationListener />
           <FacebookPixel />
-          <RedirectEnforcer />
-        </Suspense>
-      )}
-      {(cartOpen || wishlistOpen) && (
-        <Suspense fallback={null}>
           <CartDrawer />
+          <RedirectEnforcer />
         </Suspense>
       )}
       <ViewTransitions />

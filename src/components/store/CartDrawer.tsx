@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState, useRef } from 'react';
 import { X, ShoppingCart, Plus, Minus, Trash2, ArrowRight, Tag, Loader2, Heart, CheckCircle } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useNavigate } from 'react-router-dom';
@@ -52,8 +52,8 @@ const CartDrawer = () => {
   };
 
   // Cart Panel
-  const CartPanel = forwardRef<HTMLDivElement>((_, ref) => (
-    <div ref={ref} className={`fixed inset-0 z-[200] ${cartOpen ? '' : 'pointer-events-none'}`}>
+  const CartPanel = () => (
+    <div className={`fixed inset-0 z-[200] ${cartOpen ? '' : 'pointer-events-none'}`}>
       <div
         className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${cartOpen ? 'opacity-100' : 'opacity-0'}`}
         onClick={() => setCartOpen(false)}
@@ -216,13 +216,11 @@ const CartDrawer = () => {
         )}
       </div>
     </div>
-  ));
-
-  CartPanel.displayName = 'CartPanel';
+  );
 
   // Wishlist Panel
-  const WishlistPanel = forwardRef<HTMLDivElement>((_, ref) => (
-    <div ref={ref} className={`fixed inset-0 z-[200] ${wishlistOpen ? '' : 'pointer-events-none'}`}>
+  const WishlistPanel = () => (
+    <div className={`fixed inset-0 z-[200] ${wishlistOpen ? '' : 'pointer-events-none'}`}>
       <div
         className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${wishlistOpen ? 'opacity-100' : 'opacity-0'}`}
         onClick={() => setWishlistOpen(false)}
@@ -279,9 +277,7 @@ const CartDrawer = () => {
         </div>
       </div>
     </div>
-  ));
-
-  WishlistPanel.displayName = 'WishlistPanel';
+  );
 
   return (
     <>

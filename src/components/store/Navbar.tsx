@@ -1,17 +1,14 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search, Download, Share2, PlusSquare, Package, Key, Wallet, Award, Heart, MapPin, Bell, Gift, Lock, Globe, ShieldCheck, ChevronRight, Facebook, MessageCircle, Instagram, Send, Moon, Sun, LogIn } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star, Shield, Phone, Mail, Sparkles, Search, Download, Share2, PlusSquare, Package, Key, Wallet, Award, Heart, MapPin, Bell, Gift, Lock, Globe, ShieldCheck, ChevronRight, Facebook, MessageCircle, Instagram, Send } from 'lucide-react';
 import { useFooterSettings } from '@/hooks/useFooterSettings';
-import { useTheme } from '@/hooks/useTheme';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
+import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { prefetchRoute } from '@/hooks/usePrefetchRoute';
-
-const DesktopSearchPalette = lazy(() => import('./SearchBar').then((mod) => ({ default: mod.DesktopSearchPalette })));
-const MobileSearchOverlay = lazy(() => import('./SearchBar').then((mod) => ({ default: mod.MobileSearchOverlay })));
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -70,7 +67,6 @@ const Navbar = () => {
   
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
-  const { activeTheme, saveTheme } = useTheme();
   const navigate = useNavigate();
 
   const [imgVersion] = useState(() => Date.now());
@@ -153,28 +149,29 @@ const Navbar = () => {
   }, [user, mobileOpen]);
 
   useEffect(() => {
-    const run = () => {
+    // Defer announcement fetch — below-fold banner
+    const t = setTimeout(() => {
       supabase.from('site_settings').select('value').eq('key', 'announcement_text').eq('category', 'marketing').maybeSingle()
         .then(({ data }) => { if (data?.value) setAnnouncement(data.value); });
-    };
-
-    const t = setTimeout(() => {
-      if ('requestIdleCallback' in window) {
-        (window as Window & {
-          requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
-        }).requestIdleCallback?.(() => run(), { timeout: 3000 });
-      } else {
-        run();
-      }
-    }, 2200);
-
+    }, 1000);
     return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
-    if (!mobileOpen || navCategories.length > 0) return;
-    loadNavCategories();
-  }, [mobileOpen, navCategories.length]);
+    // Defer category load to not block initial render
+    const t = setTimeout(() => {
+      loadNavCategories();
+    }, 500);
+    // Realtime: bust cache and reload when categories change
+    const channel = supabase
+      .channel('navbar-cats-rt')
+      .on('postgres_changes' as any, { event: '*', schema: 'public', table: 'categories' }, () => {
+        _catCache = null;
+        loadNavCategories(true);
+      })
+      .subscribe();
+    return () => { clearTimeout(t); supabase.removeChannel(channel); };
+  }, []);
 
   // PWA Install detection
   useEffect(() => {
@@ -211,17 +208,16 @@ const Navbar = () => {
 
       {/* ── Desktop Search Overlay ── */}
       {desktopSearch && (
-        <Suspense fallback={null}>
-          <div className="fixed inset-0 z-[999] hidden md:flex items-start justify-center pt-20 px-4"
-            style={{ background: 'hsla(226,35%,10%,0.55)', backdropFilter: 'blur(6px)' }}
-            onClick={(e) => { if (e.target === e.currentTarget) setDesktopSearch(false); }}>
-            <div className="w-full max-w-2xl xl:max-w-3xl rounded-3xl overflow-hidden shadow-[0_32px_80px_hsla(226,35%,10%,0.40)] flex flex-col"
-              style={{ background: 'hsl(var(--card))', border: '1.5px solid hsl(var(--border))', maxHeight: '80vh' }}>
-              <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
-              <DesktopSearchPalette onClose={() => setDesktopSearch(false)} />
-            </div>
+        <div className="fixed inset-0 z-[999] hidden md:flex items-start justify-center pt-20 px-4"
+          style={{ background: 'hsla(226,35%,10%,0.55)', backdropFilter: 'blur(6px)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setDesktopSearch(false); }}>
+          <div className="w-full max-w-2xl xl:max-w-3xl rounded-3xl overflow-hidden shadow-[0_32px_80px_hsla(226,35%,10%,0.40)] flex flex-col"
+            style={{ background: 'hsl(var(--card))', border: '1.5px solid hsl(var(--border))', maxHeight: '80vh' }}>
+            {/* Top line */}
+            <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(263,70%,58%))' }} />
+            <DesktopSearchPalette onClose={() => setDesktopSearch(false)} />
           </div>
-        </Suspense>
+        </div>
       )}
 
       {/* ── Fixed wrapper for announcement + navbar ── */}
@@ -455,267 +451,524 @@ const Navbar = () => {
 
         {/* Mobile Search — full-screen overlay, xs/sm only */}
         {mobileSearch && (
-          <Suspense fallback={null}>
-            <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
-          </Suspense>
+          <MobileSearchOverlay onClose={() => setMobileSearch(false)} />
         )}
 
-        {/* Mobile Menu — Glassmorphic Minimal */}
+        {/* Mobile Menu — Next-Gen Bento Design */}
         <div className={`lg:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'max-h-[calc(100vh-100px)] overflow-y-auto' : 'max-h-0'}`}>
-          <div className="border-t px-4 py-5 relative"
+          <div className="border-t px-3 py-4 relative"
             style={{
-              background: 'linear-gradient(180deg, hsla(0,0%,100%,0.85) 0%, hsla(258,30%,99%,0.82) 100%)',
-              borderColor: 'hsla(258,40%,80%,0.20)',
-              backdropFilter: 'blur(28px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-              borderRadius: '0 0 28px 28px',
-              boxShadow: '0 20px 50px -22px hsla(258,50%,30%,0.15)',
+              background: 'linear-gradient(180deg, hsla(258,60%,99%,0.98) 0%, hsla(220,50%,98%,0.98) 50%, hsla(280,40%,99%,0.98) 100%)',
+              borderColor: 'hsla(258,78%,60%,0.15)',
+              backdropFilter: 'blur(32px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+              borderRadius: '0 0 24px 24px',
+              boxShadow: '0 24px 50px -20px hsla(258,78%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.7)',
             }}>
+            {/* Decorative orbs */}
+            <div className="absolute top-0 right-0 w-48 h-48 rounded-full pointer-events-none opacity-40"
+              style={{ background: 'radial-gradient(circle, hsla(258,78%,55%,0.18), transparent 70%)', filter: 'blur(28px)' }} />
+            <div className="absolute bottom-10 left-0 w-40 h-40 rounded-full pointer-events-none opacity-30"
+              style={{ background: 'radial-gradient(circle, hsla(200,90%,50%,0.18), transparent 70%)', filter: 'blur(24px)' }} />
 
-            {/* Search bar — top */}
-            <button
-              onClick={() => { setMobileSearch(true); setMobileOpen(false); }}
-              className="w-full flex items-center gap-2.5 px-4 py-3 mb-4 rounded-2xl text-left transition-all active:scale-[0.99]"
-              style={{
-                background: 'hsla(0,0%,100%,0.70)',
-                border: '1px solid hsla(258,40%,80%,0.25)',
-                backdropFilter: 'blur(20px)',
-                boxShadow: '0 2px 8px hsla(258,40%,30%,0.04)',
-                animation: mobileOpen ? 'slideInRight 0.35s ease-out both' : undefined,
-              }}>
-              <Search size={17} style={{ color: 'hsl(226,25%,45%)' }} strokeWidth={2.2} />
-              <span className="text-[13.5px] flex-1" style={{ color: 'hsl(226,20%,50%)' }}>প্রোডাক্ট খুঁজুন...</span>
-            </button>
-
-            {/* Profile / Sign-In compact card */}
             {user ? (
-              <button
-                onClick={() => { navigate('/dashboard?tab=profile'); setMobileOpen(false); }}
-                className="w-full group flex items-center gap-3 px-3.5 py-3 mb-5 rounded-2xl transition-all active:scale-[0.99]"
-                style={{
-                  background: 'hsla(0,0%,100%,0.75)',
-                  border: '1px solid hsla(258,40%,80%,0.25)',
-                  backdropFilter: 'blur(20px)',
-                  boxShadow: '0 2px 8px hsla(258,40%,30%,0.05)',
-                  animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.05s both' : undefined,
-                }}>
-                <div className="relative w-11 h-11 rounded-full overflow-hidden flex items-center justify-center shrink-0"
-                  style={{ background: 'hsl(258,78%,55%)', color: 'hsl(0,0%,100%)' }}>
-                  {avatarUrl ? (
-                    <img src={`${avatarUrl}?v=${imgVersion}`} alt="avatar" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-base font-bold">{initials}</span>
-                  )}
-                  <span className="absolute -bottom-0 -right-0 w-3 h-3 rounded-full border-2 border-white" style={{ background: 'hsl(150,75%,48%)' }} />
-                </div>
-                <div className="flex-1 text-left min-w-0">
-                  <p className="text-[10.5px] font-medium uppercase tracking-[0.14em]" style={{ color: 'hsl(226,20%,55%)' }}>Welcome back</p>
-                  <p className="text-[14px] font-semibold truncate" style={{ color: 'hsl(226,35%,18%)' }}>{displayName}</p>
-                </div>
-                <ChevronRight size={18} style={{ color: 'hsl(226,20%,55%)' }} className="group-hover:translate-x-0.5 transition-transform" />
-              </button>
-            ) : (
-              <button
-                onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                className="w-full group flex items-center gap-3 px-3.5 py-3 mb-5 rounded-2xl transition-all active:scale-[0.99]"
-                style={{
-                  background: 'hsla(0,0%,100%,0.75)',
-                  border: '1px solid hsla(258,40%,80%,0.25)',
-                  backdropFilter: 'blur(20px)',
-                  boxShadow: '0 2px 8px hsla(258,40%,30%,0.05)',
-                  animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.05s both' : undefined,
-                }}>
-                <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
-                  style={{ background: 'hsla(258,78%,55%,0.10)', color: 'hsl(258,78%,50%)' }}>
-                  <LogIn size={20} strokeWidth={2.2} />
-                </div>
-                <div className="flex-1 text-left min-w-0">
-                  <p className="text-[10.5px] font-medium uppercase tracking-[0.14em]" style={{ color: 'hsl(226,20%,55%)' }}>Get started</p>
-                  <p className="text-[14px] font-semibold" style={{ color: 'hsl(226,35%,18%)' }}>Sign in / Register</p>
-                </div>
-                <ChevronRight size={18} style={{ color: 'hsl(226,20%,55%)' }} className="group-hover:translate-x-0.5 transition-transform" />
-              </button>
-            )}
-
-            {/* Quick Actions label */}
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] px-1 mb-2.5" style={{ color: 'hsl(226,20%,50%)' }}>Quick Actions</p>
-
-            {/* Quick Actions tile grid (4 monochrome) */}
-            <div className="grid grid-cols-4 gap-2 mb-5">
-              {[
-                { label: 'Shop',  icon: ShoppingCart, href: '/shop' },
-                { label: 'Tools', icon: Sparkles,     href: '/free-tools' },
-                { label: 'Blog',  icon: Star,         href: '/blog' },
-                { label: 'Help',  icon: MessageCircle, href: '/contact-us' },
-              ].map((q, i) => (
+              <div className="relative">
+                {/* User Hero Card — Premium Profile Banner */}
                 <button
-                  key={q.label}
-                  onClick={() => { navigate(q.href); setMobileOpen(false); }}
-                  className="group aspect-square rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-all active:scale-95"
+                  onClick={() => { navigate('/dashboard?tab=profile'); setMobileOpen(false); }}
+                  className="w-full group relative rounded-3xl p-4 mb-4 overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
                   style={{
-                    background: 'hsla(0,0%,100%,0.70)',
-                    border: '1px solid hsla(258,40%,80%,0.22)',
-                    backdropFilter: 'blur(20px)',
-                    boxShadow: '0 2px 8px hsla(258,40%,30%,0.04)',
-                    animation: mobileOpen ? `slideInRight 0.35s ease-out ${0.10 + i * 0.03}s both` : undefined,
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.06)'; e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.30)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'hsla(0,0%,100%,0.70)'; e.currentTarget.style.borderColor = 'hsla(258,40%,80%,0.22)'; }}>
-                  <q.icon size={19} strokeWidth={2.1} style={{ color: 'hsl(226,35%,22%)' }} className="group-hover:scale-110 group-hover:[color:hsl(258,78%,50%)] transition-all" />
-                  <span className="text-[10.5px] font-semibold" style={{ color: 'hsl(226,35%,28%)' }}>{q.label}</span>
-                </button>
-              ))}
-            </div>
+                    background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(225,80%,52%) 45%, hsl(200,90%,50%) 100%)',
+                    boxShadow: '0 16px 40px -10px hsla(258,78%,45%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.35)',
+                    animation: mobileOpen ? 'slideInRight 0.4s ease-out both' : undefined,
+                  }}>
+                  {/* Animated mesh overlay */}
+                  <div className="absolute inset-0 opacity-50 pointer-events-none"
+                    style={{ background: 'radial-gradient(circle at 20% 20%, hsla(0,0%,100%,0.35), transparent 50%), radial-gradient(circle at 80% 80%, hsla(280,90%,70%,0.4), transparent 50%)' }} />
+                  <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.25), transparent 70%)', filter: 'blur(8px)' }} />
 
-            {/* Categories — clean list */}
-            {navCategories.length > 0 && (
-              <div className="mb-5" style={{ animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.22s both' : undefined }}>
-                <div className="flex items-center justify-between px-1 mb-2">
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em]" style={{ color: 'hsl(226,20%,50%)' }}>Categories</p>
-                  <button onClick={() => { navigate('/shop'); setMobileOpen(false); }}
-                    className="text-[11px] font-semibold flex items-center gap-0.5" style={{ color: 'hsl(258,78%,50%)' }}>
-                    See all <ChevronRight size={12} />
+                  <div className="relative flex items-center gap-3.5">
+                    {/* Avatar with ring */}
+                    <div className="relative shrink-0">
+                      <div className="absolute -inset-1 rounded-2xl"
+                        style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.6), hsla(280,90%,80%,0.6))', filter: 'blur(4px)' }} />
+                      <div className="relative w-14 h-14 rounded-2xl overflow-hidden flex items-center justify-center"
+                        style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '2px solid hsla(0,0%,100%,0.5)' }}>
+                        {avatarUrl ? (
+                          <img src={`${avatarUrl}?v=${imgVersion}`} alt="avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <User size={26} className="text-white" strokeWidth={2.5} />
+                        )}
+                      </div>
+                      {/* Online dot */}
+                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-white"
+                        style={{ background: 'hsl(150,80%,50%)', boxShadow: '0 0 8px hsla(150,80%,50%,0.6)' }} />
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Welcome back 👋</p>
+                      <p className="text-base font-bold text-white truncate">{displayName}</p>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <div className="px-1.5 py-0.5 rounded-md flex items-center gap-1" style={{ background: 'hsla(0,0%,100%,0.22)', backdropFilter: 'blur(8px)' }}>
+                          <Star size={9} className="text-yellow-300" fill="currentColor" />
+                          <span className="text-[10px] font-bold text-white">VIP Member</span>
+                        </div>
+                      </div>
+                    </div>
+                    <ChevronRight size={20} className="text-white/80 transition-transform group-hover:translate-x-1" />
+                  </div>
+
+                  {/* Live Stats Strip */}
+                  <div className="relative mt-3.5 pt-3 grid grid-cols-3 gap-2 border-t" style={{ borderColor: 'hsla(0,0%,100%,0.20)' }}>
+                    <div className="text-center">
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Wallet</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">৳{userStats?.wallet?.toFixed(0) ?? '—'}</p>
+                    </div>
+                    <div className="text-center border-x" style={{ borderColor: 'hsla(0,0%,100%,0.18)' }}>
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Points</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">{userStats?.points ?? '—'}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Orders</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">{userStats?.orders ?? '—'}</p>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Quick Actions — Bento Grid (4 cols) with live counts */}
+                <div className="grid grid-cols-4 gap-2 mb-3">
+                  {[
+                    { label: 'Orders',    icon: Package, tab: 'orders',   grad: 'linear-gradient(135deg, hsl(200,90%,55%), hsl(220,85%,55%))', count: userStats?.orders },
+                    { label: 'Wallet',    icon: Wallet,  tab: 'wallet',   grad: 'linear-gradient(135deg, hsl(150,72%,45%), hsl(170,75%,42%))', count: undefined },
+                    { label: 'Wishlist',  icon: Heart,   tab: 'wishlist', grad: 'linear-gradient(135deg, hsl(0,82%,60%), hsl(340,82%,55%))', count: userStats?.wishlist },
+                    { label: 'Points',    icon: Award,   tab: 'points',   grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,92%,55%))', count: undefined },
+                  ].map((q, i) => (
+                    <button
+                      key={q.tab}
+                      onClick={() => { navigate(`/dashboard?tab=${q.tab}`); setMobileOpen(false); }}
+                      className="group relative aspect-square rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]"
+                      style={{
+                        background: 'hsla(0,0%,100%,0.85)',
+                        border: '1px solid hsla(258,78%,60%,0.12)',
+                        backdropFilter: 'blur(12px)',
+                        boxShadow: '0 4px 12px hsla(258,40%,40%,0.06)',
+                        animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.05 + i * 0.04}s both` : undefined,
+                      }}>
+                      <div className="absolute inset-x-0 top-0 h-1/2 opacity-15 pointer-events-none" style={{ background: q.grad }} />
+                      {/* Live count badge */}
+                      {q.count !== undefined && q.count > 0 && (
+                        <div className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center text-[9px] font-extrabold text-white tabular-nums z-10"
+                          style={{ background: q.grad, boxShadow: '0 2px 6px hsla(258,40%,40%,0.3)' }}>
+                          {q.count > 99 ? '99+' : q.count}
+                        </div>
+                      )}
+                      <div className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
+                        style={{ background: q.grad, boxShadow: '0 6px 14px hsla(258,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
+                        <q.icon size={17} className="text-white" strokeWidth={2.5} />
+                      </div>
+                      <span className="text-[10.5px] font-bold tracking-tight" style={{ color: 'hsl(226,35%,22%)' }}>{q.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Featured Strip — 2 premium horizontal cards */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <button
+                    onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(0,82%,58%) 0%, hsl(20,90%,55%) 100%)',
+                      boxShadow: '0 8px 20px hsla(0,80%,50%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.22s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <span className="text-[14px]">🔥</span>
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Hot Deals</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Up to 70% OFF</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Shop trending →</p>
+                  </button>
+                  <button
+                    onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(150,72%,42%) 0%, hsl(170,75%,40%) 100%)',
+                      boxShadow: '0 8px 20px hsla(150,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.26s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center relative" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <MessageCircle size={14} className="text-white" strokeWidth={2.6} />
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: 'hsl(45,95%,55%)', boxShadow: '0 0 6px hsla(45,95%,55%,0.8)', animation: 'pulse 2s infinite' }} />
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Live 24/7</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Need Help?</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Chat with us →</p>
                   </button>
                 </div>
-                <div className="rounded-2xl overflow-hidden"
-                  style={{ background: 'hsla(0,0%,100%,0.70)', border: '1px solid hsla(258,40%,80%,0.22)', backdropFilter: 'blur(20px)' }}>
-                  {navCategories.slice(0, 6).map((cat, idx) => {
-                    const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP.default;
-                    return (
-                      <button
-                        key={cat.id}
-                        onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
-                        className="w-full flex items-center gap-3 px-3.5 py-2.5 transition-colors active:bg-[hsla(258,78%,55%,0.06)]"
-                        style={{ borderTop: idx > 0 ? '1px solid hsla(258,40%,80%,0.15)' : 'none' }}>
-                        <span className="text-[16px] w-6 text-center">{meta.icon}</span>
-                        <span className="flex-1 text-left text-[13.5px] font-medium" style={{ color: 'hsl(226,35%,22%)' }}>{cat.name}</span>
-                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full tabular-nums"
-                          style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
-                        <ChevronRight size={14} style={{ color: 'hsl(226,20%,55%)' }} />
-                      </button>
-                    );
-                  })}
+
+                {/* Trending Categories Chips */}
+                {navCategories.length > 0 && (
+                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.30s both' : undefined }}>
+                    <div className="flex items-center gap-2 px-1 pb-2">
+                      <span className="text-[10px]">🏷️</span>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'hsl(226,35%,40%)' }}>Trending Categories</p>
+                    </div>
+                    <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
+                      {navCategories.slice(0, 8).map(cat => {
+                        const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP.default;
+                        return (
+                          <button
+                            key={cat.id}
+                            onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
+                            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
+                            style={{
+                              background: 'hsla(0,0%,100%,0.85)',
+                              border: '1px solid hsla(258,78%,60%,0.18)',
+                              color: 'hsl(226,35%,22%)',
+                              backdropFilter: 'blur(10px)',
+                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
+                            }}>
+                            <span className="text-[13px]">{meta.icon}</span>
+                            <span>{cat.name}</span>
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Section Label */}
+                <div className="flex items-center gap-2 px-1 pb-2.5">
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                  <p className="text-[10px] font-bold tracking-[0.22em] uppercase flex items-center gap-1.5"
+                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <Sparkles size={10} style={{ color: 'hsl(258,78%,55%)' }} />
+                    Account
+                    <Sparkles size={10} style={{ color: 'hsl(200,90%,50%)' }} />
+                  </p>
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                </div>
+
+                {/* Detailed list — remaining items */}
+                {[
+                  { label: 'My Licenses',   icon: Key,    tab: 'licenses',      grad: 'linear-gradient(135deg, hsl(45,95%,55%), hsl(30,90%,55%))' },
+                  { label: 'Addresses',     icon: MapPin, tab: 'addresses',     grad: 'linear-gradient(135deg, hsl(190,85%,45%), hsl(210,85%,50%))' },
+                  { label: 'Notifications', icon: Bell,   tab: 'notifications', grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,90%,55%))' },
+                  { label: 'Referral',      icon: Gift,   tab: 'referral',      grad: 'linear-gradient(135deg, hsl(280,75%,55%), hsl(310,70%,55%))' },
+                  { label: 'Security',      icon: Lock,   tab: 'security',      grad: 'linear-gradient(135deg, hsl(220,30%,40%), hsl(240,35%,45%))' },
+                  { label: 'Language',      icon: Globe,  tab: 'language',      grad: 'linear-gradient(135deg, hsl(170,70%,42%), hsl(190,75%,45%))' },
+                ].map((item, i) => (
+                  <button
+                    key={item.tab}
+                    onClick={() => { navigate(`/dashboard?tab=${item.tab}`); setMobileOpen(false); }}
+                    className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1.5 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985] relative overflow-hidden"
+                    style={{
+                      color: 'hsl(226,35%,20%)',
+                      background: 'hsla(0,0%,100%,0.75)',
+                      border: '1px solid hsla(258,78%,60%,0.10)',
+                      backdropFilter: 'blur(10px)',
+                      animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.25 + i * 0.04}s both` : undefined,
+                      boxShadow: '0 2px 6px hsla(258,40%,40%,0.05)',
+                    }}>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]"
+                      style={{ background: item.grad, boxShadow: '0 5px 12px hsla(258,40%,40%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      <item.icon size={16} className="text-white" strokeWidth={2.4} />
+                    </div>
+                    <span className="flex-1 text-left tracking-tight">{item.label}</span>
+                    <ChevronRight size={15} className="transition-all duration-300 group-hover:translate-x-1 opacity-50 group-hover:opacity-100"
+                      style={{ color: 'hsl(258,78%,55%)' }} />
+                  </button>
+                ))}
+
+                {/* Install App */}
+                {canInstall && (
+                  <button onClick={() => { handleInstall(); if (!isIOS) setMobileOpen(false); }}
+                    className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1.5 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                    style={{ color: 'hsl(226,35%,20%)', background: 'hsla(0,0%,100%,0.75)', border: '1px solid hsla(258,78%,60%,0.10)', backdropFilter: 'blur(10px)' }}>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110"
+                      style={{ background: 'linear-gradient(135deg, hsl(160,75%,45%), hsl(180,75%,45%))', boxShadow: '0 5px 12px hsla(160,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      <Download size={16} className="text-white" strokeWidth={2.4} />
+                    </div>
+                    <span className="flex-1 text-left">Install App</span>
+                  </button>
+                )}
+                {showIOSTip && (
+                  <div className="mx-1 mt-2 mb-2 rounded-2xl p-3.5 text-[12px] leading-relaxed"
+                    style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.08), hsla(200,90%,50%,0.08))', border: '1px solid hsla(258,78%,55%,0.18)', backdropFilter: 'blur(10px)' }}>
+                    <p className="font-bold mb-2 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
+                      <Share2 size={13} style={{ color: 'hsl(258,78%,55%)' }} /> Install on iOS:
+                    </p>
+                    <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
+                      1. Tap the <Share2 size={12} className="text-blue-500" /> Share button
+                    </p>
+                    <p className="flex items-center gap-1.5 mt-1" style={{ color: 'hsl(226,35%,45%)' }}>
+                      2. Select <PlusSquare size={12} className="text-blue-500" /> "Add to Home Screen"
+                    </p>
+                  </div>
+                )}
+
+                {/* Admin + Logout — side by side */}
+                <div className={`grid ${isAdmin ? 'grid-cols-2' : 'grid-cols-1'} gap-2 mt-3`}>
+                  {isAdmin && (
+                    <button
+                      onClick={() => { navigate('/ceo'); setMobileOpen(false); }}
+                      className="group relative flex items-center justify-center gap-2 px-3 py-3 rounded-2xl text-[13px] font-bold text-white overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(280,75%,55%) 50%, hsl(258,78%,55%) 100%)',
+                        backgroundSize: '200% 100%',
+                        boxShadow: '0 10px 24px hsla(258,78%,55%,0.42), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                        animation: 'shimmer 3s linear infinite',
+                      }}>
+                      <div className="absolute inset-0 opacity-30 pointer-events-none"
+                        style={{ background: 'radial-gradient(circle at 30% 50%, hsla(0,0%,100%,0.4), transparent 60%)' }} />
+                      <ShieldCheck size={15} strokeWidth={2.6} className="relative" />
+                      <span className="relative tracking-wide">Admin</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => { supabase.auth.signOut(); setMobileOpen(false); }}
+                    className="group flex items-center justify-center gap-2 px-3 py-3 rounded-2xl text-[13px] font-bold transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]"
+                    style={{
+                      color: 'hsl(0,75%,48%)',
+                      background: 'linear-gradient(135deg, hsla(0,82%,98%,0.95), hsla(15,82%,97%,0.95))',
+                      border: '1.5px solid hsla(0,80%,60%,0.25)',
+                      backdropFilter: 'blur(12px)',
+                      boxShadow: '0 6px 16px hsla(0,80%,55%,0.10)',
+                    }}>
+                    <LogOut size={15} strokeWidth={2.6} />
+                    <span className="tracking-wide">Logout</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="relative">
+                {/* Guest Hero — Sign In CTA Banner */}
+                <button
+                  onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
+                  className="w-full group relative rounded-3xl p-4 mb-4 overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(225,80%,52%) 45%, hsl(200,90%,50%) 100%)',
+                    boxShadow: '0 16px 40px -10px hsla(258,78%,45%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.35)',
+                    animation: mobileOpen ? 'slideInRight 0.4s ease-out both' : undefined,
+                  }}>
+                  <div className="absolute inset-0 opacity-50 pointer-events-none"
+                    style={{ background: 'radial-gradient(circle at 20% 20%, hsla(0,0%,100%,0.35), transparent 50%), radial-gradient(circle at 80% 80%, hsla(280,90%,70%,0.4), transparent 50%)' }} />
+                  <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.25), transparent 70%)', filter: 'blur(8px)' }} />
+
+                  <div className="relative flex items-center gap-3.5">
+                    <div className="relative shrink-0">
+                      <div className="absolute -inset-1 rounded-2xl"
+                        style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.6), hsla(280,90%,80%,0.6))', filter: 'blur(4px)' }} />
+                      <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center"
+                        style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '2px solid hsla(0,0%,100%,0.5)' }}>
+                        <Sparkles size={26} className="text-white" strokeWidth={2.5} />
+                      </div>
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Get Started</p>
+                      <p className="text-base font-bold text-white truncate">Sign In / Register</p>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <Gift size={11} className="text-white/90" />
+                        <span className="text-[11px] font-semibold text-white/90">Unlock exclusive deals</span>
+                      </div>
+                    </div>
+                    <ChevronRight size={20} className="text-white/80 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </button>
+
+                {/* Quick Browse Grid (4 cols) */}
+                <div className="grid grid-cols-4 gap-2 mb-4">
+                  {[
+                    { label: 'Shop',    icon: ShoppingCart, href: '/shop',       grad: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(280,75%,55%))' },
+                    { label: 'Tools',   icon: Sparkles,     href: '/free-tools', grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,92%,55%))' },
+                    { label: 'Blog',    icon: Star,         href: '/blog',       grad: 'linear-gradient(135deg, hsl(150,72%,45%), hsl(170,75%,42%))' },
+                    { label: 'Contact', icon: MessageCircle,href: '/contact-us', grad: 'linear-gradient(135deg, hsl(200,90%,50%), hsl(220,85%,55%))' },
+                  ].map((q, i) => (
+                    <button
+                      key={q.label}
+                      onClick={() => { navigate(q.href); setMobileOpen(false); }}
+                      className="group relative aspect-square rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]"
+                      style={{
+                        background: 'hsla(0,0%,100%,0.85)',
+                        border: '1px solid hsla(258,78%,60%,0.12)',
+                        backdropFilter: 'blur(12px)',
+                        boxShadow: '0 4px 12px hsla(258,40%,40%,0.06)',
+                        animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.05 + i * 0.04}s both` : undefined,
+                      }}>
+                      <div className="absolute inset-x-0 top-0 h-1/2 opacity-15 pointer-events-none" style={{ background: q.grad }} />
+                      <div className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
+                        style={{ background: q.grad, boxShadow: '0 6px 14px hsla(258,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
+                        <q.icon size={17} className="text-white" strokeWidth={2.5} />
+                      </div>
+                      <span className="text-[10.5px] font-bold tracking-tight" style={{ color: 'hsl(226,35%,22%)' }}>{q.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Featured Strip — Guest version */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <button
+                    onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(0,82%,58%) 0%, hsl(20,90%,55%) 100%)',
+                      boxShadow: '0 8px 20px hsla(0,80%,50%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.22s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <span className="text-[14px]">🔥</span>
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Hot Deals</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Up to 70% OFF</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Shop trending →</p>
+                  </button>
+                  <button
+                    onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(150,72%,42%) 0%, hsl(170,75%,40%) 100%)',
+                      boxShadow: '0 8px 20px hsla(150,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.26s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center relative" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <MessageCircle size={14} className="text-white" strokeWidth={2.6} />
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: 'hsl(45,95%,55%)', boxShadow: '0 0 6px hsla(45,95%,55%,0.8)', animation: 'pulse 2s infinite' }} />
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Live 24/7</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Need Help?</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Chat with us →</p>
+                  </button>
+                </div>
+
+                {/* Trending Categories Chips — Guest */}
+                {navCategories.length > 0 && (
+                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.30s both' : undefined }}>
+                    <div className="flex items-center gap-2 px-1 pb-2">
+                      <span className="text-[10px]">🏷️</span>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'hsl(226,35%,40%)' }}>Trending Categories</p>
+                    </div>
+                    <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
+                      {navCategories.slice(0, 8).map(cat => {
+                        const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP.default;
+                        return (
+                          <button
+                            key={cat.id}
+                            onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
+                            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
+                            style={{
+                              background: 'hsla(0,0%,100%,0.85)',
+                              border: '1px solid hsla(258,78%,60%,0.18)',
+                              color: 'hsl(226,35%,22%)',
+                              backdropFilter: 'blur(10px)',
+                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
+                            }}>
+                            <span className="text-[13px]">{meta.icon}</span>
+                            <span>{cat.name}</span>
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Section Label */}
+                <div className="flex items-center gap-2 px-1 pb-2.5">
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                  <p className="text-[10px] font-bold tracking-[0.22em] uppercase flex items-center gap-1.5"
+                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <Sparkles size={10} style={{ color: 'hsl(258,78%,55%)' }} />
+                    Explore
+                    <Sparkles size={10} style={{ color: 'hsl(200,90%,50%)' }} />
+                  </p>
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                </div>
+
+                {/* Guest list — login-required items */}
+                {[
+                  { label: 'My Orders',     icon: Package, grad: 'linear-gradient(135deg, hsl(200,90%,50%), hsl(220,80%,55%))' },
+                  { label: 'My Licenses',   icon: Key,     grad: 'linear-gradient(135deg, hsl(45,95%,55%), hsl(30,90%,55%))' },
+                  { label: 'Wallet',        icon: Wallet,  grad: 'linear-gradient(135deg, hsl(150,70%,45%), hsl(170,75%,42%))' },
+                  { label: 'Wishlist',      icon: Heart,   grad: 'linear-gradient(135deg, hsl(0,80%,60%), hsl(340,80%,55%))' },
+                  { label: 'Notifications', icon: Bell,    grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,90%,55%))' },
+                  { label: 'Referral',      icon: Gift,    grad: 'linear-gradient(135deg, hsl(280,75%,55%), hsl(310,70%,55%))' },
+                ].map((item, i) => (
+                  <button
+                    key={item.label}
+                    onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
+                    className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1.5 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                    style={{
+                      color: 'hsl(226,35%,20%)',
+                      background: 'hsla(0,0%,100%,0.75)',
+                      border: '1px solid hsla(258,78%,60%,0.10)',
+                      backdropFilter: 'blur(10px)',
+                      animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.25 + i * 0.04}s both` : undefined,
+                      boxShadow: '0 2px 6px hsla(258,40%,40%,0.05)',
+                    }}>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]"
+                      style={{ background: item.grad, boxShadow: '0 5px 12px hsla(258,40%,40%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      <item.icon size={16} className="text-white" strokeWidth={2.4} />
+                    </div>
+                    <span className="flex-1 text-left tracking-tight">{item.label}</span>
+                    <Lock size={13} className="opacity-50" style={{ color: 'hsl(258,78%,55%)' }} />
+                  </button>
+                ))}
+
+                {/* Install App */}
+                {canInstall && (
+                  <button onClick={() => { handleInstall(); if (!isIOS) setMobileOpen(false); }}
+                    className="w-full group flex items-center gap-3 px-3 py-2.5 mt-2 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                    style={{ color: 'hsl(226,35%,20%)', background: 'hsla(0,0%,100%,0.75)', border: '1px solid hsla(258,78%,60%,0.10)', backdropFilter: 'blur(10px)' }}>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110"
+                      style={{ background: 'linear-gradient(135deg, hsl(160,75%,45%), hsl(180,75%,45%))', boxShadow: '0 5px 12px hsla(160,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.25)' }}>
+                      <Download size={16} className="text-white" strokeWidth={2.4} />
+                    </div>
+                    <span className="flex-1 text-left">Install App</span>
+                  </button>
+                )}
+                {showIOSTip && (
+                  <div className="mx-1 mt-2 mb-2 rounded-2xl p-3.5 text-[12px] leading-relaxed"
+                    style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.08), hsla(200,90%,50%,0.08))', border: '1px solid hsla(258,78%,55%,0.18)', backdropFilter: 'blur(10px)' }}>
+                    <p className="font-bold mb-2 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,20%)' }}>
+                      <Share2 size={13} style={{ color: 'hsl(258,78%,55%)' }} /> Install on iOS:
+                    </p>
+                    <p className="flex items-center gap-1.5" style={{ color: 'hsl(226,35%,45%)' }}>
+                      1. Tap the <Share2 size={12} className="text-blue-500" /> Share button
+                    </p>
+                    <p className="flex items-center gap-1.5 mt-1" style={{ color: 'hsl(226,35%,45%)' }}>
+                      2. Select <PlusSquare size={12} className="text-blue-500" /> "Add to Home Screen"
+                    </p>
+                  </div>
+                )}
+
+                {/* Trust footer */}
+                <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t" style={{ borderColor: 'hsla(258,78%,55%,0.12)' }}>
+                  <div className="flex items-center gap-1.5">
+                    <Shield size={12} style={{ color: 'hsl(150,70%,42%)' }} />
+                    <span className="text-[10px] font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>100% Secure</span>
+                  </div>
+                  <div className="w-1 h-1 rounded-full" style={{ background: 'hsl(258,78%,60%)' }} />
+                  <div className="flex items-center gap-1.5">
+                    <Star size={12} style={{ color: 'hsl(38,95%,55%)' }} fill="hsl(38,95%,55%)" />
+                    <span className="text-[10px] font-semibold" style={{ color: 'hsl(226,35%,40%)' }}>Trusted Store</span>
+                  </div>
                 </div>
               </div>
             )}
-
-            {/* Account section */}
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] px-1 mb-2" style={{ color: 'hsl(226,20%,50%)' }}>Account</p>
-            <div className="rounded-2xl overflow-hidden mb-5"
-              style={{ background: 'hsla(0,0%,100%,0.70)', border: '1px solid hsla(258,40%,80%,0.22)', backdropFilter: 'blur(20px)', animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.28s both' : undefined }}>
-              {(user
-                ? [
-                    { label: 'My Orders',    icon: Package, action: () => navigate('/dashboard?tab=orders'),        meta: userStats?.orders && userStats.orders > 0 ? String(userStats.orders) : undefined },
-                    { label: 'My Licenses',  icon: Key,     action: () => navigate('/dashboard?tab=licenses'),      meta: undefined },
-                    { label: 'Wallet',       icon: Wallet,  action: () => navigate('/dashboard?tab=wallet'),        meta: userStats ? `৳${userStats.wallet.toFixed(0)}` : undefined },
-                    { label: 'Wishlist',     icon: Heart,   action: () => navigate('/dashboard?tab=wishlist'),      meta: userStats?.wishlist && userStats.wishlist > 0 ? String(userStats.wishlist) : undefined },
-                    { label: 'Notifications',icon: Bell,    action: () => navigate('/dashboard?tab=notifications'), meta: undefined },
-                    { label: 'Referral',     icon: Gift,    action: () => navigate('/dashboard?tab=referral'),      meta: undefined },
-                  ]
-                : [
-                    { label: 'My Orders',    icon: Package, action: () => setAuthOpen(true), meta: undefined, locked: true },
-                    { label: 'My Licenses',  icon: Key,     action: () => setAuthOpen(true), meta: undefined, locked: true },
-                    { label: 'Wallet',       icon: Wallet,  action: () => setAuthOpen(true), meta: undefined, locked: true },
-                    { label: 'Wishlist',     icon: Heart,   action: () => setAuthOpen(true), meta: undefined, locked: true },
-                    { label: 'Notifications',icon: Bell,    action: () => setAuthOpen(true), meta: undefined, locked: true },
-                    { label: 'Referral',     icon: Gift,    action: () => setAuthOpen(true), meta: undefined, locked: true },
-                  ]
-              ).map((item, idx) => (
-                <button
-                  key={item.label}
-                  onClick={() => { item.action(); setMobileOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 transition-colors active:bg-[hsla(258,78%,55%,0.06)]"
-                  style={{ borderTop: idx > 0 ? '1px solid hsla(258,40%,80%,0.15)' : 'none' }}>
-                  <item.icon size={17} strokeWidth={2.1} style={{ color: 'hsl(226,35%,30%)' }} />
-                  <span className="flex-1 text-left text-[13.5px] font-medium" style={{ color: 'hsl(226,35%,22%)' }}>{item.label}</span>
-                  {item.meta && (
-                    <span className="text-[11.5px] font-semibold tabular-nums" style={{ color: 'hsl(258,78%,48%)' }}>{item.meta}</span>
-                  )}
-                  {(item as { locked?: boolean }).locked
-                    ? <Lock size={13} style={{ color: 'hsl(226,20%,55%)' }} />
-                    : <ChevronRight size={14} style={{ color: 'hsl(226,20%,55%)' }} />}
-                </button>
-              ))}
-            </div>
-
-            {/* Settings row */}
-            <div className="rounded-2xl overflow-hidden mb-5"
-              style={{ background: 'hsla(0,0%,100%,0.70)', border: '1px solid hsla(258,40%,80%,0.22)', backdropFilter: 'blur(20px)', animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.32s both' : undefined }}>
-              {/* Dark mode toggle */}
-              <button
-                onClick={() => saveTheme(activeTheme === 'dark-cyber' ? 'clean-white' : 'dark-cyber')}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 transition-colors active:bg-[hsla(258,78%,55%,0.06)]">
-                {activeTheme === 'dark-cyber'
-                  ? <Sun size={17} strokeWidth={2.1} style={{ color: 'hsl(226,35%,30%)' }} />
-                  : <Moon size={17} strokeWidth={2.1} style={{ color: 'hsl(226,35%,30%)' }} />}
-                <span className="flex-1 text-left text-[13.5px] font-medium" style={{ color: 'hsl(226,35%,22%)' }}>
-                  {activeTheme === 'dark-cyber' ? 'Light mode' : 'Dark mode'}
-                </span>
-                {/* Toggle pill */}
-                <span className="relative w-10 h-6 rounded-full transition-colors"
-                  style={{ background: activeTheme === 'dark-cyber' ? 'hsl(258,78%,55%)' : 'hsla(226,20%,75%,0.5)' }}>
-                  <span className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all"
-                    style={{ left: activeTheme === 'dark-cyber' ? '18px' : '2px' }} />
-                </span>
-              </button>
-              {/* Install app */}
-              {canInstall && (
-                <button
-                  onClick={() => { handleInstall(); if (!isIOS) setMobileOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 transition-colors active:bg-[hsla(258,78%,55%,0.06)]"
-                  style={{ borderTop: '1px solid hsla(258,40%,80%,0.15)' }}>
-                  <Download size={17} strokeWidth={2.1} style={{ color: 'hsl(226,35%,30%)' }} />
-                  <span className="flex-1 text-left text-[13.5px] font-medium" style={{ color: 'hsl(226,35%,22%)' }}>Install App</span>
-                  <ChevronRight size={14} style={{ color: 'hsl(226,20%,55%)' }} />
-                </button>
-              )}
-              {/* Admin */}
-              {user && isAdmin && (
-                <button
-                  onClick={() => { navigate('/ceo'); setMobileOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 transition-colors active:bg-[hsla(258,78%,55%,0.06)]"
-                  style={{ borderTop: '1px solid hsla(258,40%,80%,0.15)' }}>
-                  <ShieldCheck size={17} strokeWidth={2.1} style={{ color: 'hsl(258,78%,50%)' }} />
-                  <span className="flex-1 text-left text-[13.5px] font-semibold" style={{ color: 'hsl(258,78%,45%)' }}>Admin Panel</span>
-                  <ChevronRight size={14} style={{ color: 'hsl(258,78%,50%)' }} />
-                </button>
-              )}
-              {/* Logout */}
-              {user && (
-                <button
-                  onClick={() => { supabase.auth.signOut(); setMobileOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 transition-colors active:bg-[hsla(0,80%,55%,0.06)]"
-                  style={{ borderTop: '1px solid hsla(258,40%,80%,0.15)' }}>
-                  <LogOut size={17} strokeWidth={2.1} style={{ color: 'hsl(0,75%,50%)' }} />
-                  <span className="flex-1 text-left text-[13.5px] font-medium" style={{ color: 'hsl(0,75%,48%)' }}>Sign out</span>
-                </button>
-              )}
-            </div>
-
-            {/* iOS install tip */}
-            {showIOSTip && (
-              <div className="mb-4 rounded-2xl p-3 text-[12px] leading-relaxed"
-                style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.16)' }}>
-                <p className="font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: 'hsl(226,35%,22%)' }}>
-                  <Share2 size={12} style={{ color: 'hsl(258,78%,55%)' }} /> Install on iOS
-                </p>
-                <p style={{ color: 'hsl(226,20%,45%)' }}>1. Tap Share button</p>
-                <p style={{ color: 'hsl(226,20%,45%)' }}>2. "Add to Home Screen"</p>
-              </div>
-            )}
-
-            {/* Trust footer */}
-            <div className="flex items-center justify-center gap-3 pt-3 border-t" style={{ borderColor: 'hsla(258,40%,80%,0.20)' }}>
-              <div className="flex items-center gap-1.5">
-                <Shield size={11} style={{ color: 'hsl(150,65%,40%)' }} />
-                <span className="text-[10.5px] font-medium" style={{ color: 'hsl(226,20%,48%)' }}>Secure</span>
-              </div>
-              <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(226,20%,70%)' }} />
-              <div className="flex items-center gap-1.5">
-                <Star size={11} style={{ color: 'hsl(38,90%,55%)' }} fill="hsl(38,90%,55%)" />
-                <span className="text-[10.5px] font-medium" style={{ color: 'hsl(226,20%,48%)' }}>Trusted Store</span>
-              </div>
-            </div>
           </div>
         </div>
       </nav>

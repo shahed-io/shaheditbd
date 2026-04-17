@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Loader2, Minimize2, MessageCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -50,7 +50,7 @@ const FloatingSupport = () => {
   const [config, setConfig] = useState<LiveChatConfig>(DEFAULTS);
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([{ role: 'assistant', content: DEFAULTS.ai_welcome_message }]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -58,7 +58,8 @@ const FloatingSupport = () => {
   const configLoaded = useRef(false);
   const sessionIdRef = useRef(crypto.randomUUID());
 
-  const loadConfig = useCallback(() => {
+  // Load settings once
+  useEffect(() => {
     if (configLoaded.current) return;
     configLoaded.current = true;
     supabase
@@ -67,36 +68,20 @@ const FloatingSupport = () => {
       .eq('key', 'live_chat_settings')
       .maybeSingle()
       .then(({ data }) => {
-        if (!data?.value) return;
-        try {
-          const parsed = JSON.parse(data.value);
-          const merged = { ...DEFAULTS, ...parsed };
-          setConfig(merged);
-          setMessages((prev) => prev.length <= 1 ? [{ role: 'assistant', content: merged.ai_welcome_message }] : prev);
-        } catch {
-          // Keep defaults on parse failure
+        if (data?.value) {
+          try {
+            const parsed = JSON.parse(data.value);
+            const merged = { ...DEFAULTS, ...parsed };
+            setConfig(merged);
+            setMessages([{ role: 'assistant', content: merged.ai_welcome_message }]);
+          } catch {
+            setMessages([{ role: 'assistant', content: DEFAULTS.ai_welcome_message }]);
+          }
+        } else {
+          setMessages([{ role: 'assistant', content: DEFAULTS.ai_welcome_message }]);
         }
       });
   }, []);
-
-  useEffect(() => {
-    if (menuOpen || chatOpen) {
-      loadConfig();
-      return;
-    }
-
-    const t = setTimeout(() => {
-      if ('requestIdleCallback' in window) {
-        (window as Window & {
-          requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
-        }).requestIdleCallback?.(() => loadConfig(), { timeout: 4000 });
-      } else {
-        loadConfig();
-      }
-    }, 2500);
-
-    return () => clearTimeout(t);
-  }, [menuOpen, chatOpen, loadConfig]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
