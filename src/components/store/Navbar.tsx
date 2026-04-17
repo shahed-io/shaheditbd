@@ -827,47 +827,34 @@ const Navbar = () => {
                   <ChevronRight size={16} strokeWidth={2} style={{ color: 'hsl(226,20%,40%)' }} className="shrink-0 transition-transform group-hover:translate-x-0.5" />
                 </button>
 
-                {/* Trending Categories Chips — Guest */}
+                {/* Trending Categories — clean chips */}
                 {navCategories.length > 0 && (
-                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.30s both' : undefined }}>
-                    <div className="flex items-center gap-2 px-1 pb-2">
-                      <span className="text-[10px]">🏷️</span>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'hsl(226,35%,40%)' }}>Trending Categories</p>
-                    </div>
+                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.24s both' : undefined }}>
+                    <p className="text-[10px] font-medium uppercase tracking-[0.16em] px-1 pb-2" style={{ color: 'hsl(226,15%,48%)' }}>Trending categories</p>
                     <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
-                      {navCategories.slice(0, 8).map(cat => {
-                        const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP.default;
-                        return (
-                          <button
-                            key={cat.id}
-                            onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
-                            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
-                            style={{
-                              background: 'hsla(0,0%,100%,0.85)',
-                              border: '1px solid hsla(258,78%,60%,0.18)',
-                              color: 'hsl(226,35%,22%)',
-                              backdropFilter: 'blur(10px)',
-                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
-                            }}>
-                            <span className="text-[13px]">{meta.icon}</span>
-                            <span>{cat.name}</span>
-                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
-                          </button>
-                        );
-                      })}
+                      {navCategories.slice(0, 8).map(cat => (
+                        <button
+                          key={cat.id}
+                          onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
+                          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium transition-colors duration-150 hover:bg-[hsl(226,22%,96%)]"
+                          style={{
+                            background: 'hsl(0,0%,100%)',
+                            border: '1px solid hsl(226,18%,88%)',
+                            color: 'hsl(226,30%,22%)',
+                          }}>
+                          <span>{cat.name}</span>
+                          <span className="text-[10px] font-medium tabular-nums" style={{ color: 'hsl(226,15%,52%)' }}>{cat.count}</span>
+                        </button>
+                      ))}
                     </div>
                   </div>
                 )}
 
-                {/* Section Label */}
-                <div className="flex items-center gap-2 px-1 pb-2.5">
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
-                  <p className="text-[10px] font-bold tracking-[0.22em] uppercase flex items-center gap-1.5"
-                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    <Sparkles size={10} style={{ color: 'hsl(258,78%,55%)' }} />
-                    Explore
-                    <Sparkles size={10} style={{ color: 'hsl(200,90%,50%)' }} />
-                  </p>
+                {/* Section Label — minimal divider */}
+                <div className="flex items-center gap-3 px-1 pb-2.5">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.18em]" style={{ color: 'hsl(226,15%,48%)' }}>Explore</p>
+                  <div className="h-px flex-1" style={{ background: 'hsl(226,18%,88%)' }} />
+                </div>
                   <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
                 </div>
 
