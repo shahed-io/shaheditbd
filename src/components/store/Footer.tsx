@@ -152,67 +152,72 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Nav columns */}
+      {/* Nav columns — fully dynamic from admin */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {NAV_COL.map((col, ci) => (
-          <div key={ci} className="rounded-2xl p-5 space-y-4"
-            style={{
-              background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
-              backdropFilter: 'blur(24px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-              border: `1px solid ${col.accent.replace('hsl(','hsla(').replace(')',',0.18)')}`,
-              boxShadow: `0 4px 20px ${col.accent.replace('hsl(','hsla(').replace(')',',0.07)')}, 0 1px 0 rgba(255,255,255,0.9) inset`,
-            }}>
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                style={{
-                  background: col.accent.replace('hsl(','hsla(').replace(')',',0.12)'),
-                  border: `1.5px solid ${col.accent.replace('hsl(','hsla(').replace(')',',0.25)')}`,
-                  color: col.accent,
-                }}>
-                {col.icon}
+        {sections.map((col) => {
+          const IconComp = ICON_MAP[col.icon] ?? Info;
+          const accent = col.accent || 'hsl(258,78%,55%)';
+          return (
+            <div key={col.id} className="rounded-2xl p-5 space-y-4"
+              style={{
+                background: 'linear-gradient(135deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.50) 100%)',
+                backdropFilter: 'blur(24px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                border: `1px solid ${accent.replace('hsl(','hsla(').replace(')',',0.18)')}`,
+                boxShadow: `0 4px 20px ${accent.replace('hsl(','hsla(').replace(')',',0.07)')}, 0 1px 0 rgba(255,255,255,0.9) inset`,
+              }}>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: accent.replace('hsl(','hsla(').replace(')',',0.12)'),
+                    border: `1.5px solid ${accent.replace('hsl(','hsla(').replace(')',',0.25)')}`,
+                    color: accent,
+                  }}>
+                  <IconComp size={14} />
+                </div>
+                <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em]"
+                  style={{ color: 'hsl(226,35%,20%)' }}>
+                  {col.title}
+                </h4>
               </div>
-              <h4 className="font-sora font-bold text-[11px] uppercase tracking-[0.18em]"
-                style={{ color: 'hsl(226,35%,20%)' }}>
-                {col.title}
-              </h4>
+              <div className="h-px rounded-full"
+                style={{ background: `linear-gradient(90deg, ${accent.replace('hsl(','hsla(').replace(')',',0.40)')}, transparent)` }} />
+              <ul className="grid grid-cols-2 md:grid-cols-1 gap-x-2 gap-y-0.5">
+                {col.links.map((link) => (
+                  <li key={link.id}>
+                    <a href={link.href}
+                      target={link.external ? '_blank' : undefined}
+                      rel={link.external ? 'noopener noreferrer' : undefined}
+                      className="group flex items-center gap-2 px-2.5 py-2 rounded-xl text-[12.5px] transition-all"
+                      style={{
+                        color: 'hsl(226,35%,45%)',
+                        background: 'transparent',
+                        border: '1px solid transparent',
+                      }}
+                      onMouseEnter={e => {
+                        const el = e.currentTarget as HTMLElement;
+                        el.style.color = accent;
+                        el.style.background = accent.replace('hsl(','hsla(').replace(')',',0.08)');
+                        el.style.borderColor = accent.replace('hsl(','hsla(').replace(')',',0.22)');
+                        el.style.transform = 'translateX(2px)';
+                      }}
+                      onMouseLeave={e => {
+                        const el = e.currentTarget as HTMLElement;
+                        el.style.color = 'hsl(226,35%,45%)';
+                        el.style.background = 'transparent';
+                        el.style.borderColor = 'transparent';
+                        el.style.transform = 'translateX(0)';
+                      }}>
+                      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all group-hover:scale-125"
+                        style={{ background: accent.replace('hsl(','hsla(').replace(')',',0.45)') }} />
+                      <span className="truncate">{link.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div className="h-px rounded-full"
-              style={{ background: `linear-gradient(90deg, ${col.accent.replace('hsl(','hsla(').replace(')',',0.40)')}, transparent)` }} />
-            <ul className="grid grid-cols-2 md:grid-cols-1 gap-x-2 gap-y-0.5">
-              {col.links.map((link: any) => (
-                <li key={link.label}>
-                  <a href={link.href} target={(link as any).external ? '_blank' : undefined}
-                    rel={(link as any).external ? 'noopener noreferrer' : undefined}
-                    className="group flex items-center gap-2 px-2.5 py-2 rounded-xl text-[12.5px] transition-all"
-                    style={{
-                      color: link.highlight ? col.accent : 'hsl(226,35%,45%)',
-                      background: link.highlight ? col.accent.replace('hsl(','hsla(').replace(')',',0.06)') : 'transparent',
-                      border: link.highlight ? `1px solid ${col.accent.replace('hsl(','hsla(').replace(')',',0.18)')}` : '1px solid transparent',
-                    }}
-                    onMouseEnter={e => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.color = col.accent;
-                      el.style.background = col.accent.replace('hsl(','hsla(').replace(')',',0.08)');
-                      el.style.borderColor = col.accent.replace('hsl(','hsla(').replace(')',',0.22)');
-                      el.style.transform = 'translateX(2px)';
-                    }}
-                    onMouseLeave={e => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.color = link.highlight ? col.accent : 'hsl(226,35%,45%)';
-                      el.style.background = link.highlight ? col.accent.replace('hsl(','hsla(').replace(')',',0.06)') : 'transparent';
-                      el.style.borderColor = link.highlight ? col.accent.replace('hsl(','hsla(').replace(')',',0.18)') : 'transparent';
-                      el.style.transform = 'translateX(0)';
-                    }}>
-                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all group-hover:scale-125"
-                      style={{ background: col.accent.replace('hsl(','hsla(').replace(')',',0.45)') }} />
-                    <span className="truncate">{link.label}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
 
