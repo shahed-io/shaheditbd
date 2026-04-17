@@ -11,7 +11,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Edit3, Trash2, Copy, MessageCircle, Search, Filter, Package, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Edit3, Trash2, Copy, MessageCircle, Search, Filter, Package, Clock, CheckCircle, XCircle, Settings2 } from 'lucide-react';
+import { usePasswordTypes } from '@/hooks/usePasswordTypes';
+import PasswordTypesManager from '@/components/admin/PasswordTypesManager';
 
 type PersonalLicense = {
   id: string;
@@ -19,6 +21,7 @@ type PersonalLicense = {
   category: string;
   key_value: string | null;
   password: string | null;
+  password_type: string | null;
   expires_at: string | null;
   note: string | null;
   status: string;
@@ -30,7 +33,7 @@ type PersonalLicense = {
 };
 
 const emptyForm = {
-  name: '', category: 'general', key_value: '', password: '',
+  name: '', category: 'general', key_value: '', password: '', password_type: '',
   expires_at: '', note: '', status: 'active', customer_name: '', customer_phone: '',
 };
 
