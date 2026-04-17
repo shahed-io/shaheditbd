@@ -113,15 +113,39 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) { setAvatarUrl(null); setIsAdmin(false); return; }
+    if (!user) { setAvatarUrl(null); setIsAdmin(false); setUserStats(null); return; }
     const t = setTimeout(() => {
-      supabase.from('profiles').select('avatar_url, display_name').eq('user_id', user.id).single()
-        .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
+      supabase.from('profiles').select('avatar_url, display_name, wallet_balance, points_balance').eq('user_id', user.id).single()
+        .then(({ data }) => {
+          if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+          if (data) {
+            setUserStats(prev => ({
+              wallet: Number(data.wallet_balance) || 0,
+              points: Number(data.points_balance) || 0,
+              orders: prev?.orders || 0,
+              wishlist: prev?.wishlist || 0,
+            }));
+          }
+        });
       supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle()
         .then(({ data }) => { setIsAdmin(!!data); });
     }, 500);
     return () => clearTimeout(t);
   }, [user]);
+
+  // Fetch order/wishlist counts only when mobile menu opens (lazy)
+  useEffect(() => {
+    if (!user || !mobileOpen) return;
+    let cancelled = false;
+    Promise.all([
+      supabase.from('orders').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+      supabase.from('wishlists').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+    ]).then(([o, w]) => {
+      if (cancelled) return;
+      setUserStats(prev => prev ? { ...prev, orders: o.count || 0, wishlist: w.count || 0 } : prev);
+    });
+    return () => { cancelled = true; };
+  }, [user, mobileOpen]);
 
   useEffect(() => {
     // Defer announcement fetch — below-fold banner
