@@ -30,7 +30,7 @@ const fetchProducts = async () => {
     .select('id, slug, name, price, original_price, discount_percent, image_url, is_featured, total_sales, created_at, status, category:category_id(name, sort_order)')
     .eq('status', 'active')
     .order('sort_order', { ascending: true })
-    .limit(36);
+    .limit(80);
   if (error) throw error;
   const rows = data ?? [];
   const hiddenCats = ['Streaming', 'Adobe', 'Antivirus'];
