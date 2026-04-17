@@ -161,9 +161,8 @@ export default function AdminPersonalLicenses() {
     const lines = [`📦 *${lic.name}*`];
     if (lic.key_value) lines.push(`🔑 Key: \`${lic.key_value}\``);
     if (lic.password) {
-      const suffix = pt ? ` ${pt.emoji} _${pt.label}_` : '';
+      const suffix = pt ? ` ${pt.emoji} _(${pt.label})_` : '';
       lines.push(`🔒 Password: \`${lic.password}\`${suffix}`);
-      if (pt?.description) lines.push(`   _${pt.description}_`);
     }
     if (lic.expires_at) lines.push(`📅 মেয়াদ: ${new Date(lic.expires_at).toLocaleDateString('bn-BD')}`);
     if (lic.note) lines.push(`📝 ${lic.note}`);
