@@ -806,126 +806,187 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="relative">
-                {/* Guest CTA — Editorial, restrained, professional */}
+                {/* Guest Hero Card — Same dashboard-style banner as logged-in users */}
                 <button
                   onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                  className="w-full group relative rounded-2xl mb-3 overflow-hidden text-left transition-colors duration-200"
+                  className="w-full group relative rounded-3xl p-4 mb-4 overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
                   style={{
-                    background: 'hsl(226,30%,12%)',
-                    animation: mobileOpen ? 'slideInRight 0.35s ease-out both' : undefined,
+                    background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(225,80%,52%) 45%, hsl(200,90%,50%) 100%)',
+                    boxShadow: '0 16px 40px -10px hsla(258,78%,45%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.35)',
+                    animation: mobileOpen ? 'slideInRight 0.4s ease-out both' : undefined,
                   }}>
-                  <div className="px-4 py-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-[0.16em] mb-1.5" style={{ color: 'hsla(0,0%,100%,0.55)' }}>Account</p>
-                        <p className="text-[15px] font-semibold text-white leading-tight" style={{ letterSpacing: '-0.015em' }}>Sign in or create account</p>
-                        <p className="text-[12px] mt-1 leading-snug" style={{ color: 'hsla(0,0%,100%,0.62)' }}>Track orders, save items & earn rewards.</p>
-                      </div>
-                      <div className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:translate-x-0.5"
-                        style={{ background: 'hsla(0,0%,100%,0.08)', border: '1px solid hsla(0,0%,100%,0.14)' }}>
-                        <ChevronRight size={16} className="text-white" strokeWidth={2.2} />
+                  <div className="absolute inset-0 opacity-50 pointer-events-none"
+                    style={{ background: 'radial-gradient(circle at 20% 20%, hsla(0,0%,100%,0.35), transparent 50%), radial-gradient(circle at 80% 80%, hsla(280,90%,70%,0.4), transparent 50%)' }} />
+                  <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.25), transparent 70%)', filter: 'blur(8px)' }} />
+
+                  <div className="relative flex items-center gap-3.5">
+                    <div className="relative shrink-0">
+                      <div className="absolute -inset-1 rounded-2xl"
+                        style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.6), hsla(280,90%,80%,0.6))', filter: 'blur(4px)' }} />
+                      <div className="relative w-14 h-14 rounded-2xl overflow-hidden flex items-center justify-center"
+                        style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '2px solid hsla(0,0%,100%,0.5)' }}>
+                        <User size={26} className="text-white" strokeWidth={2.5} />
                       </div>
                     </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Welcome 👋</p>
+                      <p className="text-base font-bold text-white truncate">Sign in to continue</p>
+                      <p className="text-[11px] font-medium text-white/85 truncate -mt-0.5">Track orders & earn rewards</p>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <div className="px-1.5 py-0.5 rounded-md flex items-center gap-1" style={{ background: 'hsla(0,0%,100%,0.22)', backdropFilter: 'blur(8px)' }}>
+                          <Sparkles size={9} className="text-yellow-300" />
+                          <span className="text-[10px] font-bold text-white">Get Welcome Offer</span>
+                        </div>
+                      </div>
+                    </div>
+                    <ChevronRight size={20} className="text-white/80 transition-transform group-hover:translate-x-1" />
                   </div>
-                  <div className="px-4 py-2.5 flex items-center justify-between text-[11px]" style={{ background: 'hsla(0,0%,100%,0.04)', borderTop: '1px solid hsla(0,0%,100%,0.08)', color: 'hsla(0,0%,100%,0.7)' }}>
-                    <span className="font-medium">New here?</span>
-                    <span className="font-semibold text-white">Get welcome offer →</span>
+
+                  {/* Stats Strip — placeholders for guests */}
+                  <div className="relative mt-3.5 pt-3 grid grid-cols-3 gap-2 border-t" style={{ borderColor: 'hsla(0,0%,100%,0.20)' }}>
+                    <div className="text-center">
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Wallet</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">৳—</p>
+                    </div>
+                    <div className="text-center border-x" style={{ borderColor: 'hsla(0,0%,100%,0.18)' }}>
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Points</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">—</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[9px] font-bold uppercase tracking-wider text-white/70">Orders</p>
+                      <p className="text-sm font-extrabold text-white tabular-nums">—</p>
+                    </div>
                   </div>
                 </button>
 
-                {/* Quick links — minimal list, no color tiles */}
-                <nav className="rounded-2xl overflow-hidden mb-3"
-                  style={{ background: 'hsl(0,0%,100%)', border: '1px solid hsl(226,18%,90%)' }}>
+                {/* Quick Actions — Bento Grid (4 cols) — login required */}
+                <div className="grid grid-cols-4 gap-2 mb-3">
                   {[
-                    { label: 'Shop all products', sub: 'Browse the catalog',  icon: ShoppingCart, href: '/shop' },
-                    { label: 'Free tools',        sub: '40+ utilities',       icon: Sparkles,     href: '/free-tools' },
-                    { label: 'Blog & guides',     sub: 'Tips and how-tos',    icon: Star,         href: '/blog' },
-                    { label: 'Contact support',   sub: 'We reply in minutes', icon: MessageCircle,href: '/contact-us' },
-                  ].map((item, i, arr) => (
+                    { label: 'Orders',    icon: Package, grad: 'linear-gradient(135deg, hsl(200,90%,55%), hsl(220,85%,55%))' },
+                    { label: 'Wallet',    icon: Wallet,  grad: 'linear-gradient(135deg, hsl(150,72%,45%), hsl(170,75%,42%))' },
+                    { label: 'Wishlist',  icon: Heart,   grad: 'linear-gradient(135deg, hsl(0,82%,60%), hsl(340,82%,55%))' },
+                    { label: 'Points',    icon: Award,   grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,92%,55%))' },
+                  ].map((q, i) => (
                     <button
-                      key={item.label}
-                      onClick={() => { navigate(item.href); setMobileOpen(false); }}
-                      onMouseEnter={() => prefetchRoute(item.href)}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-150 hover:bg-[hsl(226,20%,97%)] active:bg-[hsl(226,22%,95%)]"
+                      key={q.label}
+                      onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
+                      className="group relative aspect-square rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]"
                       style={{
-                        borderBottom: i < arr.length - 1 ? '1px solid hsl(226,18%,93%)' : undefined,
-                        animation: mobileOpen ? `slideInRight 0.35s ease-out ${0.04 + i * 0.03}s both` : undefined,
+                        background: 'hsla(0,0%,100%,0.85)',
+                        border: '1px solid hsla(258,78%,60%,0.12)',
+                        backdropFilter: 'blur(12px)',
+                        boxShadow: '0 4px 12px hsla(258,40%,40%,0.06)',
+                        animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.05 + i * 0.04}s both` : undefined,
                       }}>
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                        style={{ background: 'hsl(226,22%,96%)', border: '1px solid hsl(226,18%,90%)' }}>
-                        <item.icon size={16} strokeWidth={2} style={{ color: 'hsl(226,30%,30%)' }} />
+                      <div className="absolute inset-x-0 top-0 h-1/2 opacity-15 pointer-events-none" style={{ background: q.grad }} />
+                      <div className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
+                        style={{ background: q.grad, boxShadow: '0 6px 14px hsla(258,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
+                        <q.icon size={17} className="text-white" strokeWidth={2.5} />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13.5px] font-semibold leading-tight" style={{ color: 'hsl(226,35%,16%)', letterSpacing: '-0.01em' }}>{item.label}</p>
-                        <p className="text-[11px] mt-0.5" style={{ color: 'hsl(226,15%,48%)' }}>{item.sub}</p>
-                      </div>
-                      <ChevronRight size={15} strokeWidth={2} style={{ color: 'hsl(226,15%,55%)' }} />
+                      <span className="text-[10.5px] font-bold tracking-tight" style={{ color: 'hsl(226,35%,22%)' }}>{q.label}</span>
                     </button>
                   ))}
-                </nav>
+                </div>
 
-                {/* Single highlight strip — simple, no neon */}
-                <button
-                  onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
-                  onMouseEnter={() => prefetchRoute('/shop')}
-                  className="w-full group relative rounded-2xl px-4 py-3 mb-3 flex items-center justify-between gap-3 transition-colors duration-200"
-                  style={{
-                    background: 'hsl(0,0%,100%)',
-                    border: '1px solid hsl(226,18%,90%)',
-                    animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.20s both' : undefined,
-                  }}>
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-2 h-10 rounded-full shrink-0" style={{ background: 'hsl(8,75%,55%)' }} />
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: 'hsl(8,70%,42%)' }}>Today's deals</p>
-                      <p className="text-[13.5px] font-semibold leading-tight mt-0.5" style={{ color: 'hsl(226,35%,16%)', letterSpacing: '-0.01em' }}>Save up to 70% on selected products</p>
+                {/* Featured Strip — Hot Deals + Live Help */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <button
+                    onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(0,82%,58%) 0%, hsl(20,90%,55%) 100%)',
+                      boxShadow: '0 8px 20px hsla(0,80%,50%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.22s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <span className="text-[14px]">🔥</span>
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Hot Deals</span>
                     </div>
-                  </div>
-                  <ChevronRight size={16} strokeWidth={2} style={{ color: 'hsl(226,20%,40%)' }} className="shrink-0 transition-transform group-hover:translate-x-0.5" />
-                </button>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Up to 70% OFF</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Shop trending →</p>
+                  </button>
+                  <button
+                    onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(150,72%,42%) 0%, hsl(170,75%,40%) 100%)',
+                      boxShadow: '0 8px 20px hsla(150,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.26s both' : undefined,
+                    }}>
+                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center relative" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
+                        <MessageCircle size={14} className="text-white" strokeWidth={2.6} />
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: 'hsl(45,95%,55%)', boxShadow: '0 0 6px hsla(45,95%,55%,0.8)', animation: 'pulse 2s infinite' }} />
+                      </div>
+                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Live 24/7</span>
+                    </div>
+                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Need Help?</p>
+                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Chat with us →</p>
+                  </button>
+                </div>
 
-                {/* Trending Categories — clean chips */}
+                {/* Trending Categories Chips */}
                 {navCategories.length > 0 && (
-                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.24s both' : undefined }}>
-                    <p className="text-[10px] font-medium uppercase tracking-[0.16em] px-1 pb-2" style={{ color: 'hsl(226,15%,48%)' }}>Trending categories</p>
+                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.30s both' : undefined }}>
+                    <div className="flex items-center gap-2 px-1 pb-2">
+                      <span className="text-[10px]">🏷️</span>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'hsl(226,35%,40%)' }}>Trending Categories</p>
+                    </div>
                     <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
-                      {navCategories.slice(0, 8).map(cat => (
-                        <button
-                          key={cat.id}
-                          onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
-                          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium transition-colors duration-150 hover:bg-[hsl(226,22%,96%)]"
-                          style={{
-                            background: 'hsl(0,0%,100%)',
-                            border: '1px solid hsl(226,18%,88%)',
-                            color: 'hsl(226,30%,22%)',
-                          }}>
-                          <span>{cat.name}</span>
-                          <span className="text-[10px] font-medium tabular-nums" style={{ color: 'hsl(226,15%,52%)' }}>{cat.count}</span>
-                        </button>
-                      ))}
+                      {navCategories.slice(0, 8).map(cat => {
+                        const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP.default;
+                        return (
+                          <button
+                            key={cat.id}
+                            onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
+                            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
+                            style={{
+                              background: 'hsla(0,0%,100%,0.85)',
+                              border: '1px solid hsla(258,78%,60%,0.18)',
+                              color: 'hsl(226,35%,22%)',
+                              backdropFilter: 'blur(10px)',
+                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
+                            }}>
+                            <span className="text-[13px]">{meta.icon}</span>
+                            <span>{cat.name}</span>
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
 
-                {/* Section Label — minimal divider */}
-                <div className="flex items-center gap-3 px-1 pb-2.5">
-                  <p className="text-[10px] font-medium uppercase tracking-[0.18em]" style={{ color: 'hsl(226,15%,48%)' }}>Explore</p>
-                  <div className="h-px flex-1" style={{ background: 'hsl(226,18%,88%)' }} />
+                {/* Section Label */}
+                <div className="flex items-center gap-2 px-1 pb-2.5">
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                  <p className="text-[10px] font-bold tracking-[0.22em] uppercase flex items-center gap-1.5"
+                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <Sparkles size={10} style={{ color: 'hsl(258,78%,55%)' }} />
+                    Account
+                    <Sparkles size={10} style={{ color: 'hsl(200,90%,50%)' }} />
+                  </p>
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
                 </div>
 
-                {/* Guest list — login-required items */}
+                {/* Detailed account list — same as logged-in, opens auth modal */}
                 {[
-                  { label: 'My Orders',     icon: Package, grad: 'linear-gradient(135deg, hsl(200,90%,50%), hsl(220,80%,55%))' },
-                  { label: 'My Licenses',   icon: Key,     grad: 'linear-gradient(135deg, hsl(45,95%,55%), hsl(30,90%,55%))' },
-                  { label: 'Wallet',        icon: Wallet,  grad: 'linear-gradient(135deg, hsl(150,70%,45%), hsl(170,75%,42%))' },
-                  { label: 'Wishlist',      icon: Heart,   grad: 'linear-gradient(135deg, hsl(0,80%,60%), hsl(340,80%,55%))' },
-                  { label: 'Notifications', icon: Bell,    grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,90%,55%))' },
-                  { label: 'Referral',      icon: Gift,    grad: 'linear-gradient(135deg, hsl(280,75%,55%), hsl(310,70%,55%))' },
+                  { label: 'My Licenses',   icon: Key,    grad: 'linear-gradient(135deg, hsl(45,95%,55%), hsl(30,90%,55%))' },
+                  { label: 'Addresses',     icon: MapPin, grad: 'linear-gradient(135deg, hsl(190,85%,45%), hsl(210,85%,50%))' },
+                  { label: 'Notifications', icon: Bell,   grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,90%,55%))' },
+                  { label: 'Referral',      icon: Gift,   grad: 'linear-gradient(135deg, hsl(280,75%,55%), hsl(310,70%,55%))' },
+                  { label: 'Security',      icon: Lock,   grad: 'linear-gradient(135deg, hsl(220,30%,40%), hsl(240,35%,45%))' },
+                  { label: 'Language',      icon: Globe,  grad: 'linear-gradient(135deg, hsl(170,70%,42%), hsl(190,75%,45%))' },
                 ].map((item, i) => (
                   <button
                     key={item.label}
                     onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                    className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1.5 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                    className="w-full group flex items-center gap-3 px-3 py-2.5 mb-1.5 rounded-2xl text-sm font-semibold transition-all duration-300 hover:scale-[1.015] active:scale-[0.985] relative overflow-hidden"
                     style={{
                       color: 'hsl(226,35%,20%)',
                       background: 'hsla(0,0%,100%,0.75)',
@@ -969,6 +1030,20 @@ const Navbar = () => {
                     </p>
                   </div>
                 )}
+
+                {/* Sign In CTA — bottom button */}
+                <button
+                  onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
+                  className="w-full group relative flex items-center justify-center gap-2 px-3 py-3 mt-3 rounded-2xl text-[13px] font-bold text-white overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(280,75%,55%) 50%, hsl(258,78%,55%) 100%)',
+                    backgroundSize: '200% 100%',
+                    boxShadow: '0 10px 24px hsla(258,78%,55%,0.42), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                    animation: 'shimmer 3s linear infinite',
+                  }}>
+                  <User size={15} strokeWidth={2.6} className="relative" />
+                  <span className="relative tracking-wide">Sign In / Sign Up</span>
+                </button>
 
                 {/* Trust footer */}
                 <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t" style={{ borderColor: 'hsla(258,78%,55%,0.12)' }}>
