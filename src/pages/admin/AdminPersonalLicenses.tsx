@@ -11,7 +11,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Edit3, Trash2, Copy, MessageCircle, Search, Filter, Package, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Edit3, Trash2, Copy, MessageCircle, Search, Filter, Package, Clock, CheckCircle, XCircle, Settings2 } from 'lucide-react';
+import { usePasswordTypes } from '@/hooks/usePasswordTypes';
+import PasswordTypesManager from '@/components/admin/PasswordTypesManager';
 
 type PersonalLicense = {
   id: string;
@@ -19,6 +21,7 @@ type PersonalLicense = {
   category: string;
   key_value: string | null;
   password: string | null;
+  password_type: string | null;
   expires_at: string | null;
   note: string | null;
   status: string;
@@ -30,7 +33,7 @@ type PersonalLicense = {
 };
 
 const emptyForm = {
-  name: '', category: 'general', key_value: '', password: '',
+  name: '', category: 'general', key_value: '', password: '', password_type: '',
   expires_at: '', note: '', status: 'active', customer_name: '', customer_phone: '',
 };
 
@@ -42,6 +45,8 @@ export default function AdminPersonalLicenses() {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
+  const [typesManagerOpen, setTypesManagerOpen] = useState(false);
+  const { types: passwordTypes, getType } = usePasswordTypes();
 
   const { data: licenses = [], isLoading } = useQuery({
     queryKey: ['personal-licenses'],
@@ -64,6 +69,7 @@ export default function AdminPersonalLicenses() {
         category: vals.category || 'general',
         key_value: vals.key_value || null,
         password: vals.password || null,
+        password_type: vals.password_type || null,
         expires_at: vals.expires_at || null,
         note: vals.note || null,
         status: vals.status,
@@ -124,6 +130,7 @@ export default function AdminPersonalLicenses() {
       category: lic.category || 'general',
       key_value: lic.key_value || '',
       password: lic.password || '',
+      password_type: lic.password_type || '',
       expires_at: lic.expires_at ? lic.expires_at.split('T')[0] : '',
       note: lic.note || '',
       status: lic.status,
@@ -136,9 +143,13 @@ export default function AdminPersonalLicenses() {
   function closeDialog() { setOpen(false); setEditing(null); setForm(emptyForm); }
 
   function copyLicenseText(lic: PersonalLicense) {
+    const pt = getType(lic.password_type);
     const lines = [`📦 ${lic.name}`];
     if (lic.key_value) lines.push(`🔑 Key: ${lic.key_value}`);
-    if (lic.password) lines.push(`🔒 Password: ${lic.password}`);
+    if (lic.password) {
+      const suffix = pt ? ` ${pt.emoji} (${pt.label})` : '';
+      lines.push(`🔒 Password: ${lic.password}${suffix}`);
+    }
     if (lic.expires_at) lines.push(`📅 মেয়াদ: ${new Date(lic.expires_at).toLocaleDateString('bn-BD')}`);
     if (lic.note) lines.push(`📝 নোট: ${lic.note}`);
     navigator.clipboard.writeText(lines.join('\n'));
@@ -146,9 +157,14 @@ export default function AdminPersonalLicenses() {
   }
 
   function sendWhatsApp(lic: PersonalLicense) {
+    const pt = getType(lic.password_type);
     const lines = [`📦 *${lic.name}*`];
     if (lic.key_value) lines.push(`🔑 Key: \`${lic.key_value}\``);
-    if (lic.password) lines.push(`🔒 Password: \`${lic.password}\``);
+    if (lic.password) {
+      const suffix = pt ? ` ${pt.emoji} _${pt.label}_` : '';
+      lines.push(`🔒 Password: \`${lic.password}\`${suffix}`);
+      if (pt?.description) lines.push(`   _${pt.description}_`);
+    }
     if (lic.expires_at) lines.push(`📅 মেয়াদ: ${new Date(lic.expires_at).toLocaleDateString('bn-BD')}`);
     if (lic.note) lines.push(`📝 ${lic.note}`);
     lines.push('\n✅ Shahed Store থেকে ডেলিভারি করা হলো।');
@@ -191,12 +207,17 @@ export default function AdminPersonalLicenses() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-foreground">পার্সোনাল লাইসেন্স ইনভেন্টরি</h1>
           <p className="text-sm text-muted-foreground">আপনার সকল লাইসেন্স ও সাবস্ক্রিপশন এক জায়গায়</p>
         </div>
-        <Button onClick={openAdd}><Plus className="w-4 h-4 mr-2" />নতুন যোগ করুন</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setTypesManagerOpen(true)}>
+            <Settings2 className="w-4 h-4 mr-2" />পাসওয়ার্ড টাইপ
+          </Button>
+          <Button onClick={openAdd}><Plus className="w-4 h-4 mr-2" />নতুন যোগ করুন</Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -256,9 +277,21 @@ export default function AdminPersonalLicenses() {
                   <TableCell className="font-medium">{lic.name}</TableCell>
                   <TableCell><Badge variant="outline">{lic.category}</Badge></TableCell>
                   <TableCell>
-                    <div className="space-y-0.5 text-xs font-mono max-w-[200px] truncate">
+                    <div className="space-y-1 text-xs font-mono max-w-[220px] truncate">
                       {lic.key_value && <div title={lic.key_value}>🔑 {lic.key_value.substring(0, 20)}{lic.key_value.length > 20 ? '...' : ''}</div>}
-                      {lic.password && <div>🔒 ••••••</div>}
+                      {lic.password && (
+                        <div className="flex items-center gap-1">
+                          <span>🔒 ••••••</span>
+                          {(() => {
+                            const pt = getType(lic.password_type);
+                            return pt ? (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4">
+                                {pt.emoji} {pt.label}
+                              </Badge>
+                            ) : null;
+                          })()}
+                        </div>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -341,6 +374,38 @@ export default function AdminPersonalLicenses() {
                 <Label>পাসওয়ার্ড</Label>
                 <Input value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} placeholder="পাসওয়ার্ড (ঐচ্ছিক)" />
               </div>
+              <div className="col-span-2">
+                <div className="flex items-center justify-between mb-1">
+                  <Label>পাসওয়ার্ডের ধরন (Type)</Label>
+                  <button
+                    type="button"
+                    onClick={() => setTypesManagerOpen(true)}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    + টাইপ ম্যানেজ করুন
+                  </button>
+                </div>
+                <Select
+                  value={form.password_type || '__none__'}
+                  onValueChange={v => setForm(f => ({ ...f, password_type: v === '__none__' ? '' : v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="টাইপ নির্বাচন করুন (ঐচ্ছিক)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">— কোনো টাইপ নয় —</SelectItem>
+                    {passwordTypes.map(pt => (
+                      <SelectItem key={pt.id} value={pt.id}>
+                        <span className="flex items-center gap-2">
+                          <span>{pt.emoji}</span>
+                          <span>{pt.label}</span>
+                          {pt.description && <span className="text-xs text-muted-foreground">— {pt.description}</span>}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div>
                 <Label>মেয়াদ শেষ</Label>
                 <Input type="date" value={form.expires_at} onChange={e => setForm(f => ({ ...f, expires_at: e.target.value }))} />
@@ -365,6 +430,8 @@ export default function AdminPersonalLicenses() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <PasswordTypesManager open={typesManagerOpen} onOpenChange={setTypesManagerOpen} />
     </div>
   );
 }
