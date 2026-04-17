@@ -197,6 +197,7 @@ const AppContent = () => {
           <RedirectEnforcer />
         </Suspense>
       )}
+      <ViewTransitions />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Index />} />
