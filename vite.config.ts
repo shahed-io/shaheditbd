@@ -34,8 +34,15 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-select', '@radix-ui/react-dropdown-menu'],
+          'vendor-ui': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-select',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-popover',
+          ],
           'vendor-query': ['@tanstack/react-query'],
+          'vendor-icons': ['lucide-react'],
         },
       },
     },
@@ -47,8 +54,9 @@ export default defineConfig(({ mode }) => ({
     assetsInlineLimit: 8192,  // Inline larger assets to reduce requests
     cssCodeSplit: true,
     modulePreload: { polyfill: false }, // Modern browsers don't need polyfill
+    reportCompressedSize: false, // Faster builds
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react', '@tanstack/react-query'],
+    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react', '@tanstack/react-query', '@supabase/supabase-js'],
   },
 }));

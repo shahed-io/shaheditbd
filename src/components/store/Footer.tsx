@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { Phone, Mail, MapPin, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Download, Zap, Package, Info, FileText, Send } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 import dbidLogo from '@/assets/dbid-logo.png';
@@ -45,12 +46,12 @@ const NAV_COL = [
   },
 ];
 
-const Footer = () => {
+const Footer = forwardRef<HTMLElement>((_, ref) => {
   const { settings } = useFooterSettings();
   const paymentMethods = settings.payment_methods.split(',').map(s => s.trim()).filter(Boolean);
 
   return (
-  <footer className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
+  <footer ref={ref} className="relative overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
 
     {/* Decorative background */}
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -316,6 +317,8 @@ const Footer = () => {
     </div>
   </footer>
   );
-};
+});
+
+Footer.displayName = 'Footer';
 
 export default Footer;
