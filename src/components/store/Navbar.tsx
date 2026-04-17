@@ -8,6 +8,7 @@ import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { prefetchRoute } from '@/hooks/usePrefetchRoute';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
