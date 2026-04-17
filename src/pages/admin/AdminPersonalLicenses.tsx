@@ -143,9 +143,13 @@ export default function AdminPersonalLicenses() {
   function closeDialog() { setOpen(false); setEditing(null); setForm(emptyForm); }
 
   function copyLicenseText(lic: PersonalLicense) {
+    const pt = getType(lic.password_type);
     const lines = [`📦 ${lic.name}`];
     if (lic.key_value) lines.push(`🔑 Key: ${lic.key_value}`);
-    if (lic.password) lines.push(`🔒 Password: ${lic.password}`);
+    if (lic.password) {
+      const suffix = pt ? ` ${pt.emoji} (${pt.label})` : '';
+      lines.push(`🔒 Password: ${lic.password}${suffix}`);
+    }
     if (lic.expires_at) lines.push(`📅 মেয়াদ: ${new Date(lic.expires_at).toLocaleDateString('bn-BD')}`);
     if (lic.note) lines.push(`📝 নোট: ${lic.note}`);
     navigator.clipboard.writeText(lines.join('\n'));
@@ -153,9 +157,14 @@ export default function AdminPersonalLicenses() {
   }
 
   function sendWhatsApp(lic: PersonalLicense) {
+    const pt = getType(lic.password_type);
     const lines = [`📦 *${lic.name}*`];
     if (lic.key_value) lines.push(`🔑 Key: \`${lic.key_value}\``);
-    if (lic.password) lines.push(`🔒 Password: \`${lic.password}\``);
+    if (lic.password) {
+      const suffix = pt ? ` ${pt.emoji} _${pt.label}_` : '';
+      lines.push(`🔒 Password: \`${lic.password}\`${suffix}`);
+      if (pt?.description) lines.push(`   _${pt.description}_`);
+    }
     if (lic.expires_at) lines.push(`📅 মেয়াদ: ${new Date(lic.expires_at).toLocaleDateString('bn-BD')}`);
     if (lic.note) lines.push(`📝 ${lic.note}`);
     lines.push('\n✅ Shahed Store থেকে ডেলিভারি করা হলো।');
