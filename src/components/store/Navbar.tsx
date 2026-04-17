@@ -64,6 +64,7 @@ const Navbar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStats, setUserStats] = useState<{ wallet: number; points: number; orders: number; wishlist: number } | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
+  const [profileUsername, setProfileUsername] = useState<string | null>(null);
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
   
   const { user } = useAuth();
@@ -115,26 +116,48 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) { setAvatarUrl(null); setIsAdmin(false); setUserStats(null); setProfileName(null); return; }
-    const t = setTimeout(() => {
+    if (!user) {
+      setAvatarUrl(null);
+      setIsAdmin(false);
+      setUserStats(null);
+      setProfileName(null);
+      setProfileUsername(null);
+      return;
+    }
+
+    const loadProfile = () => {
       supabase.from('profiles').select('avatar_url, display_name, username, wallet_balance, points_balance').eq('user_id', user.id).single()
         .then(({ data }) => {
-          if (data?.avatar_url) setAvatarUrl(data.avatar_url);
-          if (data?.display_name) setProfileName(data.display_name);
-          else if (data?.username) setProfileName(data.username);
-          if (data) {
-            setUserStats(prev => ({
-              wallet: Number(data.wallet_balance) || 0,
-              points: Number(data.points_balance) || 0,
-              orders: prev?.orders || 0,
-              wishlist: prev?.wishlist || 0,
-            }));
-          }
+          if (!data) return;
+          setAvatarUrl(data.avatar_url || null);
+          setProfileName(data.display_name || null);
+          setProfileUsername(data.username || null);
+          setUserStats(prev => ({
+            wallet: Number(data.wallet_balance) || 0,
+            points: Number(data.points_balance) || 0,
+            orders: prev?.orders || 0,
+            wishlist: prev?.wishlist || 0,
+          }));
         });
+    };
+
+    const t = setTimeout(() => {
+      loadProfile();
       supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle()
         .then(({ data }) => { setIsAdmin(!!data); });
     }, 500);
-    return () => clearTimeout(t);
+
+    // Realtime: refresh profile name/username/avatar when user updates from dashboard
+    const channel = supabase
+      .channel(`navbar-profile-${user.id}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `user_id=eq.${user.id}` },
+        () => loadProfile())
+      .subscribe();
+
+    return () => {
+      clearTimeout(t);
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   // Lock body scroll when mobile menu is open to prevent background scrolling
@@ -223,7 +246,7 @@ const Navbar = () => {
     deferredPrompt.current = null;
   };
 
-  const displayName = profileName || user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
+  const displayName = profileName || profileUsername || user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
   const initials    = displayName[0].toUpperCase();
 
   return (
@@ -535,6 +558,9 @@ const Navbar = () => {
                     <div className="flex-1 text-left min-w-0">
                       <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Welcome back 👋</p>
                       <p className="text-base font-bold text-white truncate">{displayName}</p>
+                      {profileUsername && profileUsername !== displayName && (
+                        <p className="text-[11px] font-medium text-white/85 truncate -mt-0.5">@{profileUsername}</p>
+                      )}
                       <div className="flex items-center gap-1.5 mt-1">
                         <div className="px-1.5 py-0.5 rounded-md flex items-center gap-1" style={{ background: 'hsla(0,0%,100%,0.22)', backdropFilter: 'blur(8px)' }}>
                           <Star size={9} className="text-yellow-300" fill="currentColor" />
