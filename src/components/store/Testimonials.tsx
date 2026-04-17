@@ -227,7 +227,7 @@ const Testimonials = () => {
       </div>
 
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-fluid">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-[11px] font-bold mb-5 tracking-widest uppercase"
             style={{

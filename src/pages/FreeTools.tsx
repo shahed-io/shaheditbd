@@ -1291,7 +1291,7 @@ const FreeTools = () => {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <section className="container-fluid py-12">
         {activeTool ? (
           <div className="max-w-2xl mx-auto">
             <button onClick={() => setActiveTool(null)}

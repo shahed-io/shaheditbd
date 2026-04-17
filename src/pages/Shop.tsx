@@ -224,7 +224,7 @@ const Shop = () => {
       />
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="container-fluid py-10">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="font-sora font-black text-3xl text-foreground">
@@ -345,7 +345,7 @@ const Shop = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 4xl:grid-cols-6 gap-4">
                 {products.map(p => <ShopProductCard key={p.id} product={p} />)}
               </div>
             )}

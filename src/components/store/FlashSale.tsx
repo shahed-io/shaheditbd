@@ -92,7 +92,7 @@ const FlashSale = () => {
           style={{ background: 'linear-gradient(90deg, transparent, hsla(15,100%,60%,0.2), hsla(38,100%,55%,0.2), transparent)' }} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="container-fluid relative z-10">
 
         {/* Header */}
         <div
@@ -154,14 +154,14 @@ const FlashSale = () => {
 
         {/* Product Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 3xl:grid-cols-6 gap-4">
             {[0,1,2,3,4,5,6,7].map(i => (
               <div key={i} className="rounded-2xl bg-muted animate-pulse" style={{ height: '22rem', animationDelay: `${i * 0.07}s` }} />
             ))}
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 3xl:grid-cols-6 gap-4">
               {products.map((p, i) => (
                 <div
                   key={p.id}
