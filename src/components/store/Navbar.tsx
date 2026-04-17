@@ -558,6 +558,9 @@ const Navbar = () => {
                     <div className="flex-1 text-left min-w-0">
                       <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Welcome back 👋</p>
                       <p className="text-base font-bold text-white truncate">{displayName}</p>
+                      {profileUsername && profileUsername !== displayName && (
+                        <p className="text-[11px] font-medium text-white/85 truncate -mt-0.5">@{profileUsername}</p>
+                      )}
                       <div className="flex items-center gap-1.5 mt-1">
                         <div className="px-1.5 py-0.5 rounded-md flex items-center gap-1" style={{ background: 'hsla(0,0%,100%,0.22)', backdropFilter: 'blur(8px)' }}>
                           <Star size={9} className="text-yellow-300" fill="currentColor" />
