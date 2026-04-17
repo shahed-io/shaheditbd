@@ -64,6 +64,7 @@ const Navbar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStats, setUserStats] = useState<{ wallet: number; points: number; orders: number; wishlist: number } | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
+  const [profileUsername, setProfileUsername] = useState<string | null>(null);
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
   
   const { user } = useAuth();
