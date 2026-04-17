@@ -30,6 +30,7 @@ import {
   Download, Share2, PlusSquare, Smartphone, AtSign, Check, Loader2
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
+import VerifiedBadge from '@/components/store/VerifiedBadge';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
 
 interface Profile {
@@ -750,7 +751,10 @@ const UserDashboard = () => {
                 style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
                 {profile.avatar_url ? <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" /> : initials}
               </div>
-              <span className="text-sm font-semibold max-w-[120px] truncate hidden sm:block text-foreground">{displayName}</span>
+              <span className="text-sm font-semibold max-w-[120px] truncate hidden sm:flex items-center gap-1 text-foreground">
+                <span className="truncate">{displayName}</span>
+                <VerifiedBadge size={13} />
+              </span>
               {unreadCount > 0 && <span className="w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center" style={{ background: 'hsl(var(--destructive))' }}>{unreadCount}</span>}
             </div>
             {isAdmin && (
@@ -784,7 +788,10 @@ const UserDashboard = () => {
                 </button>
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-lg font-black text-foreground truncate">{displayName}</h1>
+                <h1 className="text-base sm:text-lg font-black text-foreground truncate flex items-center gap-1.5">
+                  <span className="truncate">{displayName}</span>
+                  <VerifiedBadge size={18} />
+                </h1>
                 <p className="text-xs sm:text-sm font-medium text-foreground/70 break-all">{user?.email}</p>
                 <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">

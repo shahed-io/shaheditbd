@@ -10,6 +10,7 @@ import {
 import { toast } from 'sonner';
 import SEOHead from '@/components/seo/SEOHead';
 import { articleSchema, breadcrumbSchema } from '@/components/seo/schemas';
+import VerifiedBadge from '@/components/store/VerifiedBadge';
 
 // ── Table of Contents Generator ──────────────────────────────────────────────
 const generateTOC = (content: string) => {
@@ -117,7 +118,10 @@ const CommentSection = ({ postId }: { postId: string }) => {
                   {c.author_name[0]?.toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{c.author_name}</p>
+                  <p className="text-sm font-semibold text-foreground inline-flex items-center gap-1">
+                    {c.author_name}
+                    <VerifiedBadge size={12} />
+                  </p>
                   <p className="text-[10px] text-muted-foreground">{new Date(c.created_at).toLocaleDateString('en-BD')}</p>
                 </div>
               </div>
@@ -319,7 +323,10 @@ const BlogPost = () => {
                   </div>
                 )}
                 <div>
-                  <p className="text-xs font-semibold text-foreground">{post.author_name}</p>
+                  <p className="text-xs font-semibold text-foreground inline-flex items-center gap-1">
+                    {post.author_name}
+                    <VerifiedBadge size={12} />
+                  </p>
                   {post.author_bio && <p className="text-[10px] text-muted-foreground line-clamp-1 max-w-[180px]">{post.author_bio}</p>}
                 </div>
               </div>
@@ -394,7 +401,10 @@ const BlogPost = () => {
                   </div>
                 )}
                 <div>
-                  <p className="font-bold text-foreground text-sm">{post.author_name}</p>
+                  <p className="font-bold text-foreground text-sm inline-flex items-center gap-1.5">
+                    {post.author_name}
+                    <VerifiedBadge size={14} />
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{post.author_bio}</p>
                 </div>
               </div>

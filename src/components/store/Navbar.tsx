@@ -3,6 +3,7 @@ import { Menu, X, ShoppingCart, User, LogOut, LayoutDashboard, ChevronDown, Star
 import { useFooterSettings } from '@/hooks/useFooterSettings';
 import AuthModal from './AuthModal';
 import BrandLogo from './BrandLogo';
+import VerifiedBadge from './VerifiedBadge';
 import SearchBar, { DesktopSearchPalette, MobileSearchOverlay } from './SearchBar';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
@@ -557,7 +558,10 @@ const Navbar = () => {
                     </div>
                     <div className="flex-1 text-left min-w-0">
                       <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Welcome back 👋</p>
-                      <p className="text-base font-bold text-white truncate">{displayName}</p>
+                      <p className="text-base font-bold text-white truncate flex items-center gap-1">
+                        <span className="truncate">{displayName}</span>
+                        <VerifiedBadge size={15} />
+                      </p>
                       {profileUsername && profileUsername !== displayName && (
                         <p className="text-[11px] font-medium text-white/85 truncate -mt-0.5">@{profileUsername}</p>
                       )}

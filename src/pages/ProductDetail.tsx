@@ -18,6 +18,7 @@ import SEOHead from '@/components/seo/SEOHead';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import { productSchema, breadcrumbSchema, faqSchema } from '@/components/seo/schemas';
 import { SITE_URL } from '@/components/seo/SEOHead';
+import VerifiedBadge from '@/components/store/VerifiedBadge';
 
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
@@ -1602,13 +1603,10 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center flex-wrap gap-2 mb-1">
-                    <span className="font-semibold text-sm text-foreground">{r.author_name}</span>
-                    {r.is_verified && (
-                      <span className="text-[10px] flex items-center gap-1 px-2 py-0.5 rounded-full font-bold"
-                        style={{ color: 'hsl(158,80%,38%)', background: 'hsla(158,80%,48%,0.12)', border: '1px solid hsla(158,80%,48%,0.28)' }}>
-                        <CheckCircle2 size={9} /> Verified
-                      </span>
-                    )}
+                    <span className="font-semibold text-sm text-foreground inline-flex items-center gap-1">
+                      {r.author_name}
+                      <VerifiedBadge size={13} />
+                    </span>
                     <StarRating value={r.rating} size={12} />
                     <span className="text-xs text-muted-foreground ml-auto">
                       {new Date(r.created_at).toLocaleDateString('bn-BD')}

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import SEOHead from '@/components/seo/SEOHead';
 import { SITE_URL } from '@/components/seo/SEOHead';
+import VerifiedBadge from '@/components/store/VerifiedBadge';
 
 const Blog = () => {
   const [posts, setPosts] = useState<any[]>([]);
@@ -358,7 +359,10 @@ const Blog = () => {
                             style={{ background: 'hsla(271,91%,65%,0.1)' }}>
                             <User size={9} style={{ color: 'hsl(271,91%,65%)' }} />
                           </div>
-                          <span className="font-medium">{post.author_name || 'Admin'}</span>
+                          <span className="font-medium inline-flex items-center gap-0.5">
+                            {post.author_name || 'Admin'}
+                            <VerifiedBadge size={10} />
+                          </span>
                           <span className="text-border">·</span>
                           <Clock size={10} />
                           <span>{post.reading_time}m পড়া</span>
