@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
+import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
@@ -160,6 +161,21 @@ const AppContent = () => {
       setDeferReady(true);
     });
     return () => cancelAnimationFrame(id);
+  }, []);
+
+  // Warm critical route chunks during browser idle time → instant navigation
+  useEffect(() => {
+    prefetchOnIdle([
+      '/shop',
+      '/product/',     // ProductDetail chunk
+      '/checkout',
+      '/blog',
+      '/free-tools',
+      '/dashboard',
+      '/contact',
+      '/about',
+      '/faqs',
+    ], 1500);
   }, []);
 
   useEffect(() => {
