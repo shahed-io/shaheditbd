@@ -63,6 +63,7 @@ const Navbar = () => {
   const [showIOSTip, setShowIOSTip] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStats, setUserStats] = useState<{ wallet: number; points: number; orders: number; wishlist: number } | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
   
   const { user } = useAuth();
@@ -114,11 +115,13 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) { setAvatarUrl(null); setIsAdmin(false); setUserStats(null); return; }
+    if (!user) { setAvatarUrl(null); setIsAdmin(false); setUserStats(null); setProfileName(null); return; }
     const t = setTimeout(() => {
-      supabase.from('profiles').select('avatar_url, display_name, wallet_balance, points_balance').eq('user_id', user.id).single()
+      supabase.from('profiles').select('avatar_url, display_name, username, wallet_balance, points_balance').eq('user_id', user.id).single()
         .then(({ data }) => {
           if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+          if (data?.display_name) setProfileName(data.display_name);
+          else if (data?.username) setProfileName(data.username);
           if (data) {
             setUserStats(prev => ({
               wallet: Number(data.wallet_balance) || 0,
@@ -199,7 +202,7 @@ const Navbar = () => {
     deferredPrompt.current = null;
   };
 
-  const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
+  const displayName = profileName || user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
   const initials    = displayName[0].toUpperCase();
 
   return (
