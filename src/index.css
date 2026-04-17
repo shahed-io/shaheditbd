@@ -1638,3 +1638,23 @@ body.admin-page * {
 }
 
 
+
+/* ══════════════════════════════════════
+   INSTANT NAVIGATION — View Transitions
+   Smooth fade between pages (Chrome-based browsers)
+   Eliminates white flash during route changes
+══════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-fade-out 180ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  ::view-transition-new(root) {
+    animation: vt-fade-in 220ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+}
+@keyframes vt-fade-out {
+  to { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+}
