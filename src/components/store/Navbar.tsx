@@ -749,108 +749,142 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="relative">
-                {/* Guest Hero — Sign In CTA Banner */}
+                {/* Guest Hero — Premium Sign In CTA (Apple-inspired minimalism) */}
                 <button
                   onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                  className="w-full group relative rounded-3xl p-4 mb-4 overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
+                  className="w-full group relative rounded-[22px] p-[1.5px] mb-3 overflow-hidden transition-all duration-300 active:scale-[0.985]"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(225,80%,52%) 45%, hsl(200,90%,50%) 100%)',
-                    boxShadow: '0 16px 40px -10px hsla(258,78%,45%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.35)',
+                    background: 'linear-gradient(135deg, hsla(258,90%,65%,0.55), hsla(200,95%,60%,0.35) 50%, hsla(280,85%,68%,0.5))',
                     animation: mobileOpen ? 'slideInRight 0.4s ease-out both' : undefined,
                   }}>
-                  <div className="absolute inset-0 opacity-50 pointer-events-none"
-                    style={{ background: 'radial-gradient(circle at 20% 20%, hsla(0,0%,100%,0.35), transparent 50%), radial-gradient(circle at 80% 80%, hsla(280,90%,70%,0.4), transparent 50%)' }} />
-                  <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full pointer-events-none"
-                    style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.25), transparent 70%)', filter: 'blur(8px)' }} />
+                  <div className="relative rounded-[20.5px] px-4 py-3.5 overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(252,72%,52%) 0%, hsl(228,80%,50%) 50%, hsl(208,92%,52%) 100%)',
+                      boxShadow: '0 18px 40px -14px hsla(252,72%,40%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.28), inset 0 -1px 0 hsla(0,0%,0%,0.08)',
+                    }}>
+                    {/* Subtle mesh glow */}
+                    <div className="absolute inset-0 pointer-events-none opacity-90"
+                      style={{ background: 'radial-gradient(120% 80% at 100% 0%, hsla(280,95%,75%,0.35), transparent 55%), radial-gradient(80% 60% at 0% 100%, hsla(195,100%,70%,0.25), transparent 60%)' }} />
+                    {/* Glass shine sweep */}
+                    <div className="absolute -inset-y-2 -left-1/3 w-1/2 pointer-events-none opacity-40 transition-transform duration-700 group-hover:translate-x-[260%]"
+                      style={{ background: 'linear-gradient(115deg, transparent 30%, hsla(0,0%,100%,0.35) 50%, transparent 70%)', filter: 'blur(6px)', transform: 'translateX(-60%)' }} />
 
-                  <div className="relative flex items-center gap-3.5">
-                    <div className="relative shrink-0">
-                      <div className="absolute -inset-1 rounded-2xl"
-                        style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.6), hsla(280,90%,80%,0.6))', filter: 'blur(4px)' }} />
-                      <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center"
-                        style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '2px solid hsla(0,0%,100%,0.5)' }}>
-                        <Sparkles size={26} className="text-white" strokeWidth={2.5} />
+                    <div className="relative flex items-center gap-3">
+                      <div className="relative shrink-0">
+                        <div className="w-11 h-11 rounded-2xl flex items-center justify-center"
+                          style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.28), hsla(0,0%,100%,0.12))', backdropFilter: 'blur(14px)', border: '1px solid hsla(0,0%,100%,0.45)', boxShadow: 'inset 0 1px 0 hsla(0,0%,100%,0.4)' }}>
+                          <Sparkles size={20} className="text-white" strokeWidth={2.4} style={{ filter: 'drop-shadow(0 1px 2px hsla(0,0%,0%,0.18))' }} />
+                        </div>
+                      </div>
+                      <div className="flex-1 text-left min-w-0">
+                        <p className="text-[9.5px] font-bold uppercase tracking-[0.22em] text-white/75 mb-0.5">Welcome</p>
+                        <p className="text-[15px] font-bold text-white leading-tight" style={{ letterSpacing: '-0.01em' }}>Sign in or create account</p>
+                      </div>
+                      <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5"
+                        style={{ background: 'hsla(0,0%,100%,0.18)', border: '1px solid hsla(0,0%,100%,0.3)' }}>
+                        <ChevronRight size={15} className="text-white" strokeWidth={2.6} />
                       </div>
                     </div>
-                    <div className="flex-1 text-left min-w-0">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 mb-0.5">Get Started</p>
-                      <p className="text-base font-bold text-white truncate">Sign In / Register</p>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <Gift size={11} className="text-white/90" />
-                        <span className="text-[11px] font-semibold text-white/90">Unlock exclusive deals</span>
-                      </div>
+
+                    {/* Perks row */}
+                    <div className="relative mt-3 pt-3 flex items-center gap-3" style={{ borderTop: '1px solid hsla(0,0%,100%,0.18)' }}>
+                      {[
+                        { icon: Gift, label: 'Welcome gift' },
+                        { icon: Star, label: 'Loyalty points' },
+                        { icon: Sparkles, label: 'Member deals' },
+                      ].map((p, i) => (
+                        <div key={i} className="flex items-center gap-1.5 min-w-0">
+                          <p.icon size={11} className="text-white/85 shrink-0" strokeWidth={2.6} />
+                          <span className="text-[10px] font-semibold text-white/90 truncate" style={{ letterSpacing: '0.01em' }}>{p.label}</span>
+                        </div>
+                      ))}
                     </div>
-                    <ChevronRight size={20} className="text-white/80 transition-transform group-hover:translate-x-1" />
                   </div>
                 </button>
 
-                {/* Quick Browse Grid (4 cols) */}
-                <div className="grid grid-cols-4 gap-2 mb-4">
+                {/* Premium Quick Browse — refined glass tiles */}
+                <div className="grid grid-cols-4 gap-2 mb-3">
                   {[
-                    { label: 'Shop',    icon: ShoppingCart, href: '/shop',       grad: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(280,75%,55%))' },
-                    { label: 'Tools',   icon: Sparkles,     href: '/free-tools', grad: 'linear-gradient(135deg, hsl(38,95%,55%), hsl(20,92%,55%))' },
-                    { label: 'Blog',    icon: Star,         href: '/blog',       grad: 'linear-gradient(135deg, hsl(150,72%,45%), hsl(170,75%,42%))' },
-                    { label: 'Contact', icon: MessageCircle,href: '/contact-us', grad: 'linear-gradient(135deg, hsl(200,90%,50%), hsl(220,85%,55%))' },
+                    { label: 'Shop',    icon: ShoppingCart, href: '/shop',       tint: 'hsl(258,78%,55%)' },
+                    { label: 'Tools',   icon: Sparkles,     href: '/free-tools', tint: 'hsl(28,92%,55%)' },
+                    { label: 'Blog',    icon: Star,         href: '/blog',       tint: 'hsl(160,72%,42%)' },
+                    { label: 'Contact', icon: MessageCircle,href: '/contact-us', tint: 'hsl(208,92%,52%)' },
                   ].map((q, i) => (
                     <button
                       key={q.label}
                       onClick={() => { navigate(q.href); setMobileOpen(false); }}
-                      className="group relative aspect-square rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.05] active:scale-[0.95]"
+                      className="group relative rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-1.5 py-3 transition-all duration-300 active:scale-[0.94]"
                       style={{
-                        background: 'hsla(0,0%,100%,0.85)',
-                        border: '1px solid hsla(258,78%,60%,0.12)',
-                        backdropFilter: 'blur(12px)',
-                        boxShadow: '0 4px 12px hsla(258,40%,40%,0.06)',
+                        background: 'linear-gradient(160deg, hsla(0,0%,100%,0.95), hsla(0,0%,100%,0.78))',
+                        border: '1px solid hsla(226,30%,80%,0.45)',
+                        backdropFilter: 'blur(14px)',
+                        boxShadow: '0 4px 14px hsla(226,40%,30%,0.06), inset 0 1px 0 hsla(0,0%,100%,0.7)',
                         animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.05 + i * 0.04}s both` : undefined,
                       }}>
-                      <div className="absolute inset-x-0 top-0 h-1/2 opacity-15 pointer-events-none" style={{ background: q.grad }} />
-                      <div className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
-                        style={{ background: q.grad, boxShadow: '0 6px 14px hsla(258,40%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.3)' }}>
-                        <q.icon size={17} className="text-white" strokeWidth={2.5} />
+                      {/* color accent ring */}
+                      <div className="relative w-10 h-10 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
+                        style={{
+                          background: `linear-gradient(135deg, ${q.tint}, color-mix(in hsl, ${q.tint}, hsl(280,80%,60%) 30%))`,
+                          boxShadow: `0 8px 18px -4px color-mix(in hsl, ${q.tint}, transparent 55%), inset 0 1px 0 hsla(0,0%,100%,0.35)`,
+                        }}>
+                        <q.icon size={18} className="text-white" strokeWidth={2.5} style={{ filter: 'drop-shadow(0 1px 2px hsla(0,0%,0%,0.15))' }} />
                       </div>
-                      <span className="text-[10.5px] font-bold tracking-tight" style={{ color: 'hsl(226,35%,22%)' }}>{q.label}</span>
+                      <span className="text-[10.5px] font-semibold tracking-tight" style={{ color: 'hsl(226,35%,22%)', letterSpacing: '-0.005em' }}>{q.label}</span>
                     </button>
                   ))}
                 </div>
 
-                {/* Featured Strip — Guest version */}
+                {/* Featured Strip — Premium Glass Cards */}
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   <button
                     onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
-                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 active:scale-[0.97] text-left"
                     style={{
-                      background: 'linear-gradient(135deg, hsl(0,82%,58%) 0%, hsl(20,90%,55%) 100%)',
-                      boxShadow: '0 8px 20px hsla(0,80%,50%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      background: 'linear-gradient(160deg, hsla(0,0%,100%,0.95), hsla(0,0%,100%,0.78))',
+                      border: '1px solid hsla(8,80%,70%,0.4)',
+                      backdropFilter: 'blur(14px)',
+                      boxShadow: '0 6px 18px hsla(8,80%,50%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.7)',
                       animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.22s both' : undefined,
                     }}>
-                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
-                    <div className="relative flex items-center gap-2 mb-1">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
-                        <span className="text-[14px]">🔥</span>
+                    <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full pointer-events-none opacity-50"
+                      style={{ background: 'radial-gradient(circle, hsla(8,90%,60%,0.18), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1.5">
+                      <div className="w-7 h-7 rounded-xl flex items-center justify-center"
+                        style={{ background: 'linear-gradient(135deg, hsl(8,88%,58%), hsl(20,92%,55%))', boxShadow: '0 4px 10px hsla(8,80%,50%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.35)' }}>
+                        <span className="text-[12px]" style={{ filter: 'drop-shadow(0 1px 1px hsla(0,0%,0%,0.2))' }}>🔥</span>
                       </div>
-                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Hot Deals</span>
+                      <span className="text-[9.5px] font-bold uppercase tracking-[0.14em]" style={{ color: 'hsl(8,75%,42%)' }}>Hot Deals</span>
                     </div>
-                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Up to 70% OFF</p>
-                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Shop trending →</p>
+                    <p className="relative text-[14px] font-bold leading-tight" style={{ color: 'hsl(226,40%,18%)', letterSpacing: '-0.015em' }}>Up to 70% OFF</p>
+                    <p className="relative text-[10px] font-semibold mt-1 flex items-center gap-1" style={{ color: 'hsl(8,75%,48%)' }}>
+                      Shop trending <ChevronRight size={10} strokeWidth={3} className="transition-transform group-hover:translate-x-0.5" />
+                    </p>
                   </button>
+
                   <button
                     onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
-                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 active:scale-[0.97] text-left"
                     style={{
-                      background: 'linear-gradient(135deg, hsl(150,72%,42%) 0%, hsl(170,75%,40%) 100%)',
-                      boxShadow: '0 8px 20px hsla(150,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
+                      background: 'linear-gradient(160deg, hsla(0,0%,100%,0.95), hsla(0,0%,100%,0.78))',
+                      border: '1px solid hsla(160,60%,60%,0.4)',
+                      backdropFilter: 'blur(14px)',
+                      boxShadow: '0 6px 18px hsla(160,60%,40%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.7)',
                       animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.26s both' : undefined,
                     }}>
-                    <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.6), transparent 70%)' }} />
-                    <div className="relative flex items-center gap-2 mb-1">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center relative" style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(8px)' }}>
-                        <MessageCircle size={14} className="text-white" strokeWidth={2.6} />
-                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: 'hsl(45,95%,55%)', boxShadow: '0 0 6px hsla(45,95%,55%,0.8)', animation: 'pulse 2s infinite' }} />
+                    <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full pointer-events-none opacity-50"
+                      style={{ background: 'radial-gradient(circle, hsla(160,70%,50%,0.18), transparent 70%)' }} />
+                    <div className="relative flex items-center gap-2 mb-1.5">
+                      <div className="w-7 h-7 rounded-xl flex items-center justify-center relative"
+                        style={{ background: 'linear-gradient(135deg, hsl(160,72%,42%), hsl(170,75%,40%))', boxShadow: '0 4px 10px hsla(160,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.35)' }}>
+                        <MessageCircle size={13} className="text-white" strokeWidth={2.6} />
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-white" style={{ background: 'hsl(45,95%,55%)', boxShadow: '0 0 6px hsla(45,95%,55%,0.8)', animation: 'pulse 2s infinite' }} />
                       </div>
-                      <span className="text-[10px] font-extrabold text-white/95 uppercase tracking-wider">Live 24/7</span>
+                      <span className="text-[9.5px] font-bold uppercase tracking-[0.14em]" style={{ color: 'hsl(160,65%,30%)' }}>Live 24/7</span>
                     </div>
-                    <p className="relative text-[13px] font-extrabold text-white leading-tight">Need Help?</p>
-                    <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Chat with us →</p>
+                    <p className="relative text-[14px] font-bold leading-tight" style={{ color: 'hsl(226,40%,18%)', letterSpacing: '-0.015em' }}>Need Help?</p>
+                    <p className="relative text-[10px] font-semibold mt-1 flex items-center gap-1" style={{ color: 'hsl(160,65%,35%)' }}>
+                      Chat with us <ChevronRight size={10} strokeWidth={3} className="transition-transform group-hover:translate-x-0.5" />
+                    </p>
                   </button>
                 </div>
 
