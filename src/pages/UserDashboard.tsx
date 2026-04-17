@@ -27,13 +27,14 @@ import {
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
   History, BellRing, BellOff, ExternalLink, Wallet, Globe,
   ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle,
-  Download, Share2, PlusSquare, Smartphone
+  Download, Share2, PlusSquare, Smartphone, AtSign, Check, Loader2
 } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
 
 interface Profile {
   display_name: string | null;
+  username: string | null;
   email: string | null;
   phone: string | null;
   avatar_url: string | null;
@@ -256,7 +257,10 @@ const UserDashboard = () => {
   });
   // On mobile: if a tab param is provided via URL, go directly to content view
   const [mobileShowContent, setMobileShowContent] = useState(() => !!searchParams.get('tab'));
-  const [profile, setProfile] = useState<Profile>({ display_name: '', email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+  const [profile, setProfile] = useState<Profile>({ display_name: '', username: null, email: '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+  const [usernameInput, setUsernameInput] = useState('');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
+  const [usernameError, setUsernameError] = useState<string>('');
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -371,14 +375,15 @@ const UserDashboard = () => {
 
   const fetchProfile = async () => {
     if (!user) return;
-    const { data } = await supabase.from('profiles').select('display_name, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned, total_points_redeemed').eq('user_id', user.id).single();
+    const { data } = await supabase.from('profiles').select('display_name, username, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned, total_points_redeemed').eq('user_id', user.id).single();
     if (data) {
-      setProfile({ display_name: data.display_name, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
+      setProfile({ display_name: data.display_name, username: (data as any).username || null, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
+      setUsernameInput((data as any).username || '');
       setPointsBalance((data as any).points_balance || 0);
       setTotalPointsEarned((data as any).total_points_earned || 0);
       setTotalPointsRedeemed((data as any).total_points_redeemed || 0);
     } else {
-      setProfile({ display_name: user.user_metadata?.display_name || '', email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
+      setProfile({ display_name: user.user_metadata?.display_name || '', username: null, email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
     }
   };
 
@@ -554,10 +559,61 @@ const UserDashboard = () => {
     setTopupProcessing(false);
   };
 
+  // Live username availability check (debounced)
+  useEffect(() => {
+    if (!editing) return;
+    const trimmed = usernameInput.trim();
+    // No change → idle
+    if (trimmed === (profile.username || '')) { setUsernameStatus('idle'); setUsernameError(''); return; }
+    if (!trimmed) { setUsernameStatus('idle'); setUsernameError(''); return; }
+    // Format check
+    if (trimmed.length < 3 || trimmed.length > 20) {
+      setUsernameStatus('invalid'); setUsernameError('৩-২০ অক্ষরের মধ্যে হতে হবে'); return;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) {
+      setUsernameStatus('invalid'); setUsernameError('শুধু a-z, 0-9 এবং _ ব্যবহার করুন'); return;
+    }
+    setUsernameStatus('checking'); setUsernameError('');
+    const timer = setTimeout(async () => {
+      const { data, error } = await supabase.rpc('is_username_available', { p_username: trimmed, p_user_id: user?.id || null });
+      if (error) { setUsernameStatus('invalid'); setUsernameError('চেক করতে সমস্যা হয়েছে'); return; }
+      setUsernameStatus(data ? 'available' : 'taken');
+      setUsernameError(data ? '' : 'এই ইউজারনেমটি ইতিমধ্যে নেওয়া হয়েছে');
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [usernameInput, editing, profile.username, user?.id]);
+
   const handleSaveProfile = async () => {
-    if (!user) return; setEditing(false); toast.success(t(selectedLang, 'profile_saved')); setSaving(true);
-    const { error } = await supabase.from('profiles').upsert({ user_id: user.id, display_name: profile.display_name, phone: profile.phone, email: user.email, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-    if (error) toast.error(t(selectedLang, 'profile_save_error')); setSaving(false);
+    if (!user) return;
+    const trimmedUsername = usernameInput.trim();
+    // Block save if username invalid/taken
+    if (trimmedUsername && trimmedUsername !== (profile.username || '') && (usernameStatus === 'taken' || usernameStatus === 'invalid' || usernameStatus === 'checking')) {
+      toast.error(usernameError || 'ইউজারনেম সঠিক নয়');
+      return;
+    }
+    setSaving(true);
+    const payload: any = {
+      user_id: user.id,
+      display_name: profile.display_name,
+      phone: profile.phone,
+      email: user.email,
+      updated_at: new Date().toISOString(),
+    };
+    // Only include username if changed and valid
+    if (trimmedUsername !== (profile.username || '')) {
+      payload.username = trimmedUsername || null;
+    }
+    const { error } = await supabase.from('profiles').upsert(payload, { onConflict: 'user_id' });
+    if (error) {
+      toast.error(error.message || t(selectedLang, 'profile_save_error'));
+      setSaving(false);
+      return;
+    }
+    setProfile(p => ({ ...p, username: trimmedUsername || null }));
+    setEditing(false);
+    setUsernameStatus('idle');
+    toast.success(t(selectedLang, 'profile_saved'));
+    setSaving(false);
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -866,6 +922,48 @@ const UserDashboard = () => {
                       )}
                     </div>
                   ))}
+
+                  {/* ── Username Field (custom @handle) ── */}
+                  <div>
+                    <label className={labelCls}>Username</label>
+                    {editing ? (
+                      <>
+                        <div className="relative">
+                          <AtSign size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <input
+                            type="text"
+                            value={usernameInput}
+                            onChange={e => setUsernameInput(e.target.value.replace(/\s/g, '').toLowerCase())}
+                            className={inputCls}
+                            placeholder="your_username"
+                            maxLength={20}
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                            spellCheck={false}
+                          />
+                          <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                            {usernameStatus === 'checking' && <Loader2 size={15} className="animate-spin text-muted-foreground" />}
+                            {usernameStatus === 'available' && <Check size={16} className="text-emerald-500" />}
+                            {(usernameStatus === 'taken' || usernameStatus === 'invalid') && <X size={16} className="text-rose-500" />}
+                          </div>
+                        </div>
+                        <p className="mt-1.5 text-[11px]"
+                          style={{ color: usernameStatus === 'available' ? 'hsl(160,70%,40%)' : (usernameStatus === 'taken' || usernameStatus === 'invalid') ? 'hsl(350,75%,55%)' : 'hsl(var(--muted-foreground))' }}>
+                          {usernameStatus === 'available' && '✓ এই ইউজারনেমটি ব্যবহারের জন্য উপলব্ধ'}
+                          {(usernameStatus === 'taken' || usernameStatus === 'invalid') && usernameError}
+                          {(usernameStatus === 'idle' || usernameStatus === 'checking') && '৩-২০ অক্ষর • শুধু a-z, 0-9, _ • যতবার ইচ্ছা পরিবর্তন করুন'}
+                        </p>
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>
+                        <AtSign size={15} className="text-muted-foreground" />
+                        <span className="text-sm font-medium text-foreground">
+                          {profile.username ? `@${profile.username}` : <span className="text-muted-foreground italic">এডিট চাপুন এবং কাস্টম ইউজারনেম সেট করুন</span>}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
                   <div>
                     <label className={labelCls}>{t(selectedLang, 'email')}</label>
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid hsla(258,78%,75%,0.2)' }}>

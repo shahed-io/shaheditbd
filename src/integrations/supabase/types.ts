@@ -1450,6 +1450,7 @@ export type Database = {
           total_points_redeemed: number
           updated_at: string
           user_id: string
+          username: string | null
           wallet_balance: number
         }
         Insert: {
@@ -1469,6 +1470,7 @@ export type Database = {
           total_points_redeemed?: number
           updated_at?: string
           user_id: string
+          username?: string | null
           wallet_balance?: number
         }
         Update: {
@@ -1488,6 +1490,7 @@ export type Database = {
           total_points_redeemed?: number
           updated_at?: string
           user_id?: string
+          username?: string | null
           wallet_balance?: number
         }
         Relationships: []
@@ -2225,6 +2228,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_username_available: {
+        Args: { p_user_id?: string; p_username: string }
         Returns: boolean
       }
       move_to_dlq: {
