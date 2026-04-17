@@ -749,187 +749,111 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="relative">
-                {/* Guest Hero — Premium Sign In CTA (Apple-inspired minimalism) */}
+                {/* Guest CTA — Editorial, restrained, professional */}
                 <button
                   onClick={() => { setAuthOpen(true); setMobileOpen(false); }}
-                  className="w-full group relative rounded-[22px] p-[1.5px] mb-3 overflow-hidden transition-all duration-300 active:scale-[0.985]"
+                  className="w-full group relative rounded-2xl mb-3 overflow-hidden text-left transition-colors duration-200"
                   style={{
-                    background: 'linear-gradient(135deg, hsla(258,90%,65%,0.55), hsla(200,95%,60%,0.35) 50%, hsla(280,85%,68%,0.5))',
-                    animation: mobileOpen ? 'slideInRight 0.4s ease-out both' : undefined,
+                    background: 'hsl(226,30%,12%)',
+                    animation: mobileOpen ? 'slideInRight 0.35s ease-out both' : undefined,
                   }}>
-                  <div className="relative rounded-[20.5px] px-4 py-3.5 overflow-hidden"
-                    style={{
-                      background: 'linear-gradient(135deg, hsl(252,72%,52%) 0%, hsl(228,80%,50%) 50%, hsl(208,92%,52%) 100%)',
-                      boxShadow: '0 18px 40px -14px hsla(252,72%,40%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.28), inset 0 -1px 0 hsla(0,0%,0%,0.08)',
-                    }}>
-                    {/* Subtle mesh glow */}
-                    <div className="absolute inset-0 pointer-events-none opacity-90"
-                      style={{ background: 'radial-gradient(120% 80% at 100% 0%, hsla(280,95%,75%,0.35), transparent 55%), radial-gradient(80% 60% at 0% 100%, hsla(195,100%,70%,0.25), transparent 60%)' }} />
-                    {/* Glass shine sweep */}
-                    <div className="absolute -inset-y-2 -left-1/3 w-1/2 pointer-events-none opacity-40 transition-transform duration-700 group-hover:translate-x-[260%]"
-                      style={{ background: 'linear-gradient(115deg, transparent 30%, hsla(0,0%,100%,0.35) 50%, transparent 70%)', filter: 'blur(6px)', transform: 'translateX(-60%)' }} />
-
-                    <div className="relative flex items-center gap-3">
-                      <div className="relative shrink-0">
-                        <div className="w-11 h-11 rounded-2xl flex items-center justify-center"
-                          style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.28), hsla(0,0%,100%,0.12))', backdropFilter: 'blur(14px)', border: '1px solid hsla(0,0%,100%,0.45)', boxShadow: 'inset 0 1px 0 hsla(0,0%,100%,0.4)' }}>
-                          <Sparkles size={20} className="text-white" strokeWidth={2.4} style={{ filter: 'drop-shadow(0 1px 2px hsla(0,0%,0%,0.18))' }} />
-                        </div>
+                  <div className="px-4 py-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-medium uppercase tracking-[0.16em] mb-1.5" style={{ color: 'hsla(0,0%,100%,0.55)' }}>Account</p>
+                        <p className="text-[15px] font-semibold text-white leading-tight" style={{ letterSpacing: '-0.015em' }}>Sign in or create account</p>
+                        <p className="text-[12px] mt-1 leading-snug" style={{ color: 'hsla(0,0%,100%,0.62)' }}>Track orders, save items & earn rewards.</p>
                       </div>
-                      <div className="flex-1 text-left min-w-0">
-                        <p className="text-[9.5px] font-bold uppercase tracking-[0.22em] text-white/75 mb-0.5">Welcome</p>
-                        <p className="text-[15px] font-bold text-white leading-tight" style={{ letterSpacing: '-0.01em' }}>Sign in or create account</p>
-                      </div>
-                      <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5"
-                        style={{ background: 'hsla(0,0%,100%,0.18)', border: '1px solid hsla(0,0%,100%,0.3)' }}>
-                        <ChevronRight size={15} className="text-white" strokeWidth={2.6} />
+                      <div className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:translate-x-0.5"
+                        style={{ background: 'hsla(0,0%,100%,0.08)', border: '1px solid hsla(0,0%,100%,0.14)' }}>
+                        <ChevronRight size={16} className="text-white" strokeWidth={2.2} />
                       </div>
                     </div>
-
-                    {/* Perks row */}
-                    <div className="relative mt-3 pt-3 flex items-center gap-3" style={{ borderTop: '1px solid hsla(0,0%,100%,0.18)' }}>
-                      {[
-                        { icon: Gift, label: 'Welcome gift' },
-                        { icon: Star, label: 'Loyalty points' },
-                        { icon: Sparkles, label: 'Member deals' },
-                      ].map((p, i) => (
-                        <div key={i} className="flex items-center gap-1.5 min-w-0">
-                          <p.icon size={11} className="text-white/85 shrink-0" strokeWidth={2.6} />
-                          <span className="text-[10px] font-semibold text-white/90 truncate" style={{ letterSpacing: '0.01em' }}>{p.label}</span>
-                        </div>
-                      ))}
-                    </div>
+                  </div>
+                  <div className="px-4 py-2.5 flex items-center justify-between text-[11px]" style={{ background: 'hsla(0,0%,100%,0.04)', borderTop: '1px solid hsla(0,0%,100%,0.08)', color: 'hsla(0,0%,100%,0.7)' }}>
+                    <span className="font-medium">New here?</span>
+                    <span className="font-semibold text-white">Get welcome offer →</span>
                   </div>
                 </button>
 
-                {/* Premium Quick Browse — refined glass tiles */}
-                <div className="grid grid-cols-4 gap-2 mb-3">
+                {/* Quick links — minimal list, no color tiles */}
+                <nav className="rounded-2xl overflow-hidden mb-3"
+                  style={{ background: 'hsl(0,0%,100%)', border: '1px solid hsl(226,18%,90%)' }}>
                   {[
-                    { label: 'Shop',    icon: ShoppingCart, href: '/shop',       tint: 'hsl(258,78%,55%)' },
-                    { label: 'Tools',   icon: Sparkles,     href: '/free-tools', tint: 'hsl(28,92%,55%)' },
-                    { label: 'Blog',    icon: Star,         href: '/blog',       tint: 'hsl(160,72%,42%)' },
-                    { label: 'Contact', icon: MessageCircle,href: '/contact-us', tint: 'hsl(208,92%,52%)' },
-                  ].map((q, i) => (
+                    { label: 'Shop all products', sub: 'Browse the catalog',  icon: ShoppingCart, href: '/shop' },
+                    { label: 'Free tools',        sub: '40+ utilities',       icon: Sparkles,     href: '/free-tools' },
+                    { label: 'Blog & guides',     sub: 'Tips and how-tos',    icon: Star,         href: '/blog' },
+                    { label: 'Contact support',   sub: 'We reply in minutes', icon: MessageCircle,href: '/contact-us' },
+                  ].map((item, i, arr) => (
                     <button
-                      key={q.label}
-                      onClick={() => { navigate(q.href); setMobileOpen(false); }}
-                      className="group relative rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-1.5 py-3 transition-all duration-300 active:scale-[0.94]"
+                      key={item.label}
+                      onClick={() => { navigate(item.href); setMobileOpen(false); }}
+                      onMouseEnter={() => prefetchRoute(item.href)}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-150 hover:bg-[hsl(226,20%,97%)] active:bg-[hsl(226,22%,95%)]"
                       style={{
-                        background: 'linear-gradient(160deg, hsla(0,0%,100%,0.95), hsla(0,0%,100%,0.78))',
-                        border: '1px solid hsla(226,30%,80%,0.45)',
-                        backdropFilter: 'blur(14px)',
-                        boxShadow: '0 4px 14px hsla(226,40%,30%,0.06), inset 0 1px 0 hsla(0,0%,100%,0.7)',
-                        animation: mobileOpen ? `slideInRight 0.4s ease-out ${0.05 + i * 0.04}s both` : undefined,
+                        borderBottom: i < arr.length - 1 ? '1px solid hsl(226,18%,93%)' : undefined,
+                        animation: mobileOpen ? `slideInRight 0.35s ease-out ${0.04 + i * 0.03}s both` : undefined,
                       }}>
-                      {/* color accent ring */}
-                      <div className="relative w-10 h-10 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
-                        style={{
-                          background: `linear-gradient(135deg, ${q.tint}, color-mix(in hsl, ${q.tint}, hsl(280,80%,60%) 30%))`,
-                          boxShadow: `0 8px 18px -4px color-mix(in hsl, ${q.tint}, transparent 55%), inset 0 1px 0 hsla(0,0%,100%,0.35)`,
-                        }}>
-                        <q.icon size={18} className="text-white" strokeWidth={2.5} style={{ filter: 'drop-shadow(0 1px 2px hsla(0,0%,0%,0.15))' }} />
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: 'hsl(226,22%,96%)', border: '1px solid hsl(226,18%,90%)' }}>
+                        <item.icon size={16} strokeWidth={2} style={{ color: 'hsl(226,30%,30%)' }} />
                       </div>
-                      <span className="text-[10.5px] font-semibold tracking-tight" style={{ color: 'hsl(226,35%,22%)', letterSpacing: '-0.005em' }}>{q.label}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13.5px] font-semibold leading-tight" style={{ color: 'hsl(226,35%,16%)', letterSpacing: '-0.01em' }}>{item.label}</p>
+                        <p className="text-[11px] mt-0.5" style={{ color: 'hsl(226,15%,48%)' }}>{item.sub}</p>
+                      </div>
+                      <ChevronRight size={15} strokeWidth={2} style={{ color: 'hsl(226,15%,55%)' }} />
                     </button>
                   ))}
-                </div>
+                </nav>
 
-                {/* Featured Strip — Premium Glass Cards */}
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  <button
-                    onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
-                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 active:scale-[0.97] text-left"
-                    style={{
-                      background: 'linear-gradient(160deg, hsla(0,0%,100%,0.95), hsla(0,0%,100%,0.78))',
-                      border: '1px solid hsla(8,80%,70%,0.4)',
-                      backdropFilter: 'blur(14px)',
-                      boxShadow: '0 6px 18px hsla(8,80%,50%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.7)',
-                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.22s both' : undefined,
-                    }}>
-                    <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full pointer-events-none opacity-50"
-                      style={{ background: 'radial-gradient(circle, hsla(8,90%,60%,0.18), transparent 70%)' }} />
-                    <div className="relative flex items-center gap-2 mb-1.5">
-                      <div className="w-7 h-7 rounded-xl flex items-center justify-center"
-                        style={{ background: 'linear-gradient(135deg, hsl(8,88%,58%), hsl(20,92%,55%))', boxShadow: '0 4px 10px hsla(8,80%,50%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.35)' }}>
-                        <span className="text-[12px]" style={{ filter: 'drop-shadow(0 1px 1px hsla(0,0%,0%,0.2))' }}>🔥</span>
-                      </div>
-                      <span className="text-[9.5px] font-bold uppercase tracking-[0.14em]" style={{ color: 'hsl(8,75%,42%)' }}>Hot Deals</span>
+                {/* Single highlight strip — simple, no neon */}
+                <button
+                  onClick={() => { navigate('/shop?sort=discount'); setMobileOpen(false); }}
+                  onMouseEnter={() => prefetchRoute('/shop')}
+                  className="w-full group relative rounded-2xl px-4 py-3 mb-3 flex items-center justify-between gap-3 transition-colors duration-200"
+                  style={{
+                    background: 'hsl(0,0%,100%)',
+                    border: '1px solid hsl(226,18%,90%)',
+                    animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.20s both' : undefined,
+                  }}>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-2 h-10 rounded-full shrink-0" style={{ background: 'hsl(8,75%,55%)' }} />
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: 'hsl(8,70%,42%)' }}>Today's deals</p>
+                      <p className="text-[13.5px] font-semibold leading-tight mt-0.5" style={{ color: 'hsl(226,35%,16%)', letterSpacing: '-0.01em' }}>Save up to 70% on selected products</p>
                     </div>
-                    <p className="relative text-[14px] font-bold leading-tight" style={{ color: 'hsl(226,40%,18%)', letterSpacing: '-0.015em' }}>Up to 70% OFF</p>
-                    <p className="relative text-[10px] font-semibold mt-1 flex items-center gap-1" style={{ color: 'hsl(8,75%,48%)' }}>
-                      Shop trending <ChevronRight size={10} strokeWidth={3} className="transition-transform group-hover:translate-x-0.5" />
-                    </p>
-                  </button>
+                  </div>
+                  <ChevronRight size={16} strokeWidth={2} style={{ color: 'hsl(226,20%,40%)' }} className="shrink-0 transition-transform group-hover:translate-x-0.5" />
+                </button>
 
-                  <button
-                    onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
-                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 active:scale-[0.97] text-left"
-                    style={{
-                      background: 'linear-gradient(160deg, hsla(0,0%,100%,0.95), hsla(0,0%,100%,0.78))',
-                      border: '1px solid hsla(160,60%,60%,0.4)',
-                      backdropFilter: 'blur(14px)',
-                      boxShadow: '0 6px 18px hsla(160,60%,40%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.7)',
-                      animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.26s both' : undefined,
-                    }}>
-                    <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full pointer-events-none opacity-50"
-                      style={{ background: 'radial-gradient(circle, hsla(160,70%,50%,0.18), transparent 70%)' }} />
-                    <div className="relative flex items-center gap-2 mb-1.5">
-                      <div className="w-7 h-7 rounded-xl flex items-center justify-center relative"
-                        style={{ background: 'linear-gradient(135deg, hsl(160,72%,42%), hsl(170,75%,40%))', boxShadow: '0 4px 10px hsla(160,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.35)' }}>
-                        <MessageCircle size={13} className="text-white" strokeWidth={2.6} />
-                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-white" style={{ background: 'hsl(45,95%,55%)', boxShadow: '0 0 6px hsla(45,95%,55%,0.8)', animation: 'pulse 2s infinite' }} />
-                      </div>
-                      <span className="text-[9.5px] font-bold uppercase tracking-[0.14em]" style={{ color: 'hsl(160,65%,30%)' }}>Live 24/7</span>
-                    </div>
-                    <p className="relative text-[14px] font-bold leading-tight" style={{ color: 'hsl(226,40%,18%)', letterSpacing: '-0.015em' }}>Need Help?</p>
-                    <p className="relative text-[10px] font-semibold mt-1 flex items-center gap-1" style={{ color: 'hsl(160,65%,35%)' }}>
-                      Chat with us <ChevronRight size={10} strokeWidth={3} className="transition-transform group-hover:translate-x-0.5" />
-                    </p>
-                  </button>
-                </div>
-
-                {/* Trending Categories Chips — Guest */}
+                {/* Trending Categories — clean chips */}
                 {navCategories.length > 0 && (
-                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.4s ease-out 0.30s both' : undefined }}>
-                    <div className="flex items-center gap-2 px-1 pb-2">
-                      <span className="text-[10px]">🏷️</span>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'hsl(226,35%,40%)' }}>Trending Categories</p>
-                    </div>
+                  <div className="mb-4" style={{ animation: mobileOpen ? 'slideInRight 0.35s ease-out 0.24s both' : undefined }}>
+                    <p className="text-[10px] font-medium uppercase tracking-[0.16em] px-1 pb-2" style={{ color: 'hsl(226,15%,48%)' }}>Trending categories</p>
                     <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
-                      {navCategories.slice(0, 8).map(cat => {
-                        const meta = CAT_ICON_MAP[cat.name] || CAT_ICON_MAP.default;
-                        return (
-                          <button
-                            key={cat.id}
-                            onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
-                            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11.5px] font-bold transition-all duration-300 hover:scale-105 active:scale-95"
-                            style={{
-                              background: 'hsla(0,0%,100%,0.85)',
-                              border: '1px solid hsla(258,78%,60%,0.18)',
-                              color: 'hsl(226,35%,22%)',
-                              backdropFilter: 'blur(10px)',
-                              boxShadow: '0 2px 6px hsla(258,40%,40%,0.06)',
-                            }}>
-                            <span className="text-[13px]">{meta.icon}</span>
-                            <span>{cat.name}</span>
-                            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full" style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,45%)' }}>{cat.count}</span>
-                          </button>
-                        );
-                      })}
+                      {navCategories.slice(0, 8).map(cat => (
+                        <button
+                          key={cat.id}
+                          onClick={() => { navigate(`/shop?category=${cat.slug}`); setMobileOpen(false); }}
+                          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium transition-colors duration-150 hover:bg-[hsl(226,22%,96%)]"
+                          style={{
+                            background: 'hsl(0,0%,100%)',
+                            border: '1px solid hsl(226,18%,88%)',
+                            color: 'hsl(226,30%,22%)',
+                          }}>
+                          <span>{cat.name}</span>
+                          <span className="text-[10px] font-medium tabular-nums" style={{ color: 'hsl(226,15%,52%)' }}>{cat.count}</span>
+                        </button>
+                      ))}
                     </div>
                   </div>
                 )}
 
-                {/* Section Label */}
-                <div className="flex items-center gap-2 px-1 pb-2.5">
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
-                  <p className="text-[10px] font-bold tracking-[0.22em] uppercase flex items-center gap-1.5"
-                    style={{ background: 'linear-gradient(135deg, hsl(258,78%,50%), hsl(200,90%,45%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    <Sparkles size={10} style={{ color: 'hsl(258,78%,55%)' }} />
-                    Explore
-                    <Sparkles size={10} style={{ color: 'hsl(200,90%,50%)' }} />
-                  </p>
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.3), transparent)' }} />
+                {/* Section Label — minimal divider */}
+                <div className="flex items-center gap-3 px-1 pb-2.5">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.18em]" style={{ color: 'hsl(226,15%,48%)' }}>Explore</p>
+                  <div className="h-px flex-1" style={{ background: 'hsl(226,18%,88%)' }} />
                 </div>
 
                 {/* Guest list — login-required items */}
