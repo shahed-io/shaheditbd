@@ -46,6 +46,28 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
   const wishlisted = isWishlisted(String(product.id));
   const inCart     = isInCart(product.id);
 
+  // Detect if product image is missing / invalid → use branded auto-fallback
+  const hasValidImage = !!product.image && typeof product.image === 'string' && product.image.trim().length > 0 && product.image !== 'null' && product.image !== 'undefined';
+
+  // Deterministic gradient picker per product so each fallback feels unique
+  const gradientPalettes = [
+    { from: 'hsl(258, 85%, 70%)', to:   'hsl(195, 90%, 65%)', accent: 'hsl(320, 90%, 72%)' },
+    { from: 'hsl(195, 90%, 65%)', to:   'hsl(160, 80%, 60%)', accent: 'hsl(258, 85%, 72%)' },
+    { from: 'hsl(320, 88%, 68%)', to:   'hsl(258, 85%, 70%)', accent: 'hsl(40, 100%, 65%)' },
+    { from: 'hsl(40, 100%, 65%)', to:   'hsl(20, 95%, 62%)',  accent: 'hsl(320, 88%, 68%)' },
+    { from: 'hsl(160, 80%, 55%)', to:   'hsl(195, 90%, 60%)', accent: 'hsl(258, 85%, 70%)' },
+    { from: 'hsl(280, 85%, 70%)', to:   'hsl(330, 90%, 70%)', accent: 'hsl(195, 90%, 65%)' },
+  ];
+  const seed = String(product.id || product.name || '0').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  const palette = gradientPalettes[seed % gradientPalettes.length];
+  const initials = product.name
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(w => w[0]?.toUpperCase() || '')
+    .join('') || 'SS';
+
   const waMsg = () => {
     const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
@@ -305,28 +327,83 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
           <div className="card-scan-line" />
 
           {/* Shimmer placeholder — always visible until image loads */}
-          {!imageLoaded && <div className="absolute inset-0 shimmer" />}
+          {!imageLoaded && hasValidImage && <div className="absolute inset-0 shimmer" />}
 
-          <img
-            src={product.image}
-            alt={`${product.name} - Buy at ৳${product.price.toLocaleString()} in Bangladesh`}
-            title={`${product.name} - Shahed Store Bangladesh`}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            fetchPriority={priority ? 'high' : 'low'}
-            onLoad={() => setImageLoaded(true)}
-            onError={e => {
-              (e.target as HTMLImageElement).src = 'https://placehold.co/300x300/f5f3ff/7c3aed?text=Product';
-              setImageLoaded(true);
-            }}
-            className="w-full h-full object-cover"
-            style={{
-              opacity: imageLoaded ? 1 : 0,
-              transition: 'opacity 0.4s ease',
-              position: 'relative',
-              zIndex: 1,
-            }}
-          />
+          {hasValidImage ? (
+            <img
+              src={product.image}
+              alt={`${product.name} - Buy at ৳${product.price.toLocaleString()} in Bangladesh`}
+              title={`${product.name} - Shahed Store Bangladesh`}
+              loading={priority ? 'eager' : 'lazy'}
+              decoding="async"
+              fetchPriority={priority ? 'high' : 'low'}
+              onLoad={() => setImageLoaded(true)}
+              onError={() => setImageLoaded(true)}
+              className="w-full h-full object-cover"
+              style={{
+                opacity: imageLoaded ? 1 : 0,
+                transition: 'opacity 0.4s ease',
+                position: 'relative',
+                zIndex: 1,
+              }}
+            />
+          ) : (
+            // ─── Branded auto-fallback (when product image is missing) ───
+            <div
+              className="absolute inset-0 flex items-center justify-center overflow-hidden"
+              role="img"
+              aria-label={`${product.name} - Shahed Store`}
+              style={{
+                background: `linear-gradient(135deg, ${palette.from} 0%, ${palette.to} 100%)`,
+                zIndex: 1,
+              }}
+            >
+              {/* Decorative bokeh circles */}
+              <span className="absolute rounded-full opacity-40 blur-2xl pointer-events-none"
+                style={{ width: '60%', height: '60%', top: '-15%', left: '-15%', background: palette.accent }} />
+              <span className="absolute rounded-full opacity-30 blur-2xl pointer-events-none"
+                style={{ width: '50%', height: '50%', bottom: '-10%', right: '-10%', background: 'rgba(255,255,255,0.6)' }} />
+              <span className="absolute rounded-full opacity-25 blur-xl pointer-events-none"
+                style={{ width: '22%', height: '22%', top: '18%', right: '12%', background: 'rgba(255,255,255,0.85)' }} />
+
+              {/* Subtle dot pattern */}
+              <span className="absolute inset-0 pointer-events-none opacity-20"
+                style={{
+                  backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1.5px)',
+                  backgroundSize: '22px 22px',
+                }} />
+
+              {/* Top brand chip */}
+              <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-widest uppercase backdrop-blur-md"
+                style={{ background: 'rgba(255,255,255,0.25)', color: 'white', border: '1px solid rgba(255,255,255,0.35)' }}>
+                Shahed Store
+              </span>
+
+              {/* Center glass tile with initials */}
+              <div className="relative flex flex-col items-center justify-center gap-2 px-6 py-5 rounded-2xl backdrop-blur-xl"
+                style={{
+                  background: 'rgba(255,255,255,0.22)',
+                  border: '1.5px solid rgba(255,255,255,0.4)',
+                  boxShadow: '0 12px 40px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.5)',
+                  minWidth: '50%',
+                }}>
+                <span className="font-sora font-black text-white leading-none drop-shadow-lg"
+                  style={{ fontSize: 'clamp(28px, 5vw, 44px)', letterSpacing: '-0.02em', textShadow: '0 2px 12px rgba(0,0,0,0.25)' }}>
+                  {initials}
+                </span>
+                <span className="text-white text-[10px] font-bold uppercase tracking-[0.18em] opacity-95 text-center line-clamp-1 max-w-[140px]"
+                  style={{ textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>
+                  {product.category || 'Premium'}
+                </span>
+              </div>
+
+              {/* Bottom watermark */}
+              <span className="absolute bottom-2.5 right-3 text-[9px] font-fira font-bold opacity-85"
+                style={{ color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+                shahedstore.com.bd
+              </span>
+            </div>
+          )}
 
 
           {/* Light shimmer overlay on hover — replaces dark shadow */}
