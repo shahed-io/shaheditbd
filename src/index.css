@@ -1685,3 +1685,31 @@ body.admin-page * {
 @keyframes vt-fade-in {
   from { opacity: 0; transform: translateY(6px); }
 }
+
+/* ══════════════════════════════════════
+   GRID FILL ROWS — hide orphan items in last row
+   So no empty gaps appear when product count
+   doesn't divide evenly by the column count.
+══════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* tablet: 4 cols → hide last 1, 2, or 3 orphan items */
+  .grid-fill-rows > *:nth-last-child(1):nth-child(4n + 1),
+  .grid-fill-rows > *:nth-last-child(2):nth-child(4n + 1),
+  .grid-fill-rows > *:nth-last-child(2):nth-child(4n + 1) ~ *,
+  .grid-fill-rows > *:nth-last-child(3):nth-child(4n + 1),
+  .grid-fill-rows > *:nth-last-child(3):nth-child(4n + 1) ~ * {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  /* desktop: 5 cols → hide last 1, 2, 3, or 4 orphan items */
+  .grid-fill-rows > *:nth-last-child(1):nth-child(5n + 1),
+  .grid-fill-rows > *:nth-last-child(2):nth-child(5n + 1),
+  .grid-fill-rows > *:nth-last-child(2):nth-child(5n + 1) ~ *,
+  .grid-fill-rows > *:nth-last-child(3):nth-child(5n + 1),
+  .grid-fill-rows > *:nth-last-child(3):nth-child(5n + 1) ~ *,
+  .grid-fill-rows > *:nth-last-child(4):nth-child(5n + 1),
+  .grid-fill-rows > *:nth-last-child(4):nth-child(5n + 1) ~ * {
+    display: none;
+  }
+}
