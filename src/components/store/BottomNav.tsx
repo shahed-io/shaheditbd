@@ -98,7 +98,7 @@ const BottomNav = () => {
 
       {/* Outer wrapper for floating gradient halo */}
       <div
-        className={`md:hidden fixed left-3 right-3 z-40 transition-all duration-500 ${hidden ? 'translate-y-[140%] opacity-0' : 'translate-y-0 opacity-100'}`}
+        className="md:hidden fixed left-3 right-3 z-40"
         style={{
           bottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)',
         }}
