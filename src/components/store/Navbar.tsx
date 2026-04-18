@@ -512,7 +512,7 @@ const Navbar = () => {
             transition: 'max-height 500ms ease-out',
           }}
         >
-          <div className="border-t px-3 py-4 pb-[calc(env(safe-area-inset-bottom)+160px)] relative"
+          <div className="border-t px-3 py-4 pb-[max(env(safe-area-inset-bottom),32px)] relative"
             style={{
               background: 'linear-gradient(180deg, hsla(258,60%,99%,0.98) 0%, hsla(220,50%,98%,0.98) 50%, hsla(280,40%,99%,0.98) 100%)',
               borderColor: 'hsla(258,78%,60%,0.15)',
