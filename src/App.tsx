@@ -19,6 +19,7 @@ import Index from "./pages/Index";
 const CartDrawer = lazy(() => import("@/components/store/CartDrawer"));
 const RedirectEnforcer = lazy(() => import("@/components/seo/RedirectEnforcer"));
 const FacebookPixel = lazy(() => import("@/components/store/FacebookPixel"));
+const BottomNav = lazy(() => import("@/components/store/BottomNav"));
 
 // All other pages — lazy loaded
 const Checkout              = lazy(() => import("./pages/Checkout"));
@@ -196,6 +197,7 @@ const AppContent = () => {
           <FacebookPixel />
           <CartDrawer />
           <RedirectEnforcer />
+          <BottomNav />
         </Suspense>
       )}
       <ViewTransitions />
