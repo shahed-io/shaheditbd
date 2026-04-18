@@ -46,6 +46,28 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
   const wishlisted = isWishlisted(String(product.id));
   const inCart     = isInCart(product.id);
 
+  // Detect if product image is missing / invalid → use branded auto-fallback
+  const hasValidImage = !!product.image && typeof product.image === 'string' && product.image.trim().length > 0 && product.image !== 'null' && product.image !== 'undefined';
+
+  // Deterministic gradient picker per product so each fallback feels unique
+  const gradientPalettes = [
+    { from: 'hsl(258, 85%, 70%)', to:   'hsl(195, 90%, 65%)', accent: 'hsl(320, 90%, 72%)' },
+    { from: 'hsl(195, 90%, 65%)', to:   'hsl(160, 80%, 60%)', accent: 'hsl(258, 85%, 72%)' },
+    { from: 'hsl(320, 88%, 68%)', to:   'hsl(258, 85%, 70%)', accent: 'hsl(40, 100%, 65%)' },
+    { from: 'hsl(40, 100%, 65%)', to:   'hsl(20, 95%, 62%)',  accent: 'hsl(320, 88%, 68%)' },
+    { from: 'hsl(160, 80%, 55%)', to:   'hsl(195, 90%, 60%)', accent: 'hsl(258, 85%, 70%)' },
+    { from: 'hsl(280, 85%, 70%)', to:   'hsl(330, 90%, 70%)', accent: 'hsl(195, 90%, 65%)' },
+  ];
+  const seed = String(product.id || product.name || '0').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  const palette = gradientPalettes[seed % gradientPalettes.length];
+  const initials = product.name
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(w => w[0]?.toUpperCase() || '')
+    .join('') || 'SS';
+
   const waMsg = () => {
     const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
