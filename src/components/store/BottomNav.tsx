@@ -1,8 +1,9 @@
-import { Home, ShoppingBag, Search, Heart, User } from 'lucide-react';
+import { Home, ShoppingBag, Package, Heart, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
 
 const BottomNav = () => {
@@ -12,6 +13,27 @@ const BottomNav = () => {
   const { user } = useAuth();
   const [hidden, setHidden] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [pendingOrders, setPendingOrders] = useState(0);
+
+  // Fetch active orders count for logged-in user
+  useEffect(() => {
+    if (!user) { setPendingOrders(0); return; }
+    let cancelled = false;
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from('orders')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .in('status', ['pending', 'processing']);
+      if (!cancelled) setPendingOrders(count || 0);
+    };
+    fetchCount();
+    const channel = supabase
+      .channel('bottomnav-orders')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `user_id=eq.${user.id}` }, fetchCount)
+      .subscribe();
+    return () => { cancelled = true; supabase.removeChannel(channel); };
+  }, [user]);
 
   // Hide on admin / checkout routes
   const hideOnRoutes = ['/ceo', '/checkout', '/reset-password'];
@@ -47,10 +69,15 @@ const BottomNav = () => {
     else setAuthOpen(true);
   };
 
+  const handleOrdersClick = () => {
+    if (user) navigate('/dashboard?tab=orders');
+    else setAuthOpen(true);
+  };
+
   const items = [
     { label: 'Home',     icon: Home,        path: '/',          onClick: () => navigate('/') },
     { label: 'Shop',     icon: ShoppingBag, path: '/shop',      onClick: () => navigate('/shop') },
-    { label: 'Search',   icon: Search,      path: '/shop?focus=search', onClick: () => navigate('/shop?focus=search') },
+    { label: 'Orders',   icon: Package,     path: '/dashboard?tab=orders', onClick: handleOrdersClick, badge: pendingOrders },
     { label: 'Wishlist', icon: Heart,       path: '/dashboard?tab=wishlist', onClick: handleWishlistClick, badge: wishlistItems.length },
     { label: 'Account',  icon: User,        path: user ? '/dashboard' : '/account',  onClick: handleAccountClick },
   ];
