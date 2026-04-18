@@ -153,8 +153,8 @@ const TopProducts = () => {
                       </div>
                     ))}
                   </div>
-                  {/* Tablet & desktop grid — 3 cols on tablet, 4+ on laptop */}
-                  <div className="hidden md:grid grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+                  {/* Tablet (4 cols) & desktop (5 cols) grid — auto-hide orphan cards that don't fill a row */}
+                  <div className="hidden md:grid grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 grid-fill-rows">
                     {shown.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.05} priority={catIdx === 0 && i < 4} />)}
                   </div>
                   {hasMore && (
@@ -175,7 +175,7 @@ const TopProducts = () => {
         {!error && !loading && activeTab !== 'All' && (
           <div>
             <p className="text-sm text-muted-foreground mb-6 font-fira">{filtered.length} products in "{activeTab}"</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 grid-fill-rows">
               {filtered.map((p, i) => <ProductCard key={p.id} product={p} delay={Math.min(i * 0.04, 0.4)} />)}
             </div>
           </div>
