@@ -57,6 +57,7 @@ const BottomNav = () => {
 
   return (
     <>
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
       {/* Spacer so content isn't hidden behind the bar */}
       <div className="md:hidden h-[64px]" aria-hidden="true" />
 
