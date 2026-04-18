@@ -1,8 +1,9 @@
-import { Home, ShoppingBag, Search, Heart, User } from 'lucide-react';
+import { Home, ShoppingBag, Package, Heart, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
 
 const BottomNav = () => {
