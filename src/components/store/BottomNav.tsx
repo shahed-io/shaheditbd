@@ -11,7 +11,7 @@ const BottomNav = () => {
   const navigate = useNavigate();
   const { wishlistItems } = useWishlist();
   const { user } = useAuth();
-  const [hidden, setHidden] = useState(false);
+  
   const [authOpen, setAuthOpen] = useState(false);
   const [pendingOrders, setPendingOrders] = useState(0);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -58,18 +58,7 @@ const BottomNav = () => {
   const hideOnRoutes = ['/ceo', '/checkout', '/reset-password'];
   const shouldHide = hideOnRoutes.some(r => location.pathname.startsWith(r));
 
-  // Auto-hide on scroll down (mobile UX)
-  useEffect(() => {
-    let lastY = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (y > lastY && y > 80) setHidden(true);
-      else setHidden(false);
-      lastY = y;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  // Bottom nav stays permanently visible — no scroll-based hiding
 
   if (shouldHide) return null;
 
@@ -109,7 +98,7 @@ const BottomNav = () => {
 
       {/* Outer wrapper for floating gradient halo */}
       <div
-        className={`md:hidden fixed left-3 right-3 z-40 transition-all duration-500 ${hidden ? 'translate-y-[140%] opacity-0' : 'translate-y-0 opacity-100'}`}
+        className="md:hidden fixed left-3 right-3 z-40"
         style={{
           bottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)',
         }}
