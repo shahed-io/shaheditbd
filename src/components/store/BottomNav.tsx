@@ -69,10 +69,15 @@ const BottomNav = () => {
     else setAuthOpen(true);
   };
 
+  const handleOrdersClick = () => {
+    if (user) navigate('/dashboard?tab=orders');
+    else setAuthOpen(true);
+  };
+
   const items = [
     { label: 'Home',     icon: Home,        path: '/',          onClick: () => navigate('/') },
     { label: 'Shop',     icon: ShoppingBag, path: '/shop',      onClick: () => navigate('/shop') },
-    { label: 'Search',   icon: Search,      path: '/shop?focus=search', onClick: () => navigate('/shop?focus=search') },
+    { label: 'Orders',   icon: Package,     path: '/dashboard?tab=orders', onClick: handleOrdersClick, badge: pendingOrders },
     { label: 'Wishlist', icon: Heart,       path: '/dashboard?tab=wishlist', onClick: handleWishlistClick, badge: wishlistItems.length },
     { label: 'Account',  icon: User,        path: user ? '/dashboard' : '/account',  onClick: handleAccountClick },
   ];
