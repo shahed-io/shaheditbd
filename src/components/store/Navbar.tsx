@@ -71,6 +71,20 @@ const Navbar = () => {
   const { user } = useAuth();
   const { cartCount, setCartOpen } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Auto-open mobile menu when ?openMenu=1 (from dashboard back button etc.)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('openMenu') === '1') {
+      setMobileOpen(true);
+      // Clean URL
+      const cleaned = location.pathname + (Array.from(params.entries()).filter(([k]) => k !== 'openMenu').length
+        ? '?' + new URLSearchParams(Array.from(params.entries()).filter(([k]) => k !== 'openMenu')).toString()
+        : '');
+      window.history.replaceState(null, '', cleaned);
+    }
+  }, [location.search, location.pathname]);
 
   const [imgVersion] = useState(() => Date.now());
 
