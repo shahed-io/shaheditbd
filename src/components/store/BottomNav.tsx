@@ -59,22 +59,31 @@ const BottomNav = () => {
     <>
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
       {/* Spacer so content isn't hidden behind the bar */}
-      <div className="md:hidden h-[64px]" aria-hidden="true" />
+      <div className="md:hidden h-[72px]" aria-hidden="true" />
 
       <nav
-        className={`md:hidden fixed left-0 right-0 z-40 transition-transform duration-300 ${hidden ? 'translate-y-full' : 'translate-y-0'}`}
+        className={`md:hidden fixed left-2 right-2 z-40 transition-all duration-300 ${hidden ? 'translate-y-[120%] opacity-0' : 'translate-y-0 opacity-100'}`}
         style={{
-          bottom: 0,
-          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-          background: 'rgba(255,255,255,0.85)',
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-          borderTop: '1px solid hsla(var(--border), 0.6)',
-          boxShadow: '0 -8px 24px -8px rgba(0,0,0,0.08)',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)',
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.72))',
+          backdropFilter: 'blur(28px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(200%)',
+          border: '1px solid hsla(0,0%,100%,0.7)',
+          borderRadius: 24,
+          boxShadow:
+            '0 -2px 0 hsla(0,0%,100%,0.9) inset, 0 12px 32px -8px hsla(258,78%,40%,0.18), 0 4px 14px -4px rgba(0,0,0,0.08)',
         }}
         aria-label="Bottom navigation"
       >
-        <ul className="grid grid-cols-5 px-1 pt-1.5 pb-1">
+        {/* Top accent gradient line */}
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-16 rounded-full"
+          style={{
+            background: 'linear-gradient(90deg, transparent, hsla(258,78%,55%,0.5), transparent)',
+          }}
+        />
+
+        <ul className="grid grid-cols-5 px-2 py-2">
           {items.map((item) => {
             const active = isActive(item.path.split('?')[0]) && (item.path === '/' ? location.pathname === '/' : true);
             const Icon = item.icon;
@@ -82,31 +91,52 @@ const BottomNav = () => {
               <li key={item.label} className="flex">
                 <button
                   onClick={item.onClick}
-                  className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-xl transition-all active:scale-95"
+                  className="relative flex-1 flex flex-col items-center justify-center gap-1 py-1 rounded-2xl transition-all active:scale-90"
                   aria-label={item.label}
                   aria-current={active ? 'page' : undefined}
                 >
+                  {/* Active glow underneath */}
+                  {active && (
+                    <span
+                      aria-hidden
+                      className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full pointer-events-none"
+                      style={{
+                        background: 'radial-gradient(circle, hsla(258,78%,55%,0.35), transparent 70%)',
+                        filter: 'blur(8px)',
+                      }}
+                    />
+                  )}
+
                   <span
-                    className="relative flex items-center justify-center w-10 h-7 rounded-xl transition-all"
+                    className="relative flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300"
                     style={{
                       background: active
-                        ? 'linear-gradient(145deg, hsl(258,78%,55%), hsl(195,90%,55%))'
+                        ? 'linear-gradient(145deg, hsl(258,78%,58%), hsl(195,90%,55%))'
                         : 'transparent',
-                      boxShadow: active ? '0 4px 12px -2px hsla(258,78%,55%,0.4)' : 'none',
+                      boxShadow: active
+                        ? '0 6px 16px -4px hsla(258,78%,55%,0.5), inset 0 1px 0 hsla(0,0%,100%,0.4)'
+                        : 'none',
+                      transform: active ? 'translateY(-6px) scale(1.05)' : 'translateY(0) scale(1)',
+                      border: active ? '2px solid #fff' : '2px solid transparent',
                     }}
                   >
                     <Icon
-                      size={20}
-                      strokeWidth={active ? 2.4 : 2}
-                      style={{ color: active ? '#fff' : 'hsl(var(--muted-foreground))' }}
+                      size={active ? 21 : 20}
+                      strokeWidth={active ? 2.6 : 2}
+                      style={{
+                        color: active ? '#fff' : 'hsl(226,20%,45%)',
+                        filter: active ? 'drop-shadow(0 1px 2px rgba(0,0,0,0.2))' : 'none',
+                        transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                      }}
                     />
                     {item.badge && item.badge > 0 ? (
                       <span
-                        className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center"
+                        className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black flex items-center justify-center animate-pulse"
                         style={{
-                          background: 'hsl(0,85%,55%)',
+                          background: 'linear-gradient(135deg, hsl(0,90%,58%), hsl(15,95%,55%))',
                           color: '#fff',
-                          border: '1.5px solid #fff',
+                          border: '2px solid #fff',
+                          boxShadow: '0 2px 6px hsla(0,90%,55%,0.5)',
                         }}
                       >
                         {item.badge > 9 ? '9+' : item.badge}
@@ -114,9 +144,11 @@ const BottomNav = () => {
                     ) : null}
                   </span>
                   <span
-                    className="text-[10px] font-semibold leading-none"
+                    className="text-[10px] font-bold leading-none tracking-wide transition-all duration-300"
                     style={{
-                      color: active ? 'hsl(258,78%,55%)' : 'hsl(var(--muted-foreground))',
+                      color: active ? 'hsl(258,78%,52%)' : 'hsl(226,15%,52%)',
+                      transform: active ? 'translateY(-2px)' : 'translateY(0)',
+                      textShadow: active ? '0 1px 2px hsla(258,78%,55%,0.15)' : 'none',
                     }}
                   >
                     {item.label}
