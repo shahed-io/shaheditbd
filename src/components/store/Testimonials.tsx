@@ -68,58 +68,12 @@ const StarRating = ({ rating, color }: { rating: number; color: string }) => (
   </div>
 );
 
-const isImageUrl = (s: string | undefined | null) =>
-  !!s && (/^https?:\/\//i.test(s) || s.startsWith('data:image') || s.startsWith('/'));
-
-const AvatarCircle = ({ initials, index, photo, name }: { initials: string; index: number; photo?: string; name?: string }) => {
+const AvatarCircle = ({ initials, index }: { initials: string; index: number }) => {
   const [a, b] = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length];
-  const [imgErr, setImgErr] = useState(false);
-  const showImage = isImageUrl(photo) && !imgErr;
-
   return (
-    <div className="relative flex-shrink-0" style={{ width: 52, height: 52 }}>
-      {/* Soft outer glow */}
-      <div
-        aria-hidden
-        className="absolute inset-0 rounded-full pointer-events-none"
-        style={{
-          background: `radial-gradient(circle, ${a}55 0%, transparent 70%)`,
-          filter: 'blur(8px)',
-          transform: 'scale(1.15)',
-        }}
-      />
-      {/* Gradient conic ring */}
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{
-          padding: 2.5,
-          background: `conic-gradient(from 140deg, ${a}, ${b}, ${a})`,
-          boxShadow: `0 6px 18px ${a}55, 0 0 0 1px hsla(0,0%,100%,0.85)`,
-        }}
-      >
-        {/* White inner halo + content */}
-        <div
-          className="w-full h-full rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-sm"
-          style={{
-            background: showImage ? '#fff' : `linear-gradient(135deg, ${a}, ${b})`,
-            border: '2px solid #fff',
-          }}
-        >
-          {showImage ? (
-            <img
-              src={photo!}
-              alt={name || initials}
-              loading="lazy"
-              onError={() => setImgErr(true)}
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-              draggable={false}
-            />
-          ) : (
-            <span style={{ textShadow: '0 1px 2px rgba(0,0,0,0.18)' }}>{initials}</span>
-          )}
-        </div>
-      </div>
+    <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+      style={{ background: `linear-gradient(135deg, ${a}, ${b})`, boxShadow: `0 4px 12px ${a}45` }}>
+      {initials}
     </div>
   );
 };
@@ -182,12 +136,7 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
           style={{ background: `linear-gradient(90deg, transparent, ${from.replace('hsl(','hsla(').replace(')',',0.18)')}, transparent)` }} />
 
         <div className="flex items-center gap-3">
-          <AvatarCircle
-            initials={(review.avatar && !isImageUrl(review.avatar) ? review.avatar : (review.name?.slice(0,2).toUpperCase() || 'CU'))}
-            photo={isImageUrl(review.avatar) ? review.avatar : undefined}
-            name={review.name}
-            index={index}
-          />
+          <AvatarCircle initials={review.avatar || review.name?.slice(0,2).toUpperCase()} index={index} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <p className="text-[13px] font-bold truncate" style={{ color: 'hsl(226,35%,14%)' }}>

@@ -305,47 +305,15 @@ const Navbar = () => {
         </div>
 
         <div className="flex-1 overflow-hidden mx-3 relative z-10">
-          <div className="flex items-center gap-2 text-[12.5px]"
-            style={{
-              animation: 'marquee 28s linear infinite',
-              whiteSpace: 'nowrap',
-              display: 'inline-flex',
-              fontFamily: "'Hind Siliguri', 'Tiro Bangla', system-ui, sans-serif",
-              fontWeight: 700,
-              letterSpacing: '0.015em',
-              textShadow: '0 1px 6px rgba(0,0,0,0.18)',
-            }}>
-            <Sparkles size={12} className="flex-shrink-0" style={{ color: '#FDE68A', filter: 'drop-shadow(0 0 6px rgba(253,224,138,0.7))' }} />
-            <span className="inline-flex items-center gap-2">
-              <span style={{
-                background: 'linear-gradient(90deg, #FFFFFF 0%, #FDE68A 50%, #FFFFFF 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                fontWeight: 800,
-              }}>
-                ⚡ FREE instant delivery
-              </span>
-              <span className="opacity-80">•</span>
-              <span>{announcement || 'সব অর্ডারে ফ্রি ডেলিভারি'}</span>
-              <span className="opacity-80">•</span>
-              <span style={{ color: '#FDE68A', fontWeight: 800 }}>৫০% ছাড় সীমিত সময়ের জন্য 🎉</span>
+          <div className="flex items-center gap-1.5 font-bold text-[11px]"
+            style={{ animation: 'marquee 28s linear infinite', whiteSpace: 'nowrap', display: 'inline-flex' }}>
+            <Sparkles size={11} className="text-yellow-300 flex-shrink-0" />
+            <span>
+              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • ৫০% ছাড় সীমিত সময়ের জন্য'}
             </span>
-            <span className="ml-16 inline-flex items-center gap-2">
-              <Sparkles size={12} style={{ color: '#FDE68A', filter: 'drop-shadow(0 0 6px rgba(253,224,138,0.7))' }} />
-              <span style={{
-                background: 'linear-gradient(90deg, #FFFFFF 0%, #FDE68A 50%, #FFFFFF 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                fontWeight: 800,
-              }}>
-                ⚡ FREE instant delivery
-              </span>
-              <span className="opacity-80">•</span>
-              <span>{announcement || 'সব অর্ডারে ফ্রি ডেলিভারি'}</span>
-              <span className="opacity-80">•</span>
-              <span style={{ color: '#FDE68A', fontWeight: 800 }}>৫০% ছাড় সীমিত সময়ের জন্য 🎉</span>
+            <span className="ml-16">
+              <Sparkles size={11} className="text-yellow-300 inline mr-1.5" />
+              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • ৫০% ছাড় সীমিত সময়ের জন্য'}
             </span>
           </div>
         </div>
@@ -412,12 +380,7 @@ const Navbar = () => {
               style={{ borderColor: 'hsla(258,78%,60%,0.20)', background: 'hsla(258,78%,55%,0.04)' }}
             >
               <Search size={14} className="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-              <span
-                className="text-[15px] flex-1 tracking-wide bg-gradient-to-r from-violet-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent group-hover:from-violet-700 group-hover:to-cyan-600 transition-all"
-                style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', system-ui, sans-serif", fontWeight: 600, letterSpacing: '0.01em' }}
-              >
-                প্রোডাক্ট খুঁজুন...
-              </span>
+              <span className="text-sm text-muted-foreground flex-1">প্রোডাক্ট খুঁজুন...</span>
               <kbd className="hidden lg:flex items-center gap-1 px-1.5 py-0.5 rounded-md border border-border/60 text-[10px] font-mono text-muted-foreground bg-muted/40 flex-shrink-0">
                 Ctrl K
               </kbd>
