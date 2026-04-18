@@ -22,7 +22,8 @@ const mapProduct = (p: any): Product => ({
   customFields:  Array.isArray(p.custom_fields) ? p.custom_fields : [],
 });
 
-const LIMIT = 10;
+// Default limit = 20 (LCM of 4 & 5 cols, ensures full rows on tablet & desktop)
+const LIMIT = 20;
 
 const fetchProducts = async () => {
   const { data, error } = await supabase
