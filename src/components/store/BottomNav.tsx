@@ -11,7 +11,7 @@ const BottomNav = () => {
   const navigate = useNavigate();
   const { wishlistItems } = useWishlist();
   const { user } = useAuth();
-  const [hidden, setHidden] = useState(false);
+  
   const [authOpen, setAuthOpen] = useState(false);
   const [pendingOrders, setPendingOrders] = useState(0);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
