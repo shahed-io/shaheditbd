@@ -14,6 +14,25 @@ const BottomNav = () => {
   const [hidden, setHidden] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [pendingOrders, setPendingOrders] = useState(0);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string>('');
+
+  // Fetch profile (avatar + name) for logged-in user
+  useEffect(() => {
+    if (!user) { setAvatarUrl(null); setDisplayName(''); return; }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('avatar_url, display_name, username')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      setAvatarUrl(data?.avatar_url || (user.user_metadata as any)?.avatar_url || null);
+      setDisplayName(data?.display_name || data?.username || (user.user_metadata as any)?.full_name || user.email?.split('@')[0] || '');
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
 
   // Fetch active orders count for logged-in user
   useEffect(() => {
@@ -201,15 +220,36 @@ const BottomNav = () => {
                         border: active ? '2.5px solid #fff' : '1.5px solid hsla(0,0%,100%,0.5)',
                       }}
                     >
-                      <Icon
-                        size={active ? 22 : 20}
-                        strokeWidth={active ? 2.8 : 2}
-                        style={{
-                          color: active ? '#fff' : 'hsl(226,25%,42%)',
-                          filter: active ? 'drop-shadow(0 2px 3px rgba(0,0,0,0.25))' : 'none',
-                          transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                        }}
-                      />
+                      {item.label === 'Account' && user && avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt={displayName || 'Account'}
+                          className="w-full h-full object-cover rounded-2xl"
+                          style={{
+                            filter: active ? 'drop-shadow(0 2px 3px rgba(0,0,0,0.25))' : 'none',
+                          }}
+                        />
+                      ) : item.label === 'Account' && user && displayName ? (
+                        <span
+                          className="font-black text-base uppercase"
+                          style={{
+                            color: active ? '#fff' : 'hsl(258,78%,55%)',
+                            filter: active ? 'drop-shadow(0 2px 3px rgba(0,0,0,0.25))' : 'none',
+                          }}
+                        >
+                          {displayName.charAt(0)}
+                        </span>
+                      ) : (
+                        <Icon
+                          size={active ? 22 : 20}
+                          strokeWidth={active ? 2.8 : 2}
+                          style={{
+                            color: active ? '#fff' : 'hsl(226,25%,42%)',
+                            filter: active ? 'drop-shadow(0 2px 3px rgba(0,0,0,0.25))' : 'none',
+                            transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                          }}
+                        />
+                      )}
                       {item.badge && item.badge > 0 ? (
                         <span
                           className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1 rounded-full text-[10px] font-black flex items-center justify-center"
