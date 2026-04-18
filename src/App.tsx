@@ -11,6 +11,7 @@ import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
 import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
 import { ViewTransitions } from "@/components/ViewTransitions";
+import ScrollToTop from "@/components/ScrollToTop";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
@@ -200,6 +201,7 @@ const AppContent = () => {
           <BottomNav />
         </Suspense>
       )}
+      <ScrollToTop />
       <ViewTransitions />
       <Suspense fallback={<PageLoader />}>
         <Routes>
