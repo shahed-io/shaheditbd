@@ -504,10 +504,15 @@ const Navbar = () => {
 
         {/* Mobile Menu — Next-Gen Bento Design */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'max-h-[calc(100vh-100px)] overflow-y-auto overscroll-contain' : 'max-h-0'}`}
-          style={{ WebkitOverflowScrolling: 'touch', touchAction: mobileOpen ? 'pan-y' : 'auto' }}
+          className={`md:hidden overflow-hidden transition-all duration-500 ease-out ${mobileOpen ? 'overflow-y-auto overscroll-contain' : ''}`}
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            touchAction: mobileOpen ? 'pan-y' : 'auto',
+            maxHeight: mobileOpen ? 'calc(100dvh - 100px)' : '0px',
+            transition: 'max-height 500ms ease-out',
+          }}
         >
-          <div className="border-t px-3 py-4 relative"
+          <div className="border-t px-3 py-4 pb-[max(env(safe-area-inset-bottom),24px)] relative"
             style={{
               background: 'linear-gradient(180deg, hsla(258,60%,99%,0.98) 0%, hsla(220,50%,98%,0.98) 50%, hsla(280,40%,99%,0.98) 100%)',
               borderColor: 'hsla(258,78%,60%,0.15)',
