@@ -14,6 +14,25 @@ const BottomNav = () => {
   const [hidden, setHidden] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [pendingOrders, setPendingOrders] = useState(0);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string>('');
+
+  // Fetch profile (avatar + name) for logged-in user
+  useEffect(() => {
+    if (!user) { setAvatarUrl(null); setDisplayName(''); return; }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('avatar_url, display_name, username')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      setAvatarUrl(data?.avatar_url || (user.user_metadata as any)?.avatar_url || null);
+      setDisplayName(data?.display_name || data?.username || (user.user_metadata as any)?.full_name || user.email?.split('@')[0] || '');
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
 
   // Fetch active orders count for logged-in user
   useEffect(() => {
