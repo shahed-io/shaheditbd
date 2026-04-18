@@ -380,7 +380,12 @@ const Navbar = () => {
               style={{ borderColor: 'hsla(258,78%,60%,0.20)', background: 'hsla(258,78%,55%,0.04)' }}
             >
               <Search size={14} className="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-              <span className="text-sm text-muted-foreground flex-1">প্রোডাক্ট খুঁজুন...</span>
+              <span
+                className="text-[15px] flex-1 tracking-wide bg-gradient-to-r from-violet-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent group-hover:from-violet-700 group-hover:to-cyan-600 transition-all"
+                style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', system-ui, sans-serif", fontWeight: 600, letterSpacing: '0.01em' }}
+              >
+                প্রোডাক্ট খুঁজুন...
+              </span>
               <kbd className="hidden lg:flex items-center gap-1 px-1.5 py-0.5 rounded-md border border-border/60 text-[10px] font-mono text-muted-foreground bg-muted/40 flex-shrink-0">
                 Ctrl K
               </kbd>
