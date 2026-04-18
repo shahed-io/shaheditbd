@@ -38,7 +38,7 @@ const BottomNav = () => {
   };
 
   const handleAccountClick = () => {
-    if (user) navigate('/dashboard');
+    if (user) navigate('/dashboard?tab=profile');
     else setAuthOpen(true);
   };
 
