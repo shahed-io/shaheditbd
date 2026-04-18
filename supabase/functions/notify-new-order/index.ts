@@ -65,18 +65,45 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    // Fetch order + items
-    const { data: order, error: orderErr } = await supabase
-      .from('orders')
-      .select('*, order_items(*)')
-      .eq('id', orderId)
-      .single();
+    // Fetch order + items (with retry — items may not be inserted yet when triggered)
+    let order: any = null;
+    let orderErr: any = null;
+    const MAX_RETRIES = 5;
+    const RETRY_DELAY_MS = 1500;
 
-    if (orderErr || !order) {
-      console.error('Order fetch error:', orderErr);
-      return new Response(JSON.stringify({ error: 'Order not found', detail: orderErr }), {
-        status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*, order_items(*)')
+        .eq('id', orderId)
+        .single();
+
+      orderErr = error;
+      order = data;
+
+      if (orderErr || !order) {
+        console.error(`Order fetch error (attempt ${attempt + 1}):`, orderErr);
+        if (attempt < MAX_RETRIES - 1) {
+          await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
+          continue;
+        }
+        return new Response(JSON.stringify({ error: 'Order not found', detail: orderErr }), {
+          status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // If order found but no items yet, wait and retry
+      if (!order.order_items || order.order_items.length === 0) {
+        console.log(`Order items empty (attempt ${attempt + 1}/${MAX_RETRIES}), retrying...`);
+        if (attempt < MAX_RETRIES - 1) {
+          await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
+          continue;
+        }
+        console.warn('Order items still empty after all retries, proceeding anyway');
+      } else {
+        console.log(`Order fetched with ${order.order_items.length} items on attempt ${attempt + 1}`);
+        break;
+      }
     }
 
     // Fetch admin notification settings
@@ -96,9 +123,11 @@ Deno.serve(async (req) => {
 
     if (telegramChatId && BOT_TOKEN) {
       const items = order.order_items || [];
-      const itemLines = items.map((i: any) =>
-        `  • ${i.product_name} ×${i.quantity} — ৳${Number(i.total).toLocaleString()}`
-      ).join('\n');
+      const itemLines = items.length > 0
+        ? items.map((i: any) =>
+            `  • ${i.product_name} ×${i.quantity} — ৳${Number(i.total).toLocaleString()}`
+          ).join('\n')
+        : '  • (পণ্যের তথ্য লোড হচ্ছে — অর্ডার ডিটেইলস দেখুন)';
 
       const paymentEmoji: Record<string, string> = {
         bkash: '💜', nagad: '🟠', rocket: '🟣', upay: '🔵', wallet: '💰',
