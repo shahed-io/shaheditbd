@@ -22,7 +22,7 @@ const mapProduct = (p: any): Product => ({
   customFields:  Array.isArray(p.custom_fields) ? p.custom_fields : [],
 });
 
-const LIMIT = 8;
+const LIMIT = 10;
 
 const fetchProducts = async () => {
   const { data, error } = await supabase
