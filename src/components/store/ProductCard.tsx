@@ -379,7 +379,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
         {/* ── Content ── */}
         <div className="p-4 flex flex-col gap-2.5 flex-1 relative z-10">
           <h3
-            className="text-sm font-semibold leading-snug line-clamp-2 text-foreground transition-colors duration-200"
+            className="text-sm font-semibold leading-snug line-clamp-2 text-foreground transition-colors duration-200 min-h-[2.5rem]"
             onMouseEnter={e => (e.currentTarget.style.color = 'hsl(271,91%,75%)')}
             onMouseLeave={e => (e.currentTarget.style.color = '')}
           >
