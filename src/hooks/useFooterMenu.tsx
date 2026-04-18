@@ -50,7 +50,7 @@ const DEFAULT_SECTIONS: FooterSection[] = [
       { id: 'l-9',  label: 'My Account',             href: '/dashboard',is_active: true, sort_order: 3 },
       { id: 'l-10', label: 'Contact Us',             href: '/contact',  is_active: true, sort_order: 4 },
       { id: 'l-11', label: 'Blog',                   href: '/blog',     is_active: true, sort_order: 5 },
-      { id: 'l-12', label: 'Software Download Link', href: '/link',     is_active: true, sort_order: 6 },
+      { id: 'l-12', label: 'Download Link',          href: '/link',     is_active: true, sort_order: 6 },
     ],
   },
   {
