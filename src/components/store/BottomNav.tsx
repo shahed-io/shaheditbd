@@ -1,8 +1,9 @@
 import { Home, ShoppingBag, Search, Heart, User } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
 import { useState, useEffect } from 'react';
+import AuthModal from './AuthModal';
 
 const BottomNav = () => {
   const location = useLocation();
@@ -10,6 +11,7 @@ const BottomNav = () => {
   const { wishlistItems } = useWishlist();
   const { user } = useAuth();
   const [hidden, setHidden] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
 
   // Hide on admin / checkout routes
   const hideOnRoutes = ['/ceo', '/checkout', '/reset-password'];
@@ -35,18 +37,27 @@ const BottomNav = () => {
     return location.pathname.startsWith(path);
   };
 
-  const accountPath = user ? '/dashboard' : '/dashboard';
+  const handleAccountClick = () => {
+    if (user) navigate('/dashboard');
+    else setAuthOpen(true);
+  };
+
+  const handleWishlistClick = () => {
+    if (user) navigate('/dashboard?tab=wishlist');
+    else setAuthOpen(true);
+  };
 
   const items = [
     { label: 'Home',     icon: Home,        path: '/',          onClick: () => navigate('/') },
     { label: 'Shop',     icon: ShoppingBag, path: '/shop',      onClick: () => navigate('/shop') },
     { label: 'Search',   icon: Search,      path: '/shop?focus=search', onClick: () => navigate('/shop?focus=search') },
-    { label: 'Wishlist', icon: Heart,       path: '/dashboard?tab=wishlist', onClick: () => navigate('/dashboard?tab=wishlist'), badge: wishlistItems.length },
-    { label: 'Account',  icon: User,        path: accountPath,  onClick: () => navigate(accountPath) },
+    { label: 'Wishlist', icon: Heart,       path: '/dashboard?tab=wishlist', onClick: handleWishlistClick, badge: wishlistItems.length },
+    { label: 'Account',  icon: User,        path: user ? '/dashboard' : '/account',  onClick: handleAccountClick },
   ];
 
   return (
     <>
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
       {/* Spacer so content isn't hidden behind the bar */}
       <div className="md:hidden h-[64px]" aria-hidden="true" />
 
