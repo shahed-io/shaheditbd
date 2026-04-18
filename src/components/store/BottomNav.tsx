@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { wishlist } = useWishlist();
+  const { wishlistItems } = useWishlist();
   const { user } = useAuth();
   const [hidden, setHidden] = useState(false);
 
@@ -41,7 +41,7 @@ const BottomNav = () => {
     { label: 'Home',     icon: Home,        path: '/',          onClick: () => navigate('/') },
     { label: 'Shop',     icon: ShoppingBag, path: '/shop',      onClick: () => navigate('/shop') },
     { label: 'Search',   icon: Search,      path: '/shop?focus=search', onClick: () => navigate('/shop?focus=search') },
-    { label: 'Wishlist', icon: Heart,       path: '/dashboard?tab=wishlist', onClick: () => navigate('/dashboard?tab=wishlist'), badge: wishlist.length },
+    { label: 'Wishlist', icon: Heart,       path: '/dashboard?tab=wishlist', onClick: () => navigate('/dashboard?tab=wishlist'), badge: wishlistItems.length },
     { label: 'Account',  icon: User,        path: accountPath,  onClick: () => navigate(accountPath) },
   ];
 
