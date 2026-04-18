@@ -305,15 +305,47 @@ const Navbar = () => {
         </div>
 
         <div className="flex-1 overflow-hidden mx-3 relative z-10">
-          <div className="flex items-center gap-1.5 font-bold text-[11px]"
-            style={{ animation: 'marquee 28s linear infinite', whiteSpace: 'nowrap', display: 'inline-flex' }}>
-            <Sparkles size={11} className="text-yellow-300 flex-shrink-0" />
-            <span>
-              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • ৫০% ছাড় সীমিত সময়ের জন্য'}
+          <div className="flex items-center gap-2 text-[12.5px]"
+            style={{
+              animation: 'marquee 28s linear infinite',
+              whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              fontFamily: "'Hind Siliguri', 'Tiro Bangla', system-ui, sans-serif",
+              fontWeight: 700,
+              letterSpacing: '0.015em',
+              textShadow: '0 1px 6px rgba(0,0,0,0.18)',
+            }}>
+            <Sparkles size={12} className="flex-shrink-0" style={{ color: '#FDE68A', filter: 'drop-shadow(0 0 6px rgba(253,224,138,0.7))' }} />
+            <span className="inline-flex items-center gap-2">
+              <span style={{
+                background: 'linear-gradient(90deg, #FFFFFF 0%, #FDE68A 50%, #FFFFFF 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontWeight: 800,
+              }}>
+                ⚡ FREE instant delivery
+              </span>
+              <span className="opacity-80">•</span>
+              <span>{announcement || 'সব অর্ডারে ফ্রি ডেলিভারি'}</span>
+              <span className="opacity-80">•</span>
+              <span style={{ color: '#FDE68A', fontWeight: 800 }}>৫০% ছাড় সীমিত সময়ের জন্য 🎉</span>
             </span>
-            <span className="ml-16">
-              <Sparkles size={11} className="text-yellow-300 inline mr-1.5" />
-              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • ৫০% ছাড় সীমিত সময়ের জন্য'}
+            <span className="ml-16 inline-flex items-center gap-2">
+              <Sparkles size={12} style={{ color: '#FDE68A', filter: 'drop-shadow(0 0 6px rgba(253,224,138,0.7))' }} />
+              <span style={{
+                background: 'linear-gradient(90deg, #FFFFFF 0%, #FDE68A 50%, #FFFFFF 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontWeight: 800,
+              }}>
+                ⚡ FREE instant delivery
+              </span>
+              <span className="opacity-80">•</span>
+              <span>{announcement || 'সব অর্ডারে ফ্রি ডেলিভারি'}</span>
+              <span className="opacity-80">•</span>
+              <span style={{ color: '#FDE68A', fontWeight: 800 }}>৫০% ছাড় সীমিত সময়ের জন্য 🎉</span>
             </span>
           </div>
         </div>
