@@ -304,6 +304,8 @@ const UserDashboard = () => {
   const [myLicenses, setMyLicenses] = useState<any[]>([]);
   const [licensesLoading, setLicensesLoading] = useState(false);
   const [licenseVisibility, setLicenseVisibility] = useState<Record<string, boolean>>({});
+  // Trending categories for mobile home view
+  const [trendingCats, setTrendingCats] = useState<{ id: string; name: string; slug: string; productCount: number }[]>([]);
 
   // Mobile-friendly tab switch: also show content panel
   const handleTabSwitch = (tab: TabId) => {
@@ -313,7 +315,26 @@ const UserDashboard = () => {
   };
 
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
-  useEffect(() => { if (user) fetchProfile(); }, [user]);
+  useEffect(() => { if (user) { fetchProfile(); fetchOrders(); fetchTrendingCats(); } }, [user]);
+
+  const fetchTrendingCats = async () => {
+    const { data: cats } = await supabase
+      .from('categories')
+      .select('id, name, slug')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .limit(3);
+    if (!cats) return;
+    const withCounts = await Promise.all(cats.map(async (c) => {
+      const { count } = await supabase
+        .from('products')
+        .select('id', { count: 'exact', head: true })
+        .eq('category_id', c.id)
+        .eq('status', 'active');
+      return { ...c, productCount: count || 0 };
+    }));
+    setTrendingCats(withCounts);
+  };
   useEffect(() => {
     if (!user) return;
     if (activeTab === 'orders') fetchOrders();
@@ -824,11 +845,203 @@ const UserDashboard = () => {
           </div>
         </div>
 
+        {/* ====== MOBILE HOME VIEW (replaces sidebar on mobile when no tab selected) ====== */}
+        {!mobileShowContent && (
+          <div className="md:hidden space-y-4 mb-4">
+            {/* Hero Welcome Card */}
+            <div className="rounded-3xl overflow-hidden p-5 relative" style={{
+              background: 'linear-gradient(135deg, hsl(220,90%,55%), hsl(258,78%,58%) 60%, hsl(280,75%,60%))',
+              boxShadow: '0 12px 40px hsla(258,78%,55%,0.35)',
+            }}>
+              <div className="absolute top-2 right-3 text-[10px] font-bold uppercase tracking-widest text-white/80 flex items-center gap-1">
+                Welcome Back <span>👋</span>
+              </div>
+              <div className="flex items-center gap-3 mt-4">
+                <div className="relative flex-shrink-0">
+                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/40 shadow-lg flex items-center justify-center text-base font-black text-white"
+                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                    {profile.avatar_url ? <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" /> : initials}
+                  </div>
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-base font-black text-white truncate flex items-center gap-1.5">
+                    {displayName}
+                    <VerifiedBadge size={16} />
+                  </h2>
+                  {profile.username && (
+                    <p className="text-xs text-white/80 truncate">@{profile.username}</p>
+                  )}
+                  <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-white backdrop-blur-sm">
+                    <Star size={9} fill="currentColor" /> VIP Member
+                  </span>
+                </div>
+                <button onClick={() => handleTabSwitch('profile')} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white">
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+              {/* Stats row */}
+              <div className="mt-4 pt-4 border-t border-white/20 grid grid-cols-3 gap-2">
+                <button onClick={() => handleTabSwitch('wallet')} className="text-center active:scale-95 transition-transform">
+                  <p className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Wallet</p>
+                  <p className="text-base font-black text-white mt-0.5">৳{walletBalance.toLocaleString()}</p>
+                </button>
+                <button onClick={() => handleTabSwitch('points')} className="text-center active:scale-95 transition-transform border-x border-white/20">
+                  <p className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Points</p>
+                  <p className="text-base font-black text-white mt-0.5">{pointsBalance}</p>
+                </button>
+                <button onClick={() => handleTabSwitch('orders')} className="text-center active:scale-95 transition-transform">
+                  <p className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Orders</p>
+                  <p className="text-base font-black text-white mt-0.5">{orders.length}</p>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Action Tiles */}
+            <div className="grid grid-cols-4 gap-2.5">
+              {[
+                { id: 'orders' as TabId, icon: Package, label: 'Orders', bg: 'linear-gradient(145deg, hsl(210,90%,60%), hsl(220,90%,52%))', badge: orders.filter(o => ['pending','processing'].includes(o.status)).length },
+                { id: 'wallet' as TabId, icon: Wallet, label: 'Wallet', bg: 'linear-gradient(145deg, hsl(158,64%,48%), hsl(168,70%,42%))' },
+                { id: 'wishlist' as TabId, icon: Heart, label: 'Wishlist', bg: 'linear-gradient(145deg, hsl(348,85%,62%), hsl(358,80%,55%))', badge: wishlistItems.length },
+                { id: 'points' as TabId, icon: Award, label: 'Points', bg: 'linear-gradient(145deg, hsl(35,95%,58%), hsl(25,90%,52%))' },
+              ].map((it) => {
+                const Icon = it.icon;
+                return (
+                  <button key={it.id} onClick={() => handleTabSwitch(it.id)}
+                    className="flex flex-col items-center gap-1.5 p-3 rounded-2xl active:scale-95 transition-transform relative"
+                    style={{
+                      background: 'rgba(255,255,255,0.85)',
+                      backdropFilter: 'blur(20px)',
+                      border: '1px solid hsla(258,78%,75%,0.22)',
+                      boxShadow: '0 4px 14px hsla(258,78%,55%,0.08)',
+                    }}>
+                    {it.badge !== undefined && it.badge > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-white text-[10px] font-black flex items-center justify-center border-2 border-white shadow-md">
+                        {it.badge}
+                      </span>
+                    )}
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md" style={{ background: it.bg }}>
+                      <Icon size={18} className="text-white" />
+                    </div>
+                    <span className="text-[11px] font-bold text-foreground">{it.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Promo Cards */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <button onClick={() => navigate('/shop')} className="text-left p-4 rounded-2xl active:scale-95 transition-transform relative overflow-hidden" style={{
+                background: 'linear-gradient(135deg, hsl(15,90%,60%), hsl(0,85%,55%))',
+                boxShadow: '0 8px 22px hsla(15,90%,55%,0.32)',
+              }}>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-white/25 text-white">
+                  🔥 Hot Deals
+                </span>
+                <p className="text-base font-black text-white mt-2">Up to 70% OFF</p>
+                <p className="text-[11px] text-white/85 font-medium mt-0.5">Shop trending →</p>
+              </button>
+              <button onClick={() => window.open('https://wa.me/8801894392421', '_blank')} className="text-left p-4 rounded-2xl active:scale-95 transition-transform relative overflow-hidden" style={{
+                background: 'linear-gradient(135deg, hsl(158,70%,45%), hsl(168,75%,40%))',
+                boxShadow: '0 8px 22px hsla(158,70%,40%,0.32)',
+              }}>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-white/25 text-white">
+                  💬 Live 24/7
+                </span>
+                <p className="text-base font-black text-white mt-2">Need Help?</p>
+                <p className="text-[11px] text-white/85 font-medium mt-0.5">Chat with us →</p>
+              </button>
+            </div>
+
+            {/* Trending Categories */}
+            {trendingCats.length > 0 && (
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest px-1 mb-2 text-muted-foreground flex items-center gap-1">
+                  ✨ Trending Categories
+                </p>
+                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
+                  {trendingCats.map((c, i) => {
+                    const emojis = ['🪟', '📂', '💿'];
+                    return (
+                      <button key={c.id} onClick={() => navigate(`/shop?category=${c.slug}`)}
+                        className="flex-shrink-0 flex items-center gap-2 px-3.5 py-2.5 rounded-2xl active:scale-95 transition-transform"
+                        style={{
+                          background: 'rgba(255,255,255,0.85)',
+                          backdropFilter: 'blur(20px)',
+                          border: '1px solid hsla(258,78%,75%,0.22)',
+                          boxShadow: '0 3px 10px hsla(258,78%,55%,0.06)',
+                        }}>
+                        <span className="text-base">{emojis[i] || '📦'}</span>
+                        <span className="text-sm font-bold text-foreground">{c.name}</span>
+                        {c.productCount > 0 && (
+                          <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-primary/12 text-primary">
+                            {c.productCount}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Account Links */}
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest px-1 mb-2 text-muted-foreground flex items-center gap-1">
+                ✦ Account ✦
+              </p>
+              <div className="rounded-2xl overflow-hidden" style={glassCard}>
+                {[
+                  { id: 'licenses' as TabId, icon: Key, label: 'My Licenses', color: 'hsl(35,95%,55%)' },
+                  { id: 'addresses' as TabId, icon: MapPin, label: 'Addresses', color: 'hsl(210,90%,55%)' },
+                  { id: 'notifications' as TabId, icon: Bell, label: 'Notifications', color: 'hsl(25,90%,55%)', badge: unreadCount },
+                  { id: 'referral' as TabId, icon: Gift, label: 'Referral', color: 'hsl(280,75%,58%)' },
+                  { id: 'security' as TabId, icon: Lock, label: 'Security', color: 'hsl(220,15%,45%)' },
+                  { id: 'language' as TabId, icon: Globe, label: 'Language', color: 'hsl(195,80%,50%)' },
+                  { id: 'install' as TabId, icon: Download, label: 'Install App', color: 'hsl(158,64%,42%)' },
+                ].map((item, idx, arr) => {
+                  const Icon = item.icon;
+                  return (
+                    <button key={item.id} onClick={() => handleTabSwitch(item.id)}
+                      className={`w-full flex items-center gap-3 px-4 py-3.5 active:bg-primary/5 transition-colors ${idx < arr.length - 1 ? 'border-b border-border/40' : ''}`}>
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm" style={{ background: `${item.color}` }}>
+                        <Icon size={16} className="text-white" />
+                      </div>
+                      <span className="flex-1 text-left text-sm font-bold text-foreground">{item.label}</span>
+                      {item.badge !== undefined && item.badge > 0 && (
+                        <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-white text-[10px] font-black flex items-center justify-center">
+                          {item.badge}
+                        </span>
+                      )}
+                      <ChevronRight size={16} className="text-muted-foreground" />
+                    </button>
+                  );
+                })}
+                {isAdmin && (
+                  <button onClick={() => navigate('/ceo')} className="w-full flex items-center gap-3 px-4 py-3.5 border-t border-border/40" style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.08), hsla(263,70%,58%,0.05))' }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                      <ShieldCheck size={16} className="text-white" />
+                    </div>
+                    <span className="flex-1 text-left text-sm font-black text-primary">Admin Panel</span>
+                    <ChevronRight size={16} className="text-primary" />
+                  </button>
+                )}
+                <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3.5 border-t border-border/40 active:bg-destructive/5">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm bg-destructive/15">
+                    <LogOut size={16} className="text-destructive" />
+                  </div>
+                  <span className="flex-1 text-left text-sm font-bold text-destructive">{t(selectedLang, 'tab_logout')}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Body */}
         <div className="grid md:grid-cols-[240px_1fr] gap-5 sm:gap-6">
 
           {/* Sidebar */}
-          <div className={`rounded-2xl p-3 h-fit ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
+          <div className="hidden md:block rounded-2xl p-3 h-fit" style={glassCard}>
             <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">{t(selectedLang, 'menu')}</p>
             {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
               <button key={id} onClick={() => handleTabSwitch(id)}
