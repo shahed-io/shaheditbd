@@ -58,18 +58,7 @@ const BottomNav = () => {
   const hideOnRoutes = ['/ceo', '/checkout', '/reset-password'];
   const shouldHide = hideOnRoutes.some(r => location.pathname.startsWith(r));
 
-  // Auto-hide on scroll down (mobile UX)
-  useEffect(() => {
-    let lastY = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (y > lastY && y > 80) setHidden(true);
-      else setHidden(false);
-      lastY = y;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  // Bottom nav stays permanently visible — no scroll-based hiding
 
   if (shouldHide) return null;
 
