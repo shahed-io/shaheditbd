@@ -182,7 +182,12 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
           style={{ background: `linear-gradient(90deg, transparent, ${from.replace('hsl(','hsla(').replace(')',',0.18)')}, transparent)` }} />
 
         <div className="flex items-center gap-3">
-          <AvatarCircle initials={review.avatar || review.name?.slice(0,2).toUpperCase()} index={index} />
+          <AvatarCircle
+            initials={(review.avatar && !isImageUrl(review.avatar) ? review.avatar : (review.name?.slice(0,2).toUpperCase() || 'CU'))}
+            photo={isImageUrl(review.avatar) ? review.avatar : undefined}
+            name={review.name}
+            index={index}
+          />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <p className="text-[13px] font-bold truncate" style={{ color: 'hsl(226,35%,14%)' }}>
