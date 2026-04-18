@@ -304,6 +304,8 @@ const UserDashboard = () => {
   const [myLicenses, setMyLicenses] = useState<any[]>([]);
   const [licensesLoading, setLicensesLoading] = useState(false);
   const [licenseVisibility, setLicenseVisibility] = useState<Record<string, boolean>>({});
+  // Trending categories for mobile home view
+  const [trendingCats, setTrendingCats] = useState<{ id: string; name: string; slug: string; productCount: number }[]>([]);
 
   // Mobile-friendly tab switch: also show content panel
   const handleTabSwitch = (tab: TabId) => {
@@ -313,7 +315,26 @@ const UserDashboard = () => {
   };
 
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
-  useEffect(() => { if (user) fetchProfile(); }, [user]);
+  useEffect(() => { if (user) { fetchProfile(); fetchOrders(); fetchTrendingCats(); } }, [user]);
+
+  const fetchTrendingCats = async () => {
+    const { data: cats } = await supabase
+      .from('categories')
+      .select('id, name, slug')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .limit(3);
+    if (!cats) return;
+    const withCounts = await Promise.all(cats.map(async (c) => {
+      const { count } = await supabase
+        .from('products')
+        .select('id', { count: 'exact', head: true })
+        .eq('category_id', c.id)
+        .eq('status', 'active');
+      return { ...c, productCount: count || 0 };
+    }));
+    setTrendingCats(withCounts);
+  };
   useEffect(() => {
     if (!user) return;
     if (activeTab === 'orders') fetchOrders();
