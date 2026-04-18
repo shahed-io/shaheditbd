@@ -667,10 +667,9 @@ const Navbar = () => {
                     <p className="relative text-[13px] font-extrabold text-white leading-tight">Up to 70% OFF</p>
                     <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Shop trending →</p>
                   </button>
-                  <a
-                    href="https://shahedstore.com.bd/contact"
-                    onClick={() => { setMobileOpen(false); }}
-                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left block"
+                  <button
+                    onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
                     style={{
                       background: 'linear-gradient(135deg, hsl(150,72%,42%) 0%, hsl(170,75%,40%) 100%)',
                       boxShadow: '0 8px 20px hsla(150,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
@@ -686,7 +685,7 @@ const Navbar = () => {
                     </div>
                     <p className="relative text-[13px] font-extrabold text-white leading-tight">Need Help?</p>
                     <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Chat with us →</p>
-                  </a>
+                  </button>
                 </div>
 
                 {/* Trending Categories Chips */}
@@ -929,10 +928,9 @@ const Navbar = () => {
                     <p className="relative text-[13px] font-extrabold text-white leading-tight">Up to 70% OFF</p>
                     <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Shop trending →</p>
                   </button>
-                  <a
-                    href="https://shahedstore.com.bd/contact"
-                    onClick={() => { setMobileOpen(false); }}
-                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left block"
+                  <button
+                    onClick={() => { navigate('/contact-us'); setMobileOpen(false); }}
+                    className="group relative rounded-2xl p-3 overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-left"
                     style={{
                       background: 'linear-gradient(135deg, hsl(150,72%,42%) 0%, hsl(170,75%,40%) 100%)',
                       boxShadow: '0 8px 20px hsla(150,72%,40%,0.30), inset 0 1px 0 hsla(0,0%,100%,0.30)',
@@ -948,7 +946,7 @@ const Navbar = () => {
                     </div>
                     <p className="relative text-[13px] font-extrabold text-white leading-tight">Need Help?</p>
                     <p className="relative text-[10px] font-semibold text-white/85 mt-0.5">Chat with us →</p>
-                  </a>
+                  </button>
                 </div>
 
                 {/* Trending Categories Chips */}
