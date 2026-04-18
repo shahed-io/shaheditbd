@@ -13,6 +13,27 @@ const BottomNav = () => {
   const { user } = useAuth();
   const [hidden, setHidden] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [pendingOrders, setPendingOrders] = useState(0);
+
+  // Fetch active orders count for logged-in user
+  useEffect(() => {
+    if (!user) { setPendingOrders(0); return; }
+    let cancelled = false;
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from('orders')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .in('status', ['pending', 'processing']);
+      if (!cancelled) setPendingOrders(count || 0);
+    };
+    fetchCount();
+    const channel = supabase
+      .channel('bottomnav-orders')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `user_id=eq.${user.id}` }, fetchCount)
+      .subscribe();
+    return () => { cancelled = true; supabase.removeChannel(channel); };
+  }, [user]);
 
   // Hide on admin / checkout routes
   const hideOnRoutes = ['/ceo', '/checkout', '/reset-password'];
