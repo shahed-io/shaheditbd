@@ -93,8 +93,6 @@ const BottomNav = () => {
   return (
     <>
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
-      {/* Spacer so content isn't hidden behind the bar */}
-      <div className="md:hidden h-[84px]" aria-hidden="true" />
 
       {/* Outer wrapper for floating gradient halo */}
       <div
