@@ -390,9 +390,7 @@ const Navbar = () => {
           backdropFilter: 'blur(28px) saturate(200%)',
           WebkitBackdropFilter: 'blur(28px) saturate(200%)',
           border: '1.5px solid var(--glass-border)',
-          boxShadow: scrolled
-            ? '0 8px 40px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.18), inset 0 1px 0 hsla(0,0%,100%,0.6)'
-            : 'var(--glass-shadow)',
+          boxShadow: 'var(--glass-shadow)',
         }}>
         <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between h-[68px] gap-4">
