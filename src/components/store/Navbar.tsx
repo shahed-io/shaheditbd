@@ -285,10 +285,13 @@ const Navbar = () => {
       {/* ── Fixed wrapper for announcement + navbar ── */}
       <div className="fixed top-0 left-0 right-0 z-50">
 
-      {/* ── Top Announcement Bar — permanently hidden per user request ── */}
-      <div className="hidden"
+      {/* ── Top Announcement Bar — hides on scroll ── */}
+      <div className="w-full text-white text-xs font-medium py-2 flex items-center overflow-hidden relative transition-all duration-300"
         style={{
           background: 'linear-gradient(90deg, hsl(258,78%,50%), hsl(200,90%,42%), hsl(258,78%,50%))',
+          maxHeight: scrolled ? '0px' : '40px',
+          opacity: scrolled ? 0 : 1,
+          padding: scrolled ? '0' : undefined,
         }}>
         <div className="absolute inset-0 dot-grid opacity-20 pointer-events-none" />
 
@@ -390,7 +393,9 @@ const Navbar = () => {
           backdropFilter: 'blur(28px) saturate(200%)',
           WebkitBackdropFilter: 'blur(28px) saturate(200%)',
           border: '1.5px solid var(--glass-border)',
-          boxShadow: 'var(--glass-shadow)',
+          boxShadow: scrolled
+            ? '0 8px 40px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.18), inset 0 1px 0 hsla(0,0%,100%,0.6)'
+            : 'var(--glass-shadow)',
         }}>
         <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between h-[68px] gap-4">
@@ -1115,8 +1120,8 @@ const Navbar = () => {
       </nav>
       </div>
       </div>{/* end fixed wrapper */}
-      {/* Spacer for fixed navbar (~60px) */}
-      <div className="h-[60px]" />
+      {/* Spacer for fixed navbar (announcement bar ~36px + navbar ~60px) */}
+      <div className="h-[96px]" />
     </>
   );
 };
