@@ -22,8 +22,10 @@ const mapProduct = (p: any): Product => ({
   customFields:  Array.isArray(p.custom_fields) ? p.custom_fields : [],
 });
 
-// Default limit = 20 (LCM of 4 & 5 cols, ensures full rows on tablet & desktop)
-const LIMIT = 20;
+const LIMIT = 10;
+
+// Trim a list to the largest multiple of `cols` ≤ list.length, so grid rows are always full.
+const trimToFullRows = (count: number, cols: number) => Math.floor(count / cols) * cols;
 
 const fetchProducts = async () => {
   const { data, error } = await supabase
