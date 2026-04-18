@@ -123,9 +123,11 @@ Deno.serve(async (req) => {
 
     if (telegramChatId && BOT_TOKEN) {
       const items = order.order_items || [];
-      const itemLines = items.map((i: any) =>
-        `  • ${i.product_name} ×${i.quantity} — ৳${Number(i.total).toLocaleString()}`
-      ).join('\n');
+      const itemLines = items.length > 0
+        ? items.map((i: any) =>
+            `  • ${i.product_name} ×${i.quantity} — ৳${Number(i.total).toLocaleString()}`
+          ).join('\n')
+        : '  • (পণ্যের তথ্য লোড হচ্ছে — অর্ডার ডিটেইলস দেখুন)';
 
       const paymentEmoji: Record<string, string> = {
         bkash: '💜', nagad: '🟠', rocket: '🟣', upay: '🔵', wallet: '💰',
