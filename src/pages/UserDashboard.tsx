@@ -870,7 +870,7 @@ const UserDashboard = () => {
 
             {/* Mobile Back Button */}
             <button
-              onClick={() => { setMobileShowContent(false); window.scrollTo({ top: 0 }); }}
+              onClick={() => { navigate('/?openMenu=1'); }}
               className="md:hidden flex items-center gap-2 px-4 py-3 text-sm font-semibold text-primary w-full"
               style={{ borderBottom: '1px solid hsla(258,78%,75%,0.15)', background: 'rgba(255,255,255,0.5)' }}>
               <ChevronRight size={16} className="rotate-180" /> Back to Menu
