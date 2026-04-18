@@ -63,7 +63,7 @@ const FlashSale = () => {
         .eq('status', 'active')
         .not('discount_percent', 'is', null)
         .order('discount_percent', { ascending: false })
-        .limit(8);
+        .limit(10);
       if (error) throw error;
       return (data as FlashProduct[]) ?? [];
     },
