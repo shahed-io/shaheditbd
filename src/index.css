@@ -1617,6 +1617,11 @@ html[data-theme="midnight-purple"] .hero-bg {
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
   }
+
+  /* Reserve space at the bottom of the page for the floating BottomNav (mobile only) */
+  body:not(.admin-page) {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);
+  }
 }
 
 /* ══════════════════════════════════════
