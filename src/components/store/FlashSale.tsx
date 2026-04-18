@@ -218,7 +218,7 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
   return (
     <div
       onClick={onNavigate}
-      className="group rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
+      className="group rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 flex flex-col h-full"
       style={{
         animationDelay: `${delay}s`,
         background: hovered ? 'hsla(0,0%,100%,0.75)' : 'hsla(0,0%,100%,0.55)',
@@ -270,8 +270,8 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
       </div>
 
       {/* Info */}
-      <div className="p-3.5">
-        <p className="font-semibold text-[13px] line-clamp-2 leading-snug mb-2.5 transition-colors duration-200"
+      <div className="p-3.5 flex flex-col flex-1">
+        <p className="font-semibold text-[13px] line-clamp-2 leading-snug mb-2.5 transition-colors duration-200 min-h-[2.4rem]"
           style={{ color: hovered ? 'hsl(15,100%,58%)' : 'hsl(var(--foreground))' }}>
           {product.name}
         </p>
@@ -281,18 +281,22 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
             <span className="text-[12px] text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</span>
           )}
         </div>
-        {savings && (
-          <div className="mt-2 text-[11px] font-bold rounded-lg px-2.5 py-1 inline-flex items-center gap-1"
-            style={{ color: 'hsl(15,100%,65%)', background: 'hsla(15,100%,60%,0.10)', border: '1px solid hsla(15,100%,60%,0.2)' }}>
-            <TrendingDown size={10} /> Save ৳{savings.toLocaleString()}
-          </div>
-        )}
-        {product.delivery_time && (
-          <p className="mt-1.5 text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
-            <Zap size={9} style={{ color: 'hsl(158,64%,48%)' }} />
-            {product.delivery_time}
-          </p>
-        )}
+        <div className="mt-2 min-h-[1.75rem]">
+          {savings && (
+            <div className="text-[11px] font-bold rounded-lg px-2.5 py-1 inline-flex items-center gap-1"
+              style={{ color: 'hsl(15,100%,65%)', background: 'hsla(15,100%,60%,0.10)', border: '1px solid hsla(15,100%,60%,0.2)' }}>
+              <TrendingDown size={10} /> Save ৳{savings.toLocaleString()}
+            </div>
+          )}
+        </div>
+        <div className="mt-1.5 min-h-[1rem]">
+          {product.delivery_time && (
+            <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
+              <Zap size={9} style={{ color: 'hsl(158,64%,48%)' }} />
+              {product.delivery_time}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
