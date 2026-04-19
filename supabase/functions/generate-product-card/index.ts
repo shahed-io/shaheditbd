@@ -245,9 +245,10 @@ serve(async (req) => {
       Deno.env.get("GEMINI_API_KEY_6"),
     ].filter(Boolean) as string[];
 
+    // Only valid image-generation model names for Direct Gemini API (v1beta)
     const DIRECT_IMAGE_MODELS = [
-      "gemini-2.5-flash-image",                 // newest stable image model
-      "gemini-2.0-flash-preview-image-generation", // fallback image model
+      "gemini-2.5-flash-image",         // primary stable image model
+      "gemini-2.5-flash-image-preview", // preview alias (some keys have access)
     ];
 
     // Pre-fetch reference image once (if provided) and convert to base64
