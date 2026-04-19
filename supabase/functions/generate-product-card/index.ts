@@ -26,52 +26,70 @@ const corsHeaders = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const sharedBlueprint = (name: string, brand: string) => `
-You MUST create a premium square (1:1) product promotional card with this EXACT layout — non-negotiable:
+You MUST create a premium square (1:1) product promotional card that EXACTLY matches the Shahed Store house style. This layout is non-negotiable — every element must be present and look like the reference cards (Canva Pro, AutoDesk, ChatGPT Plus, Duolingo, HIX.AI cards previously made for this store):
 
 ═══ BACKGROUND (full canvas, behind everything) ═══
-- A SOFT PASTEL GRADIENT covering the entire canvas (NEVER plain white, NEVER plain dark)
-- 5–8 large soft 3D-style FLOATING BOKEH ORBS scattered around the card edges:
-  • Light sky blue translucent spheres (#bfe3ff, ~20–30% opacity)
-  • Soft mint / teal spheres (#9fe7d4, ~25% opacity)
-  • A few soft white/silver glow orbs
-  • Sizes vary 80–220px, blurred, with gentle inner highlight (3D ball look)
-  • Place them BEHIND the card AND peeking around the corners — top-left, top-right, bottom-left, bottom-right, mid-left, mid-right
-  • These orbs MUST be clearly visible — they are a hero design element, not optional
-- The overall background must feel airy, dreamy, premium — like a luxury Apple-style ad
+- A SOFT PASTEL DIAGONAL GRADIENT covering the ENTIRE canvas:
+  • Top-left: soft lavender / lilac (#c9b6f0 → #d4baf5)
+  • Top-right: soft pink / rose (#f5b6c9 → #f4c2d2)
+  • Bottom-left: soft sky blue (#b6c9f0 → #b8d4f0)
+  • Bottom-right: soft warm peach / coral (#f5c9b6 → #f6cfb5)
+  • Smooth painterly blend across the diagonal — NO harsh lines, NO solid colors, NO plain white, NO dark background
+- Scatter 8–12 soft TRANSLUCENT 3D BUBBLES / SPHERES around the card edges and corners:
+  • Pure soft white / pale blue translucent bubbles (rgba(255,255,255,0.4–0.6))
+  • Sizes vary: small 30–60px and large 100–200px
+  • Each bubble has a subtle inner highlight on the upper-left to look like a 3D glass ball
+  • Place them BEHIND and peeking around the card — top corners, mid-left, mid-right, bottom corners
+  • Some bubbles partially overlap the card edges to add depth
+  • These bubbles are a SIGNATURE element — they MUST be clearly visible
 
-═══ MAIN CARD (centered, ~75% of canvas) ═══
-- One large rounded rectangle WHITE FROSTED GLASS card
-- Background: rgba(255,255,255,0.72) with strong backdrop blur
-- Border: 1.5px solid rgba(255,255,255,0.9)
-- Corner radius: ~28px
+═══ MAIN CARD (centered, ~78% of canvas) ═══
+- One large rounded rectangle FROSTED GLASS card
+- Background: rgba(255,255,255,0.35) with strong backdrop blur (heavy frosted look)
+- Border: 1.5px solid rgba(255,255,255,0.7)
+- Corner radius: ~32px
 - Soft shadow: 0 24px 60px rgba(120,130,180,0.18)
+- The pastel gradient background should subtly show THROUGH the frosted card
 
-═══ TOP ROW INSIDE CARD (18px padding) ═══
-- LEFT: a bright RED rounded rectangle pill (#dc2626 → #ef4444 gradient) with the text "SHAHED STORE" in WHITE BOLD text inside it. Crisp, clean, instantly readable. This is the brand badge.
-- RIGHT: a clean white rounded pill (rgba(255,255,255,0.9), subtle 1px border) containing the product/brand name "${brand || name}" in dark charcoal (#374151) bold, with a small product/brand logo icon to the left of the text.
+═══ TOP ROW INSIDE CARD (24px padding from card edges) ═══
+- LEFT — "SHAHED STORE" BADGE:
+  • A frosted TRANSLUCENT GLASS PILL (rgba(255,255,255,0.25), 1px white border, backdrop blur)
+  • Rounded fully (pill shape, ~24px radius, ~50px tall)
+  • Inside text: "SHAHED STORE" in WHITE BOLD uppercase sans-serif, letter-spaced, crisp
+  • This is a glass pill — NOT a red badge, NOT solid color
+- RIGHT — BRAND PILL:
+  • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.95), subtle shadow, ~24px radius, ~50px tall)
+  • Contains a small square brand/product LOGO ICON on the left (~32px, rounded corners)
+  • Followed by the brand/product name "${brand || name}" in dark charcoal (#1f2937 / #111827) bold sans-serif
+  • Logo + text fit snugly inside the pill with comfortable padding
 
 ═══ CENTER OF CARD (the hero) ═══
-- The product "${name}" displayed as a VERY LARGE clean square app-icon with rounded corners (~16% of card width radius)
-- Generous breathing room around the icon
+- The product "${name}" displayed as a VERY LARGE clean app-icon / logo
+- Either a rounded square app icon (~22% radius) OR the official brand logo if iconic
+- Size: takes ~45–55% of card width
+- Generous breathing room above and below
 - Subtle soft drop shadow beneath the icon: 0 12px 30px rgba(0,0,0,0.12)
-- NO price, NO discount badge, NO extra text near the icon
+- The icon should look crisp, vibrant, premium — like an Apple App Store hero icon
+- NO price, NO discount badge, NO extra text near the icon (brand name may appear UNDER the icon ONLY if it is part of the official logo lockup, like "duolingo" wordmark)
 
 ═══ BOTTOM CONTACT LINE INSIDE CARD ═══
-- A single thin horizontal contact line near the bottom edge of the card (NOT a separate floating bar outside the card, NOT a colored gradient strip)
-- Lives INSIDE the white glass card itself
-- Centered horizontally, two items:
-  • 🌐 globe icon + "www.shahedstore.com.bd"
-  • 📞 phone icon + "+880 1840-099853"
-- Text: dark charcoal (#1f2937), clean sans-serif, ~11–12px, BOLD enough to read clearly
-- A subtle hairline divider (1px, rgba(0,0,0,0.06)) above the contact line gives separation
+- A single thin horizontal contact line near the bottom edge of the card (24px from bottom)
+- Lives INSIDE the frosted glass card — NOT a separate floating bar outside
+- Two items aligned left and centered/right with comfortable spacing:
+  • A small circular outlined GLOBE icon with a tiny cursor arrow on it, then "www.shahedstore.com.bd"
+  • A small circular outlined PHONE handset icon, then "+880 1840-099853"
+- Text: dark charcoal (#1f2937), clean BOLD sans-serif, ~14–16px, very readable
+- Icons are thin-outline style (1.5px stroke), dark charcoal, inside small circular outlines
 
-═══ CRITICAL RULES ═══
-- The contact info MUST be inside the white glass card (bottom area) — never as a separate detached bar
-- The floating bokeh orbs in the background MUST be present and visible
-- NO price tag anywhere
-- All text crisp and readable
+═══ ABSOLUTE RULES ═══
+- The "SHAHED STORE" pill is a FROSTED GLASS pill with WHITE TEXT — NEVER a red badge
+- The brand pill on the right is a SOLID WHITE pill with the brand logo + name
+- The contact info MUST be INSIDE the frosted card (bottom area) — never detached
+- The floating translucent bubbles MUST be visible around the card edges
+- Pastel diagonal gradient background — lavender / pink / peach / blue
+- NO price tag, NO discount badge, NO marketing text
 - Square format exactly (1:1)
-- Looks like it was designed by a top-tier graphic designer for a luxury digital store
+- Every element crisp, readable, premium — luxury digital store aesthetic
 `.trim();
 
 const STYLES = {
@@ -81,14 +99,13 @@ const STYLES = {
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Dark Neon" tone ═══
-- Background gradient: deep midnight indigo (#0a0d2e) blending with deep purple (#1a0d3a) and a hint of electric blue (#0e2a5c)
-- The floating bokeh orbs glow with neon cyan, electric purple, and hot pink tones — luminous against the dark background
-- The white glass card now becomes a SEMI-TRANSPARENT DARK GLASS card: rgba(15,15,40,0.55) with a glowing 2px gradient neon border (purple → cyan → pink)
-- Card border has a soft outer neon halo
-- Top-left "SHAHED STORE" pill stays bright RED (still the signature brand badge — never change this)
-- Top-right brand pill: dark glass (rgba(20,20,50,0.6)) with white text instead of charcoal
-- Bottom contact line: light gray text (#e5e7eb) instead of charcoal, for readability on dark glass
-- Overall vibe: cyberpunk premium, glowing, luxurious
+- Override ONLY the background gradient: deep midnight indigo (#0a0d2e) blending into deep purple (#1a0d3a) with a hint of electric blue (#0e2a5c)
+- Translucent bubbles glow with neon cyan, electric purple, hot pink — luminous against the dark background
+- The frosted card becomes a SEMI-TRANSPARENT DARK GLASS card: rgba(15,15,40,0.45) with a glowing 2px gradient neon border (purple → cyan → pink) and a soft outer neon halo
+- "SHAHED STORE" pill stays a frosted glass pill with WHITE bold text (do not change to red)
+- Brand pill on the right: dark glass (rgba(20,20,50,0.6)) with WHITE text instead of charcoal
+- Bottom contact line text: light gray (#e5e7eb) for readability
+- Vibe: cyberpunk premium, glowing, luxurious
 `.trim(),
   },
 
@@ -98,10 +115,9 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Light Glass" tone ═══
-- Background gradient: soft warm gold/amber (#f5d7a0) flowing into soft rose (#f0c4d4) flowing into soft sky blue (#b8d4f0) — like a watercolor wash
-- Floating bokeh orbs: soft cream, blush pink, sky blue
-- Otherwise follow the shared blueprint exactly
-- Vibe: warm, luxurious, magazine-quality, bright daylight
+- Keep the signature pastel diagonal gradient (lavender → pink → peach → blue) — exactly as in the shared blueprint
+- Make the bubbles slightly more prominent and frosted (this is the signature Shahed Store look)
+- Vibe: warm, luxurious, magazine-quality, bright daylight pastel
 `.trim(),
   },
 
@@ -111,8 +127,8 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Clean Light" tone ═══
-- Background gradient: very light blue-gray (#e8edf5) to soft off-white (#f2f5fa)
-- Floating bokeh orbs: soft sky blue, mint teal, and white glow — clearly visible
+- Slightly cooler pastel gradient: more sky blue and lilac, less peach (still smooth diagonal blend)
+- Bubbles: soft sky blue and white glow, very visible
 - Vibe: clean, minimal, corporate-premium, Apple product page energy
 `.trim(),
   },
@@ -123,8 +139,8 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Soft Aurora" tone ═══
-- Background gradient: aurora flow — soft mint/seafoam (#a8edea) blending into soft lavender/lilac (#d4b5fc) blending into soft warm peach (#ffd6b0) diagonally
-- Floating bokeh orbs: pastel mint, lavender, peach — varied colors, dreamy
+- Slightly more saturated aurora pastel — soft mint/seafoam mixed into the lavender → pink → peach diagonal blend
+- Bubbles: pastel mint, lavender, peach — varied colors, dreamy
 - Vibe: bright, airy, dreamy, premium aurora aesthetic
 `.trim(),
   },
@@ -135,10 +151,10 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glass Gradient Border" tone ═══
-- Background gradient: very light warm gray (#f5f5f7) to soft off-white (#fafafa) with a faint pastel lavender/mint wash
-- Floating bokeh orbs: soft blue, soft mint, soft white — visible behind the card
-- Card border becomes a beautiful 2px GRADIENT BORDER flowing: indigo (#818cf8) → purple (#c084fc) → pink (#f9a8d4) → cyan (#67e8f9) → teal (#5eead4)
-- The gradient border has a delicate soft outer pastel halo
+- Keep the signature pastel diagonal gradient background (lavender → pink → peach → blue)
+- The frosted card border becomes a beautiful 2px GRADIENT BORDER flowing: indigo (#818cf8) → purple (#c084fc) → pink (#f9a8d4) → cyan (#67e8f9) → teal (#5eead4)
+- Gradient border has a delicate soft outer pastel halo
+- Bubbles still visible around the card
 - Vibe: bright, airy, modern Apple-like glassmorphism with a rainbow accent
 `.trim(),
   },
@@ -149,9 +165,9 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glassmorphism UI" tone ═══
-- Background gradient: clean bright white (#ffffff) base with 3 large luminous colorful bokeh glow orbs — golden-amber (top-right), electric cyan (bottom-left), lavender purple (top-left)
-- Plus 3–4 additional soft 3D bokeh balls (sky blue, mint) as required by the blueprint
+- Keep the signature pastel diagonal gradient (lavender → pink → peach → blue) — slightly brighter/whiter overall
 - A bold 3px horizontal gradient accent line (gold → pink → cyan) at the very TOP edge of the card
+- Bubbles still visible around the card
 - Vibe: BRIGHT, premium, luxurious — like Apple/Samsung product launch graphics
 `.trim(),
   },
