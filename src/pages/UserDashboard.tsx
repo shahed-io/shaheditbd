@@ -2116,6 +2116,7 @@ const UserDashboard = () => {
           </div>{/* end Content Panel */}
         </div>
       </main>
+      </div>{/* end relative z-10 wrapper */}
     </div>
   );
 };
