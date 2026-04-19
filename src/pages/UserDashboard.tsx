@@ -738,17 +738,14 @@ const UserDashboard = () => {
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(240,30%,96%) 0%, hsl(260,25%,94%) 50%, hsl(280,20%,95%) 100%)' }}>
 
-      {/* Ambient gradient blobs - desktop only for visual richness (animated) */}
+      {/* Ambient gradient blobs - desktop only for visual richness */}
       <div className="hidden md:block pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-40 -left-32 w-[520px] h-[520px] rounded-full opacity-50 animate-float-slow"
+        <div className="absolute -top-40 -left-32 w-[520px] h-[520px] rounded-full opacity-50"
           style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.35) 0%, transparent 70%)', filter: 'blur(60px)' }} />
-        <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full opacity-40 animate-float-slower"
+        <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full opacity-40"
           style={{ background: 'radial-gradient(circle, hsla(190,90%,65%,0.3) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-        <div className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full opacity-30 animate-float-slow"
-          style={{ background: 'radial-gradient(circle, hsla(280,80%,70%,0.25) 0%, transparent 70%)', filter: 'blur(70px)', animationDelay: '2s' }} />
-        {/* subtle grid overlay */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: 'linear-gradient(hsl(258,78%,55%) 1px, transparent 1px), linear-gradient(90deg, hsl(258,78%,55%) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
+        <div className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full opacity-30"
+          style={{ background: 'radial-gradient(circle, hsla(280,80%,70%,0.25) 0%, transparent 70%)', filter: 'blur(70px)' }} />
       </div>
 
       <div className="relative z-10">
@@ -786,25 +783,19 @@ const UserDashboard = () => {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
         {/* Hero Profile Card - desktop redesigned */}
-        <div className="hidden md:block rounded-3xl overflow-hidden mb-6 sm:mb-8 relative animate-tilt-in" style={glassCardStrong}>
-          {/* Animated decorative gradient strip */}
-          <div className="absolute inset-x-0 top-0 h-24 opacity-90 pointer-events-none animate-gradient-x"
-            style={{ background: 'linear-gradient(120deg, hsla(243,75%,59%,0.22) 0%, hsla(263,70%,58%,0.18) 35%, hsla(190,90%,60%,0.20) 70%, hsla(243,75%,59%,0.22) 100%)', backgroundSize: '200% 200%' }} />
-          {/* Shimmer line */}
-          <div className="absolute inset-x-0 top-0 h-[2px] pointer-events-none animate-shimmer"
-            style={{ background: 'linear-gradient(90deg, transparent, hsla(258,85%,75%,0.9), hsla(190,90%,70%,0.9), transparent)', backgroundSize: '200% 100%' }} />
-          <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full opacity-50 pointer-events-none animate-float-slow"
+        <div className="hidden md:block rounded-3xl overflow-hidden mb-6 sm:mb-8 relative" style={glassCardStrong}>
+          {/* Decorative gradient strip */}
+          <div className="absolute inset-x-0 top-0 h-24 opacity-90 pointer-events-none"
+            style={{ background: 'linear-gradient(120deg, hsla(243,75%,59%,0.18) 0%, hsla(263,70%,58%,0.14) 35%, hsla(190,90%,60%,0.16) 100%)' }} />
+          <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full opacity-50 pointer-events-none"
             style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.35) 0%, transparent 70%)', filter: 'blur(40px)' }} />
 
           <div className="relative p-6 lg:p-7 flex items-center justify-between gap-6 flex-wrap">
             <div className="flex items-center gap-5 min-w-0">
               <div className="relative flex-shrink-0">
-                {/* Pulse ring */}
-                <div className="absolute inset-0 rounded-2xl pointer-events-none animate-pulse-ring"
-                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(190,90%,60%))', filter: 'blur(2px)' }} aria-hidden="true" />
-                <div className="relative p-[3px] rounded-2xl shadow-xl"
+                <div className="p-[3px] rounded-2xl shadow-xl"
                   style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%) 50%, hsl(190,90%,60%))' }}>
-                  <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden flex items-center justify-center text-2xl font-black text-white transition-transform duration-500 hover:scale-105"
+                  <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden flex items-center justify-center text-2xl font-black text-white"
                     style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
                     {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
                   </div>
@@ -812,20 +803,14 @@ const UserDashboard = () => {
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
                 <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
                   title="Change photo"
-                  className="absolute -bottom-1.5 -right-1.5 w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 transition-all hover:scale-110 hover:rotate-12 active:scale-95"
+                  className="absolute -bottom-1.5 -right-1.5 w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 transition-transform hover:scale-110 active:scale-95"
                   style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', borderColor: 'white' }}>
                   {avatarUploading ? <RefreshCw size={13} className="text-white animate-spin" /> : <Camera size={13} className="text-white" />}
                 </button>
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-2xl lg:text-3xl font-black truncate flex items-center gap-2">
-                  <span className="truncate animate-gradient-x" style={{
-                    backgroundImage: 'linear-gradient(90deg, hsl(243,75%,45%), hsl(263,70%,50%), hsl(190,90%,45%), hsl(243,75%,45%))',
-                    backgroundSize: '200% auto',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}>{displayName}</span>
+                <h1 className="text-2xl lg:text-3xl font-black text-foreground truncate flex items-center gap-2">
+                  <span className="truncate">{displayName}</span>
                   <VerifiedBadge size={22} />
                 </h1>
                 <p className="text-sm font-medium text-foreground/65 break-all flex items-center gap-1.5 mt-1">
@@ -833,18 +818,18 @@ const UserDashboard = () => {
                   {user?.email}
                 </p>
                 <div className="flex items-center gap-2 mt-3 flex-wrap">
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-sm transition-transform hover:scale-105"
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-sm"
                     style={{ background: 'linear-gradient(135deg, hsl(158,64%,42%), hsl(168,76%,38%))' }}>
                     <ShieldCheck size={11} /> Verified Account
                   </span>
                   {completedOrders > 0 && (
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full transition-transform hover:scale-105"
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full"
                       style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid hsla(258,78%,65%,0.35)', color: 'hsl(var(--primary))' }}>
                       <Star size={10} fill="currentColor" /> {completedOrders} Completed
                     </span>
                   )}
                   {profile.username && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full text-foreground/70 transition-transform hover:scale-105"
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full text-foreground/70"
                       style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
                       <AtSign size={10} />{profile.username}
                     </span>
@@ -859,18 +844,15 @@ const UserDashboard = () => {
                 { icon: TrendingUp, label: t(selectedLang, 'total'), value: `৳${totalSpent.toLocaleString()}`, color: 'hsl(263,70%,58%)', bg: 'linear-gradient(135deg, hsla(263,70%,58%,0.12), hsla(280,60%,60%,0.08))' },
                 { icon: Heart, label: t(selectedLang, 'tab_wishlist'), value: wishlistItems.length.toString(), color: 'hsl(340,82%,55%)', bg: 'linear-gradient(135deg, hsla(340,82%,55%,0.12), hsla(360,70%,60%,0.08))' },
               ].map((stat, i) => (
-                <div key={i} className="group relative px-4 lg:px-5 py-3 lg:py-3.5 rounded-2xl min-w-[100px] lg:min-w-[120px] transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 cursor-default animate-tilt-in overflow-hidden"
-                  style={{ background: stat.bg, border: '1px solid hsla(258,78%,75%,0.25)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.06), 0 1px 0 rgba(255,255,255,0.85) inset', animationDelay: `${0.1 + i * 0.1}s` }}>
-                  {/* shimmer sweep on hover */}
-                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none"
-                    style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)' }} aria-hidden="true" />
-                  <div className="relative flex items-center gap-2 mb-1">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-6" style={{ background: stat.color, boxShadow: `0 4px 10px ${stat.color}55` }}>
+                <div key={i} className="px-4 lg:px-5 py-3 lg:py-3.5 rounded-2xl min-w-[100px] lg:min-w-[120px] transition-all hover:scale-[1.03] hover:-translate-y-0.5 cursor-default"
+                  style={{ background: stat.bg, border: '1px solid hsla(258,78%,75%,0.25)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.06), 0 1px 0 rgba(255,255,255,0.85) inset' }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: stat.color, boxShadow: `0 4px 10px ${stat.color}55` }}>
                       <stat.icon size={14} className="text-white" />
                     </div>
                     <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{stat.label}</div>
                   </div>
-                  <div className="relative text-xl lg:text-2xl font-black leading-tight" style={{ color: stat.color }}>{stat.value}</div>
+                  <div className="text-xl lg:text-2xl font-black leading-tight" style={{ color: stat.color }}>{stat.value}</div>
                 </div>
               ))}
             </div>
@@ -893,24 +875,15 @@ const UserDashboard = () => {
                 const isActive = activeTab === id;
                 return (
                   <button key={id} onClick={() => handleTabSwitch(id)}
-                    className={`group relative w-full flex items-center gap-2.5 px-2.5 py-2 rounded-2xl text-[13px] font-semibold transition-all duration-300 mb-1 overflow-hidden ${
-                      isActive ? 'text-white scale-[1.02]' : 'hover:bg-white/70 hover:translate-x-0.5 text-foreground/75 hover:text-foreground'
+                    className={`group relative w-full flex items-center gap-2.5 px-2.5 py-2 rounded-2xl text-[13px] font-semibold transition-all mb-1 ${
+                      isActive ? 'text-white' : 'hover:bg-white/70 text-foreground/75 hover:text-foreground'
                     }`}
                     style={isActive ? {
                       background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 100%)',
                       boxShadow: '0 8px 20px hsla(258,78%,55%,0.38), 0 1px 0 rgba(255,255,255,0.4) inset',
                     } : { border: '1px solid transparent' }}>
-                    {/* Active left indicator bar */}
-                    {isActive && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-white/90 animate-fade-in" aria-hidden="true" />
-                    )}
-                    {/* Hover sweep */}
-                    {!isActive && (
-                      <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none"
-                        style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,75%,0.18), transparent)' }} aria-hidden="true" />
-                    )}
-                    <span className={`relative w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                      isActive ? '' : 'group-hover:scale-110 group-hover:rotate-3'
+                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
+                      isActive ? '' : 'group-hover:scale-110'
                     }`}
                       style={isActive
                         ? { background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(8px)' }
@@ -918,10 +891,10 @@ const UserDashboard = () => {
                       }>
                       <Icon size={14} className={isActive ? 'text-white' : 'text-primary'} />
                     </span>
-                    <span className="relative flex-1 text-left truncate">{label}</span>
+                    <span className="flex-1 text-left truncate">{label}</span>
                     {badge !== undefined && badge > 0 && (
-                      <span className={`relative text-[10px] font-black px-1.5 min-w-[18px] h-[18px] rounded-full flex items-center justify-center ${
-                        isActive ? 'text-primary bg-white' : 'text-white animate-pulse'
+                      <span className={`text-[10px] font-black px-1.5 min-w-[18px] h-[18px] rounded-full flex items-center justify-center ${
+                        isActive ? 'text-primary bg-white' : 'text-white'
                       }`}
                         style={!isActive ? { background: id === 'notifications' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' } : undefined}>{badge}</span>
                     )}
