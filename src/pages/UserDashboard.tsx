@@ -782,79 +782,105 @@ const UserDashboard = () => {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
-        {/* Hero Profile Card - desktop redesigned */}
-        <div className="hidden md:block rounded-3xl overflow-hidden mb-6 sm:mb-8 relative" style={glassCardStrong}>
-          {/* Decorative gradient strip */}
-          <div className="absolute inset-x-0 top-0 h-24 opacity-90 pointer-events-none"
-            style={{ background: 'linear-gradient(120deg, hsla(243,75%,59%,0.18) 0%, hsla(263,70%,58%,0.14) 35%, hsla(190,90%,60%,0.16) 100%)' }} />
-          <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full opacity-50 pointer-events-none"
-            style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.35) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+        {/* Hero Profile Card — fully redesigned premium glassmorphism */}
+        <div className="hidden md:block relative mb-8">
+          {/* Floating ambient halo behind hero */}
+          <div className="absolute -inset-x-6 -top-6 h-[260px] pointer-events-none opacity-70" aria-hidden="true"
+            style={{ background: 'radial-gradient(60% 100% at 20% 0%, hsla(258,85%,70%,0.30) 0%, transparent 60%), radial-gradient(60% 100% at 90% 30%, hsla(190,90%,65%,0.25) 0%, transparent 60%)', filter: 'blur(40px)' }} />
 
-          <div className="relative p-6 lg:p-7 flex items-center justify-between gap-6 flex-wrap">
-            <div className="flex items-center gap-5 min-w-0">
-              <div className="relative flex-shrink-0">
-                <div className="p-[3px] rounded-2xl shadow-xl"
-                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%) 50%, hsl(190,90%,60%))' }}>
-                  <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden flex items-center justify-center text-2xl font-black text-white"
-                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                    {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
-                  </div>
-                </div>
-                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-                <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
-                  title="Change photo"
-                  className="absolute -bottom-1.5 -right-1.5 w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 transition-transform hover:scale-110 active:scale-95"
-                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', borderColor: 'white' }}>
-                  {avatarUploading ? <RefreshCw size={13} className="text-white animate-spin" /> : <Camera size={13} className="text-white" />}
-                </button>
-              </div>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-2xl lg:text-3xl font-black text-foreground truncate flex items-center gap-2">
-                  <span className="truncate">{displayName}</span>
-                  <VerifiedBadge size={22} />
-                </h1>
-                <p className="text-sm font-medium text-foreground/65 break-all flex items-center gap-1.5 mt-1">
-                  <Mail size={13} className="text-primary/70 flex-shrink-0" />
-                  {user?.email}
-                </p>
-                <div className="flex items-center gap-2 mt-3 flex-wrap">
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-sm"
-                    style={{ background: 'linear-gradient(135deg, hsl(158,64%,42%), hsl(168,76%,38%))' }}>
-                    <ShieldCheck size={11} /> Verified Account
-                  </span>
-                  {completedOrders > 0 && (
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full"
-                      style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid hsla(258,78%,65%,0.35)', color: 'hsl(var(--primary))' }}>
-                      <Star size={10} fill="currentColor" /> {completedOrders} Completed
-                    </span>
-                  )}
-                  {profile.username && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full text-foreground/70"
-                      style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
-                      <AtSign size={10} />{profile.username}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
+          <div className="relative rounded-[28px] overflow-hidden" style={glassCardStrong}>
+            {/* Gradient top accent bar */}
+            <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, hsl(243,75%,59%), hsl(263,70%,58%) 35%, hsl(190,90%,60%) 70%, hsl(330,82%,60%))' }} />
 
-            <div className="grid grid-cols-3 gap-3 lg:gap-4">
-              {[
-                { icon: Package, label: t(selectedLang, 'order'), value: orders.length.toString(), color: 'hsl(243,75%,59%)', bg: 'linear-gradient(135deg, hsla(243,75%,59%,0.12), hsla(263,70%,58%,0.08))' },
-                { icon: TrendingUp, label: t(selectedLang, 'total'), value: `৳${totalSpent.toLocaleString()}`, color: 'hsl(263,70%,58%)', bg: 'linear-gradient(135deg, hsla(263,70%,58%,0.12), hsla(280,60%,60%,0.08))' },
-                { icon: Heart, label: t(selectedLang, 'tab_wishlist'), value: wishlistItems.length.toString(), color: 'hsl(340,82%,55%)', bg: 'linear-gradient(135deg, hsla(340,82%,55%,0.12), hsla(360,70%,60%,0.08))' },
-              ].map((stat, i) => (
-                <div key={i} className="px-4 lg:px-5 py-3 lg:py-3.5 rounded-2xl min-w-[100px] lg:min-w-[120px] transition-all hover:scale-[1.03] hover:-translate-y-0.5 cursor-default"
-                  style={{ background: stat.bg, border: '1px solid hsla(258,78%,75%,0.25)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.06), 0 1px 0 rgba(255,255,255,0.85) inset' }}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: stat.color, boxShadow: `0 4px 10px ${stat.color}55` }}>
-                      <stat.icon size={14} className="text-white" />
+            {/* Inner content */}
+            <div className="relative p-6 lg:p-8">
+              {/* Decorative inner glow */}
+              <div className="absolute -top-16 right-10 w-64 h-64 rounded-full opacity-50 pointer-events-none"
+                style={{ background: 'radial-gradient(circle, hsla(258,85%,75%,0.35) 0%, transparent 70%)', filter: 'blur(40px)' }} aria-hidden="true" />
+
+              <div className="relative flex items-start justify-between gap-8 flex-wrap">
+                {/* Identity block */}
+                <div className="flex items-center gap-6 min-w-0 flex-1">
+                  <div className="relative flex-shrink-0">
+                    {/* Animated gradient ring */}
+                    <div className="absolute inset-0 rounded-3xl opacity-70 blur-md"
+                      style={{ background: 'conic-gradient(from 180deg, hsl(243,75%,59%), hsl(263,70%,58%), hsl(190,90%,60%), hsl(330,82%,60%), hsl(243,75%,59%))' }} aria-hidden="true" />
+                    <div className="relative p-[2.5px] rounded-3xl"
+                      style={{ background: 'conic-gradient(from 180deg, hsl(243,75%,59%), hsl(263,70%,58%), hsl(190,90%,60%), hsl(330,82%,60%), hsl(243,75%,59%))' }}>
+                      <div className="w-24 h-24 lg:w-28 lg:h-28 rounded-[22px] overflow-hidden flex items-center justify-center text-3xl font-black text-white ring-4 ring-white/80"
+                        style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                        {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
+                      </div>
                     </div>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{stat.label}</div>
+                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                    <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
+                      title="Change photo"
+                      className="absolute -bottom-2 -right-2 w-9 h-9 rounded-2xl flex items-center justify-center shadow-lg ring-2 ring-white transition-all hover:scale-110 active:scale-95"
+                      style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 6px 16px hsla(258,78%,55%,0.45)' }}>
+                      {avatarUploading ? <RefreshCw size={14} className="text-white animate-spin" /> : <Camera size={14} className="text-white" />}
+                    </button>
                   </div>
-                  <div className="text-xl lg:text-2xl font-black leading-tight" style={{ color: stat.color }}>{stat.value}</div>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary/70 mb-1">Welcome back</p>
+                    <h1 className="text-3xl lg:text-[34px] font-black leading-tight truncate flex items-center gap-2.5"
+                      style={{ background: 'linear-gradient(135deg, hsl(230,30%,15%), hsl(258,40%,30%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                      <span className="truncate">{displayName}</span>
+                      <VerifiedBadge size={24} />
+                    </h1>
+                    <p className="text-sm font-medium text-foreground/65 break-all flex items-center gap-1.5 mt-1.5">
+                      <Mail size={13} className="text-primary/70 flex-shrink-0" />
+                      {user?.email}
+                    </p>
+                    <div className="flex items-center gap-2 mt-3.5 flex-wrap">
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full text-white"
+                        style={{ background: 'linear-gradient(135deg, hsl(158,64%,42%), hsl(168,76%,38%))', boxShadow: '0 4px 12px hsla(158,64%,42%,0.35)' }}>
+                        <ShieldCheck size={11} /> Verified
+                      </span>
+                      {completedOrders > 0 && (
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full"
+                          style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(10px)', border: '1px solid hsla(258,78%,65%,0.35)', color: 'hsl(var(--primary))' }}>
+                          <Star size={10} fill="currentColor" /> {completedOrders} Completed
+                        </span>
+                      )}
+                      {profile.username && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-3 py-1.5 rounded-full text-foreground/70"
+                          style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(10px)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
+                          <AtSign size={10} />{profile.username}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              ))}
+
+                {/* Stat cards — premium floating tiles */}
+                <div className="grid grid-cols-3 gap-3 lg:gap-4">
+                  {[
+                    { icon: Package, label: t(selectedLang, 'order'), value: orders.length.toString(), accent: 'hsl(243,75%,59%)', glow: 'hsla(243,75%,59%,0.35)' },
+                    { icon: TrendingUp, label: t(selectedLang, 'total'), value: `৳${totalSpent.toLocaleString()}`, accent: 'hsl(263,70%,58%)', glow: 'hsla(263,70%,58%,0.35)' },
+                    { icon: Heart, label: t(selectedLang, 'tab_wishlist'), value: wishlistItems.length.toString(), accent: 'hsl(340,82%,55%)', glow: 'hsla(340,82%,55%,0.35)' },
+                  ].map((stat, i) => (
+                    <div key={i} className="group relative px-4 lg:px-5 py-3.5 lg:py-4 rounded-2xl min-w-[120px] lg:min-w-[140px] transition-all duration-300 hover:-translate-y-1 cursor-default overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.75) 100%)',
+                        backdropFilter: 'blur(20px) saturate(180%)',
+                        border: '1px solid hsla(258,78%,75%,0.30)',
+                        boxShadow: `0 6px 20px ${stat.glow}, 0 1px 0 rgba(255,255,255,0.95) inset`,
+                      }}>
+                      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-60 transition-opacity"
+                        style={{ background: `radial-gradient(circle, ${stat.glow} 0%, transparent 70%)`, filter: 'blur(20px)' }} aria-hidden="true" />
+                      <div className="relative flex items-center gap-2 mb-1.5">
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-6"
+                          style={{ background: `linear-gradient(135deg, ${stat.accent}, ${stat.accent}dd)`, boxShadow: `0 4px 12px ${stat.glow}` }}>
+                          <stat.icon size={15} className="text-white" />
+                        </div>
+                        <div className="text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">{stat.label}</div>
+                      </div>
+                      <div className="relative text-2xl lg:text-[26px] font-black leading-tight tracking-tight" style={{ color: stat.accent }}>{stat.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
