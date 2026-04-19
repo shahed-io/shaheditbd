@@ -232,13 +232,106 @@ serve(async (req) => {
       userContent.push({ type: "image_url", image_url: { url: imageUrl } });
     }
 
-    // ── Phase 1: Lovable AI Gateway (best quality models) ─────────────────
-    const GATEWAY_MODELS = [
-      "google/gemini-3-pro-image-preview",     // highest quality
-      "google/gemini-3.1-flash-image-preview", // fast + pro-level
+    let data: any = null;
+
+    // ── Phase 1: Direct Gemini API with USER-PROVIDED keys (FREE — no Lovable credits) ──
+    // We try all 6 user keys FIRST so Lovable AI credits are NOT consumed.
+    const USER_GEMINI_KEYS = [
+      Deno.env.get("GEMINI_API_KEY"),
+      Deno.env.get("GEMINI_API_KEY_2"),
+      Deno.env.get("GEMINI_API_KEY_3"),
+      Deno.env.get("GEMINI_API_KEY_4"),
+      Deno.env.get("GEMINI_API_KEY_5"),
+      Deno.env.get("GEMINI_API_KEY_6"),
+    ].filter(Boolean) as string[];
+
+    const DIRECT_IMAGE_MODELS = [
+      "gemini-2.5-flash-image",                 // newest stable image model
+      "gemini-2.0-flash-preview-image-generation", // fallback image model
     ];
 
-    let data: any = null;
+    // Pre-fetch reference image once (if provided) and convert to base64
+    let refImagePart: any = null;
+    if (imageUrl) {
+      try {
+        const imgResp = await fetch(imageUrl);
+        if (imgResp.ok) {
+          const imgBuf = await imgResp.arrayBuffer();
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(imgBuf)));
+          const mimeType = imgResp.headers.get("content-type") || "image/jpeg";
+          refImagePart = { inline_data: { mime_type: mimeType, data: base64 } };
+        }
+      } catch (_) { /* text-only fallback */ }
+    }
+
+    outer: for (let ki = 0; ki < USER_GEMINI_KEYS.length; ki++) {
+      const apiKey = USER_GEMINI_KEYS[ki];
+      for (let mi = 0; mi < DIRECT_IMAGE_MODELS.length; mi++) {
+        const model = DIRECT_IMAGE_MODELS[mi];
+        console.log(`Direct Gemini — key#${ki + 1}, model=${model}`);
+
+        const parts: any[] = [{ text: promptText }];
+        if (refImagePart) parts.push(refImagePart);
+
+        try {
+          const directResp = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts }],
+                generationConfig: {
+                  responseModalities: ["IMAGE", "TEXT"],
+                },
+              }),
+            }
+          );
+
+          if (directResp.status === 429) {
+            console.warn(`key#${ki + 1} ${model} → 429 rate limited, trying next...`);
+            await new Promise(r => setTimeout(r, 600));
+            continue;
+          }
+
+          if (!directResp.ok) {
+            const errText = await directResp.text();
+            console.warn(`key#${ki + 1} ${model} → ${directResp.status}: ${errText.substring(0, 200)}`);
+            continue;
+          }
+
+          const directData = await directResp.json();
+          const inlinePart = directData.candidates?.[0]?.content?.parts?.find(
+            (p: any) => p.inlineData?.data || p.inline_data?.data
+          );
+          const inline = inlinePart?.inlineData || inlinePart?.inline_data;
+
+          if (inline?.data) {
+            const mime = inline.mimeType || inline.mime_type || "image/png";
+            console.log(`✅ Direct Gemini success — key#${ki + 1}, model=${model}`);
+            // Reuse the standard upload pipeline by populating `data` in gateway-shape
+            data = {
+              choices: [{
+                message: {
+                  images: [{ image_url: { url: `data:${mime};base64,${inline.data}` } }]
+                }
+              }]
+            };
+            break outer;
+          }
+
+          console.warn(`key#${ki + 1} ${model} → no image data in response`);
+        } catch (e) {
+          console.warn(`key#${ki + 1} ${model} → exception: ${e instanceof Error ? e.message : e}`);
+        }
+      }
+    }
+
+    // ── Phase 2: Lovable AI Gateway fallback (uses Lovable credits) ─────────
+    const GATEWAY_MODELS = [
+      "google/gemini-3-pro-image-preview",
+      "google/gemini-3.1-flash-image-preview",
+    ];
 
     for (let attempt = 0; attempt < GATEWAY_MODELS.length; attempt++) {
       const model = GATEWAY_MODELS[attempt];
