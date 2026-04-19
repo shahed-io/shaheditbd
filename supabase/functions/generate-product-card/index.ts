@@ -232,177 +232,186 @@ serve(async (req) => {
       userContent.push({ type: "image_url", image_url: { url: imageUrl } });
     }
 
-    // ── Phase 1: Lovable AI Gateway (best quality models) ─────────────────
-    const GATEWAY_MODELS = [
-      "google/gemini-3-pro-image-preview",     // highest quality
-      "google/gemini-3.1-flash-image-preview", // fast + pro-level
-    ];
-
     let data: any = null;
 
-    for (let attempt = 0; attempt < GATEWAY_MODELS.length; attempt++) {
-      const model = GATEWAY_MODELS[attempt];
-      console.log(`Gateway attempt ${attempt + 1}: ${model}`);
+    // ── Phase 1: Direct Gemini API with USER-PROVIDED keys (FREE — no Lovable credits) ──
+    // We try all 6 user keys FIRST so Lovable AI credits are NOT consumed.
+    const USER_GEMINI_KEYS = [
+      Deno.env.get("GEMINI_API_KEY"),
+      Deno.env.get("GEMINI_API_KEY_2"),
+      Deno.env.get("GEMINI_API_KEY_3"),
+      Deno.env.get("GEMINI_API_KEY_4"),
+      Deno.env.get("GEMINI_API_KEY_5"),
+      Deno.env.get("GEMINI_API_KEY_6"),
+    ].filter(Boolean) as string[];
 
-      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model,
-          messages: [{ role: "user", content: userContent }],
-          modalities: ["image", "text"],
-        }),
-      });
+    const DIRECT_IMAGE_MODELS = [
+      "gemini-2.5-flash-image",                 // newest stable image model
+      "gemini-2.0-flash-preview-image-generation", // fallback image model
+    ];
 
-      if (response.status === 402) {
-        // credits exhausted — fall through to direct API keys
-        console.warn("Gateway credits exhausted, switching to direct Gemini API...");
-        break;
-      }
-
-      if (response.status === 429) {
-        console.warn(`Gateway model ${model} rate limited, trying next...`);
-        await new Promise(r => setTimeout(r, 800));
-        continue;
-      }
-
-      if (!response.ok) {
-        const errText = await response.text();
-        console.warn(`Gateway error ${response.status}: ${errText}, trying next...`);
-        continue;
-      }
-
-      const responseData = await response.json();
-
-      if (responseData.error) {
-        const code = responseData.error?.code;
-        if (code === 429 || responseData.error?.status === 429) {
-          console.warn(`Gateway body 429, trying next...`);
-          await new Promise(r => setTimeout(r, 800));
-          continue;
+    // Pre-fetch reference image once (if provided) and convert to base64
+    let refImagePart: any = null;
+    if (imageUrl) {
+      try {
+        const imgResp = await fetch(imageUrl);
+        if (imgResp.ok) {
+          const imgBuf = await imgResp.arrayBuffer();
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(imgBuf)));
+          const mimeType = imgResp.headers.get("content-type") || "image/jpeg";
+          refImagePart = { inline_data: { mime_type: mimeType, data: base64 } };
         }
-        if (code === 402) {
-          console.warn("Gateway credits exhausted, switching to direct Gemini API...");
-          break;
-        }
-        throw new Error(responseData.error?.message || "AI gateway error");
-      }
-
-      // Check if choices[0] itself contains a rate-limit or error (200 OK but error injected)
-      const choiceError = responseData.choices?.[0]?.error;
-      if (choiceError) {
-        const choiceCode = choiceError?.code || choiceError?.metadata?.error_type;
-        if (choiceCode === 429 || choiceCode === "rate_limit_exceeded") {
-          console.warn(`Gateway choice-level 429 on ${model}, trying next...`);
-          await new Promise(r => setTimeout(r, 800));
-          continue;
-        }
-        if (choiceCode === 402) {
-          console.warn("Gateway choice-level credits exhausted, switching to direct Gemini API...");
-          break;
-        }
-        console.warn(`Gateway choice-level error on ${model}: ${JSON.stringify(choiceError)}, trying next...`);
-        continue;
-      }
-
-      // Verify there's actually image data before accepting this response
-      const hasImage = !!(
-        responseData.choices?.[0]?.message?.images?.[0]?.image_url?.url ||
-        responseData.choices?.[0]?.message?.images?.[0]?.data ||
-        (Array.isArray(responseData.choices?.[0]?.message?.content) &&
-          responseData.choices?.[0]?.message?.content.find((p: any) => p.type === "image_url" || p.inline_data))
-      );
-
-      if (!hasImage) {
-        console.warn(`Gateway model ${model} returned no image data, trying next...`);
-        continue;
-      }
-
-      data = responseData;
-      break;
+      } catch (_) { /* text-only fallback */ }
     }
 
-    // ── Phase 2: Direct Gemini API with user-provided keys ─────────────────
-    if (!data) {
-      const GEMINI_KEYS = [
-        Deno.env.get("GEMINI_API_KEY"),
-        Deno.env.get("GEMINI_API_KEY_2"),
-        Deno.env.get("GEMINI_API_KEY_3"),
-      ].filter(Boolean) as string[];
+    outer: for (let ki = 0; ki < USER_GEMINI_KEYS.length; ki++) {
+      const apiKey = USER_GEMINI_KEYS[ki];
+      for (let mi = 0; mi < DIRECT_IMAGE_MODELS.length; mi++) {
+        const model = DIRECT_IMAGE_MODELS[mi];
+        console.log(`Direct Gemini — key#${ki + 1}, model=${model}`);
 
-      // Use gemini-2.0-flash-preview-image-generation for direct API (high quality)
-      const DIRECT_MODEL = "gemini-2.0-flash-preview-image-generation";
-
-      for (let i = 0; i < GEMINI_KEYS.length; i++) {
-        const apiKey = GEMINI_KEYS[i];
-        console.log(`Direct Gemini attempt ${i + 1} with key ${i + 1}...`);
-
-        // Build parts for direct Gemini API
         const parts: any[] = [{ text: promptText }];
-        if (imageUrl) {
-          // Fetch the image and convert to base64 for direct API
-          try {
-            const imgResp = await fetch(imageUrl);
-            if (imgResp.ok) {
-              const imgBuf = await imgResp.arrayBuffer();
-              const base64 = btoa(String.fromCharCode(...new Uint8Array(imgBuf)));
-              const mimeType = imgResp.headers.get("content-type") || "image/jpeg";
-              parts.push({ inline_data: { mime_type: mimeType, data: base64 } });
+        if (refImagePart) parts.push(refImagePart);
+
+        try {
+          const directResp = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts }],
+                generationConfig: {
+                  responseModalities: ["IMAGE", "TEXT"],
+                },
+              }),
             }
-          } catch (e) {
-            console.warn("Could not fetch image for direct API, text-only prompt");
+          );
+
+          if (directResp.status === 429) {
+            console.warn(`key#${ki + 1} ${model} → 429 rate limited, trying next...`);
+            await new Promise(r => setTimeout(r, 600));
+            continue;
           }
+
+          if (!directResp.ok) {
+            const errText = await directResp.text();
+            console.warn(`key#${ki + 1} ${model} → ${directResp.status}: ${errText.substring(0, 200)}`);
+            continue;
+          }
+
+          const directData = await directResp.json();
+          const inlinePart = directData.candidates?.[0]?.content?.parts?.find(
+            (p: any) => p.inlineData?.data || p.inline_data?.data
+          );
+          const inline = inlinePart?.inlineData || inlinePart?.inline_data;
+
+          if (inline?.data) {
+            const mime = inline.mimeType || inline.mime_type || "image/png";
+            console.log(`✅ Direct Gemini success — key#${ki + 1}, model=${model}`);
+            // Reuse the standard upload pipeline by populating `data` in gateway-shape
+            data = {
+              choices: [{
+                message: {
+                  images: [{ image_url: { url: `data:${mime};base64,${inline.data}` } }]
+                }
+              }]
+            };
+            break outer;
+          }
+
+          console.warn(`key#${ki + 1} ${model} → no image data in response`);
+        } catch (e) {
+          console.warn(`key#${ki + 1} ${model} → exception: ${e instanceof Error ? e.message : e}`);
+        }
+      }
+    }
+
+    // ── Phase 2: Lovable AI Gateway fallback (uses Lovable credits) ─────────
+    const GATEWAY_MODELS = [
+      "google/gemini-3-pro-image-preview",
+      "google/gemini-3.1-flash-image-preview",
+    ];
+
+    if (!data) {
+      for (let attempt = 0; attempt < GATEWAY_MODELS.length; attempt++) {
+        const model = GATEWAY_MODELS[attempt];
+        console.log(`Gateway fallback attempt ${attempt + 1}: ${model}`);
+
+        const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model,
+            messages: [{ role: "user", content: userContent }],
+            modalities: ["image", "text"],
+          }),
+        });
+
+        if (response.status === 402) {
+          console.warn("Gateway credits exhausted");
+          break;
         }
 
-        const directResp = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${DIRECT_MODEL}:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts }],
-              generationConfig: {
-                responseModalities: ["IMAGE", "TEXT"],
-                responseMimeType: "image/jpeg",
-              },
-            }),
-          }
-        );
-
-        if (directResp.status === 429) {
-          console.warn(`Direct key ${i + 1} rate limited, trying next key...`);
+        if (response.status === 429) {
+          console.warn(`Gateway model ${model} rate limited, trying next...`);
           await new Promise(r => setTimeout(r, 800));
           continue;
         }
 
-        if (!directResp.ok) {
-          const errText = await directResp.text();
-          console.warn(`Direct key ${i + 1} error ${directResp.status}: ${errText}`);
+        if (!response.ok) {
+          const errText = await response.text();
+          console.warn(`Gateway error ${response.status}: ${errText}, trying next...`);
           continue;
         }
 
-        const directData = await directResp.json();
-        const inlinePart = directData.candidates?.[0]?.content?.parts?.find(
-          (p: any) => p.inlineData?.data
-        );
+        const responseData = await response.json();
 
-        if (inlinePart?.inlineData?.data) {
-          const mime = inlinePart.inlineData.mimeType || "image/jpeg";
-          const imageData = `data:${mime};base64,${inlinePart.inlineData.data}`;
-          console.log("Direct Gemini image generated successfully");
-          return new Response(JSON.stringify({ imageData }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
+        if (responseData.error) {
+          const code = responseData.error?.code;
+          if (code === 429 || responseData.error?.status === 429) {
+            await new Promise(r => setTimeout(r, 800));
+            continue;
+          }
+          if (code === 402) break;
+          continue;
         }
 
-        console.warn(`Direct key ${i + 1} returned no image data`);
-      }
+        const choiceError = responseData.choices?.[0]?.error;
+        if (choiceError) {
+          const choiceCode = choiceError?.code || choiceError?.metadata?.error_type;
+          if (choiceCode === 429 || choiceCode === "rate_limit_exceeded") {
+            await new Promise(r => setTimeout(r, 800));
+            continue;
+          }
+          if (choiceCode === 402) break;
+          continue;
+        }
 
+        const hasImage = !!(
+          responseData.choices?.[0]?.message?.images?.[0]?.image_url?.url ||
+          responseData.choices?.[0]?.message?.images?.[0]?.data ||
+          (Array.isArray(responseData.choices?.[0]?.message?.content) &&
+            responseData.choices?.[0]?.message?.content.find((p: any) => p.type === "image_url" || p.inline_data))
+        );
+
+        if (!hasImage) {
+          console.warn(`Gateway model ${model} returned no image data, trying next...`);
+          continue;
+        }
+
+        data = responseData;
+        break;
+      }
+    }
+
+    // ── Final check: if all sources failed ────────────────────────────────────
+    if (!data) {
       return new Response(
-        JSON.stringify({ error: "সকল AI কী রেট লিমিটেড। কিছুক্ষণ পর আবার চেষ্টা করুন।" }),
+        JSON.stringify({ error: "সকল AI কী রেট লিমিটেড বা ব্যর্থ হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।" }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
