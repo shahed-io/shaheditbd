@@ -540,9 +540,16 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error("generate-product-card error:", e);
+    // Return 200 with structured error → prevents supabase-js from throwing
+    // and prevents the global error boundary blank screen.
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        ok: false,
+        error: e instanceof Error ? e.message : "Unknown error",
+        fallback: true,
+        code: "INTERNAL_ERROR",
+      }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
