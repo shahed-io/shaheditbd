@@ -893,15 +893,24 @@ const UserDashboard = () => {
                 const isActive = activeTab === id;
                 return (
                   <button key={id} onClick={() => handleTabSwitch(id)}
-                    className={`group relative w-full flex items-center gap-2.5 px-2.5 py-2 rounded-2xl text-[13px] font-semibold transition-all mb-1 ${
-                      isActive ? 'text-white' : 'hover:bg-white/70 text-foreground/75 hover:text-foreground'
+                    className={`group relative w-full flex items-center gap-2.5 px-2.5 py-2 rounded-2xl text-[13px] font-semibold transition-all duration-300 mb-1 overflow-hidden ${
+                      isActive ? 'text-white scale-[1.02]' : 'hover:bg-white/70 hover:translate-x-0.5 text-foreground/75 hover:text-foreground'
                     }`}
                     style={isActive ? {
                       background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 100%)',
                       boxShadow: '0 8px 20px hsla(258,78%,55%,0.38), 0 1px 0 rgba(255,255,255,0.4) inset',
                     } : { border: '1px solid transparent' }}>
-                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
-                      isActive ? '' : 'group-hover:scale-110'
+                    {/* Active left indicator bar */}
+                    {isActive && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-white/90 animate-fade-in" aria-hidden="true" />
+                    )}
+                    {/* Hover sweep */}
+                    {!isActive && (
+                      <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none"
+                        style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,75%,0.18), transparent)' }} aria-hidden="true" />
+                    )}
+                    <span className={`relative w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                      isActive ? '' : 'group-hover:scale-110 group-hover:rotate-3'
                     }`}
                       style={isActive
                         ? { background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(8px)' }
@@ -909,10 +918,10 @@ const UserDashboard = () => {
                       }>
                       <Icon size={14} className={isActive ? 'text-white' : 'text-primary'} />
                     </span>
-                    <span className="flex-1 text-left truncate">{label}</span>
+                    <span className="relative flex-1 text-left truncate">{label}</span>
                     {badge !== undefined && badge > 0 && (
-                      <span className={`text-[10px] font-black px-1.5 min-w-[18px] h-[18px] rounded-full flex items-center justify-center ${
-                        isActive ? 'text-primary bg-white' : 'text-white'
+                      <span className={`relative text-[10px] font-black px-1.5 min-w-[18px] h-[18px] rounded-full flex items-center justify-center ${
+                        isActive ? 'text-primary bg-white' : 'text-white animate-pulse'
                       }`}
                         style={!isActive ? { background: id === 'notifications' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' } : undefined}>{badge}</span>
                     )}
