@@ -24,7 +24,7 @@ const MobileBottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { items } = useCart();
-  const { wishlist } = useWishlist();
+  const { wishlistCount } = useWishlist();
   const { user } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -50,7 +50,6 @@ const MobileBottomNav = () => {
   if (location.pathname.startsWith('/ceo')) return null;
 
   const cartCount = items.reduce((s, i) => s + i.quantity, 0);
-  const wishlistCount = wishlist.length;
 
   const items_: NavItem[] = [
     { label: 'Home',     icon: Home,        path: '/',          match: (p) => p === '/' },
