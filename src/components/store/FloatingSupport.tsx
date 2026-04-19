@@ -216,7 +216,7 @@ const FloatingSupport = () => {
         <div className="fixed right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-w-sm flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-border/60 bg-background"
           style={{
             animation: 'slideUpIn 0.2s ease-out',
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 80px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 160px)',
           }}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary to-primary/80">
@@ -294,7 +294,7 @@ const FloatingSupport = () => {
 
       {/* ── Popup Menu ── */}
       {menuOpen && !chatOpen && (
-        <div className="fixed right-4 sm:right-6 z-50 flex flex-col gap-3" style={{ animation: 'slideUpIn 0.15s ease-out', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 80px)' }}>
+        <div className="fixed right-4 sm:right-6 z-50 flex flex-col gap-3" style={{ animation: 'slideUpIn 0.15s ease-out', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 160px)' }}>
           {/* AI Support */}
           {config.chat_enabled && (
             <button onClick={openChat}
@@ -348,7 +348,7 @@ const FloatingSupport = () => {
       {/* ── Main FAB ── */}
       <div
         className="fixed right-4 sm:right-6 z-50 flex items-center justify-center"
-        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)' }}
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 96px)' }}
       >
         {!menuOpen && !chatOpen && (
           <>
