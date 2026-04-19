@@ -362,7 +362,63 @@ serve(async (req) => {
       }
     }
 
-    // ── Phase 2: Lovable AI Gateway fallback (uses Lovable credits) ─────────
+    // ── Phase 2: OpenAI Image API fallback (uses user's OpenAI credits) ─────
+    // Try OpenAI gpt-image-1 if all Gemini keys exhausted.
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    if (!data && OPENAI_API_KEY) {
+      try {
+        console.log("OpenAI fallback — gpt-image-1");
+        const openaiResp = await fetch("https://api.openai.com/v1/images/generations", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "gpt-image-1",
+            prompt: promptText,
+            size: "1024x1024",
+            n: 1,
+          }),
+        });
+
+        if (openaiResp.status === 429 || openaiResp.status === 503) {
+          console.warn(`OpenAI → ${openaiResp.status}, falling through to Lovable gateway`);
+        } else if (!openaiResp.ok) {
+          const errText = await openaiResp.text();
+          console.warn(`OpenAI error ${openaiResp.status}: ${errText.substring(0, 200)}`);
+        } else {
+          const openaiData = await openaiResp.json();
+          const b64 = openaiData?.data?.[0]?.b64_json;
+          const url = openaiData?.data?.[0]?.url;
+          if (b64) {
+            console.log("✅ OpenAI success (b64)");
+            data = {
+              choices: [{
+                message: {
+                  images: [{ image_url: { url: `data:image/png;base64,${b64}` } }]
+                }
+              }]
+            };
+          } else if (url) {
+            console.log("✅ OpenAI success (url)");
+            data = {
+              choices: [{
+                message: {
+                  images: [{ image_url: { url } }]
+                }
+              }]
+            };
+          } else {
+            console.warn("OpenAI returned no image data");
+          }
+        }
+      } catch (e) {
+        console.warn(`OpenAI exception: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    // ── Phase 3: Lovable AI Gateway fallback (uses Lovable credits) ─────────
     const GATEWAY_MODELS = [
       "google/gemini-3-pro-image-preview",
       "google/gemini-3.1-flash-image-preview",
