@@ -738,14 +738,17 @@ const UserDashboard = () => {
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(240,30%,96%) 0%, hsl(260,25%,94%) 50%, hsl(280,20%,95%) 100%)' }}>
 
-      {/* Ambient gradient blobs - desktop only for visual richness */}
+      {/* Ambient gradient blobs - desktop only for visual richness (animated) */}
       <div className="hidden md:block pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-40 -left-32 w-[520px] h-[520px] rounded-full opacity-50"
+        <div className="absolute -top-40 -left-32 w-[520px] h-[520px] rounded-full opacity-50 animate-float-slow"
           style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.35) 0%, transparent 70%)', filter: 'blur(60px)' }} />
-        <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full opacity-40"
+        <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full opacity-40 animate-float-slower"
           style={{ background: 'radial-gradient(circle, hsla(190,90%,65%,0.3) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-        <div className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full opacity-30"
-          style={{ background: 'radial-gradient(circle, hsla(280,80%,70%,0.25) 0%, transparent 70%)', filter: 'blur(70px)' }} />
+        <div className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full opacity-30 animate-float-slow"
+          style={{ background: 'radial-gradient(circle, hsla(280,80%,70%,0.25) 0%, transparent 70%)', filter: 'blur(70px)', animationDelay: '2s' }} />
+        {/* subtle grid overlay */}
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: 'linear-gradient(hsl(258,78%,55%) 1px, transparent 1px), linear-gradient(90deg, hsl(258,78%,55%) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
       </div>
 
       <div className="relative z-10">
