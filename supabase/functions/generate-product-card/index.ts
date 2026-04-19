@@ -290,14 +290,16 @@ serve(async (req) => {
           );
 
           if (directResp.status === 429) {
-            console.warn(`key#${ki + 1} ${model} → 429 rate limited, trying next...`);
-            await new Promise(r => setTimeout(r, 600));
-            continue;
+            console.warn(`key#${ki + 1} ${model} → 429 rate limited, switching key...`);
+            await directResp.text().catch(() => {});
+            // 429 means THIS key is exhausted — skip remaining models for this key
+            break;
           }
 
           if (!directResp.ok) {
             const errText = await directResp.text();
             console.warn(`key#${ki + 1} ${model} → ${directResp.status}: ${errText.substring(0, 200)}`);
+            // 404/400 means model unsupported — try next model on same key
             continue;
           }
 
