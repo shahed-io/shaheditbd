@@ -19,6 +19,7 @@ import Index from "./pages/Index";
 const CartDrawer = lazy(() => import("@/components/store/CartDrawer"));
 const RedirectEnforcer = lazy(() => import("@/components/seo/RedirectEnforcer"));
 const FacebookPixel = lazy(() => import("@/components/store/FacebookPixel"));
+const MobileBottomNav = lazy(() => import("@/components/store/MobileBottomNav"));
 
 // All other pages — lazy loaded
 const Checkout              = lazy(() => import("./pages/Checkout"));
@@ -295,7 +296,11 @@ const AppContent = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
-      
+      {deferReady && (
+        <Suspense fallback={null}>
+          <MobileBottomNav />
+        </Suspense>
+      )}
     </>
   );
 };
