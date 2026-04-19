@@ -7,22 +7,21 @@ const corsHeaders = {
 };
 
 // ─── SHARED DESIGN BLUEPRINT ─────────────────────────────────────────────────
-// Every style MUST follow this exact "old design" structure (matches the
-// reference screenshots from ~15 days ago):
-//   1. Pastel gradient background (lavender/pink/peach/mint/blue) — NOT plain
-//   2. Multiple soft floating bokeh ORBS / 3D translucent balls scattered
-//      around the card (light blue, mint/teal, soft white) — these MUST be
-//      clearly visible behind and around the card to give depth
-//   3. A single large WHITE FROSTED GLASS card centered (~75% of image)
-//   4. Inside the card top-left: red rounded "SHAHED STORE" badge (white text
-//      on a bright red rectangle pill)
-//   5. Inside the card top-right: white pill containing the product/brand
-//      name + tiny brand logo
+// Signature SHAHED STORE house style (matches the reference cards exactly):
+//   1. Soft pale-blue / off-white airy background (NOT pastel pink/peach)
+//   2. Multiple soft floating 3D BUBBLES around the card — only sky-blue and
+//      mint/teal tones (NO pink/lavender/peach)
+//   3. A single large WHITE FROSTED GLASS card centered (~80% of image) with
+//      crisp rounded corners and a thin white border
+//   4. Inside the card top-left: WHITE rounded pill containing a small RED
+//      rectangle badge with "SHAHED STORE" in WHITE bold letters (pill itself
+//      is white, badge inside is red)
+//   5. Inside the card top-right: WHITE rounded pill with brand logo + name
+//      in dark charcoal text
 //   6. Center of the card: VERY LARGE clean square app icon of the product
-//   7. Bottom of the card: a subtle thin contact line containing
+//   7. Bottom of the card: a subtle thin separator line, then a contact line
 //      🌐 www.shahedstore.com.bd     📞 +880 1840-099853
-//      in dark charcoal text — this line lives INSIDE the white glass card,
-//      NOT as a separate floating bar outside
+//      in dark charcoal text — INSIDE the white glass card
 // ─────────────────────────────────────────────────────────────────────────────
 
 const sharedBlueprint = (name: string, brand: string) => `
