@@ -782,55 +782,79 @@ const UserDashboard = () => {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
-        {/* Hero Profile Card - always hidden on mobile */}
-        <div className="hidden md:block rounded-2xl overflow-hidden mb-6 sm:mb-8 p-4 sm:p-5" style={glassCardStrong}>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-3 sm:gap-4">
+        {/* Hero Profile Card - desktop redesigned */}
+        <div className="hidden md:block rounded-3xl overflow-hidden mb-6 sm:mb-8 relative" style={glassCardStrong}>
+          {/* Decorative gradient strip */}
+          <div className="absolute inset-x-0 top-0 h-24 opacity-90 pointer-events-none"
+            style={{ background: 'linear-gradient(120deg, hsla(243,75%,59%,0.18) 0%, hsla(263,70%,58%,0.14) 35%, hsla(190,90%,60%,0.16) 100%)' }} />
+          <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full opacity-50 pointer-events-none"
+            style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.35) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+
+          <div className="relative p-6 lg:p-7 flex items-center justify-between gap-6 flex-wrap">
+            <div className="flex items-center gap-5 min-w-0">
               <div className="relative flex-shrink-0">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 shadow-lg flex items-center justify-center text-lg font-black text-white"
-                  style={{ borderColor: 'hsla(258,78%,65%,0.3)', background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                  {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
+                <div className="p-[3px] rounded-2xl shadow-xl"
+                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%) 50%, hsl(190,90%,60%))' }}>
+                  <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden flex items-center justify-center text-2xl font-black text-white"
+                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                    {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
+                  </div>
                 </div>
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
                 <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
-                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-lg flex items-center justify-center shadow-md border-2 transition-transform hover:scale-110"
-                  style={{ background: 'hsl(var(--primary))', borderColor: 'white' }}>
-                  {avatarUploading ? <RefreshCw size={10} className="text-white animate-spin" /> : <Camera size={10} className="text-white" />}
+                  title="Change photo"
+                  className="absolute -bottom-1.5 -right-1.5 w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 transition-transform hover:scale-110 active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', borderColor: 'white' }}>
+                  {avatarUploading ? <RefreshCw size={13} className="text-white animate-spin" /> : <Camera size={13} className="text-white" />}
                 </button>
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-lg font-black text-foreground truncate flex items-center gap-1.5">
+                <h1 className="text-2xl lg:text-3xl font-black text-foreground truncate flex items-center gap-2">
                   <span className="truncate">{displayName}</span>
-                  <VerifiedBadge size={18} />
+                  <VerifiedBadge size={22} />
                 </h1>
-                <p className="text-xs sm:text-sm font-medium text-foreground/70 break-all">{user?.email}</p>
-                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
-                    <ShieldCheck size={10} /> Verified
+                <p className="text-sm font-medium text-foreground/65 break-all flex items-center gap-1.5 mt-1">
+                  <Mail size={13} className="text-primary/70 flex-shrink-0" />
+                  {user?.email}
+                </p>
+                <div className="flex items-center gap-2 mt-3 flex-wrap">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-sm"
+                    style={{ background: 'linear-gradient(135deg, hsl(158,64%,42%), hsl(168,76%,38%))' }}>
+                    <ShieldCheck size={11} /> Verified Account
                   </span>
                   {completedOrders > 0 && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-primary/25 bg-primary/10 text-primary">
-                      <Star size={9} fill="currentColor" /> {completedOrders} {t(selectedLang, 'tab_orders')}
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full"
+                      style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid hsla(258,78%,65%,0.35)', color: 'hsl(var(--primary))' }}>
+                      <Star size={10} fill="currentColor" /> {completedOrders} Completed
+                    </span>
+                  )}
+                  {profile.username && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full text-foreground/70"
+                      style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
+                      <AtSign size={10} />{profile.username}
                     </span>
                   )}
                 </div>
               </div>
             </div>
-            <div className="flex gap-4 sm:gap-5">
-              <div className="text-center">
-                <div className="text-lg font-black text-foreground">{orders.length}</div>
-                <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'order')}</div>
-              </div>
-              <div className="w-px bg-border" />
-              <div className="text-center">
-                <div className="text-lg font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div>
-                <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'total')}</div>
-              </div>
-              <div className="w-px bg-border" />
-              <div className="text-center">
-                <div className="text-lg font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div>
-                <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'tab_wishlist')}</div>
-              </div>
+
+            <div className="grid grid-cols-3 gap-3 lg:gap-4">
+              {[
+                { icon: Package, label: t(selectedLang, 'order'), value: orders.length.toString(), color: 'hsl(243,75%,59%)', bg: 'linear-gradient(135deg, hsla(243,75%,59%,0.12), hsla(263,70%,58%,0.08))' },
+                { icon: TrendingUp, label: t(selectedLang, 'total'), value: `৳${totalSpent.toLocaleString()}`, color: 'hsl(263,70%,58%)', bg: 'linear-gradient(135deg, hsla(263,70%,58%,0.12), hsla(280,60%,60%,0.08))' },
+                { icon: Heart, label: t(selectedLang, 'tab_wishlist'), value: wishlistItems.length.toString(), color: 'hsl(340,82%,55%)', bg: 'linear-gradient(135deg, hsla(340,82%,55%,0.12), hsla(360,70%,60%,0.08))' },
+              ].map((stat, i) => (
+                <div key={i} className="px-4 lg:px-5 py-3 lg:py-3.5 rounded-2xl min-w-[100px] lg:min-w-[120px] transition-all hover:scale-[1.03] hover:-translate-y-0.5 cursor-default"
+                  style={{ background: stat.bg, border: '1px solid hsla(258,78%,75%,0.25)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.06), 0 1px 0 rgba(255,255,255,0.85) inset' }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: stat.color, boxShadow: `0 4px 10px ${stat.color}55` }}>
+                      <stat.icon size={14} className="text-white" />
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{stat.label}</div>
+                  </div>
+                  <div className="text-xl lg:text-2xl font-black leading-tight" style={{ color: stat.color }}>{stat.value}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
