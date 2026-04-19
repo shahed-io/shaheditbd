@@ -24,11 +24,11 @@ interface NavItem {
 const MobileBottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { items } = useCart();
   const { wishlistCount } = useWishlist();
   const { user } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [orderCount, setOrderCount] = useState(0);
 
   // Auto-hide when keyboard opens on mobile
   useEffect(() => {
@@ -47,9 +47,40 @@ const MobileBottomNav = () => {
     };
   }, []);
 
-  if (location.pathname.startsWith('/ceo')) return null;
+  // Fetch active orders count for the badge (pending / processing)
+  useEffect(() => {
+    if (!user) {
+      setOrderCount(0);
+      return;
+    }
 
-  const cartCount = items.reduce((s, i) => s + i.quantity, 0);
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .in('status', ['pending', 'processing']);
+      setOrderCount(count || 0);
+    };
+
+    fetchCount();
+
+    // Realtime updates
+    const channel = supabase
+      .channel('mobile-nav-orders')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'orders', filter: `user_id=eq.${user.id}` },
+        () => fetchCount()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  if (location.pathname.startsWith('/ceo')) return null;
 
   const navItems: NavItem[] = [
     {
@@ -76,18 +107,19 @@ const MobileBottomNav = () => {
       gradient: 'linear-gradient(135deg, hsl(340 85% 58%), hsl(0 84% 60%))',
     },
     {
-      label: 'Cart',
-      icon: ShoppingBag,
-      path: '/checkout',
-      match: (p) => p === '/checkout',
-      badgeCount: cartCount,
+      label: 'Orders',
+      icon: Package,
+      path: '/dashboard?tab=orders',
+      match: (p) => p.startsWith('/dashboard') && location.search.includes('tab=orders'),
+      badgeCount: orderCount,
+      requireAuth: true,
       gradient: 'linear-gradient(135deg, hsl(25 95% 55%), hsl(15 90% 55%))',
     },
     {
       label: 'Account',
       icon: User,
       path: '/dashboard',
-      match: (p) => p === '/dashboard',
+      match: (p) => p === '/dashboard' && !location.search.includes('tab=orders') && !location.search.includes('tab=wishlist'),
       requireAuth: true,
       gradient: 'linear-gradient(135deg, hsl(160 75% 45%), hsl(185 90% 52%))',
     },
