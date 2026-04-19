@@ -925,7 +925,7 @@ const UserDashboard = () => {
           </div>
 
           {/* Content Panel */}
-          <div className={`rounded-2xl overflow-hidden ${!mobileShowContent ? 'hidden md:block' : ''}`} style={glassCardStrong}>
+          <div className={`rounded-3xl overflow-hidden ${!mobileShowContent ? 'hidden md:block' : ''}`} style={glassCardStrong}>
 
             {/* Mobile Back Button */}
             <button
@@ -936,12 +936,27 @@ const UserDashboard = () => {
             </button>
 
             {/* Tab Header */}
-            <div className="px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'rgba(255,255,255,0.4)' }}>
-              <div>
-                 <h2 className="text-lg font-black text-foreground">{t(selectedLang, `tab_${activeTab}`)}</h2>
-                 <p className="text-xs mt-0.5 text-muted-foreground">
-                    {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `${t(selectedLang, 'points_balance_label')} ${pointsBalance} pts` : ''}
+            <div className="relative px-5 sm:px-7 py-5 sm:py-6 flex items-center justify-between gap-3 overflow-hidden"
+              style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.35) 100%)' }}>
+              <div className="absolute -top-12 -left-8 w-40 h-40 rounded-full opacity-50 pointer-events-none"
+                style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.18) 0%, transparent 70%)', filter: 'blur(30px)' }} aria-hidden="true" />
+              <div className="relative flex items-center gap-3 min-w-0">
+                <div className="hidden sm:flex w-11 h-11 rounded-2xl items-center justify-center flex-shrink-0 shadow-md"
+                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 6px 16px hsla(243,75%,59%,0.35)' }}>
+                  {(() => {
+                    const ActiveIcon = tabsWithBadges.find(t => t.id === activeTab)?.icon;
+                    return ActiveIcon ? <ActiveIcon size={20} className="text-white" /> : null;
+                  })()}
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-xl sm:text-2xl font-black truncate"
+                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,45%), hsl(263,70%,48%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                    {t(selectedLang, `tab_${activeTab}`)}
+                  </h2>
+                  <p className="text-xs mt-0.5 text-muted-foreground truncate">
+                    {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `${t(selectedLang, 'points_balance_label')} ${pointsBalance} pts` : activeTab === 'profile' ? 'Manage your personal information' : activeTab === 'wallet' ? 'Top-up & transactions' : activeTab === 'addresses' ? 'Saved delivery locations' : activeTab === 'security' ? 'Password & account safety' : activeTab === 'referral' ? 'Earn rewards by inviting friends' : activeTab === 'licenses' ? 'Your purchased licenses' : ''}
                   </p>
+                </div>
               </div>
               <div className="flex gap-2">
                 {activeTab === 'profile' && !editing && (
