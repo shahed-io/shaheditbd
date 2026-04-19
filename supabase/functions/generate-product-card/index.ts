@@ -245,9 +245,10 @@ serve(async (req) => {
       Deno.env.get("GEMINI_API_KEY_6"),
     ].filter(Boolean) as string[];
 
+    // Only valid image-generation model names for Direct Gemini API (v1beta)
     const DIRECT_IMAGE_MODELS = [
-      "gemini-2.5-flash-image",                 // newest stable image model
-      "gemini-2.0-flash-preview-image-generation", // fallback image model
+      "gemini-2.5-flash-image",         // primary stable image model
+      "gemini-2.5-flash-image-preview", // preview alias (some keys have access)
     ];
 
     // Pre-fetch reference image once (if provided) and convert to base64
@@ -289,14 +290,16 @@ serve(async (req) => {
           );
 
           if (directResp.status === 429) {
-            console.warn(`key#${ki + 1} ${model} → 429 rate limited, trying next...`);
-            await new Promise(r => setTimeout(r, 600));
-            continue;
+            console.warn(`key#${ki + 1} ${model} → 429 rate limited, switching key...`);
+            await directResp.text().catch(() => {});
+            // 429 means THIS key is exhausted — skip remaining models for this key
+            break;
           }
 
           if (!directResp.ok) {
             const errText = await directResp.text();
             console.warn(`key#${ki + 1} ${model} → ${directResp.status}: ${errText.substring(0, 200)}`);
+            // 404/400 means model unsupported — try next model on same key
             continue;
           }
 
