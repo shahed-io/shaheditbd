@@ -281,9 +281,18 @@ serve(async (req) => {
       } catch (_) { /* text-only fallback */ }
     }
 
-    outer: for (let ki = 0; ki < USER_GEMINI_KEYS.length; ki++) {
+    // Shuffle keys to distribute load across all 6 keys (avoids always
+    // hitting key#1 first which gets exhausted faster than others).
+    const shuffledKeyIndices = USER_GEMINI_KEYS
+      .map((_, i) => i)
+      .sort(() => Math.random() - 0.5);
+
+    outer: for (const ki of shuffledKeyIndices) {
       const apiKey = USER_GEMINI_KEYS[ki];
+      let keyExhausted = false;
+
       for (let mi = 0; mi < DIRECT_IMAGE_MODELS.length; mi++) {
+        if (keyExhausted) break;
         const model = DIRECT_IMAGE_MODELS[mi];
         console.log(`Direct Gemini — key#${ki + 1}, model=${model}`);
 
@@ -298,24 +307,28 @@ serve(async (req) => {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 contents: [{ parts }],
-                generationConfig: {
-                  responseModalities: ["IMAGE", "TEXT"],
-                },
+                generationConfig: { responseModalities: ["IMAGE", "TEXT"] },
               }),
             }
           );
 
-          if (directResp.status === 429) {
-            console.warn(`key#${ki + 1} ${model} → 429 rate limited, switching key...`);
+          // 429 = quota exhausted for THIS key → skip to next key
+          // 503 = service overloaded → also try next key
+          if (directResp.status === 429 || directResp.status === 503) {
+            console.warn(`key#${ki + 1} ${model} → ${directResp.status}, skipping key`);
             await directResp.text().catch(() => {});
-            // 429 means THIS key is exhausted — skip remaining models for this key
-            break;
+            keyExhausted = true;
+            continue;
           }
 
           if (!directResp.ok) {
             const errText = await directResp.text();
             console.warn(`key#${ki + 1} ${model} → ${directResp.status}: ${errText.substring(0, 200)}`);
-            // 404/400 means model unsupported — try next model on same key
+            // 400/404 = model unsupported on this key → try next model
+            // If errText mentions quota/billing, mark key exhausted
+            if (/quota|billing|exceeded|limit/i.test(errText)) {
+              keyExhausted = true;
+            }
             continue;
           }
 
@@ -328,7 +341,6 @@ serve(async (req) => {
           if (inline?.data) {
             const mime = inline.mimeType || inline.mime_type || "image/png";
             console.log(`✅ Direct Gemini success — key#${ki + 1}, model=${model}`);
-            // Reuse the standard upload pipeline by populating `data` in gateway-shape
             data = {
               choices: [{
                 message: {
