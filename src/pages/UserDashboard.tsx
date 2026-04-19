@@ -910,6 +910,10 @@ const UserDashboard = () => {
                     } : { background: 'transparent' }}
                     onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.75)'; }}
                     onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}>
+                    {/* Active indicator pill */}
+                    {isActive && (
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-6 rounded-full bg-white/80" aria-hidden="true" />
+                    )}
                     {/* Hover shimmer */}
                     {!isActive && (
                       <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
