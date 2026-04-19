@@ -860,19 +860,19 @@ const UserDashboard = () => {
                     { icon: TrendingUp, label: t(selectedLang, 'total'), value: `৳${totalSpent.toLocaleString()}`, accent: 'hsl(263,70%,58%)', glow: 'hsla(263,70%,58%,0.35)' },
                     { icon: Heart, label: t(selectedLang, 'tab_wishlist'), value: wishlistItems.length.toString(), accent: 'hsl(340,82%,55%)', glow: 'hsla(340,82%,55%,0.35)' },
                   ].map((stat, i) => (
-                    <div key={i} className="group relative px-4 lg:px-5 py-3.5 lg:py-4 rounded-2xl min-w-[120px] lg:min-w-[140px] transition-all duration-300 hover:-translate-y-1 cursor-default overflow-hidden"
+                    <div key={i} className="group relative px-4 lg:px-5 py-3.5 lg:py-4 rounded-2xl min-w-[120px] lg:min-w-[140px] transition-all duration-300 hover:-translate-y-0.5 cursor-default overflow-hidden"
                       style={{
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.75) 100%)',
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.78) 100%)',
                         backdropFilter: 'blur(20px) saturate(180%)',
-                        border: '1px solid hsla(258,78%,75%,0.30)',
-                        boxShadow: `0 6px 20px ${stat.glow}, 0 1px 0 rgba(255,255,255,0.95) inset`,
+                        border: '1px solid hsla(258,78%,75%,0.22)',
+                        boxShadow: `0 2px 8px ${stat.glow.replace('0.35', '0.10')}, 0 1px 0 rgba(255,255,255,0.9) inset`,
                       }}>
-                      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-60 transition-opacity"
+                      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-50 transition-opacity"
                         style={{ background: `radial-gradient(circle, ${stat.glow} 0%, transparent 70%)`, filter: 'blur(20px)' }} aria-hidden="true" />
                       <div className="relative flex items-center gap-2 mb-1.5">
-                        <div className="w-8 h-8 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-6"
-                          style={{ background: `linear-gradient(135deg, ${stat.accent}, ${stat.accent}dd)`, boxShadow: `0 4px 12px ${stat.glow}` }}>
-                          <stat.icon size={15} className="text-white" />
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110"
+                          style={{ background: `linear-gradient(135deg, ${stat.accent}, ${stat.accent}cc)`, boxShadow: `0 2px 6px ${stat.glow.replace('0.35', '0.4')}` }}>
+                          <stat.icon size={16} strokeWidth={2.5} color="#ffffff" />
                         </div>
                         <div className="text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">{stat.label}</div>
                       </div>
