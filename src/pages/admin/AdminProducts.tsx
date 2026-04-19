@@ -432,7 +432,6 @@ const AdminProducts = () => {
 
       // Handle rate limit / payment errors gracefully
       if (error) {
-        // Try to parse body from FunctionsHttpError
         let msg = error.message || 'Unknown error';
         try {
           const body = await (error as any).context?.json?.();
@@ -440,7 +439,10 @@ const AdminProducts = () => {
         } catch { /* ignore */ }
         throw new Error(msg);
       }
-      if (data?.error) throw new Error(data.error);
+      // Edge function now returns 200 with { ok: false, error } on rate limits
+      if (data?.ok === false || data?.error) {
+        throw new Error(data.error || 'AI জেনারেশন ব্যর্থ হয়েছে');
+      }
 
       // Server may return a storage URL directly (imageUrl) or base64 fallback (imageData)
       let previewUrl: string | null = null;

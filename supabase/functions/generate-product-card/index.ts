@@ -412,10 +412,18 @@ serve(async (req) => {
     }
 
     // ── Final check: if all sources failed ────────────────────────────────────
+    // IMPORTANT: return HTTP 200 with structured error so the client can read
+    // the body and show a friendly toast (avoids supabase-js throwing on 4xx
+    // which causes the global error boundary blank screen).
     if (!data) {
       return new Response(
-        JSON.stringify({ error: "সকল AI কী রেট লিমিটেড বা ব্যর্থ হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।" }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({
+          ok: false,
+          error: "সকল AI মডেল এই মুহূর্তে ব্যস্ত (rate limited)। ১-২ মিনিট পর আবার চেষ্টা করুন।",
+          fallback: true,
+          code: "RATE_LIMITED",
+        }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -532,9 +540,16 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error("generate-product-card error:", e);
+    // Return 200 with structured error → prevents supabase-js from throwing
+    // and prevents the global error boundary blank screen.
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        ok: false,
+        error: e instanceof Error ? e.message : "Unknown error",
+        fallback: true,
+        code: "INTERNAL_ERROR",
+      }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
