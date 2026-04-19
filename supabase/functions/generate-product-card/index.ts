@@ -99,14 +99,13 @@ const STYLES = {
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Dark Neon" tone ═══
-- Background gradient: deep midnight indigo (#0a0d2e) blending with deep purple (#1a0d3a) and a hint of electric blue (#0e2a5c)
-- The floating bokeh orbs glow with neon cyan, electric purple, and hot pink tones — luminous against the dark background
-- The white glass card now becomes a SEMI-TRANSPARENT DARK GLASS card: rgba(15,15,40,0.55) with a glowing 2px gradient neon border (purple → cyan → pink)
-- Card border has a soft outer neon halo
-- Top-left "SHAHED STORE" pill stays bright RED (still the signature brand badge — never change this)
-- Top-right brand pill: dark glass (rgba(20,20,50,0.6)) with white text instead of charcoal
-- Bottom contact line: light gray text (#e5e7eb) instead of charcoal, for readability on dark glass
-- Overall vibe: cyberpunk premium, glowing, luxurious
+- Override ONLY the background gradient: deep midnight indigo (#0a0d2e) blending into deep purple (#1a0d3a) with a hint of electric blue (#0e2a5c)
+- Translucent bubbles glow with neon cyan, electric purple, hot pink — luminous against the dark background
+- The frosted card becomes a SEMI-TRANSPARENT DARK GLASS card: rgba(15,15,40,0.45) with a glowing 2px gradient neon border (purple → cyan → pink) and a soft outer neon halo
+- "SHAHED STORE" pill stays a frosted glass pill with WHITE bold text (do not change to red)
+- Brand pill on the right: dark glass (rgba(20,20,50,0.6)) with WHITE text instead of charcoal
+- Bottom contact line text: light gray (#e5e7eb) for readability
+- Vibe: cyberpunk premium, glowing, luxurious
 `.trim(),
   },
 
@@ -116,10 +115,9 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Light Glass" tone ═══
-- Background gradient: soft warm gold/amber (#f5d7a0) flowing into soft rose (#f0c4d4) flowing into soft sky blue (#b8d4f0) — like a watercolor wash
-- Floating bokeh orbs: soft cream, blush pink, sky blue
-- Otherwise follow the shared blueprint exactly
-- Vibe: warm, luxurious, magazine-quality, bright daylight
+- Keep the signature pastel diagonal gradient (lavender → pink → peach → blue) — exactly as in the shared blueprint
+- Make the bubbles slightly more prominent and frosted (this is the signature Shahed Store look)
+- Vibe: warm, luxurious, magazine-quality, bright daylight pastel
 `.trim(),
   },
 
@@ -129,8 +127,8 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Clean Light" tone ═══
-- Background gradient: very light blue-gray (#e8edf5) to soft off-white (#f2f5fa)
-- Floating bokeh orbs: soft sky blue, mint teal, and white glow — clearly visible
+- Slightly cooler pastel gradient: more sky blue and lilac, less peach (still smooth diagonal blend)
+- Bubbles: soft sky blue and white glow, very visible
 - Vibe: clean, minimal, corporate-premium, Apple product page energy
 `.trim(),
   },
@@ -141,8 +139,8 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Soft Aurora" tone ═══
-- Background gradient: aurora flow — soft mint/seafoam (#a8edea) blending into soft lavender/lilac (#d4b5fc) blending into soft warm peach (#ffd6b0) diagonally
-- Floating bokeh orbs: pastel mint, lavender, peach — varied colors, dreamy
+- Slightly more saturated aurora pastel — soft mint/seafoam mixed into the lavender → pink → peach diagonal blend
+- Bubbles: pastel mint, lavender, peach — varied colors, dreamy
 - Vibe: bright, airy, dreamy, premium aurora aesthetic
 `.trim(),
   },
@@ -153,10 +151,10 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glass Gradient Border" tone ═══
-- Background gradient: very light warm gray (#f5f5f7) to soft off-white (#fafafa) with a faint pastel lavender/mint wash
-- Floating bokeh orbs: soft blue, soft mint, soft white — visible behind the card
-- Card border becomes a beautiful 2px GRADIENT BORDER flowing: indigo (#818cf8) → purple (#c084fc) → pink (#f9a8d4) → cyan (#67e8f9) → teal (#5eead4)
-- The gradient border has a delicate soft outer pastel halo
+- Keep the signature pastel diagonal gradient background (lavender → pink → peach → blue)
+- The frosted card border becomes a beautiful 2px GRADIENT BORDER flowing: indigo (#818cf8) → purple (#c084fc) → pink (#f9a8d4) → cyan (#67e8f9) → teal (#5eead4)
+- Gradient border has a delicate soft outer pastel halo
+- Bubbles still visible around the card
 - Vibe: bright, airy, modern Apple-like glassmorphism with a rainbow accent
 `.trim(),
   },
@@ -167,9 +165,9 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glassmorphism UI" tone ═══
-- Background gradient: clean bright white (#ffffff) base with 3 large luminous colorful bokeh glow orbs — golden-amber (top-right), electric cyan (bottom-left), lavender purple (top-left)
-- Plus 3–4 additional soft 3D bokeh balls (sky blue, mint) as required by the blueprint
+- Keep the signature pastel diagonal gradient (lavender → pink → peach → blue) — slightly brighter/whiter overall
 - A bold 3px horizontal gradient accent line (gold → pink → cyan) at the very TOP edge of the card
+- Bubbles still visible around the card
 - Vibe: BRIGHT, premium, luxurious — like Apple/Samsung product launch graphics
 `.trim(),
   },
