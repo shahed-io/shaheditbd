@@ -736,8 +736,19 @@ const UserDashboard = () => {
   const gradBtnStyle = { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' };
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, hsl(240,30%,96%) 0%, hsl(260,25%,94%) 50%, hsl(280,20%,95%) 100%)' }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(240,30%,96%) 0%, hsl(260,25%,94%) 50%, hsl(280,20%,95%) 100%)' }}>
 
+      {/* Ambient gradient blobs - desktop only for visual richness */}
+      <div className="hidden md:block pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute -top-40 -left-32 w-[520px] h-[520px] rounded-full opacity-50"
+          style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.35) 0%, transparent 70%)', filter: 'blur(60px)' }} />
+        <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full opacity-40"
+          style={{ background: 'radial-gradient(circle, hsla(190,90%,65%,0.3) 0%, transparent 70%)', filter: 'blur(80px)' }} />
+        <div className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full opacity-30"
+          style={{ background: 'radial-gradient(circle, hsla(280,80%,70%,0.25) 0%, transparent 70%)', filter: 'blur(70px)' }} />
+      </div>
+
+      <div className="relative z-10">
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ ...glassCard, borderRadius: 0, borderLeft: 'none', borderRight: 'none', borderTop: 'none' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -771,102 +782,150 @@ const UserDashboard = () => {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
-        {/* Hero Profile Card - always hidden on mobile */}
-        <div className="hidden md:block rounded-2xl overflow-hidden mb-6 sm:mb-8 p-4 sm:p-5" style={glassCardStrong}>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-3 sm:gap-4">
+        {/* Hero Profile Card - desktop redesigned */}
+        <div className="hidden md:block rounded-3xl overflow-hidden mb-6 sm:mb-8 relative" style={glassCardStrong}>
+          {/* Decorative gradient strip */}
+          <div className="absolute inset-x-0 top-0 h-24 opacity-90 pointer-events-none"
+            style={{ background: 'linear-gradient(120deg, hsla(243,75%,59%,0.18) 0%, hsla(263,70%,58%,0.14) 35%, hsla(190,90%,60%,0.16) 100%)' }} />
+          <div className="absolute -top-20 -right-10 w-72 h-72 rounded-full opacity-50 pointer-events-none"
+            style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.35) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+
+          <div className="relative p-6 lg:p-7 flex items-center justify-between gap-6 flex-wrap">
+            <div className="flex items-center gap-5 min-w-0">
               <div className="relative flex-shrink-0">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 shadow-lg flex items-center justify-center text-lg font-black text-white"
-                  style={{ borderColor: 'hsla(258,78%,65%,0.3)', background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
-                  {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
+                <div className="p-[3px] rounded-2xl shadow-xl"
+                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%) 50%, hsl(190,90%,60%))' }}>
+                  <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden flex items-center justify-center text-2xl font-black text-white"
+                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>
+                    {profile.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" /> : initials}
+                  </div>
                 </div>
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
                 <button onClick={() => fileInputRef.current?.click()} disabled={avatarUploading}
-                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-lg flex items-center justify-center shadow-md border-2 transition-transform hover:scale-110"
-                  style={{ background: 'hsl(var(--primary))', borderColor: 'white' }}>
-                  {avatarUploading ? <RefreshCw size={10} className="text-white animate-spin" /> : <Camera size={10} className="text-white" />}
+                  title="Change photo"
+                  className="absolute -bottom-1.5 -right-1.5 w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 transition-transform hover:scale-110 active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', borderColor: 'white' }}>
+                  {avatarUploading ? <RefreshCw size={13} className="text-white animate-spin" /> : <Camera size={13} className="text-white" />}
                 </button>
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-lg font-black text-foreground truncate flex items-center gap-1.5">
+                <h1 className="text-2xl lg:text-3xl font-black text-foreground truncate flex items-center gap-2">
                   <span className="truncate">{displayName}</span>
-                  <VerifiedBadge size={18} />
+                  <VerifiedBadge size={22} />
                 </h1>
-                <p className="text-xs sm:text-sm font-medium text-foreground/70 break-all">{user?.email}</p>
-                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
-                    <ShieldCheck size={10} /> Verified
+                <p className="text-sm font-medium text-foreground/65 break-all flex items-center gap-1.5 mt-1">
+                  <Mail size={13} className="text-primary/70 flex-shrink-0" />
+                  {user?.email}
+                </p>
+                <div className="flex items-center gap-2 mt-3 flex-wrap">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-sm"
+                    style={{ background: 'linear-gradient(135deg, hsl(158,64%,42%), hsl(168,76%,38%))' }}>
+                    <ShieldCheck size={11} /> Verified Account
                   </span>
                   {completedOrders > 0 && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-primary/25 bg-primary/10 text-primary">
-                      <Star size={9} fill="currentColor" /> {completedOrders} {t(selectedLang, 'tab_orders')}
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full"
+                      style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid hsla(258,78%,65%,0.35)', color: 'hsl(var(--primary))' }}>
+                      <Star size={10} fill="currentColor" /> {completedOrders} Completed
+                    </span>
+                  )}
+                  {profile.username && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full text-foreground/70"
+                      style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.25)' }}>
+                      <AtSign size={10} />{profile.username}
                     </span>
                   )}
                 </div>
               </div>
             </div>
-            <div className="flex gap-4 sm:gap-5">
-              <div className="text-center">
-                <div className="text-lg font-black text-foreground">{orders.length}</div>
-                <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'order')}</div>
-              </div>
-              <div className="w-px bg-border" />
-              <div className="text-center">
-                <div className="text-lg font-black" style={{ color: 'hsl(var(--primary))' }}>৳{totalSpent.toLocaleString()}</div>
-                <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'total')}</div>
-              </div>
-              <div className="w-px bg-border" />
-              <div className="text-center">
-                <div className="text-lg font-black" style={{ color: 'hsl(158,64%,42%)' }}>{wishlistItems.length}</div>
-                <div className="text-[10px] text-muted-foreground">{t(selectedLang, 'tab_wishlist')}</div>
-              </div>
+
+            <div className="grid grid-cols-3 gap-3 lg:gap-4">
+              {[
+                { icon: Package, label: t(selectedLang, 'order'), value: orders.length.toString(), color: 'hsl(243,75%,59%)', bg: 'linear-gradient(135deg, hsla(243,75%,59%,0.12), hsla(263,70%,58%,0.08))' },
+                { icon: TrendingUp, label: t(selectedLang, 'total'), value: `৳${totalSpent.toLocaleString()}`, color: 'hsl(263,70%,58%)', bg: 'linear-gradient(135deg, hsla(263,70%,58%,0.12), hsla(280,60%,60%,0.08))' },
+                { icon: Heart, label: t(selectedLang, 'tab_wishlist'), value: wishlistItems.length.toString(), color: 'hsl(340,82%,55%)', bg: 'linear-gradient(135deg, hsla(340,82%,55%,0.12), hsla(360,70%,60%,0.08))' },
+              ].map((stat, i) => (
+                <div key={i} className="px-4 lg:px-5 py-3 lg:py-3.5 rounded-2xl min-w-[100px] lg:min-w-[120px] transition-all hover:scale-[1.03] hover:-translate-y-0.5 cursor-default"
+                  style={{ background: stat.bg, border: '1px solid hsla(258,78%,75%,0.25)', boxShadow: '0 2px 12px hsla(258,78%,55%,0.06), 0 1px 0 rgba(255,255,255,0.85) inset' }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: stat.color, boxShadow: `0 4px 10px ${stat.color}55` }}>
+                      <stat.icon size={14} className="text-white" />
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{stat.label}</div>
+                  </div>
+                  <div className="text-xl lg:text-2xl font-black leading-tight" style={{ color: stat.color }}>{stat.value}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Body */}
-        <div className="grid md:grid-cols-[240px_1fr] gap-5 sm:gap-6">
+        <div className="grid md:grid-cols-[260px_1fr] gap-5 lg:gap-6">
 
           {/* Sidebar */}
-          <div className={`rounded-2xl p-3 h-fit ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
-            <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">{t(selectedLang, 'menu')}</p>
-            {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
-              <button key={id} onClick={() => handleTabSwitch(id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${
-                  activeTab === id
-                    ? 'text-primary shadow-sm'
-                    : 'hover:bg-white/50 text-muted-foreground'
-                }`}
-                style={activeTab === id ? {
-                  background: 'rgba(255,255,255,0.85)',
-                  border: '1px solid hsla(258,78%,65%,0.25)',
-                  boxShadow: '0 2px 8px hsla(258,78%,55%,0.12)',
-                } : { border: '1px solid transparent' }}>
-                <Icon size={16} />
-                <span className="flex-1 text-left">{label}</span>
-                {badge !== undefined && badge > 0 && (
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
-                    style={{ background: id === 'notifications' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' }}>{badge}</span>
-                )}
-                {activeTab === id && <ChevronRight size={14} />}
-              </button>
-            ))}
-            <div className="h-px my-2 bg-border/50" />
-            <button onClick={() => navigate('/free-tools')} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 hover:bg-white/50 text-muted-foreground" style={{ border: '1px solid transparent' }}>
-              <Zap size={16} /> Free Tools
+          <div className={`rounded-3xl p-3 h-fit md:sticky md:top-24 ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
+            <div className="flex items-center justify-between px-3 py-2 mb-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t(selectedLang, 'menu')}</p>
+              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-primary/10 text-primary">{tabsWithBadges.length}</span>
+            </div>
+            {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => {
+              const isActive = activeTab === id;
+              return (
+                <button key={id} onClick={() => handleTabSwitch(id)}
+                  className={`group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-semibold transition-all mb-1 ${
+                    isActive ? 'text-white' : 'hover:bg-white/60 text-foreground/70 hover:text-foreground'
+                  }`}
+                  style={isActive ? {
+                    background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 100%)',
+                    boxShadow: '0 6px 18px hsla(258,78%,55%,0.35), 0 1px 0 rgba(255,255,255,0.4) inset',
+                  } : { border: '1px solid transparent' }}>
+                  <span className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${
+                    isActive ? '' : 'group-hover:scale-105'
+                  }`}
+                    style={isActive
+                      ? { background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(8px)' }
+                      : { background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.2)' }
+                    }>
+                    <Icon size={15} className={isActive ? 'text-white' : 'text-primary'} />
+                  </span>
+                  <span className="flex-1 text-left truncate">{label}</span>
+                  {badge !== undefined && badge > 0 && (
+                    <span className={`text-[10px] font-black px-1.5 min-w-[20px] h-5 rounded-full flex items-center justify-center ${
+                      isActive ? 'text-primary bg-white' : 'text-white'
+                    }`}
+                      style={!isActive ? { background: id === 'notifications' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' } : undefined}>{badge}</span>
+                  )}
+                  {isActive && <ChevronRight size={14} className="text-white/90" />}
+                </button>
+              );
+            })}
+            <div className="h-px my-3 mx-2" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,65%,0.25), transparent)' }} />
+            <button onClick={() => navigate('/free-tools')} className="group w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-semibold transition-all mb-1 hover:bg-white/60 text-foreground/70 hover:text-foreground" style={{ border: '1px solid transparent' }}>
+              <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, hsla(45,90%,52%,0.15), hsla(35,85%,55%,0.1))', border: '1px solid hsla(45,90%,52%,0.25)' }}>
+                <Zap size={15} style={{ color: 'hsl(38,92%,50%)' }} />
+              </span>
+              Free Tools
             </button>
             {isAdmin && (
-              <button onClick={() => navigate('/ceo')} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', color: 'white', boxShadow: '0 2px 10px hsla(243,75%,59%,0.35)', border: '1px solid transparent' }}>
-                <ShieldCheck size={16} /> Admin Panel
+              <button onClick={() => navigate('/ceo')} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-bold transition-all mb-1 text-white" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', boxShadow: '0 4px 14px hsla(243,75%,59%,0.4), 0 1px 0 rgba(255,255,255,0.4) inset', border: '1px solid transparent' }}>
+                <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.22)' }}>
+                  <ShieldCheck size={15} className="text-white" />
+                </span>
+                Admin Panel
               </button>
             )}
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive" style={{ border: '1px solid transparent' }}>
-              <LogOut size={16} /> {t(selectedLang, 'tab_logout')}
+            <button onClick={handleLogout} className="group w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive" style={{ border: '1px solid transparent' }}>
+              <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105"
+                style={{ background: 'hsla(0,84%,60%,0.1)', border: '1px solid hsla(0,84%,60%,0.2)' }}>
+                <LogOut size={15} className="text-destructive" />
+              </span>
+              {t(selectedLang, 'tab_logout')}
             </button>
           </div>
 
           {/* Content Panel */}
-          <div className={`rounded-2xl overflow-hidden ${!mobileShowContent ? 'hidden md:block' : ''}`} style={glassCardStrong}>
+          <div className={`rounded-3xl overflow-hidden ${!mobileShowContent ? 'hidden md:block' : ''}`} style={glassCardStrong}>
 
             {/* Mobile Back Button */}
             <button
@@ -877,12 +936,27 @@ const UserDashboard = () => {
             </button>
 
             {/* Tab Header */}
-            <div className="px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between" style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'rgba(255,255,255,0.4)' }}>
-              <div>
-                 <h2 className="text-lg font-black text-foreground">{t(selectedLang, `tab_${activeTab}`)}</h2>
-                 <p className="text-xs mt-0.5 text-muted-foreground">
-                    {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `${t(selectedLang, 'points_balance_label')} ${pointsBalance} pts` : ''}
+            <div className="relative px-5 sm:px-7 py-5 sm:py-6 flex items-center justify-between gap-3 overflow-hidden"
+              style={{ borderBottom: '1px solid hsla(258,78%,75%,0.18)', background: 'linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.35) 100%)' }}>
+              <div className="absolute -top-12 -left-8 w-40 h-40 rounded-full opacity-50 pointer-events-none"
+                style={{ background: 'radial-gradient(circle, hsla(258,85%,70%,0.18) 0%, transparent 70%)', filter: 'blur(30px)' }} aria-hidden="true" />
+              <div className="relative flex items-center gap-3 min-w-0">
+                <div className="hidden sm:flex w-11 h-11 rounded-2xl items-center justify-center flex-shrink-0 shadow-md"
+                  style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 6px 16px hsla(243,75%,59%,0.35)' }}>
+                  {(() => {
+                    const ActiveIcon = tabsWithBadges.find(t => t.id === activeTab)?.icon;
+                    return ActiveIcon ? <ActiveIcon size={20} className="text-white" /> : null;
+                  })()}
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-xl sm:text-2xl font-black truncate"
+                    style={{ background: 'linear-gradient(135deg, hsl(243,75%,45%), hsl(263,70%,48%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                    {t(selectedLang, `tab_${activeTab}`)}
+                  </h2>
+                  <p className="text-xs mt-0.5 text-muted-foreground truncate">
+                    {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `${t(selectedLang, 'points_balance_label')} ${pointsBalance} pts` : activeTab === 'profile' ? 'Manage your personal information' : activeTab === 'wallet' ? 'Top-up & transactions' : activeTab === 'addresses' ? 'Saved delivery locations' : activeTab === 'security' ? 'Password & account safety' : activeTab === 'referral' ? 'Earn rewards by inviting friends' : activeTab === 'licenses' ? 'Your purchased licenses' : ''}
                   </p>
+                </div>
               </div>
               <div className="flex gap-2">
                 {activeTab === 'profile' && !editing && (
@@ -2105,6 +2179,7 @@ const UserDashboard = () => {
           </div>{/* end Content Panel */}
         </div>
       </main>
+      </div>{/* end relative z-10 wrapper */}
     </div>
   );
 };
