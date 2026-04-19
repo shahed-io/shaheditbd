@@ -25,68 +25,71 @@ const corsHeaders = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const sharedBlueprint = (name: string, brand: string) => `
-You MUST create a premium square (1:1) product promotional card that EXACTLY matches the Shahed Store house style. This layout is non-negotiable — every element must be present and look like the reference cards (Canva Pro, AutoDesk, ChatGPT Plus, Duolingo, HIX.AI cards previously made for this store):
+You MUST create a premium square (1:1) product promotional card that EXACTLY matches the Shahed Store signature house style. This layout is NON-NEGOTIABLE — every element must look IDENTICAL to the reference cards previously generated for this store (LinkedIn, Adobe Creative Cloud, Figma Premium, Microsoft Office 365, Windows 11 Pro):
 
 ═══ BACKGROUND (full canvas, behind everything) ═══
-- A SOFT PASTEL DIAGONAL GRADIENT covering the ENTIRE canvas:
-  • Top-left: soft lavender / lilac (#c9b6f0 → #d4baf5)
-  • Top-right: soft pink / rose (#f5b6c9 → #f4c2d2)
-  • Bottom-left: soft sky blue (#b6c9f0 → #b8d4f0)
-  • Bottom-right: soft warm peach / coral (#f5c9b6 → #f6cfb5)
-  • Smooth painterly blend across the diagonal — NO harsh lines, NO solid colors, NO plain white, NO dark background
-- Scatter 8–12 soft TRANSLUCENT 3D BUBBLES / SPHERES around the card edges and corners:
-  • Pure soft white / pale blue translucent bubbles (rgba(255,255,255,0.4–0.6))
-  • Sizes vary: small 30–60px and large 100–200px
-  • Each bubble has a subtle inner highlight on the upper-left to look like a 3D glass ball
-  • Place them BEHIND and peeking around the card — top corners, mid-left, mid-right, bottom corners
+- A SOFT PALE-BLUE / OFF-WHITE airy gradient covering the ENTIRE canvas:
+  • Top: very pale ice-blue (#e8eef5 → #dde6f0)
+  • Bottom: slightly cooler pale blue (#d5e0ed → #c8d6e8)
+  • Smooth airy gradient — bright, clean, daylight feel
+  • NO pink, NO peach, NO lavender, NO purple, NO yellow — ONLY pale blue / white
+- Scatter 6–10 soft 3D TRANSLUCENT BUBBLES / SPHERES around the card:
+  • Colors: ONLY soft sky blue (#a8c5e8) and mint/teal (#7dd3c8) — NO other colors
+  • Sizes vary: small 60–100px and large 150–250px
+  • Each bubble is a SOFT 3D glossy sphere with subtle inner highlight (upper-left)
+  • Slight blur on bubbles for depth (those farther = more blurred)
+  • Place them BEHIND and around the card edges — top corners, mid-left, mid-right, bottom corners
   • Some bubbles partially overlap the card edges to add depth
-  • These bubbles are a SIGNATURE element — they MUST be clearly visible
+  • These bubbles are a SIGNATURE element — MUST be clearly visible
 
-═══ MAIN CARD (centered, ~78% of canvas) ═══
+═══ MAIN CARD (centered, ~82% of canvas) ═══
 - One large rounded rectangle FROSTED GLASS card
-- Background: rgba(255,255,255,0.35) with strong backdrop blur (heavy frosted look)
-- Border: 1.5px solid rgba(255,255,255,0.7)
-- Corner radius: ~32px
-- Soft shadow: 0 24px 60px rgba(120,130,180,0.18)
-- The pastel gradient background should subtly show THROUGH the frosted card
+- Background: rgba(255,255,255,0.5) with strong backdrop blur (heavy frosted look)
+- Border: 1.5px solid rgba(255,255,255,0.85)
+- Corner radius: ~28px
+- Soft drop shadow: 0 20px 50px rgba(100,130,180,0.15)
+- Background bubbles subtly show THROUGH the frosted card
 
-═══ TOP ROW INSIDE CARD (24px padding from card edges) ═══
-- LEFT — "SHAHED STORE" BADGE:
-  • A frosted TRANSLUCENT GLASS PILL (rgba(255,255,255,0.25), 1px white border, backdrop blur)
-  • Rounded fully (pill shape, ~24px radius, ~50px tall)
-  • Inside text: "SHAHED STORE" in WHITE BOLD uppercase sans-serif, letter-spaced, crisp
-  • This is a glass pill — NOT a red badge, NOT solid color
+═══ TOP ROW INSIDE CARD (28px padding from card edges) ═══
+- LEFT — "SHAHED STORE" PILL:
+  • A SOLID WHITE rounded pill (rgba(255,255,255,0.95), subtle soft shadow, ~26px radius, ~52px tall)
+  • INSIDE the white pill: a smaller RED rounded rectangle badge (#e63946 / bright red, ~8px radius)
+  • The red badge contains the text "SHAHED STORE" in WHITE BOLD uppercase sans-serif, crisp letter-spacing
+  • The red badge does NOT fill the entire pill — there is small white padding around the red badge inside the pill
+  • CRITICAL: The OUTER container is a WHITE pill, the INNER SHAHED STORE badge is RED with WHITE text
 - RIGHT — BRAND PILL:
-  • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.95), subtle shadow, ~24px radius, ~50px tall)
-  • Contains a small square brand/product LOGO ICON on the left (~32px, rounded corners)
-  • Followed by the brand/product name "${brand || name}" in dark charcoal (#1f2937 / #111827) bold sans-serif
+  • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.95), subtle soft shadow, ~26px radius, ~52px tall)
+  • Contains the small square brand/product LOGO ICON on the left (~34px, original colors)
+  • Followed by the brand/product name "${brand || name}" in dark charcoal (#1f2937) bold sans-serif (~15px)
   • Logo + text fit snugly inside the pill with comfortable padding
 
 ═══ CENTER OF CARD (the hero) ═══
 - The product "${name}" displayed as a VERY LARGE clean app-icon / logo
-- Either a rounded square app icon (~22% radius) OR the official brand logo if iconic
-- Size: takes ~45–55% of card width
-- Generous breathing room above and below
-- Subtle soft drop shadow beneath the icon: 0 12px 30px rgba(0,0,0,0.12)
+- Either a rounded square app icon (~22% radius) OR the official brand logo if iconic (like LinkedIn's "in", Windows flag, Office 365 hexagon, Figma "F")
+- Size: takes ~50–60% of card width
+- Vertically centered with generous breathing room above and below
+- Subtle soft drop shadow beneath the icon: 0 12px 30px rgba(0,0,0,0.10)
 - The icon should look crisp, vibrant, premium — like an Apple App Store hero icon
-- NO price, NO discount badge, NO extra text near the icon (brand name may appear UNDER the icon ONLY if it is part of the official logo lockup, like "duolingo" wordmark)
+- NO price, NO discount badge, NO extra marketing text near the icon
+- Brand wordmark may appear UNDER the icon ONLY if it is part of the official logo lockup
 
 ═══ BOTTOM CONTACT LINE INSIDE CARD ═══
-- A single thin horizontal contact line near the bottom edge of the card (24px from bottom)
+- A thin horizontal SEPARATOR line first (1px, rgba(0,0,0,0.08), spans most of the card width)
+- Below the separator (with 16px gap), a single contact row near the bottom edge (28px from bottom)
 - Lives INSIDE the frosted glass card — NOT a separate floating bar outside
-- Two items aligned left and centered/right with comfortable spacing:
-  • A small circular outlined GLOBE icon with a tiny cursor arrow on it, then "www.shahedstore.com.bd"
-  • A small circular outlined PHONE handset icon, then "+880 1840-099853"
-- Text: dark charcoal (#1f2937), clean BOLD sans-serif, ~14–16px, very readable
-- Icons are thin-outline style (1.5px stroke), dark charcoal, inside small circular outlines
+- Two items aligned left and right with comfortable spacing:
+  • LEFT: A small circular outlined GLOBE icon with a tiny cursor arrow on its bottom-right, then "www.shahedstore.com.bd"
+  • RIGHT: A small circular outlined PHONE handset icon, then "+880 1840-099853"
+- Text: dark charcoal (#1f2937), clean BOLD sans-serif, ~15–16px, very readable
+- Icons: thin-outline style (1.5px stroke), dark charcoal, inside small circular outlines
 
-═══ ABSOLUTE RULES ═══
-- The "SHAHED STORE" pill is a FROSTED GLASS pill with WHITE TEXT — NEVER a red badge
-- The brand pill on the right is a SOLID WHITE pill with the brand logo + name
-- The contact info MUST be INSIDE the frosted card (bottom area) — never detached
-- The floating translucent bubbles MUST be visible around the card edges
-- Pastel diagonal gradient background — lavender / pink / peach / blue
-- NO price tag, NO discount badge, NO marketing text
+═══ ABSOLUTE RULES (MUST FOLLOW) ═══
+- The "SHAHED STORE" element is a WHITE PILL containing a RED BADGE with WHITE TEXT — never just a glass pill
+- The brand pill on the right is a SOLID WHITE pill with the brand logo + name in dark charcoal
+- The contact info MUST be INSIDE the frosted card (bottom area) with a separator line above it
+- The floating 3D bubbles MUST be visible around the card edges (sky blue + mint/teal ONLY)
+- Background is PALE BLUE / OFF-WHITE only — NO pink, peach, lavender, or warm tones
+- NO price tag, NO discount badge, NO marketing copy, NO promotional text
 - Square format exactly (1:1)
 - Every element crisp, readable, premium — luxury digital store aesthetic
 `.trim();
