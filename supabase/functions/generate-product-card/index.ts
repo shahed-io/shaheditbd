@@ -333,89 +333,87 @@ serve(async (req) => {
       "google/gemini-3.1-flash-image-preview",
     ];
 
-    for (let attempt = 0; attempt < GATEWAY_MODELS.length; attempt++) {
-      const model = GATEWAY_MODELS[attempt];
-      console.log(`Gateway attempt ${attempt + 1}: ${model}`);
+    if (!data) {
+      for (let attempt = 0; attempt < GATEWAY_MODELS.length; attempt++) {
+        const model = GATEWAY_MODELS[attempt];
+        console.log(`Gateway fallback attempt ${attempt + 1}: ${model}`);
 
-      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model,
-          messages: [{ role: "user", content: userContent }],
-          modalities: ["image", "text"],
-        }),
-      });
+        const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model,
+            messages: [{ role: "user", content: userContent }],
+            modalities: ["image", "text"],
+          }),
+        });
 
-      if (response.status === 402) {
-        // credits exhausted — fall through to direct API keys
-        console.warn("Gateway credits exhausted, switching to direct Gemini API...");
+        if (response.status === 402) {
+          console.warn("Gateway credits exhausted");
+          break;
+        }
+
+        if (response.status === 429) {
+          console.warn(`Gateway model ${model} rate limited, trying next...`);
+          await new Promise(r => setTimeout(r, 800));
+          continue;
+        }
+
+        if (!response.ok) {
+          const errText = await response.text();
+          console.warn(`Gateway error ${response.status}: ${errText}, trying next...`);
+          continue;
+        }
+
+        const responseData = await response.json();
+
+        if (responseData.error) {
+          const code = responseData.error?.code;
+          if (code === 429 || responseData.error?.status === 429) {
+            await new Promise(r => setTimeout(r, 800));
+            continue;
+          }
+          if (code === 402) break;
+          continue;
+        }
+
+        const choiceError = responseData.choices?.[0]?.error;
+        if (choiceError) {
+          const choiceCode = choiceError?.code || choiceError?.metadata?.error_type;
+          if (choiceCode === 429 || choiceCode === "rate_limit_exceeded") {
+            await new Promise(r => setTimeout(r, 800));
+            continue;
+          }
+          if (choiceCode === 402) break;
+          continue;
+        }
+
+        const hasImage = !!(
+          responseData.choices?.[0]?.message?.images?.[0]?.image_url?.url ||
+          responseData.choices?.[0]?.message?.images?.[0]?.data ||
+          (Array.isArray(responseData.choices?.[0]?.message?.content) &&
+            responseData.choices?.[0]?.message?.content.find((p: any) => p.type === "image_url" || p.inline_data))
+        );
+
+        if (!hasImage) {
+          console.warn(`Gateway model ${model} returned no image data, trying next...`);
+          continue;
+        }
+
+        data = responseData;
         break;
       }
+    }
 
-      if (response.status === 429) {
-        console.warn(`Gateway model ${model} rate limited, trying next...`);
-        await new Promise(r => setTimeout(r, 800));
-        continue;
-      }
-
-      if (!response.ok) {
-        const errText = await response.text();
-        console.warn(`Gateway error ${response.status}: ${errText}, trying next...`);
-        continue;
-      }
-
-      const responseData = await response.json();
-
-      if (responseData.error) {
-        const code = responseData.error?.code;
-        if (code === 429 || responseData.error?.status === 429) {
-          console.warn(`Gateway body 429, trying next...`);
-          await new Promise(r => setTimeout(r, 800));
-          continue;
-        }
-        if (code === 402) {
-          console.warn("Gateway credits exhausted, switching to direct Gemini API...");
-          break;
-        }
-        throw new Error(responseData.error?.message || "AI gateway error");
-      }
-
-      // Check if choices[0] itself contains a rate-limit or error (200 OK but error injected)
-      const choiceError = responseData.choices?.[0]?.error;
-      if (choiceError) {
-        const choiceCode = choiceError?.code || choiceError?.metadata?.error_type;
-        if (choiceCode === 429 || choiceCode === "rate_limit_exceeded") {
-          console.warn(`Gateway choice-level 429 on ${model}, trying next...`);
-          await new Promise(r => setTimeout(r, 800));
-          continue;
-        }
-        if (choiceCode === 402) {
-          console.warn("Gateway choice-level credits exhausted, switching to direct Gemini API...");
-          break;
-        }
-        console.warn(`Gateway choice-level error on ${model}: ${JSON.stringify(choiceError)}, trying next...`);
-        continue;
-      }
-
-      // Verify there's actually image data before accepting this response
-      const hasImage = !!(
-        responseData.choices?.[0]?.message?.images?.[0]?.image_url?.url ||
-        responseData.choices?.[0]?.message?.images?.[0]?.data ||
-        (Array.isArray(responseData.choices?.[0]?.message?.content) &&
-          responseData.choices?.[0]?.message?.content.find((p: any) => p.type === "image_url" || p.inline_data))
+    // ── Final check: if all sources failed ────────────────────────────────────
+    if (!data) {
+      return new Response(
+        JSON.stringify({ error: "সকল AI কী রেট লিমিটেড বা ব্যর্থ হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।" }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
-
-      if (!hasImage) {
-        console.warn(`Gateway model ${model} returned no image data, trying next...`);
-        continue;
-      }
-
-      data = responseData;
-      break;
     }
 
     // ── Phase 2: Direct Gemini API with user-provided keys ─────────────────
