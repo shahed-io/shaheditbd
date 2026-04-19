@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reserve space at the bottom on mobile so the fixed Bottom Navigation
+   bar (rendered by MobileBottomNav.tsx) never covers page content/footer.
+   Hidden on /ceo admin routes (body.admin-page) and on md+ screens. */
+@media (max-width: 767px) {
+  body:not(.admin-page) {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 76px);
+  }
+}
+
 /* Fonts loaded via index.html preload for non-blocking performance */
 
 /* ══════════════════════════════════════
