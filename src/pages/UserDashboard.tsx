@@ -886,10 +886,10 @@ const UserDashboard = () => {
         </div>
 
         {/* Body */}
-        <div className="grid md:grid-cols-[260px_1fr] gap-5 lg:gap-6">
+        <div className="grid md:grid-cols-[280px_1fr] gap-6 lg:gap-7">
 
-          {/* Sidebar */}
-          <div className={`rounded-3xl p-3 h-fit md:sticky md:top-24 ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
+          {/* Sidebar — premium redesign with floating glow active state */}
+          <aside className={`rounded-[26px] p-3.5 h-fit md:sticky md:top-24 ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
             {(() => {
               const SECTIONS: { title: string; ids: TabId[] }[] = [
                 { title: 'Account', ids: ['profile', 'security', 'addresses'] },
@@ -901,28 +901,39 @@ const UserDashboard = () => {
                 const isActive = activeTab === id;
                 return (
                   <button key={id} onClick={() => handleTabSwitch(id)}
-                    className={`group relative w-full flex items-center gap-2.5 px-2.5 py-2 rounded-2xl text-[13px] font-semibold transition-all mb-1 ${
-                      isActive ? 'text-white' : 'hover:bg-white/70 text-foreground/75 hover:text-foreground'
+                    className={`group relative w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-2xl text-[13px] font-semibold transition-all duration-300 mb-1 overflow-hidden ${
+                      isActive ? 'text-white' : 'text-foreground/75 hover:text-foreground'
                     }`}
                     style={isActive ? {
-                      background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 100%)',
-                      boxShadow: '0 8px 20px hsla(258,78%,55%,0.38), 0 1px 0 rgba(255,255,255,0.4) inset',
-                    } : { border: '1px solid transparent' }}>
-                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
-                      isActive ? '' : 'group-hover:scale-110'
+                      background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 60%, hsl(280,65%,60%) 100%)',
+                      boxShadow: '0 10px 24px hsla(258,78%,55%,0.42), 0 1px 0 rgba(255,255,255,0.45) inset',
+                    } : { background: 'transparent' }}
+                    onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.75)'; }}
+                    onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}>
+                    {/* Active indicator pill */}
+                    {isActive && (
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-6 rounded-full bg-white/80" aria-hidden="true" />
+                    )}
+                    {/* Hover shimmer */}
+                    {!isActive && (
+                      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                        style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,75%,0.12), transparent)' }} aria-hidden="true" />
+                    )}
+                    <span className={`relative w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                      isActive ? '' : 'group-hover:scale-110 group-hover:rotate-3'
                     }`}
                       style={isActive
-                        ? { background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(8px)' }
-                        : { background: 'rgba(255,255,255,0.8)', border: '1px solid hsla(258,78%,75%,0.25)' }
+                        ? { background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', boxShadow: '0 2px 8px rgba(0,0,0,0.1) inset' }
+                        : { background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7))', border: '1px solid hsla(258,78%,75%,0.30)', boxShadow: '0 2px 6px hsla(258,78%,55%,0.08)' }
                       }>
-                      <Icon size={14} className={isActive ? 'text-white' : 'text-primary'} />
+                      <Icon size={15} className={isActive ? 'text-white' : 'text-primary'} />
                     </span>
-                    <span className="flex-1 text-left truncate">{label}</span>
+                    <span className="relative flex-1 text-left truncate">{label}</span>
                     {badge !== undefined && badge > 0 && (
-                      <span className={`text-[10px] font-black px-1.5 min-w-[18px] h-[18px] rounded-full flex items-center justify-center ${
-                        isActive ? 'text-primary bg-white' : 'text-white'
+                      <span className={`relative text-[10px] font-black px-2 min-w-[20px] h-[20px] rounded-full flex items-center justify-center ${
+                        isActive ? 'text-primary bg-white shadow-md' : 'text-white shadow-sm'
                       }`}
-                        style={!isActive ? { background: id === 'notifications' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' } : undefined}>{badge}</span>
+                        style={!isActive ? { background: id === 'notifications' ? 'linear-gradient(135deg, hsl(0,84%,60%), hsl(355,80%,55%))' : 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : undefined}>{badge}</span>
                     )}
                   </button>
                 );
@@ -933,39 +944,45 @@ const UserDashboard = () => {
                     const items = tabsWithBadges.filter(t => section.ids.includes(t.id));
                     if (!items.length) return null;
                     return (
-                      <div key={section.title} className={sIdx > 0 ? 'mt-3' : ''}>
-                        <p className="text-[9px] font-black uppercase tracking-[0.14em] px-2 py-1.5 text-muted-foreground/70">{section.title}</p>
+                      <div key={section.title} className={sIdx > 0 ? 'mt-4' : ''}>
+                        <div className="flex items-center gap-2 px-2.5 mb-1.5">
+                          <p className="text-[9px] font-black uppercase tracking-[0.18em] text-primary/60">{section.title}</p>
+                          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, hsla(258,78%,65%,0.25), transparent)' }} />
+                        </div>
                         {items.map(renderItem)}
                       </div>
                     );
                   })}
-                  <div className="h-px my-3 mx-2" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,65%,0.25), transparent)' }} />
-                  <button onClick={() => navigate('/free-tools')} className="group w-full flex items-center gap-2.5 px-2.5 py-2 rounded-2xl text-[13px] font-semibold transition-all mb-1 hover:bg-white/70 text-foreground/75 hover:text-foreground" style={{ border: '1px solid transparent' }}>
-                    <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110"
-                      style={{ background: 'linear-gradient(135deg, hsla(45,90%,52%,0.18), hsla(35,85%,55%,0.12))', border: '1px solid hsla(45,90%,52%,0.3)' }}>
-                      <Zap size={14} style={{ color: 'hsl(38,92%,50%)' }} />
+                  <div className="h-px my-4 mx-2" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,65%,0.30), transparent)' }} />
+                  <button onClick={() => navigate('/free-tools')} className="group relative w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-2xl text-[13px] font-bold transition-all duration-300 mb-1 overflow-hidden"
+                    style={{ background: 'linear-gradient(135deg, hsla(45,95%,55%,0.18), hsla(35,90%,60%,0.12))', border: '1px solid hsla(45,90%,52%,0.30)', color: 'hsl(35,85%,38%)' }}>
+                    <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-12"
+                      style={{ background: 'linear-gradient(135deg, hsl(45,95%,55%), hsl(35,90%,52%))', boxShadow: '0 4px 12px hsla(38,92%,50%,0.40)' }}>
+                      <Zap size={15} className="text-white" />
                     </span>
-                    Free Tools
+                    <span className="flex-1 text-left">Free Tools</span>
+                    <ChevronRight size={14} className="opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                   </button>
                   {isAdmin && (
-                    <button onClick={() => navigate('/ceo')} className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-2xl text-[13px] font-bold transition-all mb-1 text-white" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', boxShadow: '0 6px 16px hsla(243,75%,59%,0.4), 0 1px 0 rgba(255,255,255,0.4) inset', border: '1px solid transparent' }}>
-                      <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.22)' }}>
-                        <ShieldCheck size={14} className="text-white" />
+                    <button onClick={() => navigate('/ceo')} className="group w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-2xl text-[13px] font-bold transition-all mb-1 text-white" style={{ background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))', boxShadow: '0 8px 20px hsla(243,75%,59%,0.42), 0 1px 0 rgba(255,255,255,0.4) inset' }}>
+                      <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)' }}>
+                        <ShieldCheck size={15} className="text-white" />
                       </span>
-                      Admin Panel
+                      <span className="flex-1 text-left">Admin Panel</span>
+                      <ChevronRight size={14} className="text-white/80" />
                     </button>
                   )}
-                  <button onClick={handleLogout} className="group w-full flex items-center gap-2.5 px-2.5 py-2 rounded-2xl text-[13px] font-semibold transition-all hover:bg-destructive/10 text-destructive" style={{ border: '1px solid transparent' }}>
-                    <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110"
-                      style={{ background: 'hsla(0,84%,60%,0.12)', border: '1px solid hsla(0,84%,60%,0.22)' }}>
-                      <LogOut size={14} className="text-destructive" />
+                  <button onClick={handleLogout} className="group w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-2xl text-[13px] font-semibold transition-all hover:bg-destructive/10 text-destructive">
+                    <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110"
+                      style={{ background: 'linear-gradient(135deg, hsla(0,84%,60%,0.15), hsla(355,80%,55%,0.10))', border: '1px solid hsla(0,84%,60%,0.25)' }}>
+                      <LogOut size={15} className="text-destructive" />
                     </span>
                     {t(selectedLang, 'tab_logout')}
                   </button>
                 </>
               );
             })()}
-          </div>
+          </aside>
 
           {/* Content Panel */}
           <div className={`rounded-3xl overflow-hidden ${!mobileShowContent ? 'hidden md:block' : ''}`} style={glassCardStrong}>
