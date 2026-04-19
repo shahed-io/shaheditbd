@@ -860,43 +860,67 @@ const UserDashboard = () => {
         </div>
 
         {/* Body */}
-        <div className="grid md:grid-cols-[240px_1fr] gap-5 sm:gap-6">
+        <div className="grid md:grid-cols-[260px_1fr] gap-5 lg:gap-6">
 
           {/* Sidebar */}
-          <div className={`rounded-2xl p-3 h-fit ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
-            <p className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 mb-1 text-muted-foreground">{t(selectedLang, 'menu')}</p>
-            {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => (
-              <button key={id} onClick={() => handleTabSwitch(id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 ${
-                  activeTab === id
-                    ? 'text-primary shadow-sm'
-                    : 'hover:bg-white/50 text-muted-foreground'
-                }`}
-                style={activeTab === id ? {
-                  background: 'rgba(255,255,255,0.85)',
-                  border: '1px solid hsla(258,78%,65%,0.25)',
-                  boxShadow: '0 2px 8px hsla(258,78%,55%,0.12)',
-                } : { border: '1px solid transparent' }}>
-                <Icon size={16} />
-                <span className="flex-1 text-left">{label}</span>
-                {badge !== undefined && badge > 0 && (
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
-                    style={{ background: id === 'notifications' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' }}>{badge}</span>
-                )}
-                {activeTab === id && <ChevronRight size={14} />}
-              </button>
-            ))}
-            <div className="h-px my-2 bg-border/50" />
-            <button onClick={() => navigate('/free-tools')} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5 hover:bg-white/50 text-muted-foreground" style={{ border: '1px solid transparent' }}>
-              <Zap size={16} /> Free Tools
+          <div className={`rounded-3xl p-3 h-fit md:sticky md:top-24 ${mobileShowContent ? 'hidden md:block' : ''}`} style={glassCard}>
+            <div className="flex items-center justify-between px-3 py-2 mb-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t(selectedLang, 'menu')}</p>
+              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-primary/10 text-primary">{tabsWithBadges.length}</span>
+            </div>
+            {tabsWithBadges.map(({ id, label, icon: Icon, badge }) => {
+              const isActive = activeTab === id;
+              return (
+                <button key={id} onClick={() => handleTabSwitch(id)}
+                  className={`group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-semibold transition-all mb-1 ${
+                    isActive ? 'text-white' : 'hover:bg-white/60 text-foreground/70 hover:text-foreground'
+                  }`}
+                  style={isActive ? {
+                    background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 100%)',
+                    boxShadow: '0 6px 18px hsla(258,78%,55%,0.35), 0 1px 0 rgba(255,255,255,0.4) inset',
+                  } : { border: '1px solid transparent' }}>
+                  <span className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${
+                    isActive ? '' : 'group-hover:scale-105'
+                  }`}
+                    style={isActive
+                      ? { background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(8px)' }
+                      : { background: 'rgba(255,255,255,0.7)', border: '1px solid hsla(258,78%,75%,0.2)' }
+                    }>
+                    <Icon size={15} className={isActive ? 'text-white' : 'text-primary'} />
+                  </span>
+                  <span className="flex-1 text-left truncate">{label}</span>
+                  {badge !== undefined && badge > 0 && (
+                    <span className={`text-[10px] font-black px-1.5 min-w-[20px] h-5 rounded-full flex items-center justify-center ${
+                      isActive ? 'text-primary bg-white' : 'text-white'
+                    }`}
+                      style={!isActive ? { background: id === 'notifications' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' } : undefined}>{badge}</span>
+                  )}
+                  {isActive && <ChevronRight size={14} className="text-white/90" />}
+                </button>
+              );
+            })}
+            <div className="h-px my-3 mx-2" style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,65%,0.25), transparent)' }} />
+            <button onClick={() => navigate('/free-tools')} className="group w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-semibold transition-all mb-1 hover:bg-white/60 text-foreground/70 hover:text-foreground" style={{ border: '1px solid transparent' }}>
+              <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, hsla(45,90%,52%,0.15), hsla(35,85%,55%,0.1))', border: '1px solid hsla(45,90%,52%,0.25)' }}>
+                <Zap size={15} style={{ color: 'hsl(38,92%,50%)' }} />
+              </span>
+              Free Tools
             </button>
             {isAdmin && (
-              <button onClick={() => navigate('/ceo')} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all mb-0.5" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', color: 'white', boxShadow: '0 2px 10px hsla(243,75%,59%,0.35)', border: '1px solid transparent' }}>
-                <ShieldCheck size={16} /> Admin Panel
+              <button onClick={() => navigate('/ceo')} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-bold transition-all mb-1 text-white" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(263,70%,58%))', boxShadow: '0 4px 14px hsla(243,75%,59%,0.4), 0 1px 0 rgba(255,255,255,0.4) inset', border: '1px solid transparent' }}>
+                <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.22)' }}>
+                  <ShieldCheck size={15} className="text-white" />
+                </span>
+                Admin Panel
               </button>
             )}
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive" style={{ border: '1px solid transparent' }}>
-              <LogOut size={16} /> {t(selectedLang, 'tab_logout')}
+            <button onClick={handleLogout} className="group w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-semibold transition-all hover:bg-destructive/10 text-destructive" style={{ border: '1px solid transparent' }}>
+              <span className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105"
+                style={{ background: 'hsla(0,84%,60%,0.1)', border: '1px solid hsla(0,84%,60%,0.2)' }}>
+                <LogOut size={15} className="text-destructive" />
+              </span>
+              {t(selectedLang, 'tab_logout')}
             </button>
           </div>
 
