@@ -122,6 +122,10 @@ export default {
           "0%":   { transform: "scale(0.95)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
+        tabRipple: {
+          "0%":   { transform: "scale(0.6)", opacity: "0.9" },
+          "100%": { transform: "scale(1.05)", opacity: "0" },
+        },
         "neon-glow": {
           "0%, 100%": { boxShadow: "0 0 10px hsla(271,91%,65%,0.5), 0 0 30px hsla(271,91%,65%,0.2)" },
           "50%":      { boxShadow: "0 0 20px hsla(271,91%,65%,0.9), 0 0 60px hsla(271,91%,65%,0.4)" },

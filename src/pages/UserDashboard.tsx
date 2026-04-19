@@ -901,35 +901,41 @@ const UserDashboard = () => {
                 const isActive = activeTab === id;
                 return (
                   <button key={id} onClick={() => handleTabSwitch(id)}
-                    className={`group relative w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-2xl text-[13px] font-semibold transition-all duration-300 mb-1 overflow-hidden ${
-                      isActive ? 'text-white' : 'text-foreground/75 hover:text-foreground'
+                    className={`group relative w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-2xl text-[13px] font-semibold transition-all duration-300 mb-1 overflow-hidden active:scale-[0.97] ${
+                      isActive ? 'text-foreground' : 'text-foreground/75 hover:text-foreground'
                     }`}
                     style={isActive ? {
-                      background: 'linear-gradient(135deg, hsl(243,75%,59%) 0%, hsl(263,70%,58%) 60%, hsl(280,65%,60%) 100%)',
-                      boxShadow: '0 10px 24px hsla(258,78%,55%,0.42), 0 1px 0 rgba(255,255,255,0.45) inset',
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.78) 100%)',
+                      backdropFilter: 'blur(28px) saturate(180%)',
+                      WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                      border: '1px solid rgba(255,255,255,0.9)',
+                      boxShadow: '0 10px 28px hsla(258,40%,40%,0.12), 0 1px 0 rgba(255,255,255,1) inset, 0 0 0 1px hsla(258,78%,75%,0.18)',
                     } : { background: 'transparent' }}
-                    onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.75)'; }}
+                    onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.6)'; }}
                     onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}>
                     {/* Hover shimmer */}
                     {!isActive && (
                       <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                        style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,75%,0.12), transparent)' }} aria-hidden="true" />
+                        style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)' }} aria-hidden="true" />
+                    )}
+                    {/* Click ripple pulse on active */}
+                    {isActive && (
+                      <span key={`ripple-${id}`} className="absolute inset-0 rounded-2xl pointer-events-none animate-[tabRipple_0.6s_ease-out]"
+                        style={{ background: 'radial-gradient(circle at center, rgba(255,255,255,0.7) 0%, transparent 60%)' }} aria-hidden="true" />
                     )}
                     <span className={`relative w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                      isActive ? '' : 'group-hover:scale-110 group-hover:rotate-3'
+                      isActive ? 'scale-105' : 'group-hover:scale-110 group-hover:rotate-3'
                     }`}
                       style={isActive
-                        ? { background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', boxShadow: '0 2px 8px rgba(0,0,0,0.1) inset' }
+                        ? { background: 'linear-gradient(135deg, rgba(255,255,255,1), rgba(255,255,255,0.85))', border: '1px solid rgba(255,255,255,1)', boxShadow: '0 4px 12px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,1) inset' }
                         : { background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7))', border: '1px solid hsla(258,78%,75%,0.30)', boxShadow: '0 2px 6px hsla(258,78%,55%,0.08)' }
                       }>
-                      <Icon size={15} className={isActive ? 'text-white' : 'text-primary'} />
+                      <Icon size={15} className="text-primary" />
                     </span>
                     <span className="relative flex-1 text-left truncate">{label}</span>
                     {badge !== undefined && badge > 0 && (
-                      <span className={`relative text-[10px] font-black px-2 min-w-[20px] h-[20px] rounded-full flex items-center justify-center ${
-                        isActive ? 'text-primary bg-white shadow-md' : 'text-white shadow-sm'
-                      }`}
-                        style={!isActive ? { background: id === 'notifications' ? 'linear-gradient(135deg, hsl(0,84%,60%), hsl(355,80%,55%))' : 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : undefined}>{badge}</span>
+                      <span className="relative text-[10px] font-black px-2 min-w-[20px] h-[20px] rounded-full flex items-center justify-center text-white shadow-sm"
+                        style={{ background: id === 'notifications' ? 'linear-gradient(135deg, hsl(0,84%,60%), hsl(355,80%,55%))' : 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' }}>{badge}</span>
                     )}
                   </button>
                 );
