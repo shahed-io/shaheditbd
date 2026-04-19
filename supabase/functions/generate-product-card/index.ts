@@ -251,15 +251,18 @@ serve(async (req) => {
     let data: any = null;
 
     // ── Phase 1: Direct Gemini API with USER-PROVIDED keys (FREE — no Lovable credits) ──
-    // We try all 6 user keys FIRST so Lovable AI credits are NOT consumed.
-    const USER_GEMINI_KEYS = [
+    // We support both the legacy sequential secret names and indexed names so
+    // existing configured keys are all picked up reliably.
+    const USER_GEMINI_KEYS = Array.from(new Set([
       Deno.env.get("GEMINI_API_KEY"),
+      Deno.env.get("GEMINI_API_KEY_1"),
       Deno.env.get("GEMINI_API_KEY_2"),
       Deno.env.get("GEMINI_API_KEY_3"),
       Deno.env.get("GEMINI_API_KEY_4"),
       Deno.env.get("GEMINI_API_KEY_5"),
       Deno.env.get("GEMINI_API_KEY_6"),
-    ].filter(Boolean) as string[];
+      Deno.env.get("GOOGLE_GEMINI_API_KEY"),
+    ].filter(Boolean) as string[]));
 
     // Only valid image-generation model names for Direct Gemini API (v1beta)
     const DIRECT_IMAGE_MODELS = [
