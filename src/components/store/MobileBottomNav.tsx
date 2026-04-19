@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Home, Store, Heart, ShoppingBag, User } from 'lucide-react';
+import { Home, Store, Heart, Package, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import AuthModal from './AuthModal';
 
 interface NavItem {
