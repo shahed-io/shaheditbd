@@ -248,13 +248,14 @@ const MobileBottomNav = () => {
                   className="w-full h-full rounded-2xl pointer-events-none"
                   style={{
                     background: navItems[activeIndex].gradient,
-                    boxShadow: `0 8px 24px -4px ${
+                    boxShadow: `0 10px 28px -6px ${
                       navItems[activeIndex].gradient
-                        .match(/hsl\([^)]+\)/)?.[0] || 'hsla(258,78%,55%,0.5)'
-                    }`,
-                    opacity: drag?.active ? 0.85 : 0.95,
+                        .match(/hsl\([^)]+\)/)?.[0] || 'hsla(258,78%,55%,0.55)'
+                    }, 0 4px 12px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.12)`,
+                    opacity: 1,
                     transform: drag?.active ? 'scale(0.96)' : 'scale(1)',
-                    transition: 'opacity 0.2s, transform 0.2s',
+                    transition: 'transform 0.2s',
+                    border: '1.5px solid rgba(255,255,255,0.55)',
                   }}
                 />
               </div>
