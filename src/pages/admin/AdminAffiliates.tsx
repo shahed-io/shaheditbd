@@ -636,9 +636,25 @@ const AdminAffiliates = () => {
                 <Textarea rows={3} value={editingAccount.admin_note || ''}
                   onChange={e => setEditingAccount({ ...editingAccount, admin_note: e.target.value })} />
               </div>
+              {(editingAccount.applicant_name || editingAccount.applicant_email || editingAccount.website_url || editingAccount.facebook_url || editingAccount.why_join) && (
+                <div className="space-y-2 p-3 bg-muted/50 rounded-lg border border-border">
+                  <div className="text-xs font-bold text-foreground">📋 Application Details</div>
+                  {editingAccount.applicant_name && <div className="text-xs"><strong>Name:</strong> {editingAccount.applicant_name}</div>}
+                  {editingAccount.applicant_email && <div className="text-xs"><strong>Email:</strong> {editingAccount.applicant_email}</div>}
+                  {editingAccount.applicant_phone && <div className="text-xs"><strong>Phone:</strong> {editingAccount.applicant_phone}</div>}
+                  {editingAccount.niche && <div className="text-xs"><strong>Niche:</strong> {editingAccount.niche}</div>}
+                  {editingAccount.audience_size && <div className="text-xs"><strong>Audience:</strong> {editingAccount.audience_size}</div>}
+                  {editingAccount.website_url && <div className="text-xs"><strong>Website:</strong> <a href={editingAccount.website_url} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">{editingAccount.website_url}</a></div>}
+                  {editingAccount.facebook_url && <div className="text-xs"><strong>Facebook:</strong> <a href={editingAccount.facebook_url} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">{editingAccount.facebook_url}</a></div>}
+                  {editingAccount.youtube_url && <div className="text-xs"><strong>YouTube:</strong> <a href={editingAccount.youtube_url} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">{editingAccount.youtube_url}</a></div>}
+                  {editingAccount.other_social_url && <div className="text-xs"><strong>Social:</strong> <a href={editingAccount.other_social_url} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">{editingAccount.other_social_url}</a></div>}
+                  {editingAccount.why_join && <div className="text-xs mt-2"><strong>কেন যোগ দিতে চান:</strong><div className="text-muted-foreground mt-1 whitespace-pre-wrap">{editingAccount.why_join}</div></div>}
+                  {editingAccount.promotion_strategy && <div className="text-xs mt-2"><strong>প্রমোশন স্ট্র্যাটেজি:</strong><div className="text-muted-foreground mt-1 whitespace-pre-wrap">{editingAccount.promotion_strategy}</div></div>}
+                </div>
+              )}
               {editingAccount.application_note && (
                 <div className="text-xs p-3 bg-muted rounded-lg">
-                  <div className="text-muted-foreground mb-1">Application note:</div>
+                  <div className="text-muted-foreground mb-1">Additional note:</div>
                   <div>{editingAccount.application_note}</div>
                 </div>
               )}
