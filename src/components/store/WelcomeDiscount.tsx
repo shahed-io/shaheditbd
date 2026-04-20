@@ -116,7 +116,7 @@ export default function WelcomeDiscount() {
       return () => clearTimeout(t);
     }
 
-    const randomDelay = (Math.floor(Math.random() * 9) + 12) * 1000;
+    const randomDelay = (Math.floor(Math.random() * 6) + 5) * 1000;
     const timer = setTimeout(loadInitial, randomDelay);
     const handler = () => {
       clearTimeout(timer);
