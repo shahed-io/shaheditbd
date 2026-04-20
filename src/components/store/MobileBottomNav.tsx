@@ -142,12 +142,6 @@ const MobileBottomNav = () => {
   };
 
   // Apple-style swipe gesture on the indicator pill — drag left/right to switch tabs
-  const [drag, setDrag] = useState<{
-    startX: number;
-    currentX: number;
-    active: boolean;
-    pillWidth: number;
-  } | null>(null);
 
   const navigateToIndex = (idx: number) => {
     const target = navItems[idx];
