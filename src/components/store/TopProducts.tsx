@@ -145,13 +145,19 @@ const TopProducts = () => {
                       View all <ArrowRight size={13} />
                     </button>
                   </div>
-                  {/* Mobile scroll */}
-                  <div className="flex gap-3 overflow-x-auto pb-2 md:hidden scrollbar-hide">
-                    {items.map((p, i) => (
-                      <div key={p.id} className="flex-shrink-0 w-48">
-                        <ProductCard product={p} delay={i * 0.05} />
-                      </div>
+                  {/* Mobile: single column vertical stack */}
+                  <div className="grid grid-cols-1 gap-3 md:hidden">
+                    {(isExpanded ? items : items.slice(0, LIMIT)).map((p, i) => (
+                      <ProductCard key={p.id} product={p} delay={Math.min(i * 0.04, 0.3)} />
                     ))}
+                    {hasMore && (
+                      <div className="flex justify-center mt-2">
+                        <button onClick={() => toggleCat(cat)}
+                          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-card border border-border shadow-soft text-foreground">
+                          {isExpanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
+                        </button>
+                      </div>
+                    )}
                   </div>
                   {/* Tablet (4 cols) & desktop (5 cols) grid — only hide orphans in collapsed preview */}
                   <div className={`hidden md:grid grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 ${!isExpanded && hasMore ? 'grid-fill-rows' : ''}`}>
@@ -175,7 +181,7 @@ const TopProducts = () => {
         {!error && !loading && activeTab !== 'All' && (
           <div>
             <p className="text-sm text-muted-foreground mb-6 font-fira">{filtered.length} products in "{activeTab}"</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
               {filtered.map((p, i) => <ProductCard key={p.id} product={p} delay={Math.min(i * 0.04, 0.4)} />)}
             </div>
           </div>
