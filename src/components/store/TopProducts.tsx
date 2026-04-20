@@ -86,39 +86,19 @@ const TopProducts = () => {
           </div>
         </div>
 
-        {/* Tab Bar — Apple-style glassmorphism scroll rail */}
-        <div
-          className="flex gap-2 mb-8 pb-8 border-b border-border overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap"
-          style={{ WebkitOverflowScrolling: 'touch', scrollSnapType: 'x proximity' }}
-        >
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                style={{
-                  scrollSnapAlign: 'start',
-                  background: isActive
-                    ? 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))'
-                    : 'linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.55) 100%)',
-                  backdropFilter: isActive ? undefined : 'blur(24px) saturate(180%)',
-                  WebkitBackdropFilter: isActive ? undefined : 'blur(24px) saturate(180%)',
-                  border: isActive
-                    ? '1px solid rgba(255,255,255,0.4)'
-                    : '1px solid rgba(255,255,255,0.6)',
-                  boxShadow: isActive
-                    ? '0 8px 24px -6px hsla(258,78%,55%,0.45), inset 0 1px 0 rgba(255,255,255,0.4)'
-                    : '0 4px 14px -4px rgba(88,28,200,0.12), inset 0 1px 0 rgba(255,255,255,0.85)',
-                }}
-                className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 whitespace-nowrap active:scale-95 ${
-                  isActive ? 'text-white' : 'text-foreground/70 hover:text-foreground'
-                }`}
-              >
-                {tab}
-              </button>
-            );
-          })}
+        {/* Tab Bar */}
+        <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-border">
+          {tabs.map((tab) => (
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              style={activeTab === tab ? { background: 'linear-gradient(135deg, hsl(243,75%,59%), hsl(263,70%,58%))' } : {}}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-200 ${
+                activeTab === tab
+                  ? 'text-white shadow-indigo'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 shadow-soft'
+              }`}>
+              {tab}
+            </button>
+          ))}
         </div>
 
         {/* Error */}
@@ -173,14 +153,7 @@ const TopProducts = () => {
                     {hasMore && (
                       <div className="col-span-2 flex justify-center mt-2">
                         <button onClick={() => toggleCat(cat)}
-                          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold text-foreground transition-all active:scale-95"
-                          style={{
-                            background: 'linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.55) 100%)',
-                            backdropFilter: 'blur(24px) saturate(180%)',
-                            WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-                            border: '1px solid rgba(255,255,255,0.6)',
-                            boxShadow: '0 6px 20px -6px rgba(88,28,200,0.15), inset 0 1px 0 rgba(255,255,255,0.85)',
-                          }}>
+                          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-card border border-border shadow-soft text-foreground">
                           {isExpanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
                         </button>
                       </div>
@@ -193,14 +166,7 @@ const TopProducts = () => {
                   {hasMore && (
                     <div className="hidden md:flex justify-center mt-6">
                       <button onClick={() => toggleCat(cat)}
-                        className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold text-foreground transition-all hover:-translate-y-0.5 active:scale-95"
-                        style={{
-                          background: 'linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.58) 100%)',
-                          backdropFilter: 'blur(28px) saturate(200%)',
-                          WebkitBackdropFilter: 'blur(28px) saturate(200%)',
-                          border: '1px solid rgba(255,255,255,0.65)',
-                          boxShadow: '0 10px 28px -8px rgba(88,28,200,0.18), inset 0 1px 0 rgba(255,255,255,0.9)',
-                        }}>
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-card border border-border shadow-soft hover:shadow-medium transition-all text-foreground">
                         {isExpanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
                       </button>
                     </div>
