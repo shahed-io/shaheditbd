@@ -44,6 +44,17 @@ interface Account {
   total_conversions: number;
   application_note: string | null;
   admin_note: string | null;
+  applicant_name?: string | null;
+  applicant_email?: string | null;
+  applicant_phone?: string | null;
+  website_url?: string | null;
+  facebook_url?: string | null;
+  youtube_url?: string | null;
+  other_social_url?: string | null;
+  audience_size?: string | null;
+  niche?: string | null;
+  why_join?: string | null;
+  promotion_strategy?: string | null;
   payout_method: string | null;
   payout_account: string | null;
   payout_account_name: string | null;
