@@ -225,24 +225,36 @@ const MobileBottomNav = () => {
               }}
             />
 
-            {/* Sliding active indicator (gradient blob) */}
+            {/* Sliding active indicator (gradient blob) — Apple-style swipe enabled */}
             {activeIndex >= 0 && (
               <div
-                className="absolute top-1.5 bottom-1.5 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] pointer-events-none"
+                onPointerDown={onIndicatorPointerDown}
+                onPointerMove={onIndicatorPointerMove}
+                onPointerUp={onIndicatorPointerUp}
+                onPointerCancel={onIndicatorPointerUp}
+                className={`absolute top-1.5 bottom-1.5 z-10 touch-none ${
+                  drag?.active
+                    ? 'transition-none'
+                    : 'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]'
+                }`}
                 style={{
                   width: `calc((100% - 12px) / ${navItems.length})`,
                   left: `calc(6px + ${activeIndex} * ((100% - 12px) / ${navItems.length}))`,
+                  transform: `translateX(${dragOffset}px)`,
+                  cursor: drag?.active ? 'grabbing' : 'grab',
                 }}
               >
                 <div
-                  className="w-full h-full rounded-2xl"
+                  className="w-full h-full rounded-2xl pointer-events-none"
                   style={{
                     background: navItems[activeIndex].gradient,
                     boxShadow: `0 8px 24px -4px ${
                       navItems[activeIndex].gradient
                         .match(/hsl\([^)]+\)/)?.[0] || 'hsla(258,78%,55%,0.5)'
                     }`,
-                    opacity: 0.95,
+                    opacity: drag?.active ? 0.85 : 0.95,
+                    transform: drag?.active ? 'scale(0.96)' : 'scale(1)',
+                    transition: 'opacity 0.2s, transform 0.2s',
                   }}
                 />
               </div>
