@@ -234,14 +234,10 @@ const MobileBottomNav = () => {
               }}
             />
 
-            {/* Sliding active indicator (gradient blob) — Apple-style swipe enabled */}
+            {/* Sliding active indicator (gradient blob) — purely visual, never blocks taps */}
             {activeIndex >= 0 && (
               <div
-                onPointerDown={onIndicatorPointerDown}
-                onPointerMove={onIndicatorPointerMove}
-                onPointerUp={onIndicatorPointerUp}
-                onPointerCancel={onIndicatorPointerUp}
-                className={`absolute top-1.5 bottom-1.5 z-0 touch-none ${
+                className={`absolute top-1.5 bottom-1.5 z-0 pointer-events-none ${
                   drag?.active
                     ? 'transition-none'
                     : 'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]'
@@ -250,11 +246,10 @@ const MobileBottomNav = () => {
                   width: `calc((100% - 12px) / ${navItems.length})`,
                   left: `calc(6px + ${activeIndex} * ((100% - 12px) / ${navItems.length}))`,
                   transform: `translateX(${dragOffset}px)`,
-                  cursor: drag?.active ? 'grabbing' : 'grab',
                 }}
               >
                 <div
-                  className="w-full h-full rounded-2xl pointer-events-none"
+                  className="w-full h-full rounded-2xl"
                   style={{
                     background: navItems[activeIndex].gradient,
                     boxShadow: `0 10px 28px -6px ${
@@ -270,7 +265,13 @@ const MobileBottomNav = () => {
               </div>
             )}
 
-            <ul className="relative z-10 grid grid-cols-5 px-1.5 py-1.5">
+            <ul
+              className="relative z-10 grid grid-cols-5 px-1.5 py-1.5 touch-pan-y"
+              onPointerDown={onRailPointerDown}
+              onPointerMove={onRailPointerMove}
+              onPointerUp={onRailPointerUp}
+              onPointerCancel={onRailPointerUp}
+            >
               {navItems.map((item, idx) => {
                 const isActive = idx === activeIndex;
                 const Icon = item.icon;
