@@ -232,7 +232,7 @@ const MobileBottomNav = () => {
                 onPointerMove={onIndicatorPointerMove}
                 onPointerUp={onIndicatorPointerUp}
                 onPointerCancel={onIndicatorPointerUp}
-                className={`absolute top-1.5 bottom-1.5 z-10 touch-none ${
+                className={`absolute top-1.5 bottom-1.5 z-0 touch-none ${
                   drag?.active
                     ? 'transition-none'
                     : 'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]'
@@ -261,7 +261,7 @@ const MobileBottomNav = () => {
               </div>
             )}
 
-            <ul className="relative grid grid-cols-5 px-1.5 py-1.5">
+            <ul className="relative z-10 grid grid-cols-5 px-1.5 py-1.5">
               {navItems.map((item, idx) => {
                 const isActive = idx === activeIndex;
                 const Icon = item.icon;
@@ -271,7 +271,7 @@ const MobileBottomNav = () => {
                       onClick={() => handleClick(item)}
                       aria-label={item.label}
                       aria-current={isActive ? 'page' : undefined}
-                      className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-2xl transition-all duration-300 active:scale-90"
+                      className="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-2xl transition-all duration-300 active:scale-90"
                     >
                       <span className="relative">
                         <Icon
