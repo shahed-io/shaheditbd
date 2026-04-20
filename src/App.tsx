@@ -11,6 +11,7 @@ import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
 import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
 import { ViewTransitions } from "@/components/ViewTransitions";
+import { useAffiliateTracking } from "@/hooks/useAffiliateTracking";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
@@ -158,6 +159,7 @@ const AppContent = () => {
   const location = useLocation();
   const [deferReady, setDeferReady] = useState(false);
   useTheme(); // Apply saved theme on load
+  useAffiliateTracking(); // Capture ?ref=CODE on every navigation
 
   useEffect(() => {
     // Defer non-critical components until after first paint (~20ms)
@@ -294,6 +296,7 @@ const AppContent = () => {
           <Route path="/free-tools" element={<FreeTools />} />
           <Route path="/refund-request" element={<RefundRequest />} />
           <Route path="/dashboard" element={<UserDashboard />} />
+          <Route path="/affiliate" element={<Affiliate />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/install" element={<InstallApp />} />
           <Route path="/reseller" element={<Reseller />} />
