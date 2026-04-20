@@ -218,16 +218,17 @@ const Affiliate = () => {
           body: { affiliateId: (inserted as any)?.id },
         });
       } catch (e) {
-        // Fire Google Ads + GA4 Lead/Sign Up conversion (non-blocking)
-        import('@/components/store/GoogleTracking').then(({ gTrackLead }) => {
-          gTrackLead({ method: 'affiliate_apply' }, {
-            email: form.applicant_email,
-            phone: form.applicant_phone,
-            name: form.applicant_name,
-          }).catch(() => { /* silent */ });
-        }).catch(() => { /* silent */ });
         console.warn('notify-affiliate-application invoke failed', e);
       }
+
+      // Fire Google Ads + GA4 Lead/Sign Up conversion (non-blocking)
+      import('@/components/store/GoogleTracking').then(({ gTrackLead }) => {
+        gTrackLead({ method: 'affiliate_apply' }, {
+          email: form.applicant_email,
+          phone: form.applicant_phone,
+          name: form.applicant_name,
+        }).catch(() => { /* silent */ });
+      }).catch(() => { /* silent */ });
 
       toast.success('আবেদন সফলভাবে জমা হয়েছে! 🎉 অ্যাডমিন রিভিউ করার পর আপনাকে জানানো হবে।');
       fetchData();
