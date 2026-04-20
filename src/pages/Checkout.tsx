@@ -177,6 +177,12 @@ const Checkout = () => {
       value: finalTotal,
       items: items.map(i => ({ item_id: String(i.id), item_name: i.name, price: i.price, quantity: i.quantity })),
     }, { email: form.email, phone: form.phone, name: form.name }).catch(() => { /* silent */ });
+    // Fire TikTok / Snap / Pin / LinkedIn / X pixels
+    import('@/components/store/MarketingPixels').then(({ mTrackInitiateCheckout, loadMarketingPixels }) => {
+      loadMarketingPixels().then(() => {
+        mTrackInitiateCheckout({ value: finalTotal });
+      }).catch(() => { /* silent */ });
+    }).catch(() => { /* silent */ });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
@@ -401,6 +407,16 @@ const Checkout = () => {
         coupon: coupon.isApplied ? coupon.code : undefined,
         items: items.map(i => ({ item_id: String(i.id), item_name: i.name, price: i.price, quantity: i.quantity })),
       }, { email: form.email, phone: form.phone, name: form.name }).catch(() => { /* silent */ });
+      // Fire TikTok (+ CAPI) / Snap / Pin / LinkedIn / X pixels
+      import('@/components/store/MarketingPixels').then(({ mTrackPurchase, loadMarketingPixels }) => {
+        loadMarketingPixels().then(() => {
+          mTrackPurchase({
+            transaction_id: orderNum,
+            value: finalTotal,
+            content_ids: items.map(i => String(i.id)),
+          });
+        }).catch(() => { /* silent */ });
+      }).catch(() => { /* silent */ });
     } catch (err: unknown) {
       console.error('[Checkout] Order error:', err);
       const msg = err instanceof Error ? err.message : (err as any)?.message || String(err);

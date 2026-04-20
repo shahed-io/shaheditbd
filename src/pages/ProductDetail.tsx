@@ -197,6 +197,16 @@ const ProductDetail = () => {
         // Defer view tracking + review stats for schema — don't block UI
         setTimeout(() => {
           supabase.from('products').update({ total_views: (row.total_views || 0) + 1 }).eq('id', row.id).then(() => {});
+          // Fire ViewContent event on TikTok / Snap / Pin / LinkedIn / X
+          import('@/components/store/MarketingPixels').then(({ mTrackViewContent, loadMarketingPixels }) => {
+            loadMarketingPixels().then(() => {
+              mTrackViewContent({
+                content_id: String(row.id),
+                content_name: row.name,
+                value: Number(row.price) || 0,
+              });
+            }).catch(() => { /* silent */ });
+          }).catch(() => { /* silent */ });
           // Fetch review stats for Google rich snippet schema
           (supabase as any).from('product_reviews')
             .select('rating')
