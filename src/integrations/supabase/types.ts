@@ -2452,30 +2452,39 @@ export type Database = {
         Row: {
           code: string
           created_at: string
+          discount_amount: number
           discount_percent: number
+          discount_type: string
           expires_at: string
           id: string
           is_used: boolean
+          prize_label: string | null
           used_by_order_id: string | null
           visitor_id: string
         }
         Insert: {
           code: string
           created_at?: string
+          discount_amount?: number
           discount_percent: number
+          discount_type?: string
           expires_at: string
           id?: string
           is_used?: boolean
+          prize_label?: string | null
           used_by_order_id?: string | null
           visitor_id: string
         }
         Update: {
           code?: string
           created_at?: string
+          discount_amount?: number
           discount_percent?: number
+          discount_type?: string
           expires_at?: string
           id?: string
           is_used?: boolean
+          prize_label?: string | null
           used_by_order_id?: string | null
           visitor_id?: string
         }

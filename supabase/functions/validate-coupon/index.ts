@@ -29,7 +29,7 @@ serve(async (req) => {
     if (trimmedCode.startsWith('WELCOME-')) {
       const { data: wc, error: wcErr } = await supabase
         .from('welcome_coupons')
-        .select('id, code, discount_percent, expires_at, is_used')
+        .select('id, code, discount_percent, discount_type, discount_amount, expires_at, is_used')
         .eq('code', trimmedCode)
         .single();
 
@@ -51,7 +51,14 @@ serve(async (req) => {
         });
       }
 
-      const discount = Math.round(orderTotal * wc.discount_percent / 100);
+      // Calculate discount based on type (percent / fixed)
+      let discount = 0;
+      if (wc.discount_type === 'fixed' && wc.discount_amount > 0) {
+        discount = Math.min(wc.discount_amount, orderTotal);
+      } else {
+        // legacy: percent (fallback if discount_type is null/percent)
+        discount = Math.round(orderTotal * wc.discount_percent / 100);
+      }
 
       // Mark as used
       await supabase

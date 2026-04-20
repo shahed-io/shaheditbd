@@ -7,55 +7,86 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Gift, Settings, Trash2, Clock, Percent, Eye, RefreshCw } from 'lucide-react';
+import { Gift, Settings, Trash2, Clock, Plus, GripVertical, RefreshCw, Eye, Sparkles } from 'lucide-react';
 
-interface WelcomeSettings {
-  enabled: boolean;
-  min_discount: number;
-  max_discount: number;
-  min_minutes: number;
-  max_minutes: number;
-  delay_seconds: number;
-  popup_title: string;
-  popup_subtitle: string;
+interface SpinPrize {
+  id: string;
+  label: string;
+  type: 'percent' | 'fixed' | 'none';
+  value: number;
+  weight: number;
+  color?: string;
 }
 
-const DEFAULT_SETTINGS: WelcomeSettings = {
+interface SpinSettings {
+  enabled: boolean;
+  popup_title: string;
+  popup_subtitle: string;
+  spin_button_text: string;
+  min_minutes: number;
+  max_minutes: number;
+  prizes: SpinPrize[];
+}
+
+const DEFAULT_PRIZES: SpinPrize[] = [
+  { id: 'p1', label: '5% OFF',   type: 'percent', value: 5,   weight: 30, color: '262 80% 60%' },
+  { id: 'p2', label: '৳50 OFF',  type: 'fixed',   value: 50,  weight: 25, color: '24 95% 55%' },
+  { id: 'p3', label: '10% OFF',  type: 'percent', value: 10,  weight: 18, color: '198 90% 55%' },
+  { id: 'p4', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 12, color: '142 75% 45%' },
+  { id: 'p5', label: '15% OFF',  type: 'percent', value: 15,  weight: 8,  color: '340 85% 60%' },
+  { id: 'p6', label: '৳150 OFF', type: 'fixed',   value: 150, weight: 4,  color: '47 95% 55%' },
+  { id: 'p7', label: '20% OFF',  type: 'percent', value: 20,  weight: 2,  color: '280 85% 55%' },
+  { id: 'p8', label: 'Try Again',type: 'none',    value: 0,   weight: 1,  color: '0 0% 60%' },
+];
+
+const DEFAULT_SETTINGS: SpinSettings = {
   enabled: true,
-  min_discount: 5,
-  max_discount: 12,
+  popup_title: '🎡 Lucky Spin!',
+  popup_subtitle: 'হুইল ঘুরিয়ে বিশেষ ছাড় জিতে নিন',
+  spin_button_text: 'SPIN',
   min_minutes: 30,
   max_minutes: 60,
-  delay_seconds: 3,
-  popup_title: '🎉 স্বাগতম!',
-  popup_subtitle: 'আপনার জন্য বিশেষ ডিসকাউন্ট',
+  prizes: DEFAULT_PRIZES,
 };
 
 const SETTINGS_KEY = 'welcome_discount_config';
+const COLOR_PRESETS = [
+  '262 80% 60%', '24 95% 55%', '198 90% 55%', '142 75% 45%',
+  '340 85% 60%', '47 95% 55%', '280 85% 55%', '0 0% 60%',
+  '174 75% 45%', '12 90% 55%',
+];
 
 export default function AdminWelcomeDiscount() {
   const queryClient = useQueryClient();
-  const [settings, setSettings] = useState<WelcomeSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<SpinSettings>(DEFAULT_SETTINGS);
 
-  // Fetch settings
-  const { data: savedSettings, isLoading } = useQuery({
-    queryKey: ['welcome-discount-settings'],
+  const { data: savedSettings } = useQuery({
+    queryKey: ['spin-wheel-settings'],
     queryFn: async () => {
       const { data } = await supabase
         .from('site_settings')
         .select('value')
         .eq('key', SETTINGS_KEY)
         .single();
-      return data?.value ? JSON.parse(data.value) as WelcomeSettings : DEFAULT_SETTINGS;
+      if (!data?.value) return DEFAULT_SETTINGS;
+      try {
+        const parsed = JSON.parse(data.value);
+        return {
+          ...DEFAULT_SETTINGS,
+          ...parsed,
+          prizes: Array.isArray(parsed.prizes) && parsed.prizes.length > 0 ? parsed.prizes : DEFAULT_PRIZES,
+        } as SpinSettings;
+      } catch {
+        return DEFAULT_SETTINGS;
+      }
     },
   });
 
-  // Fetch coupons
   const { data: coupons, isLoading: couponsLoading } = useQuery({
-    queryKey: ['welcome-coupons-list'],
+    queryKey: ['spin-coupons-list'],
     queryFn: async () => {
       const { data } = await supabase
         .from('welcome_coupons')
@@ -63,13 +94,9 @@ export default function AdminWelcomeDiscount() {
         .order('created_at', { ascending: false })
         .limit(50);
       return (data || []) as Array<{
-        id: string;
-        code: string;
-        discount_percent: number;
-        expires_at: string;
-        is_used: boolean;
-        visitor_id: string;
-        created_at: string;
+        id: string; code: string;
+        discount_percent: number; discount_type: string; discount_amount: number;
+        prize_label: string | null; expires_at: string; is_used: boolean; created_at: string;
       }>;
     },
   });
@@ -78,26 +105,33 @@ export default function AdminWelcomeDiscount() {
     if (savedSettings) setSettings(savedSettings);
   }, [savedSettings]);
 
-  // Save settings
   const saveMutation = useMutation({
-    mutationFn: async (newSettings: WelcomeSettings) => {
+    mutationFn: async (newSettings: SpinSettings) => {
+      // Validate
+      if (newSettings.prizes.length < 2) throw new Error('কমপক্ষে ২টি prize প্রয়োজন');
+      if (newSettings.prizes.length > 12) throw new Error('সর্বোচ্চ ১২টি prize রাখা যাবে');
+      for (const p of newSettings.prizes) {
+        if (!p.label?.trim()) throw new Error('প্রতিটি prize-এর label দিতে হবে');
+        if (p.type === 'percent' && (p.value < 1 || p.value > 20)) {
+          throw new Error(`Percent discount ১-২০% এর মধ্যে রাখুন (${p.label})`);
+        }
+        if (p.type === 'fixed' && (p.value < 10 || p.value > 500)) {
+          throw new Error(`Fixed discount ৳১০-৳৫০০ এর মধ্যে রাখুন (${p.label})`);
+        }
+        if (p.weight < 0) throw new Error(`Weight negative হতে পারে না (${p.label})`);
+      }
       const { error } = await supabase
         .from('site_settings')
-        .upsert({
-          key: SETTINGS_KEY,
-          value: JSON.stringify(newSettings),
-          category: 'store',
-        }, { onConflict: 'key' });
+        .upsert({ key: SETTINGS_KEY, value: JSON.stringify(newSettings), category: 'store' }, { onConflict: 'key' });
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['welcome-discount-settings'] });
-      toast.success('Settings saved successfully');
+      queryClient.invalidateQueries({ queryKey: ['spin-wheel-settings'] });
+      toast.success('Spin wheel settings saved');
     },
-    onError: () => toast.error('Failed to save settings'),
+    onError: (err: Error) => toast.error(err.message || 'Save failed'),
   });
 
-  // Delete expired/used coupons
   const cleanupMutation = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
@@ -107,22 +141,63 @@ export default function AdminWelcomeDiscount() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['welcome-coupons-list'] });
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
       toast.success('Expired & used coupons cleaned up');
     },
   });
 
-  // Delete single coupon
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('welcome_coupons').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['welcome-coupons-list'] });
-      toast.success('Coupon deleted');
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
+      toast.success('Deleted');
     },
   });
+
+  const updatePrize = (id: string, patch: Partial<SpinPrize>) => {
+    setSettings(p => ({
+      ...p,
+      prizes: p.prizes.map(pr => pr.id === id ? { ...pr, ...patch } : pr),
+    }));
+  };
+
+  const removePrize = (id: string) => {
+    if (settings.prizes.length <= 2) {
+      toast.error('কমপক্ষে ২টি prize রাখতে হবে');
+      return;
+    }
+    setSettings(p => ({ ...p, prizes: p.prizes.filter(pr => pr.id !== id) }));
+  };
+
+  const addPrize = () => {
+    if (settings.prizes.length >= 12) {
+      toast.error('সর্বোচ্চ ১২টি prize রাখা যাবে');
+      return;
+    }
+    const colorIdx = settings.prizes.length % COLOR_PRESETS.length;
+    setSettings(p => ({
+      ...p,
+      prizes: [...p.prizes, {
+        id: `p${Date.now()}`,
+        label: 'New Prize',
+        type: 'percent',
+        value: 5,
+        weight: 10,
+        color: COLOR_PRESETS[colorIdx],
+      }],
+    }));
+  };
+
+  const resetToDefaults = () => {
+    setSettings(DEFAULT_SETTINGS);
+    toast.info('Default values লোড হয়েছে — Save করুন');
+  };
+
+  // Probability calculation
+  const totalWeight = settings.prizes.reduce((s, p) => s + Math.max(0, p.weight), 0);
 
   const stats = {
     total: coupons?.length || 0,
@@ -131,24 +206,31 @@ export default function AdminWelcomeDiscount() {
     expired: coupons?.filter(c => !c.is_used && new Date(c.expires_at) <= new Date()).length || 0,
   };
 
+  const sliceAngle = 360 / Math.max(1, settings.prizes.length);
+  const conicStops = settings.prizes.map((p, i) => {
+    const start = i * sliceAngle;
+    const end = (i + 1) * sliceAngle;
+    return `hsl(${p.color || '262 80% 60%'}) ${start}deg ${end}deg`;
+  }).join(', ');
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Gift className="w-6 h-6 text-primary" />
-            Welcome Discount System
+            Spin Wheel Discount System
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Control the auto-popup discount for new visitors
+            Visitor-দের জন্য interactive spin-to-win discount popup
           </p>
         </div>
-        <Button
-          onClick={() => saveMutation.mutate(settings)}
-          disabled={saveMutation.isPending}
-        >
-          {saveMutation.isPending ? 'Saving...' : 'Save Settings'}
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={resetToDefaults}>Reset Defaults</Button>
+          <Button onClick={() => saveMutation.mutate(settings)} disabled={saveMutation.isPending}>
+            {saveMutation.isPending ? 'Saving...' : 'Save Settings'}
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -168,178 +250,264 @@ export default function AdminWelcomeDiscount() {
         ))}
       </div>
 
-      {/* Settings */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Settings className="w-5 h-5" />
-              System Settings
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Enable/Disable */}
-            <div className="flex items-center justify-between">
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Left: Settings */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Settings className="w-5 h-5" /> System Settings
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-sm font-medium">Enable Spin Wheel</Label>
+                  <p className="text-xs text-muted-foreground">Show popup to new visitors</p>
+                </div>
+                <Switch
+                  checked={settings.enabled}
+                  onCheckedChange={(v) => setSettings(p => ({ ...p, enabled: v }))}
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  কুপন Validity: {settings.min_minutes} — {settings.max_minutes} minutes
+                </Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Min (minutes)</Label>
+                    <Input
+                      type="number" min={5} max={settings.max_minutes}
+                      value={settings.min_minutes}
+                      onChange={(e) => setSettings(p => ({ ...p, min_minutes: Math.max(5, Math.min(Number(e.target.value), p.max_minutes)) }))}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Max (minutes)</Label>
+                    <Input
+                      type="number" min={settings.min_minutes} max={1440}
+                      value={settings.max_minutes}
+                      onChange={(e) => setSettings(p => ({ ...p, max_minutes: Math.max(p.min_minutes, Math.min(Number(e.target.value), 1440)) }))}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Popup Texts (Bengali OK)</Label>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Title</Label>
+                  <Input
+                    value={settings.popup_title}
+                    onChange={(e) => setSettings(p => ({ ...p, popup_title: e.target.value }))}
+                    placeholder="🎡 Lucky Spin!"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Subtitle</Label>
+                  <Input
+                    value={settings.popup_subtitle}
+                    onChange={(e) => setSettings(p => ({ ...p, popup_subtitle: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Spin Button Text</Label>
+                  <Input
+                    value={settings.spin_button_text}
+                    onChange={(e) => setSettings(p => ({ ...p, spin_button_text: e.target.value }))}
+                    placeholder="SPIN"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Prizes editor */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <Label className="text-sm font-medium">Enable Welcome Discount</Label>
-                <p className="text-xs text-muted-foreground">Show popup to new visitors</p>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Sparkles className="w-5 h-5" /> Prize Wheel Slices
+                </CardTitle>
+                <CardDescription>{settings.prizes.length} / 12 prizes configured</CardDescription>
               </div>
-              <Switch
-                checked={settings.enabled}
-                onCheckedChange={(v) => setSettings(p => ({ ...p, enabled: v }))}
-              />
-            </div>
+              <Button size="sm" onClick={addPrize} disabled={settings.prizes.length >= 12}>
+                <Plus className="w-4 h-4 mr-1" /> Add Prize
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {settings.prizes.map((prize) => {
+                const probability = totalWeight > 0 ? (Math.max(0, prize.weight) / totalWeight * 100) : 0;
+                return (
+                  <div key={prize.id} className="rounded-xl border border-border bg-card/50 p-3 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <GripVertical className="w-4 h-4 text-muted-foreground shrink-0" />
+                      <div className="w-4 h-4 rounded-full border border-border shrink-0" style={{ background: `hsl(${prize.color || '262 80% 60%'})` }} />
+                      <Input
+                        value={prize.label}
+                        onChange={(e) => updatePrize(prize.id, { label: e.target.value })}
+                        placeholder="Prize label e.g. 10% OFF"
+                        className="flex-1 h-9"
+                      />
+                      <Button variant="ghost" size="icon" onClick={() => removePrize(prize.id)} className="text-destructive hover:text-destructive shrink-0 h-9 w-9">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <Label className="text-[10px] text-muted-foreground">Type</Label>
+                        <Select
+                          value={prize.type}
+                          onValueChange={(v: 'percent' | 'fixed' | 'none') => updatePrize(prize.id, { type: v, value: v === 'none' ? 0 : prize.value })}
+                        >
+                          <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="percent">% Percent</SelectItem>
+                            <SelectItem value="fixed">৳ Fixed Taka</SelectItem>
+                            <SelectItem value="none">No Prize</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-[10px] text-muted-foreground">
+                          Value {prize.type === 'percent' ? '(1-20%)' : prize.type === 'fixed' ? '(10-500 ৳)' : ''}
+                        </Label>
+                        <Input
+                          type="number"
+                          disabled={prize.type === 'none'}
+                          min={prize.type === 'percent' ? 1 : 10}
+                          max={prize.type === 'percent' ? 20 : 500}
+                          value={prize.value}
+                          onChange={(e) => updatePrize(prize.id, { value: Number(e.target.value) })}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-[10px] text-muted-foreground">Weight ({probability.toFixed(1)}%)</Label>
+                        <Input
+                          type="number" min={0} max={1000}
+                          value={prize.weight}
+                          onChange={(e) => updatePrize(prize.id, { weight: Math.max(0, Number(e.target.value)) })}
+                          className="h-8 text-xs"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {COLOR_PRESETS.map(c => (
+                        <button
+                          key={c}
+                          onClick={() => updatePrize(prize.id, { color: c })}
+                          className={`w-5 h-5 rounded-full border-2 transition-all ${prize.color === c ? 'border-foreground scale-110' : 'border-transparent'}`}
+                          style={{ background: `hsl(${c})` }}
+                          title={c}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+              <p className="text-[11px] text-muted-foreground">
+                <strong>Weight</strong> = জেতার সম্ভাবনা। উচ্চ মানে বেশি দেখা যাবে। সব weight মিলে যত বেশি, percentage ততো ভাগ হয়ে যায়।
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
-            {/* Discount Range */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Percent className="w-4 h-4" />
-                Discount Range: {settings.min_discount}% — {settings.max_discount}%
-              </Label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-xs text-muted-foreground">Min %</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={settings.max_discount}
-                    value={settings.min_discount}
-                    onChange={(e) => setSettings(p => ({ ...p, min_discount: Math.max(1, Math.min(Number(e.target.value), p.max_discount)) }))}
-                  />
+        {/* Right: Live Preview */}
+        <div className="space-y-6">
+          <Card className="sticky top-4">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Eye className="w-5 h-5" /> Live Wheel Preview
+              </CardTitle>
+              <CardDescription>Save করার পর users যেমন দেখবে</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-2xl overflow-hidden border border-border bg-background">
+                <div className="bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(258,78%,45%)] to-[hsl(var(--accent))] p-4 text-center text-white">
+                  <h3 className="text-lg font-bold drop-shadow-md">{settings.popup_title || '🎡 Lucky Spin!'}</h3>
+                  <p className="text-white/85 text-xs mt-0.5">{settings.popup_subtitle}</p>
                 </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">Max %</Label>
-                  <Input
-                    type="number"
-                    min={settings.min_discount}
-                    max={50}
-                    value={settings.max_discount}
-                    onChange={(e) => setSettings(p => ({ ...p, max_discount: Math.max(p.min_discount, Math.min(Number(e.target.value), 50)) }))}
-                  />
+                <div className="relative p-5 flex items-center justify-center">
+                  <div className="relative w-[260px] h-[260px]">
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-20">
+                      <div className="w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-[hsl(var(--destructive))] drop-shadow-lg" />
+                    </div>
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--accent))] p-[6px] shadow-xl">
+                      <div className="relative w-full h-full rounded-full bg-background p-[3px] overflow-hidden">
+                        <div
+                          className="relative w-full h-full rounded-full overflow-hidden"
+                          style={{ background: `conic-gradient(from 0deg, ${conicStops})` }}
+                        >
+                          {settings.prizes.map((p, i) => {
+                            const angle = i * sliceAngle + sliceAngle / 2;
+                            return (
+                              <div
+                                key={p.id}
+                                className="absolute top-1/2 left-1/2 origin-left text-white font-bold text-[10px] whitespace-nowrap drop-shadow-md pointer-events-none"
+                                style={{
+                                  transform: `rotate(${angle}deg) translateX(28px)`,
+                                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                                }}
+                              >
+                                {p.label}
+                              </div>
+                            );
+                          })}
+                          {settings.prizes.map((_, i) => (
+                            <div
+                              key={`d${i}`}
+                              className="absolute top-1/2 left-1/2 w-[130px] h-[1px] bg-white/30 origin-left"
+                              style={{ transform: `rotate(${i * sliceAngle}deg)` }}
+                            />
+                          ))}
+                        </div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[72px] h-[72px] rounded-full bg-gradient-to-br from-white to-[hsl(var(--accent)/0.1)] border-[3px] border-[hsl(var(--primary))] shadow-lg flex items-center justify-center font-black text-[hsl(var(--primary))] text-sm">
+                          {settings.spin_button_text || 'SPIN'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Probability summary */}
+                <div className="px-5 pb-5">
+                  <p className="text-xs font-semibold text-muted-foreground mb-2">Win Probability</p>
+                  <div className="space-y-1">
+                    {settings.prizes.map(p => {
+                      const prob = totalWeight > 0 ? (Math.max(0, p.weight) / totalWeight * 100) : 0;
+                      return (
+                        <div key={p.id} className="flex items-center gap-2 text-xs">
+                          <div className="w-3 h-3 rounded-full shrink-0" style={{ background: `hsl(${p.color || '262 80% 60%'})` }} />
+                          <span className="flex-1 truncate font-medium">{p.label}</span>
+                          <span className="text-muted-foreground tabular-nums">{prob.toFixed(1)}%</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Validity Duration */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                Validity: {settings.min_minutes} — {settings.max_minutes} minutes
-              </Label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-xs text-muted-foreground">Min (minutes)</Label>
-                  <Input
-                    type="number"
-                    min={5}
-                    max={settings.max_minutes}
-                    value={settings.min_minutes}
-                    onChange={(e) => setSettings(p => ({ ...p, min_minutes: Math.max(5, Math.min(Number(e.target.value), p.max_minutes)) }))}
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">Max (minutes)</Label>
-                  <Input
-                    type="number"
-                    min={settings.min_minutes}
-                    max={1440}
-                    value={settings.max_minutes}
-                    onChange={(e) => setSettings(p => ({ ...p, max_minutes: Math.max(p.min_minutes, Math.min(Number(e.target.value), 1440)) }))}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Popup Delay */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Popup Delay: {settings.delay_seconds}s</Label>
-              <Slider
-                value={[settings.delay_seconds]}
-                onValueChange={([v]) => setSettings(p => ({ ...p, delay_seconds: v }))}
-                min={1}
-                max={15}
-                step={1}
-              />
-              <p className="text-xs text-muted-foreground">Time before popup appears after page load</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Eye className="w-5 h-5" />
-              Popup Content
-            </CardTitle>
-            <CardDescription>Customize popup text (Bengali)</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label className="text-sm">Popup Title</Label>
-              <Input
-                value={settings.popup_title}
-                onChange={(e) => setSettings(p => ({ ...p, popup_title: e.target.value }))}
-                placeholder="🎉 স্বাগতম!"
-              />
-            </div>
-            <div>
-              <Label className="text-sm">Popup Subtitle</Label>
-              <Input
-                value={settings.popup_subtitle}
-                onChange={(e) => setSettings(p => ({ ...p, popup_subtitle: e.target.value }))}
-                placeholder="আপনার জন্য বিশেষ ডিসকাউন্ট"
-              />
-            </div>
-
-            {/* Preview */}
-            <div className="mt-6 rounded-2xl overflow-hidden border border-border">
-              <div className="bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--primary)/0.85)] to-[hsl(270,70%,50%)] p-5 text-center">
-                <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-white/20 flex items-center justify-center">
-                  <Gift className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-white text-lg font-bold">{settings.popup_title || '🎉 স্বাগতম!'}</h3>
-                <p className="text-white/80 text-sm">{settings.popup_subtitle || 'আপনার জন্য বিশেষ ডিসকাউন্ট'}</p>
-              </div>
-              <div className="bg-background p-4 text-center -mt-3 rounded-t-2xl relative">
-                <span className="text-4xl font-extrabold bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(270,70%,50%)] bg-clip-text text-transparent">
-                  {settings.min_discount}-{settings.max_discount}%
-                </span>
-                <p className="text-muted-foreground text-xs mt-1">Random discount preview</p>
-                <div className="mt-3 px-3 py-2 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 font-mono text-sm font-bold">
-                  WELCOME-XXXXX
-                </div>
-                <div className="flex items-center justify-center gap-1 mt-2 text-xs text-muted-foreground">
-                  <Clock className="w-3 h-3" />
-                  {settings.min_minutes}-{settings.max_minutes} min validity
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Coupons Table */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-3">
           <div>
-            <CardTitle className="text-lg">Generated Coupons</CardTitle>
-            <CardDescription>Last 50 auto-generated welcome coupons</CardDescription>
+            <CardTitle className="text-lg">Generated Spin Coupons</CardTitle>
+            <CardDescription>Last 50 spin-to-win coupons</CardDescription>
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => queryClient.invalidateQueries({ queryKey: ['welcome-coupons-list'] })}
-            >
+            <Button variant="outline" size="sm" onClick={() => queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] })}>
               <RefreshCw className="w-4 h-4 mr-1" /> Refresh
             </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => cleanupMutation.mutate()}
-              disabled={cleanupMutation.isPending}
-            >
-              <Trash2 className="w-4 h-4 mr-1" /> Cleanup Expired
+            <Button variant="destructive" size="sm" onClick={() => cleanupMutation.mutate()} disabled={cleanupMutation.isPending}>
+              <Trash2 className="w-4 h-4 mr-1" /> Cleanup
             </Button>
           </div>
         </CardHeader>
@@ -349,46 +517,38 @@ export default function AdminWelcomeDiscount() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Code</TableHead>
-                  <TableHead>Discount</TableHead>
+                  <TableHead>Prize</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Expires</TableHead>
-                  <TableHead>Created</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {couponsLoading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Loading...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Loading...</TableCell></TableRow>
                 ) : !coupons?.length ? (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No coupons generated yet</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No coupons generated yet</TableCell></TableRow>
                 ) : coupons.map(c => {
                   const isExpired = new Date(c.expires_at) <= new Date();
+                  const display = c.prize_label
+                    ? c.prize_label
+                    : c.discount_type === 'fixed'
+                      ? `৳${c.discount_amount} OFF`
+                      : `${c.discount_percent}% OFF`;
                   return (
                     <TableRow key={c.id}>
                       <TableCell className="font-mono font-bold text-sm">{c.code}</TableCell>
-                      <TableCell>{c.discount_percent}%</TableCell>
+                      <TableCell><Badge variant="outline">{display}</Badge></TableCell>
                       <TableCell>
-                        {c.is_used ? (
-                          <Badge variant="default" className="bg-green-500/20 text-green-600 border-green-500/30">Used</Badge>
-                        ) : isExpired ? (
-                          <Badge variant="secondary">Expired</Badge>
-                        ) : (
-                          <Badge variant="outline" className="border-primary/40 text-primary">Active</Badge>
-                        )}
+                        {c.is_used ? <Badge className="bg-green-500/20 text-green-600 border-green-500/30">Used</Badge>
+                          : isExpired ? <Badge variant="secondary">Expired</Badge>
+                          : <Badge variant="outline" className="border-primary/40 text-primary">Active</Badge>}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {new Date(c.expires_at).toLocaleString('en-BD', { dateStyle: 'short', timeStyle: 'short' })}
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {new Date(c.created_at).toLocaleString('en-BD', { dateStyle: 'short', timeStyle: 'short' })}
-                      </TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteMutation.mutate(c.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(c.id)} className="text-destructive hover:text-destructive">
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </TableCell>
