@@ -145,13 +145,13 @@ const TopProducts = () => {
                       View all <ArrowRight size={13} />
                     </button>
                   </div>
-                  {/* Mobile: single column vertical stack */}
-                  <div className="grid grid-cols-1 gap-3 md:hidden">
+                  {/* Mobile: 2 columns */}
+                  <div className="grid grid-cols-2 gap-3 md:hidden">
                     {(isExpanded ? items : items.slice(0, LIMIT)).map((p, i) => (
                       <ProductCard key={p.id} product={p} delay={Math.min(i * 0.04, 0.3)} />
                     ))}
                     {hasMore && (
-                      <div className="flex justify-center mt-2">
+                      <div className="col-span-2 flex justify-center mt-2">
                         <button onClick={() => toggleCat(cat)}
                           className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-card border border-border shadow-soft text-foreground">
                           {isExpanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
