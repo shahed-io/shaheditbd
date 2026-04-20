@@ -11,6 +11,7 @@ import { WishlistProvider } from "@/hooks/useWishlist";
 import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
 import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
 import { ViewTransitions } from "@/components/ViewTransitions";
+import { useAffiliateTracking } from "@/hooks/useAffiliateTracking";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
@@ -109,6 +110,8 @@ const AdminInventoryAlerts       = lazy(() => import("./pages/admin/AdminInvento
 const AdminThemes                = lazy(() => import("./pages/admin/AdminThemes"));
 const AdminAiAssistant           = lazy(() => import("./pages/admin/AdminAiAssistant"));
 const AdminWelcomeDiscount       = lazy(() => import("./pages/admin/AdminWelcomeDiscount"));
+const AdminAffiliates            = lazy(() => import("./pages/admin/AdminAffiliates"));
+const Affiliate                  = lazy(() => import("./pages/Affiliate"));
 
 
 const queryClient = new QueryClient({
@@ -156,6 +159,7 @@ const AppContent = () => {
   const location = useLocation();
   const [deferReady, setDeferReady] = useState(false);
   useTheme(); // Apply saved theme on load
+  useAffiliateTracking(); // Capture ?ref=CODE on every navigation
 
   useEffect(() => {
     // Defer non-critical components until after first paint (~20ms)
@@ -274,6 +278,7 @@ const AppContent = () => {
             <Route path="themes" element={<AdminSuspense><AdminThemes /></AdminSuspense>} />
             <Route path="ai-assistant" element={<AdminSuspense><AdminAiAssistant /></AdminSuspense>} />
             <Route path="welcome-discount" element={<AdminSuspense><AdminWelcomeDiscount /></AdminSuspense>} />
+            <Route path="affiliates" element={<AdminSuspense><AdminAffiliates /></AdminSuspense>} />
             
             <Route path="reseller" element={<AdminSuspense><Reseller /></AdminSuspense>} />
             <Route path="reseller-accounts" element={<AdminSuspense><AdminResellerAccounts /></AdminSuspense>} />
@@ -291,6 +296,7 @@ const AppContent = () => {
           <Route path="/free-tools" element={<FreeTools />} />
           <Route path="/refund-request" element={<RefundRequest />} />
           <Route path="/dashboard" element={<UserDashboard />} />
+          <Route path="/affiliate" element={<Affiliate />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/install" element={<InstallApp />} />
           <Route path="/reseller" element={<Reseller />} />

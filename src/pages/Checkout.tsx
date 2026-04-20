@@ -18,6 +18,7 @@ import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
+import { getStoredAffiliateRef, clearStoredAffiliateRef } from '@/hooks/useAffiliateTracking';
 
 const ASSET_LOGOS: Record<string, string> = {
   bkash: bkashLogo,
@@ -252,6 +253,9 @@ const Checkout = () => {
         couponId = couponData?.id || null;
       }
 
+      // Attach affiliate ref if present
+      const affRef = getStoredAffiliateRef();
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -270,6 +274,7 @@ const Checkout = () => {
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
           user_id: user?.id || null,
           notes: orderNotes.trim() || null,
+          affiliate_referral_code: affRef?.code || null,
         })
         .select()
         .single();
@@ -300,6 +305,20 @@ const Checkout = () => {
 
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
       if (itemsError) throw itemsError;
+
+      // Record affiliate conversion (non-blocking, server validates)
+      if (affRef?.code) {
+        (supabase as any).rpc('record_affiliate_conversion', {
+          p_order_id: order.id,
+          p_referral_code: affRef.code,
+        }).then(({ data, error }: any) => {
+          if (error) console.error('[Affiliate] conversion error:', error);
+          else if (data?.success) {
+            console.log('[Affiliate] conversion recorded:', data);
+            clearStoredAffiliateRef();
+          }
+        });
+      }
 
       // Increment coupon uses_count
       if (couponId) {

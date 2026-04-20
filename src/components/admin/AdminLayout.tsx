@@ -53,6 +53,7 @@ const menuItems = [
   { icon: Percent, label: 'Coupons', path: '/ceo/coupons' },
   { icon: Gift, label: 'Welcome Discount', path: '/ceo/welcome-discount' },
   { icon: Gift, label: 'Referrals', path: '/ceo/referrals' },
+  { icon: TrendingUp, label: 'Affiliates', path: '/ceo/affiliates' },
   { icon: Headphones, label: 'Tickets', path: '/ceo/tickets' },
   { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
   { icon: Layout, label: 'Pages', path: '/ceo/pages' },
