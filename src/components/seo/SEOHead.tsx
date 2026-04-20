@@ -21,7 +21,30 @@ const DEFAULT_OG = '/favicon.png';
 const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, shahed store';
 
 // Cache for GA/GSC settings so we only fetch once per session
-let _seoCache: { ga?: string; gsc?: string; loaded?: boolean } = {};
+let _seoCache: { ga?: string; gsc?: string; verification?: Record<string, string>; loaded?: boolean } = {};
+
+const VERIFICATION_META: Record<string, string> = {
+  google: 'google-site-verification',
+  bing: 'msvalidate.01',
+  yandex: 'yandex-verification',
+  pinterest: 'p:domain_verify',
+  facebook: 'facebook-domain-verification',
+  baidu: 'baidu-site-verification',
+  norton: 'norton-safeweb-site-verification',
+  ahrefs: 'ahrefs-site-verification',
+};
+
+const injectVerificationTags = (verif: Record<string, string>) => {
+  Object.entries(verif).forEach(([key, value]) => {
+    const metaName = VERIFICATION_META[key];
+    if (!metaName || !value) return;
+    if (document.querySelector(`meta[name="${metaName}"]`)) return;
+    const m = document.createElement('meta');
+    m.name = metaName;
+    m.content = value;
+    document.head.appendChild(m);
+  });
+};
 
 const SEOHead = ({
   title,
@@ -45,18 +68,23 @@ const SEOHead = ({
     if (_seoCache.loaded) {
       injectGA(_seoCache.ga);
       injectGSC(_seoCache.gsc);
+      if (_seoCache.verification) injectVerificationTags(_seoCache.verification);
       return;
     }
     supabase.from('site_settings').select('key,value')
-      .in('key', ['google_analytics', 'google_site_verification'])
+      .in('key', ['google_analytics', 'google_site_verification', 'seo_verification'])
       .then(({ data }) => {
         _seoCache.loaded = true;
         data?.forEach(r => {
           if (r.key === 'google_analytics') _seoCache.ga = r.value || '';
           if (r.key === 'google_site_verification') _seoCache.gsc = r.value || '';
+          if (r.key === 'seo_verification') {
+            try { _seoCache.verification = JSON.parse(r.value || '{}'); } catch { _seoCache.verification = {}; }
+          }
         });
         injectGA(_seoCache.ga);
         injectGSC(_seoCache.gsc);
+        if (_seoCache.verification) injectVerificationTags(_seoCache.verification);
       });
   }, []);
 
