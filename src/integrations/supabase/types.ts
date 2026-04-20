@@ -62,17 +62,25 @@ export type Database = {
       affiliate_accounts: {
         Row: {
           admin_note: string | null
+          applicant_email: string | null
+          applicant_name: string | null
+          applicant_phone: string | null
           application_note: string | null
           approved_at: string | null
           approved_by: string | null
+          audience_size: string | null
           available_balance: number
           created_at: string
           custom_commission_percent: number | null
           custom_customer_discount_percent: number | null
+          facebook_url: string | null
           id: string
+          niche: string | null
+          other_social_url: string | null
           payout_account: string | null
           payout_account_name: string | null
           payout_method: string | null
+          promotion_strategy: string | null
           referral_code: string
           status: string
           total_clicks: number
@@ -81,20 +89,31 @@ export type Database = {
           total_paid: number
           updated_at: string
           user_id: string
+          website_url: string | null
+          why_join: string | null
+          youtube_url: string | null
         }
         Insert: {
           admin_note?: string | null
+          applicant_email?: string | null
+          applicant_name?: string | null
+          applicant_phone?: string | null
           application_note?: string | null
           approved_at?: string | null
           approved_by?: string | null
+          audience_size?: string | null
           available_balance?: number
           created_at?: string
           custom_commission_percent?: number | null
           custom_customer_discount_percent?: number | null
+          facebook_url?: string | null
           id?: string
+          niche?: string | null
+          other_social_url?: string | null
           payout_account?: string | null
           payout_account_name?: string | null
           payout_method?: string | null
+          promotion_strategy?: string | null
           referral_code: string
           status?: string
           total_clicks?: number
@@ -103,20 +122,31 @@ export type Database = {
           total_paid?: number
           updated_at?: string
           user_id: string
+          website_url?: string | null
+          why_join?: string | null
+          youtube_url?: string | null
         }
         Update: {
           admin_note?: string | null
+          applicant_email?: string | null
+          applicant_name?: string | null
+          applicant_phone?: string | null
           application_note?: string | null
           approved_at?: string | null
           approved_by?: string | null
+          audience_size?: string | null
           available_balance?: number
           created_at?: string
           custom_commission_percent?: number | null
           custom_customer_discount_percent?: number | null
+          facebook_url?: string | null
           id?: string
+          niche?: string | null
+          other_social_url?: string | null
           payout_account?: string | null
           payout_account_name?: string | null
           payout_method?: string | null
+          promotion_strategy?: string | null
           referral_code?: string
           status?: string
           total_clicks?: number
@@ -125,6 +155,9 @@ export type Database = {
           total_paid?: number
           updated_at?: string
           user_id?: string
+          website_url?: string | null
+          why_join?: string | null
+          youtube_url?: string | null
         }
         Relationships: []
       }
