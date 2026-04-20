@@ -284,7 +284,8 @@ const AppContent = () => {
           <Route path="/order-policy" element={<OrderPolicy />} />
           <Route path="/delivery-info" element={<DeliveryInfo />} />
           <Route path="/return-policy" element={<ReturnPolicy />} />
-          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/contact" element={<Navigate to="/contact-us" replace />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/faqs" element={<FAQs />} />
           <Route path="/free-tools" element={<FreeTools />} />
