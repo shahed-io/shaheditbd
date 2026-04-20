@@ -164,14 +164,19 @@ const injectLinkedIn = (accounts: PixelAccount[]) => {
 
 const injectTwitter = (accounts: PixelAccount[]) => {
   if (accounts.length === 0 || typeof window === 'undefined') return;
-  /* eslint-disable */
-  (function (e: any, t: Document, n: string, s: string, u: string, a: any, c: any) {
-    e.twq || (s = e.twq = function () { s.exe ? s.exe.apply(s, arguments) : s.queue.push(arguments); },
-      s.version = '1.1', s.queue = [], u = t.createElement(n), u.async = !0, u.src = 'https://static.ads-twitter.com/uwt.js',
-      a = t.getElementsByTagName(n)[0], a.parentNode.insertBefore(u, a));
-  })(window, document, 'script');
-  accounts.forEach(acc => { window.twq('config', acc.pixel_id); });
-  /* eslint-enable */
+  const w: any = window;
+  if (!w.twq) {
+    const s: any = function (...args: any[]) { s.exe ? s.exe.apply(s, args) : s.queue.push(args); };
+    s.version = '1.1';
+    s.queue = [];
+    w.twq = s;
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://static.ads-twitter.com/uwt.js';
+    const first = document.getElementsByTagName('script')[0];
+    first.parentNode!.insertBefore(script, first);
+  }
+  accounts.forEach(acc => { w.twq('config', acc.pixel_id); });
 };
 
 // ─────────────────────── Public event helpers ────────────────────────
