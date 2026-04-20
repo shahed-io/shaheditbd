@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { X, Copy, Check, Clock, Sparkles, Gift } from 'lucide-react';
+import { X, Copy, Check, Clock, ShieldCheck, Tag, BadgePercent } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -41,13 +41,14 @@ function getOrCreateVisitorId(): string {
   return id;
 }
 
+// Professional palette — muted, brand-aligned (no neon casino colors)
 const FALLBACK_PRIZES: SpinPrize[] = [
-  { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: '142 75% 45%' },
-  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 200, color: '262 80% 60%' },
-  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 150, color: '24 95% 55%'  },
-  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 90,  color: '198 90% 55%' },
-  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 50,  color: '340 85% 60%' },
-  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: '280 85% 55%' },
+  { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: '258 60% 55%' },
+  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 200, color: '258 35% 92%' },
+  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 150, color: '258 55% 65%' },
+  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 90,  color: '258 35% 88%' },
+  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 50,  color: '258 50% 60%' },
+  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: '258 70% 50%' },
 ];
 
 export default function WelcomeDiscount() {
@@ -62,7 +63,6 @@ export default function WelcomeDiscount() {
   const [noPrize, setNoPrize] = useState(false);
   const wheelRef = useRef<HTMLDivElement>(null);
 
-  // Load settings + check existing coupon
   const loadInitial = useCallback(async () => {
     if (sessionStorage.getItem(WELCOME_SHOWN_KEY) || localStorage.getItem(WELCOME_SHOWN_KEY)) return;
 
@@ -73,7 +73,6 @@ export default function WelcomeDiscount() {
       });
       if (error || !data || data.disabled || data.error) return;
 
-      // Already has unused coupon → show won-screen directly
       if (data.alreadyHas) {
         setCoupon({
           code: data.code,
@@ -88,7 +87,6 @@ export default function WelcomeDiscount() {
         return;
       }
 
-      // Already claimed (used/expired) → don't show
       if (data.alreadyClaimed) return;
 
       if (data.canSpin && data.settings) {
@@ -105,7 +103,7 @@ export default function WelcomeDiscount() {
     } catch { /* silent */ }
   }, []);
 
-  // Trigger: random delay OR product page visit
+  // Trigger: show 5–10 seconds after landing
   useEffect(() => {
     if (sessionStorage.getItem(WELCOME_SHOWN_KEY) || localStorage.getItem(WELCOME_SHOWN_KEY)) return;
 
@@ -132,10 +130,7 @@ export default function WelcomeDiscount() {
     if (!coupon) return;
     const update = () => {
       const diff = new Date(coupon.expiresAt).getTime() - Date.now();
-      if (diff <= 0) {
-        setTimeLeft('মেয়াদ শেষ');
-        return;
-      }
+      if (diff <= 0) { setTimeLeft('Expired'); return; }
       const mins = Math.floor(diff / 60000);
       const secs = Math.floor((diff % 60000) / 1000);
       setTimeLeft(`${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
@@ -156,7 +151,7 @@ export default function WelcomeDiscount() {
       });
 
       if (error || !data || data.error) {
-        toast.error('সমস্যা হয়েছে, আবার চেষ্টা করুন');
+        toast.error('একটি সমস্যা হয়েছে, অনুগ্রহ করে আবার চেষ্টা করুন');
         setSpinning(false);
         return;
       }
@@ -177,15 +172,11 @@ export default function WelcomeDiscount() {
       const prizes = settings.prizes;
       const sliceAngle = 360 / prizes.length;
       const prizeIndex = Math.max(0, data.prizeIndex ?? 0);
-      // Wheel rotation: align selected slice to TOP pointer (12 o'clock)
-      // Each slice center sits at: prizeIndex * sliceAngle + sliceAngle/2 (measured CW from 0°/right)
-      // We want that center to land at 270° (top). So rotate by: 270 - (center) + N*360 spins
       const sliceCenter = prizeIndex * sliceAngle + sliceAngle / 2;
-      const targetRotation = 360 * 6 + (270 - sliceCenter);
+      const targetRotation = 360 * 5 + (270 - sliceCenter);
 
       setRotation(targetRotation);
 
-      // After animation, show result
       setTimeout(() => {
         setSpinning(false);
         setHasSpun(true);
@@ -203,7 +194,7 @@ export default function WelcomeDiscount() {
       }, 4500);
     } catch {
       setSpinning(false);
-      toast.error('সমস্যা হয়েছে');
+      toast.error('একটি সমস্যা হয়েছে');
     }
   };
 
@@ -212,7 +203,7 @@ export default function WelcomeDiscount() {
     try {
       await navigator.clipboard.writeText(coupon.code);
       setCopied(true);
-      toast.success('কুপন কোড কপি হয়েছে!');
+      toast.success('কুপন কোডটি কপি হয়েছে');
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error('কপি করা যায়নি');
@@ -225,66 +216,71 @@ export default function WelcomeDiscount() {
   };
 
   if (!show) return null;
-  // Need either settings (to spin) or coupon (already won)
   if (!settings && !coupon) return null;
 
   const prizes = settings?.prizes || FALLBACK_PRIZES;
   const sliceAngle = 360 / prizes.length;
-  const popupTitle = settings?.popup_title || '🎡 Lucky Spin!';
-  const popupSubtitle = settings?.popup_subtitle || 'হুইল ঘুরিয়ে বিশেষ ছাড় জিতে নিন';
-  const spinButtonText = settings?.spin_button_text || 'SPIN';
+  const popupTitle = settings?.popup_title || 'Welcome Reward';
+  const popupSubtitle = settings?.popup_subtitle || 'নতুন গ্রাহকদের জন্য বিশেষ ছাড়';
+  const spinButtonText = settings?.spin_button_text || 'CLAIM';
 
-  // Build conic-gradient for wheel slices
+  // Professional muted gradient slices
   const conicStops = prizes.map((p, i) => {
     const start = i * sliceAngle;
     const end = (i + 1) * sliceAngle;
-    const color = `hsl(${p.color || '262 80% 60%'})`;
+    const color = `hsl(${p.color || '258 50% 60%'})`;
     return `${color} ${start}deg ${end}deg`;
   }).join(', ');
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={handleClose} />
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={handleClose} />
 
-      <div className="relative w-full max-w-[360px] animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
-        {/* Outer glow */}
-        <div className="absolute -inset-1 rounded-[28px] bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--accent))] to-[hsl(var(--primary))] opacity-50 blur-xl animate-pulse" />
-
-        <div className="relative rounded-[24px] overflow-hidden border border-white/20 shadow-2xl bg-background">
-          {/* Top gradient header */}
-          <div className="relative px-5 pt-5 pb-3 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(258,78%,45%)] to-[hsl(var(--accent))]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.18),transparent_60%)]" />
-
+      <div className="relative w-full max-w-[380px] animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+        <div className="relative rounded-2xl overflow-hidden border border-border/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)] bg-card">
+          {/* Header — minimal, professional */}
+          <div className="relative px-6 pt-6 pb-4 border-b border-border/50">
             <button
               onClick={handleClose}
-              className="absolute top-3 right-3 p-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 hover:bg-white/30 transition-all hover:scale-110 hover:rotate-90 z-10"
+              className="absolute top-4 right-4 p-1.5 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              aria-label="Close"
             >
-              <X className="w-3.5 h-3.5 text-white" />
+              <X className="w-4 h-4" />
             </button>
 
-            <h2 className="relative text-white text-lg font-bold text-center drop-shadow-md">
-              {hasSpun && coupon ? '🎉 অভিনন্দন!' : hasSpun && noPrize ? '😅 দুঃখিত!' : popupTitle}
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center">
+                <BadgePercent className="w-4 h-4 text-[hsl(var(--primary))]" />
+              </div>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                Exclusive Offer
+              </span>
+            </div>
+
+            <h2 className="text-foreground text-lg font-semibold leading-tight">
+              {hasSpun && coupon ? 'অভিনন্দন! আপনি একটি ছাড় পেয়েছেন' : hasSpun && noPrize ? 'এই মুহূর্তে কোনো পুরস্কার নেই' : popupTitle}
             </h2>
-            <p className="relative text-white/85 text-xs text-center font-medium mt-0.5">
-              {hasSpun && coupon ? 'আপনি জিতেছেন একটি বিশেষ কুপন' : hasSpun && noPrize ? 'এবার ভাগ্য সাথ দেয়নি' : popupSubtitle}
+            <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
+              {hasSpun && coupon
+                ? 'নিচের কুপন কোডটি কপি করে চেকআউটে ব্যবহার করুন'
+                : hasSpun && noPrize
+                ? 'পরবর্তী ক্যাম্পেইনে আবার চেষ্টা করুন'
+                : popupSubtitle}
             </p>
           </div>
 
-          {/* Wheel section (only before spinning OR while spinning) */}
+          {/* Wheel */}
           {!hasSpun && (
-            <div className="relative px-5 pt-6 pb-5 bg-gradient-to-b from-[hsl(var(--primary)/0.05)] to-transparent">
-              {/* Wheel */}
+            <div className="relative px-6 pt-6 pb-5">
               <div className="relative mx-auto w-[260px] h-[260px]">
-                {/* Pointer (top) */}
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-20">
-                  <div className="w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-[hsl(var(--destructive))] drop-shadow-lg" />
+                {/* Top pointer — minimal triangle */}
+                <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 z-20">
+                  <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[16px] border-t-[hsl(var(--primary))]" />
                 </div>
 
-                {/* Outer ring */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--accent))] p-[6px] shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
-                  <div className="relative w-full h-full rounded-full bg-background p-[3px] overflow-hidden">
-                    {/* Spinning wheel */}
+                {/* Outer ring — subtle */}
+                <div className="absolute inset-0 rounded-full bg-border p-[2px]">
+                  <div className="relative w-full h-full rounded-full bg-card p-[3px] overflow-hidden">
                     <div
                       ref={wheelRef}
                       className="relative w-full h-full rounded-full overflow-hidden"
@@ -294,145 +290,143 @@ export default function WelcomeDiscount() {
                         transition: spinning ? 'transform 4.3s cubic-bezier(0.17, 0.67, 0.21, 0.99)' : 'none',
                       }}
                     >
-                      {/* Slice labels */}
                       {prizes.map((p, i) => {
                         const angle = i * sliceAngle + sliceAngle / 2;
+                        const isLight = (p.color || '').includes('92%') || (p.color || '').includes('88%');
                         return (
                           <div
                             key={p.id}
-                            className="absolute top-1/2 left-1/2 origin-left text-white font-bold text-[11px] whitespace-nowrap drop-shadow-md pointer-events-none"
-                            style={{
-                              transform: `rotate(${angle}deg) translateX(28px)`,
-                              textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-                            }}
+                            className={`absolute top-1/2 left-1/2 origin-left font-semibold text-[11px] whitespace-nowrap pointer-events-none ${isLight ? 'text-foreground' : 'text-white'}`}
+                            style={{ transform: `rotate(${angle}deg) translateX(36px)` }}
                           >
                             {p.label}
                           </div>
                         );
                       })}
 
-                      {/* Slice dividers */}
                       {prizes.map((_, i) => (
                         <div
                           key={`d${i}`}
-                          className="absolute top-1/2 left-1/2 w-[130px] h-[1px] bg-white/30 origin-left"
+                          className="absolute top-1/2 left-1/2 w-[130px] h-[1px] bg-white/40 origin-left"
                           style={{ transform: `rotate(${i * sliceAngle}deg)` }}
                         />
                       ))}
                     </div>
 
-                    {/* Center hub with SPIN button */}
+                    {/* Center claim button */}
                     <button
                       onClick={handleSpin}
                       disabled={spinning}
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[72px] h-[72px] rounded-full bg-gradient-to-br from-white via-white to-[hsl(var(--accent)/0.1)] border-[3px] border-[hsl(var(--primary))] shadow-[0_4px_16px_rgba(0,0,0,0.25)] flex items-center justify-center font-black text-[hsl(var(--primary))] text-sm hover:scale-105 active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-90"
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[68px] h-[68px] rounded-full bg-card border-[3px] border-[hsl(var(--primary))] shadow-md flex items-center justify-center font-bold text-[hsl(var(--primary))] text-xs tracking-wide hover:bg-[hsl(var(--primary)/0.05)] active:scale-95 transition-all disabled:cursor-not-allowed"
                     >
                       {spinning ? (
-                        <div className="w-6 h-6 border-2 border-[hsl(var(--primary))] border-t-transparent rounded-full animate-spin" />
+                        <div className="w-5 h-5 border-2 border-[hsl(var(--primary))] border-t-transparent rounded-full animate-spin" />
                       ) : (
                         spinButtonText
                       )}
                     </button>
                   </div>
                 </div>
-
-                {/* Decorative dots around wheel */}
-                {[...Array(12)].map((_, i) => (
-                  <div
-                    key={`dot${i}`}
-                    className="absolute w-1.5 h-1.5 rounded-full bg-[hsl(var(--accent))] shadow-md"
-                    style={{
-                      top: '50%',
-                      left: '50%',
-                      transform: `rotate(${i * 30}deg) translateY(-138px)`,
-                    }}
-                  />
-                ))}
               </div>
 
-              <p className="text-center text-[11px] text-muted-foreground mt-4 font-medium">
-                {spinning ? '✨ ভাগ্য পরীক্ষা করা হচ্ছে...' : '👇 SPIN বাটনে ক্লিক করে শুরু করুন'}
+              <p className="text-center text-xs text-muted-foreground mt-5">
+                {spinning ? 'আপনার পুরস্কার নির্ধারণ করা হচ্ছে...' : 'CLAIM বাটনে ক্লিক করে আপনার ছাড়টি দেখুন'}
               </p>
+
+              {/* Trust signals */}
+              <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-border/50">
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <ShieldCheck className="w-3 h-3" />
+                  <span>Verified Offer</span>
+                </div>
+                <div className="w-px h-3 bg-border" />
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Tag className="w-3 h-3" />
+                  <span>One Per Customer</span>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* Won coupon view */}
+          {/* Won view — professional voucher */}
           {hasSpun && coupon && (
-            <div className="relative px-5 pt-5 pb-5">
-              {/* Prize badge */}
-              <div className="text-center mb-4">
-                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[hsl(var(--accent)/0.12)] border border-[hsl(var(--accent)/0.2)] mb-2">
-                  <Sparkles className="w-3 h-3 text-[hsl(var(--accent))]" />
-                  <span className="text-[10px] font-bold text-[hsl(var(--accent))] uppercase tracking-wide">আপনি জিতেছেন</span>
+            <div className="relative px-6 pt-6 pb-6">
+              {/* Discount value display */}
+              <div className="text-center mb-5">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold mb-2">
+                  Your Discount
+                </p>
+                <div className="text-4xl font-bold text-foreground tracking-tight">
+                  {coupon.prizeLabel}
                 </div>
-                <div className="relative inline-block">
-                  <span className="text-4xl font-black bg-gradient-to-r from-[hsl(var(--primary))] via-[hsl(258,78%,50%)] to-[hsl(var(--accent))] bg-clip-text text-transparent leading-none">
-                    {coupon.prizeLabel}
-                  </span>
-                  <div className="absolute -inset-4 bg-gradient-to-r from-[hsl(var(--primary)/0.08)] to-[hsl(var(--accent)/0.08)] blur-2xl rounded-full -z-10" />
-                </div>
-                <p className="text-muted-foreground text-xs mt-1.5 font-medium">
+                <p className="text-muted-foreground text-xs mt-1.5">
                   {coupon.discountType === 'fixed'
-                    ? `৳${coupon.discountValue} ছাড় যেকোনো অর্ডারে`
-                    : 'ডিসকাউন্ট যেকোনো প্রোডাক্টে'}
+                    ? `যেকোনো অর্ডারে ৳${coupon.discountValue} সাশ্রয় করুন`
+                    : `যেকোনো প্রোডাক্টে ${coupon.discountValue}% ছাড়`}
                 </p>
               </div>
 
-              {/* Coupon code */}
-              <button
-                onClick={handleCopy}
-                className="w-full group relative rounded-2xl overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-[hsl(var(--primary))] via-[hsl(var(--accent))] to-[hsl(var(--primary))] opacity-70" style={{ backgroundSize: '200% 100%', animation: 'shimmer 3s linear infinite' }} />
-                <div className="absolute inset-[1.5px] rounded-[14.5px] bg-background" />
-
-                <div className="relative flex items-center justify-between gap-3 px-5 py-3.5">
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-background" />
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-5 h-5 rounded-full bg-background" />
-                  <div className="absolute left-3 right-3 top-1/2 -translate-y-1/2 border-t border-dashed border-[hsl(var(--primary)/0.15)]" />
-
-                  <span className="relative font-mono text-[15px] font-extrabold tracking-[0.15em] bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(258,78%,50%)] bg-clip-text text-transparent whitespace-nowrap">
+              {/* Voucher code card */}
+              <div className="relative rounded-xl border-2 border-dashed border-border bg-muted/30 p-4">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+                  Coupon Code
+                </p>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-mono text-base font-bold text-foreground tracking-[0.15em] truncate">
                     {coupon.code}
                   </span>
-                  <div className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg shrink-0 transition-all ${
-                    copied
-                      ? 'bg-green-500/15 text-green-600'
-                      : 'bg-gradient-to-r from-[hsl(var(--primary)/0.1)] to-[hsl(var(--accent)/0.1)] text-[hsl(var(--primary))]'
-                  }`}>
-                    {copied ? <><Check className="w-3.5 h-3.5" /><span className="text-[11px] font-bold">কপি!</span></>
-                            : <><Copy className="w-3.5 h-3.5" /><span className="text-[11px] font-bold">কপি</span></>}
-                  </div>
-                </div>
-              </button>
-
-              {/* Timer */}
-              <div className="flex items-center justify-center mt-4">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20">
-                  <Clock className="w-3.5 h-3.5 text-destructive animate-pulse" />
-                  <span className="text-[10px] text-muted-foreground font-medium">মেয়াদ শেষ হবে:</span>
-                  <span className="font-mono font-bold text-destructive text-xs tabular-nums">{timeLeft}</span>
+                  <button
+                    onClick={handleCopy}
+                    className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                      copied
+                        ? 'bg-green-500/10 text-green-600'
+                        : 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:opacity-90'
+                    }`}
+                  >
+                    {copied ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy</>}
+                  </button>
                 </div>
               </div>
 
-              <p className="text-center text-[10px] text-muted-foreground/70 mt-3 font-medium">
-                ✨ চেকআউটে এই কোডটি ব্যবহার করুন
+              {/* Validity */}
+              <div className="flex items-center justify-between mt-4 px-1">
+                <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>মেয়াদ শেষ হবে</span>
+                </div>
+                <span className="font-mono font-semibold text-[hsl(var(--primary))] text-sm tabular-nums">
+                  {timeLeft}
+                </span>
+              </div>
+
+              {/* CTA */}
+              <button
+                onClick={handleClose}
+                className="mt-5 w-full py-2.5 rounded-lg bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold hover:opacity-90 transition-opacity"
+              >
+                এখনই কেনাকাটা শুরু করুন
+              </button>
+
+              <p className="text-center text-[10px] text-muted-foreground/80 mt-3">
+                চেকআউট পেজে কুপন কোডটি প্রবেশ করিয়ে ছাড় উপভোগ করুন
               </p>
             </div>
           )}
 
-          {/* "Try Again" / no prize view */}
+          {/* No prize view */}
           {hasSpun && noPrize && (
-            <div className="relative px-5 pt-5 pb-6 text-center">
-              <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted/50 flex items-center justify-center">
-                <Gift className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <p className="text-foreground text-sm font-semibold mb-1">এবার আপনি কোনো পুরস্কার পাননি</p>
-              <p className="text-muted-foreground text-xs">পরবর্তী অফারের জন্য অপেক্ষা করুন। ভালো অফার আসছে!</p>
+            <div className="relative px-6 pt-6 pb-6 text-center">
+              <p className="text-foreground text-sm font-medium mb-1">
+                এই মুহূর্তে আপনার জন্য কোনো ছাড় উপলব্ধ নেই
+              </p>
+              <p className="text-muted-foreground text-xs leading-relaxed">
+                আমাদের পরবর্তী প্রমোশনাল ক্যাম্পেইনের জন্য অনুগ্রহ করে অপেক্ষা করুন।
+              </p>
               <button
                 onClick={handleClose}
-                className="mt-4 px-6 py-2 rounded-xl bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--accent))] text-white text-sm font-semibold shadow-lg hover:scale-105 active:scale-95 transition-transform"
+                className="mt-5 w-full py-2.5 rounded-lg bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold hover:opacity-90 transition-opacity"
               >
-                ঠিক আছে
+                বুঝেছি
               </button>
             </div>
           )}
