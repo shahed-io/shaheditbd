@@ -214,3 +214,22 @@ export const itemListSchema = (items: { name: string; slug: string; image?: stri
     image: item.image || `${SITE_URL}/favicon.png`,
   })),
 });
+
+/** Review schema — embed individual reviews for Google rich snippets */
+export const reviewSchema = (
+  productName: string,
+  productSlug: string,
+  reviews: { author: string; rating: number; body: string; date?: string }[]
+) => reviews.slice(0, 10).map(r => ({
+  '@context': 'https://schema.org',
+  '@type': 'Review',
+  itemReviewed: {
+    '@type': 'Product',
+    name: productName,
+    url: `${SITE_URL}/product/${productSlug}`,
+  },
+  author: { '@type': 'Person', name: r.author },
+  reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+  reviewBody: r.body,
+  datePublished: r.date || new Date().toISOString().split('T')[0],
+}));
