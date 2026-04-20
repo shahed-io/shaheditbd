@@ -220,8 +220,8 @@ export default function WelcomeDiscount() {
 
   const prizes = settings?.prizes || FALLBACK_PRIZES;
   const sliceAngle = 360 / prizes.length;
-  const popupTitle = settings?.popup_title || 'Welcome Reward';
-  const popupSubtitle = settings?.popup_subtitle || 'নতুন গ্রাহকদের জন্য বিশেষ ছাড়';
+  const popupTitle = settings?.popup_title || 'আপনার Welcome Gift প্রস্তুত';
+  const popupSubtitle = settings?.popup_subtitle || 'Shahed Store-এ স্বাগতম! শুধুমাত্র নতুন ভিজিটরদের জন্য একটি গ্যারান্টিড ছাড় — মাত্র একবার দাবি করা যাবে।';
   const spinButtonText = settings?.spin_button_text || 'CLAIM';
 
   // Professional muted gradient slices
