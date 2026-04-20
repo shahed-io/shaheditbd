@@ -12,6 +12,8 @@ import { useAdminOrderNotification } from "@/hooks/useAdminOrderNotification";
 import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
 import { ViewTransitions } from "@/components/ViewTransitions";
 import { useAffiliateTracking } from "@/hooks/useAffiliateTracking";
+import { useCustomAudiences } from "@/hooks/useCustomAudiences";
+import { useCart } from "@/hooks/useCart";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
@@ -20,6 +22,7 @@ import Index from "./pages/Index";
 const CartDrawer = lazy(() => import("@/components/store/CartDrawer"));
 const RedirectEnforcer = lazy(() => import("@/components/seo/RedirectEnforcer"));
 const FacebookPixel = lazy(() => import("@/components/store/FacebookPixel"));
+const GoogleTracking = lazy(() => import("@/components/store/GoogleTracking"));
 const MobileBottomNav = lazy(() => import("@/components/store/MobileBottomNav"));
 
 // All other pages — lazy loaded
@@ -111,6 +114,8 @@ const AdminThemes                = lazy(() => import("./pages/admin/AdminThemes"
 const AdminAiAssistant           = lazy(() => import("./pages/admin/AdminAiAssistant"));
 const AdminWelcomeDiscount       = lazy(() => import("./pages/admin/AdminWelcomeDiscount"));
 const AdminAffiliates            = lazy(() => import("./pages/admin/AdminAffiliates"));
+const AdminGoogleAds             = lazy(() => import("./pages/admin/AdminGoogleAds"));
+const AdminCustomAudiences       = lazy(() => import("./pages/admin/AdminCustomAudiences"));
 const Affiliate                  = lazy(() => import("./pages/Affiliate"));
 
 
@@ -160,6 +165,8 @@ const AppContent = () => {
   const [deferReady, setDeferReady] = useState(false);
   useTheme(); // Apply saved theme on load
   useAffiliateTracking(); // Capture ?ref=CODE on every navigation
+  const { subtotal } = useCart();
+  useCustomAudiences({ cartValue: subtotal }); // Fire FB custom-audience events on route changes
 
   useEffect(() => {
     // Defer non-critical components until after first paint (~20ms)
@@ -199,6 +206,7 @@ const AppContent = () => {
         <Suspense fallback={null}>
           <AdminNotificationListener />
           <FacebookPixel />
+          <GoogleTracking />
           <CartDrawer />
           <RedirectEnforcer />
         </Suspense>
@@ -279,6 +287,8 @@ const AppContent = () => {
             <Route path="ai-assistant" element={<AdminSuspense><AdminAiAssistant /></AdminSuspense>} />
             <Route path="welcome-discount" element={<AdminSuspense><AdminWelcomeDiscount /></AdminSuspense>} />
             <Route path="affiliates" element={<AdminSuspense><AdminAffiliates /></AdminSuspense>} />
+            <Route path="google-ads" element={<AdminSuspense><AdminGoogleAds /></AdminSuspense>} />
+            <Route path="custom-audiences" element={<AdminSuspense><AdminCustomAudiences /></AdminSuspense>} />
             
             <Route path="reseller" element={<AdminSuspense><Reseller /></AdminSuspense>} />
             <Route path="reseller-accounts" element={<AdminSuspense><AdminResellerAccounts /></AdminSuspense>} />

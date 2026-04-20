@@ -93,6 +93,8 @@ const menuItems = [
   { icon: TrendingUp, label: 'Reports', path: '/ceo/reports' },
   { icon: Megaphone, label: 'Marketing', path: '/ceo/marketing' },
   { icon: Facebook, label: 'Facebook Pixel', path: '/ceo/facebook-pixel' },
+  { icon: Users, label: 'FB Custom Audiences', path: '/ceo/custom-audiences' },
+  { icon: BarChart2, label: 'Google Ads & Analytics', path: '/ceo/google-ads' },
   { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
   { icon: Bot, label: 'Telegram Shop Bot', path: '/ceo/telegram-bot' },
   { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
