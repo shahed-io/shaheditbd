@@ -29,6 +29,12 @@ const MobileBottomNav = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [orderCount, setOrderCount] = useState(0);
+  const [drag, setDrag] = useState<{
+    startX: number;
+    currentX: number;
+    active: boolean;
+    pillWidth: number;
+  } | null>(null);
 
   // Auto-hide when keyboard opens on mobile
   useEffect(() => {
@@ -135,6 +141,55 @@ const MobileBottomNav = () => {
     navigate(item.path);
   };
 
+  // Apple-style swipe gesture on the indicator pill — drag left/right to switch tabs
+
+  const navigateToIndex = (idx: number) => {
+    const target = navItems[idx];
+    if (!target) return;
+    if (target.requireAuth && !user) {
+      setAuthOpen(true);
+      return;
+    }
+    navigate(target.path);
+    // Haptic feedback on supported devices
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate(10); } catch {}
+    }
+  };
+
+  const onIndicatorPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activeIndex < 0) return;
+    const parent = e.currentTarget.parentElement;
+    if (!parent) return;
+    const pillWidth = (parent.clientWidth - 12) / navItems.length;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    setDrag({ startX: e.clientX, currentX: e.clientX, active: true, pillWidth });
+  };
+
+  const onIndicatorPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag?.active) return;
+    setDrag({ ...drag, currentX: e.clientX });
+  };
+
+  const onIndicatorPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag?.active) return;
+    const delta = drag.currentX - drag.startX;
+    const threshold = drag.pillWidth * 0.4;
+    let nextIdx = activeIndex;
+    if (delta > threshold) nextIdx = Math.min(navItems.length - 1, activeIndex + 1);
+    else if (delta < -threshold) nextIdx = Math.max(0, activeIndex - 1);
+    setDrag(null);
+    if (nextIdx !== activeIndex) navigateToIndex(nextIdx);
+  };
+
+  // Live offset while dragging (clamped within rail)
+  const dragOffset = drag?.active
+    ? Math.max(
+        -activeIndex * drag.pillWidth,
+        Math.min((navItems.length - 1 - activeIndex) * drag.pillWidth, drag.currentX - drag.startX)
+      )
+    : 0;
+
   return (
     <>
       <nav
@@ -170,24 +225,36 @@ const MobileBottomNav = () => {
               }}
             />
 
-            {/* Sliding active indicator (gradient blob) */}
+            {/* Sliding active indicator (gradient blob) — Apple-style swipe enabled */}
             {activeIndex >= 0 && (
               <div
-                className="absolute top-1.5 bottom-1.5 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] pointer-events-none"
+                onPointerDown={onIndicatorPointerDown}
+                onPointerMove={onIndicatorPointerMove}
+                onPointerUp={onIndicatorPointerUp}
+                onPointerCancel={onIndicatorPointerUp}
+                className={`absolute top-1.5 bottom-1.5 z-10 touch-none ${
+                  drag?.active
+                    ? 'transition-none'
+                    : 'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]'
+                }`}
                 style={{
                   width: `calc((100% - 12px) / ${navItems.length})`,
                   left: `calc(6px + ${activeIndex} * ((100% - 12px) / ${navItems.length}))`,
+                  transform: `translateX(${dragOffset}px)`,
+                  cursor: drag?.active ? 'grabbing' : 'grab',
                 }}
               >
                 <div
-                  className="w-full h-full rounded-2xl"
+                  className="w-full h-full rounded-2xl pointer-events-none"
                   style={{
                     background: navItems[activeIndex].gradient,
                     boxShadow: `0 8px 24px -4px ${
                       navItems[activeIndex].gradient
                         .match(/hsl\([^)]+\)/)?.[0] || 'hsla(258,78%,55%,0.5)'
                     }`,
-                    opacity: 0.95,
+                    opacity: drag?.active ? 0.85 : 0.95,
+                    transform: drag?.active ? 'scale(0.96)' : 'scale(1)',
+                    transition: 'opacity 0.2s, transform 0.2s',
                   }}
                 />
               </div>
