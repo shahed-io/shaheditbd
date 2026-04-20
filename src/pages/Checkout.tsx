@@ -19,6 +19,7 @@ import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
 import { getStoredAffiliateRef, clearStoredAffiliateRef } from '@/hooks/useAffiliateTracking';
+import { gTrackBeginCheckout, gTrackPurchase } from '@/components/store/GoogleTracking';
 
 const ASSET_LOGOS: Record<string, string> = {
   bkash: bkashLogo,
@@ -169,7 +170,15 @@ const Checkout = () => {
     }
   }, []);
 
-  // Abandoned cart: save after 90s if email typed
+  // Fire begin_checkout once on mount when there are items
+  useEffect(() => {
+    if (items.length === 0) return;
+    gTrackBeginCheckout({
+      value: finalTotal,
+      items: items.map(i => ({ item_id: String(i.id), item_name: i.name, price: i.price, quantity: i.quantity })),
+    }, { email: form.email, phone: form.phone, name: form.name }).catch(() => { /* silent */ });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     if (form.email && items.length > 0) {
       clearTimeout(abandonedTimer.current);
