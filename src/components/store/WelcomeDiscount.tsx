@@ -141,10 +141,21 @@ export default function WelcomeDiscount() {
     } catch { /* silent */ }
   }, []);
 
-  // Listen for admin "test" trigger
+  // Listen for admin "test" trigger (event + URL query)
   useEffect(() => {
     const handleTest = () => loadInitial(true);
     window.addEventListener('ss:welcome-test', handleTest);
+
+    // URL trigger: ?welcome_test=1 (admin uses this to preview from new tab)
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('welcome_test') === '1') {
+        // Clear blocks and force preview
+        sessionStorage.removeItem(WELCOME_SESSION_KEY);
+        setTimeout(() => loadInitial(true), 500);
+      }
+    } catch { /* silent */ }
+
     return () => window.removeEventListener('ss:welcome-test', handleTest);
   }, [loadInitial]);
 
