@@ -6,7 +6,8 @@ import { toast } from 'sonner';
 import {
   Gift, MousePointerClick, TrendingUp, Wallet, Copy, Check, Share2,
   Send, Loader2, Clock, CheckCircle2, XCircle, Info, ArrowLeft,
-  DollarSign, Sparkles, FileText, ExternalLink
+  DollarSign, Sparkles, FileText, ExternalLink, Globe, Facebook, Youtube,
+  Users as UsersIcon, Target, Rocket, User as UserIcon, Mail, Phone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -65,6 +66,18 @@ const STATUS_COLORS: Record<string, string> = {
   paid: 'bg-blue-500/15 text-blue-700 border-blue-500/30',
 };
 
+const NICHE_OPTIONS = [
+  'Software / SaaS',
+  'Tech / Gadgets',
+  'Education / Tutorials',
+  'Gaming',
+  'Lifestyle / Vlog',
+  'Business / Marketing',
+  'Freelancing',
+  'Design / Creative',
+  'Other',
+];
+
 const Affiliate = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -75,7 +88,21 @@ const Affiliate = () => {
   const [conversions, setConversions] = useState<Conversion[]>([]);
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
 
-  const [applicationNote, setApplicationNote] = useState('');
+  // Detailed application form
+  const [form, setForm] = useState({
+    applicant_name: '',
+    applicant_email: '',
+    applicant_phone: '',
+    website_url: '',
+    facebook_url: '',
+    youtube_url: '',
+    other_social_url: '',
+    audience_size: '',
+    niche: '',
+    why_join: '',
+    promotion_strategy: '',
+    accept_terms: false,
+  });
   const [applying, setApplying] = useState(false);
 
   const [showWithdraw, setShowWithdraw] = useState(false);
@@ -88,12 +115,23 @@ const Affiliate = () => {
     if (!user) return;
     setLoading(true);
     try {
-      const [accRes, setRes] = await Promise.all([
+      const [accRes, setRes, profileRes] = await Promise.all([
         supabase.from('affiliate_accounts').select('*').eq('user_id', user.id).maybeSingle(),
         supabase.from('affiliate_settings').select('*').eq('id', 1).maybeSingle(),
+        supabase.from('profiles').select('display_name, email, phone').eq('user_id', user.id).maybeSingle(),
       ]);
       setSettings(setRes.data as Settings | null);
       setAccount(accRes.data as Account | null);
+
+      // Auto-fill basic fields if no account yet
+      if (!accRes.data && profileRes.data) {
+        setForm(f => ({
+          ...f,
+          applicant_name: f.applicant_name || profileRes.data.display_name || '',
+          applicant_email: f.applicant_email || profileRes.data.email || user.email || '',
+          applicant_phone: f.applicant_phone || profileRes.data.phone || '',
+        }));
+      }
 
       if (accRes.data) {
         const [convRes, wdRes] = await Promise.all([
@@ -121,18 +159,52 @@ const Affiliate = () => {
 
   const handleApply = async () => {
     if (!user) return;
+
+    // Validation
+    if (!form.applicant_name.trim()) return toast.error('আপনার নাম লিখুন');
+    if (!form.applicant_email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.applicant_email)) return toast.error('সঠিক ইমেইল লিখুন');
+    if (!form.applicant_phone.trim() || form.applicant_phone.trim().length < 10) return toast.error('সঠিক ফোন নম্বর লিখুন');
+    if (!form.niche) return toast.error('Niche/Category নির্বাচন করুন');
+    if (!form.audience_size.trim()) return toast.error('Audience size লিখুন');
+    if (!form.why_join.trim() || form.why_join.trim().length < 20) return toast.error('কেন যোগ দিতে চান বিস্তারিত লিখুন (অন্তত ২০ অক্ষর)');
+    if (!form.promotion_strategy.trim() || form.promotion_strategy.trim().length < 20) return toast.error('প্রমোশন স্ট্র্যাটেজি বিস্তারিত লিখুন (অন্তত ২০ অক্ষর)');
+
+    // Must have at least one promotion channel
+    if (!form.website_url.trim() && !form.facebook_url.trim() && !form.youtube_url.trim() && !form.other_social_url.trim()) {
+      return toast.error('অন্তত একটি প্রমোশন চ্যানেল দিন (Website / Facebook / YouTube / Social link)');
+    }
+
+    if (settings?.terms_and_conditions && !form.accept_terms) return toast.error('Terms & Conditions অ্যাক্সেপ্ট করুন');
+
     setApplying(true);
     try {
       const { data: existing } = await supabase
         .from('affiliate_accounts').select('id').eq('user_id', user.id).maybeSingle();
       if (existing) { toast.error('Already applied'); return; }
 
-      const { error } = await supabase.from('affiliate_accounts').insert({
+      const insertPayload: any = {
         user_id: user.id,
         referral_code: '',
-        status: settings?.terms_and_conditions ? 'pending' : 'pending',
-        application_note: applicationNote.trim() || null,
-      });
+        status: 'pending',
+        applicant_name: form.applicant_name.trim(),
+        applicant_email: form.applicant_email.trim(),
+        applicant_phone: form.applicant_phone.trim(),
+        website_url: form.website_url.trim() || null,
+        facebook_url: form.facebook_url.trim() || null,
+        youtube_url: form.youtube_url.trim() || null,
+        other_social_url: form.other_social_url.trim() || null,
+        audience_size: form.audience_size.trim(),
+        niche: form.niche,
+        why_join: form.why_join.trim(),
+        promotion_strategy: form.promotion_strategy.trim(),
+        application_note: null,
+      };
+
+      const { data: inserted, error } = await supabase
+        .from('affiliate_accounts')
+        .insert(insertPayload)
+        .select()
+        .single();
       if (error) throw error;
 
       const { data: s } = await supabase.from('affiliate_settings').select('auto_approve_applications').eq('id', 1).maybeSingle();
@@ -140,7 +212,16 @@ const Affiliate = () => {
         await supabase.from('affiliate_accounts').update({ status: 'approved', approved_at: new Date().toISOString() }).eq('user_id', user.id);
       }
 
-      toast.success('Application submitted! 🎉');
+      // Notify admin via Telegram + email (fire & forget)
+      try {
+        supabase.functions.invoke('notify-affiliate-application', {
+          body: { affiliateId: (inserted as any)?.id },
+        });
+      } catch (e) {
+        console.warn('notify-affiliate-application invoke failed', e);
+      }
+
+      toast.success('আবেদন সফলভাবে জমা হয়েছে! 🎉 অ্যাডমিন রিভিউ করার পর আপনাকে জানানো হবে।');
       fetchData();
     } catch (e: any) {
       toast.error('Failed: ' + e.message);
@@ -227,18 +308,19 @@ const Affiliate = () => {
     );
   }
 
+  // ─── Application Form ──────────────────────────────────────────────────
   if (!account) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="max-w-2xl mx-auto px-4 py-10 space-y-6">
+        <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
           <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="gap-2"><ArrowLeft size={14} /> Back to Dashboard</Button>
 
           <div className="text-center space-y-2">
             <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
               <Sparkles className="text-white" size={36} />
             </div>
-            <h1 className="text-3xl font-bold">অ্যাফিলিয়েট প্রোগ্রামে যোগ দিন</h1>
+            <h1 className="text-3xl font-bold">অ্যাফিলিয়েট প্রোগ্রামে আবেদন করুন</h1>
             <p className="text-muted-foreground">আপনার রেফারেল লিংক শেয়ার করে প্রতিটি বিক্রয়ে কমিশন আয় করুন।</p>
           </div>
 
@@ -248,22 +330,106 @@ const Affiliate = () => {
             <BenefitCard icon={Wallet} title={`৳${settings?.minimum_withdrawal || 500}`} desc="মিনিমাম উইথড্রয়াল" />
           </div>
 
-          {settings?.terms_and_conditions && (
-            <div className="bg-card border border-border rounded-2xl p-5">
-              <h3 className="font-semibold mb-2 flex items-center gap-2"><FileText size={16} /> Terms & Conditions</h3>
-              <div className="text-sm text-muted-foreground whitespace-pre-wrap">{settings.terms_and_conditions}</div>
+          {/* Application Form */}
+          <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 space-y-5">
+            <div className="flex items-center gap-2 pb-2 border-b border-border">
+              <FileText size={18} className="text-primary" />
+              <h2 className="text-lg font-bold">আবেদন ফর্ম</h2>
             </div>
-          )}
 
-          <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
-            <div className="space-y-1.5">
-              <Label>আপনার সম্পর্কে কিছু লিখুন (ঐচ্ছিক)</Label>
-              <Textarea rows={4} placeholder="আপনি কীভাবে প্রোমোট করবেন? আপনার ফলোয়ার / অডিয়েন্স সম্পর্কে..."
-                value={applicationNote} onChange={e => setApplicationNote(e.target.value)} />
-            </div>
+            {/* Basic info */}
+            <Section title="১. আপনার পরিচিতি" icon={UserIcon}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Field label="পূর্ণ নাম" required icon={UserIcon}>
+                  <Input value={form.applicant_name} onChange={e => setForm({ ...form, applicant_name: e.target.value })} placeholder="আপনার নাম" />
+                </Field>
+                <Field label="ইমেইল" required icon={Mail}>
+                  <Input type="email" value={form.applicant_email} onChange={e => setForm({ ...form, applicant_email: e.target.value })} placeholder="you@example.com" />
+                </Field>
+                <Field label="ফোন নম্বর" required icon={Phone}>
+                  <Input type="tel" value={form.applicant_phone} onChange={e => setForm({ ...form, applicant_phone: e.target.value })} placeholder="01XXXXXXXXX" />
+                </Field>
+              </div>
+            </Section>
+
+            {/* Promotion channels */}
+            <Section title="২. প্রমোশন চ্যানেল (অন্তত একটি দিন)" icon={Globe}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Field label="Website / Blog URL" icon={Globe}>
+                  <Input type="url" value={form.website_url} onChange={e => setForm({ ...form, website_url: e.target.value })} placeholder="https://yoursite.com" />
+                </Field>
+                <Field label="Facebook Page" icon={Facebook}>
+                  <Input type="url" value={form.facebook_url} onChange={e => setForm({ ...form, facebook_url: e.target.value })} placeholder="https://fb.com/yourpage" />
+                </Field>
+                <Field label="YouTube Channel" icon={Youtube}>
+                  <Input type="url" value={form.youtube_url} onChange={e => setForm({ ...form, youtube_url: e.target.value })} placeholder="https://youtube.com/@channel" />
+                </Field>
+                <Field label="Instagram / TikTok / অন্যান্য" icon={ExternalLink}>
+                  <Input type="url" value={form.other_social_url} onChange={e => setForm({ ...form, other_social_url: e.target.value })} placeholder="https://..." />
+                </Field>
+              </div>
+            </Section>
+
+            {/* Audience */}
+            <Section title="৩. অডিয়েন্স তথ্য" icon={UsersIcon}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Field label="মোট ফলোয়ার / অডিয়েন্স সাইজ" required icon={UsersIcon}>
+                  <Input value={form.audience_size} onChange={e => setForm({ ...form, audience_size: e.target.value })} placeholder="যেমন: 10K Facebook, 5K YouTube" />
+                </Field>
+                <Field label="Niche / Category" required icon={Target}>
+                  <select
+                    value={form.niche}
+                    onChange={e => setForm({ ...form, niche: e.target.value })}
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  >
+                    <option value="">— নির্বাচন করুন —</option>
+                    {NICHE_OPTIONS.map(n => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                </Field>
+              </div>
+            </Section>
+
+            {/* Why & Strategy */}
+            <Section title="৪. আপনার সম্পর্কে ও স্ট্র্যাটেজি" icon={Rocket}>
+              <Field label="কেন আমাদের অ্যাফিলিয়েট প্রোগ্রামে যোগ দিতে চান?" required>
+                <Textarea rows={3}
+                  value={form.why_join}
+                  onChange={e => setForm({ ...form, why_join: e.target.value })}
+                  placeholder="আপনি কে, কী করেন, এবং কেন এই প্রোগ্রাম আপনার জন্য উপযুক্ত..."
+                />
+                <p className="text-[11px] text-muted-foreground">{form.why_join.length}/500 অক্ষর</p>
+              </Field>
+              <Field label="কীভাবে প্রোডাক্ট প্রমোট করবেন?" required>
+                <Textarea rows={4}
+                  value={form.promotion_strategy}
+                  onChange={e => setForm({ ...form, promotion_strategy: e.target.value })}
+                  placeholder="যেমন: Facebook post, YouTube video, ব্লগ রিভিউ, ইমেইল মার্কেটিং, পেইড অ্যাড..."
+                />
+                <p className="text-[11px] text-muted-foreground">{form.promotion_strategy.length}/1000 অক্ষর</p>
+              </Field>
+            </Section>
+
+            {/* Terms */}
+            {settings?.terms_and_conditions && (
+              <div className="bg-muted/50 border border-border rounded-xl p-4 space-y-2">
+                <h3 className="font-semibold text-sm flex items-center gap-2"><FileText size={14} /> Terms & Conditions</h3>
+                <div className="text-xs text-muted-foreground whitespace-pre-wrap max-h-32 overflow-y-auto">{settings.terms_and_conditions}</div>
+                <label className="flex items-start gap-2 text-xs cursor-pointer pt-2">
+                  <input
+                    type="checkbox"
+                    checked={form.accept_terms}
+                    onChange={e => setForm({ ...form, accept_terms: e.target.checked })}
+                    className="mt-0.5"
+                  />
+                  <span>আমি উপরের Terms & Conditions পড়েছি এবং সম্মত</span>
+                </label>
+              </div>
+            )}
+
             <Button onClick={handleApply} disabled={applying} className="w-full" size="lg">
-              {applying ? <><Loader2 size={16} className="animate-spin mr-2" /> Submitting...</> : 'Apply Now'}
+              {applying ? <><Loader2 size={16} className="animate-spin mr-2" /> Submitting...</> : <><Send size={16} className="mr-2" /> Submit Application</>}
             </Button>
+            <p className="text-[11px] text-center text-muted-foreground">আবেদন রিভিউ করতে সাধারণত ১-২ কর্মদিবস সময় লাগে।</p>
           </div>
         </div>
         <Footer />
@@ -271,6 +437,7 @@ const Affiliate = () => {
     );
   }
 
+  // ─── Approved/Pending Dashboard ────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -384,36 +551,42 @@ const Affiliate = () => {
           <div className="space-y-4">
             <div className="text-sm text-muted-foreground">
               Available: <strong className="text-foreground">৳{Number(account?.available_balance || 0).toFixed(0)}</strong>
-              {' • '}Min: ৳{settings?.minimum_withdrawal}
+              {' • '}Minimum: <strong className="text-foreground">৳{settings?.minimum_withdrawal}</strong>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label>Amount (৳)</Label>
+                <Input type="number" value={withdrawForm.amount}
+                  onChange={e => setWithdrawForm({ ...withdrawForm, amount: Number(e.target.value) })} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Method</Label>
+                <select value={withdrawForm.method}
+                  onChange={e => setWithdrawForm({ ...withdrawForm, method: e.target.value })}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                  <option value="bkash">bKash</option>
+                  <option value="nagad">Nagad</option>
+                  <option value="rocket">Rocket</option>
+                  <option value="bank">Bank</option>
+                </select>
+              </div>
             </div>
             <div className="space-y-1.5">
-              <Label>Amount (৳)</Label>
-              <Input type="number" value={withdrawForm.amount} onChange={e => setWithdrawForm({ ...withdrawForm, amount: Number(e.target.value) })} />
+              <Label>Account Number</Label>
+              <Input value={withdrawForm.account_number}
+                onChange={e => setWithdrawForm({ ...withdrawForm, account_number: e.target.value })}
+                placeholder="01XXXXXXXXX" />
             </div>
             <div className="space-y-1.5">
-              <Label>Method</Label>
-              <select value={withdrawForm.method} onChange={e => setWithdrawForm({ ...withdrawForm, method: e.target.value })}
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-                <option value="bkash">bKash</option>
-                <option value="nagad">Nagad</option>
-                <option value="rocket">Rocket</option>
-                <option value="bank">Bank Transfer</option>
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Account Number *</Label>
-              <Input value={withdrawForm.account_number} onChange={e => setWithdrawForm({ ...withdrawForm, account_number: e.target.value })} placeholder="017XXXXXXXX or A/C number" />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Account Holder Name (optional)</Label>
-              <Input value={withdrawForm.account_name} onChange={e => setWithdrawForm({ ...withdrawForm, account_name: e.target.value })} />
+              <Label>Account Name (optional)</Label>
+              <Input value={withdrawForm.account_name}
+                onChange={e => setWithdrawForm({ ...withdrawForm, account_name: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowWithdraw(false)}>Cancel</Button>
             <Button onClick={submitWithdrawal} disabled={withdrawing}>
-              {withdrawing ? <Loader2 size={14} className="animate-spin mr-2" /> : null}
-              Submit
+              {withdrawing ? <><Loader2 size={14} className="animate-spin mr-2" /> Submitting...</> : 'Submit Request'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -424,19 +597,43 @@ const Affiliate = () => {
   );
 };
 
-const StatBox = ({ icon: Icon, label, value, color }: any) => (
-  <div className={`bg-gradient-to-br ${color} rounded-2xl p-4 text-white`}>
-    <Icon size={18} className="opacity-80 mb-1" />
-    <div className="text-xs opacity-90">{label}</div>
-    <div className="text-xl font-bold mt-0.5">{value}</div>
+const BenefitCard = ({ icon: Icon, title, desc }: { icon: any; title: string; desc: string }) => (
+  <div className="bg-card border border-border rounded-2xl p-4 text-center">
+    <Icon className="mx-auto text-primary mb-2" size={22} />
+    <div className="text-lg font-bold">{title}</div>
+    <div className="text-xs text-muted-foreground">{desc}</div>
   </div>
 );
 
-const BenefitCard = ({ icon: Icon, title, desc }: any) => (
-  <div className="bg-card border border-border rounded-2xl p-4 text-center">
-    <Icon size={20} className="mx-auto text-primary mb-2" />
-    <div className="text-lg font-bold">{title}</div>
-    <div className="text-xs text-muted-foreground mt-0.5">{desc}</div>
+const StatBox = ({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) => (
+  <div className="bg-card border border-border rounded-2xl p-4">
+    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center mb-2`}>
+      <Icon className="text-white" size={16} />
+    </div>
+    <div className="text-xs text-muted-foreground">{label}</div>
+    <div className="text-lg font-bold">{value}</div>
+  </div>
+);
+
+const Section = ({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) => (
+  <div className="space-y-3">
+    <div className="flex items-center gap-2">
+      <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+        <Icon size={14} className="text-primary" />
+      </div>
+      <h3 className="font-semibold text-sm">{title}</h3>
+    </div>
+    <div className="space-y-3 pl-9">{children}</div>
+  </div>
+);
+
+const Field = ({ label, required, icon: Icon, children }: { label: string; required?: boolean; icon?: any; children: React.ReactNode }) => (
+  <div className="space-y-1.5">
+    <Label className="text-xs flex items-center gap-1.5">
+      {Icon && <Icon size={11} className="text-muted-foreground" />}
+      {label} {required && <span className="text-red-500">*</span>}
+    </Label>
+    {children}
   </div>
 );
 
