@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Gift, Settings, Trash2, Clock, Plus, GripVertical, RefreshCw, Eye, Sparkles } from 'lucide-react';
+import { Gift, Settings, Trash2, Clock, Plus, GripVertical, RefreshCw, Eye, Sparkles, PlayCircle, RotateCcw, ExternalLink } from 'lucide-react';
 
 interface SpinPrize {
   id: string;
@@ -225,13 +225,58 @@ export default function AdminWelcomeDiscount() {
             Visitor-দের জন্য interactive spin-to-win discount popup
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button variant="outline" onClick={resetToDefaults}>Reset Defaults</Button>
           <Button onClick={() => saveMutation.mutate(settings)} disabled={saveMutation.isPending}>
             {saveMutation.isPending ? 'Saving...' : 'Save Settings'}
           </Button>
         </div>
       </div>
+
+      {/* Test & Reset Tools */}
+      <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
+        <CardContent className="p-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
+              <PlayCircle className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">Test & Debug Tools</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Live site-এ গিয়ে Spin Wheel test করুন (DB-তে coupon save হবে না)
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                // Clear all client-side blocks so popup re-shows for this browser
+                try {
+                  sessionStorage.removeItem('ss_welcome_shown');
+                  localStorage.removeItem('ss_welcome_shown');
+                  localStorage.removeItem('ss_welcome_claimed');
+                  toast.success('Visitor lock reset — homepage refresh করলে popup আবার দেখাবে');
+                } catch {
+                  toast.error('Reset ব্যর্থ হয়েছে');
+                }
+              }}
+            >
+              <RotateCcw className="w-4 h-4 mr-1.5" /> Reset My Lock
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                window.open('/?welcome_test=1', '_blank');
+                toast.success('নতুন ট্যাবে test mode খুলছে...');
+              }}
+            >
+              <ExternalLink className="w-4 h-4 mr-1.5" /> Test on Live Site
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
