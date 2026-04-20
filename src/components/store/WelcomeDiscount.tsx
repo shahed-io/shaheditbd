@@ -42,14 +42,12 @@ function getOrCreateVisitorId(): string {
 }
 
 const FALLBACK_PRIZES: SpinPrize[] = [
-  { id: '1', label: '5% OFF',   type: 'percent', value: 5,   weight: 1, color: '262 80% 60%' },
-  { id: '2', label: '৳50 OFF',  type: 'fixed',   value: 50,  weight: 1, color: '24 95% 55%' },
-  { id: '3', label: '10% OFF',  type: 'percent', value: 10,  weight: 1, color: '198 90% 55%' },
-  { id: '4', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 1, color: '142 75% 45%' },
-  { id: '5', label: '15% OFF',  type: 'percent', value: 15,  weight: 1, color: '340 85% 60%' },
-  { id: '6', label: '৳150 OFF', type: 'fixed',   value: 150, weight: 1, color: '47 95% 55%' },
-  { id: '7', label: '20% OFF',  type: 'percent', value: 20,  weight: 1, color: '280 85% 55%' },
-  { id: '8', label: 'Try Again',type: 'none',    value: 0,   weight: 1, color: '0 0% 60%' },
+  { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: '142 75% 45%' },
+  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 200, color: '262 80% 60%' },
+  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 150, color: '24 95% 55%'  },
+  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 90,  color: '198 90% 55%' },
+  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 50,  color: '340 85% 60%' },
+  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: '280 85% 55%' },
 ];
 
 export default function WelcomeDiscount() {
@@ -116,7 +114,7 @@ export default function WelcomeDiscount() {
       return () => clearTimeout(t);
     }
 
-    const randomDelay = (Math.floor(Math.random() * 9) + 12) * 1000;
+    const randomDelay = (Math.floor(Math.random() * 6) + 5) * 1000;
     const timer = setTimeout(loadInitial, randomDelay);
     const handler = () => {
       clearTimeout(timer);

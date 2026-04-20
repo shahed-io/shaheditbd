@@ -26,17 +26,17 @@ interface SpinSettings {
 }
 
 // Weighted distribution (total weight = 1000):
-//  • 5–12% discounts  → ~99% chance (combined weight 990)
-//  • ৳100 OFF         → ~50% chance (weight 500, sits inside the 99% bucket)
-//  • 20% OFF          → ~1% chance  (weight 10) — ultra rare, লোভনীয়
-// No "Try Again" — সবাই কিছু না কিছু জিতবে → spin করতে বাধ্য হবে
+//  • ৳100 OFF         → ~50% chance (weight 500)
+//  • 5–12% discounts  → ~49.5% chance (combined weight 495)
+//  • 20% OFF          → ~0.5% chance (weight 5) — ultra rare jackpot
+// No "Try Again" — সবাই কিছু না কিছু জিতবে
 const DEFAULT_PRIZES: SpinPrize[] = [
   { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: '142 75% 45%' }, // 50%
   { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 200, color: '262 80% 60%' }, // 20%
   { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 150, color: '24 95% 55%'  }, // 15%
   { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 90,  color: '198 90% 55%' }, // 9%
   { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 50,  color: '340 85% 60%' }, // 5%
-  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 10,  color: '280 85% 55%' }, // 1% — JACKPOT
+  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: '280 85% 55%' }, // 0.5% — JACKPOT
 ];
 
 const DEFAULT_SETTINGS: SpinSettings = {
