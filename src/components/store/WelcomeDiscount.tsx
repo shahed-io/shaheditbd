@@ -220,8 +220,8 @@ export default function WelcomeDiscount() {
 
   const prizes = settings?.prizes || FALLBACK_PRIZES;
   const sliceAngle = 360 / prizes.length;
-  const popupTitle = settings?.popup_title || 'Welcome Reward';
-  const popupSubtitle = settings?.popup_subtitle || 'নতুন গ্রাহকদের জন্য বিশেষ ছাড়';
+  const popupTitle = settings?.popup_title || 'আপনার Welcome Gift প্রস্তুত';
+  const popupSubtitle = settings?.popup_subtitle || 'Shahed Store-এ স্বাগতম! শুধুমাত্র নতুন ভিজিটরদের জন্য একটি গ্যারান্টিড ছাড় — মাত্র একবার দাবি করা যাবে।';
   const spinButtonText = settings?.spin_button_text || 'CLAIM';
 
   // Professional muted gradient slices
@@ -252,21 +252,30 @@ export default function WelcomeDiscount() {
               <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center">
                 <BadgePercent className="w-4 h-4 text-[hsl(var(--primary))]" />
               </div>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                Exclusive Offer
+              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[hsl(var(--primary))]">
+                🎁 New Customer Welcome Gift
               </span>
             </div>
 
             <h2 className="text-foreground text-lg font-semibold leading-tight">
-              {hasSpun && coupon ? 'অভিনন্দন! আপনি একটি ছাড় পেয়েছেন' : hasSpun && noPrize ? 'এই মুহূর্তে কোনো পুরস্কার নেই' : popupTitle}
+              {hasSpun && coupon ? '🎉 অভিনন্দন! আপনার ছাড় কোড প্রস্তুত' : hasSpun && noPrize ? 'এই মুহূর্তে কোনো পুরস্কার নেই' : popupTitle}
             </h2>
             <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
               {hasSpun && coupon
-                ? 'নিচের কুপন কোডটি কপি করে চেকআউটে ব্যবহার করুন'
+                ? 'নিচের কোডটি কপি করে চেকআউটে ব্যবহার করুন — মেয়াদ শেষ হওয়ার আগেই অর্ডার সম্পন্ন করুন।'
                 : hasSpun && noPrize
                 ? 'পরবর্তী ক্যাম্পেইনে আবার চেষ্টা করুন'
                 : popupSubtitle}
             </p>
+            {!hasSpun && (
+              <div className="mt-3 flex items-center gap-1.5 text-[10px] text-emerald-600 font-semibold">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                <span>100% Guaranteed Win • Free • No Card Required</span>
+              </div>
+            )}
           </div>
 
           {/* Wheel */}
@@ -330,7 +339,7 @@ export default function WelcomeDiscount() {
               </div>
 
               <p className="text-center text-xs text-muted-foreground mt-5">
-                {spinning ? 'আপনার পুরস্কার নির্ধারণ করা হচ্ছে...' : 'CLAIM বাটনে ক্লিক করে আপনার ছাড়টি দেখুন'}
+                {spinning ? 'আপনার পুরস্কার নির্ধারণ করা হচ্ছে...' : 'CLAIM-এ ক্লিক করে আপনার গ্যারান্টিড ছাড়টি Unlock করুন'}
               </p>
 
               {/* Trust signals */}
@@ -342,7 +351,12 @@ export default function WelcomeDiscount() {
                 <div className="w-px h-3 bg-border" />
                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                   <Tag className="w-3 h-3" />
-                  <span>One Per Customer</span>
+                  <span>One-Time Use</span>
+                </div>
+                <div className="w-px h-3 bg-border" />
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Clock className="w-3 h-3" />
+                  <span>Limited Time</span>
                 </div>
               </div>
             </div>
@@ -354,7 +368,7 @@ export default function WelcomeDiscount() {
               {/* Discount value display */}
               <div className="text-center mb-5">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold mb-2">
-                  Your Discount
+                  Your Welcome Reward
                 </p>
                 <div className="text-4xl font-bold text-foreground tracking-tight">
                   {coupon.prizeLabel}
