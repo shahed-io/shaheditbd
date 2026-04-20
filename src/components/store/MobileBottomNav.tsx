@@ -29,6 +29,12 @@ const MobileBottomNav = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [orderCount, setOrderCount] = useState(0);
+  const [drag, setDrag] = useState<{
+    startX: number;
+    currentX: number;
+    active: boolean;
+    pillWidth: number;
+  } | null>(null);
 
   // Auto-hide when keyboard opens on mobile
   useEffect(() => {
