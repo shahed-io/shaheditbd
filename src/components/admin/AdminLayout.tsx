@@ -11,7 +11,7 @@ import {
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
   Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Map, Bot, Code2, KeyRound, FileSearch, PackageSearch, Star, BarChart2,
-  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette,
+  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles,
   ShoppingCart as ShopIcon, CreditCard as CreditIcon, Clock, Eye
 } from 'lucide-react';
 
@@ -88,6 +88,7 @@ const menuItems = [
       { label: 'URL Slug Editor', path: '/ceo/seo/slugs', icon: Link2 },
       { label: 'Redirect Manager', path: '/ceo/seo/redirects', icon: ArrowLeftRight },
       { label: 'Broken Link Checker', path: '/ceo/seo/broken-links', icon: Link2Off },
+      { label: '🤖 Content Analyzer', path: '/ceo/seo/content-analyzer', icon: Sparkles },
     ]
   },
   { icon: TrendingUp, label: 'Reports', path: '/ceo/reports' },
@@ -95,6 +96,8 @@ const menuItems = [
   { icon: Facebook, label: 'Facebook Pixel', path: '/ceo/facebook-pixel' },
   { icon: Users, label: 'FB Custom Audiences', path: '/ceo/custom-audiences' },
   { icon: BarChart2, label: 'Google Ads & Analytics', path: '/ceo/google-ads' },
+  { icon: Megaphone, label: 'Marketing Pixels (TikTok/Snap/Pin/LinkedIn/X)', path: '/ceo/marketing-pixels' },
+  { icon: ShieldCheck, label: 'Site Verification', path: '/ceo/site-verification' },
   { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
   { icon: Bot, label: 'Telegram Shop Bot', path: '/ceo/telegram-bot' },
   { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },

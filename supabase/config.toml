@@ -37,3 +37,5 @@ project_id = "dpvdavjwqyviredzoorj"
     verify_jwt = false
   [functions.validate-coupon]
     verify_jwt = false
+  [functions.tiktok-events-api]
+    verify_jwt = false

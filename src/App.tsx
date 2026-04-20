@@ -13,6 +13,7 @@ import { prefetchOnIdle } from "@/hooks/usePrefetchRoute";
 import { ViewTransitions } from "@/components/ViewTransitions";
 import { useAffiliateTracking } from "@/hooks/useAffiliateTracking";
 import { useCustomAudiences } from "@/hooks/useCustomAudiences";
+import { useMarketingPixelsPageView } from "@/hooks/useMarketingPixelsPageView";
 import { useCart } from "@/hooks/useCart";
 
 // Critical pages — eager load
@@ -23,6 +24,7 @@ const CartDrawer = lazy(() => import("@/components/store/CartDrawer"));
 const RedirectEnforcer = lazy(() => import("@/components/seo/RedirectEnforcer"));
 const FacebookPixel = lazy(() => import("@/components/store/FacebookPixel"));
 const GoogleTracking = lazy(() => import("@/components/store/GoogleTracking"));
+const MarketingPixels = lazy(() => import("@/components/store/MarketingPixels"));
 const MobileBottomNav = lazy(() => import("@/components/store/MobileBottomNav"));
 
 // All other pages — lazy loaded
@@ -116,6 +118,9 @@ const AdminWelcomeDiscount       = lazy(() => import("./pages/admin/AdminWelcome
 const AdminAffiliates            = lazy(() => import("./pages/admin/AdminAffiliates"));
 const AdminGoogleAds             = lazy(() => import("./pages/admin/AdminGoogleAds"));
 const AdminCustomAudiences       = lazy(() => import("./pages/admin/AdminCustomAudiences"));
+const AdminMarketingPixels       = lazy(() => import("./pages/admin/AdminMarketingPixels"));
+const AdminSiteVerification      = lazy(() => import("./pages/admin/AdminSiteVerification"));
+const AdminContentSeo            = lazy(() => import("./pages/admin/seo/AdminContentSeo"));
 const Affiliate                  = lazy(() => import("./pages/Affiliate"));
 
 
@@ -167,6 +172,7 @@ const AppContent = () => {
   useAffiliateTracking(); // Capture ?ref=CODE on every navigation
   const { subtotal } = useCart();
   useCustomAudiences({ cartValue: subtotal }); // Fire FB custom-audience events on route changes
+  useMarketingPixelsPageView(); // Fire PageView on TikTok/Snap/Pin/LinkedIn/X on every route change
 
   useEffect(() => {
     // Defer non-critical components until after first paint (~20ms)
@@ -207,6 +213,7 @@ const AppContent = () => {
           <AdminNotificationListener />
           <FacebookPixel />
           <GoogleTracking />
+          <MarketingPixels />
           <CartDrawer />
           <RedirectEnforcer />
         </Suspense>
@@ -289,7 +296,10 @@ const AppContent = () => {
             <Route path="affiliates" element={<AdminSuspense><AdminAffiliates /></AdminSuspense>} />
             <Route path="google-ads" element={<AdminSuspense><AdminGoogleAds /></AdminSuspense>} />
             <Route path="custom-audiences" element={<AdminSuspense><AdminCustomAudiences /></AdminSuspense>} />
-            
+            <Route path="marketing-pixels" element={<AdminSuspense><AdminMarketingPixels /></AdminSuspense>} />
+            <Route path="site-verification" element={<AdminSuspense><AdminSiteVerification /></AdminSuspense>} />
+            <Route path="seo/content-analyzer" element={<AdminSuspense><AdminContentSeo /></AdminSuspense>} />
+
             <Route path="reseller" element={<AdminSuspense><Reseller /></AdminSuspense>} />
             <Route path="reseller-accounts" element={<AdminSuspense><AdminResellerAccounts /></AdminSuspense>} />
           </Route>
