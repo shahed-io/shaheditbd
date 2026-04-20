@@ -135,6 +135,61 @@ const MobileBottomNav = () => {
     navigate(item.path);
   };
 
+  // Apple-style swipe gesture on the indicator pill — drag left/right to switch tabs
+  const [drag, setDrag] = useState<{
+    startX: number;
+    currentX: number;
+    active: boolean;
+    pillWidth: number;
+  } | null>(null);
+
+  const navigateToIndex = (idx: number) => {
+    const target = navItems[idx];
+    if (!target) return;
+    if (target.requireAuth && !user) {
+      setAuthOpen(true);
+      return;
+    }
+    navigate(target.path);
+    // Haptic feedback on supported devices
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate(10); } catch {}
+    }
+  };
+
+  const onIndicatorPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activeIndex < 0) return;
+    const parent = e.currentTarget.parentElement;
+    if (!parent) return;
+    const pillWidth = (parent.clientWidth - 12) / navItems.length;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    setDrag({ startX: e.clientX, currentX: e.clientX, active: true, pillWidth });
+  };
+
+  const onIndicatorPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag?.active) return;
+    setDrag({ ...drag, currentX: e.clientX });
+  };
+
+  const onIndicatorPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag?.active) return;
+    const delta = drag.currentX - drag.startX;
+    const threshold = drag.pillWidth * 0.4;
+    let nextIdx = activeIndex;
+    if (delta > threshold) nextIdx = Math.min(navItems.length - 1, activeIndex + 1);
+    else if (delta < -threshold) nextIdx = Math.max(0, activeIndex - 1);
+    setDrag(null);
+    if (nextIdx !== activeIndex) navigateToIndex(nextIdx);
+  };
+
+  // Live offset while dragging (clamped within rail)
+  const dragOffset = drag?.active
+    ? Math.max(
+        -activeIndex * drag.pillWidth,
+        Math.min((navItems.length - 1 - activeIndex) * drag.pillWidth, drag.currentX - drag.startX)
+      )
+    : 0;
+
   return (
     <>
       <nav
