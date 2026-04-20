@@ -157,22 +157,31 @@ const MobileBottomNav = () => {
     }
   };
 
-  const onIndicatorPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+  // Swipe handlers attached to the rail (ul). Taps still fire on buttons because
+  // we only consume the gesture when horizontal movement exceeds a small threshold.
+  const SWIPE_START_THRESHOLD = 8; // px before we treat it as a swipe
+  const onRailPointerDown = (e: React.PointerEvent<HTMLUListElement>) => {
     if (activeIndex < 0) return;
-    const parent = e.currentTarget.parentElement;
-    if (!parent) return;
-    const pillWidth = (parent.clientWidth - 12) / navItems.length;
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    setDrag({ startX: e.clientX, currentX: e.clientX, active: true, pillWidth });
+    const pillWidth = (e.currentTarget.clientWidth - 12) / navItems.length;
+    setDrag({ startX: e.clientX, currentX: e.clientX, active: false, pillWidth });
   };
 
-  const onIndicatorPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!drag?.active) return;
-    setDrag({ ...drag, currentX: e.clientX });
+  const onRailPointerMove = (e: React.PointerEvent<HTMLUListElement>) => {
+    if (!drag) return;
+    const delta = e.clientX - drag.startX;
+    if (!drag.active && Math.abs(delta) < SWIPE_START_THRESHOLD) return;
+    if (!drag.active) {
+      try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+    }
+    setDrag({ ...drag, currentX: e.clientX, active: true });
   };
 
-  const onIndicatorPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!drag?.active) return;
+  const onRailPointerUp = (e: React.PointerEvent<HTMLUListElement>) => {
+    if (!drag) return;
+    if (!drag.active) {
+      setDrag(null);
+      return;
+    }
     const delta = drag.currentX - drag.startX;
     const threshold = drag.pillWidth * 0.4;
     let nextIdx = activeIndex;
