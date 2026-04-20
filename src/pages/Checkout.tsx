@@ -393,6 +393,14 @@ const Checkout = () => {
       clearCart();
       setOrderNumber(orderNum);
       setOrderPlaced(true);
+
+      // Fire Google Ads + GA4 Purchase conversion (non-blocking, after success)
+      gTrackPurchase({
+        transaction_id: orderNum,
+        value: finalTotal,
+        coupon: coupon.isApplied ? coupon.code : undefined,
+        items: items.map(i => ({ item_id: String(i.id), item_name: i.name, price: i.price, quantity: i.quantity })),
+      }, { email: form.email, phone: form.phone, name: form.name }).catch(() => { /* silent */ });
     } catch (err: unknown) {
       console.error('[Checkout] Order error:', err);
       const msg = err instanceof Error ? err.message : (err as any)?.message || String(err);
