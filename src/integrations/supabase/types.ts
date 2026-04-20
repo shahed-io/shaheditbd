@@ -59,6 +59,334 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_accounts: {
+        Row: {
+          admin_note: string | null
+          application_note: string | null
+          approved_at: string | null
+          approved_by: string | null
+          available_balance: number
+          created_at: string
+          custom_commission_percent: number | null
+          custom_customer_discount_percent: number | null
+          id: string
+          payout_account: string | null
+          payout_account_name: string | null
+          payout_method: string | null
+          referral_code: string
+          status: string
+          total_clicks: number
+          total_conversions: number
+          total_earned: number
+          total_paid: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          application_note?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          available_balance?: number
+          created_at?: string
+          custom_commission_percent?: number | null
+          custom_customer_discount_percent?: number | null
+          id?: string
+          payout_account?: string | null
+          payout_account_name?: string | null
+          payout_method?: string | null
+          referral_code: string
+          status?: string
+          total_clicks?: number
+          total_conversions?: number
+          total_earned?: number
+          total_paid?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          application_note?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          available_balance?: number
+          created_at?: string
+          custom_commission_percent?: number | null
+          custom_customer_discount_percent?: number | null
+          id?: string
+          payout_account?: string | null
+          payout_account_name?: string | null
+          payout_method?: string | null
+          referral_code?: string
+          status?: string
+          total_clicks?: number
+          total_conversions?: number
+          total_earned?: number
+          total_paid?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      affiliate_clicks: {
+        Row: {
+          affiliate_id: string
+          converted: boolean
+          country: string | null
+          created_at: string
+          id: string
+          ip_address: string | null
+          landing_page: string | null
+          product_id: string | null
+          referral_code: string
+          referrer: string | null
+          user_agent: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          converted?: boolean
+          country?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          landing_page?: string | null
+          product_id?: string | null
+          referral_code: string
+          referrer?: string | null
+          user_agent?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          converted?: boolean
+          country?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          landing_page?: string | null
+          product_id?: string | null
+          referral_code?: string
+          referrer?: string | null
+          user_agent?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_clicks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_conversions: {
+        Row: {
+          affiliate_id: string
+          commission_amount: number
+          commission_percent: number
+          created_at: string
+          customer_discount_amount: number | null
+          id: string
+          order_id: string
+          order_number: string
+          order_total: number
+          paid_at: string | null
+          rejection_reason: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          affiliate_id: string
+          commission_amount: number
+          commission_percent: number
+          created_at?: string
+          customer_discount_amount?: number | null
+          id?: string
+          order_id: string
+          order_number: string
+          order_total: number
+          paid_at?: string | null
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          affiliate_id?: string
+          commission_amount?: number
+          commission_percent?: number
+          created_at?: string
+          customer_discount_amount?: number | null
+          id?: string
+          order_id?: string
+          order_number?: string
+          order_total?: number
+          paid_at?: string | null
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_conversions_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_conversions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_product_commissions: {
+        Row: {
+          commission_percent: number
+          created_at: string
+          customer_discount_percent: number | null
+          id: string
+          is_active: boolean
+          product_id: string
+          updated_at: string
+        }
+        Insert: {
+          commission_percent: number
+          created_at?: string
+          customer_discount_percent?: number | null
+          id?: string
+          is_active?: boolean
+          product_id: string
+          updated_at?: string
+        }
+        Update: {
+          commission_percent?: number
+          created_at?: string
+          customer_discount_percent?: number | null
+          id?: string
+          is_active?: boolean
+          product_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_product_commissions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_settings: {
+        Row: {
+          auto_approve_applications: boolean
+          cookie_duration_days: number
+          customer_discount_percent: number
+          default_commission_percent: number
+          enable_affiliate_commission: boolean
+          enable_customer_discount: boolean
+          id: number
+          is_enabled: boolean
+          minimum_withdrawal: number
+          terms_and_conditions: string | null
+          updated_at: string
+        }
+        Insert: {
+          auto_approve_applications?: boolean
+          cookie_duration_days?: number
+          customer_discount_percent?: number
+          default_commission_percent?: number
+          enable_affiliate_commission?: boolean
+          enable_customer_discount?: boolean
+          id?: number
+          is_enabled?: boolean
+          minimum_withdrawal?: number
+          terms_and_conditions?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auto_approve_applications?: boolean
+          cookie_duration_days?: number
+          customer_discount_percent?: number
+          default_commission_percent?: number
+          enable_affiliate_commission?: boolean
+          enable_customer_discount?: boolean
+          id?: number
+          is_enabled?: boolean
+          minimum_withdrawal?: number
+          terms_and_conditions?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      affiliate_withdrawals: {
+        Row: {
+          account_name: string | null
+          account_number: string
+          admin_notes: string | null
+          affiliate_id: string
+          amount: number
+          id: string
+          method: string
+          processed_at: string | null
+          processed_by: string | null
+          requested_at: string
+          status: string
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          account_name?: string | null
+          account_number: string
+          admin_notes?: string | null
+          affiliate_id: string
+          amount: number
+          id?: string
+          method: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          account_name?: string | null
+          account_number?: string
+          admin_notes?: string | null
+          affiliate_id?: string
+          amount?: number
+          id?: string
+          method?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_withdrawals_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_categories: {
         Row: {
           color: string | null
@@ -839,6 +1167,8 @@ export type Database = {
       orders: {
         Row: {
           admin_notes: string | null
+          affiliate_discount_amount: number | null
+          affiliate_referral_code: string | null
           coupon_code: string | null
           coupon_id: string | null
           created_at: string
@@ -860,6 +1190,8 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          affiliate_discount_amount?: number | null
+          affiliate_referral_code?: string | null
           coupon_code?: string | null
           coupon_id?: string | null
           created_at?: string
@@ -881,6 +1213,8 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          affiliate_discount_amount?: number | null
+          affiliate_referral_code?: string | null
           coupon_code?: string | null
           coupon_id?: string | null
           created_at?: string
@@ -2208,6 +2542,10 @@ export type Database = {
       }
     }
     Functions: {
+      approve_affiliate_conversion: {
+        Args: { p_conversion_id: string }
+        Returns: Json
+      }
       auto_assign_licenses: { Args: { p_order_id: string }; Returns: Json }
       deduct_order_points: {
         Args: { p_order_id: string; p_order_total: number; p_user_id: string }
@@ -2225,6 +2563,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      generate_affiliate_code: { Args: never; Returns: string }
       get_referral_tier: { Args: { referral_count: number }; Returns: Json }
       has_role: {
         Args: {
@@ -2246,6 +2585,15 @@ export type Database = {
         }
         Returns: number
       }
+      process_affiliate_withdrawal: {
+        Args: {
+          p_action: string
+          p_admin_notes?: string
+          p_transaction_id?: string
+          p_withdrawal_id: string
+        }
+        Returns: Json
+      }
       process_google_referral: {
         Args: { p_referral_code: string; p_referred_user_id: string }
         Returns: Json
@@ -2262,8 +2610,16 @@ export type Database = {
           read_ct: number
         }[]
       }
+      record_affiliate_conversion: {
+        Args: { p_order_id: string; p_referral_code: string }
+        Returns: Json
+      }
       redeem_points: {
         Args: { p_points: number; p_user_id: string }
+        Returns: Json
+      }
+      reject_affiliate_conversion: {
+        Args: { p_conversion_id: string; p_reason?: string }
         Returns: Json
       }
       wallet_credit: {
