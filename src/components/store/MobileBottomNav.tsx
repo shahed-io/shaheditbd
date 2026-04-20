@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Home, Store, Heart, Package, User } from 'lucide-react';
+import { Home, Store, Wallet, Package, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useAuth } from '@/hooks/useAuth';
@@ -98,13 +98,12 @@ const MobileBottomNav = () => {
       gradient: 'linear-gradient(135deg, hsl(185 90% 52%), hsl(200 92% 55%))',
     },
     {
-      label: 'Wishlist',
-      icon: Heart,
-      path: '/dashboard?tab=wishlist',
-      match: (p) => p === '/wishlist',
-      badgeCount: wishlistCount,
+      label: 'Wallet',
+      icon: Wallet,
+      path: '/dashboard?tab=wallet',
+      match: (p) => p.startsWith('/dashboard') && location.search.includes('tab=wallet'),
       requireAuth: true,
-      gradient: 'linear-gradient(135deg, hsl(340 85% 58%), hsl(0 84% 60%))',
+      gradient: 'linear-gradient(135deg, hsl(160 75% 42%), hsl(175 85% 45%))',
     },
     {
       label: 'Orders',
