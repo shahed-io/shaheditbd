@@ -118,7 +118,7 @@ const MobileBottomNav = () => {
       label: 'Account',
       icon: User,
       path: '/dashboard',
-      match: (p) => p === '/dashboard' && !location.search.includes('tab=orders') && !location.search.includes('tab=wishlist'),
+      match: (p) => p === '/dashboard' && !location.search.includes('tab=orders') && !location.search.includes('tab=wallet'),
       requireAuth: true,
       gradient: 'linear-gradient(135deg, hsl(160 75% 45%), hsl(185 90% 52%))',
     },
