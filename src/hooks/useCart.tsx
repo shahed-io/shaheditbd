@@ -107,6 +107,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return [...prev, { ...item, quantity: qty }];
     });
     setCartOpen(true);
+    // Fire Google Ads + GA4 add_to_cart conversion (non-blocking)
+    import('@/components/store/GoogleTracking').then(({ gTrackAddToCart }) => {
+      gTrackAddToCart({
+        value: item.price * qty,
+        items: [{ item_id: String(item.id), item_name: item.name, price: item.price, quantity: qty }],
+      }).catch(() => { /* silent */ });
+    }).catch(() => { /* silent */ });
   };
 
   // Buy now: clear cart, add single item, go to checkout
