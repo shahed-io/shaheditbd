@@ -252,21 +252,30 @@ export default function WelcomeDiscount() {
               <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center">
                 <BadgePercent className="w-4 h-4 text-[hsl(var(--primary))]" />
               </div>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                Exclusive Offer
+              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[hsl(var(--primary))]">
+                🎁 New Customer Welcome Gift
               </span>
             </div>
 
             <h2 className="text-foreground text-lg font-semibold leading-tight">
-              {hasSpun && coupon ? 'অভিনন্দন! আপনি একটি ছাড় পেয়েছেন' : hasSpun && noPrize ? 'এই মুহূর্তে কোনো পুরস্কার নেই' : popupTitle}
+              {hasSpun && coupon ? '🎉 অভিনন্দন! আপনার ছাড় কোড প্রস্তুত' : hasSpun && noPrize ? 'এই মুহূর্তে কোনো পুরস্কার নেই' : popupTitle}
             </h2>
             <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
               {hasSpun && coupon
-                ? 'নিচের কুপন কোডটি কপি করে চেকআউটে ব্যবহার করুন'
+                ? 'নিচের কোডটি কপি করে চেকআউটে ব্যবহার করুন — মেয়াদ শেষ হওয়ার আগেই অর্ডার সম্পন্ন করুন।'
                 : hasSpun && noPrize
                 ? 'পরবর্তী ক্যাম্পেইনে আবার চেষ্টা করুন'
                 : popupSubtitle}
             </p>
+            {!hasSpun && (
+              <div className="mt-3 flex items-center gap-1.5 text-[10px] text-emerald-600 font-semibold">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                <span>100% Guaranteed Win • Free • No Card Required</span>
+              </div>
+            )}
           </div>
 
           {/* Wheel */}
