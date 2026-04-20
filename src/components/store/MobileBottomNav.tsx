@@ -157,11 +157,12 @@ const MobileBottomNav = () => {
     }
   };
 
-  // Swipe handlers attached to the rail (ul). Taps still fire on buttons because
-  // we only consume the gesture when horizontal movement exceeds a small threshold.
-  const SWIPE_START_THRESHOLD = 8; // px before we treat it as a swipe
+  // Swipe handlers — never capture pointer & never preventDefault, so taps and
+  // vertical scroll always work. Only navigate when user clearly swipes horizontally.
+  const SWIPE_START_THRESHOLD = 28; // px — must be a deliberate horizontal swipe
   const onRailPointerDown = (e: React.PointerEvent<HTMLUListElement>) => {
     if (activeIndex < 0) return;
+    if (e.pointerType === 'mouse') return; // mouse users click
     const pillWidth = (e.currentTarget.clientWidth - 12) / navItems.length;
     setDrag({ startX: e.clientX, currentX: e.clientX, active: false, pillWidth });
   };
@@ -170,20 +171,14 @@ const MobileBottomNav = () => {
     if (!drag) return;
     const delta = e.clientX - drag.startX;
     if (!drag.active && Math.abs(delta) < SWIPE_START_THRESHOLD) return;
-    if (!drag.active) {
-      try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
-    }
     setDrag({ ...drag, currentX: e.clientX, active: true });
   };
 
-  const onRailPointerUp = (e: React.PointerEvent<HTMLUListElement>) => {
+  const onRailPointerUp = () => {
     if (!drag) return;
-    if (!drag.active) {
-      setDrag(null);
-      return;
-    }
+    if (!drag.active) { setDrag(null); return; }
     const delta = drag.currentX - drag.startX;
-    const threshold = drag.pillWidth * 0.4;
+    const threshold = drag.pillWidth * 0.5;
     let nextIdx = activeIndex;
     if (delta > threshold) nextIdx = Math.min(navItems.length - 1, activeIndex + 1);
     else if (delta < -threshold) nextIdx = Math.max(0, activeIndex - 1);
