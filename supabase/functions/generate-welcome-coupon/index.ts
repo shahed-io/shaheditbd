@@ -25,15 +25,18 @@ interface SpinSettings {
   prizes: SpinPrize[];
 }
 
+// Weighted distribution (total weight = 1000):
+//  • 5–12% discounts  → ~99% chance (combined weight 990)
+//  • ৳100 OFF         → ~50% chance (weight 500, sits inside the 99% bucket)
+//  • 20% OFF          → ~1% chance  (weight 10) — ultra rare, লোভনীয়
+// No "Try Again" — সবাই কিছু না কিছু জিতবে → spin করতে বাধ্য হবে
 const DEFAULT_PRIZES: SpinPrize[] = [
-  { id: 'p1', label: '5% OFF',   type: 'percent', value: 5,   weight: 30, color: '262 80% 60%' },
-  { id: 'p2', label: '৳50 OFF',  type: 'fixed',   value: 50,  weight: 25, color: '24 95% 55%' },
-  { id: 'p3', label: '10% OFF',  type: 'percent', value: 10,  weight: 18, color: '198 90% 55%' },
-  { id: 'p4', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 12, color: '142 75% 45%' },
-  { id: 'p5', label: '15% OFF',  type: 'percent', value: 15,  weight: 8,  color: '340 85% 60%' },
-  { id: 'p6', label: '৳150 OFF', type: 'fixed',   value: 150, weight: 4,  color: '47 95% 55%' },
-  { id: 'p7', label: '20% OFF',  type: 'percent', value: 20,  weight: 2,  color: '280 85% 55%' },
-  { id: 'p8', label: 'Try Again',type: 'none',    value: 0,   weight: 1,  color: '0 0% 60%' },
+  { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: '142 75% 45%' }, // 50%
+  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 200, color: '262 80% 60%' }, // 20%
+  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 150, color: '24 95% 55%'  }, // 15%
+  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 90,  color: '198 90% 55%' }, // 9%
+  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 50,  color: '340 85% 60%' }, // 5%
+  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 10,  color: '280 85% 55%' }, // 1% — JACKPOT
 ];
 
 const DEFAULT_SETTINGS: SpinSettings = {
@@ -163,10 +166,10 @@ serve(async (req) => {
       });
     }
 
-    // Cap percent prizes at 20%, fixed at 500 — safety
+    // Cap percent prizes at 20%, fixed at ৳100 — safety
     const safePrizes = settings.prizes.map(p => {
       if (p.type === 'percent') return { ...p, value: Math.max(1, Math.min(20, Math.floor(p.value))) };
-      if (p.type === 'fixed') return { ...p, value: Math.max(10, Math.min(500, Math.floor(p.value))) };
+      if (p.type === 'fixed') return { ...p, value: Math.max(10, Math.min(100, Math.floor(p.value))) };
       return { ...p, value: 0 };
     });
 
