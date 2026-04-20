@@ -339,7 +339,7 @@ export default function WelcomeDiscount() {
               </div>
 
               <p className="text-center text-xs text-muted-foreground mt-5">
-                {spinning ? 'আপনার পুরস্কার নির্ধারণ করা হচ্ছে...' : 'CLAIM বাটনে ক্লিক করে আপনার ছাড়টি দেখুন'}
+                {spinning ? 'আপনার পুরস্কার নির্ধারণ করা হচ্ছে...' : 'CLAIM-এ ক্লিক করে আপনার গ্যারান্টিড ছাড়টি Unlock করুন'}
               </p>
 
               {/* Trust signals */}
@@ -351,7 +351,12 @@ export default function WelcomeDiscount() {
                 <div className="w-px h-3 bg-border" />
                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                   <Tag className="w-3 h-3" />
-                  <span>One Per Customer</span>
+                  <span>One-Time Use</span>
+                </div>
+                <div className="w-px h-3 bg-border" />
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Clock className="w-3 h-3" />
+                  <span>Limited Time</span>
                 </div>
               </div>
             </div>
@@ -363,7 +368,7 @@ export default function WelcomeDiscount() {
               {/* Discount value display */}
               <div className="text-center mb-5">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold mb-2">
-                  Your Discount
+                  Your Welcome Reward
                 </p>
                 <div className="text-4xl font-bold text-foreground tracking-tight">
                   {coupon.prizeLabel}
