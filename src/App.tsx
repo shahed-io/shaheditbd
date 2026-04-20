@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useEffect, lazy, Suspense, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
@@ -284,7 +284,8 @@ const AppContent = () => {
           <Route path="/order-policy" element={<OrderPolicy />} />
           <Route path="/delivery-info" element={<DeliveryInfo />} />
           <Route path="/return-policy" element={<ReturnPolicy />} />
-          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/contact" element={<Navigate to="/contact-us" replace />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/faqs" element={<FAQs />} />
           <Route path="/free-tools" element={<FreeTools />} />
