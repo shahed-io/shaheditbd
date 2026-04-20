@@ -157,22 +157,31 @@ const MobileBottomNav = () => {
     }
   };
 
-  const onIndicatorPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+  // Swipe handlers attached to the rail (ul). Taps still fire on buttons because
+  // we only consume the gesture when horizontal movement exceeds a small threshold.
+  const SWIPE_START_THRESHOLD = 8; // px before we treat it as a swipe
+  const onRailPointerDown = (e: React.PointerEvent<HTMLUListElement>) => {
     if (activeIndex < 0) return;
-    const parent = e.currentTarget.parentElement;
-    if (!parent) return;
-    const pillWidth = (parent.clientWidth - 12) / navItems.length;
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    setDrag({ startX: e.clientX, currentX: e.clientX, active: true, pillWidth });
+    const pillWidth = (e.currentTarget.clientWidth - 12) / navItems.length;
+    setDrag({ startX: e.clientX, currentX: e.clientX, active: false, pillWidth });
   };
 
-  const onIndicatorPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!drag?.active) return;
-    setDrag({ ...drag, currentX: e.clientX });
+  const onRailPointerMove = (e: React.PointerEvent<HTMLUListElement>) => {
+    if (!drag) return;
+    const delta = e.clientX - drag.startX;
+    if (!drag.active && Math.abs(delta) < SWIPE_START_THRESHOLD) return;
+    if (!drag.active) {
+      try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+    }
+    setDrag({ ...drag, currentX: e.clientX, active: true });
   };
 
-  const onIndicatorPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!drag?.active) return;
+  const onRailPointerUp = (e: React.PointerEvent<HTMLUListElement>) => {
+    if (!drag) return;
+    if (!drag.active) {
+      setDrag(null);
+      return;
+    }
     const delta = drag.currentX - drag.startX;
     const threshold = drag.pillWidth * 0.4;
     let nextIdx = activeIndex;
@@ -225,14 +234,10 @@ const MobileBottomNav = () => {
               }}
             />
 
-            {/* Sliding active indicator (gradient blob) — Apple-style swipe enabled */}
+            {/* Sliding active indicator (gradient blob) — purely visual, never blocks taps */}
             {activeIndex >= 0 && (
               <div
-                onPointerDown={onIndicatorPointerDown}
-                onPointerMove={onIndicatorPointerMove}
-                onPointerUp={onIndicatorPointerUp}
-                onPointerCancel={onIndicatorPointerUp}
-                className={`absolute top-1.5 bottom-1.5 z-0 touch-none ${
+                className={`absolute top-1.5 bottom-1.5 z-0 pointer-events-none ${
                   drag?.active
                     ? 'transition-none'
                     : 'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]'
@@ -241,11 +246,10 @@ const MobileBottomNav = () => {
                   width: `calc((100% - 12px) / ${navItems.length})`,
                   left: `calc(6px + ${activeIndex} * ((100% - 12px) / ${navItems.length}))`,
                   transform: `translateX(${dragOffset}px)`,
-                  cursor: drag?.active ? 'grabbing' : 'grab',
                 }}
               >
                 <div
-                  className="w-full h-full rounded-2xl pointer-events-none"
+                  className="w-full h-full rounded-2xl"
                   style={{
                     background: navItems[activeIndex].gradient,
                     boxShadow: `0 10px 28px -6px ${
@@ -261,7 +265,13 @@ const MobileBottomNav = () => {
               </div>
             )}
 
-            <ul className="relative z-10 grid grid-cols-5 px-1.5 py-1.5">
+            <ul
+              className="relative z-10 grid grid-cols-5 px-1.5 py-1.5 touch-pan-y"
+              onPointerDown={onRailPointerDown}
+              onPointerMove={onRailPointerMove}
+              onPointerUp={onRailPointerUp}
+              onPointerCancel={onRailPointerUp}
+            >
               {navItems.map((item, idx) => {
                 const isActive = idx === activeIndex;
                 const Icon = item.icon;
