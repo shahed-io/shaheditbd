@@ -166,10 +166,10 @@ serve(async (req) => {
       });
     }
 
-    // Cap percent prizes at 20%, fixed at 500 — safety
+    // Cap percent prizes at 20%, fixed at ৳100 — safety
     const safePrizes = settings.prizes.map(p => {
       if (p.type === 'percent') return { ...p, value: Math.max(1, Math.min(20, Math.floor(p.value))) };
-      if (p.type === 'fixed') return { ...p, value: Math.max(10, Math.min(500, Math.floor(p.value))) };
+      if (p.type === 'fixed') return { ...p, value: Math.max(10, Math.min(100, Math.floor(p.value))) };
       return { ...p, value: 0 };
     });
 
