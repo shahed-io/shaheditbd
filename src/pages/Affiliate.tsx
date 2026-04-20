@@ -229,6 +229,12 @@ const Affiliate = () => {
           name: form.applicant_name,
         }).catch(() => { /* silent */ });
       }).catch(() => { /* silent */ });
+      // Fire TikTok / Snap / Pin / LinkedIn / X Lead pixels
+      import('@/components/store/MarketingPixels').then(({ mTrackLead, loadMarketingPixels }) => {
+        loadMarketingPixels().then(() => {
+          mTrackLead({ method: 'affiliate_apply' });
+        }).catch(() => { /* silent */ });
+      }).catch(() => { /* silent */ });
 
       toast.success('আবেদন সফলভাবে জমা হয়েছে! 🎉 অ্যাডমিন রিভিউ করার পর আপনাকে জানানো হবে।');
       fetchData();

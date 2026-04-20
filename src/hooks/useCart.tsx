@@ -114,6 +114,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         items: [{ item_id: String(item.id), item_name: item.name, price: item.price, quantity: qty }],
       }).catch(() => { /* silent */ });
     }).catch(() => { /* silent */ });
+    // Fire TikTok / Snapchat / Pinterest / LinkedIn / X pixels
+    import('@/components/store/MarketingPixels').then(({ mTrackAddToCart, loadMarketingPixels }) => {
+      loadMarketingPixels().then(() => {
+        mTrackAddToCart({
+          content_id: String(item.id),
+          content_name: item.name,
+          value: item.price * qty,
+        });
+      }).catch(() => { /* silent */ });
+    }).catch(() => { /* silent */ });
   };
 
   // Buy now: clear cart, add single item, go to checkout
