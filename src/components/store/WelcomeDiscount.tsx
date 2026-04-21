@@ -42,15 +42,26 @@ function getOrCreateVisitorId(): string {
   return id;
 }
 
-// Professional palette — muted, brand-aligned (no neon casino colors)
+// Professional, high-contrast palette — brand-aligned and conversion-focused
 const FALLBACK_PRIZES: SpinPrize[] = [
-  { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: '258 60% 55%' },
-  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 180, color: '42 96% 58%' },
-  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 140, color: '200 90% 45%' },
-  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 105, color: '162 72% 38%' },
-  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 70,  color: '330 85% 55%' },
-  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: '258 78% 45%' },
+  { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: 'var(--accent)' },
+  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 180, color: 'var(--primary)' },
+  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 140, color: 'var(--brand2-h) var(--brand2-s) var(--brand2-l)' },
+  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 105, color: 'var(--brand4-h) var(--brand4-s) var(--brand4-l)' },
+  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 70,  color: 'var(--brand3-h) var(--brand3-s) var(--brand3-l)' },
+  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: 'var(--primary)' },
 ];
+
+const VIBRANT_PRIZE_PALETTE = [
+  'var(--accent)',
+  'var(--primary)',
+  'var(--brand2-h) var(--brand2-s) var(--brand2-l)',
+  'var(--brand4-h) var(--brand4-s) var(--brand4-l)',
+  'var(--brand3-h) var(--brand3-s) var(--brand3-l)',
+  'var(--primary)',
+];
+
+const getPrizeColor = (prize: SpinPrize, index: number) => prize.color || VIBRANT_PRIZE_PALETTE[index % VIBRANT_PRIZE_PALETTE.length];
 
 const getPrizeBenefit = (prize: SpinPrize) => {
   if (prize.type === 'fixed') return `চেকআউটে সরাসরি ৳${prize.value} কমবে`;
@@ -336,7 +347,7 @@ export default function WelcomeDiscount() {
   const conicStops = prizes.map((p, i) => {
     const start = i * sliceAngle;
     const end = (i + 1) * sliceAngle;
-    const color = `hsl(${p.color || '258 50% 60%'})`;
+    const color = `hsl(${getPrizeColor(p, i)})`;
     return `${color} ${start}deg ${end}deg`;
   }).join(', ');
 
@@ -346,7 +357,7 @@ export default function WelcomeDiscount() {
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(135deg, hsla(258, 60%, 20%, 0.55), hsla(258, 40%, 10%, 0.65))',
+          background: 'linear-gradient(135deg, hsl(var(--primary) / 0.50), hsl(var(--brand2-h) var(--brand2-s) 20% / 0.42), hsl(var(--accent) / 0.22))',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
         }}
@@ -358,18 +369,18 @@ export default function WelcomeDiscount() {
         <div
           className="relative rounded-3xl overflow-hidden"
           style={{
-            background: 'linear-gradient(145deg, rgba(255,255,255,0.85), rgba(255,255,255,0.65))',
+            background: 'linear-gradient(145deg, hsl(var(--background) / 0.92), hsl(var(--card) / 0.74))',
             backdropFilter: 'blur(28px) saturate(180%)',
             WebkitBackdropFilter: 'blur(28px) saturate(180%)',
             border: '1px solid rgba(255,255,255,0.6)',
-            boxShadow: '0 20px 60px -15px rgba(80, 30, 180, 0.35), 0 0 0 1px rgba(255,255,255,0.4) inset',
+            boxShadow: '0 20px 60px -15px hsl(var(--primary) / 0.38), 0 0 0 1px hsl(var(--background) / 0.45) inset',
           }}
         >
           {/* Preview mode banner */}
           {previewMode && (
             <div
               className="absolute top-0 left-0 right-0 z-30 text-center py-1.5 text-[10px] font-bold uppercase tracking-wider text-white"
-              style={{ background: 'linear-gradient(90deg, hsl(258 78% 55%), hsl(280 70% 55%))' }}
+              style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)), hsl(var(--accent)))' }}
             >
               <Sparkles className="w-3 h-3 inline mr-1" />
               Admin Preview Mode — Test Spin
@@ -391,15 +402,15 @@ export default function WelcomeDiscount() {
               <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(258 78% 55% / 0.18), hsl(258 78% 55% / 0.08))',
-                  border: '1px solid hsl(258 78% 55% / 0.2)',
+                  background: 'linear-gradient(135deg, hsl(var(--primary) / 0.18), hsl(var(--accent) / 0.14))',
+                  border: '1px solid hsl(var(--primary) / 0.20)',
                 }}
               >
-                <BadgePercent className="w-4 h-4" style={{ color: 'hsl(258 78% 45%)' }} />
+                <BadgePercent className="w-4 h-4" style={{ color: 'hsl(var(--primary))' }} />
               </div>
               <span
                 className="text-[10px] font-semibold uppercase tracking-[0.15em]"
-                style={{ color: 'hsl(258 78% 45%)' }}
+                style={{ color: 'hsl(var(--primary))' }}
               >
                 🎁 Welcome Savings Voucher
               </span>
@@ -437,8 +448,8 @@ export default function WelcomeDiscount() {
                     style={{
                       borderLeft: '10px solid transparent',
                       borderRight: '10px solid transparent',
-                      borderTop: '16px solid hsl(258 78% 55%)',
-                      filter: 'drop-shadow(0 2px 4px rgba(80,30,180,0.4))',
+                      borderTop: '16px solid hsl(var(--accent))',
+                      filter: 'drop-shadow(0 2px 4px hsl(var(--primary) / 0.38))',
                     }}
                   />
                 </div>
@@ -447,8 +458,8 @@ export default function WelcomeDiscount() {
                 <div
                   className="absolute inset-0 rounded-full p-[3px]"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258 78% 55%), hsl(280 60% 60%))',
-                    boxShadow: '0 10px 30px -8px rgba(80, 30, 180, 0.4)',
+                    background: 'conic-gradient(from 210deg, hsl(var(--primary)), hsl(var(--brand2-h) var(--brand2-s) var(--brand2-l)), hsl(var(--accent)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)), hsl(var(--primary)))',
+                    boxShadow: '0 12px 34px -8px hsl(var(--primary) / 0.42)',
                   }}
                 >
                   <div className="relative w-full h-full rounded-full bg-white p-[3px] overflow-hidden">
@@ -498,15 +509,15 @@ export default function WelcomeDiscount() {
                       disabled={spinning}
                       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[68px] h-[68px] rounded-full flex items-center justify-center font-bold text-xs tracking-wide active:scale-95 transition-all disabled:cursor-not-allowed"
                       style={{
-                        background: 'linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.75))',
+                        background: 'radial-gradient(circle at 35% 25%, hsl(var(--background)), hsl(var(--accent) / 0.34) 46%, hsl(var(--primary) / 0.18))',
                         backdropFilter: 'blur(10px)',
-                        border: '3px solid hsl(258 78% 55%)',
-                        boxShadow: '0 6px 20px -4px rgba(80, 30, 180, 0.45), 0 0 0 1px rgba(255,255,255,0.6) inset',
-                        color: 'hsl(258 78% 45%)',
+                        border: '3px solid hsl(var(--primary))',
+                        boxShadow: '0 8px 22px -5px hsl(var(--primary) / 0.48), 0 0 0 1px hsl(var(--background) / 0.70) inset',
+                        color: 'hsl(var(--primary))',
                       }}
                     >
                       {spinning ? (
-                        <div className="w-5 h-5 border-2 rounded-full animate-spin" style={{ borderColor: 'hsl(258 78% 55%)', borderTopColor: 'transparent' }} />
+                        <div className="w-5 h-5 border-2 rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))', borderTopColor: 'transparent' }} />
                       ) : (
                         spinButtonText
                       )}
@@ -522,13 +533,13 @@ export default function WelcomeDiscount() {
               <div className="mt-4 rounded-2xl p-3" style={{ background: 'hsl(var(--background) / 0.62)', border: '1px solid hsl(var(--border) / 0.7)' }}>
                 <div className="flex items-center justify-between gap-3 mb-2">
                   <p className="text-[11px] font-bold text-slate-900">আজকের সম্ভাব্য Welcome Offers</p>
-                  <span className="rounded-full px-2 py-0.5 text-[9px] font-semibold" style={{ background: 'hsl(var(--primary) / 0.10)', color: 'hsl(var(--primary))' }}>Limited</span>
+                  <span className="rounded-full px-2 py-0.5 text-[9px] font-semibold" style={{ background: 'linear-gradient(135deg, hsl(var(--primary) / 0.14), hsl(var(--accent) / 0.22))', color: 'hsl(var(--primary))' }}>Limited</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {prizes.slice(0, 6).map((p) => (
                     <div key={p.id} className="rounded-xl px-2.5 py-2" style={{ background: 'hsl(var(--card) / 0.78)', border: '1px solid hsl(var(--border) / 0.65)' }}>
                       <div className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full" style={{ background: `hsl(${p.color || 'var(--primary)'})` }} />
+                        <span className="h-2 w-2 rounded-full" style={{ background: `hsl(${getPrizeColor(p, prizes.indexOf(p))})` }} />
                         <span className="text-[11px] font-bold text-slate-900">{p.label}</span>
                       </div>
                       <p className="mt-1 text-[9.5px] leading-snug text-slate-600">{getPrizeBenefit(p)}</p>
@@ -567,7 +578,7 @@ export default function WelcomeDiscount() {
                 </p>
                 <div
                   className="text-4xl font-bold tracking-tight bg-clip-text text-transparent"
-                  style={{ backgroundImage: 'linear-gradient(135deg, hsl(258 78% 45%), hsl(280 70% 50%))' }}
+                   style={{ backgroundImage: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)), hsl(var(--accent)))' }}
                 >
                   {coupon.prizeLabel}
                 </div>
@@ -584,7 +595,7 @@ export default function WelcomeDiscount() {
                 style={{
                   background: 'linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.5))',
                   backdropFilter: 'blur(12px)',
-                  border: '2px dashed hsl(258 60% 70%)',
+                   border: '2px dashed hsl(var(--primary) / 0.55)',
                 }}
               >
                 <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-2">
@@ -601,7 +612,7 @@ export default function WelcomeDiscount() {
                         ? 'bg-emerald-500/15 text-emerald-700'
                         : 'text-white hover:opacity-90'
                     }`}
-                    style={!copied ? { background: 'linear-gradient(135deg, hsl(258 78% 55%), hsl(280 70% 55%))' } : undefined}
+                    style={!copied ? { background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)))' } : undefined}
                   >
                     {copied ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy</>}
                   </button>
@@ -614,7 +625,7 @@ export default function WelcomeDiscount() {
                   <Clock className="w-3.5 h-3.5" />
                   <span>মেয়াদ শেষ হবে</span>
                 </div>
-                <span className="font-mono font-semibold text-sm tabular-nums" style={{ color: 'hsl(258 78% 45%)' }}>
+                 <span className="font-mono font-semibold text-sm tabular-nums" style={{ color: 'hsl(var(--primary))' }}>
                   {timeLeft}
                 </span>
               </div>
@@ -624,8 +635,8 @@ export default function WelcomeDiscount() {
                 onClick={handleClose}
                 className="mt-5 w-full py-2.5 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(258 78% 55%), hsl(280 70% 55%))',
-                  boxShadow: '0 6px 18px -4px rgba(80, 30, 180, 0.45)',
+                   background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand2-h) var(--brand2-s) var(--brand2-l)), hsl(var(--accent)))',
+                   boxShadow: '0 6px 18px -4px hsl(var(--primary) / 0.45)',
                 }}
               >
                 এখনই কেনাকাটা শুরু করুন
@@ -649,7 +660,7 @@ export default function WelcomeDiscount() {
               <button
                 onClick={handleClose}
                 className="mt-5 w-full py-2.5 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"
-                style={{ background: 'linear-gradient(135deg, hsl(258 78% 55%), hsl(280 70% 55%))' }}
+                style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)))' }}
               >
                 বুঝেছি
               </button>
