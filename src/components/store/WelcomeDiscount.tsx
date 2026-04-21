@@ -357,7 +357,7 @@ export default function WelcomeDiscount() {
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(135deg, hsla(258, 60%, 20%, 0.55), hsla(258, 40%, 10%, 0.65))',
+          background: 'linear-gradient(135deg, hsl(var(--primary) / 0.50), hsl(var(--brand2-h) var(--brand2-s) 20% / 0.42), hsl(var(--accent) / 0.22))',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
         }}
@@ -369,18 +369,18 @@ export default function WelcomeDiscount() {
         <div
           className="relative rounded-3xl overflow-hidden"
           style={{
-            background: 'linear-gradient(145deg, rgba(255,255,255,0.85), rgba(255,255,255,0.65))',
+            background: 'linear-gradient(145deg, hsl(var(--background) / 0.92), hsl(var(--card) / 0.74))',
             backdropFilter: 'blur(28px) saturate(180%)',
             WebkitBackdropFilter: 'blur(28px) saturate(180%)',
             border: '1px solid rgba(255,255,255,0.6)',
-            boxShadow: '0 20px 60px -15px rgba(80, 30, 180, 0.35), 0 0 0 1px rgba(255,255,255,0.4) inset',
+            boxShadow: '0 20px 60px -15px hsl(var(--primary) / 0.38), 0 0 0 1px hsl(var(--background) / 0.45) inset',
           }}
         >
           {/* Preview mode banner */}
           {previewMode && (
             <div
               className="absolute top-0 left-0 right-0 z-30 text-center py-1.5 text-[10px] font-bold uppercase tracking-wider text-white"
-              style={{ background: 'linear-gradient(90deg, hsl(258 78% 55%), hsl(280 70% 55%))' }}
+              style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)), hsl(var(--accent)))' }}
             >
               <Sparkles className="w-3 h-3 inline mr-1" />
               Admin Preview Mode — Test Spin
