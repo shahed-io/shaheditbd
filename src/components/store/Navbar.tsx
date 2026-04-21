@@ -138,14 +138,31 @@ const Navbar = () => {
       setUserStats(null);
       setProfileName(null);
       setProfileUsername(null);
+      setAvatarFailed(false);
       return;
+    }
+
+    // Immediately seed avatar from Google OAuth metadata so it shows up even
+    // before the profiles row finishes loading.
+    const oauthAvatar =
+      (user.user_metadata as any)?.avatar_url ||
+      (user.user_metadata as any)?.picture ||
+      null;
+    if (oauthAvatar) {
+      setAvatarUrl(oauthAvatar);
+      setAvatarFailed(false);
     }
 
     const loadProfile = () => {
       supabase.from('profiles').select('avatar_url, display_name, username, wallet_balance, points_balance').eq('user_id', user.id).single()
         .then(({ data }) => {
           if (!data) return;
-          setAvatarUrl(data.avatar_url || null);
+          // Prefer the saved profile avatar; fall back to the Google OAuth
+          // avatar so the photo is always visible for social-sign-in users.
+          const nextAvatar = data.avatar_url || oauthAvatar || null;
+          setAvatarUrl(nextAvatar);
+          setAvatarFailed(false);
+          setImgVersion(Date.now()); // bust cache when avatar changes
           setProfileName(data.display_name || null);
           setProfileUsername(data.username || null);
           setUserStats(prev => ({
@@ -157,11 +174,10 @@ const Navbar = () => {
         });
     };
 
-    const t = setTimeout(() => {
-      loadProfile();
-      supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle()
-        .then(({ data }) => { setIsAdmin(!!data); });
-    }, 500);
+    // Load immediately (no 500ms delay) so the photo doesn't flash blank.
+    loadProfile();
+    supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle()
+      .then(({ data }) => { setIsAdmin(!!data); });
 
     // Realtime: refresh profile name/username/avatar when user updates from dashboard
     const channel = supabase
@@ -171,7 +187,6 @@ const Navbar = () => {
       .subscribe();
 
     return () => {
-      clearTimeout(t);
       supabase.removeChannel(channel);
     };
   }, [user]);
