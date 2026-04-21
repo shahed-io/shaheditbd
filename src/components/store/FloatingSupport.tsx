@@ -145,10 +145,25 @@ const FloatingSupport = () => {
 
       if (!resp.ok) {
         const errData = await resp.json().catch(() => ({}));
-        throw new Error(errData.error || 'Failed');
+        // Handle specific status codes with friendly Bengali messages — no throw
+        let friendlyMsg = errData.error || 'দুঃখিত, সমস্যা হয়েছে।';
+        if (resp.status === 402) {
+          friendlyMsg = '🔧 AI সহায়তা সাময়িকভাবে অনুপলব্ধ। সরাসরি WhatsApp-এ যোগাযোগ করুন: 01840099853';
+        } else if (resp.status === 429) {
+          friendlyMsg = '⏳ অনেক বেশি রিকোয়েস্ট। ১ মিনিট পরে আবার চেষ্টা করুন।';
+        } else if (resp.status >= 500) {
+          friendlyMsg = '⚠️ সার্ভার সমস্যা। WhatsApp-এ যোগাযোগ করুন: 01840099853';
+        }
+        setMessages(prev => [...prev, { role: 'assistant', content: friendlyMsg }]);
+        setLoading(false);
+        return;
       }
 
-      if (!resp.body) throw new Error('No body');
+      if (!resp.body) {
+        setMessages(prev => [...prev, { role: 'assistant', content: 'দুঃখিত, রেসপন্স পাওয়া যায়নি। WhatsApp: 01840099853' }]);
+        setLoading(false);
+        return;
+      }
 
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
@@ -197,10 +212,11 @@ const FloatingSupport = () => {
         } catch { /* silent */ }
       }
     } catch (err: any) {
-      const msg = err?.message?.includes('রিকোয়েস্ট') || err?.message?.includes('AI')
-        ? err.message
-        : 'দুঃখিত, সমস্যা হয়েছে। WhatsApp-এ যোগাযোগ করুন: 01840099853';
-      setMessages(prev => [...prev, { role: 'assistant', content: msg }]);
+      console.warn('Chat error (handled):', err?.message);
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: '⚠️ সংযোগে সমস্যা হয়েছে। WhatsApp-এ যোগাযোগ করুন: 01840099853',
+      }]);
     } finally {
       setLoading(false);
     }
