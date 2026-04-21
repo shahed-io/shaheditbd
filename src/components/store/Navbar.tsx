@@ -522,11 +522,13 @@ const Navbar = () => {
           style={{
             WebkitOverflowScrolling: 'touch',
             touchAction: mobileOpen ? 'pan-y' : 'auto',
-            maxHeight: mobileOpen ? 'calc(100dvh - 64px)' : '0px',
+            // Subtract: announcement bar (~40px) + navbar (68px) + wrapper padding (16px) + safety (12px)
+            // Subtract: announcement bar (~40px) + navbar (68px) + wrapper padding (16px) + bottom nav (~64px) + safety
+            maxHeight: mobileOpen ? `calc(100dvh - ${scrolled ? 160 : 200}px)` : '0px',
             transition: 'max-height 500ms ease-out',
           }}
         >
-          <div className="border-t px-3 py-4 pb-[max(env(safe-area-inset-bottom),32px)] relative"
+          <div className="border-t px-3 py-4 pb-[calc(env(safe-area-inset-bottom)+24px)] relative"
             style={{
               background: 'linear-gradient(180deg, hsla(258,60%,99%,0.98) 0%, hsla(220,50%,98%,0.98) 50%, hsla(280,40%,99%,0.98) 100%)',
               borderColor: 'hsla(258,78%,60%,0.15)',
