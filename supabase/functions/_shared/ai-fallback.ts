@@ -1,0 +1,135 @@
+// Shared AI helper: tries Lovable AI Gateway first, then falls back to direct Gemini API
+// Use this whenever Lovable AI credits may be exhausted (402) so features keep working.
+
+export interface AIMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+export interface AIResult {
+  text: string;
+  provider: "lovable" | "gemini";
+}
+
+/** Map Lovable model id → Gemini direct model id (prefer lite for free quota) */
+function mapToGeminiModel(_model: string): string {
+  // Always use flash-lite for fallback — has the most generous free quota
+  return "gemini-2.5-flash-lite";
+}
+
+/** Get all available Gemini keys */
+function getGeminiKeys(): string[] {
+  return [
+    Deno.env.get("GEMINI_API_KEY"),
+    Deno.env.get("GEMINI_API_KEY_2"),
+    Deno.env.get("GEMINI_API_KEY_3"),
+    Deno.env.get("GEMINI_API_KEY_4"),
+    Deno.env.get("GEMINI_API_KEY_5"),
+    Deno.env.get("GEMINI_API_KEY_6"),
+  ].filter(Boolean) as string[];
+}
+
+/** Convert OpenAI-style messages → Gemini format */
+function messagesToGemini(messages: AIMessage[]) {
+  const systemTexts: string[] = [];
+  const contents: any[] = [];
+  for (const m of messages) {
+    if (m.role === "system") {
+      systemTexts.push(m.content);
+    } else {
+      contents.push({
+        role: m.role === "assistant" ? "model" : "user",
+        parts: [{ text: m.content }],
+      });
+    }
+  }
+  const payload: any = { contents };
+  if (systemTexts.length > 0) {
+    payload.systemInstruction = { parts: [{ text: systemTexts.join("\n\n") }] };
+  }
+  return payload;
+}
+
+/**
+ * Call AI with automatic fallback.
+ * Tries Lovable AI Gateway first; on 402/429/5xx falls back to direct Gemini.
+ */
+export async function callAIWithFallback(opts: {
+  model?: string;
+  messages: AIMessage[];
+  maxTokens?: number;
+}): Promise<AIResult> {
+  const model = opts.model || "google/gemini-3-flash-preview";
+  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+
+  // Try Lovable AI Gateway first
+  if (LOVABLE_API_KEY) {
+    try {
+      const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: opts.messages,
+          ...(opts.maxTokens ? { max_tokens: opts.maxTokens } : {}),
+        }),
+      });
+
+      if (r.ok) {
+        const data = await r.json();
+        const text = data.choices?.[0]?.message?.content ?? "";
+        if (text) return { text, provider: "lovable" };
+      } else {
+        console.warn(`Lovable AI failed (${r.status}); falling back to Gemini`);
+      }
+    } catch (e) {
+      console.warn("Lovable AI exception, falling back to Gemini:", e);
+    }
+  }
+
+  // Fallback: direct Gemini API — try every key, retry on 429/503
+  const geminiKeys = getGeminiKeys();
+  if (geminiKeys.length === 0) {
+    throw new Error("No AI provider available (Lovable credits exhausted and no GEMINI_API_KEY)");
+  }
+
+  const geminiModel = mapToGeminiModel(model);
+  const payload = messagesToGemini(opts.messages);
+  const shuffled = [...geminiKeys].sort(() => Math.random() - 0.5);
+
+  let lastErr = "";
+  for (const key of shuffled) {
+    try {
+      const gr = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${key}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (gr.ok) {
+        const gdata = await gr.json();
+        const text = gdata.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ?? "";
+        if (text) return { text, provider: "gemini" };
+        lastErr = "Empty Gemini response";
+        continue;
+      }
+
+      const errText = await gr.text().catch(() => "");
+      lastErr = `${gr.status} ${errText.slice(0, 150)}`;
+      // Retry next key on quota/overload
+      if (gr.status === 429 || gr.status === 503) continue;
+      break;
+    } catch (e) {
+      lastErr = e instanceof Error ? e.message : String(e);
+      continue;
+    }
+  }
+
+  throw new Error(`Gemini fallback failed (tried ${shuffled.length} keys): ${lastErr}`);
+}

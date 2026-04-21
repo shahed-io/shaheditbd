@@ -295,7 +295,9 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
       requestBody.response_format = { type: "json_object" };
     }
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    // Try Lovable AI, then fallback to direct Gemini
+    let content = "";
+    const lovableResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -304,25 +306,29 @@ Now write the full description for the NEW PRODUCT following the EXACT SAME styl
       body: JSON.stringify(requestBody),
     });
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "AI rate limit exceeded. Please try again later." }), {
-          status: 429,
+    if (lovableResp.ok) {
+      const data = await lovableResp.json();
+      content = data.choices?.[0]?.message?.content || "";
+    } else {
+      console.warn(`Lovable AI failed (${lovableResp.status}); falling back to Gemini`);
+      const { callAIWithFallback } = await import("../_shared/ai-fallback.ts");
+      try {
+        const { text } = await callAIWithFallback({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            { role: "system", content: systemPrompt + (isJsonType ? "\n\nReturn ONLY valid JSON, no markdown." : "") },
+            { role: "user", content: userPrompt },
+          ],
+          maxTokens,
+        });
+        content = text;
+      } catch (e) {
+        return new Response(JSON.stringify({ error: "AI সাময়িকভাবে অনুপলব্ধ। পরে আবার চেষ্টা করুন।" }), {
+          status: 503,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Please add credits." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const errText = await response.text();
-      throw new Error(`AI gateway error [${response.status}]: ${errText}`);
     }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || "";
 
     if (type === "short_description" || type === "description" || type === "demo_style") {
       return new Response(JSON.stringify({ result: content.trim() }), {
