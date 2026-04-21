@@ -11,16 +11,15 @@ export interface AIResult {
   provider: "lovable" | "gemini";
 }
 
-/** Map Lovable model id → Gemini direct model id */
-function mapToGeminiModel(model: string): string {
-  if (model.includes("gemini-3") || model.includes("2.5-pro")) return "gemini-2.5-flash";
-  if (model.includes("flash-lite")) return "gemini-2.5-flash-lite";
-  return "gemini-2.5-flash";
+/** Map Lovable model id → Gemini direct model id (prefer lite for free quota) */
+function mapToGeminiModel(_model: string): string {
+  // Always use flash-lite for fallback — has the most generous free quota
+  return "gemini-2.5-flash-lite";
 }
 
-/** Pick first available Gemini key (rotate through pool) */
-function getGeminiKey(): string | null {
-  const keys = [
+/** Get all available Gemini keys */
+function getGeminiKeys(): string[] {
+  return [
     Deno.env.get("GEMINI_API_KEY"),
     Deno.env.get("GEMINI_API_KEY_2"),
     Deno.env.get("GEMINI_API_KEY_3"),
@@ -28,8 +27,6 @@ function getGeminiKey(): string | null {
     Deno.env.get("GEMINI_API_KEY_5"),
     Deno.env.get("GEMINI_API_KEY_6"),
   ].filter(Boolean) as string[];
-  if (keys.length === 0) return null;
-  return keys[Math.floor(Math.random() * keys.length)];
 }
 
 /** Convert OpenAI-style messages → Gemini format */
