@@ -522,7 +522,8 @@ const Navbar = () => {
           style={{
             WebkitOverflowScrolling: 'touch',
             touchAction: mobileOpen ? 'pan-y' : 'auto',
-            maxHeight: mobileOpen ? 'calc(100dvh - 64px)' : '0px',
+            // Subtract: announcement bar (~40px) + navbar (68px) + wrapper padding (16px) + safety (12px)
+            maxHeight: mobileOpen ? `calc(100dvh - ${scrolled ? 96 : 136}px)` : '0px',
             transition: 'max-height 500ms ease-out',
           }}
         >
