@@ -93,29 +93,46 @@ export async function callAIWithFallback(opts: {
     }
   }
 
-  // Fallback: direct Gemini API
-  const geminiKey = getGeminiKey();
-  if (!geminiKey) throw new Error("No AI provider available (Lovable credits exhausted and no GEMINI_API_KEY)");
+  // Fallback: direct Gemini API — try every key, retry on 429/503
+  const geminiKeys = getGeminiKeys();
+  if (geminiKeys.length === 0) {
+    throw new Error("No AI provider available (Lovable credits exhausted and no GEMINI_API_KEY)");
+  }
 
   const geminiModel = mapToGeminiModel(model);
   const payload = messagesToGemini(opts.messages);
+  const shuffled = [...geminiKeys].sort(() => Math.random() - 0.5);
 
-  const gr = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+  let lastErr = "";
+  for (const key of shuffled) {
+    try {
+      const gr = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${key}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (gr.ok) {
+        const gdata = await gr.json();
+        const text = gdata.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ?? "";
+        if (text) return { text, provider: "gemini" };
+        lastErr = "Empty Gemini response";
+        continue;
+      }
+
+      const errText = await gr.text().catch(() => "");
+      lastErr = `${gr.status} ${errText.slice(0, 150)}`;
+      // Retry next key on quota/overload
+      if (gr.status === 429 || gr.status === 503) continue;
+      break;
+    } catch (e) {
+      lastErr = e instanceof Error ? e.message : String(e);
+      continue;
     }
-  );
-
-  if (!gr.ok) {
-    const errText = await gr.text().catch(() => "");
-    throw new Error(`Gemini fallback failed: ${gr.status} ${errText.slice(0, 200)}`);
   }
 
-  const gdata = await gr.json();
-  const text = gdata.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ?? "";
-  if (!text) throw new Error("Gemini returned empty response");
-  return { text, provider: "gemini" };
+  throw new Error(`Gemini fallback failed (tried ${shuffled.length} keys): ${lastErr}`);
 }
