@@ -577,20 +577,29 @@ const Navbar = () => {
                     style={{ background: 'radial-gradient(circle, hsla(0,0%,100%,0.25), transparent 70%)', filter: 'blur(8px)' }} />
 
                   <div className="relative flex items-center gap-3.5">
-                    {/* Avatar with ring */}
+                    {/* Avatar with premium ring — circular for clearer face */}
                     <div className="relative shrink-0">
-                      <div className="absolute -inset-1 rounded-2xl"
-                        style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.6), hsla(280,90%,80%,0.6))', filter: 'blur(4px)' }} />
-                      <div className="relative w-14 h-14 rounded-2xl overflow-hidden flex items-center justify-center"
-                        style={{ background: 'hsla(0,0%,100%,0.25)', backdropFilter: 'blur(12px)', border: '2px solid hsla(0,0%,100%,0.5)' }}>
-                        {avatarUrl ? (
-                          <img src={`${avatarUrl}?v=${imgVersion}`} alt="avatar" className="w-full h-full object-cover" />
+                      <div className="absolute -inset-[3px] rounded-full"
+                        style={{ background: 'conic-gradient(from 180deg, hsla(0,0%,100%,0.95), hsla(280,90%,80%,0.85), hsla(200,90%,75%,0.85), hsla(0,0%,100%,0.95))', filter: 'blur(2px)' }} />
+                      <div className="relative w-16 h-16 rounded-full overflow-hidden flex items-center justify-center"
+                        style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.85), hsla(200,90%,50%,0.85))', border: '2.5px solid hsla(0,0%,100%,0.95)', boxShadow: '0 6px 18px hsla(258,60%,30%,0.35), inset 0 1px 0 hsla(0,0%,100%,0.5)' }}>
+                        {avatarUrl && !avatarFailed ? (
+                          <img
+                            src={`${avatarUrl}${avatarUrl.includes('?') ? '&' : '?'}v=${imgVersion}`}
+                            alt={displayName}
+                            referrerPolicy="no-referrer"
+                            crossOrigin="anonymous"
+                            onError={() => setAvatarFailed(true)}
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
-                          <User size={26} className="text-white" strokeWidth={2.5} />
+                          <span className="text-white font-extrabold text-xl uppercase select-none" style={{ textShadow: '0 1px 3px hsla(0,0%,0%,0.25)' }}>
+                            {(displayName?.[0] || 'U').toUpperCase()}
+                          </span>
                         )}
                       </div>
                       {/* Online dot */}
-                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-white"
+                      <div className="absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-white"
                         style={{ background: 'hsl(150,80%,50%)', boxShadow: '0 0 8px hsla(150,80%,50%,0.6)' }} />
                     </div>
                     <div className="flex-1 text-left min-w-0">
