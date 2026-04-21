@@ -533,7 +533,7 @@ export default function WelcomeDiscount() {
               <div className="mt-4 rounded-2xl p-3" style={{ background: 'hsl(var(--background) / 0.62)', border: '1px solid hsl(var(--border) / 0.7)' }}>
                 <div className="flex items-center justify-between gap-3 mb-2">
                   <p className="text-[11px] font-bold text-slate-900">আজকের সম্ভাব্য Welcome Offers</p>
-                  <span className="rounded-full px-2 py-0.5 text-[9px] font-semibold" style={{ background: 'hsl(var(--primary) / 0.10)', color: 'hsl(var(--primary))' }}>Limited</span>
+                  <span className="rounded-full px-2 py-0.5 text-[9px] font-semibold" style={{ background: 'linear-gradient(135deg, hsl(var(--primary) / 0.14), hsl(var(--accent) / 0.22))', color: 'hsl(var(--primary))' }}>Limited</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {prizes.slice(0, 6).map((p) => (
@@ -578,7 +578,7 @@ export default function WelcomeDiscount() {
                 </p>
                 <div
                   className="text-4xl font-bold tracking-tight bg-clip-text text-transparent"
-                  style={{ backgroundImage: 'linear-gradient(135deg, hsl(258 78% 45%), hsl(280 70% 50%))' }}
+                   style={{ backgroundImage: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)), hsl(var(--accent)))' }}
                 >
                   {coupon.prizeLabel}
                 </div>
@@ -595,7 +595,7 @@ export default function WelcomeDiscount() {
                 style={{
                   background: 'linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.5))',
                   backdropFilter: 'blur(12px)',
-                  border: '2px dashed hsl(258 60% 70%)',
+                   border: '2px dashed hsl(var(--primary) / 0.55)',
                 }}
               >
                 <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-2">
@@ -612,7 +612,7 @@ export default function WelcomeDiscount() {
                         ? 'bg-emerald-500/15 text-emerald-700'
                         : 'text-white hover:opacity-90'
                     }`}
-                    style={!copied ? { background: 'linear-gradient(135deg, hsl(258 78% 55%), hsl(280 70% 55%))' } : undefined}
+                    style={!copied ? { background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)))' } : undefined}
                   >
                     {copied ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy</>}
                   </button>
@@ -625,7 +625,7 @@ export default function WelcomeDiscount() {
                   <Clock className="w-3.5 h-3.5" />
                   <span>মেয়াদ শেষ হবে</span>
                 </div>
-                <span className="font-mono font-semibold text-sm tabular-nums" style={{ color: 'hsl(258 78% 45%)' }}>
+                 <span className="font-mono font-semibold text-sm tabular-nums" style={{ color: 'hsl(var(--primary))' }}>
                   {timeLeft}
                 </span>
               </div>
@@ -635,8 +635,8 @@ export default function WelcomeDiscount() {
                 onClick={handleClose}
                 className="mt-5 w-full py-2.5 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(258 78% 55%), hsl(280 70% 55%))',
-                  boxShadow: '0 6px 18px -4px rgba(80, 30, 180, 0.45)',
+                   background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand2-h) var(--brand2-s) var(--brand2-l)), hsl(var(--accent)))',
+                   boxShadow: '0 6px 18px -4px hsl(var(--primary) / 0.45)',
                 }}
               >
                 এখনই কেনাকাটা শুরু করুন
@@ -660,7 +660,7 @@ export default function WelcomeDiscount() {
               <button
                 onClick={handleClose}
                 className="mt-5 w-full py-2.5 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"
-                style={{ background: 'linear-gradient(135deg, hsl(258 78% 55%), hsl(280 70% 55%))' }}
+                style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)))' }}
               >
                 বুঝেছি
               </button>
