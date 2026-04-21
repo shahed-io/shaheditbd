@@ -1,3 +1,30 @@
-/sitemap.xml https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap 200
-/sitemap_index.xml https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap 200
-/product-sitemap.xml https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap 200
+# ── Sitemaps (served by edge functions for fresh data) ──────────
+/sitemap.xml         https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap         200
+/sitemap_index.xml   https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap-index   200
+/product-sitemap.xml https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap         200
+/image-sitemap.xml   https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/image-sitemap   200
+
+# ── Bot prerender for product pages ─────────────────────────────
+# When Googlebot / Bingbot / social crawlers hit a product URL we serve
+# a fully-rendered static HTML version (with image, price, schema.org
+# markup) so search engines index the product instantly. Real users
+# get the SPA via the SPA fallback below.
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*Googlebot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*bingbot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*DuckDuckBot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*YandexBot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*Baiduspider*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*facebookexternalhit*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*Twitterbot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*LinkedInBot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*WhatsApp*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*TelegramBot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*Slackbot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*Applebot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*GPTBot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*PerplexityBot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*ClaudeBot*
+/product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*ChatGPT-User*
+
+# ── SPA fallback (for real users) ───────────────────────────────
+/*  /index.html  200
