@@ -402,15 +402,15 @@ export default function WelcomeDiscount() {
               <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(258 78% 55% / 0.18), hsl(258 78% 55% / 0.08))',
-                  border: '1px solid hsl(258 78% 55% / 0.2)',
+                  background: 'linear-gradient(135deg, hsl(var(--primary) / 0.18), hsl(var(--accent) / 0.14))',
+                  border: '1px solid hsl(var(--primary) / 0.20)',
                 }}
               >
-                <BadgePercent className="w-4 h-4" style={{ color: 'hsl(258 78% 45%)' }} />
+                <BadgePercent className="w-4 h-4" style={{ color: 'hsl(var(--primary))' }} />
               </div>
               <span
                 className="text-[10px] font-semibold uppercase tracking-[0.15em]"
-                style={{ color: 'hsl(258 78% 45%)' }}
+                style={{ color: 'hsl(var(--primary))' }}
               >
                 🎁 Welcome Savings Voucher
               </span>
@@ -448,8 +448,8 @@ export default function WelcomeDiscount() {
                     style={{
                       borderLeft: '10px solid transparent',
                       borderRight: '10px solid transparent',
-                      borderTop: '16px solid hsl(258 78% 55%)',
-                      filter: 'drop-shadow(0 2px 4px rgba(80,30,180,0.4))',
+                      borderTop: '16px solid hsl(var(--accent))',
+                      filter: 'drop-shadow(0 2px 4px hsl(var(--primary) / 0.38))',
                     }}
                   />
                 </div>
@@ -458,8 +458,8 @@ export default function WelcomeDiscount() {
                 <div
                   className="absolute inset-0 rounded-full p-[3px]"
                   style={{
-                    background: 'linear-gradient(135deg, hsl(258 78% 55%), hsl(280 60% 60%))',
-                    boxShadow: '0 10px 30px -8px rgba(80, 30, 180, 0.4)',
+                    background: 'conic-gradient(from 210deg, hsl(var(--primary)), hsl(var(--brand2-h) var(--brand2-s) var(--brand2-l)), hsl(var(--accent)), hsl(var(--brand3-h) var(--brand3-s) var(--brand3-l)), hsl(var(--primary)))',
+                    boxShadow: '0 12px 34px -8px hsl(var(--primary) / 0.42)',
                   }}
                 >
                   <div className="relative w-full h-full rounded-full bg-white p-[3px] overflow-hidden">
