@@ -86,7 +86,8 @@ const Navbar = () => {
     }
   }, [location.search, location.pathname]);
 
-  const [imgVersion] = useState(() => Date.now());
+  const [imgVersion, setImgVersion] = useState(() => Date.now());
+  const [avatarFailed, setAvatarFailed] = useState(false);
 
   const loadNavCategories = async (force = false) => {
     // Use cache if fresh
