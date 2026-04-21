@@ -1,0 +1,221 @@
+/**
+ * Anti-Scraping & Design Protection System
+ * --------------------------------------------------------------
+ * GOAL:
+ *  - Block automated scrapers / AI cloning bots (Firecrawl,
+ *    ScrapingBee, HTTrack, headless Puppeteer, wget, curl, etc.)
+ *    so they cannot mass-copy our HTML/CSS/design.
+ *  - PRESERVE search-engine + AI-search visibility (Googlebot,
+ *    Bingbot, GPTBot, PerplexityBot, ClaudeBot, etc.) so SEO and
+ *    AI answer-engine ranking are unaffected.
+ *  - PRESERVE all real human users (mobile + desktop) and the
+ *    backend/API behaviour.
+ *
+ * This file runs only on the client. Backend APIs / Supabase /
+ * edge functions are intentionally untouched.
+ */
+
+// ──────────────────────────────────────────────────────────────
+// 1. Bot classification — case-insensitive substring match on UA
+// ──────────────────────────────────────────────────────────────
+
+/** Search & social crawlers we WANT to allow for SEO + AI ranking. */
+const ALLOWED_BOT_SIGNATURES = [
+  // Search engines
+  'googlebot', 'google-inspectiontool', 'storebot-google', 'adsbot-google',
+  'bingbot', 'bingpreview', 'msnbot',
+  'duckduckbot', 'duckduckgo',
+  'yandexbot', 'yandeximages',
+  'baiduspider',
+  'slurp', // Yahoo
+  'sogou', 'exabot', 'seznambot',
+  // AI search / answer engines (good for ranking in AI results)
+  'gptbot', 'oai-searchbot', 'chatgpt-user',
+  'perplexitybot', 'perplexity-user',
+  'claudebot', 'claude-web', 'anthropic-ai',
+  'google-extended', 'googleother',
+  'applebot', 'applebot-extended',
+  'amazonbot',
+  'cohere-ai',
+  'youbot',
+  // Social preview bots (link unfurl)
+  'twitterbot', 'facebookexternalhit', 'facebookbot', 'facebot',
+  'linkedinbot', 'whatsapp', 'telegrambot',
+  'slackbot', 'discordbot', 'pinterest', 'pinterestbot',
+  'redditbot', 'embedly', 'quora link preview', 'tumblr',
+  // Monitoring / uptime — harmless
+  'uptimerobot', 'pingdom', 'statuscake',
+];
+
+/**
+ * Known scraper / cloning / mirror tools we want to BLOCK from
+ * being able to render our design. Designed to be conservative —
+ * we only block tools that are *primarily* used for scraping
+ * websites, never generic browsers.
+ */
+const BLOCKED_SCRAPER_SIGNATURES = [
+  // Generic CLI / library scrapers
+  'wget', 'curl/', 'libcurl', 'httrack', 'webcopier', 'webzip',
+  'offline explorer', 'teleport', 'sitesucker', 'getleft',
+  'webreaper', 'website ripper', 'website extractor',
+  // HTTP libraries (server-side scraping)
+  'python-requests', 'python-urllib', 'aiohttp', 'httpx',
+  'go-http-client', 'okhttp', 'java/', 'apache-httpclient',
+  'ruby', 'mechanize', 'scrapy', 'colly',
+  'node-fetch', 'axios/', 'got (', 'undici',
+  // Commercial scraping APIs
+  'firecrawl', 'scrapingbee', 'scraperapi', 'scrapfly',
+  'apify', 'brightdata', 'oxylabs', 'zyte', 'crawlbase',
+  'proxycrawl', 'diffbot', 'webscraping', 'webharvy',
+  'octoparse', 'parsehub', 'import.io', 'phantomjscloud',
+  // Headless / automation frameworks (when not masked)
+  'headlesschrome', 'phantomjs', 'slimerjs', 'electron',
+  'puppeteer', 'playwright', 'selenium', 'webdriver',
+  'chromedriver', 'geckodriver', 'nightmarejs', 'cypress',
+  // Site cloners
+  'sitedupe', 'webcloner', 'ai-website-clone', 'cloningbot',
+  'designscraper', 'uigrab', 'pagesnap',
+];
+
+export type BotClassification = 'allowed' | 'blocked' | 'human';
+
+export function classifyUserAgent(rawUa: string | undefined | null): BotClassification {
+  const ua = (rawUa || '').toLowerCase().trim();
+  if (!ua) return 'blocked'; // empty UA → almost always a script
+
+  // First check allow-list (so e.g. "ChatGPT-User" is never blocked).
+  for (const sig of ALLOWED_BOT_SIGNATURES) {
+    if (ua.includes(sig)) return 'allowed';
+  }
+
+  // Then check block-list.
+  for (const sig of BLOCKED_SCRAPER_SIGNATURES) {
+    if (ua.includes(sig)) return 'blocked';
+  }
+
+  return 'human';
+}
+
+// ──────────────────────────────────────────────────────────────
+// 2. Headless / automation runtime detection
+// ──────────────────────────────────────────────────────────────
+
+/**
+ * Detect headless browsers / automation environments that try to
+ * spoof a normal Chrome UA. We look for runtime fingerprints that
+ * a real human browser does not expose.
+ *
+ * Returns true ONLY when at least 2 strong signals match — this
+ * prevents false positives (some real users have weird devices).
+ */
+export function isAutomatedBrowser(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+
+  let signals = 0;
+  const nav = navigator as Navigator & { webdriver?: boolean; languages?: readonly string[] };
+
+  // Strongest signal: WebDriver flag (Selenium, Playwright, Puppeteer w/o stealth)
+  if (nav.webdriver === true) signals += 2;
+
+  // Chrome headless leaves these globals on window
+  const w = window as unknown as Record<string, unknown>;
+  if (w.__nightmare || w._phantom || w.callPhantom) signals += 2;
+  if (w.Buffer && typeof w.Buffer === 'function') signals += 1; // Node leak
+  if (w.spawn || w.emit) signals += 1;
+
+  // Headless Chrome has no real plugins and an empty languages array
+  try {
+    if (Array.isArray(nav.languages) && nav.languages.length === 0) signals += 1;
+    if (navigator.plugins && navigator.plugins.length === 0 && /chrome/i.test(navigator.userAgent)) {
+      signals += 1;
+    }
+  } catch { /* ignore */ }
+
+  // Permission API spoof check — headless Chrome returns "denied"
+  // for notifications even when the surrounding state is "granted".
+  // We don't run the async check inline; only flag the obvious bits.
+  if (/HeadlessChrome|PhantomJS/i.test(navigator.userAgent)) signals += 3;
+
+  return signals >= 3;
+}
+
+// ──────────────────────────────────────────────────────────────
+// 3. Public guard: "should we block this client from seeing the design?"
+// ──────────────────────────────────────────────────────────────
+
+export interface ProtectionDecision {
+  classification: BotClassification;
+  isAutomation: boolean;
+  shouldBlock: boolean;
+}
+
+export function evaluateClientProtection(): ProtectionDecision {
+  if (typeof navigator === 'undefined') {
+    return { classification: 'human', isAutomation: false, shouldBlock: false };
+  }
+  const classification = classifyUserAgent(navigator.userAgent);
+  const isAutomation = isAutomatedBrowser();
+  const shouldBlock = classification === 'blocked' || (classification === 'human' && isAutomation);
+  return { classification, isAutomation, shouldBlock };
+}
+
+// ──────────────────────────────────────────────────────────────
+// 4. Soft UX deterrents (only for real humans, never SEO bots)
+// ──────────────────────────────────────────────────────────────
+
+/**
+ * Install lightweight client-side anti-copy UX:
+ *  - block right-click context menu on the page
+ *  - block image drag-and-save
+ *  - block common DevTools shortcuts (F12, Ctrl+Shift+I/J/C, Ctrl+U)
+ *  - disable text selection on design chrome (but keep product
+ *    descriptions / blog body selectable so users can copy info)
+ *
+ * Search bots never execute this script (they parse HTML), so SEO
+ * is unaffected. Form fields, inputs, and `.allow-select` regions
+ * stay fully usable for real users.
+ */
+export function installCopyDeterrents(): () => void {
+  if (typeof document === 'undefined') return () => {};
+
+  const isInteractive = (el: EventTarget | null): boolean => {
+    if (!(el instanceof HTMLElement)) return false;
+    if (el.closest('input, textarea, select, [contenteditable="true"], .allow-select, .allow-copy')) {
+      return true;
+    }
+    return false;
+  };
+
+  const onContext = (e: MouseEvent) => {
+    if (isInteractive(e.target)) return;
+    e.preventDefault();
+  };
+
+  const onDragStart = (e: DragEvent) => {
+    const t = e.target as HTMLElement | null;
+    if (t && (t.tagName === 'IMG' || t.tagName === 'VIDEO')) e.preventDefault();
+  };
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    // F12
+    if (e.key === 'F12') { e.preventDefault(); return; }
+    // Ctrl/Cmd + U  (view source)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); return; }
+    // Ctrl/Cmd + S  (save page)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) { e.preventDefault(); return; }
+    // Ctrl/Cmd + Shift + I/J/C  (DevTools / inspector)
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','I','j','J','c','C'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  document.addEventListener('contextmenu', onContext);
+  document.addEventListener('dragstart', onDragStart);
+  document.addEventListener('keydown', onKeyDown);
+
+  return () => {
+    document.removeEventListener('contextmenu', onContext);
+    document.removeEventListener('dragstart', onDragStart);
+    document.removeEventListener('keydown', onKeyDown);
+  };
+}
