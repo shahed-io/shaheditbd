@@ -75,9 +75,12 @@ Deno.serve(async (req) => {
     </image:image>`).join('');
 
       urls.push(`  <url>
-    <loc>${SITE_URL}/product/${escape(p.slug)}</loc>${p.updated_at ? `\n    <lastmod>${p.updated_at.split('T')[0]}</lastmod>` : ''}
+    <loc>${SITE_URL}/product/${escape(p.slug)}</loc>${p.updated_at ? `\n    <lastmod>${p.updated_at}</lastmod>` : ''}
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>${imageBlocks}
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="bn-BD" href="${SITE_URL}/product/${escape(p.slug)}" />
+    <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}/product/${escape(p.slug)}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/product/${escape(p.slug)}" />${imageBlocks}
   </url>`);
     }
 
