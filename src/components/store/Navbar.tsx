@@ -523,7 +523,8 @@ const Navbar = () => {
             WebkitOverflowScrolling: 'touch',
             touchAction: mobileOpen ? 'pan-y' : 'auto',
             // Subtract: announcement bar (~40px) + navbar (68px) + wrapper padding (16px) + safety (12px)
-            maxHeight: mobileOpen ? `calc(100dvh - ${scrolled ? 96 : 136}px)` : '0px',
+            // Subtract: announcement bar (~40px) + navbar (68px) + wrapper padding (16px) + bottom nav (~64px) + safety
+            maxHeight: mobileOpen ? `calc(100dvh - ${scrolled ? 160 : 200}px)` : '0px',
             transition: 'max-height 500ms ease-out',
           }}
         >
