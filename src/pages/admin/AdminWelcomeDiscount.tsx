@@ -496,13 +496,14 @@ export default function AdminWelcomeDiscount() {
                             return (
                               <div
                                 key={p.id}
-                                className="absolute top-1/2 left-1/2 origin-left text-white font-bold text-[10px] whitespace-nowrap drop-shadow-md pointer-events-none"
+                                className="absolute top-1/2 left-1/2 origin-left pointer-events-none"
                                 style={{
-                                  transform: `rotate(${angle}deg) translateX(28px)`,
-                                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                                  transform: `rotate(${angle}deg) translateX(80px) rotate(-${angle}deg) translate(-50%, -50%)`,
                                 }}
                               >
-                                {p.label}
+                                <span className="inline-flex min-w-[56px] justify-center rounded-full border border-border bg-background/90 px-2 py-1 text-[10px] font-bold leading-none text-foreground shadow-sm">
+                                  {p.label}
+                                </span>
                               </div>
                             );
                           })}
@@ -524,14 +525,23 @@ export default function AdminWelcomeDiscount() {
 
                 {/* Probability summary */}
                 <div className="px-5 pb-5">
-                  <p className="text-xs font-semibold text-muted-foreground mb-2">Win Probability</p>
-                  <div className="space-y-1">
+                  <div className="mb-3 rounded-xl border border-border bg-card/70 p-3">
+                    <p className="text-xs font-bold text-foreground">Customer spend hook</p>
+                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                      Copy shown to visitors: অফারটি শুধু checkout-এ ব্যবহার করা যাবে, তাই cart total কমাতে claim করার পর অর্ডার সম্পন্ন করতে উৎসাহিত করবে।
+                    </p>
+                  </div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-2">Offer clarity & probability</p>
+                  <div className="space-y-1.5">
                     {settings.prizes.map(p => {
                       const prob = totalWeight > 0 ? (Math.max(0, p.weight) / totalWeight * 100) : 0;
                       return (
-                        <div key={p.id} className="flex items-center gap-2 text-xs">
+                        <div key={p.id} className="flex items-center gap-2 rounded-lg border border-border/70 bg-card/60 px-2.5 py-2 text-xs">
                           <div className="w-3 h-3 rounded-full shrink-0" style={{ background: `hsl(${p.color || '262 80% 60%'})` }} />
-                          <span className="flex-1 truncate font-medium">{p.label}</span>
+                          <span className="flex-1 min-w-0">
+                            <span className="block truncate font-semibold text-foreground">{p.label}</span>
+                            <span className="block truncate text-[10px] text-muted-foreground">{getPrizeBenefit(p)}</span>
+                          </span>
                           <span className="text-muted-foreground tabular-nums">{prob.toFixed(1)}%</span>
                         </div>
                       );
