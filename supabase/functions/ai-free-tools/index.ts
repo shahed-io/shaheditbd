@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { callAIWithFallback } from "../_shared/ai-fallback.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,36 +32,20 @@ serve(async (req) => {
     const body = await req.json();
     const { tool, input, ...extra } = body;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
-
     const promptFn = TOOL_PROMPTS[tool];
     if (!promptFn) throw new Error(`Unknown tool: ${tool}`);
 
     const prompt = promptFn(input || '', extra as Record<string, string>);
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: "You are a helpful AI assistant for a Bangladeshi e-commerce store. Respond in Bengali when asked, or English/mixed as appropriate. Be concise and practical." },
-          { role: "user", content: prompt }
-        ],
-      }),
+    const { text } = await callAIWithFallback({
+      model: "google/gemini-3-flash-preview",
+      messages: [
+        { role: "system", content: "You are a helpful AI assistant for a Bangladeshi e-commerce store. Respond in Bengali when asked, or English/mixed as appropriate. Be concise and practical." },
+        { role: "user", content: prompt },
+      ],
     });
 
-    if (!response.ok) {
-      if (response.status === 429) return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      if (response.status === 402) return new Response(JSON.stringify({ error: "Payment required." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      throw new Error(`AI gateway error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const result = data.choices?.[0]?.message?.content ?? "কোনো ফলাফল পাওয়া যায়নি।";
-
-    return new Response(JSON.stringify({ result }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ result: text || "কোনো ফলাফল পাওয়া যায়নি।" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("ai-free-tools error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
