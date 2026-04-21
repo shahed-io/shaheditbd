@@ -347,7 +347,7 @@ export default function WelcomeDiscount() {
   const conicStops = prizes.map((p, i) => {
     const start = i * sliceAngle;
     const end = (i + 1) * sliceAngle;
-    const color = `hsl(${p.color || '258 50% 60%'})`;
+    const color = `hsl(${getPrizeColor(p, i)})`;
     return `${color} ${start}deg ${end}deg`;
   }).join(', ');
 
@@ -509,15 +509,15 @@ export default function WelcomeDiscount() {
                       disabled={spinning}
                       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[68px] h-[68px] rounded-full flex items-center justify-center font-bold text-xs tracking-wide active:scale-95 transition-all disabled:cursor-not-allowed"
                       style={{
-                        background: 'linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.75))',
+                        background: 'radial-gradient(circle at 35% 25%, hsl(var(--background)), hsl(var(--accent) / 0.34) 46%, hsl(var(--primary) / 0.18))',
                         backdropFilter: 'blur(10px)',
-                        border: '3px solid hsl(258 78% 55%)',
-                        boxShadow: '0 6px 20px -4px rgba(80, 30, 180, 0.45), 0 0 0 1px rgba(255,255,255,0.6) inset',
-                        color: 'hsl(258 78% 45%)',
+                        border: '3px solid hsl(var(--primary))',
+                        boxShadow: '0 8px 22px -5px hsl(var(--primary) / 0.48), 0 0 0 1px hsl(var(--background) / 0.70) inset',
+                        color: 'hsl(var(--primary))',
                       }}
                     >
                       {spinning ? (
-                        <div className="w-5 h-5 border-2 rounded-full animate-spin" style={{ borderColor: 'hsl(258 78% 55%)', borderTopColor: 'transparent' }} />
+                        <div className="w-5 h-5 border-2 rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))', borderTopColor: 'transparent' }} />
                       ) : (
                         spinButtonText
                       )}
@@ -539,7 +539,7 @@ export default function WelcomeDiscount() {
                   {prizes.slice(0, 6).map((p) => (
                     <div key={p.id} className="rounded-xl px-2.5 py-2" style={{ background: 'hsl(var(--card) / 0.78)', border: '1px solid hsl(var(--border) / 0.65)' }}>
                       <div className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full" style={{ background: `hsl(${p.color || 'var(--primary)'})` }} />
+                        <span className="h-2 w-2 rounded-full" style={{ background: `hsl(${getPrizeColor(p, prizes.indexOf(p))})` }} />
                         <span className="text-[11px] font-bold text-slate-900">{p.label}</span>
                       </div>
                       <p className="mt-1 text-[9.5px] leading-snug text-slate-600">{getPrizeBenefit(p)}</p>
