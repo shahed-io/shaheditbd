@@ -42,15 +42,26 @@ function getOrCreateVisitorId(): string {
   return id;
 }
 
-// Professional palette — muted, brand-aligned (no neon casino colors)
+// Professional, high-contrast palette — brand-aligned and conversion-focused
 const FALLBACK_PRIZES: SpinPrize[] = [
-  { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: '258 60% 55%' },
-  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 180, color: '42 96% 58%' },
-  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 140, color: '200 90% 45%' },
-  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 105, color: '162 72% 38%' },
-  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 70,  color: '330 85% 55%' },
-  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: '258 78% 45%' },
+  { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: 'var(--accent)' },
+  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 180, color: 'var(--primary)' },
+  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 140, color: 'var(--brand2-h) var(--brand2-s) var(--brand2-l)' },
+  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 105, color: 'var(--brand4-h) var(--brand4-s) var(--brand4-l)' },
+  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 70,  color: 'var(--brand3-h) var(--brand3-s) var(--brand3-l)' },
+  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: 'var(--primary)' },
 ];
+
+const VIBRANT_PRIZE_PALETTE = [
+  'var(--accent)',
+  'var(--primary)',
+  'var(--brand2-h) var(--brand2-s) var(--brand2-l)',
+  'var(--brand4-h) var(--brand4-s) var(--brand4-l)',
+  'var(--brand3-h) var(--brand3-s) var(--brand3-l)',
+  'var(--primary)',
+];
+
+const getPrizeColor = (prize: SpinPrize, index: number) => prize.color || VIBRANT_PRIZE_PALETTE[index % VIBRANT_PRIZE_PALETTE.length];
 
 const getPrizeBenefit = (prize: SpinPrize) => {
   if (prize.type === 'fixed') return `চেকআউটে সরাসরি ৳${prize.value} কমবে`;
