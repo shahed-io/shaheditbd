@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import React from "react";
+import { ScraperShield } from "./components/ScraperShield";
 
 // Global error boundary to prevent blank screens
 class RootErrorBoundary extends React.Component<
@@ -74,6 +75,8 @@ class RootErrorBoundary extends React.Component<
 
 createRoot(document.getElementById("root")!).render(
   <RootErrorBoundary>
-    <App />
+    <ScraperShield>
+      <App />
+    </ScraperShield>
   </RootErrorBoundary>
 );
