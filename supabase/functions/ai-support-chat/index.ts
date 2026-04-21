@@ -65,6 +65,11 @@ ${productContext}
 - সমস্যা সমাধান না হলে WhatsApp (01840099853) এ যোগাযোগ করতে বলুন
 - সংক্ষিপ্ত, বন্ধুত্বপূর্ণ ও সহায়ক উত্তর দিন (৩-৫ লাইনের মধ্যে রাখুন)`;
 
+    const aiMessages = [
+      { role: "system", content: systemPrompt },
+      ...messages,
+    ];
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -73,39 +78,56 @@ ${productContext}
       },
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages,
-        ],
+        messages: aiMessages,
         stream: true,
         max_tokens: 600,
       }),
     });
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "অনেক বেশি রিকোয়েস্ট। একটু পরে আবার চেষ্টা করুন।" }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI সার্ভিস সাময়িক বন্ধ। WhatsApp-এ যোগাযোগ করুন: 01840099853" }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      return new Response(JSON.stringify({ error: "AI service error" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+    // Lovable AI worked → stream directly
+    if (response.ok) {
+      return new Response(response.body, {
+        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
       });
     }
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
-    });
+    // Lovable failed (402/429/5xx) → fallback to direct Gemini (non-streaming, wrap as SSE)
+    console.warn(`Lovable AI failed (${response.status}); falling back to Gemini direct`);
+
+    try {
+      const { callAIWithFallback } = await import("../_shared/ai-fallback.ts");
+      const { text } = await callAIWithFallback({
+        model: "google/gemini-3-flash-preview",
+        messages: aiMessages as any,
+        maxTokens: 600,
+      });
+
+      // Wrap response as SSE so frontend stream parser works unchanged
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        start(controller) {
+          // Send the entire response as a single delta chunk
+          const chunk = {
+            choices: [{ delta: { content: text }, index: 0 }],
+          };
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`));
+          controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
+          controller.close();
+        },
+      });
+
+      return new Response(stream, {
+        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      });
+    } catch (fallbackErr) {
+      console.error("Gemini fallback also failed:", fallbackErr);
+      return new Response(JSON.stringify({ 
+        error: "AI সাময়িকভাবে অনুপলব্ধ। সরাসরি WhatsApp-এ যোগাযোগ করুন: 01840099853" 
+      }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
   } catch (e) {
     console.error("chat error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
