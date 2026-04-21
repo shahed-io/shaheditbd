@@ -32,21 +32,19 @@ interface SpinSettings {
 }
 
 const DEFAULT_PRIZES: SpinPrize[] = [
-  { id: 'p1', label: '5% OFF',   type: 'percent', value: 5,   weight: 30, color: '262 80% 60%' },
-  { id: 'p2', label: '৳50 OFF',  type: 'fixed',   value: 50,  weight: 25, color: '24 95% 55%' },
-  { id: 'p3', label: '10% OFF',  type: 'percent', value: 10,  weight: 18, color: '198 90% 55%' },
-  { id: 'p4', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 12, color: '142 75% 45%' },
-  { id: 'p5', label: '15% OFF',  type: 'percent', value: 15,  weight: 8,  color: '340 85% 60%' },
-  { id: 'p6', label: '৳150 OFF', type: 'fixed',   value: 150, weight: 4,  color: '47 95% 55%' },
-  { id: 'p7', label: '20% OFF',  type: 'percent', value: 20,  weight: 2,  color: '280 85% 55%' },
-  { id: 'p8', label: 'Try Again',type: 'none',    value: 0,   weight: 1,  color: '0 0% 60%' },
+  { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: '258 60% 55%' },
+  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 180, color: '42 96% 58%' },
+  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 140, color: '200 90% 45%' },
+  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 105, color: '162 72% 38%' },
+  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 70,  color: '330 85% 55%' },
+  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: '258 78% 45%' },
 ];
 
 const DEFAULT_SETTINGS: SpinSettings = {
   enabled: true,
-  popup_title: '🎡 Lucky Spin!',
-  popup_subtitle: 'হুইল ঘুরিয়ে বিশেষ ছাড় জিতে নিন',
-  spin_button_text: 'SPIN',
+  popup_title: 'আপনার Welcome Savings Voucher প্রস্তুত',
+  popup_subtitle: 'নতুন ভিজিটরদের জন্য গ্যারান্টিড checkout saving — অফারটি claim করে অর্ডারে ব্যবহার করুন।',
+  spin_button_text: 'CLAIM',
   min_minutes: 30,
   max_minutes: 60,
   prizes: DEFAULT_PRIZES,
@@ -54,10 +52,16 @@ const DEFAULT_SETTINGS: SpinSettings = {
 
 const SETTINGS_KEY = 'welcome_discount_config';
 const COLOR_PRESETS = [
-  '262 80% 60%', '24 95% 55%', '198 90% 55%', '142 75% 45%',
-  '340 85% 60%', '47 95% 55%', '280 85% 55%', '0 0% 60%',
-  '174 75% 45%', '12 90% 55%',
+  '258 60% 55%', '42 96% 58%', '200 90% 45%', '162 72% 38%',
+  '330 85% 55%', '258 78% 45%', '186 78% 50%', '263 70% 70%',
+  '204 70% 45%', '38 100% 50%',
 ];
+
+const getPrizeBenefit = (prize: SpinPrize) => {
+  if (prize.type === 'fixed') return `Checkout total থেকে ৳${prize.value} কমবে`;
+  if (prize.type === 'percent') return `${prize.value}% instant saving`;
+  return 'No voucher generated';
+};
 
 export default function AdminWelcomeDiscount() {
   const queryClient = useQueryClient();
