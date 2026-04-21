@@ -45,12 +45,18 @@ function getOrCreateVisitorId(): string {
 // Professional palette — muted, brand-aligned (no neon casino colors)
 const FALLBACK_PRIZES: SpinPrize[] = [
   { id: 'p1', label: '৳100 OFF', type: 'fixed',   value: 100, weight: 500, color: '258 60% 55%' },
-  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 200, color: '258 35% 92%' },
-  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 150, color: '258 55% 65%' },
-  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 90,  color: '258 35% 88%' },
-  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 50,  color: '258 50% 60%' },
-  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: '258 70% 50%' },
+  { id: 'p2', label: '5% OFF',   type: 'percent', value: 5,   weight: 180, color: '42 96% 58%' },
+  { id: 'p3', label: '8% OFF',   type: 'percent', value: 8,   weight: 140, color: '200 90% 45%' },
+  { id: 'p4', label: '10% OFF',  type: 'percent', value: 10,  weight: 105, color: '162 72% 38%' },
+  { id: 'p5', label: '12% OFF',  type: 'percent', value: 12,  weight: 70,  color: '330 85% 55%' },
+  { id: 'p6', label: '20% OFF',  type: 'percent', value: 20,  weight: 5,   color: '258 78% 45%' },
 ];
+
+const getPrizeBenefit = (prize: SpinPrize) => {
+  if (prize.type === 'fixed') return `চেকআউটে সরাসরি ৳${prize.value} কমবে`;
+  if (prize.type === 'percent') return `আপনার অর্ডারে ${prize.value}% সেভিংস`;
+  return 'পরবর্তী অফারের জন্য অপেক্ষা করুন';
+};
 
 export default function WelcomeDiscount() {
   const [show, setShow] = useState(false);
@@ -347,7 +353,7 @@ export default function WelcomeDiscount() {
         onClick={handleClose}
       />
 
-      <div className="relative w-full max-w-[380px] animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+      <div className="relative w-full max-w-[430px] animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
         {/* Glassmorphism card */}
         <div
           className="relative rounded-3xl overflow-hidden"
@@ -395,7 +401,7 @@ export default function WelcomeDiscount() {
                 className="text-[10px] font-semibold uppercase tracking-[0.15em]"
                 style={{ color: 'hsl(258 78% 45%)' }}
               >
-                🎁 New Customer Welcome Gift
+                🎁 Welcome Savings Voucher
               </span>
             </div>
 
@@ -415,7 +421,7 @@ export default function WelcomeDiscount() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                 </span>
-                <span>100% Guaranteed Win • Free • No Card Required</span>
+                <span>গ্যারান্টিড Welcome Offer • Checkout-এ instant saving</span>
               </div>
             )}
           </div>
@@ -423,7 +429,7 @@ export default function WelcomeDiscount() {
           {/* Wheel */}
           {!hasSpun && (
             <div className="relative px-6 pt-6 pb-5">
-              <div className="relative mx-auto w-[260px] h-[260px]">
+              <div className="relative mx-auto w-[278px] h-[278px]">
                 {/* Top pointer */}
                 <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 z-20">
                   <div
@@ -457,14 +463,22 @@ export default function WelcomeDiscount() {
                     >
                       {prizes.map((p, i) => {
                         const angle = i * sliceAngle + sliceAngle / 2;
-                        const isLight = (p.color || '').includes('92%') || (p.color || '').includes('88%');
                         return (
                           <div
                             key={p.id}
-                            className={`absolute top-1/2 left-1/2 origin-left font-semibold text-[11px] whitespace-nowrap pointer-events-none ${isLight ? 'text-slate-800' : 'text-white'}`}
-                            style={{ transform: `rotate(${angle}deg) translateX(36px)` }}
+                            className="absolute top-1/2 left-1/2 origin-left pointer-events-none"
+                            style={{ transform: `rotate(${angle}deg) translateX(82px) rotate(-${angle}deg) translate(-50%, -50%)` }}
                           >
-                            {p.label}
+                            <span
+                              className="inline-flex min-w-[58px] justify-center rounded-full px-2 py-1 text-[10px] font-bold leading-none shadow-sm"
+                              style={{
+                                background: 'hsl(var(--background) / 0.9)',
+                                color: 'hsl(var(--foreground))',
+                                border: '1px solid hsl(var(--border) / 0.8)',
+                              }}
+                            >
+                              {p.label}
+                            </span>
                           </div>
                         );
                       })}
@@ -501,9 +515,28 @@ export default function WelcomeDiscount() {
                 </div>
               </div>
 
-              <p className="text-center text-xs text-slate-600 mt-5">
-                {spinning ? 'আপনার পুরস্কার নির্ধারণ করা হচ্ছে...' : 'CLAIM-এ ক্লিক করে আপনার গ্যারান্টিড ছাড়টি Unlock করুন'}
+              <p className="text-center text-xs text-slate-700 mt-5 font-medium">
+                {spinning ? 'আপনার welcome voucher প্রস্তুত করা হচ্ছে...' : 'এক ক্লিকেই আপনার checkout saving unlock করুন'}
               </p>
+
+              <div className="mt-4 rounded-2xl p-3" style={{ background: 'hsl(var(--background) / 0.62)', border: '1px solid hsl(var(--border) / 0.7)' }}>
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <p className="text-[11px] font-bold text-slate-900">আজকের সম্ভাব্য Welcome Offers</p>
+                  <span className="rounded-full px-2 py-0.5 text-[9px] font-semibold" style={{ background: 'hsl(var(--primary) / 0.10)', color: 'hsl(var(--primary))' }}>Limited</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {prizes.slice(0, 6).map((p) => (
+                    <div key={p.id} className="rounded-xl px-2.5 py-2" style={{ background: 'hsl(var(--card) / 0.78)', border: '1px solid hsl(var(--border) / 0.65)' }}>
+                      <div className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full" style={{ background: `hsl(${p.color || 'var(--primary)'})` }} />
+                        <span className="text-[11px] font-bold text-slate-900">{p.label}</span>
+                      </div>
+                      <p className="mt-1 text-[9.5px] leading-snug text-slate-600">{getPrizeBenefit(p)}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-center text-[10px] font-medium text-slate-600">অফারটি শুধু অর্ডার করলে active হবে — তাই cart total কমাতে এখনই claim করুন।</p>
+              </div>
 
               {/* Trust signals */}
               <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-white/40">
