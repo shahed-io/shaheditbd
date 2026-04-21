@@ -51,6 +51,13 @@ serve(async (req) => {
         });
       }
 
+      const welcomeMinOrder = wc.discount_type === 'fixed' && wc.discount_amount >= 100 ? 999 : 0;
+      if (welcomeMinOrder > 0 && orderTotal < welcomeMinOrder) {
+        return new Response(JSON.stringify({ valid: false, message: `এই Welcome Offer ব্যবহার করতে ন্যূনতম ৳${welcomeMinOrder} টাকার অর্ডার করুন` }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
+        });
+      }
+
       // Calculate discount based on type (percent / fixed)
       let discount = 0;
       if (wc.discount_type === 'fixed' && wc.discount_amount > 0) {

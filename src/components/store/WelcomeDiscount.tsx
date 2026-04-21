@@ -64,7 +64,9 @@ const VIBRANT_PRIZE_PALETTE = [
 const getPrizeColor = (prize: SpinPrize, index: number) => prize.color || VIBRANT_PRIZE_PALETTE[index % VIBRANT_PRIZE_PALETTE.length];
 
 const getPrizeBenefit = (prize: SpinPrize) => {
-  if (prize.type === 'fixed') return `চেকআউটে সরাসরি ৳${prize.value} কমবে`;
+  if (prize.type === 'fixed') return prize.value >= 100
+    ? `৳999+ অর্ডারে চেকআউটে ৳${prize.value} কমবে`
+    : `চেকআউটে সরাসরি ৳${prize.value} কমবে`;
   if (prize.type === 'percent') return `আপনার অর্ডারে ${prize.value}% সেভিংস`;
   return 'পরবর্তী অফারের জন্য অপেক্ষা করুন';
 };
@@ -584,7 +586,9 @@ export default function WelcomeDiscount() {
                 </div>
                 <p className="text-slate-600 text-xs mt-1.5">
                   {coupon.discountType === 'fixed'
-                    ? `যেকোনো অর্ডারে ৳${coupon.discountValue} সাশ্রয় করুন`
+                    ? coupon.discountValue >= 100
+                      ? `৳999 বা তার বেশি অর্ডারে ৳${coupon.discountValue} সাশ্রয় করুন`
+                      : `যেকোনো অর্ডারে ৳${coupon.discountValue} সাশ্রয় করুন`
                     : `যেকোনো প্রোডাক্টে ${coupon.discountValue}% ছাড়`}
                 </p>
               </div>
@@ -643,7 +647,9 @@ export default function WelcomeDiscount() {
               </button>
 
               <p className="text-center text-[10px] text-slate-500 mt-3">
-                চেকআউট পেজে কুপন কোডটি প্রবেশ করিয়ে ছাড় উপভোগ করুন
+                {coupon.discountType === 'fixed' && coupon.discountValue >= 100
+                  ? 'এই অফারটি পেতে cart total কমপক্ষে ৳999 হতে হবে'
+                  : 'চেকআউট পেজে কুপন কোডটি প্রবেশ করিয়ে ছাড় উপভোগ করুন'}
               </p>
             </div>
           )}

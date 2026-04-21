@@ -229,6 +229,7 @@ serve(async (req) => {
       discount: insertPayload.discount_percent,
       discountType: prize.type,
       discountAmount: insertPayload.discount_amount,
+      minOrderAmount: prize.type === 'fixed' && insertPayload.discount_amount >= 100 ? 999 : 0,
       prizeLabel: prize.label,
       expiresAt,
     }), {
