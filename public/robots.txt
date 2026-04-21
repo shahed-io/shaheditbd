@@ -128,3 +128,5 @@ Disallow: /*?*utm_
 
 # ───────── Sitemaps ─────────
 Sitemap: https://shahedstore.com.bd/sitemap.xml
+Sitemap: https://shahedstore.com.bd/image-sitemap.xml
+Sitemap: https://shahedstore.com.bd/sitemap_index.xml
