@@ -909,7 +909,7 @@ export default function AdminCustomers() {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="নাম, ইমেইল, ফোন দিয়ে সার্চ করুন..." value={search} onChange={e => setSearch(e.target.value)} className="pl-14 bg-muted/30" />
+          <Input placeholder="নাম, ইমেইল, ফোন দিয়ে সার্চ করুন..." value={search} onChange={e => setSearch(e.target.value)} className="pl-16 bg-muted/30" />
         </div>
         <Select value={sort} onValueChange={setSort}>
           <SelectTrigger className="w-44 bg-muted/30"><SelectValue /></SelectTrigger>
