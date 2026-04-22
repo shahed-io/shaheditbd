@@ -564,7 +564,77 @@ const AdminLicenses = () => {
       .eq('id', lic.id);
 
     toast.success('WhatsApp এ ডেলিভারি হয়েছে!');
-    setWaModal({ open: false, license: null, phone: '' });
+  };
+
+  // ── Bulk WhatsApp Delivery: একসাথে অনেক license এক customer-এর WhatsApp এ পাঠান ──
+  const openBulkWaModal = () => {
+    if (selectedIds.size === 0) return toast.error('আগে license সিলেক্ট করুন');
+    const selectedLics = licenses.filter(l => selectedIds.has(l.id));
+    // pre-fill phone/name/order from first license that has customer info
+    const withCustomer = selectedLics.find(l => l.customer_phone || l.customer_name);
+    setBulkWaPhone(withCustomer?.customer_phone || '');
+    setBulkWaCustomerName(withCustomer?.customer_name || '');
+    setBulkWaOrderNumber(withCustomer?.order_number || '');
+    setBulkWaModal(true);
+  };
+
+  const handleBulkWhatsAppSend = async () => {
+    if (!bulkWaPhone.trim()) return toast.error('ফোন নম্বর দিন');
+    const selectedLics = licenses.filter(l => selectedIds.has(l.id));
+    if (selectedLics.length === 0) return toast.error('কোনো license সিলেক্টেড নেই');
+
+    setBulkWaSending(true);
+    const phone = bulkWaPhone.replace(/\D/g, '').replace(/^0/, '880');
+    const batchId = (crypto as any).randomUUID ? (crypto as any).randomUUID() : `batch-${Date.now()}`;
+
+    // Build single combined WhatsApp message
+    let msg = `*SHAHED STORE*\n`;
+    msg += `________________________\n\n`;
+    msg += `*Bulk License Delivery*\n`;
+    if (bulkWaCustomerName.trim()) msg += `Customer: *${bulkWaCustomerName.trim()}*\n`;
+    if (bulkWaOrderNumber.trim()) msg += `Order: #${bulkWaOrderNumber.trim()}\n`;
+    msg += `Total Items: *${selectedLics.length}*\n`;
+    msg += `\n________________________\n\n`;
+
+    selectedLics.forEach((lic, idx) => {
+      const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label?.replace(/^[^\w\s]+\s*/, '') || lic.key_type;
+      msg += `*${idx + 1}. ${lic.product_name}*\n`;
+      msg += `Type: ${typeLabel}\n`;
+      msg += `Email/Key:\n\`${lic.key_value}\`\n`;
+      if (lic.extra_info) msg += `Password:\n\`${lic.extra_info}\`\n`;
+      msg += `________________________\n\n`;
+    });
+
+    msg += `Thank you for choosing *Shahed Store*\n`;
+    msg += `_www.shahedstore.com.bd_`;
+
+    // Open WhatsApp
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+
+    // Mark all as whatsapp_delivered with batch id
+    const { error } = await supabase
+      .from('license_keys')
+      .update({
+        status: 'whatsapp_delivered',
+        assigned_at: new Date().toISOString(),
+        delivered_to_phone: phone,
+        delivery_batch_id: batchId,
+      } as any)
+      .in('id', selectedLics.map(l => l.id));
+
+    setBulkWaSending(false);
+    if (error) {
+      toast.error('Status আপডেট ব্যর্থ: ' + error.message);
+      return;
+    }
+
+    toast.success(`${selectedLics.length}টি license একসাথে WhatsApp এ ডেলিভারি হয়েছে!`);
+    setBulkWaModal(false);
+    setBulkWaPhone('');
+    setBulkWaCustomerName('');
+    setBulkWaOrderNumber('');
+    setSelectedIds(new Set());
     fetchAll();
   };
 
