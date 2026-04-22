@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Trash2, Save, Loader2, Tag, BarChart3, Settings as SettingsIcon, ShieldCheck } from 'lucide-react';
+import { Plus, Trash2, Save, Loader2, Tag, BarChart3, Settings as SettingsIcon, ShieldCheck, BookOpen, Lightbulb, AlertTriangle, CheckCircle2, Hash, Target, TrendingUp, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { reloadGoogleTrackingConfig, type GoogleAdsAccount } from '@/components/store/GoogleTracking';
 
