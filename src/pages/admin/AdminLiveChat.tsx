@@ -425,15 +425,18 @@ const AdminLiveChat = () => {
   };
 
   const addLiveSet = () => {
+    const messengerType = LIVE_SET_TYPES.find(t => t.value === 'messenger')!;
     const newSet: LiveSet = {
       id: crypto.randomUUID(),
       name: 'New Channel',
-      type: 'whatsapp',
+      type: 'messenger',
       value: '',
-      label: 'নতুন চ্যানেল',
-      subtitle: 'যোগাযোগ করুন',
-      icon_color: '#25D366',
+      label: 'Facebook Messenger',
+      subtitle: 'মেসেঞ্জারে চ্যাট করুন',
+      icon_color: messengerType.color,
+      icon: messengerType.icon,
       is_active: true,
+      sort_order: settings.live_sets.length,
     };
     setSettings(prev => ({ ...prev, live_sets: [...prev.live_sets, newSet] }));
   };
@@ -444,10 +447,13 @@ const AdminLiveChat = () => {
       live_sets: prev.live_sets.map(s => {
         if (s.id !== id) return s;
         const updated = { ...s, [field]: value };
-        // Auto-set icon color when type changes
+        // Auto-set icon color and default icon when type changes
         if (field === 'type') {
           const typeInfo = LIVE_SET_TYPES.find(t => t.value === value);
-          if (typeInfo) updated.icon_color = typeInfo.color;
+          if (typeInfo) {
+            updated.icon_color = typeInfo.color;
+            updated.icon = typeInfo.icon;
+          }
         }
         return updated;
       }),
@@ -459,6 +465,18 @@ const AdminLiveChat = () => {
       ...prev,
       live_sets: prev.live_sets.filter(s => s.id !== id),
     }));
+  };
+
+  const moveLiveSet = (id: string, direction: 'up' | 'down') => {
+    setSettings(prev => {
+      const idx = prev.live_sets.findIndex(s => s.id === id);
+      if (idx === -1) return prev;
+      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= prev.live_sets.length) return prev;
+      const next = [...prev.live_sets];
+      [next[idx], next[targetIdx]] = [next[targetIdx], next[idx]];
+      return { ...prev, live_sets: next.map((s, i) => ({ ...s, sort_order: i })) };
+    });
   };
 
   const addSuggestion = () => {
