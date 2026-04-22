@@ -818,6 +818,7 @@ body.admin-page {
   --ad-radius-sm:     12px;
   --ad-radius-lg:     26px;
   --ad-radius-pill:   9999px;
+}
 html[data-theme="dark-cyber"] body.admin-page,
 html[data-theme="midnight-purple"] body.admin-page {
   --ad-bg:            258 22% 8%;
