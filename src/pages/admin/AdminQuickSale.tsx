@@ -846,8 +846,7 @@ const AdminQuickSale = () => {
       )}
     </div>
   );
-});
+};
 
-AdminQuickSale.displayName = 'AdminQuickSale';
 
 export default AdminQuickSale;
