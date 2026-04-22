@@ -379,7 +379,7 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="min-h-screen admin-gradient-bg flex">
+    <div className="min-h-screen admin-gradient-bg">
       {/* Mobile overlay */}
       {mobileSidebarOpen && (
         <div
@@ -401,7 +401,7 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main content */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 w-full ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
+      <div className={`flex flex-col min-h-screen transition-[margin] duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
         {/* Top bar */}
         <header className="admin-glass-header px-3 sm:px-6 py-3 flex items-center gap-2 sm:gap-4 sticky top-0 z-30">
           {/* Mobile menu button */}
