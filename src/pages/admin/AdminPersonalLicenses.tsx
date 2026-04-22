@@ -362,8 +362,11 @@ export default function AdminPersonalLicenses() {
                       <Button size="icon" variant="ghost" onClick={() => copyLicenseText(lic)} title="কপি">
                         <Copy className="w-4 h-4" />
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={() => sendWhatsApp(lic)} title="WhatsApp ডেলিভারি" className="text-green-600 hover:text-green-700">
+                      <Button size="icon" variant="ghost" onClick={() => sendWhatsApp(lic)} title="WhatsApp ডেলিভারি (টেক্সট)" className="text-green-600 hover:text-green-700">
                         <MessageCircle className="w-4 h-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" onClick={() => downloadLicensePdf(lic)} title="PDF ডাউনলোড করুন" className="text-primary hover:text-primary/80">
+                        <FileDown className="w-4 h-4" />
                       </Button>
                       <Button size="icon" variant="ghost" onClick={() => openEdit(lic)}>
                         <Edit3 className="w-4 h-4" />
