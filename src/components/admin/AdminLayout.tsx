@@ -4,6 +4,7 @@ import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAdminPrefetch, prefetchAdminRoute } from '@/hooks/useAdminPrefetch';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
@@ -162,6 +163,10 @@ const AdminLayout = () => {
   const [navSearch, setNavSearch] = useState('');
   const location = useLocation();
 
+  // ⚡ Eagerly prefetch ALL admin sub-pages during browser idle time
+  // → menu clicks resolve instantly (no chunk download wait)
+  useAdminPrefetch();
+
   const pageMeta = useMemo(() => getPageTitle(location.pathname), [location.pathname]);
 
   // Filter sections by search
@@ -293,6 +298,9 @@ const AdminLayout = () => {
                           to={item.path}
                           end={item.path === '/ceo'}
                           title={!showLabel ? item.label : undefined}
+                          onMouseEnter={() => prefetchAdminRoute(item.path)}
+                          onTouchStart={() => prefetchAdminRoute(item.path)}
+                          onFocus={() => prefetchAdminRoute(item.path)}
                           className={`admin-nav-item ${isActive ? 'active' : ''} ${!showLabel ? 'justify-center px-2' : ''}`}
                         >
                           <item.icon size={17} className="flex-shrink-0" />
