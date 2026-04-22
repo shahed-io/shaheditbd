@@ -574,8 +574,12 @@ const FloatingSupport = () => {
 
       <style>{`
         @keyframes slideUpIn {
-          from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateY(12px) scale(0.96); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes fadeInBg {
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
         .fab-ring {
           position: absolute;
