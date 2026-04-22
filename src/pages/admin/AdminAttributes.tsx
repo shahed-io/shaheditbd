@@ -406,15 +406,123 @@ const AdminAttributes = () => {
         </div>
       )}
 
-      <div className="glass-card rounded-2xl p-5 border border-primary/10">
-        <h3 className="text-sm font-bold text-foreground mb-2">📘 How to Use Attributes</h3>
-        <ul className="text-xs text-muted-foreground space-y-1.5">
-          <li>→ Create <strong className="text-foreground">global attributes</strong> here (Color, Size, Platform)</li>
-          <li>→ Add <strong className="text-foreground">values</strong> for each attribute (Red/Blue, S/M/L, Windows/Mac)</li>
-          <li>→ Assign attributes to products in the <strong className="text-foreground">product edit → Attributes tab</strong></li>
-          <li>→ <strong className="text-foreground">Visible on product page</strong> = shows in specifications table</li>
-          <li>→ <strong className="text-foreground">Use in variation</strong> = drives price/stock variations (future)</li>
-        </ul>
+      {/* ─────────── বিস্তারিত বাংলা গাইড সিস্টেম ─────────── */}
+      <div className="space-y-4">
+        {/* 1. Attribute কী? */}
+        <div className="glass-card rounded-2xl p-5 sm:p-6 border border-primary/15">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0">
+              <Tags size={18} className="text-primary" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-foreground">Attributes কী এবং কেন দরকার?</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">প্রোডাক্টের বৈশিষ্ট্য (Specifications) সাজানোর সম্পূর্ণ গাইড</p>
+            </div>
+          </div>
+          <p className="text-sm text-foreground/80 leading-relaxed">
+            <strong className="text-foreground">Attributes</strong> হলো আপনার প্রোডাক্টের <strong>বৈশিষ্ট্য বা ফিচার</strong> — যেমন <strong className="text-primary">Color (রং)</strong>, <strong className="text-primary">Size (সাইজ)</strong>, <strong className="text-primary">Platform (Windows/Mac/Android)</strong>, <strong className="text-primary">Duration (1 Month / 1 Year)</strong> ইত্যাদি।
+            একবার এখানে তৈরি করলে এগুলো <strong>সব প্রোডাক্টে পুনরায় ব্যবহার (reuse)</strong> করা যায় — প্রতিবার নতুন করে লেখার দরকার নেই। কাস্টমাররা প্রোডাক্ট ডিটেইল পেজে <strong>Specifications টেবিলে</strong> এই তথ্যগুলো দেখতে পান।
+          </p>
+        </div>
+
+        {/* 2. Step-by-step ব্যবহার */}
+        <div className="glass-card rounded-2xl p-5 sm:p-6 border border-primary/10">
+          <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <span className="w-6 h-6 rounded-lg bg-primary/15 text-primary text-xs font-bold flex items-center justify-center">📋</span>
+            ধাপে ধাপে ব্যবহারের নিয়ম
+          </h3>
+          <div className="space-y-3">
+            {[
+              { n: '1', t: 'Attribute তৈরি করুন', d: 'উপরের "Add Attribute" বাটনে ক্লিক করুন। নাম দিন (যেমন: Color, Size, Platform), Type বাছুন (Select/Text/Color), এবং Save করুন।' },
+              { n: '2', t: 'Values যোগ করুন', d: 'প্রতিটি Attribute-এর পাশে ➤ আইকনে ক্লিক করে expand করুন, তারপর "Add Value" দিয়ে অপশনগুলো যোগ করুন (যেমন Color-এর জন্য Red, Blue, Green)।' },
+              { n: '3', t: 'প্রোডাক্টে Assign করুন', d: 'CEO Panel → Products → কোনো প্রোডাক্ট Edit করুন → "Attributes" ট্যাবে যান → এখান থেকে যেই Attribute দরকার সেটা সিলেক্ট করে Values বেছে নিন।' },
+              { n: '4', t: 'কাস্টমার দেখবে Specifications-এ', d: 'প্রোডাক্ট পেজে গিয়ে কাস্টমার "Specifications" সেকশনে এই attributes-গুলো একটা সুন্দর টেবিলে দেখতে পাবে।' },
+            ].map(s => (
+              <div key={s.n} className="flex gap-3 p-3 rounded-xl bg-muted/20 border border-border/40">
+                <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center flex-shrink-0">{s.n}</div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{s.t}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{s.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 3. Field ব্যাখ্যা */}
+        <div className="glass-card rounded-2xl p-5 sm:p-6 border border-primary/10">
+          <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <span className="w-6 h-6 rounded-lg bg-primary/15 text-primary text-xs font-bold flex items-center justify-center">⚙️</span>
+            প্রতিটি Field-এর কাজ কী?
+          </h3>
+          <div className="grid sm:grid-cols-2 gap-3 text-xs">
+            {[
+              { f: 'Name', d: 'Attribute-এর নাম, যেমন Color, Size, Platform। কাস্টমার এই নামটাই দেখবে।' },
+              { f: 'Slug', d: 'URL/Database-এ ব্যবহারের জন্য ছোট নাম (auto তৈরি হয়)। সাধারণত পরিবর্তন না করলেও চলে।' },
+              { f: 'Type — Select', d: 'Dropdown menu — নির্দিষ্ট কয়েকটা option থেকে বাছাই করার জন্য (Color, Size ইত্যাদির জন্য আদর্শ)।' },
+              { f: 'Type — Text', d: 'যেকোনো লেখা টাইপ করার জন্য (যেমন Custom Note, Brand Name)।' },
+              { f: 'Type — Color Swatch', d: 'রঙের স্যাম্পল দেখানোর জন্য — প্রতিটি value-এ একটা hex color (যেমন #ff0000) থাকবে।' },
+              { f: 'Order By', d: 'Values গুলো কীভাবে সাজানো হবে: Name (অক্ষর অনুসারে), Numeric (সংখ্যা অনুসারে), অথবা Custom।' },
+              { f: 'Enable archives', d: 'চালু থাকলে এই attribute-এর filter পেজ তৈরি হবে (যেমন /attributes/color/red)। SEO-এর জন্য ভালো।' },
+              { f: 'Color Code (hex)', d: 'শুধু Color type-এর জন্য — প্রতিটি value-এ একটা রঙ যোগ করতে হবে (যেমন #ff0000 = লাল)।' },
+            ].map(x => (
+              <div key={x.f} className="p-3 rounded-xl bg-muted/20 border border-border/40">
+                <p className="font-bold text-foreground text-[13px]">{x.f}</p>
+                <p className="text-muted-foreground mt-0.5 leading-relaxed">{x.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 4. বাস্তব উদাহরণ */}
+        <div className="glass-card rounded-2xl p-5 sm:p-6 border border-green-500/20" style={{ background: 'hsla(142, 76%, 45%, 0.04)' }}>
+          <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+            <span className="w-6 h-6 rounded-lg bg-green-500/15 text-green-500 text-xs font-bold flex items-center justify-center">💡</span>
+            বাস্তব উদাহরণ — Netflix Subscription
+          </h3>
+          <p className="text-xs text-muted-foreground mb-3">ধরুন আপনি Netflix Premium বিক্রি করছেন। তাহলে এই attributes তৈরি করতে পারেন:</p>
+          <div className="space-y-2 text-xs">
+            <div className="flex items-start gap-2 p-2.5 rounded-lg bg-background/60 border border-border/40">
+              <Hash size={12} className="text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <strong className="text-foreground">Duration</strong> <span className="text-muted-foreground">(Type: Select)</span>
+                <p className="text-muted-foreground mt-0.5">Values: 1 Month, 3 Months, 6 Months, 1 Year</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 p-2.5 rounded-lg bg-background/60 border border-border/40">
+              <Hash size={12} className="text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <strong className="text-foreground">Account Type</strong> <span className="text-muted-foreground">(Type: Select)</span>
+                <p className="text-muted-foreground mt-0.5">Values: Personal, Shared, Premium</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 p-2.5 rounded-lg bg-background/60 border border-border/40">
+              <Hash size={12} className="text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <strong className="text-foreground">Quality</strong> <span className="text-muted-foreground">(Type: Select)</span>
+                <p className="text-muted-foreground mt-0.5">Values: HD, Full HD, 4K Ultra HD</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-foreground/70 mt-3 leading-relaxed">
+            ✅ এই ৩টি Attribute একবার তৈরি করলে — আপনার <strong>সব Netflix প্রোডাক্টে</strong> এগুলো ড্রপডাউন থেকে assign করতে পারবেন। প্রতিবার নতুন করে লেখার দরকার নেই!
+          </p>
+        </div>
+
+        {/* 5. Tips ও সতর্কতা */}
+        <div className="glass-card rounded-2xl p-5 sm:p-6 border border-yellow-500/20" style={{ background: 'hsla(45, 93%, 50%, 0.04)' }}>
+          <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+            <span className="w-6 h-6 rounded-lg bg-yellow-500/15 text-yellow-600 text-xs font-bold flex items-center justify-center">⚠️</span>
+            গুরুত্বপূর্ণ টিপস ও সতর্কতা
+          </h3>
+          <ul className="text-xs text-muted-foreground space-y-2 leading-relaxed">
+            <li className="flex gap-2"><span className="text-yellow-600 flex-shrink-0">•</span><span><strong className="text-foreground">Attribute Delete করলে</strong> — সেই Attribute-এর সব Values এবং সব Product থেকে assignment-ও মুছে যাবে। সাবধানে delete করুন।</span></li>
+            <li className="flex gap-2"><span className="text-yellow-600 flex-shrink-0">•</span><span><strong className="text-foreground">একই নামের Attribute</strong> দুইবার তৈরি করবেন না — পুরাতনটাই ব্যবহার করুন।</span></li>
+            <li className="flex gap-2"><span className="text-yellow-600 flex-shrink-0">•</span><span><strong className="text-foreground">Color type</strong>-এর জন্য প্রতিটি value-এ অবশ্যই একটা hex color code দিন, নাহলে রঙের স্যাম্পল দেখাবে না।</span></li>
+            <li className="flex gap-2"><span className="text-yellow-600 flex-shrink-0">•</span><span><strong className="text-foreground">"Visible on product page"</strong> অপশন প্রোডাক্ট edit পেজে চালু থাকলেই কাস্টমার Specifications টেবিলে এই attribute দেখতে পাবে।</span></li>
+            <li className="flex gap-2"><span className="text-yellow-600 flex-shrink-0">•</span><span><strong className="text-foreground">"Use in variation"</strong> = ভবিষ্যতে একই প্রোডাক্টের আলাদা variant (যেমন: 1 Month vs 1 Year আলাদা দাম) তৈরির জন্য রাখা হয়েছে।</span></li>
+          </ul>
+        </div>
       </div>
     </div>
   );
