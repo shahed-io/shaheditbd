@@ -405,7 +405,7 @@ const AdminQuickSale = () => {
   const validItemCount = entries.filter(e => e.product || (e.is_custom && e.custom_name.trim())).length;
 
   return (
-    <div ref={ref} className="space-y-5 max-w-5xl mx-auto pb-8">
+    <div className="space-y-5 max-w-5xl mx-auto pb-8">
       {/* Inline header — auto-hidden left side via global CSS guard (.admin-page-header is rendered by AdminLayout) */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2.5">
