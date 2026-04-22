@@ -1,12 +1,22 @@
 /**
- * Unified PDF Invoice Generator
- * - Uses jsPDF + autoTable for professional, readable PDF output
- * - Provides `downloadInvoicePdf(data)` for manual local PDF download.
- * - WhatsApp delivery uses the original plain-text style — admins click
- *   the separate "PDF ডাউনলোড" button to save a PDF and share it manually.
+ * Unified PDF Invoice Generator (HTML → Canvas → PDF)
+ *
+ * Strategy: render the same beautiful HTML invoice the user sees in the
+ * preview modal, then snapshot it with html2canvas and embed into a single
+ * jsPDF page. This preserves:
+ *  - Bengali fonts and emojis exactly as displayed
+ *  - Logo, gradients, rounded cards, brand colors
+ *  - Pixel-perfect parity between on-screen preview and downloaded PDF
+ *
+ * Two ways to use:
+ *  1. `downloadInvoicePdfFromElement(el, filename)` — preferred when the
+ *     preview modal is already mounted (matches what the user sees 1:1).
+ *  2. `downloadInvoicePdf(data)` — standalone, builds an off-screen DOM
+ *     using the same template and exports it. Used when there's no live
+ *     preview (e.g. License manager, Personal license cards).
  */
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import html2canvas from 'html2canvas';
 import logoIcon from '@/assets/logo.png';
 
 export interface InvoiceItem {
@@ -36,23 +46,25 @@ export interface InvoiceData {
   notes?: string;
 }
 
-const BRAND = {
-  primary: [124, 58, 237] as [number, number, number], // violet-600
-  light: [243, 240, 255] as [number, number, number],
-  dark: [26, 26, 46] as [number, number, number],
-  muted: [110, 110, 130] as [number, number, number],
-  success: [5, 150, 105] as [number, number, number],
-};
-
 const PM_LABELS: Record<string, string> = {
   bkash: 'bKash',
   nagad: 'Nagad',
   rocket: 'Rocket',
-  upay: 'Upay',
+  upay: 'উপায়',
   bank: 'Bank Transfer',
   cash: 'Cash',
   bkash_merchant: 'bKash Merchant',
   other: 'Other',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'পেন্ডিং',
+  processing: 'প্রসেসিং',
+  delivered: 'ডেলিভার্ড',
+  completed: 'সম্পন্ন',
+  cancelled: 'বাতিল',
+  refunded: 'রিফান্ড',
+  failed: 'ব্যর্থ',
 };
 
 let cachedLogo: string | null = null;
@@ -77,7 +89,7 @@ async function loadLogoBase64(): Promise<string | null> {
 }
 
 function fmtMoney(n: number): string {
-  return 'BDT ' + Number(n || 0).toLocaleString('en-US');
+  return '৳' + Number(n || 0).toLocaleString('en-US');
 }
 
 function fmtDate(d: string | Date): string {
@@ -90,209 +102,180 @@ function fmtDate(d: string | Date): string {
 }
 
 /**
- * Build a printable PDF as a Blob.
- * NOTE: jsPDF built-in fonts don't support Bengali; we use English labels in
- * the PDF so output is always crisp and readable. Product names from the DB
- * may include Bengali — those characters typically render as boxes with
- * built-in helvetica. To stay clean we transliterate via the system using
- * UTF text and set font to helvetica which handles Latin + numerals well.
- * Customer-facing Bengali appears in the WhatsApp message body; the PDF is
- * a clean English/Latin invoice.
+ * Build the canonical invoice HTML — identical look to the preview modal.
  */
-export async function buildInvoicePdf(data: InvoiceData): Promise<Blob> {
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-  const pageW = doc.internal.pageSize.getWidth();
-  const margin = 40;
-
-  // ── Header band
-  doc.setFillColor(...BRAND.primary);
-  doc.rect(0, 0, pageW, 90, 'F');
-
-  // Logo
-  const logo = await loadLogoBase64();
-  if (logo) {
-    try {
-      doc.addImage(logo, 'PNG', margin, 22, 46, 46);
-    } catch {
-      /* ignore */
-    }
-  }
-
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(20);
-  doc.text('SHAHED STORE', margin + 58, 45);
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Premium Digital Products', margin + 58, 60);
-  doc.text('shahedstore.com.bd  |  +880 1840 099 853', margin + 58, 73);
-
-  // Invoice title (right)
-  doc.setFontSize(26);
-  doc.setFont('helvetica', 'bold');
-  doc.text('INVOICE', pageW - margin, 45, { align: 'right' });
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`#${data.invoiceNumber}`, pageW - margin, 62, { align: 'right' });
-  doc.text(fmtDate(data.date), pageW - margin, 76, { align: 'right' });
-
-  // ── Bill To / Payment cards
-  let y = 120;
-  const cardW = (pageW - margin * 2 - 14) / 2;
-
-  // Bill To
-  doc.setFillColor(...BRAND.light);
-  doc.roundedRect(margin, y, cardW, 90, 6, 6, 'F');
-  doc.setTextColor(...BRAND.primary);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.text('BILL TO', margin + 12, y + 18);
-
-  doc.setTextColor(...BRAND.dark);
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-  doc.text(String(data.customer.name || '-'), margin + 12, y + 36);
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(...BRAND.muted);
-  let cy = y + 52;
-  if (data.customer.phone) { doc.text(`Phone: ${data.customer.phone}`, margin + 12, cy); cy += 12; }
-  if (data.customer.email) { doc.text(`Email: ${data.customer.email}`, margin + 12, cy); cy += 12; }
-  if (data.customer.address) { doc.text(`Address: ${data.customer.address}`, margin + 12, cy); }
-
-  // Payment
-  const px = margin + cardW + 14;
-  doc.setFillColor(...BRAND.light);
-  doc.roundedRect(px, y, cardW, 90, 6, 6, 'F');
-  doc.setTextColor(...BRAND.primary);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.text('PAYMENT', px + 12, y + 18);
-
-  doc.setTextColor(...BRAND.dark);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  let py = y + 36;
-  doc.text(`Method: ${PM_LABELS[data.paymentMethod || ''] || data.paymentMethod || 'N/A'}`, px + 12, py);
-  py += 13;
-  if (data.transactionId) { doc.text(`TrxID: ${data.transactionId}`, px + 12, py); py += 13; }
-  if (data.status) {
-    doc.setTextColor(...BRAND.success);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Status: ${data.status.toUpperCase()}`, px + 12, py);
-  }
-
-  // ── Items table
-  const rows = data.items.map((it, idx) => {
-    const total = it.total ?? it.quantity * it.price;
-    const name = it.license_key ? `${it.name}\nKey: ${it.license_key}` : it.name;
-    return [
-      String(idx + 1),
-      name,
-      String(it.quantity),
-      fmtMoney(it.price),
-      fmtMoney(total),
-    ];
-  });
-
-  autoTable(doc, {
-    startY: y + 110,
-    head: [['#', 'Product / Description', 'Qty', 'Unit Price', 'Total']],
-    body: rows,
-    theme: 'grid',
-    margin: { left: margin, right: margin },
-    styles: {
-      font: 'helvetica',
-      fontSize: 10,
-      cellPadding: 8,
-      lineColor: [230, 230, 240],
-      textColor: BRAND.dark,
-    },
-    headStyles: {
-      fillColor: BRAND.primary,
-      textColor: [255, 255, 255],
-      fontStyle: 'bold',
-      fontSize: 10,
-    },
-    alternateRowStyles: { fillColor: [250, 249, 255] },
-    columnStyles: {
-      0: { cellWidth: 30, halign: 'center' },
-      2: { cellWidth: 50, halign: 'center' },
-      3: { cellWidth: 90, halign: 'right' },
-      4: { cellWidth: 100, halign: 'right', fontStyle: 'bold' },
-    },
-  });
-
-  // ── Totals box
-  // @ts-expect-error - autoTable adds lastAutoTable
-  const tableEnd = doc.lastAutoTable.finalY || y + 200;
-  const totalsX = pageW - margin - 220;
-  let ty = tableEnd + 14;
+async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
+  const logo = (await loadLogoBase64()) || '';
+  const brandColor = '#7c3aed';
+  const brandLight = '#f3f0ff';
 
   const sub = data.subtotal ?? data.items.reduce((s, i) => s + i.quantity * i.price, 0);
   const disc = data.discount || 0;
 
-  doc.setFillColor(...BRAND.light);
-  doc.roundedRect(totalsX, ty, 220, disc > 0 ? 76 : 56, 6, 6, 'F');
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = `
+    position: fixed; left: -10000px; top: 0;
+    width: 760px; background: #ffffff; color: #1a1a2e;
+    padding: 40px; border-radius: 12px;
+    font-family: 'Segoe UI', 'Noto Sans Bengali', Arial, sans-serif;
+    box-sizing: border-box;
+  `;
 
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...BRAND.muted);
-  doc.text('Subtotal', totalsX + 14, ty + 20);
-  doc.setTextColor(...BRAND.dark);
-  doc.text(fmtMoney(sub), totalsX + 206, ty + 20, { align: 'right' });
+  const itemsHtml = data.items.map((item, idx) => {
+    const total = item.total ?? item.quantity * item.price;
+    const keyRow = item.license_key
+      ? `<div style="font-size:11px;color:#7c3aed;font-family:monospace;margin-top:4px;background:#f3f0ff;padding:3px 8px;border-radius:4px;display:inline-block">Key: ${item.license_key}</div>`
+      : '';
+    return `
+      <tr style="border-bottom:1px solid #eee;background:${idx % 2 === 0 ? '#fff' : '#faf9ff'}">
+        <td style="padding:14px;font-size:13px;color:#666;text-align:center">${idx + 1}</td>
+        <td style="padding:14px;font-size:13px;color:#1a1a2e;font-weight:600">
+          ${escapeHtml(item.name)}
+          ${keyRow}
+        </td>
+        <td style="padding:14px;font-size:13px;color:#555;text-align:center">×${item.quantity}</td>
+        <td style="padding:14px;font-size:13px;color:#555;text-align:right">${fmtMoney(item.price)}</td>
+        <td style="padding:14px;font-size:14px;color:#1a1a2e;text-align:right;font-weight:700">${fmtMoney(total)}</td>
+      </tr>`;
+  }).join('');
 
-  if (disc > 0) {
-    doc.setTextColor(...BRAND.success);
-    doc.text('Discount', totalsX + 14, ty + 36);
-    doc.text('-' + fmtMoney(disc), totalsX + 206, ty + 36, { align: 'right' });
+  const statusLabel = data.status ? (STATUS_LABELS[data.status] || data.status) : '';
+  const pmLabel = data.paymentMethod ? (PM_LABELS[data.paymentMethod] || data.paymentMethod) : 'N/A';
+
+  wrapper.innerHTML = `
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:20px;border-bottom:3px solid ${brandColor}">
+      <div style="display:flex;align-items:center;gap:14px">
+        ${logo ? `<img src="${logo}" alt="Shahed Store" style="height:54px;width:auto;object-fit:contain" crossorigin="anonymous" />` : ''}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:32px;font-weight:800;color:${brandColor};letter-spacing:2px;line-height:1">INVOICE</div>
+        <div style="font-size:13px;color:#666;margin-top:6px;font-family:monospace">#${escapeHtml(data.invoiceNumber)}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">${fmtDate(data.date)}</div>
+      </div>
+    </div>
+
+    <!-- Customer + Payment -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
+      <div style="background:${brandLight};border-radius:10px;padding:16px;border-left:4px solid ${brandColor}">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:10px">📋 বিলিং তথ্য</div>
+        <p style="font-size:15px;font-weight:700;color:#1a1a2e;margin:0 0 6px 0">${escapeHtml(data.customer.name || '-')}</p>
+        ${data.customer.email ? `<p style="font-size:12px;color:#555;margin:3px 0">✉️ ${escapeHtml(data.customer.email)}</p>` : ''}
+        ${data.customer.phone ? `<p style="font-size:12px;color:#555;margin:3px 0">📱 ${escapeHtml(data.customer.phone)}</p>` : ''}
+        ${data.customer.address ? `<p style="font-size:12px;color:#555;margin:3px 0">🏠 ${escapeHtml(data.customer.address)}</p>` : ''}
+      </div>
+      <div style="background:${brandLight};border-radius:10px;padding:16px;border-left:4px solid ${brandColor}">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:10px">💳 পেমেন্ট তথ্য</div>
+        <p style="font-size:12px;color:#555;margin:0 0 4px 0">Method: <strong style="color:#1a1a2e">${escapeHtml(pmLabel)}</strong></p>
+        ${data.transactionId ? `<p style="font-size:12px;color:#555;margin:4px 0">TrxID: <strong style="color:#1a1a2e;font-family:monospace;background:#e8e5f7;padding:1px 6px;border-radius:4px;font-size:11px">${escapeHtml(data.transactionId)}</strong></p>` : ''}
+        ${statusLabel ? `<p style="font-size:12px;color:#555;margin:4px 0">Status: <span style="background:${brandColor};color:#fff;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600">${escapeHtml(statusLabel)}</span></p>` : ''}
+      </div>
+    </div>
+
+    <!-- Items table -->
+    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;border-radius:8px;overflow:hidden">
+      <thead>
+        <tr style="background:${brandColor}">
+          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:center;letter-spacing:0.5px">#</th>
+          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:left;letter-spacing:0.5px">পণ্যের নাম</th>
+          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:center;letter-spacing:0.5px">পরিমাণ</th>
+          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:right;letter-spacing:0.5px">দাম</th>
+          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:right;letter-spacing:0.5px">মোট</th>
+        </tr>
+      </thead>
+      <tbody>${itemsHtml}</tbody>
+    </table>
+
+    <!-- Totals -->
+    <div style="display:flex;justify-content:flex-end;margin-bottom:24px">
+      <div style="min-width:280px;background:${brandLight};border-radius:10px;padding:18px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:#555;margin-bottom:8px">
+          <span>সাবটোটাল:</span><span>${fmtMoney(sub)}</span>
+        </div>
+        ${disc > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#059669;margin-bottom:8px"><span>ডিসকাউন্ট:</span><span>-${fmtMoney(disc)}</span></div>` : ''}
+        <div style="height:1px;background:${brandColor};opacity:0.3;margin:10px 0"></div>
+        <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;color:${brandColor}">
+          <span>সর্বমোট:</span><span>${fmtMoney(data.total)}</span>
+        </div>
+      </div>
+    </div>
+
+    ${data.notes ? `
+    <div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:14px;margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">📝 গ্রাহকের নোট:</div>
+      <div style="font-size:13px;color:#78350f">${escapeHtml(data.notes)}</div>
+    </div>` : ''}
+
+    <!-- Footer -->
+    <div style="border-top:1px solid #eee;padding-top:16px;text-align:center">
+      <p style="font-size:13px;color:#666;margin:0 0 6px 0">ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!</p>
+      <p style="font-size:11px;color:#888;margin:0">🌐 shahedstore.com.bd  •  ✉️ info@shahedstore.com.bd</p>
+      <p style="font-size:10px;color:#aaa;margin-top:6px">This is a computer-generated invoice and does not require a signature.</p>
+    </div>
+  `;
+
+  return wrapper;
+}
+
+function escapeHtml(s: string): string {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Snapshot any DOM element into a single-page A4 PDF.
+ */
+export async function downloadInvoicePdfFromElement(
+  element: HTMLElement,
+  filename: string
+): Promise<void> {
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+    logging: false,
+  });
+  const imgData = canvas.toDataURL('image/png');
+
+  // A4 portrait at 72 DPI = 595 × 842 pt
+  const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  const margin = 24;
+  const availW = pageW - margin * 2;
+
+  const ratio = canvas.height / canvas.width;
+  let imgW = availW;
+  let imgH = imgW * ratio;
+
+  // If too tall for one page, scale down to fit
+  if (imgH > pageH - margin * 2) {
+    imgH = pageH - margin * 2;
+    imgW = imgH / ratio;
   }
 
-  const totalY = disc > 0 ? ty + 60 : ty + 42;
-  doc.setDrawColor(...BRAND.primary);
-  doc.setLineWidth(0.8);
-  doc.line(totalsX + 12, totalY - 8, totalsX + 208, totalY - 8);
+  const x = (pageW - imgW) / 2;
+  const y = margin;
+  pdf.addImage(imgData, 'PNG', x, y, imgW, imgH, undefined, 'FAST');
+  pdf.save(filename);
+}
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.setTextColor(...BRAND.primary);
-  doc.text('TOTAL', totalsX + 14, totalY + 6);
-  doc.text(fmtMoney(data.total), totalsX + 206, totalY + 6, { align: 'right' });
-
-  // ── Notes
-  if (data.notes) {
-    doc.setFillColor(255, 251, 235);
-    doc.roundedRect(margin, ty, totalsX - margin - 14, disc > 0 ? 76 : 56, 6, 6, 'F');
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(180, 83, 9);
-    doc.text('NOTE', margin + 12, ty + 18);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(80, 70, 40);
-    const noteLines = doc.splitTextToSize(data.notes, totalsX - margin - 38);
-    doc.text(noteLines, margin + 12, ty + 32);
+/**
+ * Standalone download: builds the HTML off-screen then snapshots to PDF.
+ */
+export async function downloadInvoicePdf(data: InvoiceData): Promise<void> {
+  const el = await buildInvoiceHtml(data);
+  document.body.appendChild(el);
+  try {
+    // Allow images/fonts a tick to settle
+    await new Promise((r) => setTimeout(r, 80));
+    await downloadInvoicePdfFromElement(el, `invoice-${data.invoiceNumber}.pdf`);
+  } finally {
+    document.body.removeChild(el);
   }
-
-  // ── Footer
-  const pageH = doc.internal.pageSize.getHeight();
-  doc.setDrawColor(...BRAND.light);
-  doc.setLineWidth(1.2);
-  doc.line(margin, pageH - 60, pageW - margin, pageH - 60);
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(...BRAND.primary);
-  doc.text('Thank you for shopping with Shahed Store!', pageW / 2, pageH - 42, { align: 'center' });
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.setTextColor(...BRAND.muted);
-  doc.text('shahedstore.com.bd  |  info@shahedstore.com.bd  |  +880 1840 099 853', pageW / 2, pageH - 28, { align: 'center' });
-  doc.setFontSize(7);
-  doc.text('This is a computer-generated invoice and does not require a signature.', pageW / 2, pageH - 16, { align: 'center' });
-
-  return doc.output('blob');
 }
 
 /**
@@ -305,20 +288,4 @@ export function normalizeWaPhone(raw?: string | null): string {
   if (p.startsWith('0')) return '880' + p.slice(1);
   if (p.length === 10) return '880' + p;
   return p;
-}
-
-/**
- * Trigger a local download of the PDF — admin saves it manually
- * and shares with customer however they prefer (WhatsApp attachment, email…).
- */
-export async function downloadInvoicePdf(data: InvoiceData): Promise<void> {
-  const blob = await buildInvoicePdf(data);
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `invoice-${data.invoiceNumber}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
