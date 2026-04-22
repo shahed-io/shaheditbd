@@ -1,13 +1,12 @@
 /**
  * Unified PDF Invoice Generator
  * - Uses jsPDF + autoTable for professional, readable PDF output
- * - Uploads to Supabase `invoices` bucket → returns public URL
- * - Builds a WhatsApp wa.me link with the PDF link embedded so customers
- *   receive a real downloadable PDF instead of a long text block.
+ * - Provides `downloadInvoicePdf(data)` for manual local PDF download.
+ * - WhatsApp delivery uses the original plain-text style — admins click
+ *   the separate "PDF ডাউনলোড" button to save a PDF and share it manually.
  */
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { supabase } from '@/integrations/supabase/client';
 import logoIcon from '@/assets/logo.png';
 
 export interface InvoiceItem {
@@ -297,22 +296,6 @@ export async function buildInvoicePdf(data: InvoiceData): Promise<Blob> {
 }
 
 /**
- * Upload a PDF blob to the public `invoices` bucket and return a public URL.
- */
-export async function uploadInvoicePdf(blob: Blob, invoiceNumber: string): Promise<string> {
-  const safe = invoiceNumber.replace(/[^a-zA-Z0-9_-]/g, '_');
-  const path = `${new Date().getFullYear()}/${safe}-${Date.now()}.pdf`;
-  const { error } = await supabase.storage.from('invoices').upload(path, blob, {
-    contentType: 'application/pdf',
-    upsert: true,
-    cacheControl: '3600',
-  });
-  if (error) throw error;
-  const { data } = supabase.storage.from('invoices').getPublicUrl(path);
-  return data.publicUrl;
-}
-
-/**
  * Normalize Bangladeshi phone to wa.me format (8801XXXXXXXXX).
  */
 export function normalizeWaPhone(raw?: string | null): string {
@@ -325,32 +308,10 @@ export function normalizeWaPhone(raw?: string | null): string {
 }
 
 /**
- * One-shot helper: build PDF → upload → open WhatsApp with PDF link.
+ * Trigger a local download of the PDF — admin saves it manually
+ * and shares with customer however they prefer (WhatsApp attachment, email…).
  */
-export async function sendInvoiceViaWhatsApp(
-  data: InvoiceData,
-  options?: { phone?: string; messagePrefix?: string }
-): Promise<{ url: string; waUrl: string }> {
-  const blob = await buildInvoicePdf(data);
-  const url = await uploadInvoicePdf(blob, data.invoiceNumber);
-
-  const phone = normalizeWaPhone(options?.phone || data.customer.phone);
-  const prefix = options?.messagePrefix ??
-    `📄 *INVOICE — SHAHED STORE*\n\nপ্রিয় ${data.customer.name},\nআপনার অর্ডার #${data.invoiceNumber} এর সম্পূর্ণ ইনভয়েস (PDF) নিচের লিংকে দেখুন/ডাউনলোড করুন:`;
-
-  const text = `${prefix}\n\n📎 ${url}\n\n💰 মোট: ৳${Number(data.total).toLocaleString()}\n\n✅ ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!\n🌐 shahedstore.com.bd`;
-  const waUrl = phone
-    ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
-    : `https://wa.me/?text=${encodeURIComponent(text)}`;
-
-  window.open(waUrl, '_blank');
-  return { url, waUrl };
-}
-
-/**
- * Trigger a local download of the PDF (fallback / preview).
- */
-export async function downloadInvoicePdf(data: InvoiceData) {
+export async function downloadInvoicePdf(data: InvoiceData): Promise<void> {
   const blob = await buildInvoicePdf(data);
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

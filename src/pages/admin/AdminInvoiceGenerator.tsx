@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Plus, Trash2, Printer, X, FileText, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import logoIcon from '@/assets/logo.png';
-import { sendInvoiceViaWhatsApp, type InvoiceData } from '@/lib/invoicePdf';
+import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
 
 interface InvoiceItem {
   id: string;
@@ -78,9 +78,8 @@ const AdminInvoiceGenerator = () => {
     setTimeout(() => { win.print(); win.close(); }, 400);
   };
 
-  const handleSendWhatsAppPdf = async () => {
+  const handleDownloadPdf = async () => {
     if (!customerName.trim()) return toast.error('গ্রাহকের নাম দিন');
-    if (!customerPhone.trim()) return toast.error('গ্রাহকের ফোন নম্বর দিন');
     if (items.some(i => !i.name.trim() || i.price <= 0)) return toast.error('সকল আইটেমের নাম ও দাম দিন');
     const data: InvoiceData = {
       invoiceNumber, date: invoiceDate,
@@ -90,8 +89,8 @@ const AdminInvoiceGenerator = () => {
     };
     const tid = toast.loading('PDF তৈরি হচ্ছে...');
     try {
-      await sendInvoiceViaWhatsApp(data, { phone: customerPhone });
-      toast.success('PDF ইনভয়েস WhatsApp এ পাঠানো হচ্ছে...', { id: tid });
+      await downloadInvoicePdf(data);
+      toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp/Email এ Attach করে পাঠান', { id: tid });
     } catch (e: any) {
       toast.error('সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
     }
@@ -234,8 +233,8 @@ const AdminInvoiceGenerator = () => {
             <button onClick={handlePreview} className="w-full mt-2 btn-glow rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2">
               <Printer size={16} /> প্রিভিউ ও প্রিন্ট
             </button>
-            <button onClick={handleSendWhatsAppPdf} className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 glass-card border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10 transition-colors">
-              <Send size={16} /> WhatsApp এ PDF পাঠান
+            <button onClick={handleDownloadPdf} className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 glass-card border border-primary/40 text-primary hover:bg-primary/10 transition-colors">
+              <FileText size={16} /> PDF ডাউনলোড
             </button>
           </div>
         </div>
@@ -248,7 +247,7 @@ const AdminInvoiceGenerator = () => {
             <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-shrink-0">
               <h3 className="font-bold text-foreground text-sm">Invoice {invoiceNumber}</h3>
               <div className="flex gap-2">
-                <button onClick={handleSendWhatsAppPdf} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10 text-xs font-semibold"><Send size={13} /> WhatsApp PDF</button>
+                <button onClick={handleDownloadPdf} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-primary/40 text-primary hover:bg-primary/10 text-xs font-semibold"><FileText size={13} /> PDF ডাউনলোড</button>
                 <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-glow text-xs font-semibold"><Printer size={13} /> Print / PDF</button>
                 <button onClick={() => setShowPreview(false)} className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30"><X size={15} /></button>
               </div>

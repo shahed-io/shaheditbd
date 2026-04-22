@@ -11,7 +11,7 @@ import {
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 import logoIcon from '@/assets/logo.png';
-import { sendInvoiceViaWhatsApp, type InvoiceData } from '@/lib/invoicePdf';
+import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
 
 // Build a canonical InvoiceData object from a DB order row
 const orderToInvoiceData = (order: any): InvoiceData => ({
@@ -37,13 +37,11 @@ const orderToInvoiceData = (order: any): InvoiceData => ({
   status: order.status,
 });
 
-const sendOrderInvoicePdf = async (order: any) => {
-  const phone = order.customer_phone;
-  if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
-  const tid = toast.loading('PDF ইনভয়েস তৈরি হচ্ছে...');
+const downloadOrderInvoicePdf = async (order: any) => {
+  const tid = toast.loading('PDF তৈরি হচ্ছে...');
   try {
-    await sendInvoiceViaWhatsApp(orderToInvoiceData(order), { phone });
-    toast.success('PDF ইনভয়েস WhatsApp এ পাঠানো হচ্ছে...', { id: tid });
+    await downloadInvoicePdf(orderToInvoiceData(order));
+    toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp এ Attach করে পাঠান', { id: tid });
   } catch (e: any) {
     toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
   }
@@ -119,7 +117,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
     setTimeout(() => { win.print(); }, 400);
   };
 
-  const sendInvoiceWhatsApp = () => sendOrderInvoicePdf(order);
+  const handleDownloadPdf = () => downloadOrderInvoicePdf(order);
 
   const items = order.order_items || [];
   const date = new Date(order.created_at).toLocaleDateString('bn-BD', { day: '2-digit', month: 'long', year: 'numeric' });
@@ -137,8 +135,8 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
         <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-shrink-0">
           <h3 className="font-bold text-foreground text-sm">Invoice #{order.order_number}</h3>
           <div className="flex gap-2">
-            <button onClick={sendInvoiceWhatsApp} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-[#25D366]/30 text-[#25D366] hover:bg-[#25D366]/10 text-xs font-semibold transition-colors">
-              <Send size={13} /> WhatsApp এ পাঠান
+            <button onClick={handleDownloadPdf} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-primary/30 text-primary hover:bg-primary/10 text-xs font-semibold transition-colors">
+              <Download size={13} /> PDF ডাউনলোড
             </button>
             <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-glow text-xs font-semibold">
               <Printer size={13} /> Print / PDF
@@ -605,9 +603,9 @@ const OrderDetailModal = ({
                       </button>
                     )}
                     {order.customer_phone && (
-                      <button onClick={() => sendOrderInvoicePdf(order)}
+                      <button onClick={() => downloadOrderInvoicePdf(order)}
                         className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-primary/30 text-primary hover:bg-primary/10 transition-colors">
-                        <FileText size={12} /> PDF ইনভয়েস পাঠান
+                        <Download size={12} /> PDF ডাউনলোড
                       </button>
                     )}
                     {!['cancelled', 'refunded', 'failed'].includes(order.status) && (
@@ -1163,15 +1161,13 @@ const AdminOrders = () => {
                               <Truck size={14} />
                             </button>
                           )}
-                          {/* WhatsApp PDF Invoice Button — works for any status */}
-                          {order.customer_phone && (
-                            <button
-                              onClick={() => sendOrderInvoicePdf(order)}
-                              title="WhatsApp এ PDF ইনভয়েস পাঠান"
-                              className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
-                              <FileText size={14} />
-                            </button>
-                          )}
+                          {/* PDF Invoice Download Button — works for any status */}
+                          <button
+                            onClick={() => downloadOrderInvoicePdf(order)}
+                            title="PDF ইনভয়েস ডাউনলোড করুন"
+                            className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
+                            <Download size={14} />
+                          </button>
                           {/* Customer WhatsApp Button */}
                           <button
                             onClick={() => sendCustomerWhatsApp(order)}

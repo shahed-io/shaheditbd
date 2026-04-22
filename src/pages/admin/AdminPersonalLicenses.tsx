@@ -11,10 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Edit3, Trash2, Copy, MessageCircle, Search, Filter, Package, Clock, CheckCircle, XCircle, Settings2 } from 'lucide-react';
+import { Plus, Edit3, Trash2, Copy, MessageCircle, Search, Filter, Package, Clock, CheckCircle, XCircle, Settings2, FileDown } from 'lucide-react';
 import { usePasswordTypes } from '@/hooks/usePasswordTypes';
 import PasswordTypesManager from '@/components/admin/PasswordTypesManager';
-import { sendInvoiceViaWhatsApp, type InvoiceData } from '@/lib/invoicePdf';
+import { downloadInvoicePdf, normalizeWaPhone, type InvoiceData } from '@/lib/invoicePdf';
 
 type PersonalLicense = {
   id: string;
@@ -157,11 +157,38 @@ export default function AdminPersonalLicenses() {
     toast.success('কপি হয়েছে');
   }
 
-  async function sendWhatsApp(lic: PersonalLicense) {
+  // Original text-style WhatsApp delivery (no PDF, no link)
+  function sendWhatsApp(lic: PersonalLicense) {
     const pt = getType(lic.password_type);
-    const phone = lic.customer_phone || '';
+    const phone = normalizeWaPhone(lic.customer_phone);
     if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
 
+    const lines: string[] = [];
+    lines.push(`📦 *${lic.name}*`);
+    lines.push('');
+    if (lic.customer_name) lines.push(`প্রিয় ${lic.customer_name},`);
+    lines.push('আপনার লাইসেন্সের বিস্তারিত নিচে দেওয়া হলো:');
+    lines.push('');
+    if (lic.key_value) lines.push(`🔑 Key: ${lic.key_value}`);
+    if (lic.password) {
+      const suffix = pt ? ` ${pt.emoji} (${pt.label})` : '';
+      lines.push(`🔒 Password: ${lic.password}${suffix}`);
+    }
+    if (lic.expires_at) lines.push(`📅 মেয়াদ: ${new Date(lic.expires_at).toLocaleDateString('bn-BD')}`);
+    if (lic.note) lines.push(`📝 নোট: ${lic.note}`);
+    lines.push('');
+    lines.push('✅ ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!');
+    lines.push('🌐 shahedstore.com.bd');
+
+    const msg = encodeURIComponent(lines.join('\n'));
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    // Mark as delivered
+    deliverMut.mutate(lic);
+  }
+
+  // Manual PDF download — admin saves & shares as WhatsApp attachment
+  async function downloadLicensePdf(lic: PersonalLicense) {
+    const pt = getType(lic.password_type);
     const noteParts: string[] = [];
     if (lic.key_value) noteParts.push(`Key: ${lic.key_value}`);
     if (lic.password) noteParts.push(`Password: ${lic.password}${pt ? ' (' + pt.label + ')' : ''}`);
@@ -171,7 +198,7 @@ export default function AdminPersonalLicenses() {
     const data: InvoiceData = {
       invoiceNumber: `LIC-${lic.id.slice(0, 8).toUpperCase()}`,
       date: new Date(),
-      customer: { name: lic.customer_name || 'Valued Customer', phone },
+      customer: { name: lic.customer_name || 'Valued Customer', phone: lic.customer_phone || '' },
       items: [{
         name: lic.name,
         quantity: 1,
@@ -186,15 +213,10 @@ export default function AdminPersonalLicenses() {
       notes: 'Personal license delivery from Shahed Store.',
     };
 
-    const tid = toast.loading('PDF ইনভয়েস তৈরি হচ্ছে...');
+    const tid = toast.loading('PDF তৈরি হচ্ছে...');
     try {
-      await sendInvoiceViaWhatsApp(data, {
-        phone,
-        messagePrefix: `📦 *${lic.name}*\n\nপ্রিয় ${lic.customer_name || 'গ্রাহক'},\nআপনার লাইসেন্সের সম্পূর্ণ বিস্তারিত PDF আকারে পাঠানো হলো:`,
-      });
-      toast.success('PDF লাইসেন্স WhatsApp এ পাঠানো হচ্ছে...', { id: tid });
-      // Mark as delivered
-      deliverMut.mutate(lic);
+      await downloadInvoicePdf(data);
+      toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp এ Attach করে পাঠান', { id: tid });
     } catch (e: any) {
       toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
     }
@@ -340,8 +362,11 @@ export default function AdminPersonalLicenses() {
                       <Button size="icon" variant="ghost" onClick={() => copyLicenseText(lic)} title="কপি">
                         <Copy className="w-4 h-4" />
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={() => sendWhatsApp(lic)} title="WhatsApp ডেলিভারি" className="text-green-600 hover:text-green-700">
+                      <Button size="icon" variant="ghost" onClick={() => sendWhatsApp(lic)} title="WhatsApp ডেলিভারি (টেক্সট)" className="text-green-600 hover:text-green-700">
                         <MessageCircle className="w-4 h-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" onClick={() => downloadLicensePdf(lic)} title="PDF ডাউনলোড করুন" className="text-primary hover:text-primary/80">
+                        <FileDown className="w-4 h-4" />
                       </Button>
                       <Button size="icon" variant="ghost" onClick={() => openEdit(lic)}>
                         <Edit3 className="w-4 h-4" />
