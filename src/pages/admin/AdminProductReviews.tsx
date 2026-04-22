@@ -66,9 +66,9 @@ const AdminProductReviews = () => {
 
       <div className="flex gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="রিভিউ বা প্রোডাক্ট খুঁজুন..."
-            className="w-full bg-muted/30 border border-border rounded-xl pl-12 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
+            className="w-full bg-muted/30 border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
         </div>
         {(['pending', 'approved', 'rejected', 'all'] as const).map(f => (
           <button key={f} onClick={() => setFilter(f)}

@@ -426,28 +426,28 @@ const AdminQuickSale = () => {
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">নাম <span className="text-destructive">*</span></label>
               <div className="relative group">
-                <User size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <User size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input value={customerName} onChange={e => setCustomerName(e.target.value)}
                   placeholder="কাস্টমারের নাম"
-                  className="w-full bg-background border border-border rounded-lg pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
               </div>
             </div>
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">ফোন <span className="text-destructive">*</span></label>
               <div className="relative group">
-                <Phone size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Phone size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input value={customerPhone} onChange={e => setCustomerPhone(e.target.value)}
                   placeholder="01XXXXXXXXX"
-                  className="w-full bg-background border border-border rounded-lg pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
               </div>
             </div>
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">ইমেইল</label>
               <div className="relative group">
-                <Mail size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Mail size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input value={customerEmail} onChange={e => setCustomerEmail(e.target.value)}
                   placeholder="email@example.com"
-                  className="w-full bg-background border border-border rounded-lg pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors" />
+                  className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors" />
               </div>
             </div>
           </div>
@@ -501,10 +501,10 @@ const AdminQuickSale = () => {
                       <div className="sm:col-span-9">
                         <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">কাস্টম প্রোডাক্ট নাম <span className="text-destructive">*</span></label>
                         <div className="relative group">
-                          <PenLine size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <PenLine size={13} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
                           <input value={entry.custom_name} onChange={e => updateEntry(idx, { custom_name: e.target.value })}
                             placeholder="প্রোডাক্টের নাম লিখুন"
-                            className="w-full bg-background border border-border rounded-lg pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                            className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                         </div>
                       </div>
                       <div className="sm:col-span-3">
@@ -552,13 +552,13 @@ const AdminQuickSale = () => {
                       ) : (
                         <>
                           <div className="relative">
-                            <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                            <Search size={13} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                             <input
                               value={activeIdx === idx ? productSearch : ''}
                               onChange={e => { setProductSearch(e.target.value); setActiveIdx(idx); }}
                               onFocus={() => { setActiveIdx(idx); }}
                               placeholder="প্রোডাক্ট নাম লিখে সার্চ করুন..."
-                              className="w-full bg-background border border-border rounded-lg pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                              className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                             />
                           </div>
                           {activeIdx === idx && (
