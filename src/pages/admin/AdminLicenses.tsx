@@ -118,6 +118,11 @@ const AdminLicenses = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
 
+  // ── Product Search Mode (NEW) ──
+  // Quickly find which products have available licenses by searching product name.
+  const [productNameQuery, setProductNameQuery] = useState('');
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
+
 
   const fetchAll = async () => {
     setLoading(true);
