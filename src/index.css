@@ -1605,6 +1605,19 @@ body.admin-page textarea {
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
   box-shadow: var(--ad-shadow-sm);
 }
+/* Preserve Tailwind left/right padding utilities (icon-prefixed inputs) */
+body.admin-page input.pl-8  { padding-left: 2rem; }
+body.admin-page input.pl-9  { padding-left: 2.25rem; }
+body.admin-page input.pl-10 { padding-left: 2.5rem; }
+body.admin-page input.pl-11 { padding-left: 2.75rem; }
+body.admin-page input.pl-12 { padding-left: 3rem; }
+body.admin-page input.pl-14 { padding-left: 3.5rem; }
+body.admin-page input.pl-16 { padding-left: 4rem; }
+body.admin-page input.pr-8  { padding-right: 2rem; }
+body.admin-page input.pr-9  { padding-right: 2.25rem; }
+body.admin-page input.pr-10 { padding-right: 2.5rem; }
+body.admin-page input.pr-11 { padding-right: 2.75rem; }
+body.admin-page input.pr-12 { padding-right: 3rem; }
 body.admin-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"])::placeholder,
 body.admin-page textarea::placeholder {
   color: hsl(var(--ad-text-subtle));
