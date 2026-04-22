@@ -321,7 +321,14 @@ const AdminInvoiceGenerator = () => {
           <div className="glass-card rounded-2xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-shrink-0">
               <h3 className="font-bold text-foreground text-sm">Invoice {invoiceNumber}</h3>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={handleSaveAsOrder}
+                  disabled={saving || !!savedOrderId}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-semibold shadow-md shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <Database size={13} /> {savedOrderId ? 'সেভ হয়েছে ✓' : saving ? 'সেভ...' : 'অর্ডারে সেভ'}
+                </button>
                 <button onClick={handleDownloadPdf} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-primary/40 text-primary hover:bg-primary/10 text-xs font-semibold"><FileText size={13} /> PDF ডাউনলোড</button>
                 <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-glow text-xs font-semibold"><Printer size={13} /> Print / PDF</button>
                 <button onClick={() => setShowPreview(false)} className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30"><X size={15} /></button>
