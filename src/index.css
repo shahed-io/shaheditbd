@@ -925,13 +925,14 @@ body.admin-page > #root,
 ══════════════════════════════════════════════════════════════ */
 .admin-glass-sidebar {
   background:
-    linear-gradient(180deg, hsla(var(--ad-glass-tint), 0.78), hsla(var(--ad-glass-tint), 0.62));
+    linear-gradient(180deg, hsla(var(--ad-glass-tint), 0.92), hsla(var(--ad-glass-tint), 0.82));
   backdrop-filter: var(--ad-blur-strong);
   -webkit-backdrop-filter: var(--ad-blur-strong);
-  border-right: 1px solid hsla(var(--ad-border), 0.6);
+  border-right: 1px solid hsla(var(--ad-border-strong), 0.7);
   box-shadow:
-    inset -1px 0 0 hsla(255, 255, 255, 0.6),  /* inner highlight */
-    4px 0 24px hsla(220, 30%, 25%, 0.04);
+    inset -1px 0 0 hsla(255, 255, 255, 0.7),
+    6px 0 32px hsla(220, 30%, 25%, 0.08),
+    1px 0 0 hsla(220, 20%, 80%, 0.5);
   position: relative;
 }
 .admin-glass-sidebar::before {
