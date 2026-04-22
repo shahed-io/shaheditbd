@@ -53,7 +53,7 @@ interface HistoryItem {
   price_cents: number;
   created_at: string;
   user_id: string;
-  reseller_users?: { username: string } | null;
+  user?: { email?: string; display_name?: string } | null;
 }
 
 const formatIID = (raw: string) =>

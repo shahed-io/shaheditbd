@@ -1941,6 +1941,7 @@ export type Database = {
           id: string
           installation_id: string | null
           price_cents: number
+          provider: string | null
           user_id: string
         }
         Insert: {
@@ -1949,6 +1950,7 @@ export type Database = {
           id?: string
           installation_id?: string | null
           price_cents?: number
+          provider?: string | null
           user_id: string
         }
         Update: {
@@ -1957,77 +1959,38 @@ export type Database = {
           id?: string
           installation_id?: string | null
           price_cents?: number
+          provider?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "reseller_generations_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "reseller_users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
-      reseller_sessions: {
-        Row: {
-          created_at: string
-          expires_at: string
-          id: string
-          token: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          expires_at?: string
-          id?: string
-          token: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string
-          id?: string
-          token?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "reseller_sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "reseller_users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      reseller_users: {
+      reseller_profiles: {
         Row: {
           balance_cents: number
           created_at: string
           id: string
-          is_admin: boolean
-          password_hash: string
+          is_active: boolean
+          notes: string | null
           updated_at: string
-          username: string
+          user_id: string
         }
         Insert: {
           balance_cents?: number
           created_at?: string
           id?: string
-          is_admin?: boolean
-          password_hash: string
+          is_active?: boolean
+          notes?: string | null
           updated_at?: string
-          username: string
+          user_id: string
         }
         Update: {
           balance_cents?: number
           created_at?: string
           id?: string
-          is_admin?: boolean
-          password_hash?: string
+          is_active?: boolean
+          notes?: string | null
           updated_at?: string
-          username?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -2710,7 +2673,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "manager" | "user"
+      app_role: "admin" | "manager" | "user" | "reseller"
       order_status:
         | "pending"
         | "processing"
@@ -2847,7 +2810,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "manager", "user"],
+      app_role: ["admin", "manager", "user", "reseller"],
       order_status: [
         "pending",
         "processing",
