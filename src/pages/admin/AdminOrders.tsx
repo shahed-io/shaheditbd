@@ -11,6 +11,43 @@ import {
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 import logoIcon from '@/assets/logo.png';
+import { sendInvoiceViaWhatsApp, type InvoiceData } from '@/lib/invoicePdf';
+
+// Build a canonical InvoiceData object from a DB order row
+const orderToInvoiceData = (order: any): InvoiceData => ({
+  invoiceNumber: order.order_number,
+  date: order.created_at,
+  customer: {
+    name: order.customer_name,
+    phone: order.customer_phone,
+    email: order.customer_email,
+  },
+  items: (order.order_items || []).map((i: any) => ({
+    name: i.product_name,
+    quantity: Number(i.quantity) || 1,
+    price: Number(i.price) || 0,
+    total: Number(i.total) || 0,
+    license_key: i.license_key,
+  })),
+  subtotal: Number(order.subtotal) || 0,
+  discount: Number(order.discount_amount) || 0,
+  total: Number(order.total) || 0,
+  paymentMethod: order.payment_method,
+  transactionId: order.transaction_id,
+  status: order.status,
+});
+
+const sendOrderInvoicePdf = async (order: any) => {
+  const phone = order.customer_phone;
+  if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
+  const tid = toast.loading('PDF ইনভয়েস তৈরি হচ্ছে...');
+  try {
+    await sendInvoiceViaWhatsApp(orderToInvoiceData(order), { phone });
+    toast.success('PDF ইনভয়েস WhatsApp এ পাঠানো হচ্ছে...', { id: tid });
+  } catch (e: any) {
+    toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
+  }
+};
 
 // ─── Status Config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any; dot: string }> = {
