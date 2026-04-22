@@ -397,7 +397,7 @@ export default function AdminGetCIDTools() {
                   <CardContent className="pt-6 space-y-4">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <Badge className="bg-emerald-500/10 text-emerald-700 border-emerald-500/30 gap-1.5" variant="outline">
-                        <CheckCircle2 className="h-3 w-3" /> Success via {cidResult.provider.toUpperCase()}
+                        <CheckCircle2 className="h-3 w-3" /> Success via {cidResult.provider === 'getcid' ? 'Primary' : 'Backup'} Channel
                       </Badge>
                       <Badge variant="outline" className="gap-1.5">
                         <Clock className="h-3 w-3" /> {cidResult.elapsed_ms}ms
