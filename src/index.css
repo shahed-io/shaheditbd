@@ -961,7 +961,35 @@ html[data-theme="midnight-purple"] .admin-glass-card {
   border-color: hsla(258, 78%, 50%, 0.25);
 }
 
-/* ── Sidebar Nav Item — Floating gradient pill ─────────────── */
+/* ══════════════════════════════════════════════════════════════
+   PREMIUM GRADIENT GLOW — Keyframes (admin-only animations)
+══════════════════════════════════════════════════════════════ */
+@keyframes admin-gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes admin-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 hsla(258, 78%, 55%, 0.45), 0 8px 22px hsla(258, 78%, 55%, 0.35); }
+  50%      { box-shadow: 0 0 0 8px hsla(258, 78%, 55%, 0), 0 12px 28px hsla(258, 78%, 55%, 0.45); }
+}
+@keyframes admin-shine-sweep {
+  0%   { transform: translateX(-120%) skewX(-20deg); }
+  100% { transform: translateX(220%) skewX(-20deg); }
+}
+@keyframes admin-card-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2px); }
+}
+@keyframes admin-icon-spin-in {
+  0%   { transform: rotate(-180deg) scale(0.6); opacity: 0; }
+  100% { transform: rotate(0) scale(1); opacity: 1; }
+}
+@keyframes admin-rotate-conic {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Sidebar Nav Item — Floating gradient pill (Premium Glow) ─ */
 .admin-nav-item {
   position: relative;
   display: flex;
@@ -972,7 +1000,23 @@ html[data-theme="midnight-purple"] .admin-glass-card {
   font-size: 0.8125rem;
   font-weight: 500;
   color: hsl(var(--ad-text-muted));
-  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.18s ease, transform 0.15s ease;
+  transition: background-color 0.2s ease, color 0.2s ease,
+              box-shadow 0.25s ease, transform 0.2s ease;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* shimmer layer (active only) */
+.admin-nav-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg,
+    transparent 30%,
+    hsla(0, 0%, 100%, 0.5) 50%,
+    transparent 70%);
+  transform: translateX(-120%) skewX(-20deg);
+  pointer-events: none;
+  z-index: 1;
 }
 .admin-nav-item > svg:first-of-type {
   width: 28px;
@@ -982,31 +1026,77 @@ html[data-theme="midnight-purple"] .admin-glass-card {
   background: hsla(258, 78%, 55%, 0.10);
   color: hsl(var(--ad-accent));
   flex-shrink: 0;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition: background 0.25s ease, color 0.25s ease,
+              transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease;
+  position: relative;
+  z-index: 2;
 }
+.admin-nav-item > span,
+.admin-nav-item > .flex { position: relative; z-index: 2; }
+
 .admin-nav-item:hover {
-  background: hsla(258, 78%, 55%, 0.07);
+  background: linear-gradient(135deg,
+    hsla(258, 78%, 55%, 0.08) 0%,
+    hsla(200, 90%, 50%, 0.06) 100%);
   color: hsl(var(--ad-text));
+  transform: translateX(2px);
 }
 .admin-nav-item:hover > svg:first-of-type {
-  background: hsla(258, 78%, 55%, 0.16);
-  transform: scale(1.05);
+  background: linear-gradient(135deg,
+    hsla(258, 78%, 55%, 0.20) 0%,
+    hsla(200, 90%, 50%, 0.16) 100%);
+  transform: scale(1.08) rotate(-3deg);
+  box-shadow: 0 4px 12px hsla(258, 78%, 55%, 0.20);
 }
 .admin-nav-item.active {
-  background: hsla(0, 0%, 100%, 0.96);
-  color: hsl(var(--ad-accent));
-  font-weight: 600;
-  box-shadow: var(--ad-shadow-pill);
+  background: linear-gradient(135deg,
+    hsla(0, 0%, 100%, 0.98) 0%,
+    hsla(258, 78%, 98%, 0.95) 50%,
+    hsla(200, 90%, 98%, 0.95) 100%);
+  color: hsl(var(--ad-accent-deep));
+  font-weight: 700;
+  box-shadow:
+    0 6px 18px hsla(258, 78%, 55%, 0.22),
+    0 1px 3px hsla(258, 78%, 55%, 0.10),
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.9);
+  transform: translateX(2px);
+}
+.admin-nav-item.active::after {
+  animation: admin-shine-sweep 2.4s ease-in-out 0.3s 1;
 }
 .admin-nav-item.active > svg:first-of-type {
-  background: linear-gradient(135deg, hsl(var(--ad-accent)) 0%, hsl(280, 75%, 55%) 50%, hsl(var(--ad-accent-2)) 100%);
+  background: linear-gradient(135deg,
+    hsl(258, 78%, 55%) 0%,
+    hsl(280, 75%, 55%) 35%,
+    hsl(200, 90%, 50%) 70%,
+    hsl(330, 85%, 60%) 100%);
+  background-size: 200% 200%;
+  animation: admin-gradient-shift 4s ease infinite, admin-icon-spin-in 0.45s ease-out;
   color: white;
-  box-shadow: 0 4px 12px hsla(258, 78%, 55%, 0.40);
+  box-shadow:
+    0 6px 16px hsla(258, 78%, 55%, 0.45),
+    0 0 0 1px hsla(0, 0%, 100%, 0.4) inset;
+  transform: scale(1.06);
 }
-.admin-nav-item.active::before { display: none; }
+.admin-nav-item.active::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: -2px; top: 25%; bottom: 25%;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, hsl(258, 78%, 55%), hsl(200, 90%, 50%));
+  box-shadow: 0 0 12px hsla(258, 78%, 55%, 0.6);
+  z-index: 2;
+}
 html[data-theme="dark-cyber"] .admin-nav-item.active,
 html[data-theme="midnight-purple"] .admin-nav-item.active {
-  background: hsla(258, 78%, 55%, 0.18);
+  background: linear-gradient(135deg,
+    hsla(258, 78%, 25%, 0.7) 0%,
+    hsla(280, 75%, 25%, 0.6) 50%,
+    hsla(200, 90%, 25%, 0.6) 100%);
+  color: hsl(258, 78%, 90%);
 }
 
 /* ── Stat Card — White glass + gradient hover border + soft sheen ── */
