@@ -846,6 +846,8 @@ const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
       )}
     </div>
   );
-};
+});
+
+AdminQuickSale.displayName = 'AdminQuickSale';
 
 export default AdminQuickSale;
