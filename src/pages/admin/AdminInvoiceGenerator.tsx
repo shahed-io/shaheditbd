@@ -104,12 +104,66 @@ const AdminInvoiceGenerator = () => {
     }
   };
 
+  const handleSaveAsOrder = async () => {
+    if (!customerName.trim()) return toast.error('গ্রাহকের নাম দিন');
+    if (!customerEmail.trim()) return toast.error('গ্রাহকের ইমেইল দিন (অর্ডার সেভের জন্য আবশ্যক)');
+    if (items.some(i => !i.name.trim() || i.price <= 0)) return toast.error('সকল আইটেমের নাম ও দাম দিন');
+    if (savedOrderId) return toast.info('এই ইনভয়েসটি ইতিমধ্যে অর্ডার হিসেবে সেভ করা হয়েছে');
+
+    setSaving(true);
+    const tid = toast.loading('অর্ডার হিসেবে সেভ হচ্ছে...');
+    try {
+      // 1) Insert order
+      const { data: order, error: orderErr } = await supabase
+        .from('orders')
+        .insert({
+          order_number: invoiceNumber,
+          customer_name: customerName.trim(),
+          customer_email: customerEmail.trim(),
+          customer_phone: customerPhone.trim() || null,
+          subtotal,
+          total,
+          discount_amount: discount,
+          payment_method: paymentMethod,
+          transaction_id: transactionId.trim() || null,
+          status: 'completed',
+          payment_status: 'paid',
+          notes: notes.trim() || null,
+          admin_notes: `📄 Manual Invoice (Invoice Generator)${customerAddress ? ` | Address: ${customerAddress}` : ''}`,
+        })
+        .select('id, order_number')
+        .single();
+
+      if (orderErr) throw orderErr;
+
+      // 2) Insert order items
+      const itemRows = items.map(i => ({
+        order_id: order.id,
+        product_name: i.name.trim(),
+        quantity: i.quantity,
+        price: i.price,
+        total: i.quantity * i.price,
+      }));
+
+      const { error: itemsErr } = await supabase.from('order_items').insert(itemRows);
+      if (itemsErr) throw itemsErr;
+
+      setSavedOrderId(order.id);
+      toast.success(`✅ অর্ডার সেভ হয়েছে — Order: ${order.order_number}`, { id: tid, duration: 5000 });
+    } catch (e: any) {
+      toast.error('সেভ করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleReset = () => {
     setInvoiceNumber(generateInvoiceNumber());
     setInvoiceDate(new Date().toISOString().slice(0, 10));
     setCustomerName(''); setCustomerEmail(''); setCustomerPhone(''); setCustomerAddress('');
     setPaymentMethod('bkash'); setTransactionId(''); setNotes(''); setDiscount(0);
     setItems([{ id: crypto.randomUUID(), name: '', quantity: 1, price: 0 }]);
+    setSavedOrderId(null);
     toast.success('ফর্ম রিসেট হয়েছে');
   };
 
