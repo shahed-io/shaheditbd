@@ -876,28 +876,57 @@ html[data-theme="midnight-purple"] .admin-gradient-bg {
     hsl(var(--ad-bg));
 }
 
-/* ── Glass sidebar — white glass with violet ambient glow ────── */
+/* ── Glass sidebar — white glass + violet→cyan gradient edge ── */
 .admin-glass-sidebar {
-  background: hsla(0, 0%, 100%, 0.72);
+  background: hsla(0, 0%, 100%, 0.78);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border-right: 1px solid hsla(258, 40%, 80%, 0.35);
-  box-shadow: 1px 0 24px hsla(258, 78%, 55%, 0.06);
+  border-right: 1px solid hsla(258, 40%, 82%, 0.40);
+  box-shadow:
+    1px 0 28px hsla(258, 78%, 55%, 0.08),
+    inset -1px 0 0 hsla(0, 0%, 100%, 0.6);
+  position: relative;
+}
+.admin-glass-sidebar::after {
+  content: '';
+  position: absolute;
+  top: 0; right: -1px; bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    hsla(258, 78%, 55%, 0.35) 25%,
+    hsla(200, 90%, 50%, 0.30) 70%,
+    transparent 100%);
+  pointer-events: none;
 }
 html[data-theme="dark-cyber"] .admin-glass-sidebar,
 html[data-theme="midnight-purple"] .admin-glass-sidebar {
   background: hsla(258, 22%, 12%, 0.78);
   border-right-color: hsla(258, 40%, 40%, 0.30);
-  box-shadow: 1px 0 24px hsla(258, 78%, 30%, 0.20);
+  box-shadow: 1px 0 28px hsla(258, 78%, 30%, 0.22);
 }
 
-/* ── Top header bar — white glass with violet hairline ───────── */
+/* ── Top header bar — white glass + gradient hairline ───────── */
 .admin-glass-header {
-  background: hsla(0, 0%, 100%, 0.78);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid hsla(258, 40%, 80%, 0.35);
-  box-shadow: 0 1px 12px hsla(258, 78%, 55%, 0.04);
+  background: hsla(0, 0%, 100%, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid hsla(258, 40%, 82%, 0.40);
+  box-shadow: 0 2px 16px hsla(258, 78%, 55%, 0.05);
+  position: relative;
+}
+.admin-glass-header::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    hsla(258, 78%, 55%, 0.30) 30%,
+    hsla(200, 90%, 50%, 0.25) 65%,
+    hsla(330, 85%, 55%, 0.20) 90%,
+    transparent 100%);
+  pointer-events: none;
 }
 html[data-theme="dark-cyber"] .admin-glass-header,
 html[data-theme="midnight-purple"] .admin-glass-header {
