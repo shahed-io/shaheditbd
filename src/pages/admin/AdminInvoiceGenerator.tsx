@@ -23,6 +23,8 @@ const AdminInvoiceGenerator = () => {
   const printRef = useRef<HTMLDivElement>(null);
   const [logoBase64, setLogoBase64] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [savedOrderId, setSavedOrderId] = useState<string | null>(null);
 
   const [invoiceNumber, setInvoiceNumber] = useState(generateInvoiceNumber());
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().slice(0, 10));
