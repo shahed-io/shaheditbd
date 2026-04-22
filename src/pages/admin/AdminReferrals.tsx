@@ -232,7 +232,7 @@ const AdminReferrals = () => {
             placeholder="নাম, ইমেইল বা কোড দিয়ে খুঁজুন..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full bg-muted/30 border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+            className="w-full bg-muted/30 border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
           />
         </div>
         <div className="flex gap-2">

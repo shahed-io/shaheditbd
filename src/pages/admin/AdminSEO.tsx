@@ -301,7 +301,7 @@ const AdminSEO = () => {
             <div className="relative flex-1">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input value={productSearch} onChange={e => setProductSearch(e.target.value)} placeholder="প্রোডাক্ট খুঁজুন..."
-                className="w-full bg-background border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
+                className="w-full bg-background border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
             </div>
             {stats.withSeo < stats.products && (
               <button onClick={autoGenerateAll} disabled={saving} className="btn-glow px-4 py-2.5 rounded-xl text-xs font-medium flex items-center gap-2 whitespace-nowrap disabled:opacity-60">
