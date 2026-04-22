@@ -78,6 +78,25 @@ const AdminInvoiceGenerator = () => {
     setTimeout(() => { win.print(); win.close(); }, 400);
   };
 
+  const handleSendWhatsAppPdf = async () => {
+    if (!customerName.trim()) return toast.error('গ্রাহকের নাম দিন');
+    if (!customerPhone.trim()) return toast.error('গ্রাহকের ফোন নম্বর দিন');
+    if (items.some(i => !i.name.trim() || i.price <= 0)) return toast.error('সকল আইটেমের নাম ও দাম দিন');
+    const data: InvoiceData = {
+      invoiceNumber, date: invoiceDate,
+      customer: { name: customerName, phone: customerPhone, email: customerEmail, address: customerAddress },
+      items: items.map(i => ({ name: i.name, quantity: i.quantity, price: i.price, total: i.quantity * i.price })),
+      subtotal, discount, total, paymentMethod, transactionId, status: 'paid', notes,
+    };
+    const tid = toast.loading('PDF তৈরি হচ্ছে...');
+    try {
+      await sendInvoiceViaWhatsApp(data, { phone: customerPhone });
+      toast.success('PDF ইনভয়েস WhatsApp এ পাঠানো হচ্ছে...', { id: tid });
+    } catch (e: any) {
+      toast.error('সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
+    }
+  };
+
   const handleReset = () => {
     setInvoiceNumber(generateInvoiceNumber());
     setInvoiceDate(new Date().toISOString().slice(0, 10));
