@@ -11,7 +11,7 @@ import {
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 import logoIcon from '@/assets/logo.png';
-import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
+import { downloadInvoicePdf, downloadInvoicePdfFromElement, type InvoiceData } from '@/lib/invoicePdf';
 
 // Build a canonical InvoiceData object from a DB order row
 const orderToInvoiceData = (order: any): InvoiceData => ({
