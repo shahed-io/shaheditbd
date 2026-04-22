@@ -118,6 +118,13 @@ const AdminLicenses = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
 
+  // ── Bulk WhatsApp Delivery States ──
+  const [bulkWaModal, setBulkWaModal] = useState(false);
+  const [bulkWaPhone, setBulkWaPhone] = useState('');
+  const [bulkWaCustomerName, setBulkWaCustomerName] = useState('');
+  const [bulkWaOrderNumber, setBulkWaOrderNumber] = useState('');
+  const [bulkWaSending, setBulkWaSending] = useState(false);
+
   // ── Product Search Mode (NEW) ──
   // Quickly find which products have available licenses by searching product name.
   const [productNameQuery, setProductNameQuery] = useState('');
