@@ -33,6 +33,9 @@ type LicenseKey = {
 type OrderEntry = {
   product: Product | null;
   quantity: number;
+  original_price: number;
+  discount_amount: number;
+  discount_percent: number;
   custom_price: number;
   license: LicenseKey | null;
   manual_key: string;
@@ -44,6 +47,9 @@ type OrderEntry = {
 const emptyEntry = (): OrderEntry => ({
   product: null,
   quantity: 1,
+  original_price: 0,
+  discount_amount: 0,
+  discount_percent: 0,
   custom_price: 0,
   license: null,
   manual_key: '',
