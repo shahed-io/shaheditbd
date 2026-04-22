@@ -256,25 +256,25 @@ const AdminDashboard = () => {
 
   const StatCard = ({ label, value, icon: Icon, gradient, change, changePct, prefix = '', onClick }: any) => (
     <div
-      className={`glass-card rounded-2xl p-5 transition-all duration-200 ${onClick ? 'cursor-pointer hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]' : ''}`}
+      className={`admin-stat-card ${onClick ? 'cursor-pointer active:scale-[0.98]' : ''}`}
       onClick={onClick}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
-          <Icon size={20} className="text-white" />
+      <div className="relative z-[1] flex items-start justify-between mb-3">
+        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 shadow-lg ring-1 ring-white/30`}>
+          <Icon size={20} className="text-white drop-shadow-sm" />
         </div>
         {changePct !== null && changePct !== undefined && (
-          <div className={`flex items-center gap-0.5 text-[11px] font-semibold px-2 py-1 rounded-lg ${parseFloat(changePct) >= 0 ? 'text-emerald-600 bg-emerald-500/10' : 'text-destructive bg-destructive/10'}`}>
+          <div className={`flex items-center gap-0.5 text-[11px] font-semibold px-2 py-1 rounded-lg backdrop-blur-sm ${parseFloat(changePct) >= 0 ? 'text-emerald-700 bg-emerald-500/15 ring-1 ring-emerald-500/20' : 'text-destructive bg-destructive/10 ring-1 ring-destructive/20'}`}>
             {parseFloat(changePct) >= 0 ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
             {Math.abs(parseFloat(changePct))}%
           </div>
         )}
       </div>
-      <p className="text-muted-foreground text-[11px] uppercase tracking-wider font-semibold mb-1">{label}</p>
-      <p className="text-2xl font-bold text-foreground leading-tight">
+      <p className="relative z-[1] text-muted-foreground text-[11px] uppercase tracking-[1.2px] font-semibold mb-1">{label}</p>
+      <p className="relative z-[1] text-2xl font-bold text-foreground leading-tight" style={{ fontFamily: 'Sora, sans-serif' }}>
         {loading ? <span className="inline-block w-20 h-7 bg-muted/40 rounded animate-pulse" /> : `${prefix}${typeof value === 'number' ? value.toLocaleString() : value}`}
       </p>
-      {change && <p className="text-[11px] text-muted-foreground mt-1">{change}</p>}
+      {change && <p className="relative z-[1] text-[11px] text-muted-foreground mt-1">{change}</p>}
     </div>
   );
 
@@ -324,10 +324,7 @@ const AdminDashboard = () => {
 
       {/* ── Section: Revenue ── */}
       <div>
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-full bg-primary" />
-          <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">রেভিনিউ ওভারভিউ</h2>
-        </div>
+        <h2 className="admin-section-title">রেভিনিউ ওভারভিউ</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard label="Today's Sales" value={stats.todaySales} icon={TrendingUp} gradient="from-primary to-primary/60" prefix="৳" onClick={() => navigate('/ceo/orders?filter=today')} />
           <StatCard label="This Month Revenue" value={stats.monthRevenue} icon={DollarSign} gradient="from-purple-500 to-violet-600" prefix="৳" changePct={revenueGrowth} change="vs last month" onClick={() => navigate('/ceo/orders?filter=month')} />
@@ -338,10 +335,7 @@ const AdminDashboard = () => {
 
       {/* ── Section: Orders ── */}
       <div>
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-full bg-primary" />
-          <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">অর্ডার স্ট্যাটাস</h2>
-        </div>
+        <h2 className="admin-section-title">অর্ডার স্ট্যাটাস</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
             { label: 'Total Orders', value: stats.totalOrders, icon: ShoppingCart, gradient: 'from-primary to-primary/70', changePct: ordersGrowth, onClick: () => navigate('/ceo/orders') },

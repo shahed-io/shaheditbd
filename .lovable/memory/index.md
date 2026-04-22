@@ -8,3 +8,4 @@ AI Card Generator: pale-blue/white bg + sky-blue/mint bubbles, WHITE pill with R
 
 ## Memories
 - [Product card generation](mem://features/product-card-generation) — Signature SHAHED STORE AI card visual blueprint (background, pills, bubbles, contact)
+- [Admin design system](mem://style/admin-design-system) — admin-glass-* tokens, admin-nav-item, admin-stat-card, admin-section-title; auto-applied via body.admin-page
