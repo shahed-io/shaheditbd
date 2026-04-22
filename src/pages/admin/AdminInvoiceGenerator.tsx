@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Plus, Trash2, Printer, X, FileText, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import logoIcon from '@/assets/logo.png';
-import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
+import { downloadInvoicePdf, downloadInvoicePdfFromElement, type InvoiceData } from '@/lib/invoicePdf';
 
 interface InvoiceItem {
   id: string;
