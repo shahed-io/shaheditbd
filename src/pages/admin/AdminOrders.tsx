@@ -117,7 +117,16 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
     setTimeout(() => { win.print(); }, 400);
   };
 
-  const handleDownloadPdf = () => downloadOrderInvoicePdf(order);
+  const handleDownloadPdf = async () => {
+    if (!printRef.current) return downloadOrderInvoicePdf(order);
+    const tid = toast.loading('PDF তৈরি হচ্ছে...');
+    try {
+      await downloadInvoicePdfFromElement(printRef.current, `invoice-${order.order_number}.pdf`);
+      toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp এ Attach করে পাঠান', { id: tid });
+    } catch (e: any) {
+      toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
+    }
+  };
 
   const items = order.order_items || [];
   const date = new Date(order.created_at).toLocaleDateString('bn-BD', { day: '2-digit', month: 'long', year: 'numeric' });
