@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { forwardRef, useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 import {
   ShoppingBag, Search, ChevronDown, User, Phone, Mail,
   MessageCircle, Send, Save, Plus, Minus, X, Package,
@@ -11,13 +12,15 @@ import {
 import { sendInvoiceEmail } from '@/lib/emailInvoice';
 
 // Inline price + discount editor
-const PriceDiscountFields = ({ entry, onOriginalChange, onDiscountAmountChange, onDiscountPercentChange }: {
+type PriceDiscountFieldsProps = {
   entry: { original_price: number; discount_amount: number; discount_percent: number; custom_price: number };
   onOriginalChange: (v: number) => void;
   onDiscountAmountChange: (v: number) => void;
   onDiscountPercentChange: (v: number) => void;
-}) => (
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-lg bg-muted/20 border border-border/60">
+};
+
+const PriceDiscountFields = forwardRef<HTMLDivElement, PriceDiscountFieldsProps>(({ entry, onOriginalChange, onDiscountAmountChange, onDiscountPercentChange }, ref) => (
+  <div ref={ref} className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-lg bg-muted/20 border border-border/60">
     <div>
       <label className="text-[10px] font-semibold text-muted-foreground mb-1 block">মূল মূল্য (৳)</label>
       <input type="number" min={0} value={entry.original_price || ''}
@@ -49,7 +52,9 @@ const PriceDiscountFields = ({ entry, onOriginalChange, onDiscountAmountChange, 
       </div>
     </div>
   </div>
-);
+));
+
+PriceDiscountFields.displayName = 'PriceDiscountFields';
 
 
 type Product = {
@@ -109,7 +114,10 @@ const KEY_TYPES: Record<string, string> = {
   custom: '📝 Custom',
 };
 
-const AdminQuickSale = () => {
+const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-16 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
+const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-0 flex w-12 items-center justify-center text-muted-foreground transition-colors group-focus-within:text-primary';
+
+const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -397,7 +405,7 @@ const AdminQuickSale = () => {
   const validItemCount = entries.filter(e => e.product || (e.is_custom && e.custom_name.trim())).length;
 
   return (
-    <div className="space-y-5 max-w-5xl mx-auto pb-8">
+    <div ref={ref} className="space-y-5 max-w-5xl mx-auto pb-8">
       {/* Inline header — auto-hidden left side via global CSS guard (.admin-page-header is rendered by AdminLayout) */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2.5">
@@ -426,28 +434,28 @@ const AdminQuickSale = () => {
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">নাম <span className="text-destructive">*</span></label>
               <div className="relative group">
-                <User size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <span className={iconSlotClass}><User size={16} /></span>
                 <input value={customerName} onChange={e => setCustomerName(e.target.value)}
                   placeholder="কাস্টমারের নাম"
-                  className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  className={iconInputClass} />
               </div>
             </div>
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">ফোন <span className="text-destructive">*</span></label>
               <div className="relative group">
-                <Phone size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <span className={iconSlotClass}><Phone size={16} /></span>
                 <input value={customerPhone} onChange={e => setCustomerPhone(e.target.value)}
                   placeholder="01XXXXXXXXX"
-                  className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  className={iconInputClass} />
               </div>
             </div>
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">ইমেইল</label>
               <div className="relative group">
-                <Mail size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <span className={iconSlotClass}><Mail size={16} /></span>
                 <input value={customerEmail} onChange={e => setCustomerEmail(e.target.value)}
                   placeholder="email@example.com"
-                  className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors" />
+                  className={iconInputClass} />
               </div>
             </div>
           </div>
@@ -501,10 +509,10 @@ const AdminQuickSale = () => {
                       <div className="sm:col-span-9">
                         <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">কাস্টম প্রোডাক্ট নাম <span className="text-destructive">*</span></label>
                         <div className="relative group">
-                          <PenLine size={13} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <span className={cn(iconSlotClass, 'w-11')}><PenLine size={13} /></span>
                           <input value={entry.custom_name} onChange={e => updateEntry(idx, { custom_name: e.target.value })}
                             placeholder="প্রোডাক্টের নাম লিখুন"
-                            className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                            className={cn(iconInputClass, 'pl-14')} />
                         </div>
                       </div>
                       <div className="sm:col-span-3">
@@ -551,14 +559,14 @@ const AdminQuickSale = () => {
                         </div>
                       ) : (
                         <>
-                          <div className="relative">
-                            <Search size={13} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <div className="relative group">
+                            <span className={cn(iconSlotClass, 'w-11')}><Search size={13} /></span>
                             <input
                               value={activeIdx === idx ? productSearch : ''}
                               onChange={e => { setProductSearch(e.target.value); setActiveIdx(idx); }}
                               onFocus={() => { setActiveIdx(idx); }}
                               placeholder="প্রোডাক্ট নাম লিখে সার্চ করুন..."
-                              className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                              className={cn(iconInputClass, 'pl-14')}
                             />
                           </div>
                           {activeIdx === idx && (
@@ -646,7 +654,7 @@ const AdminQuickSale = () => {
                       </div>
                     </div>
                     {entry.license && (
-                      <p className="text-[11px] text-green-600 mt-2 flex items-center gap-1 font-medium">
+                      <p className="text-[11px] text-primary mt-2 flex items-center gap-1 font-medium">
                         <CheckCircle2 size={11} /> স্টক থেকে সিলেক্ট করা হয়েছে
                       </p>
                     )}
@@ -838,6 +846,8 @@ const AdminQuickSale = () => {
       )}
     </div>
   );
-};
+});
+
+AdminQuickSale.displayName = 'AdminQuickSale';
 
 export default AdminQuickSale;
