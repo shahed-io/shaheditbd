@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
         .limit(1);
 
       const user = users?.[0];
-      if (!user) return json({ error: 'Invalid username or password' }, 401);
+      if (!user) return json({ error: 'Invalid username or password' });
 
       // For admin user: if password matches ADMIN_PASSWORD but hash doesn't verify,
       // it means the hash is stale — re-hash and update
