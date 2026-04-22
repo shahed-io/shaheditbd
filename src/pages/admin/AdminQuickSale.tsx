@@ -398,17 +398,8 @@ const AdminQuickSale = () => {
 
   return (
     <div className="space-y-5 max-w-5xl mx-auto pb-8">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Zap size={18} className="text-primary" />
-          </div>
-          <div>
-            <h1 className="text-xl font-black text-foreground tracking-tight">Quick Sale</h1>
-            <p className="text-xs text-muted-foreground">দ্রুত অর্ডার তৈরি ও ডেলিভারি</p>
-          </div>
-        </div>
+      {/* Inline meta strip — page header is rendered by AdminLayout */}
+      <div className="flex items-center justify-end">
         <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-lg border border-border">
           <Hash size={12} />
           <span>মোট অর্ডার: <span className="font-bold text-foreground">{totalOrders}</span></span>
