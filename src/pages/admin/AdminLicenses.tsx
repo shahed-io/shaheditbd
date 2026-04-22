@@ -313,6 +313,11 @@ const AdminLicenses = () => {
   const filtered = licenses.filter(l => {
     if (filterStatus !== 'all' && l.status !== filterStatus) return false;
     if (filterProduct !== 'all' && l.product_id !== filterProduct) return false;
+    if (onlyAvailable && l.status !== 'available') return false;
+    if (productNameQuery.trim()) {
+      const q = productNameQuery.trim().toLowerCase();
+      if (!(l.product_name || '').toLowerCase().includes(q)) return false;
+    }
     if (search) {
       const q = search.toLowerCase();
       return l.key_value.toLowerCase().includes(q) ||
@@ -322,6 +327,21 @@ const AdminLicenses = () => {
     }
     return true;
   });
+
+  // ── Product Search: aggregate available licenses per matching product ──
+  const productMatches = (() => {
+    const q = productNameQuery.trim().toLowerCase();
+    if (!q) return [] as Array<{ product: Product; available: number; total: number }>;
+    const matched = products.filter(p => p.name.toLowerCase().includes(q));
+    return matched.map(p => {
+      const all = licenses.filter(l => l.product_id === p.id);
+      return {
+        product: p,
+        available: all.filter(l => l.status === 'available').length,
+        total: all.length,
+      };
+    }).sort((a, b) => b.available - a.available);
+  })();
 
   const toggleShow = (id: string) => setShowValues(prev => ({ ...prev, [id]: !prev[id] }));
   const maskValue = (val: string) => val.length > 8 ? val.slice(0, 4) + '•'.repeat(Math.min(val.length - 8, 12)) + val.slice(-4) : '••••••••';
