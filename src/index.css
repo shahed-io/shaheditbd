@@ -814,10 +814,10 @@ body.admin-page {
   --ad-shadow-lg:     0 8px 32px hsla(258, 78%, 55%, 0.10), 0 2px 6px hsla(258, 40%, 30%, 0.04);
   --ad-shadow-xl:     0 24px 48px hsla(258, 78%, 55%, 0.16), 0 8px 16px hsla(258, 40%, 30%, 0.06);
   --ad-shadow-pill:   0 4px 14px hsla(258, 78%, 55%, 0.18), 0 1px 3px hsla(258, 78%, 55%, 0.10);
-  --ad-radius:        14px;
-  --ad-radius-sm:     8px;
-  --ad-radius-lg:     18px;
-}
+  --ad-radius:        20px;
+  --ad-radius-sm:     12px;
+  --ad-radius-lg:     26px;
+  --ad-radius-pill:   9999px;
 html[data-theme="dark-cyber"] body.admin-page,
 html[data-theme="midnight-purple"] body.admin-page {
   --ad-bg:            258 22% 8%;
