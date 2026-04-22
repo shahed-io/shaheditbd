@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { forwardRef, useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 import {
   ShoppingBag, Search, ChevronDown, User, Phone, Mail,
   MessageCircle, Send, Save, Plus, Minus, X, Package,
@@ -11,13 +12,15 @@ import {
 import { sendInvoiceEmail } from '@/lib/emailInvoice';
 
 // Inline price + discount editor
-const PriceDiscountFields = ({ entry, onOriginalChange, onDiscountAmountChange, onDiscountPercentChange }: {
+type PriceDiscountFieldsProps = {
   entry: { original_price: number; discount_amount: number; discount_percent: number; custom_price: number };
   onOriginalChange: (v: number) => void;
   onDiscountAmountChange: (v: number) => void;
   onDiscountPercentChange: (v: number) => void;
-}) => (
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-lg bg-muted/20 border border-border/60">
+};
+
+const PriceDiscountFields = forwardRef<HTMLDivElement, PriceDiscountFieldsProps>(({ entry, onOriginalChange, onDiscountAmountChange, onDiscountPercentChange }, ref) => (
+  <div ref={ref} className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-lg bg-muted/20 border border-border/60">
     <div>
       <label className="text-[10px] font-semibold text-muted-foreground mb-1 block">মূল মূল্য (৳)</label>
       <input type="number" min={0} value={entry.original_price || ''}
@@ -49,7 +52,9 @@ const PriceDiscountFields = ({ entry, onOriginalChange, onDiscountAmountChange, 
       </div>
     </div>
   </div>
-);
+));
+
+PriceDiscountFields.displayName = 'PriceDiscountFields';
 
 
 type Product = {
@@ -109,7 +114,10 @@ const KEY_TYPES: Record<string, string> = {
   custom: '📝 Custom',
 };
 
-const AdminQuickSale = () => {
+const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-16 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
+const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-0 flex w-12 items-center justify-center text-muted-foreground transition-colors group-focus-within:text-primary';
+
+const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
