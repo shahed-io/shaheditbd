@@ -946,20 +946,60 @@ html[data-theme="midnight-purple"] .admin-glass-header {
   border: 1px solid hsla(258, 78%, 75%, 0.22);
   border-radius: var(--ad-radius);
   box-shadow: var(--ad-shadow-sm);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.25s ease, box-shadow 0.3s ease,
+              transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
 }
 .admin-glass-card:hover {
-  border-color: hsla(258, 78%, 60%, 0.40);
-  box-shadow: var(--ad-shadow-md);
-  transform: translateY(-1px);
+  border-color: hsla(258, 78%, 60%, 0.45);
+  box-shadow:
+    0 12px 32px hsla(258, 78%, 55%, 0.14),
+    0 4px 10px hsla(200, 90%, 50%, 0.06);
+  transform: translateY(-2px);
 }
 html[data-theme="dark-cyber"] .admin-glass-card,
 html[data-theme="midnight-purple"] .admin-glass-card {
   background: hsla(258, 22%, 14%, 0.78);
   border-color: hsla(258, 78%, 50%, 0.25);
 }
+
+/* Auto-rainbow stat cards inside any 4-column grid (Dashboard, Reports) */
+body.admin-page .grid > .admin-stat-card:nth-child(4n+1)::before {
+  background: linear-gradient(90deg, hsl(258, 78%, 55%), hsl(280, 75%, 58%), hsl(258, 78%, 55%));
+  background-size: 200% 100%;
+}
+body.admin-page .grid > .admin-stat-card:nth-child(4n+2)::before {
+  background: linear-gradient(90deg, hsl(200, 90%, 50%), hsl(180, 85%, 50%), hsl(200, 90%, 50%));
+  background-size: 200% 100%;
+}
+body.admin-page .grid > .admin-stat-card:nth-child(4n+2)::after {
+  background: radial-gradient(circle, hsla(200, 90%, 60%, 0.14), transparent 70%);
+}
+body.admin-page .grid > .admin-stat-card:nth-child(4n+3)::before {
+  background: linear-gradient(90deg, hsl(330, 85%, 58%), hsl(350, 80%, 60%), hsl(330, 85%, 58%));
+  background-size: 200% 100%;
+}
+body.admin-page .grid > .admin-stat-card:nth-child(4n+3)::after {
+  background: radial-gradient(circle, hsla(330, 85%, 60%, 0.14), transparent 70%);
+}
+body.admin-page .grid > .admin-stat-card:nth-child(4n+4)::before {
+  background: linear-gradient(90deg, hsl(42, 96%, 58%), hsl(28, 92%, 58%), hsl(42, 96%, 58%));
+  background-size: 200% 100%;
+}
+body.admin-page .grid > .admin-stat-card:nth-child(4n+4)::after {
+  background: radial-gradient(circle, hsla(42, 96%, 60%, 0.16), transparent 70%);
+}
+
+/* Main content fade-in on route change */
+@keyframes admin-content-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+body.admin-page main > * {
+  animation: admin-content-in 0.35s ease-out;
+}
+
 
 /* ══════════════════════════════════════════════════════════════
    PREMIUM GRADIENT GLOW — Keyframes (admin-only animations)
