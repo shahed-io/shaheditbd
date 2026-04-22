@@ -279,20 +279,24 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* Header — page title is now in top bar; show last refresh + action */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          Real-time business snapshot · <span className="font-medium text-foreground">{lastRefresh.toLocaleTimeString('en-BD')}</span>
-        </p>
-        <button
-          onClick={fetchAll}
-          disabled={loading}
-          className="glass-card px-4 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
-        >
-          <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
-          Refresh
-        </button>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0 flex-1">
+          <p className="text-sm text-muted-foreground">
+            Real-time business snapshot · <span className="font-medium text-foreground">{lastRefresh.toLocaleTimeString('en-BD')}</span>
+          </p>
+        </div>
+        <div className="flex items-start gap-3 lg:justify-end">
+          <button
+            onClick={fetchAll}
+            disabled={loading}
+            className="glass-card px-4 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
+          >
+            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* ── Notification Panel ── */}
@@ -303,7 +307,7 @@ const AdminDashboard = () => {
             <span className="text-sm font-semibold text-foreground">Notifications</span>
             <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-bold">{notifications.length}</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2">
             {notifications.map(n => {
               const { icon: NIcon, color } = notifIcon[n.type];
               return (
