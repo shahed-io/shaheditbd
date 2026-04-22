@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
       }
 
       if (!passwordValid) {
-        return json({ error: 'Invalid username or password' }, 401);
+        return json({ error: 'Invalid username or password' });
       }
 
       // Clean old sessions for this user (keep last 5)
