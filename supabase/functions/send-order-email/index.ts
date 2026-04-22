@@ -24,8 +24,8 @@ const STATUS_LABELS: Record<string, { bn: string; emoji: string; color: string }
 function buildInvoiceHtml(order: any, items: any[]) {
   const statusInfo = STATUS_LABELS[order.status] || { bn: order.status, emoji: '📋', color: '#6b7280' }
   const PM_LABELS: Record<string, string> = {
-    bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket',
-    upay: 'Upay', bkash_merchant: 'bKash Merchant', wallet: 'Wallet'
+    bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket',
+    upay: 'Upay', bkash_merchant: 'BKash Merchant', wallet: 'Wallet'
   }
   const dateFormatted = new Date(order.created_at).toLocaleDateString('bn-BD', { day: '2-digit', month: 'long', year: 'numeric' })
   const dateEn = new Date(order.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -269,8 +269,8 @@ function buildPromoHtml(subject: string, body: string, ctaText?: string, ctaUrl?
 
 function buildAdminOrderHtml(order: any, items: any[], adminCount: number) {
   const paymentMethodLabels: Record<string, string> = {
-    bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket',
-    upay: 'Upay', bkash_merchant: 'bKash Merchant', wallet: 'Wallet',
+    bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket',
+    upay: 'Upay', bkash_merchant: 'BKash Merchant', wallet: 'Wallet',
   }
   const itemsHtml = items.map(item => `
     <tr>

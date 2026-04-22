@@ -5,7 +5,7 @@ export interface FooterSettings {
   cert_title: string;
   cert_id: string;
   status_text: string;
-  payment_methods: string; // comma-separated: "bKash,Nagad,Rocket"
+  payment_methods: string; // comma-separated: "BKash,Nagad,Rocket"
   phone: string;
   email: string;
   address: string;
@@ -22,7 +22,7 @@ const DEFAULTS: FooterSettings = {
   cert_title: 'GOVT. CERTIFIED BUSINESS',
   cert_id: 'DBID: 586772174',
   status_text: 'Trusted Digital Product Store',
-  payment_methods: 'bKash,Nagad,Rocket,Upay,bKash Merchant',
+  payment_methods: 'BKash,Nagad,Rocket,Upay,BKash Merchant',
   phone: '01840-099853',
   email: 'info@shahedstore.com.bd',
   address: 'Ishwardi, Pabna',

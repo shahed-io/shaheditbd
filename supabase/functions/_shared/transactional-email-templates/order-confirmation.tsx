@@ -52,7 +52,7 @@ const OrderConfirmation = ({
   orderNumber = 'ORD-XXXXXXXX',
   orderTotal = '0 BDT',
   orderItems = [{ name: 'Sample Product', quantity: 1, price: '500 BDT' }],
-  paymentMethod = 'bKash',
+  paymentMethod = 'BKash',
 }: OrderConfirmationProps) => {
   return (
     <Html lang="en" dir="ltr">
@@ -119,7 +119,7 @@ export const template = {
       { name: 'Windows 11 Pro Key', quantity: 1, price: '800 BDT' },
       { name: 'Office 365 License', quantity: 1, price: '700 BDT' },
     ],
-    paymentMethod: 'bKash',
+    paymentMethod: 'BKash',
   },
 } satisfies TemplateEntry
 

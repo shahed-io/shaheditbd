@@ -215,7 +215,7 @@ export const template = {
     subtotal: 3100,
     discount: 100,
     total: 3000,
-    paymentMethod: 'bKash',
+    paymentMethod: 'BKash',
     transactionId: 'BX9K2L7M',
     status: 'Paid',
     pdfUrl: 'https://example.com/invoice.pdf',

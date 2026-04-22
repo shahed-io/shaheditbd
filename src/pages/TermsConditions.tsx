@@ -44,7 +44,7 @@ const TermsConditions = () => (
     <SectionCard icon={<CreditCard size={15} />} title="৩. মূল্য ও পেমেন্ট" accentFrom={A} accentTo={B}>
       <ul className="space-y-1.5">
         <Bullet>সকল মূল্য বাংলাদেশি টাকায় (BDT) প্রদর্শিত হয়</Bullet>
-        <Bullet>পেমেন্ট গ্রহণযোগ্য: bKash, Nagad, Rocket, উপায়, bKash Merchant</Bullet>
+        <Bullet>পেমেন্ট গ্রহণযোগ্য: BKash, Nagad, Rocket, উপায়, BKash Merchant</Bullet>
         <Bullet>অর্ডার কনফার্মেশনের আগে পেমেন্ট যাচাই করা হয়</Bullet>
         <Bullet>মূল্য পরিবর্তনের অধিকার আমরা সংরক্ষণ করি</Bullet>
       </ul>

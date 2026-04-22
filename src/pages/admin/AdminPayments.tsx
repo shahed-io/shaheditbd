@@ -51,7 +51,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
   rejected: { label: 'Rejected', color: 'bg-destructive/15 text-destructive border-destructive/30', icon: XCircle },
 };
 const methodLabels: Record<string, string> = {
-  bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket', bank: 'Bank Transfer',
+  bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', bank: 'Bank Transfer',
 };
 
 // ── Empty method template ───────────────────────────────────
@@ -150,7 +150,7 @@ const MethodEditor = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase">নাম *</label>
-              <Input value={form.label} onChange={e => set('label', e.target.value)} placeholder="যেমন: bKash" />
+              <Input value={form.label} onChange={e => set('label', e.target.value)} placeholder="যেমন: BKash" />
             </div>
             <div>
               <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase">নম্বর *</label>

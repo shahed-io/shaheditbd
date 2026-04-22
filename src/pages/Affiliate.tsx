@@ -579,7 +579,7 @@ const Affiliate = () => {
                 <select value={withdrawForm.method}
                   onChange={e => setWithdrawForm({ ...withdrawForm, method: e.target.value })}
                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-                  <option value="bkash">bKash</option>
+                  <option value="bkash">BKash</option>
                   <option value="nagad">Nagad</option>
                   <option value="rocket">Rocket</option>
                   <option value="bank">Bank</option>
