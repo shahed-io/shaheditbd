@@ -252,6 +252,166 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // ADMIN-ONLY ACTIONS (Supabase JWT auth, no reseller billing)
+    // ═══════════════════════════════════════════════════════════════
+    const isAdminAction = ['admin_balance', 'admin_generate', 'admin_compare', 'admin_batch', 'admin_history'].includes(action);
+    if (isAdminAction) {
+      // Verify Supabase admin via JWT
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader?.startsWith('Bearer ')) {
+        return json({ error: 'Admin auth required' }, 401);
+      }
+      const jwt = authHeader.replace('Bearer ', '');
+      const { data: userData, error: userErr } = await supabase.auth.getUser(jwt);
+      if (userErr || !userData.user) {
+        return json({ error: 'Invalid admin token' }, 401);
+      }
+      const { data: roleRow } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userData.user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+      if (!roleRow) {
+        return json({ error: 'Admin role required' }, 403);
+      }
+
+      // ── Admin: Balance check (both providers, no billing) ──
+      if (action === 'admin_balance') {
+        const result: Record<string, unknown> = { providers: {} };
+        const providers = result.providers as Record<string, unknown>;
+        if (GETCID_TOKEN) {
+          const r = await callGetCIDBalance(GETCID_TOKEN);
+          providers.getcid = r.ok
+            ? { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL }
+            : { error: r.error, status: 'error', raw: r.raw };
+        } else {
+          providers.getcid = { status: 'not_configured' };
+        }
+        if (GRAHOK_TOKEN) {
+          const r = await callGrahokBalance(GRAHOK_TOKEN, GRAHOK_BAL);
+          providers.grahok = r.ok
+            ? { balance: r.balance, status: 'ok', endpoint: GRAHOK_BAL }
+            : { error: r.error, status: 'error', raw: r.raw };
+        } else {
+          providers.grahok = { status: 'not_configured' };
+        }
+        return json(result);
+      }
+
+      // ── Admin: Direct CID generation (no balance deduction) ──
+      if (action === 'admin_generate') {
+        if (!installation_id || String(installation_id).trim().length < 4) {
+          return json({ error: 'Installation ID too short' }, 400);
+        }
+        const provider = (body.provider as string) || 'auto'; // 'getcid' | 'grahok' | 'auto'
+        const iid = String(installation_id).trim().replace(/\s+/g, ' ');
+        const errors: Record<string, string> = {};
+        let cidValue: string | null = null;
+        let usedProvider = '';
+        const startTime = Date.now();
+
+        const tryGetCID = async () => {
+          if (!GETCID_TOKEN) { errors.getcid = 'token not configured'; return; }
+          const r = await callGetCID(GETCID_TOKEN, iid);
+          if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'getcid'; }
+          else errors.getcid = r.error || 'unknown';
+        };
+        const tryGrahok = async () => {
+          if (!GRAHOK_TOKEN) { errors.grahok = 'token not configured'; return; }
+          const r = await callGrahok(GRAHOK_TOKEN, GRAHOK_URL, iid);
+          if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'grahok'; }
+          else errors.grahok = r.error || 'unknown';
+        };
+
+        if (provider === 'getcid') await tryGetCID();
+        else if (provider === 'grahok') await tryGrahok();
+        else { await tryGetCID(); if (!cidValue) await tryGrahok(); }
+
+        const elapsed = Date.now() - startTime;
+        if (!cidValue) return json({ error: 'CID generation failed', details: errors, elapsed_ms: elapsed }, 502);
+        return json({ cid: cidValue, provider: usedProvider, elapsed_ms: elapsed, billed: false });
+      }
+
+      // ── Admin: Compare both providers side-by-side ──
+      if (action === 'admin_compare') {
+        if (!installation_id || String(installation_id).trim().length < 4) {
+          return json({ error: 'Installation ID too short' }, 400);
+        }
+        const iid = String(installation_id).trim().replace(/\s+/g, ' ');
+        const t1 = Date.now();
+        const [getcidRes, grahokRes] = await Promise.all([
+          GETCID_TOKEN ? callGetCID(GETCID_TOKEN, iid) : Promise.resolve({ ok: false, error: 'not configured' }),
+          GRAHOK_TOKEN ? callGrahok(GRAHOK_TOKEN, GRAHOK_URL, iid) : Promise.resolve({ ok: false, error: 'not configured' }),
+        ]);
+        return json({
+          installation_id: iid,
+          total_elapsed_ms: Date.now() - t1,
+          getcid: getcidRes.ok
+            ? { status: 'success', cid: getcidRes.cid }
+            : { status: 'failed', error: getcidRes.error, raw: getcidRes.raw },
+          grahok: grahokRes.ok
+            ? { status: 'success', cid: grahokRes.cid }
+            : { status: 'failed', error: grahokRes.error, raw: grahokRes.raw },
+        });
+      }
+
+      // ── Admin: Batch generate (multiple IIDs at once) ──
+      if (action === 'admin_batch') {
+        const iids = body.installation_ids as unknown;
+        if (!Array.isArray(iids) || iids.length === 0) {
+          return json({ error: 'installation_ids must be a non-empty array' }, 400);
+        }
+        if (iids.length > 50) {
+          return json({ error: 'Maximum 50 IIDs per batch' }, 400);
+        }
+        const provider = (body.provider as string) || 'auto';
+        const results: Array<Record<string, unknown>> = [];
+        for (const raw of iids) {
+          const iid = String(raw).trim().replace(/\s+/g, ' ');
+          if (iid.length < 4) {
+            results.push({ installation_id: iid, status: 'skipped', error: 'too short' });
+            continue;
+          }
+          const errors: Record<string, string> = {};
+          let cidValue: string | null = null;
+          let usedProvider = '';
+          const tryGetCID = async () => {
+            if (!GETCID_TOKEN) { errors.getcid = 'no token'; return; }
+            const r = await callGetCID(GETCID_TOKEN, iid);
+            if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'getcid'; }
+            else errors.getcid = r.error || 'unknown';
+          };
+          const tryGrahok = async () => {
+            if (!GRAHOK_TOKEN) { errors.grahok = 'no token'; return; }
+            const r = await callGrahok(GRAHOK_TOKEN, GRAHOK_URL, iid);
+            if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'grahok'; }
+            else errors.grahok = r.error || 'unknown';
+          };
+          if (provider === 'getcid') await tryGetCID();
+          else if (provider === 'grahok') await tryGrahok();
+          else { await tryGetCID(); if (!cidValue) await tryGrahok(); }
+
+          if (cidValue) results.push({ installation_id: iid, status: 'success', cid: cidValue, provider: usedProvider });
+          else results.push({ installation_id: iid, status: 'failed', errors });
+        }
+        const successCount = results.filter(r => r.status === 'success').length;
+        return json({ total: results.length, success: successCount, failed: results.length - successCount, results });
+      }
+
+      // ── Admin: All generations history ──
+      if (action === 'admin_history') {
+        const limit = Math.min(Number(body.limit) || 100, 500);
+        const { data: generations } = await supabase
+          .from('reseller_generations')
+          .select('id, installation_id, cid, price_cents, created_at, user_id, reseller_users(username)')
+          .order('created_at', { ascending: false })
+          .limit(limit);
+        return json({ generations: generations ?? [] });
+      }
+    }
+
     // ── User's own generation history ────────────────────────────────
     if (action === 'my_history') {
       if (!token) return json({ error: 'Authentication required' }, 401);
