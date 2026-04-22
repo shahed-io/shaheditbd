@@ -114,8 +114,8 @@ const KEY_TYPES: Record<string, string> = {
   custom: '📝 Custom',
 };
 
-const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
-const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground transition-colors group-focus-within:text-primary';
+const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-16 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
+const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-4 flex w-12 items-center justify-center text-muted-foreground transition-colors group-focus-within:text-primary';
 
 const AdminQuickSale = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -509,10 +509,10 @@ const AdminQuickSale = () => {
                       <div className="sm:col-span-9">
                         <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">কাস্টম প্রোডাক্ট নাম <span className="text-destructive">*</span></label>
                         <div className="relative group">
-                          <span className={cn(iconSlotClass, 'w-11')}><PenLine size={13} /></span>
+                          <span className={iconSlotClass}><PenLine size={13} /></span>
                           <input value={entry.custom_name} onChange={e => updateEntry(idx, { custom_name: e.target.value })}
                             placeholder="প্রোডাক্টের নাম লিখুন"
-                            className={cn(iconInputClass, 'pl-14')} />
+                            className={iconInputClass} />
                         </div>
                       </div>
                       <div className="sm:col-span-3">
@@ -560,13 +560,13 @@ const AdminQuickSale = () => {
                       ) : (
                         <>
                           <div className="relative group">
-                            <span className={cn(iconSlotClass, 'w-11')}><Search size={13} /></span>
+                            <span className={iconSlotClass}><Search size={13} /></span>
                             <input
                               value={activeIdx === idx ? productSearch : ''}
                               onChange={e => { setProductSearch(e.target.value); setActiveIdx(idx); }}
                               onFocus={() => { setActiveIdx(idx); }}
                               placeholder="প্রোডাক্ট নাম লিখে সার্চ করুন..."
-                              className={cn(iconInputClass, 'pl-14')}
+                              className={iconInputClass}
                             />
                           </div>
                           {activeIdx === idx && (
