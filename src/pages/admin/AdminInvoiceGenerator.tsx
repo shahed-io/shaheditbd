@@ -232,9 +232,9 @@ const AdminInvoiceGenerator = () => {
 
           {/* Summary */}
           <div className="glass-card rounded-2xl p-5 space-y-3">
-            <div className="flex justify-between text-sm text-muted-foreground"><span>সাবটোটাল:</span><span>৳{subtotal.toLocaleString()}</span></div>
-            {discount > 0 && <div className="flex justify-between text-sm text-green-500"><span>ডিসকাউন্ট:</span><span>-৳{discount.toLocaleString()}</span></div>}
-            <div className="flex justify-between text-lg font-bold text-primary border-t border-border pt-3"><span>সর্বমোট:</span><span>৳{total.toLocaleString()}</span></div>
+            <div className="flex justify-between text-sm text-muted-foreground"><span>Subtotal:</span><span>৳{subtotal.toLocaleString()}</span></div>
+            {discount > 0 && <div className="flex justify-between text-sm text-green-500"><span>Discount:</span><span>-৳{discount.toLocaleString()}</span></div>}
+            <div className="flex justify-between text-lg font-bold text-primary border-t border-border pt-3"><span>Total:</span><span>৳{total.toLocaleString()}</span></div>
             <button onClick={handlePreview} className="w-full mt-2 btn-glow rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2">
               <Printer size={16} /> প্রিভিউ ও প্রিন্ট
             </button>
