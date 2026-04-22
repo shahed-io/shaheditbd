@@ -2019,25 +2019,44 @@ body.admin-page * {
    inherit the storefront's premium glassmorphism.
 ══════════════════════════════════════ */
 body.admin-page .glass-card {
-  background: linear-gradient(145deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.55) 100%);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.22);
+  position: relative;
+  background:
+    linear-gradient(145deg, hsla(0,0%,100%,0.78) 0%, hsla(0,0%,100%,0.55) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 65%, 0.55) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 60%, 0.35) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 60%, 0.45) 100%
+    ) border-box;
+  border: 1.5px solid transparent;
+  backdrop-filter: blur(28px) saturate(185%);
+  -webkit-backdrop-filter: blur(28px) saturate(185%);
   box-shadow:
-    0 4px 24px hsla(226, 35%, 12%, 0.06),
-    inset 0 1px 0 hsla(0, 0%, 100%, 0.7);
-  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    0 6px 28px hsla(226, 35%, 12%, 0.07),
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.75);
+  transition: box-shadow 0.28s ease, transform 0.28s ease, background 0.28s ease;
 }
 body.admin-page .glass-card:hover {
-  border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.35);
+  transform: translateY(-1px);
+  background:
+    linear-gradient(145deg, hsla(0,0%,100%,0.85) 0%, hsla(0,0%,100%,0.62) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 60%, 0.85) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 55%, 0.6) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 55%, 0.7) 100%
+    ) border-box;
   box-shadow:
-    0 8px 32px hsla(var(--brand-h), var(--brand-s), 50%, 0.10),
-    inset 0 1px 0 hsla(0, 0%, 100%, 0.8);
+    0 14px 40px hsla(var(--brand-h), var(--brand-s), 50%, 0.14),
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.85);
 }
 html[data-theme="dark-cyber"] body.admin-page .glass-card,
 html[data-theme="midnight-purple"] body.admin-page .glass-card {
-  background: linear-gradient(145deg, hsla(260,40%,12%,0.65) 0%, hsla(260,40%,9%,0.55) 100%);
-  border-color: hsla(var(--brand-h), var(--brand-s), 60%, 0.20);
+  background:
+    linear-gradient(145deg, hsla(260,40%,13%,0.72) 0%, hsla(260,40%,9%,0.55) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 60%, 0.55) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 55%, 0.35) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 55%, 0.45) 100%
+    ) border-box;
 }
 
 /* Tables inside admin pages — soft glassy header */
