@@ -798,13 +798,13 @@ html[data-theme="midnight-purple"] .cat-card {
 
 /* ── Admin Color Tokens (scoped to body.admin-page) ───────── */
 body.admin-page {
-  --ad-bg:            220 30% 97%;          /* faint blue-tinted canvas */
+  --ad-bg:            220 32% 94%;          /* deeper blue-tinted canvas — gives glass cards real lift */
   --ad-surface:       0 0% 100%;            /* pure white base */
-  --ad-surface-2:     220 25% 96%;          /* subtle alt */
+  --ad-surface-2:     220 28% 92%;          /* subtle alt */
   --ad-glass:         255 255 255;          /* RGB for rgba use */
-  --ad-glass-tint:    220 50% 98%;
-  --ad-border:        220 20% 88%;          /* hairline */
-  --ad-border-strong: 220 18% 78%;
+  --ad-glass-tint:    220 45% 99%;
+  --ad-border:        220 18% 82%;          /* hairline — slightly stronger */
+  --ad-border-strong: 220 16% 70%;
   --ad-text:          222 24% 12%;
   --ad-text-muted:    220 10% 44%;
   --ad-text-subtle:   220 10% 58%;
