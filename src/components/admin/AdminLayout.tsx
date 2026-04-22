@@ -308,8 +308,8 @@ const AdminLayout = () => {
                             <>
                               <span className="flex-1 truncate">{item.label}</span>
                               {item.badge === 'live' && (
-                                <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                                  <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> LIVE
+                                <span className="flex items-center gap-1 text-[9px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                                  <span className="w-1 h-1 rounded-full bg-primary animate-pulse" /> LIVE
                                 </span>
                               )}
                               {item.badge === 'new' && (
