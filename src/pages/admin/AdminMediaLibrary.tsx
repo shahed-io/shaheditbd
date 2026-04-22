@@ -231,12 +231,12 @@ const AdminMediaLibrary = () => {
       {/* Controls */}
       <div className="flex gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="প্রোডাক্ট নাম দিয়ে খুঁজুন…"
-            className="w-full bg-background border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+            className="w-full bg-background border border-border rounded-xl pl-12 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
           />
         </div>
         <div className="flex items-center gap-2">

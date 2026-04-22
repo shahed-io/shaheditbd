@@ -1008,10 +1008,10 @@ const AdminOrders = () => {
       <div className="glass-card rounded-2xl p-4 space-y-3">
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="অর্ডার ID, নাম, ইমেইল, TrxID..."
-              className="w-full bg-muted/30 border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
+              className="w-full bg-muted/30 border border-border rounded-xl pl-12 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
           </div>
           <button onClick={() => setShowFilters(!showFilters)}
             className={`px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 border transition-all ${showFilters ? 'btn-glow border-transparent' : 'glass-card border-border text-muted-foreground hover:text-foreground'}`}>
