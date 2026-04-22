@@ -246,7 +246,7 @@ const AdminGoogleAds = () => {
         </TabsContent>
 
         {/* GA4 */}
-        <TabsContent value="ga4" className="mt-4">
+        <TabsContent value="ga4" className="mt-4 space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -263,6 +263,54 @@ const AdminGoogleAds = () => {
               <p className="text-xs text-muted-foreground">GA4 → Admin → Data Streams → Web → Measurement ID</p>
             </CardContent>
           </Card>
+
+          {/* ─────── GA4 বিস্তারিত গাইড ─────── */}
+          <div className="rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/5 via-background to-background p-5 sm:p-6 space-y-5 backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+                <TrendingUp className="text-primary" size={20} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Google Analytics 4 (GA4) গাইড</h3>
+                <p className="text-xs text-muted-foreground">Visitor behavior ও traffic analyze করার সম্পূর্ণ system</p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-muted/20 border border-border/40 p-4 space-y-2">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-2"><Search size={14} className="text-primary" /> GA4 কী এবং কেন প্রয়োজন?</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                GA4 হলো Google-এর free analytics tool যা আপনার website-এ কারা আসছে, কোথা থেকে আসছে, কোন page বেশি দেখা হচ্ছে, কতক্ষণ থাকছে — এসব track করে। <strong>SEO ranking</strong>-এর জন্য Google জানতে চায় আপনার site-এ real users আসে কি না, তারা content পছন্দ করে কি না। GA4 connected থাকলে Google আপনার site-কে trustworthy মনে করে।
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-2"><CheckCircle2 size={14} className="text-primary" /> Setup Steps</p>
+              {[
+                { n: '1', t: 'GA4 Property তৈরি করুন', d: 'analytics.google.com → Admin → Create Property → আপনার website-এর নাম, time zone (Asia/Dhaka), currency (BDT) দিন।' },
+                { n: '2', t: 'Web Data Stream যোগ করুন', d: 'Property তৈরির পর "Web" platform বেছে নিন → আপনার website URL (https://shahedstore.com.bd) দিন → Stream তৈরি হবে।' },
+                { n: '3', t: 'Measurement ID কপি করুন', d: 'Stream-এর details page-এ "G-XXXXXXXXXX" format-এ একটা ID পাবেন। সেটাই Measurement ID। উপরে paste করুন।' },
+                { n: '4', t: 'Switch ON করে Save করুন', d: 'Toggle ON করে Save All চাপুন। ২৪–৪৮ ঘণ্টায় Realtime report-এ data দেখা যাবে।' },
+              ].map(s => (
+                <div key={s.n} className="flex gap-3 p-3 rounded-xl bg-muted/20 border border-border/40">
+                  <div className="w-7 h-7 shrink-0 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">{s.n}</div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{s.t}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">{s.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl bg-primary/10 border border-primary/30 p-4 space-y-1.5">
+              <p className="text-sm font-semibold text-primary flex items-center gap-2"><Lightbulb size={14} /> SEO ও Ranking-এর জন্য Tips</p>
+              <ul className="text-xs text-muted-foreground space-y-1 list-disc ml-5">
+                <li>GA4-কে <strong>Google Search Console</strong>-এর সাথে link করুন — organic search performance দেখা যাবে।</li>
+                <li>Engagement rate, bounce rate কম রাখার চেষ্টা করুন — ranking factor।</li>
+                <li>Realtime report দিয়ে instantly verify করুন site track হচ্ছে কি না।</li>
+                <li>GA4 ID একই — Conversion ID (AW-...) থেকে আলাদা। গুলিয়ে ফেলবেন না।</li>
+              </ul>
+            </div>
+          </div>
         </TabsContent>
 
         {/* GTM */}
