@@ -360,11 +360,72 @@ const FloatingSupport = () => {
         </div>
       )}
 
+      {/* ── Option Menu (shown when FAB clicked) ── */}
+      {menuOpen && !chatOpen && (
+        <>
+          <div
+            onClick={() => setMenuOpen(false)}
+            className="fixed inset-0 z-40 bg-transparent"
+          />
+          <div
+            className="fixed right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-72 max-w-xs flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-border/60 bg-background bottom-[calc(env(safe-area-inset-bottom,0px)+160px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+80px)]"
+            style={{ animation: 'slideUpIn 0.18s ease-out' }}
+          >
+            <div className="px-4 py-3 bg-gradient-to-r from-primary to-primary/80">
+              <p className="text-white text-sm font-bold">{config.fab_label}</p>
+              <p className="text-white/80 text-[11px] mt-0.5">যেকোনো একটি বেছে নিন</p>
+            </div>
+            <div className="p-2 flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto">
+              {config.chat_enabled && (
+                <button onClick={openChat} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/60 transition-colors text-left">
+                  <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))' }}>
+                    <Bot size={18} className="text-white" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{config.ai_label}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{config.ai_subtitle}</p>
+                  </div>
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
+                </button>
+              )}
+              {config.whatsapp_enabled && (
+                <button onClick={openWhatsApp} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/60 transition-colors text-left">
+                  <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}>
+                    <MessageCircle size={18} className="text-white" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{config.whatsapp_label}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{config.whatsapp_subtitle}</p>
+                  </div>
+                </button>
+              )}
+              {activeSets.map(set => {
+                const ChannelIcon = getFsIcon(set.icon);
+                return (
+                  <button key={set.id} onClick={() => openLiveSet(set)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/60 transition-colors text-left">
+                    <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)` }}>
+                      <ChannelIcon size={18} className="text-white" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground">{set.label}</p>
+                      {set.subtitle && <p className="text-[11px] text-muted-foreground truncate">{set.subtitle}</p>}
+                    </div>
+                  </button>
+                );
+              })}
+              {!config.chat_enabled && !config.whatsapp_enabled && activeSets.length === 0 && (
+                <p className="text-center text-xs text-muted-foreground py-6">কোনো সাপোর্ট চ্যানেল কনফিগার করা নেই</p>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
       {/* ── Main FAB ── */}
       <div
         className="fixed right-4 sm:right-6 z-50 flex items-center justify-center bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+16px)]"
       >
-        {!chatOpen && (
+        {!chatOpen && !menuOpen && (
           <>
             <span className="fab-ring fab-ring-1" />
             <span className="fab-ring fab-ring-2" />
@@ -372,27 +433,28 @@ const FloatingSupport = () => {
           </>
         )}
 
-        {!chatOpen && (
-          <span className="fab-comet" />
-        )}
+        {!chatOpen && !menuOpen && <span className="fab-comet" />}
 
         <button
-          onClick={() => { setMenuOpen(false); setChatOpen(o => !o); }}
+          onClick={() => {
+            if (chatOpen) setChatOpen(false);
+            else setMenuOpen(o => !o);
+          }}
           className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
           style={{
-            background: chatOpen
+            background: (chatOpen || menuOpen)
               ? 'hsl(var(--muted))'
               : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-            boxShadow: chatOpen
+            boxShadow: (chatOpen || menuOpen)
               ? 'none'
               : '0 0 24px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3), 0 8px 24px hsla(215,40%,4%,0.5)',
           }}
           title="সাপোর্ট"
         >
-          {!chatOpen && (
+          {!chatOpen && !menuOpen && (
             <span className="absolute inset-0 rounded-full fab-pulse-inner" />
           )}
-          {chatOpen
+          {(chatOpen || menuOpen)
             ? <X size={22} className="text-foreground" />
             : <MessageCircle size={24} className="text-white relative z-10" />
           }
