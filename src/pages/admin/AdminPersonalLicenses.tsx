@@ -278,7 +278,7 @@ export default function AdminPersonalLicenses() {
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="নাম, কি, কাস্টমার খুঁজুন..." className="pl-14" value={search} onChange={e => setSearch(e.target.value)} />
+          <Input placeholder="নাম, কি, কাস্টমার খুঁজুন..." className="pl-16" value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-[150px]"><Filter className="w-4 h-4 mr-2" /><SelectValue /></SelectTrigger>
@@ -326,7 +326,7 @@ export default function AdminPersonalLicenses() {
                     <div className="space-y-1 text-xs font-mono max-w-[220px] truncate">
                       {lic.key_value && <div title={lic.key_value}>🔑 {lic.key_value.substring(0, 20)}{lic.key_value.length > 20 ? '...' : ''}</div>}
                       {lic.password && (
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-2">
                           <span>🔒 ••••••</span>
                           {(() => {
                             const pt = getType(lic.password_type);
@@ -358,7 +358,7 @@ export default function AdminPersonalLicenses() {
                     ) : <span className="text-xs text-muted-foreground">—</span>}
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center justify-end gap-1">
+                    <div className="flex items-center justify-end gap-2">
                       <Button size="icon" variant="ghost" onClick={() => copyLicenseText(lic)} title="কপি">
                         <Copy className="w-4 h-4" />
                       </Button>

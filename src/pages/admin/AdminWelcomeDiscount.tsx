@@ -444,7 +444,7 @@ export default function AdminWelcomeDiscount() {
                         />
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-2">
                       {COLOR_PRESETS.map(c => (
                         <button
                           key={c}

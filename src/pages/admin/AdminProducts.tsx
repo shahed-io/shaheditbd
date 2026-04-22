@@ -303,7 +303,7 @@ const AdminProducts = () => {
       type="button"
       onClick={() => generateAiContent(fieldType)}
       disabled={!form.name.trim() || aiLoading !== null}
-      className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg border border-primary/30 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      className="flex items-center gap-2 text-xs px-2.5 py-1 rounded-lg border border-primary/30 text-primary bg-primary/5 hover:bg-primary/15 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
     >
       {aiLoading === fieldType ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
       {aiLoading === fieldType ? 'Generating...' : label}
@@ -901,7 +901,7 @@ const AdminProducts = () => {
           <input
             value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search by name, SKU, brand..."
-            className="w-full bg-muted/30 border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+            className="w-full bg-muted/30 border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
           />
         </div>
       </div>
@@ -1047,7 +1047,7 @@ const AdminProducts = () => {
                           <button
                             type="button"
                             onClick={() => setForm(p => ({ ...p, short_desc_bullets: [...p.short_desc_bullets, ''] }))}
-                            className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors flex items-center gap-1"
+                            className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors flex items-center gap-2"
                           >
                             <Plus size={11} /> যোগ করুন
                           </button>
@@ -1295,7 +1295,7 @@ const AdminProducts = () => {
                             const cat = categories.find(c => c.id === id);
                             if (!cat) return null;
                             return (
-                              <span key={id} className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
+                              <span key={id} className="flex items-center gap-2 text-xs px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
                                 {cat.name}
                                 <button type="button" onClick={() => setForm(p => ({ ...p, extra_category_ids: p.extra_category_ids.filter(i => i !== id) }))}>
                                   <X size={10} />
@@ -1377,7 +1377,7 @@ const AdminProducts = () => {
                         <button
                           type="button"
                           onClick={() => setForm(p => ({ ...p, duration_plans: [...p.duration_plans, { duration: '', price: '', original_price: '' }] }))}
-                          className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors flex items-center gap-1"
+                          className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors flex items-center gap-2"
                         >
                           <Plus size={11} /> প্যাকেজ যোগ করুন
                         </button>
@@ -1745,7 +1745,7 @@ const AdminProducts = () => {
 
                         {aiCardLoading && (
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <div className="flex gap-1">
+                            <div className="flex gap-2">
                               {[0, 0.2, 0.4].map((d, i) => (
                                 <div key={i} className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: `${d}s` }} />
                               ))}
@@ -1834,7 +1834,7 @@ const AdminProducts = () => {
                           placeholder="YouTube or direct video URL..." className={`${ic} flex-1`} />
                       </div>
                       {form.video_url && (
-                        <a href={form.video_url} target="_blank" rel="noreferrer" className="text-xs text-primary flex items-center gap-1 mt-1 hover:underline">
+                        <a href={form.video_url} target="_blank" rel="noreferrer" className="text-xs text-primary flex items-center gap-2 mt-1 hover:underline">
                           <ExternalLink size={11} /> Preview video
                         </a>
                       )}
@@ -1899,7 +1899,7 @@ const AdminProducts = () => {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label className="text-sm font-medium text-foreground">What You Get</label>
-                        <button type="button" onClick={addListItem} className="text-xs text-primary hover:underline flex items-center gap-1"><Plus size={12} /> Add</button>
+                        <button type="button" onClick={addListItem} className="text-xs text-primary hover:underline flex items-center gap-2"><Plus size={12} /> Add</button>
                       </div>
                       <div className="space-y-2">
                         {form.what_you_get.map((item, i) => (
@@ -1916,7 +1916,7 @@ const AdminProducts = () => {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label className="text-sm font-medium text-foreground">FAQ</label>
-                        <button type="button" onClick={addFaq} className="text-xs text-primary hover:underline flex items-center gap-1"><Plus size={12} /> Add</button>
+                        <button type="button" onClick={addFaq} className="text-xs text-primary hover:underline flex items-center gap-2"><Plus size={12} /> Add</button>
                       </div>
                       <div className="space-y-3">
                         {form.faq.map((item, i) => (
@@ -1956,7 +1956,7 @@ const AdminProducts = () => {
                             };
                             setForm(p => ({ ...p, custom_fields: [...p.custom_fields, newField] }));
                           }}
-                          className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors flex items-center gap-1"
+                          className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors flex items-center gap-2"
                         >
                           <Plus size={11} /> ফিল্ড যোগ করুন
                         </button>
@@ -2259,7 +2259,7 @@ const AdminProducts = () => {
                         </div>
                         <div>
                           <div className="font-medium text-foreground line-clamp-1">{product.name}</div>
-                          <div className="flex items-center gap-1 flex-wrap mt-0.5">
+                          <div className="flex items-center gap-2 flex-wrap mt-0.5">
                             {product.brand && <span className="text-xs text-muted-foreground">{product.brand}</span>}
                             {product.is_featured && <span className="text-xs text-primary">⭐</span>}
                             {product.badge && <span className="text-xs bg-primary/10 text-primary px-1.5 rounded">{product.badge}</span>}

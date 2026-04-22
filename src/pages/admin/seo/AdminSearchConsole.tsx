@@ -61,7 +61,7 @@ const AdminSearchConsole = () => {
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-medium text-muted-foreground">Generated Meta Tag</p>
               <button onClick={() => { navigator.clipboard.writeText(`<meta name="google-site-verification" content="${verifyCode}" />`); toast.success('Copied!'); }}
-                className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"><Copy size={11} /> Copy</button>
+                className="text-xs text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors"><Copy size={11} /> Copy</button>
             </div>
             <code className="text-xs font-mono text-muted-foreground">{`<meta name="google-site-verification" content="${verifyCode}" />`}</code>
           </div>
@@ -74,7 +74,7 @@ const AdminSearchConsole = () => {
         <div className="flex items-center gap-3 bg-muted/20 rounded-xl px-4 py-3 border border-border">
           <code className="text-sm font-mono text-primary flex-1">{SITE_URL}/sitemap.xml</code>
           <button onClick={() => { navigator.clipboard.writeText(`${SITE_URL}/sitemap.xml`); toast.success('Copied!'); }}
-            className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"><Copy size={11} /> Copy</button>
+            className="text-xs text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors"><Copy size={11} /> Copy</button>
         </div>
         <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer"
           className="btn-glow inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium">

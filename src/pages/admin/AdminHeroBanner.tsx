@@ -253,7 +253,7 @@ const AdminHeroBanner = () => {
               </div>
             ))}
             <button onClick={() => setStats(p => [...p, { label: 'New', value: '0+', icon: '📊' }])}
-              className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1"><Plus size={10} /> স্ট্যাট যোগ</button>
+              className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-2"><Plus size={10} /> স্ট্যাট যোগ</button>
           </div>
         </div>
 
@@ -265,7 +265,7 @@ const AdminHeroBanner = () => {
               </span>
               <div className="flex items-center gap-2">
                 {enabledSlides.length > 1 && (
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-2">
                     <button onClick={() => setPreviewIdx(p => (p - 1 + enabledSlides.length) % enabledSlides.length)}
                       className="p-1 rounded-md text-muted-foreground hover:text-foreground"><ChevronLeft size={14} /></button>
                     <span className="text-[10px] text-muted-foreground font-mono">{previewIdx + 1}/{enabledSlides.length}</span>
@@ -321,7 +321,7 @@ const AdminHeroBanner = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <SmartField label="ইমোজি আইকন" value={selectedSlide.emoji} onChange={v => updateSlide(selectedSlide.id, 'emoji', v)} small />
                   <div>
-                    <label className="text-[11px] font-semibold text-muted-foreground mb-1 flex items-center gap-1 block">
+                    <label className="text-[11px] font-semibold text-muted-foreground mb-1 flex items-center gap-2 block">
                       <ImageIcon size={10} /> লোগো URL <span className="text-[9px] text-muted-foreground/60">(ঐচ্ছিক)</span>
                     </label>
                     <input value={selectedSlide.logoImg || ''} onChange={e => updateSlide(selectedSlide.id, 'logoImg', e.target.value)}
@@ -337,7 +337,7 @@ const AdminHeroBanner = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-semibold text-muted-foreground mb-1 flex items-center gap-1 block">
+                  <label className="text-[11px] font-semibold text-muted-foreground mb-1 flex items-center gap-2 block">
                     <Link2 size={10} /> প্রোডাক্ট লিংক (slug)
                   </label>
                   <div className="flex">
@@ -447,7 +447,7 @@ const AdminHeroBanner = () => {
               </div>
             ))}
             <button onClick={() => setTrust(p => [...p, { text: 'New', icon: '✅' }])}
-              className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1"><Plus size={10} /> যোগ</button>
+              className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-2"><Plus size={10} /> যোগ</button>
           </div>
 
           <div className="bg-card border border-border rounded-xl p-4 space-y-3">
@@ -465,7 +465,7 @@ const AdminHeroBanner = () => {
             ))}
             {floating.length < 3 && (
               <button onClick={() => setFloating(p => [...p, { label: 'New', value: '0+', icon: '📊' }])}
-                className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-1"><Plus size={10} /> যোগ</button>
+                className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-2"><Plus size={10} /> যোগ</button>
             )}
           </div>
         </div>
@@ -518,7 +518,7 @@ const MiniSlidePreview = ({ slide }: { slide: Slide }) => {
 
           <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start">
             {slide.features.map(f => (
-              <span key={f} className="text-[10px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
+              <span key={f} className="text-[10px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-2"
                 style={{ background: `${bgFrom}08`, border: `1px solid ${bgFrom}18`, color: bgFrom }}>
                 <CheckCircle2 size={9} /> {f}
               </span>

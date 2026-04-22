@@ -211,7 +211,7 @@ const AdminReviews = () => {
       <div className="relative">
         <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="নাম, রিভিউ বা প্রোডাক্ট দিয়ে খুঁজুন…"
-          className="w-full bg-background border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
+          className="w-full bg-background border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
       </div>
 
       {/* List */}
@@ -254,7 +254,7 @@ const AdminReviews = () => {
                   </div>
                 </div>
                 {/* Actions */}
-                <div className="flex items-center gap-1 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <button onClick={() => setEditing(editing === r.id ? null : r.id)}
                     className={`p-1.5 rounded-lg transition-colors ${editing === r.id ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`} title="এডিট">
                     <Edit2 size={13} />

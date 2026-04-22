@@ -364,7 +364,7 @@ const AdminSoftwareDownloads = () => {
                   <p className="text-[11px] text-muted-foreground line-clamp-1">{item.description}</p>
                 )}
                 <a href={item.download_url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-[10px] text-primary hover:underline font-fira line-clamp-1">
+                  className="flex items-center gap-2 text-[10px] text-primary hover:underline font-fira line-clamp-1">
                   <ExternalLink size={10} /> {item.download_url.replace(/^https?:\/\//, '').slice(0, 30)}...
                 </a>
               </div>

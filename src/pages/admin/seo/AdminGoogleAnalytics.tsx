@@ -67,7 +67,7 @@ const AdminGoogleAnalytics = () => {
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-medium text-muted-foreground">Generated Script Tag</p>
               <button onClick={() => { navigator.clipboard.writeText(snippet); toast.success('Copied!'); }}
-                className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+                className="text-xs text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors">
                 <Copy size={11} /> Copy
               </button>
             </div>
@@ -86,7 +86,7 @@ const AdminGoogleAnalytics = () => {
             <div className="w-8 h-8 rounded-lg btn-glow flex items-center justify-center text-white font-bold text-sm mb-3">{s.step}</div>
             <h4 className="font-semibold text-sm text-foreground mb-1">{s.title}</h4>
             <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
-            {s.url && <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1 mt-2"><ExternalLink size={10} /> Open</a>}
+            {s.url && <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-2 mt-2"><ExternalLink size={10} /> Open</a>}
           </div>
         ))}
       </div>

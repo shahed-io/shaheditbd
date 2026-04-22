@@ -213,7 +213,7 @@ const AdminSEO = () => {
                 <div className="w-7 h-7 rounded-lg btn-glow flex items-center justify-center text-white font-bold text-xs mb-2">{s.step}</div>
                 <h4 className="font-semibold text-sm text-foreground mb-1">{s.title}</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
-                {s.url && <a href={s.url} target="_blank" rel="noopener" className="text-xs text-primary hover:underline flex items-center gap-1 mt-1.5"><ExternalLink size={10} /> খুলুন</a>}
+                {s.url && <a href={s.url} target="_blank" rel="noopener" className="text-xs text-primary hover:underline flex items-center gap-2 mt-1.5"><ExternalLink size={10} /> খুলুন</a>}
               </div>
             ))}
           </div>
@@ -301,7 +301,7 @@ const AdminSEO = () => {
             <div className="relative flex-1">
               <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input value={productSearch} onChange={e => setProductSearch(e.target.value)} placeholder="প্রোডাক্ট খুঁজুন..."
-                className="w-full bg-background border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
+                className="w-full bg-background border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
             </div>
             {stats.withSeo < stats.products && (
               <button onClick={autoGenerateAll} disabled={saving} className="btn-glow px-4 py-2.5 rounded-xl text-xs font-medium flex items-center gap-2 whitespace-nowrap disabled:opacity-60">
@@ -387,10 +387,10 @@ const AdminSEO = () => {
           </div>
 
           <div className="flex gap-3 text-xs">
-            <a href="https://search.google.com/search-console" target="_blank" rel="noopener" className="text-primary hover:underline flex items-center gap-1">
+            <a href="https://search.google.com/search-console" target="_blank" rel="noopener" className="text-primary hover:underline flex items-center gap-2">
               <ExternalLink size={10} /> Google Search Console এ সাবমিট করুন
             </a>
-            <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener" className="text-primary hover:underline flex items-center gap-1">
+            <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener" className="text-primary hover:underline flex items-center gap-2">
               <ExternalLink size={10} /> Bing Webmaster
             </a>
           </div>

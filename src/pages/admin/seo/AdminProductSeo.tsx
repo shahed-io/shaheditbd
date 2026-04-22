@@ -272,7 +272,7 @@ const AdminProductSeo = () => {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="প্রোডাক্ট নাম বা slug দিয়ে খুঁজুন…"
-          className="w-full bg-background border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+          className="w-full bg-background border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
         />
       </div>
 
@@ -309,7 +309,7 @@ const AdminProductSeo = () => {
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
                       <a href={`/product/${p.slug}`} target="_blank" rel="noopener noreferrer"
-                        className="text-xs font-mono text-muted-foreground hover:text-primary flex items-center gap-1 w-fit">
+                        className="text-xs font-mono text-muted-foreground hover:text-primary flex items-center gap-2 w-fit">
                         /product/{p.slug} <ExternalLink size={10} />
                       </a>
                       {p.price > 0 && <span className="text-xs text-muted-foreground">৳{p.price.toLocaleString()}</span>}
@@ -320,7 +320,7 @@ const AdminProductSeo = () => {
                       onClick={() => aiGenerate(p)}
                       disabled={isAiGen || !!aiGenerating || bulkGenerating}
                       title="AI দিয়ে SEO তৈরি করুন"
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 disabled:opacity-50 transition-colors"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 disabled:opacity-50 transition-colors"
                     >
                       {isAiGen ? <Loader2 size={11} className="animate-spin" /> : <Wand2 size={11} />}
                       AI

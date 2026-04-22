@@ -535,7 +535,7 @@ const AdminBackup = () => {
               ))}
               {history.length > 0 && (
                 <div className="px-5 py-3">
-                  <button onClick={() => saveHistory([])} className="text-[10px] text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1">
+                  <button onClick={() => saveHistory([])} className="text-[10px] text-muted-foreground hover:text-destructive transition-colors flex items-center gap-2">
                     <Trash2 size={10} /> হিস্ট্রি মুছুন
                   </button>
                 </div>

@@ -518,11 +518,11 @@ export default function AdminCustomers() {
               </button>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => setResetPasswordModal(null)} className="h-8 text-xs gap-1">
+              <Button size="sm" variant="outline" onClick={() => setResetPasswordModal(null)} className="h-8 text-xs gap-2">
                 <X size={12} /> বাতিল
               </Button>
               <Button size="sm" onClick={resetPassword} disabled={actionLoading || newPassword.length < 6}
-                className="h-8 text-xs gap-1 bg-amber-500 hover:bg-amber-600 text-white">
+                className="h-8 text-xs gap-2 bg-amber-500 hover:bg-amber-600 text-white">
                 <Lock size={12} /> {actionLoading ? 'রিসেট হচ্ছে...' : 'পাসওয়ার্ড রিসেট করুন'}
               </Button>
             </div>
@@ -552,10 +552,10 @@ export default function AdminCustomers() {
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button size="sm" variant="outline" onClick={() => setEditingCustomer(false)} className="h-8 text-xs gap-1">
+              <Button size="sm" variant="outline" onClick={() => setEditingCustomer(false)} className="h-8 text-xs gap-2">
                 <X size={12} /> বাতিল
               </Button>
-              <Button size="sm" onClick={saveCustomerEdit} className="h-8 text-xs gap-1">
+              <Button size="sm" onClick={saveCustomerEdit} className="h-8 text-xs gap-2">
                 <Save size={12} /> সেভ করুন
               </Button>
             </div>
@@ -647,14 +647,14 @@ export default function AdminCustomers() {
                             </div>
                           ) : (
                             <button onClick={() => setEditingOrderStatus(order.id)}
-                              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                              className="flex items-center gap-2 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                               <Edit3 size={10} /> স্ট্যাটাস পরিবর্তন
                             </button>
                           )}
 
                           {/* WhatsApp */}
                           <button onClick={() => sendWhatsApp(selected.phone, selected.display_name ?? '', order)}
-                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors">
+                            className="flex items-center gap-2 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors">
                             <MessageCircle size={10} /> WhatsApp
                           </button>
 
@@ -716,7 +716,7 @@ export default function AdminCustomers() {
                                               </div>
                                               <div className="flex items-center gap-1.5">
                                                 {editingLicense === lic.id ? (
-                                                  <div className="flex items-center gap-1">
+                                                  <div className="flex items-center gap-2">
                                                     <select
                                                       value={editLicenseStatus}
                                                       onChange={e => setEditLicenseStatus(e.target.value)}
@@ -837,7 +837,7 @@ export default function AdminCustomers() {
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <UserPlus size={14} className="text-primary" /> নতুন কাস্টমার অ্যাকাউন্ট তৈরি করুন
           </h3>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
+          <p className="text-xs text-muted-foreground flex items-center gap-2">
             <Shield size={11} /> ইমেইল ভেরিফিকেশন ছাড়াই অ্যাকাউন্ট সক্রিয় হবে
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -876,10 +876,10 @@ export default function AdminCustomers() {
             </div>
           </div>
           <div className="flex gap-2 justify-end">
-            <Button size="sm" variant="outline" onClick={() => { setShowAddModal(false); setShowPassword(false); }} className="h-8 text-xs gap-1">
+            <Button size="sm" variant="outline" onClick={() => { setShowAddModal(false); setShowPassword(false); }} className="h-8 text-xs gap-2">
               <X size={12} /> বাতিল
             </Button>
-            <Button size="sm" onClick={addCustomer} disabled={actionLoading} className="h-8 text-xs gap-1">
+            <Button size="sm" onClick={addCustomer} disabled={actionLoading} className="h-8 text-xs gap-2">
               <UserPlus size={12} /> {actionLoading ? 'তৈরি হচ্ছে...' : 'অ্যাকাউন্ট তৈরি করুন'}
             </Button>
           </div>
@@ -960,11 +960,11 @@ export default function AdminCustomers() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      {c.phone ? <span className="flex items-center gap-1 text-xs text-muted-foreground"><Phone size={11} />{c.phone}</span> : <span className="text-xs text-muted-foreground/50">—</span>}
+                      {c.phone ? <span className="flex items-center gap-2 text-xs text-muted-foreground"><Phone size={11} />{c.phone}</span> : <span className="text-xs text-muted-foreground/50">—</span>}
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{format(new Date(c.created_at), 'dd MMM yyyy')}</td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border ${(c.order_count ?? 0) > 0 ? 'bg-primary/10 text-primary border-primary/30' : 'bg-muted text-muted-foreground border-border'}`}>
+                      <span className={`inline-flex items-center gap-2 px-2 py-0.5 rounded-full text-[11px] font-bold border ${(c.order_count ?? 0) > 0 ? 'bg-primary/10 text-primary border-primary/30' : 'bg-muted text-muted-foreground border-border'}`}>
                         <ShoppingBag size={10} /> {c.order_count ?? 0}
                       </span>
                     </td>
@@ -973,7 +973,7 @@ export default function AdminCustomers() {
                     </td>
                     <td className="px-4 py-3">
                       {(c.points_balance ?? 0) > 0 ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border bg-amber-500/10 text-amber-600 border-amber-400/30">
+                        <span className="inline-flex items-center gap-2 px-2 py-0.5 rounded-full text-[11px] font-bold border bg-amber-500/10 text-amber-600 border-amber-400/30">
                           <Award size={10} /> {(c.points_balance ?? 0).toLocaleString()}
                         </span>
                       ) : <span className="text-xs text-muted-foreground/50">0</span>}
@@ -983,7 +983,7 @@ export default function AdminCustomers() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5">
-                        <Button size="sm" variant="outline" onClick={() => openDetail(c)} className="h-7 text-xs gap-1">
+                        <Button size="sm" variant="outline" onClick={() => openDetail(c)} className="h-7 text-xs gap-2">
                           <Eye size={12} /> বিস্তারিত
                         </Button>
                         <button onClick={() => deleteCustomer(c)}

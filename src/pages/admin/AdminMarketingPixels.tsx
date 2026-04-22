@@ -135,7 +135,7 @@ const AdminMarketingPixels = () => {
                   <input type="checkbox" checked={acc.enabled} onChange={e => update(p.key, idx, { enabled: e.target.checked })} className="w-4 h-4" />
                   <span className="text-xs font-semibold">{acc.enabled ? '🟢 Enabled' : '⚫ Disabled'}</span>
                 </label>
-                <button onClick={() => remove(p.key, idx)} className="text-destructive hover:text-destructive/80 text-xs flex items-center gap-1">
+                <button onClick={() => remove(p.key, idx)} className="text-destructive hover:text-destructive/80 text-xs flex items-center gap-2">
                   <Trash2 size={12} /> Remove
                 </button>
               </div>

@@ -262,7 +262,7 @@ const ChatHistoryPanel = () => {
           placeholder="চ্যাটে সার্চ করুন..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="pl-14"
+          className="pl-16"
         />
       </div>
 
@@ -295,13 +295,13 @@ const ChatHistoryPanel = () => {
                       {firstMsg.user_message.length > 60 ? firstMsg.user_message.slice(0, 60) + '...' : firstMsg.user_message}
                     </p>
                     <div className="flex items-center gap-3 mt-0.5">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <span className="text-xs text-muted-foreground flex items-center gap-2">
                         <Clock className="w-3 h-3" /> {formatTime(session.last_at)}
                       </span>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <span className="text-xs text-muted-foreground flex items-center gap-2">
                         <MessageCircle className="w-3 h-3" /> {session.messages.length} টি প্রশ্ন
                       </span>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <span className="text-xs text-muted-foreground flex items-center gap-2">
                         <Monitor className="w-3 h-3" /> {session.device}
                       </span>
                     </div>
@@ -527,7 +527,7 @@ const AdminLiveChat = () => {
           <TabsTrigger value="ai-chat">AI চ্যাট</TabsTrigger>
           <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
           <TabsTrigger value="live-sets">লাইভ সেট</TabsTrigger>
-          <TabsTrigger value="chat-history" className="flex items-center gap-1"><History className="w-3.5 h-3.5" /> হিস্ট্রি</TabsTrigger>
+          <TabsTrigger value="chat-history" className="flex items-center gap-2"><History className="w-3.5 h-3.5" /> হিস্ট্রি</TabsTrigger>
         </TabsList>
 
         {/* General Tab */}
@@ -731,7 +731,7 @@ const AdminLiveChat = () => {
                         <p className="text-xs text-muted-foreground">#{idx + 1} · {LIVE_SET_TYPES.find(t => t.value === set.type)?.label}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       <Button variant="ghost" size="icon" onClick={() => moveLiveSet(set.id, 'up')} disabled={idx === 0} className="h-8 w-8" title="উপরে">
                         <ArrowUp className="w-4 h-4" />
                       </Button>

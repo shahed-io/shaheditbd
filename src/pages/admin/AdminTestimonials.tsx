@@ -123,7 +123,7 @@ const AdminTestimonials = () => {
                 <div className="font-semibold text-sm text-foreground truncate">{item.name}</div>
                 <div className="text-xs text-muted-foreground truncate">{item.product} · {'★'.repeat(item.rating)}</div>
               </div>
-              <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
                 <button onClick={() => update(item.id, 'enabled', !item.enabled)}
                   className={`p-1.5 rounded-lg ${item.enabled ? 'text-primary' : 'text-muted-foreground'} transition-colors`}>
                   {item.enabled ? <Eye size={14} /> : <EyeOff size={14} />}

@@ -62,7 +62,7 @@ const AdminSpeedOptimization = () => {
               </div>
               {(c as any).action && (
                 <a href={(c as any).action.url} target={(c as any).action.url.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
-                  className="text-xs text-primary hover:underline flex items-center gap-1 flex-shrink-0">
+                  className="text-xs text-primary hover:underline flex items-center gap-2 flex-shrink-0">
                   {(c as any).action.label} <ExternalLink size={10} />
                 </a>
               )}

@@ -436,7 +436,7 @@ const AdminPages = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block mb-1 flex items-center gap-1">
+                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block mb-1 flex items-center gap-2">
                         <Palette size={10} /> Accent Color
                       </label>
                       <div className="flex gap-1.5 flex-wrap">
@@ -560,7 +560,7 @@ const AdminPages = () => {
               <div>
                 <h2 className="font-sora font-bold text-lg text-foreground">{activePage.label}</h2>
                 <a href={activePage.path} target="_blank" rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors">
+                  className="text-xs text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors">
                   <Globe size={10} /> {activePage.path}
                 </a>
               </div>

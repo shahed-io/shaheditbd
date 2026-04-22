@@ -209,7 +209,7 @@ const MethodEditor = ({
                     type="button" variant="outline" size="sm"
                     onClick={() => logoInputRef.current?.click()}
                     disabled={uploading}
-                    className="gap-1 text-xs"
+                    className="gap-2 text-xs"
                   >
                     <Upload size={13} />
                     {uploading ? 'আপলোড হচ্ছে...' : 'ফাইল আপলোড'}
@@ -228,7 +228,7 @@ const MethodEditor = ({
           {/* Colors */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase flex items-center gap-1">
+              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase flex items-center gap-2">
                 <Palette size={12} /> Accent Color (HSL)
               </label>
               <div className="flex gap-2">
@@ -245,7 +245,7 @@ const MethodEditor = ({
               </div>
             </div>
             <div>
-              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase flex items-center gap-1">
+              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block uppercase flex items-center gap-2">
                 <Palette size={12} /> Background Color (HSLA)
               </label>
               <div className="flex gap-2">
@@ -336,7 +336,7 @@ const MethodEditor = ({
                 className="text-xs"
                 onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addStep())}
               />
-              <Button type="button" variant="outline" size="sm" onClick={addStep} className="gap-1 text-xs">
+              <Button type="button" variant="outline" size="sm" onClick={addStep} className="gap-2 text-xs">
                 <Plus size={13} /> যোগ
               </Button>
             </div>
@@ -430,14 +430,14 @@ const PaymentSettingsTab = () => {
           <p className="text-xs text-muted-foreground mt-0.5">পেমেন্ট মেথডের নম্বর, লোগো ও তথ্য পরিবর্তন করুন</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <Button variant="outline" size="sm" onClick={resetToDefault} className="text-xs gap-1">
+          <Button variant="outline" size="sm" onClick={resetToDefault} className="text-xs gap-2">
             <RefreshCw size={13} /> রিসেট
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setEditingMethod(newMethodTemplate())} className="text-xs gap-1">
+          <Button variant="outline" size="sm" onClick={() => setEditingMethod(newMethodTemplate())} className="text-xs gap-2">
             <Plus size={13} /> নতুন মেথড
           </Button>
           {isDirty && (
-            <Button size="sm" onClick={saveAll} disabled={saveMutation.isPending} className="gap-1 bg-green-600 hover:bg-green-700 text-white text-xs">
+            <Button size="sm" onClick={saveAll} disabled={saveMutation.isPending} className="gap-2 bg-green-600 hover:bg-green-700 text-white text-xs">
               <Save size={13} /> {saveMutation.isPending ? 'সেভ হচ্ছে...' : 'সেভ করুন'}
             </Button>
           )}
@@ -647,7 +647,7 @@ export default function AdminPayments() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 rounded-xl bg-muted/40 border border-border/50 w-fit">
+      <div className="flex gap-2 p-1 rounded-xl bg-muted/40 border border-border/50 w-fit">
         {([
           { key: 'proofs', label: 'পেমেন্ট প্রুফ', icon: BadgeCheck },
           { key: 'settings', label: 'পেমেন্ট সেটিংস', icon: Settings },
@@ -768,12 +768,12 @@ export default function AdminPayments() {
                             {format(new Date(p.submitted_at), 'dd MMM, hh:mm a')}
                           </td>
                           <td className="px-4 py-3">
-                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.color}`}>
+                            <span className={`inline-flex items-center gap-2 px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.color}`}>
                               <Icon size={11} />{cfg.label}
                             </span>
                           </td>
                           <td className="px-4 py-3">
-                            <Button size="sm" variant="outline" onClick={() => { setSelected(p); setAdminNotes(p.admin_notes ?? ''); }} className="h-7 text-xs gap-1">
+                            <Button size="sm" variant="outline" onClick={() => { setSelected(p); setAdminNotes(p.admin_notes ?? ''); }} className="h-7 text-xs gap-2">
                               <Eye size={12} /> Review
                             </Button>
                           </td>
@@ -806,7 +806,7 @@ export default function AdminPayments() {
                         { label: 'Customer', value: <span className="truncate">{selected.orders?.customer_name ?? '—'}</span> },
                         { label: 'Amount', value: <span className="font-bold text-primary">{selected.amount != null ? `৳${selected.amount.toLocaleString()}` : '—'}</span> },
                         { label: 'Method', value: methodLabels[selected.payment_method] ?? selected.payment_method },
-                        { label: 'Status', value: <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.color}`}><Icon size={11} />{cfg.label}</span> },
+                        { label: 'Status', value: <span className={`inline-flex items-center gap-2 px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.color}`}><Icon size={11} />{cfg.label}</span> },
                       ].map(({ label, value }) => (
                         <div key={label} className="glass-card rounded-lg p-3 border border-border/50">
                           <div className="text-[10px] text-muted-foreground uppercase font-semibold mb-1">{label}</div>
@@ -838,10 +838,10 @@ export default function AdminPayments() {
               })()}
               <DialogFooter className="flex gap-2 sm:gap-2">
                 <Button variant="outline" onClick={() => setSelected(null)} className="flex-1">Cancel</Button>
-                <Button variant="destructive" onClick={() => reviewMutation.mutate({ id: selected!.id, status: 'rejected', notes: adminNotes })} disabled={reviewMutation.isPending || selected?.status === 'rejected'} className="flex-1 gap-1">
+                <Button variant="destructive" onClick={() => reviewMutation.mutate({ id: selected!.id, status: 'rejected', notes: adminNotes })} disabled={reviewMutation.isPending || selected?.status === 'rejected'} className="flex-1 gap-2">
                   <XCircle size={14} /> Reject
                 </Button>
-                <Button onClick={() => reviewMutation.mutate({ id: selected!.id, status: 'approved', notes: adminNotes })} disabled={reviewMutation.isPending || selected?.status === 'approved'} className="flex-1 gap-1 bg-green-600 hover:bg-green-700 text-white">
+                <Button onClick={() => reviewMutation.mutate({ id: selected!.id, status: 'approved', notes: adminNotes })} disabled={reviewMutation.isPending || selected?.status === 'approved'} className="flex-1 gap-2 bg-green-600 hover:bg-green-700 text-white">
                   <CheckCircle2 size={14} /> Approve
                 </Button>
               </DialogFooter>

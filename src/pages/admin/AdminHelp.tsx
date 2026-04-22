@@ -124,7 +124,7 @@ const AdminHelp = () => {
         <div className="relative flex-1 min-w-48">
           <Search size={13} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="আর্টিকেল খুঁজুন..."
-            className="w-full bg-muted/30 border border-border rounded-xl pl-14 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
+            className="w-full bg-muted/30 border border-border rounded-xl pl-16 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
         </div>
         {['all', ...CATEGORIES.map(c => c.value)].map(cat => (
           <button key={cat} onClick={() => setCatFilter(cat)}
@@ -179,7 +179,7 @@ const AdminHelp = () => {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1">
+                    <div className="flex items-center justify-end gap-2">
                       <button onClick={() => toggleFeatured(a)} title="Feature"
                         className={`p-1.5 rounded-lg transition-colors ${a.is_featured ? 'text-amber-400 bg-amber-400/10' : 'text-muted-foreground hover:text-amber-400'}`}>
                         {a.is_featured ? <Star size={12} /> : <StarOff size={12} />}
@@ -294,7 +294,7 @@ const AdminHelp = () => {
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {(editArt.tags || []).map((t: string) => (
-                        <span key={t} className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs glass-card border border-border text-muted-foreground">
+                        <span key={t} className="flex items-center gap-2 px-2.5 py-1 rounded-lg text-xs glass-card border border-border text-muted-foreground">
                           #{t}
                           <button onClick={() => setEditArt((p: any) => ({ ...p, tags: p.tags.filter((x: string) => x !== t) }))}
                             className="text-muted-foreground hover:text-destructive ml-0.5"><X size={9} /></button>

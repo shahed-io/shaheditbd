@@ -486,7 +486,7 @@ const AdminQuickSale = () => {
                   {entry.product && <span className="text-xs text-muted-foreground">— {entry.product.name}</span>}
                   {entry.is_custom && entry.custom_name && <span className="text-xs text-muted-foreground">— {entry.custom_name} (কাস্টম)</span>}
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <button onClick={() => toggleCustomProduct(idx)}
                     title={entry.is_custom ? 'স্টোর প্রোডাক্ট ব্যবহার করুন' : 'কাস্টম প্রোডাক্ট তৈরি করুন'}
                     className={`p-1.5 rounded-md text-xs transition-all ${entry.is_custom ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-primary hover:bg-primary/5'}`}>
@@ -634,7 +634,7 @@ const AdminQuickSale = () => {
                       </div>
                       {entry.product && !entry.is_custom && (
                         <button onClick={() => openLicensePicker(idx)}
-                          className="text-[11px] px-2.5 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-all font-semibold flex items-center gap-1">
+                          className="text-[11px] px-2.5 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-all font-semibold flex items-center gap-2">
                           <Package size={10} /> স্টক থেকে নিন
                         </button>
                       )}
@@ -654,7 +654,7 @@ const AdminQuickSale = () => {
                       </div>
                     </div>
                     {entry.license && (
-                      <p className="text-[11px] text-primary mt-2 flex items-center gap-1 font-medium">
+                      <p className="text-[11px] text-primary mt-2 flex items-center gap-2 font-medium">
                         <CheckCircle2 size={11} /> স্টক থেকে সিলেক্ট করা হয়েছে
                       </p>
                     )}
@@ -832,7 +832,7 @@ const AdminQuickSale = () => {
                         </p>
                       )}
                       <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] text-primary font-semibold flex items-center gap-1">
+                        <span className="text-[10px] text-primary font-semibold flex items-center gap-2">
                           <CheckCircle2 size={10} /> ক্লিক করে সিলেক্ট করুন
                         </span>
                       </div>

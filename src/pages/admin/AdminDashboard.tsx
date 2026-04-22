@@ -358,13 +358,13 @@ const AdminDashboard = () => {
             <div>
               <h3 className="font-bold text-foreground">Sales Overview</h3>
               {revenueGrowth !== null && (
-                <p className={`text-xs mt-0.5 flex items-center gap-1 ${parseFloat(revenueGrowth) >= 0 ? 'text-green-500' : 'text-destructive'}`}>
+                <p className={`text-xs mt-0.5 flex items-center gap-2 ${parseFloat(revenueGrowth) >= 0 ? 'text-green-500' : 'text-destructive'}`}>
                   {parseFloat(revenueGrowth) >= 0 ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
                   {Math.abs(parseFloat(revenueGrowth))}% revenue growth vs last month
                 </p>
               )}
             </div>
-            <div className="flex gap-1">
+            <div className="flex gap-2">
               {(['daily', 'weekly', 'monthly'] as const).map(r => (
                 <button key={r} onClick={() => setChartRange(r)}
                   className={`text-xs px-3 py-1 rounded-lg transition-colors capitalize ${chartRange === r ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'}`}>

@@ -306,7 +306,7 @@ const AdminMarketing = () => {
                   <div className="text-sm font-medium text-foreground">{item.key}</div>
                   <div className="text-xs text-muted-foreground truncate mt-0.5">{item.value || '(খালি)'}</div>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-2">
                   <button onClick={() => { setEditing(item); setForm({ key: item.key, value: item.value || '', category: 'marketing' }); setShowForm(true); }}
                     className="p-1.5 text-muted-foreground hover:text-primary transition-colors"><Edit size={14} /></button>
                   <button onClick={() => handleDelete(item.id)} className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"><Trash2 size={14} /></button>
