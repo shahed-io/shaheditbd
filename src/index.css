@@ -925,6 +925,10 @@ body.admin-page > #root {
   min-height: 100vh;
 }
 
+body.admin-page .admin-gradient-bg {
+  align-items: stretch;
+}
+
 .admin-gradient-bg > * {
   position: relative;
   z-index: 1;
