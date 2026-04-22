@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { Plus, Edit3, Trash2, Copy, MessageCircle, Search, Filter, Package, Clock, CheckCircle, XCircle, Settings2 } from 'lucide-react';
 import { usePasswordTypes } from '@/hooks/usePasswordTypes';
 import PasswordTypesManager from '@/components/admin/PasswordTypesManager';
+import { sendInvoiceViaWhatsApp, type InvoiceData } from '@/lib/invoicePdf';
 
 type PersonalLicense = {
   id: string;
