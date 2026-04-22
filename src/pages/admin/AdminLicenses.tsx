@@ -1155,6 +1155,96 @@ const AdminLicenses = () => {
         </div>
       )}
 
+      {/* ── Product Search Mode (NEW) ─────────────────────────────────
+          প্রোডাক্টের নাম লিখে দ্রুত খুঁজে দেখুন কোন প্রোডাক্টে কতটি license available আছে
+      ────────────────────────────────────────────────────────────── */}
+      <div className="glass-card rounded-2xl border border-border p-4 space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(330,85%,62%))' }}>
+              <Package size={15} className="text-white" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold">প্রোডাক্ট দিয়ে License খুঁজুন</h3>
+              <p className="text-[11px] text-muted-foreground">প্রোডাক্টের নাম লিখুন — সেই প্রোডাক্টের available লাইসেন্সগুলো দেখুন</p>
+            </div>
+          </div>
+          {(productNameQuery || onlyAvailable) && (
+            <button
+              onClick={() => { setProductNameQuery(''); setOnlyAvailable(false); }}
+              className="text-[11px] font-semibold text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
+            >
+              <X size={12} /> ক্লিয়ার করুন
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <div className="relative flex-1 min-w-56">
+            <Package size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
+            <input
+              value={productNameQuery}
+              onChange={e => setProductNameQuery(e.target.value)}
+              placeholder="যেমন: Netflix, Canva, Windows 11..."
+              className="w-full bg-background border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+          <label className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-background text-xs font-semibold cursor-pointer hover:border-primary/40 transition-all select-none">
+            <input
+              type="checkbox"
+              checked={onlyAvailable}
+              onChange={e => setOnlyAvailable(e.target.checked)}
+              className="w-4 h-4 accent-primary"
+            />
+            শুধু Available
+          </label>
+        </div>
+
+        {/* Product matches summary */}
+        {productNameQuery.trim() && (
+          <div className="space-y-2">
+            {productMatches.length === 0 ? (
+              <div className="text-xs text-muted-foreground bg-muted/30 rounded-lg p-3 text-center">
+                "<strong>{productNameQuery}</strong>" নামে কোনো প্রোডাক্ট পাওয়া যায়নি
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto">
+                {productMatches.slice(0, 12).map(({ product, available, total }) => {
+                  const isActive = filterProduct === product.id;
+                  return (
+                    <button
+                      key={product.id}
+                      onClick={() => setFilterProduct(isActive ? 'all' : product.id)}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
+                        isActive
+                          ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                          : 'bg-background border-border hover:border-primary/40 hover:bg-primary/5'
+                      }`}
+                    >
+                      <span className="truncate max-w-[160px]">{product.name}</span>
+                      <Badge
+                        variant="secondary"
+                        className={`${
+                          available > 0
+                            ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                            : 'bg-destructive/15 text-destructive'
+                        } border-0 px-1.5 py-0 h-5 text-[10px] font-bold`}
+                      >
+                        {available} / {total}
+                      </Badge>
+                    </button>
+                  );
+                })}
+                {productMatches.length > 12 && (
+                  <span className="text-[11px] text-muted-foreground self-center">+{productMatches.length - 12} আরও</span>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-48">
