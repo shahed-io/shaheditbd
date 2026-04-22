@@ -1441,7 +1441,13 @@ body.admin-page .bg-sky-100 {
 body.admin-page .bg-orange-100 {
   background: hsl(var(--ad-accent-soft)) !important;
   color: hsl(var(--ad-accent)) !important;
-  border: 1px solid hsl(20, 100%, 88%) !important;
+  border: 1px solid hsla(258, 78%, 75%, 0.40) !important;
+}
+body.admin-page .bg-purple-100,
+body.admin-page .bg-violet-100 {
+  background: hsl(var(--ad-accent-soft)) !important;
+  color: hsl(var(--ad-accent)) !important;
+  border: 1px solid hsla(258, 78%, 75%, 0.40) !important;
 }
 
 /* Borders — Notion hairline */
