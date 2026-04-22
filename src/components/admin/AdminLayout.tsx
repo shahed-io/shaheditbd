@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import BrandLogo from '@/components/store/BrandLogo';
-import { NavLink, useLocation, Outlet } from 'react-router-dom';
+import { NavLink, useLocation, Outlet, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +13,8 @@ import {
   Bot, KeyRound, Star, BarChart2,
   ImageIcon, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles,
   ShoppingCart as ShopIcon, CreditCard as CreditIcon,
+  PanelLeftClose, PanelLeftOpen,
+  ShoppingBag, Boxes, Megaphone as MegaIcon, FileCode2, BarChart3, Plug, Cog, Pin, PinOff,
 } from 'lucide-react';
 
 interface AdminNotif {
@@ -25,18 +27,20 @@ interface AdminNotif {
 }
 
 type MenuItem = { icon: any; label: string; path: string; badge?: 'live' | 'new' };
-type MenuSection = { title: string; items: MenuItem[] };
+type MenuSection = { title: string; sectionIcon: any; items: MenuItem[] };
 
-// ─── Grouped sidebar — clear sections instead of one long flat list ───
+// ─── Grouped sidebar — clear sections with category icons ───
 const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'Overview',
+    sectionIcon: LayoutDashboard,
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
     ],
   },
   {
     title: 'Sales',
+    sectionIcon: ShoppingBag,
     items: [
       { icon: ShoppingCart, label: 'Orders', path: '/ceo/orders', badge: 'live' },
       { icon: ShoppingCart, label: 'Quick Sale', path: '/ceo/quick-sale' },
@@ -47,6 +51,7 @@ const MENU_SECTIONS: MenuSection[] = [
   },
   {
     title: 'Catalog',
+    sectionIcon: Boxes,
     items: [
       { icon: Package, label: 'Products', path: '/ceo/products' },
       { icon: Grid3X3, label: 'Categories', path: '/ceo/categories' },
@@ -59,6 +64,7 @@ const MENU_SECTIONS: MenuSection[] = [
   },
   {
     title: 'Customers',
+    sectionIcon: Users,
     items: [
       { icon: Users, label: 'All Customers', path: '/ceo/customers' },
       { icon: Wallet, label: 'Wallet', path: '/ceo/wallet' },
@@ -69,6 +75,7 @@ const MENU_SECTIONS: MenuSection[] = [
   },
   {
     title: 'Storefront',
+    sectionIcon: Layout,
     items: [
       { icon: Sliders, label: 'Hero Banner', path: '/ceo/hero-banner' },
       { icon: Flame, label: 'Flash Sale', path: '/ceo/flash-sale' },
@@ -82,6 +89,7 @@ const MENU_SECTIONS: MenuSection[] = [
   },
   {
     title: 'Marketing',
+    sectionIcon: MegaIcon,
     items: [
       { icon: Percent, label: 'Coupons', path: '/ceo/coupons' },
       { icon: Gift, label: 'Welcome Discount', path: '/ceo/welcome-discount' },
@@ -96,6 +104,7 @@ const MENU_SECTIONS: MenuSection[] = [
   },
   {
     title: 'Content & SEO',
+    sectionIcon: FileCode2,
     items: [
       { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
       { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
@@ -106,12 +115,14 @@ const MENU_SECTIONS: MenuSection[] = [
   },
   {
     title: 'Reports',
+    sectionIcon: BarChart3,
     items: [
       { icon: TrendingUp, label: 'Analytics & Reports', path: '/ceo/reports' },
     ],
   },
   {
     title: 'Integrations',
+    sectionIcon: Plug,
     items: [
       { icon: Bot, label: 'Telegram Shop Bot', path: '/ceo/telegram-bot' },
       { icon: ShieldCheck, label: 'CID Reseller Portal', path: '/ceo/reseller' },
@@ -120,6 +131,7 @@ const MENU_SECTIONS: MenuSection[] = [
   },
   {
     title: 'AI Tools',
+    sectionIcon: Sparkles,
     items: [
       { icon: Brain, label: 'AI Assistant', path: '/ceo/ai-assistant', badge: 'new' },
       { icon: Sparkles, label: 'AI API Config', path: '/ceo/ai-config' },
@@ -127,6 +139,7 @@ const MENU_SECTIONS: MenuSection[] = [
   },
   {
     title: 'System',
+    sectionIcon: Cog,
     items: [
       { icon: Users, label: 'Staff Management', path: '/ceo/staff' },
       { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
@@ -137,19 +150,21 @@ const MENU_SECTIONS: MenuSection[] = [
 ];
 
 // Build a flat lookup for the current page title
-const ALL_ITEMS_FLAT = MENU_SECTIONS.flatMap(s => s.items);
+const ALL_ITEMS_FLAT = MENU_SECTIONS.flatMap(s =>
+  s.items.map(i => ({ ...i, section: s.title }))
+);
 
-const getPageTitle = (pathname: string): { title: string; section: string } => {
-  // longest-prefix match
+const getPageTitle = (pathname: string): { title: string; section: string; icon: any } => {
   const sorted = [...ALL_ITEMS_FLAT].sort((a, b) => b.path.length - a.path.length);
   for (const item of sorted) {
     if (pathname === item.path || pathname.startsWith(item.path + '/')) {
-      const section = MENU_SECTIONS.find(s => s.items.some(i => i.path === item.path))?.title || '';
-      return { title: item.label, section };
+      return { title: item.label, section: item.section, icon: item.icon };
     }
   }
-  return { title: 'Admin Panel', section: '' };
+  return { title: 'Admin Panel', section: '', icon: LayoutDashboard };
 };
+
+const PINNED_KEY = 'admin_pinned_items_v1';
 
 const AdminLayout = () => {
   const { user, isAdmin, loading, signOut } = useAuth();
@@ -160,7 +175,11 @@ const AdminLayout = () => {
   const [adminNotifs, setAdminNotifs] = useState<AdminNotif[]>([]);
   const [notifCount, setNotifCount] = useState(0);
   const [navSearch, setNavSearch] = useState('');
+  const [pinnedPaths, setPinnedPaths] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem(PINNED_KEY) || '[]'); } catch { return []; }
+  });
   const location = useLocation();
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const pageMeta = useMemo(() => getPageTitle(location.pathname), [location.pathname]);
 
@@ -172,6 +191,36 @@ const AdminLayout = () => {
       .map(s => ({ ...s, items: s.items.filter(i => i.label.toLowerCase().includes(q)) }))
       .filter(s => s.items.length > 0);
   }, [navSearch]);
+
+  // Pinned items (from flat lookup)
+  const pinnedItems = useMemo(() => {
+    return pinnedPaths
+      .map(p => ALL_ITEMS_FLAT.find(i => i.path === p))
+      .filter(Boolean) as (MenuItem & { section: string })[];
+  }, [pinnedPaths]);
+
+  // Persist pinned
+  useEffect(() => {
+    localStorage.setItem(PINNED_KEY, JSON.stringify(pinnedPaths));
+  }, [pinnedPaths]);
+
+  const togglePin = useCallback((path: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setPinnedPaths(prev => prev.includes(path) ? prev.filter(p => p !== path) : [...prev, path]);
+  }, []);
+
+  // Keyboard shortcut ⌘K / Ctrl+K — focus search
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   // Fetch admin notifications
   const fetchNotifs = useCallback(async () => {
@@ -201,7 +250,7 @@ const AdminLayout = () => {
   }, [location.pathname]);
 
   if (loading) return (
-    <div className="min-h-screen admin-gradient-bg flex items-center justify-center">
+    <div className="min-h-screen admin-mesh-bg flex items-center justify-center">
       <div className="admin-glass-card p-8 flex flex-col items-center gap-4">
         <div className="w-12 h-12 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
         <p className="text-sm text-muted-foreground font-medium">Loading Dashboard...</p>
@@ -217,15 +266,25 @@ const AdminLayout = () => {
     );
   };
 
+  // ─── Sidebar content renderer ───
   const sidebarContent = (isMobile: boolean) => {
     const showLabel = isMobile || sidebarOpen;
     return (
       <>
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-border/50 min-h-[68px] overflow-hidden">
+        {/* Logo / Brand */}
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-border/40 min-h-[72px] overflow-hidden">
           {showLabel ? (
             <div className="flex items-center justify-between w-full">
-              <BrandLogo size="sm" />
+              <Link to="/ceo" className="flex items-center gap-2.5 group">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform"
+                  style={{ background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,55%), hsl(340,100%,45%) 60%, hsl(222,30%,18%))' }}>
+                  <span className="text-white text-sm font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
+                </div>
+                <div className="flex flex-col leading-none">
+                  <span className="text-sm font-bold text-foreground tracking-tight" style={{ fontFamily: 'Sora, sans-serif' }}>Shahed Store</span>
+                  <span className="text-[9px] uppercase tracking-[1.5px] font-semibold text-primary mt-0.5">Admin Panel</span>
+                </div>
+              </Link>
               {isMobile && (
                 <button onClick={() => setMobileSidebarOpen(false)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
                   <X size={20} />
@@ -233,9 +292,9 @@ const AdminLayout = () => {
               )}
             </div>
           ) : (
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,50%), hsl(340,100%,40%) 60%, hsl(222,30%,14%))' }}>
-              <span className="text-white text-xs font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mx-auto shadow-md"
+              style={{ background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,55%), hsl(340,100%,45%) 60%, hsl(222,30%,18%))' }}>
+              <span className="text-white text-sm font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
             </div>
           )}
         </div>
@@ -243,78 +302,113 @@ const AdminLayout = () => {
         {/* Quick search inside sidebar */}
         {showLabel && (
           <div className="px-3 pt-3 pb-1">
-            <div className="relative">
-              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <div className="admin-search-box !min-w-0 !py-1.5">
+              <Search size={13} className="text-muted-foreground flex-shrink-0" />
               <input
+                ref={searchInputRef}
                 type="text"
                 value={navSearch}
                 onChange={e => setNavSearch(e.target.value)}
-                placeholder="Quick find menu..."
-                className="w-full bg-muted/30 border border-border/60 rounded-lg pl-8 pr-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-primary/50 transition-colors"
+                placeholder="Search menu..."
               />
+              <span className="admin-kbd flex-shrink-0">⌘K</span>
+            </div>
+          </div>
+        )}
+
+        {/* Pinned items */}
+        {showLabel && pinnedItems.length > 0 && !navSearch && (
+          <div className="px-2 pt-2">
+            <div className="admin-section-chip">
+              <Pin size={11} className="text-primary" />
+              <span>Pinned</span>
+            </div>
+            <div className="space-y-0.5 mt-1 mb-3">
+              {pinnedItems.map((item) => {
+                const isActive = location.pathname === item.path ||
+                  (item.path !== '/ceo' && location.pathname.startsWith(item.path + '/'));
+                return (
+                  <NavLink
+                    key={`pin-${item.path}`}
+                    to={item.path}
+                    end={item.path === '/ceo'}
+                    className={`admin-nav-item ${isActive ? 'active' : ''}`}
+                  >
+                    <item.icon size={16} className="flex-shrink-0" />
+                    <span className="flex-1 truncate">{item.label}</span>
+                    <button onClick={(e) => togglePin(item.path, e)} className="opacity-50 hover:opacity-100 transition-opacity">
+                      <PinOff size={11} />
+                    </button>
+                  </NavLink>
+                );
+              })}
             </div>
           </div>
         )}
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
-          {visibleSections.map((section) => {
+        <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-3 scrollbar-thin">
+          {visibleSections.map((section, sIdx) => {
             const isCollapsed = collapsedSections.includes(section.title);
+            const SectionIcon = section.sectionIcon;
             return (
-              <div key={section.title}>
-                {/* Section header */}
-                {showLabel && (
+              <div key={section.title} className="admin-nav-anim" style={{ animationDelay: `${sIdx * 25}ms` }}>
+                {showLabel ? (
                   <button
                     onClick={() => toggleSection(section.title)}
-                    className="w-full flex items-center justify-between px-3 mb-1.5 group"
+                    className="admin-section-chip"
                   >
-                    <span className="text-[10px] font-bold uppercase tracking-[1.2px] text-muted-foreground/70 group-hover:text-foreground transition-colors">
-                      {section.title}
+                    <span className="admin-section-icon">
+                      <SectionIcon size={11} />
                     </span>
+                    <span className="flex-1 text-left">{section.title}</span>
+                    <span className="text-[9px] font-medium opacity-60">{section.items.length}</span>
                     <ChevronDown
                       size={11}
-                      className={`text-muted-foreground/50 transition-transform ${isCollapsed ? '-rotate-90' : ''}`}
+                      className={`opacity-60 transition-transform ${isCollapsed ? '-rotate-90' : ''}`}
                     />
                   </button>
-                )}
-                {!showLabel && (
-                  <div className="h-px bg-border/40 mx-2 my-2" />
+                ) : (
+                  <div className="flex justify-center my-2" title={section.title}>
+                    <span className="admin-section-icon" style={{ width: 24, height: 24 }}>
+                      <SectionIcon size={13} />
+                    </span>
+                  </div>
                 )}
 
-                {/* Section items */}
                 {!isCollapsed && (
-                  <div className="space-y-0.5">
+                  <div className="space-y-0.5 mt-1">
                     {section.items.map((item) => {
                       const isActive = location.pathname === item.path ||
                         (item.path !== '/ceo' && location.pathname.startsWith(item.path + '/'));
+                      const isPinned = pinnedPaths.includes(item.path);
                       return (
                         <NavLink
                           key={item.path}
                           to={item.path}
                           end={item.path === '/ceo'}
                           title={!showLabel ? item.label : undefined}
-                          className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
-                            isActive
-                              ? 'bg-primary/15 text-primary font-semibold'
-                              : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
-                          }`}
+                          className={`admin-nav-item group ${isActive ? 'active' : ''} ${!showLabel ? 'justify-center' : ''}`}
                         >
-                          {/* Active indicator bar */}
-                          {isActive && (
-                            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-primary" />
-                          )}
                           <item.icon size={17} className="flex-shrink-0" />
                           {showLabel && (
                             <>
                               <span className="flex-1 truncate">{item.label}</span>
                               {item.badge === 'live' && (
-                                <span className="flex items-center gap-1 text-[9px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
-                                  <span className="w-1 h-1 rounded-full bg-primary animate-pulse" /> LIVE
+                                <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-500/12 px-1.5 py-0.5 rounded-md">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 admin-notif-dot" /> LIVE
                                 </span>
                               )}
                               {item.badge === 'new' && (
-                                <span className="text-[9px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded">NEW</span>
+                                <span className="text-[9px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded-md">NEW</span>
                               )}
+                              <button
+                                onClick={(e) => togglePin(item.path, e)}
+                                className={`transition-opacity ${isPinned ? 'opacity-70 hover:opacity-100' : 'opacity-0 group-hover:opacity-50 hover:!opacity-100'}`}
+                                title={isPinned ? 'Unpin' : 'Pin to top'}
+                              >
+                                {isPinned ? <Pin size={11} className="text-primary fill-primary" /> : <Pin size={11} />}
+                              </button>
                             </>
                           )}
                         </NavLink>
@@ -327,18 +421,19 @@ const AdminLayout = () => {
           })}
 
           {visibleSections.length === 0 && showLabel && (
-            <div className="px-4 py-6 text-center text-xs text-muted-foreground">
+            <div className="px-4 py-8 text-center text-xs text-muted-foreground">
+              <Search size={20} className="mx-auto mb-2 opacity-40" />
               কোনো ম্যাচ পাওয়া যায়নি
             </div>
           )}
         </nav>
 
-        {/* User info */}
-        <div className="border-t border-border/50 p-3">
+        {/* User info footer */}
+        <div className="border-t border-border/40 p-3">
           {showLabel ? (
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-background text-sm font-bold flex-shrink-0">
-                A
+            <div className="flex items-center gap-2.5 p-2 rounded-xl bg-muted/30">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-md">
+                {(user.email?.[0] || 'A').toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-semibold text-foreground truncate">Admin</div>
@@ -362,36 +457,38 @@ const AdminLayout = () => {
     );
   };
 
+  const PageIcon = pageMeta.icon;
+
   return (
-    <div className="min-h-screen admin-gradient-bg flex">
+    <div className="min-h-screen admin-mesh-bg flex">
       {/* Mobile overlay */}
       {mobileSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setMobileSidebarOpen(false)}
         />
       )}
 
-      {/* Mobile Sidebar (overlay drawer) */}
-      <aside className={`fixed left-0 top-0 h-full z-50 w-[280px] flex flex-col admin-glass-sidebar transition-transform duration-300 md:hidden ${
+      {/* Mobile Sidebar */}
+      <aside className={`fixed left-0 top-0 h-full z-50 w-[280px] flex flex-col admin-sidebar-v2 transition-transform duration-300 md:hidden ${
         mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         {sidebarContent(true)}
       </aside>
 
       {/* Desktop Sidebar */}
-      <aside className={`hidden md:flex fixed left-0 top-0 h-full z-40 transition-all duration-300 flex-col ${sidebarOpen ? 'w-64' : 'w-16'} admin-glass-sidebar`}>
+      <aside className={`hidden md:flex fixed left-0 top-0 h-full z-40 transition-all duration-300 flex-col ${sidebarOpen ? 'w-[260px]' : 'w-[68px]'} admin-sidebar-v2`}>
         {sidebarContent(false)}
       </aside>
 
       {/* Main content */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 w-full ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
+      <div className={`flex-1 flex flex-col transition-all duration-300 w-full min-w-0 ${sidebarOpen ? 'md:ml-[260px]' : 'md:ml-[68px]'}`}>
         {/* Top bar */}
-        <header className="admin-glass-header px-3 sm:px-6 py-3 flex items-center gap-2 sm:gap-4 sticky top-0 z-30">
+        <header className="admin-header-v2 px-3 sm:px-5 py-3 flex items-center gap-2 sm:gap-3 sticky top-0 z-30">
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileSidebarOpen(true)}
-            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary md:hidden flex-shrink-0"
+            className="admin-pill-btn !p-2 md:hidden flex-shrink-0"
             aria-label="Open menu"
           >
             <Menu size={18} />
@@ -399,57 +496,85 @@ const AdminLayout = () => {
           {/* Desktop sidebar toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary hidden md:flex flex-shrink-0"
+            className="admin-pill-btn !p-2 hidden md:flex flex-shrink-0"
             aria-label="Toggle sidebar"
           >
-            {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+            {sidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
           </button>
 
           {/* Page title + breadcrumb */}
-          <div className="min-w-0 flex-1">
-            {pageMeta.section && (
-              <div className="hidden sm:flex items-center gap-1 text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider">
-                <span>{pageMeta.section}</span>
-                <ChevronRight size={10} />
-                <span className="text-primary/80">{pageMeta.title}</span>
-              </div>
-            )}
-            <h1 className="text-base sm:text-lg font-bold text-foreground truncate leading-tight" style={{ fontFamily: 'Rajdhani, sans-serif', letterSpacing: '0.3px' }}>
-              {pageMeta.title}
-            </h1>
+          <div className="min-w-0 flex-1 flex items-center gap-3">
+            <div className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, hsla(var(--brand-h),var(--brand-s),55%,0.15), hsla(var(--brand2-h),var(--brand2-s),55%,0.10))' }}>
+              <PageIcon size={18} className="text-primary" />
+            </div>
+            <div className="min-w-0 flex-1">
+              {pageMeta.section && (
+                <div className="hidden sm:flex items-center gap-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-[1.2px]">
+                  <span>{pageMeta.section}</span>
+                  <ChevronRight size={10} />
+                  <span className="text-primary">{pageMeta.title}</span>
+                </div>
+              )}
+              <h1 className="text-base sm:text-lg font-bold text-foreground truncate leading-tight" style={{ fontFamily: 'Rajdhani, sans-serif', letterSpacing: '0.3px' }}>
+                {pageMeta.title}
+              </h1>
+            </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-3 flex-shrink-0 relative">
-            <button onClick={() => setShowNotifPanel(!showNotifPanel)} className="relative p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary" aria-label="Notifications">
-              <Bell size={18} />
-              {notifCount > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-primary rounded-full text-[10px] font-bold text-primary-foreground flex items-center justify-center">{notifCount > 9 ? '9+' : notifCount}</span>}
+          {/* Header actions */}
+          <div className="ml-auto flex items-center gap-1.5 sm:gap-2 flex-shrink-0 relative">
+            {/* Quick search trigger (hidden on mobile) */}
+            <button
+              onClick={() => searchInputRef.current?.focus()}
+              className="admin-pill-btn hidden lg:flex"
+              title="Search menu (⌘K)"
+            >
+              <Search size={14} />
+              <span className="text-xs">Search</span>
+              <span className="admin-kbd ml-1">⌘K</span>
             </button>
 
-            {/* Notification Dropdown */}
+            {/* Notifications */}
+            <button onClick={() => setShowNotifPanel(!showNotifPanel)} className="admin-pill-btn !p-2 relative" aria-label="Notifications">
+              <Bell size={18} />
+              {notifCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-rose-500 to-orange-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center shadow-md">
+                  {notifCount > 9 ? '9+' : notifCount}
+                </span>
+              )}
+            </button>
+
             {showNotifPanel && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowNotifPanel(false)} />
-                <div className="absolute right-0 top-12 z-50 w-80 sm:w-96 glass-card rounded-2xl shadow-2xl border border-border overflow-hidden">
-                  <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-                    <h3 className="font-bold text-foreground text-sm">নোটিফিকেশন সেন্টার</h3>
-                    <span className="text-[10px] text-muted-foreground">{notifCount}টি আইটেম</span>
+                <div className="absolute right-0 top-12 z-50 w-80 sm:w-96 admin-glass-card overflow-hidden">
+                  <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between bg-gradient-to-r from-primary/5 to-accent/5">
+                    <div>
+                      <h3 className="font-bold text-foreground text-sm">Notifications</h3>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{notifCount} new updates</p>
+                    </div>
+                    <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">Live</span>
                   </div>
-                  <div className="max-h-80 overflow-y-auto divide-y divide-border/30">
+                  <div className="max-h-96 overflow-y-auto divide-y divide-border/30">
                     {adminNotifs.length === 0 ? (
-                      <div className="py-8 text-center text-muted-foreground text-sm">কোনো নোটিফিকেশন নেই</div>
+                      <div className="py-12 text-center">
+                        <Bell size={28} className="mx-auto mb-2 text-muted-foreground/40" />
+                        <p className="text-sm text-muted-foreground">কোনো নোটিফিকেশন নেই</p>
+                      </div>
                     ) : adminNotifs.map(n => {
                       const icons: Record<string, { icon: any; cls: string }> = {
-                        order: { icon: ShopIcon, cls: 'text-primary bg-primary/10' },
-                        payment: { icon: CreditIcon, cls: 'text-amber-500 bg-amber-500/10' },
-                        ticket: { icon: Headphones, cls: 'text-blue-500 bg-blue-500/10' },
-                        stock: { icon: AlertTriangle, cls: 'text-destructive bg-destructive/10' },
+                        order: { icon: ShopIcon, cls: 'text-emerald-600 bg-emerald-500/10' },
+                        payment: { icon: CreditIcon, cls: 'text-amber-600 bg-amber-500/10' },
+                        ticket: { icon: Headphones, cls: 'text-blue-600 bg-blue-500/10' },
+                        stock: { icon: AlertTriangle, cls: 'text-rose-600 bg-rose-500/10' },
                       };
                       const { icon: NIcon, cls } = icons[n.type] || icons.order;
                       return (
                         <a key={n.id} href={n.link || '#'} onClick={() => setShowNotifPanel(false)}
-                          className="flex items-start gap-3 px-4 py-3 hover:bg-muted/20 transition-colors">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${cls}`}>
-                            <NIcon size={14} />
+                          className="flex items-start gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${cls}`}>
+                            <NIcon size={15} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold text-foreground">{n.title}</p>
@@ -464,14 +589,15 @@ const AdminLayout = () => {
               </>
             )}
 
-            <a href="/" target="_blank" className="text-xs text-primary hover:underline glass-card px-2 sm:px-3 py-2 rounded-xl border-primary/30 hidden sm:flex items-center gap-1.5">
-              <Globe size={13} /> View Store
+            <a href="/" target="_blank" rel="noopener" className="admin-pill-btn hidden sm:flex">
+              <Globe size={14} />
+              <span className="text-xs">View Store</span>
             </a>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-3 sm:p-6 overflow-x-auto">
+        <main className="flex-1 p-3 sm:p-5 lg:p-6 overflow-x-auto relative z-10">
           <Outlet />
         </main>
       </div>
