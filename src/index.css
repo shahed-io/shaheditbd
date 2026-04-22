@@ -2114,6 +2114,239 @@ body.admin-page ::-webkit-scrollbar-thumb:hover {
   background-clip: padding-box;
 }
 
+/* ══════════════════════════════════════
+   ADMIN AUTO-POLISH — extends look to raw
+   bg-white / bg-gray-* / rounded panels that
+   weren't built with .glass-card. This way
+   every legacy admin page becomes glassy
+   without per-page edits.
+══════════════════════════════════════ */
+
+/* Hard-coded white/gray panels → soft glass surface */
+body.admin-page .bg-white:not(.glass-card):not(button):not(input):not(textarea):not(select):not([role="combobox"]):not([data-glass-skip]),
+body.admin-page .bg-gray-50:not(.glass-card):not(button):not([data-glass-skip]),
+body.admin-page .bg-gray-100:not(.glass-card):not(button):not([data-glass-skip]),
+body.admin-page .bg-slate-50:not(.glass-card):not(button):not([data-glass-skip]),
+body.admin-page .bg-slate-100:not(.glass-card):not(button):not([data-glass-skip]) {
+  background:
+    linear-gradient(145deg, hsla(0,0%,100%,0.78) 0%, hsla(0,0%,100%,0.55) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 65%, 0.45) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 60%, 0.28) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 60%, 0.38) 100%
+    ) border-box !important;
+  border: 1.5px solid transparent !important;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    0 4px 20px hsla(226, 35%, 12%, 0.05),
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.7);
+}
+html[data-theme="dark-cyber"] body.admin-page .bg-white:not(.glass-card):not(button):not(input):not(textarea):not(select):not([role="combobox"]):not([data-glass-skip]),
+html[data-theme="dark-cyber"] body.admin-page .bg-gray-50:not(.glass-card):not(button):not([data-glass-skip]),
+html[data-theme="dark-cyber"] body.admin-page .bg-gray-100:not(.glass-card):not(button):not([data-glass-skip]),
+html[data-theme="dark-cyber"] body.admin-page .bg-slate-50:not(.glass-card):not(button):not([data-glass-skip]),
+html[data-theme="dark-cyber"] body.admin-page .bg-slate-100:not(.glass-card):not(button):not([data-glass-skip]),
+html[data-theme="midnight-purple"] body.admin-page .bg-white:not(.glass-card):not(button):not(input):not(textarea):not(select):not([role="combobox"]):not([data-glass-skip]),
+html[data-theme="midnight-purple"] body.admin-page .bg-gray-50:not(.glass-card):not(button):not([data-glass-skip]),
+html[data-theme="midnight-purple"] body.admin-page .bg-gray-100:not(.glass-card):not(button):not([data-glass-skip]),
+html[data-theme="midnight-purple"] body.admin-page .bg-slate-50:not(.glass-card):not(button):not([data-glass-skip]),
+html[data-theme="midnight-purple"] body.admin-page .bg-slate-100:not(.glass-card):not(button):not([data-glass-skip]) {
+  background:
+    linear-gradient(145deg, hsla(260,40%,13%,0.72) 0%, hsla(260,40%,9%,0.55) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 60%, 0.45) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 55%, 0.28) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 55%, 0.38) 100%
+    ) border-box !important;
+}
+
+/* Modal/Dialog/Sheet content — gradient-glass */
+body.admin-page [role="dialog"] > div:not([data-glass-skip]),
+body.admin-page [data-radix-popper-content-wrapper] > [role="menu"],
+body.admin-page [data-radix-popper-content-wrapper] > [role="listbox"],
+body.admin-page [data-radix-popper-content-wrapper] > [role="dialog"] {
+  background:
+    linear-gradient(145deg, hsla(0,0%,100%,0.92) 0%, hsla(0,0%,100%,0.78) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 65%, 0.55) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 60%, 0.35) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 60%, 0.45) 100%
+    ) border-box !important;
+  border: 1.5px solid transparent !important;
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  box-shadow:
+    0 24px 60px hsla(226, 35%, 12%, 0.18),
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.85) !important;
+}
+html[data-theme="dark-cyber"] body.admin-page [role="dialog"] > div:not([data-glass-skip]),
+html[data-theme="midnight-purple"] body.admin-page [role="dialog"] > div:not([data-glass-skip]) {
+  background:
+    linear-gradient(145deg, hsla(260,40%,15%,0.92) 0%, hsla(260,40%,10%,0.78) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 60%, 0.55) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 55%, 0.35) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 55%, 0.45) 100%
+    ) border-box !important;
+}
+
+/* Tabs list — clear visual grouping */
+body.admin-page [role="tablist"] {
+  background: linear-gradient(180deg, hsla(0,0%,100%,0.65), hsla(0,0%,100%,0.42));
+  border: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 0.75rem;
+  padding: 4px;
+  box-shadow: inset 0 1px 0 hsla(0, 0%, 100%, 0.7);
+}
+body.admin-page [role="tab"][data-state="active"] {
+  background: linear-gradient(135deg,
+    hsla(var(--brand-h), var(--brand-s), 60%, 0.16),
+    hsla(var(--brand2-h), var(--brand2-s), 55%, 0.10)) !important;
+  color: hsl(var(--primary)) !important;
+  box-shadow:
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.7),
+    0 2px 10px hsla(var(--brand-h), var(--brand-s), 55%, 0.14) !important;
+}
+
+/* Primary action buttons in admin — gradient sweep */
+body.admin-page button.bg-primary,
+body.admin-page button.bg-blue-600,
+body.admin-page button.bg-blue-500,
+body.admin-page button.bg-indigo-600,
+body.admin-page button.bg-violet-600,
+body.admin-page button.bg-purple-600 {
+  background: linear-gradient(135deg,
+    hsl(var(--brand-h), var(--brand-s), var(--brand-l)),
+    hsl(var(--brand2-h), var(--brand2-s), var(--brand2-l))) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow:
+    0 4px 14px hsla(var(--brand-h), var(--brand-s), 50%, 0.32),
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.25);
+  transition: all 0.18s ease;
+}
+body.admin-page button.bg-primary:hover,
+body.admin-page button.bg-blue-600:hover,
+body.admin-page button.bg-blue-500:hover,
+body.admin-page button.bg-indigo-600:hover,
+body.admin-page button.bg-violet-600:hover,
+body.admin-page button.bg-purple-600:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow:
+    0 8px 22px hsla(var(--brand-h), var(--brand-s), 50%, 0.42),
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.35);
+}
+
+/* Section titles inside cards — clear hierarchy */
+body.admin-page h2:not(.no-accent),
+body.admin-page h3:not(.no-accent) {
+  letter-spacing: -0.005em;
+}
+body.admin-page .glass-card > h2:first-child::before,
+body.admin-page .glass-card > h3:first-child::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 1em;
+  margin-right: 0.55rem;
+  vertical-align: -2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg,
+    hsl(var(--brand-h), var(--brand-s), var(--brand-l)),
+    hsl(var(--brand2-h), var(--brand2-s), var(--brand2-l)));
+  box-shadow: 0 0 8px hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.45);
+}
+
+/* Native form labels — bolder for clarity */
+body.admin-page label {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  font-size: 0.85rem;
+}
+
+/* Native checkboxes/radios — branded */
+body.admin-page input[type="checkbox"],
+body.admin-page input[type="radio"] {
+  accent-color: hsl(var(--primary));
+  cursor: pointer;
+}
+
+/* Disabled inputs — clear visual */
+body.admin-page input:disabled,
+body.admin-page select:disabled,
+body.admin-page textarea:disabled,
+body.admin-page button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Status badges — auto pill polish */
+body.admin-page .bg-green-100,
+body.admin-page .bg-emerald-100 {
+  background: hsla(150, 70%, 92%, 0.85) !important;
+  color: hsl(150, 65%, 25%) !important;
+  border: 1px solid hsla(150, 70%, 50%, 0.3);
+}
+body.admin-page .bg-red-100,
+body.admin-page .bg-rose-100 {
+  background: hsla(0, 75%, 94%, 0.85) !important;
+  color: hsl(0, 65%, 38%) !important;
+  border: 1px solid hsla(0, 75%, 55%, 0.3);
+}
+body.admin-page .bg-yellow-100,
+body.admin-page .bg-amber-100 {
+  background: hsla(38, 95%, 92%, 0.85) !important;
+  color: hsl(28, 75%, 32%) !important;
+  border: 1px solid hsla(38, 95%, 55%, 0.3);
+}
+body.admin-page .bg-blue-100,
+body.admin-page .bg-sky-100 {
+  background: hsla(210, 90%, 94%, 0.85) !important;
+  color: hsl(210, 70%, 32%) !important;
+  border: 1px solid hsla(210, 90%, 55%, 0.3);
+}
+
+/* Borders — soften gray-200/300 to brand-tint */
+body.admin-page .border-gray-200,
+body.admin-page .border-gray-300,
+body.admin-page .border-slate-200,
+body.admin-page .border-slate-300 {
+  border-color: hsla(var(--brand-h), var(--brand-s), 70%, 0.18) !important;
+}
+
+/* Empty-state / placeholder boxes — friendly look */
+body.admin-page [data-empty-state],
+body.admin-page .empty-state {
+  background: linear-gradient(145deg,
+    hsla(var(--brand-h), var(--brand-s), 95%, 0.6),
+    hsla(var(--brand2-h), var(--brand2-s), 95%, 0.4));
+  border: 1.5px dashed hsla(var(--brand-h), var(--brand-s), 65%, 0.32);
+  border-radius: 1rem;
+  padding: 2.5rem 1.25rem;
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Optional: hint chip — quick contextual tip */
+.admin-hint-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: linear-gradient(135deg,
+    hsla(var(--brand-h), var(--brand-s), 60%, 0.14),
+    hsla(var(--brand2-h), var(--brand2-s), 55%, 0.10));
+  color: hsl(var(--primary));
+  border: 1px solid hsla(var(--brand-h), var(--brand-s), 65%, 0.22);
+}
+
 
 
 /* ══════════════════════════════════════
