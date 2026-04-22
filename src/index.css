@@ -918,6 +918,13 @@ html[data-theme="midnight-purple"] .admin-gradient-bg::after { opacity: 0.25; }
 body.admin-page > #root,
 .admin-gradient-bg > * { position: relative; z-index: 1; }
 
+body.admin-page main,
+body.admin-page .admin-main,
+body.admin-page [data-admin-content] {
+  width: 100%;
+  max-width: none;
+}
+
 /* ── Sidebar — deep glass with indigo tint ── */
 .admin-glass-sidebar {
   background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.70) 100%);
