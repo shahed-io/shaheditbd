@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bot, X, Send, Loader2, Minimize2, MessageCircle } from 'lucide-react';
+import { Bot, X, Send, Loader2, Minimize2, MessageCircle, Facebook, Send as TelegramIcon, Link as LinkIcon, Phone, Mail, Instagram, Twitter, Youtube, Video, Headphones, LifeBuoy, HelpCircle, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+
+const FS_ICON_MAP: Record<string, any> = {
+  MessageCircle, Facebook, TelegramIcon, LinkIcon, Phone, Mail, Instagram, Twitter, Youtube, Video, Headphones, LifeBuoy, HelpCircle, Globe,
+};
+const getFsIcon = (name?: string) => FS_ICON_MAP[name || 'MessageCircle'] || MessageCircle;
 
 type Message = { role: 'user' | 'assistant'; content: string };
 
