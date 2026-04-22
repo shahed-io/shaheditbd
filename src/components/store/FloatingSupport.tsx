@@ -295,6 +295,52 @@ const FloatingSupport = () => {
             </div>
           )}
 
+          {/* Other ways to contact — inside AI chat panel */}
+          {(config.whatsapp_enabled || activeSets.length > 0) && (
+            <div className="px-3 pb-2 pt-1 border-t border-border/40">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-1">
+                অন্যান্য যোগাযোগের উপায়
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {config.whatsapp_enabled && (
+                  <button
+                    onClick={openWhatsApp}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-card border border-border/60 hover:border-green-500/50 hover:shadow-sm transition-all group"
+                    title={config.whatsapp_label}
+                  >
+                    <span
+                      className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}
+                    >
+                      <MessageCircle size={12} className="text-white" />
+                    </span>
+                    <span className="text-xs font-medium text-foreground">{config.whatsapp_label}</span>
+                  </button>
+                )}
+                {activeSets.map(set => {
+                  const ChannelIcon = getFsIcon(set.icon);
+                  return (
+                    <button
+                      key={set.id}
+                      onClick={() => openLiveSet(set)}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-card border border-border/60 hover:shadow-sm transition-all group"
+                      style={{ borderColor: `${set.icon_color}40` }}
+                      title={set.subtitle || set.label}
+                    >
+                      <span
+                        className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)` }}
+                      >
+                        <ChannelIcon size={12} className="text-white" />
+                      </span>
+                      <span className="text-xs font-medium text-foreground">{set.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Input */}
           <div className="flex items-center gap-2 px-3 py-2.5 border-t border-border/60 bg-background">
             <input
