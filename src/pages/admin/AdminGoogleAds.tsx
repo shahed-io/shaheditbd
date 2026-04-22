@@ -176,6 +176,73 @@ const AdminGoogleAds = () => {
               <Button variant="outline" onClick={addAccount} className="w-full gap-2"><Plus size={16} /> Add Account</Button>
             </CardContent>
           </Card>
+
+          {/* ─────── Google Ads বিস্তারিত গাইড ─────── */}
+          <div className="rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/5 via-background to-background p-5 sm:p-6 space-y-5 backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+                <BookOpen className="text-primary" size={20} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Google Ads সম্পূর্ণ গাইড</h3>
+                <p className="text-xs text-muted-foreground">Conversion tracking সঠিকভাবে setup করার নিয়ম</p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-muted/20 border border-border/40 p-4 space-y-2">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-2"><Target size={14} className="text-primary" /> Conversion Tracking কী?</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                আপনি Google-এ ad চালালে Google জানতে চায় কোন ad থেকে কতটা sale হলো। সেই data পাঠানোর সিস্টেমকে <strong>Conversion Tracking</strong> বলে। এতে Google smart-ভাবে campaign optimize করে — যেখানে বেশি sale হয় সেখানে বেশি ad দেখায়।
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-2"><CheckCircle2 size={14} className="text-primary" /> Setup Steps</p>
+              {[
+                { n: '1', t: 'Google Ads-এ Conversion Action তৈরি করুন', d: 'Google Ads → Tools (🔧) → Conversions → "+ New conversion action" → Website। চারটি action তৈরি করুন: Purchase, Begin Checkout, Add to Cart, Lead।' },
+                { n: '2', t: 'Conversion ID ও Label কপি করুন', d: 'প্রতিটি action তৈরির পর AW-1234567890/AbCdEfGh123 format-এ tag পাবেন। প্রথম অংশ (AW-...) Conversion ID, slash-এর পরের অংশ Label।' },
+                { n: '3', t: 'উপরের form-এ যোগ করুন', d: '"Add Account" বাটনে ক্লিক করে Account name দিন, Conversion ID বসান, এবং প্রতিটি event-এর জন্য সঠিক Label বসান।' },
+                { n: '4', t: 'Switch ON করে Save করুন', d: 'উপরের toggle ON করে "Save All" চাপুন। ৫–১০ মিনিটের মধ্যে Google Tag Assistant-এ verify করতে পারবেন।' },
+              ].map(s => (
+                <div key={s.n} className="flex gap-3 p-3 rounded-xl bg-muted/20 border border-border/40">
+                  <div className="w-7 h-7 shrink-0 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">{s.n}</div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{s.t}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">{s.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-2"><Hash size={14} className="text-primary" /> Field-গুলোর ব্যাখ্যা</p>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {[
+                  { k: 'Account Name', v: 'আপনার নিজের চেনার জন্য একটা নাম (যেমন: "Main Brand Ads")। Google-এ যায় না।' },
+                  { k: 'Conversion ID', v: 'AW-XXXXXXXXXX format। প্রতিটি Google Ads account-এর একটাই ID — সব action-এর জন্য একই।' },
+                  { k: 'Purchase Label', v: 'Order complete হলে fire হয়। Revenue tracking-এর জন্য সবচেয়ে গুরুত্বপূর্ণ।' },
+                  { k: 'Begin Checkout Label', v: 'Customer checkout page-এ ঢুকলে fire হয়। Funnel analysis-এ কাজে আসে।' },
+                  { k: 'Add to Cart Label', v: 'Cart-এ product add করলে fire হয়। Smart Bidding-এর জন্য micro-conversion।' },
+                  { k: 'Lead/Sign Up Label', v: 'নতুন user signup/registration করলে fire হয়।' },
+                ].map(f => (
+                  <div key={f.k} className="p-3 rounded-lg bg-background/40 border border-border/40">
+                    <p className="text-xs font-semibold text-foreground">{f.k}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{f.v}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 p-4 space-y-1.5">
+              <p className="text-sm font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-2"><AlertTriangle size={14} /> গুরুত্বপূর্ণ Tips</p>
+              <ul className="text-xs text-muted-foreground space-y-1 list-disc ml-5">
+                <li>Label-এ শুধু slash (<code>/</code>)-এর পরের অংশটি বসাবেন — পুরো tag নয়।</li>
+                <li>একাধিক Google Ads account থাকলে আলাদা আলাদা Add Account করুন।</li>
+                <li>কোনো event track না করতে চাইলে সেই Label খালি রাখুন।</li>
+                <li>Setup এর পর <strong>Google Tag Assistant</strong> Chrome extension দিয়ে verify করুন।</li>
+              </ul>
+            </div>
+          </div>
         </TabsContent>
 
         {/* GA4 */}
