@@ -590,7 +590,7 @@ export default function AdminGetCIDTools() {
                               <td className="p-2">
                                 {r.status === 'success' ? (
                                   <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/30">
-                                    {r.provider}
+                                    {r.provider === 'getcid' ? 'Primary' : 'Backup'}
                                   </Badge>
                                 ) : (
                                   <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30">
