@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Bot, MessageCircle, Plus, Trash2, Save, Loader2, Smartphone, Globe, History, Search, ChevronDown, ChevronUp, User, Clock, Monitor } from 'lucide-react';
+import { Bot, MessageCircle, Plus, Trash2, Save, Loader2, Smartphone, Globe, History, Search, ChevronDown, ChevronUp, User, Clock, Monitor, ArrowUp, ArrowDown, Facebook, Send as TelegramIcon, Link as LinkIcon, Phone, Mail, Instagram, Twitter, Youtube, Video, Headphones, LifeBuoy, HelpCircle } from 'lucide-react';
 
 interface LiveChatSettings {
   // General
