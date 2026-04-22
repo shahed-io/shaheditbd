@@ -253,7 +253,7 @@ const AdminLayout = () => {
             </div>
           ) : (
             <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,50%), hsl(340,100%,40%) 60%, hsl(222,30%,14%))' }}>
+              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.30)' }}>
               <span className="text-white text-xs font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
             </div>
           )}
