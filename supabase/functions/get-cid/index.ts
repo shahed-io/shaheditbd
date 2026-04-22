@@ -125,21 +125,17 @@ Deno.serve(async (req) => {
         return json({ ok: false, error: 'Invalid or expired session' }, 401);
       }
 
-      const result: Record<string, unknown> = { providers: {} };
-      const providers = result.providers as Record<string, unknown>;
-
+      // Resellers see only an aggregated balance — no provider names exposed.
+      let aggregateBalance: number | null = null;
       if (GETCID_TOKEN) {
         const r = await callGetCIDBalance(GETCID_TOKEN);
-        providers.getcid = r.ok ? { balance: r.balance, status: 'ok' } : { error: r.error, status: 'error' };
-        if (r.ok) result.balance = r.balance; // primary balance for back-compat
+        if (r.ok && typeof r.balance === 'number') aggregateBalance = r.balance;
       }
-      if (GRAHOK_TOKEN) {
+      if (aggregateBalance === null && GRAHOK_TOKEN) {
         const r = await callGrahokBalance(GRAHOK_TOKEN, GRAHOK_BAL);
-        providers.grahok = r.ok ? { balance: r.balance, status: 'ok' } : { error: r.error, status: 'error' };
-        if (result.balance === undefined && r.ok) result.balance = r.balance;
+        if (r.ok && typeof r.balance === 'number') aggregateBalance = r.balance;
       }
-
-      return json(result);
+      return json({ ok: true, balance: aggregateBalance });
     }
 
     // ── Get CID — Auto-fallback (GetCID primary, Grahok backup) ──────
@@ -221,7 +217,8 @@ Deno.serve(async (req) => {
       }
 
       if (!cidValue) {
-        return json({ error: 'All CID providers failed', details: errors }, 502);
+        // Generic error — never expose provider names to resellers.
+        return json({ error: 'CID generation temporarily unavailable. Please try again.' }, 502);
       }
 
       // Deduct balance & log generation
@@ -244,9 +241,9 @@ Deno.serve(async (req) => {
       }
       await Promise.all(ops);
 
+      // Reseller-facing response: no provider name leaked.
       return json({
         cid: cidValue,
-        provider: usedProvider,
         balance_after_cents: newBalance,
         billed_user_id: billedUserId,
       });

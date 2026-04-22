@@ -254,10 +254,10 @@ export default function AdminGetCIDTools() {
             <span className="p-2 rounded-lg bg-primary/10">
               <KeyRound className="h-6 w-6 text-primary" />
             </span>
-            GetCID API Tools
+            CID Gateway Tools
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Microsoft Phone Activation — Confirmation ID generator with dual-provider auto-fallback
+            Microsoft Phone Activation — Confirmation ID generator with multi-channel auto-fallback
           </p>
         </div>
         <Button onClick={loadBalance} disabled={balanceLoading} variant="outline" className="gap-2">
@@ -271,20 +271,19 @@ export default function AdminGetCIDTools() {
         {(['getcid', 'grahok'] as const).map((key) => {
           const p = balance?.providers[key];
           const isPrimary = key === 'getcid';
+          const channelLabel = isPrimary ? 'Primary Channel' : 'Backup Channel';
           return (
             <Card key={key} className={`relative overflow-hidden ${isPrimary ? 'border-primary/40' : ''}`}>
-              {isPrimary && (
-                <Badge className="absolute top-3 right-3 bg-primary/10 text-primary border-primary/20" variant="outline">
-                  Primary
-                </Badge>
-              )}
+              <Badge className={`absolute top-3 right-3 ${isPrimary ? 'bg-primary/10 text-primary border-primary/20' : 'bg-muted text-muted-foreground'}`} variant="outline">
+                {isPrimary ? 'Primary' : 'Backup'}
+              </Badge>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Wallet className="h-4 w-4" />
-                  {isPrimary ? 'GetCID.app (api-v2)' : 'Grahok.io (Backup)'}
+                  {channelLabel}
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  {isPrimary ? 'panel.getcid.app/user-api' : 'grahok.io/api'}
+                  {isPrimary ? 'Auto-routed first for every request' : 'Activated automatically on primary failure'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -303,7 +302,7 @@ export default function AdminGetCIDTools() {
                   </div>
                 ) : p?.status === 'not_configured' ? (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <AlertCircle className="h-4 w-4" /> API token not configured
+                    <AlertCircle className="h-4 w-4" /> Channel credentials not configured
                   </div>
                 ) : (
                   <div className="space-y-1">
@@ -368,13 +367,13 @@ export default function AdminGetCIDTools() {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label>Provider</Label>
+                  <Label>Routing</Label>
                   <Select value={provider} onValueChange={(v) => setProvider(v as typeof provider)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="auto">Auto (with fallback)</SelectItem>
-                      <SelectItem value="getcid">GetCID only</SelectItem>
-                      <SelectItem value="grahok">Grahok only</SelectItem>
+                      <SelectItem value="auto">Smart (auto-fallback)</SelectItem>
+                      <SelectItem value="getcid">Primary only</SelectItem>
+                      <SelectItem value="grahok">Backup only</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -398,7 +397,7 @@ export default function AdminGetCIDTools() {
                   <CardContent className="pt-6 space-y-4">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <Badge className="bg-emerald-500/10 text-emerald-700 border-emerald-500/30 gap-1.5" variant="outline">
-                        <CheckCircle2 className="h-3 w-3" /> Success via {cidResult.provider.toUpperCase()}
+                        <CheckCircle2 className="h-3 w-3" /> Success via {cidResult.provider === 'getcid' ? 'Primary' : 'Backup'} Channel
                       </Badge>
                       <Badge variant="outline" className="gap-1.5">
                         <Clock className="h-3 w-3" /> {cidResult.elapsed_ms}ms
@@ -462,7 +461,7 @@ export default function AdminGetCIDTools() {
                         <Card key={p} className={ok ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-destructive/30 bg-destructive/5'}>
                           <CardHeader className="pb-2">
                             <CardTitle className="text-sm flex items-center justify-between">
-                              <span className="capitalize">{p}</span>
+                              <span>{p === 'getcid' ? 'Primary Channel' : 'Backup Channel'}</span>
                               {ok ? (
                                 <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/30 gap-1">
                                   <CheckCircle2 className="h-3 w-3" /> Success
@@ -530,13 +529,13 @@ export default function AdminGetCIDTools() {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label>Provider</Label>
+                  <Label>Routing</Label>
                   <Select value={batchProvider} onValueChange={(v) => setBatchProvider(v as typeof batchProvider)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="auto">Auto (fallback)</SelectItem>
-                      <SelectItem value="getcid">GetCID only</SelectItem>
-                      <SelectItem value="grahok">Grahok only</SelectItem>
+                      <SelectItem value="auto">Smart (auto-fallback)</SelectItem>
+                      <SelectItem value="getcid">Primary only</SelectItem>
+                      <SelectItem value="grahok">Backup only</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -591,7 +590,7 @@ export default function AdminGetCIDTools() {
                               <td className="p-2">
                                 {r.status === 'success' ? (
                                   <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/30">
-                                    {r.provider}
+                                    {r.provider === 'getcid' ? 'Primary' : 'Backup'}
                                   </Badge>
                                 ) : (
                                   <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30">
@@ -678,55 +677,74 @@ export default function AdminGetCIDTools() {
           </Card>
         </TabsContent>
 
-        {/* ─── TAB 5: API Documentation ─── */}
+        {/* ─── TAB 5: API Documentation (Internal — provider-agnostic) ─── */}
         <TabsContent value="docs">
           <div className="grid gap-4">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Code2 className="h-5 w-5 text-primary" /> API Reference
+                  <Code2 className="h-5 w-5 text-primary" /> Internal CID Gateway API
                 </CardTitle>
                 <CardDescription>
-                  GetCID.app API v2 — Direct integration documentation
+                  Our reseller-facing endpoint. Upstream channels are abstracted — neither resellers nor end users see provider names.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6 text-sm">
+                <Alert>
+                  <ShieldCheck className="h-4 w-4" />
+                  <AlertTitle>Routing is fully transparent</AlertTitle>
+                  <AlertDescription className="text-xs mt-1">
+                    Every reseller request is auto-routed through our internal channels. Upstream provider names, URLs, and error responses are never exposed to clients — only generic success or "temporarily unavailable" messages are returned.
+                  </AlertDescription>
+                </Alert>
+
                 <div>
                   <h3 className="font-semibold mb-2 flex items-center gap-2">
-                    <ShieldCheck className="h-4 w-4 text-primary" /> Get CID Endpoint
+                    <ShieldCheck className="h-4 w-4 text-primary" /> Generate CID
                   </h3>
                   <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
-{`GET https://panel.getcid.app/user-api/getcid?token={TOKEN}&iid={IID}`}
+{`POST {SUPABASE_URL}/functions/v1/get-cid
+Content-Type: application/json
+
+{
+  "action": "getcid",
+  "token": "{RESELLER_SESSION_TOKEN}",
+  "installation_id": "{IID}"
+}`}
                   </pre>
                   <table className="w-full text-xs mt-3 border">
                     <thead className="bg-muted"><tr>
-                      <th className="p-2 text-left">Parameter</th>
+                      <th className="p-2 text-left">Field</th>
                       <th className="p-2 text-left">Required</th>
                       <th className="p-2 text-left">Description</th>
                     </tr></thead>
                     <tbody>
-                      <tr className="border-t"><td className="p-2 font-mono">token</td><td className="p-2">Yes</td><td className="p-2">Your API key</td></tr>
-                      <tr className="border-t"><td className="p-2 font-mono">iid</td><td className="p-2">Yes</td><td className="p-2">Installation ID (digits or dash-separated)</td></tr>
+                      <tr className="border-t"><td className="p-2 font-mono">action</td><td className="p-2">Yes</td><td className="p-2">Always <code>"getcid"</code></td></tr>
+                      <tr className="border-t"><td className="p-2 font-mono">token</td><td className="p-2">Yes</td><td className="p-2">Reseller session token (from /reseller-auth)</td></tr>
+                      <tr className="border-t"><td className="p-2 font-mono">installation_id</td><td className="p-2">Yes</td><td className="p-2">Microsoft IID (digits or dash-separated)</td></tr>
                     </tbody>
                   </table>
                 </div>
 
                 <div>
                   <h4 className="font-semibold mb-2">Response — Success</h4>
-                  <pre className="bg-muted p-3 rounded text-xs">{`{"cid": "228126-846886-493986-..."}`}</pre>
+                  <pre className="bg-muted p-3 rounded text-xs">{`{
+  "cid": "228126-846886-493986-...",
+  "balance_after_cents": 4900,
+  "billed_user_id": "..."
+}`}</pre>
+                  <p className="text-xs text-muted-foreground mt-2">No provider/upstream channel info is ever included.</p>
                 </div>
 
                 <div>
                   <h4 className="font-semibold mb-2">Response — Errors</h4>
                   <div className="grid md:grid-cols-2 gap-2 text-xs">
                     {[
-                      ['Token required', '{"error": "Token required."}'],
-                      ['IID required', '{"error": "IID required."}'],
-                      ['Invalid token', '{"error": "Invalid token."}'],
-                      ['Insufficient balance', '{"error": "Insufficient balance."}'],
-                      ['Wrong IID', '{"error": "Wrong IID."}'],
-                      ['Key Dead', '{"error": "Key Dead"}'],
-                      ['Blocked IID', '{"error": "Blocked IID."}'],
+                      ['Unauthenticated', '{"error": "Authentication required"}'],
+                      ['Invalid session', '{"error": "Invalid or expired session"}'],
+                      ['Bad IID', '{"error": "Installation ID too short"}'],
+                      ['Insufficient balance', '{"error": "Insufficient balance. Need $1.00, have $0.00"}'],
+                      ['All channels down', '{"error": "CID generation temporarily unavailable. Please try again."}'],
                     ].map(([label, body]) => (
                       <div key={label} className="border rounded p-2">
                         <div className="font-medium">{label}</div>
@@ -738,34 +756,35 @@ export default function AdminGetCIDTools() {
 
                 <div>
                   <h3 className="font-semibold mb-2 flex items-center gap-2">
-                    <Wallet className="h-4 w-4 text-primary" /> Check Balance Endpoint
+                    <Wallet className="h-4 w-4 text-primary" /> Check Balance
                   </h3>
                   <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
-{`GET https://panel.getcid.app/user-api/checkbalance?token={TOKEN}
+{`POST {SUPABASE_URL}/functions/v1/get-cid
+{ "action": "balance", "token": "{RESELLER_SESSION_TOKEN}" }
 
-Response: Plain number (e.g. 42)`}
+Response: { "ok": true, "balance": 42 }`}
                   </pre>
                 </div>
 
                 <div>
                   <h3 className="font-semibold mb-2">cURL Example</h3>
                   <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
-{`# Get CID
-curl "https://panel.getcid.app/user-api/getcid?token=YOUR_TOKEN&iid=YOUR_IID"
-
-# Check Balance
-curl "https://panel.getcid.app/user-api/checkbalance?token=YOUR_TOKEN"`}
+{`# Generate CID
+curl -X POST "{SUPABASE_URL}/functions/v1/get-cid" \\
+  -H "Content-Type: application/json" \\
+  -H "apikey: {ANON_KEY}" \\
+  -d '{"action":"getcid","token":"SESSION_TOKEN","installation_id":"YOUR_IID"}'`}
                   </pre>
                 </div>
 
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Important Notes</AlertTitle>
+                  <AlertTitle>Operational notes</AlertTitle>
                   <AlertDescription className="text-xs space-y-1 mt-2">
-                    <div>• Each successful CID request costs <strong>1 credit</strong> from your balance</div>
-                    <div>• HTTP timeout: at least <strong>60 seconds</strong> for CID generation (may take 5-30s)</div>
-                    <div>• If same IID was processed before, cached CID returned instantly (no credit deducted)</div>
-                    <div>• API v2 returns CID directly — no polling required (unlike v1)</div>
+                    <div>• Each successful CID costs <strong>$1.00</strong> from the reseller's balance</div>
+                    <div>• Admin-issued CIDs (no <code>token</code>, JWT auth) bypass billing</div>
+                    <div>• Smart routing: Primary Channel first, automatic failover to Backup Channel</div>
+                    <div>• HTTP timeout: at least <strong>60 seconds</strong> recommended (CID can take 5–30s)</div>
                   </AlertDescription>
                 </Alert>
               </CardContent>
