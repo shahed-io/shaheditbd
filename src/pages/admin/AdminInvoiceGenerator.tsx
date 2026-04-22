@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Plus, Trash2, Printer, X, FileText, Save, Send } from 'lucide-react';
+import { Plus, Trash2, Printer, X, FileText, Save, Send, Database } from 'lucide-react';
 import { toast } from 'sonner';
 import logoIcon from '@/assets/logo.png';
 import { downloadInvoicePdf, downloadInvoicePdfFromElement, type InvoiceData } from '@/lib/invoicePdf';
+import { supabase } from '@/integrations/supabase/client';
 
 interface InvoiceItem {
   id: string;
