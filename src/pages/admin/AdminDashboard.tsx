@@ -256,40 +256,35 @@ const AdminDashboard = () => {
 
   const StatCard = ({ label, value, icon: Icon, gradient, change, changePct, prefix = '', onClick }: any) => (
     <div
-      className={`glass-card rounded-2xl p-5 transition-all duration-200 ${onClick ? 'cursor-pointer hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]' : ''}`}
+      className={`glass-card rounded-2xl p-5 transition-all duration-200 ${onClick ? 'cursor-pointer hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]' : ''}`}
       onClick={onClick}
     >
       <div className="flex items-start justify-between mb-3">
-        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0`}>
-          <Icon size={18} className="text-white" />
+        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
+          <Icon size={20} className="text-white" />
         </div>
         {changePct !== null && changePct !== undefined && (
-          <div className={`flex items-center gap-0.5 text-xs font-medium ${parseFloat(changePct) >= 0 ? 'text-green-500' : 'text-destructive'}`}>
-            {parseFloat(changePct) >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+          <div className={`flex items-center gap-0.5 text-[11px] font-semibold px-2 py-1 rounded-lg ${parseFloat(changePct) >= 0 ? 'text-emerald-600 bg-emerald-500/10' : 'text-destructive bg-destructive/10'}`}>
+            {parseFloat(changePct) >= 0 ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
             {Math.abs(parseFloat(changePct))}%
           </div>
         )}
       </div>
-      <p className="text-muted-foreground text-xs mb-0.5">{label}</p>
-      <p className="text-2xl font-bold text-foreground">
-        {loading ? <span className="inline-block w-16 h-6 bg-muted/40 rounded animate-pulse" /> : `${prefix}${typeof value === 'number' ? value.toLocaleString() : value}`}
+      <p className="text-muted-foreground text-[11px] uppercase tracking-wider font-semibold mb-1">{label}</p>
+      <p className="text-2xl font-bold text-foreground leading-tight">
+        {loading ? <span className="inline-block w-20 h-7 bg-muted/40 rounded animate-pulse" /> : `${prefix}${typeof value === 'number' ? value.toLocaleString() : value}`}
       </p>
-      {change && <p className="text-xs text-muted-foreground mt-0.5">{change}</p>}
+      {change && <p className="text-[11px] text-muted-foreground mt-1">{change}</p>}
     </div>
   );
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-            Dashboard <span className="gradient-text">Overview</span>
-          </h1>
-          <p className="text-muted-foreground text-sm mt-0.5">
-            Real-time business snapshot · Last updated: {lastRefresh.toLocaleTimeString('en-BD')}
-          </p>
-        </div>
+      {/* Header — page title is now in top bar; show last refresh + action */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          Real-time business snapshot · <span className="font-medium text-foreground">{lastRefresh.toLocaleTimeString('en-BD')}</span>
+        </p>
         <button
           onClick={fetchAll}
           disabled={loading}
