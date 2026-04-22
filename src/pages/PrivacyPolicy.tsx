@@ -54,7 +54,7 @@ const PrivacyPolicy = () =>
     <SectionCard icon={<Users size={15} />} title="৪. তৃতীয় পক্ষের সাথে তথ্য শেয়ার" accentFrom={A} accentTo={B}>
       <p className="mb-2">আমরা <strong>কখনই</strong> আপনার তথ্য বিক্রি করি না। সীমিত শেয়ার শুধুমাত্র:</p>
       <ul className="space-y-1.5">
-        <Bullet><strong>পেমেন্ট প্রসেসর:</strong> bKash, Nagad, Rocket — পেমেন্ট যাচাইয়ের জন্য</Bullet>
+        <Bullet><strong>পেমেন্ট প্রসেসর:</strong> BKash, Nagad, Rocket — পেমেন্ট যাচাইয়ের জন্য</Bullet>
         <Bullet><strong>ইমেইল সেবা:</strong> অর্ডার কনফার্মেশন পাঠাতে</Bullet>
         <Bullet><strong>আইনগত বাধ্যবাধকতা:</strong> বাংলাদেশের আইন অনুযায়ী</Bullet>
       </ul>

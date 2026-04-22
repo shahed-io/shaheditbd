@@ -43,7 +43,7 @@ const FEATURES = [
 
 const STEPS = [
   { n: '01', emoji: '🛒', title: 'Choose Product',   desc: 'আমাদের collection থেকে পছন্দের software বেছে নিন।',  accent: 'hsl(243,75%,59%)' },
-  { n: '02', emoji: '💳', title: 'Make Payment',      desc: 'bKash, Nagad বা Rocket-এ নিরাপদে payment করুন।',     accent: 'hsl(15,100%,58%)'  },
+  { n: '02', emoji: '💳', title: 'Make Payment',      desc: 'BKash, Nagad বা Rocket-এ নিরাপদে payment করুন।',     accent: 'hsl(15,100%,58%)'  },
   { n: '03', emoji: '📧', title: 'Get Delivery',      desc: '১–২৪ ঘণ্টার মধ্যে ইমেইলে license key পাঠানো হবে।',  accent: 'hsl(158,64%,42%)' },
   { n: '04', emoji: '✅', title: 'Activate & Enjoy', desc: 'Product activate করুন, সমস্যায় support-এ যোগাযোগ।', accent: 'hsl(263,70%,58%)' },
 ];

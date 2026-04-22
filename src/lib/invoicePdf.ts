@@ -47,13 +47,13 @@ export interface InvoiceData {
 }
 
 const PM_LABELS: Record<string, string> = {
-  bkash: 'bKash',
+  bkash: 'BKash',
   nagad: 'Nagad',
   rocket: 'Rocket',
   upay: 'উপায়',
   bank: 'Bank Transfer',
   cash: 'Cash',
-  bkash_merchant: 'bKash Merchant',
+  bkash_merchant: 'BKash Merchant',
   other: 'Other',
 };
 

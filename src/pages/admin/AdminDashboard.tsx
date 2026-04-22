@@ -128,7 +128,7 @@ const AdminDashboard = () => {
 
     // --- Payment Method Breakdown ---
     const pmCounts: Record<string, number> = {};
-    const PM_LABELS: Record<string, string> = { bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'Upay', bkash_merchant: 'bKash Merchant' };
+    const PM_LABELS: Record<string, string> = { bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'Upay', bkash_merchant: 'BKash Merchant' };
     const PM_COLORS = ['hsl(var(--primary))', '#e91e8a', '#8b5cf6', '#f59e0b', '#06b6d4', '#10b981'];
     orders.filter(o => o.status !== 'cancelled').forEach(o => {
       const pm = o.payment_method || 'other';
