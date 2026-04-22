@@ -529,13 +529,13 @@ export default function AdminGetCIDTools() {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label>Provider</Label>
+                  <Label>Routing</Label>
                   <Select value={batchProvider} onValueChange={(v) => setBatchProvider(v as typeof batchProvider)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="auto">Auto (fallback)</SelectItem>
-                      <SelectItem value="getcid">GetCID only</SelectItem>
-                      <SelectItem value="grahok">Grahok only</SelectItem>
+                      <SelectItem value="auto">Smart (auto-fallback)</SelectItem>
+                      <SelectItem value="getcid">Primary only</SelectItem>
+                      <SelectItem value="grahok">Backup only</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
