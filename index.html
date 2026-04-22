@@ -92,10 +92,7 @@
       html { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
       body {
         background: #ffffff; margin: 0;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        -webkit-touch-callout: none;
+        /* user-select & touch-callout সম্পূর্ণ allow — right-click/copy/select সবই কাজ করবে */
       }
       /* Anti-copy CSS — chrome/design is non-selectable, but readable
          content (descriptions, blog, inputs) stays fully selectable. */
