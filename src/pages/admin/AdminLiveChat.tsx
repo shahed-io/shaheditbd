@@ -714,24 +714,35 @@ const AdminLiveChat = () => {
                 </div>
               )}
 
-              {settings.live_sets.map((set) => (
+              {settings.live_sets.map((set, idx) => {
+                const SetIcon = getIconByName(set.icon || 'MessageCircle');
+                return (
                 <div key={set.id} className="border border-border rounded-xl p-4 space-y-4 bg-muted/20">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center"
                         style={{ backgroundColor: set.icon_color }}
                       >
-                        <MessageCircle className="w-4 h-4 text-white" />
+                        <SetIcon className="w-4 h-4 text-white" />
                       </div>
-                      <span className="font-medium text-foreground">{set.label || 'নতুন চ্যানেল'}</span>
+                      <div>
+                        <span className="font-medium text-foreground">{set.label || 'নতুন চ্যানেল'}</span>
+                        <p className="text-xs text-muted-foreground">#{idx + 1} · {LIVE_SET_TYPES.find(t => t.value === set.type)?.label}</p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => moveLiveSet(set.id, 'up')} disabled={idx === 0} className="h-8 w-8" title="উপরে">
+                        <ArrowUp className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => moveLiveSet(set.id, 'down')} disabled={idx === settings.live_sets.length - 1} className="h-8 w-8" title="নিচে">
+                        <ArrowDown className="w-4 h-4" />
+                      </Button>
                       <Switch
                         checked={set.is_active}
                         onCheckedChange={(v) => updateLiveSet(set.id, 'is_active', v)}
                       />
-                      <Button variant="ghost" size="icon" onClick={() => removeLiveSet(set.id)} className="text-destructive hover:text-destructive">
+                      <Button variant="ghost" size="icon" onClick={() => removeLiveSet(set.id)} className="text-destructive hover:text-destructive h-8 w-8">
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -751,11 +762,21 @@ const AdminLiveChat = () => {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <Label>{set.type === 'custom_link' ? 'URL' : 'নম্বর / ইউজারনেম'}</Label>
+                      <Label>
+                        {set.type === 'custom_link' ? 'URL' :
+                         set.type === 'messenger' ? 'Page Username (m.me/...)' :
+                         set.type === 'telegram' ? 'Telegram Username (@user)' :
+                         'WhatsApp নম্বর (8801...)'}
+                      </Label>
                       <Input
                         value={set.value}
                         onChange={e => updateLiveSet(set.id, 'value', e.target.value)}
-                        placeholder={set.type === 'custom_link' ? 'https://...' : set.type === 'telegram' ? '@username' : '8801XXXXXXXXX'}
+                        placeholder={
+                          set.type === 'custom_link' ? 'https://...' :
+                          set.type === 'messenger' ? 'shahedstore' :
+                          set.type === 'telegram' ? '@shahedstore' :
+                          '8801XXXXXXXXX'
+                        }
                       />
                     </div>
                   </div>
@@ -792,8 +813,33 @@ const AdminLiveChat = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Icon Picker */}
+                  <div className="space-y-2">
+                    <Label>আইকন বাছাই করুন</Label>
+                    <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-border bg-background/50">
+                      {ICON_OPTIONS.map(({ name, Icon: IconComp }) => {
+                        const selected = (set.icon || 'MessageCircle') === name;
+                        return (
+                          <button
+                            key={name}
+                            type="button"
+                            onClick={() => updateLiveSet(set.id, 'icon', name)}
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-all ${
+                              selected
+                                ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
+                                : 'border-border hover:border-primary/40 bg-muted/40'
+                            }`}
+                            title={name}
+                          >
+                            <IconComp className={`w-4 h-4 ${selected ? 'text-primary' : 'text-foreground'}`} style={!selected ? { color: set.icon_color } : undefined} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              ))}
+              );})}
             </CardContent>
           </Card>
         </TabsContent>
