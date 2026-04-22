@@ -4,6 +4,7 @@ import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAdminPrefetch, prefetchAdminRoute } from '@/hooks/useAdminPrefetch';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
