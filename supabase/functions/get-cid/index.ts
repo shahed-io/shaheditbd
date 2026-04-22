@@ -8,16 +8,99 @@ const corsHeaders = {
 
 const PRICE_CENTS = 100; // $1 per CID
 
+// ─── Provider endpoints ────────────────────────────────────────────────
+// PRIMARY: GetCID.app (api-v2 — direct CID response)
+const GETCID_API_URL     = 'https://panel.getcid.app/user-api/getcid';
+const GETCID_BALANCE_URL = 'https://panel.getcid.app/user-api/checkbalance';
+
+// ─── Provider call: GetCID.app ─────────────────────────────────────────
+async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; cid?: string; error?: string; raw?: string }> {
+  const url = `${GETCID_API_URL}?token=${encodeURIComponent(token)}&iid=${encodeURIComponent(iid)}`;
+  try {
+    const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
+    const text = await res.text();
+    let data: Record<string, unknown> = {};
+    try { data = JSON.parse(text); } catch {
+      return { ok: false, error: 'Invalid JSON from GetCID', raw: text };
+    }
+    if (data['cid']) return { ok: true, cid: String(data['cid']) };
+    return { ok: false, error: (data['error'] as string) || 'No CID returned', raw: text };
+  } catch (e) {
+    return { ok: false, error: `GetCID network error: ${String(e)}` };
+  }
+}
+
+async function callGetCIDBalance(token: string): Promise<{ ok: boolean; balance?: number; raw?: string; error?: string }> {
+  const url = `${GETCID_BALANCE_URL}?token=${encodeURIComponent(token)}`;
+  try {
+    const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json,text/plain' } });
+    const text = await res.text();
+    // Plain text number expected
+    const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
+    if (m) return { ok: true, balance: parseFloat(m[1]), raw: text };
+    return { ok: false, error: 'Could not parse balance', raw: text };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+// ─── Provider call: Grahok.io (BACKUP) ─────────────────────────────────
+async function callGrahok(token: string, apiUrl: string, iid: string): Promise<{ ok: boolean; cid?: string; error?: string; raw?: string }> {
+  try {
+    const formData = new FormData();
+    formData.append('token', token);
+    formData.append('installation_id', iid);
+    const apiUrlWithToken = `${apiUrl}${apiUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
+    const res = await fetch(apiUrlWithToken, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'X-API-TOKEN': token },
+      body: formData,
+    });
+    const text = await res.text();
+    let data: Record<string, unknown> = {};
+    try { data = JSON.parse(text); } catch {
+      return { ok: false, error: 'Invalid JSON from Grahok', raw: text };
+    }
+    if (data['cid']) return { ok: true, cid: String(data['cid']) };
+    return { ok: false, error: (data['error'] as string) || 'No CID returned', raw: text };
+  } catch (e) {
+    return { ok: false, error: `Grahok network error: ${String(e)}` };
+  }
+}
+
+async function callGrahokBalance(token: string, balanceUrl: string): Promise<{ ok: boolean; balance?: number | null; raw?: string; error?: string }> {
+  try {
+    const url = `${balanceUrl}${balanceUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
+    const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json', 'X-API-TOKEN': token } });
+    const text = await res.text();
+    let data: Record<string, unknown> = {};
+    try {
+      data = JSON.parse(text);
+      const bal = (data['balance'] ?? data['amount']) as number | undefined;
+      return { ok: true, balance: typeof bal === 'number' ? bal : null, raw: text };
+    } catch {
+      const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
+      return { ok: true, balance: m ? parseFloat(m[1]) : null, raw: text };
+    }
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  const GRAHOK_API_TOKEN = Deno.env.get('GRAHOK_API_TOKEN');
-  const API_URL     = Deno.env.get('GRAHOK_API_URL')     || 'https://grahok.io/api/getcid.php';
-  const BALANCE_URL = Deno.env.get('GRAHOK_BALANCE_URL') || 'https://grahok.io/api/balance.php';
+  const GETCID_TOKEN = Deno.env.get('GETCID_API_TOKEN');
+  const GRAHOK_TOKEN = Deno.env.get('GRAHOK_API_TOKEN');
+  const GRAHOK_URL   = Deno.env.get('GRAHOK_API_URL')     || 'https://grahok.io/api/getcid.php';
+  const GRAHOK_BAL   = Deno.env.get('GRAHOK_BALANCE_URL') || 'https://grahok.io/api/balance.php';
+
   const json = (data: unknown, status = 200) =>
     new Response(JSON.stringify(data), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
-  if (!GRAHOK_API_TOKEN) return json({ error: 'API token not configured' }, 500);
+  if (!GETCID_TOKEN && !GRAHOK_TOKEN) {
+    return json({ error: 'No CID provider configured' }, 500);
+  }
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -28,9 +111,8 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { action, installation_id, token } = body;
 
-    // ── Balance check (grahok.io API balance) — any valid reseller session ──────
+    // ── Balance check — combined providers ───────────────────────────
     if (action === 'balance') {
-      // Validate any reseller session (admin OR regular user)
       if (!token) return json({ ok: false, error: 'Authentication required' }, 401);
 
       const { data: sessions } = await supabase
@@ -43,29 +125,30 @@ Deno.serve(async (req) => {
         return json({ ok: false, error: 'Invalid or expired session' }, 401);
       }
 
-      // Try GET with query param (grahok.io balance API format)
-      const balUrl = `${BALANCE_URL}${BALANCE_URL.includes('?') ? '&' : '?'}token=${encodeURIComponent(GRAHOK_API_TOKEN)}`;
-      const res = await fetch(balUrl, {
-        method: 'GET',
-        headers: { 'Accept': 'application/json', 'X-API-TOKEN': GRAHOK_API_TOKEN },
-      });
-      const text = await res.text();
-      let data: Record<string, unknown> = {};
-      try { data = JSON.parse(text); } catch {
-        const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
-        data = { balance: m ? parseFloat(m[1]) : null, raw: text };
+      const result: Record<string, unknown> = { providers: {} };
+      const providers = result.providers as Record<string, unknown>;
+
+      if (GETCID_TOKEN) {
+        const r = await callGetCIDBalance(GETCID_TOKEN);
+        providers.getcid = r.ok ? { balance: r.balance, status: 'ok' } : { error: r.error, status: 'error' };
+        if (r.ok) result.balance = r.balance; // primary balance for back-compat
       }
-      return json(data);
+      if (GRAHOK_TOKEN) {
+        const r = await callGrahokBalance(GRAHOK_TOKEN, GRAHOK_BAL);
+        providers.grahok = r.ok ? { balance: r.balance, status: 'ok' } : { error: r.error, status: 'error' };
+        if (result.balance === undefined && r.ok) result.balance = r.balance;
+      }
+
+      return json(result);
     }
 
-    // ── Get CID (requires reseller session token) ─────────────────────────────
+    // ── Get CID — Auto-fallback (GetCID primary, Grahok backup) ──────
     if (action === 'getcid') {
       if (!token) return json({ error: 'Authentication required' }, 401);
       if (!installation_id || String(installation_id).trim().length < 4) {
         return json({ error: 'Installation ID too short' }, 400);
       }
 
-      // Validate reseller session
       const { data: sessions } = await supabase
         .from('reseller_sessions')
         .select('user_id, expires_at')
@@ -77,7 +160,6 @@ Deno.serve(async (req) => {
         return json({ error: 'Invalid or expired session' }, 401);
       }
 
-      // Determine which user to bill: admin can pass target_user_id, otherwise bill self
       const { target_user_id } = body;
       const { data: callerRows } = await supabase
         .from('reseller_users')
@@ -91,7 +173,6 @@ Deno.serve(async (req) => {
       let billedUserBalance = caller.balance_cents;
 
       if (target_user_id && caller.is_admin) {
-        // Admin can generate on behalf of any user
         const { data: targetRows } = await supabase
           .from('reseller_users')
           .select('id, balance_cents')
@@ -102,57 +183,76 @@ Deno.serve(async (req) => {
         billedUserId = targetUser.id;
         billedUserBalance = targetUser.balance_cents;
       } else if (!caller.is_admin && caller.balance_cents < PRICE_CENTS) {
-        return json({ error: `Insufficient balance. You need $${(PRICE_CENTS/100).toFixed(2)} but have $${(caller.balance_cents/100).toFixed(2)}` }, 402);
+        return json({ error: `Insufficient balance. Need $${(PRICE_CENTS/100).toFixed(2)}, have $${(caller.balance_cents/100).toFixed(2)}` }, 402);
       }
 
       if (!caller.is_admin && billedUserBalance < PRICE_CENTS) {
         return json({ error: `Insufficient balance. Need $${(PRICE_CENTS/100).toFixed(2)}, have $${(billedUserBalance/100).toFixed(2)}` }, 402);
       }
 
-      // Normalize IID
       const iid = String(installation_id).trim().replace(/\s+/g, ' ');
 
-      // Call grahok.io API
-      const formData = new FormData();
-      formData.append('token', GRAHOK_API_TOKEN);
-      formData.append('installation_id', iid);
+      // ── Try PRIMARY: GetCID.app ──
+      let cidValue: string | null = null;
+      let usedProvider = '';
+      const errors: Record<string, string> = {};
 
-      const apiUrlWithToken = `${API_URL}${API_URL.includes('?') ? '&' : '?'}token=${encodeURIComponent(GRAHOK_API_TOKEN)}`;
-
-      const res = await fetch(apiUrlWithToken, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'X-API-TOKEN': GRAHOK_API_TOKEN },
-        body: formData,
-      });
-
-      const text = await res.text();
-      let data: Record<string, unknown> = {};
-      try { data = JSON.parse(text); } catch {
-        return json({ error: 'Upstream did not return JSON', raw: text }, 502);
+      if (GETCID_TOKEN) {
+        const r = await callGetCID(GETCID_TOKEN, iid);
+        if (r.ok && r.cid) {
+          cidValue = r.cid;
+          usedProvider = 'getcid';
+        } else {
+          errors.getcid = r.error || 'unknown';
+          console.log(`[GetCID] failed: ${r.error} | raw: ${r.raw}`);
+        }
       }
 
-      if (!data['cid']) {
-        return json({ error: (data['error'] as string) || 'No CID in response', raw: text }, 502);
+      // ── FALLBACK: Grahok.io ──
+      if (!cidValue && GRAHOK_TOKEN) {
+        const r = await callGrahok(GRAHOK_TOKEN, GRAHOK_URL, iid);
+        if (r.ok && r.cid) {
+          cidValue = r.cid;
+          usedProvider = 'grahok';
+        } else {
+          errors.grahok = r.error || 'unknown';
+          console.log(`[Grahok] failed: ${r.error} | raw: ${r.raw}`);
+        }
       }
 
-      const cidValue = String(data['cid']);
+      if (!cidValue) {
+        return json({ error: 'All CID providers failed', details: errors }, 502);
+      }
 
-      // Deduct balance & log generation (admin billing target user; if admin generates for self and is_admin, skip deduction)
+      // Deduct balance & log generation
       const shouldDeductBalance = !caller.is_admin || (caller.is_admin && target_user_id);
       const newBalance = shouldDeductBalance ? billedUserBalance - PRICE_CENTS : billedUserBalance;
 
       const ops = [
-        supabase.from('reseller_generations').insert({ user_id: billedUserId, installation_id: iid, cid: cidValue, price_cents: shouldDeductBalance ? PRICE_CENTS : 0 }),
+        supabase.from('reseller_generations').insert({
+          user_id: billedUserId,
+          installation_id: iid,
+          cid: cidValue,
+          price_cents: shouldDeductBalance ? PRICE_CENTS : 0,
+        }),
       ];
       if (shouldDeductBalance) {
-        ops.push(supabase.from('reseller_users').update({ balance_cents: newBalance, updated_at: new Date().toISOString() }).eq('id', billedUserId) as never);
+        ops.push(supabase.from('reseller_users').update({
+          balance_cents: newBalance,
+          updated_at: new Date().toISOString(),
+        }).eq('id', billedUserId) as never);
       }
       await Promise.all(ops);
 
-      return json({ ...data, balance_after_cents: newBalance, billed_user_id: billedUserId });
+      return json({
+        cid: cidValue,
+        provider: usedProvider,
+        balance_after_cents: newBalance,
+        billed_user_id: billedUserId,
+      });
     }
 
-    // ── User's own generation history ─────────────────────────────────────────
+    // ── User's own generation history ────────────────────────────────
     if (action === 'my_history') {
       if (!token) return json({ error: 'Authentication required' }, 401);
 
