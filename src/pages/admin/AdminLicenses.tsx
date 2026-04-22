@@ -1354,10 +1354,15 @@ const AdminLicenses = () => {
             {filtered.length} টি license key দেখানো হচ্ছে
           </span>
           {selectedIds.size > 0 && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="text-xs font-bold text-primary">{selectedIds.size}টি সিলেক্টেড</span>
               <button onClick={() => setSelectedIds(new Set())}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors">সব বাদ দিন</button>
+              <button onClick={openBulkWaModal}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-all">
+                <MessageCircle size={12} />
+                WhatsApp এ পাঠান ({selectedIds.size})
+              </button>
               <button onClick={handleBulkDelete} disabled={bulkDeleting}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all">
                 {bulkDeleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
