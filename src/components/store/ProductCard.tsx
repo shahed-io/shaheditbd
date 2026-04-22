@@ -336,8 +336,8 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
           <div className="absolute bottom-0 left-0 right-0 h-24 transition-opacity duration-500 opacity-0 group-hover:opacity-100 pointer-events-none"
             style={{ background: 'linear-gradient(to top, hsla(271,91%,75%,0.18) 0%, hsla(185,90%,62%,0.08) 50%, transparent 100%)' }} />
 
-          {/* Badges */}
-          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
+          {/* Badges — bottom-left so they don't clash with the brand pills baked into the card image */}
+          <div className="absolute bottom-2.5 left-2.5 flex flex-row gap-1.5 z-10">
             {product.discount && (
               <span className="badge-sale">-{product.discount}%</span>
             )}
