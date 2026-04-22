@@ -27,19 +27,20 @@ Deno.serve(async (req) => {
       const { username, password } = body;
       if (!username || !password) return json({ error: 'Username and password required' });
 
-      const adminPass = Deno.env.get('ADMIN_PASSWORD') || 'Sh@9696';
+      const ADMIN_USERNAME = Deno.env.get('ADMIN_USERNAME') || 'info.shahedit@gmail.com';
+      const adminPass = Deno.env.get('ADMIN_PASSWORD') || '1234@Shahed';
 
-      // Ensure admin exists
+      // Ensure primary admin exists
       const { data: existingAdmin } = await supabase
         .from('reseller_users')
         .select('id')
-        .eq('username', 'admin')
+        .eq('username', ADMIN_USERNAME)
         .limit(1);
 
       if (!existingAdmin || existingAdmin.length === 0) {
         const hash = await bcrypt.hash(adminPass, 10);
         await supabase.from('reseller_users').insert({
-          username: 'admin',
+          username: ADMIN_USERNAME,
           password_hash: hash,
           is_admin: true,
           balance_cents: 0,
@@ -60,12 +61,12 @@ Deno.serve(async (req) => {
       // it means the hash is stale — re-hash and update
       let passwordValid = await bcrypt.compare(password, user.password_hash);
 
-      if (!passwordValid && user.username === 'admin' && password === adminPass) {
+      if (!passwordValid && user.username === ADMIN_USERNAME && password === adminPass) {
         // Password matches config but hash is stale — update hash
         const newHash = await bcrypt.hash(adminPass, 10);
         await supabase.from('reseller_users')
           .update({ password_hash: newHash })
-          .eq('username', 'admin');
+          .eq('username', ADMIN_USERNAME);
         passwordValid = true;
       }
 
