@@ -293,27 +293,19 @@ const AdminLayout = () => {
                           to={item.path}
                           end={item.path === '/ceo'}
                           title={!showLabel ? item.label : undefined}
-                          className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
-                            isActive
-                              ? 'bg-primary/15 text-primary font-semibold'
-                              : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
-                          }`}
+                          className={`admin-nav-item ${isActive ? 'active' : ''} ${!showLabel ? 'justify-center px-2' : ''}`}
                         >
-                          {/* Active indicator bar */}
-                          {isActive && (
-                            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-primary" />
-                          )}
                           <item.icon size={17} className="flex-shrink-0" />
                           {showLabel && (
                             <>
                               <span className="flex-1 truncate">{item.label}</span>
                               {item.badge === 'live' && (
-                                <span className="flex items-center gap-1 text-[9px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                                <span className="flex items-center gap-1 text-[9px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded-md ring-1 ring-primary/20">
                                   <span className="w-1 h-1 rounded-full bg-primary animate-pulse" /> LIVE
                                 </span>
                               )}
                               {item.badge === 'new' && (
-                                <span className="text-[9px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded">NEW</span>
+                                <span className="text-[9px] font-bold text-primary bg-gradient-to-r from-primary/20 to-accent/20 px-1.5 py-0.5 rounded-md ring-1 ring-primary/20">NEW</span>
                               )}
                             </>
                           )}
@@ -391,7 +383,7 @@ const AdminLayout = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileSidebarOpen(true)}
-            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary md:hidden flex-shrink-0"
+            className="admin-icon-btn md:hidden flex-shrink-0"
             aria-label="Open menu"
           >
             <Menu size={18} />
@@ -399,7 +391,7 @@ const AdminLayout = () => {
           {/* Desktop sidebar toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary hidden md:flex flex-shrink-0"
+            className="admin-icon-btn hidden md:inline-flex flex-shrink-0"
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
@@ -408,35 +400,42 @@ const AdminLayout = () => {
           {/* Page title + breadcrumb */}
           <div className="min-w-0 flex-1">
             {pageMeta.section && (
-              <div className="hidden sm:flex items-center gap-1 text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider">
+              <div className="hidden sm:flex items-center gap-1 text-[10px] font-semibold text-muted-foreground/80 uppercase tracking-[1.2px]">
                 <span>{pageMeta.section}</span>
                 <ChevronRight size={10} />
-                <span className="text-primary/80">{pageMeta.title}</span>
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{pageMeta.title}</span>
               </div>
             )}
-            <h1 className="text-base sm:text-lg font-bold text-foreground truncate leading-tight" style={{ fontFamily: 'Rajdhani, sans-serif', letterSpacing: '0.3px' }}>
+            <h1 className="text-base sm:text-lg font-bold text-foreground truncate leading-tight" style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.01em' }}>
               {pageMeta.title}
             </h1>
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3 flex-shrink-0 relative">
-            <button onClick={() => setShowNotifPanel(!showNotifPanel)} className="relative p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary" aria-label="Notifications">
+            <button onClick={() => setShowNotifPanel(!showNotifPanel)} className="admin-icon-btn relative" aria-label="Notifications">
               <Bell size={18} />
-              {notifCount > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-primary rounded-full text-[10px] font-bold text-primary-foreground flex items-center justify-center">{notifCount > 9 ? '9+' : notifCount}</span>}
+              {notifCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-primary to-accent rounded-full text-[10px] font-bold text-white flex items-center justify-center shadow-md ring-2 ring-background">
+                  {notifCount > 9 ? '9+' : notifCount}
+                </span>
+              )}
             </button>
 
             {/* Notification Dropdown */}
             {showNotifPanel && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowNotifPanel(false)} />
-                <div className="absolute right-0 top-12 z-50 w-80 sm:w-96 glass-card rounded-2xl shadow-2xl border border-border overflow-hidden">
-                  <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-                    <h3 className="font-bold text-foreground text-sm">নোটিফিকেশন সেন্টার</h3>
-                    <span className="text-[10px] text-muted-foreground">{notifCount}টি আইটেম</span>
+                <div className="absolute right-0 top-12 z-50 w-80 sm:w-96 admin-glass-card rounded-2xl shadow-2xl overflow-hidden">
+                  <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between bg-gradient-to-r from-primary/5 to-accent/5">
+                    <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
+                      <Bell size={14} className="text-primary" />
+                      Notification Center
+                    </h3>
+                    <span className="text-[10px] text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full">{notifCount} items</span>
                   </div>
                   <div className="max-h-80 overflow-y-auto divide-y divide-border/30">
                     {adminNotifs.length === 0 ? (
-                      <div className="py-8 text-center text-muted-foreground text-sm">কোনো নোটিফিকেশন নেই</div>
+                      <div className="py-10 text-center text-muted-foreground text-sm">No notifications</div>
                     ) : adminNotifs.map(n => {
                       const icons: Record<string, { icon: any; cls: string }> = {
                         order: { icon: ShopIcon, cls: 'text-primary bg-primary/10' },
@@ -447,9 +446,9 @@ const AdminLayout = () => {
                       const { icon: NIcon, cls } = icons[n.type] || icons.order;
                       return (
                         <a key={n.id} href={n.link || '#'} onClick={() => setShowNotifPanel(false)}
-                          className="flex items-start gap-3 px-4 py-3 hover:bg-muted/20 transition-colors">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${cls}`}>
-                            <NIcon size={14} />
+                          className="flex items-start gap-3 px-4 py-3 hover:bg-primary/5 transition-colors">
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${cls}`}>
+                            <NIcon size={15} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold text-foreground">{n.title}</p>
@@ -464,7 +463,7 @@ const AdminLayout = () => {
               </>
             )}
 
-            <a href="/" target="_blank" className="text-xs text-primary hover:underline glass-card px-2 sm:px-3 py-2 rounded-xl border-primary/30 hidden sm:flex items-center gap-1.5">
+            <a href="/" target="_blank" className="text-xs font-medium text-primary hover:text-primary/80 admin-icon-btn px-3 hidden sm:inline-flex items-center gap-1.5">
               <Globe size={13} /> View Store
             </a>
           </div>
