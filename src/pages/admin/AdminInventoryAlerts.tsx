@@ -151,7 +151,7 @@ const AdminInventoryAlerts = () => {
         <div className="relative flex-1 min-w-[200px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="প্রোডাক্ট সার্চ..."
-            className="w-full bg-muted/30 border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
+            className="w-full bg-muted/30 border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
         </div>
         <div className="flex gap-1.5">
           {(['all', 'critical', 'low', 'ok'] as const).map(f => (

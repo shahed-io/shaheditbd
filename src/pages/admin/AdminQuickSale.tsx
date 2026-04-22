@@ -504,7 +504,7 @@ const AdminQuickSale = () => {
                           <PenLine size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
                           <input value={entry.custom_name} onChange={e => updateEntry(idx, { custom_name: e.target.value })}
                             placeholder="প্রোডাক্টের নাম লিখুন"
-                            className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                            className="w-full bg-background border border-border rounded-lg pl-11 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                         </div>
                       </div>
                       <div className="sm:col-span-3">
@@ -558,7 +558,7 @@ const AdminQuickSale = () => {
                               onChange={e => { setProductSearch(e.target.value); setActiveIdx(idx); }}
                               onFocus={() => { setActiveIdx(idx); }}
                               placeholder="প্রোডাক্ট নাম লিখে সার্চ করুন..."
-                              className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                              className="w-full bg-background border border-border rounded-lg pl-11 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                             />
                           </div>
                           {activeIdx === idx && (

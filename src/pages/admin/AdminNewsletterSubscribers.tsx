@@ -96,7 +96,7 @@ const AdminNewsletterSubscribers = () => {
         <div className="relative flex-1 min-w-[200px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="ইমেইল বা নাম খুঁজুন..."
-            className="w-full bg-muted/30 border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
+            className="w-full bg-muted/30 border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
         </div>
         {(['all', 'active', 'unsubscribed'] as const).map(f => (
           <button key={f} onClick={() => setFilter(f)}

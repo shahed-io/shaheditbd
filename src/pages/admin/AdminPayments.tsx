@@ -704,7 +704,7 @@ export default function AdminPayments() {
                 placeholder="Search by transaction ID, order, customer..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="pl-9 bg-muted/30"
+                className="pl-11 bg-muted/30"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatus}>

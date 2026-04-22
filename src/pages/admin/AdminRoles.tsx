@@ -121,7 +121,7 @@ const AdminRoles = () => {
                   <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required
                     placeholder="user@example.com"
-                    className="w-full bg-muted/30 border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
+                    className="w-full bg-muted/30 border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
                 </div>
               </div>
               <div>
@@ -151,7 +151,7 @@ const AdminRoles = () => {
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="সার্চ করুন..."
-              className="bg-muted/30 border border-border rounded-xl pl-8 pr-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary transition-colors w-48" />
+              className="bg-muted/30 border border-border rounded-xl pl-10 pr-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary transition-colors w-48" />
           </div>
         </div>
 

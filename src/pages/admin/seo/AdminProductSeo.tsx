@@ -272,7 +272,7 @@ const AdminProductSeo = () => {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="প্রোডাক্ট নাম বা slug দিয়ে খুঁজুন…"
-          className="w-full bg-background border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+          className="w-full bg-background border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
         />
       </div>
 
