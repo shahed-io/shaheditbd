@@ -1010,35 +1010,37 @@ html[data-theme="midnight-purple"] .admin-stat-card {
   box-shadow: none;
 }
 
-/* ── Page header card — big violet icon + title ──────── */
+/* ── Page header card — dashboard "My Orders" style ──────── */
 .admin-page-header {
   display: flex;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
-  padding: 1.125rem 1.25rem;
-  border-radius: var(--ad-radius-lg);
-  background: hsla(0, 0%, 100%, 0.85);
-  border: 1px solid hsla(258, 78%, 75%, 0.22);
-  box-shadow: var(--ad-shadow-sm);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  padding: 1.25rem 1.5rem;
+  border-radius: 18px;
+  background: hsla(0, 0%, 100%, 0.92);
+  border: 1px solid hsla(258, 60%, 88%, 0.55);
+  box-shadow: 0 4px 20px hsla(258, 78%, 55%, 0.06);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
 .admin-page-header .admin-page-header-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: 14px;
-  background: linear-gradient(135deg, hsl(var(--ad-accent)), hsl(var(--ad-accent-deep)));
-  color: white;
-  box-shadow: 0 6px 20px hsla(258, 78%, 55%, 0.30);
+  background: hsla(258, 78%, 55%, 0.12);
+  color: hsl(var(--ad-accent));
+  box-shadow: none;
+  border: 1px solid hsla(258, 78%, 55%, 0.18);
 }
 .admin-page-header .admin-page-header-icon svg {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.25;
 }
 .admin-page-header .admin-page-header-text {
   flex: 1;
@@ -1046,27 +1048,33 @@ html[data-theme="midnight-purple"] .admin-stat-card {
 }
 .admin-page-header h1,
 .admin-page-header .admin-page-title {
-  font-size: 1.375rem;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, hsl(var(--ad-accent)), hsl(var(--ad-accent-deep)));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: initial;
   color: hsl(var(--ad-accent));
-  margin: 0 0 0.25rem 0;
-  line-height: 1.2;
+  margin: 0 0 0.125rem 0;
+  line-height: 1.15;
 }
 .admin-page-header .admin-page-subtitle {
   font-size: 0.8125rem;
   color: hsl(var(--ad-text-muted));
-  line-height: 1.5;
+  line-height: 1.4;
   max-width: 64ch;
+  margin: 0;
 }
 html[data-theme="dark-cyber"] .admin-page-header,
 html[data-theme="midnight-purple"] .admin-page-header {
   background: hsla(258, 22%, 14%, 0.78);
   border-color: hsla(258, 78%, 50%, 0.25);
+}
+html[data-theme="dark-cyber"] .admin-page-header .admin-page-header-icon,
+html[data-theme="midnight-purple"] .admin-page-header .admin-page-header-icon {
+  background: hsla(258, 78%, 55%, 0.18);
+  border-color: hsla(258, 78%, 55%, 0.30);
 }
 
 /* ── Helper text under form fields ───────────── */
