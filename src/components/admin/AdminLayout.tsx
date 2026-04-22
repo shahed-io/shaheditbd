@@ -163,6 +163,10 @@ const AdminLayout = () => {
   const [navSearch, setNavSearch] = useState('');
   const location = useLocation();
 
+  // ⚡ Eagerly prefetch ALL admin sub-pages during browser idle time
+  // → menu clicks resolve instantly (no chunk download wait)
+  useAdminPrefetch();
+
   const pageMeta = useMemo(() => getPageTitle(location.pathname), [location.pathname]);
 
   // Filter sections by search
