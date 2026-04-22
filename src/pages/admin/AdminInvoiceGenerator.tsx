@@ -298,6 +298,19 @@ const AdminInvoiceGenerator = () => {
             <button onClick={handleDownloadPdf} className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 glass-card border border-primary/40 text-primary hover:bg-primary/10 transition-colors">
               <FileText size={16} /> PDF ডাউনলোড
             </button>
+            <button
+              onClick={handleSaveAsOrder}
+              disabled={saving || !!savedOrderId}
+              className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              <Database size={16} />
+              {savedOrderId ? '✅ অর্ডারে সেভ হয়েছে' : saving ? 'সেভ হচ্ছে...' : '💾 অর্ডার হিসেবে সেভ করুন'}
+            </button>
+            {savedOrderId && (
+              <p className="text-[11px] text-center text-muted-foreground">
+                Order #{invoiceNumber} • <a href="/ceo/orders" className="text-primary hover:underline font-medium">অর্ডার তালিকায় দেখুন →</a>
+              </p>
+            )}
           </div>
         </div>
       </div>
