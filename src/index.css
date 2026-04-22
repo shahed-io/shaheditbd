@@ -794,30 +794,41 @@ html[data-theme="midnight-purple"] .cat-card {
    ▸ Premium dashboard look matching user dashboard
 ══════════════════════════════════════════════════════════════ */
 
-/* ── Admin Color Tokens (scoped to body.admin-page) ───────── */
+/* ══════════════════════════════════════════════════════════════
+   ADMIN PANEL — Site-Aligned Gradient Glassmorphism
+   Matches storefront: violet → cyan → pink gradient hero,
+   gold accents, white glass cards, multi-color ambient glows.
+══════════════════════════════════════════════════════════════ */
 body.admin-page {
-  --ad-bg:            262 60% 98%;          /* soft lavender wash */
-  --ad-surface:       0 0% 100%;            /* white cards */
-  --ad-surface-2:     262 40% 96%;          /* violet-tinted alt */
-  --ad-border:        262 40% 88%;          /* soft violet hairline */
-  --ad-border-strong: 262 40% 80%;
-  --ad-text:          258 30% 16%;          /* deep violet-black */
-  --ad-text-muted:    258 12% 46%;
-  --ad-text-subtle:   258 10% 60%;
-  --ad-accent:        258 78% 55%;          /* violet brand */
+  --ad-bg:            230 50% 97%;          /* cool airy off-white (matches storefront) */
+  --ad-surface:       0 0% 100%;            /* pure white cards */
+  --ad-surface-2:     230 40% 97%;          /* cool tinted alt */
+  --ad-border:        230 35% 90%;          /* soft cool hairline */
+  --ad-border-strong: 230 35% 82%;
+  --ad-text:          226 35% 12%;          /* foreground from main theme */
+  --ad-text-muted:    226 15% 42%;
+  --ad-text-subtle:   226 12% 58%;
+  --ad-accent:        258 78% 55%;          /* violet brand (--brand-h) */
   --ad-accent-soft:   258 78% 96%;
   --ad-accent-hover:  258 78% 48%;
   --ad-accent-deep:   258 78% 42%;
-  --ad-black:         258 30% 16%;
-  --ad-shadow-sm:     0 1px 2px hsla(258, 40%, 30%, 0.05), 0 1px 1px hsla(258, 40%, 30%, 0.03);
-  --ad-shadow-md:     0 4px 16px hsla(258, 78%, 55%, 0.08), 0 1px 3px hsla(258, 40%, 30%, 0.04);
-  --ad-shadow-lg:     0 8px 32px hsla(258, 78%, 55%, 0.10), 0 2px 6px hsla(258, 40%, 30%, 0.04);
-  --ad-shadow-xl:     0 24px 48px hsla(258, 78%, 55%, 0.16), 0 8px 16px hsla(258, 40%, 30%, 0.06);
-  --ad-shadow-pill:   0 4px 14px hsla(258, 78%, 55%, 0.18), 0 1px 3px hsla(258, 78%, 55%, 0.10);
+  --ad-accent-2:      200 90% 45%;          /* cyan (--brand2) */
+  --ad-accent-3:      330 85% 55%;          /* pink (--brand3) */
+  --ad-accent-gold:   42 96% 58%;           /* gold accent */
+  --ad-black:         226 35% 12%;
+  --ad-shadow-sm:     0 1px 2px hsla(226, 35%, 12%, 0.05), 0 1px 1px hsla(226, 35%, 12%, 0.03);
+  --ad-shadow-md:     0 4px 18px hsla(258, 78%, 55%, 0.10), 0 1px 3px hsla(226, 35%, 12%, 0.04);
+  --ad-shadow-lg:     0 12px 36px hsla(258, 78%, 55%, 0.14), 0 2px 6px hsla(226, 35%, 12%, 0.05);
+  --ad-shadow-xl:     0 28px 56px hsla(258, 78%, 55%, 0.20), 0 8px 16px hsla(226, 35%, 12%, 0.06);
+  --ad-shadow-pill:   0 6px 18px hsla(258, 78%, 55%, 0.28), 0 1px 3px hsla(258, 78%, 55%, 0.12);
+  --ad-shadow-gradient: 0 8px 24px hsla(258, 78%, 55%, 0.18), 0 4px 12px hsla(200, 90%, 45%, 0.10);
   --ad-radius:        20px;
   --ad-radius-sm:     12px;
   --ad-radius-lg:     26px;
   --ad-radius-pill:   9999px;
+  --ad-gradient-brand: linear-gradient(135deg, hsl(258, 78%, 55%) 0%, hsl(280, 75%, 58%) 50%, hsl(200, 90%, 50%) 100%);
+  --ad-gradient-warm:  linear-gradient(135deg, hsl(330, 85%, 58%) 0%, hsl(42, 96%, 58%) 100%);
+  --ad-gradient-border: linear-gradient(135deg, hsla(258, 78%, 55%, 0.35) 0%, hsla(200, 90%, 50%, 0.30) 100%);
 }
 html[data-theme="dark-cyber"] body.admin-page,
 html[data-theme="midnight-purple"] body.admin-page {
@@ -844,11 +855,13 @@ body.admin-page {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Page canvas: soft lavender wash with violet ambient glows ─ */
+/* ── Page canvas: site-matched multi-color ambient gradient ─── */
 .admin-gradient-bg {
   background:
-    radial-gradient(ellipse 1200px 600px at 0% -10%, hsla(258, 78%, 88%, 0.45), transparent 60%),
-    radial-gradient(ellipse 900px 500px at 100% 100%, hsla(280, 78%, 90%, 0.35), transparent 60%),
+    radial-gradient(ellipse 1100px 580px at 5% -8%, hsla(258, 78%, 80%, 0.38), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 100% 0%, hsla(200, 90%, 78%, 0.28), transparent 60%),
+    radial-gradient(ellipse 800px 480px at 90% 100%, hsla(330, 85%, 82%, 0.22), transparent 60%),
+    radial-gradient(ellipse 700px 400px at 0% 100%, hsla(42, 96%, 78%, 0.18), transparent 60%),
     hsl(var(--ad-bg));
   position: relative;
   min-height: 100vh;
