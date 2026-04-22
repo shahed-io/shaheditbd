@@ -162,7 +162,20 @@ const AdminLayout = () => {
   const [adminNotifs, setAdminNotifs] = useState<AdminNotif[]>([]);
   const [notifCount, setNotifCount] = useState(0);
   const [navSearch, setNavSearch] = useState('');
+  const [cmdOpen, setCmdOpen] = useState(false);
   const location = useLocation();
+
+  // Global ⌘K / Ctrl+K shortcut for command palette
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCmdOpen(o => !o);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   // ⚡ Eagerly prefetch ALL admin sub-pages during browser idle time
   // → menu clicks resolve instantly (no chunk download wait)
