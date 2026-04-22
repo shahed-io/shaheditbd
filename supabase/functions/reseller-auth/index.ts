@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
     // ── Validate token ───────────────────────────────────────────────────────
     if (action === 'validate') {
       const { token } = body;
-      if (!token) return json({ error: 'No token' }, 401);
+      if (!token) return json({ error: 'No token' });
 
       const { data: sessions } = await supabase
         .from('reseller_sessions')
@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
 
       const session = sessions?.[0];
       if (!session || new Date(session.expires_at) < new Date()) {
-        return json({ error: 'Invalid or expired session' }, 401);
+        return json({ error: 'Invalid or expired session' });
       }
 
       const { data: users } = await supabase
@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
         .limit(1);
 
       const user = users?.[0];
-      if (!user) return json({ error: 'User not found' }, 401);
+      if (!user) return json({ error: 'User not found' });
 
       return json({ user });
     }
