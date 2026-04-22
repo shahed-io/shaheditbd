@@ -314,7 +314,7 @@ const AdminGoogleAds = () => {
         </TabsContent>
 
         {/* GTM */}
-        <TabsContent value="gtm" className="mt-4">
+        <TabsContent value="gtm" className="mt-4 space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -331,10 +331,60 @@ const AdminGoogleAds = () => {
               <p className="text-xs text-muted-foreground">tagmanager.google.com → আপনার container → Container ID</p>
             </CardContent>
           </Card>
+
+          {/* ─────── GTM বিস্তারিত গাইড ─────── */}
+          <div className="rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/5 via-background to-background p-5 sm:p-6 space-y-5 backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+                <SettingsIcon className="text-primary" size={20} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Google Tag Manager (GTM) গাইড</h3>
+                <p className="text-xs text-muted-foreground">একটি জায়গা থেকে সব tracking tags manage করার system</p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-muted/20 border border-border/40 p-4 space-y-2">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-2"><Tag size={14} className="text-primary" /> GTM কী এবং কখন ব্যবহার করবেন?</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                GTM হলো Google-এর free tag management system। এটা enable করলে আপনি <strong>code edit ছাড়াই</strong> Google Ads, Facebook Pixel, TikTok Pixel, Hotjar — যেকোনো third-party tag GTM dashboard থেকে add করতে পারবেন। Advanced marketers-দের জন্য সবচেয়ে flexible option।
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong className="text-primary">Note:</strong> আমাদের site-এ ইতিমধ্যে Google Ads, GA4, Facebook ও TikTok pixel direct integrate করা আছে। GTM শুধু তখনই enable করুন যদি আপনি advanced custom tags add করতে চান।
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-2"><CheckCircle2 size={14} className="text-primary" /> Setup Steps</p>
+              {[
+                { n: '1', t: 'GTM Account তৈরি করুন', d: 'tagmanager.google.com → Create Account → Country: Bangladesh, Container name: shahedstore.com.bd, Target: Web।' },
+                { n: '2', t: 'Container ID কপি করুন', d: 'Container তৈরির পর "GTM-XXXXXXX" format-এ ID পাবেন। সেটাই Container ID। উপরে paste করুন।' },
+                { n: '3', t: 'Tags & Triggers configure করুন', d: 'GTM dashboard-এ Tags → New → তারপর তৈরি tag (যেমন Hotjar, LinkedIn Insight)। Trigger বাছুন (যেমন All Pages)।' },
+                { n: '4', t: 'Switch ON করে Save', d: 'উপরে toggle ON করে Save All। GTM dashboard থেকে "Submit" করতে ভুলবেন না — নাহলে live হবে না।' },
+              ].map(s => (
+                <div key={s.n} className="flex gap-3 p-3 rounded-xl bg-muted/20 border border-border/40">
+                  <div className="w-7 h-7 shrink-0 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">{s.n}</div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{s.t}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">{s.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl bg-primary/10 border border-primary/30 p-4 space-y-1.5">
+              <p className="text-sm font-semibold text-primary flex items-center gap-2"><AlertTriangle size={14} /> সতর্কতা</p>
+              <ul className="text-xs text-muted-foreground space-y-1 list-disc ml-5">
+                <li>GTM-এ Google Ads tag duplicate add করবেন না — এতে double conversion count হবে।</li>
+                <li>GA4-ও duplicate add করবেন না (আমরা ইতিমধ্যে direct করি)।</li>
+                <li>GTM mostly third-party tools (Hotjar, Clarity, LinkedIn) এর জন্য use করুন।</li>
+              </ul>
+            </div>
+          </div>
         </TabsContent>
 
         {/* ENHANCED CONVERSIONS */}
-        <TabsContent value="enhanced" className="mt-4">
+        <TabsContent value="enhanced" className="mt-4 space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -357,6 +407,54 @@ const AdminGoogleAds = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* ─────── Enhanced Conversions বিস্তারিত গাইড ─────── */}
+          <div className="rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/5 via-background to-background p-5 sm:p-6 space-y-5 backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+                <ShieldCheck className="text-primary" size={20} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Enhanced Conversions গাইড</h3>
+                <p className="text-xs text-muted-foreground">iOS & ad-blocker থেকেও accurate conversion tracking</p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-muted/20 border border-border/40 p-4 space-y-2">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-2"><ShieldCheck size={14} className="text-primary" /> Enhanced Conversions কী?</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                আজকাল iOS users এবং ad-blockers এর কারণে Google প্রায় <strong>৩০–৫০% conversion miss</strong> করে। Enhanced Conversions enable করলে আমরা customer-এর email/phone-কে <strong>SHA-256 hash</strong> করে Google-কে পাঠাই। Google সেই hash-কে নিজের data-base-এর সাথে match করে missing conversions recover করে। Privacy-safe — original data কখনো leave করে না।
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-2"><CheckCircle2 size={14} className="text-primary" /> Setup Steps</p>
+              {[
+                { n: '1', t: 'Google Ads-এ Enhanced Conversions enable করুন', d: 'Google Ads → Tools → Conversions → আপনার Purchase action → Settings → "Turn on enhanced conversions" → Method: "Google tag" বাছুন।' },
+                { n: '2', t: 'Customer data terms accept করুন', d: 'Google data processing terms accept করুন। এটা GDPR/privacy compliance-এর জন্য বাধ্যতামূলক।' },
+                { n: '3', t: 'উপরের toggle ON করুন', d: 'এই page-এ Enhanced Conversions toggle ON করে Save All চাপুন।' },
+                { n: '4', t: 'Verify করুন', d: 'Google Ads → Conversions-এ "Recording enhanced conversions" status দেখুন। ৭২ ঘণ্টা পর diagnostics-এ match rate দেখা যাবে।' },
+              ].map(s => (
+                <div key={s.n} className="flex gap-3 p-3 rounded-xl bg-muted/20 border border-border/40">
+                  <div className="w-7 h-7 shrink-0 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">{s.n}</div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{s.t}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">{s.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl bg-primary/10 border border-primary/30 p-4 space-y-1.5">
+              <p className="text-sm font-semibold text-primary flex items-center gap-2"><Lightbulb size={14} /> Benefits</p>
+              <ul className="text-xs text-muted-foreground space-y-1 list-disc ml-5">
+                <li><strong>৩০–৫০% বেশি conversions</strong> attribution recover হবে।</li>
+                <li>Smart Bidding আরও ভালো performance দিবে — ROAS বাড়বে।</li>
+                <li>iOS 14.5+ users-এর data-ও capture হবে।</li>
+                <li>100% privacy-safe — শুধু one-way SHA-256 hash পাঠানো হয়।</li>
+              </ul>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
