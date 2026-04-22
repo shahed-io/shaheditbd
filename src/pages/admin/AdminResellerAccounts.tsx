@@ -12,63 +12,119 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import {
-  Users, Plus, Trash2, KeyRound, Wallet, ShieldCheck, Loader2, RefreshCw, Search,
+  Users, Wallet, ShieldCheck, Loader2, RefreshCw, Search,
+  UserPlus, UserMinus, Power, PowerOff,
 } from 'lucide-react';
 
-interface AdminUser {
-  id: string;
-  username: string;
-  is_admin: boolean;
+interface AppUser {
+  user_id: string;
+  email: string | null;
+  display_name: string | null;
+  created_at: string;
+}
+
+interface ResellerProfile {
+  user_id: string;
   balance_cents: number;
+  is_active: boolean;
+}
+
+interface ResellerRow {
+  user_id: string;
+  email: string | null;
+  display_name: string | null;
+  balance_cents: number;
+  is_active: boolean;
   created_at: string;
 }
 
 interface Stats {
-  total_users: number;
-  total_cids: number;
+  total_resellers: number;
+  active_resellers: number;
   total_balance_cents: number;
 }
 
-const callAdmin = async (body: object) => {
-  const token = localStorage.getItem('rs_token');
-  if (!token) throw new Error('No reseller session. Please login on the CID For Reseller page first.');
-  const { data, error } = await supabase.functions.invoke('reseller-admin', { body: { ...body, token } });
-  if (error) throw new Error(error.message);
-  if (data?.error) throw new Error(data.error);
-  return data;
-};
-
 const AdminResellerAccounts = () => {
-  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [resellers, setResellers] = useState<ResellerRow[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
-  const [createOpen, setCreateOpen] = useState(false);
+  const [grantOpen, setGrantOpen] = useState(false);
   const [topupOpen, setTopupOpen] = useState(false);
-  const [passwordOpen, setPasswordOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
+  const [revokeOpen, setRevokeOpen] = useState(false);
+  const [selected, setSelected] = useState<ResellerRow | null>(null);
 
-  const [newUsername, setNewUsername] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newIsAdmin, setNewIsAdmin] = useState(false);
-  const [newBalance, setNewBalance] = useState('0');
-  const [topupAmount, setTopupAmount] = useState('');
-  const [changePassword, setChangePassword] = useState('');
+  // Grant flow state
+  const [userSearch, setUserSearch] = useState('');
+  const [searchResults, setSearchResults] = useState<AppUser[]>([]);
+  const [searching, setSearching] = useState(false);
+
+  // Topup state
+  const [topupAmountTk, setTopupAmountTk] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
+  // ─── Fetch reseller list (joined with profiles) ─────────────────────
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [usersRes, statsRes] = await Promise.all([
-        callAdmin({ action: 'list_users' }),
-        callAdmin({ action: 'stats' }),
+      // Get reseller role assignments
+      const { data: roleRows, error: roleErr } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'reseller');
+      if (roleErr) throw roleErr;
+
+      const resellerUserIds = (roleRows ?? []).map(r => r.user_id);
+
+      if (resellerUserIds.length === 0) {
+        setResellers([]);
+        setStats({ total_resellers: 0, active_resellers: 0, total_balance_cents: 0 });
+        return;
+      }
+
+      const [profilesRes, accountsRes] = await Promise.all([
+        supabase
+          .from('reseller_profiles')
+          .select('user_id, balance_cents, is_active')
+          .in('user_id', resellerUserIds),
+        supabase
+          .from('profiles')
+          .select('user_id, email, display_name, created_at')
+          .in('user_id', resellerUserIds),
       ]);
-      setUsers(usersRes.users || []);
-      setStats(statsRes);
-    } catch (err: any) {
-      toast.error(err.message);
+
+      const profileMap = new Map<string, ResellerProfile>(
+        (profilesRes.data ?? []).map(p => [p.user_id, p as ResellerProfile])
+      );
+      const accountMap = new Map<string, AppUser>(
+        (accountsRes.data ?? []).map(a => [a.user_id, a as AppUser])
+      );
+
+      const rows: ResellerRow[] = resellerUserIds.map(uid => {
+        const prof = profileMap.get(uid);
+        const acc  = accountMap.get(uid);
+        return {
+          user_id: uid,
+          email: acc?.email ?? null,
+          display_name: acc?.display_name ?? null,
+          balance_cents: prof?.balance_cents ?? 0,
+          is_active: prof?.is_active ?? true,
+          created_at: acc?.created_at ?? new Date().toISOString(),
+        };
+      });
+
+      const totalBalance = rows.reduce((sum, r) => sum + r.balance_cents, 0);
+      const activeCount  = rows.filter(r => r.is_active).length;
+
+      setResellers(rows);
+      setStats({
+        total_resellers: rows.length,
+        active_resellers: activeCount,
+        total_balance_cents: totalBalance,
+      });
+    } catch (err: unknown) {
+      toast.error((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -76,75 +132,139 @@ const AdminResellerAccounts = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const handleCreate = async () => {
-    if (!newUsername.trim() || !newPassword) return;
+  // ─── Search users to grant reseller role ─────────────────────────────
+  const searchUsers = useCallback(async (q: string) => {
+    if (!q || q.length < 2) { setSearchResults([]); return; }
+    setSearching(true);
+    try {
+      // Get current reseller user_ids to exclude
+      const existingIds = new Set(resellers.map(r => r.user_id));
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('user_id, email, display_name, created_at')
+        .or(`email.ilike.%${q}%,display_name.ilike.%${q}%`)
+        .limit(20);
+      if (error) throw error;
+      const filtered = (data ?? []).filter(u => !existingIds.has(u.user_id));
+      setSearchResults(filtered as AppUser[]);
+    } catch (err: unknown) {
+      toast.error((err as Error).message);
+    } finally {
+      setSearching(false);
+    }
+  }, [resellers]);
+
+  useEffect(() => {
+    const t = setTimeout(() => searchUsers(userSearch), 300);
+    return () => clearTimeout(t);
+  }, [userSearch, searchUsers]);
+
+  // ─── Grant reseller role ────────────────────────────────────────────
+  const handleGrant = async (targetUserId: string) => {
     setActionLoading(true);
     try {
-      await callAdmin({
-        action: 'create_user',
-        username: newUsername.trim(),
-        password: newPassword,
-        is_admin: newIsAdmin,
-        balance_cents: parseInt(newBalance) || 0,
-      });
-      toast.success('User created successfully');
-      setCreateOpen(false);
-      setNewUsername(''); setNewPassword(''); setNewIsAdmin(false); setNewBalance('0');
+      const { error } = await supabase
+        .from('user_roles')
+        .insert({ user_id: targetUserId, role: 'reseller' });
+      if (error) {
+        if (error.code === '23505') throw new Error('User is already a reseller');
+        throw error;
+      }
+      toast.success('Reseller role granted');
+      setGrantOpen(false);
+      setUserSearch('');
+      setSearchResults([]);
       fetchData();
-    } catch (err: any) { toast.error(err.message); }
-    finally { setActionLoading(false); }
+    } catch (err: unknown) {
+      toast.error((err as Error).message);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
+  // ─── Revoke reseller role ───────────────────────────────────────────
+  const handleRevoke = async () => {
+    if (!selected) return;
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', selected.user_id)
+        .eq('role', 'reseller');
+      if (error) throw error;
+      toast.success('Reseller role revoked');
+      setRevokeOpen(false);
+      fetchData();
+    } catch (err: unknown) {
+      toast.error((err as Error).message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // ─── Top up reseller balance (in BDT taka, 1 USD = 100 cents = ৳118 approx; we store cents matching $) ──
+  // Actually: cents represent USD cents per CID pricing. Admin enters dollars.
   const handleTopup = async () => {
-    if (!selectedUser || !topupAmount) return;
+    if (!selected || !topupAmountTk) return;
+    const dollars = parseFloat(topupAmountTk);
+    if (isNaN(dollars) || dollars <= 0) {
+      toast.error('Enter a valid amount');
+      return;
+    }
     setActionLoading(true);
     try {
-      await callAdmin({ action: 'topup', user_id: selectedUser.id, amount_cents: parseInt(topupAmount) });
-      toast.success('Balance added successfully');
-      setTopupOpen(false); setTopupAmount('');
+      const newBalance = selected.balance_cents + Math.round(dollars * 100);
+      const { error } = await supabase
+        .from('reseller_profiles')
+        .update({ balance_cents: newBalance, updated_at: new Date().toISOString() })
+        .eq('user_id', selected.user_id);
+      if (error) throw error;
+      toast.success(`Added $${dollars.toFixed(2)} to ${selected.email}`);
+      setTopupOpen(false);
+      setTopupAmountTk('');
       fetchData();
-    } catch (err: any) { toast.error(err.message); }
-    finally { setActionLoading(false); }
+    } catch (err: unknown) {
+      toast.error((err as Error).message);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const handleChangePassword = async () => {
-    if (!selectedUser || !changePassword) return;
-    setActionLoading(true);
+  // ─── Toggle active ──────────────────────────────────────────────────
+  const handleToggleActive = async (row: ResellerRow) => {
     try {
-      await callAdmin({ action: 'change_password', user_id: selectedUser.id, new_password: changePassword });
-      toast.success('Password changed successfully');
-      setPasswordOpen(false); setChangePassword('');
-    } catch (err: any) { toast.error(err.message); }
-    finally { setActionLoading(false); }
-  };
-
-  const handleDelete = async () => {
-    if (!selectedUser) return;
-    setActionLoading(true);
-    try {
-      await callAdmin({ action: 'delete_user', user_id: selectedUser.id });
-      toast.success('User deleted successfully');
-      setDeleteOpen(false);
+      const { error } = await supabase
+        .from('reseller_profiles')
+        .update({ is_active: !row.is_active, updated_at: new Date().toISOString() })
+        .eq('user_id', row.user_id);
+      if (error) throw error;
+      toast.success(row.is_active ? 'Account suspended' : 'Account activated');
       fetchData();
-    } catch (err: any) { toast.error(err.message); }
-    finally { setActionLoading(false); }
+    } catch (err: unknown) {
+      toast.error((err as Error).message);
+    }
   };
 
-  const filtered = users.filter(u => u.username.toLowerCase().includes(search.toLowerCase()));
+  const filtered = resellers.filter(u =>
+    (u.email || '').toLowerCase().includes(search.toLowerCase()) ||
+    (u.display_name || '').toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Reseller Accounts</h1>
-          <p className="text-muted-foreground text-sm">Reseller user management</p>
+          <p className="text-muted-foreground text-sm">Grant reseller access to existing user accounts</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
-            <Plus className="h-4 w-4 mr-1" /> New User
+          <Button size="sm" onClick={() => setGrantOpen(true)}>
+            <UserPlus className="h-4 w-4 mr-1" /> Grant Reseller Role
           </Button>
         </div>
       </div>
@@ -156,8 +276,8 @@ const AdminResellerAccounts = () => {
               <div className="flex items-center gap-3">
                 <Users className="h-8 w-8 text-primary" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Users</p>
-                  <p className="text-2xl font-bold">{stats.total_users}</p>
+                  <p className="text-sm text-muted-foreground">Total Resellers</p>
+                  <p className="text-2xl font-bold">{stats.total_resellers}</p>
                 </div>
               </div>
             </CardContent>
@@ -167,8 +287,8 @@ const AdminResellerAccounts = () => {
               <div className="flex items-center gap-3">
                 <ShieldCheck className="h-8 w-8 text-primary" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Total CIDs</p>
-                  <p className="text-2xl font-bold">{stats.total_cids}</p>
+                  <p className="text-sm text-muted-foreground">Active</p>
+                  <p className="text-2xl font-bold">{stats.active_resellers}</p>
                 </div>
               </div>
             </CardContent>
@@ -178,8 +298,8 @@ const AdminResellerAccounts = () => {
               <div className="flex items-center gap-3">
                 <Wallet className="h-8 w-8 text-primary" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Balance</p>
-                  <p className="text-2xl font-bold">৳{(stats.total_balance_cents / 100).toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">Total Balance (USD)</p>
+                  <p className="text-2xl font-bold">${(stats.total_balance_cents / 100).toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
@@ -190,14 +310,14 @@ const AdminResellerAccounts = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">User List</CardTitle>
+            <CardTitle className="text-lg">Reseller List</CardTitle>
             <div className="relative w-64">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search users..."
+                placeholder="Search by email or name..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="pl-16"
+                className="pl-9"
               />
             </div>
           </div>
@@ -210,8 +330,8 @@ const AdminResellerAccounts = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Username</TableHead>
-                    <TableHead>Role</TableHead>
+                    <TableHead>User</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead>Balance</TableHead>
                     <TableHead>Joined</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -219,29 +339,32 @@ const AdminResellerAccounts = () => {
                 </TableHeader>
                 <TableBody>
                   {filtered.length === 0 ? (
-                    <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">No users found</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">No resellers found. Click "Grant Reseller Role" to add one.</TableCell></TableRow>
                   ) : filtered.map(u => (
-                    <TableRow key={u.id}>
-                      <TableCell className="font-medium">{u.username}</TableCell>
+                    <TableRow key={u.user_id}>
                       <TableCell>
-                        <Badge variant={u.is_admin ? 'default' : 'secondary'}>
-                          {u.is_admin ? 'Admin' : 'Reseller'}
+                        <div className="font-medium">{u.display_name || '—'}</div>
+                        <div className="text-xs text-muted-foreground">{u.email || u.user_id.slice(0, 8)}</div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={u.is_active ? 'default' : 'secondary'}>
+                          {u.is_active ? 'Active' : 'Suspended'}
                         </Badge>
                       </TableCell>
-                      <TableCell>৳{(u.balance_cents / 100).toFixed(2)}</TableCell>
+                      <TableCell className="font-semibold">${(u.balance_cents / 100).toFixed(2)}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {new Date(u.created_at).toLocaleDateString('en-US')}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Button variant="outline" size="sm" onClick={() => { setSelectedUser(u); setTopupOpen(true); }}>
+                          <Button variant="outline" size="sm" onClick={() => { setSelected(u); setTopupOpen(true); }}>
                             <Wallet className="h-3.5 w-3.5 mr-1" /> Top Up
                           </Button>
-                          <Button variant="outline" size="sm" onClick={() => { setSelectedUser(u); setPasswordOpen(true); }}>
-                            <KeyRound className="h-3.5 w-3.5" />
+                          <Button variant="outline" size="sm" onClick={() => handleToggleActive(u)}>
+                            {u.is_active ? <PowerOff className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />}
                           </Button>
-                          <Button variant="destructive" size="sm" onClick={() => { setSelectedUser(u); setDeleteOpen(true); }}>
-                            <Trash2 className="h-3.5 w-3.5" />
+                          <Button variant="destructive" size="sm" onClick={() => { setSelected(u); setRevokeOpen(true); }}>
+                            <UserMinus className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </TableCell>
@@ -254,33 +377,43 @@ const AdminResellerAccounts = () => {
         </CardContent>
       </Card>
 
-      {/* Create User Dialog */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+      {/* Grant Role Dialog */}
+      <Dialog open={grantOpen} onOpenChange={setGrantOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Create New Reseller</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Grant Reseller Role</DialogTitle>
+          </DialogHeader>
           <div className="space-y-4 py-2">
             <div>
-              <label className="text-sm font-medium">Username</label>
-              <Input value={newUsername} onChange={e => setNewUsername(e.target.value)} placeholder="Username" />
+              <label className="text-sm font-medium mb-1.5 block">Search users by email or name</label>
+              <Input
+                value={userSearch}
+                onChange={e => setUserSearch(e.target.value)}
+                placeholder="At least 2 characters..."
+              />
             </div>
-            <div>
-              <label className="text-sm font-medium">Password</label>
-              <Input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Minimum 6 characters" />
+            <div className="max-h-72 overflow-y-auto border rounded-md divide-y">
+              {searching ? (
+                <div className="p-4 text-center text-sm text-muted-foreground"><Loader2 className="h-4 w-4 mx-auto animate-spin" /></div>
+              ) : searchResults.length === 0 ? (
+                <p className="p-4 text-center text-sm text-muted-foreground">
+                  {userSearch.length < 2 ? 'Type to search for users' : 'No matching users found'}
+                </p>
+              ) : searchResults.map(u => (
+                <div key={u.user_id} className="flex items-center justify-between p-3 hover:bg-muted/50">
+                  <div>
+                    <div className="font-medium text-sm">{u.display_name || '—'}</div>
+                    <div className="text-xs text-muted-foreground">{u.email}</div>
+                  </div>
+                  <Button size="sm" onClick={() => handleGrant(u.user_id)} disabled={actionLoading}>
+                    {actionLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Grant'}
+                  </Button>
+                </div>
+              ))}
             </div>
-            <div>
-              <label className="text-sm font-medium">Initial Balance (cents)</label>
-              <Input type="number" value={newBalance} onChange={e => setNewBalance(e.target.value)} />
-            </div>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={newIsAdmin} onChange={e => setNewIsAdmin(e.target.checked)} />
-              Create as Admin
-            </label>
           </div>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-            <Button onClick={handleCreate} disabled={actionLoading}>
-              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Create
-            </Button>
+            <DialogClose asChild><Button variant="outline">Close</Button></DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -288,53 +421,44 @@ const AdminResellerAccounts = () => {
       {/* Topup Dialog */}
       <Dialog open={topupOpen} onOpenChange={setTopupOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Balance Top Up — {selectedUser?.username}</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Top Up Balance — {selected?.email}</DialogTitle>
+          </DialogHeader>
           <div className="space-y-4 py-2">
-            <p className="text-sm text-muted-foreground">Current Balance: ৳{((selectedUser?.balance_cents || 0) / 100).toFixed(2)}</p>
+            <p className="text-sm text-muted-foreground">Current Balance: ${((selected?.balance_cents || 0) / 100).toFixed(2)}</p>
             <div>
-              <label className="text-sm font-medium">Top Up Amount (cents)</label>
-              <Input type="number" value={topupAmount} onChange={e => setTopupAmount(e.target.value)} placeholder="e.g. 1000 = ৳10" />
+              <label className="text-sm font-medium">Amount (USD)</label>
+              <Input
+                type="number"
+                step="0.01"
+                value={topupAmountTk}
+                onChange={e => setTopupAmountTk(e.target.value)}
+                placeholder="e.g. 10.00"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Each CID generation costs $1.00</p>
             </div>
           </div>
           <DialogFooter>
             <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-            <Button onClick={handleTopup} disabled={actionLoading}>
-              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Top Up
+            <Button onClick={handleTopup} disabled={actionLoading || !topupAmountTk}>
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Add Balance
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Change Password Dialog */}
-      <Dialog open={passwordOpen} onOpenChange={setPasswordOpen}>
+      {/* Revoke Dialog */}
+      <Dialog open={revokeOpen} onOpenChange={setRevokeOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Change Password — {selectedUser?.username}</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-2">
-            <div>
-              <label className="text-sm font-medium">New Password</label>
-              <Input type="password" value={changePassword} onChange={e => setChangePassword(e.target.value)} placeholder="Minimum 6 characters" />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-            <Button onClick={handleChangePassword} disabled={actionLoading}>
-              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Change
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>Delete User</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Revoke Reseller Role</DialogTitle></DialogHeader>
           <p className="text-sm text-muted-foreground py-2">
-            Are you sure you want to delete <strong>{selectedUser?.username}</strong>? This action cannot be undone.
+            Remove reseller access from <strong>{selected?.email}</strong>?
+            <br />Their balance and history will be preserved but they will lose access to the portal.
           </p>
           <DialogFooter>
             <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-            <Button variant="destructive" onClick={handleDelete} disabled={actionLoading}>
-              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Delete
+            <Button variant="destructive" onClick={handleRevoke} disabled={actionLoading}>
+              {actionLoading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Revoke
             </Button>
           </DialogFooter>
         </DialogContent>
