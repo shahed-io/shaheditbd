@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     // ── Login ────────────────────────────────────────────────────────────────
     if (action === 'login') {
       const { username, password } = body;
-      if (!username || !password) return json({ error: 'Username and password required' }, 400);
+      if (!username || !password) return json({ error: 'Username and password required' });
 
       const adminPass = Deno.env.get('ADMIN_PASSWORD') || 'Sh@9696';
 
