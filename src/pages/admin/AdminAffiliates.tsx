@@ -401,8 +401,8 @@ const AdminAffiliates = () => {
         <TabsContent value="accounts" className="space-y-3 mt-4">
           <div className="flex flex-wrap items-center gap-2">
             <div className="relative flex-1 min-w-[200px]">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Search code, email, name..." value={accountSearch} onChange={e => setAccountSearch(e.target.value)} className="pl-11" />
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input placeholder="Search code, email, name..." value={accountSearch} onChange={e => setAccountSearch(e.target.value)} className="pl-12" />
             </div>
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
               <option value="all">All Statuses</option>

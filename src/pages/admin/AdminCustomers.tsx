@@ -908,8 +908,8 @@ export default function AdminCustomers() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="নাম, ইমেইল, ফোন দিয়ে সার্চ করুন..." value={search} onChange={e => setSearch(e.target.value)} className="pl-11 bg-muted/30" />
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input placeholder="নাম, ইমেইল, ফোন দিয়ে সার্চ করুন..." value={search} onChange={e => setSearch(e.target.value)} className="pl-12 bg-muted/30" />
         </div>
         <Select value={sort} onValueChange={setSort}>
           <SelectTrigger className="w-44 bg-muted/30"><SelectValue /></SelectTrigger>

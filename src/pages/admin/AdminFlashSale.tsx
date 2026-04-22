@@ -152,9 +152,9 @@ const AdminFlashSale = () => {
 
         {/* Search */}
         <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => handleSearch(e.target.value)} placeholder="প্রোডাক্ট খুঁজুন..."
-            className="w-full bg-muted/30 border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
+            className="w-full bg-muted/30 border border-border rounded-xl pl-12 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
           {search && (
             <button onClick={() => { setSearch(''); setSearchResults([]); }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">

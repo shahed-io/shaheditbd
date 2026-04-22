@@ -361,10 +361,10 @@ const AdminWallet = () => {
             <div className="glass-card rounded-2xl border border-border overflow-hidden">
               <div className="p-4 border-b border-border">
                 <div className="relative">
-                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input value={search} onChange={e => setSearch(e.target.value)}
                     placeholder="Search by name or email..."
-                    className="w-full pl-11 pr-4 py-2.5 text-sm rounded-xl bg-muted/30 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
+                    className="w-full pl-12 pr-4 py-2.5 text-sm rounded-xl bg-muted/30 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
                 </div>
               </div>
               <div className="divide-y divide-border max-h-[500px] overflow-y-auto">

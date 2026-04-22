@@ -833,7 +833,7 @@ const AdminLicenses = () => {
                         value={productSearch}
                         onChange={e => setProductSearch(e.target.value)}
                         placeholder="প্রোডাক্ট খুঁজুন..."
-                        className="w-full bg-muted/20 border border-border rounded-lg pl-10 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
+                        className="w-full bg-muted/20 border border-border rounded-lg pl-12 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
                         autoFocus
                         onClick={e => e.stopPropagation()}
                       />
@@ -968,7 +968,7 @@ const AdminLicenses = () => {
                         value={bulkProductSearch}
                         onChange={e => setBulkProductSearch(e.target.value)}
                         placeholder="প্রোডাক্ট খুঁজুন..."
-                        className="w-full bg-muted/20 border border-border rounded-lg pl-10 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
+                        className="w-full bg-muted/20 border border-border rounded-lg pl-12 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
                         autoFocus
                         onClick={e => e.stopPropagation()}
                       />
@@ -1259,12 +1259,12 @@ const AdminLicenses = () => {
 
         <div className="flex flex-wrap gap-2">
           <div className="relative flex-1 min-w-56">
-            <Package size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
+            <Package size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary" />
             <input
               value={productNameQuery}
               onChange={e => setProductNameQuery(e.target.value)}
               placeholder="যেমন: Netflix, Canva, Windows 11..."
-              className="w-full bg-background border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="w-full bg-background border border-border rounded-xl pl-12 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
           </div>
           <label className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-background text-xs font-semibold cursor-pointer hover:border-primary/40 transition-all select-none">
@@ -1325,10 +1325,10 @@ const AdminLicenses = () => {
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-48">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Key, প্রোডাক্ট, কাস্টমার খুঁজুন..."
-            className="w-full bg-card border border-border rounded-xl pl-11 pr-4 py-2 text-sm focus:outline-none focus:border-primary" />
+            className="w-full bg-card border border-border rounded-xl pl-12 pr-4 py-2 text-sm focus:outline-none focus:border-primary" />
         </div>
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
           className="bg-card border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary">
@@ -1897,12 +1897,12 @@ const AdminLicenses = () => {
                 অর্ডার নম্বর, কাস্টমারের নাম বা ইমেইল দিয়ে খুঁজুন
               </label>
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
                   value={assignSearch}
                   onChange={e => searchOrders(e.target.value)}
                   placeholder="অর্ডার নম্বর / নাম / ইমেইল..."
-                  className="w-full bg-muted/20 border border-border rounded-xl pl-11 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary"
+                  className="w-full bg-muted/20 border border-border rounded-xl pl-12 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary"
                   autoFocus
                 />
                 {assignSearching && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-primary" />}
