@@ -254,10 +254,10 @@ export default function AdminGetCIDTools() {
             <span className="p-2 rounded-lg bg-primary/10">
               <KeyRound className="h-6 w-6 text-primary" />
             </span>
-            GetCID API Tools
+            CID Gateway Tools
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Microsoft Phone Activation — Confirmation ID generator with dual-provider auto-fallback
+            Microsoft Phone Activation — Confirmation ID generator with multi-channel auto-fallback
           </p>
         </div>
         <Button onClick={loadBalance} disabled={balanceLoading} variant="outline" className="gap-2">
@@ -271,20 +271,19 @@ export default function AdminGetCIDTools() {
         {(['getcid', 'grahok'] as const).map((key) => {
           const p = balance?.providers[key];
           const isPrimary = key === 'getcid';
+          const channelLabel = isPrimary ? 'Primary Channel' : 'Backup Channel';
           return (
             <Card key={key} className={`relative overflow-hidden ${isPrimary ? 'border-primary/40' : ''}`}>
-              {isPrimary && (
-                <Badge className="absolute top-3 right-3 bg-primary/10 text-primary border-primary/20" variant="outline">
-                  Primary
-                </Badge>
-              )}
+              <Badge className={`absolute top-3 right-3 ${isPrimary ? 'bg-primary/10 text-primary border-primary/20' : 'bg-muted text-muted-foreground'}`} variant="outline">
+                {isPrimary ? 'Primary' : 'Backup'}
+              </Badge>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Wallet className="h-4 w-4" />
-                  {isPrimary ? 'GetCID.app (api-v2)' : 'Grahok.io (Backup)'}
+                  {channelLabel}
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  {isPrimary ? 'panel.getcid.app/user-api' : 'grahok.io/api'}
+                  {isPrimary ? 'Auto-routed first for every request' : 'Activated automatically on primary failure'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -303,7 +302,7 @@ export default function AdminGetCIDTools() {
                   </div>
                 ) : p?.status === 'not_configured' ? (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <AlertCircle className="h-4 w-4" /> API token not configured
+                    <AlertCircle className="h-4 w-4" /> Channel credentials not configured
                   </div>
                 ) : (
                   <div className="space-y-1">
