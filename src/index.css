@@ -885,7 +885,10 @@ html[data-theme="midnight-purple"] .admin-gradient-bg {
   box-shadow:
     1px 0 28px hsla(258, 78%, 55%, 0.08),
     inset -1px 0 0 hsla(0, 0%, 100%, 0.6);
-  position: relative;
+  /* NOTE: do NOT set position here — the aside element uses Tailwind `fixed`
+     for desktop overlay. Adding position:relative here breaks the fixed layout
+     and pushes the main content below the sidebar. The ::after gradient edge
+     still works because the aside is a positioned element via `fixed`. */
 }
 .admin-glass-sidebar::after {
   content: '';
