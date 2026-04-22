@@ -165,10 +165,10 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
         ${data.customer.address ? `<p style="font-size:12px;color:#555;margin:3px 0">🏠 ${escapeHtml(data.customer.address)}</p>` : ''}
       </div>
       <div style="background:${brandLight};border-radius:10px;padding:16px;border-left:4px solid ${brandColor}">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:10px">💳 পেমেন্ট তথ্য</div>
-        <p style="font-size:12px;color:#555;margin:0 0 4px 0">Method: <strong style="color:#1a1a2e">${escapeHtml(pmLabel)}</strong></p>
-        ${data.transactionId ? `<p style="font-size:12px;color:#555;margin:4px 0">TrxID: <strong style="color:#1a1a2e;font-family:monospace;background:#e8e5f7;padding:1px 6px;border-radius:4px;font-size:11px">${escapeHtml(data.transactionId)}</strong></p>` : ''}
-        ${statusLabel ? `<p style="font-size:12px;color:#555;margin:4px 0">Status: <span style="background:${brandColor};color:#fff;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600">${escapeHtml(statusLabel)}</span></p>` : ''}
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:12px">💳 Payment Info</div>
+        <div style="font-size:12px;color:#555;line-height:1.9"><span style="display:inline-block;min-width:62px">Method:</span> <strong style="color:#1a1a2e">${escapeHtml(pmLabel)}</strong></div>
+        ${data.transactionId ? `<div style="font-size:12px;color:#555;line-height:1.9;margin-top:6px"><span style="display:inline-block;min-width:62px">TrxID:</span> <span style="color:#1a1a2e;font-family:monospace;background:#e8e5f7;padding:2px 8px;border-radius:4px;font-size:11px;display:inline-block;line-height:1.4">${escapeHtml(data.transactionId)}</span></div>` : ''}
+        ${statusLabel ? `<div style="font-size:12px;color:#555;line-height:1.9;margin-top:6px"><span style="display:inline-block;min-width:62px">Status:</span> <span style="background:${brandColor};color:#fff;padding:3px 12px;border-radius:999px;font-size:11px;font-weight:600;display:inline-block;line-height:1.4">${escapeHtml(statusLabel)}</span></div>` : ''}
       </div>
     </div>
 
@@ -190,12 +190,12 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
     <div style="display:flex;justify-content:flex-end;margin-bottom:24px">
       <div style="min-width:280px;background:${brandLight};border-radius:10px;padding:18px">
         <div style="display:flex;justify-content:space-between;font-size:13px;color:#555;margin-bottom:8px">
-          <span>সাবটোটাল:</span><span>${fmtMoney(sub)}</span>
+          <span>Subtotal:</span><span>${fmtMoney(sub)}</span>
         </div>
-        ${disc > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#059669;margin-bottom:8px"><span>ডিসকাউন্ট:</span><span>-${fmtMoney(disc)}</span></div>` : ''}
+        ${disc > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#059669;margin-bottom:8px"><span>Discount:</span><span>-${fmtMoney(disc)}</span></div>` : ''}
         <div style="height:1px;background:${brandColor};opacity:0.3;margin:10px 0"></div>
         <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;color:${brandColor}">
-          <span>সর্বমোট:</span><span>${fmtMoney(data.total)}</span>
+          <span>Total:</span><span>${fmtMoney(data.total)}</span>
         </div>
       </div>
     </div>

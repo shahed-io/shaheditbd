@@ -183,13 +183,13 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
                 {order.customer_phone && <p style={{ fontSize: '12px', color: '#555', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>📱 {order.customer_phone}</p>}
               </div>
               <div style={{ background: brandLight, borderRadius: '10px', padding: '16px', borderLeft: `4px solid ${brandColor}` }}>
-                <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '10px' }}>💳 পেমেন্ট তথ্য</div>
-                <p style={{ fontSize: '12px', color: '#555' }}>Method: <strong style={{ color: '#1a1a2e' }}>{PM_LABELS[order.payment_method] || order.payment_method}</strong></p>
-                {order.transaction_id && <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>TrxID: <strong style={{ color: '#1a1a2e', fontFamily: 'monospace', background: '#e8e5f7', padding: '1px 6px', borderRadius: '4px', fontSize: '11px' }}>{order.transaction_id}</strong></p>}
-                <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>
-                  Status: <span style={{ background: brandColor, color: '#fff', padding: '2px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 600 }}>{statusCfg.label}</span>
-                </p>
-                {order.coupon_code && <p style={{ fontSize: '12px', color: '#059669', marginTop: '4px' }}>🎟️ কুপন: <strong>{order.coupon_code}</strong></p>}
+                <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '12px' }}>💳 Payment Info</div>
+                <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9 }}><span style={{ display: 'inline-block', minWidth: '62px' }}>Method:</span> <strong style={{ color: '#1a1a2e' }}>{PM_LABELS[order.payment_method] || order.payment_method}</strong></div>
+                {order.transaction_id && <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px' }}><span style={{ display: 'inline-block', minWidth: '62px' }}>TrxID:</span> <span style={{ color: '#1a1a2e', fontFamily: 'monospace', background: '#e8e5f7', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', display: 'inline-block', lineHeight: 1.4 }}>{order.transaction_id}</span></div>}
+                <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px' }}>
+                  <span style={{ display: 'inline-block', minWidth: '62px' }}>Status:</span> <span style={{ background: brandColor, color: '#fff', padding: '3px 12px', borderRadius: '999px', fontSize: '11px', fontWeight: 600, display: 'inline-block', lineHeight: 1.4 }}>{statusCfg.label}</span>
+                </div>
+                {order.coupon_code && <div style={{ fontSize: '12px', color: '#059669', marginTop: '6px' }}>🎟️ Coupon: <strong>{order.coupon_code}</strong></div>}
               </div>
             </div>
 
@@ -228,15 +228,15 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <div style={{ minWidth: '260px', background: brandLight, borderRadius: '10px', padding: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#555', marginBottom: '8px' }}>
-                  <span>সাবটোটাল:</span><span>৳{Number(order.subtotal).toLocaleString()}</span>
+                  <span>Subtotal:</span><span>৳{Number(order.subtotal).toLocaleString()}</span>
                 </div>
                 {Number(order.discount_amount) > 0 && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#059669', marginBottom: '8px' }}>
-                    <span>🎉 ডিসকাউন্ট:</span><span>-৳{Number(order.discount_amount).toLocaleString()}</span>
+                    <span>🎉 Discount:</span><span>-৳{Number(order.discount_amount).toLocaleString()}</span>
                   </div>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 800, color: brandColor, borderTop: `2px solid ${brandColor}`, paddingTop: '10px', marginTop: '8px' }}>
-                  <span>সর্বমোট:</span><span>৳{Number(order.total).toLocaleString()}</span>
+                  <span>Total:</span><span>৳{Number(order.total).toLocaleString()}</span>
                 </div>
               </div>
             </div>

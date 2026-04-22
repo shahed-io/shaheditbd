@@ -232,9 +232,9 @@ const AdminInvoiceGenerator = () => {
 
           {/* Summary */}
           <div className="glass-card rounded-2xl p-5 space-y-3">
-            <div className="flex justify-between text-sm text-muted-foreground"><span>সাবটোটাল:</span><span>৳{subtotal.toLocaleString()}</span></div>
-            {discount > 0 && <div className="flex justify-between text-sm text-green-500"><span>ডিসকাউন্ট:</span><span>-৳{discount.toLocaleString()}</span></div>}
-            <div className="flex justify-between text-lg font-bold text-primary border-t border-border pt-3"><span>সর্বমোট:</span><span>৳{total.toLocaleString()}</span></div>
+            <div className="flex justify-between text-sm text-muted-foreground"><span>Subtotal:</span><span>৳{subtotal.toLocaleString()}</span></div>
+            {discount > 0 && <div className="flex justify-between text-sm text-green-500"><span>Discount:</span><span>-৳{discount.toLocaleString()}</span></div>}
+            <div className="flex justify-between text-lg font-bold text-primary border-t border-border pt-3"><span>Total:</span><span>৳{total.toLocaleString()}</span></div>
             <button onClick={handlePreview} className="w-full mt-2 btn-glow rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2">
               <Printer size={16} /> প্রিভিউ ও প্রিন্ট
             </button>
@@ -279,12 +279,12 @@ const AdminInvoiceGenerator = () => {
                     {customerAddress && <p style={{ fontSize: '12px', color: '#555', marginTop: '3px' }}>📍 {customerAddress}</p>}
                   </div>
                   <div style={{ background: brandLight, borderRadius: '10px', padding: '16px', borderLeft: `4px solid ${brandColor}` }}>
-                    <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '10px' }}>পেমেন্ট তথ্য</div>
-                    <p style={{ fontSize: '12px', color: '#555' }}>Method: <strong style={{ color: '#1a1a2e' }}>{PM_LABELS[paymentMethod] || paymentMethod}</strong></p>
-                    {transactionId && <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>TrxID: <strong style={{ color: '#1a1a2e', fontFamily: 'monospace', background: '#e8e5f7', padding: '1px 6px', borderRadius: '4px', fontSize: '11px' }}>{transactionId}</strong></p>}
-                    <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>
-                      Status: <span style={{ background: brandColor, color: '#fff', padding: '2px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 600 }}>Paid</span>
-                    </p>
+                    <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '12px' }}>💳 Payment Info</div>
+                    <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9 }}><span style={{ display: 'inline-block', minWidth: '62px' }}>Method:</span> <strong style={{ color: '#1a1a2e' }}>{PM_LABELS[paymentMethod] || paymentMethod}</strong></div>
+                    {transactionId && <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px' }}><span style={{ display: 'inline-block', minWidth: '62px' }}>TrxID:</span> <span style={{ color: '#1a1a2e', fontFamily: 'monospace', background: '#e8e5f7', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', display: 'inline-block', lineHeight: 1.4 }}>{transactionId}</span></div>}
+                    <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px' }}>
+                      <span style={{ display: 'inline-block', minWidth: '62px' }}>Status:</span> <span style={{ background: brandColor, color: '#fff', padding: '3px 12px', borderRadius: '999px', fontSize: '11px', fontWeight: 600, display: 'inline-block', lineHeight: 1.4 }}>Paid</span>
+                    </div>
                   </div>
                 </div>
 
@@ -315,9 +315,9 @@ const AdminInvoiceGenerator = () => {
                 {/* Totals */}
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <div style={{ minWidth: '260px', background: brandLight, borderRadius: '10px', padding: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#555', marginBottom: '8px' }}><span>সাবটোটাল:</span><span>৳{subtotal.toLocaleString()}</span></div>
-                    {discount > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#059669', marginBottom: '8px' }}><span>ডিসকাউন্ট:</span><span>-৳{discount.toLocaleString()}</span></div>}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 800, color: brandColor, borderTop: `2px solid ${brandColor}`, paddingTop: '10px', marginTop: '8px' }}><span>সর্বমোট:</span><span>৳{total.toLocaleString()}</span></div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#555', marginBottom: '8px' }}><span>Subtotal:</span><span>৳{subtotal.toLocaleString()}</span></div>
+                    {discount > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#059669', marginBottom: '8px' }}><span>Discount:</span><span>-৳{discount.toLocaleString()}</span></div>}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 800, color: brandColor, borderTop: `2px solid ${brandColor}`, paddingTop: '10px', marginTop: '8px' }}><span>Total:</span><span>৳{total.toLocaleString()}</span></div>
                   </div>
                 </div>
 
