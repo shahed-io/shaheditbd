@@ -1,30 +1,49 @@
 ---
 name: Admin Design System
-description: Admin panel uses website-matched glassmorphism — admin-glass-* tokens, admin-nav-item, admin-stat-card, admin-section-title, admin-icon-btn utilities, plus auto-applied glass-card polish via body.admin-page selector
+description: Admin panel uses Gradient Border Glass Cards — admin-glass-card / admin-stat-card use double-background (padding-box+border-box) for true gradient stroke. Includes admin-page-header, admin-helper, admin-info-card, admin-warning-card, admin-success-card, admin-field-label clarity utilities. Auto-applied via body.admin-page selector.
 type: design
 ---
-Admin panel ওয়েবসাইটের premium gradient glassmorphism follow করে।
+Admin panel ওয়েবসাইটের premium **Gradient Border Glassmorphism** style follow করে — প্রতিটা card-এ true gradient stroke (violet→cyan→pink) যা hover-এ আরও vivid হয়।
 
 ## Core utility classes (in src/index.css)
-- `.admin-gradient-bg` — animated radial blob background (violet/cyan/pink), supports dark themes
-- `.admin-glass-card` — premium glass card with hover lift + brand border glow
-- `.admin-glass-sidebar` — 36px blur sidebar with inset highlight
+
+### Surfaces (gradient border + glass)
+- `.admin-glass-card` — primary glass card with **gradient border** (double-background trick), hover lifts + intensifies stroke
+- `.admin-stat-card` — dashboard tile, gradient border, gradient sweep overlay, hover translateY(-3px)
+- `.admin-glass-sidebar` — 36px blur sidebar
 - `.admin-glass-header` — 28px blur sticky header
-- `.admin-nav-item` + `.active` — sidebar nav link with gradient pill + glowing left bar
-- `.admin-stat-card` — dashboard tile with hover lift + gradient sweep overlay
-- `.admin-section-title` — H2 with gradient accent bar (violet→cyan)
-- `.admin-icon-btn` — header/toolbar glass icon button
+- `.admin-icon-btn` — gradient-bordered glass icon button
+
+### Navigation
+- `.admin-nav-item` + `.active` — sidebar nav with gradient pill + glowing left bar
+- `.admin-section-title` — H2 with violet→cyan accent bar
+
+### Clarity utilities (NEW — for admin understanding)
+- `.admin-page-header` — page top section with gradient title + dashed bottom border
+- `.admin-page-title` — large gradient text (foreground→primary)
+- `.admin-page-subtitle` — muted helper line under title (max 60ch)
+- `.admin-field-label` — bold field label, supports `.req` span for red asterisk
+- `.admin-helper` — small muted helper text under inputs
+- `.admin-helper-icon` — pill helper with brand-tinted background
+- `.admin-info-card` — blue gradient-bordered callout
+- `.admin-warning-card` — amber gradient-bordered callout
+- `.admin-success-card` — green gradient-bordered callout
+
+## Gradient Border technique
+Uses CSS double-background trick:
+```css
+background:
+  linear-gradient(... white glass ...) padding-box,
+  linear-gradient(... brand→brand2→brand3 ...) border-box;
+border: 1.5px solid transparent;
+```
+This creates a true gradient stroke (no hack overlays).
 
 ## Auto-inheritance
-`body.admin-page` selector globally promotes `.glass-card`, tables, inputs, scrollbars to website-matched glassmorphism — meaning all 100+ admin pages inherit polished look without per-page edits.
+`body.admin-page .glass-card` selector globally promotes ALL `.glass-card` shadcn cards to gradient-border glass — meaning all 100+ admin pages inherit polished look without per-page edits.
 
 ## Theme support
-All tokens have `html[data-theme="dark-cyber"]` and `html[data-theme="midnight-purple"]` overrides for full theme toggle compatibility.
+All tokens have `html[data-theme="dark-cyber"]` and `html[data-theme="midnight-purple"]` overrides.
 
 ## Active page indicator
-Sidebar active item shows: gradient background (brand→brand2 16%/10% opacity), left vertical pill bar with violet glow, and primary text color.
-
-## Header
-- Page title in Sora font, breadcrumb has gradient text on current page
-- Notification bell uses gradient-to-br badge with white ring
-- All buttons use `admin-icon-btn` for consistency
+Sidebar active item: gradient bg (brand→brand2 18%/12%), 3px left pill bar with violet glow, primary text color.
