@@ -16,7 +16,9 @@ interface LiveSet {
   label: string;
   subtitle: string;
   icon_color: string;
+  icon?: string;
   is_active: boolean;
+  sort_order?: number;
 }
 
 interface LiveChatConfig {
