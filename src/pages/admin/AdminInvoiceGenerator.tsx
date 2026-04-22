@@ -282,8 +282,9 @@ const AdminInvoiceGenerator = () => {
                     <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '12px' }}>💳 Payment Info</div>
                     <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9 }}><span style={{ display: 'inline-block', minWidth: '62px' }}>Method:</span> <strong style={{ color: '#1a1a2e' }}>{PM_LABELS[paymentMethod] || paymentMethod}</strong></div>
                     {transactionId && <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px' }}><span style={{ display: 'inline-block', minWidth: '62px' }}>TrxID:</span> <span style={{ color: '#1a1a2e', fontFamily: 'monospace', background: '#e8e5f7', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', display: 'inline-block', lineHeight: 1.4 }}>{transactionId}</span></div>}
-                    <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px' }}>
-                      <span style={{ display: 'inline-block', minWidth: '62px' }}>Status:</span> <span style={{ background: brandColor, color: '#fff', padding: '3px 12px', borderRadius: '999px', fontSize: '11px', fontWeight: 600, display: 'inline-block', lineHeight: 1.4 }}>Paid</span>
+                    <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ display: 'inline-block', minWidth: '62px' }}>Status:</span>
+                      <span style={{ background: brandColor, color: '#ffffff', padding: '5px 14px', borderRadius: '999px', fontSize: '11px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', lineHeight: 1, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Paid</span>
                     </div>
                   </div>
                 </div>
@@ -292,11 +293,11 @@ const AdminInvoiceGenerator = () => {
                 <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
                   <thead>
                     <tr style={{ background: brandColor }}>
-                      <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'left' }}>#</th>
-                      <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'left' }}>পণ্যের নাম</th>
-                      <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'center' }}>পরিমাণ</th>
-                      <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'right' }}>দাম</th>
-                      <th style={{ color: '#fff', fontSize: '11px', textTransform: 'uppercase', padding: '12px 14px', textAlign: 'right' }}>মোট</th>
+                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'left', background: brandColor }}>#</th>
+                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'left', background: brandColor }}>পণ্যের নাম</th>
+                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'center', background: brandColor }}>পরিমাণ</th>
+                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'right', background: brandColor }}>দাম</th>
+                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'right', background: brandColor }}>মোট</th>
                     </tr>
                   </thead>
                   <tbody>
