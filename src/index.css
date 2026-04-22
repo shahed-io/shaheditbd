@@ -1518,6 +1518,65 @@ body.admin-page .border-b {
   border-color: hsl(var(--ad-border)) !important;
 }
 
+/* ══════════════════════════════════════
+   GLOBAL ROUNDED-CORNER POLISH (admin only)
+   Bumps every common Tailwind radius class up
+   one step for a softer, more premium look.
+   Matches user-dashboard pill aesthetic.
+══════════════════════════════════════ */
+body.admin-page .rounded { border-radius: 14px !important; }
+body.admin-page .rounded-sm { border-radius: 10px !important; }
+body.admin-page .rounded-md { border-radius: 14px !important; }
+body.admin-page .rounded-lg { border-radius: 18px !important; }
+body.admin-page .rounded-xl { border-radius: 22px !important; }
+body.admin-page .rounded-2xl { border-radius: 28px !important; }
+body.admin-page .rounded-3xl { border-radius: 32px !important; }
+
+/* Buttons — pill-ish by default */
+body.admin-page button:not(.rounded-full):not([class*="rounded-"]):not(.h-auto) {
+  border-radius: 12px;
+}
+body.admin-page button.bg-primary,
+body.admin-page button.bg-blue-600,
+body.admin-page button.bg-blue-500,
+body.admin-page button.bg-indigo-600,
+body.admin-page button.bg-violet-600,
+body.admin-page button.bg-purple-600 {
+  border-radius: 14px !important;
+}
+
+/* Inputs / selects / textareas — softer corners */
+body.admin-page input:not([type="checkbox"]):not([type="radio"]),
+body.admin-page select,
+body.admin-page textarea {
+  border-radius: 12px !important;
+}
+
+/* Cards & glass surfaces — large radius */
+body.admin-page .admin-glass-card,
+body.admin-page .glass-card,
+body.admin-page [class*="border"][class*="bg-card"],
+body.admin-page [class*="bg-white"][class*="border"] {
+  border-radius: 22px !important;
+}
+
+/* Badges — fully rounded pills */
+body.admin-page .badge,
+body.admin-page [class*="rounded-full"] {
+  border-radius: 9999px !important;
+}
+
+/* Tables — rounded outer container */
+body.admin-page table {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Dialog / popover / dropdown surfaces */
+body.admin-page [role="dialog"],
+body.admin-page [data-radix-popper-content-wrapper] > * {
+  border-radius: 22px !important;
+}
 
 
 /* ══════════════════════════════════════
