@@ -1672,6 +1672,31 @@ body.admin-page [data-radix-popper-content-wrapper] > * {
   border-radius: 22px !important;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   DUPLICATE PAGE-TITLE GUARD
+   AdminLayout auto-injects `.admin-page-header` (gradient hero
+   strip with title + icon + subtitle) above <Outlet />.
+   Many legacy admin pages still render their own inline H1 + icon
+   block at the very top → visible duplicate header (Quick Sale).
+   This rule hides that legacy top block while keeping all H1s
+   inside cards, tables, dialogs, and form sections intact.
+══════════════════════════════════════════════════════════════ */
+/* Case A: page root opens directly with an <h1> (rare) */
+body.admin-page main > .admin-page-header + div > h1:first-child,
+body.admin-page main > .admin-page-header + section > h1:first-child {
+  display: none !important;
+}
+/* Case B: page root's first child is a wrapper containing the title H1 */
+body.admin-page main > .admin-page-header + div > div:first-child:has(> h1:first-child),
+body.admin-page main > .admin-page-header + div > div:first-child:has(> div:first-child > h1) {
+  display: none !important;
+}
+/* Case C: header lives in a flex/justify-between row with extra meta on the right —
+   hide ONLY the left title sub-block, keep the right-side badge/buttons visible */
+body.admin-page main > .admin-page-header + div > div.flex:first-child:has(> div h1) > div:first-child {
+  display: none !important;
+}
+
 
 /* ══════════════════════════════════════
    INSTANT NAVIGATION — View Transitions
