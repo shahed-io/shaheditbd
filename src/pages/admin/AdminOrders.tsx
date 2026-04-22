@@ -1128,35 +1128,11 @@ const AdminOrders = () => {
                               <Truck size={14} />
                             </button>
                           )}
-                          {/* WhatsApp Invoice Button — works for any status */}
+                          {/* WhatsApp PDF Invoice Button — works for any status */}
                           {order.customer_phone && (
                             <button
-                              onClick={() => {
-                                const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
-                                if (!phone) { toast.error('ফোন নম্বর নেই'); return; }
-                                const statusLabel = STATUS_CONFIG[order.status]?.label || order.status;
-                                const itemsList = (order.order_items || []).map((i: any, idx: number) =>
-                                  `${idx + 1}. ${i.product_name} x${i.quantity} -- TK ${Number(i.total).toLocaleString()}${i.license_key ? '\n   Key: ' + i.license_key : ''}`
-                                ).join('\n');
-                                const msg = encodeURIComponent(
-                                  `SHAHED STORE\n` +
-                                  `________________________\n\n` +
-                                  `INVOICE #${order.order_number}\n` +
-                                  `Date: ${new Date(order.created_at).toLocaleDateString('bn-BD')}\n` +
-                                  `Status: ${statusLabel}\n\n` +
-                                  `Customer: ${order.customer_name}\n\n` +
-                                  `Products:\n${itemsList}\n\n` +
-                                  `________________________\n` +
-                                  (Number(order.discount_amount) > 0 ? `Subtotal: TK ${Number(order.subtotal).toLocaleString()}\nDiscount: -TK ${Number(order.discount_amount).toLocaleString()}\n` : '') +
-                                  `Total: TK ${Number(order.total).toLocaleString()}\n\n` +
-                                  `Payment: ${PM_LABELS[order.payment_method] || order.payment_method}` +
-                                  (order.transaction_id ? ` | TrxID: ${order.transaction_id}` : '') +
-                                  `\n\nThank you!\nwww.shahedstore.com.bd`
-                                );
-                                window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-                                toast.success('WhatsApp এ ইনভয়েস পাঠানো হচ্ছে...');
-                              }}
-                              title="WhatsApp এ ইনভয়েস পাঠান"
+                              onClick={() => sendOrderInvoicePdf(order)}
+                              title="WhatsApp এ PDF ইনভয়েস পাঠান"
                               className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
                               <FileText size={14} />
                             </button>
