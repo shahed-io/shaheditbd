@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Plus, Trash2, Printer, X, FileText, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import logoIcon from '@/assets/logo.png';
-import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
+import { downloadInvoicePdf, downloadInvoicePdfFromElement, type InvoiceData } from '@/lib/invoicePdf';
 
 interface InvoiceItem {
   id: string;
@@ -89,7 +89,12 @@ const AdminInvoiceGenerator = () => {
     };
     const tid = toast.loading('PDF তৈরি হচ্ছে...');
     try {
-      await downloadInvoicePdf(data);
+      // If preview modal is open, snapshot the live element for 1:1 parity
+      if (printRef.current && showPreview) {
+        await downloadInvoicePdfFromElement(printRef.current, `invoice-${invoiceNumber}.pdf`);
+      } else {
+        await downloadInvoicePdf(data);
+      }
       toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp/Email এ Attach করে পাঠান', { id: tid });
     } catch (e: any) {
       toast.error('সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
