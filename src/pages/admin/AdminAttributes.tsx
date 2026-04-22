@@ -348,7 +348,7 @@ const AdminAttributes = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-1 flex-shrink-0">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <button onClick={() => openEditAttr(attr)} className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
                       <Edit size={14} />
                     </button>
@@ -365,7 +365,7 @@ const AdminAttributes = () => {
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-semibold text-foreground">Values</p>
                       <button onClick={() => openNewVal(attr.id)}
-                        className="text-xs text-primary border border-primary/30 bg-primary/5 hover:bg-primary/10 px-2.5 py-1 rounded-lg flex items-center gap-1 transition-colors">
+                        className="text-xs text-primary border border-primary/30 bg-primary/5 hover:bg-primary/10 px-2.5 py-1 rounded-lg flex items-center gap-2 transition-colors">
                         <Plus size={11} /> Add Value
                       </button>
                     </div>

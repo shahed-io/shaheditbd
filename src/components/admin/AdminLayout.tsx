@@ -324,7 +324,7 @@ const AdminLayout = () => {
                             <>
                               <span className="flex-1 truncate">{item.label}</span>
                               {item.badge === 'live' && (
-                                <span className="flex items-center gap-1 text-[9px] font-bold text-violet-600 bg-violet-100 dark:bg-violet-900/40 dark:text-violet-300 px-1.5 py-0.5 rounded-md ring-1 ring-violet-300/40">
+                                <span className="flex items-center gap-2 text-[9px] font-bold text-violet-600 bg-violet-100 dark:bg-violet-900/40 dark:text-violet-300 px-1.5 py-0.5 rounded-md ring-1 ring-violet-300/40">
                                   <span className="w-1 h-1 rounded-full bg-violet-500 animate-pulse" /> LIVE
                                 </span>
                               )}
@@ -425,7 +425,7 @@ const AdminLayout = () => {
           {/* Page title + breadcrumb */}
           <div className="min-w-0 flex-1">
             {pageMeta.section && (
-              <div className="hidden sm:flex items-center gap-1 text-[10px] font-semibold text-violet-500/80 uppercase tracking-[1.2px]">
+              <div className="hidden sm:flex items-center gap-2 text-[10px] font-semibold text-violet-500/80 uppercase tracking-[1.2px]">
                 <span>{pageMeta.section}</span>
                 <ChevronRight size={10} />
                 <span style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{pageMeta.title}</span>

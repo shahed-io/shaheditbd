@@ -389,7 +389,7 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
           <div>
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">পণ্যসমূহ</p>
-              <button onClick={addItem} className="text-xs text-primary hover:underline flex items-center gap-1"><Plus size={11} /> যোগ করুন</button>
+              <button onClick={addItem} className="text-xs text-primary hover:underline flex items-center gap-2"><Plus size={11} /> যোগ করুন</button>
             </div>
             <div className="space-y-2">
               {items.map((item, idx) => (
@@ -928,11 +928,11 @@ const AdminOrders = () => {
             <span className="font-bold text-foreground">{orders.length}</span> মোট অর্ডার
           </p>
           {adminWhatsapp ? (
-            <span className="flex items-center gap-1 text-[11px] text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+            <span className="flex items-center gap-2 text-[11px] text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
               <MessageCircle size={10} /> WhatsApp সক্রিয়
             </span>
           ) : (
-            <span className="flex items-center gap-1 text-[11px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+            <span className="flex items-center gap-2 text-[11px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
               <Bell size={10} /> WhatsApp নম্বর দিন Settings-এ
             </span>
           )}
@@ -1011,7 +1011,7 @@ const AdminOrders = () => {
             <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="অর্ডার ID, নাম, ইমেইল, TrxID..."
-              className="w-full bg-muted/30 border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
+              className="w-full bg-muted/30 border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
           </div>
           <button onClick={() => setShowFilters(!showFilters)}
             className={`px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 border transition-all ${showFilters ? 'btn-glow border-transparent' : 'glass-card border-border text-muted-foreground hover:text-foreground'}`}>
@@ -1019,7 +1019,7 @@ const AdminOrders = () => {
             {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-primary" />}
           </button>
           {hasActiveFilters && (
-            <button onClick={resetFilters} className="px-3 py-2.5 rounded-xl text-xs text-muted-foreground hover:text-destructive glass-card border border-border transition-colors flex items-center gap-1">
+            <button onClick={resetFilters} className="px-3 py-2.5 rounded-xl text-xs text-muted-foreground hover:text-destructive glass-card border border-border transition-colors flex items-center gap-2">
               <X size={13} /> Reset
             </button>
           )}
@@ -1134,7 +1134,7 @@ const AdminOrders = () => {
                       <td className="px-4 py-3 hidden md:table-cell">
                         <div className="text-xs font-medium text-foreground">{PM_LABELS[order.payment_method] || order.payment_method}</div>
                         {order.transaction_id && (
-                          <div className="flex items-center gap-1 mt-0.5">
+                          <div className="flex items-center gap-2 mt-0.5">
                             <span className="font-mono text-[10px] text-muted-foreground">{order.transaction_id.slice(0, 8)}...</span>
                             <button onClick={() => copyTrx(order.transaction_id, order.id)} className="text-muted-foreground hover:text-primary">
                               {copiedTrx === order.id ? <Check size={10} className="text-primary" /> : <Copy size={10} />}
@@ -1155,7 +1155,7 @@ const AdminOrders = () => {
                         <div>{new Date(order.created_at).toLocaleTimeString('en-BD', { hour: '2-digit', minute: '2-digit' })}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-2">
                           {order.payment_status !== 'verified' && order.status === 'pending' && (
                             <button onClick={() => updateOrder(order.id, { payment_status: 'verified', status: 'processing' }, '✅ Verified!')}
                               title="পেমেন্ট ভেরিফাই"

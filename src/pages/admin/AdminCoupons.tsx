@@ -251,7 +251,7 @@ const AdminCoupons = () => {
                   </div>
                   {coupon.description && <p className="text-xs text-muted-foreground mt-0.5">{coupon.description}</p>}
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-2">
                   <button onClick={() => handleEdit(coupon)} className="p-1.5 text-muted-foreground hover:text-primary"><Edit size={14} /></button>
                   <button onClick={() => handleDelete(coupon.id)} className="p-1.5 text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
                 </div>

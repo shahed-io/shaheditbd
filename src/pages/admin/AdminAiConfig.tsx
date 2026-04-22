@@ -204,7 +204,7 @@ const AdminAiConfig = () => {
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           placeholder="Key খুঁজুন..."
-          className={inputCls + ' pl-14'}
+          className={inputCls + ' pl-16'}
         />
       </div>
 

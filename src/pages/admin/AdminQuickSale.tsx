@@ -114,8 +114,8 @@ const KEY_TYPES: Record<string, string> = {
   custom: '📝 Custom',
 };
 
-const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
-const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground transition-colors group-focus-within:text-primary';
+const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-16 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
+const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-4 flex w-12 items-center justify-center text-muted-foreground transition-colors group-focus-within:text-primary';
 
 const AdminQuickSale = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -486,7 +486,7 @@ const AdminQuickSale = () => {
                   {entry.product && <span className="text-xs text-muted-foreground">— {entry.product.name}</span>}
                   {entry.is_custom && entry.custom_name && <span className="text-xs text-muted-foreground">— {entry.custom_name} (কাস্টম)</span>}
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <button onClick={() => toggleCustomProduct(idx)}
                     title={entry.is_custom ? 'স্টোর প্রোডাক্ট ব্যবহার করুন' : 'কাস্টম প্রোডাক্ট তৈরি করুন'}
                     className={`p-1.5 rounded-md text-xs transition-all ${entry.is_custom ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-primary hover:bg-primary/5'}`}>
@@ -509,10 +509,10 @@ const AdminQuickSale = () => {
                       <div className="sm:col-span-9">
                         <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">কাস্টম প্রোডাক্ট নাম <span className="text-destructive">*</span></label>
                         <div className="relative group">
-                          <span className={cn(iconSlotClass, 'w-11')}><PenLine size={13} /></span>
+                          <span className={iconSlotClass}><PenLine size={13} /></span>
                           <input value={entry.custom_name} onChange={e => updateEntry(idx, { custom_name: e.target.value })}
                             placeholder="প্রোডাক্টের নাম লিখুন"
-                            className={cn(iconInputClass, 'pl-14')} />
+                            className={iconInputClass} />
                         </div>
                       </div>
                       <div className="sm:col-span-3">
@@ -560,13 +560,13 @@ const AdminQuickSale = () => {
                       ) : (
                         <>
                           <div className="relative group">
-                            <span className={cn(iconSlotClass, 'w-11')}><Search size={13} /></span>
+                            <span className={iconSlotClass}><Search size={13} /></span>
                             <input
                               value={activeIdx === idx ? productSearch : ''}
                               onChange={e => { setProductSearch(e.target.value); setActiveIdx(idx); }}
                               onFocus={() => { setActiveIdx(idx); }}
                               placeholder="প্রোডাক্ট নাম লিখে সার্চ করুন..."
-                              className={cn(iconInputClass, 'pl-14')}
+                              className={iconInputClass}
                             />
                           </div>
                           {activeIdx === idx && (
@@ -634,7 +634,7 @@ const AdminQuickSale = () => {
                       </div>
                       {entry.product && !entry.is_custom && (
                         <button onClick={() => openLicensePicker(idx)}
-                          className="text-[11px] px-2.5 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-all font-semibold flex items-center gap-1">
+                          className="text-[11px] px-2.5 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-all font-semibold flex items-center gap-2">
                           <Package size={10} /> স্টক থেকে নিন
                         </button>
                       )}
@@ -654,7 +654,7 @@ const AdminQuickSale = () => {
                       </div>
                     </div>
                     {entry.license && (
-                      <p className="text-[11px] text-primary mt-2 flex items-center gap-1 font-medium">
+                      <p className="text-[11px] text-primary mt-2 flex items-center gap-2 font-medium">
                         <CheckCircle2 size={11} /> স্টক থেকে সিলেক্ট করা হয়েছে
                       </p>
                     )}
@@ -832,7 +832,7 @@ const AdminQuickSale = () => {
                         </p>
                       )}
                       <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] text-primary font-semibold flex items-center gap-1">
+                        <span className="text-[10px] text-primary font-semibold flex items-center gap-2">
                           <CheckCircle2 size={10} /> ক্লিক করে সিলেক্ট করুন
                         </span>
                       </div>

@@ -241,7 +241,7 @@ const AdminCategories = () => {
                 <div className="flex items-center gap-2 mt-2">
                   {imagePreview && (
                     <button type="button" onClick={() => { setImagePreview(''); setImageFile(null); setForm({...form, image_url: ''}); }}
-                      className="text-xs text-destructive hover:underline flex items-center gap-1">
+                      className="text-xs text-destructive hover:underline flex items-center gap-2">
                       <X size={12} /> Remove
                     </button>
                   )}
@@ -375,7 +375,7 @@ const AdminCategories = () => {
                   <div className="text-xs text-muted-foreground">{cat.slug}</div>
                 </div>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-2">
                 <button onClick={() => handleEdit(cat)} className="p-1.5 text-muted-foreground hover:text-primary"><Edit size={14} /></button>
                 <button onClick={() => handleDelete(cat.id)} className="p-1.5 text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
               </div>

@@ -309,7 +309,7 @@ const ProductAttributesEditor = ({ productId }: Props) => {
                     <div className="min-h-[44px] flex flex-wrap gap-2 p-3 rounded-xl border border-border bg-muted/20 mb-2">
                       {a.selected_values.map(val => (
                         <span key={val}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border border-primary/30 text-primary bg-primary/10">
+                          className="flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium border border-primary/30 text-primary bg-primary/10">
                           {val}
                           <button onClick={() => removeValue(idx, val)} className="hover:text-destructive ml-0.5">
                             <X size={10} />
@@ -331,7 +331,7 @@ const ProductAttributesEditor = ({ productId }: Props) => {
                             return (
                               <button key={gv.id}
                                 onClick={() => isAdded ? removeValue(idx, gv.value) : addValue(idx, gv.value)}
-                                className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition-all ${
+                                className={`flex items-center gap-2 px-2.5 py-1 rounded-full text-xs border transition-all ${
                                   isAdded
                                     ? 'border-primary bg-primary/15 text-primary'
                                     : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/40'

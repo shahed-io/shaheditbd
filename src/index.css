@@ -1618,6 +1618,31 @@ body.admin-page input.pr-9  { padding-right: 2.25rem !important; }
 body.admin-page input.pr-10 { padding-right: 2.5rem !important; }
 body.admin-page input.pr-11 { padding-right: 2.75rem !important; }
 body.admin-page input.pr-12 { padding-right: 3rem !important; }
+body.admin-page .relative > input.pl-14,
+body.admin-page .relative > textarea.pl-14,
+body.admin-page .relative > [role="combobox"].pl-14,
+body.admin-page .relative > button.pl-14 {
+  padding-left: 3.75rem !important;
+}
+body.admin-page .relative > input.pl-16,
+body.admin-page .relative > textarea.pl-16,
+body.admin-page .relative > [role="combobox"].pl-16,
+body.admin-page .relative > button.pl-16 {
+  padding-left: 4.25rem !important;
+}
+body.admin-page .relative > .absolute.left-4.top-1\/2.-translate-y-1\/2 {
+  left: 1.125rem !important;
+}
+body.admin-page .relative > .absolute.left-3.top-1\/2.-translate-y-1\/2,
+body.admin-page .relative > .absolute.left-3\.5.top-1\/2.-translate-y-1\/2 {
+  left: 1rem !important;
+}
+body.admin-page .flex.items-center.gap-0\.5,
+body.admin-page .inline-flex.items-center.gap-0\.5,
+body.admin-page .flex.items-center.gap-1,
+body.admin-page .inline-flex.items-center.gap-1 {
+  gap: 0.5rem !important;
+}
 body.admin-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"])::placeholder,
 body.admin-page textarea::placeholder {
   color: hsl(var(--ad-text-subtle));

@@ -68,7 +68,7 @@ const AdminProductReviews = () => {
         <div className="relative flex-1 min-w-[200px]">
           <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="রিভিউ বা প্রোডাক্ট খুঁজুন..."
-            className="w-full bg-muted/30 border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
+            className="w-full bg-muted/30 border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary" />
         </div>
         {(['pending', 'approved', 'rejected', 'all'] as const).map(f => (
           <button key={f} onClick={() => setFilter(f)}
@@ -98,14 +98,14 @@ const AdminProductReviews = () => {
                   </span>
                 </div>
                 <a href={`/product/${r.product_slug}`} target="_blank" rel="noopener noreferrer"
-                  className="text-xs text-primary hover:underline flex items-center gap-1">
+                  className="text-xs text-primary hover:underline flex items-center gap-2">
                   {r.product_slug} <ExternalLink size={10} />
                 </a>
                 {r.title && <div className="text-sm font-semibold text-foreground">{r.title}</div>}
                 <p className="text-sm text-muted-foreground line-clamp-3">{r.body}</p>
                 <div className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString('bn-BD')}</div>
               </div>
-              <div className="flex items-center gap-1 flex-shrink-0">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 {r.status !== 'approved' && (
                   <button onClick={() => updateStatus(r.id, 'approved')}
                     className="p-2 rounded-xl bg-green-400/15 text-green-400 hover:bg-green-400/25 transition-colors" title="অনুমোদন করুন">

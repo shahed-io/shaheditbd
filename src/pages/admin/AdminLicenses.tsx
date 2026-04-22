@@ -833,7 +833,7 @@ const AdminLicenses = () => {
                         value={productSearch}
                         onChange={e => setProductSearch(e.target.value)}
                         placeholder="প্রোডাক্ট খুঁজুন..."
-                        className="w-full bg-muted/20 border border-border rounded-lg pl-14 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
+                        className="w-full bg-muted/20 border border-border rounded-lg pl-16 pr-4 py-1.5 text-xs focus:outline-none focus:border-primary"
                         autoFocus
                         onClick={e => e.stopPropagation()}
                       />
@@ -968,7 +968,7 @@ const AdminLicenses = () => {
                         value={bulkProductSearch}
                         onChange={e => setBulkProductSearch(e.target.value)}
                         placeholder="প্রোডাক্ট খুঁজুন..."
-                        className="w-full bg-muted/20 border border-border rounded-lg pl-14 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary"
+                        className="w-full bg-muted/20 border border-border rounded-lg pl-16 pr-4 py-1.5 text-xs focus:outline-none focus:border-primary"
                         autoFocus
                         onClick={e => e.stopPropagation()}
                       />
@@ -1250,7 +1250,7 @@ const AdminLicenses = () => {
           {(productNameQuery || onlyAvailable) && (
             <button
               onClick={() => { setProductNameQuery(''); setOnlyAvailable(false); }}
-              className="text-[11px] font-semibold text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
+              className="text-[11px] font-semibold text-muted-foreground hover:text-destructive flex items-center gap-2 transition-colors"
             >
               <X size={12} /> ক্লিয়ার করুন
             </button>
@@ -1264,7 +1264,7 @@ const AdminLicenses = () => {
               value={productNameQuery}
               onChange={e => setProductNameQuery(e.target.value)}
               placeholder="যেমন: Netflix, Canva, Windows 11..."
-              className="w-full bg-background border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="w-full bg-background border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
           </div>
           <label className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-background text-xs font-semibold cursor-pointer hover:border-primary/40 transition-all select-none">
@@ -1328,7 +1328,7 @@ const AdminLicenses = () => {
           <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Key, প্রোডাক্ট, কাস্টমার খুঁজুন..."
-            className="w-full bg-card border border-border rounded-xl pl-14 pr-4 py-2 text-sm focus:outline-none focus:border-primary" />
+            className="w-full bg-card border border-border rounded-xl pl-16 pr-4 py-2 text-sm focus:outline-none focus:border-primary" />
         </div>
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
           className="bg-card border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary">
@@ -1472,7 +1472,7 @@ const AdminLicenses = () => {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-2">
                           {/* Edit */}
                           <button onClick={() => openEditModal(lic)}
                             title="এডিট করুন"
@@ -1902,7 +1902,7 @@ const AdminLicenses = () => {
                   value={assignSearch}
                   onChange={e => searchOrders(e.target.value)}
                   placeholder="অর্ডার নম্বর / নাম / ইমেইল..."
-                  className="w-full bg-muted/20 border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary"
+                  className="w-full bg-muted/20 border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm focus:outline-none focus:border-primary"
                   autoFocus
                 />
                 {assignSearching && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-primary" />}
@@ -1929,7 +1929,7 @@ const AdminLicenses = () => {
                         <button
                           onClick={() => handleAssign(item.id)}
                           disabled={assigning}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all"
                           style={{ background: 'hsla(162,72%,46%,0.15)', color: 'hsl(162,72%,36%)' }}
                         >
                           {assigning ? <Loader2 size={10} className="animate-spin" /> : <UserPlus size={10} />}

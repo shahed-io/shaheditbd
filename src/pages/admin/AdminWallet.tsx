@@ -269,7 +269,7 @@ const AdminWallet = () => {
       <div className="grid lg:grid-cols-[1fr_380px] gap-6">
         {/* Left: Tabs */}
         <div className="space-y-4">
-          <div className="flex gap-1 p-1 rounded-xl bg-muted/30 border border-border w-fit">
+          <div className="flex gap-2 p-1 rounded-xl bg-muted/30 border border-border w-fit">
             {[
               { id: 'requests', label: `Requests${pendingCount > 0 ? ` (${pendingCount})` : ''}`, icon: Clock },
               { id: 'customers', label: 'Customers', icon: Users },
@@ -364,7 +364,7 @@ const AdminWallet = () => {
                   <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input value={search} onChange={e => setSearch(e.target.value)}
                     placeholder="Search by name or email..."
-                    className="w-full pl-14 pr-4 py-2.5 text-sm rounded-xl bg-muted/30 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
+                    className="w-full pl-16 pr-4 py-2.5 text-sm rounded-xl bg-muted/30 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
                 </div>
               </div>
               <div className="divide-y divide-border max-h-[500px] overflow-y-auto">

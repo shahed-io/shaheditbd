@@ -326,7 +326,7 @@ const AdminFacebookPixel = () => {
                       placeholder="যেমন: 1234567890123456"
                       className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors font-mono"
                     />
-                    <p className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-1">
+                    <p className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-2">
                       <Info size={11} />
                       Events Manager → আপনার Pixel → Settings থেকে Pixel ID পাবেন
                     </p>

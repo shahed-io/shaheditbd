@@ -197,7 +197,7 @@ const AdminResellerAccounts = () => {
                 placeholder="Search users..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="pl-14"
+                className="pl-16"
               />
             </div>
           </div>
@@ -233,7 +233,7 @@ const AdminResellerAccounts = () => {
                         {new Date(u.created_at).toLocaleDateString('en-US')}
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-2">
                           <Button variant="outline" size="sm" onClick={() => { setSelectedUser(u); setTopupOpen(true); }}>
                             <Wallet className="h-3.5 w-3.5 mr-1" /> Top Up
                           </Button>

@@ -122,7 +122,7 @@ const AdminAiAssistant = () => {
             <h2 className="font-semibold text-foreground text-sm">AI কন্ট্রোল সেন্টার</h2>
             <p className="text-[10px] text-muted-foreground truncate">চ্যাটের মাধ্যমে সম্পূর্ণ ওয়েবসাইট কন্ট্রোল করুন</p>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             {messages.length > 0 && (
               <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={() => setMessages([])}>
                 <Trash2 className="w-3 h-3 mr-1" /> ক্লিয়ার
@@ -191,7 +191,7 @@ const AdminAiAssistant = () => {
           {isLoading && (
             <div className="flex justify-start">
               <div className="bg-muted/50 border border-border rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-2">
-                <div className="flex gap-1">
+                <div className="flex gap-2">
                   <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -234,7 +234,7 @@ const AdminAiAssistant = () => {
           <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-card">
             <Eye className="w-4 h-4 text-muted-foreground" />
             <span className="text-xs font-medium text-foreground flex-1">লাইভ প্রিভিউ</span>
-            <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
+            <div className="flex items-center gap-2 bg-muted rounded-lg p-0.5">
               <button
                 onClick={() => setPreviewDevice('desktop')}
                 className={`p-1 rounded-md transition-colors ${previewDevice === 'desktop' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}

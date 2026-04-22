@@ -276,13 +276,13 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
                   {/* Display type */}
                   <div>
                     <label className={lc}>Display As</label>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2">
                       {DISPLAY_TYPES.map(dt => (
                         <button
                           key={dt.value}
                           type="button"
                           onClick={() => updateGroup(gi, { display_type: dt.value })}
-                          className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-xs font-medium border transition-colors ${
+                          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium border transition-colors ${
                             group.display_type === dt.value
                               ? 'border-primary bg-primary/15 text-primary'
                               : 'border-border bg-muted/20 text-muted-foreground hover:border-primary/40'
@@ -370,7 +370,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
                 <button
                   type="button"
                   onClick={() => addValue(gi)}
-                  className="text-xs text-primary/80 hover:text-primary flex items-center gap-1 mt-1 transition-colors"
+                  className="text-xs text-primary/80 hover:text-primary flex items-center gap-2 mt-1 transition-colors"
                 >
                   <Plus size={11} /> Add Value
                 </button>

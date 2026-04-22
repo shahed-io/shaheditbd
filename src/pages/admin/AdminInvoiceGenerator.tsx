@@ -246,7 +246,7 @@ const AdminInvoiceGenerator = () => {
           <div className="glass-card rounded-2xl p-5 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="font-semibold text-foreground text-sm">📦 পণ্য / সার্ভিস</h2>
-              <button onClick={addItem} className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 font-medium"><Plus size={14} /> আইটেম যোগ</button>
+              <button onClick={addItem} className="flex items-center gap-2 text-xs text-primary hover:text-primary/80 font-medium"><Plus size={14} /> আইটেম যোগ</button>
             </div>
 
             <div className="space-y-3">

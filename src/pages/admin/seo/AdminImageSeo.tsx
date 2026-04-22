@@ -60,7 +60,7 @@ const AdminImageSeo = () => {
         <div className="relative flex-1">
           <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products…"
-            className="w-full bg-background border border-border rounded-xl pl-14 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
+            className="w-full bg-background border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors" />
         </div>
         <div className="flex glass-card rounded-xl overflow-hidden border border-border">
           {(['all', 'missing'] as const).map(f => (
@@ -99,7 +99,7 @@ const AdminImageSeo = () => {
                       className="flex-1 bg-background border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                     <button onClick={() => save(p)} disabled={saving === p.id}
-                      className="flex-shrink-0 btn-glow px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 disabled:opacity-60">
+                      className="flex-shrink-0 btn-glow px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 disabled:opacity-60">
                       {saved === p.id ? <Check size={11} /> : saving === p.id ? <div className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : <Save size={11} />}
                       {saved === p.id ? 'Saved!' : 'Save'}
                     </button>
