@@ -521,6 +521,9 @@ const AdminLayout = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* Global Command Palette */}
+      <AdminCommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
     </div>
   );
 };
