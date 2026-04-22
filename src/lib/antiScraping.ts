@@ -186,36 +186,17 @@ export function installCopyDeterrents(): () => void {
     return false;
   };
 
-  const onContext = (e: MouseEvent) => {
-    if (isInteractive(e.target)) return;
-    e.preventDefault();
-  };
-
+  // Right-click context menu, keyboard shortcuts (F12, Ctrl+U/S/Shift+I/J/C),
+  // text selection — সব স্বাভাবিকভাবে কাজ করবে।
+  // শুধু image/video direct drag-save protection রাখা হয়েছে।
   const onDragStart = (e: DragEvent) => {
     const t = e.target as HTMLElement | null;
     if (t && (t.tagName === 'IMG' || t.tagName === 'VIDEO')) e.preventDefault();
   };
 
-  const onKeyDown = (e: KeyboardEvent) => {
-    // F12
-    if (e.key === 'F12') { e.preventDefault(); return; }
-    // Ctrl/Cmd + U  (view source)
-    if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); return; }
-    // Ctrl/Cmd + S  (save page)
-    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) { e.preventDefault(); return; }
-    // Ctrl/Cmd + Shift + I/J/C  (DevTools / inspector)
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','I','j','J','c','C'].includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
-  document.addEventListener('contextmenu', onContext);
   document.addEventListener('dragstart', onDragStart);
-  document.addEventListener('keydown', onKeyDown);
 
   return () => {
-    document.removeEventListener('contextmenu', onContext);
     document.removeEventListener('dragstart', onDragStart);
-    document.removeEventListener('keydown', onKeyDown);
   };
 }
