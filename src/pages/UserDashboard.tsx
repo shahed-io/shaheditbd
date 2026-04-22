@@ -1193,7 +1193,7 @@ const UserDashboard = () => {
                         const s = STATUS_MAP[order.status] || { label: order.status, color: 'text-muted-foreground bg-muted border-border', icon: null };
                         const isExpanded = expandedOrder === order.id;
                         const isWallet = order.payment_method === 'wallet';
-                        const pmLabel: Record<string, string> = { bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়', bkash_merchant: 'BKash Merchant', wallet: '💜 Wallet' };
+                        const pmLabel: Record<string, string> = { bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়', bkash_merchant: 'bKash Merchant', wallet: '💜 Wallet' };
                         return (
                           <div key={order.id} className="rounded-2xl overflow-hidden transition-all"
                             style={{ background: 'rgba(255,255,255,0.72)', border: isExpanded ? '1.5px solid hsla(258,78%,65%,0.4)' : '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(12px)', boxShadow: isExpanded ? '0 4px 20px hsla(258,78%,55%,0.10)' : 'none' }}>
@@ -2178,7 +2178,7 @@ const UserDashboard = () => {
                   <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid hsla(258,78%,75%,0.2)', backdropFilter: 'blur(8px)' }}>
                     <p className="text-sm font-bold mb-3 text-foreground">How to use your wallet?</p>
                     {[
-                      { n: '1', text: 'Top-up: Choose amount → Pay via BKash/Nagad → Enter TrxID' },
+                      { n: '1', text: 'Top-up: Choose amount → Pay via bKash/Nagad → Enter TrxID' },
                       { n: '2', text: 'Admin verifies payment and credits your wallet balance' },
                       { n: '3', text: 'At checkout, select "Wallet" as payment method to pay instantly' },
                     ].map(({ n, text }) => (

@@ -14,7 +14,7 @@ const KNOWN_PROVIDERS: Record<string, { name: string; icon: string; color: strin
   'gemini': { name: 'Google Gemini', icon: '🤖', color: '#4285F4', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/20', testType: 'gemini', link: 'https://aistudio.google.com/apikey', description: 'Google AI Studio থেকে API Key নিন' },
   'openai': { name: 'OpenAI (ChatGPT)', icon: '💬', color: '#10A37F', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/20', testType: 'openai', link: 'https://platform.openai.com/api-keys', description: 'OpenAI Dashboard থেকে API Key নিন' },
   'telegram': { name: 'Telegram Bot', icon: '📱', color: '#0088CC', bgColor: 'bg-sky-500/10', borderColor: 'border-sky-500/20', description: 'Telegram Bot Token' },
-  'bkash': { name: 'BKash Payment', icon: '💳', color: '#E2136E', bgColor: 'bg-pink-500/10', borderColor: 'border-pink-500/20', description: 'BKash Merchant API Credentials' },
+  'bkash': { name: 'bKash Payment', icon: '💳', color: '#E2136E', bgColor: 'bg-pink-500/10', borderColor: 'border-pink-500/20', description: 'bKash Merchant API Credentials' },
   'grahok': { name: 'Grahok SMS', icon: '📨', color: '#FF6B35', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/20', description: 'Grahok SMS API Credentials' },
   'admin': { name: 'Admin Credentials', icon: '🔐', color: '#8B5CF6', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20', description: 'Admin login credentials' },
   'supabase': { name: 'Supabase / System', icon: '⚙️', color: '#3ECF8E', bgColor: 'bg-green-500/10', borderColor: 'border-green-500/20', description: 'সিস্টেম লেভেল কনফিগারেশন (পরিবর্তন সাবধানে করুন)' },

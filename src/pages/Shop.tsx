@@ -208,7 +208,7 @@ const Shop = () => {
           : 'Buy Digital Software, License Keys & Subscriptions – Best Price in Bangladesh'}
         description={activeCategory
           ? `Buy original ${activeCategory.name} at the best price in Bangladesh. ১০০% genuine license key. Instant delivery. Shahed Store – Bangladesh's most trusted digital software shop.`
-          : 'Shop Windows 11, Office 365, Adobe CC, Netflix, Spotify, Antivirus, VPN & all digital software at the lowest price in Bangladesh. ১০০% genuine. Instant delivery. BKash/Nagad payment.'}
+          : 'Shop Windows 11, Office 365, Adobe CC, Netflix, Spotify, Antivirus, VPN & all digital software at the lowest price in Bangladesh. ১০০% genuine. Instant delivery. bKash/Nagad payment.'}
         canonical={activeCatSlug ? `https://shahedstore.com.bd/shop?category=${activeCatSlug}` : 'https://shahedstore.com.bd/shop'}
         keywords={activeCategory
           ? `${activeCategory.name} price in bangladesh, ${activeCategory.name} কিনুন, buy ${activeCategory.name} bangladesh, ${activeCategory.name} bd, shahed store`

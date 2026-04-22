@@ -59,7 +59,7 @@ const AdminInvoiceGenerator = () => {
   const total = Math.max(0, subtotal - discount);
 
   const PM_LABELS: Record<string, string> = {
-    bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়', bank: 'ব্যাংক ট্রান্সফার', cash: 'ক্যাশ', other: 'অন্যান্য',
+    bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়', bank: 'ব্যাংক ট্রান্সফার', cash: 'ক্যাশ', other: 'অন্যান্য',
   };
 
   const handlePreview = () => {

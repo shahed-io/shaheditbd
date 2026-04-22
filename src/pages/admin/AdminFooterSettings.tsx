@@ -127,8 +127,8 @@ const AdminFooterSettings = () => {
         <Field
           label="পেমেন্ট মেথড (কমা দিয়ে আলাদা করুন)"
           k="payment_methods"
-          placeholder="BKash,Nagad,Rocket,Upay,BKash Merchant"
-          hint="উদাহরণ: BKash,Nagad,Rocket — প্রতিটি নাম কমা দিয়ে আলাদা করুন"
+          placeholder="bKash,Nagad,Rocket,Upay,bKash Merchant"
+          hint="উদাহরণ: bKash,Nagad,Rocket — প্রতিটি নাম কমা দিয়ে আলাদা করুন"
         />
       </Section>
 

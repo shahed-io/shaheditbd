@@ -1052,7 +1052,7 @@ const ProductDetail = () => {
                       { icon: '⚡', text: 'Instant Digital Delivery — received within 5–30 minutes after payment' },
                       { icon: '🔒', text: 'Lifetime Activation — one-time purchase, no subscription needed' },
                       { icon: '🛡️', text: 'After-sales Support — our team is available 24/7 to help you activate' },
-                      { icon: '💳', text: 'Easy Payment — BKash, Nagad, Rocket, Card & more options available' },
+                      { icon: '💳', text: 'Easy Payment — bKash, Nagad, Rocket, Card & more options available' },
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-3"
                         style={{

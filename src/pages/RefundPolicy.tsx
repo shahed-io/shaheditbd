@@ -60,7 +60,7 @@ const RefundPolicy = () => (
         {[
           { n: '১', t: 'আবেদন দাখিল (২৪ ঘণ্টার মধ্যে)', d: 'অর্ডার নম্বর, সমস্যার বিবরণ ও স্ক্রিনশট সহ আবেদন করুন।' },
           { n: '২', t: 'যাচাই (১–৬ ঘণ্টা)', d: 'আমাদের টিম সমস্যাটি যাচাই করে সমাধান বা রিফান্ড অনুমোদন করবে।' },
-          { n: '৩', t: 'রিফান্ড প্রদান', d: 'BKash Online Payment-এ ১–২৪ ঘণ্টার মধ্যে। Gateway রিফান্ডের ক্ষেত্রে তাদের শর্ত অনুযায়ী সাধারণত ৩–৭ কার্যদিবস সময় প্রযোজ্য।' },
+          { n: '৩', t: 'রিফান্ড প্রদান', d: 'bKash Online Payment-এ ১–২৪ ঘণ্টার মধ্যে। Gateway রিফান্ডের ক্ষেত্রে তাদের শর্ত অনুযায়ী সাধারণত ৩–৭ কার্যদিবস সময় প্রযোজ্য।' },
         ].map(s => (
           <div key={s.n} className="flex items-start gap-3">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-black text-white"

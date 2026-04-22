@@ -86,8 +86,8 @@ const LICENSE_STATUS: Record<string, { label: string; color: string }> = {
 };
 
 const PM_LABELS: Record<string, string> = {
-  bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket',
-  upay: 'উপায়', bkash_merchant: 'BKash Merchant', wallet: 'Wallet',
+  bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket',
+  upay: 'উপায়', bkash_merchant: 'bKash Merchant', wallet: 'Wallet',
 };
 
 export default function AdminCustomers() {

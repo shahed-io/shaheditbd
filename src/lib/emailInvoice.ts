@@ -20,7 +20,7 @@ import html2canvas from 'html2canvas';
 import type { InvoiceData } from './invoicePdf';
 
 const PM_LABELS: Record<string, string> = {
-  bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়',
+  bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়',
   bank: 'Bank Transfer', cash: 'Cash', wallet: 'Wallet', free: 'Free', other: 'Other',
 };
 

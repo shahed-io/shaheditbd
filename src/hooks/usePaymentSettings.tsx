@@ -27,14 +27,14 @@ const SETTINGS_KEY = 'payment_methods_config';
 export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
   {
     id: 'bkash',
-    label: 'BKash',
+    label: 'bKash',
     number: '01820060046',
     type: 'Send Money',
     logoUrl: '',
     accentColor: 'hsl(338,90%,48%)',
     bgColor: 'hsla(338,90%,48%,0.07)',
     steps: [
-      'আপনার BKash অ্যাপ বা *247# ডায়াল করুন',
+      'আপনার bKash অ্যাপ বা *247# ডায়াল করুন',
       '"Send Money" অপশনটি সিলেক্ট করুন',
       'নম্বর বক্সে উপরের নম্বরটি পেস্ট করুন',
       'পরিমাণ লিখুন ও PIN দিয়ে কনফার্ম করুন',
@@ -107,14 +107,14 @@ export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
   },
   {
     id: 'bkash_merchant',
-    label: 'BKash Merchant',
+    label: 'bKash Merchant',
     number: '01840099853',
     type: 'Merchant Payment',
     logoUrl: '',
     accentColor: 'hsl(338,85%,42%)',
     bgColor: 'hsla(338,85%,42%,0.07)',
     steps: [
-      'আপনার BKash অ্যাপ বা *247# ডায়াল করুন',
+      'আপনার bKash অ্যাপ বা *247# ডায়াল করুন',
       '"Payment" অপশনটি সিলেক্ট করুন',
       'Merchant নম্বর বক্সে উপরের নম্বরটি পেস্ট করুন',
       'পরিমাণ লিখুন ও PIN দিয়ে কনফার্ম করুন',

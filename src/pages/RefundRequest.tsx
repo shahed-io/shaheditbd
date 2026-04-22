@@ -382,7 +382,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                   {[
                     { n: '১', t: 'আবেদন জমা (২৪ ঘণ্টার মধ্যে)', d: 'অর্ডার নম্বর, সমস্যার বিবরণ ও স্ক্রিনশট সহ ফর্ম পূরণ করুন।' },
                     { n: '২', t: 'যাচাই (১–৬ ঘণ্টা)', d: 'আমাদের টিম সমস্যাটি যাচাই করে সমাধান বা রিফান্ড অনুমোদন করবে।' },
-                    { n: '৩', t: 'রিফান্ড প্রদান', d: 'BKash Online Payment: ১–২৪ ঘণ্টার মধ্যে। Gateway রিফান্ড: তাদের শর্ত অনুযায়ী সাধারণত ৩–৭ কার্যদিবস।' },
+                    { n: '৩', t: 'রিফান্ড প্রদান', d: 'bKash Online Payment: ১–২৪ ঘণ্টার মধ্যে। Gateway রিফান্ড: তাদের শর্ত অনুযায়ী সাধারণত ৩–৭ কার্যদিবস।' },
                   ].map(s => (
                     <div key={s.n} className="flex items-start gap-3">
                       <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-black text-white"
@@ -564,7 +564,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                     <label className={labelCls} style={{ color: 'hsl(226,35%,28%)' }}>পেমেন্ট মাধ্যম</label>
                     <select value={form.payment_method} onChange={e => set('payment_method', e.target.value)} className={inputCls}>
                       <option value="">-- নির্বাচন করুন --</option>
-                      {['BKash', 'Nagad', 'Rocket', 'Upay', 'Bank Transfer', 'অন্যান্য'].map(m => <option key={m} value={m}>{m}</option>)}
+                      {['bKash', 'Nagad', 'Rocket', 'Upay', 'Bank Transfer', 'অন্যান্য'].map(m => <option key={m} value={m}>{m}</option>)}
                     </select>
                   </div>
                 </div>
@@ -713,7 +713,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
                         style={{ borderColor: !form.refund_account_type ? 'hsla(258,78%,55%,0.45)' : undefined }}
                       >
                         <option value="">-- নির্বাচন করুন --</option>
-                        {['BKash', 'Nagad', 'Rocket', 'Upay', 'Dutch Bangla Bank', 'Brac Bank', 'Dutch-Bangla Nexus', 'অন্যান্য ব্যাংক'].map(m => (
+                        {['bKash', 'Nagad', 'Rocket', 'Upay', 'Dutch Bangla Bank', 'Brac Bank', 'Dutch-Bangla Nexus', 'অন্যান্য ব্যাংক'].map(m => (
                           <option key={m} value={m}>{m}</option>
                         ))}
                       </select>
