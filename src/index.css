@@ -1315,13 +1315,13 @@ body.admin-page .bg-gray-100:not(.glass-card):not(button):not([data-glass-skip])
 body.admin-page .bg-slate-50:not(.glass-card):not(button):not([data-glass-skip]),
 body.admin-page .bg-slate-100:not(.glass-card):not(button):not([data-glass-skip]) {
   background:
-    linear-gradient(145deg, hsla(255, 255, 255, 0.7), hsla(255, 255, 255, 0.45)) !important;
-  border: 1px solid hsla(var(--ad-border), 0.6) !important;
+    linear-gradient(145deg, hsla(255, 255, 255, 0.92), hsla(255, 255, 255, 0.75)) !important;
+  border: 1px solid hsla(var(--ad-border), 0.85) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   box-shadow:
-    inset 0 1px 0 hsla(255, 255, 255, 0.6),
-    var(--ad-shadow-sm);
+    inset 0 1px 0 hsla(255, 255, 255, 0.85),
+    var(--ad-shadow-md) !important;
   border-radius: var(--ad-radius);
 }
 html[data-theme="dark-cyber"] body.admin-page .bg-white:not(.glass-card):not(button):not(input):not(textarea):not(select):not([role="combobox"]):not([data-glass-skip]),
