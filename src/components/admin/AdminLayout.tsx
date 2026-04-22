@@ -264,13 +264,13 @@ const AdminLayout = () => {
           <div className="px-3 pt-3 pb-1">
             <button
               onClick={() => { setCmdOpen(true); if (isMobile) setMobileSidebarOpen(false); }}
-              className="group w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-border/60 bg-gradient-to-br from-muted/40 to-muted/20 hover:from-orange-50/80 hover:to-orange-50/30 hover:border-orange-300/60 dark:hover:from-orange-950/20 dark:hover:to-orange-950/5 dark:hover:border-orange-700/40 transition-all"
+              className="group w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-violet-200/60 bg-white/60 hover:bg-white/90 hover:border-violet-300/80 dark:border-violet-800/40 dark:bg-violet-950/20 dark:hover:bg-violet-950/40 transition-all backdrop-blur-md"
             >
-              <Search size={14} className="text-muted-foreground group-hover:text-orange-500 transition-colors flex-shrink-0" strokeWidth={2.5} />
+              <Search size={14} className="text-violet-500 group-hover:text-violet-600 transition-colors flex-shrink-0" strokeWidth={2.5} />
               <span className="flex-1 text-left text-xs text-muted-foreground/90 group-hover:text-foreground transition-colors truncate">
                 Search anything…
               </span>
-              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-border/70 bg-background/80 font-mono text-[9px] font-bold text-muted-foreground flex-shrink-0">
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-violet-200/70 bg-white/80 dark:bg-violet-950/40 dark:border-violet-800/40 font-mono text-[9px] font-bold text-violet-600 dark:text-violet-400 flex-shrink-0">
                 ⌘K
               </kbd>
             </button>
