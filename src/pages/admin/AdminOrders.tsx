@@ -67,8 +67,8 @@ const PAYMENT_STATUS_COLORS: Record<string, string> = {
 };
 
 const PM_LABELS: Record<string, string> = {
-  bkash: 'bKash', nagad: 'Nagad', rocket: 'Rocket',
-  upay: 'উপায়', bkash_merchant: 'bKash Merchant',
+  bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket',
+  upay: 'উপায়', bkash_merchant: 'BKash Merchant',
 };
 
 const inputCls = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors";

@@ -76,7 +76,7 @@ const ReturnPolicy = () => (
     <SectionCard icon={<AlertTriangle size={15} />} title="৫. রিফান্ড শর্তাবলী" accentFrom={A} accentTo={B}>
       <ul className="space-y-1.5">
         <Bullet color="hsl(38,92%,38%)">
-          <strong>bKash Online Payment রিফান্ড:</strong> ১–২৪ ঘণ্টার মধ্যে প্রদান করা হয়।
+          <strong>BKash Online Payment রিফান্ড:</strong> ১–২৪ ঘণ্টার মধ্যে প্রদান করা হয়।
         </Bullet>
         <Bullet color="hsl(38,92%,38%)">
           <strong>Gateway রিফান্ড:</strong> তাদের শর্ত অনুযায়ী সাধারণত ৩–৭ কার্যদিবস সময় লাগে।
