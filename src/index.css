@@ -840,58 +840,81 @@ html[data-theme="midnight-purple"] .admin-gradient-bg {
   50%      { transform: translate(30px, -20px) scale(1.05); }
 }
 
-/* ── Glass Surfaces ─────────────────────────── */
+/* ══════════════════════════════════════
+   GRADIENT BORDER CARD SYSTEM (admin-wide)
+   Uses double-background trick for a true
+   gradient stroke around a glass surface.
+══════════════════════════════════════ */
 .admin-glass-card {
-  background: linear-gradient(145deg, hsla(0,0%,100%,0.72) 0%, hsla(0,0%,100%,0.55) 100%);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.22);
+  position: relative;
+  background:
+    linear-gradient(145deg, hsla(0,0%,100%,0.78) 0%, hsla(0,0%,100%,0.55) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 65%, 0.55) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 60%, 0.35) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 60%, 0.45) 100%
+    ) border-box;
+  border: 1.5px solid transparent;
+  backdrop-filter: blur(28px) saturate(185%);
+  -webkit-backdrop-filter: blur(28px) saturate(185%);
   border-radius: 1rem;
   box-shadow:
-    0 4px 24px hsla(226, 35%, 12%, 0.06),
+    0 6px 28px hsla(226, 35%, 12%, 0.07),
     0 1px 4px hsla(226, 35%, 12%, 0.04),
-    inset 0 1px 0 hsla(0, 0%, 100%, 0.7);
-  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.75);
+  transition: box-shadow 0.28s ease, transform 0.28s ease, background 0.28s ease;
 }
 .admin-glass-card:hover {
-  border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.35);
+  transform: translateY(-1px);
+  background:
+    linear-gradient(145deg, hsla(0,0%,100%,0.85) 0%, hsla(0,0%,100%,0.62) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 60%, 0.85) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 55%, 0.6) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 55%, 0.7) 100%
+    ) border-box;
   box-shadow:
-    0 8px 32px hsla(var(--brand-h), var(--brand-s), 50%, 0.10),
+    0 14px 40px hsla(var(--brand-h), var(--brand-s), 50%, 0.14),
     0 2px 8px hsla(226, 35%, 12%, 0.06),
-    inset 0 1px 0 hsla(0, 0%, 100%, 0.8);
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.85);
 }
 html[data-theme="dark-cyber"] .admin-glass-card,
 html[data-theme="midnight-purple"] .admin-glass-card {
-  background: linear-gradient(145deg, hsla(260,40%,12%,0.65) 0%, hsla(260,40%,9%,0.55) 100%);
-  border-color: hsla(var(--brand-h), var(--brand-s), 60%, 0.20);
+  background:
+    linear-gradient(145deg, hsla(260,40%,13%,0.72) 0%, hsla(260,40%,9%,0.55) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 60%, 0.55) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 55%, 0.35) 50%,
+      hsla(var(--brand3-h), var(--brand3-s), 55%, 0.45) 100%
+    ) border-box;
 }
 
 .admin-glass-sidebar {
-  background: linear-gradient(180deg, hsla(0,0%,100%,0.78) 0%, hsla(0,0%,100%,0.62) 100%);
+  background: linear-gradient(180deg, hsla(0,0%,100%,0.82) 0%, hsla(0,0%,100%,0.65) 100%);
   backdrop-filter: blur(36px) saturate(200%);
   -webkit-backdrop-filter: blur(36px) saturate(200%);
-  border-right: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.18);
+  border-right: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.22);
   box-shadow:
-    4px 0 32px hsla(var(--brand-h), var(--brand-s), 50%, 0.06),
+    4px 0 32px hsla(var(--brand-h), var(--brand-s), 50%, 0.07),
     inset -1px 0 0 hsla(0, 0%, 100%, 0.6);
 }
 html[data-theme="dark-cyber"] .admin-glass-sidebar,
 html[data-theme="midnight-purple"] .admin-glass-sidebar {
-  background: linear-gradient(180deg, hsla(260,40%,11%,0.78) 0%, hsla(260,40%,8%,0.65) 100%);
-  border-right-color: hsla(var(--brand-h), var(--brand-s), 50%, 0.18);
+  background: linear-gradient(180deg, hsla(260,40%,11%,0.82) 0%, hsla(260,40%,8%,0.68) 100%);
+  border-right-color: hsla(var(--brand-h), var(--brand-s), 50%, 0.20);
 }
 
 .admin-glass-header {
-  background: linear-gradient(180deg, hsla(0,0%,100%,0.78) 0%, hsla(0,0%,100%,0.55) 100%);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border-bottom: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.18);
+  background: linear-gradient(180deg, hsla(0,0%,100%,0.82) 0%, hsla(0,0%,100%,0.6) 100%);
+  backdrop-filter: blur(28px) saturate(185%);
+  -webkit-backdrop-filter: blur(28px) saturate(185%);
+  border-bottom: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.2);
   box-shadow: 0 2px 20px hsla(226, 35%, 12%, 0.04);
 }
 html[data-theme="dark-cyber"] .admin-glass-header,
 html[data-theme="midnight-purple"] .admin-glass-header {
-  background: linear-gradient(180deg, hsla(260,40%,12%,0.78) 0%, hsla(260,40%,9%,0.55) 100%);
-  border-bottom-color: hsla(var(--brand-h), var(--brand-s), 50%, 0.18);
+  background: linear-gradient(180deg, hsla(260,40%,12%,0.82) 0%, hsla(260,40%,9%,0.6) 100%);
+  border-bottom-color: hsla(var(--brand-h), var(--brand-s), 50%, 0.2);
 }
 
 /* ── Sidebar Nav Item — Active Pill ───────────── */
@@ -913,13 +936,13 @@ html[data-theme="midnight-purple"] .admin-glass-header {
 }
 .admin-nav-item.active {
   background: linear-gradient(135deg,
-    hsla(var(--brand-h), var(--brand-s), 60%, 0.16) 0%,
-    hsla(var(--brand2-h), var(--brand2-s), 55%, 0.10) 100%);
+    hsla(var(--brand-h), var(--brand-s), 60%, 0.18) 0%,
+    hsla(var(--brand2-h), var(--brand2-s), 55%, 0.12) 100%);
   color: hsl(var(--primary));
   font-weight: 600;
   box-shadow:
     inset 0 1px 0 hsla(0, 0%, 100%, 0.6),
-    0 1px 8px hsla(var(--brand-h), var(--brand-s), 55%, 0.10);
+    0 1px 8px hsla(var(--brand-h), var(--brand-s), 55%, 0.12);
 }
 .admin-nav-item.active::before {
   content: '';
@@ -934,43 +957,58 @@ html[data-theme="midnight-purple"] .admin-glass-header {
   box-shadow: 0 0 8px hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.5);
 }
 
-/* ── Stat Card variant for dashboard tiles ────── */
+/* ── Stat Card — Gradient Border + Glass ──────── */
 .admin-stat-card {
-  background: linear-gradient(145deg, hsla(0,0%,100%,0.78) 0%, hsla(0,0%,100%,0.58) 100%);
+  position: relative;
+  background:
+    linear-gradient(145deg, hsla(0,0%,100%,0.82) 0%, hsla(0,0%,100%,0.6) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 65%, 0.6) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 60%, 0.4) 100%
+    ) border-box;
+  border: 1.5px solid transparent;
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.22);
   border-radius: 1rem;
   padding: 1.1rem;
   box-shadow:
     0 4px 20px hsla(226, 35%, 12%, 0.05),
     inset 0 1px 0 hsla(0, 0%, 100%, 0.7);
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 .admin-stat-card::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, hsla(var(--brand-h),var(--brand-s),60%,0.06) 0%, transparent 60%);
+  background: linear-gradient(135deg, hsla(var(--brand-h),var(--brand-s),60%,0.07) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.22s ease;
   pointer-events: none;
+  border-radius: inherit;
 }
 .admin-stat-card:hover {
-  transform: translateY(-2px);
-  border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.4);
+  transform: translateY(-3px);
+  background:
+    linear-gradient(145deg, hsla(0,0%,100%,0.88) 0%, hsla(0,0%,100%,0.65) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 58%, 0.9) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 55%, 0.65) 100%
+    ) border-box;
   box-shadow:
-    0 12px 36px hsla(var(--brand-h), var(--brand-s), 50%, 0.12),
+    0 16px 40px hsla(var(--brand-h), var(--brand-s), 50%, 0.14),
     0 2px 8px hsla(226, 35%, 12%, 0.06),
-    inset 0 1px 0 hsla(0, 0%, 100%, 0.8);
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.85);
 }
 .admin-stat-card:hover::after { opacity: 1; }
 html[data-theme="dark-cyber"] .admin-stat-card,
 html[data-theme="midnight-purple"] .admin-stat-card {
-  background: linear-gradient(145deg, hsla(260,40%,13%,0.7) 0%, hsla(260,40%,9%,0.55) 100%);
-  border-color: hsla(var(--brand-h), var(--brand-s), 55%, 0.2);
+  background:
+    linear-gradient(145deg, hsla(260,40%,14%,0.75) 0%, hsla(260,40%,9%,0.58) 100%) padding-box,
+    linear-gradient(135deg,
+      hsla(var(--brand-h), var(--brand-s), 60%, 0.55) 0%,
+      hsla(var(--brand2-h), var(--brand2-s), 55%, 0.35) 100%
+    ) border-box;
 }
 
 /* ── Section heading accent bar ───────────────── */
@@ -994,6 +1032,135 @@ html[data-theme="midnight-purple"] .admin-stat-card {
   box-shadow: 0 0 8px hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.4);
 }
 
+/* ── Page header (title + helper subtitle) ───── */
+.admin-page-header {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed hsla(var(--brand-h), var(--brand-s), 65%, 0.25);
+}
+.admin-page-header h1,
+.admin-page-header .admin-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--primary)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.25rem 0;
+}
+.admin-page-header .admin-page-subtitle {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.5;
+  max-width: 60ch;
+}
+
+/* ── Helper text under form fields ───────────── */
+.admin-helper {
+  display: block;
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.4;
+}
+.admin-helper-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.5rem;
+  background: hsla(var(--brand-h), var(--brand-s), 70%, 0.08);
+  border: 1px solid hsla(var(--brand-h), var(--brand-s), 70%, 0.18);
+}
+
+/* ── Field label (clear bold) ───────────────── */
+.admin-field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin-bottom: 0.4rem;
+}
+.admin-field-label .req {
+  color: hsl(var(--destructive));
+  font-weight: 700;
+}
+
+/* ── Info / Tip callout cards ───────────────── */
+.admin-info-card {
+  position: relative;
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  background:
+    linear-gradient(135deg,
+      hsla(210, 90%, 96%, 0.85) 0%,
+      hsla(210, 90%, 92%, 0.7) 100%) padding-box,
+    linear-gradient(135deg, hsla(210,90%,55%,0.55), hsla(210,90%,45%,0.3)) border-box;
+  border: 1.5px solid transparent;
+  color: hsl(210, 60%, 25%);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.admin-warning-card {
+  background:
+    linear-gradient(135deg,
+      hsla(38, 95%, 95%, 0.88) 0%,
+      hsla(38, 95%, 90%, 0.7) 100%) padding-box,
+    linear-gradient(135deg, hsla(38,95%,55%,0.55), hsla(28,95%,50%,0.3)) border-box;
+  border: 1.5px solid transparent;
+  color: hsl(28, 70%, 28%);
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.admin-success-card {
+  background:
+    linear-gradient(135deg,
+      hsla(150, 70%, 94%, 0.88) 0%,
+      hsla(150, 70%, 88%, 0.7) 100%) padding-box,
+    linear-gradient(135deg, hsla(150,70%,45%,0.55), hsla(160,70%,40%,0.3)) border-box;
+  border: 1.5px solid transparent;
+  color: hsl(150, 60%, 22%);
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+html[data-theme="dark-cyber"] .admin-info-card,
+html[data-theme="midnight-purple"] .admin-info-card {
+  background:
+    linear-gradient(135deg, hsla(210,60%,14%,0.7) 0%, hsla(210,60%,11%,0.6) 100%) padding-box,
+    linear-gradient(135deg, hsla(210,90%,55%,0.5), hsla(210,90%,45%,0.25)) border-box;
+  color: hsl(210, 60%, 80%);
+}
+html[data-theme="dark-cyber"] .admin-warning-card,
+html[data-theme="midnight-purple"] .admin-warning-card {
+  background:
+    linear-gradient(135deg, hsla(38,60%,14%,0.7) 0%, hsla(38,60%,11%,0.6) 100%) padding-box,
+    linear-gradient(135deg, hsla(38,95%,55%,0.5), hsla(28,95%,50%,0.25)) border-box;
+  color: hsl(38, 80%, 78%);
+}
+html[data-theme="dark-cyber"] .admin-success-card,
+html[data-theme="midnight-purple"] .admin-success-card {
+  background:
+    linear-gradient(135deg, hsla(150,60%,14%,0.7) 0%, hsla(150,60%,11%,0.6) 100%) padding-box,
+    linear-gradient(135deg, hsla(150,70%,45%,0.5), hsla(160,70%,40%,0.25)) border-box;
+  color: hsl(150, 60%, 78%);
+}
+
 /* ── Glass icon button (header / toolbar) ─────── */
 .admin-icon-btn {
   display: inline-flex;
@@ -1001,23 +1168,25 @@ html[data-theme="midnight-purple"] .admin-stat-card {
   justify-content: center;
   padding: 0.5rem;
   border-radius: 0.75rem;
-  background: hsla(0, 0%, 100%, 0.6);
+  background:
+    linear-gradient(145deg, hsla(0,0%,100%,0.7) 0%, hsla(0,0%,100%,0.5) 100%) padding-box,
+    linear-gradient(135deg, hsla(var(--brand-h),var(--brand-s),65%,0.5), hsla(var(--brand2-h),var(--brand2-s),60%,0.3)) border-box;
+  border: 1.5px solid transparent;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid hsla(var(--brand-h), var(--brand-s), 75%, 0.2);
   color: hsl(var(--muted-foreground));
   transition: all 0.18s ease;
 }
 .admin-icon-btn:hover {
-  border-color: hsla(var(--brand-h), var(--brand-s), 60%, 0.45);
   color: hsl(var(--primary));
-  box-shadow: 0 4px 16px hsla(var(--brand-h), var(--brand-s), 55%, 0.12);
+  box-shadow: 0 6px 20px hsla(var(--brand-h), var(--brand-s), 55%, 0.18);
   transform: translateY(-1px);
 }
 html[data-theme="dark-cyber"] .admin-icon-btn,
 html[data-theme="midnight-purple"] .admin-icon-btn {
-  background: hsla(260, 40%, 14%, 0.6);
-  border-color: hsla(var(--brand-h), var(--brand-s), 55%, 0.22);
+  background:
+    linear-gradient(145deg, hsla(260,40%,14%,0.7) 0%, hsla(260,40%,10%,0.5) 100%) padding-box,
+    linear-gradient(135deg, hsla(var(--brand-h),var(--brand-s),60%,0.5), hsla(var(--brand2-h),var(--brand2-s),55%,0.3)) border-box;
 }
 
 .hero-bg {
