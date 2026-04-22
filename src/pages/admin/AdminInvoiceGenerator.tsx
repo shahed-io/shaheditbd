@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Plus, Trash2, Printer, X, FileText, Save } from 'lucide-react';
+import { Plus, Trash2, Printer, X, FileText, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import logoIcon from '@/assets/logo.png';
+import { sendInvoiceViaWhatsApp, type InvoiceData } from '@/lib/invoicePdf';
 
 interface InvoiceItem {
   id: string;
