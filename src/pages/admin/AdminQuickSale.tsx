@@ -453,38 +453,38 @@ const AdminQuickSale = () => {
               <div className="p-4 space-y-3">
                 {entry.is_custom ? (
                   /* Custom product inputs */
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                    <div className="sm:col-span-6">
-                      <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">কাস্টম প্রোডাক্ট নাম <span className="text-destructive">*</span></label>
-                      <div className="relative group">
-                        <PenLine size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                        <input value={entry.custom_name} onChange={e => updateEntry(idx, { custom_name: e.target.value })}
-                          placeholder="প্রোডাক্টের নাম লিখুন"
-                          className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                      <div className="sm:col-span-9">
+                        <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">কাস্টম প্রোডাক্ট নাম <span className="text-destructive">*</span></label>
+                        <div className="relative group">
+                          <PenLine size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <input value={entry.custom_name} onChange={e => updateEntry(idx, { custom_name: e.target.value })}
+                            placeholder="প্রোডাক্টের নাম লিখুন"
+                            className="w-full bg-background border border-border rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-3">
+                        <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">পরিমাণ</label>
+                        <div className="flex items-center bg-background border border-border rounded-lg overflow-hidden">
+                          <button onClick={() => updateEntry(idx, { quantity: Math.max(1, entry.quantity - 1) })}
+                            className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-r border-border">
+                            <Minus size={13} />
+                          </button>
+                          <span className="flex-1 text-center text-sm font-bold tabular-nums">{entry.quantity}</span>
+                          <button onClick={() => updateEntry(idx, { quantity: entry.quantity + 1 })}
+                            className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-l border-border">
+                            <Plus size={13} />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="sm:col-span-3">
-                      <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">মূল্য (৳)</label>
-                      <div className="relative group">
-                        <DollarSign size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                        <input type="number" value={entry.custom_price} onChange={e => updateEntry(idx, { custom_price: Number(e.target.value) })}
-                          className="w-full bg-background border border-border rounded-lg pl-8 pr-3 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                      </div>
-                    </div>
-                    <div className="sm:col-span-3">
-                      <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">পরিমাণ</label>
-                      <div className="flex items-center bg-background border border-border rounded-lg overflow-hidden">
-                        <button onClick={() => updateEntry(idx, { quantity: Math.max(1, entry.quantity - 1) })}
-                          className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-r border-border">
-                          <Minus size={13} />
-                        </button>
-                        <span className="flex-1 text-center text-sm font-bold tabular-nums">{entry.quantity}</span>
-                        <button onClick={() => updateEntry(idx, { quantity: entry.quantity + 1 })}
-                          className="px-3 py-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border-l border-border">
-                          <Plus size={13} />
-                        </button>
-                      </div>
-                    </div>
+                    <PriceDiscountFields
+                      entry={entry}
+                      onOriginalChange={(v) => updateOriginalPrice(idx, v)}
+                      onDiscountAmountChange={(v) => updateDiscountAmount(idx, v)}
+                      onDiscountPercentChange={(v) => updateDiscountPercent(idx, v)}
+                    />
                   </div>
                 ) : (
                   /* Store product selector */
