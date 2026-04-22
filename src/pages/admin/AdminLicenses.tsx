@@ -118,6 +118,13 @@ const AdminLicenses = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
 
+  // ── Bulk WhatsApp Delivery States ──
+  const [bulkWaModal, setBulkWaModal] = useState(false);
+  const [bulkWaPhone, setBulkWaPhone] = useState('');
+  const [bulkWaCustomerName, setBulkWaCustomerName] = useState('');
+  const [bulkWaOrderNumber, setBulkWaOrderNumber] = useState('');
+  const [bulkWaSending, setBulkWaSending] = useState(false);
+
   // ── Product Search Mode (NEW) ──
   // Quickly find which products have available licenses by searching product name.
   const [productNameQuery, setProductNameQuery] = useState('');
@@ -557,7 +564,77 @@ const AdminLicenses = () => {
       .eq('id', lic.id);
 
     toast.success('WhatsApp এ ডেলিভারি হয়েছে!');
-    setWaModal({ open: false, license: null, phone: '' });
+  };
+
+  // ── Bulk WhatsApp Delivery: একসাথে অনেক license এক customer-এর WhatsApp এ পাঠান ──
+  const openBulkWaModal = () => {
+    if (selectedIds.size === 0) return toast.error('আগে license সিলেক্ট করুন');
+    const selectedLics = licenses.filter(l => selectedIds.has(l.id));
+    // pre-fill phone/name/order from first license that has customer info
+    const withCustomer = selectedLics.find(l => l.customer_phone || l.customer_name);
+    setBulkWaPhone(withCustomer?.customer_phone || '');
+    setBulkWaCustomerName(withCustomer?.customer_name || '');
+    setBulkWaOrderNumber(withCustomer?.order_number || '');
+    setBulkWaModal(true);
+  };
+
+  const handleBulkWhatsAppSend = async () => {
+    if (!bulkWaPhone.trim()) return toast.error('ফোন নম্বর দিন');
+    const selectedLics = licenses.filter(l => selectedIds.has(l.id));
+    if (selectedLics.length === 0) return toast.error('কোনো license সিলেক্টেড নেই');
+
+    setBulkWaSending(true);
+    const phone = bulkWaPhone.replace(/\D/g, '').replace(/^0/, '880');
+    const batchId = (crypto as any).randomUUID ? (crypto as any).randomUUID() : `batch-${Date.now()}`;
+
+    // Build single combined WhatsApp message
+    let msg = `*SHAHED STORE*\n`;
+    msg += `________________________\n\n`;
+    msg += `*Bulk License Delivery*\n`;
+    if (bulkWaCustomerName.trim()) msg += `Customer: *${bulkWaCustomerName.trim()}*\n`;
+    if (bulkWaOrderNumber.trim()) msg += `Order: #${bulkWaOrderNumber.trim()}\n`;
+    msg += `Total Items: *${selectedLics.length}*\n`;
+    msg += `\n________________________\n\n`;
+
+    selectedLics.forEach((lic, idx) => {
+      const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label?.replace(/^[^\w\s]+\s*/, '') || lic.key_type;
+      msg += `*${idx + 1}. ${lic.product_name}*\n`;
+      msg += `Type: ${typeLabel}\n`;
+      msg += `Email/Key:\n\`${lic.key_value}\`\n`;
+      if (lic.extra_info) msg += `Password:\n\`${lic.extra_info}\`\n`;
+      msg += `________________________\n\n`;
+    });
+
+    msg += `Thank you for choosing *Shahed Store*\n`;
+    msg += `_www.shahedstore.com.bd_`;
+
+    // Open WhatsApp
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+
+    // Mark all as whatsapp_delivered with batch id
+    const { error } = await supabase
+      .from('license_keys')
+      .update({
+        status: 'whatsapp_delivered',
+        assigned_at: new Date().toISOString(),
+        delivered_to_phone: phone,
+        delivery_batch_id: batchId,
+      } as any)
+      .in('id', selectedLics.map(l => l.id));
+
+    setBulkWaSending(false);
+    if (error) {
+      toast.error('Status আপডেট ব্যর্থ: ' + error.message);
+      return;
+    }
+
+    toast.success(`${selectedLics.length}টি license একসাথে WhatsApp এ ডেলিভারি হয়েছে!`);
+    setBulkWaModal(false);
+    setBulkWaPhone('');
+    setBulkWaCustomerName('');
+    setBulkWaOrderNumber('');
+    setSelectedIds(new Set());
     fetchAll();
   };
 
@@ -1277,10 +1354,15 @@ const AdminLicenses = () => {
             {filtered.length} টি license key দেখানো হচ্ছে
           </span>
           {selectedIds.size > 0 && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="text-xs font-bold text-primary">{selectedIds.size}টি সিলেক্টেড</span>
               <button onClick={() => setSelectedIds(new Set())}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors">সব বাদ দিন</button>
+              <button onClick={openBulkWaModal}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-all">
+                <MessageCircle size={12} />
+                WhatsApp এ পাঠান ({selectedIds.size})
+              </button>
               <button onClick={handleBulkDelete} disabled={bulkDeleting}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all">
                 {bulkDeleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
@@ -1613,7 +1695,118 @@ const AdminLicenses = () => {
         </div>
       )}
 
-      {/* Edit License Modal */}
+      {/* Bulk WhatsApp Delivery Modal — একসাথে অনেক product একই WhatsApp এ */}
+      {bulkWaModal && (() => {
+        const selectedLics = licenses.filter(l => selectedIds.has(l.id));
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => !bulkWaSending && setBulkWaModal(false)}>
+            <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between p-5 border-b border-border">
+                <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                  <MessageCircle size={18} className="text-green-500" />
+                  Bulk WhatsApp Delivery
+                  <Badge className="ml-2 bg-green-500/10 text-green-600 border-0 text-xs">{selectedLics.length}টি Product</Badge>
+                </h3>
+                <button onClick={() => !bulkWaSending && setBulkWaModal(false)}
+                  className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 overflow-y-auto flex-1 space-y-4">
+                {/* Customer Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">কাস্টমারের নাম (অপশনাল)</label>
+                    <input
+                      type="text"
+                      value={bulkWaCustomerName}
+                      onChange={e => setBulkWaCustomerName(e.target.value)}
+                      placeholder="উদাহরণ: রহিম উদ্দিন"
+                      className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Order Number (অপশনাল)</label>
+                    <input
+                      type="text"
+                      value={bulkWaOrderNumber}
+                      onChange={e => setBulkWaOrderNumber(e.target.value)}
+                      placeholder="ORD-12345"
+                      className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">কাস্টমারের ফোন নম্বর *</label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground bg-muted/30 border border-border rounded-l-xl px-3 py-2.5">+880</span>
+                    <input
+                      type="tel"
+                      value={bulkWaPhone}
+                      onChange={e => setBulkWaPhone(e.target.value)}
+                      placeholder="01XXXXXXXXX"
+                      className="w-full bg-muted/20 border border-border rounded-r-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Selected Licenses Preview */}
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
+                    সিলেক্টেড Licenses ({selectedLics.length}টি)
+                  </label>
+                  <div className="bg-muted/20 border border-border rounded-xl divide-y divide-border max-h-64 overflow-y-auto">
+                    {selectedLics.map((lic, idx) => (
+                      <div key={lic.id} className="p-3 flex items-start gap-3">
+                        <span className="text-xs font-bold text-green-600 mt-0.5 min-w-[20px]">{idx + 1}.</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-foreground truncate">{lic.product_name}</p>
+                          <code className="text-[11px] font-mono text-muted-foreground break-all">{lic.key_value}</code>
+                          {lic.extra_info && (
+                            <p className="text-[10px] font-mono text-muted-foreground mt-0.5">🔒 {lic.extra_info}</p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => toggleSelect(lic.id)}
+                          className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+                          title="তালিকা থেকে বাদ দিন">
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Info */}
+                <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-3">
+                  <p className="text-[11px] text-foreground leading-relaxed">
+                    💡 <strong>{selectedLics.length}টি license</strong> একটি সম্পূর্ণ মেসেজে কাস্টমারের WhatsApp এ পাঠানো হবে এবং সবগুলোর status স্বয়ংক্রিয়ভাবে <strong>WhatsApp Delivered</strong> হবে।
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 p-5 border-t border-border">
+                <button
+                  onClick={handleBulkWhatsAppSend}
+                  disabled={!bulkWaPhone.trim() || bulkWaSending || selectedLics.length === 0}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50"
+                  style={{ background: 'linear-gradient(135deg, hsl(142,70%,45%), hsl(142,70%,35%))' }}>
+                  {bulkWaSending ? <Loader2 size={14} className="animate-spin" /> : <MessageCircle size={14} />}
+                  {selectedLics.length}টি একসাথে পাঠান
+                </button>
+                <button onClick={() => setBulkWaModal(false)} disabled={bulkWaSending}
+                  className="px-4 py-2.5 rounded-xl text-sm border border-border text-muted-foreground hover:border-primary/40">
+                  বাতিল
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+
       {editModal.open && editModal.license && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setEditModal({ open: false, license: null })}>
           <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>

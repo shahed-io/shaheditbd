@@ -996,6 +996,7 @@ export type Database = {
           assigned_at: string | null
           created_at: string
           delivered_to_phone: string | null
+          delivery_batch_id: string | null
           extra_info: string | null
           id: string
           key_type: string
@@ -1008,6 +1009,7 @@ export type Database = {
           assigned_at?: string | null
           created_at?: string
           delivered_to_phone?: string | null
+          delivery_batch_id?: string | null
           extra_info?: string | null
           id?: string
           key_type?: string
@@ -1020,6 +1022,7 @@ export type Database = {
           assigned_at?: string | null
           created_at?: string
           delivered_to_phone?: string | null
+          delivery_batch_id?: string | null
           extra_info?: string | null
           id?: string
           key_type?: string
