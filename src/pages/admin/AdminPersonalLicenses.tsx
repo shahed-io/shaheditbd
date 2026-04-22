@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { Plus, Edit3, Trash2, Copy, MessageCircle, Search, Filter, Package, Clock, CheckCircle, XCircle, Settings2 } from 'lucide-react';
 import { usePasswordTypes } from '@/hooks/usePasswordTypes';
 import PasswordTypesManager from '@/components/admin/PasswordTypesManager';
+import { sendInvoiceViaWhatsApp, type InvoiceData } from '@/lib/invoicePdf';
 
 type PersonalLicense = {
   id: string;
@@ -156,23 +157,47 @@ export default function AdminPersonalLicenses() {
     toast.success('কপি হয়েছে');
   }
 
-  function sendWhatsApp(lic: PersonalLicense) {
+  async function sendWhatsApp(lic: PersonalLicense) {
     const pt = getType(lic.password_type);
-    const lines = [`📦 *${lic.name}*`];
-    if (lic.key_value) lines.push(`🔑 Key: \`${lic.key_value}\``);
-    if (lic.password) {
-      const suffix = pt ? ` ${pt.emoji} _(${pt.label})_` : '';
-      lines.push(`🔒 Password: \`${lic.password}\`${suffix}`);
+    const phone = lic.customer_phone || '';
+    if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
+
+    const noteParts: string[] = [];
+    if (lic.key_value) noteParts.push(`Key: ${lic.key_value}`);
+    if (lic.password) noteParts.push(`Password: ${lic.password}${pt ? ' (' + pt.label + ')' : ''}`);
+    if (lic.expires_at) noteParts.push(`Expires: ${new Date(lic.expires_at).toLocaleDateString('en-US')}`);
+    if (lic.note) noteParts.push(lic.note);
+
+    const data: InvoiceData = {
+      invoiceNumber: `LIC-${lic.id.slice(0, 8).toUpperCase()}`,
+      date: new Date(),
+      customer: { name: lic.customer_name || 'Valued Customer', phone },
+      items: [{
+        name: lic.name,
+        quantity: 1,
+        price: 0,
+        total: 0,
+        license_key: noteParts.join(' | '),
+      }],
+      subtotal: 0,
+      total: 0,
+      paymentMethod: 'cash',
+      status: 'delivered',
+      notes: 'Personal license delivery from Shahed Store.',
+    };
+
+    const tid = toast.loading('PDF ইনভয়েস তৈরি হচ্ছে...');
+    try {
+      await sendInvoiceViaWhatsApp(data, {
+        phone,
+        messagePrefix: `📦 *${lic.name}*\n\nপ্রিয় ${lic.customer_name || 'গ্রাহক'},\nআপনার লাইসেন্সের সম্পূর্ণ বিস্তারিত PDF আকারে পাঠানো হলো:`,
+      });
+      toast.success('PDF লাইসেন্স WhatsApp এ পাঠানো হচ্ছে...', { id: tid });
+      // Mark as delivered
+      deliverMut.mutate(lic);
+    } catch (e: any) {
+      toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
     }
-    if (lic.expires_at) lines.push(`📅 মেয়াদ: ${new Date(lic.expires_at).toLocaleDateString('bn-BD')}`);
-    if (lic.note) lines.push(`📝 ${lic.note}`);
-    lines.push('\n✅ Shahed Store থেকে ডেলিভারি করা হলো।');
-    const phone = lic.customer_phone?.replace(/[^0-9]/g, '') || '';
-    const intlPhone = phone.startsWith('0') ? '88' + phone : phone;
-    const url = `https://wa.me/${intlPhone}?text=${encodeURIComponent(lines.join('\n'))}`;
-    window.open(url, '_blank');
-    // Mark as delivered
-    deliverMut.mutate(lic);
   }
 
   const filtered = licenses.filter(l => {
