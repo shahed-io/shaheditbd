@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -163,6 +163,7 @@ const AdminLayout = () => {
   const [notifCount, setNotifCount] = useState(0);
   const [navSearch, setNavSearch] = useState('');
   const [cmdOpen, setCmdOpen] = useState(false);
+  const mainContentRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
 
   // Global ⌘K / Ctrl+K shortcut for command palette
@@ -175,6 +176,17 @@ const AdminLayout = () => {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('scrollRestoration' in window.history)) return;
+
+    const previousScrollRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+
+    return () => {
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
   }, []);
 
   // ⚡ Eagerly prefetch ALL admin sub-pages during browser idle time
@@ -214,9 +226,22 @@ const AdminLayout = () => {
   useEffect(() => { fetchNotifs(); }, [fetchNotifs]);
   useEffect(() => { const iv = setInterval(fetchNotifs, 60000); return () => clearInterval(iv); }, [fetchNotifs]);
 
-  // Close mobile sidebar on route change
+  // Reset admin shell state and always start child pages from the top
   useEffect(() => {
     setMobileSidebarOpen(false);
+    setShowNotifPanel(false);
+
+    const resetScrollPosition = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      mainContentRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    };
+
+    resetScrollPosition();
+    const rafId = window.requestAnimationFrame(resetScrollPosition);
+
+    return () => window.cancelAnimationFrame(rafId);
   }, [location.pathname]);
 
   if (loading) return (
@@ -401,9 +426,9 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main content */}
-      <div className={`flex flex-col min-h-screen transition-[margin] duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
+      <div className={`flex min-h-screen min-w-0 flex-col transition-[margin] duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
         {/* Top bar */}
-        <header className="admin-glass-header px-3 sm:px-6 py-3 flex items-center gap-2 sm:gap-4 sticky top-0 z-30">
+        <header className="admin-glass-header sticky top-0 z-30 flex items-center gap-2 px-3 py-3 sm:gap-4 sm:px-6">
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileSidebarOpen(true)}
@@ -517,7 +542,7 @@ const AdminLayout = () => {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 w-full p-3 sm:p-6 overflow-x-auto" data-admin-content>
+        <main ref={mainContentRef} className="flex-1 min-w-0 w-full overflow-x-auto p-3 sm:p-6" data-admin-content>
           <Outlet />
         </main>
       </div>
