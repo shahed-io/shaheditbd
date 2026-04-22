@@ -906,26 +906,29 @@ const AdminOrders = () => {
   // Status tabs shown
   const tabStatuses = ['all', 'pending', 'processing', 'delivered', 'completed', 'cancelled', 'refunded', 'failed'];
 
+  // Quick stats for header overview
+  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + Number(o.total), 0);
+  const pendingCount = statusCounts['pending'] || 0;
+  const processingCount = statusCounts['processing'] || 0;
+  const completedCount = statusCounts['completed'] || 0;
+
   return (
     <div className="space-y-5">
-      {/* Header */}
+      {/* ── Action bar (page title is in top header) ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-            Orders <span className="gradient-text">Management</span>
-          </h1>
-          <div className="flex items-center gap-3 mt-0.5">
-            <p className="text-muted-foreground text-sm">{orders.length} total orders</p>
-            {adminWhatsapp ? (
-              <span className="flex items-center gap-1 text-[11px] text-[#25D366] bg-[#25D366]/10 px-2 py-0.5 rounded-full border border-[#25D366]/20">
-                <MessageCircle size={10} /> WhatsApp সক্রিয়
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-[11px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                <Bell size={10} /> WhatsApp নম্বর দিন Settings-এ
-              </span>
-            )}
-          </div>
+        <div className="flex items-center gap-3 flex-wrap">
+          <p className="text-sm text-muted-foreground">
+            <span className="font-bold text-foreground">{orders.length}</span> মোট অর্ডার
+          </p>
+          {adminWhatsapp ? (
+            <span className="flex items-center gap-1 text-[11px] text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+              <MessageCircle size={10} /> WhatsApp সক্রিয়
+            </span>
+          ) : (
+            <span className="flex items-center gap-1 text-[11px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+              <Bell size={10} /> WhatsApp নম্বর দিন Settings-এ
+            </span>
+          )}
         </div>
         <div className="flex gap-2">
           <button
@@ -941,6 +944,38 @@ const AdminOrders = () => {
         </div>
       </div>
 
+      {/* ── Quick overview cards ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="glass-card rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">মোট রেভিনিউ</span>
+            <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center"><CreditCard size={14} /></div>
+          </div>
+          <p className="text-xl font-bold text-foreground">৳{totalRevenue.toLocaleString()}</p>
+        </div>
+        <button onClick={() => setStatusFilter('pending')} className="glass-card rounded-2xl p-4 text-left hover:border-amber-500/40 transition-colors">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">পেন্ডিং</span>
+            <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-500 flex items-center justify-center"><Clock size={14} /></div>
+          </div>
+          <p className="text-xl font-bold text-foreground">{pendingCount}</p>
+        </button>
+        <button onClick={() => setStatusFilter('processing')} className="glass-card rounded-2xl p-4 text-left hover:border-blue-500/40 transition-colors">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">প্রসেসিং</span>
+            <div className="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-500 flex items-center justify-center"><RefreshCw size={14} /></div>
+          </div>
+          <p className="text-xl font-bold text-foreground">{processingCount}</p>
+        </button>
+        <button onClick={() => setStatusFilter('completed')} className="glass-card rounded-2xl p-4 text-left hover:border-emerald-500/40 transition-colors">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">সম্পন্ন</span>
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-500 flex items-center justify-center"><CheckCircle2 size={14} /></div>
+          </div>
+          <p className="text-xl font-bold text-foreground">{completedCount}</p>
+        </button>
+      </div>
+
       {/* Status Tabs — scrollable */}
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
         {tabStatuses.map(s => {
@@ -954,7 +989,7 @@ const AdminOrders = () => {
               }`}
             >
               {s === 'all' ? 'সব অর্ডার' : cfg?.label}
-              <span className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center ${statusFilter === s ? 'bg-white/20' : 'bg-muted/50'}`}>
+              <span className={`min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center ${statusFilter === s ? 'bg-white/20' : 'bg-muted/50'}`}>
                 {statusCounts[s] || 0}
               </span>
             </button>
