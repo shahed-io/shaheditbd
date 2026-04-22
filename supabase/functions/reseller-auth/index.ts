@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     // ── Login ────────────────────────────────────────────────────────────────
     if (action === 'login') {
       const { username, password } = body;
-      if (!username || !password) return json({ error: 'Username and password required' }, 400);
+      if (!username || !password) return json({ error: 'Username and password required' });
 
       const adminPass = Deno.env.get('ADMIN_PASSWORD') || 'Sh@9696';
 
@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
         .limit(1);
 
       const user = users?.[0];
-      if (!user) return json({ error: 'Invalid username or password' }, 401);
+      if (!user) return json({ error: 'Invalid username or password' });
 
       // For admin user: if password matches ADMIN_PASSWORD but hash doesn't verify,
       // it means the hash is stale — re-hash and update
@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
       }
 
       if (!passwordValid) {
-        return json({ error: 'Invalid username or password' }, 401);
+        return json({ error: 'Invalid username or password' });
       }
 
       // Clean old sessions for this user (keep last 5)
@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
     // ── Validate token ───────────────────────────────────────────────────────
     if (action === 'validate') {
       const { token } = body;
-      if (!token) return json({ error: 'No token' }, 401);
+      if (!token) return json({ error: 'No token' });
 
       const { data: sessions } = await supabase
         .from('reseller_sessions')
@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
 
       const session = sessions?.[0];
       if (!session || new Date(session.expires_at) < new Date()) {
-        return json({ error: 'Invalid or expired session' }, 401);
+        return json({ error: 'Invalid or expired session' });
       }
 
       const { data: users } = await supabase
@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
         .limit(1);
 
       const user = users?.[0];
-      if (!user) return json({ error: 'User not found' }, 401);
+      if (!user) return json({ error: 'User not found' });
 
       return json({ user });
     }
