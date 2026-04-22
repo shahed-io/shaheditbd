@@ -217,7 +217,8 @@ Deno.serve(async (req) => {
       }
 
       if (!cidValue) {
-        return json({ error: 'All CID providers failed', details: errors }, 502);
+        // Generic error — never expose provider names to resellers.
+        return json({ error: 'CID generation temporarily unavailable. Please try again.' }, 502);
       }
 
       // Deduct balance & log generation
@@ -240,9 +241,9 @@ Deno.serve(async (req) => {
       }
       await Promise.all(ops);
 
+      // Reseller-facing response: no provider name leaked.
       return json({
         cid: cidValue,
-        provider: usedProvider,
         balance_after_cents: newBalance,
         billed_user_id: billedUserId,
       });
