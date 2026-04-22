@@ -1,53 +1,49 @@
 ---
-name: Admin Design System
-description: Admin panel uses Gradient Border Glassmorphism — admin-glass-card / admin-stat-card / admin-info-card with double-background gradient stroke. Body.admin-page selectors auto-promote .glass-card, raw bg-white/bg-gray-*, dialogs, tabs, primary buttons, status pills, borders to glassy gradient look across all 100+ pages without per-page edits.
+name: Admin Panel Design System
+description: Notion/Stripe-inspired Clean Light Minimal — pure white surfaces, hairline gray borders, glass sidebar with backdrop, orange (#FF6B1A) + black accent. Auto-applied via body.admin-page selectors.
 type: design
 ---
-Admin panel ওয়েবসাইটের premium **Gradient Border Glassmorphism** style follow করে — প্রতিটা card-এ true gradient stroke (violet→cyan→pink), hover-এ আরও vivid।
 
-## Core utility classes (in src/index.css)
+**Admin design (NON-NEGOTIABLE):** Notion/Stripe **Clean Light Minimal** — NOT gradient glassmorphism. Storefront uses gradient glass; admin is intentionally different for clarity & focus.
 
-### Surfaces (gradient border + glass)
-- `.admin-glass-card` — primary glass card with gradient border, hover lifts
-- `.admin-stat-card` — dashboard tile, gradient border + sweep overlay
-- `.admin-glass-sidebar` / `.admin-glass-header` — 36/28px blur
-- `.admin-icon-btn` — gradient-bordered glass icon button
+## Color tokens (scoped via `body.admin-page` in `src/index.css`)
+- `--ad-bg`: 0 0% 99% (canvas)
+- `--ad-surface`: 0 0% 100% (cards, pure white)
+- `--ad-surface-2`: 220 14% 98% (table head, alt rows)
+- `--ad-border`: 220 13% 91% (hairline)
+- `--ad-border-strong`: 220 13% 84%
+- `--ad-text`: 222 22% 11% (near-black)
+- `--ad-text-muted`: 220 9% 46%
+- `--ad-accent`: 20 100% 54% (orange)
+- `--ad-accent-soft`: 20 100% 96%
+- `--ad-black`: 222 22% 11% (primary button bg)
+- Radius: 6 / 10 / 14 px. Shadows: subtle layered (`--ad-shadow-sm/md/lg/xl`).
 
-### Navigation
-- `.admin-nav-item` + `.active` — sidebar nav with gradient pill + glowing left bar
-- `.admin-section-title` — H2 with violet→cyan accent bar
+## Key surface rules
+- **Sidebar (`.admin-glass-sidebar`):** `hsla(white, 0.72)` + `backdrop-filter: blur(28px) saturate(180%)` + 1px hairline border. NO heavy shadow, NO gradient.
+- **Header (`.admin-glass-header`):** matching glass surface with backdrop blur.
+- **Cards (`.glass-card`, `.admin-glass-card`, `.admin-stat-card`):** flat white + 1px `--ad-border` + `--ad-shadow-sm`. Hover → `--ad-shadow-md` + stronger border. NO blur, NO gradient borders, NO translateY (only stat-card lifts 1px).
+- **Nav item active:** orange-soft bg + orange text + 3px left orange bar. Hover = `--ad-surface-2` only.
+- **Buttons (primary):** solid `--ad-black` bg, white text. Hover → orange `--ad-accent` bg with 3px orange focus ring. NO gradient sweep.
+- **Tabs:** Notion segmented control — `--ad-surface-2` track, white pill on active with `--ad-shadow-sm`.
+- **Inputs:** white bg, 1px `--ad-border-strong`, 6px radius, focus = orange border + 3px `--ad-accent/15` ring.
+- **Tables:** `--ad-surface-2` header with uppercase 11px muted labels, hairline rows, hover = `--ad-surface-2`.
+- **Dialogs/Popovers:** white surface + 1px border + 14px radius + `--ad-shadow-xl`. NO blur.
+- **Status badges:** flat soft fills (green/red/yellow/blue/orange) with matched 1px border.
 
-### Clarity utilities (admin understanding)
-- `.admin-page-header` + `.admin-page-title` + `.admin-page-subtitle` — page top with gradient title and dashed border
-- `.admin-field-label` (`.req` for red asterisk) + `.admin-helper` + `.admin-helper-icon`
-- `.admin-info-card` (blue) / `.admin-warning-card` (amber) / `.admin-success-card` (green)
-- `.admin-hint-chip` — small gradient pill for contextual tips
+## Auto-inheritance
+All `body.admin-page` selectors override raw Tailwind:
+- `.bg-white`, `.bg-gray-50/100`, `.bg-slate-50/100`, `.glass-card` → flat white surface
+- `[role="dialog"]`, popover, menu, listbox → flat elevated card (no blur)
+- `[role="tablist"]` + active tab → segmented control with white pill
+- Primary buttons (`.bg-primary`, `.bg-blue-600`, `.bg-indigo-600`, `.bg-violet-600`, `.bg-purple-600`) → solid black with orange hover
+- `<table>` → Notion-style with hairlines + uppercase headers
+- Inputs/selects/textareas → white flat with orange focus ring
+- Status backgrounds (`.bg-green-100` / `.bg-red-100` / `.bg-yellow-100` / `.bg-blue-100` / `.bg-orange-100`) → flat soft pills
+- `.border-gray-200/300`, `.border-slate-200/300`, `.border-border` → hairline `--ad-border`
 
-## Auto-inheritance via body.admin-page selectors
-ALL legacy admin pages auto-polished without per-page edits:
-- `.glass-card` → gradient-border glass card
-- Raw `.bg-white` / `.bg-gray-50/100` / `.bg-slate-50/100` panels (excluding buttons/inputs) → glassy gradient surface
-- `[role="dialog"] > div` / popover / menu / listbox → blur(32px) gradient-border modal
-- `[role="tablist"]` + active tab → gradient pill
-- Primary buttons (`.bg-primary`, `.bg-blue-600`, `.bg-indigo-600`, `.bg-violet-600`, `.bg-purple-600`) → brand gradient with hover lift
-- `<table thead>` → soft brand-tinted glass; `tbody tr:hover` → brand wash
-- Inputs / selects / textareas → glass with brand focus ring
-- Native `<label>` → bold 600
-- Status colored backgrounds (`.bg-green-100` / `.bg-red-100` / `.bg-yellow-100` / `.bg-blue-100`) → tinted pills with matching border
-- `.border-gray-200/300`, `.border-slate-200/300` → soft brand-tinted border
-- `[data-empty-state]` / `.empty-state` → friendly dashed brand-tinted block
-
-## Skip auto-glass
-Add `data-glass-skip` attribute to opt-out a specific surface from auto-promotion.
-
-## Gradient Border technique
-CSS double-background trick:
-```css
-background:
-  linear-gradient(... white glass ...) padding-box,
-  linear-gradient(... brand→brand2→brand3 ...) border-box;
-border: 1.5px solid transparent;
-```
+## Skip auto-polish
+Add `data-glass-skip` attribute to opt-out a specific surface.
 
 ## Theme support
-All tokens have `html[data-theme="dark-cyber"]` and `html[data-theme="midnight-purple"]` overrides.
+`html[data-theme="dark-cyber"]` and `html[data-theme="midnight-purple"]` auto-flip tokens to deep slate surfaces, light text, dark shadows. Sidebar still uses backdrop blur.
