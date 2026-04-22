@@ -915,14 +915,31 @@ html[data-theme="midnight-purple"] .admin-gradient-bg::after { opacity: 0.25; }
   .admin-gradient-bg::before, .admin-gradient-bg::after { animation: none; }
 }
 
-body.admin-page > #root,
-.admin-gradient-bg > * { position: relative; z-index: 1; }
+body.admin-page > #root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.admin-gradient-bg {
+  min-height: 100vh;
+}
+
+body.admin-page .admin-gradient-bg {
+  align-items: stretch;
+}
+
+.admin-gradient-bg > * {
+  position: relative;
+  z-index: 1;
+}
 
 body.admin-page main,
 body.admin-page .admin-main,
 body.admin-page [data-admin-content] {
   width: 100%;
   max-width: none;
+  min-height: 0;
 }
 
 /* ── Sidebar — deep glass with indigo tint ── */
