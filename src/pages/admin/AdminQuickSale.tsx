@@ -509,10 +509,10 @@ const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
                       <div className="sm:col-span-9">
                         <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">কাস্টম প্রোডাক্ট নাম <span className="text-destructive">*</span></label>
                         <div className="relative group">
-                          <PenLine size={13} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <span className={cn(iconSlotClass, 'w-11')}><PenLine size={13} /></span>
                           <input value={entry.custom_name} onChange={e => updateEntry(idx, { custom_name: e.target.value })}
                             placeholder="প্রোডাক্টের নাম লিখুন"
-                            className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                            className={cn(iconInputClass, 'pl-14')} />
                         </div>
                       </div>
                       <div className="sm:col-span-3">
@@ -559,14 +559,14 @@ const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
                         </div>
                       ) : (
                         <>
-                          <div className="relative">
-                            <Search size={13} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <div className="relative group">
+                            <span className={cn(iconSlotClass, 'w-11')}><Search size={13} /></span>
                             <input
                               value={activeIdx === idx ? productSearch : ''}
                               onChange={e => { setProductSearch(e.target.value); setActiveIdx(idx); }}
                               onFocus={() => { setActiveIdx(idx); }}
                               placeholder="প্রোডাক্ট নাম লিখে সার্চ করুন..."
-                              className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                              className={cn(iconInputClass, 'pl-14')}
                             />
                           </div>
                           {activeIdx === idx && (
@@ -654,7 +654,7 @@ const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
                       </div>
                     </div>
                     {entry.license && (
-                      <p className="text-[11px] text-green-600 mt-2 flex items-center gap-1 font-medium">
+                      <p className="text-[11px] text-primary mt-2 flex items-center gap-1 font-medium">
                         <CheckCircle2 size={11} /> স্টক থেকে সিলেক্ট করা হয়েছে
                       </p>
                     )}
