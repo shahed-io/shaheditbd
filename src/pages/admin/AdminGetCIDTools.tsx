@@ -461,7 +461,7 @@ export default function AdminGetCIDTools() {
                         <Card key={p} className={ok ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-destructive/30 bg-destructive/5'}>
                           <CardHeader className="pb-2">
                             <CardTitle className="text-sm flex items-center justify-between">
-                              <span className="capitalize">{p}</span>
+                              <span>{p === 'getcid' ? 'Primary Channel' : 'Backup Channel'}</span>
                               {ok ? (
                                 <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/30 gap-1">
                                   <CheckCircle2 className="h-3 w-3" /> Success
