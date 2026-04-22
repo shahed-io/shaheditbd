@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Plus, Trash2, Printer, X, FileText, Save, Send } from 'lucide-react';
+import { Plus, Trash2, Printer, X, FileText, Save, Send, Database } from 'lucide-react';
 import { toast } from 'sonner';
 import logoIcon from '@/assets/logo.png';
 import { downloadInvoicePdf, downloadInvoicePdfFromElement, type InvoiceData } from '@/lib/invoicePdf';
+import { supabase } from '@/integrations/supabase/client';
 
 interface InvoiceItem {
   id: string;
@@ -22,6 +23,8 @@ const AdminInvoiceGenerator = () => {
   const printRef = useRef<HTMLDivElement>(null);
   const [logoBase64, setLogoBase64] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [savedOrderId, setSavedOrderId] = useState<string | null>(null);
 
   const [invoiceNumber, setInvoiceNumber] = useState(generateInvoiceNumber());
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().slice(0, 10));
@@ -101,12 +104,66 @@ const AdminInvoiceGenerator = () => {
     }
   };
 
+  const handleSaveAsOrder = async () => {
+    if (!customerName.trim()) return toast.error('গ্রাহকের নাম দিন');
+    if (!customerEmail.trim()) return toast.error('গ্রাহকের ইমেইল দিন (অর্ডার সেভের জন্য আবশ্যক)');
+    if (items.some(i => !i.name.trim() || i.price <= 0)) return toast.error('সকল আইটেমের নাম ও দাম দিন');
+    if (savedOrderId) return toast.info('এই ইনভয়েসটি ইতিমধ্যে অর্ডার হিসেবে সেভ করা হয়েছে');
+
+    setSaving(true);
+    const tid = toast.loading('অর্ডার হিসেবে সেভ হচ্ছে...');
+    try {
+      // 1) Insert order
+      const { data: order, error: orderErr } = await supabase
+        .from('orders')
+        .insert({
+          order_number: invoiceNumber,
+          customer_name: customerName.trim(),
+          customer_email: customerEmail.trim(),
+          customer_phone: customerPhone.trim() || null,
+          subtotal,
+          total,
+          discount_amount: discount,
+          payment_method: paymentMethod,
+          transaction_id: transactionId.trim() || null,
+          status: 'completed',
+          payment_status: 'paid',
+          notes: notes.trim() || null,
+          admin_notes: `📄 Manual Invoice (Invoice Generator)${customerAddress ? ` | Address: ${customerAddress}` : ''}`,
+        })
+        .select('id, order_number')
+        .single();
+
+      if (orderErr) throw orderErr;
+
+      // 2) Insert order items
+      const itemRows = items.map(i => ({
+        order_id: order.id,
+        product_name: i.name.trim(),
+        quantity: i.quantity,
+        price: i.price,
+        total: i.quantity * i.price,
+      }));
+
+      const { error: itemsErr } = await supabase.from('order_items').insert(itemRows);
+      if (itemsErr) throw itemsErr;
+
+      setSavedOrderId(order.id);
+      toast.success(`✅ অর্ডার সেভ হয়েছে — Order: ${order.order_number}`, { id: tid, duration: 5000 });
+    } catch (e: any) {
+      toast.error('সেভ করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleReset = () => {
     setInvoiceNumber(generateInvoiceNumber());
     setInvoiceDate(new Date().toISOString().slice(0, 10));
     setCustomerName(''); setCustomerEmail(''); setCustomerPhone(''); setCustomerAddress('');
     setPaymentMethod('bkash'); setTransactionId(''); setNotes(''); setDiscount(0);
     setItems([{ id: crypto.randomUUID(), name: '', quantity: 1, price: 0 }]);
+    setSavedOrderId(null);
     toast.success('ফর্ম রিসেট হয়েছে');
   };
 
@@ -241,6 +298,19 @@ const AdminInvoiceGenerator = () => {
             <button onClick={handleDownloadPdf} className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 glass-card border border-primary/40 text-primary hover:bg-primary/10 transition-colors">
               <FileText size={16} /> PDF ডাউনলোড
             </button>
+            <button
+              onClick={handleSaveAsOrder}
+              disabled={saving || !!savedOrderId}
+              className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              <Database size={16} />
+              {savedOrderId ? '✅ অর্ডারে সেভ হয়েছে' : saving ? 'সেভ হচ্ছে...' : '💾 অর্ডার হিসেবে সেভ করুন'}
+            </button>
+            {savedOrderId && (
+              <p className="text-[11px] text-center text-muted-foreground">
+                Order #{invoiceNumber} • <a href="/ceo/orders" className="text-primary hover:underline font-medium">অর্ডার তালিকায় দেখুন →</a>
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -251,7 +321,14 @@ const AdminInvoiceGenerator = () => {
           <div className="glass-card rounded-2xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-shrink-0">
               <h3 className="font-bold text-foreground text-sm">Invoice {invoiceNumber}</h3>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={handleSaveAsOrder}
+                  disabled={saving || !!savedOrderId}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-semibold shadow-md shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <Database size={13} /> {savedOrderId ? 'সেভ হয়েছে ✓' : saving ? 'সেভ...' : 'অর্ডারে সেভ'}
+                </button>
                 <button onClick={handleDownloadPdf} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-primary/40 text-primary hover:bg-primary/10 text-xs font-semibold"><FileText size={13} /> PDF ডাউনলোড</button>
                 <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-glow text-xs font-semibold"><Printer size={13} /> Print / PDF</button>
                 <button onClick={() => setShowPreview(false)} className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30"><X size={15} /></button>
