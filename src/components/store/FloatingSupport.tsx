@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bot, X, Send, Loader2, Minimize2, MessageCircle } from 'lucide-react';
+import { Bot, X, Send, Loader2, Minimize2, MessageCircle, Facebook, Send as TelegramIcon, Link as LinkIcon, Phone, Mail, Instagram, Twitter, Youtube, Video, Headphones, LifeBuoy, HelpCircle, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+
+const FS_ICON_MAP: Record<string, any> = {
+  MessageCircle, Facebook, TelegramIcon, LinkIcon, Phone, Mail, Instagram, Twitter, Youtube, Video, Headphones, LifeBuoy, HelpCircle, Globe,
+};
+const getFsIcon = (name?: string) => FS_ICON_MAP[name || 'MessageCircle'] || MessageCircle;
 
 type Message = { role: 'user' | 'assistant'; content: string };
 
@@ -11,7 +16,9 @@ interface LiveSet {
   label: string;
   subtitle: string;
   icon_color: string;
+  icon?: string;
   is_active: boolean;
+  sort_order?: number;
 }
 
 interface LiveChatConfig {
@@ -288,6 +295,52 @@ const FloatingSupport = () => {
             </div>
           )}
 
+          {/* Other ways to contact — inside AI chat panel */}
+          {(config.whatsapp_enabled || activeSets.length > 0) && (
+            <div className="px-3 pb-2 pt-1 border-t border-border/40">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-1">
+                অন্যান্য যোগাযোগের উপায়
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {config.whatsapp_enabled && (
+                  <button
+                    onClick={openWhatsApp}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-card border border-border/60 hover:border-green-500/50 hover:shadow-sm transition-all group"
+                    title={config.whatsapp_label}
+                  >
+                    <span
+                      className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}
+                    >
+                      <MessageCircle size={12} className="text-white" />
+                    </span>
+                    <span className="text-xs font-medium text-foreground">{config.whatsapp_label}</span>
+                  </button>
+                )}
+                {activeSets.map(set => {
+                  const ChannelIcon = getFsIcon(set.icon);
+                  return (
+                    <button
+                      key={set.id}
+                      onClick={() => openLiveSet(set)}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-card border border-border/60 hover:shadow-sm transition-all group"
+                      style={{ borderColor: `${set.icon_color}40` }}
+                      title={set.subtitle || set.label}
+                    >
+                      <span
+                        className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)` }}
+                      >
+                        <ChannelIcon size={12} className="text-white" />
+                      </span>
+                      <span className="text-xs font-medium text-foreground">{set.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Input */}
           <div className="flex items-center gap-2 px-3 py-2.5 border-t border-border/60 bg-background">
             <input
@@ -307,64 +360,11 @@ const FloatingSupport = () => {
         </div>
       )}
 
-      {/* ── Popup Menu ── */}
-      {menuOpen && !chatOpen && (
-        <div className="fixed right-4 sm:right-6 z-50 flex flex-col gap-3 bottom-[calc(env(safe-area-inset-bottom,0px)+160px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+80px)]" style={{ animation: 'slideUpIn 0.15s ease-out' }}>
-          {/* AI Support */}
-          {config.chat_enabled && (
-            <button onClick={openChat}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/40 shadow-xl hover:border-primary/50 transition-all group w-56">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, #7c3aed, #5b21b6)' }}>
-                <Bot size={20} className="text-white" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-foreground">{config.ai_label}</p>
-                <p className="text-xs text-muted-foreground">{config.ai_subtitle}</p>
-              </div>
-            </button>
-          )}
-
-          {/* WhatsApp */}
-          {config.whatsapp_enabled && (
-            <button onClick={openWhatsApp}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/40 shadow-xl hover:border-green-500/50 transition-all group w-56">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}>
-                <MessageCircle size={20} className="text-white" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-foreground">{config.whatsapp_label}</p>
-                <p className="text-xs text-muted-foreground">{config.whatsapp_subtitle}</p>
-              </div>
-            </button>
-          )}
-
-          {/* Live Sets */}
-          {activeSets.map(set => (
-            <button key={set.id} onClick={() => openLiveSet(set)}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card border border-border/40 shadow-xl hover:border-primary/50 transition-all group w-56">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)` }}>
-                <MessageCircle size={20} className="text-white" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-foreground">{set.label}</p>
-                <p className="text-xs text-muted-foreground">{set.subtitle}</p>
-              </div>
-            </button>
-          ))}
-
-          {/* Label */}
-          <p className="text-center text-xs text-muted-foreground">{config.fab_label}</p>
-        </div>
-      )}
-
       {/* ── Main FAB ── */}
       <div
         className="fixed right-4 sm:right-6 z-50 flex items-center justify-center bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+16px)]"
       >
-        {!menuOpen && !chatOpen && (
+        {!chatOpen && (
           <>
             <span className="fab-ring fab-ring-1" />
             <span className="fab-ring fab-ring-2" />
@@ -372,27 +372,27 @@ const FloatingSupport = () => {
           </>
         )}
 
-        {!menuOpen && !chatOpen && (
+        {!chatOpen && (
           <span className="fab-comet" />
         )}
 
         <button
-          onClick={() => { if (chatOpen) { setChatOpen(false); } else { setMenuOpen(o => !o); } }}
+          onClick={() => { setMenuOpen(false); setChatOpen(o => !o); }}
           className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
           style={{
-            background: menuOpen || chatOpen
+            background: chatOpen
               ? 'hsl(var(--muted))'
               : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-            boxShadow: menuOpen || chatOpen
+            boxShadow: chatOpen
               ? 'none'
               : '0 0 24px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3), 0 8px 24px hsla(215,40%,4%,0.5)',
           }}
           title="সাপোর্ট"
         >
-          {!menuOpen && !chatOpen && (
+          {!chatOpen && (
             <span className="absolute inset-0 rounded-full fab-pulse-inner" />
           )}
-          {menuOpen || chatOpen
+          {chatOpen
             ? <X size={22} className="text-foreground" />
             : <MessageCircle size={24} className="text-white relative z-10" />
           }

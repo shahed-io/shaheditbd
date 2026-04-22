@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Bot, MessageCircle, Plus, Trash2, Save, Loader2, Smartphone, Globe, History, Search, ChevronDown, ChevronUp, User, Clock, Monitor } from 'lucide-react';
+import { Bot, MessageCircle, Plus, Trash2, Save, Loader2, Smartphone, Globe, History, Search, ChevronDown, ChevronUp, User, Clock, Monitor, ArrowUp, ArrowDown, Facebook, Send as TelegramIcon, Link as LinkIcon, Phone, Mail, Instagram, Twitter, Youtube, Video, Headphones, LifeBuoy, HelpCircle } from 'lucide-react';
 
 interface LiveChatSettings {
   // General
@@ -39,7 +39,9 @@ interface LiveSet {
   label: string;
   subtitle: string;
   icon_color: string;
+  icon: string; // lucide icon name
   is_active: boolean;
+  sort_order?: number;
 }
 
 const DEFAULT_SETTINGS: LiveChatSettings = {
@@ -58,11 +60,33 @@ const DEFAULT_SETTINGS: LiveChatSettings = {
 };
 
 const LIVE_SET_TYPES = [
-  { value: 'whatsapp', label: 'WhatsApp', color: '#25D366' },
-  { value: 'messenger', label: 'Messenger', color: '#0084FF' },
-  { value: 'telegram', label: 'Telegram', color: '#0088CC' },
-  { value: 'custom_link', label: 'Custom Link', color: '#7c3aed' },
+  { value: 'messenger', label: 'Facebook Messenger', color: '#0084FF', icon: 'Facebook' },
+  { value: 'telegram', label: 'Telegram', color: '#0088CC', icon: 'TelegramIcon' },
+  { value: 'whatsapp', label: 'WhatsApp (Extra)', color: '#25D366', icon: 'MessageCircle' },
+  { value: 'custom_link', label: 'Custom Link', color: '#7c3aed', icon: 'LinkIcon' },
 ];
+
+// Available icons for picker
+const ICON_OPTIONS = [
+  { name: 'MessageCircle', Icon: MessageCircle },
+  { name: 'Facebook', Icon: Facebook },
+  { name: 'TelegramIcon', Icon: TelegramIcon },
+  { name: 'LinkIcon', Icon: LinkIcon },
+  { name: 'Phone', Icon: Phone },
+  { name: 'Mail', Icon: Mail },
+  { name: 'Instagram', Icon: Instagram },
+  { name: 'Twitter', Icon: Twitter },
+  { name: 'Youtube', Icon: Youtube },
+  { name: 'Video', Icon: Video },
+  { name: 'Headphones', Icon: Headphones },
+  { name: 'LifeBuoy', Icon: LifeBuoy },
+  { name: 'HelpCircle', Icon: HelpCircle },
+  { name: 'Globe', Icon: Globe },
+];
+
+const getIconByName = (name: string) => {
+  return ICON_OPTIONS.find(i => i.name === name)?.Icon || MessageCircle;
+};
 
 // ── Chat History Panel ──
 interface ChatConversation {
@@ -401,15 +425,18 @@ const AdminLiveChat = () => {
   };
 
   const addLiveSet = () => {
+    const messengerType = LIVE_SET_TYPES.find(t => t.value === 'messenger')!;
     const newSet: LiveSet = {
       id: crypto.randomUUID(),
       name: 'New Channel',
-      type: 'whatsapp',
+      type: 'messenger',
       value: '',
-      label: 'নতুন চ্যানেল',
-      subtitle: 'যোগাযোগ করুন',
-      icon_color: '#25D366',
+      label: 'Facebook Messenger',
+      subtitle: 'মেসেঞ্জারে চ্যাট করুন',
+      icon_color: messengerType.color,
+      icon: messengerType.icon,
       is_active: true,
+      sort_order: settings.live_sets.length,
     };
     setSettings(prev => ({ ...prev, live_sets: [...prev.live_sets, newSet] }));
   };
@@ -420,10 +447,13 @@ const AdminLiveChat = () => {
       live_sets: prev.live_sets.map(s => {
         if (s.id !== id) return s;
         const updated = { ...s, [field]: value };
-        // Auto-set icon color when type changes
+        // Auto-set icon color and default icon when type changes
         if (field === 'type') {
           const typeInfo = LIVE_SET_TYPES.find(t => t.value === value);
-          if (typeInfo) updated.icon_color = typeInfo.color;
+          if (typeInfo) {
+            updated.icon_color = typeInfo.color;
+            updated.icon = typeInfo.icon;
+          }
         }
         return updated;
       }),
@@ -435,6 +465,18 @@ const AdminLiveChat = () => {
       ...prev,
       live_sets: prev.live_sets.filter(s => s.id !== id),
     }));
+  };
+
+  const moveLiveSet = (id: string, direction: 'up' | 'down') => {
+    setSettings(prev => {
+      const idx = prev.live_sets.findIndex(s => s.id === id);
+      if (idx === -1) return prev;
+      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= prev.live_sets.length) return prev;
+      const next = [...prev.live_sets];
+      [next[idx], next[targetIdx]] = [next[targetIdx], next[idx]];
+      return { ...prev, live_sets: next.map((s, i) => ({ ...s, sort_order: i })) };
+    });
   };
 
   const addSuggestion = () => {
@@ -672,24 +714,35 @@ const AdminLiveChat = () => {
                 </div>
               )}
 
-              {settings.live_sets.map((set) => (
+              {settings.live_sets.map((set, idx) => {
+                const SetIcon = getIconByName(set.icon || 'MessageCircle');
+                return (
                 <div key={set.id} className="border border-border rounded-xl p-4 space-y-4 bg-muted/20">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center"
                         style={{ backgroundColor: set.icon_color }}
                       >
-                        <MessageCircle className="w-4 h-4 text-white" />
+                        <SetIcon className="w-4 h-4 text-white" />
                       </div>
-                      <span className="font-medium text-foreground">{set.label || 'নতুন চ্যানেল'}</span>
+                      <div>
+                        <span className="font-medium text-foreground">{set.label || 'নতুন চ্যানেল'}</span>
+                        <p className="text-xs text-muted-foreground">#{idx + 1} · {LIVE_SET_TYPES.find(t => t.value === set.type)?.label}</p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => moveLiveSet(set.id, 'up')} disabled={idx === 0} className="h-8 w-8" title="উপরে">
+                        <ArrowUp className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => moveLiveSet(set.id, 'down')} disabled={idx === settings.live_sets.length - 1} className="h-8 w-8" title="নিচে">
+                        <ArrowDown className="w-4 h-4" />
+                      </Button>
                       <Switch
                         checked={set.is_active}
                         onCheckedChange={(v) => updateLiveSet(set.id, 'is_active', v)}
                       />
-                      <Button variant="ghost" size="icon" onClick={() => removeLiveSet(set.id)} className="text-destructive hover:text-destructive">
+                      <Button variant="ghost" size="icon" onClick={() => removeLiveSet(set.id)} className="text-destructive hover:text-destructive h-8 w-8">
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -709,11 +762,21 @@ const AdminLiveChat = () => {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <Label>{set.type === 'custom_link' ? 'URL' : 'নম্বর / ইউজারনেম'}</Label>
+                      <Label>
+                        {set.type === 'custom_link' ? 'URL' :
+                         set.type === 'messenger' ? 'Page Username (m.me/...)' :
+                         set.type === 'telegram' ? 'Telegram Username (@user)' :
+                         'WhatsApp নম্বর (8801...)'}
+                      </Label>
                       <Input
                         value={set.value}
                         onChange={e => updateLiveSet(set.id, 'value', e.target.value)}
-                        placeholder={set.type === 'custom_link' ? 'https://...' : set.type === 'telegram' ? '@username' : '8801XXXXXXXXX'}
+                        placeholder={
+                          set.type === 'custom_link' ? 'https://...' :
+                          set.type === 'messenger' ? 'shahedstore' :
+                          set.type === 'telegram' ? '@shahedstore' :
+                          '8801XXXXXXXXX'
+                        }
                       />
                     </div>
                   </div>
@@ -750,8 +813,33 @@ const AdminLiveChat = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Icon Picker */}
+                  <div className="space-y-2">
+                    <Label>আইকন বাছাই করুন</Label>
+                    <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-border bg-background/50">
+                      {ICON_OPTIONS.map(({ name, Icon: IconComp }) => {
+                        const selected = (set.icon || 'MessageCircle') === name;
+                        return (
+                          <button
+                            key={name}
+                            type="button"
+                            onClick={() => updateLiveSet(set.id, 'icon', name)}
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-all ${
+                              selected
+                                ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
+                                : 'border-border hover:border-primary/40 bg-muted/40'
+                            }`}
+                            title={name}
+                          >
+                            <IconComp className={`w-4 h-4 ${selected ? 'text-primary' : 'text-foreground'}`} style={!selected ? { color: set.icon_color } : undefined} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              ))}
+              );})}
             </CardContent>
           </Card>
         </TabsContent>
