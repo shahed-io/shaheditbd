@@ -787,51 +787,53 @@ html[data-theme="midnight-purple"] .cat-card {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   ADMIN PANEL — NOTION / STRIPE INSPIRED CLEAN LIGHT MINIMAL
-   ▸ Pure white surfaces, subtle gray borders
-   ▸ Glass sidebar with backdrop blur
-   ▸ Orange (#FF6B1A) + Black accent system
-   ▸ Sharp typography, generous spacing
-   ▸ Designed for absolute clarity & focus
+   ADMIN PANEL — PURPLE GLASSMORPHISM DASHBOARD
+   ▸ Soft lavender canvas with white-glass surfaces
+   ▸ Violet accents (258 78% 55%) + glass sidebar
+   ▸ Floating active pills + violet-tinted icon boxes
+   ▸ Premium dashboard look matching user dashboard
 ══════════════════════════════════════════════════════════════ */
 
 /* ── Admin Color Tokens (scoped to body.admin-page) ───────── */
 body.admin-page {
-  --ad-bg:            0 0% 99%;            /* canvas */
-  --ad-surface:       0 0% 100%;           /* cards */
-  --ad-surface-2:     220 14% 98%;         /* subtle alt */
-  --ad-border:        220 13% 91%;         /* hairline */
-  --ad-border-strong: 220 13% 84%;
-  --ad-text:          222 22% 11%;         /* near-black */
-  --ad-text-muted:    220 9% 46%;
-  --ad-text-subtle:   220 9% 60%;
-  --ad-accent:        20 100% 54%;         /* orange */
-  --ad-accent-soft:   20 100% 96%;
-  --ad-accent-hover:  20 100% 48%;
-  --ad-black:         222 22% 11%;
-  --ad-shadow-sm:     0 1px 2px hsla(220, 13%, 25%, 0.05);
-  --ad-shadow-md:     0 1px 3px hsla(220, 13%, 25%, 0.08), 0 4px 12px hsla(220, 13%, 25%, 0.04);
-  --ad-shadow-lg:     0 8px 24px hsla(220, 13%, 25%, 0.08), 0 2px 6px hsla(220, 13%, 25%, 0.04);
-  --ad-shadow-xl:     0 24px 48px hsla(220, 13%, 25%, 0.14), 0 8px 16px hsla(220, 13%, 25%, 0.06);
-  --ad-radius:        10px;
-  --ad-radius-sm:     6px;
-  --ad-radius-lg:     14px;
+  --ad-bg:            262 60% 98%;          /* soft lavender wash */
+  --ad-surface:       0 0% 100%;            /* white cards */
+  --ad-surface-2:     262 40% 96%;          /* violet-tinted alt */
+  --ad-border:        262 40% 88%;          /* soft violet hairline */
+  --ad-border-strong: 262 40% 80%;
+  --ad-text:          258 30% 16%;          /* deep violet-black */
+  --ad-text-muted:    258 12% 46%;
+  --ad-text-subtle:   258 10% 60%;
+  --ad-accent:        258 78% 55%;          /* violet brand */
+  --ad-accent-soft:   258 78% 96%;
+  --ad-accent-hover:  258 78% 48%;
+  --ad-accent-deep:   258 78% 42%;
+  --ad-black:         258 30% 16%;
+  --ad-shadow-sm:     0 1px 2px hsla(258, 40%, 30%, 0.05), 0 1px 1px hsla(258, 40%, 30%, 0.03);
+  --ad-shadow-md:     0 4px 16px hsla(258, 78%, 55%, 0.08), 0 1px 3px hsla(258, 40%, 30%, 0.04);
+  --ad-shadow-lg:     0 8px 32px hsla(258, 78%, 55%, 0.10), 0 2px 6px hsla(258, 40%, 30%, 0.04);
+  --ad-shadow-xl:     0 24px 48px hsla(258, 78%, 55%, 0.16), 0 8px 16px hsla(258, 40%, 30%, 0.06);
+  --ad-shadow-pill:   0 4px 14px hsla(258, 78%, 55%, 0.18), 0 1px 3px hsla(258, 78%, 55%, 0.10);
+  --ad-radius:        14px;
+  --ad-radius-sm:     8px;
+  --ad-radius-lg:     18px;
 }
 html[data-theme="dark-cyber"] body.admin-page,
 html[data-theme="midnight-purple"] body.admin-page {
-  --ad-bg:            222 18% 7%;
-  --ad-surface:       222 18% 10%;
-  --ad-surface-2:     222 18% 12%;
-  --ad-border:        222 14% 18%;
-  --ad-border-strong: 222 14% 24%;
+  --ad-bg:            258 22% 8%;
+  --ad-surface:       258 22% 12%;
+  --ad-surface-2:     258 22% 14%;
+  --ad-border:        258 18% 22%;
+  --ad-border-strong: 258 18% 28%;
   --ad-text:          0 0% 98%;
-  --ad-text-muted:    220 9% 65%;
-  --ad-text-subtle:   220 9% 50%;
-  --ad-accent-soft:   20 60% 14%;
+  --ad-text-muted:    258 14% 68%;
+  --ad-text-subtle:   258 12% 52%;
+  --ad-accent-soft:   258 60% 18%;
   --ad-shadow-sm:     0 1px 2px hsla(0, 0%, 0%, 0.3);
-  --ad-shadow-md:     0 1px 3px hsla(0, 0%, 0%, 0.4), 0 4px 12px hsla(0, 0%, 0%, 0.2);
-  --ad-shadow-lg:     0 8px 24px hsla(0, 0%, 0%, 0.4), 0 2px 6px hsla(0, 0%, 0%, 0.2);
-  --ad-shadow-xl:     0 24px 48px hsla(0, 0%, 0%, 0.5), 0 8px 16px hsla(0, 0%, 0%, 0.3);
+  --ad-shadow-md:     0 4px 16px hsla(258, 78%, 30%, 0.30), 0 1px 3px hsla(0, 0%, 0%, 0.3);
+  --ad-shadow-lg:     0 8px 32px hsla(258, 78%, 30%, 0.35), 0 2px 6px hsla(0, 0%, 0%, 0.3);
+  --ad-shadow-xl:     0 24px 48px hsla(0, 0%, 0%, 0.5), 0 8px 16px hsla(258, 78%, 30%, 0.30);
+  --ad-shadow-pill:   0 4px 14px hsla(258, 78%, 50%, 0.40);
 }
 
 body.admin-page {
