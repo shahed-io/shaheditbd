@@ -119,32 +119,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
     setTimeout(() => { win.print(); }, 400);
   };
 
-  const sendInvoiceWhatsApp = () => {
-    const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
-    if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
-    const itemsList = (order.order_items || []).map((i: any, idx: number) => 
-      `${idx + 1}. ${i.product_name} ×${i.quantity} — ৳${Number(i.total).toLocaleString()}${i.license_key ? '\n   🔑 ' + i.license_key : ''}`
-    ).join('\n');
-    const msg = encodeURIComponent(
-      `📄 *INVOICE — SHAHED STORE*\n` +
-      `━━━━━━━━━━━━━━━━━━━━\n\n` +
-      `🧾 Invoice: #${order.order_number}\n` +
-      `📅 তারিখ: ${new Date(order.created_at).toLocaleDateString('bn-BD')}\n\n` +
-      `👤 *গ্রাহক:* ${order.customer_name}\n` +
-      `📱 ${order.customer_phone}\n` +
-      (order.customer_email ? `✉️ ${order.customer_email}\n` : '') +
-      `\n📦 *পণ্যসমূহ:*\n${itemsList}\n\n` +
-      `━━━━━━━━━━━━━━━━━━━━\n` +
-      (Number(order.discount_amount) > 0 ? `সাবটোটাল: ৳${Number(order.subtotal).toLocaleString()}\n🎉 ডিসকাউন্ট: -৳${Number(order.discount_amount).toLocaleString()}\n` : '') +
-      `💰 *সর্বমোট: ৳${Number(order.total).toLocaleString()}*\n\n` +
-      `💳 পেমেন্ট: ${PM_LABELS[order.payment_method] || order.payment_method}\n` +
-      (order.transaction_id ? `TrxID: ${order.transaction_id}\n` : '') +
-      `\n✅ ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!\n` +
-      `🌐 shahedstore.com.bd`
-    );
-    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-    toast.success('WhatsApp এ ইনভয়েস পাঠানো হচ্ছে...');
-  };
+  const sendInvoiceWhatsApp = () => sendOrderInvoicePdf(order);
 
   const items = order.order_items || [];
   const date = new Date(order.created_at).toLocaleDateString('bn-BD', { day: '2-digit', month: 'long', year: 'numeric' });
