@@ -234,6 +234,9 @@ const AdminInvoiceGenerator = () => {
             <button onClick={handlePreview} className="w-full mt-2 btn-glow rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2">
               <Printer size={16} /> প্রিভিউ ও প্রিন্ট
             </button>
+            <button onClick={handleSendWhatsAppPdf} className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 glass-card border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10 transition-colors">
+              <Send size={16} /> WhatsApp এ PDF পাঠান
+            </button>
           </div>
         </div>
       </div>
@@ -245,6 +248,7 @@ const AdminInvoiceGenerator = () => {
             <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-shrink-0">
               <h3 className="font-bold text-foreground text-sm">Invoice {invoiceNumber}</h3>
               <div className="flex gap-2">
+                <button onClick={handleSendWhatsAppPdf} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10 text-xs font-semibold"><Send size={13} /> WhatsApp PDF</button>
                 <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-glow text-xs font-semibold"><Printer size={13} /> Print / PDF</button>
                 <button onClick={() => setShowPreview(false)} className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30"><X size={15} /></button>
               </div>
