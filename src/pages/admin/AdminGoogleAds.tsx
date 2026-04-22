@@ -233,8 +233,8 @@ const AdminGoogleAds = () => {
               </div>
             </div>
 
-            <div className="rounded-xl bg-warning/10 border border-warning/30 p-4 space-y-1.5">
-              <p className="text-sm font-semibold text-warning flex items-center gap-2"><AlertTriangle size={14} /> গুরুত্বপূর্ণ Tips</p>
+            <div className="rounded-xl bg-primary/10 border border-primary/30 p-4 space-y-1.5">
+              <p className="text-sm font-semibold text-primary flex items-center gap-2"><AlertTriangle size={14} /> গুরুত্বপূর্ণ Tips</p>
               <ul className="text-xs text-muted-foreground space-y-1 list-disc ml-5">
                 <li>Label-এ শুধু slash (<code>/</code>)-এর পরের অংশটি বসাবেন — পুরো tag নয়।</li>
                 <li>একাধিক Google Ads account থাকলে আলাদা আলাদা Add Account করুন।</li>
