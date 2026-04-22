@@ -1,56 +1,40 @@
 ---
 name: Admin Panel Design System
-description: Purple Glassmorphism Dashboard — soft lavender canvas, white-glass cards, violet accents (258 78% 55%), floating active pills, big violet icon page-header card. Auto-applied via body.admin-page selectors.
+description: Site-Aligned Gradient Glassmorphism — cool airy bg + multi-color ambient gradient (violet/cyan/pink/gold), white-glass cards, violet→cyan→pink gradient page-header, gradient stat-card top accent, gradient pill buttons. Matches storefront's hero & glass aesthetic. Auto-applied via body.admin-page.
 type: design
 ---
 
-**Admin design (NON-NEGOTIABLE):** **Purple Glassmorphism Dashboard** matching the user dashboard. Soft lavender canvas + white-glass surfaces + violet accents. Replaces the previous orange/black Notion-minimal system.
+**Admin design (NON-NEGOTIABLE):** **Site-Aligned Gradient Glassmorphism**. Visually unified with the storefront — same violet→cyan→pink gradient hero, gold accents, white glass cards, and multi-color ambient glows. Replaces the previous lavender-only purple system.
 
 ## Color tokens (scoped via `body.admin-page` in `src/index.css`)
-- `--ad-bg`: 262 60% 98% (soft lavender wash)
-- `--ad-surface`: 0 0% 100% (white cards)
-- `--ad-surface-2`: 262 40% 96% (violet-tinted alt)
-- `--ad-border`: 262 40% 88% (soft violet hairline)
-- `--ad-border-strong`: 262 40% 80%
-- `--ad-text`: 258 30% 16% (deep violet-black)
-- `--ad-text-muted`: 258 12% 46%
-- `--ad-accent`: 258 78% 55% (violet brand)
-- `--ad-accent-soft`: 258 78% 96%
-- `--ad-accent-deep`: 258 78% 42%
-- `--ad-shadow-pill`: 0 4px 14px hsla(258,78%,55%,0.18) — for active nav pill
-- Radius: 8 / 14 / 18 px. Shadows: violet-tinted layered.
+- `--ad-bg`: 230 50% 97% (cool airy off-white — matches storefront)
+- `--ad-surface`: 0 0% 100%
+- `--ad-surface-2`: 230 40% 97%
+- `--ad-border`: 230 35% 90%
+- `--ad-text`: 226 35% 12% (storefront foreground)
+- `--ad-text-muted`: 226 15% 42%
+- `--ad-accent`: 258 78% 55% (violet brand `--brand-h`)
+- `--ad-accent-2`: 200 90% 45% (cyan `--brand2`)
+- `--ad-accent-3`: 330 85% 55% (pink `--brand3`)
+- `--ad-accent-gold`: 42 96% 58% (gold)
+- `--ad-gradient-brand`: violet → purple → cyan (135deg)
+- `--ad-gradient-warm`: pink → gold (135deg)
+- Radius: 12 / 20 / 26 px. Shadows: violet+cyan layered.
 
 ## Key surface rules
-- **Canvas (`.admin-gradient-bg`):** lavender wash + 2 radial violet ambient glows (top-left + bottom-right).
-- **Sidebar (`.admin-glass-sidebar`):** `hsla(white, 0.72)` + `backdrop-filter: blur(28px) saturate(180%)` + soft violet hairline + ambient violet right-edge glow.
-- **Header (`.admin-glass-header`):** matching white glass + violet hairline.
-- **Cards (`.glass-card`, `.admin-glass-card`, `.admin-stat-card`):** `hsla(white, 0.85)` + 24px blur + soft violet border `hsla(258,78%,75%,0.22)` + violet-tinted shadow. Stat-card lifts 2px on hover.
-- **Nav item (default):** transparent + violet-tinted icon box (28×28 rounded). Hover = soft violet bg.
-- **Nav item (active):** white floating pill + violet text + violet-filled gradient icon box (white icon) + soft violet shadow. NO left bar.
-- **Page header card (`.admin-page-header`):** big 56×56 violet gradient icon box + violet gradient title + gray subtitle. Auto-injected by AdminLayout for every admin page.
-- **Buttons (primary):** violet gradient pill (135deg, accent → accent-deep) with violet shadow. Hover lifts 1px + brightens.
-- **Tabs:** violet-tinted track + white floating pill on active with violet shadow.
-- **Inputs:** white + 1px violet-strong border + 8px radius + focus = violet border + 3px violet/15 ring.
-- **Tables:** violet-tinted header row, violet uppercase labels, hairline rows, violet hover.
-- **Dialogs/Popovers:** white-glass `hsla(white, 0.92)` + 28px blur + violet border + 18px radius + premium shadow.
-- **Status badges:** soft pastel fills (green/red/amber/blue/violet) with matching 1px borders. Orange and purple both map to violet.
+- **Canvas (`.admin-gradient-bg`):** 4-color ambient — violet (top-left), cyan (top-right), pink (bottom-right), gold (bottom-left).
+- **Sidebar (`.admin-glass-sidebar`):** white glass `hsla(white, 0.78)` + 28px blur + violet→cyan vertical gradient right edge.
+- **Header (`.admin-glass-header`):** white glass + horizontal violet→cyan→pink hairline gradient under it.
+- **Cards (`.admin-glass-card`):** white glass + violet hover border + lift 1px.
+- **Stat cards (`.admin-stat-card`):** 3px gradient top bar (violet→cyan→pink) appears on hover, soft violet radial glow corner, lift 3px.
+- **Nav active:** white floating pill + tri-color violet→purple→cyan gradient icon box.
+- **Page header (`.admin-page-header`):** violet→white→cyan gradient bg, dual radial glows, 56×56 tri-color gradient icon box, violet→cyan gradient text title.
+- **Buttons (primary):** tri-color violet→purple→cyan gradient pill with shifting background-position on hover (200% size). Inset white sheen.
+- **Section title bar:** violet→cyan vertical gradient.
+- **Tabs / inputs / dialogs:** unchanged white glass + violet focus.
 
 ## Auto-inheritance
-All `body.admin-page` selectors override raw Tailwind:
-- `.bg-white`, `.bg-gray/slate-50/100`, `.glass-card` → white glass with 24px blur + violet border
-- `[role="dialog"]`, popover, menu, listbox → white glass + violet border + 28px blur
-- `[role="tablist"]` + active tab → violet-tinted track with white floating pill
-- Primary buttons (`.bg-primary`, `.bg-blue/indigo/violet/purple-600`) → violet gradient pill
-- `<table>` → violet-tinted header + hairlines + uppercase labels
-- Inputs/selects/textareas → white flat with violet focus ring
-- Status backgrounds (green/red/amber/blue/orange/purple/violet-100) → flat soft pills (orange & purple → violet)
-- `.border-gray/slate-200/300`, `.border-border` → soft violet hairline
-
-## Page header injection
-`AdminLayout.tsx` auto-injects `<div className="admin-page-header">` above `<Outlet />` on every admin page — big violet icon (from menu item) + violet gradient title + section/subtitle. No per-page edits needed.
-
-## Skip auto-polish
-Add `data-glass-skip` attribute to opt-out a specific surface.
+Same `body.admin-page` overrides as before (Tailwind .bg-white/gray, dialogs, tabs, inputs, status badges) — all flow through the new gradient tokens. Add `data-glass-skip` to opt out.
 
 ## Theme support
-`html[data-theme="dark-cyber"]` and `html[data-theme="midnight-purple"]` flip tokens to deep violet-tinted slate surfaces while keeping violet accents and ambient glows. Other themes (rose-gold, ocean-blue, forest-green) — admin always stays violet.
+`html[data-theme="dark-cyber"]` and `html[data-theme="midnight-purple"]` flip surfaces to deep violet-tinted slate; gradients & ambient glows remain.
