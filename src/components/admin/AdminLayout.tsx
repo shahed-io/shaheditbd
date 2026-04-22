@@ -520,6 +520,25 @@ const AdminLayout = () => {
 
         {/* Page content */}
         <main className="flex-1 p-3 sm:p-6 overflow-x-auto">
+          {(() => {
+            const currentItem = ALL_ITEMS_FLAT.find(i =>
+              location.pathname === i.path || (i.path !== '/ceo' && location.pathname.startsWith(i.path + '/'))
+            );
+            const HeaderIcon = currentItem?.icon || LayoutDashboard;
+            return (
+              <div className="admin-page-header">
+                <div className="admin-page-header-icon">
+                  <HeaderIcon />
+                </div>
+                <div className="admin-page-header-text">
+                  <h1>{pageMeta.title}</h1>
+                  <p className="admin-page-subtitle">
+                    {pageMeta.section ? `${pageMeta.section} • Manage and configure ${pageMeta.title.toLowerCase()}` : 'Welcome to your admin panel'}
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
           <Outlet />
         </main>
       </div>
