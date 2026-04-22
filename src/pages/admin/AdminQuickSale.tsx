@@ -114,10 +114,10 @@ const KEY_TYPES: Record<string, string> = {
   custom: '📝 Custom',
 };
 
-const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-16 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
-const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-0 flex w-12 items-center justify-center text-muted-foreground transition-colors group-focus-within:text-primary';
+const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
+const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground transition-colors group-focus-within:text-primary';
 
-const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
+const AdminQuickSale = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -405,7 +405,7 @@ const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
   const validItemCount = entries.filter(e => e.product || (e.is_custom && e.custom_name.trim())).length;
 
   return (
-    <div ref={ref} className="space-y-5 max-w-5xl mx-auto pb-8">
+    <div className="space-y-5 max-w-5xl mx-auto pb-8">
       {/* Inline header — auto-hidden left side via global CSS guard (.admin-page-header is rendered by AdminLayout) */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2.5">
@@ -846,8 +846,7 @@ const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
       )}
     </div>
   );
-});
+};
 
-AdminQuickSale.displayName = 'AdminQuickSale';
 
 export default AdminQuickSale;
