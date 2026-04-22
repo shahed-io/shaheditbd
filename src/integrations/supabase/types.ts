@@ -2352,6 +2352,27 @@ export type Database = {
           },
         ]
       }
+      telegram_user_prefs: {
+        Row: {
+          chat_id: string
+          created_at: string
+          language: string
+          updated_at: string
+        }
+        Insert: {
+          chat_id: string
+          created_at?: string
+          language?: string
+          updated_at?: string
+        }
+        Update: {
+          chat_id?: string
+          created_at?: string
+          language?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
