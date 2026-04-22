@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import BrandLogo from '@/components/store/BrandLogo';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -7,12 +7,12 @@ import { supabase } from '@/integrations/supabase/client';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
-  LogOut, Menu, X, BarChart3, Bell, Search, ChevronDown,
+  LogOut, Menu, X, Bell, Search, ChevronDown, ChevronRight,
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
-  Megaphone, Shield, Database, Tag, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
-  Map, Bot, Code2, KeyRound, FileSearch, PackageSearch, Star, BarChart2,
-  Zap, ImageIcon, Link2, ArrowLeftRight, Link2Off, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles,
-  ShoppingCart as ShopIcon, CreditCard as CreditIcon, Clock, Eye
+  Megaphone, Shield, Database, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
+  Bot, KeyRound, Star, BarChart2,
+  ImageIcon, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles,
+  ShoppingCart as ShopIcon, CreditCard as CreditIcon,
 } from 'lucide-react';
 
 interface AdminNotif {
@@ -24,104 +24,154 @@ interface AdminNotif {
   link?: string;
 }
 
-const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
-  { icon: ShoppingCart, label: 'Orders', path: '/ceo/orders' },
+type MenuItem = { icon: any; label: string; path: string; badge?: 'live' | 'new' };
+type MenuSection = { title: string; items: MenuItem[] };
+
+// ─── Grouped sidebar — clear sections instead of one long flat list ───
+const MENU_SECTIONS: MenuSection[] = [
   {
-    icon: Package, label: 'Products', path: '/ceo/products',
-    children: [
-      { label: 'All Products', path: '/ceo/products' },
-      { label: 'Add New', path: '/ceo/products/new' },
-      { label: 'Attributes', path: '/ceo/attributes' },
-    ]
+    title: 'Overview',
+    items: [
+      { icon: LayoutDashboard, label: 'Dashboard', path: '/ceo' },
+    ],
   },
   {
-    icon: Grid3X3, label: 'Categories', path: '/ceo/categories',
-    children: [
-      { label: 'All Categories', path: '/ceo/categories' },
-      { label: 'Add New', path: '/ceo/categories/new' },
-    ]
+    title: 'Sales',
+    items: [
+      { icon: ShoppingCart, label: 'Orders', path: '/ceo/orders', badge: 'live' },
+      { icon: ShoppingCart, label: 'Quick Sale', path: '/ceo/quick-sale' },
+      { icon: FileText, label: 'Invoice Generator', path: '/ceo/invoices' },
+      { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
+      { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
+    ],
   },
-  { icon: Users, label: 'Customers', path: '/ceo/customers' },
-  { icon: Wallet, label: 'Wallet', path: '/ceo/wallet' },
-  { icon: Sliders, label: 'Hero Banner', path: '/ceo/hero-banner' },
-  { icon: Flame, label: 'Flash Sale', path: '/ceo/flash-sale' },
-  { icon: Star, label: 'Testimonials', path: '/ceo/testimonials' },
-  { icon: Megaphone, label: 'Announcement Bar', path: '/ceo/announcement-bar' },
-  { icon: Layers, label: 'Popup Banner', path: '/ceo/popup-banner' },
-  { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
-  { icon: Percent, label: 'Coupons', path: '/ceo/coupons' },
-  { icon: Gift, label: 'Welcome Discount', path: '/ceo/welcome-discount' },
-  { icon: Gift, label: 'Referrals', path: '/ceo/referrals' },
-  { icon: TrendingUp, label: 'Affiliates', path: '/ceo/affiliates' },
-  { icon: Headphones, label: 'Tickets', path: '/ceo/tickets' },
-  { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
-  { icon: Layout, label: 'Pages', path: '/ceo/pages' },
-  { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
-  { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
-  { icon: ShoppingCart, label: 'Quick Sale', path: '/ceo/quick-sale' },
-  
-  { icon: FolderDown, label: 'Software Downloads', path: '/ceo/software-downloads' },
-  { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
-  { icon: Mail, label: 'Newsletter', path: '/ceo/newsletter' },
-  { icon: FileText, label: 'Product Reviews', path: '/ceo/product-reviews' },
-  { icon: ArrowLeftRight, label: 'Import / Export', path: '/ceo/import-export' },
-  { icon: FileText, label: 'Invoice Generator', path: '/ceo/invoices' },
   {
-    icon: Globe, label: 'SEO Settings', path: '/ceo/seo',
-    children: [
-      { label: 'SEO Manager', path: '/ceo/seo', icon: Globe },
-      { label: 'Blog Manager', path: '/ceo/blog', icon: BookOpen },
-      { label: 'Meta Tag Manager', path: '/ceo/seo/meta-tags', icon: Tag },
-      { label: 'Sitemap Generator', path: '/ceo/seo/sitemap', icon: Map },
-      { label: 'Robots.txt Editor', path: '/ceo/seo/robots', icon: Bot },
-      { label: 'Schema Generator', path: '/ceo/seo/schema', icon: Code2 },
-      { label: 'Keyword Manager', path: '/ceo/seo/keywords', icon: KeyRound },
-      { label: 'Page SEO Control', path: '/ceo/seo/pages', icon: FileSearch },
-      { label: 'Product SEO', path: '/ceo/seo/products', icon: PackageSearch },
-      { label: 'FAQ Manager', path: '/ceo/seo/faq', icon: HelpCircle },
-      { label: 'Review System', path: '/ceo/seo/reviews', icon: Star },
-      { label: 'Google Analytics', path: '/ceo/seo/analytics', icon: BarChart2 },
-      { label: 'Search Console', path: '/ceo/seo/search-console', icon: Search },
-      { label: 'Speed Optimization', path: '/ceo/seo/speed', icon: Zap },
-      { label: 'Image SEO', path: '/ceo/seo/images', icon: ImageIcon },
-      { label: 'URL Slug Editor', path: '/ceo/seo/slugs', icon: Link2 },
-      { label: 'Redirect Manager', path: '/ceo/seo/redirects', icon: ArrowLeftRight },
-      { label: 'Broken Link Checker', path: '/ceo/seo/broken-links', icon: Link2Off },
-      { label: '🤖 Content Analyzer', path: '/ceo/seo/content-analyzer', icon: Sparkles },
-    ]
+    title: 'Catalog',
+    items: [
+      { icon: Package, label: 'Products', path: '/ceo/products' },
+      { icon: Grid3X3, label: 'Categories', path: '/ceo/categories' },
+      { icon: Sliders, label: 'Attributes', path: '/ceo/attributes' },
+      { icon: AlertTriangle, label: 'Inventory Alerts', path: '/ceo/inventory-alerts' },
+      { icon: ArrowLeftRight, label: 'Import / Export', path: '/ceo/import-export' },
+      { icon: Star, label: 'Product Reviews', path: '/ceo/product-reviews' },
+      { icon: FolderDown, label: 'Software Downloads', path: '/ceo/software-downloads' },
+    ],
   },
-  { icon: TrendingUp, label: 'Reports', path: '/ceo/reports' },
-  { icon: Megaphone, label: 'Marketing', path: '/ceo/marketing' },
-  { icon: Facebook, label: 'Facebook Pixel', path: '/ceo/facebook-pixel' },
-  { icon: Users, label: 'FB Custom Audiences', path: '/ceo/custom-audiences' },
-  { icon: BarChart2, label: 'Google Ads & Analytics', path: '/ceo/google-ads' },
-  { icon: Megaphone, label: 'Marketing Pixels (TikTok/Snap/Pin/LinkedIn/X)', path: '/ceo/marketing-pixels' },
-  { icon: ShieldCheck, label: 'Site Verification', path: '/ceo/site-verification' },
-  { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
-  { icon: Bot, label: 'Telegram Shop Bot', path: '/ceo/telegram-bot' },
-  { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
-  { icon: Brain, label: 'AI API Config', path: '/ceo/ai-config' },
-  { icon: Users, label: 'Staff Management', path: '/ceo/staff' },
-  { icon: AlertTriangle, label: 'Inventory Alerts', path: '/ceo/inventory-alerts' },
-  { icon: Palette, label: 'Themes', path: '/ceo/themes' },
-  { icon: Settings, label: 'Settings', path: '/ceo/settings' },
-  { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
-  { icon: Database, label: 'Backup', path: '/ceo/backup' },
-  { icon: ShieldCheck, label: 'CID For Reseller', path: '/ceo/reseller' },
-  { icon: Users, label: 'Reseller Accounts', path: '/ceo/reseller-accounts' },
-  { icon: Brain, label: '🤖 AI Assistant', path: '/ceo/ai-assistant' },
+  {
+    title: 'Customers',
+    items: [
+      { icon: Users, label: 'All Customers', path: '/ceo/customers' },
+      { icon: Wallet, label: 'Wallet', path: '/ceo/wallet' },
+      { icon: Headphones, label: 'Support Tickets', path: '/ceo/tickets' },
+      { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
+      { icon: Mail, label: 'Newsletter', path: '/ceo/newsletter' },
+    ],
+  },
+  {
+    title: 'Storefront',
+    items: [
+      { icon: Sliders, label: 'Hero Banner', path: '/ceo/hero-banner' },
+      { icon: Flame, label: 'Flash Sale', path: '/ceo/flash-sale' },
+      { icon: Star, label: 'Testimonials', path: '/ceo/testimonials' },
+      { icon: Megaphone, label: 'Announcement Bar', path: '/ceo/announcement-bar' },
+      { icon: Layers, label: 'Popup Banner', path: '/ceo/popup-banner' },
+      { icon: Layout, label: 'Pages', path: '/ceo/pages' },
+      { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
+      { icon: Palette, label: 'Themes', path: '/ceo/themes' },
+    ],
+  },
+  {
+    title: 'Marketing',
+    items: [
+      { icon: Percent, label: 'Coupons', path: '/ceo/coupons' },
+      { icon: Gift, label: 'Welcome Discount', path: '/ceo/welcome-discount' },
+      { icon: Gift, label: 'Referrals', path: '/ceo/referrals' },
+      { icon: TrendingUp, label: 'Affiliates', path: '/ceo/affiliates' },
+      { icon: Megaphone, label: 'Marketing Hub', path: '/ceo/marketing' },
+      { icon: Facebook, label: 'Facebook Pixel', path: '/ceo/facebook-pixel' },
+      { icon: Users, label: 'FB Custom Audiences', path: '/ceo/custom-audiences' },
+      { icon: BarChart2, label: 'Google Ads', path: '/ceo/google-ads' },
+      { icon: Megaphone, label: 'Other Pixels', path: '/ceo/marketing-pixels' },
+    ],
+  },
+  {
+    title: 'Content & SEO',
+    items: [
+      { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
+      { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
+      { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
+      { icon: Globe, label: 'SEO Manager', path: '/ceo/seo' },
+      { icon: ShieldCheck, label: 'Site Verification', path: '/ceo/site-verification' },
+    ],
+  },
+  {
+    title: 'Reports',
+    items: [
+      { icon: TrendingUp, label: 'Analytics & Reports', path: '/ceo/reports' },
+    ],
+  },
+  {
+    title: 'Integrations',
+    items: [
+      { icon: Bot, label: 'Telegram Shop Bot', path: '/ceo/telegram-bot' },
+      { icon: ShieldCheck, label: 'CID Reseller Portal', path: '/ceo/reseller' },
+      { icon: Users, label: 'Reseller Accounts', path: '/ceo/reseller-accounts' },
+    ],
+  },
+  {
+    title: 'AI Tools',
+    items: [
+      { icon: Brain, label: 'AI Assistant', path: '/ceo/ai-assistant', badge: 'new' },
+      { icon: Sparkles, label: 'AI API Config', path: '/ceo/ai-config' },
+    ],
+  },
+  {
+    title: 'System',
+    items: [
+      { icon: Users, label: 'Staff Management', path: '/ceo/staff' },
+      { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
+      { icon: Database, label: 'Backup', path: '/ceo/backup' },
+      { icon: Settings, label: 'General Settings', path: '/ceo/settings' },
+    ],
+  },
 ];
+
+// Build a flat lookup for the current page title
+const ALL_ITEMS_FLAT = MENU_SECTIONS.flatMap(s => s.items);
+
+const getPageTitle = (pathname: string): { title: string; section: string } => {
+  // longest-prefix match
+  const sorted = [...ALL_ITEMS_FLAT].sort((a, b) => b.path.length - a.path.length);
+  for (const item of sorted) {
+    if (pathname === item.path || pathname.startsWith(item.path + '/')) {
+      const section = MENU_SECTIONS.find(s => s.items.some(i => i.path === item.path))?.title || '';
+      return { title: item.label, section };
+    }
+  }
+  return { title: 'Admin Panel', section: '' };
+};
 
 const AdminLayout = () => {
   const { user, isAdmin, loading, signOut } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Products', 'Orders']);
+  const [collapsedSections, setCollapsedSections] = useState<string[]>([]);
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const [adminNotifs, setAdminNotifs] = useState<AdminNotif[]>([]);
   const [notifCount, setNotifCount] = useState(0);
+  const [navSearch, setNavSearch] = useState('');
   const location = useLocation();
+
+  const pageMeta = useMemo(() => getPageTitle(location.pathname), [location.pathname]);
+
+  // Filter sections by search
+  const visibleSections = useMemo(() => {
+    if (!navSearch.trim()) return MENU_SECTIONS;
+    const q = navSearch.toLowerCase();
+    return MENU_SECTIONS
+      .map(s => ({ ...s, items: s.items.filter(i => i.label.toLowerCase().includes(q)) }))
+      .filter(s => s.items.length > 0);
+  }, [navSearch]);
 
   // Fetch admin notifications
   const fetchNotifs = useCallback(async () => {
@@ -161,120 +211,156 @@ const AdminLayout = () => {
 
   if (!user || !isAdmin) return <Navigate to="/ceo/login" replace />;
 
-  const toggleMenu = (label: string) => {
-    setExpandedMenus(prev =>
-      prev.includes(label) ? prev.filter(m => m !== label) : [...prev, label]
+  const toggleSection = (title: string) => {
+    setCollapsedSections(prev =>
+      prev.includes(title) ? prev.filter(t => t !== title) : [...prev, title]
     );
   };
 
-  const sidebarContent = (isMobile: boolean) => (
-    <>
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-border/50 min-h-[68px] overflow-hidden">
-        {(isMobile || sidebarOpen) ? (
-          <div className="flex items-center justify-between w-full">
-            <BrandLogo size="sm" />
-            {isMobile && (
-              <button onClick={() => setMobileSidebarOpen(false)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
-                <X size={20} />
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,50%), hsl(340,100%,40%) 60%, hsl(222,30%,14%))' }}>
-            <span className="text-white text-xs font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
-          </div>
-        )}
-      </div>
-
-      {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
-        {menuItems.map((item) => {
-          const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
-          const hasChildren = item.children && item.children.length > 0;
-          const isExpanded = expandedMenus.includes(item.label);
-          const showLabel = isMobile || sidebarOpen;
-
-          return (
-            <div key={item.label}>
-              {hasChildren ? (
-                <button
-                  onClick={() => showLabel && toggleMenu(item.label)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
-                    isActive
-                      ? 'bg-primary/20 text-primary border border-primary/30'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
-                  }`}
-                >
-                  <item.icon size={18} className="flex-shrink-0" />
-                  {showLabel && (
-                    <>
-                      <span className="flex-1 text-left font-medium">{item.label}</span>
-                      <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                    </>
-                  )}
+  const sidebarContent = (isMobile: boolean) => {
+    const showLabel = isMobile || sidebarOpen;
+    return (
+      <>
+        {/* Logo */}
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-border/50 min-h-[68px] overflow-hidden">
+          {showLabel ? (
+            <div className="flex items-center justify-between w-full">
+              <BrandLogo size="sm" />
+              {isMobile && (
+                <button onClick={() => setMobileSidebarOpen(false)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
+                  <X size={20} />
                 </button>
-              ) : (
-                <NavLink
-                  to={item.path}
-                  end={item.path === '/ceo'}
-                  className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
-                    isActive
-                      ? 'bg-primary/20 text-primary border border-primary/30'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
-                  }`}
-                >
-                  <item.icon size={18} className="flex-shrink-0" />
-                  {showLabel && <span className="font-medium">{item.label}</span>}
-                </NavLink>
-              )}
-
-              {/* Sub-menu */}
-              {hasChildren && showLabel && isExpanded && (
-                <div className="ml-8 mt-1 space-y-1">
-                  {item.children!.map((child) => (
-                    <NavLink
-                      key={child.path}
-                      to={child.path}
-                      end
-                      className={({ isActive }) => `block px-3 py-1.5 rounded-lg text-xs transition-all ${
-                        isActive ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      → {child.label}
-                    </NavLink>
-                  ))}
-                </div>
               )}
             </div>
-          );
-        })}
-      </nav>
+          ) : (
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'radial-gradient(ellipse at 40% 35%, hsl(20,100%,50%), hsl(340,100%,40%) 60%, hsl(222,30%,14%))' }}>
+              <span className="text-white text-xs font-black" style={{ fontFamily: 'Sora, sans-serif' }}>S</span>
+            </div>
+          )}
+        </div>
 
-      {/* User info */}
-      <div className="border-t border-border/50 p-3">
-        {(isMobile || sidebarOpen) ? (
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-background text-sm font-bold">
-              A
+        {/* Quick search inside sidebar */}
+        {showLabel && (
+          <div className="px-3 pt-3 pb-1">
+            <div className="relative">
+              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                value={navSearch}
+                onChange={e => setNavSearch(e.target.value)}
+                placeholder="Quick find menu..."
+                className="w-full bg-muted/30 border border-border/60 rounded-lg pl-8 pr-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-primary/50 transition-colors"
+              />
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-xs font-medium text-foreground truncate">Admin</div>
-              <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
-            </div>
-            <button onClick={signOut} className="text-muted-foreground hover:text-destructive transition-colors" title="Sign Out">
-              <LogOut size={16} />
-            </button>
           </div>
-        ) : (
-          <button onClick={signOut} className="w-full flex justify-center text-muted-foreground hover:text-destructive transition-colors p-2">
-            <LogOut size={18} />
-          </button>
         )}
-      </div>
-    </>
-  );
+
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
+          {visibleSections.map((section) => {
+            const isCollapsed = collapsedSections.includes(section.title);
+            return (
+              <div key={section.title}>
+                {/* Section header */}
+                {showLabel && (
+                  <button
+                    onClick={() => toggleSection(section.title)}
+                    className="w-full flex items-center justify-between px-3 mb-1.5 group"
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-[1.2px] text-muted-foreground/70 group-hover:text-foreground transition-colors">
+                      {section.title}
+                    </span>
+                    <ChevronDown
+                      size={11}
+                      className={`text-muted-foreground/50 transition-transform ${isCollapsed ? '-rotate-90' : ''}`}
+                    />
+                  </button>
+                )}
+                {!showLabel && (
+                  <div className="h-px bg-border/40 mx-2 my-2" />
+                )}
+
+                {/* Section items */}
+                {!isCollapsed && (
+                  <div className="space-y-0.5">
+                    {section.items.map((item) => {
+                      const isActive = location.pathname === item.path ||
+                        (item.path !== '/ceo' && location.pathname.startsWith(item.path + '/'));
+                      return (
+                        <NavLink
+                          key={item.path}
+                          to={item.path}
+                          end={item.path === '/ceo'}
+                          title={!showLabel ? item.label : undefined}
+                          className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
+                            isActive
+                              ? 'bg-primary/15 text-primary font-semibold'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                          }`}
+                        >
+                          {/* Active indicator bar */}
+                          {isActive && (
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-primary" />
+                          )}
+                          <item.icon size={17} className="flex-shrink-0" />
+                          {showLabel && (
+                            <>
+                              <span className="flex-1 truncate">{item.label}</span>
+                              {item.badge === 'live' && (
+                                <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                                  <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> LIVE
+                                </span>
+                              )}
+                              {item.badge === 'new' && (
+                                <span className="text-[9px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded">NEW</span>
+                              )}
+                            </>
+                          )}
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {visibleSections.length === 0 && showLabel && (
+            <div className="px-4 py-6 text-center text-xs text-muted-foreground">
+              কোনো ম্যাচ পাওয়া যায়নি
+            </div>
+          )}
+        </nav>
+
+        {/* User info */}
+        <div className="border-t border-border/50 p-3">
+          {showLabel ? (
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-background text-sm font-bold flex-shrink-0">
+                A
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-semibold text-foreground truncate">Admin</div>
+                <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
+              </div>
+              <button
+                onClick={signOut}
+                className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                title="Sign Out"
+              >
+                <LogOut size={15} />
+              </button>
+            </div>
+          ) : (
+            <button onClick={signOut} className="w-full flex justify-center text-muted-foreground hover:text-destructive transition-colors p-2" title="Sign Out">
+              <LogOut size={18} />
+            </button>
+          )}
+        </div>
+      </>
+    );
+  };
 
   return (
     <div className="min-h-screen admin-gradient-bg flex">
@@ -301,37 +387,42 @@ const AdminLayout = () => {
       {/* Main content */}
       <div className={`flex-1 flex flex-col transition-all duration-300 w-full ${sidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
         {/* Top bar */}
-        <header className="admin-glass-header px-3 sm:px-6 py-3 sm:py-4 flex items-center gap-2 sm:gap-4 sticky top-0 z-30">
+        <header className="admin-glass-header px-3 sm:px-6 py-3 flex items-center gap-2 sm:gap-4 sticky top-0 z-30">
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileSidebarOpen(true)}
-            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary md:hidden"
+            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary md:hidden flex-shrink-0"
+            aria-label="Open menu"
           >
             <Menu size={18} />
           </button>
           {/* Desktop sidebar toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary hidden md:block"
+            className="p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary hidden md:flex flex-shrink-0"
+            aria-label="Toggle sidebar"
           >
             {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
 
-          <div className="flex-1 max-w-md min-w-0">
-            <div className="relative">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search anything..."
-                className="w-full bg-muted/30 border border-border rounded-xl pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-              />
-            </div>
+          {/* Page title + breadcrumb */}
+          <div className="min-w-0 flex-1">
+            {pageMeta.section && (
+              <div className="hidden sm:flex items-center gap-1 text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider">
+                <span>{pageMeta.section}</span>
+                <ChevronRight size={10} />
+                <span className="text-primary/80">{pageMeta.title}</span>
+              </div>
+            )}
+            <h1 className="text-base sm:text-lg font-bold text-foreground truncate leading-tight" style={{ fontFamily: 'Rajdhani, sans-serif', letterSpacing: '0.3px' }}>
+              {pageMeta.title}
+            </h1>
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3 flex-shrink-0 relative">
-            <button onClick={() => setShowNotifPanel(!showNotifPanel)} className="relative p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary">
+            <button onClick={() => setShowNotifPanel(!showNotifPanel)} className="relative p-2 rounded-xl glass-card hover:border-primary/40 transition-all text-muted-foreground hover:text-primary" aria-label="Notifications">
               <Bell size={18} />
-              {notifCount > 0 && <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary rounded-full text-[9px] font-bold text-primary-foreground flex items-center justify-center">{notifCount > 9 ? '9+' : notifCount}</span>}
+              {notifCount > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-primary rounded-full text-[10px] font-bold text-primary-foreground flex items-center justify-center">{notifCount > 9 ? '9+' : notifCount}</span>}
             </button>
 
             {/* Notification Dropdown */}
@@ -373,8 +464,8 @@ const AdminLayout = () => {
               </>
             )}
 
-            <a href="/" target="_blank" className="text-xs text-primary hover:underline glass-card px-2 sm:px-3 py-2 rounded-xl border-primary/30 hidden sm:block">
-              View Store →
+            <a href="/" target="_blank" className="text-xs text-primary hover:underline glass-card px-2 sm:px-3 py-2 rounded-xl border-primary/30 hidden sm:flex items-center gap-1.5">
+              <Globe size={13} /> View Store
             </a>
           </div>
         </header>
