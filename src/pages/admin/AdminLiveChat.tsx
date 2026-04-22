@@ -39,7 +39,9 @@ interface LiveSet {
   label: string;
   subtitle: string;
   icon_color: string;
+  icon: string; // lucide icon name
   is_active: boolean;
+  sort_order?: number;
 }
 
 const DEFAULT_SETTINGS: LiveChatSettings = {
@@ -58,11 +60,33 @@ const DEFAULT_SETTINGS: LiveChatSettings = {
 };
 
 const LIVE_SET_TYPES = [
-  { value: 'whatsapp', label: 'WhatsApp', color: '#25D366' },
-  { value: 'messenger', label: 'Messenger', color: '#0084FF' },
-  { value: 'telegram', label: 'Telegram', color: '#0088CC' },
-  { value: 'custom_link', label: 'Custom Link', color: '#7c3aed' },
+  { value: 'messenger', label: 'Facebook Messenger', color: '#0084FF', icon: 'Facebook' },
+  { value: 'telegram', label: 'Telegram', color: '#0088CC', icon: 'TelegramIcon' },
+  { value: 'whatsapp', label: 'WhatsApp (Extra)', color: '#25D366', icon: 'MessageCircle' },
+  { value: 'custom_link', label: 'Custom Link', color: '#7c3aed', icon: 'LinkIcon' },
 ];
+
+// Available icons for picker
+const ICON_OPTIONS = [
+  { name: 'MessageCircle', Icon: MessageCircle },
+  { name: 'Facebook', Icon: Facebook },
+  { name: 'TelegramIcon', Icon: TelegramIcon },
+  { name: 'LinkIcon', Icon: LinkIcon },
+  { name: 'Phone', Icon: Phone },
+  { name: 'Mail', Icon: Mail },
+  { name: 'Instagram', Icon: Instagram },
+  { name: 'Twitter', Icon: Twitter },
+  { name: 'Youtube', Icon: Youtube },
+  { name: 'Video', Icon: Video },
+  { name: 'Headphones', Icon: Headphones },
+  { name: 'LifeBuoy', Icon: LifeBuoy },
+  { name: 'HelpCircle', Icon: HelpCircle },
+  { name: 'Globe', Icon: Globe },
+];
+
+const getIconByName = (name: string) => {
+  return ICON_OPTIONS.find(i => i.name === name)?.Icon || MessageCircle;
+};
 
 // ── Chat History Panel ──
 interface ChatConversation {
