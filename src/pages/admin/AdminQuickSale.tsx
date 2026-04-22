@@ -148,8 +148,18 @@ const AdminQuickSale = () => {
   }, [products, productSearch]);
 
   const selectProduct = (idx: number, product: Product) => {
+    const orig = product.original_price || product.price;
+    const sell = product.price;
+    const disc = Math.max(0, orig - sell);
     setEntries(prev => prev.map((e, i) =>
-      i === idx ? { ...e, product, custom_price: product.price, license: null, manual_key: '', manual_extra: '', is_custom: false, custom_name: '' } : e
+      i === idx ? {
+        ...e, product,
+        original_price: orig,
+        discount_amount: disc,
+        discount_percent: orig > 0 ? Math.round((disc / orig) * 100) : 0,
+        custom_price: sell,
+        license: null, manual_key: '', manual_extra: '', is_custom: false, custom_name: '',
+      } : e
     ));
     setActiveIdx(null);
     setProductSearch('');
@@ -157,9 +167,34 @@ const AdminQuickSale = () => {
 
   const toggleCustomProduct = (idx: number) => {
     setEntries(prev => prev.map((e, i) =>
-      i === idx ? { ...e, is_custom: !e.is_custom, product: null, custom_name: '', custom_price: 0, license: null, manual_key: '', manual_extra: '' } : e
+      i === idx ? { ...e, is_custom: !e.is_custom, product: null, custom_name: '', original_price: 0, discount_amount: 0, discount_percent: 0, custom_price: 0, license: null, manual_key: '', manual_extra: '' } : e
     ));
     setActiveIdx(null);
+  };
+
+  // Auto-recalculate final price when original_price or discount changes
+  const updateOriginalPrice = (idx: number, value: number) => {
+    setEntries(prev => prev.map((e, i) => {
+      if (i !== idx) return e;
+      const newOrig = value;
+      const newDisc = Math.min(e.discount_amount, newOrig);
+      return { ...e, original_price: newOrig, discount_amount: newDisc, custom_price: Math.max(0, newOrig - newDisc), discount_percent: newOrig > 0 ? Math.round((newDisc / newOrig) * 100) : 0 };
+    }));
+  };
+  const updateDiscountAmount = (idx: number, value: number) => {
+    setEntries(prev => prev.map((e, i) => {
+      if (i !== idx) return e;
+      const disc = Math.min(Math.max(0, value), e.original_price);
+      return { ...e, discount_amount: disc, custom_price: Math.max(0, e.original_price - disc), discount_percent: e.original_price > 0 ? Math.round((disc / e.original_price) * 100) : 0 };
+    }));
+  };
+  const updateDiscountPercent = (idx: number, value: number) => {
+    setEntries(prev => prev.map((e, i) => {
+      if (i !== idx) return e;
+      const pct = Math.min(Math.max(0, value), 100);
+      const disc = Math.round((e.original_price * pct) / 100);
+      return { ...e, discount_percent: pct, discount_amount: disc, custom_price: Math.max(0, e.original_price - disc) };
+    }));
   };
 
   const updateEntry = (idx: number, updates: Partial<OrderEntry>) => {
