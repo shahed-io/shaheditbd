@@ -436,6 +436,29 @@ const AdminLayout = () => {
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3 flex-shrink-0 relative">
+            {/* Premium Search Trigger (header) */}
+            <button
+              onClick={() => setCmdOpen(true)}
+              className="group hidden sm:inline-flex items-center gap-2.5 h-9 px-3 rounded-xl border border-border/60 bg-gradient-to-r from-muted/40 via-background to-muted/30 hover:border-orange-300/70 hover:bg-orange-50/30 dark:hover:bg-orange-950/10 dark:hover:border-orange-700/40 transition-all"
+              aria-label="Search admin"
+            >
+              <Search size={14} className="text-muted-foreground group-hover:text-orange-500 transition-colors" strokeWidth={2.5} />
+              <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                Search…
+              </span>
+              <kbd className="inline-flex items-center px-1.5 py-0.5 rounded-md border border-border/70 bg-background/90 font-mono text-[9px] font-bold text-muted-foreground">
+                ⌘K
+              </kbd>
+            </button>
+            {/* Mobile-only icon trigger */}
+            <button
+              onClick={() => setCmdOpen(true)}
+              className="admin-icon-btn sm:hidden"
+              aria-label="Search admin"
+            >
+              <Search size={18} />
+            </button>
+
             <button onClick={() => setShowNotifPanel(!showNotifPanel)} className="admin-icon-btn relative" aria-label="Notifications">
               <Bell size={18} />
               {notifCount > 0 && (
