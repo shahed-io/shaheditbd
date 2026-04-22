@@ -272,10 +272,10 @@ const AdminCommandPalette = ({ open, onClose }: Props) => {
       />
 
       {/* Panel */}
-      <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border border-border/60 bg-background animate-in zoom-in-95 slide-in-from-top-4 duration-200">
+      <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden border border-violet-200/60 dark:border-violet-800/40 bg-white/95 dark:bg-violet-950/90 backdrop-blur-xl animate-in zoom-in-95 slide-in-from-top-4 duration-200" style={{ boxShadow: '0 24px 48px hsla(258,78%,55%,0.20), 0 8px 16px hsla(258,40%,30%,0.08)' }}>
         {/* Search input */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/60 bg-gradient-to-r from-background via-background to-orange-50/40 dark:to-orange-950/10">
-          <Search size={18} className="text-orange-500 flex-shrink-0" strokeWidth={2.5} />
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-violet-200/50 dark:border-violet-800/30 bg-gradient-to-r from-violet-50/60 via-white/40 to-violet-50/60 dark:from-violet-950/40 dark:via-violet-950/20 dark:to-violet-950/40">
+          <Search size={18} className="text-violet-500 flex-shrink-0" strokeWidth={2.5} />
           <input
             ref={inputRef}
             type="text"
@@ -285,14 +285,14 @@ const AdminCommandPalette = ({ open, onClose }: Props) => {
             className="flex-1 bg-transparent border-0 outline-none text-base text-foreground placeholder:text-muted-foreground/70 font-medium"
           />
           {loading && (
-            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-orange-500 bg-orange-50 dark:bg-orange-950/30 px-2 py-1 rounded-md">
-              <div className="w-1 h-1 rounded-full bg-orange-500 animate-pulse" />
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-violet-600 bg-violet-100 dark:bg-violet-900/40 dark:text-violet-300 px-2 py-1 rounded-md">
+              <div className="w-1 h-1 rounded-full bg-violet-500 animate-pulse" />
               Searching
             </div>
           )}
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-violet-100/60 dark:hover:bg-violet-900/40 transition-colors"
             aria-label="Close"
           >
             <X size={16} />
@@ -340,14 +340,15 @@ const AdminCommandPalette = ({ open, onClose }: Props) => {
                   onClick={() => handleSelect(currentIdx)}
                   className={`w-full flex items-center gap-3 px-3 mx-2 py-2.5 rounded-xl text-left transition-all group ${
                     isActive
-                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md shadow-orange-500/20'
-                      : 'hover:bg-muted/60 text-foreground'
+                      ? 'text-white'
+                      : 'hover:bg-violet-50/70 dark:hover:bg-violet-950/40 text-foreground'
                   }`}
+                  style={isActive ? { background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(258,78%,42%))', boxShadow: '0 8px 24px hsla(258,78%,55%,0.30)' } : undefined}
                 >
                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
                     isActive
                       ? 'bg-white/20 text-white'
-                      : 'bg-muted/70 text-muted-foreground group-hover:text-foreground'
+                      : 'bg-violet-100/70 dark:bg-violet-900/40 text-violet-600 dark:text-violet-300 group-hover:bg-violet-200/70'
                   }`}>
                     <Icon size={16} />
                   </div>
@@ -395,7 +396,7 @@ const AdminCommandPalette = ({ open, onClose }: Props) => {
               close
             </span>
           </div>
-          <div className="hidden sm:flex items-center gap-1.5 text-orange-600 dark:text-orange-400">
+          <div className="hidden sm:flex items-center gap-1.5 text-violet-600 dark:text-violet-400">
             <Sparkles size={11} />
             <span className="font-semibold">AI Smart Search</span>
           </div>
