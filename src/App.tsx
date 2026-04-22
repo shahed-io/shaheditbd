@@ -122,6 +122,7 @@ const AdminMarketingPixels       = lazy(() => import("./pages/admin/AdminMarketi
 const AdminSiteVerification      = lazy(() => import("./pages/admin/AdminSiteVerification"));
 const AdminContentSeo            = lazy(() => import("./pages/admin/seo/AdminContentSeo"));
 const Affiliate                  = lazy(() => import("./pages/Affiliate"));
+const AdminGetCIDTools           = lazy(() => import("./pages/admin/AdminGetCIDTools"));
 
 
 const queryClient = new QueryClient({
@@ -302,6 +303,7 @@ const AppContent = () => {
 
             <Route path="reseller" element={<AdminSuspense><Reseller /></AdminSuspense>} />
             <Route path="reseller-accounts" element={<AdminSuspense><AdminResellerAccounts /></AdminSuspense>} />
+            <Route path="getcid-tools" element={<AdminSuspense><AdminGetCIDTools /></AdminSuspense>} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
