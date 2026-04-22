@@ -11,7 +11,7 @@ import {
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 import logoIcon from '@/assets/logo.png';
-import { sendInvoiceViaWhatsApp, type InvoiceData } from '@/lib/invoicePdf';
+import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
 
 // Build a canonical InvoiceData object from a DB order row
 const orderToInvoiceData = (order: any): InvoiceData => ({
@@ -37,13 +37,11 @@ const orderToInvoiceData = (order: any): InvoiceData => ({
   status: order.status,
 });
 
-const sendOrderInvoicePdf = async (order: any) => {
-  const phone = order.customer_phone;
-  if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
-  const tid = toast.loading('PDF ইনভয়েস তৈরি হচ্ছে...');
+const downloadOrderInvoicePdf = async (order: any) => {
+  const tid = toast.loading('PDF তৈরি হচ্ছে...');
   try {
-    await sendInvoiceViaWhatsApp(orderToInvoiceData(order), { phone });
-    toast.success('PDF ইনভয়েস WhatsApp এ পাঠানো হচ্ছে...', { id: tid });
+    await downloadInvoicePdf(orderToInvoiceData(order));
+    toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp এ Attach করে পাঠান', { id: tid });
   } catch (e: any) {
     toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
   }
