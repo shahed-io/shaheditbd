@@ -298,6 +298,9 @@ const AdminLayout = () => {
                           to={item.path}
                           end={item.path === '/ceo'}
                           title={!showLabel ? item.label : undefined}
+                          onMouseEnter={() => prefetchAdminRoute(item.path)}
+                          onTouchStart={() => prefetchAdminRoute(item.path)}
+                          onFocus={() => prefetchAdminRoute(item.path)}
                           className={`admin-nav-item ${isActive ? 'active' : ''} ${!showLabel ? 'justify-center px-2' : ''}`}
                         >
                           <item.icon size={17} className="flex-shrink-0" />
