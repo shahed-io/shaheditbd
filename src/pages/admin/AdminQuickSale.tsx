@@ -114,8 +114,8 @@ const KEY_TYPES: Record<string, string> = {
   custom: '📝 Custom',
 };
 
-const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-[60px] pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
-const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-0 flex w-11 items-center justify-start pl-4 text-muted-foreground transition-colors group-focus-within:text-primary border-r border-border/50 mr-0';
+const iconInputClass = 'w-full bg-background border border-border rounded-lg pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all';
+const iconSlotClass = 'pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground transition-colors group-focus-within:text-primary';
 
 const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
   const [products, setProducts] = useState<Product[]>([]);
