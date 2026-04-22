@@ -398,7 +398,7 @@ const AdminQuickSale = () => {
 
   return (
     <div className="space-y-5 max-w-5xl mx-auto pb-8">
-      {/* Header */}
+      {/* Inline header — auto-hidden left side via global CSS guard (.admin-page-header is rendered by AdminLayout) */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
