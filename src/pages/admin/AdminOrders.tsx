@@ -605,27 +605,9 @@ const OrderDetailModal = ({
                       </button>
                     )}
                     {order.customer_phone && (
-                      <button onClick={() => {
-                        const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
-                        const itemsList = (order.order_items || []).map((i: any, idx: number) => 
-                          `${idx + 1}. ${i.product_name} ×${i.quantity} — ৳${Number(i.total).toLocaleString()}${i.license_key ? '\n   🔑 ' + i.license_key : ''}`
-                        ).join('\n');
-                        const msg = encodeURIComponent(
-                          `📄 *INVOICE — SHAHED STORE*\n━━━━━━━━━━━━━━━━━━━━\n\n` +
-                          `🧾 Invoice: #${order.order_number}\n📅 ${new Date(order.created_at).toLocaleDateString('bn-BD')}\n\n` +
-                          `👤 *${order.customer_name}*\n\n📦 *পণ্যসমূহ:*\n${itemsList}\n\n` +
-                          `━━━━━━━━━━━━━━━━━━━━\n` +
-                          (Number(order.discount_amount) > 0 ? `সাবটোটাল: ৳${Number(order.subtotal).toLocaleString()}\n🎉 ছাড়: -৳${Number(order.discount_amount).toLocaleString()}\n` : '') +
-                          `💰 *সর্বমোট: ৳${Number(order.total).toLocaleString()}*\n\n` +
-                          `💳 ${PM_LABELS[order.payment_method] || order.payment_method}` +
-                          (order.transaction_id ? ` | TrxID: ${order.transaction_id}` : '') +
-                          `\n\n✅ ধন্যবাদ!\n🌐 shahedstore.com.bd`
-                        );
-                        window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-                        toast.success('ইনভয়েস WhatsApp এ পাঠানো হচ্ছে...');
-                      }}
+                      <button onClick={() => sendOrderInvoicePdf(order)}
                         className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-primary/30 text-primary hover:bg-primary/10 transition-colors">
-                        <FileText size={12} /> ইনভয়েস পাঠান
+                        <FileText size={12} /> PDF ইনভয়েস পাঠান
                       </button>
                     )}
                     {!['cancelled', 'refunded', 'failed'].includes(order.status) && (
