@@ -405,7 +405,7 @@ const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
   const validItemCount = entries.filter(e => e.product || (e.is_custom && e.custom_name.trim())).length;
 
   return (
-    <div className="space-y-5 max-w-5xl mx-auto pb-8">
+    <div ref={ref} className="space-y-5 max-w-5xl mx-auto pb-8">
       {/* Inline header — auto-hidden left side via global CSS guard (.admin-page-header is rendered by AdminLayout) */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2.5">
@@ -434,28 +434,28 @@ const AdminQuickSale = forwardRef<HTMLDivElement>((_props, ref) => {
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">নাম <span className="text-destructive">*</span></label>
               <div className="relative group">
-                <User size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <span className={iconSlotClass}><User size={16} /></span>
                 <input value={customerName} onChange={e => setCustomerName(e.target.value)}
                   placeholder="কাস্টমারের নাম"
-                  className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  className={iconInputClass} />
               </div>
             </div>
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">ফোন <span className="text-destructive">*</span></label>
               <div className="relative group">
-                <Phone size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <span className={iconSlotClass}><Phone size={16} /></span>
                 <input value={customerPhone} onChange={e => setCustomerPhone(e.target.value)}
                   placeholder="01XXXXXXXXX"
-                  className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  className={iconInputClass} />
               </div>
             </div>
             <div>
               <label className="text-[11px] font-semibold text-muted-foreground mb-1 block">ইমেইল</label>
               <div className="relative group">
-                <Mail size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <span className={iconSlotClass}><Mail size={16} /></span>
                 <input value={customerEmail} onChange={e => setCustomerEmail(e.target.value)}
                   placeholder="email@example.com"
-                  className="w-full bg-background border border-border rounded-lg pl-14 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors" />
+                  className={iconInputClass} />
               </div>
             </div>
           </div>
