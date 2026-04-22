@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminPrefetch, prefetchAdminRoute } from '@/hooks/useAdminPrefetch';
+import AdminCommandPalette from '@/components/admin/AdminCommandPalette';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
@@ -161,7 +162,20 @@ const AdminLayout = () => {
   const [adminNotifs, setAdminNotifs] = useState<AdminNotif[]>([]);
   const [notifCount, setNotifCount] = useState(0);
   const [navSearch, setNavSearch] = useState('');
+  const [cmdOpen, setCmdOpen] = useState(false);
   const location = useLocation();
+
+  // Global ⌘K / Ctrl+K shortcut for command palette
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCmdOpen(o => !o);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   // ⚡ Eagerly prefetch ALL admin sub-pages during browser idle time
   // → menu clicks resolve instantly (no chunk download wait)
@@ -245,19 +259,21 @@ const AdminLayout = () => {
           )}
         </div>
 
-        {/* Quick search inside sidebar */}
+        {/* Premium global search trigger inside sidebar */}
         {showLabel && (
           <div className="px-3 pt-3 pb-1">
-            <div className="relative">
-              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                value={navSearch}
-                onChange={e => setNavSearch(e.target.value)}
-                placeholder="Quick find menu..."
-                className="w-full bg-muted/30 border border-border/60 rounded-lg pl-8 pr-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-primary/50 transition-colors"
-              />
-            </div>
+            <button
+              onClick={() => { setCmdOpen(true); if (isMobile) setMobileSidebarOpen(false); }}
+              className="group w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-border/60 bg-gradient-to-br from-muted/40 to-muted/20 hover:from-orange-50/80 hover:to-orange-50/30 hover:border-orange-300/60 dark:hover:from-orange-950/20 dark:hover:to-orange-950/5 dark:hover:border-orange-700/40 transition-all"
+            >
+              <Search size={14} className="text-muted-foreground group-hover:text-orange-500 transition-colors flex-shrink-0" strokeWidth={2.5} />
+              <span className="flex-1 text-left text-xs text-muted-foreground/90 group-hover:text-foreground transition-colors truncate">
+                Search anything…
+              </span>
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-border/70 bg-background/80 font-mono text-[9px] font-bold text-muted-foreground flex-shrink-0">
+                ⌘K
+              </kbd>
+            </button>
           </div>
         )}
 
@@ -420,6 +436,29 @@ const AdminLayout = () => {
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3 flex-shrink-0 relative">
+            {/* Premium Search Trigger (header) */}
+            <button
+              onClick={() => setCmdOpen(true)}
+              className="group hidden sm:inline-flex items-center gap-2.5 h-9 px-3 rounded-xl border border-border/60 bg-gradient-to-r from-muted/40 via-background to-muted/30 hover:border-orange-300/70 hover:bg-orange-50/30 dark:hover:bg-orange-950/10 dark:hover:border-orange-700/40 transition-all"
+              aria-label="Search admin"
+            >
+              <Search size={14} className="text-muted-foreground group-hover:text-orange-500 transition-colors" strokeWidth={2.5} />
+              <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                Search…
+              </span>
+              <kbd className="inline-flex items-center px-1.5 py-0.5 rounded-md border border-border/70 bg-background/90 font-mono text-[9px] font-bold text-muted-foreground">
+                ⌘K
+              </kbd>
+            </button>
+            {/* Mobile-only icon trigger */}
+            <button
+              onClick={() => setCmdOpen(true)}
+              className="admin-icon-btn sm:hidden"
+              aria-label="Search admin"
+            >
+              <Search size={18} />
+            </button>
+
             <button onClick={() => setShowNotifPanel(!showNotifPanel)} className="admin-icon-btn relative" aria-label="Notifications">
               <Bell size={18} />
               {notifCount > 0 && (
@@ -482,6 +521,9 @@ const AdminLayout = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* Global Command Palette */}
+      <AdminCommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
     </div>
   );
 };
