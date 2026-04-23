@@ -139,6 +139,159 @@ Deno.serve(async (req) => {
     const { action, installation_id } = body;
 
     // ═══════════════════════════════════════════════════════════════
+    // USER ACTIONS — any authenticated user (uses cid_balances credits)
+    // ═══════════════════════════════════════════════════════════════
+
+    if (action === 'user_balance') {
+      const auth = await authenticate();
+      if ('error' in auth) return json({ ok: false, error: auth.error }, auth.status);
+      const { data: bal } = await supabase
+        .from('cid_balances')
+        .select('balance, total_added, total_used')
+        .eq('user_id', auth.user.id)
+        .maybeSingle();
+      return json({
+        ok: true,
+        balance: bal?.balance ?? 0,
+        total_added: bal?.total_added ?? 0,
+        total_used: bal?.total_used ?? 0,
+      });
+    }
+
+    if (action === 'user_history') {
+      const auth = await authenticate();
+      if ('error' in auth) return json({ ok: false, error: auth.error }, auth.status);
+      const { data: gens } = await supabase
+        .from('cid_generations')
+        .select('id, number, operator, operator_name, result, status, cost, created_at')
+        .eq('user_id', auth.user.id)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      return json({ ok: true, generations: gens ?? [] });
+    }
+
+    if (action === 'parse_screenshot') {
+      const auth = await authenticate();
+      if ('error' in auth) return json({ ok: false, error: auth.error }, auth.status);
+      const imageBase64 = body.image_base64 as string | undefined;
+      if (!imageBase64 || imageBase64.length < 100) {
+        return json({ ok: false, error: 'image_base64 required' }, 400);
+      }
+      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+      if (!LOVABLE_API_KEY) return json({ ok: false, error: 'AI not configured' }, 500);
+      try {
+        const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              {
+                role: 'system',
+                content: 'You extract Microsoft Installation IDs from screenshots. The format is 9 groups of 7 digits separated by dashes or spaces (e.g., 1234567-1234567-...). Return ONLY the digits in 9 groups separated by single dashes. No explanation.',
+              },
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: 'Extract the Installation ID from this screenshot. Return only the 9 groups of 7 digits separated by dashes.' },
+                  { type: 'image_url', image_url: { url: imageBase64.startsWith('data:') ? imageBase64 : `data:image/png;base64,${imageBase64}` } },
+                ],
+              },
+            ],
+          }),
+        });
+        if (!aiResp.ok) {
+          if (aiResp.status === 429) return json({ ok: false, error: 'Too many requests, try again shortly.' }, 429);
+          if (aiResp.status === 402) return json({ ok: false, error: 'AI credits exhausted.' }, 402);
+          return json({ ok: false, error: 'AI vision failed' }, 500);
+        }
+        const aiData = await aiResp.json();
+        const raw = String(aiData.choices?.[0]?.message?.content ?? '').trim();
+        // Extract numeric groups
+        const digits = raw.replace(/[^0-9]/g, '');
+        if (digits.length < 50) {
+          return json({ ok: false, error: 'Could not detect a valid Installation ID. Try a clearer screenshot.' }, 422);
+        }
+        // Reformat into 9 groups of 7
+        const groups: string[] = [];
+        for (let i = 0; i < digits.length && groups.length < 9; i += 7) {
+          groups.push(digits.substr(i, 7));
+        }
+        return json({ ok: true, installation_id: groups.join('-') });
+      } catch (e) {
+        return json({ ok: false, error: `Vision error: ${String(e)}` }, 500);
+      }
+    }
+
+    if (action === 'user_getcid') {
+      const auth = await authenticate();
+      if ('error' in auth) return json({ ok: false, error: auth.error }, auth.status);
+      const isAdmin = auth.roles.includes('admin');
+
+      if (!installation_id || String(installation_id).trim().length < 4) {
+        return json({ ok: false, error: 'Installation ID too short' }, 400);
+      }
+      const iid = String(installation_id).trim().replace(/\s+/g, ' ');
+
+      // Check CID balance (admins skip)
+      let currentBalance = 0;
+      if (!isAdmin) {
+        const { data: bal } = await supabase
+          .from('cid_balances')
+          .select('balance')
+          .eq('user_id', auth.user.id)
+          .maybeSingle();
+        currentBalance = bal?.balance ?? 0;
+        if (currentBalance < 1) {
+          return json({ ok: false, error: 'Insufficient CID credits. Please purchase more from the shop.', balance: currentBalance }, 402);
+        }
+      }
+
+      // Try PRIMARY then BACKUP
+      let cidValue: string | null = null;
+      let usedProvider = '';
+      if (GETCID_TOKEN) {
+        const r = await callGetCID(GETCID_TOKEN, iid);
+        if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'primary'; }
+      }
+      if (!cidValue && GRAHOK_TOKEN) {
+        const r = await callGrahok(GRAHOK_TOKEN, GRAHOK_URL, iid);
+        if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'backup'; }
+      }
+      if (!cidValue) {
+        return json({ ok: false, error: 'CID generation temporarily unavailable. Please try again.' }, 502);
+      }
+
+      // Debit 1 credit (admins skip) using RPC
+      let newBalance = currentBalance;
+      if (!isAdmin) {
+        const { data: debitResult } = await supabase.rpc('debit_cid_balance', {
+          p_user_id: auth.user.id,
+          p_amount: 1,
+        });
+        if (debitResult && typeof debitResult === 'object' && 'balance' in debitResult) {
+          newBalance = Number((debitResult as Record<string, unknown>).balance) || 0;
+        }
+      }
+
+      // Log generation
+      await supabase.from('cid_generations').insert({
+        user_id: auth.user.id,
+        operator: 'microsoft',
+        operator_name: 'Microsoft Confirmation ID',
+        number: iid,
+        result: { cid: cidValue, provider: usedProvider },
+        status: 'success',
+        cost: isAdmin ? 0 : 1,
+      });
+
+      return json({ ok: true, cid: cidValue, balance: newBalance });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     // RESELLER ACTIONS — require reseller or admin role
     // ═══════════════════════════════════════════════════════════════
 
