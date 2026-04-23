@@ -719,6 +719,110 @@ export type Database = {
         }
         Relationships: []
       }
+      cid_balances: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          total_added: number
+          total_used: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_added?: number
+          total_used?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_added?: number
+          total_used?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cid_generations: {
+        Row: {
+          cost: number
+          created_at: string
+          id: string
+          number: string | null
+          operator: string
+          operator_name: string | null
+          provider: string | null
+          result: Json | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          cost?: number
+          created_at?: string
+          id?: string
+          number?: string | null
+          operator: string
+          operator_name?: string | null
+          provider?: string | null
+          result?: Json | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          id?: string
+          number?: string | null
+          operator?: string
+          operator_name?: string | null
+          provider?: string | null
+          result?: Json | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cid_product_credits: {
+        Row: {
+          cid_credits: number
+          created_at: string
+          id: string
+          is_active: boolean
+          product_id: string
+          updated_at: string
+        }
+        Insert: {
+          cid_credits?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          product_id: string
+          updated_at?: string
+        }
+        Update: {
+          cid_credits?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          product_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cid_product_credits_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupons: {
         Row: {
           code: string
@@ -1934,66 +2038,6 @@ export type Database = {
         }
         Relationships: []
       }
-      reseller_generations: {
-        Row: {
-          cid: string
-          created_at: string
-          id: string
-          installation_id: string | null
-          price_cents: number
-          provider: string | null
-          user_id: string
-        }
-        Insert: {
-          cid: string
-          created_at?: string
-          id?: string
-          installation_id?: string | null
-          price_cents?: number
-          provider?: string | null
-          user_id: string
-        }
-        Update: {
-          cid?: string
-          created_at?: string
-          id?: string
-          installation_id?: string | null
-          price_cents?: number
-          provider?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      reseller_profiles: {
-        Row: {
-          balance_cents: number
-          created_at: string
-          id: string
-          is_active: boolean
-          notes: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          balance_cents?: number
-          created_at?: string
-          id?: string
-          is_active?: boolean
-          notes?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          balance_cents?: number
-          created_at?: string
-          id?: string
-          is_active?: boolean
-          notes?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       site_settings: {
         Row: {
           category: string | null
@@ -2571,11 +2615,19 @@ export type Database = {
       }
     }
     Functions: {
+      admin_adjust_cid_balance: {
+        Args: { p_delta: number; p_note?: string; p_user_id: string }
+        Returns: Json
+      }
       approve_affiliate_conversion: {
         Args: { p_conversion_id: string }
         Returns: Json
       }
       auto_assign_licenses: { Args: { p_order_id: string }; Returns: Json }
+      debit_cid_balance: {
+        Args: { p_amount: number; p_user_id: string }
+        Returns: Json
+      }
       deduct_order_points: {
         Args: { p_order_id: string; p_order_total: number; p_user_id: string }
         Returns: Json
