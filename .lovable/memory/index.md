@@ -10,3 +10,4 @@ AI Card Generator: pale-blue/white bg + sky-blue/mint bubbles, WHITE pill with R
 ## Memories
 - [Product card generation](mem://features/product-card-generation) — Signature SHAHED STORE AI card visual blueprint (background, pills, bubbles, contact)
 - [Admin design system](mem://style/admin-design-system) — Notion/Stripe clean minimal admin: --ad-* tokens, glass sidebar with backdrop, orange+black accent; auto-applied via body.admin-page
+- [Microsoft CID Generator](mem://features/microsoft-cid-generator) — Public /get-cid page, Gemini Vision OCR, 1 credit/CID from cid_balances, generic Primary/Backup channels
