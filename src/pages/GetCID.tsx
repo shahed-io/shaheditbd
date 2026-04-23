@@ -487,7 +487,7 @@ const GetCID = () => {
         </div>
       )}
 
-      {showAuth && <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} onSuccess={() => { setShowAuth(false); fetchBalance(); }} />}
+      {showAuth && <AuthModal isOpen={showAuth} onClose={() => { setShowAuth(false); fetchBalance(); }} />}
       <Footer />
     </>
   );
