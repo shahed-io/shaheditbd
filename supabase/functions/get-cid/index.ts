@@ -29,11 +29,25 @@ async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; ci
   }
 }
 
-async function callGetCIDBalance(token: string): Promise<{ ok: boolean; balance?: number; raw?: string; error?: string }> {
-  const url = `${GETCID_BALANCE_URL}?token=${encodeURIComponent(token)}`;
+async function callGetCIDBalance(token: string, userId?: string): Promise<{ ok: boolean; balance?: number; raw?: string; error?: string }> {
+  if (!userId) {
+    return { ok: false, error: 'GETCID_USER_ID not configured' };
+  }
+  const url = `${GETCID_BALANCE_URL}?token=${encodeURIComponent(token)}&user_id=${encodeURIComponent(userId)}`;
   try {
     const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json,text/plain' } });
     const text = await res.text();
+    // Try JSON first
+    try {
+      const data = JSON.parse(text);
+      const bal = data.balance ?? data.amount ?? data.credits ?? data.user_balance;
+      if (typeof bal === 'number') return { ok: true, balance: bal, raw: text };
+      if (typeof bal === 'string') {
+        const n = parseFloat(bal);
+        if (!isNaN(n)) return { ok: true, balance: n, raw: text };
+      }
+    } catch { /* not JSON, fall through */ }
+    // Plain text numeric
     const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
     if (m) return { ok: true, balance: parseFloat(m[1]), raw: text };
     return { ok: false, error: 'Could not parse balance', raw: text };
@@ -252,11 +266,18 @@ Deno.serve(async (req) => {
       if (action === 'admin_balance') {
         const result: Record<string, unknown> = { providers: {} };
         const providers = result.providers as Record<string, unknown>;
+        const GETCID_USER_ID = Deno.env.get('GETCID_USER_ID');
         if (GETCID_TOKEN) {
-          const r = await callGetCIDBalance(GETCID_TOKEN);
-          providers.getcid = r.ok
-            ? { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL }
-            : { error: r.error, status: 'error', raw: r.raw };
+          const r = await callGetCIDBalance(GETCID_TOKEN, GETCID_USER_ID);
+          if (r.ok) {
+            providers.getcid = { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL };
+          } else {
+            // GetCID balance API is known to be unreliable — surface as "unavailable" instead of error
+            const isApiLimitation = r.raw === 'User ID is required' || r.error === 'GETCID_USER_ID not configured';
+            providers.getcid = isApiLimitation
+              ? { status: 'unavailable', message: 'Balance API not exposed by provider', endpoint: GETCID_BALANCE_URL }
+              : { error: r.error, status: 'error', raw: r.raw };
+          }
         } else {
           providers.getcid = { status: 'not_configured' };
         }
