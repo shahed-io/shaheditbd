@@ -269,9 +269,15 @@ Deno.serve(async (req) => {
         const GETCID_USER_ID = Deno.env.get('GETCID_USER_ID');
         if (GETCID_TOKEN) {
           const r = await callGetCIDBalance(GETCID_TOKEN, GETCID_USER_ID);
-          providers.getcid = r.ok
-            ? { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL }
-            : { error: r.error, status: 'error', raw: r.raw };
+          if (r.ok) {
+            providers.getcid = { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL };
+          } else {
+            // GetCID balance API is known to be unreliable — surface as "unavailable" instead of error
+            const isApiLimitation = r.raw === 'User ID is required' || r.error === 'GETCID_USER_ID not configured';
+            providers.getcid = isApiLimitation
+              ? { status: 'unavailable', message: 'Balance API not exposed by provider', endpoint: GETCID_BALANCE_URL }
+              : { error: r.error, status: 'error', raw: r.raw };
+          }
         } else {
           providers.getcid = { status: 'not_configured' };
         }
