@@ -661,7 +661,7 @@ export default function AdminGetCIDTools() {
                                 day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
                               })}
                             </td>
-                            <td className="p-2">{h.reseller_users?.username || <span className="text-muted-foreground">—</span>}</td>
+                            <td className="p-2">{h.user?.display_name || h.user?.email || <span className="text-muted-foreground">—</span>}</td>
                             <td className="p-2 font-mono truncate max-w-[180px]">{h.installation_id.slice(0, 25)}…</td>
                             <td className="p-2 font-mono truncate max-w-[180px]">{h.cid.slice(0, 25)}…</td>
                             <td className="p-2">${(h.price_cents / 100).toFixed(2)}</td>
