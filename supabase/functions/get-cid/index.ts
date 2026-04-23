@@ -266,8 +266,9 @@ Deno.serve(async (req) => {
       if (action === 'admin_balance') {
         const result: Record<string, unknown> = { providers: {} };
         const providers = result.providers as Record<string, unknown>;
+        const GETCID_USER_ID = Deno.env.get('GETCID_USER_ID');
         if (GETCID_TOKEN) {
-          const r = await callGetCIDBalance(GETCID_TOKEN);
+          const r = await callGetCIDBalance(GETCID_TOKEN, GETCID_USER_ID);
           providers.getcid = r.ok
             ? { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL }
             : { error: r.error, status: 'error', raw: r.raw };
