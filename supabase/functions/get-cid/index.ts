@@ -29,11 +29,25 @@ async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; ci
   }
 }
 
-async function callGetCIDBalance(token: string): Promise<{ ok: boolean; balance?: number; raw?: string; error?: string }> {
-  const url = `${GETCID_BALANCE_URL}?token=${encodeURIComponent(token)}`;
+async function callGetCIDBalance(token: string, userId?: string): Promise<{ ok: boolean; balance?: number; raw?: string; error?: string }> {
+  if (!userId) {
+    return { ok: false, error: 'GETCID_USER_ID not configured' };
+  }
+  const url = `${GETCID_BALANCE_URL}?token=${encodeURIComponent(token)}&user_id=${encodeURIComponent(userId)}`;
   try {
     const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json,text/plain' } });
     const text = await res.text();
+    // Try JSON first
+    try {
+      const data = JSON.parse(text);
+      const bal = data.balance ?? data.amount ?? data.credits ?? data.user_balance;
+      if (typeof bal === 'number') return { ok: true, balance: bal, raw: text };
+      if (typeof bal === 'string') {
+        const n = parseFloat(bal);
+        if (!isNaN(n)) return { ok: true, balance: n, raw: text };
+      }
+    } catch { /* not JSON, fall through */ }
+    // Plain text numeric
     const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
     if (m) return { ok: true, balance: parseFloat(m[1]), raw: text };
     return { ok: false, error: 'Could not parse balance', raw: text };
