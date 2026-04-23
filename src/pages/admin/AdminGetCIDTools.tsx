@@ -304,6 +304,17 @@ export default function AdminGetCIDTools() {
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <AlertCircle className="h-4 w-4" /> Channel credentials not configured
                   </div>
+                ) : p?.status === 'unavailable' ? (
+                  <div className="space-y-1">
+                    <div className="text-2xl font-bold text-muted-foreground">N/A</div>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <AlertCircle className="h-3 w-3" />
+                      {(p as any)?.message || 'Balance check not supported'}
+                    </div>
+                    <p className="text-[11px] text-muted-foreground/70">
+                      Channel still works for CID generation
+                    </p>
+                  </div>
                 ) : (
                   <div className="space-y-1">
                     <div className="flex items-center gap-1.5 text-sm text-destructive">
