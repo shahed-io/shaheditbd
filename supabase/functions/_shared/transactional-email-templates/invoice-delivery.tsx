@@ -8,7 +8,7 @@ import type { TemplateEntry } from './registry.ts'
 
 const SITE_NAME = 'Shahed Store'
 const SITE_URL = 'https://www.shahedstore.com.bd'
-const LOGO_URL = 'https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/email-assets/logo.png'
+const LOGO_URL = 'https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/email-assets/logo-navbar.png'
 
 interface InvoiceItemData {
   name: string
