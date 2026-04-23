@@ -17,9 +17,10 @@ import {
 import { toast } from 'sonner';
 
 interface ProviderBalance {
-  status: 'ok' | 'error' | 'not_configured';
+  status: 'ok' | 'error' | 'not_configured' | 'unavailable';
   balance?: number;
   error?: string;
+  message?: string;
   currency?: string;
   endpoint?: string;
   raw?: string;
