@@ -179,11 +179,18 @@ export default function AdminCidCredits() {
       if (error) throw error;
       const res = data as any;
       if (!res?.success) throw new Error(res?.error || 'Failed');
-      toast.success(`${sign > 0 ? 'Added' : 'Deducted'} ${n} credits. New balance: ${res.new_balance}`);
+      const newBalance = res.new_balance as number;
+      toast.success(`${sign > 0 ? 'Added' : 'Deducted'} ${n} credits. New balance: ${newBalance}`);
+      // Update lookup results in place so the user sees the new balance instantly
+      setLookupResults(prev => prev.map(r => r.user_id === editing.user_id
+        ? { ...r, balance: newBalance,
+            total_added: r.total_added + (sign > 0 ? n : 0),
+            total_used: r.total_used + (sign < 0 ? n : 0) }
+        : r));
       setEditing(null);
       setDelta('');
       setNote('');
-      load();
+      await load();
     } catch (e: any) {
       toast.error(e.message || 'Adjustment failed');
     } finally {
@@ -534,14 +541,17 @@ export default function AdminCidCredits() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Adjust CID Credits</DialogTitle>
-            <DialogDescription asChild>
-              <div className="space-y-1">
-                <div className="font-medium text-foreground">{editing?.display_name || 'Unnamed'}</div>
-                <div className="text-xs break-all">{editing?.email || editing?.phone || editing?.user_id}</div>
-                <div>Current balance: <strong className="text-foreground">{editing?.balance ?? 0}</strong></div>
-              </div>
+            <DialogDescription>
+              Add or deduct CID credits for this user. The change is logged and the user is notified.
             </DialogDescription>
           </DialogHeader>
+          <div className="rounded-md border bg-muted/40 p-3 space-y-1 text-sm">
+            <div className="font-medium">{editing?.display_name || 'Unnamed'}</div>
+            <div className="text-xs break-all text-muted-foreground">
+              {editing?.email || editing?.phone || editing?.user_id}
+            </div>
+            <div>Current balance: <strong>{editing?.balance ?? 0}</strong></div>
+          </div>
           <div className="space-y-3">
             <div>
               <Label htmlFor="cid-delta">Amount</Label>
