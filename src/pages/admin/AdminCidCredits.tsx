@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/table';
 import {
   Coins, Plus, Minus, Search, RefreshCw, Loader2, History, User as UserIcon,
-  Mail, Download, UserSearch, ClipboardList, Users,
+  Mail, Download, UserSearch, ClipboardList, Users, UserPlus, Eye, EyeOff, Copy,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
