@@ -6,6 +6,8 @@ import { Save, Megaphone, Plus, Trash2, ToggleLeft, ToggleRight, ArrowUp, ArrowD
 type TickerItem = { label: string; price: string; off: string };
 type AnnouncementSettings = {
   enabled: boolean;
+  useLiveProducts: boolean;
+  speedSeconds: number;
   bgFrom: string;
   bgTo: string;
   textColor: string;
@@ -16,6 +18,8 @@ type AnnouncementSettings = {
 
 const DEFAULT: AnnouncementSettings = {
   enabled: true,
+  useLiveProducts: true,
+  speedSeconds: 60,
   bgFrom: 'hsl(220,20%,97%)',
   bgTo: 'hsl(258,40%,96%)',
   textColor: 'hsl(226,35%,18%)',
@@ -98,6 +102,39 @@ const AdminAnnouncementBar = () => {
           {settings.enabled ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
           {settings.enabled ? 'চালু' : 'বন্ধ'}
         </button>
+      </div>
+
+      {/* Behavior Settings */}
+      <div className="glass-card rounded-2xl p-5 space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <div className="font-bold text-foreground">ডেটা সোর্স</div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              {settings.useLiveProducts ? 'ডাটাবেস থেকে লাইভ প্রোডাক্ট দেখাবে (নিচের আইটেম তালিকা ব্যবহার হবে না)' : 'নিচের ম্যানুয়াল আইটেম তালিকা দেখাবে'}
+            </div>
+          </div>
+          <button onClick={() => setSettings(p => ({ ...p, useLiveProducts: !p.useLiveProducts }))}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${settings.useLiveProducts ? 'bg-primary/20 text-primary border border-primary/30' : 'glass-card text-muted-foreground'}`}>
+            {settings.useLiveProducts ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
+            {settings.useLiveProducts ? 'Live Products' : 'Manual Items'}
+          </button>
+        </div>
+
+        <div className="border-t border-border pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-semibold text-foreground">স্ক্রল স্পিড</label>
+            <span className="text-xs text-muted-foreground font-mono">{settings.speedSeconds}s / loop</span>
+          </div>
+          <input type="range" min={20} max={180} step={5}
+            value={settings.speedSeconds}
+            onChange={e => setSettings(p => ({ ...p, speedSeconds: Number(e.target.value) }))}
+            className="w-full accent-primary" />
+          <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+            <span>দ্রুত (20s)</span>
+            <span>স্বাভাবিক (60s)</span>
+            <span>ধীর (180s)</span>
+          </div>
+        </div>
       </div>
 
       {/* Preview */}
