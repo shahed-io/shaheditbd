@@ -126,10 +126,6 @@ export default function AdminGetCIDTools() {
   const [batchResult, setBatchResult] = useState<BatchResult | null>(null);
   const [batchLoading, setBatchLoading] = useState(false);
 
-  // ─── History ───
-  const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [historyLoading, setHistoryLoading] = useState(false);
-
   // ─── Load balance on mount ───
   const loadBalance = useCallback(async () => {
     setBalanceLoading(true);
@@ -143,22 +139,9 @@ export default function AdminGetCIDTools() {
     }
   }, []);
 
-  const loadHistory = useCallback(async () => {
-    setHistoryLoading(true);
-    try {
-      const data = await callApi('admin_history', { limit: 100 });
-      setHistory(data.generations || []);
-    } catch (e) {
-      toast.error(`History load failed: ${(e as Error).message}`);
-    } finally {
-      setHistoryLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
     loadBalance();
-    loadHistory();
-  }, [loadBalance, loadHistory]);
+  }, [loadBalance]);
 
   // ─── Single CID ───
   const handleGenerate = async () => {
@@ -173,7 +156,6 @@ export default function AdminGetCIDTools() {
       const data = await callApi('admin_generate', { installation_id: iid, provider });
       setCidResult(data);
       toast.success(`CID generated via ${data.provider}`);
-      loadHistory();
     } catch (e) {
       setCidError((e as Error).message);
       toast.error((e as Error).message);
@@ -217,7 +199,6 @@ export default function AdminGetCIDTools() {
       const data = await callApi('admin_batch', { installation_ids: lines, provider: batchProvider });
       setBatchResult(data);
       toast.success(`${data.success}/${data.total} successful`);
-      loadHistory();
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -332,7 +313,20 @@ export default function AdminGetCIDTools() {
 
       {/* ─── Main Tabs ─── */}
       <Tabs defaultValue="single" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
+          <TabsTrigger value="single" className="gap-2 py-2.5">
+            <Sparkles className="h-4 w-4" /> <span className="hidden sm:inline">Single</span>
+          </TabsTrigger>
+          <TabsTrigger value="compare" className="gap-2 py-2.5">
+            <GitCompare className="h-4 w-4" /> <span className="hidden sm:inline">Compare</span>
+          </TabsTrigger>
+          <TabsTrigger value="batch" className="gap-2 py-2.5">
+            <Layers className="h-4 w-4" /> <span className="hidden sm:inline">Batch</span>
+          </TabsTrigger>
+          <TabsTrigger value="docs" className="gap-2 py-2.5">
+            <Code2 className="h-4 w-4" /> <span className="hidden sm:inline">Docs</span>
+          </TabsTrigger>
+        </TabsList>
           <TabsTrigger value="single" className="gap-2 py-2.5">
             <Zap className="h-4 w-4" /> <span className="hidden sm:inline">Single</span>
           </TabsTrigger>
