@@ -179,11 +179,18 @@ export default function AdminCidCredits() {
       if (error) throw error;
       const res = data as any;
       if (!res?.success) throw new Error(res?.error || 'Failed');
-      toast.success(`${sign > 0 ? 'Added' : 'Deducted'} ${n} credits. New balance: ${res.new_balance}`);
+      const newBalance = res.new_balance as number;
+      toast.success(`${sign > 0 ? 'Added' : 'Deducted'} ${n} credits. New balance: ${newBalance}`);
+      // Update lookup results in place so the user sees the new balance instantly
+      setLookupResults(prev => prev.map(r => r.user_id === editing.user_id
+        ? { ...r, balance: newBalance,
+            total_added: r.total_added + (sign > 0 ? n : 0),
+            total_used: r.total_used + (sign < 0 ? n : 0) }
+        : r));
       setEditing(null);
       setDelta('');
       setNote('');
-      load();
+      await load();
     } catch (e: any) {
       toast.error(e.message || 'Adjustment failed');
     } finally {
