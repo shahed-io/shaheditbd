@@ -719,6 +719,36 @@ export type Database = {
         }
         Relationships: []
       }
+      cid_balance_adjustments: {
+        Row: {
+          adjusted_by: string | null
+          balance_after: number
+          created_at: string
+          delta: number
+          id: string
+          note: string | null
+          user_id: string
+        }
+        Insert: {
+          adjusted_by?: string | null
+          balance_after: number
+          created_at?: string
+          delta: number
+          id?: string
+          note?: string | null
+          user_id: string
+        }
+        Update: {
+          adjusted_by?: string | null
+          balance_after?: number
+          created_at?: string
+          delta?: number
+          id?: string
+          note?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       cid_balances: {
         Row: {
           balance: number
@@ -2618,6 +2648,18 @@ export type Database = {
       admin_adjust_cid_balance: {
         Args: { p_delta: number; p_note?: string; p_user_id: string }
         Returns: Json
+      }
+      admin_find_user_for_cid: {
+        Args: { p_query: string }
+        Returns: {
+          balance: number
+          display_name: string
+          email: string
+          phone: string
+          total_added: number
+          total_used: number
+          user_id: string
+        }[]
       }
       approve_affiliate_conversion: {
         Args: { p_conversion_id: string }
