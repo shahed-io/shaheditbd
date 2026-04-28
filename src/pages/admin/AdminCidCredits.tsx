@@ -765,6 +765,115 @@ export default function AdminCidCredits() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Create New Account dialog */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5 text-primary" /> Create New CID Account
+            </DialogTitle>
+            <DialogDescription>
+              Create a new user account with login credentials and assign initial CID credits.
+              The user can immediately log in and use /get-cid.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label htmlFor="c-name">Full Name *</Label>
+              <Input id="c-name" value={cName} onChange={(e) => setCName(e.target.value)} placeholder="John Doe" />
+            </div>
+            <div>
+              <Label htmlFor="c-email">Email *</Label>
+              <Input id="c-email" type="email" value={cEmail} onChange={(e) => setCEmail(e.target.value)} placeholder="user@example.com" />
+            </div>
+            <div>
+              <Label htmlFor="c-password">Password * (min 8 chars)</Label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Input
+                    id="c-password"
+                    type={cShowPwd ? 'text' : 'password'}
+                    value={cPassword}
+                    onChange={(e) => setCPassword(e.target.value)}
+                    placeholder="Strong password"
+                  />
+                  <button type="button" onClick={() => setCShowPwd(s => !s)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    {cShowPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <Button type="button" variant="outline" onClick={generatePassword}>Generate</Button>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="c-phone">Phone (optional)</Label>
+              <Input id="c-phone" value={cPhone} onChange={(e) => setCPhone(e.target.value)} placeholder="017xxxxxxxx" />
+            </div>
+            <div>
+              <Label htmlFor="c-credit">Initial CID Credit</Label>
+              <Input id="c-credit" type="number" min={0} value={cCredit} onChange={(e) => setCCredit(e.target.value)} placeholder="e.g. 50" />
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {PRESETS.map(p => (
+                  <Button key={p} type="button" size="sm" variant="outline" className="h-7 text-xs"
+                    onClick={() => setCCredit(String(p))}>
+                    {p}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={creating}>Cancel</Button>
+            <Button onClick={createAccount} disabled={creating} className="gap-1">
+              {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
+              Create Account
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Created Info dialog (show credentials so admin can share) */}
+      <Dialog open={!!createdInfo} onOpenChange={(o) => !o && setCreatedInfo(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>✅ Account Ready</DialogTitle>
+            <DialogDescription>
+              Save these credentials — the password will not be shown again. Share them with the user.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 rounded-md border bg-muted/40 p-4 text-sm">
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Email:</span>
+              <span className="font-mono">{createdInfo?.email}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Password:</span>
+              <span className="font-mono">{createdInfo?.password}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">CID Balance:</span>
+              <Badge>{createdInfo?.balance}</Badge>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              className="gap-1"
+              onClick={() => {
+                if (!createdInfo) return;
+                navigator.clipboard.writeText(
+                  `Email: ${createdInfo.email}\nPassword: ${createdInfo.password}\nCID Credits: ${createdInfo.balance}\nLogin at: ${window.location.origin}/login`,
+                );
+                toast.success('Credentials copied');
+              }}
+            >
+              <Copy className="h-4 w-4" /> Copy
+            </Button>
+            <Button onClick={() => setCreatedInfo(null)}>Done</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
