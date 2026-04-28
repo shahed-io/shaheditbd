@@ -6,6 +6,8 @@ import { Save, Megaphone, Plus, Trash2, ToggleLeft, ToggleRight, ArrowUp, ArrowD
 type TickerItem = { label: string; price: string; off: string };
 type AnnouncementSettings = {
   enabled: boolean;
+  useLiveProducts: boolean;
+  speedSeconds: number;
   bgFrom: string;
   bgTo: string;
   textColor: string;
@@ -16,6 +18,8 @@ type AnnouncementSettings = {
 
 const DEFAULT: AnnouncementSettings = {
   enabled: true,
+  useLiveProducts: true,
+  speedSeconds: 60,
   bgFrom: 'hsl(220,20%,97%)',
   bgTo: 'hsl(258,40%,96%)',
   textColor: 'hsl(226,35%,18%)',
