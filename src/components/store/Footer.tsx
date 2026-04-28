@@ -87,9 +87,10 @@ const Footer = () => {
         <a href="/" className="flex items-center justify-center">
           <BrandLogo size="lg" />
         </a>
-        <p className="text-[13px] leading-relaxed md:whitespace-nowrap" style={{ color: 'hsl(226,35%,42%)' }}>
-          {settings.tagline}
-        </p>
+        <p className="text-[13px] leading-relaxed md:whitespace-nowrap footer-tagline-highlight" style={{ color: 'hsl(226,35%,42%)' }}
+          dangerouslySetInnerHTML={{ __html: highlightTagline(settings.tagline) }}
+        />
+
 
         {/* Contact pills — centered */}
         <div className="flex flex-col items-center gap-2 w-full">
