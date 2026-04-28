@@ -77,7 +77,7 @@ export default function AdminCidCredits() {
   const [bulkNote, setBulkNote] = useState('');
 
   // Recent adjustments tab
-  const [recentAdj, setRecentAdj] = useState<(AdjustmentLog & { user: CidAccount | null })[]>([]);
+  const [recentAdj, setRecentAdj] = useState<(AdjustmentLog & { user_id: string; user: CidAccount | null })[]>([]);
   const [recentLoading, setRecentLoading] = useState(false);
 
   const load = useCallback(async () => {
