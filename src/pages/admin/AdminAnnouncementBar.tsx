@@ -1,7 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Save, Megaphone, Plus, Trash2, ToggleLeft, ToggleRight, ArrowUp, ArrowDown } from 'lucide-react';
+import { Save, Megaphone, Plus, Trash2, ToggleLeft, ToggleRight, ArrowUp, ArrowDown, Search, X } from 'lucide-react';
+
+const formatBDT = (n: number) => `৳${Math.round(n).toLocaleString('en-US')}`;
+
+type ProductSearchResult = { id: string; name: string; price: number; original_price: number | null; discount_percent: number | null; slug: string };
 
 type TickerItem = { label: string; price: string; off: string };
 type AnnouncementSettings = {
