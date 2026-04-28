@@ -887,10 +887,21 @@ const AdminProducts = () => {
           <p className="text-muted-foreground text-sm">{products.length} products total</p>
         </div>
         <button
-          onClick={() => { setEditingProduct(null); setForm(emptyForm); setImagePreview(''); setActiveTab('basic'); setShowForm(true); }}
-          className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold"
+          type="button"
+          onClick={() => {
+            setEditingProduct(null);
+            setForm(emptyForm);
+            setImagePreview('');
+            setActiveTab('basic');
+            setShowForm(true);
+          }}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+          style={{
+            background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.85))',
+            boxShadow: '0 8px 24px hsl(var(--primary) / 0.35)',
+          }}
         >
-          <Plus size={16} /> Add New Product
+          <Plus size={18} strokeWidth={2.5} /> Add New Product
         </button>
       </div>
 
