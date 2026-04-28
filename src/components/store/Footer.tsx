@@ -10,23 +10,53 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Sparkles, Gift, Tag, Star, Heart, Download, Mail, Phone, MessageCircle,
 };
 
-// Daraz-style green underline highlight on key Bangla/English keywords in tagline
-const HIGHLIGHT_KEYWORDS = [
-  'বিশ্বস্ত', 'ডিজিটাল সফটওয়্যার স্টোর', 'অরিজিনাল সফটওয়্যার', 'অরিজিনাল',
-  'সেরা দামে', 'ইনস্ট্যান্ট ডেলিভারি', 'প্রিমিয়াম ডিজিটাল সেবা',
-  'সাশ্রয়ী মূল্যে', 'সাবস্ক্রিপশন', 'গ্রাহকদের',
+// Daraz-style two-color highlight on tagline keywords:
+//   green  → trust / value phrases
+//   orange → product / authenticity phrases
+const HIGHLIGHT_GREEN = [
+  'বিশ্বস্ত', 'সাশ্রয়ী মূল্যে', 'সেরা দামে', 'ইনস্ট্যান্ট ডেলিভারি',
+  'প্রিমিয়াম ডিজিটাল সেবা', 'ডিজিটাল সফটওয়্যার স্টোর', 'গ্রাহকদের',
+];
+const HIGHLIGHT_ORANGE = [
+  'অরিজিনাল সফটওয়্যার', 'অরিজিনাল সাবস্ক্রিপশন', 'অরিজিনাল', 'সাবস্ক্রিপশন',
 ];
 const escapeHtml = (s: string) => s.replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]!));
 const highlightTagline = (text: string) => {
-  let html = escapeHtml(text);
-  // longest first to avoid nested replacement
-  const sorted = [...HIGHLIGHT_KEYWORDS].sort((a, b) => b.length - a.length);
-  for (const kw of sorted) {
-    const safe = escapeHtml(kw).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    html = html.replace(new RegExp(`(?<!<mark[^>]*>[^<]*)${safe}`, 'g'), `<mark class="fth">${escapeHtml(kw)}</mark>`);
+  // Build placeholder-based replacement so we don't nest <mark> tags
+  type Hit = { start: number; end: number; word: string; cls: string };
+  const hits: Hit[] = [];
+  const scan = (list: string[], cls: string) => {
+    for (const kw of list) {
+      let from = 0;
+      while (from <= text.length - kw.length) {
+        const idx = text.indexOf(kw, from);
+        if (idx === -1) break;
+        hits.push({ start: idx, end: idx + kw.length, word: kw, cls });
+        from = idx + kw.length;
+      }
+    }
+  };
+  scan(HIGHLIGHT_GREEN, 'fth-g');
+  scan(HIGHLIGHT_ORANGE, 'fth-o');
+  // longest first; drop overlaps
+  hits.sort((a, b) => (b.end - b.start) - (a.end - a.start));
+  const taken: Hit[] = [];
+  for (const h of hits) {
+    if (taken.some(t => !(h.end <= t.start || h.start >= t.end))) continue;
+    taken.push(h);
   }
-  return html;
+  taken.sort((a, b) => a.start - b.start);
+  let out = '';
+  let cursor = 0;
+  for (const h of taken) {
+    out += escapeHtml(text.slice(cursor, h.start));
+    out += `<mark class="${h.cls}">${escapeHtml(h.word)}</mark>`;
+    cursor = h.end;
+  }
+  out += escapeHtml(text.slice(cursor));
+  return out;
 };
+
 
 const Footer = () => {
   const { settings } = useFooterSettings();
