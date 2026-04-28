@@ -430,6 +430,23 @@
   }
 }
 
+.ticker-track {
+  display: inline-flex;
+  width: max-content;
+  min-width: max-content;
+  animation: ticker-marquee 34s linear infinite;
+  will-change: transform;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
 
 /* ══════════════════════════════════════
    THEME-SPECIFIC BODY ORB BACKGROUNDS
