@@ -28,6 +28,7 @@ const highlightTagline = (text: string) => {
   return html;
 };
 
+const Footer = () => {
   const { settings } = useFooterSettings();
   const { sections } = useFooterMenu();
   const paymentMethods = settings.payment_methods.split(',').map(s => s.trim()).filter(Boolean);
