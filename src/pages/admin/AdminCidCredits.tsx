@@ -80,6 +80,17 @@ export default function AdminCidCredits() {
   const [recentAdj, setRecentAdj] = useState<(AdjustmentLog & { user_id: string; user: CidAccount | null })[]>([]);
   const [recentLoading, setRecentLoading] = useState(false);
 
+  // Create new account
+  const [createOpen, setCreateOpen] = useState(false);
+  const [cEmail, setCEmail] = useState('');
+  const [cPassword, setCPassword] = useState('');
+  const [cName, setCName] = useState('');
+  const [cPhone, setCPhone] = useState('');
+  const [cCredit, setCCredit] = useState('');
+  const [cShowPwd, setCShowPwd] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [createdInfo, setCreatedInfo] = useState<{ email: string; password: string; balance: number } | null>(null);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
