@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/table';
 import {
   Coins, Plus, Minus, Search, RefreshCw, Loader2, History, User as UserIcon,
-  Mail, Download, UserSearch, ClipboardList, Users,
+  Mail, Download, UserSearch, ClipboardList, Users, UserPlus, Eye, EyeOff, Copy,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -79,6 +79,17 @@ export default function AdminCidCredits() {
   // Recent adjustments tab
   const [recentAdj, setRecentAdj] = useState<(AdjustmentLog & { user_id: string; user: CidAccount | null })[]>([]);
   const [recentLoading, setRecentLoading] = useState(false);
+
+  // Create new account
+  const [createOpen, setCreateOpen] = useState(false);
+  const [cEmail, setCEmail] = useState('');
+  const [cPassword, setCPassword] = useState('');
+  const [cName, setCName] = useState('');
+  const [cPhone, setCPhone] = useState('');
+  const [cCredit, setCCredit] = useState('');
+  const [cShowPwd, setCShowPwd] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [createdInfo, setCreatedInfo] = useState<{ email: string; password: string; balance: number } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -297,6 +308,49 @@ export default function AdminCidCredits() {
     URL.revokeObjectURL(url);
   };
 
+  const generatePassword = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+    let p = '';
+    for (let i = 0; i < 12; i++) p += chars[Math.floor(Math.random() * chars.length)];
+    setCPassword(p);
+    setCShowPwd(true);
+  };
+
+  const createAccount = async () => {
+    if (!cEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cEmail)) { toast.error('Enter a valid email'); return; }
+    if (!cPassword || cPassword.length < 8) { toast.error('Password must be at least 8 characters'); return; }
+    if (!cName.trim()) { toast.error('Name is required'); return; }
+    setCreating(true);
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      if (!token) throw new Error('Not authenticated');
+      const url = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/admin-create-cid-user`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          email: cEmail.trim().toLowerCase(),
+          password: cPassword,
+          name: cName.trim(),
+          phone: cPhone.trim() || null,
+          initial_credit: parseInt(cCredit, 10) || 0,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || 'Failed to create account');
+      toast.success(json.created ? `Account created with ${json.balance} credits` : `Existing user — ${json.balance} credits applied`);
+      setCreatedInfo({ email: json.email, password: cPassword, balance: json.balance });
+      setCEmail(''); setCPassword(''); setCName(''); setCPhone(''); setCCredit('');
+      setCreateOpen(false);
+      await load();
+    } catch (e: any) {
+      toast.error(e.message || 'Failed');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -308,7 +362,10 @@ export default function AdminCidCredits() {
             Find any user by email/phone and add or deduct CID credits — even users who never generated before.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setCreateOpen(true)} className="gap-2">
+            <UserPlus className="h-4 w-4" /> Create New Account
+          </Button>
           <Button variant="outline" onClick={exportCsv} className="gap-2" disabled={accounts.length === 0}>
             <Download className="h-4 w-4" /> Export CSV
           </Button>
@@ -706,6 +763,115 @@ export default function AdminCidCredits() {
               </TabsContent>
             </Tabs>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Create New Account dialog */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5 text-primary" /> Create New CID Account
+            </DialogTitle>
+            <DialogDescription>
+              Create a new user account with login credentials and assign initial CID credits.
+              The user can immediately log in and use /get-cid.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label htmlFor="c-name">Full Name *</Label>
+              <Input id="c-name" value={cName} onChange={(e) => setCName(e.target.value)} placeholder="John Doe" />
+            </div>
+            <div>
+              <Label htmlFor="c-email">Email *</Label>
+              <Input id="c-email" type="email" value={cEmail} onChange={(e) => setCEmail(e.target.value)} placeholder="user@example.com" />
+            </div>
+            <div>
+              <Label htmlFor="c-password">Password * (min 8 chars)</Label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Input
+                    id="c-password"
+                    type={cShowPwd ? 'text' : 'password'}
+                    value={cPassword}
+                    onChange={(e) => setCPassword(e.target.value)}
+                    placeholder="Strong password"
+                  />
+                  <button type="button" onClick={() => setCShowPwd(s => !s)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    {cShowPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <Button type="button" variant="outline" onClick={generatePassword}>Generate</Button>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="c-phone">Phone (optional)</Label>
+              <Input id="c-phone" value={cPhone} onChange={(e) => setCPhone(e.target.value)} placeholder="017xxxxxxxx" />
+            </div>
+            <div>
+              <Label htmlFor="c-credit">Initial CID Credit</Label>
+              <Input id="c-credit" type="number" min={0} value={cCredit} onChange={(e) => setCCredit(e.target.value)} placeholder="e.g. 50" />
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {PRESETS.map(p => (
+                  <Button key={p} type="button" size="sm" variant="outline" className="h-7 text-xs"
+                    onClick={() => setCCredit(String(p))}>
+                    {p}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={creating}>Cancel</Button>
+            <Button onClick={createAccount} disabled={creating} className="gap-1">
+              {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
+              Create Account
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Created Info dialog (show credentials so admin can share) */}
+      <Dialog open={!!createdInfo} onOpenChange={(o) => !o && setCreatedInfo(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>✅ Account Ready</DialogTitle>
+            <DialogDescription>
+              Save these credentials — the password will not be shown again. Share them with the user.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 rounded-md border bg-muted/40 p-4 text-sm">
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Email:</span>
+              <span className="font-mono">{createdInfo?.email}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Password:</span>
+              <span className="font-mono">{createdInfo?.password}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">CID Balance:</span>
+              <Badge>{createdInfo?.balance}</Badge>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              className="gap-1"
+              onClick={() => {
+                if (!createdInfo) return;
+                navigator.clipboard.writeText(
+                  `Email: ${createdInfo.email}\nPassword: ${createdInfo.password}\nCID Credits: ${createdInfo.balance}\nLogin at: ${window.location.origin}/login`,
+                );
+                toast.success('Credentials copied');
+              }}
+            >
+              <Copy className="h-4 w-4" /> Copy
+            </Button>
+            <Button onClick={() => setCreatedInfo(null)}>Done</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
