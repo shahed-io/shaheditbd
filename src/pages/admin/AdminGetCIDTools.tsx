@@ -327,22 +327,6 @@ export default function AdminGetCIDTools() {
             <Code2 className="h-4 w-4" /> <span className="hidden sm:inline">Docs</span>
           </TabsTrigger>
         </TabsList>
-          <TabsTrigger value="single" className="gap-2 py-2.5">
-            <Zap className="h-4 w-4" /> <span className="hidden sm:inline">Single</span>
-          </TabsTrigger>
-          <TabsTrigger value="compare" className="gap-2 py-2.5">
-            <GitCompare className="h-4 w-4" /> <span className="hidden sm:inline">Compare</span>
-          </TabsTrigger>
-          <TabsTrigger value="batch" className="gap-2 py-2.5">
-            <Layers className="h-4 w-4" /> <span className="hidden sm:inline">Batch</span>
-          </TabsTrigger>
-          <TabsTrigger value="history" className="gap-2 py-2.5">
-            <History className="h-4 w-4" /> <span className="hidden sm:inline">History</span>
-          </TabsTrigger>
-          <TabsTrigger value="docs" className="gap-2 py-2.5">
-            <Code2 className="h-4 w-4" /> <span className="hidden sm:inline">Docs</span>
-          </TabsTrigger>
-        </TabsList>
 
         {/* ─── TAB 1: Single CID ─── */}
         <TabsContent value="single">
