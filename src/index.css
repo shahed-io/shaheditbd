@@ -2096,3 +2096,20 @@ body.admin-page main > .admin-page-header + div > div.flex:first-child:has(> div
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+
+/* Daraz-style green underline highlight on footer tagline keywords */
+.footer-tagline-highlight mark.fth {
+  background: transparent;
+  color: hsl(152, 62%, 32%);
+  font-weight: 600;
+  padding: 0 1px;
+  background-image: linear-gradient(to top,
+    hsla(152, 70%, 45%, 0.22) 0%,
+    hsla(152, 70%, 45%, 0.22) 22%,
+    transparent 22%,
+    transparent 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-radius: 2px;
+  white-space: nowrap;
+}
