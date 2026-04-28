@@ -879,34 +879,8 @@ const AdminProducts = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-            Products <span className="gradient-text">Management</span>
-          </h1>
-          <p className="text-muted-foreground text-sm">{products.length} products total</p>
-        </div>
-        <button
-          type="button"
-          onClick={() => {
-            setEditingProduct(null);
-            setForm(emptyForm);
-            setImagePreview('');
-            setActiveTab('basic');
-            setShowForm(true);
-          }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-          style={{
-            background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.85))',
-            boxShadow: '0 8px 24px hsl(var(--primary) / 0.35)',
-          }}
-        >
-          <Plus size={18} strokeWidth={2.5} /> Add New Product
-        </button>
-      </div>
-
-      {/* Search */}
-      <div className="glass-card rounded-2xl p-4 flex gap-3">
+      {/* Action bar — Add Product + Search */}
+      <div className="glass-card rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="relative flex-1">
           <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -915,7 +889,28 @@ const AdminProducts = () => {
             className="w-full bg-muted/30 border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
           />
         </div>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <span className="text-xs text-muted-foreground hidden sm:inline">{products.length} products</span>
+          <button
+            type="button"
+            onClick={() => {
+              setEditingProduct(null);
+              setForm(emptyForm);
+              setImagePreview('');
+              setActiveTab('basic');
+              setShowForm(true);
+            }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+            style={{
+              background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.85))',
+              boxShadow: '0 8px 24px hsl(var(--primary) / 0.35)',
+            }}
+          >
+            <Plus size={18} strokeWidth={2.5} /> Add New Product
+          </button>
+        </div>
       </div>
+
 
       {/* ======= PRODUCT FORM MODAL ======= */}
       {showForm && (
