@@ -11,7 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   KeyRound, Wallet, RefreshCw, Copy, Check, AlertCircle, Zap,
-  GitCompare, Layers, History, Code2, ExternalLink, ShieldCheck, Sparkles,
+  GitCompare, Layers, Code2, ExternalLink, ShieldCheck, Sparkles,
   Loader2, CheckCircle2, XCircle, Clock,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -47,15 +47,7 @@ interface BatchResult {
     errors?: Record<string, string>;
   }>;
 }
-interface HistoryItem {
-  id: string;
-  installation_id: string;
-  cid: string;
-  price_cents: number;
-  created_at: string;
-  user_id: string;
-  user?: { email?: string; display_name?: string } | null;
-}
+
 
 const formatIID = (raw: string) =>
   raw.replace(/[^0-9]/g, '').replace(/(.{7})/g, '$1 ').trim();
@@ -126,10 +118,6 @@ export default function AdminGetCIDTools() {
   const [batchResult, setBatchResult] = useState<BatchResult | null>(null);
   const [batchLoading, setBatchLoading] = useState(false);
 
-  // ─── History ───
-  const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [historyLoading, setHistoryLoading] = useState(false);
-
   // ─── Load balance on mount ───
   const loadBalance = useCallback(async () => {
     setBalanceLoading(true);
@@ -143,22 +131,9 @@ export default function AdminGetCIDTools() {
     }
   }, []);
 
-  const loadHistory = useCallback(async () => {
-    setHistoryLoading(true);
-    try {
-      const data = await callApi('admin_history', { limit: 100 });
-      setHistory(data.generations || []);
-    } catch (e) {
-      toast.error(`History load failed: ${(e as Error).message}`);
-    } finally {
-      setHistoryLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
     loadBalance();
-    loadHistory();
-  }, [loadBalance, loadHistory]);
+  }, [loadBalance]);
 
   // ─── Single CID ───
   const handleGenerate = async () => {
@@ -173,7 +148,6 @@ export default function AdminGetCIDTools() {
       const data = await callApi('admin_generate', { installation_id: iid, provider });
       setCidResult(data);
       toast.success(`CID generated via ${data.provider}`);
-      loadHistory();
     } catch (e) {
       setCidError((e as Error).message);
       toast.error((e as Error).message);
@@ -217,7 +191,6 @@ export default function AdminGetCIDTools() {
       const data = await callApi('admin_batch', { installation_ids: lines, provider: batchProvider });
       setBatchResult(data);
       toast.success(`${data.success}/${data.total} successful`);
-      loadHistory();
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -332,18 +305,15 @@ export default function AdminGetCIDTools() {
 
       {/* ─── Main Tabs ─── */}
       <Tabs defaultValue="single" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
           <TabsTrigger value="single" className="gap-2 py-2.5">
-            <Zap className="h-4 w-4" /> <span className="hidden sm:inline">Single</span>
+            <Sparkles className="h-4 w-4" /> <span className="hidden sm:inline">Single</span>
           </TabsTrigger>
           <TabsTrigger value="compare" className="gap-2 py-2.5">
             <GitCompare className="h-4 w-4" /> <span className="hidden sm:inline">Compare</span>
           </TabsTrigger>
           <TabsTrigger value="batch" className="gap-2 py-2.5">
             <Layers className="h-4 w-4" /> <span className="hidden sm:inline">Batch</span>
-          </TabsTrigger>
-          <TabsTrigger value="history" className="gap-2 py-2.5">
-            <History className="h-4 w-4" /> <span className="hidden sm:inline">History</span>
           </TabsTrigger>
           <TabsTrigger value="docs" className="gap-2 py-2.5">
             <Code2 className="h-4 w-4" /> <span className="hidden sm:inline">Docs</span>
@@ -621,67 +591,6 @@ export default function AdminGetCIDTools() {
                         </tbody>
                       </table>
                     </div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* ─── TAB 4: History ─── */}
-        <TabsContent value="history">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <History className="h-5 w-5 text-primary" />
-                  Generation History
-                </CardTitle>
-                <CardDescription>
-                  All CIDs generated through the system (admin + resellers, last 100)
-                </CardDescription>
-              </div>
-              <Button onClick={loadHistory} disabled={historyLoading} variant="outline" size="sm" className="gap-2">
-                <RefreshCw className={`h-3.5 w-3.5 ${historyLoading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {historyLoading ? (
-                <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" /></div>
-              ) : history.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">No generations yet</div>
-              ) : (
-                <div className="border rounded-lg overflow-hidden">
-                  <div className="overflow-x-auto max-h-[500px]">
-                    <table className="w-full text-xs">
-                      <thead className="bg-muted sticky top-0">
-                        <tr>
-                          <th className="p-2 text-left">Time</th>
-                          <th className="p-2 text-left">User</th>
-                          <th className="p-2 text-left">IID</th>
-                          <th className="p-2 text-left">CID</th>
-                          <th className="p-2 text-left">Cost</th>
-                          <th className="p-2 text-left">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {history.map((h) => (
-                          <tr key={h.id} className="border-t hover:bg-muted/40">
-                            <td className="p-2 whitespace-nowrap">
-                              {new Date(h.created_at).toLocaleString('en-GB', {
-                                day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
-                              })}
-                            </td>
-                            <td className="p-2">{h.user?.display_name || h.user?.email || <span className="text-muted-foreground">—</span>}</td>
-                            <td className="p-2 font-mono truncate max-w-[180px]">{h.installation_id.slice(0, 25)}…</td>
-                            <td className="p-2 font-mono truncate max-w-[180px]">{h.cid.slice(0, 25)}…</td>
-                            <td className="p-2">${(h.price_cents / 100).toFixed(2)}</td>
-                            <td className="p-2"><CopyBtn text={h.cid} /></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
                   </div>
                 </div>
               )}

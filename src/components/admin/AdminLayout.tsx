@@ -117,8 +117,6 @@ const MENU_SECTIONS: MenuSection[] = [
     items: [
       { icon: Bot, label: 'Telegram Shop Bot', path: '/ceo/telegram-bot' },
       { icon: KeyRound, label: 'GetCID API Tools', path: '/ceo/getcid-tools', badge: 'new' },
-      { icon: ShieldCheck, label: 'CID Reseller Portal', path: '/ceo/reseller' },
-      { icon: Users, label: 'Reseller Accounts', path: '/ceo/reseller-accounts' },
     ],
   },
   {

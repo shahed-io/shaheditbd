@@ -85,7 +85,6 @@ export function useAdminPrefetch() {
     // ── Wave 4: Integrations + System + Pixels + SEO sub-pages ───────────────
     idle(() => {
       safeImport('telegram-bot', () => import('@/pages/admin/AdminTelegramBot'));
-      safeImport('reseller-accounts', () => import('@/pages/admin/AdminResellerAccounts'));
       safeImport('staff', () => import('@/pages/admin/AdminStaffManagement'));
       safeImport('roles', () => import('@/pages/admin/AdminRoles'));
       safeImport('backup', () => import('@/pages/admin/AdminBackup'));
@@ -168,7 +167,6 @@ const HOVER_LOADERS: Record<string, () => Promise<unknown>> = {
   '/ceo/site-verification':     () => import('@/pages/admin/AdminSiteVerification'),
   '/ceo/reports':               () => import('@/pages/admin/AdminReports'),
   '/ceo/telegram-bot':          () => import('@/pages/admin/AdminTelegramBot'),
-  '/ceo/reseller-accounts':     () => import('@/pages/admin/AdminResellerAccounts'),
   '/ceo/ai-assistant':          () => import('@/pages/admin/AdminAiAssistant'),
   '/ceo/ai-config':             () => import('@/pages/admin/AdminAiConfig'),
   '/ceo/staff':                 () => import('@/pages/admin/AdminStaffManagement'),

@@ -292,125 +292,9 @@ Deno.serve(async (req) => {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // RESELLER ACTIONS — require reseller or admin role
-    // ═══════════════════════════════════════════════════════════════
-
-    if (action === 'balance') {
-      const auth = await authenticate();
-      if ('error' in auth) return json({ ok: false, error: auth.error }, auth.status);
-      const isReseller = auth.roles.includes('reseller') || auth.roles.includes('admin');
-      if (!isReseller) return json({ ok: false, error: 'Reseller access required' }, 403);
-
-      // Reseller's wallet balance (from reseller_profiles)
-      const { data: profile } = await supabase
-        .from('reseller_profiles')
-        .select('balance_cents, is_active')
-        .eq('user_id', auth.user.id)
-        .maybeSingle();
-
-      return json({
-        ok: true,
-        balance_cents: profile?.balance_cents ?? 0,
-        is_active: profile?.is_active ?? false,
-      });
-    }
-
-    if (action === 'getcid') {
-      const auth = await authenticate();
-      if ('error' in auth) return json({ error: auth.error }, auth.status);
-      const isAdmin    = auth.roles.includes('admin');
-      const isReseller = auth.roles.includes('reseller');
-      if (!isReseller && !isAdmin) return json({ error: 'Reseller access required' }, 403);
-
-      if (!installation_id || String(installation_id).trim().length < 4) {
-        return json({ error: 'Installation ID too short' }, 400);
-      }
-
-      // Load reseller profile (admins also get one auto if missing)
-      let { data: profile } = await supabase
-        .from('reseller_profiles')
-        .select('id, balance_cents, is_active')
-        .eq('user_id', auth.user.id)
-        .maybeSingle();
-
-      if (!profile && isAdmin) {
-        const { data: created } = await supabase
-          .from('reseller_profiles')
-          .insert({ user_id: auth.user.id })
-          .select('id, balance_cents, is_active')
-          .single();
-        profile = created;
-      }
-
-      if (!profile) return json({ error: 'Reseller profile not found' }, 403);
-      if (!profile.is_active && !isAdmin) return json({ error: 'Account suspended. Contact admin.' }, 403);
-
-      // Admins skip billing; resellers must have balance
-      if (!isAdmin && profile.balance_cents < PRICE_CENTS) {
-        return json({ error: `Insufficient balance. Need $${(PRICE_CENTS/100).toFixed(2)}, have $${(profile.balance_cents/100).toFixed(2)}` }, 402);
-      }
-
-      const iid = String(installation_id).trim().replace(/\s+/g, ' ');
-
-      // Try PRIMARY then BACKUP
-      let cidValue: string | null = null;
-      let usedProvider = '';
-
-      if (GETCID_TOKEN) {
-        const r = await callGetCID(GETCID_TOKEN, iid);
-        if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'primary'; }
-        else console.log(`[primary] failed: ${r.error} | raw: ${r.raw}`);
-      }
-      if (!cidValue && GRAHOK_TOKEN) {
-        const r = await callGrahok(GRAHOK_TOKEN, GRAHOK_URL, iid);
-        if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'backup'; }
-        else console.log(`[backup] failed: ${r.error} | raw: ${r.raw}`);
-      }
-
-      if (!cidValue) {
-        return json({ error: 'CID generation temporarily unavailable. Please try again.' }, 502);
-      }
-
-      // Deduct & log
-      const shouldDeduct = !isAdmin;
-      const newBalance = shouldDeduct ? profile.balance_cents - PRICE_CENTS : profile.balance_cents;
-
-      const ops: Promise<unknown>[] = [
-        supabase.from('reseller_generations').insert({
-          user_id: auth.user.id,
-          installation_id: iid,
-          cid: cidValue,
-          price_cents: shouldDeduct ? PRICE_CENTS : 0,
-          provider: usedProvider,
-        }),
-      ];
-      if (shouldDeduct) {
-        ops.push(supabase.from('reseller_profiles').update({
-          balance_cents: newBalance,
-          updated_at: new Date().toISOString(),
-        }).eq('user_id', auth.user.id));
-      }
-      await Promise.all(ops);
-
-      return json({ cid: cidValue, balance_after_cents: newBalance });
-    }
-
-    if (action === 'my_history') {
-      const auth = await authenticate();
-      if ('error' in auth) return json({ error: auth.error }, auth.status);
-      const { data: generations } = await supabase
-        .from('reseller_generations')
-        .select('id, installation_id, cid, price_cents, created_at')
-        .eq('user_id', auth.user.id)
-        .order('created_at', { ascending: false })
-        .limit(50);
-      return json({ generations: generations ?? [] });
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // ADMIN-ONLY ACTIONS
     // ═══════════════════════════════════════════════════════════════
-    const isAdminAction = ['admin_balance', 'admin_generate', 'admin_compare', 'admin_batch', 'admin_history'].includes(action);
+    const isAdminAction = ['admin_balance', 'admin_generate', 'admin_compare', 'admin_batch'].includes(action);
     if (isAdminAction) {
       const auth = await authenticate();
       if ('error' in auth) return json({ error: auth.error }, auth.status);
@@ -425,7 +309,6 @@ Deno.serve(async (req) => {
           if (r.ok) {
             providers.getcid = { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL };
           } else {
-            // GetCID balance API is known to be unreliable — surface as "unavailable" instead of error
             const isApiLimitation = r.raw === 'User ID is required' || r.error === 'GETCID_USER_ID not configured';
             providers.getcid = isApiLimitation
               ? { status: 'unavailable', message: 'Balance API not exposed by provider', endpoint: GETCID_BALANCE_URL }
@@ -540,30 +423,6 @@ Deno.serve(async (req) => {
         }
         const successCount = results.filter(r => r.status === 'success').length;
         return json({ total: results.length, success: successCount, failed: results.length - successCount, results });
-      }
-
-      if (action === 'admin_history') {
-        const limit = Math.min(Number(body.limit) || 100, 500);
-        const { data: generations } = await supabase
-          .from('reseller_generations')
-          .select('id, installation_id, cid, price_cents, created_at, user_id, provider')
-          .order('created_at', { ascending: false })
-          .limit(limit);
-
-        // Enrich with user emails
-        const userIds = Array.from(new Set((generations ?? []).map((g: { user_id: string }) => g.user_id)));
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('user_id, email, display_name')
-          .in('user_id', userIds);
-        const userMap = new Map((profiles ?? []).map((p: { user_id: string; email?: string; display_name?: string }) => [p.user_id, p]));
-
-        const enriched = (generations ?? []).map((g: Record<string, unknown>) => ({
-          ...g,
-          user: userMap.get(g.user_id as string) || null,
-        }));
-
-        return json({ generations: enriched });
       }
     }
 
