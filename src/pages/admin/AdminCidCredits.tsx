@@ -308,7 +308,49 @@ export default function AdminCidCredits() {
     URL.revokeObjectURL(url);
   };
 
-  return (
+  const generatePassword = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+    let p = '';
+    for (let i = 0; i < 12; i++) p += chars[Math.floor(Math.random() * chars.length)];
+    setCPassword(p);
+    setCShowPwd(true);
+  };
+
+  const createAccount = async () => {
+    if (!cEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cEmail)) { toast.error('Enter a valid email'); return; }
+    if (!cPassword || cPassword.length < 8) { toast.error('Password must be at least 8 characters'); return; }
+    if (!cName.trim()) { toast.error('Name is required'); return; }
+    setCreating(true);
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      if (!token) throw new Error('Not authenticated');
+      const url = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/admin-create-cid-user`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          email: cEmail.trim().toLowerCase(),
+          password: cPassword,
+          name: cName.trim(),
+          phone: cPhone.trim() || null,
+          initial_credit: parseInt(cCredit, 10) || 0,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || 'Failed to create account');
+      toast.success(json.created ? `Account created with ${json.balance} credits` : `Existing user — ${json.balance} credits applied`);
+      setCreatedInfo({ email: json.email, password: cPassword, balance: json.balance });
+      setCEmail(''); setCPassword(''); setCName(''); setCPhone(''); setCCredit('');
+      setCreateOpen(false);
+      await load();
+    } catch (e: any) {
+      toast.error(e.message || 'Failed');
+    } finally {
+      setCreating(false);
+    }
+  };
+
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
