@@ -44,6 +44,10 @@ const AdminAnnouncementBar = () => {
   const [settings, setSettings] = useState<AnnouncementSettings>(DEFAULT);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<ProductSearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => { fetchData(); }, []);
 
@@ -51,6 +55,41 @@ const AdminAnnouncementBar = () => {
     const { data } = await supabase.from('site_settings').select('value').eq('key', 'announcement_bar').maybeSingle();
     if (data?.value) { try { setSettings(JSON.parse(data.value)); } catch {} }
     setLoading(false);
+  };
+
+  // Search products debounced
+  useEffect(() => {
+    if (!showSearch) return;
+    const t = setTimeout(async () => {
+      setSearching(true);
+      let q = supabase.from('products')
+        .select('id, name, price, original_price, discount_percent, slug')
+        .eq('status', 'active')
+        .limit(20);
+      if (searchQuery.trim()) q = q.ilike('name', `%${searchQuery.trim()}%`);
+      else q = q.order('total_sales', { ascending: false });
+      const { data } = await q;
+      setSearchResults((data as any) || []);
+      setSearching(false);
+    }, 250);
+    return () => clearTimeout(t);
+  }, [searchQuery, showSearch]);
+
+  const addProductAsItem = (p: ProductSearchResult) => {
+    const price = Number(p.price) || 0;
+    const original = Number(p.original_price) || 0;
+    let off = 0;
+    if (p.discount_percent && p.discount_percent > 0) off = p.discount_percent;
+    else if (original > price && price > 0) off = Math.round(((original - price) / original) * 100);
+    setSettings(prev => ({
+      ...prev,
+      items: [...prev.items, {
+        label: p.name,
+        price: formatBDT(price),
+        off: off > 0 ? `-${off}%` : '',
+      }],
+    }));
+    toast.success(`'${p.name}' যোগ হয়েছে`);
   };
 
   const handleSave = async () => {
