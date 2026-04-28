@@ -302,6 +302,7 @@ const AppContent = () => {
             <Route path="seo/content-analyzer" element={<AdminSuspense><AdminContentSeo /></AdminSuspense>} />
 
             <Route path="getcid-tools" element={<AdminSuspense><AdminGetCIDTools /></AdminSuspense>} />
+            <Route path="cid-credits" element={<AdminSuspense><AdminCidCredits /></AdminSuspense>} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
