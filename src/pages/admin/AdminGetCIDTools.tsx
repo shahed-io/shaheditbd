@@ -47,15 +47,7 @@ interface BatchResult {
     errors?: Record<string, string>;
   }>;
 }
-interface HistoryItem {
-  id: string;
-  installation_id: string;
-  cid: string;
-  price_cents: number;
-  created_at: string;
-  user_id: string;
-  user?: { email?: string; display_name?: string } | null;
-}
+
 
 const formatIID = (raw: string) =>
   raw.replace(/[^0-9]/g, '').replace(/(.{7})/g, '$1 ').trim();
