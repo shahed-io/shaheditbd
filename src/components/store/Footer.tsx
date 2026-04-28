@@ -10,7 +10,24 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Sparkles, Gift, Tag, Star, Heart, Download, Mail, Phone, MessageCircle,
 };
 
-const Footer = () => {
+// Daraz-style green underline highlight on key Bangla/English keywords in tagline
+const HIGHLIGHT_KEYWORDS = [
+  'বিশ্বস্ত', 'ডিজিটাল সফটওয়্যার স্টোর', 'অরিজিনাল সফটওয়্যার', 'অরিজিনাল',
+  'সেরা দামে', 'ইনস্ট্যান্ট ডেলিভারি', 'প্রিমিয়াম ডিজিটাল সেবা',
+  'সাশ্রয়ী মূল্যে', 'সাবস্ক্রিপশন', 'গ্রাহকদের',
+];
+const escapeHtml = (s: string) => s.replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]!));
+const highlightTagline = (text: string) => {
+  let html = escapeHtml(text);
+  // longest first to avoid nested replacement
+  const sorted = [...HIGHLIGHT_KEYWORDS].sort((a, b) => b.length - a.length);
+  for (const kw of sorted) {
+    const safe = escapeHtml(kw).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    html = html.replace(new RegExp(`(?<!<mark[^>]*>[^<]*)${safe}`, 'g'), `<mark class="fth">${escapeHtml(kw)}</mark>`);
+  }
+  return html;
+};
+
   const { settings } = useFooterSettings();
   const { sections } = useFooterMenu();
   const paymentMethods = settings.payment_methods.split(',').map(s => s.trim()).filter(Boolean);
