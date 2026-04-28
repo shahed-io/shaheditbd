@@ -231,12 +231,24 @@ const AdminAnnouncementBar = () => {
 
       {/* Items */}
       <div className="glass-card rounded-2xl p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-bold text-foreground">টিকার আইটেমস ({settings.items.length})</h3>
-          <button onClick={addItem} className="flex items-center gap-1.5 text-xs text-primary px-3 py-1.5 rounded-xl glass-card hover:border-primary/40 transition-all">
-            <Plus size={12} /> আইটেম যোগ করুন
-          </button>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h3 className="font-bold text-foreground">টিকার আইটেমস ({settings.items.length})</h3>
+            {settings.useLiveProducts && (
+              <p className="text-[11px] text-amber-600 mt-1">⚠️ এখন 'Live Products' মোড চালু — এই ম্যানুয়াল লিস্ট দেখানো হবে না। উপরে টগল করে 'Manual Items' করুন।</p>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => { setShowSearch(true); setSearchQuery(''); }} className="flex items-center gap-1.5 text-xs text-primary px-3 py-1.5 rounded-xl glass-card hover:border-primary/40 transition-all">
+              <Search size={12} /> প্রোডাক্ট সার্চ করে যোগ করুন
+            </button>
+            <button onClick={addItem} className="flex items-center gap-1.5 text-xs text-primary px-3 py-1.5 rounded-xl glass-card hover:border-primary/40 transition-all">
+              <Plus size={12} /> খালি আইটেম
+            </button>
+          </div>
         </div>
+
+        <p className="text-[11px] text-muted-foreground">💡 প্রোডাক্টের নামটি (label) এখানে edit করলে সেটাই ব্যানারে দেখাবে — মূল প্রোডাক্ট নাম পরিবর্তন হবে না।</p>
 
         <div className="space-y-2">
           {settings.items.map((item, i) => (
@@ -249,12 +261,12 @@ const AdminAnnouncementBar = () => {
                   <ArrowDown size={10} />
                 </button>
               </div>
-              <input value={item.label} onChange={e => updateItem(i, 'label', e.target.value)} placeholder="প্রোডাক্ট নাম"
-                className="flex-1 bg-transparent text-sm text-foreground focus:outline-none" />
+              <input value={item.label} onChange={e => updateItem(i, 'label', e.target.value)} placeholder="প্রোডাক্ট নাম (edit করা যাবে)"
+                className="flex-1 bg-transparent text-sm text-foreground focus:outline-none border-b border-transparent focus:border-primary/40 px-1" />
               <input value={item.price} onChange={e => updateItem(i, 'price', e.target.value)} placeholder="৳000"
-                className="w-20 bg-transparent text-sm text-foreground focus:outline-none text-center font-mono" />
+                className="w-24 bg-transparent text-sm text-foreground focus:outline-none text-center font-mono border-b border-transparent focus:border-primary/40" />
               <input value={item.off} onChange={e => updateItem(i, 'off', e.target.value)} placeholder="-00%"
-                className="w-16 bg-transparent text-sm text-foreground focus:outline-none text-center font-mono" />
+                className="w-20 bg-transparent text-sm text-foreground focus:outline-none text-center font-mono border-b border-transparent focus:border-primary/40" />
               <button onClick={() => removeItem(i)} className="p-1 text-muted-foreground hover:text-destructive rounded-lg transition-colors">
                 <Trash2 size={13} />
               </button>
@@ -262,6 +274,54 @@ const AdminAnnouncementBar = () => {
           ))}
         </div>
       </div>
+
+      {/* Product Search Modal */}
+      {showSearch && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center pt-20 px-4" onClick={() => setShowSearch(false)}>
+          <div className="bg-background border border-border rounded-2xl w-full max-w-2xl max-h-[70vh] flex flex-col overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="p-4 border-b border-border flex items-center gap-3">
+              <Search size={18} className="text-muted-foreground flex-shrink-0" />
+              <input
+                autoFocus
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="প্রোডাক্ট নাম দিয়ে সার্চ করুন..."
+                className="flex-1 bg-transparent text-sm text-foreground focus:outline-none"
+              />
+              <button onClick={() => setShowSearch(false)} className="p-1 text-muted-foreground hover:text-foreground rounded-lg">
+                <X size={16} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2">
+              {searching ? (
+                <div className="text-center py-8 text-sm text-muted-foreground">খুঁজছি...</div>
+              ) : searchResults.length === 0 ? (
+                <div className="text-center py-8 text-sm text-muted-foreground">কোনো প্রোডাক্ট পাওয়া যায়নি</div>
+              ) : (
+                searchResults.map(p => {
+                  const price = Number(p.price) || 0;
+                  const original = Number(p.original_price) || 0;
+                  let off = 0;
+                  if (p.discount_percent && p.discount_percent > 0) off = p.discount_percent;
+                  else if (original > price && price > 0) off = Math.round(((original - price) / original) * 100);
+                  return (
+                    <button key={p.id} onClick={() => addProductAsItem(p)}
+                      className="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/40 transition-colors text-left">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium text-foreground truncate">{p.name}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          {formatBDT(price)} {off > 0 && <span className="text-primary font-semibold ml-2">-{off}%</span>}
+                        </div>
+                      </div>
+                      <Plus size={14} className="text-primary flex-shrink-0" />
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
