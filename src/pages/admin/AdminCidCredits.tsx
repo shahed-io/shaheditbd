@@ -534,14 +534,17 @@ export default function AdminCidCredits() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Adjust CID Credits</DialogTitle>
-            <DialogDescription asChild>
-              <div className="space-y-1">
-                <div className="font-medium text-foreground">{editing?.display_name || 'Unnamed'}</div>
-                <div className="text-xs break-all">{editing?.email || editing?.phone || editing?.user_id}</div>
-                <div>Current balance: <strong className="text-foreground">{editing?.balance ?? 0}</strong></div>
-              </div>
+            <DialogDescription>
+              Add or deduct CID credits for this user. The change is logged and the user is notified.
             </DialogDescription>
           </DialogHeader>
+          <div className="rounded-md border bg-muted/40 p-3 space-y-1 text-sm">
+            <div className="font-medium">{editing?.display_name || 'Unnamed'}</div>
+            <div className="text-xs break-all text-muted-foreground">
+              {editing?.email || editing?.phone || editing?.user_id}
+            </div>
+            <div>Current balance: <strong>{editing?.balance ?? 0}</strong></div>
+          </div>
           <div className="space-y-3">
             <div>
               <Label htmlFor="cid-delta">Amount</Label>
