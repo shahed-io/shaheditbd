@@ -121,6 +121,7 @@ const AdminSiteVerification      = lazy(() => import("./pages/admin/AdminSiteVer
 const AdminContentSeo            = lazy(() => import("./pages/admin/seo/AdminContentSeo"));
 const Affiliate                  = lazy(() => import("./pages/Affiliate"));
 const AdminGetCIDTools           = lazy(() => import("./pages/admin/AdminGetCIDTools"));
+const AdminCidCredits            = lazy(() => import("./pages/admin/AdminCidCredits"));
 const GetCID                     = lazy(() => import("./pages/GetCID"));
 
 
