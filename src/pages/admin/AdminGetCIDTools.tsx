@@ -606,67 +606,6 @@ export default function AdminGetCIDTools() {
           </Card>
         </TabsContent>
 
-        {/* ─── TAB 4: History ─── */}
-        <TabsContent value="history">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <History className="h-5 w-5 text-primary" />
-                  Generation History
-                </CardTitle>
-                <CardDescription>
-                  All CIDs generated through the system (admin + resellers, last 100)
-                </CardDescription>
-              </div>
-              <Button onClick={loadHistory} disabled={historyLoading} variant="outline" size="sm" className="gap-2">
-                <RefreshCw className={`h-3.5 w-3.5 ${historyLoading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {historyLoading ? (
-                <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" /></div>
-              ) : history.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">No generations yet</div>
-              ) : (
-                <div className="border rounded-lg overflow-hidden">
-                  <div className="overflow-x-auto max-h-[500px]">
-                    <table className="w-full text-xs">
-                      <thead className="bg-muted sticky top-0">
-                        <tr>
-                          <th className="p-2 text-left">Time</th>
-                          <th className="p-2 text-left">User</th>
-                          <th className="p-2 text-left">IID</th>
-                          <th className="p-2 text-left">CID</th>
-                          <th className="p-2 text-left">Cost</th>
-                          <th className="p-2 text-left">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {history.map((h) => (
-                          <tr key={h.id} className="border-t hover:bg-muted/40">
-                            <td className="p-2 whitespace-nowrap">
-                              {new Date(h.created_at).toLocaleString('en-GB', {
-                                day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
-                              })}
-                            </td>
-                            <td className="p-2">{h.user?.display_name || h.user?.email || <span className="text-muted-foreground">—</span>}</td>
-                            <td className="p-2 font-mono truncate max-w-[180px]">{h.installation_id.slice(0, 25)}…</td>
-                            <td className="p-2 font-mono truncate max-w-[180px]">{h.cid.slice(0, 25)}…</td>
-                            <td className="p-2">${(h.price_cents / 100).toFixed(2)}</td>
-                            <td className="p-2"><CopyBtn text={h.cid} /></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         {/* ─── TAB 5: API Documentation (Internal — provider-agnostic) ─── */}
         <TabsContent value="docs">
           <div className="grid gap-4">
