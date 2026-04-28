@@ -362,7 +362,10 @@ export default function AdminCidCredits() {
             Find any user by email/phone and add or deduct CID credits — even users who never generated before.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setCreateOpen(true)} className="gap-2">
+            <UserPlus className="h-4 w-4" /> Create New Account
+          </Button>
           <Button variant="outline" onClick={exportCsv} className="gap-2" disabled={accounts.length === 0}>
             <Download className="h-4 w-4" /> Export CSV
           </Button>
