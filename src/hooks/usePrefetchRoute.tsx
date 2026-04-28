@@ -31,7 +31,7 @@ const ROUTE_LOADERS: Record<string, () => Promise<unknown>> = {
   '/return-policy': () => import('@/pages/ReturnPolicy'),
   '/refund-request':() => import('@/pages/RefundRequest'),
   '/install':       () => import('@/pages/InstallApp'),
-  '/reseller':      () => import('@/pages/Reseller'),
+  
   // Dynamic routes — keyed by prefix
   '/product/':      () => import('@/pages/ProductDetail'),
   '/blog/':         () => import('@/pages/BlogPost'),

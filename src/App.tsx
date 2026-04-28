@@ -72,8 +72,6 @@ const FAQs                  = lazy(() => import("./pages/FAQs"));
 const FreeTools             = lazy(() => import("./pages/FreeTools"));
 const RefundRequest         = lazy(() => import("./pages/RefundRequest"));
 const InstallApp            = lazy(() => import("./pages/InstallApp"));
-const Reseller              = lazy(() => import("./pages/Reseller"));
-const AdminResellerAccounts = lazy(() => import("./pages/admin/AdminResellerAccounts"));
 const Unsubscribe           = lazy(() => import("./pages/Unsubscribe"));
 
 // SEO sub-pages
@@ -302,8 +300,6 @@ const AppContent = () => {
             <Route path="site-verification" element={<AdminSuspense><AdminSiteVerification /></AdminSuspense>} />
             <Route path="seo/content-analyzer" element={<AdminSuspense><AdminContentSeo /></AdminSuspense>} />
 
-            <Route path="reseller" element={<AdminSuspense><Reseller /></AdminSuspense>} />
-            <Route path="reseller-accounts" element={<AdminSuspense><AdminResellerAccounts /></AdminSuspense>} />
             <Route path="getcid-tools" element={<AdminSuspense><AdminGetCIDTools /></AdminSuspense>} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -323,7 +319,6 @@ const AppContent = () => {
           <Route path="/affiliate" element={<Affiliate />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/install" element={<InstallApp />} />
-          <Route path="/reseller" element={<Reseller />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

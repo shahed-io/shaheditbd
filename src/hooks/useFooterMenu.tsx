@@ -32,7 +32,6 @@ const DEFAULT_SECTIONS: FooterSection[] = [
       { id: 'l-1', label: 'Windows Keys',     href: '/shop?category=windows', is_active: true, sort_order: 1 },
       { id: 'l-2', label: 'Office 365',       href: '/shop?category=office',  is_active: true, sort_order: 2 },
       { id: 'l-3', label: 'All Products',     href: '/shop',                  is_active: true, sort_order: 3 },
-      { id: 'l-4', label: 'CID For Reseller', href: 'https://ss.shahedit.com/getcid/login.php', external: true, is_active: true, sort_order: 4 },
       { id: 'l-5', label: 'VPN & Security',   href: '/shop?category=vpn',     is_active: true, sort_order: 5 },
       { id: 'l-6', label: 'Free Tools',       href: '/free-tools',            is_active: true, sort_order: 6 },
     ],
