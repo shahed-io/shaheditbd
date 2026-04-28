@@ -11,7 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   KeyRound, Wallet, RefreshCw, Copy, Check, AlertCircle, Zap,
-  GitCompare, Layers, History, Code2, ExternalLink, ShieldCheck, Sparkles,
+  GitCompare, Layers, Code2, ExternalLink, ShieldCheck, Sparkles,
   Loader2, CheckCircle2, XCircle, Clock,
 } from 'lucide-react';
 import { toast } from 'sonner';
