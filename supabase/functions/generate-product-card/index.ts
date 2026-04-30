@@ -95,7 +95,7 @@ const STYLES = {
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Dark Neon" tone ═══
-- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Keep EVERY signature element exactly as defined above (translucent gray-glass "SHAHED STORE" pill with white text, white brand pill, glossy orb bubbles, contact line inside card)
 - Subtle tone shift only: orbs lean slightly cooler (pale ice-blue + soft violet tint instead of mint), background still bright airy sky but with a hint more lilac in the top corners
 - Vibe: signature SHAHED STORE house style with a cool-cinematic accent
 `.trim(),
@@ -107,7 +107,7 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Light Glass" tone ═══
-- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Keep EVERY signature element exactly as defined above (translucent gray-glass "SHAHED STORE" pill with white text, white brand pill, glossy orb bubbles, contact line inside card)
 - Subtle tone shift only: background slightly brighter and more pearl-white, orbs lean toward pale sky-blue and soft white with crisper highlights
 - Vibe: the FLAGSHIP signature look — bright, airy, premium glassmorphism
 `.trim(),
@@ -119,7 +119,7 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Clean Light" tone ═══
-- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Keep EVERY signature element exactly as defined above (translucent gray-glass "SHAHED STORE" pill with white text, white brand pill, glossy orb bubbles, contact line inside card)
 - Subtle tone shift only: background a touch more white-washed and minimal, orb bubbles slightly more spread out and softer
 - Vibe: clean, minimal, corporate-premium — same signature SHAHED STORE layout
 `.trim(),
@@ -131,7 +131,7 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Soft Aurora" tone ═══
-- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Keep EVERY signature element exactly as defined above (translucent gray-glass "SHAHED STORE" pill with white text, white brand pill, glossy orb bubbles, contact line inside card)
 - Subtle tone shift only: orbs include slightly warmer accents (a few pale-pink and pale-mint orbs mixed in with the blue ones); background gains a very faint warm bottom glow
 - Vibe: signature SHAHED STORE style with a soft aurora-pastel warmth
 `.trim(),
@@ -143,7 +143,7 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glass Gradient Border" tone ═══
-- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Keep EVERY signature element exactly as defined above (translucent gray-glass "SHAHED STORE" pill with white text, white brand pill, glossy orb bubbles, contact line inside card)
 - The frosted card border becomes a delicate 2px GRADIENT BORDER flowing: pale lavender → pale pink → pale peach → pale sky blue (soft, low-saturation, matches the airy background)
 - Subtle soft outer halo matching the gradient border
 - Vibe: signature SHAHED STORE look with a refined pastel rainbow border accent
@@ -156,7 +156,7 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glassmorphism UI" tone ═══
-- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Keep EVERY signature element exactly as defined above (translucent gray-glass "SHAHED STORE" pill with white text, white brand pill, glossy orb bubbles, contact line inside card)
 - Add a subtle 3px horizontal accent line in pastel gradient (lavender → pink → peach) at the very TOP edge of the card (just inside the border)
 - Background slightly brighter and more luminous overall
 - Vibe: BRIGHT, ultra-clean, premium pastel — Apple/Samsung product launch energy with the signature SHAHED STORE layout intact
