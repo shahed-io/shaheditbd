@@ -151,12 +151,64 @@ You MUST create a premium square (1:1) product promotional card in the SHAHED ST
   light_glass: {
     label: "Light Glass",
     prompt: (name: string, brand: string, _price: string, _category: string) => `
-${sharedBlueprint(name, brand)}
+You MUST create a premium square (1:1) product promotional card in the SHAHED STORE "Light Glass" SIGNATURE house style. This is a UNIQUE flagship standalone design — Apple Vision Pro / iOS 18 / visionOS inspired ultra-premium frosted crystal glassmorphism. NOT the bubble-pastel look.
 
-═══ STYLE OVERRIDE — "Light Glass" tone ═══
-- Keep the EXACT signature pastel mesh background (lavender + pink + peach + sky blue) and clear soap bubbles from the shared blueprint
-- This is THE flagship Shahed Store look — identical to the Hix.AI / Duolingo / Crunchyroll / ChatGPT Plus / Canva Pro reference cards
-- Vibe: dreamy, airy, premium pastel daylight glassmorphism
+═══ BACKGROUND (full canvas) ═══
+- A luxurious LIGHT CRYSTAL SKY mesh gradient covering the canvas:
+  • Top-left: soft pearl white (#fbfbff)
+  • Top-right: pale powder blue (#dde7f5)
+  • Bottom-left: blush rose (#fbe4ec)
+  • Bottom-right: warm champagne ivory (#fff1e0)
+  • Smooth diagonal blend, very airy and bright (NOT washed out — keep it luminous)
+- Layer 2–3 LARGE soft floating PRISM ORBS (signature element, NOT bubbles):
+  • Each orb is a translucent gradient sphere (~280–420px), heavily blurred (~60px gaussian)
+  • Colors: one violet-to-pink, one cyan-to-mint, one peach-to-gold
+  • Positioned around the card edges (top-left behind card, bottom-right behind card, one peeking from the side)
+  • Looks like luminous color clouds floating in glass — premium, dreamy, airy
+- Add 4–6 tiny crisp SPARKLE STARS (small 4-point bright white stars with soft glow) scattered subtly
+- A faint warm light bloom near the bottom-center for grounding
+- NO soap bubbles — the prism orbs replace them entirely
+
+═══ MAIN CARD (centered, ~80% of canvas) ═══
+- One large rounded rectangle ULTRA-PREMIUM CRYSTAL GLASS card
+- Background: rgba(255,255,255,0.32) with VERY heavy backdrop blur (~40px) — the prism orbs visibly bloom through the glass
+- Corner radius: ~38px
+- DOUBLE BORDER for crystal realism:
+  • Outer: 2px iridescent gradient stroke (pearl → pale violet → pale cyan → pearl) with 18px soft outer halo
+  • Inner: 1px pure white at 50% opacity, sitting just inside the outer border (creates a glass-edge highlight)
+- Subtle inner top highlight (1.5px white, 60% opacity, only on the top edge) — like light catching a glass pane
+- Subtle inner bottom shadow (1px, very faint) for thickness illusion
+- Soft layered drop shadow: 0 30px 80px rgba(140,140,200,0.18), and 0 8px 20px rgba(120,100,180,0.10)
+
+═══ TOP ROW INSIDE CARD (32px padding from edges) ═══
+- LEFT — "SHAHED STORE" PILL:
+  • TRANSLUCENT FROSTED CRYSTAL pill (rgba(255,255,255,0.55), heavy backdrop blur, ~28px radius, ~52px tall)
+  • Thin 1px iridescent gradient inner border (pearl-pink → pale cyan)
+  • "SHAHED STORE" in DARK CHARCOAL (#1f2937) BOLD uppercase sans-serif (~15px) — switch to dark text on this light style for premium contrast
+  • Comfortable horizontal padding
+- RIGHT — BRAND PILL:
+  • SOLID WHITE rounded pill (rgba(255,255,255,0.98), soft shadow, ~28px radius, ~52px tall)
+  • Small square brand/product LOGO ICON left (~34px, original brand colors)
+  • Brand/product name "${brand || name}" in dark charcoal (#1f2937) bold sans-serif (~16px)
+
+═══ CENTER OF CARD (the hero) ═══
+- The product "${name}" as a VERY LARGE 3D rounded-square app icon (or official brand logo if iconic)
+- Size: ~52–58% of card width, vertically centered
+- The icon sits on a soft PRISM HALO — gentle radial glow beneath: violet → pink → cyan rings, heavily blurred (~55px), giving a floating crystal feel
+- Crisp drop shadow: 0 22px 50px rgba(120,100,200,0.18)
+- Icon must look hyper-crisp, vibrant, Apple-App-Store-hero quality
+
+═══ BOTTOM CONTACT STRIP (inside card, ~32px from bottom) ═══
+- Single horizontal row, NO separator line above
+- LEFT: outlined globe icon (with cursor arrow accent, 1.5px stroke, dark charcoal #1f2937) + "www.shahedstore.com.bd" in dark charcoal bold ~16px
+- RIGHT: outlined phone icon (1.5px stroke, dark charcoal) + "+880 1840-099853" in dark charcoal bold ~16px
+- Comfortable spacing, perfectly aligned
+
+═══ ABSOLUTE RULES ═══
+- Signature elements: floating PRISM ORBS (not bubbles) + crystal-clear DOUBLE-BORDERED glass card + iridescent halo
+- Vibe: Apple Vision Pro / visionOS / iOS 18 — luminous, airy, ultra-premium crystal glassmorphism
+- Square format exactly (1:1)
+- This is the FLAGSHIP daylight look — must feel like a high-end Apple product launch poster
 `.trim(),
   },
 
