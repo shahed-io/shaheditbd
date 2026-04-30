@@ -1,27 +1,32 @@
 ---
 name: AI Product Card Signature Design
-description: Exact signature visual blueprint for AI-generated product promo cards (SHAHED STORE house style)
+description: Permanent signature visual blueprint for AI-generated product promo cards (SHAHED STORE house style)
 type: design
 ---
-**Signature SHAHED STORE AI Card Design (NON-NEGOTIABLE — applies to ALL 6 style variants):**
+**Signature SHAHED STORE AI Card Design (PERMANENT, NON-NEGOTIABLE — applies to ALL 6 style variants):**
 
-Reference cards (gold standard): SQL Server, NordVPN, Figma, Chegg promo cards uploaded by user. ALL six styles (Dark Neon, Light Glass, Clean Light, Soft Aurora, Glass Gradient, Glassmorphism UI) MUST share the SAME blueprint — only subtle background tone tweaks differ.
+Reference cards (gold standard, locked-in): Hix.AI, AutoDesk, ChatGPT Plus, Canva Pro promo cards. ALL six styles (Dark Neon, Light Glass, Clean Light, Soft Aurora, Glass Gradient, Glassmorphism UI) MUST share the SAME blueprint — only subtle accents may differ.
 
-**Background:** Bright pale sky-blue / icy lavender airy daylight mesh (#e6eef9 → #eef1fa) with subtle warm corner hints. Never dark, never washed-out gray.
+**Background:** Soft PASTEL DIAGONAL MESH gradient covering whole canvas:
+- Top-left: lavender (#c9b8e8)
+- Top-right: pink (#f4b8c8)
+- Bottom-left: sky blue (#bcd0ec)
+- Bottom-right: peach (#f5c8b0)
+Smooth diagonal blend, dreamy daylight feel. Never dark, never washed-out.
 
-**Bubbles (signature):** 8–14 large floating GLOSSY 3D ORB BUBBLES — pale sky-blue, mint-teal, soft lilac. Each has glossy upper-left highlight + lower-right tonal shadow. Mix of crisp foreground orbs and heavily blurred (~25–40px gaussian) background orbs. Some overlap card edges.
+**Bubbles (signature):** 8–14 SMALL/MEDIUM CLEAR TRANSPARENT SOAP BUBBLES (NOT solid orbs). Each bubble: thin 1.5–2px white outline ring + small upper-left crescent highlight + tiny dot reflection. Sizes 30–180px. Some overlap card edges.
 
-**Main Card:** Centered ~80% frosted glass (rgba(255,255,255,0.30)), 30px radius, 1.5px solid white border, soft drop shadow.
+**Main Card:** Centered ~80% ULTRA-TRANSPARENT frosted glass (rgba(255,255,255,0.18)), 30px radius, 1.5px solid white border, soft drop shadow. Pastel gradient clearly shows through.
 
-**TOP-LEFT pill — "SHAHED STORE" (signature, NON-NEGOTIABLE):** SOLID WHITE pill containing a small ROUNDED RED RECTANGLE BADGE (#e63946) with "SHAHED" in bold WHITE uppercase, followed inside the same white pill by "STORE" in BOLD DARK CHARCOAL (#1f2937). Reads: [red:SHAHED][ STORE].
+**TOP-LEFT pill — "SHAHED STORE" (signature, locked-in):** TRANSLUCENT GRAY-GLASS pill (rgba(180,180,200,0.35), backdrop blur, thin white inner border) with "SHAHED STORE" in BOLD WHITE uppercase directly on the glass. NO red badge, NO solid white background — just translucent glass + white text.
 
-**TOP-RIGHT pill:** Solid white pill with brand/product name in dark charcoal (~15-16px) on left + small square brand logo (~34px, original colors) on right. Stack name vertically if two lines.
+**TOP-RIGHT pill:** SOLID WHITE pill (rgba(255,255,255,0.98)) with brand LOGO ICON on left (~32px, original colors) + brand/product name on right in DARK CHARCOAL (#1f2937) bold sans-serif (~16px).
 
 **Center hero:** Very large square app icon or official brand logo (~52–62% card width), vertically centered, soft drop shadow.
 
-**Bottom contact:** Thin 1px subtle horizontal divider (~80px from bottom) spanning most of card width, then contact row below (~32px from bottom):
-- Left: outlined globe icon (with cursor arrow) + `www.shahedstore.com.bd`
+**Bottom contact line (no divider above):** Single contact row ~32px from bottom, INSIDE the card:
+- Left: outlined globe icon (with cursor arrow accent) + `www.shahedstore.com.bd`
 - Right: outlined phone icon + `+880 1840-099853`
 Text in dark charcoal (#1f2937), bold ~16px.
 
-**Style variants:** Dark Neon, Light Glass, Clean Light, Soft Aurora, Glass Gradient, Glassmorphism UI — ALL share the exact same blueprint above. Each style overrides ONLY subtle background tone (cooler/warmer/brighter) and small accents (gradient border on Glass Gradient, top accent line on Glassmorphism UI). The SHAHED STORE red-badge pill, white brand pill, glossy orbs, contact line + divider remain IDENTICAL across all 6.
+**Style variants:** All 6 styles share the exact blueprint above. Variants only override subtle background tone or add small accent (e.g., gradient border on Glass Gradient, top accent line on Glassmorphism UI). Translucent gray-glass SHAHED STORE pill, white brand pill, clear soap bubbles, pastel mesh, contact line — IDENTICAL across all 6.
