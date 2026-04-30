@@ -91,6 +91,11 @@ export default function AdminCidCredits() {
   const [recentAdj, setRecentAdj] = useState<(AdjustmentLog & { user_id: string; user: CidAccount | null })[]>([]);
   const [recentLoading, setRecentLoading] = useState(false);
 
+  // All users tab (every registered user — even those with 0 balance)
+  const [allUsers, setAllUsers] = useState<CidAccount[]>([]);
+  const [allUsersLoading, setAllUsersLoading] = useState(false);
+  const [allUsersSearch, setAllUsersSearch] = useState('');
+
   // Create new account
   const [createOpen, setCreateOpen] = useState(false);
   const [cEmail, setCEmail] = useState('');
@@ -167,6 +172,44 @@ export default function AdminCidCredits() {
     }
   }, []);
 
+  const loadAllUsers = useCallback(async () => {
+    setAllUsersLoading(true);
+    try {
+      const { data: profs, error } = await supabase
+        .from('profiles')
+        .select('user_id, display_name, email, phone, created_at')
+        .order('created_at', { ascending: false })
+        .limit(2000);
+      if (error) throw error;
+
+      const ids = (profs || []).map(p => p.user_id);
+      const balMap = new Map<string, { balance: number; total_added: number; total_used: number; updated_at?: string }>();
+      if (ids.length) {
+        const { data: bals } = await supabase
+          .from('cid_balances')
+          .select('user_id, balance, total_added, total_used, updated_at')
+          .in('user_id', ids);
+        (bals || []).forEach(b => balMap.set(b.user_id, {
+          balance: b.balance, total_added: b.total_added, total_used: b.total_used, updated_at: b.updated_at,
+        }));
+      }
+      setAllUsers((profs || []).map(p => ({
+        user_id: p.user_id,
+        display_name: p.display_name,
+        email: p.email,
+        phone: p.phone,
+        balance: balMap.get(p.user_id)?.balance ?? 0,
+        total_added: balMap.get(p.user_id)?.total_added ?? 0,
+        total_used: balMap.get(p.user_id)?.total_used ?? 0,
+        updated_at: balMap.get(p.user_id)?.updated_at,
+      })));
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to load users');
+    } finally {
+      setAllUsersLoading(false);
+    }
+  }, []);
+
   useEffect(() => { load(); }, [load]);
 
   const filtered = useMemo(() => {
@@ -208,6 +251,12 @@ export default function AdminCidCredits() {
         ? { ...r, balance: newBalance,
             total_added: r.total_added + (sign > 0 ? n : 0),
             total_used: r.total_used + (sign < 0 ? n : 0) }
+        : r));
+      setAllUsers(prev => prev.map(r => r.user_id === editing.user_id
+        ? { ...r, balance: newBalance,
+            total_added: r.total_added + (sign > 0 ? n : 0),
+            total_used: r.total_used + (sign < 0 ? n : 0),
+            updated_at: new Date().toISOString() }
         : r));
       setEditing(null);
       setDelta('');
@@ -474,13 +523,99 @@ export default function AdminCidCredits() {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="accounts" className="w-full">
+      <Tabs defaultValue="all-users" className="w-full" onValueChange={(v) => { if (v === 'all-users' && allUsers.length === 0) loadAllUsers(); }}>
         <TabsList>
-          <TabsTrigger value="accounts" className="gap-1.5"><Users className="h-3.5 w-3.5" /> Accounts</TabsTrigger>
+          <TabsTrigger value="all-users" onClick={() => { if (allUsers.length === 0) loadAllUsers(); }} className="gap-1.5">
+            <Users className="h-3.5 w-3.5" /> All Users
+          </TabsTrigger>
+          <TabsTrigger value="accounts" className="gap-1.5"><Coins className="h-3.5 w-3.5" /> With Balance</TabsTrigger>
           <TabsTrigger value="adjustments" onClick={loadRecentAdjustments} className="gap-1.5">
             <ClipboardList className="h-3.5 w-3.5" /> Recent Adjustments
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="all-users" className="mt-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <CardTitle className="text-base">All Registered Users ({allUsers.length})</CardTitle>
+                <div className="relative sm:ml-auto w-full sm:w-80">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search name, email, phone, or ID"
+                    value={allUsersSearch}
+                    onChange={(e) => setAllUsersSearch(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Button size="sm" variant="outline" onClick={loadAllUsers} disabled={allUsersLoading} className="gap-1">
+                  <RefreshCw className={`h-3.5 w-3.5 ${allUsersLoading ? 'animate-spin' : ''}`} /> Refresh
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {allUsersLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : (() => {
+                const q = allUsersSearch.trim().toLowerCase();
+                const list = q
+                  ? allUsers.filter(a =>
+                      (a.display_name || '').toLowerCase().includes(q) ||
+                      (a.email || '').toLowerCase().includes(q) ||
+                      (a.phone || '').toLowerCase().includes(q) ||
+                      a.user_id.toLowerCase().includes(q))
+                  : allUsers;
+                if (list.length === 0) {
+                  return <p className="text-center text-muted-foreground py-12">No users found.</p>;
+                }
+                return (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>User</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Phone</TableHead>
+                          <TableHead className="text-right">Balance</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {list.map((u) => (
+                          <TableRow key={u.user_id}>
+                            <TableCell>
+                              <div className="font-medium flex items-center gap-1.5">
+                                <UserIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                                {u.display_name || 'Unnamed'}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-xs break-all">{u.email || '—'}</TableCell>
+                            <TableCell className="text-xs">{u.phone || '—'}</TableCell>
+                            <TableCell className="text-right">
+                              <Badge variant={u.balance > 0 ? 'default' : 'secondary'}>{u.balance}</Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button size="sm" variant="outline" className="gap-1" onClick={() => openHistory(u)}>
+                                  <History className="h-3.5 w-3.5" /> History
+                                </Button>
+                                <Button size="sm" className="gap-1" onClick={() => { setEditing(u); setDelta(''); setNote(''); }}>
+                                  <Coins className="h-3.5 w-3.5" /> Adjust
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="accounts" className="mt-4">
           <Card>
