@@ -226,24 +226,30 @@ export default function AdminCidCredits() {
     setEmailLog([]);
     try {
       const queries: Promise<any>[] = [
-        supabase.from('cid_generations')
-          .select('id, created_at, operator, number, status, cost')
-          .eq('user_id', acc.user_id)
-          .order('created_at', { ascending: false })
-          .limit(100),
-        supabase.from('cid_balance_adjustments')
-          .select('id, created_at, delta, balance_after, note, adjusted_by')
-          .eq('user_id', acc.user_id)
-          .order('created_at', { ascending: false })
-          .limit(100),
+        Promise.resolve(
+          supabase.from('cid_generations')
+            .select('id, created_at, operator, number, status, cost')
+            .eq('user_id', acc.user_id)
+            .order('created_at', { ascending: false })
+            .limit(100)
+        ),
+        Promise.resolve(
+          supabase.from('cid_balance_adjustments')
+            .select('id, created_at, delta, balance_after, note, adjusted_by')
+            .eq('user_id', acc.user_id)
+            .order('created_at', { ascending: false })
+            .limit(100)
+        ),
       ];
       if (acc.email) {
         queries.push(
-          supabase.from('email_send_log')
-            .select('id, created_at, template_name, recipient_email, status, error_message, message_id')
-            .eq('recipient_email', acc.email.toLowerCase())
-            .order('created_at', { ascending: false })
-            .limit(100),
+          Promise.resolve(
+            supabase.from('email_send_log')
+              .select('id, created_at, template_name, recipient_email, status, error_message, message_id')
+              .eq('recipient_email', acc.email.toLowerCase())
+              .order('created_at', { ascending: false })
+              .limit(100)
+          )
         );
       }
       const results = await Promise.all(queries);
