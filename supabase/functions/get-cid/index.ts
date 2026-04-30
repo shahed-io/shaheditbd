@@ -457,9 +457,16 @@ Deno.serve(async (req) => {
         }
         if (GRAHOK_TOKEN) {
           const r = await callGrahokBalance(GRAHOK_TOKEN, GRAHOK_BAL);
-          providers.grahok = r.ok
-            ? { balance: r.balance, status: 'ok', endpoint: GRAHOK_BAL }
-            : { error: r.error, status: 'error', raw: r.raw };
+          if (r.ok && typeof r.balance === 'number') {
+            providers.grahok = { balance: r.balance, currency: r.currency || 'BDT', status: 'ok', endpoint: GRAHOK_BAL };
+          } else {
+            providers.grahok = {
+              status: 'error',
+              error: r.error || 'Could not parse balance from response',
+              raw: (r.raw || '').slice(0, 300),
+              endpoint: GRAHOK_BAL,
+            };
+          }
         } else {
           providers.grahok = { status: 'not_configured' };
         }
