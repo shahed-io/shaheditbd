@@ -1125,6 +1125,45 @@ export type Database = {
         }
         Relationships: []
       }
+      key_check_history: {
+        Row: {
+          act_type: string | null
+          created_at: string
+          error_code: string | null
+          id: string
+          key_value: string
+          product: string | null
+          remaining: string | null
+          status: string
+          sub_type: string | null
+          user_id: string
+        }
+        Insert: {
+          act_type?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          key_value: string
+          product?: string | null
+          remaining?: string | null
+          status: string
+          sub_type?: string | null
+          user_id: string
+        }
+        Update: {
+          act_type?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          key_value?: string
+          product?: string | null
+          remaining?: string | null
+          status?: string
+          sub_type?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       license_keys: {
         Row: {
           assigned_at: string | null

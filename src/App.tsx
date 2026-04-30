@@ -123,6 +123,7 @@ const Affiliate                  = lazy(() => import("./pages/Affiliate"));
 const AdminGetCIDTools           = lazy(() => import("./pages/admin/AdminGetCIDTools"));
 const AdminCidCredits            = lazy(() => import("./pages/admin/AdminCidCredits"));
 const GetCID                     = lazy(() => import("./pages/GetCID"));
+const CheckKey                   = lazy(() => import("./pages/CheckKey"));
 
 
 const queryClient = new QueryClient({
@@ -318,6 +319,7 @@ const AppContent = () => {
           <Route path="/refund-request" element={<RefundRequest />} />
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/get-cid" element={<GetCID />} />
+          <Route path="/check-key" element={<CheckKey />} />
           <Route path="/affiliate" element={<Affiliate />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/install" element={<InstallApp />} />
