@@ -22,8 +22,15 @@ async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; ci
     try { data = JSON.parse(text); } catch {
       return { ok: false, error: 'Invalid JSON from GetCID', raw: text };
     }
-    if (data['cid']) return { ok: true, cid: String(data['cid']) };
-    return { ok: false, error: (data['error'] as string) || 'No CID returned', raw: text };
+    // GetCID.app returns: { result: "...", confirmationid: "...", have_cid: 1|-1, pid, product_name }
+    const cidVal = data['confirmationid'] || data['cid'] || data['confirmation_id'];
+    const haveCid = data['have_cid'];
+    if (cidVal && String(cidVal).trim() && (haveCid === undefined || Number(haveCid) > 0)) {
+      return { ok: true, cid: String(cidVal).trim() };
+    }
+    const errMsg = (data['result'] as string) || (data['error'] as string) || (data['message'] as string) || 'No CID returned';
+    console.log(`[getcid] iid=${iid.slice(0,12)}... result=${errMsg} raw=${text.slice(0,200)}`);
+    return { ok: false, error: errMsg, raw: text };
   } catch (e) {
     return { ok: false, error: `GetCID network error: ${String(e)}` };
   }
@@ -281,16 +288,20 @@ Deno.serve(async (req) => {
       // Try PRIMARY then BACKUP
       let cidValue: string | null = null;
       let usedProvider = '';
+      const errs: string[] = [];
       if (GETCID_TOKEN) {
         const r = await callGetCID(GETCID_TOKEN, iid);
         if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'primary'; }
+        else if (r.error) errs.push(`primary: ${r.error}`);
       }
       if (!cidValue && GRAHOK_TOKEN) {
         const r = await callGrahok(GRAHOK_TOKEN, GRAHOK_URL, iid);
         if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'backup'; }
+        else if (r.error) errs.push(`backup: ${r.error}`);
       }
       if (!cidValue) {
-        return json({ ok: false, error: 'CID generation temporarily unavailable. Please try again.' }, 502);
+        const detail = errs.length ? ` (${errs.join(' | ')})` : '';
+        return json({ ok: false, error: `CID generation failed${detail}` }, 502);
       }
 
       // Debit 1 credit (admins skip) using RPC
