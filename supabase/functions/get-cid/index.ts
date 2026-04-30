@@ -86,11 +86,13 @@ async function tryGetCIDBalanceVariant(url: string): Promise<{ ok: boolean; bala
 }
 
 async function callGetCIDBalance(token: string, userId?: string): Promise<{ ok: boolean; balance?: number; raw?: string; error?: string }> {
-  // Try multiple parameter name variants — provider docs have varied over time
+  // Provider docs: /checkbalance?uye_rand=YOUR_TOKEN. Keep legacy variants as fallback.
   const variants: string[] = [];
   const t = encodeURIComponent(token);
+  variants.push(`${GETCID_BALANCE_URL}?uye_rand=${t}`);
   if (userId) {
     const u = encodeURIComponent(userId);
+    variants.push(`${GETCID_BALANCE_URL}?uye_rand=${t}&user_id=${u}`);
     variants.push(`${GETCID_BALANCE_URL}?token=${t}&user_id=${u}`);
     variants.push(`${GETCID_BALANCE_URL}?token=${t}&userid=${u}`);
     variants.push(`${GETCID_BALANCE_URL}?token=${t}&userId=${u}`);
