@@ -6,22 +6,29 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const CHECK_KEY_URL = 'https://panel.getcid.app/user-api/check-key';
+// GetCIDinfo.com Bulk License Key Checker
+// Docs: https://getcidinfo.com/getcid-api/
+const CHECK_KEY_URL = 'https://api.getcidinfo.com/v1/check_keys';
 
-// Status mapping for known error codes
+// Status mapping for known Microsoft activation error codes
 const STATUS_MAP: Record<string, { status: 'live' | 'dead'; meaning: string }> = {
-  '0xC004C008': { status: 'live', meaning: 'Valid, can be activated' },
-  '0xC004C020': { status: 'live', meaning: 'Requires phone/web activation' },
-  '0xC004C060': { status: 'dead', meaning: 'Key is blocked' },
-  '0xC004C003': { status: 'dead', meaning: 'Invalid key' },
-  '0xC004C004': { status: 'dead', meaning: 'Activation limit reached' },
+  '0X00000000': { status: 'live', meaning: 'Valid — can be activated online' },
+  '0XC004C008': { status: 'live', meaning: 'Valid, can be activated' },
+  '0XC004C020': { status: 'live', meaning: 'Requires phone/web activation' },
+  '0XC004C060': { status: 'dead', meaning: 'Key is blocked' },
+  '0XC004C003': { status: 'dead', meaning: 'Invalid / blocked key' },
+  '0XC004C004': { status: 'dead', meaning: 'Activation limit reached / fake key' },
+  '0XC004C001': { status: 'dead', meaning: 'Invalid product key' },
+  '0XC004C017': { status: 'dead', meaning: 'Key blocked' },
+  '0XC004C032': { status: 'dead', meaning: 'Key blocked' },
+  '0XC004C050': { status: 'dead', meaning: 'Key blocked' },
 };
 
 function classify(errorCode: string | null | undefined): { status: 'live' | 'dead' | 'unknown'; meaning: string } {
   if (!errorCode) return { status: 'unknown', meaning: 'Unknown response' };
-  const mapped = STATUS_MAP[errorCode.toUpperCase()];
+  const key = errorCode.toUpperCase();
+  const mapped = STATUS_MAP[key];
   if (mapped) return mapped;
-  // Heuristic fallback
   return { status: 'unknown', meaning: `Code ${errorCode}` };
 }
 
@@ -75,17 +82,18 @@ Deno.serve(async (req) => {
       });
     }
 
-    const apiToken = Deno.env.get('GETCID_API_TOKEN');
-    if (!apiToken) {
+    const apiKey = Deno.env.get('GETCIDINFO_API_KEY');
+    if (!apiKey) {
       return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
         status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Call upstream — supports comma-separated keys
-    const url = `${CHECK_KEY_URL}?keys=${encodeURIComponent(keys.join(','))}&token=${encodeURIComponent(apiToken)}`;
+    // Call upstream — GetCIDinfo supports comma-separated keys
+    const url = `${CHECK_KEY_URL}?api_key=${encodeURIComponent(apiKey)}&keys=${encodeURIComponent(keys.join(','))}`;
     const upstream = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
     const text = await upstream.text();
+    console.log('[check-key] upstream status', upstream.status, 'body', text.slice(0, 300));
 
     let parsed: any = null;
     try { parsed = JSON.parse(text); } catch {
@@ -94,26 +102,26 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (!parsed?.success) {
-      const errMsg = parsed?.error || parsed?.message || 'Service error';
+    if (parsed?.status && parsed.status !== 'success') {
+      const errMsg = parsed?.message || parsed?.error || 'Service error';
       return new Response(JSON.stringify({ error: typeof errMsg === 'string' ? errMsg : 'Service error' }), {
         status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Normalize results
-    const dataArr: any[] = Array.isArray(parsed.data) ? parsed.data.flat() : [];
+    // Normalize results — GetCIDinfo response shape: { status, results: [{ key, description, sub_type, error_code }] }
+    const dataArr: any[] = Array.isArray(parsed?.results) ? parsed.results : [];
     const results = dataArr.map((item: any) => {
-      const errorCode = item?.errorCode || item?.error_code || null;
+      const errorCode = item?.error_code || item?.errorCode || null;
       const cls = classify(errorCode);
       return {
         key: item?.key ?? '',
         status: cls.status,
         meaning: cls.meaning,
         errorCode: errorCode,
-        product: item?.prd || item?.product || null,
-        subType: item?.subType || item?.sub_type || null,
-        actType: item?.actType || item?.act_type || null,
+        product: item?.description || item?.prd || item?.product || null,
+        subType: item?.sub_type || item?.subType || null,
+        actType: item?.act_type || item?.actType || null,
         remaining: item?.remaining ?? null,
         time: item?.time ?? null,
       };
