@@ -91,6 +91,11 @@ export default function AdminCidCredits() {
   const [recentAdj, setRecentAdj] = useState<(AdjustmentLog & { user_id: string; user: CidAccount | null })[]>([]);
   const [recentLoading, setRecentLoading] = useState(false);
 
+  // All users tab (every registered user — even those with 0 balance)
+  const [allUsers, setAllUsers] = useState<CidAccount[]>([]);
+  const [allUsersLoading, setAllUsersLoading] = useState(false);
+  const [allUsersSearch, setAllUsersSearch] = useState('');
+
   // Create new account
   const [createOpen, setCreateOpen] = useState(false);
   const [cEmail, setCEmail] = useState('');
