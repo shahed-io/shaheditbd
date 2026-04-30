@@ -734,6 +734,9 @@ export default function AdminCidCredits() {
               <TabsList>
                 <TabsTrigger value="adj">Admin Adjustments ({adjLog.length})</TabsTrigger>
                 <TabsTrigger value="gen">CID Generations ({history.length})</TabsTrigger>
+                <TabsTrigger value="email" className="gap-1.5">
+                  <Mail className="h-3.5 w-3.5" /> Emails ({emailLog.length})
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="adj" className="mt-3 max-h-96 overflow-y-auto">
                 {adjLog.length === 0 ? (
@@ -789,6 +792,50 @@ export default function AdminCidCredits() {
                           <TableCell className="text-right">{h.cost}</TableCell>
                         </TableRow>
                       ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </TabsContent>
+              <TabsContent value="email" className="mt-3 max-h-96 overflow-y-auto">
+                {!historyUser?.email ? (
+                  <p className="text-center text-muted-foreground py-6">
+                    User has no email address — cannot show email logs.
+                  </p>
+                ) : emailLog.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-6">
+                    No emails sent to <span className="font-mono">{historyUser.email}</span> yet.
+                  </p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Template</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Error</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {emailLog.map(e => {
+                        const ok = e.status === 'sent';
+                        const pending = e.status === 'pending';
+                        return (
+                          <TableRow key={e.id}>
+                            <TableCell className="text-xs whitespace-nowrap">
+                              {new Date(e.created_at).toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-xs font-mono">{e.template_name}</TableCell>
+                            <TableCell>
+                              <Badge variant={ok ? 'default' : pending ? 'secondary' : 'destructive'}>
+                                {e.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs text-destructive max-w-[280px] truncate" title={e.error_message || ''}>
+                              {e.error_message || '—'}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 )}
