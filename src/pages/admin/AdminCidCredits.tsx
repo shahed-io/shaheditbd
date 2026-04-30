@@ -49,6 +49,16 @@ interface AdjustmentLog {
   adjusted_by: string | null;
 }
 
+interface EmailLog {
+  id: string;
+  created_at: string;
+  template_name: string;
+  recipient_email: string;
+  status: string;
+  error_message: string | null;
+  message_id: string | null;
+}
+
 const PRESETS = [10, 25, 50, 100, 500];
 
 export default function AdminCidCredits() {
@@ -63,6 +73,7 @@ export default function AdminCidCredits() {
   const [historyUser, setHistoryUser] = useState<CidAccount | null>(null);
   const [history, setHistory] = useState<GenerationLog[]>([]);
   const [adjLog, setAdjLog] = useState<AdjustmentLog[]>([]);
+  const [emailLog, setEmailLog] = useState<EmailLog[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
   // Lookup-by-email panel
@@ -212,23 +223,44 @@ export default function AdminCidCredits() {
   const openHistory = async (acc: CidAccount) => {
     setHistoryUser(acc);
     setHistoryLoading(true);
+    setEmailLog([]);
     try {
-      const [genRes, adjRes] = await Promise.all([
-        supabase.from('cid_generations')
-          .select('id, created_at, operator, number, status, cost')
-          .eq('user_id', acc.user_id)
-          .order('created_at', { ascending: false })
-          .limit(100),
-        supabase.from('cid_balance_adjustments')
-          .select('id, created_at, delta, balance_after, note, adjusted_by')
-          .eq('user_id', acc.user_id)
-          .order('created_at', { ascending: false })
-          .limit(100),
-      ]);
+      const queries: Promise<any>[] = [
+        Promise.resolve(
+          supabase.from('cid_generations')
+            .select('id, created_at, operator, number, status, cost')
+            .eq('user_id', acc.user_id)
+            .order('created_at', { ascending: false })
+            .limit(100)
+        ),
+        Promise.resolve(
+          supabase.from('cid_balance_adjustments')
+            .select('id, created_at, delta, balance_after, note, adjusted_by')
+            .eq('user_id', acc.user_id)
+            .order('created_at', { ascending: false })
+            .limit(100)
+        ),
+      ];
+      if (acc.email) {
+        queries.push(
+          Promise.resolve(
+            supabase.from('email_send_log')
+              .select('id, created_at, template_name, recipient_email, status, error_message, message_id')
+              .eq('recipient_email', acc.email.toLowerCase())
+              .order('created_at', { ascending: false })
+              .limit(100)
+          )
+        );
+      }
+      const results = await Promise.all(queries);
+      const [genRes, adjRes, emailRes] = results;
       if (genRes.error) throw genRes.error;
       if (adjRes.error) throw adjRes.error;
       setHistory((genRes.data || []) as GenerationLog[]);
       setAdjLog((adjRes.data || []) as AdjustmentLog[]);
+      if (emailRes && !emailRes.error) {
+        setEmailLog((emailRes.data || []) as EmailLog[]);
+      }
     } catch (e: any) {
       toast.error(e.message || 'Failed to load history');
     } finally {
@@ -702,6 +734,9 @@ export default function AdminCidCredits() {
               <TabsList>
                 <TabsTrigger value="adj">Admin Adjustments ({adjLog.length})</TabsTrigger>
                 <TabsTrigger value="gen">CID Generations ({history.length})</TabsTrigger>
+                <TabsTrigger value="email" className="gap-1.5">
+                  <Mail className="h-3.5 w-3.5" /> Emails ({emailLog.length})
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="adj" className="mt-3 max-h-96 overflow-y-auto">
                 {adjLog.length === 0 ? (
@@ -757,6 +792,50 @@ export default function AdminCidCredits() {
                           <TableCell className="text-right">{h.cost}</TableCell>
                         </TableRow>
                       ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </TabsContent>
+              <TabsContent value="email" className="mt-3 max-h-96 overflow-y-auto">
+                {!historyUser?.email ? (
+                  <p className="text-center text-muted-foreground py-6">
+                    User has no email address — cannot show email logs.
+                  </p>
+                ) : emailLog.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-6">
+                    No emails sent to <span className="font-mono">{historyUser.email}</span> yet.
+                  </p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Template</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Error</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {emailLog.map(e => {
+                        const ok = e.status === 'sent';
+                        const pending = e.status === 'pending';
+                        return (
+                          <TableRow key={e.id}>
+                            <TableCell className="text-xs whitespace-nowrap">
+                              {new Date(e.created_at).toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-xs font-mono">{e.template_name}</TableCell>
+                            <TableCell>
+                              <Badge variant={ok ? 'default' : pending ? 'secondary' : 'destructive'}>
+                                {e.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs text-destructive max-w-[280px] truncate" title={e.error_message || ''}>
+                              {e.error_message || '—'}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 )}
