@@ -306,7 +306,7 @@ export default function AdminGetCIDTools() {
 
       {/* ─── Main Tabs ─── */}
       <Tabs defaultValue="single" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto">
           <TabsTrigger value="single" className="gap-2 py-2.5">
             <Sparkles className="h-4 w-4" /> <span className="hidden sm:inline">Single</span>
           </TabsTrigger>
@@ -315,6 +315,9 @@ export default function AdminGetCIDTools() {
           </TabsTrigger>
           <TabsTrigger value="batch" className="gap-2 py-2.5">
             <Layers className="h-4 w-4" /> <span className="hidden sm:inline">Batch</span>
+          </TabsTrigger>
+          <TabsTrigger value="history" className="gap-2 py-2.5">
+            <HistoryIcon className="h-4 w-4" /> <span className="hidden sm:inline">History</span>
           </TabsTrigger>
           <TabsTrigger value="docs" className="gap-2 py-2.5">
             <Code2 className="h-4 w-4" /> <span className="hidden sm:inline">Docs</span>
