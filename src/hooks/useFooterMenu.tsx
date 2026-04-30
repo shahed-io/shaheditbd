@@ -34,6 +34,7 @@ const DEFAULT_SECTIONS: FooterSection[] = [
       { id: 'l-3', label: 'All Products',     href: '/shop',                  is_active: true, sort_order: 3 },
       { id: 'l-5', label: 'VPN & Security',   href: '/shop?category=vpn',     is_active: true, sort_order: 5 },
       { id: 'l-6', label: 'Free Tools',       href: '/free-tools',            is_active: true, sort_order: 6 },
+      { id: 'l-19', label: 'Confirmation ID',  href: '/get-cid',               is_active: true, sort_order: 7 },
     ],
   },
   {
