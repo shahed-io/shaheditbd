@@ -270,15 +270,47 @@ const FloatingSupport = () => {
                     <Bot size={12} className="text-primary" />
                   </div>
                 )}
-                <div className={`max-w-[78%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
+                <div className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                   msg.role === 'user'
-                    ? 'bg-primary text-primary-foreground rounded-br-none'
+                    ? 'bg-primary text-primary-foreground rounded-br-none whitespace-pre-wrap'
                     : 'bg-background border border-border/60 rounded-bl-none text-foreground shadow-sm'
                 }`}>
-                  {msg.content || (loading && i === messages.length - 1
-                    ? <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} /><span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} /><span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }} /></span>
-                    : ''
-                  )}
+                  {msg.role === 'user' ? (
+                    msg.content
+                  ) : msg.content ? (
+                    <div className="chat-markdown space-y-2 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          p: ({ children }) => <p className="my-1.5 leading-relaxed">{children}</p>,
+                          ul: ({ children }) => <ul className="my-1.5 ml-1 space-y-1 list-none">{children}</ul>,
+                          ol: ({ children }) => <ol className="my-1.5 ml-4 space-y-1 list-decimal">{children}</ol>,
+                          li: ({ children }) => (
+                            <li className="flex gap-2 leading-relaxed before:content-['•'] before:text-primary before:font-bold before:flex-shrink-0">
+                              <span className="flex-1">{children}</span>
+                            </li>
+                          ),
+                          strong: ({ children }) => <strong className="font-semibold text-primary">{children}</strong>,
+                          em: ({ children }) => <em className="italic">{children}</em>,
+                          code: ({ children }) => <code className="px-1 py-0.5 rounded bg-muted text-[0.85em] font-mono">{children}</code>,
+                          a: ({ children, href }) => <a href={href} target="_blank" rel="noreferrer" className="text-primary underline underline-offset-2 break-all">{children}</a>,
+                          h1: ({ children }) => <h1 className="text-base font-bold mt-2 mb-1">{children}</h1>,
+                          h2: ({ children }) => <h2 className="text-sm font-bold mt-2 mb-1">{children}</h2>,
+                          h3: ({ children }) => <h3 className="text-sm font-semibold mt-2 mb-1">{children}</h3>,
+                          hr: () => <hr className="my-2 border-border/50" />,
+                          blockquote: ({ children }) => <blockquote className="border-l-2 border-primary/40 pl-2 my-1.5 italic text-muted-foreground">{children}</blockquote>,
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : loading && i === messages.length - 1 ? (
+                    <span className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </span>
+                  ) : ''}
                 </div>
               </div>
             ))}
