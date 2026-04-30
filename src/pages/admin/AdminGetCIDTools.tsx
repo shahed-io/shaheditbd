@@ -12,8 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import {
   KeyRound, Wallet, RefreshCw, Copy, Check, AlertCircle, Zap,
   GitCompare, Layers, Code2, ExternalLink, ShieldCheck, Sparkles,
-  Loader2, CheckCircle2, XCircle, Clock,
+  Loader2, CheckCircle2, XCircle, Clock, History as HistoryIcon, Search, Download, User as UserIcon,
 } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 
 interface ProviderBalance {
