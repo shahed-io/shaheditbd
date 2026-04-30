@@ -3,30 +3,25 @@ name: AI Product Card Signature Design
 description: Permanent signature visual blueprint for AI-generated product promo cards (SHAHED STORE house style)
 type: design
 ---
-**Signature SHAHED STORE AI Card Design (PERMANENT, NON-NEGOTIABLE — applies to ALL 6 style variants):**
+**Two PERMANENT SHAHED STORE card designs — locked in:**
 
-Reference cards (gold standard, locked-in): Hix.AI, AutoDesk, ChatGPT Plus, Canva Pro promo cards. ALL six styles (Dark Neon, Light Glass, Clean Light, Soft Aurora, Glass Gradient, Glassmorphism UI) MUST share the SAME blueprint — only subtle accents may differ.
+═══ "Light Glass" style (FLAGSHIP — CamScanner reference) ═══
+- Background: PEARL LIGHT-BLUE / WHITE airy gradient (#e8eef6 → #f4f6fa → #e2eaf2)
+- Floating elements: 6–10 SOFT BLURRED PALE-SKY-BLUE CLOUD BUBBLES (bokeh-style, heavily blurred, ~40% opacity) — NOT crisp soap bubbles
+- Top-left: BOLD RED ROUNDED BADGE (#e63946 → #d62828 gradient) with "SHAHED" / "STORE" in WHITE bold uppercase on TWO LINES
+- Top-right: solid white pill with brand logo + brand name in dark charcoal
+- Center: large app icon / official logo (~55–62% card width)
+- Bottom contact line: BLUE-INK text (#1d4ed8) — globe + phone, INSIDE card, no separator
 
-**Background:** Soft PASTEL DIAGONAL MESH gradient covering whole canvas:
-- Top-left: lavender (#c9b8e8)
-- Top-right: pink (#f4b8c8)
-- Bottom-left: sky blue (#bcd0ec)
-- Bottom-right: peach (#f5c8b0)
-Smooth diagonal blend, dreamy daylight feel. Never dark, never washed-out.
+═══ Other 5 styles (Dark Neon, Clean Light, Soft Aurora, Glass Gradient, Glassmorphism UI) ═══
+Use the shared pastel blueprint:
+- Background: pastel diagonal mesh — lavender (#c9b8e8) top-left + pink (#f4b8c8) top-right + sky blue (#bcd0ec) bottom-left + peach (#f5c8b0) bottom-right
+- Floating: 8–14 small/medium CLEAR TRANSPARENT SOAP BUBBLES (thin white outline + tiny highlight)
+- Top-left: TRANSLUCENT GRAY-GLASS PILL (rgba(180,180,200,0.35)) with "SHAHED STORE" in BOLD WHITE on one line — NO red badge
+- Top-right: solid white pill with brand logo + brand name in dark charcoal
+- Center: large app icon, vertically centered
+- Bottom contact line: dark charcoal (#1f2937) text inside card, no separator
 
-**Bubbles (signature):** 8–14 SMALL/MEDIUM CLEAR TRANSPARENT SOAP BUBBLES (NOT solid orbs). Each bubble: thin 1.5–2px white outline ring + small upper-left crescent highlight + tiny dot reflection. Sizes 30–180px. Some overlap card edges.
+Card material for both: ultra-transparent frosted glass (rgba(255,255,255,0.18–0.22)) with strong backdrop blur, 1.5px white border, ~30px radius, soft shadow.
 
-**Main Card:** Centered ~80% ULTRA-TRANSPARENT frosted glass (rgba(255,255,255,0.18)), 30px radius, 1.5px solid white border, soft drop shadow. Pastel gradient clearly shows through.
-
-**TOP-LEFT pill — "SHAHED STORE" (signature, locked-in):** TRANSLUCENT GRAY-GLASS pill (rgba(180,180,200,0.35), backdrop blur, thin white inner border) with "SHAHED STORE" in BOLD WHITE uppercase directly on the glass. NO red badge, NO solid white background — just translucent glass + white text.
-
-**TOP-RIGHT pill:** SOLID WHITE pill (rgba(255,255,255,0.98)) with brand LOGO ICON on left (~32px, original colors) + brand/product name on right in DARK CHARCOAL (#1f2937) bold sans-serif (~16px).
-
-**Center hero:** Very large square app icon or official brand logo (~52–62% card width), vertically centered, soft drop shadow.
-
-**Bottom contact line (no divider above):** Single contact row ~32px from bottom, INSIDE the card:
-- Left: outlined globe icon (with cursor arrow accent) + `www.shahedstore.com.bd`
-- Right: outlined phone icon + `+880 1840-099853`
-Text in dark charcoal (#1f2937), bold ~16px.
-
-**Style variants:** All 6 styles share the exact blueprint above. Variants only override subtle background tone or add small accent (e.g., gradient border on Glass Gradient, top accent line on Glassmorphism UI). Translucent gray-glass SHAHED STORE pill, white brand pill, clear soap bubbles, pastel mesh, contact line — IDENTICAL across all 6.
+NO price, NO discount badge, NO marketing copy on either style. Square 1:1 only.
