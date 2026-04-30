@@ -406,6 +406,15 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
           </div>
 
           <div className="space-y-2">
+            <button
+              onClick={e => { e.stopPropagation(); setShowModal(true); }}
+              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+              style={{
+                background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+                boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
+              }}>
+              <CreditCard size={12} /> Buy Now
+            </button>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={e => { e.stopPropagation(); waMsg(); }}
@@ -428,15 +437,6 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                 {inCart ? '✓ Added' : 'Cart'}
               </button>
             </div>
-            <button
-              onClick={e => { e.stopPropagation(); setShowModal(true); }}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
-              style={{
-                background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-                boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
-              }}>
-              <CreditCard size={12} /> Buy Now
-            </button>
           </div>
         </div>
       </div>
