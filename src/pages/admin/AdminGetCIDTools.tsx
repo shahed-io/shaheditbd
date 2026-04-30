@@ -101,6 +101,39 @@ export default function AdminGetCIDTools() {
   const [balance, setBalance] = useState<BalanceResponse | null>(null);
   const [balanceLoading, setBalanceLoading] = useState(false);
 
+  // ─── Primary channel routing (admin-configurable) ───
+  const [primaryChannel, setPrimaryChannel] = useState<'getcid' | 'grahok'>('getcid');
+  const [routingSaving, setRoutingSaving] = useState(false);
+
+  const loadRouting = useCallback(async () => {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'getcid_default_provider')
+      .maybeSingle();
+    const v = (data?.value || '').toLowerCase().trim();
+    setPrimaryChannel(v === 'grahok' ? 'grahok' : 'getcid');
+  }, []);
+
+  const saveRouting = async (next: 'getcid' | 'grahok') => {
+    if (next === primaryChannel) return;
+    setRoutingSaving(true);
+    try {
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({ key: 'getcid_default_provider', value: next, category: 'integrations' }, { onConflict: 'key' });
+      if (error) throw error;
+      setPrimaryChannel(next);
+      toast.success(`${next === 'getcid' ? 'GetCID' : 'Grahok'} is now the primary channel`);
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to update routing');
+    } finally {
+      setRoutingSaving(false);
+    }
+  };
+
+  useEffect(() => { loadRouting(); }, [loadRouting]);
+
   // ─── Single CID generation ───
   const [iid, setIid] = useState('');
   const [provider, setProvider] = useState<'auto' | 'getcid' | 'grahok'>('auto');
@@ -347,23 +380,24 @@ export default function AdminGetCIDTools() {
       <div className="grid md:grid-cols-2 gap-4">
         {(['getcid', 'grahok'] as const).map((key) => {
           const p = balance?.providers[key];
-          const isPrimary = key === 'getcid';
+          const isPrimary = key === primaryChannel;
           const channelLabel = isPrimary ? 'Primary Channel' : 'Backup Channel';
+          const providerName = key === 'getcid' ? 'GetCID' : 'Grahok';
           return (
-            <Card key={key} className={`relative overflow-hidden ${isPrimary ? 'border-primary/40' : ''}`}>
+            <Card key={key} className={`relative overflow-hidden transition-all ${isPrimary ? 'border-primary/40 ring-1 ring-primary/20' : ''}`}>
               <Badge className={`absolute top-3 right-3 ${isPrimary ? 'bg-primary/10 text-primary border-primary/20' : 'bg-muted text-muted-foreground'}`} variant="outline">
                 {isPrimary ? 'Primary' : 'Backup'}
               </Badge>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Wallet className="h-4 w-4" />
-                  {channelLabel}
+                  {providerName} <span className="text-xs font-normal text-muted-foreground">· {channelLabel}</span>
                 </CardTitle>
                 <CardDescription className="text-xs">
                   {isPrimary ? 'Auto-routed first for every request' : 'Activated automatically on primary failure'}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
                 {balanceLoading ? (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" /> Checking…
@@ -400,11 +434,43 @@ export default function AdminGetCIDTools() {
                     <p className="text-xs text-muted-foreground line-clamp-2">{p?.error}</p>
                   </div>
                 )}
+
+                {/* Routing toggle */}
+                <div className="pt-2 border-t">
+                  {isPrimary ? (
+                    <div className="flex items-center gap-1.5 text-xs text-primary font-medium">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Currently primary — used first for every CID
+                    </div>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="w-full gap-2"
+                      disabled={routingSaving}
+                      onClick={() => saveRouting(key)}
+                    >
+                      {routingSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+                      Set {providerName} as Primary
+                    </Button>
+                  )}
+                </div>
               </CardContent>
             </Card>
           );
         })}
       </div>
+
+      {/* Routing summary */}
+      <Alert className="border-primary/30 bg-primary/5">
+        <Sparkles className="h-4 w-4 text-primary" />
+        <AlertTitle className="text-sm">Active routing</AlertTitle>
+        <AlertDescription className="text-xs">
+          Every customer CID request hits <strong>{primaryChannel === 'getcid' ? 'GetCID' : 'Grahok'}</strong> first.
+          If it fails, the system automatically falls back to <strong>{primaryChannel === 'getcid' ? 'Grahok' : 'GetCID'}</strong>.
+          You can switch the primary channel anytime above.
+        </AlertDescription>
+      </Alert>
 
       {/* ─── Main Tabs ─── */}
       <Tabs defaultValue="single" className="space-y-4">

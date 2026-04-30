@@ -394,20 +394,45 @@ Deno.serve(async (req) => {
         return json({ ok: false, error: 'Insufficient CID credits. Please purchase more from the shop.', balance: currentBalance }, 402);
       }
 
-      // Try PRIMARY then BACKUP
+      // Determine routing: which channel is PRIMARY (admin-configurable via site_settings)
+      // value: 'getcid' (default) | 'grahok'
+      let primaryChoice: 'getcid' | 'grahok' = 'getcid';
+      try {
+        const { data: setting } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'getcid_default_provider')
+          .maybeSingle();
+        const v = (setting?.value || '').toLowerCase().trim();
+        if (v === 'grahok') primaryChoice = 'grahok';
+      } catch (_) { /* default getcid */ }
+
+      // Try PRIMARY then BACKUP based on admin choice
       let cidValue: string | null = null;
       let usedProvider = '';
       const errs: string[] = [];
-      if (GETCID_TOKEN) {
+
+      const tryGetcid = async () => {
+        if (!GETCID_TOKEN) { errs.push('getcid: not configured'); return; }
         const r = await callGetCID(GETCID_TOKEN, iid);
-        if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'primary'; }
-        else if (r.error) errs.push(`primary: ${r.error}`);
-      }
-      if (!cidValue && GRAHOK_TOKEN) {
+        if (r.ok && r.cid) { cidValue = r.cid; usedProvider = primaryChoice === 'getcid' ? 'primary' : 'backup'; }
+        else if (r.error) errs.push(`${primaryChoice === 'getcid' ? 'primary' : 'backup'} (getcid): ${r.error}`);
+      };
+      const tryGrahok = async () => {
+        if (!GRAHOK_TOKEN) { errs.push('grahok: not configured'); return; }
         const r = await callGrahok(GRAHOK_TOKEN, GRAHOK_URL, iid);
-        if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'backup'; }
-        else if (r.error) errs.push(`backup: ${r.error}`);
+        if (r.ok && r.cid) { cidValue = r.cid; usedProvider = primaryChoice === 'grahok' ? 'primary' : 'backup'; }
+        else if (r.error) errs.push(`${primaryChoice === 'grahok' ? 'primary' : 'backup'} (grahok): ${r.error}`);
+      };
+
+      if (primaryChoice === 'getcid') {
+        await tryGetcid();
+        if (!cidValue) await tryGrahok();
+      } else {
+        await tryGrahok();
+        if (!cidValue) await tryGetcid();
       }
+
       if (!cidValue) {
         const detail = errs.length ? ` (${errs.join(' | ')})` : '';
         return json({ ok: false, error: `CID generation failed${detail}` }, 502);
