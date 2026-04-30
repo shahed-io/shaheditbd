@@ -134,8 +134,11 @@ async function callGrahok(token: string, apiUrl: string, iid: string): Promise<{
   }
 }
 
-async function callGrahokBalance(token: string, balanceUrl: string): Promise<{ ok: boolean; balance?: number | null; raw?: string; error?: string; currency?: string }> {
-  // Try multiple URL variants — providers vary on parameter naming
+async function callGrahokBalance(rawToken: string, balanceUrl: string): Promise<{ ok: boolean; balance?: number | null; raw?: string; error?: string; currency?: string }> {
+  // Sanitize: strip whitespace, surrounding quotes, and accidental "Bearer " prefix
+  const token = rawToken.trim().replace(/^Bearer\s+/i, '').replace(/^['"]|['"]$/g, '').trim();
+
+  // Grahok strictly requires `?token=` — try it first, fall back to other names
   const variants = [
     `${balanceUrl}${balanceUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`,
     `${balanceUrl}${balanceUrl.includes('?') ? '&' : '?'}api_token=${encodeURIComponent(token)}`,
