@@ -6,9 +6,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// GetCID.app Check Key endpoint
-// GET https://panel.getcid.app/user-api/check-key?keys=[KEY]&token=[API_KEY]
-const CHECK_KEY_URL = 'https://panel.getcid.app/user-api/check-key';
+// GetCIDinfo.com documented Bulk License Key Checker endpoint
+// GET https://api.getcidinfo.com/v1/check_keys?api_key=[API_KEY]&keys=[KEY1,KEY2]
+const CHECK_KEY_URL = 'https://api.getcidinfo.com/v1/check_keys';
 
 // Status mapping for known Microsoft activation error codes
 const STATUS_MAP: Record<string, { status: 'live' | 'dead'; meaning: string }> = {
@@ -36,6 +36,42 @@ function normalizeKey(k: string): string {
   return k.trim().toUpperCase().replace(/\s+/g, '');
 }
 
+function jsonResponse(body: Record<string, unknown>, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
+function getProviderData(parsed: any): { ok: boolean; data: any[]; message?: string } {
+  if (parsed?.status === 'success') {
+    const results = Array.isArray(parsed?.results) ? parsed.results : [];
+    return { ok: true, data: results };
+  }
+
+  if (parsed?.success === true) {
+    const rawData = parsed?.data;
+    const data = Array.isArray(rawData)
+      ? (Array.isArray(rawData[0]) ? rawData.flat() : rawData)
+      : [];
+    return { ok: true, data };
+  }
+
+  return {
+    ok: false,
+    data: [],
+    message: parsed?.error || parsed?.message || parsed?.code || 'Provider returned an error',
+  };
+}
+
+function safeErrorMessage(error: unknown, secrets: Array<string | undefined> = []) {
+  let message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  for (const secret of secrets) {
+    if (secret) message = message.split(secret).join('[REDACTED]');
+  }
+  return message;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
@@ -48,27 +84,21 @@ Deno.serve(async (req) => {
     const authHeader = req.headers.get('Authorization') ?? '';
     const token = authHeader.replace(/^Bearer\s+/i, '');
     if (!token) {
-      return new Response(JSON.stringify({ error: 'Authentication required' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse({ error: 'Authentication required' }, 401);
     }
     const userClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: `Bearer ${token}` } },
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !userData?.user) {
-      return new Response(JSON.stringify({ error: 'Invalid session' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse({ error: 'Invalid session' }, 401);
     }
     const userId = userData.user.id;
 
     const body = await req.json().catch(() => ({}));
     const rawKeys: string = (body?.keys ?? '').toString();
     if (!rawKeys.trim()) {
-      return new Response(JSON.stringify({ error: 'Please provide at least one product key' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse({ error: 'Please provide at least one product key' }, 400);
     }
 
     // Parse keys: split by comma, newline, whitespace
@@ -77,43 +107,46 @@ Deno.serve(async (req) => {
     )).slice(0, 50); // max 50 per request
 
     if (keys.length === 0) {
-      return new Response(JSON.stringify({ error: 'No valid keys found' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse({ error: 'No valid keys found' }, 400);
     }
 
-    const apiToken = Deno.env.get('GETCID_API_TOKEN');
-    if (!apiToken) {
-      return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
-        status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    const apiKey = Deno.env.get('GETCIDINFO_API_KEY');
+    if (!apiKey) {
+      return jsonResponse({ error: 'Service temporarily unavailable', fallback: true }, 200);
     }
 
     // Call upstream — comma-separated keys
-    const url = `${CHECK_KEY_URL}?keys=${encodeURIComponent(keys.join(','))}&token=${encodeURIComponent(apiToken)}`;
-    const upstream = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
+    const url = `${CHECK_KEY_URL}?api_key=${encodeURIComponent(apiKey)}&keys=${encodeURIComponent(keys.join(','))}`;
+    let upstream: Response;
+    try {
+      upstream = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
+    } catch (fetchError) {
+      console.error('[check-key] upstream fetch failed', safeErrorMessage(fetchError, [apiKey]));
+      return jsonResponse({ error: 'Key checking service is unreachable right now. Please try again later.', fallback: true }, 200);
+    }
     const text = await upstream.text();
     console.log('[check-key] upstream status', upstream.status, 'body', text.slice(0, 500));
 
     let parsed: any = null;
     try { parsed = JSON.parse(text); } catch {
-      return new Response(JSON.stringify({ error: 'Service returned invalid response. Please try again.' }), {
-        status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse({
+        error: 'Key checking service is not returning JSON right now. Please try again later.',
+        fallback: true,
+      }, 200);
     }
 
-    if (!parsed?.success) {
-      const errMsg = parsed?.error || parsed?.message || 'Service error';
-      return new Response(JSON.stringify({ error: typeof errMsg === 'string' ? errMsg : 'Service error' }), {
-        status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    const provider = getProviderData(parsed);
+    if (!provider.ok) {
+      return jsonResponse({
+        error: typeof provider.message === 'string' ? provider.message : 'Service error',
+        fallback: true,
+      }, 200);
     }
 
-    // Response shape: { success: true, data: [{ key, errorCode, prd, subType, actType, remaining, time }] }
-    const rawData = parsed?.data;
-    const dataArr: any[] = Array.isArray(rawData)
-      ? (Array.isArray(rawData[0]) ? rawData.flat() : rawData)
-      : [];
+    // Supported response shapes:
+    // GetCIDinfo: { status: 'success', results: [{ key, description, sub_type, error_code }] }
+    // GetCID.app fallback: { success: true, data: [{ key, errorCode, prd, subType, actType, remaining, time }] }
+    const dataArr = provider.data;
     const results = dataArr.map((item: any) => {
       const errorCode = item?.errorCode || item?.error_code || null;
       const cls = classify(errorCode);
@@ -129,6 +162,14 @@ Deno.serve(async (req) => {
         time: item?.time ?? null,
       };
     });
+
+    if (results.length === 0) {
+      return jsonResponse({
+        error: 'Service returned no key results. Please try again later.',
+        fallback: true,
+        results: [],
+      }, 200);
+    }
 
     // Log history (best effort, non-blocking)
     try {
@@ -149,13 +190,9 @@ Deno.serve(async (req) => {
       console.log('[check-key] history log failed', String(e));
     }
 
-    return new Response(JSON.stringify({ success: true, results }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ success: true, results });
   } catch (e) {
-    console.error('[check-key] error', e);
-    return new Response(JSON.stringify({ error: 'Internal error' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error('[check-key] error', safeErrorMessage(e, [Deno.env.get('GETCIDINFO_API_KEY'), Deno.env.get('GETCID_API_TOKEN')]));
+    return jsonResponse({ error: 'Check key service failed. Please try again later.', fallback: true }, 200);
   }
 });

@@ -48,8 +48,14 @@ const CheckKey = () => {
       const { data, error } = await supabase.functions.invoke('check-key', {
         body: { keys: keysInput },
       });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      if (error) {
+        toast.error(error.message || 'Check failed. Please try again.');
+        return;
+      }
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
       const out: CheckResult[] = data?.results ?? [];
       setResults(out);
       const live = out.filter(r => r.status === 'live').length;
