@@ -88,122 +88,24 @@ const STYLES = {
   dark_neon: {
     label: "Dark Neon",
     prompt: (name: string, brand: string, _price: string, _category: string) => `
-You MUST create a premium square (1:1) product promotional card in the SHAHED STORE "Dark Neon" signature house style. This layout is NON-NEGOTIABLE — it must look IDENTICAL to the Grok reference card.
+${sharedBlueprint(name, brand)}
 
-═══ BACKGROUND (full canvas) ═══
-- Deep midnight navy / indigo gradient: top #0a1438 → bottom #060a22
-- Subtle radial violet glow behind the card center (#3a1a6a, very soft, blurred)
-- A faint floor reflection at the very bottom — soft violet-cyan light bleed simulating the card glow reflecting off a glossy surface
-- NO bubbles, NO pastel colors — pure dark cinematic neon backdrop
-- Tiny soft white sparkles / lens flares (2–3) at the top corners of the card for premium feel
-
-═══ MAIN CARD (centered, ~82% of canvas) ═══
-- One large rounded rectangle DARK GLASS card
-- Background: rgba(20,22,55,0.55) with strong backdrop blur — the violet glow shows softly through
-- Corner radius: ~36px
-- THICK GLOWING NEON BORDER (signature element — MUST be prominent):
-  • A bright 3–4px gradient stroke flowing AROUND the entire card edge
-  • Gradient: hot magenta (#ff3da8) → violet (#9d4dff) → electric blue (#3da8ff) → cyan (#3df0ff) → back to magenta
-  • Strong outer glow / bloom around the border (~30px soft halo) in matching neon colors — pink-violet on top-left, blue-cyan on bottom-right
-  • The border looks like a real glowing LED tube around the card
-- Inside the card, a very subtle inner highlight along the top edge (1px white, 30% opacity) for glass realism
-
-═══ TOP ROW INSIDE CARD (32px padding from card edges) ═══
-- LEFT — empty (NO SHAHED STORE pill on Dark Neon variant — the glow border is the brand signature)
-- RIGHT — BRAND PILL:
-  • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.98), soft shadow, ~28px radius, ~52px tall)
-  • Wait — OVERRIDE: on Dark Neon, the brand mark sits DIRECTLY on the dark glass (NO white pill background). Just the brand LOGO ICON (~36px, original colors, with soft white glow) followed by the brand/product name "${brand || name}" in CRISP WHITE bold sans-serif (~20px), aligned in the top-right corner of the card with comfortable padding from the edges
-  • Subtle white drop-glow under the text for readability
-
-═══ CENTER OF CARD (the hero) ═══
-- The product "${name}" displayed as a VERY LARGE 3D rounded-square app icon
-- Size: ~45–55% of card width
-- The icon sits on a soft glowing pedestal — a subtle violet-cyan halo radiates beneath it (signature glow)
-- Strong 3D rendering with realistic highlights, soft top-light, and a dark glossy surface if the icon is dark
-- Subtle reflection/shadow beneath the icon: 0 20px 40px rgba(120,80,255,0.35)
-- NO price, NO discount badge, NO marketing text near the icon
-
-═══ BOTTOM CONTACT STRIP (signature Dark Neon detail) ═══
-- A horizontal sub-band INSIDE the card, near the bottom (~24px from bottom edge)
-- Background: very subtle translucent white-violet glow strip (rgba(180,160,255,0.10), ~56px tall, full card width minus padding, ~16px radius)
-- Two items aligned left and right with comfortable spacing INSIDE the strip:
-  • LEFT: A small CIRCULAR globe icon with cyan-violet GLOWING outline + tiny cursor arrow on its bottom-right, then "www.shahedstore.com.bd" in WHITE bold sans-serif (~16px)
-  • RIGHT: A small CIRCULAR phone handset icon with cyan-violet GLOWING outline, then "+880 1840-099853" in WHITE bold sans-serif (~16px)
-- Icon outlines glow softly (matching the border colors)
-- All text is WHITE — clearly readable against the dark glass
-
-═══ ABSOLUTE RULES (MUST FOLLOW) ═══
-- The signature element is the THICK GLOWING NEON GRADIENT BORDER (magenta → violet → blue → cyan) wrapping the card with a soft outer halo
-- Background is DEEP MIDNIGHT NAVY — NO bubbles, NO pastel colors
-- Brand mark in top-right is the LOGO + WHITE NAME directly on dark glass (no white pill)
-- Bottom contact strip is INSIDE the card with a subtle translucent sub-band, WHITE text, glowing icon outlines
-- Center hero icon has a soft violet-cyan glow halo beneath it
-- Square format exactly (1:1)
-- Vibe: cinematic premium cyberpunk — like a high-end product launch poster
+═══ STYLE OVERRIDE — "Dark Neon" tone ═══
+- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Subtle tone shift only: orbs lean slightly cooler (pale ice-blue + soft violet tint instead of mint), background still bright airy sky but with a hint more lilac in the top corners
+- Vibe: signature SHAHED STORE house style with a cool-cinematic accent
 `.trim(),
   },
 
   light_glass: {
     label: "Light Glass",
     prompt: (name: string, brand: string, _price: string, _category: string) => `
-You MUST create a premium square (1:1) product promotional card in the SHAHED STORE "Light Glass" SIGNATURE house style. This is a UNIQUE flagship standalone design — Apple Vision Pro / iOS 18 / visionOS inspired ultra-premium frosted crystal glassmorphism. NOT the bubble-pastel look.
+${sharedBlueprint(name, brand)}
 
-═══ BACKGROUND (full canvas) ═══
-- A luxurious LIGHT CRYSTAL SKY mesh gradient covering the canvas:
-  • Top-left: soft pearl white (#fbfbff)
-  • Top-right: pale powder blue (#dde7f5)
-  • Bottom-left: blush rose (#fbe4ec)
-  • Bottom-right: warm champagne ivory (#fff1e0)
-  • Smooth diagonal blend, very airy and bright (NOT washed out — keep it luminous)
-- Layer 2–3 LARGE soft floating PRISM ORBS (signature element, NOT bubbles):
-  • Each orb is a translucent gradient sphere (~280–420px), heavily blurred (~60px gaussian)
-  • Colors: one violet-to-pink, one cyan-to-mint, one peach-to-gold
-  • Positioned around the card edges (top-left behind card, bottom-right behind card, one peeking from the side)
-  • Looks like luminous color clouds floating in glass — premium, dreamy, airy
-- Add 4–6 tiny crisp SPARKLE STARS (small 4-point bright white stars with soft glow) scattered subtly
-- A faint warm light bloom near the bottom-center for grounding
-- NO soap bubbles — the prism orbs replace them entirely
-
-═══ MAIN CARD (centered, ~80% of canvas) ═══
-- One large rounded rectangle ULTRA-PREMIUM CRYSTAL GLASS card
-- Background: rgba(255,255,255,0.32) with VERY heavy backdrop blur (~40px) — the prism orbs visibly bloom through the glass
-- Corner radius: ~38px
-- DOUBLE BORDER for crystal realism:
-  • Outer: 2px iridescent gradient stroke (pearl → pale violet → pale cyan → pearl) with 18px soft outer halo
-  • Inner: 1px pure white at 50% opacity, sitting just inside the outer border (creates a glass-edge highlight)
-- Subtle inner top highlight (1.5px white, 60% opacity, only on the top edge) — like light catching a glass pane
-- Subtle inner bottom shadow (1px, very faint) for thickness illusion
-- Soft layered drop shadow: 0 30px 80px rgba(140,140,200,0.18), and 0 8px 20px rgba(120,100,180,0.10)
-
-═══ TOP ROW INSIDE CARD (32px padding from edges) ═══
-- LEFT — "SHAHED STORE" PILL:
-  • TRANSLUCENT FROSTED CRYSTAL pill (rgba(255,255,255,0.55), heavy backdrop blur, ~28px radius, ~52px tall)
-  • Thin 1px iridescent gradient inner border (pearl-pink → pale cyan)
-  • "SHAHED STORE" in DARK CHARCOAL (#1f2937) BOLD uppercase sans-serif (~15px) — switch to dark text on this light style for premium contrast
-  • Comfortable horizontal padding
-- RIGHT — BRAND PILL:
-  • SOLID WHITE rounded pill (rgba(255,255,255,0.98), soft shadow, ~28px radius, ~52px tall)
-  • Small square brand/product LOGO ICON left (~34px, original brand colors)
-  • Brand/product name "${brand || name}" in dark charcoal (#1f2937) bold sans-serif (~16px)
-
-═══ CENTER OF CARD (the hero) ═══
-- The product "${name}" as a VERY LARGE 3D rounded-square app icon (or official brand logo if iconic)
-- Size: ~52–58% of card width, vertically centered
-- The icon sits on a soft PRISM HALO — gentle radial glow beneath: violet → pink → cyan rings, heavily blurred (~55px), giving a floating crystal feel
-- Crisp drop shadow: 0 22px 50px rgba(120,100,200,0.18)
-- Icon must look hyper-crisp, vibrant, Apple-App-Store-hero quality
-
-═══ BOTTOM CONTACT STRIP (inside card, ~32px from bottom) ═══
-- Single horizontal row, NO separator line above
-- LEFT: outlined globe icon (with cursor arrow accent, 1.5px stroke, dark charcoal #1f2937) + "www.shahedstore.com.bd" in dark charcoal bold ~16px
-- RIGHT: outlined phone icon (1.5px stroke, dark charcoal) + "+880 1840-099853" in dark charcoal bold ~16px
-- Comfortable spacing, perfectly aligned
-
-═══ ABSOLUTE RULES ═══
-- Signature elements: floating PRISM ORBS (not bubbles) + crystal-clear DOUBLE-BORDERED glass card + iridescent halo
-- Vibe: Apple Vision Pro / visionOS / iOS 18 — luminous, airy, ultra-premium crystal glassmorphism
-- Square format exactly (1:1)
-- This is the FLAGSHIP daylight look — must feel like a high-end Apple product launch poster
+═══ STYLE OVERRIDE — "Light Glass" tone ═══
+- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Subtle tone shift only: background slightly brighter and more pearl-white, orbs lean toward pale sky-blue and soft white with crisper highlights
+- Vibe: the FLAGSHIP signature look — bright, airy, premium glassmorphism
 `.trim(),
   },
 
@@ -213,82 +115,23 @@ You MUST create a premium square (1:1) product promotional card in the SHAHED ST
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Clean Light" tone ═══
-- Slightly DESATURATED pastel mesh — softer, brighter, more white-washed (lavender, pink, peach, sky blue all very pale, almost milky)
-- Clear bubbles slightly more spread out, very subtle outlines
-- Vibe: clean, minimal, corporate-premium pastel — like an Apple product page with a hint of color
+- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Subtle tone shift only: background a touch more white-washed and minimal, orb bubbles slightly more spread out and softer
+- Vibe: clean, minimal, corporate-premium — same signature SHAHED STORE layout
 `.trim(),
   },
 
   vibrant_promo: {
     label: "Soft Aurora",
     prompt: (name: string, brand: string, _price: string, _category: string) => `
-You MUST create a premium square (1:1) product promotional card in the SHAHED STORE "Soft Aurora" signature house style. This is a UNIQUE standalone design — NOT the pastel-bubble look. Inspiration: Northern Lights / Aurora Borealis flowing across a soft luminous sky.
+${sharedBlueprint(name, brand)}
 
-═══ BACKGROUND (full canvas) ═══
-- A dreamy AURORA SKY gradient covering the entire canvas:
-  • Base wash: very soft cream-pink at top (#fde7f0) blending into pale lavender mid (#e8d8f5), then into mint-seafoam (#d4f2e6) at the bottom
-  • OVER the base, paint 3–4 large flowing AURORA RIBBONS (signature element):
-    - Long, soft, wavy curtains of light flowing diagonally across the canvas
-    - Each ribbon is a smooth gradient: magenta-pink (#ff8fc8) → violet (#b884ff) → cyan (#7de0ff) → mint (#9af0d0)
-    - Heavy gaussian blur on the ribbons (~40px) so they look like luminous mist, not hard shapes
-    - Ribbons overlap and blend through each other — creating a glowing aurora dance
-    - Some ribbons start from the top edge and flow toward the bottom corners
-- Subtle tiny golden sparkle stars (5–8) scattered across the background — small bright dots with soft glow
-- A faint soft warm glow at the bottom edge (peach mist) for grounding
-- NO bubbles — replaced by the aurora ribbons + sparkles
-
-═══ MAIN CARD (centered, ~80% of canvas) ═══
-- One large rounded rectangle ULTRA-CLEAR FROSTED GLASS card
-- Background: rgba(255,255,255,0.22) with very strong backdrop blur — the aurora ribbons flow visibly through the glass
-- Corner radius: ~36px
-- IRIDESCENT GRADIENT BORDER (signature):
-  • A 2.5px stroke flowing around the card: pearl-pink → lilac → cyan → mint → back to pearl-pink (matches the aurora)
-  • Soft glowing halo around the border (~24px outer bloom) in matching aurora colors
-- Subtle inner top highlight (1px white, 40% opacity) for glass realism
-- Soft drop shadow: 0 28px 70px rgba(140,100,200,0.18)
-
-═══ TOP ROW INSIDE CARD (32px padding from edges) ═══
-- LEFT — "SHAHED STORE" PILL:
-  • A TRANSLUCENT PEARL-WHITE rounded pill with soft iridescent sheen (rgba(255,255,255,0.45), backdrop blur, ~28px radius, ~52px tall)
-  • Thin 1px gradient inner border (pink → cyan, very subtle)
-  • Contains "SHAHED STORE" in WHITE BOLD uppercase sans-serif (~15px) with soft cyan-pink glow under the text for premium feel
-  • Comfortable horizontal padding
-- RIGHT — BRAND PILL:
-  • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.98), soft shadow, ~28px radius, ~52px tall)
-  • Contains the small square brand/product LOGO ICON on the left (~34px, original brand colors)
-  • Followed by the brand/product name "${brand || name}" in dark charcoal (#1f2937) bold sans-serif (~16px)
-
-═══ CENTER OF CARD (the hero) ═══
-- The product "${name}" displayed as a VERY LARGE 3D rounded-square app icon
-- Either a rounded square app icon (~22% radius) OR the official brand logo if iconic
-- Size: ~50–58% of card width, vertically centered
-- The icon sits on a luminous AURORA HALO — a soft radiant glow beneath/behind the icon: pink → violet → cyan rings radiating outward, heavily blurred (~50px), giving the icon a magical floating feel
-- Subtle soft drop shadow under the icon: 0 20px 45px rgba(150,100,220,0.18)
-- The icon should look crisp, vibrant, premium — like an Apple App Store hero icon
-- NO price, NO discount badge, NO marketing text near the icon
-- Brand wordmark may appear UNDER the icon ONLY if part of the official lockup
-
-═══ BOTTOM CONTACT LINE INSIDE CARD ═══
-- A single contact row near the bottom edge (~32px from bottom), INSIDE the frosted card
-- Two items aligned left and right with comfortable spacing:
-  • LEFT: A small circular outlined GLOBE icon with a tiny cursor arrow on its bottom-right (icon outline has soft pink-cyan gradient glow), then "www.shahedstore.com.bd"
-  • RIGHT: A small circular outlined PHONE handset icon (matching gradient glow), then "+880 1840-099853"
-- Text: dark charcoal (#1f2937), clean BOLD sans-serif, ~16px
-- Icon outlines: thin 1.5px stroke with subtle iridescent gradient glow
-
-═══ ABSOLUTE RULES (MUST FOLLOW) ═══
-- The signature element is the FLOWING AURORA RIBBONS in the background (magenta + violet + cyan + mint, heavily blurred curtains of light)
-- NO bubbles — replaced by aurora ribbons + tiny golden sparkle stars
-- Card has an IRIDESCENT GRADIENT BORDER with soft outer glow
-- Hero icon sits on a glowing AURORA HALO (pink-violet-cyan radiant rings)
-- "SHAHED STORE" pill is TRANSLUCENT pearl-white with soft glow; brand pill on right is solid white
-- Background is dreamy aurora sky — NO dark colors, NO heavy saturation
-- NO price tag, NO discount badge, NO marketing copy
-- Square format exactly (1:1)
-- Vibe: ETHEREAL, MAGICAL, premium aurora — like a luxury Apple product launch poster set under the Northern Lights
+═══ STYLE OVERRIDE — "Soft Aurora" tone ═══
+- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Subtle tone shift only: orbs include slightly warmer accents (a few pale-pink and pale-mint orbs mixed in with the blue ones); background gains a very faint warm bottom glow
+- Vibe: signature SHAHED STORE style with a soft aurora-pastel warmth
 `.trim(),
   },
-
 
   glass_gradient: {
     label: "Glass Gradient Border",
@@ -296,10 +139,10 @@ You MUST create a premium square (1:1) product promotional card in the SHAHED ST
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glass Gradient Border" tone ═══
-- Keep the signature pastel mesh background and clear bubbles
-- The frosted card border becomes a delicate 2px GRADIENT BORDER flowing: lavender (#c9b8e8) → pink (#f4b8c8) → peach (#f5c8b0) → sky blue (#bcd0ec) — matching the background palette
+- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- The frosted card border becomes a delicate 2px GRADIENT BORDER flowing: pale lavender → pale pink → pale peach → pale sky blue (soft, low-saturation, matches the airy background)
 - Subtle soft outer halo matching the gradient border
-- Vibe: signature pastel look with a refined rainbow border accent
+- Vibe: signature SHAHED STORE look with a refined pastel rainbow border accent
 `.trim(),
   },
 
@@ -309,9 +152,9 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glassmorphism UI" tone ═══
-- Keep the signature pastel mesh background — slightly brighter / more luminous overall
-- A subtle 3px horizontal accent line in pastel gradient (lavender → pink → peach) at the very TOP edge of the card
-- Clear bubbles still visible around the card
+- Keep EVERY signature element exactly as defined above (white "SHAHED STORE" pill with red SHAHED badge, white brand pill, glossy orb bubbles, contact line inside card)
+- Add a subtle 3px horizontal accent line in pastel gradient (lavender → pink → peach) at the very TOP edge of the card (just inside the border)
+- Background slightly brighter and more luminous overall
 - Vibe: BRIGHT, ultra-clean, premium pastel — Apple/Samsung product launch energy with the signature SHAHED STORE layout intact
 `.trim(),
   },
