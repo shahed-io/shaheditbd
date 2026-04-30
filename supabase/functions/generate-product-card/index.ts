@@ -93,16 +93,58 @@ const STYLES = {
   dark_neon: {
     label: "Dark Neon",
     prompt: (name: string, brand: string, _price: string, _category: string) => `
-${sharedBlueprint(name, brand)}
+You MUST create a premium square (1:1) product promotional card in the SHAHED STORE "Dark Neon" signature house style. This layout is NON-NEGOTIABLE — it must look IDENTICAL to the Grok reference card.
 
-═══ STYLE OVERRIDE — "Dark Neon" tone ═══
-- Override ONLY the background: deep midnight indigo (#0a0d2e → #1a0d3a) with subtle violet + magenta glow
-- Bubbles: clear glossy bubbles glow with neon cyan and magenta highlights (keep clear interiors, just glowing rims)
-- The frosted card becomes a DARK GLASS card: rgba(20,20,40,0.45) with thin glowing 2px violet/cyan border and soft outer glow
-- "SHAHED STORE" pill: KEEP the same translucent glass pill with WHITE text (works perfectly on dark)
-- Brand pill on right: KEEP solid white pill with charcoal text
-- Bottom contact: keep dark charcoal text on a subtle white sub-band so it stays readable
-- Vibe: cyberpunk premium with the SAME signature SHAHED STORE layout — only canvas + bubble glow differ
+═══ BACKGROUND (full canvas) ═══
+- Deep midnight navy / indigo gradient: top #0a1438 → bottom #060a22
+- Subtle radial violet glow behind the card center (#3a1a6a, very soft, blurred)
+- A faint floor reflection at the very bottom — soft violet-cyan light bleed simulating the card glow reflecting off a glossy surface
+- NO bubbles, NO pastel colors — pure dark cinematic neon backdrop
+- Tiny soft white sparkles / lens flares (2–3) at the top corners of the card for premium feel
+
+═══ MAIN CARD (centered, ~82% of canvas) ═══
+- One large rounded rectangle DARK GLASS card
+- Background: rgba(20,22,55,0.55) with strong backdrop blur — the violet glow shows softly through
+- Corner radius: ~36px
+- THICK GLOWING NEON BORDER (signature element — MUST be prominent):
+  • A bright 3–4px gradient stroke flowing AROUND the entire card edge
+  • Gradient: hot magenta (#ff3da8) → violet (#9d4dff) → electric blue (#3da8ff) → cyan (#3df0ff) → back to magenta
+  • Strong outer glow / bloom around the border (~30px soft halo) in matching neon colors — pink-violet on top-left, blue-cyan on bottom-right
+  • The border looks like a real glowing LED tube around the card
+- Inside the card, a very subtle inner highlight along the top edge (1px white, 30% opacity) for glass realism
+
+═══ TOP ROW INSIDE CARD (32px padding from card edges) ═══
+- LEFT — empty (NO SHAHED STORE pill on Dark Neon variant — the glow border is the brand signature)
+- RIGHT — BRAND PILL:
+  • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.98), soft shadow, ~28px radius, ~52px tall)
+  • Wait — OVERRIDE: on Dark Neon, the brand mark sits DIRECTLY on the dark glass (NO white pill background). Just the brand LOGO ICON (~36px, original colors, with soft white glow) followed by the brand/product name "${brand || name}" in CRISP WHITE bold sans-serif (~20px), aligned in the top-right corner of the card with comfortable padding from the edges
+  • Subtle white drop-glow under the text for readability
+
+═══ CENTER OF CARD (the hero) ═══
+- The product "${name}" displayed as a VERY LARGE 3D rounded-square app icon
+- Size: ~45–55% of card width
+- The icon sits on a soft glowing pedestal — a subtle violet-cyan halo radiates beneath it (signature glow)
+- Strong 3D rendering with realistic highlights, soft top-light, and a dark glossy surface if the icon is dark
+- Subtle reflection/shadow beneath the icon: 0 20px 40px rgba(120,80,255,0.35)
+- NO price, NO discount badge, NO marketing text near the icon
+
+═══ BOTTOM CONTACT STRIP (signature Dark Neon detail) ═══
+- A horizontal sub-band INSIDE the card, near the bottom (~24px from bottom edge)
+- Background: very subtle translucent white-violet glow strip (rgba(180,160,255,0.10), ~56px tall, full card width minus padding, ~16px radius)
+- Two items aligned left and right with comfortable spacing INSIDE the strip:
+  • LEFT: A small CIRCULAR globe icon with cyan-violet GLOWING outline + tiny cursor arrow on its bottom-right, then "www.shahedstore.com.bd" in WHITE bold sans-serif (~16px)
+  • RIGHT: A small CIRCULAR phone handset icon with cyan-violet GLOWING outline, then "+880 1840-099853" in WHITE bold sans-serif (~16px)
+- Icon outlines glow softly (matching the border colors)
+- All text is WHITE — clearly readable against the dark glass
+
+═══ ABSOLUTE RULES (MUST FOLLOW) ═══
+- The signature element is the THICK GLOWING NEON GRADIENT BORDER (magenta → violet → blue → cyan) wrapping the card with a soft outer halo
+- Background is DEEP MIDNIGHT NAVY — NO bubbles, NO pastel colors
+- Brand mark in top-right is the LOGO + WHITE NAME directly on dark glass (no white pill)
+- Bottom contact strip is INSIDE the card with a subtle translucent sub-band, WHITE text, glowing icon outlines
+- Center hero icon has a soft violet-cyan glow halo beneath it
+- Square format exactly (1:1)
+- Vibe: cinematic premium cyberpunk — like a high-end product launch poster
 `.trim(),
   },
 
