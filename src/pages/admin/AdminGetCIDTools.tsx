@@ -101,6 +101,39 @@ export default function AdminGetCIDTools() {
   const [balance, setBalance] = useState<BalanceResponse | null>(null);
   const [balanceLoading, setBalanceLoading] = useState(false);
 
+  // ─── Primary channel routing (admin-configurable) ───
+  const [primaryChannel, setPrimaryChannel] = useState<'getcid' | 'grahok'>('getcid');
+  const [routingSaving, setRoutingSaving] = useState(false);
+
+  const loadRouting = useCallback(async () => {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'getcid_default_provider')
+      .maybeSingle();
+    const v = (data?.value || '').toLowerCase().trim();
+    setPrimaryChannel(v === 'grahok' ? 'grahok' : 'getcid');
+  }, []);
+
+  const saveRouting = async (next: 'getcid' | 'grahok') => {
+    if (next === primaryChannel) return;
+    setRoutingSaving(true);
+    try {
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({ key: 'getcid_default_provider', value: next, category: 'integrations' }, { onConflict: 'key' });
+      if (error) throw error;
+      setPrimaryChannel(next);
+      toast.success(`${next === 'getcid' ? 'GetCID' : 'Grahok'} is now the primary channel`);
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to update routing');
+    } finally {
+      setRoutingSaving(false);
+    }
+  };
+
+  useEffect(() => { loadRouting(); }, [loadRouting]);
+
   // ─── Single CID generation ───
   const [iid, setIid] = useState('');
   const [provider, setProvider] = useState<'auto' | 'getcid' | 'grahok'>('auto');
