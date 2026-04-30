@@ -96,13 +96,13 @@ const STYLES = {
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Dark Neon" tone ═══
-- Override ONLY the background: deep midnight indigo (#0a0d2e → #1a0d3a) with subtle electric blue glow
-- Bubbles glow with neon cyan and deep electric blue (keep the SAME bubble shape and arrangement, just neon-glow versions)
-- The frosted card becomes a DARK GLASS card: rgba(20,20,40,0.55) with a thin glowing 2px cyan border and soft outer glow
-- "SHAHED STORE" pill: KEEP THE SAME white pill with red SHAHED STORE badge inside (do NOT change)
-- Brand pill on right: KEEP white pill with charcoal text (do NOT change)
-- Bottom contact line: keep dark charcoal text on the white-pill area (the whole contact strip lives on a subtle white sub-band so text stays dark and readable)
-- Vibe: cyberpunk premium with the SAME signature SHAHED STORE pill / brand pill / contact layout — only the canvas background and bubble glow differ
+- Override ONLY the background: deep midnight indigo (#0a0d2e → #1a0d3a) with subtle violet + magenta glow
+- Bubbles: clear glossy bubbles glow with neon cyan and magenta highlights (keep clear interiors, just glowing rims)
+- The frosted card becomes a DARK GLASS card: rgba(20,20,40,0.45) with thin glowing 2px violet/cyan border and soft outer glow
+- "SHAHED STORE" pill: KEEP the same translucent glass pill with WHITE text (works perfectly on dark)
+- Brand pill on right: KEEP solid white pill with charcoal text
+- Bottom contact: keep dark charcoal text on a subtle white sub-band so it stays readable
+- Vibe: cyberpunk premium with the SAME signature SHAHED STORE layout — only canvas + bubble glow differ
 `.trim(),
   },
 
@@ -112,9 +112,9 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Light Glass" tone ═══
-- Keep the EXACT signature pale-blue / off-white background and sky-blue + mint bubbles from the shared blueprint
-- Bubbles slightly more prominent and glossy (this is THE signature Shahed Store look)
-- Vibe: bright, airy, premium daylight glassmorphism — identical to the LinkedIn / Adobe Creative Cloud / Figma reference cards
+- Keep the EXACT signature pastel mesh background (lavender + pink + peach + sky blue) and clear soap bubbles from the shared blueprint
+- This is THE flagship Shahed Store look — identical to the Hix.AI / Duolingo / Crunchyroll / ChatGPT Plus / Canva Pro reference cards
+- Vibe: dreamy, airy, premium pastel daylight glassmorphism
 `.trim(),
   },
 
@@ -124,9 +124,9 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Clean Light" tone ═══
-- Even cleaner pale-blue / white background — almost pure white at the top fading to very light blue at the bottom
-- Bubbles: ONLY soft sky blue and white-glow bubbles (no mint), slightly more spread out
-- Vibe: clean, minimal, corporate-premium — like an Apple product page
+- Slightly DESATURATED pastel mesh — softer, brighter, more white-washed (lavender, pink, peach, sky blue all very pale, almost milky)
+- Clear bubbles slightly more spread out, very subtle outlines
+- Vibe: clean, minimal, corporate-premium pastel — like an Apple product page with a hint of color
 `.trim(),
   },
 
@@ -136,9 +136,9 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Soft Aurora" tone ═══
-- Same pale-blue base background but with a subtle mint-seafoam tint at the bottom-right corner
-- Bubbles: predominantly mint/teal with a few sky-blue accents (still NO pink/lavender/peach)
-- Vibe: bright, airy, fresh aurora aesthetic — keep all card components identical to signature
+- Same pastel mesh base but with stronger aurora flow: an extra ribbon of mint-seafoam (#b8e6d4) blending through the middle alongside lavender + pink + peach
+- Clear bubbles with slightly iridescent rainbow edge highlights (still mostly clear)
+- Vibe: fresh aurora pastel — keep all card components identical to signature
 `.trim(),
   },
 
@@ -148,10 +148,10 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glass Gradient Border" tone ═══
-- Keep the signature pale-blue / off-white background and sky-blue + mint bubbles
-- The frosted card border becomes a delicate 2px GRADIENT BORDER flowing: cyan (#67e8f9) → sky blue (#7dd3fc) → mint (#5eead4) — cool tones only, NO warm colors
+- Keep the signature pastel mesh background and clear bubbles
+- The frosted card border becomes a delicate 2px GRADIENT BORDER flowing: lavender (#c9b8e8) → pink (#f4b8c8) → peach (#f5c8b0) → sky blue (#bcd0ec) — matching the background palette
 - Subtle soft outer halo matching the gradient border
-- Vibe: signature look with a refined cool-tone rainbow border accent
+- Vibe: signature pastel look with a refined rainbow border accent
 `.trim(),
   },
 
@@ -161,10 +161,10 @@ ${sharedBlueprint(name, brand)}
 ${sharedBlueprint(name, brand)}
 
 ═══ STYLE OVERRIDE — "Glassmorphism UI" tone ═══
-- Keep the signature pale-blue / off-white background — slightly brighter / whiter overall
-- A subtle 3px horizontal accent line in cool gradient (sky blue → cyan → mint) at the very TOP edge of the card
-- Bubbles still visible around the card (sky-blue + mint only)
-- Vibe: BRIGHT, ultra-clean, premium — Apple/Samsung product launch energy with the signature SHAHED STORE layout intact
+- Keep the signature pastel mesh background — slightly brighter / more luminous overall
+- A subtle 3px horizontal accent line in pastel gradient (lavender → pink → peach) at the very TOP edge of the card
+- Clear bubbles still visible around the card
+- Vibe: BRIGHT, ultra-clean, premium pastel — Apple/Samsung product launch energy with the signature SHAHED STORE layout intact
 `.trim(),
   },
 };
