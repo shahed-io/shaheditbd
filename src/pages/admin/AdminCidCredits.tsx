@@ -517,13 +517,99 @@ export default function AdminCidCredits() {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="accounts" className="w-full">
+      <Tabs defaultValue="all-users" className="w-full" onValueChange={(v) => { if (v === 'all-users' && allUsers.length === 0) loadAllUsers(); }}>
         <TabsList>
-          <TabsTrigger value="accounts" className="gap-1.5"><Users className="h-3.5 w-3.5" /> Accounts</TabsTrigger>
+          <TabsTrigger value="all-users" onClick={() => { if (allUsers.length === 0) loadAllUsers(); }} className="gap-1.5">
+            <Users className="h-3.5 w-3.5" /> All Users
+          </TabsTrigger>
+          <TabsTrigger value="accounts" className="gap-1.5"><Coins className="h-3.5 w-3.5" /> With Balance</TabsTrigger>
           <TabsTrigger value="adjustments" onClick={loadRecentAdjustments} className="gap-1.5">
             <ClipboardList className="h-3.5 w-3.5" /> Recent Adjustments
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="all-users" className="mt-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <CardTitle className="text-base">All Registered Users ({allUsers.length})</CardTitle>
+                <div className="relative sm:ml-auto w-full sm:w-80">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search name, email, phone, or ID"
+                    value={allUsersSearch}
+                    onChange={(e) => setAllUsersSearch(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Button size="sm" variant="outline" onClick={loadAllUsers} disabled={allUsersLoading} className="gap-1">
+                  <RefreshCw className={`h-3.5 w-3.5 ${allUsersLoading ? 'animate-spin' : ''}`} /> Refresh
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {allUsersLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : (() => {
+                const q = allUsersSearch.trim().toLowerCase();
+                const list = q
+                  ? allUsers.filter(a =>
+                      (a.display_name || '').toLowerCase().includes(q) ||
+                      (a.email || '').toLowerCase().includes(q) ||
+                      (a.phone || '').toLowerCase().includes(q) ||
+                      a.user_id.toLowerCase().includes(q))
+                  : allUsers;
+                if (list.length === 0) {
+                  return <p className="text-center text-muted-foreground py-12">No users found.</p>;
+                }
+                return (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>User</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Phone</TableHead>
+                          <TableHead className="text-right">Balance</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {list.map((u) => (
+                          <TableRow key={u.user_id}>
+                            <TableCell>
+                              <div className="font-medium flex items-center gap-1.5">
+                                <UserIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                                {u.display_name || 'Unnamed'}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-xs break-all">{u.email || '—'}</TableCell>
+                            <TableCell className="text-xs">{u.phone || '—'}</TableCell>
+                            <TableCell className="text-right">
+                              <Badge variant={u.balance > 0 ? 'default' : 'secondary'}>{u.balance}</Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button size="sm" variant="outline" className="gap-1" onClick={() => openHistory(u)}>
+                                  <History className="h-3.5 w-3.5" /> History
+                                </Button>
+                                <Button size="sm" className="gap-1" onClick={() => { setEditing(u); setDelta(''); setNote(''); }}>
+                                  <Coins className="h-3.5 w-3.5" /> Adjust
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="accounts" className="mt-4">
           <Card>
