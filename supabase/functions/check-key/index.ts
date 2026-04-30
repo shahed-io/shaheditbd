@@ -115,23 +115,24 @@ Deno.serve(async (req) => {
 
     let parsed: any = null;
     try { parsed = JSON.parse(text); } catch {
-      return new Response(JSON.stringify({ error: 'Service returned invalid response. Please try again.' }), {
-        status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse({
+        error: 'Key checking service is not returning JSON right now. Please try again later.',
+        fallback: true,
+      }, 200);
     }
 
-    if (!parsed?.success) {
-      const errMsg = parsed?.error || parsed?.message || 'Service error';
-      return new Response(JSON.stringify({ error: typeof errMsg === 'string' ? errMsg : 'Service error' }), {
-        status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    const provider = getProviderData(parsed);
+    if (!provider.ok) {
+      return jsonResponse({
+        error: typeof provider.message === 'string' ? provider.message : 'Service error',
+        fallback: true,
+      }, 200);
     }
 
-    // Response shape: { success: true, data: [{ key, errorCode, prd, subType, actType, remaining, time }] }
-    const rawData = parsed?.data;
-    const dataArr: any[] = Array.isArray(rawData)
-      ? (Array.isArray(rawData[0]) ? rawData.flat() : rawData)
-      : [];
+    // Supported response shapes:
+    // GetCIDinfo: { status: 'success', results: [{ key, description, sub_type, error_code }] }
+    // GetCID.app fallback: { success: true, data: [{ key, errorCode, prd, subType, actType, remaining, time }] }
+    const dataArr = provider.data;
     const results = dataArr.map((item: any) => {
       const errorCode = item?.errorCode || item?.error_code || null;
       const cls = classify(errorCode);
@@ -147,6 +148,14 @@ Deno.serve(async (req) => {
         time: item?.time ?? null,
       };
     });
+
+    if (results.length === 0) {
+      return jsonResponse({
+        error: 'Service returned no key results. Please try again later.',
+        fallback: true,
+        results: [],
+      }, 200);
+    }
 
     // Log history (best effort, non-blocking)
     try {
@@ -167,13 +176,9 @@ Deno.serve(async (req) => {
       console.log('[check-key] history log failed', String(e));
     }
 
-    return new Response(JSON.stringify({ success: true, results }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ success: true, results });
   } catch (e) {
     console.error('[check-key] error', e);
-    return new Response(JSON.stringify({ error: 'Internal error' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ error: 'Check key service failed. Please try again later.', fallback: true }, 200);
   }
 });
