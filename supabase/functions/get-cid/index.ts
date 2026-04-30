@@ -12,9 +12,28 @@ const PRICE_CENTS = 100; // $1 per CID
 const GETCID_API_URL     = 'https://panel.getcid.app/user-api/getcid';
 const GETCID_BALANCE_URL = 'https://panel.getcid.app/user-api/checkbalance';
 
+function normalizeInstallationId(value: string): string {
+  const trimmed = value.trim();
+  const digits = trimmed.replace(/\D/g, '');
+  if (digits.length === 63) {
+    return Array.from({ length: 9 }, (_, i) => digits.slice(i * 7, i * 7 + 7)).join('-');
+  }
+  return trimmed.replace(/[\s_]+/g, '-').replace(/-+/g, '-');
+}
+
+function readStringField(data: Record<string, unknown>, keys: string[]): string | null {
+  for (const key of keys) {
+    const value = data[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+    if (typeof value === 'number') return String(value);
+  }
+  return null;
+}
+
 // ─── Provider call: GetCID.app ─────────────────────────────────────────
 async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; cid?: string; error?: string; raw?: string }> {
-  const url = `${GETCID_API_URL}?token=${encodeURIComponent(token)}&iid=${encodeURIComponent(iid)}`;
+  const normalizedIid = normalizeInstallationId(iid);
+  const url = `${GETCID_API_URL}?token=${encodeURIComponent(token)}&iid=${encodeURIComponent(normalizedIid)}`;
   try {
     const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
     const text = await res.text();
@@ -22,14 +41,12 @@ async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; ci
     try { data = JSON.parse(text); } catch {
       return { ok: false, error: 'Invalid JSON from GetCID', raw: text };
     }
-    // GetCID.app returns: { result: "...", confirmationid: "...", have_cid: 1|-1, pid, product_name }
-    const cidVal = data['confirmationid'] || data['cid'] || data['confirmation_id'];
-    const haveCid = data['have_cid'];
-    if (cidVal && String(cidVal).trim() && (haveCid === undefined || Number(haveCid) > 0)) {
-      return { ok: true, cid: String(cidVal).trim() };
-    }
-    const errMsg = (data['result'] as string) || (data['error'] as string) || (data['message'] as string) || 'No CID returned';
-    console.log(`[getcid] iid=${iid.slice(0,12)}... result=${errMsg} raw=${text.slice(0,200)}`);
+    // Provider docs show { cid: "..." }; some responses use confirmationid/confirmation_id.
+    const cidVal = readStringField(data, ['cid', 'confirmationid', 'confirmation_id', 'confirmationId', 'confirmationID']);
+    if (cidVal) return { ok: true, cid: cidVal };
+
+    const errMsg = readStringField(data, ['error', 'message', 'result']) || 'No CID returned';
+    console.log(`[getcid] iid=${normalizedIid.slice(0,12)}... result=${errMsg} raw=${text.slice(0,200)}`);
     return { ok: false, error: errMsg, raw: text };
   } catch (e) {
     return { ok: false, error: `GetCID network error: ${String(e)}` };
