@@ -6,9 +6,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// GetCIDinfo.com Bulk License Key Checker
-// Docs: https://getcidinfo.com/getcid-api/
-const CHECK_KEY_URL = 'https://api.getcidinfo.com/v1/check_keys';
+// GetCID.app Check Key endpoint
+// GET https://panel.getcid.app/user-api/check-key?keys=[KEY]&token=[API_KEY]
+const CHECK_KEY_URL = 'https://panel.getcid.app/user-api/check-key';
 
 // Status mapping for known Microsoft activation error codes
 const STATUS_MAP: Record<string, { status: 'live' | 'dead'; meaning: string }> = {
