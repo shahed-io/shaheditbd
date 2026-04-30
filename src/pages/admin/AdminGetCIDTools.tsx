@@ -119,6 +119,108 @@ export default function AdminGetCIDTools() {
   const [batchResult, setBatchResult] = useState<BatchResult | null>(null);
   const [batchLoading, setBatchLoading] = useState(false);
 
+  // ─── History ───
+  interface HistoryRow {
+    id: string;
+    user_id: string | null;
+    operator_name: string | null;
+    number: string | null;
+    result: any;
+    status: string;
+    cost: number;
+    provider: string | null;
+    created_at: string;
+    user_email?: string | null;
+    user_name?: string | null;
+    user_phone?: string | null;
+  }
+  const [history, setHistory] = useState<HistoryRow[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historySearch, setHistorySearch] = useState('');
+  const [historyStatus, setHistoryStatus] = useState<'all' | 'success' | 'failed'>('all');
+  const [historyDays, setHistoryDays] = useState<'1' | '7' | '30' | 'all'>('7');
+
+  const loadHistory = useCallback(async () => {
+    setHistoryLoading(true);
+    try {
+      let q = supabase
+        .from('cid_generations')
+        .select('id, user_id, operator_name, number, result, status, cost, provider, created_at')
+        .order('created_at', { ascending: false })
+        .limit(500);
+      if (historyDays !== 'all') {
+        const since = new Date(Date.now() - parseInt(historyDays) * 24 * 60 * 60 * 1000).toISOString();
+        q = q.gte('created_at', since);
+      }
+      if (historyStatus !== 'all') q = q.eq('status', historyStatus);
+      const { data, error } = await q;
+      if (error) throw error;
+
+      const ids = Array.from(new Set((data || []).map(r => r.user_id).filter(Boolean) as string[]));
+      const userMap = new Map<string, { email: string | null; display_name: string | null; phone: string | null }>();
+      if (ids.length) {
+        const { data: profs } = await supabase
+          .from('profiles')
+          .select('user_id, email, display_name, phone')
+          .in('user_id', ids);
+        (profs || []).forEach(p => userMap.set(p.user_id, {
+          email: p.email, display_name: p.display_name, phone: p.phone,
+        }));
+      }
+      setHistory((data || []).map(r => ({
+        ...r,
+        user_email: r.user_id ? userMap.get(r.user_id)?.email ?? null : null,
+        user_name: r.user_id ? userMap.get(r.user_id)?.display_name ?? null : null,
+        user_phone: r.user_id ? userMap.get(r.user_id)?.phone ?? null : null,
+      })));
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to load history');
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [historyDays, historyStatus]);
+
+  useEffect(() => { loadHistory(); }, [loadHistory]);
+
+  const filteredHistory = (() => {
+    const q = historySearch.trim().toLowerCase();
+    if (!q) return history;
+    return history.filter(r =>
+      (r.user_email || '').toLowerCase().includes(q) ||
+      (r.user_name || '').toLowerCase().includes(q) ||
+      (r.user_phone || '').toLowerCase().includes(q) ||
+      (r.user_id || '').toLowerCase().includes(q) ||
+      (r.number || '').toLowerCase().includes(q) ||
+      (typeof r.result === 'object' && r.result?.cid ? String(r.result.cid).toLowerCase().includes(q) : false)
+    );
+  })();
+
+  const exportHistoryCsv = () => {
+    const rows = [
+      ['created_at', 'user_email', 'user_name', 'user_phone', 'user_id', 'installation_id', 'cid', 'provider', 'status', 'cost'],
+      ...filteredHistory.map(r => [
+        r.created_at,
+        r.user_email || '',
+        r.user_name || '',
+        r.user_phone || '',
+        r.user_id || '',
+        r.number || '',
+        (typeof r.result === 'object' && r.result?.cid) ? String(r.result.cid) : '',
+        r.provider || (typeof r.result === 'object' ? r.result?.provider || '' : ''),
+        r.status,
+        String(r.cost),
+      ]),
+    ];
+    const csv = rows.map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cid-history-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // ─── Load balance on mount ───
   const loadBalance = useCallback(async () => {
     setBalanceLoading(true);
