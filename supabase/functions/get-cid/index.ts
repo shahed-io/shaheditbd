@@ -366,8 +366,6 @@ Deno.serve(async (req) => {
           const r = await callGetCIDBalance(GETCID_TOKEN, GETCID_USER_ID);
           if (r.ok) {
             providers.getcid = { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL };
-          } else if (!GETCID_USER_ID) {
-            providers.getcid = { status: 'unavailable', message: 'Set GETCID_USER_ID secret to enable balance', endpoint: GETCID_BALANCE_URL };
           } else {
             providers.getcid = { status: 'error', error: r.error || 'Unknown error', raw: r.raw };
           }
