@@ -336,11 +336,10 @@ Deno.serve(async (req) => {
           const r = await callGetCIDBalance(GETCID_TOKEN, GETCID_USER_ID);
           if (r.ok) {
             providers.getcid = { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL };
+          } else if (!GETCID_USER_ID) {
+            providers.getcid = { status: 'unavailable', message: 'Set GETCID_USER_ID secret to enable balance', endpoint: GETCID_BALANCE_URL };
           } else {
-            const isApiLimitation = r.raw === 'User ID is required' || r.error === 'GETCID_USER_ID not configured';
-            providers.getcid = isApiLimitation
-              ? { status: 'unavailable', message: 'Balance API not exposed by provider', endpoint: GETCID_BALANCE_URL }
-              : { error: r.error, status: 'error', raw: r.raw };
+            providers.getcid = { status: 'error', error: r.error || 'Unknown error', raw: r.raw };
           }
         } else {
           providers.getcid = { status: 'not_configured' };
