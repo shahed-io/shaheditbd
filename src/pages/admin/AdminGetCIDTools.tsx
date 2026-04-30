@@ -12,8 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import {
   KeyRound, Wallet, RefreshCw, Copy, Check, AlertCircle, Zap,
   GitCompare, Layers, Code2, ExternalLink, ShieldCheck, Sparkles,
-  Loader2, CheckCircle2, XCircle, Clock,
+  Loader2, CheckCircle2, XCircle, Clock, History as HistoryIcon, Search, Download, User as UserIcon,
 } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 
 interface ProviderBalance {
@@ -117,6 +118,108 @@ export default function AdminGetCIDTools() {
   const [batchProvider, setBatchProvider] = useState<'auto' | 'getcid' | 'grahok'>('auto');
   const [batchResult, setBatchResult] = useState<BatchResult | null>(null);
   const [batchLoading, setBatchLoading] = useState(false);
+
+  // ─── History ───
+  interface HistoryRow {
+    id: string;
+    user_id: string | null;
+    operator_name: string | null;
+    number: string | null;
+    result: any;
+    status: string;
+    cost: number;
+    provider: string | null;
+    created_at: string;
+    user_email?: string | null;
+    user_name?: string | null;
+    user_phone?: string | null;
+  }
+  const [history, setHistory] = useState<HistoryRow[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historySearch, setHistorySearch] = useState('');
+  const [historyStatus, setHistoryStatus] = useState<'all' | 'success' | 'failed'>('all');
+  const [historyDays, setHistoryDays] = useState<'1' | '7' | '30' | 'all'>('7');
+
+  const loadHistory = useCallback(async () => {
+    setHistoryLoading(true);
+    try {
+      let q = supabase
+        .from('cid_generations')
+        .select('id, user_id, operator_name, number, result, status, cost, provider, created_at')
+        .order('created_at', { ascending: false })
+        .limit(500);
+      if (historyDays !== 'all') {
+        const since = new Date(Date.now() - parseInt(historyDays) * 24 * 60 * 60 * 1000).toISOString();
+        q = q.gte('created_at', since);
+      }
+      if (historyStatus !== 'all') q = q.eq('status', historyStatus);
+      const { data, error } = await q;
+      if (error) throw error;
+
+      const ids = Array.from(new Set((data || []).map(r => r.user_id).filter(Boolean) as string[]));
+      const userMap = new Map<string, { email: string | null; display_name: string | null; phone: string | null }>();
+      if (ids.length) {
+        const { data: profs } = await supabase
+          .from('profiles')
+          .select('user_id, email, display_name, phone')
+          .in('user_id', ids);
+        (profs || []).forEach(p => userMap.set(p.user_id, {
+          email: p.email, display_name: p.display_name, phone: p.phone,
+        }));
+      }
+      setHistory((data || []).map(r => ({
+        ...r,
+        user_email: r.user_id ? userMap.get(r.user_id)?.email ?? null : null,
+        user_name: r.user_id ? userMap.get(r.user_id)?.display_name ?? null : null,
+        user_phone: r.user_id ? userMap.get(r.user_id)?.phone ?? null : null,
+      })));
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to load history');
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [historyDays, historyStatus]);
+
+  useEffect(() => { loadHistory(); }, [loadHistory]);
+
+  const filteredHistory = (() => {
+    const q = historySearch.trim().toLowerCase();
+    if (!q) return history;
+    return history.filter(r =>
+      (r.user_email || '').toLowerCase().includes(q) ||
+      (r.user_name || '').toLowerCase().includes(q) ||
+      (r.user_phone || '').toLowerCase().includes(q) ||
+      (r.user_id || '').toLowerCase().includes(q) ||
+      (r.number || '').toLowerCase().includes(q) ||
+      (typeof r.result === 'object' && r.result?.cid ? String(r.result.cid).toLowerCase().includes(q) : false)
+    );
+  })();
+
+  const exportHistoryCsv = () => {
+    const rows = [
+      ['created_at', 'user_email', 'user_name', 'user_phone', 'user_id', 'installation_id', 'cid', 'provider', 'status', 'cost'],
+      ...filteredHistory.map(r => [
+        r.created_at,
+        r.user_email || '',
+        r.user_name || '',
+        r.user_phone || '',
+        r.user_id || '',
+        r.number || '',
+        (typeof r.result === 'object' && r.result?.cid) ? String(r.result.cid) : '',
+        r.provider || (typeof r.result === 'object' ? r.result?.provider || '' : ''),
+        r.status,
+        String(r.cost),
+      ]),
+    ];
+    const csv = rows.map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cid-history-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // ─── Load balance on mount ───
   const loadBalance = useCallback(async () => {
@@ -305,7 +408,7 @@ export default function AdminGetCIDTools() {
 
       {/* ─── Main Tabs ─── */}
       <Tabs defaultValue="single" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto">
           <TabsTrigger value="single" className="gap-2 py-2.5">
             <Sparkles className="h-4 w-4" /> <span className="hidden sm:inline">Single</span>
           </TabsTrigger>
@@ -314,6 +417,9 @@ export default function AdminGetCIDTools() {
           </TabsTrigger>
           <TabsTrigger value="batch" className="gap-2 py-2.5">
             <Layers className="h-4 w-4" /> <span className="hidden sm:inline">Batch</span>
+          </TabsTrigger>
+          <TabsTrigger value="history" className="gap-2 py-2.5">
+            <HistoryIcon className="h-4 w-4" /> <span className="hidden sm:inline">History</span>
           </TabsTrigger>
           <TabsTrigger value="docs" className="gap-2 py-2.5">
             <Code2 className="h-4 w-4" /> <span className="hidden sm:inline">Docs</span>
@@ -594,6 +700,160 @@ export default function AdminGetCIDTools() {
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ─── TAB 4: History (all CIDs generated by users) ─── */}
+        <TabsContent value="history">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <HistoryIcon className="h-5 w-5 text-primary" />
+                    CID Generation History
+                  </CardTitle>
+                  <CardDescription>
+                    Every Confirmation ID generated through this site — who used it, the Installation ID submitted, and the CID returned.
+                  </CardDescription>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" onClick={loadHistory} disabled={historyLoading} className="gap-1">
+                    <RefreshCw className={`h-4 w-4 ${historyLoading ? 'animate-spin' : ''}`} /> Refresh
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={exportHistoryCsv} disabled={filteredHistory.length === 0} className="gap-1">
+                    <Download className="h-4 w-4" /> Export CSV
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid gap-2 sm:grid-cols-[1fr_160px_160px]">
+                <div className="relative">
+                  <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search email, name, phone, IID, CID, user ID…"
+                    value={historySearch}
+                    onChange={(e) => setHistorySearch(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Select value={historyDays} onValueChange={(v) => setHistoryDays(v as any)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Last 24 hours</SelectItem>
+                    <SelectItem value="7">Last 7 days</SelectItem>
+                    <SelectItem value="30">Last 30 days</SelectItem>
+                    <SelectItem value="all">All time</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={historyStatus} onValueChange={(v) => setHistoryStatus(v as any)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All status</SelectItem>
+                    <SelectItem value="success">Success only</SelectItem>
+                    <SelectItem value="failed">Failed only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                <div className="rounded-md border bg-card/40 p-3">
+                  <div className="text-xs text-muted-foreground">Total Records</div>
+                  <div className="text-xl font-bold">{filteredHistory.length}</div>
+                </div>
+                <div className="rounded-md border bg-card/40 p-3">
+                  <div className="text-xs text-muted-foreground">Successful</div>
+                  <div className="text-xl font-bold text-green-600">{filteredHistory.filter(r => r.status === 'success').length}</div>
+                </div>
+                <div className="rounded-md border bg-card/40 p-3">
+                  <div className="text-xs text-muted-foreground">Failed</div>
+                  <div className="text-xl font-bold text-red-600">{filteredHistory.filter(r => r.status === 'failed').length}</div>
+                </div>
+                <div className="rounded-md border bg-card/40 p-3">
+                  <div className="text-xs text-muted-foreground">Credits Used</div>
+                  <div className="text-xl font-bold">{filteredHistory.reduce((s, r) => s + (r.cost || 0), 0)}</div>
+                </div>
+              </div>
+
+              <div className="rounded-md border overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>When</TableHead>
+                      <TableHead>User</TableHead>
+                      <TableHead>Installation ID</TableHead>
+                      <TableHead>Confirmation ID</TableHead>
+                      <TableHead>Provider</TableHead>
+                      <TableHead className="text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {historyLoading ? (
+                      <TableRow><TableCell colSpan={6} className="text-center py-8">
+                        <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
+                      </TableCell></TableRow>
+                    ) : filteredHistory.length === 0 ? (
+                      <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground text-sm">
+                        No CID generations found for the selected filters.
+                      </TableCell></TableRow>
+                    ) : filteredHistory.map(r => {
+                      const cid = (typeof r.result === 'object' && r.result?.cid) ? String(r.result.cid) : '';
+                      const provider = r.provider || (typeof r.result === 'object' ? r.result?.provider || '' : '');
+                      return (
+                        <TableRow key={r.id}>
+                          <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                            {new Date(r.created_at).toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            <div className="flex items-start gap-2">
+                              <UserIcon className="h-3.5 w-3.5 mt-0.5 text-muted-foreground shrink-0" />
+                              <div className="min-w-0">
+                                <div className="font-medium truncate">{r.user_name || r.user_email || 'Unknown'}</div>
+                                {r.user_email && <div className="text-xs text-muted-foreground break-all">{r.user_email}</div>}
+                                {r.user_phone && <div className="text-xs text-muted-foreground">{r.user_phone}</div>}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-mono text-xs max-w-[220px]">
+                            <div className="flex items-center gap-1">
+                              <span className="truncate" title={r.number || ''}>{r.number || '—'}</span>
+                              {r.number && (
+                                <button
+                                  onClick={() => { navigator.clipboard.writeText(r.number!); toast.success('Copied IID'); }}
+                                  className="text-muted-foreground hover:text-foreground shrink-0"
+                                ><Copy className="h-3 w-3" /></button>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-mono text-xs max-w-[260px]">
+                            {cid ? (
+                              <div className="flex items-center gap-1">
+                                <span className="truncate" title={cid}>{cid}</span>
+                                <button
+                                  onClick={() => { navigator.clipboard.writeText(cid); toast.success('Copied CID'); }}
+                                  className="text-muted-foreground hover:text-foreground shrink-0"
+                                ><Copy className="h-3 w-3" /></button>
+                              </div>
+                            ) : <span className="text-muted-foreground">—</span>}
+                          </TableCell>
+                          <TableCell>
+                            {provider ? <Badge variant="outline" className="text-xs">{provider}</Badge> : <span className="text-muted-foreground">—</span>}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {r.status === 'success' ? (
+                              <Badge className="bg-green-500/10 text-green-700 border-green-500/30">Success</Badge>
+                            ) : (
+                              <Badge variant="destructive">{r.status}</Badge>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
