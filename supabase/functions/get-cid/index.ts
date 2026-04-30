@@ -29,31 +29,59 @@ async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; ci
   }
 }
 
-async function callGetCIDBalance(token: string, userId?: string): Promise<{ ok: boolean; balance?: number; raw?: string; error?: string }> {
-  if (!userId) {
-    return { ok: false, error: 'GETCID_USER_ID not configured' };
-  }
-  const url = `${GETCID_BALANCE_URL}?token=${encodeURIComponent(token)}&user_id=${encodeURIComponent(userId)}`;
+async function tryGetCIDBalanceVariant(url: string): Promise<{ ok: boolean; balance?: number; raw?: string; error?: string; status?: number }> {
   try {
     const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json,text/plain' } });
     const text = await res.text();
+    const trimmed = text.trim();
+    // Reject known error strings
+    if (/user id is required/i.test(trimmed) || /invalid token/i.test(trimmed) || /unauthor/i.test(trimmed)) {
+      return { ok: false, error: trimmed.slice(0, 120), raw: text, status: res.status };
+    }
     // Try JSON first
     try {
       const data = JSON.parse(text);
-      const bal = data.balance ?? data.amount ?? data.credits ?? data.user_balance;
-      if (typeof bal === 'number') return { ok: true, balance: bal, raw: text };
+      const bal = data.balance ?? data.amount ?? data.credits ?? data.user_balance ?? data.data?.balance;
+      if (typeof bal === 'number') return { ok: true, balance: bal, raw: text, status: res.status };
       if (typeof bal === 'string') {
         const n = parseFloat(bal);
-        if (!isNaN(n)) return { ok: true, balance: n, raw: text };
+        if (!isNaN(n)) return { ok: true, balance: n, raw: text, status: res.status };
       }
     } catch { /* not JSON, fall through */ }
-    // Plain text numeric
+    // Plain numeric body (e.g. "12.50")
+    if (/^[0-9]+(?:\.[0-9]+)?$/.test(trimmed)) {
+      return { ok: true, balance: parseFloat(trimmed), raw: text, status: res.status };
+    }
+    // Find a number anywhere
     const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
-    if (m) return { ok: true, balance: parseFloat(m[1]), raw: text };
-    return { ok: false, error: 'Could not parse balance', raw: text };
+    if (m) return { ok: true, balance: parseFloat(m[1]), raw: text, status: res.status };
+    return { ok: false, error: 'Could not parse balance', raw: text.slice(0, 200), status: res.status };
   } catch (e) {
     return { ok: false, error: String(e) };
   }
+}
+
+async function callGetCIDBalance(token: string, userId?: string): Promise<{ ok: boolean; balance?: number; raw?: string; error?: string }> {
+  // Try multiple parameter name variants — provider docs have varied over time
+  const variants: string[] = [];
+  const t = encodeURIComponent(token);
+  if (userId) {
+    const u = encodeURIComponent(userId);
+    variants.push(`${GETCID_BALANCE_URL}?token=${t}&user_id=${u}`);
+    variants.push(`${GETCID_BALANCE_URL}?token=${t}&userid=${u}`);
+    variants.push(`${GETCID_BALANCE_URL}?token=${t}&userId=${u}`);
+    variants.push(`${GETCID_BALANCE_URL}?token=${t}&id=${u}`);
+  }
+  variants.push(`${GETCID_BALANCE_URL}?token=${t}`);
+
+  let lastErr: { ok: boolean; error?: string; raw?: string } = { ok: false, error: 'No variant succeeded' };
+  for (const url of variants) {
+    const r = await tryGetCIDBalanceVariant(url);
+    console.log(`[getcid-balance] ${url.replace(token, '***')} → status=${r.status} ok=${r.ok} raw=${(r.raw || '').slice(0, 80)}`);
+    if (r.ok) return r;
+    lastErr = r;
+  }
+  return lastErr;
 }
 
 // ─── Provider call: Grahok.io (BACKUP) ─────────────────────────────────
@@ -308,11 +336,10 @@ Deno.serve(async (req) => {
           const r = await callGetCIDBalance(GETCID_TOKEN, GETCID_USER_ID);
           if (r.ok) {
             providers.getcid = { balance: r.balance, status: 'ok', currency: 'USD', endpoint: GETCID_BALANCE_URL };
+          } else if (!GETCID_USER_ID) {
+            providers.getcid = { status: 'unavailable', message: 'Set GETCID_USER_ID secret to enable balance', endpoint: GETCID_BALANCE_URL };
           } else {
-            const isApiLimitation = r.raw === 'User ID is required' || r.error === 'GETCID_USER_ID not configured';
-            providers.getcid = isApiLimitation
-              ? { status: 'unavailable', message: 'Balance API not exposed by provider', endpoint: GETCID_BALANCE_URL }
-              : { error: r.error, status: 'error', raw: r.raw };
+            providers.getcid = { status: 'error', error: r.error || 'Unknown error', raw: r.raw };
           }
         } else {
           providers.getcid = { status: 'not_configured' };
