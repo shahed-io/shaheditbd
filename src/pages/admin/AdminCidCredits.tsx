@@ -172,6 +172,44 @@ export default function AdminCidCredits() {
     }
   }, []);
 
+  const loadAllUsers = useCallback(async () => {
+    setAllUsersLoading(true);
+    try {
+      const { data: profs, error } = await supabase
+        .from('profiles')
+        .select('user_id, display_name, email, phone, created_at')
+        .order('created_at', { ascending: false })
+        .limit(2000);
+      if (error) throw error;
+
+      const ids = (profs || []).map(p => p.user_id);
+      const balMap = new Map<string, { balance: number; total_added: number; total_used: number; updated_at?: string }>();
+      if (ids.length) {
+        const { data: bals } = await supabase
+          .from('cid_balances')
+          .select('user_id, balance, total_added, total_used, updated_at')
+          .in('user_id', ids);
+        (bals || []).forEach(b => balMap.set(b.user_id, {
+          balance: b.balance, total_added: b.total_added, total_used: b.total_used, updated_at: b.updated_at,
+        }));
+      }
+      setAllUsers((profs || []).map(p => ({
+        user_id: p.user_id,
+        display_name: p.display_name,
+        email: p.email,
+        phone: p.phone,
+        balance: balMap.get(p.user_id)?.balance ?? 0,
+        total_added: balMap.get(p.user_id)?.total_added ?? 0,
+        total_used: balMap.get(p.user_id)?.total_used ?? 0,
+        updated_at: balMap.get(p.user_id)?.updated_at,
+      })));
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to load users');
+    } finally {
+      setAllUsersLoading(false);
+    }
+  }, []);
+
   useEffect(() => { load(); }, [load]);
 
   const filtered = useMemo(() => {
