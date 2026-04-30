@@ -137,12 +137,37 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Send credentials email to the new user (only if newly created)
+    let emailSent = false;
+    if (created) {
+      try {
+        const { error: emailErr } = await admin.functions.invoke('send-transactional-email', {
+          body: {
+            templateName: 'cid-account-credentials',
+            recipientEmail: email,
+            idempotencyKey: `cid-credentials-${userId}`,
+            templateData: {
+              customerName: name,
+              email,
+              password,
+              initialCredit,
+              loginUrl: 'https://shahedstore.com.bd/get-cid',
+            },
+          },
+        });
+        if (!emailErr) emailSent = true;
+      } catch (_e) {
+        // Non-fatal — account already created
+      }
+    }
+
     return new Response(JSON.stringify({
       success: true,
       user_id: userId,
       created,
       email,
       balance: newBalance,
+      email_sent: emailSent,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (e) {
     return new Response(JSON.stringify({ error: (e as Error).message }), {

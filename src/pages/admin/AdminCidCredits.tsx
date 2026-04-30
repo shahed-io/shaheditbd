@@ -89,7 +89,7 @@ export default function AdminCidCredits() {
   const [cCredit, setCCredit] = useState('');
   const [cShowPwd, setCShowPwd] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [createdInfo, setCreatedInfo] = useState<{ email: string; password: string; balance: number } | null>(null);
+  const [createdInfo, setCreatedInfo] = useState<{ email: string; password: string; balance: number; emailSent?: boolean } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -340,7 +340,7 @@ export default function AdminCidCredits() {
       const json = await res.json();
       if (!res.ok || !json.success) throw new Error(json.error || 'Failed to create account');
       toast.success(json.created ? `Account created with ${json.balance} credits` : `Existing user — ${json.balance} credits applied`);
-      setCreatedInfo({ email: json.email, password: cPassword, balance: json.balance });
+      setCreatedInfo({ email: json.email, password: cPassword, balance: json.balance, emailSent: !!json.email_sent });
       setCEmail(''); setCPassword(''); setCName(''); setCPhone(''); setCCredit('');
       setCreateOpen(false);
       await load();
@@ -854,6 +854,12 @@ export default function AdminCidCredits() {
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">CID Balance:</span>
               <Badge>{createdInfo?.balance}</Badge>
+            </div>
+            <div className="flex justify-between items-center pt-2 border-t mt-2">
+              <span className="text-muted-foreground">Credentials Email:</span>
+              <Badge variant={createdInfo?.emailSent ? 'default' : 'secondary'}>
+                {createdInfo?.emailSent ? '✉️ Sent to user' : 'Not sent'}
+              </Badge>
             </div>
           </div>
           <DialogFooter>
