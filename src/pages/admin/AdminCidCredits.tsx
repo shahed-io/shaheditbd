@@ -444,8 +444,12 @@ export default function AdminCidCredits() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={() => setCreateOpen(true)} className="gap-2">
-            <UserPlus className="h-4 w-4" /> Create New Account
+          <Button
+            onClick={() => setCreateOpen(true)}
+            size="lg"
+            className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg shadow-primary/30"
+          >
+            <UserPlus className="h-5 w-5" /> Create Customer Account
           </Button>
           <Button variant="outline" onClick={exportCsv} className="gap-2" disabled={accounts.length === 0}>
             <Download className="h-4 w-4" /> Export CSV
