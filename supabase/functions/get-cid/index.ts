@@ -134,23 +134,104 @@ async function callGrahok(token: string, apiUrl: string, iid: string): Promise<{
   }
 }
 
-async function callGrahokBalance(token: string, balanceUrl: string): Promise<{ ok: boolean; balance?: number | null; raw?: string; error?: string }> {
-  try {
-    const url = `${balanceUrl}${balanceUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
-    const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json', 'X-API-TOKEN': token } });
-    const text = await res.text();
-    let data: Record<string, unknown> = {};
-    try {
-      data = JSON.parse(text);
-      const bal = (data['balance'] ?? data['amount']) as number | undefined;
-      return { ok: true, balance: typeof bal === 'number' ? bal : null, raw: text };
-    } catch {
-      const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
-      return { ok: true, balance: m ? parseFloat(m[1]) : null, raw: text };
+async function callGrahokBalance(token: string, balanceUrl: string): Promise<{ ok: boolean; balance?: number | null; raw?: string; error?: string; currency?: string }> {
+  // Try multiple URL variants — providers vary on parameter naming
+  const variants = [
+    `${balanceUrl}${balanceUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`,
+    `${balanceUrl}${balanceUrl.includes('?') ? '&' : '?'}api_token=${encodeURIComponent(token)}`,
+    `${balanceUrl}${balanceUrl.includes('?') ? '&' : '?'}apikey=${encodeURIComponent(token)}`,
+  ];
+
+  // Recursively pull a numeric value from any depth using known balance-like keys
+  const BAL_KEYS = ['balance', 'amount', 'credit', 'credits', 'available', 'available_balance', 'wallet', 'wallet_balance', 'taka', 'bdt', 'fund', 'funds'];
+  const CURRENCY_KEYS = ['currency', 'unit', 'symbol'];
+
+  const findBalance = (obj: unknown): { value: number | null; currency?: string } => {
+    if (obj == null) return { value: null };
+    if (typeof obj === 'number') return { value: obj };
+    if (typeof obj === 'string') {
+      const n = parseFloat(obj);
+      return { value: isNaN(n) ? null : n };
     }
-  } catch (e) {
-    return { ok: false, error: String(e) };
+    if (Array.isArray(obj)) {
+      for (const item of obj) {
+        const r = findBalance(item);
+        if (r.value !== null) return r;
+      }
+      return { value: null };
+    }
+    if (typeof obj === 'object') {
+      const rec = obj as Record<string, unknown>;
+      let currency: string | undefined;
+      for (const ck of CURRENCY_KEYS) {
+        if (typeof rec[ck] === 'string') { currency = rec[ck] as string; break; }
+      }
+      // First scan top-level keys
+      for (const k of Object.keys(rec)) {
+        if (BAL_KEYS.includes(k.toLowerCase())) {
+          const v = rec[k];
+          if (typeof v === 'number') return { value: v, currency };
+          if (typeof v === 'string') {
+            const n = parseFloat(v);
+            if (!isNaN(n)) return { value: n, currency };
+          }
+        }
+      }
+      // Then recurse into nested objects (e.g. data, result, user)
+      for (const v of Object.values(rec)) {
+        if (v && typeof v === 'object') {
+          const r = findBalance(v);
+          if (r.value !== null) return { value: r.value, currency: r.currency || currency };
+        }
+      }
+    }
+    return { value: null };
+  };
+
+  let lastRaw = '';
+  let lastErr = '';
+  for (const url of variants) {
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json,text/plain', 'X-API-TOKEN': token, 'Authorization': `Bearer ${token}` },
+      });
+      const text = await res.text();
+      lastRaw = text;
+      console.log(`[grahok-balance] ${url.replace(token, '***')} → status=${res.status} body=${text.slice(0, 200)}`);
+
+      let data: unknown = null;
+      try { data = JSON.parse(text); } catch { /* not JSON */ }
+
+      // Detect explicit error responses
+      if (data && typeof data === 'object') {
+        const rec = data as Record<string, unknown>;
+        if (rec.ok === false || rec.success === false || (typeof rec.error === 'string' && rec.error)) {
+          lastErr = String(rec.error || rec.message || `HTTP ${res.status}`);
+          continue; // try next variant
+        }
+        const found = findBalance(data);
+        if (found.value !== null) {
+          return { ok: true, balance: found.value, currency: found.currency, raw: text };
+        }
+      }
+
+      // Plain numeric body fallback
+      const trimmed = text.trim();
+      if (/^[0-9]+(?:\.[0-9]+)?$/.test(trimmed)) {
+        return { ok: true, balance: parseFloat(trimmed), raw: text };
+      }
+      // Last-resort number scrape (only if HTTP ok)
+      if (res.ok) {
+        const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
+        if (m) return { ok: true, balance: parseFloat(m[1]), raw: text };
+      }
+      lastErr = lastErr || `Could not parse balance (HTTP ${res.status})`;
+    } catch (e) {
+      lastErr = String(e);
+    }
   }
+  return { ok: false, balance: null, error: lastErr || 'Unknown error', raw: lastRaw };
 }
 
 Deno.serve(async (req) => {
@@ -376,9 +457,16 @@ Deno.serve(async (req) => {
         }
         if (GRAHOK_TOKEN) {
           const r = await callGrahokBalance(GRAHOK_TOKEN, GRAHOK_BAL);
-          providers.grahok = r.ok
-            ? { balance: r.balance, status: 'ok', endpoint: GRAHOK_BAL }
-            : { error: r.error, status: 'error', raw: r.raw };
+          if (r.ok && typeof r.balance === 'number') {
+            providers.grahok = { balance: r.balance, currency: r.currency || 'BDT', status: 'ok', endpoint: GRAHOK_BAL };
+          } else {
+            providers.grahok = {
+              status: 'error',
+              error: r.error || 'Could not parse balance from response',
+              raw: (r.raw || '').slice(0, 300),
+              endpoint: GRAHOK_BAL,
+            };
+          }
         } else {
           providers.grahok = { status: 'not_configured' };
         }
