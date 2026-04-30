@@ -319,16 +319,22 @@ Deno.serve(async (req) => {
         return json({ ok: false, error: `CID generation failed${detail}` }, 502);
       }
 
-      // Debit 1 credit (admins skip) using RPC
+      // Debit 1 credit via RPC (atomic, race-safe)
       let newBalance = currentBalance;
-      if (!isAdmin) {
-        const { data: debitResult } = await supabase.rpc('debit_cid_balance', {
-          p_user_id: auth.user.id,
-          p_amount: 1,
-        });
-        if (debitResult && typeof debitResult === 'object' && 'balance' in debitResult) {
-          newBalance = Number((debitResult as Record<string, unknown>).balance) || 0;
+      const { data: debitResult, error: debitErr } = await supabase.rpc('debit_cid_balance', {
+        p_user_id: auth.user.id,
+        p_amount: 1,
+      });
+      if (debitErr) {
+        console.error('[debit_cid_balance] error', debitErr);
+        return json({ ok: false, error: 'Failed to deduct credit. Please try again.' }, 500);
+      }
+      if (debitResult && typeof debitResult === 'object') {
+        const dr = debitResult as Record<string, unknown>;
+        if (dr.success === false) {
+          return json({ ok: false, error: String(dr.error || 'Insufficient balance'), balance: Number(dr.balance) || 0 }, 402);
         }
+        if ('balance' in dr) newBalance = Number(dr.balance) || 0;
       }
 
       // Log generation
@@ -339,7 +345,7 @@ Deno.serve(async (req) => {
         number: iid,
         result: { cid: cidValue, provider: usedProvider },
         status: 'success',
-        cost: isAdmin ? 0 : 1,
+        cost: 1,
       });
 
       return json({ ok: true, cid: cidValue, balance: newBalance });
