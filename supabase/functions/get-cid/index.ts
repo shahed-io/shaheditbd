@@ -22,8 +22,15 @@ async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; ci
     try { data = JSON.parse(text); } catch {
       return { ok: false, error: 'Invalid JSON from GetCID', raw: text };
     }
-    if (data['cid']) return { ok: true, cid: String(data['cid']) };
-    return { ok: false, error: (data['error'] as string) || 'No CID returned', raw: text };
+    // GetCID.app returns: { result: "...", confirmationid: "...", have_cid: 1|-1, pid, product_name }
+    const cidVal = data['confirmationid'] || data['cid'] || data['confirmation_id'];
+    const haveCid = data['have_cid'];
+    if (cidVal && String(cidVal).trim() && (haveCid === undefined || Number(haveCid) > 0)) {
+      return { ok: true, cid: String(cidVal).trim() };
+    }
+    const errMsg = (data['result'] as string) || (data['error'] as string) || (data['message'] as string) || 'No CID returned';
+    console.log(`[getcid] iid=${iid.slice(0,12)}... result=${errMsg} raw=${text.slice(0,200)}`);
+    return { ok: false, error: errMsg, raw: text };
   } catch (e) {
     return { ok: false, error: `GetCID network error: ${String(e)}` };
   }
