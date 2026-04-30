@@ -283,25 +283,21 @@ Deno.serve(async (req) => {
     if (action === 'user_getcid') {
       const auth = await authenticate();
       if ('error' in auth) return json({ ok: false, error: auth.error }, auth.status);
-      const isAdmin = auth.roles.includes('admin');
 
       if (!installation_id || String(installation_id).trim().length < 4) {
         return json({ ok: false, error: 'Installation ID too short' }, 400);
       }
       const iid = normalizeInstallationId(String(installation_id));
 
-      // Check CID balance (admins skip)
-      let currentBalance = 0;
-      if (!isAdmin) {
-        const { data: bal } = await supabase
-          .from('cid_balances')
-          .select('balance')
-          .eq('user_id', auth.user.id)
-          .maybeSingle();
-        currentBalance = bal?.balance ?? 0;
-        if (currentBalance < 1) {
-          return json({ ok: false, error: 'Insufficient CID credits. Please purchase more from the shop.', balance: currentBalance }, 402);
-        }
+      // Check CID balance — every account (including admin) must have credits
+      const { data: bal } = await supabase
+        .from('cid_balances')
+        .select('balance')
+        .eq('user_id', auth.user.id)
+        .maybeSingle();
+      const currentBalance = bal?.balance ?? 0;
+      if (currentBalance < 1) {
+        return json({ ok: false, error: 'Insufficient CID credits. Please purchase more from the shop.', balance: currentBalance }, 402);
       }
 
       // Try PRIMARY then BACKUP
