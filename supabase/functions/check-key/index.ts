@@ -82,18 +82,18 @@ Deno.serve(async (req) => {
       });
     }
 
-    const apiKey = Deno.env.get('GETCIDINFO_API_KEY');
-    if (!apiKey) {
+    const apiToken = Deno.env.get('GETCID_API_TOKEN');
+    if (!apiToken) {
       return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
         status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Call upstream — GetCIDinfo supports comma-separated keys
-    const url = `${CHECK_KEY_URL}?api_key=${encodeURIComponent(apiKey)}&keys=${encodeURIComponent(keys.join(','))}`;
+    // Call upstream — comma-separated keys
+    const url = `${CHECK_KEY_URL}?keys=${encodeURIComponent(keys.join(','))}&token=${encodeURIComponent(apiToken)}`;
     const upstream = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
     const text = await upstream.text();
-    console.log('[check-key] upstream status', upstream.status, 'body', text.slice(0, 300));
+    console.log('[check-key] upstream status', upstream.status, 'body', text.slice(0, 500));
 
     let parsed: any = null;
     try { parsed = JSON.parse(text); } catch {
@@ -102,26 +102,29 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (parsed?.status && parsed.status !== 'success') {
-      const errMsg = parsed?.message || parsed?.error || 'Service error';
+    if (!parsed?.success) {
+      const errMsg = parsed?.error || parsed?.message || 'Service error';
       return new Response(JSON.stringify({ error: typeof errMsg === 'string' ? errMsg : 'Service error' }), {
         status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Normalize results — GetCIDinfo response shape: { status, results: [{ key, description, sub_type, error_code }] }
-    const dataArr: any[] = Array.isArray(parsed?.results) ? parsed.results : [];
+    // Response shape: { success: true, data: [{ key, errorCode, prd, subType, actType, remaining, time }] }
+    const rawData = parsed?.data;
+    const dataArr: any[] = Array.isArray(rawData)
+      ? (Array.isArray(rawData[0]) ? rawData.flat() : rawData)
+      : [];
     const results = dataArr.map((item: any) => {
-      const errorCode = item?.error_code || item?.errorCode || null;
+      const errorCode = item?.errorCode || item?.error_code || null;
       const cls = classify(errorCode);
       return {
         key: item?.key ?? '',
         status: cls.status,
         meaning: cls.meaning,
         errorCode: errorCode,
-        product: item?.description || item?.prd || item?.product || null,
-        subType: item?.sub_type || item?.subType || null,
-        actType: item?.act_type || item?.actType || null,
+        product: item?.prd || item?.product || item?.description || null,
+        subType: item?.subType || item?.sub_type || null,
+        actType: item?.actType || item?.act_type || null,
         remaining: item?.remaining ?? null,
         time: item?.time ?? null,
       };
