@@ -49,6 +49,16 @@ interface AdjustmentLog {
   adjusted_by: string | null;
 }
 
+interface EmailLog {
+  id: string;
+  created_at: string;
+  template_name: string;
+  recipient_email: string;
+  status: string;
+  error_message: string | null;
+  message_id: string | null;
+}
+
 const PRESETS = [10, 25, 50, 100, 500];
 
 export default function AdminCidCredits() {
@@ -63,6 +73,7 @@ export default function AdminCidCredits() {
   const [historyUser, setHistoryUser] = useState<CidAccount | null>(null);
   const [history, setHistory] = useState<GenerationLog[]>([]);
   const [adjLog, setAdjLog] = useState<AdjustmentLog[]>([]);
+  const [emailLog, setEmailLog] = useState<EmailLog[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
   // Lookup-by-email panel
@@ -212,8 +223,9 @@ export default function AdminCidCredits() {
   const openHistory = async (acc: CidAccount) => {
     setHistoryUser(acc);
     setHistoryLoading(true);
+    setEmailLog([]);
     try {
-      const [genRes, adjRes] = await Promise.all([
+      const queries: Promise<any>[] = [
         supabase.from('cid_generations')
           .select('id, created_at, operator, number, status, cost')
           .eq('user_id', acc.user_id)
@@ -224,11 +236,25 @@ export default function AdminCidCredits() {
           .eq('user_id', acc.user_id)
           .order('created_at', { ascending: false })
           .limit(100),
-      ]);
+      ];
+      if (acc.email) {
+        queries.push(
+          supabase.from('email_send_log')
+            .select('id, created_at, template_name, recipient_email, status, error_message, message_id')
+            .eq('recipient_email', acc.email.toLowerCase())
+            .order('created_at', { ascending: false })
+            .limit(100),
+        );
+      }
+      const results = await Promise.all(queries);
+      const [genRes, adjRes, emailRes] = results;
       if (genRes.error) throw genRes.error;
       if (adjRes.error) throw adjRes.error;
       setHistory((genRes.data || []) as GenerationLog[]);
       setAdjLog((adjRes.data || []) as AdjustmentLog[]);
+      if (emailRes && !emailRes.error) {
+        setEmailLog((emailRes.data || []) as EmailLog[]);
+      }
     } catch (e: any) {
       toast.error(e.message || 'Failed to load history');
     } finally {
