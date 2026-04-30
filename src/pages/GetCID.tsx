@@ -239,8 +239,8 @@ const GetCID = () => {
                 <KeyRound size={22} className="text-white" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-black text-foreground">Microsoft Confirmation ID</h1>
-                <p className="text-sm text-muted-foreground">Activate Microsoft products via phone — instantly</p>
+                <h1 className="text-2xl md:text-3xl font-black text-foreground">Confirmation ID</h1>
+                <p className="text-sm text-muted-foreground">Activate via phone — instantly</p>
               </div>
             </div>
           </div>
