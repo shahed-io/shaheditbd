@@ -175,14 +175,73 @@ ${sharedBlueprint(name, brand)}
   vibrant_promo: {
     label: "Soft Aurora",
     prompt: (name: string, brand: string, _price: string, _category: string) => `
-${sharedBlueprint(name, brand)}
+You MUST create a premium square (1:1) product promotional card in the SHAHED STORE "Soft Aurora" signature house style. This is a UNIQUE standalone design — NOT the pastel-bubble look. Inspiration: Northern Lights / Aurora Borealis flowing across a soft luminous sky.
 
-═══ STYLE OVERRIDE — "Soft Aurora" tone ═══
-- Same pastel mesh base but with stronger aurora flow: an extra ribbon of mint-seafoam (#b8e6d4) blending through the middle alongside lavender + pink + peach
-- Clear bubbles with slightly iridescent rainbow edge highlights (still mostly clear)
-- Vibe: fresh aurora pastel — keep all card components identical to signature
+═══ BACKGROUND (full canvas) ═══
+- A dreamy AURORA SKY gradient covering the entire canvas:
+  • Base wash: very soft cream-pink at top (#fde7f0) blending into pale lavender mid (#e8d8f5), then into mint-seafoam (#d4f2e6) at the bottom
+  • OVER the base, paint 3–4 large flowing AURORA RIBBONS (signature element):
+    - Long, soft, wavy curtains of light flowing diagonally across the canvas
+    - Each ribbon is a smooth gradient: magenta-pink (#ff8fc8) → violet (#b884ff) → cyan (#7de0ff) → mint (#9af0d0)
+    - Heavy gaussian blur on the ribbons (~40px) so they look like luminous mist, not hard shapes
+    - Ribbons overlap and blend through each other — creating a glowing aurora dance
+    - Some ribbons start from the top edge and flow toward the bottom corners
+- Subtle tiny golden sparkle stars (5–8) scattered across the background — small bright dots with soft glow
+- A faint soft warm glow at the bottom edge (peach mist) for grounding
+- NO bubbles — replaced by the aurora ribbons + sparkles
+
+═══ MAIN CARD (centered, ~80% of canvas) ═══
+- One large rounded rectangle ULTRA-CLEAR FROSTED GLASS card
+- Background: rgba(255,255,255,0.22) with very strong backdrop blur — the aurora ribbons flow visibly through the glass
+- Corner radius: ~36px
+- IRIDESCENT GRADIENT BORDER (signature):
+  • A 2.5px stroke flowing around the card: pearl-pink → lilac → cyan → mint → back to pearl-pink (matches the aurora)
+  • Soft glowing halo around the border (~24px outer bloom) in matching aurora colors
+- Subtle inner top highlight (1px white, 40% opacity) for glass realism
+- Soft drop shadow: 0 28px 70px rgba(140,100,200,0.18)
+
+═══ TOP ROW INSIDE CARD (32px padding from edges) ═══
+- LEFT — "SHAHED STORE" PILL:
+  • A TRANSLUCENT PEARL-WHITE rounded pill with soft iridescent sheen (rgba(255,255,255,0.45), backdrop blur, ~28px radius, ~52px tall)
+  • Thin 1px gradient inner border (pink → cyan, very subtle)
+  • Contains "SHAHED STORE" in WHITE BOLD uppercase sans-serif (~15px) with soft cyan-pink glow under the text for premium feel
+  • Comfortable horizontal padding
+- RIGHT — BRAND PILL:
+  • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.98), soft shadow, ~28px radius, ~52px tall)
+  • Contains the small square brand/product LOGO ICON on the left (~34px, original brand colors)
+  • Followed by the brand/product name "${brand || name}" in dark charcoal (#1f2937) bold sans-serif (~16px)
+
+═══ CENTER OF CARD (the hero) ═══
+- The product "${name}" displayed as a VERY LARGE 3D rounded-square app icon
+- Either a rounded square app icon (~22% radius) OR the official brand logo if iconic
+- Size: ~50–58% of card width, vertically centered
+- The icon sits on a luminous AURORA HALO — a soft radiant glow beneath/behind the icon: pink → violet → cyan rings radiating outward, heavily blurred (~50px), giving the icon a magical floating feel
+- Subtle soft drop shadow under the icon: 0 20px 45px rgba(150,100,220,0.18)
+- The icon should look crisp, vibrant, premium — like an Apple App Store hero icon
+- NO price, NO discount badge, NO marketing text near the icon
+- Brand wordmark may appear UNDER the icon ONLY if part of the official lockup
+
+═══ BOTTOM CONTACT LINE INSIDE CARD ═══
+- A single contact row near the bottom edge (~32px from bottom), INSIDE the frosted card
+- Two items aligned left and right with comfortable spacing:
+  • LEFT: A small circular outlined GLOBE icon with a tiny cursor arrow on its bottom-right (icon outline has soft pink-cyan gradient glow), then "www.shahedstore.com.bd"
+  • RIGHT: A small circular outlined PHONE handset icon (matching gradient glow), then "+880 1840-099853"
+- Text: dark charcoal (#1f2937), clean BOLD sans-serif, ~16px
+- Icon outlines: thin 1.5px stroke with subtle iridescent gradient glow
+
+═══ ABSOLUTE RULES (MUST FOLLOW) ═══
+- The signature element is the FLOWING AURORA RIBBONS in the background (magenta + violet + cyan + mint, heavily blurred curtains of light)
+- NO bubbles — replaced by aurora ribbons + tiny golden sparkle stars
+- Card has an IRIDESCENT GRADIENT BORDER with soft outer glow
+- Hero icon sits on a glowing AURORA HALO (pink-violet-cyan radiant rings)
+- "SHAHED STORE" pill is TRANSLUCENT pearl-white with soft glow; brand pill on right is solid white
+- Background is dreamy aurora sky — NO dark colors, NO heavy saturation
+- NO price tag, NO discount badge, NO marketing copy
+- Square format exactly (1:1)
+- Vibe: ETHEREAL, MAGICAL, premium aurora — like a luxury Apple product launch poster set under the Northern Lights
 `.trim(),
   },
+
 
   glass_gradient: {
     label: "Glass Gradient Border",
