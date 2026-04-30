@@ -252,6 +252,12 @@ export default function AdminCidCredits() {
             total_added: r.total_added + (sign > 0 ? n : 0),
             total_used: r.total_used + (sign < 0 ? n : 0) }
         : r));
+      setAllUsers(prev => prev.map(r => r.user_id === editing.user_id
+        ? { ...r, balance: newBalance,
+            total_added: r.total_added + (sign > 0 ? n : 0),
+            total_used: r.total_used + (sign < 0 ? n : 0),
+            updated_at: new Date().toISOString() }
+        : r));
       setEditing(null);
       setDelta('');
       setNote('');
