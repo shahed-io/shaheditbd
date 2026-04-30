@@ -134,8 +134,11 @@ async function callGrahok(token: string, apiUrl: string, iid: string): Promise<{
   }
 }
 
-async function callGrahokBalance(token: string, balanceUrl: string): Promise<{ ok: boolean; balance?: number | null; raw?: string; error?: string; currency?: string }> {
-  // Try multiple URL variants — providers vary on parameter naming
+async function callGrahokBalance(rawToken: string, balanceUrl: string): Promise<{ ok: boolean; balance?: number | null; raw?: string; error?: string; currency?: string }> {
+  // Sanitize: strip whitespace, surrounding quotes, and accidental "Bearer " prefix
+  const token = rawToken.trim().replace(/^Bearer\s+/i, '').replace(/^['"]|['"]$/g, '').trim();
+
+  // Grahok strictly requires `?token=` — try it first, fall back to other names
   const variants = [
     `${balanceUrl}${balanceUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`,
     `${balanceUrl}${balanceUrl.includes('?') ? '&' : '?'}api_token=${encodeURIComponent(token)}`,
@@ -188,8 +191,13 @@ async function callGrahokBalance(token: string, balanceUrl: string): Promise<{ o
     return { value: null };
   };
 
+  if (!token) {
+    return { ok: false, balance: null, error: 'Backup token is empty after sanitization. Please re-enter GRAHOK_API_TOKEN.', raw: '' };
+  }
+
   let lastRaw = '';
-  let lastErr = '';
+  let bestErr = '';
+  let bestStatus = 0;
   for (const url of variants) {
     try {
       const res = await fetch(url, {
@@ -207,7 +215,12 @@ async function callGrahokBalance(token: string, balanceUrl: string): Promise<{ o
       if (data && typeof data === 'object') {
         const rec = data as Record<string, unknown>;
         if (rec.ok === false || rec.success === false || (typeof rec.error === 'string' && rec.error)) {
-          lastErr = String(rec.error || rec.message || `HTTP ${res.status}`);
+          const errMsg = String(rec.error || rec.message || `HTTP ${res.status}`);
+          // Prefer the more specific auth/format errors (401/403) over generic "missing param" (400)
+          if (!bestErr || (res.status > bestStatus && res.status !== 400) || (bestStatus === 400 && res.status !== 400)) {
+            bestErr = errMsg;
+            bestStatus = res.status;
+          }
           continue; // try next variant
         }
         const found = findBalance(data);
@@ -226,12 +239,12 @@ async function callGrahokBalance(token: string, balanceUrl: string): Promise<{ o
         const m = text.match(/([0-9]+(?:\.[0-9]+)?)/);
         if (m) return { ok: true, balance: parseFloat(m[1]), raw: text };
       }
-      lastErr = lastErr || `Could not parse balance (HTTP ${res.status})`;
+      if (!bestErr) bestErr = `Could not parse balance (HTTP ${res.status})`;
     } catch (e) {
-      lastErr = String(e);
+      if (!bestErr) bestErr = String(e);
     }
   }
-  return { ok: false, balance: null, error: lastErr || 'Unknown error', raw: lastRaw };
+  return { ok: false, balance: null, error: bestErr || 'Unknown error', raw: lastRaw };
 }
 
 Deno.serve(async (req) => {
