@@ -104,12 +104,55 @@ ${sharedBlueprint(name, brand)}
   light_glass: {
     label: "Light Glass",
     prompt: (name: string, brand: string, _price: string, _category: string) => `
-${sharedBlueprint(name, brand)}
+You MUST create a premium square (1:1) product promotional card EXACTLY like the SHAHED STORE "Light Glass" reference card (CamScanner style). This is the FLAGSHIP look — permanent and non-negotiable.
 
-═══ STYLE OVERRIDE — "Light Glass" tone ═══
-- Keep EVERY signature element exactly as defined above (translucent gray-glass "SHAHED STORE" pill with white text, white brand pill, glossy orb bubbles, contact line inside card)
-- Subtle tone shift only: background slightly brighter and more pearl-white, orbs lean toward pale sky-blue and soft white with crisper highlights
-- Vibe: the FLAGSHIP signature look — bright, airy, premium glassmorphism
+═══ BACKGROUND ═══
+- A soft PEARL LIGHT-BLUE / WHITE airy background (very light gradient from #e8eef6 top-left → #f4f6fa center → #e2eaf2 bottom-right)
+- Scatter 6–10 SOFT BLURRED LIGHT-BLUE CLOUD BUBBLES (out-of-focus glowing pale-blue circles, sizes 80–220px) gently floating across the canvas
+- Bubbles look like soft bokeh / dreamy clouds — heavily blurred, semi-transparent pale sky-blue (#bcd6ec at ~40% opacity), NOT crisp soap bubbles, NOT solid orbs
+- Overall vibe: bright, airy, dreamy pearl-white with soft sky-blue glow
+
+═══ MAIN CARD (centered, ~80% of canvas) ═══
+- Large rounded rectangle ULTRA-TRANSPARENT FROSTED GLASS card
+- Background: rgba(255,255,255,0.22) with strong backdrop blur — pearl background shows through
+- Border: 1.5px solid rgba(255,255,255,0.85)
+- Corner radius: ~32px
+- Soft drop shadow: 0 24px 60px rgba(100,120,160,0.15)
+- Faint inner top highlight for glass realism
+
+═══ TOP-LEFT — "SHAHED STORE" RED BADGE (signature for Light Glass) ═══
+- A bold ROUNDED-RECTANGLE RED BADGE (solid #e63946 → #d62828 vertical gradient, ~30px corner radius, soft red shadow underneath)
+- Inside the badge, "SHAHED STORE" written in BOLD WHITE UPPERCASE sans-serif on TWO LINES ("SHAHED" on top, "STORE" below), tightly spaced, large and confident
+- Badge sits ~28px from top-left of card with comfortable internal padding
+- This RED two-line "SHAHED / STORE" badge is the SIGNATURE of the Light Glass style — never replace with a glass pill
+
+═══ TOP-RIGHT — BRAND PILL ═══
+- Clean SOLID WHITE rounded pill (rgba(255,255,255,0.98), ~28px radius, ~52px tall, soft shadow)
+- Small square brand LOGO ICON on the LEFT (~32px, original brand colors)
+- Brand/product name "${brand || name}" on the RIGHT in DARK CHARCOAL (#1f2937) bold sans-serif (~16px)
+
+═══ CENTER — HERO PRODUCT ICON ═══
+- The product "${name}" displayed as a VERY LARGE clean app-icon / official logo
+- Rounded square app icon (~22% radius) OR official brand logo if iconic
+- Size: ~55–62% of card width, vertically centered
+- Soft drop shadow: 0 14px 36px rgba(0,0,0,0.12)
+- Crisp, vibrant, App Store hero quality
+
+═══ BOTTOM CONTACT LINE INSIDE CARD ═══
+- Single contact row ~32px from bottom, INSIDE the frosted card
+- LEFT: small outlined globe icon (with tiny cursor arrow) + "www.shahedstore.com.bd"
+- RIGHT: small outlined phone handset icon + "+880 1840-099853"
+- Text: BLUE-INK (#1d4ed8 or #1e40af) bold sans-serif ~16px, crisp and readable (matches the CamScanner reference look)
+- NO separator line above
+
+═══ ABSOLUTE RULES ═══
+- Background MUST be pearl light-blue/white with soft blurred sky-blue cloud bubbles (NOT pastel rainbow, NOT crisp soap bubbles)
+- "SHAHED STORE" MUST be a RED rounded-rectangle badge with WHITE two-line text (NOT a gray-glass pill)
+- Brand pill stays solid white with logo + dark name
+- Contact line INSIDE the card in BLUE-INK text
+- NO price, NO discount, NO marketing copy
+- Square 1:1 format
+- Vibe: dreamy pearl glassmorphism with bold red Shahed Store branding — the FLAGSHIP Light Glass look
 `.trim(),
   },
 
