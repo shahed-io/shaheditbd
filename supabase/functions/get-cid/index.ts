@@ -288,7 +288,7 @@ Deno.serve(async (req) => {
       if (!installation_id || String(installation_id).trim().length < 4) {
         return json({ ok: false, error: 'Installation ID too short' }, 400);
       }
-      const iid = String(installation_id).trim().replace(/\s+/g, ' ');
+      const iid = normalizeInstallationId(String(installation_id));
 
       // Check CID balance (admins skip)
       let currentBalance = 0;
@@ -390,7 +390,7 @@ Deno.serve(async (req) => {
           return json({ error: 'Installation ID too short' }, 400);
         }
         const provider = (body.provider as string) || 'auto';
-        const iid = String(installation_id).trim().replace(/\s+/g, ' ');
+        const iid = normalizeInstallationId(String(installation_id));
         const errors: Record<string, string> = {};
         let cidValue: string | null = null;
         let usedProvider = '';
@@ -422,7 +422,7 @@ Deno.serve(async (req) => {
         if (!installation_id || String(installation_id).trim().length < 4) {
           return json({ error: 'Installation ID too short' }, 400);
         }
-        const iid = String(installation_id).trim().replace(/\s+/g, ' ');
+        const iid = normalizeInstallationId(String(installation_id));
         const t1 = Date.now();
         const [getcidRes, grahokRes] = await Promise.all([
           GETCID_TOKEN ? callGetCID(GETCID_TOKEN, iid) : Promise.resolve({ ok: false, error: 'not configured' }),
@@ -451,7 +451,7 @@ Deno.serve(async (req) => {
         const provider = (body.provider as string) || 'auto';
         const results: Array<Record<string, unknown>> = [];
         for (const raw of iids) {
-          const iid = String(raw).trim().replace(/\s+/g, ' ');
+          const iid = normalizeInstallationId(String(raw));
           if (iid.length < 4) {
             results.push({ installation_id: iid, status: 'skipped', error: 'too short' });
             continue;
