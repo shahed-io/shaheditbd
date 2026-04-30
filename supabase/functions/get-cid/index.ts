@@ -288,16 +288,20 @@ Deno.serve(async (req) => {
       // Try PRIMARY then BACKUP
       let cidValue: string | null = null;
       let usedProvider = '';
+      const errs: string[] = [];
       if (GETCID_TOKEN) {
         const r = await callGetCID(GETCID_TOKEN, iid);
         if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'primary'; }
+        else if (r.error) errs.push(`primary: ${r.error}`);
       }
       if (!cidValue && GRAHOK_TOKEN) {
         const r = await callGrahok(GRAHOK_TOKEN, GRAHOK_URL, iid);
         if (r.ok && r.cid) { cidValue = r.cid; usedProvider = 'backup'; }
+        else if (r.error) errs.push(`backup: ${r.error}`);
       }
       if (!cidValue) {
-        return json({ ok: false, error: 'CID generation temporarily unavailable. Please try again.' }, 502);
+        const detail = errs.length ? ` (${errs.join(' | ')})` : '';
+        return json({ ok: false, error: `CID generation failed${detail}` }, 502);
       }
 
       // Debit 1 credit (admins skip) using RPC
