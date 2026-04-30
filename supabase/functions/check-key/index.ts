@@ -64,6 +64,14 @@ function getProviderData(parsed: any): { ok: boolean; data: any[]; message?: str
   };
 }
 
+function safeErrorMessage(error: unknown, secrets: Array<string | undefined> = []) {
+  let message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  for (const secret of secrets) {
+    if (secret) message = message.split(secret).join('[REDACTED]');
+  }
+  return message;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
@@ -109,7 +117,13 @@ Deno.serve(async (req) => {
 
     // Call upstream — comma-separated keys
     const url = `${CHECK_KEY_URL}?api_key=${encodeURIComponent(apiKey)}&keys=${encodeURIComponent(keys.join(','))}`;
-    const upstream = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
+    let upstream: Response;
+    try {
+      upstream = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } });
+    } catch (fetchError) {
+      console.error('[check-key] upstream fetch failed', safeErrorMessage(fetchError, [apiKey]));
+      return jsonResponse({ error: 'Key checking service is unreachable right now. Please try again later.', fallback: true }, 200);
+    }
     const text = await upstream.text();
     console.log('[check-key] upstream status', upstream.status, 'body', text.slice(0, 500));
 
@@ -178,7 +192,7 @@ Deno.serve(async (req) => {
 
     return jsonResponse({ success: true, results });
   } catch (e) {
-    console.error('[check-key] error', e);
+    console.error('[check-key] error', safeErrorMessage(e, [Deno.env.get('GETCIDINFO_API_KEY'), Deno.env.get('GETCID_API_TOKEN')]));
     return jsonResponse({ error: 'Check key service failed. Please try again later.', fallback: true }, 200);
   }
 });
