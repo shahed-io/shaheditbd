@@ -30,6 +30,51 @@ function readStringField(data: Record<string, unknown>, keys: string[]): string 
   return null;
 }
 
+// ─── Microsoft / Upstream error code mapper ─────────────────────────────
+// Detects Microsoft activation error codes (0xC004C***) and known upstream
+// failure patterns from raw provider responses, mapping them to clean
+// English user-facing messages (no provider names exposed).
+type MappedError = { code: string; message: string };
+function mapUpstreamError(rawText: string): MappedError | null {
+  if (!rawText) return null;
+  const text = String(rawText);
+  const lower = text.toLowerCase();
+
+  // 1) Explicit hex code (e.g. 0xC004C003)
+  const hexMatch = text.match(/0x[0-9A-Fa-f]{8}/);
+  const code = hexMatch ? '0x' + hexMatch[0].slice(2).toUpperCase() : '';
+
+  const codeMap: Record<string, string> = {
+    '0xC004C008': 'Get confirmation on: Confirmation ID',
+    '0xC004C020': 'Get your IID and set CID using CMD',
+    '0xC004C060': 'Key blocked',
+    '0xC004C003': 'Key blocked',
+    '0xC004C004': 'Fake or invalid key',
+  };
+
+  if (code && codeMap[code]) {
+    return { code, message: `Upstream error: ${codeMap[code]} (${code})` };
+  }
+
+  // 2) Pattern-based detection
+  if (/dead key|blocked|cannot be activated/i.test(lower)) {
+    return { code: code || '0xC004C003', message: `Upstream error: This product key is blocked (${code || '0xC004C003'})` };
+  }
+  if (/fake|invalid key/i.test(lower)) {
+    return { code: code || '0xC004C004', message: 'Upstream error: Fake or invalid key (0xC004C004)' };
+  }
+  if (/unsupported|not support/i.test(lower)) {
+    return { code: 'Unsupported', message: 'Unsupported: Contact us to add your key type to system' };
+  }
+  if (/invalid installation|iid invalid|installation id/i.test(lower)) {
+    return { code: 'IID_INVALID', message: 'Invalid Installation ID. Please re-check and try again.' };
+  }
+  if (code) {
+    return { code, message: `Upstream error: ${code}` };
+  }
+  return null;
+}
+
 // ─── Provider call: GetCID.app ─────────────────────────────────────────
 async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; cid?: string; error?: string; raw?: string }> {
   const normalizedIid = normalizeInstallationId(iid);
