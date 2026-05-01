@@ -424,6 +424,43 @@ const GetCID = () => {
                 <><KeyRound size={16} /> Get Confirmation ID</>
               )}
             </button>
+
+            {/* Inline error — appears just below the input/button */}
+            {inlineError && (
+              <div
+                className="mt-3 rounded-xl px-4 py-3 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-200"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(239,68,68,0.08), rgba(255,255,255,0.92))',
+                  border: '1px solid hsla(0,84%,60%,0.35)',
+                  boxShadow: '0 4px 16px hsla(0,84%,60%,0.12)',
+                }}
+                role="alert"
+              >
+                <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: 'hsl(0,84%,60%)' }}>
+                  <AlertTriangle size={14} className="text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-red-700 break-words">
+                    {inlineError.message}
+                  </div>
+                  {inlineError.code && (
+                    <div className="text-[11px] font-mono text-red-600/80 mt-0.5">
+                      Error code: {inlineError.code}
+                    </div>
+                  )}
+                  <div className="text-xs text-muted-foreground mt-1.5">
+                    📖 নিচের <span className="font-semibold text-foreground">Error Codes</span> সেকশন দেখুন বিস্তারিত জানতে।
+                  </div>
+                </div>
+                <button
+                  onClick={() => setInlineError(null)}
+                  className="flex-shrink-0 p-1 rounded-lg hover:bg-red-100 transition-colors"
+                  aria-label="Dismiss error"
+                >
+                  <X size={14} className="text-red-600" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Result */}
