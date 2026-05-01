@@ -48,6 +48,7 @@ const GetCID = () => {
 
   const [installationId, setInstallationId] = useState('');
   const [cidResult, setCidResult] = useState<string | null>(null);
+  const [inlineError, setInlineError] = useState<{ message: string; code?: string } | null>(null);
   const [generating, setGenerating] = useState(false);
   const [parsing, setParsing] = useState(false);
   const [elapsed, setElapsed] = useState(0);
