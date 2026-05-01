@@ -81,11 +81,17 @@ async function checkSingleKey(key: string, token: string): Promise<PidMSResult> 
     // PidMS json shape: { key, description, edition, error, time, remaining_count }
     const errorRaw: string | null = parsed?.error ?? null;
     const cls = classify(errorRaw);
+    // Sanitize: keep only the hex code, strip provider attribution like "[Get CID on getcid.xyz]"
+    let cleanErrorCode: string | null = null;
+    if (errorRaw) {
+      const m = errorRaw.match(/0x[0-9A-Fa-f]+/);
+      cleanErrorCode = m ? m[0].toUpperCase() : errorRaw.replace(/\s*\[.*?\]\s*/g, '').trim();
+    }
     return {
       key: parsed?.key || key,
       status: cls.status,
       meaning: cls.meaning,
-      errorCode: errorRaw,
+      errorCode: cleanErrorCode,
       product: parsed?.description ?? null,
       subType: parsed?.edition ?? null,
       actType: null,
