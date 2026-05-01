@@ -48,6 +48,7 @@ const GetCID = () => {
 
   const [installationId, setInstallationId] = useState('');
   const [cidResult, setCidResult] = useState<string | null>(null);
+  const [inlineError, setInlineError] = useState<{ message: string; code?: string } | null>(null);
   const [generating, setGenerating] = useState(false);
   const [parsing, setParsing] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -131,6 +132,7 @@ const GetCID = () => {
 
     setGenerating(true);
     setCidResult(null);
+    setInlineError(null);
     setElapsed(0);
     startTimeRef.current = Date.now();
 
@@ -153,10 +155,14 @@ const GetCID = () => {
         toast.success('Confirmation ID তৈরি হয়েছে! 🎉');
         fetchHistory();
       } else {
-        toast.error(data.error || 'CID তৈরি করা যায়নি');
+        // Show error inline (under the input) instead of a toast
+        setInlineError({
+          message: data.error || 'CID তৈরি করা যায়নি',
+          code: data.code,
+        });
       }
     } catch (e) {
-      toast.error(`Network error: ${String(e)}`);
+      setInlineError({ message: `Network error: ${String(e)}` });
     } finally {
       setGenerating(false);
     }
@@ -418,6 +424,43 @@ const GetCID = () => {
                 <><KeyRound size={16} /> Get Confirmation ID</>
               )}
             </button>
+
+            {/* Inline error — appears just below the input/button */}
+            {inlineError && (
+              <div
+                className="mt-3 rounded-xl px-4 py-3 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-200"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(239,68,68,0.08), rgba(255,255,255,0.92))',
+                  border: '1px solid hsla(0,84%,60%,0.35)',
+                  boxShadow: '0 4px 16px hsla(0,84%,60%,0.12)',
+                }}
+                role="alert"
+              >
+                <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: 'hsl(0,84%,60%)' }}>
+                  <AlertTriangle size={14} className="text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-red-700 break-words">
+                    {inlineError.message}
+                  </div>
+                  {inlineError.code && (
+                    <div className="text-[11px] font-mono text-red-600/80 mt-0.5">
+                      Error code: {inlineError.code}
+                    </div>
+                  )}
+                  <div className="text-xs text-muted-foreground mt-1.5">
+                    📖 নিচের <span className="font-semibold text-foreground">Error Codes</span> সেকশন দেখুন বিস্তারিত জানতে।
+                  </div>
+                </div>
+                <button
+                  onClick={() => setInlineError(null)}
+                  className="flex-shrink-0 p-1 rounded-lg hover:bg-red-100 transition-colors"
+                  aria-label="Dismiss error"
+                >
+                  <X size={14} className="text-red-600" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Result */}
