@@ -243,7 +243,7 @@ const CheckKey = () => {
                     href="/get-cid"
                     className="text-primary font-semibold underline underline-offset-2 hover:text-primary/80"
                   >
-                    Get CID
+                    Confirmation ID
                   </a>
                 </span>
               </div>
