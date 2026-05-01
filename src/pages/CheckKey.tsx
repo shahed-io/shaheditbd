@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   KeyRound, Loader2, CheckCircle2, XCircle, AlertCircle,
-  Sparkles, ShieldCheck, ChevronLeft, Copy, Search,
+  Sparkles, ShieldCheck, ChevronLeft, Copy, Search, History, Trash2,
 } from 'lucide-react';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
@@ -32,6 +32,51 @@ const CheckKey = () => {
   const [checking, setChecking] = useState(false);
   const [results, setResults] = useState<CheckResult[]>([]);
   const [showAuth, setShowAuth] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+
+  const loadHistory = useCallback(async () => {
+    if (!user) return;
+    setHistoryLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('key_check_history')
+        .select('id, key_value, status, error_code, product, sub_type, remaining, created_at')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      if (error) throw error;
+      const cleaned = (data ?? []).map((r: any) => ({
+        ...r,
+        error_code: r.error_code ? String(r.error_code).replace(/\s*\[.*?\]\s*/g, '').trim() : r.error_code,
+      }));
+      setHistory(cleaned);
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to load history');
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) loadHistory();
+  }, [user, loadHistory]);
+
+  const clearHistory = async () => {
+    if (!user) return;
+    if (!confirm('Clear all check history?')) return;
+    try {
+      const { error } = await supabase
+        .from('key_check_history')
+        .delete()
+        .eq('user_id', user.id);
+      if (error) throw error;
+      setHistory([]);
+      toast.success('History cleared');
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to clear history');
+    }
+  };
 
   const handleCheck = async () => {
     if (!keysInput.trim()) {
@@ -61,6 +106,7 @@ const CheckKey = () => {
       const live = out.filter(r => r.status === 'live').length;
       const dead = out.filter(r => r.status === 'dead').length;
       toast.success(`Checked ${out.length} key${out.length !== 1 ? 's' : ''} — ${live} live, ${dead} dead`);
+      loadHistory();
     } catch (e: any) {
       toast.error(e?.message || 'Check failed. Please try again.');
     } finally {
@@ -221,6 +267,83 @@ const CheckKey = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* History */}
+          {user && (
+            <div className="rounded-2xl p-5 mt-6" style={{
+              background: 'rgba(255,255,255,0.6)',
+              backdropFilter: 'blur(24px)',
+              border: '1px solid hsla(258,78%,75%,0.18)',
+            }}>
+              <div className="flex items-center justify-between mb-3">
+                <button
+                  onClick={() => setShowHistory(s => !s)}
+                  className="text-sm font-bold text-foreground flex items-center gap-2"
+                >
+                  <History size={14} className="text-primary" />
+                  Check History {history.length > 0 && <span className="text-xs text-muted-foreground font-normal">({history.length})</span>}
+                </button>
+                <div className="flex items-center gap-2">
+                  {showHistory && history.length > 0 && (
+                    <button
+                      onClick={clearHistory}
+                      className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 px-2 py-1 rounded-md hover:bg-red-50"
+                      title="Clear history"
+                    >
+                      <Trash2 size={12} /> Clear
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setShowHistory(s => !s)}
+                    className="text-xs text-primary font-semibold"
+                  >
+                    {showHistory ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+              </div>
+
+              {showHistory && (
+                <>
+                  {historyLoading ? (
+                    <div className="flex items-center justify-center py-6 text-muted-foreground text-sm">
+                      <Loader2 size={16} className="animate-spin mr-2" /> Loading…
+                    </div>
+                  ) : history.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No checks yet. Your past key checks will appear here.
+                    </p>
+                  ) : (
+                    <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
+                      {history.map((h) => (
+                        <div key={h.id} className="rounded-xl p-3 border border-border/60 bg-white/60">
+                          <div className="flex items-start justify-between gap-3 flex-wrap">
+                            <div className="min-w-0 flex-1">
+                              <p className="font-mono text-xs md:text-sm font-bold text-foreground break-all">{h.key_value}</p>
+                              <div className="flex flex-wrap gap-2 mt-1.5 text-[11px]">
+                                {h.product && <span className="px-2 py-0.5 rounded-md bg-muted/60 text-foreground">{h.product}</span>}
+                                {h.sub_type && <span className="px-2 py-0.5 rounded-md bg-muted/60 text-foreground">{h.sub_type}</span>}
+                                {h.remaining && <span className="px-2 py-0.5 rounded-md bg-muted/60 text-foreground">Remaining: {h.remaining}</span>}
+                                {h.error_code && <span className="px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground font-mono">{h.error_code}</span>}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground mt-1.5">
+                                {new Date(h.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              {statusBadge(h.status)}
+                              <button onClick={() => copyResult(h.key_value, h.status)} className="p-1.5 rounded-md hover:bg-muted/60" title="Copy">
+                                <Copy size={14} className="text-muted-foreground" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           )}
         </div>
