@@ -269,6 +269,83 @@ const CheckKey = () => {
               </div>
             </div>
           )}
+
+          {/* History */}
+          {user && (
+            <div className="rounded-2xl p-5 mt-6" style={{
+              background: 'rgba(255,255,255,0.6)',
+              backdropFilter: 'blur(24px)',
+              border: '1px solid hsla(258,78%,75%,0.18)',
+            }}>
+              <div className="flex items-center justify-between mb-3">
+                <button
+                  onClick={() => setShowHistory(s => !s)}
+                  className="text-sm font-bold text-foreground flex items-center gap-2"
+                >
+                  <History size={14} className="text-primary" />
+                  Check History {history.length > 0 && <span className="text-xs text-muted-foreground font-normal">({history.length})</span>}
+                </button>
+                <div className="flex items-center gap-2">
+                  {showHistory && history.length > 0 && (
+                    <button
+                      onClick={clearHistory}
+                      className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 px-2 py-1 rounded-md hover:bg-red-50"
+                      title="Clear history"
+                    >
+                      <Trash2 size={12} /> Clear
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setShowHistory(s => !s)}
+                    className="text-xs text-primary font-semibold"
+                  >
+                    {showHistory ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+              </div>
+
+              {showHistory && (
+                <>
+                  {historyLoading ? (
+                    <div className="flex items-center justify-center py-6 text-muted-foreground text-sm">
+                      <Loader2 size={16} className="animate-spin mr-2" /> Loading…
+                    </div>
+                  ) : history.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No checks yet. Your past key checks will appear here.
+                    </p>
+                  ) : (
+                    <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
+                      {history.map((h) => (
+                        <div key={h.id} className="rounded-xl p-3 border border-border/60 bg-white/60">
+                          <div className="flex items-start justify-between gap-3 flex-wrap">
+                            <div className="min-w-0 flex-1">
+                              <p className="font-mono text-xs md:text-sm font-bold text-foreground break-all">{h.key_value}</p>
+                              <div className="flex flex-wrap gap-2 mt-1.5 text-[11px]">
+                                {h.product && <span className="px-2 py-0.5 rounded-md bg-muted/60 text-foreground">{h.product}</span>}
+                                {h.sub_type && <span className="px-2 py-0.5 rounded-md bg-muted/60 text-foreground">{h.sub_type}</span>}
+                                {h.remaining && <span className="px-2 py-0.5 rounded-md bg-muted/60 text-foreground">Remaining: {h.remaining}</span>}
+                                {h.error_code && <span className="px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground font-mono">{h.error_code}</span>}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground mt-1.5">
+                                {new Date(h.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              {statusBadge(h.status)}
+                              <button onClick={() => copyResult(h.key_value, h.status)} className="p-1.5 rounded-md hover:bg-muted/60" title="Copy">
+                                <Copy size={14} className="text-muted-foreground" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
       <Footer />
