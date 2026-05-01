@@ -327,11 +327,6 @@ const WhyChooseUs = () => {
           </div>
         </div>
 
-        {/* ══ STATS ══ */}
-        <div ref={statsRef}>
-          <StatsBar stats={STATS} visible={statsVisible} />
-        </div>
-
       </div>
     </section>
   );
