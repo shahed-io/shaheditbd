@@ -1284,6 +1284,30 @@ export type Database = {
         }
         Relationships: []
       }
+      office365_check_history: {
+        Row: {
+          checked_at: string
+          id: string
+          status_acc: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          checked_at?: string
+          id?: string
+          status_acc: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          checked_at?: string
+          id?: string
+          status_acc?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
