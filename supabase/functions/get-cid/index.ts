@@ -434,8 +434,27 @@ Deno.serve(async (req) => {
       }
 
       if (!cidValue) {
-        const detail = errs.length ? ` (${errs.join(' | ')})` : '';
-        return json({ ok: false, error: `CID generation failed${detail}` }, 502);
+        const isAdmin = auth.roles?.includes('admin');
+        // Log full provider details for debugging (admin-side / server logs)
+        console.log(`[user_getcid] failed for user=${auth.user.id} iid=${iid.slice(0,12)}... errs=${errs.join(' | ')}`);
+
+        if (isAdmin) {
+          const detail = errs.length ? ` (${errs.join(' | ')})` : '';
+          return json({ ok: false, error: `CID generation failed${detail}`, debug: errs }, 502);
+        }
+
+        // For regular users — friendly generic message, no provider names / internals
+        // Try to detect known cases (dead key / blocked) to give a helpful hint
+        const joined = errs.join(' ').toLowerCase();
+        let userMsg = 'এই Installation ID দিয়ে এখন Confirmation ID তৈরি করা যাচ্ছে না। অনুগ্রহ করে ID টি ঠিক আছে কিনা দেখে আবার চেষ্টা করুন।';
+        if (joined.includes('dead key') || joined.includes('blocked') || joined.includes('cannot be activated')) {
+          userMsg = 'দুঃখিত, এই Key/Installation ID টি Microsoft এর পক্ষ থেকে ব্লক করা হয়েছে এবং activate করা যাবে না। অনুগ্রহ করে নতুন একটি valid key ব্যবহার করুন।';
+        } else if (joined.includes('invalid') || joined.includes('not valid')) {
+          userMsg = 'Installation ID টি সঠিক নয়। অনুগ্রহ করে ID টি আবার দেখে নিন এবং সঠিকভাবে enter করুন।';
+        } else if (joined.includes('timeout') || joined.includes('network')) {
+          userMsg = 'সার্ভারে সংযোগ সমস্যা হচ্ছে। কিছুক্ষণ পর আবার চেষ্টা করুন।';
+        }
+        return json({ ok: false, error: userMsg }, 502);
       }
 
       // Debit 1 credit via RPC (atomic, race-safe)
