@@ -43,6 +43,7 @@ const CheckKey = () => {
       const { data, error } = await supabase
         .from('key_check_history')
         .select('id, key_value, status, error_code, product, sub_type, remaining, created_at')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(100);
       if (error) throw error;
