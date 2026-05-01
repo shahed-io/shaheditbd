@@ -498,8 +498,15 @@ Deno.serve(async (req) => {
         }
 
         // Regular users — show clean upstream error if detected, else generic
+        // Sanitize: never leak provider names, internal labels, URLs, or tokens
+        const sanitize = (s: string) => s
+          .replace(/getcid|grahok|primary|backup|provider|api[_-]?token|endpoint/gi, '')
+          .replace(/https?:\/\/\S+/gi, '')
+          .replace(/\s{2,}/g, ' ')
+          .trim();
+
         if (mapped) {
-          return json({ ok: false, error: mapped.message, code: mapped.code }, 502);
+          return json({ ok: false, error: sanitize(mapped.message), code: mapped.code }, 502);
         }
 
         const lower = joined.toLowerCase();

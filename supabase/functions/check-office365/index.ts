@@ -136,7 +136,7 @@ Deno.serve(async (req) => {
             username: a.username,
             status_acc: 'network_error',
             category: 'unknown',
-            meaning: 'Provider unreachable or temporarily blocked. Please try again in a moment.',
+            meaning: 'Service temporarily unavailable. Please try again in a moment.',
           });
         }
       }

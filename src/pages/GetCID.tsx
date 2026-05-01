@@ -16,7 +16,7 @@ interface Generation {
   id: string;
   number: string | null;
   operator_name: string | null;
-  result: { cid?: string; provider?: string } | null;
+  result: { cid?: string } | null;
   status: string;
   cost: number;
   created_at: string;
