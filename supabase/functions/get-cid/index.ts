@@ -480,23 +480,31 @@ Deno.serve(async (req) => {
 
       if (!cidValue) {
         const isAdmin = auth.roles?.includes('admin');
-        // Log full provider details for debugging (admin-side / server logs)
-        console.log(`[user_getcid] failed for user=${auth.user.id} iid=${iid.slice(0,12)}... errs=${errs.join(' | ')}`);
+        const joined = errs.join(' ');
+        // Log full provider details for admin / server logs
+        console.log(`[user_getcid] failed for user=${auth.user.id} iid=${iid.slice(0,12)}... errs=${joined}`);
+
+        // Try to detect a Microsoft / upstream error code from any provider response
+        const mapped = mapUpstreamError(joined);
 
         if (isAdmin) {
-          const detail = errs.length ? ` (${errs.join(' | ')})` : '';
-          return json({ ok: false, error: `CID generation failed${detail}`, debug: errs }, 502);
+          const detail = errs.length ? ` (${joined})` : '';
+          return json({
+            ok: false,
+            error: mapped ? mapped.message : `CID generation failed${detail}`,
+            code: mapped?.code,
+            debug: errs,
+          }, 502);
         }
 
-        // For regular users — friendly generic message, no provider names / internals
-        // Try to detect known cases (dead key / blocked) to give a helpful hint
-        const joined = errs.join(' ').toLowerCase();
+        // Regular users — show clean upstream error if detected, else generic
+        if (mapped) {
+          return json({ ok: false, error: mapped.message, code: mapped.code }, 502);
+        }
+
+        const lower = joined.toLowerCase();
         let userMsg = 'এই Installation ID দিয়ে এখন Confirmation ID তৈরি করা যাচ্ছে না। অনুগ্রহ করে ID টি ঠিক আছে কিনা দেখে আবার চেষ্টা করুন।';
-        if (joined.includes('dead key') || joined.includes('blocked') || joined.includes('cannot be activated')) {
-          userMsg = 'দুঃখিত, এই Key/Installation ID টি Microsoft এর পক্ষ থেকে ব্লক করা হয়েছে এবং activate করা যাবে না। অনুগ্রহ করে নতুন একটি valid key ব্যবহার করুন।';
-        } else if (joined.includes('invalid') || joined.includes('not valid')) {
-          userMsg = 'Installation ID টি সঠিক নয়। অনুগ্রহ করে ID টি আবার দেখে নিন এবং সঠিকভাবে enter করুন।';
-        } else if (joined.includes('timeout') || joined.includes('network')) {
+        if (lower.includes('timeout') || lower.includes('network')) {
           userMsg = 'সার্ভারে সংযোগ সমস্যা হচ্ছে। কিছুক্ষণ পর আবার চেষ্টা করুন।';
         }
         return json({ ok: false, error: userMsg }, 502);
