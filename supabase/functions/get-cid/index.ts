@@ -30,6 +30,51 @@ function readStringField(data: Record<string, unknown>, keys: string[]): string 
   return null;
 }
 
+// ─── Microsoft / Upstream error code mapper ─────────────────────────────
+// Detects Microsoft activation error codes (0xC004C***) and known upstream
+// failure patterns from raw provider responses, mapping them to clean
+// English user-facing messages (no provider names exposed).
+type MappedError = { code: string; message: string };
+function mapUpstreamError(rawText: string): MappedError | null {
+  if (!rawText) return null;
+  const text = String(rawText);
+  const lower = text.toLowerCase();
+
+  // 1) Explicit hex code (e.g. 0xC004C003)
+  const hexMatch = text.match(/0x[0-9A-Fa-f]{8}/);
+  const code = hexMatch ? '0x' + hexMatch[0].slice(2).toUpperCase() : '';
+
+  const codeMap: Record<string, string> = {
+    '0xC004C008': 'Get confirmation on: Confirmation ID',
+    '0xC004C020': 'Get your IID and set CID using CMD',
+    '0xC004C060': 'Key blocked',
+    '0xC004C003': 'Key blocked',
+    '0xC004C004': 'Fake or invalid key',
+  };
+
+  if (code && codeMap[code]) {
+    return { code, message: `Upstream error: ${codeMap[code]} (${code})` };
+  }
+
+  // 2) Pattern-based detection
+  if (/dead key|blocked|cannot be activated/i.test(lower)) {
+    return { code: code || '0xC004C003', message: `Upstream error: This product key is blocked (${code || '0xC004C003'})` };
+  }
+  if (/fake|invalid key/i.test(lower)) {
+    return { code: code || '0xC004C004', message: 'Upstream error: Fake or invalid key (0xC004C004)' };
+  }
+  if (/unsupported|not support/i.test(lower)) {
+    return { code: 'Unsupported', message: 'Unsupported: Contact us to add your key type to system' };
+  }
+  if (/invalid installation|iid invalid|installation id/i.test(lower)) {
+    return { code: 'IID_INVALID', message: 'Invalid Installation ID. Please re-check and try again.' };
+  }
+  if (code) {
+    return { code, message: `Upstream error: ${code}` };
+  }
+  return null;
+}
+
 // ─── Provider call: GetCID.app ─────────────────────────────────────────
 async function callGetCID(token: string, iid: string): Promise<{ ok: boolean; cid?: string; error?: string; raw?: string }> {
   const normalizedIid = normalizeInstallationId(iid);
@@ -435,23 +480,31 @@ Deno.serve(async (req) => {
 
       if (!cidValue) {
         const isAdmin = auth.roles?.includes('admin');
-        // Log full provider details for debugging (admin-side / server logs)
-        console.log(`[user_getcid] failed for user=${auth.user.id} iid=${iid.slice(0,12)}... errs=${errs.join(' | ')}`);
+        const joined = errs.join(' ');
+        // Log full provider details for admin / server logs
+        console.log(`[user_getcid] failed for user=${auth.user.id} iid=${iid.slice(0,12)}... errs=${joined}`);
+
+        // Try to detect a Microsoft / upstream error code from any provider response
+        const mapped = mapUpstreamError(joined);
 
         if (isAdmin) {
-          const detail = errs.length ? ` (${errs.join(' | ')})` : '';
-          return json({ ok: false, error: `CID generation failed${detail}`, debug: errs }, 502);
+          const detail = errs.length ? ` (${joined})` : '';
+          return json({
+            ok: false,
+            error: mapped ? mapped.message : `CID generation failed${detail}`,
+            code: mapped?.code,
+            debug: errs,
+          }, 502);
         }
 
-        // For regular users — friendly generic message, no provider names / internals
-        // Try to detect known cases (dead key / blocked) to give a helpful hint
-        const joined = errs.join(' ').toLowerCase();
+        // Regular users — show clean upstream error if detected, else generic
+        if (mapped) {
+          return json({ ok: false, error: mapped.message, code: mapped.code }, 502);
+        }
+
+        const lower = joined.toLowerCase();
         let userMsg = 'এই Installation ID দিয়ে এখন Confirmation ID তৈরি করা যাচ্ছে না। অনুগ্রহ করে ID টি ঠিক আছে কিনা দেখে আবার চেষ্টা করুন।';
-        if (joined.includes('dead key') || joined.includes('blocked') || joined.includes('cannot be activated')) {
-          userMsg = 'দুঃখিত, এই Key/Installation ID টি Microsoft এর পক্ষ থেকে ব্লক করা হয়েছে এবং activate করা যাবে না। অনুগ্রহ করে নতুন একটি valid key ব্যবহার করুন।';
-        } else if (joined.includes('invalid') || joined.includes('not valid')) {
-          userMsg = 'Installation ID টি সঠিক নয়। অনুগ্রহ করে ID টি আবার দেখে নিন এবং সঠিকভাবে enter করুন।';
-        } else if (joined.includes('timeout') || joined.includes('network')) {
+        if (lower.includes('timeout') || lower.includes('network')) {
           userMsg = 'সার্ভারে সংযোগ সমস্যা হচ্ছে। কিছুক্ষণ পর আবার চেষ্টা করুন।';
         }
         return json({ ok: false, error: userMsg }, 502);
