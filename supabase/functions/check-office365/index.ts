@@ -29,8 +29,13 @@ interface CheckResult {
 
 function classify(status: string): { category: CheckResult['category']; meaning: string } {
   const s = (status || '').toLowerCase();
-  if (s === 'success' || s === 'valid') {
-    return { category: 'success', meaning: 'Valid — login successful' };
+  if (s === 'success' || s === 'valid' || s === 'need_update_password') {
+    return {
+      category: 'success',
+      meaning: s === 'need_update_password'
+        ? 'Valid — login successful (password change required at next login)'
+        : 'Valid — login successful',
+    };
   }
   if (s.includes('more_information_required') || s.includes('mfa') || s.includes('interaction_required')) {
     return { category: 'mfa', meaning: 'Valid — MFA / extra verification required' };
@@ -71,10 +76,12 @@ async function callProvider(chunk: { username: string; password: string }[]): Pr
     try { parsed = JSON.parse(text); } catch {
       throw new Error('Provider returned invalid JSON');
     }
-    // Expected: { status: 'Success', res: [{ userName, password, status_acc }, ...] }
-    if (parsed?.res && Array.isArray(parsed.res)) return parsed.res;
+    // Provider response shape: { Status: 'Success', Result: [{ userName, password, status_acc, ... }] }
+    // Accept both capitalized and lowercase keys for robustness.
+    const list = parsed?.Result ?? parsed?.result ?? parsed?.res ?? parsed?.data;
+    if (Array.isArray(list)) return list;
     if (Array.isArray(parsed)) return parsed;
-    throw new Error(parsed?.message || 'Provider returned no results');
+    throw new Error(parsed?.message || parsed?.Message || 'Provider returned no results');
   } finally {
     clearTimeout(timer);
   }
