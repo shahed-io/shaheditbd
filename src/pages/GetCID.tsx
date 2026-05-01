@@ -132,6 +132,7 @@ const GetCID = () => {
 
     setGenerating(true);
     setCidResult(null);
+    setInlineError(null);
     setElapsed(0);
     startTimeRef.current = Date.now();
 
@@ -154,10 +155,14 @@ const GetCID = () => {
         toast.success('Confirmation ID তৈরি হয়েছে! 🎉');
         fetchHistory();
       } else {
-        toast.error(data.error || 'CID তৈরি করা যায়নি');
+        // Show error inline (under the input) instead of a toast
+        setInlineError({
+          message: data.error || 'CID তৈরি করা যায়নি',
+          code: data.code,
+        });
       }
     } catch (e) {
-      toast.error(`Network error: ${String(e)}`);
+      setInlineError({ message: `Network error: ${String(e)}` });
     } finally {
       setGenerating(false);
     }
