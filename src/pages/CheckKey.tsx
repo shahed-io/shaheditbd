@@ -106,6 +106,7 @@ const CheckKey = () => {
       const live = out.filter(r => r.status === 'live').length;
       const dead = out.filter(r => r.status === 'dead').length;
       toast.success(`Checked ${out.length} key${out.length !== 1 ? 's' : ''} — ${live} live, ${dead} dead`);
+      loadHistory();
     } catch (e: any) {
       toast.error(e?.message || 'Check failed. Please try again.');
     } finally {
