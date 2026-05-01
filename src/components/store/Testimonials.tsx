@@ -212,7 +212,7 @@ const Testimonials = () => {
 
   const statsData = [
     { value: avgRating, label: 'গড় রেটিং', suffix: '★', from: 'hsl(38,100%,52%)', to: 'hsl(50,100%,50%)' },
-    { value: '2,500+', label: 'সন্তুষ্ট গ্রাহক', suffix: '', from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
+    { value: '12,000+', label: 'সন্তুষ্ট গ্রাহক', suffix: '', from: 'hsl(243,75%,59%)', to: 'hsl(263,70%,62%)' },
     { value: '99%',    label: 'পজিটিভ রিভিউ', suffix: '', from: 'hsl(158,64%,40%)', to: 'hsl(180,70%,42%)' },
   ];
 
