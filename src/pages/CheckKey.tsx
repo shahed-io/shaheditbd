@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   KeyRound, Loader2, CheckCircle2, XCircle, AlertCircle,
-  Sparkles, ShieldCheck, ChevronLeft, Copy, Search,
+  Sparkles, ShieldCheck, ChevronLeft, Copy, Search, History, Trash2,
 } from 'lucide-react';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
