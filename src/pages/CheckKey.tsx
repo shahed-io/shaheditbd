@@ -226,6 +226,50 @@ const CheckKey = () => {
             </button>
           </div>
 
+          {/* Error Codes Legend */}
+          <div className="rounded-2xl p-5 mb-6" style={{
+            background: 'rgba(255,255,255,0.6)',
+            backdropFilter: 'blur(24px)',
+            border: '1px solid hsla(258,78%,75%,0.18)',
+          }}>
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+              <AlertCircle size={14} className="text-primary" /> Error Codes
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+              <div>
+                <span className="font-mono font-bold text-emerald-600">0xC004C008</span>
+                <span className="text-muted-foreground">: Get confirmation on:{' '}
+                  <a
+                    href="/get-cid"
+                    className="text-primary font-semibold underline underline-offset-2 hover:text-primary/80"
+                  >
+                    Get CID
+                  </a>
+                </span>
+              </div>
+              <div>
+                <span className="font-mono font-bold text-red-600">0xC004C060</span>
+                <span className="text-muted-foreground">: Key blocked</span>
+              </div>
+              <div>
+                <span className="font-mono font-bold text-sky-600">0xC004C020</span>
+                <span className="text-muted-foreground">: Get your IID and set CID using CMD</span>
+              </div>
+              <div>
+                <span className="font-mono font-bold text-red-600">0xC004C003</span>
+                <span className="text-muted-foreground">: Key blocked</span>
+              </div>
+              <div>
+                <span className="font-bold text-foreground">Unsupported</span>
+                <span className="text-muted-foreground">: Contact us to add your key type to system</span>
+              </div>
+              <div>
+                <span className="font-mono font-bold text-red-600">0xC004C004</span>
+                <span className="text-muted-foreground">: Fake or invalid key</span>
+              </div>
+            </div>
+          </div>
+
           {/* Results */}
           {results.length > 0 && (
             <div className="rounded-2xl p-5" style={{
