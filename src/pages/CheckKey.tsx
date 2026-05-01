@@ -32,6 +32,51 @@ const CheckKey = () => {
   const [checking, setChecking] = useState(false);
   const [results, setResults] = useState<CheckResult[]>([]);
   const [showAuth, setShowAuth] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+
+  const loadHistory = useCallback(async () => {
+    if (!user) return;
+    setHistoryLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('key_check_history')
+        .select('id, key_value, status, error_code, product, sub_type, remaining, created_at')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      if (error) throw error;
+      const cleaned = (data ?? []).map((r: any) => ({
+        ...r,
+        error_code: r.error_code ? String(r.error_code).replace(/\s*\[.*?\]\s*/g, '').trim() : r.error_code,
+      }));
+      setHistory(cleaned);
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to load history');
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) loadHistory();
+  }, [user, loadHistory]);
+
+  const clearHistory = async () => {
+    if (!user) return;
+    if (!confirm('Clear all check history?')) return;
+    try {
+      const { error } = await supabase
+        .from('key_check_history')
+        .delete()
+        .eq('user_id', user.id);
+      if (error) throw error;
+      setHistory([]);
+      toast.success('History cleared');
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to clear history');
+    }
+  };
 
   const handleCheck = async () => {
     if (!keysInput.trim()) {
