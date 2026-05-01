@@ -307,7 +307,46 @@ const GetCID = () => {
             </p>
           </div>
 
+          {/* Error Codes legend */}
+          <div className="rounded-2xl p-5 mb-6" style={{
+            background: 'rgba(255,255,255,0.6)',
+            backdropFilter: 'blur(24px)',
+            border: '1px solid hsla(258,78%,75%,0.18)',
+          }}>
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+              <ShieldCheck size={14} className="text-primary" /> Error Codes
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <code className="font-mono font-bold text-foreground">0xC004C008</code>
+                <span className="text-muted-foreground">: Get confirmation on:</span>
+                <span className="text-primary font-semibold underline">Confirmation ID</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <code className="font-mono font-bold text-red-600">0xC004C060</code>
+                <span className="text-muted-foreground">: Key blocked</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <code className="font-mono font-bold text-blue-600">0xC004C020</code>
+                <span className="text-muted-foreground">: Get your IID and set CID using CMD</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <code className="font-mono font-bold text-red-600">0xC004C003</code>
+                <span className="text-muted-foreground">: Key blocked</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="font-bold text-foreground">Unsupported</span>
+                <span className="text-muted-foreground">: Contact us to add your key type to system</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <code className="font-mono font-bold text-red-600">0xC004C004</code>
+                <span className="text-muted-foreground">: Fake or invalid key</span>
+              </div>
+            </div>
+          </div>
+
           {/* Main form */}
+
           <div className="rounded-2xl p-5 md:p-6 mb-6" style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.78))',
             backdropFilter: 'blur(32px) saturate(200%)',
