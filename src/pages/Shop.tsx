@@ -242,57 +242,115 @@ const Shop = () => {
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Sidebar — horizontal scroll on tablet, vertical on desktop */}
-          <aside className="w-full lg:w-56 flex-shrink-0">
-            <div className="rounded-2xl border p-3 lg:p-4 lg:sticky lg:top-24"
-              style={{ background: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }}>
-              <div className="font-bold text-xs text-muted-foreground mb-3 uppercase tracking-widest hidden lg:block">ক্যাটাগরি</div>
-              {/* Horizontal scroll for tablet/mobile, vertical for desktop */}
-              <div className="flex lg:flex-col gap-2 lg:gap-0 overflow-x-auto lg:overflow-visible scrollbar-hide -mx-1 px-1 lg:mx-0 lg:px-0">
-                <button onClick={() => setCategory('')}
-                  className="flex-shrink-0 lg:flex-shrink flex items-center gap-2 px-3 py-2 lg:py-2.5 rounded-xl text-sm font-semibold lg:mb-1 transition-all text-left whitespace-nowrap"
-                  style={{
-                    background: !activeCatSlug ? 'hsla(258,78%,55%,0.12)' : 'transparent',
-                    color: !activeCatSlug ? 'hsl(258,78%,50%)' : 'hsl(var(--muted-foreground))',
-                    border: !activeCatSlug ? '1px solid hsla(258,78%,55%,0.30)' : '1px solid hsl(var(--border))',
-                  }}>
-                  🛒 <span>সব</span>
-                </button>
-                {categories.map(cat => {
-                  const meta = CAT_META[cat.name] || CAT_META.default;
-                  const isActive = activeCatSlug === cat.slug;
-                  const imgSrc = cat.image_url
-                    ? `${cat.image_url.split('?')[0]}?v=${imgVersion}`
-                    : null;
-                  return (
-                    <button key={cat.id} onClick={() => setCategory(cat.slug)}
-                      className="flex-shrink-0 lg:flex-shrink w-auto lg:w-full flex items-center gap-2 lg:gap-2.5 px-3 py-2 lg:py-2.5 rounded-xl text-sm font-semibold lg:mb-1 transition-all text-left whitespace-nowrap"
+          <aside className="w-full lg:w-64 flex-shrink-0">
+            <div className="relative rounded-3xl p-4 lg:p-5 lg:sticky lg:top-24 overflow-hidden"
+              style={{
+                background: 'linear-gradient(140deg, hsla(0,0%,100%,0.78), hsla(258,60%,98%,0.65))',
+                backdropFilter: 'blur(28px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                border: '1px solid hsla(0,0%,100%,0.7)',
+                boxShadow: '0 12px 40px hsla(258,60%,40%,0.10), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+              }}>
+              {/* Ambient blobs */}
+              <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full pointer-events-none"
+                style={{ background: 'radial-gradient(circle, hsla(258,90%,66%,0.18), transparent 70%)', filter: 'blur(40px)' }} />
+              <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full pointer-events-none"
+                style={{ background: 'radial-gradient(circle, hsla(199,89%,60%,0.15), transparent 70%)', filter: 'blur(40px)' }} />
+
+              <div className="relative">
+                <div className="hidden lg:flex items-center gap-2 mb-4 px-1">
+                  <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(258,90%,66%), hsl(199,89%,60%))' }} />
+                  <div className="font-bold text-[11px] text-foreground uppercase tracking-[0.18em]">ক্যাটাগরি</div>
+                </div>
+
+                <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible scrollbar-hide -mx-1 px-1 lg:mx-0 lg:px-0">
+                  <button onClick={() => setCategory('')}
+                    className="group relative flex-shrink-0 lg:flex-shrink flex items-center gap-2.5 px-3 py-2.5 lg:py-3 rounded-2xl text-sm font-semibold transition-all duration-300 text-left whitespace-nowrap hover:-translate-y-0.5 overflow-hidden"
+                    style={{
+                      background: !activeCatSlug
+                        ? 'linear-gradient(135deg, hsla(258,90%,66%,0.18), hsla(199,89%,60%,0.14))'
+                        : 'hsla(0,0%,100%,0.55)',
+                      color: !activeCatSlug ? 'hsl(258,78%,42%)' : 'hsl(var(--foreground))',
+                      border: !activeCatSlug
+                        ? '1.5px solid hsla(258,90%,66%,0.45)'
+                        : '1px solid hsla(258,40%,80%,0.25)',
+                      boxShadow: !activeCatSlug
+                        ? '0 6px 18px hsla(258,90%,66%,0.20), inset 0 1px 0 hsla(0,0%,100%,0.7)'
+                        : '0 2px 8px hsla(258,40%,40%,0.04)',
+                    }}>
+                    {!activeCatSlug && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full"
+                        style={{ background: 'linear-gradient(180deg, hsl(258,90%,66%), hsl(199,89%,60%))' }} />
+                    )}
+                    <span className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 text-base"
                       style={{
-                        background: isActive ? `${meta.accent}18` : 'transparent',
-                        color: isActive ? meta.accent : 'hsl(var(--muted-foreground))',
-                        border: isActive ? `1px solid ${meta.accent}40` : '1px solid hsl(var(--border))',
+                        background: !activeCatSlug
+                          ? 'linear-gradient(135deg, hsl(258,90%,66%), hsl(199,89%,60%))'
+                          : 'hsla(258,30%,90%,0.6)',
+                        boxShadow: !activeCatSlug ? '0 4px 12px hsla(258,90%,66%,0.35)' : 'none',
                       }}>
-                      <span className="w-6 h-6 lg:w-7 lg:h-7 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden text-base lg:text-lg"
-                        style={{ background: isActive ? `${meta.accent}18` : 'hsla(258,78%,55%,0.06)' }}>
-                        {imgSrc
-                          ? <img
-                              key={imgSrc}
-                              src={imgSrc}
-                              alt={cat.name}
-                              className="w-full h-full object-cover"
-                              onError={e => {
-                                const img = e.currentTarget as HTMLImageElement;
-                                img.style.display = 'none';
-                                const parent = img.parentElement;
-                                if (parent) parent.textContent = meta.icon;
-                              }}
-                            />
-                          : meta.icon
-                        }
-                      </span>
-                      <span>{cat.name}</span>
-                    </button>
-                  );
-                })}
+                      <span style={{ filter: !activeCatSlug ? 'grayscale(0)' : 'none' }}>🛒</span>
+                    </span>
+                    <span>সব</span>
+                  </button>
+
+                  {categories.map(cat => {
+                    const meta = CAT_META[cat.name] || CAT_META.default;
+                    const isActive = activeCatSlug === cat.slug;
+                    const imgSrc = cat.image_url
+                      ? `${cat.image_url.split('?')[0]}?v=${imgVersion}`
+                      : null;
+                    return (
+                      <button key={cat.id} onClick={() => setCategory(cat.slug)}
+                        className="group relative flex-shrink-0 lg:flex-shrink w-auto lg:w-full flex items-center gap-2.5 px-3 py-2.5 lg:py-3 rounded-2xl text-sm font-semibold transition-all duration-300 text-left whitespace-nowrap hover:-translate-y-0.5 overflow-hidden"
+                        style={{
+                          background: isActive
+                            ? `linear-gradient(135deg, ${meta.accent}28, ${meta.accent}10)`
+                            : 'hsla(0,0%,100%,0.55)',
+                          color: isActive ? meta.accent : 'hsl(var(--foreground))',
+                          border: isActive
+                            ? `1.5px solid ${meta.accent}55`
+                            : '1px solid hsla(258,40%,80%,0.25)',
+                          boxShadow: isActive
+                            ? `0 6px 18px ${meta.accent}30, inset 0 1px 0 hsla(0,0%,100%,0.7)`
+                            : '0 2px 8px hsla(258,40%,40%,0.04)',
+                        }}>
+                        {isActive && (
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full"
+                            style={{ background: meta.accent }} />
+                        )}
+                        <span className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden text-base transition-transform duration-300 group-hover:scale-110"
+                          style={{
+                            background: isActive
+                              ? `linear-gradient(135deg, ${meta.accent}, ${meta.accent}cc)`
+                              : 'hsla(258,30%,94%,0.7)',
+                            boxShadow: isActive ? `0 4px 12px ${meta.accent}45` : 'none',
+                          }}>
+                          {imgSrc
+                            ? <img
+                                key={imgSrc}
+                                src={imgSrc}
+                                alt={cat.name}
+                                className="w-full h-full object-cover"
+                                onError={e => {
+                                  const img = e.currentTarget as HTMLImageElement;
+                                  img.style.display = 'none';
+                                  const parent = img.parentElement;
+                                  if (parent) parent.textContent = meta.icon;
+                                }}
+                              />
+                            : meta.icon
+                          }
+                        </span>
+                        <span className="flex-1 truncate">{cat.name}</span>
+                        {isActive && (
+                          <span className="hidden lg:block w-1.5 h-1.5 rounded-full animate-pulse"
+                            style={{ background: meta.accent, boxShadow: `0 0 8px ${meta.accent}` }} />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </aside>
