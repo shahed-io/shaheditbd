@@ -29,8 +29,13 @@ interface CheckResult {
 
 function classify(status: string): { category: CheckResult['category']; meaning: string } {
   const s = (status || '').toLowerCase();
-  if (s === 'success' || s === 'valid') {
-    return { category: 'success', meaning: 'Valid — login successful' };
+  if (s === 'success' || s === 'valid' || s === 'need_update_password') {
+    return {
+      category: 'success',
+      meaning: s === 'need_update_password'
+        ? 'Valid — login successful (password change required at next login)'
+        : 'Valid — login successful',
+    };
   }
   if (s.includes('more_information_required') || s.includes('mfa') || s.includes('interaction_required')) {
     return { category: 'mfa', meaning: 'Valid — MFA / extra verification required' };
