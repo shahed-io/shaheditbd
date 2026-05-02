@@ -444,6 +444,24 @@ const Checkout = () => {
         }
       });
 
+      // Mark abandoned-checkout row as converted (non-blocking)
+      try {
+        await supabase
+          .from('abandoned_checkouts')
+          .update({
+            converted: true,
+            converted_order_id: order.id,
+            converted_at: new Date().toISOString(),
+          })
+          .eq('session_token', sessionTokenRef.current);
+      } catch { /* silent */ }
+      // Reset session token for next checkout
+      try {
+        const newTok = 'cs_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem('checkout_session_token', newTok);
+        sessionTokenRef.current = newTok;
+      } catch {}
+
       clearCart();
       setOrderNumber(orderNum);
       setOrderPlaced(true);
