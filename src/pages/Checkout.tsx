@@ -199,13 +199,47 @@ const Checkout = () => {
     }).catch(() => { /* silent */ });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // ── Save abandoned checkout (debounced) — fires when user fills any contact info + has items ──
   useEffect(() => {
-    if (form.email && items.length > 0) {
-      clearTimeout(abandonedTimer.current);
-      abandonedTimer.current = setTimeout(() => saveAbandonedCart(form.email), 90000);
-    }
+    const hasContact = !!(form.email || form.phone || form.name);
+    if (!hasContact || items.length === 0) return;
+    clearTimeout(abandonedTimer.current);
+    abandonedTimer.current = setTimeout(async () => {
+      try {
+        const payload = {
+          session_token: sessionTokenRef.current,
+          user_id: user?.id || null,
+          customer_name: form.name || null,
+          customer_email: form.email || null,
+          customer_phone: form.phone || null,
+          cart_items: items.map(i => ({
+            id: i.id, name: i.name, category: i.category,
+            price: i.price, quantity: i.quantity, variant: i.variant || null, image: i.image,
+          })) as any,
+          item_count: items.reduce((s, i) => s + i.quantity, 0),
+          subtotal,
+          discount_amount: discountAmount,
+          total: finalTotal,
+          coupon_code: coupon.isApplied ? coupon.code : null,
+          payment_method: paymentMethod,
+          notes: orderNotes?.trim() || null,
+          page_url: typeof window !== 'undefined' ? window.location.href : null,
+          user_agent: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 500) : null,
+          updated_at: new Date().toISOString(),
+        };
+        const { data, error } = await supabase
+          .from('abandoned_checkouts')
+          .upsert(payload, { onConflict: 'session_token' })
+          .select('id')
+          .single();
+        if (!error && data) {
+          abandonedRowIdRef.current = data.id;
+          abandonedSavedRef.current = true;
+        }
+      } catch { /* silent */ }
+    }, 1500);
     return () => clearTimeout(abandonedTimer.current);
-  }, [form.email, items]);
+  }, [form.name, form.email, form.phone, items, subtotal, discountAmount, finalTotal, coupon.isApplied, coupon.code, paymentMethod, orderNotes, user?.id]);
 
   const handleApplyCoupon = async (code?: string) => {
     const c = (code || couponCode).trim().toUpperCase();
