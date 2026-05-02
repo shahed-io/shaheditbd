@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      abandoned_checkouts: {
+        Row: {
+          admin_notes: string | null
+          cart_items: Json
+          contacted: boolean
+          contacted_at: string | null
+          converted: boolean
+          converted_at: string | null
+          converted_order_id: string | null
+          coupon_code: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          discount_amount: number
+          id: string
+          item_count: number
+          notes: string | null
+          page_url: string | null
+          payment_method: string | null
+          session_token: string
+          subtotal: number
+          total: number
+          updated_at: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          cart_items?: Json
+          contacted?: boolean
+          contacted_at?: string | null
+          converted?: boolean
+          converted_at?: string | null
+          converted_order_id?: string | null
+          coupon_code?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount_amount?: number
+          id?: string
+          item_count?: number
+          notes?: string | null
+          page_url?: string | null
+          payment_method?: string | null
+          session_token: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          cart_items?: Json
+          contacted?: boolean
+          contacted_at?: string | null
+          converted?: boolean
+          converted_at?: string | null
+          converted_order_id?: string | null
+          coupon_code?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          discount_amount?: number
+          id?: string
+          item_count?: number
+          notes?: string | null
+          page_url?: string | null
+          payment_method?: string | null
+          session_token?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       addresses: {
         Row: {
           address_line: string
