@@ -37,6 +37,7 @@ const AdminDashboard        = lazy(() => import("./pages/admin/AdminDashboard"))
 const AdminProducts         = lazy(() => import("./pages/admin/AdminProducts"));
 const AdminCategories       = lazy(() => import("./pages/admin/AdminCategories"));
 const AdminOrders           = lazy(() => import("./pages/admin/AdminOrders"));
+const AdminAbandonedCheckouts = lazy(() => import("./pages/admin/AdminAbandonedCheckouts"));
 const AdminCoupons          = lazy(() => import("./pages/admin/AdminCoupons"));
 const AdminSettings         = lazy(() => import("./pages/admin/AdminSettings"));
 const AdminTickets          = lazy(() => import("./pages/admin/AdminTickets"));
@@ -240,6 +241,7 @@ const AppContent = () => {
             <Route path="categories" element={<AdminSuspense><AdminCategories /></AdminSuspense>} />
             <Route path="categories/new" element={<AdminSuspense><AdminCategories /></AdminSuspense>} />
             <Route path="orders" element={<AdminSuspense><AdminOrders /></AdminSuspense>} />
+            <Route path="abandoned-checkouts" element={<AdminSuspense><AdminAbandonedCheckouts /></AdminSuspense>} />
             <Route path="coupons" element={<AdminSuspense><AdminCoupons /></AdminSuspense>} />
             <Route path="settings" element={<AdminSuspense><AdminSettings /></AdminSuspense>} />
             <Route path="ai-config" element={<AdminSuspense><AdminAiConfig /></AdminSuspense>} />
