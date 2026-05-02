@@ -61,7 +61,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         });
         if (error) throw error;
 
-        toast.success('অ্যাকাউন্ট তৈরি হয়েছে! ইমেইল ভেরিফাই করুন।');
+        toast.success('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
 
         // Email signup referral: referred user gets 5% discount only (no wallet credit)
         // Referrer gets ৳20 ONLY when referred user signs up via Google OAuth
