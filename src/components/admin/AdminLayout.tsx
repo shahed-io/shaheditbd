@@ -41,6 +41,7 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'Sales',
     items: [
       { icon: ShoppingCart, label: 'Orders', path: '/ceo/orders', badge: 'live' },
+      { icon: ShopIcon, label: 'Abandoned Checkouts', path: '/ceo/abandoned-checkouts', badge: 'new' },
       { icon: ShoppingCart, label: 'Quick Sale', path: '/ceo/quick-sale' },
       { icon: FileText, label: 'Invoice Generator', path: '/ceo/invoices' },
       { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
