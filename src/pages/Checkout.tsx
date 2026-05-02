@@ -87,6 +87,20 @@ const Checkout = () => {
   const [walletBalance, setWalletBalance] = useState(0);
   const pendingSubmitRef = useRef(false);
 
+  // Persistent session token for abandoned-checkout tracking
+  const sessionTokenRef = useRef<string>('');
+  const abandonedSavedRef = useRef(false);
+  const abandonedRowIdRef = useRef<string | null>(null);
+  if (!sessionTokenRef.current) {
+    let tok = '';
+    try { tok = localStorage.getItem('checkout_session_token') || ''; } catch {}
+    if (!tok) {
+      tok = 'cs_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+      try { localStorage.setItem('checkout_session_token', tok); } catch {}
+    }
+    sessionTokenRef.current = tok;
+  }
+
   // If user logs out while wallet is selected, switch to bkash
   useEffect(() => {
     if (!user && paymentMethod === 'wallet') {
