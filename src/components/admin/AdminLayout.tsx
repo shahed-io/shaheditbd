@@ -46,6 +46,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: FileText, label: 'Invoice Generator', path: '/ceo/invoices' },
       { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
       { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
+      { icon: KeyRound, label: 'Customer Licenses', path: '/ceo/customer-licenses', badge: 'new' },
     ],
   },
   {
