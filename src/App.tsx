@@ -287,6 +287,7 @@ const AppContent = () => {
             <Route path="import-export" element={<AdminSuspense><AdminProductImportExport /></AdminSuspense>} />
             <Route path="facebook-pixel" element={<AdminSuspense><AdminFacebookPixel /></AdminSuspense>} />
             <Route path="licenses" element={<AdminSuspense><AdminLicenses /></AdminSuspense>} />
+            <Route path="customer-licenses" element={<AdminSuspense><AdminCustomerLicenses /></AdminSuspense>} />
             <Route path="quick-sale" element={<AdminSuspense><AdminQuickSale /></AdminSuspense>} />
             <Route path="popup-banner" element={<AdminSuspense><AdminPopupBanner /></AdminSuspense>} />
             <Route path="invoices" element={<AdminSuspense><AdminInvoiceGenerator /></AdminSuspense>} />
