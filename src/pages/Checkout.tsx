@@ -369,6 +369,19 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
       if (itemsError) throw itemsError;
 
+      // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
+      if (paymentMethod !== 'wallet') {
+        const { error: proofError } = await supabase.from('payment_proofs').insert({
+          order_id: order.id,
+          user_id: user?.id || null,
+          transaction_id: transactionId.trim(),
+          payment_method: paymentMethod,
+          amount: finalTotal,
+          status: 'pending',
+        });
+        if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
+      }
+
       // Record affiliate conversion (non-blocking, server validates)
       if (affRef?.code) {
         (supabase as any).rpc('record_affiliate_conversion', {
