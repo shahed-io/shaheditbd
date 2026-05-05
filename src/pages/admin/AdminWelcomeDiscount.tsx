@@ -688,10 +688,15 @@ export default function AdminWelcomeDiscount() {
                               </Button>
                             </>
                           )}
-                          {!c.is_used && isExpired && (
-                            <Button variant="outline" size="sm" onClick={() => reactivateMutation.mutate({ id: c.id, minutes: 60 })} title="Reactivate for 1 hour" className="text-green-600 hover:text-green-600">
-                              <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Reactivate
-                            </Button>
+                          {(c.is_used || isExpired) && (
+                            <>
+                              <Button variant="outline" size="sm" onClick={() => reactivateMutation.mutate({ id: c.id, minutes: 60 })} title="Reactivate for 1 hour" className="text-green-600 hover:text-green-600">
+                                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Reactivate
+                              </Button>
+                              <Button variant="outline" size="sm" onClick={() => reactivateMutation.mutate({ id: c.id, minutes: 1440 })} title="Reactivate for 1 day" className="text-green-600 hover:text-green-600">
+                                +1d
+                              </Button>
+                            </>
                           )}
                           <ExpiryEditDialog
                             currentExpiry={c.expires_at}
