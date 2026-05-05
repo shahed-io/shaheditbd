@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   ShoppingCart, Search, RefreshCw, Trash2, Eye, X, Mail, Phone, User as UserIcon,
-  CheckCircle2, Clock, MessageCircle, Copy, Check, Filter, Calendar, Package, FileText,
+  CheckCircle2, Clock, MessageCircle, Copy, Check, Calendar, Package, FileText,
 } from 'lucide-react';
 
 interface AbandonedRow {
