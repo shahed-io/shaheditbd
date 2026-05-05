@@ -152,10 +152,14 @@ export default function AdminAbandonedCheckouts() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total" value={stats.total} icon={FileText} color="from-slate-500 to-slate-600" />
-        <StatCard label="Pending Recovery" value={stats.pending} icon={Clock} color="from-amber-500 to-orange-500" />
-        <StatCard label="Recovered" value={stats.converted} icon={CheckCircle2} color="from-emerald-500 to-green-600" />
-        <StatCard label="Lost Value" value={fmtBDT(stats.lostValue)} icon={Package} color="from-rose-500 to-red-600" isText />
+        <StatCard label="Total" value={stats.total} icon={FileText} color="from-slate-500 to-slate-600"
+          active={statusFilter === 'all'} onClick={() => setStatusFilter('all')} />
+        <StatCard label="Pending Recovery" value={stats.pending} icon={Clock} color="from-amber-500 to-orange-500"
+          active={statusFilter === 'pending'} onClick={() => setStatusFilter('pending')} />
+        <StatCard label="Recovered" value={stats.converted} icon={CheckCircle2} color="from-emerald-500 to-green-600"
+          active={statusFilter === 'converted'} onClick={() => setStatusFilter('converted')} />
+        <StatCard label="Lost Value" value={fmtBDT(stats.lostValue)} icon={Package} color="from-rose-500 to-red-600" isText
+          active={statusFilter === 'pending'} onClick={() => setStatusFilter('pending')} />
       </div>
 
       {/* Filter bar */}
