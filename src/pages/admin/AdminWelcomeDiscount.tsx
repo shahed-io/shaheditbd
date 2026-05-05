@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Gift, Settings, Trash2, Clock, Plus, GripVertical, RefreshCw, Eye, Sparkles, PlayCircle, RotateCcw, ExternalLink } from 'lucide-react';
+import { Gift, Settings, Trash2, Clock, Plus, GripVertical, RefreshCw, Eye, Sparkles, PlayCircle, RotateCcw, ExternalLink, TimerReset, Ban, CheckCircle2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 
 interface SpinPrize {
   id: string;
@@ -159,6 +160,72 @@ export default function AdminWelcomeDiscount() {
       queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
       toast.success('Deleted');
     },
+  });
+
+  const extendMutation = useMutation({
+    mutationFn: async ({ id, minutes }: { id: string; minutes: number }) => {
+      const { data: row, error: fetchErr } = await supabase
+        .from('welcome_coupons').select('expires_at').eq('id', id).single();
+      if (fetchErr) throw fetchErr;
+      const base = new Date(row.expires_at) > new Date() ? new Date(row.expires_at) : new Date();
+      const newExpiry = new Date(base.getTime() + minutes * 60 * 1000).toISOString();
+      const { error } = await supabase
+        .from('welcome_coupons')
+        .update({ expires_at: newExpiry, is_used: false })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
+      toast.success('Coupon expiry updated');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Failed to extend'),
+  });
+
+  const setExpiryMutation = useMutation({
+    mutationFn: async ({ id, expiresAt }: { id: string; expiresAt: string }) => {
+      const { error } = await supabase
+        .from('welcome_coupons')
+        .update({ expires_at: expiresAt })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
+      toast.success('Expiry updated');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Update failed'),
+  });
+
+  const disableMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('welcome_coupons')
+        .update({ expires_at: new Date(Date.now() - 60_000).toISOString() })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
+      toast.success('Coupon disabled');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Disable failed'),
+  });
+
+  const reactivateMutation = useMutation({
+    mutationFn: async ({ id, minutes }: { id: string; minutes: number }) => {
+      const newExpiry = new Date(Date.now() + minutes * 60 * 1000).toISOString();
+      const { error } = await supabase
+        .from('welcome_coupons')
+        .update({ expires_at: newExpiry, is_used: false })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
+      toast.success('Coupon reactivated');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Reactivate failed'),
   });
 
   const updatePrize = (id: string, patch: Partial<SpinPrize>) => {
@@ -607,9 +674,33 @@ export default function AdminWelcomeDiscount() {
                         {new Date(c.expires_at).toLocaleString('en-BD', { dateStyle: 'short', timeStyle: 'short' })}
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(c.id)} className="text-destructive hover:text-destructive">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="flex items-center gap-1 justify-end flex-wrap">
+                          {!c.is_used && !isExpired && (
+                            <>
+                              <Button variant="outline" size="sm" onClick={() => extendMutation.mutate({ id: c.id, minutes: 60 })} title="Extend by 1 hour">
+                                <TimerReset className="w-3.5 h-3.5 mr-1" /> +1h
+                              </Button>
+                              <Button variant="outline" size="sm" onClick={() => extendMutation.mutate({ id: c.id, minutes: 1440 })} title="Extend by 1 day">
+                                +1d
+                              </Button>
+                              <Button variant="outline" size="sm" onClick={() => disableMutation.mutate(c.id)} title="Disable now" className="text-amber-600 hover:text-amber-600">
+                                <Ban className="w-3.5 h-3.5" />
+                              </Button>
+                            </>
+                          )}
+                          {!c.is_used && isExpired && (
+                            <Button variant="outline" size="sm" onClick={() => reactivateMutation.mutate({ id: c.id, minutes: 60 })} title="Reactivate for 1 hour" className="text-green-600 hover:text-green-600">
+                              <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Reactivate
+                            </Button>
+                          )}
+                          <ExpiryEditDialog
+                            currentExpiry={c.expires_at}
+                            onSave={(iso) => setExpiryMutation.mutate({ id: c.id, expiresAt: iso })}
+                          />
+                          <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(c.id)} className="text-destructive hover:text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -620,5 +711,48 @@ export default function AdminWelcomeDiscount() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function ExpiryEditDialog({ currentExpiry, onSave }: { currentExpiry: string; onSave: (iso: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const toLocalInput = (iso: string) => {
+    const d = new Date(iso);
+    const tz = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - tz).toISOString().slice(0, 16);
+  };
+  const [value, setValue] = useState(toLocalInput(currentExpiry));
+
+  useEffect(() => {
+    if (open) setValue(toLocalInput(currentExpiry));
+  }, [open, currentExpiry]);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" title="Set custom expiry">
+          <Clock className="w-3.5 h-3.5" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Set Coupon Expiry</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-2">
+          <Label className="text-xs text-muted-foreground">New expiry date & time</Label>
+          <Input type="datetime-local" value={value} onChange={(e) => setValue(e.target.value)} />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              const iso = new Date(value).toISOString();
+              onSave(iso);
+              setOpen(false);
+            }}
+          >Save</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
