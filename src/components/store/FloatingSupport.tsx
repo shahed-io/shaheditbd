@@ -652,6 +652,14 @@ const FloatingSupport = () => {
           from { opacity: 0; }
           to   { opacity: 1; }
         }
+        @keyframes orbFloat {
+          0%, 100% { transform: translate(0,0) scale(1); }
+          50%      { transform: translate(8px,-6px) scale(1.15); }
+        }
+        @keyframes headerShimmer {
+          0%   { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
         .fab-ring {
           position: absolute;
           border-radius: 9999px;
