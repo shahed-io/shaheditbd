@@ -419,7 +419,7 @@ const Checkout = () => {
           user_id: user?.id || null,
           transaction_id: transactionId.trim(),
           payment_method: paymentMethod,
-          amount: finalTotal,
+          amount: payableTotal,
           status: 'pending',
         });
         if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
