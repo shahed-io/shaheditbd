@@ -300,6 +300,20 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
       } as any);
 
       setOrderNumber(orderNum);
+      orderPlacedRef.current = true;
+      // Mark abandoned row as converted (best-effort)
+      try {
+        await supabase.from('abandoned_checkouts').update({
+          converted: true,
+          converted_at: new Date().toISOString(),
+        } as any).eq('session_token', sessionTokenRef.current);
+      } catch {}
+      // Rotate token so next quick order starts fresh
+      try {
+        const newTok = 'qo_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem('quickorder_session_token', newTok);
+        sessionTokenRef.current = newTok;
+      } catch {}
       setStep('success');
     } catch (err) {
       console.error(err);
