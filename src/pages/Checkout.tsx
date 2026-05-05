@@ -277,6 +277,23 @@ const Checkout = () => {
     }
   };
 
+  // Final payable after referral credit
+  const payableTotal = Math.max(0, finalTotal - refCreditApplied);
+
+  const handleApplyRefCredit = () => {
+    setRefCreditError('');
+    const amt = Math.floor(Number(refCreditInput) || 0);
+    if (amt <= 0) { setRefCreditError('সঠিক পরিমাণ দিন'); return; }
+    if (amt > refCreditBalance) { setRefCreditError(`আপনার ক্রেডিট মাত্র ৳${refCreditBalance}`); return; }
+    const maxAllowed = Math.floor(subtotal / 2);
+    if (amt > maxAllowed) {
+      setRefCreditError(`সর্বোচ্চ ৳${maxAllowed} apply করা যাবে। ৳${amt} apply করতে চাইলে কমপক্ষে ৳${amt * 2} এর product কিনতে হবে।`);
+      return;
+    }
+    setRefCreditApplied(amt);
+    toast.success(`✅ ৳${amt} রেফারেল ক্রেডিট প্রয়োগ হয়েছে`);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError('');
