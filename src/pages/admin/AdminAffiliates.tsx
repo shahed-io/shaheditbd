@@ -709,14 +709,18 @@ const AdminAffiliates = () => {
   );
 };
 
-const StatCard = ({ icon: Icon, label, value, color }: any) => (
-  <div className="bg-card border border-border rounded-2xl p-3">
+const StatCard = ({ icon: Icon, label, value, color, onClick }: any) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="bg-card border border-border rounded-2xl p-3 text-left transition-all hover:shadow-md hover:border-primary/40 hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/40"
+  >
     <div className="flex items-center gap-2 mb-1">
       <Icon size={14} className={color} />
       <span className="text-xs text-muted-foreground">{label}</span>
     </div>
     <div className={`text-xl font-bold ${color}`}>{value}</div>
-  </div>
+  </button>
 );
 
 const ToggleRow = ({ label, desc, checked, onChange }: { label: string; desc: string; checked: boolean; onChange: (v: boolean) => void }) => (
