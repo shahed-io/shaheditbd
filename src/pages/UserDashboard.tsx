@@ -559,7 +559,7 @@ const UserDashboard = () => {
         body: {
           title: '💰 নতুন Wallet Top-up Request',
           lines: [
-            `👤 গ্রাহক: ${profile.full_name || user.email}`,
+            `👤 গ্রাহক: ${profile.display_name || user.email}`,
             `📧 ${user.email}`,
             `💵 পরিমাণ: ৳${amt.toLocaleString()}`,
             `💳 পেমেন্ট: ${topupPaymentMethod.toUpperCase()}`,
