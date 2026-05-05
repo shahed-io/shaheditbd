@@ -1,35 +1,67 @@
-# Shahed Store — Robots.txt
-# Optimized for Google, Bing & social crawlers
-# Last updated: 2026
+# ════════════════════════════════════════════════════════
+#  Shahed Store — robots.txt
+#  SEO-optimized for Google, Bing, social & AI crawlers
+#  Last updated: 2026
+# ════════════════════════════════════════════════════════
 
-# ───────── Search engine bots ─────────
+# ───────── Major Search Engines ─────────
 User-agent: Googlebot
 Allow: /
-Allow: /product/
-Allow: /shop
-Allow: /blog/
-Allow: /link/
-Crawl-delay: 1
+Disallow: /admin/
+Disallow: /ceo/
+Disallow: /dashboard
+Disallow: /checkout
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /reseller/
+Disallow: /*?*utm_
+Disallow: /*?*ref=
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
 
 User-agent: Googlebot-Image
+Allow: /
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.webp$
+Allow: /*.svg$
+
+User-agent: Googlebot-Mobile
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: Mediapartners-Google
 Allow: /
 
 User-agent: Bingbot
 Allow: /
-Allow: /product/
-Allow: /shop
-Crawl-delay: 1
+Disallow: /admin/
+Disallow: /ceo/
+Disallow: /dashboard
+Disallow: /checkout
+Disallow: /reseller/
 
 User-agent: DuckDuckBot
 Allow: /
+Disallow: /admin/
+Disallow: /ceo/
+Disallow: /dashboard
+Disallow: /checkout
 
 User-agent: YandexBot
 Allow: /
+Disallow: /admin/
+Disallow: /ceo/
 
 User-agent: Baiduspider
 Allow: /
+Disallow: /admin/
+Disallow: /ceo/
 
-# ───────── Social / Preview crawlers ─────────
+# ───────── Social / Link-Preview Crawlers ─────────
 User-agent: Twitterbot
 Allow: /
 
@@ -51,8 +83,21 @@ Allow: /
 User-agent: Pinterest
 Allow: /
 
-# ───────── AI crawlers (allow for AI search visibility) ─────────
+User-agent: Applebot
+Allow: /
+
+# ───────── AI Search Crawlers (allowed for AI visibility) ─────────
 User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+Disallow: /ceo/
+Disallow: /dashboard
+Disallow: /checkout
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
 Allow: /
 
 User-agent: PerplexityBot
@@ -61,12 +106,16 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
+User-agent: Claude-Web
+Allow: /
+
 User-agent: Google-Extended
 Allow: /
 
-# ───────── Scraper / cloning bots — explicitly disallowed ─────────
-# These tools are used to mass-copy site designs. SEO bots above
-# are unaffected; only design-cloning crawlers are blocked here.
+User-agent: Amazonbot
+Allow: /
+
+# ───────── Blocked Scrapers / Cloners ─────────
 User-agent: FirecrawlAgent
 Disallow: /
 User-agent: ScrapingBee
@@ -101,12 +150,20 @@ User-agent: ParseHub
 Disallow: /
 User-agent: WebHarvy
 Disallow: /
-User-agent: PhantomJS
+User-agent: MJ12bot
 Disallow: /
-User-agent: HeadlessChrome
+User-agent: AhrefsBot
+Disallow: /
+User-agent: SemrushBot
+Disallow: /
+User-agent: DotBot
+Disallow: /
+User-agent: BLEXBot
+Disallow: /
+User-agent: PetalBot
 Disallow: /
 
-# ───────── Default rule for all bots ─────────
+# ───────── Default Rule (all other bots) ─────────
 User-agent: *
 Allow: /
 Disallow: /admin/
@@ -116,17 +173,23 @@ Disallow: /ceo/*
 Disallow: /dashboard
 Disallow: /dashboard/*
 Disallow: /checkout
+Disallow: /checkout/*
 Disallow: /reset-password
 Disallow: /unsubscribe
-Disallow: /api/
 Disallow: /reseller
 Disallow: /reseller/*
+Disallow: /api/
 Disallow: /*?*sort=
 Disallow: /*?*filter=
 Disallow: /*?*ref=
 Disallow: /*?*utm_
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
+Disallow: /*?*replytocom=
 
 # ───────── Sitemaps ─────────
 Sitemap: https://shahedstore.com.bd/sitemap.xml
 Sitemap: https://shahedstore.com.bd/image-sitemap.xml
-Sitemap: https://shahedstore.com.bd/sitemap_index.xml
+
+# ───────── Preferred Host ─────────
+Host: shahedstore.com.bd
