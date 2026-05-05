@@ -128,7 +128,7 @@ const Checkout = () => {
   // Auto-fill from logged-in user profile + fetch wallet balance
   useEffect(() => {
     if (!user) return;
-    supabase.from('profiles').select('display_name, email, phone, wallet_balance').eq('user_id', user.id).single()
+    supabase.from('profiles').select('display_name, email, phone, wallet_balance, referral_credit_balance').eq('user_id', user.id).single()
       .then(({ data }) => {
         if (data) {
           setForm(prev => ({
@@ -137,6 +137,7 @@ const Checkout = () => {
             phone: prev.phone || data.phone || '',
           }));
           setWalletBalance((data as any).wallet_balance || 0);
+          setRefCreditBalance(Number((data as any).referral_credit_balance || 0));
         }
       });
   }, [user?.id]);
