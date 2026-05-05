@@ -474,15 +474,30 @@ const UserDashboard = () => {
 
     setReferrals(refs); setReferralLoading(false);
 
+    // Helper: get IP (cached for this session)
+    const getClientIp = async (): Promise<string | null> => {
+      const cached = sessionStorage.getItem('client_ip');
+      if (cached) return cached;
+      try {
+        const r = await fetch('https://api.ipify.org?format=json');
+        const j = await r.json();
+        if (j?.ip) { sessionStorage.setItem('client_ip', j.ip); return j.ip; }
+      } catch { /* ignore */ }
+      return null;
+    };
+
     // Retry pending referral (email signup) from localStorage if any
     const pendingRef = localStorage.getItem('pending_referral');
     if (pendingRef && user) {
-      const { data: refResult } = await supabase.rpc('process_referral', {
+      const ip = localStorage.getItem('pending_referral_ip') || (await getClientIp());
+      const { data: refResult } = await (supabase.rpc as any)('process_referral', {
         p_referral_code: pendingRef,
         p_referred_user_id: user.id,
+        p_ip: ip,
       });
       if ((refResult as any)?.success) {
         localStorage.removeItem('pending_referral');
+        localStorage.removeItem('pending_referral_ip');
         toast.success('🎁 রেফারেল কোড প্রয়োগ হয়েছে! ৫% স্থায়ী ছাড় সক্রিয়।');
         fetchProfile();
       }
@@ -491,10 +506,10 @@ const UserDashboard = () => {
     // Process Google OAuth referral — referrer gets ৳20
     const pendingGoogleRef = localStorage.getItem('pending_google_referral');
     if (pendingGoogleRef && user) {
-      // Check if user signed in with Google (provider = google)
       const { data: sessionData } = await supabase.auth.getSession();
       const provider = sessionData?.session?.user?.app_metadata?.provider;
       if (provider === 'google') {
+        const ip = await getClientIp();
         let processed = false;
         for (let attempt = 0; attempt < 5; attempt++) {
           await new Promise(res => setTimeout(res, 800 * (attempt + 1)));
@@ -502,15 +517,19 @@ const UserDashboard = () => {
             const { data: refResult } = await (supabase.rpc as any)('process_google_referral', {
               p_referral_code: pendingGoogleRef,
               p_referred_user_id: user.id,
+              p_ip: ip,
             });
             if ((refResult as any)?.success) {
               localStorage.removeItem('pending_google_referral');
-              toast.success('🎉 Google রেফারেল সফল! ৫% স্থায়ী ছাড় সক্রিয় হয়েছে।');
+              toast.success('🎉 Google রেফারেল সফল! ৫% ছাড় ও ৳২০ ক্রেডিট সক্রিয় হয়েছে।');
               processed = true;
               fetchProfile();
               break;
             } else if ((refResult as any)?.error && (refResult as any)?.error !== 'User not found') {
               localStorage.removeItem('pending_google_referral');
+              if ((refResult as any)?.error?.includes('Same IP')) {
+                toast.warning('একই IP থেকে রেফারেল ব্যবহার সম্ভব নয়। ৫% ছাড় সক্রিয় হয়েছে কিন্তু রেফারার বোনাস পাবেন না।');
+              }
               break;
             }
           } catch { /* retry */ }
