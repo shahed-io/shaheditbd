@@ -554,6 +554,20 @@ const UserDashboard = () => {
     try {
       const { error } = await (supabase.from('wallet_topup_requests' as any) as any).insert({ user_id: user.id, amount: amt, payment_method: topupPaymentMethod, transaction_id: topupTxId.trim(), status: 'pending' });
       if (error) throw error;
+      // Fire-and-forget Telegram notify
+      supabase.functions.invoke('notify-telegram-event', {
+        body: {
+          title: '💰 নতুন Wallet Top-up Request',
+          lines: [
+            `👤 গ্রাহক: ${profile.display_name || user.email}`,
+            `📧 ${user.email}`,
+            `💵 পরিমাণ: ৳${amt.toLocaleString()}`,
+            `💳 পেমেন্ট: ${topupPaymentMethod.toUpperCase()}`,
+            `🔖 TrxID: ${topupTxId.trim()}`,
+          ],
+          footer: '⏳ Admin verification পেন্ডিং',
+        },
+      }).catch(() => {});
       toast.success('✅ Top-up request submitted! Admin will verify and credit your wallet.');
       setTopupStep(2); setTopupTxId('');
     } catch { toast.error('Failed to submit request. Please try again.'); }

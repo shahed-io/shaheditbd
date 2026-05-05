@@ -854,6 +854,18 @@ const AdminOrders = () => {
             body: { type: 'status_update', orderId: id, newStatus: updates.status },
           });
         } catch (e) { console.error('Email send failed:', e); }
+        // Telegram status notification
+        const ord = orders.find((o: any) => o.id === id);
+        supabase.functions.invoke('notify-telegram-event', {
+          body: {
+            title: `🔄 অর্ডার Status Update → ${String(updates.status).toUpperCase()}`,
+            lines: [
+              ord?.order_number ? `🧾 #${ord.order_number}` : null,
+              ord?.customer_name ? `👤 ${ord.customer_name}` : null,
+              ord?.total ? `💵 ৳${Number(ord.total).toLocaleString()}` : null,
+            ],
+          },
+        }).catch(() => {});
       }
       // Refresh orders and update selected order if open
       fetchOrders();

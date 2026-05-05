@@ -138,6 +138,17 @@ const AdminWallet = () => {
         type: 'info',
       });
 
+      supabase.functions.invoke('notify-telegram-event', {
+        body: {
+          title: '✅ Wallet Top-up Approved',
+          lines: [
+            `👤 ${req.profiles?.display_name || req.profiles?.email || req.user_id}`,
+            `💵 ৳${Number(req.amount).toLocaleString()} credited`,
+            `💳 ${(req.payment_method || '').toUpperCase()} — TrxID: ${req.transaction_id}`,
+          ],
+        },
+      }).catch(() => {});
+
       toast.success(`✅ ৳${req.amount} credited to wallet!`);
       fetchTopupRequests();
       fetchCustomers();

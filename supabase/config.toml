@@ -19,6 +19,8 @@ project_id = "dpvdavjwqyviredzoorj"
     verify_jwt = false
   [functions.notify-new-order]
     verify_jwt = false
+  [functions.notify-telegram-event]
+    verify_jwt = false
   [functions.send-transactional-email]
     verify_jwt = true
   [functions.preview-transactional-email]
