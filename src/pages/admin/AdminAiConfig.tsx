@@ -172,9 +172,18 @@ const AdminAiConfig = () => {
     grouped[cat].push(entry);
   });
 
-  const filteredGroups = Object.entries(grouped).filter(([, entries]) =>
-    entries.some(e => e.key.toLowerCase().includes(searchTerm.toLowerCase()) || e.value.toLowerCase().includes(searchTerm.toLowerCase()))
-  ).map(([cat, entries]) => [cat, entries.filter(e => e.key.toLowerCase().includes(searchTerm.toLowerCase()) || e.value.toLowerCase().includes(searchTerm.toLowerCase()))] as [string, ApiKeyEntry[]]);
+  const matchEntry = (e: ApiKeyEntry) => {
+    const q = searchTerm.toLowerCase();
+    const matchesSearch = !q || e.key.toLowerCase().includes(q) || e.value.toLowerCase().includes(q);
+    if (!matchesSearch) return false;
+    if (statFilter === 'active') return !!e.value;
+    if (statFilter === 'inactive') return !e.value;
+    if (statFilter === 'verified') return testResults[e.key] === 'success';
+    return true;
+  };
+  const filteredGroups = Object.entries(grouped)
+    .map(([cat, entries]) => [cat, entries.filter(matchEntry)] as [string, ApiKeyEntry[]])
+    .filter(([, entries]) => entries.length > 0);
 
   const totalKeys = dbSettings.length;
   const activeKeys = dbSettings.filter(e => e.value).length;
