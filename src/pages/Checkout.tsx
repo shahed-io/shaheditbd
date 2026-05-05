@@ -227,36 +227,22 @@ const Checkout = () => {
           user_agent: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 500) : null,
           updated_at: new Date().toISOString(),
         };
-        // Try update first (avoids RLS SELECT requirement)
-        if (abandonedRowIdRef.current) {
-          const { error: upErr } = await supabase
-            .from('abandoned_checkouts')
-            .update(payload)
-            .eq('id', abandonedRowIdRef.current);
-          if (upErr) console.warn('[abandoned] update error:', upErr.message);
-          return;
-        }
-        // Insert new row, then look up by session_token via RPC-free approach
-        const { error: insErr } = await supabase
+        const { error: upsertErr } = await supabase
           .from('abandoned_checkouts')
-          .insert(payload);
-        if (insErr) {
-          // If duplicate session_token, switch to update path next time
-          if (insErr.code === '23505') {
-            // Find row id (admin-only SELECT will fail for guests, so just mark as saved by token)
-            abandonedSavedRef.current = true;
-          } else {
-            console.warn('[abandoned] insert error:', insErr.message);
-          }
+          .upsert(payload, { onConflict: 'session_token' });
+        if (upsertErr) {
+          console.warn('[abandoned] upsert error:', upsertErr.message);
         } else {
           abandonedSavedRef.current = true;
-          // Try to fetch id (works for admins / RLS-permitted users; safe to fail for guests)
-          const { data: row } = await supabase
-            .from('abandoned_checkouts')
-            .select('id')
-            .eq('session_token', sessionTokenRef.current)
-            .maybeSingle();
-          if (row?.id) abandonedRowIdRef.current = row.id;
+          // Best-effort id lookup (will quietly fail for guests under RLS)
+          if (!abandonedRowIdRef.current) {
+            const { data: row } = await supabase
+              .from('abandoned_checkouts')
+              .select('id')
+              .eq('session_token', sessionTokenRef.current)
+              .maybeSingle();
+            if (row?.id) abandonedRowIdRef.current = row.id;
+          }
         }
       } catch (e) { console.warn('[abandoned] save failed:', e); }
     }, 1500);
