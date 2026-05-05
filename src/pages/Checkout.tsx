@@ -227,16 +227,38 @@ const Checkout = () => {
           user_agent: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 500) : null,
           updated_at: new Date().toISOString(),
         };
-        const { data, error } = await supabase
-          .from('abandoned_checkouts')
-          .upsert(payload, { onConflict: 'session_token' })
-          .select('id')
-          .single();
-        if (!error && data) {
-          abandonedRowIdRef.current = data.id;
-          abandonedSavedRef.current = true;
+        // Try update first (avoids RLS SELECT requirement)
+        if (abandonedRowIdRef.current) {
+          const { error: upErr } = await supabase
+            .from('abandoned_checkouts')
+            .update(payload)
+            .eq('id', abandonedRowIdRef.current);
+          if (upErr) console.warn('[abandoned] update error:', upErr.message);
+          return;
         }
-      } catch { /* silent */ }
+        // Insert new row, then look up by session_token via RPC-free approach
+        const { error: insErr } = await supabase
+          .from('abandoned_checkouts')
+          .insert(payload);
+        if (insErr) {
+          // If duplicate session_token, switch to update path next time
+          if (insErr.code === '23505') {
+            // Find row id (admin-only SELECT will fail for guests, so just mark as saved by token)
+            abandonedSavedRef.current = true;
+          } else {
+            console.warn('[abandoned] insert error:', insErr.message);
+          }
+        } else {
+          abandonedSavedRef.current = true;
+          // Try to fetch id (works for admins / RLS-permitted users; safe to fail for guests)
+          const { data: row } = await supabase
+            .from('abandoned_checkouts')
+            .select('id')
+            .eq('session_token', sessionTokenRef.current)
+            .maybeSingle();
+          if (row?.id) abandonedRowIdRef.current = row.id;
+        }
+      } catch (e) { console.warn('[abandoned] save failed:', e); }
     }, 1500);
     return () => clearTimeout(abandonedTimer.current);
   }, [form.name, form.email, form.phone, items, subtotal, discountAmount, finalTotal, coupon.isApplied, coupon.code, paymentMethod, orderNotes, user?.id]);
