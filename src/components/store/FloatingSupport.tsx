@@ -399,126 +399,157 @@ const FloatingSupport = () => {
         <>
           <div
             onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 z-40 bg-foreground/10 backdrop-blur-[2px]"
-            style={{ animation: 'fadeInBg 0.2s ease-out' }}
+            className="fixed inset-0 z-40"
+            style={{
+              animation: 'fadeInBg 0.25s ease-out',
+              background: 'radial-gradient(ellipse at bottom right, hsla(271,80%,30%,0.35) 0%, hsla(220,30%,5%,0.45) 70%)',
+              backdropFilter: 'blur(6px) saturate(140%)',
+              WebkitBackdropFilter: 'blur(6px) saturate(140%)',
+            }}
           />
           <div
-            className="fixed right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[320px] max-w-sm flex flex-col rounded-[28px] overflow-hidden bottom-[calc(env(safe-area-inset-bottom,0px)+160px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+80px)]"
+            className="fixed right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[340px] max-w-sm flex flex-col rounded-[32px] overflow-hidden bottom-[calc(env(safe-area-inset-bottom,0px)+160px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+80px)]"
             style={{
-              animation: 'slideUpIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              background: 'rgba(255, 255, 255, 0.85)',
-              backdropFilter: 'blur(28px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.6)',
-              boxShadow: '0 24px 60px -12px hsla(258, 78%, 35%, 0.35), 0 8px 24px -4px hsla(258, 60%, 30%, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+              animation: 'slideUpIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              background: 'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(252,250,255,0.92) 100%)',
+              backdropFilter: 'blur(32px) saturate(190%)',
+              WebkitBackdropFilter: 'blur(32px) saturate(190%)',
+              border: '1px solid rgba(255, 255, 255, 0.7)',
+              boxShadow: '0 32px 80px -16px hsla(271, 80%, 25%, 0.45), 0 12px 32px -8px hsla(271, 60%, 30%, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(0,0,0,0.04)',
             }}
           >
-            {/* Premium gradient header */}
+            {/* Premium animated header */}
             <div
-              className="relative px-5 py-4 overflow-hidden"
+              className="relative px-5 pt-5 pb-6 overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, hsl(258, 90%, 62%) 0%, hsl(280, 85%, 58%) 50%, hsl(310, 80%, 60%) 100%)',
+                background: 'linear-gradient(135deg, hsl(258, 92%, 60%) 0%, hsl(280, 88%, 56%) 45%, hsl(320, 82%, 60%) 100%)',
               }}
             >
-              {/* Decorative orbs */}
-              <span className="absolute -top-8 -right-6 w-24 h-24 rounded-full opacity-40 blur-2xl" style={{ background: 'hsl(50, 100%, 70%)' }} />
-              <span className="absolute -bottom-10 -left-4 w-20 h-20 rounded-full opacity-30 blur-2xl" style={{ background: 'hsl(185, 100%, 70%)' }} />
+              {/* Animated decorative orbs */}
+              <span className="absolute -top-10 -right-8 w-32 h-32 rounded-full opacity-50 blur-3xl" style={{ background: 'hsl(45, 100%, 65%)', animation: 'orbFloat 6s ease-in-out infinite' }} />
+              <span className="absolute -bottom-12 -left-6 w-28 h-28 rounded-full opacity-40 blur-3xl" style={{ background: 'hsl(185, 100%, 65%)', animation: 'orbFloat 7s ease-in-out infinite reverse' }} />
+              <span className="absolute top-1/2 left-1/3 w-20 h-20 rounded-full opacity-30 blur-2xl" style={{ background: 'hsl(310, 100%, 70%)', animation: 'orbFloat 8s ease-in-out infinite' }} />
+              {/* Shimmer overlay */}
+              <span className="absolute inset-0 opacity-30 pointer-events-none" style={{
+                background: 'linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%)',
+                animation: 'headerShimmer 4s ease-in-out infinite',
+              }} />
 
               <div className="relative flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                   <div
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 ring-2 ring-white/40"
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ring-2 ring-white/50"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.22)',
-                      backdropFilter: 'blur(8px)',
-                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15)',
+                      background: 'rgba(255, 255, 255, 0.25)',
+                      backdropFilter: 'blur(10px)',
+                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 6px 16px rgba(0, 0, 0, 0.18)',
                     }}
                   >
-                    <Headphones size={20} className="text-white drop-shadow" />
+                    <Headphones size={22} className="text-white drop-shadow-md" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-white text-[15px] font-bold leading-tight drop-shadow-sm">{config.fab_label}</p>
+                    <p className="text-white text-[16px] font-extrabold leading-tight drop-shadow-sm tracking-tight">{config.fab_label}</p>
                     <div className="flex items-center gap-1.5 mt-1">
-                      <span className="relative flex w-1.5 h-1.5">
-                        <span className="absolute inline-flex w-full h-full rounded-full bg-green-300 opacity-75 animate-ping" />
-                        <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-green-400" />
+                      <span className="relative flex w-2 h-2">
+                        <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-300 opacity-80 animate-ping" />
+                        <span className="relative inline-flex w-2 h-2 rounded-full bg-emerald-400 ring-1 ring-white/60" />
                       </span>
-                      <p className="text-white/90 text-[11px] font-medium">এখন অনলাইন · যেকোনো একটি বেছে নিন</p>
+                      <p className="text-white/95 text-[11px] font-semibold">এখন অনলাইন · দ্রুত উত্তর পান</p>
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={() => setMenuOpen(false)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white/90 hover:bg-white/20 hover:text-white transition-all flex-shrink-0"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-white/25 active:bg-white/35 transition-all flex-shrink-0"
+                  style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)' }}
                   aria-label="বন্ধ করুন"
                 >
-                  <X size={14} />
+                  <X size={15} strokeWidth={2.5} />
                 </button>
+              </div>
+
+              {/* Trust pill row */}
+              <div className="relative mt-4 flex items-center gap-1.5 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-white px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.3)' }}>
+                  ⚡ গড়ে ১ মিনিটে উত্তর
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-white px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.3)' }}>
+                  🛡️ ২৪/৭ সাপোর্ট
+                </span>
               </div>
             </div>
 
             {/* Options list */}
-            <div className="p-2.5 flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto bg-white/40">
+            <div className="p-3 flex flex-col gap-2 max-h-[55vh] overflow-y-auto" style={{ background: 'transparent' }}>
+              <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted-foreground/70 px-1 pt-1 pb-0.5">
+                যোগাযোগের মাধ্যম বেছে নিন
+              </p>
               {config.chat_enabled && (
                 <button
                   onClick={openChat}
-                  className="group/opt relative flex items-center gap-3 px-3 py-3 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5"
+                  className="group/opt relative flex items-center gap-3 px-3.5 py-3 rounded-2xl text-left transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] overflow-hidden"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.7)',
-                    border: '1px solid rgba(258, 78%, 70%, 0.2)',
-                    boxShadow: '0 1px 3px hsla(258, 40%, 30%, 0.04)',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.85), rgba(248,245,255,0.85))',
+                    border: '1px solid hsla(271, 80%, 70%, 0.25)',
+                    boxShadow: '0 2px 8px hsla(271, 40%, 30%, 0.06), inset 0 1px 0 rgba(255,255,255,0.8)',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 20px hsla(258, 78%, 50%, 0.18), 0 2px 6px hsla(258, 40%, 30%, 0.08)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px hsla(258, 40%, 30%, 0.04)'; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 12px 28px hsla(271, 78%, 50%, 0.22), 0 4px 10px hsla(271, 40%, 30%, 0.1), inset 0 1px 0 rgba(255,255,255,0.9)'; e.currentTarget.style.borderColor = 'hsla(271, 80%, 60%, 0.5)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 2px 8px hsla(271, 40%, 30%, 0.06), inset 0 1px 0 rgba(255,255,255,0.8)'; e.currentTarget.style.borderColor = 'hsla(271, 80%, 70%, 0.25)'; }}
                 >
+                  {/* Sweep on hover */}
+                  <span className="absolute inset-0 opacity-0 group-hover/opt:opacity-100 transition-opacity pointer-events-none" style={{ background: 'linear-gradient(110deg, transparent 35%, rgba(168,85,247,0.08) 50%, transparent 65%)' }} />
                   <span
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover/opt:scale-110 group-hover/opt:rotate-3"
+                    className="relative w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover/opt:scale-110 group-hover/opt:rotate-6"
                     style={{
-                      background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-                      boxShadow: '0 6px 14px hsla(271, 91%, 60%, 0.35), inset 0 1px 0 rgba(255,255,255,0.3)',
+                      background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(310,85%,60%) 50%, hsl(185,90%,52%))',
+                      boxShadow: '0 8px 20px hsla(271, 91%, 60%, 0.4), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -2px 4px rgba(0,0,0,0.1)',
                     }}
                   >
-                    <Bot size={19} className="text-white" />
+                    <Bot size={20} className="text-white drop-shadow" />
                   </span>
-                  <div className="flex-1 min-w-0">
+                  <div className="relative flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <p className="text-[14px] font-bold text-foreground">{config.ai_label}</p>
-                      <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md text-white" style={{ background: 'linear-gradient(135deg, hsl(258,80%,60%), hsl(280,80%,55%))' }}>AI</span>
+                      <p className="text-[14.5px] font-extrabold text-foreground tracking-tight">{config.ai_label}</p>
+                      <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-md text-white shadow-sm" style={{ background: 'linear-gradient(135deg, hsl(258,85%,58%), hsl(310,80%,55%))' }}>AI</span>
                     </div>
                     <p className="text-[11.5px] text-muted-foreground truncate mt-0.5">{config.ai_subtitle}</p>
                   </div>
-                  <span className="relative flex w-2 h-2 flex-shrink-0">
-                    <span className="absolute inline-flex w-full h-full rounded-full bg-green-400 opacity-75 animate-ping" />
-                    <span className="relative inline-flex w-2 h-2 rounded-full bg-green-500" />
-                  </span>
+                  <div className="relative flex flex-col items-end gap-1 flex-shrink-0">
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md text-emerald-700 bg-emerald-50 border border-emerald-200">তাৎক্ষণিক</span>
+                    <span className="relative flex w-2 h-2">
+                      <span className="absolute inline-flex w-full h-full rounded-full bg-green-400 opacity-75 animate-ping" />
+                      <span className="relative inline-flex w-2 h-2 rounded-full bg-green-500" />
+                    </span>
+                  </div>
                 </button>
               )}
               {config.whatsapp_enabled && (
                 <button
                   onClick={openWhatsApp}
-                  className="group/opt relative flex items-center gap-3 px-3 py-3 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5"
+                  className="group/opt relative flex items-center gap-3 px-3.5 py-3 rounded-2xl text-left transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] overflow-hidden"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.7)',
-                    border: '1px solid hsla(142, 70%, 55%, 0.2)',
-                    boxShadow: '0 1px 3px hsla(258, 40%, 30%, 0.04)',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,253,244,0.85))',
+                    border: '1px solid hsla(142, 70%, 55%, 0.25)',
+                    boxShadow: '0 2px 8px hsla(142, 40%, 30%, 0.06), inset 0 1px 0 rgba(255,255,255,0.8)',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 20px hsla(142, 70%, 45%, 0.20), 0 2px 6px hsla(258, 40%, 30%, 0.08)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px hsla(258, 40%, 30%, 0.04)'; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 12px 28px hsla(142, 70%, 45%, 0.25), 0 4px 10px hsla(142, 40%, 30%, 0.1), inset 0 1px 0 rgba(255,255,255,0.9)'; e.currentTarget.style.borderColor = 'hsla(142, 70%, 50%, 0.5)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 2px 8px hsla(142, 40%, 30%, 0.06), inset 0 1px 0 rgba(255,255,255,0.8)'; e.currentTarget.style.borderColor = 'hsla(142, 70%, 55%, 0.25)'; }}
                 >
+                  <span className="absolute inset-0 opacity-0 group-hover/opt:opacity-100 transition-opacity pointer-events-none" style={{ background: 'linear-gradient(110deg, transparent 35%, rgba(37,211,102,0.08) 50%, transparent 65%)' }} />
                   <span
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover/opt:scale-110 group-hover/opt:rotate-3"
+                    className="relative w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover/opt:scale-110 group-hover/opt:rotate-6"
                     style={{
                       background: 'linear-gradient(135deg, #25D366, #128C7E)',
-                      boxShadow: '0 6px 14px hsla(142, 70%, 40%, 0.35), inset 0 1px 0 rgba(255,255,255,0.3)',
+                      boxShadow: '0 8px 20px hsla(142, 70%, 40%, 0.4), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -2px 4px rgba(0,0,0,0.1)',
                     }}
                   >
-                    <MessageCircle size={19} className="text-white" />
+                    <MessageCircle size={20} className="text-white drop-shadow" />
                   </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-bold text-foreground">{config.whatsapp_label}</p>
+                  <div className="relative flex-1 min-w-0">
+                    <p className="text-[14.5px] font-extrabold text-foreground tracking-tight">{config.whatsapp_label}</p>
                     <p className="text-[11.5px] text-muted-foreground truncate mt-0.5">{config.whatsapp_subtitle}</p>
                   </div>
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full text-green-700 bg-green-100 border border-green-200 flex-shrink-0">দ্রুত</span>
+                  <span className="relative text-[10px] font-bold px-2 py-1 rounded-full text-white flex-shrink-0 shadow-sm" style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}>দ্রুত</span>
                 </button>
               )}
               {activeSets.map(set => {
@@ -527,26 +558,27 @@ const FloatingSupport = () => {
                   <button
                     key={set.id}
                     onClick={() => openLiveSet(set)}
-                    className="group/opt relative flex items-center gap-3 px-3 py-3 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5"
+                    className="group/opt relative flex items-center gap-3 px-3.5 py-3 rounded-2xl text-left transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] overflow-hidden"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.7)',
-                      border: `1px solid ${set.icon_color}33`,
-                      boxShadow: '0 1px 3px hsla(258, 40%, 30%, 0.04)',
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.85), rgba(252,250,255,0.85))',
+                      border: `1px solid ${set.icon_color}40`,
+                      boxShadow: '0 2px 8px hsla(258, 40%, 30%, 0.06), inset 0 1px 0 rgba(255,255,255,0.8)',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 8px 20px ${set.icon_color}30, 0 2px 6px hsla(258, 40%, 30%, 0.08)`; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px hsla(258, 40%, 30%, 0.04)'; }}
+                    onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 12px 28px ${set.icon_color}38, 0 4px 10px hsla(258, 40%, 30%, 0.1), inset 0 1px 0 rgba(255,255,255,0.9)`; e.currentTarget.style.borderColor = `${set.icon_color}80`; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 2px 8px hsla(258, 40%, 30%, 0.06), inset 0 1px 0 rgba(255,255,255,0.8)'; e.currentTarget.style.borderColor = `${set.icon_color}40`; }}
                   >
+                    <span className="absolute inset-0 opacity-0 group-hover/opt:opacity-100 transition-opacity pointer-events-none" style={{ background: `linear-gradient(110deg, transparent 35%, ${set.icon_color}15 50%, transparent 65%)` }} />
                     <span
-                      className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover/opt:scale-110 group-hover/opt:rotate-3"
+                      className="relative w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover/opt:scale-110 group-hover/opt:rotate-6"
                       style={{
-                        background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)`,
-                        boxShadow: `0 6px 14px ${set.icon_color}59, inset 0 1px 0 rgba(255,255,255,0.3)`,
+                        background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}cc)`,
+                        boxShadow: `0 8px 20px ${set.icon_color}66, inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -2px 4px rgba(0,0,0,0.1)`,
                       }}
                     >
-                      <ChannelIcon size={19} className="text-white" />
+                      <ChannelIcon size={20} className="text-white drop-shadow" />
                     </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-foreground">{set.label}</p>
+                    <div className="relative flex-1 min-w-0">
+                      <p className="text-[14.5px] font-extrabold text-foreground tracking-tight">{set.label}</p>
                       {set.subtitle && <p className="text-[11.5px] text-muted-foreground truncate mt-0.5">{set.subtitle}</p>}
                     </div>
                   </button>
@@ -558,9 +590,14 @@ const FloatingSupport = () => {
             </div>
 
             {/* Footer trust line */}
-            <div className="px-4 py-2.5 border-t border-white/60 bg-white/30 backdrop-blur-md flex items-center justify-center gap-1.5">
-              <span className="text-[10px] text-muted-foreground">Powered by</span>
-              <span className="text-[10.5px] font-bold bg-gradient-to-r from-[hsl(258,80%,55%)] to-[hsl(310,80%,55%)] bg-clip-text text-transparent">Shahed Store Support</span>
+            <div className="px-4 py-3 border-t border-white/70 flex items-center justify-between gap-2" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.4), rgba(248,245,255,0.5))' }}>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] text-muted-foreground">Powered by</span>
+                <span className="text-[11px] font-extrabold bg-gradient-to-r from-[hsl(258,85%,55%)] via-[hsl(280,80%,55%)] to-[hsl(320,80%,55%)] bg-clip-text text-transparent">Shahed Store</span>
+              </div>
+              <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/70 px-1.5 py-0.5 rounded-full">
+                <span className="w-1 h-1 rounded-full bg-emerald-500" /> SECURE
+              </span>
             </div>
           </div>
         </>
@@ -614,6 +651,14 @@ const FloatingSupport = () => {
         @keyframes fadeInBg {
           from { opacity: 0; }
           to   { opacity: 1; }
+        }
+        @keyframes orbFloat {
+          0%, 100% { transform: translate(0,0) scale(1); }
+          50%      { transform: translate(8px,-6px) scale(1.15); }
+        }
+        @keyframes headerShimmer {
+          0%   { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
         .fab-ring {
           position: absolute;
