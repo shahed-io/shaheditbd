@@ -182,7 +182,7 @@ export default function AdminAbandonedCheckouts() {
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search by name, email or phone..."
+            placeholder="Search by name, email, phone, coupon or product..."
             className={inputCls + ' pl-11'}
           />
         </div>
