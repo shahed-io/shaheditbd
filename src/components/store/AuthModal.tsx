@@ -68,13 +68,21 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         if (referralCode.trim() && data.user) {
           const code = referralCode.trim().toUpperCase();
           const userId = data.user.id;
+          // Capture client IP for same-IP abuse detection
+          let clientIp: string | null = null;
+          try {
+            const ipRes = await fetch('https://api.ipify.org?format=json');
+            const ipJson = await ipRes.json();
+            clientIp = ipJson?.ip || null;
+          } catch { /* ignore */ }
           let processed = false;
           for (let attempt = 0; attempt < 5; attempt++) {
             await new Promise(res => setTimeout(res, 1200 * (attempt + 1)));
             try {
-              const { data: refResult } = await supabase.rpc('process_referral', {
+              const { data: refResult } = await supabase.rpc('process_referral' as any, {
                 p_referral_code: code,
                 p_referred_user_id: userId,
+                p_ip: clientIp,
               });
               if ((refResult as any)?.success) {
                 toast.success(`🎁 রেফারেল কোড প্রয়োগ হয়েছে! ৫% স্থায়ী ছাড় সক্রিয় হয়েছে।`);
@@ -83,6 +91,10 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               } else if ((refResult as any)?.error) {
                 const err = (refResult as any).error;
                 if (err === 'User not found' && attempt < 4) continue;
+                if (err === 'Same IP detected, referral blocked') {
+                  toast.warning('একই IP থেকে রেফারেল ব্যবহার করা যাবে না।');
+                  break;
+                }
                 if (err !== 'User not found') {
                   toast.warning('রেফারেল কোড সঠিক নয় অথবা আগেই ব্যবহার করা হয়েছে।');
                   break;
@@ -92,6 +104,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           }
           if (!processed) {
             localStorage.setItem('pending_referral', code);
+            if (clientIp) localStorage.setItem('pending_referral_ip', clientIp);
           }
         }
         onClose();
