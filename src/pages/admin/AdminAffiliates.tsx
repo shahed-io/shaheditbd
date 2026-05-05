@@ -329,12 +329,18 @@ const AdminAffiliates = () => {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <StatCard icon={Users} label="Active Affiliates" value={stats.totalAffiliates} color="text-emerald-600" />
-        <StatCard icon={Clock} label="Pending Apps" value={stats.pendingApps} color="text-amber-600" />
-        <StatCard icon={CheckCircle2} label="Pending Conv." value={stats.pendingConversions} color="text-blue-600" />
-        <StatCard icon={Wallet} label="Pending Payouts" value={`৳${stats.pendingPayouts.toFixed(0)}`} color="text-purple-600" />
-        <StatCard icon={DollarSign} label="Total Paid" value={`৳${stats.totalCommissionPaid.toFixed(0)}`} color="text-green-600" />
-        <StatCard icon={MousePointerClick} label="Total Clicks" value={stats.totalClicks} color="text-pink-600" />
+        <StatCard icon={Users} label="Active Affiliates" value={stats.totalAffiliates} color="text-emerald-600"
+          onClick={() => { setTab('accounts'); setStatusFilter('approved'); setAccountSearch(''); }} />
+        <StatCard icon={Clock} label="Pending Apps" value={stats.pendingApps} color="text-amber-600"
+          onClick={() => { setTab('accounts'); setStatusFilter('pending'); setAccountSearch(''); }} />
+        <StatCard icon={CheckCircle2} label="Pending Conv." value={stats.pendingConversions} color="text-blue-600"
+          onClick={() => setTab('conversions')} />
+        <StatCard icon={Wallet} label="Pending Payouts" value={`৳${stats.pendingPayouts.toFixed(0)}`} color="text-purple-600"
+          onClick={() => setTab('withdrawals')} />
+        <StatCard icon={DollarSign} label="Total Paid" value={`৳${stats.totalCommissionPaid.toFixed(0)}`} color="text-green-600"
+          onClick={() => setTab('withdrawals')} />
+        <StatCard icon={MousePointerClick} label="Total Clicks" value={stats.totalClicks} color="text-pink-600"
+          onClick={() => { setTab('accounts'); setStatusFilter('all'); }} />
       </div>
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
