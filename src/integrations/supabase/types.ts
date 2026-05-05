@@ -2094,9 +2094,11 @@ export type Database = {
           points_balance: number
           referral_code: string | null
           referral_credit: number
+          referral_credit_balance: number
           referral_discount: number
           referral_earnings: number
           referred_by: string | null
+          signup_ip: string | null
           total_points_earned: number
           total_points_redeemed: number
           updated_at: string
@@ -2114,9 +2116,11 @@ export type Database = {
           points_balance?: number
           referral_code?: string | null
           referral_credit?: number
+          referral_credit_balance?: number
           referral_discount?: number
           referral_earnings?: number
           referred_by?: string | null
+          signup_ip?: string | null
           total_points_earned?: number
           total_points_redeemed?: number
           updated_at?: string
@@ -2134,9 +2138,11 @@ export type Database = {
           points_balance?: number
           referral_code?: string | null
           referral_credit?: number
+          referral_credit_balance?: number
           referral_discount?: number
           referral_earnings?: number
           referred_by?: string | null
+          signup_ip?: string | null
           total_points_earned?: number
           total_points_redeemed?: number
           updated_at?: string
@@ -2861,14 +2867,32 @@ export type Database = {
         }
         Returns: Json
       }
-      process_google_referral: {
-        Args: { p_referral_code: string; p_referred_user_id: string }
-        Returns: Json
-      }
-      process_referral: {
-        Args: { p_referral_code: string; p_referred_user_id: string }
-        Returns: Json
-      }
+      process_google_referral:
+        | {
+            Args: { p_referral_code: string; p_referred_user_id: string }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_ip?: string
+              p_referral_code: string
+              p_referred_user_id: string
+            }
+            Returns: Json
+          }
+      process_referral:
+        | {
+            Args: { p_referral_code: string; p_referred_user_id: string }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_ip?: string
+              p_referral_code: string
+              p_referred_user_id: string
+            }
+            Returns: Json
+          }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
@@ -2883,6 +2907,15 @@ export type Database = {
       }
       redeem_points: {
         Args: { p_points: number; p_user_id: string }
+        Returns: Json
+      }
+      redeem_referral_credit: {
+        Args: {
+          p_amount: number
+          p_order_id?: string
+          p_order_subtotal: number
+          p_user_id: string
+        }
         Returns: Json
       }
       reject_affiliate_conversion: {
