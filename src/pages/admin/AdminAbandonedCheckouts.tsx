@@ -152,10 +152,14 @@ export default function AdminAbandonedCheckouts() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total" value={stats.total} icon={FileText} color="from-slate-500 to-slate-600" />
-        <StatCard label="Pending Recovery" value={stats.pending} icon={Clock} color="from-amber-500 to-orange-500" />
-        <StatCard label="Recovered" value={stats.converted} icon={CheckCircle2} color="from-emerald-500 to-green-600" />
-        <StatCard label="Lost Value" value={fmtBDT(stats.lostValue)} icon={Package} color="from-rose-500 to-red-600" isText />
+        <StatCard label="Total" value={stats.total} icon={FileText} color="from-slate-500 to-slate-600"
+          active={statusFilter === 'all'} onClick={() => setStatusFilter('all')} />
+        <StatCard label="Pending Recovery" value={stats.pending} icon={Clock} color="from-amber-500 to-orange-500"
+          active={statusFilter === 'pending'} onClick={() => setStatusFilter('pending')} />
+        <StatCard label="Recovered" value={stats.converted} icon={CheckCircle2} color="from-emerald-500 to-green-600"
+          active={statusFilter === 'converted'} onClick={() => setStatusFilter('converted')} />
+        <StatCard label="Lost Value" value={fmtBDT(stats.lostValue)} icon={Package} color="from-rose-500 to-red-600" isText
+          active={statusFilter === 'pending'} onClick={() => setStatusFilter('pending')} />
       </div>
 
       {/* Filter bar */}
@@ -308,9 +312,13 @@ export default function AdminAbandonedCheckouts() {
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────────
-function StatCard({ label, value, icon: Icon, color, isText }: { label: string; value: any; icon: any; color: string; isText?: boolean }) {
+function StatCard({ label, value, icon: Icon, color, isText, active, onClick }: { label: string; value: any; icon: any; color: string; isText?: boolean; active?: boolean; onClick?: () => void }) {
   return (
-    <div className="rounded-2xl bg-card/50 backdrop-blur-xl border border-border/50 p-4 flex items-center justify-between">
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-left rounded-2xl bg-card/50 backdrop-blur-xl border p-4 flex items-center justify-between transition hover:scale-[1.02] hover:shadow-md ${active ? 'border-primary ring-2 ring-primary/40' : 'border-border/50'}`}
+    >
       <div>
         <div className="text-xs text-muted-foreground">{label}</div>
         <div className={`mt-1 font-bold ${isText ? 'text-lg' : 'text-2xl'} text-foreground`}>{value}</div>
@@ -318,7 +326,7 @@ function StatCard({ label, value, icon: Icon, color, isText }: { label: string; 
       <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center`}>
         <Icon className="text-white" size={18} />
       </div>
-    </div>
+    </button>
   );
 }
 
