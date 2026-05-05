@@ -301,63 +301,120 @@ const Navbar = () => {
       {/* ── Fixed wrapper for announcement + navbar ── */}
       <div className="fixed top-0 left-0 right-0 z-50">
 
-      {/* ── Top Announcement Bar — hides on scroll ── */}
-      <div className="w-full text-white text-xs font-medium py-2 flex items-center overflow-hidden relative transition-all duration-300"
+      {/* ── Top Announcement Bar — Premium glass design ── */}
+      <div
+        className="w-full text-white text-[11px] font-medium flex items-center overflow-hidden relative transition-all duration-300"
         style={{
-          background: 'linear-gradient(90deg, hsl(258,78%,50%), hsl(200,90%,42%), hsl(258,78%,50%))',
-          maxHeight: scrolled ? '0px' : '40px',
+          background:
+            'linear-gradient(95deg, hsl(252,60%,12%) 0%, hsl(258,75%,22%) 35%, hsl(220,85%,28%) 65%, hsl(252,60%,12%) 100%)',
+          maxHeight: scrolled ? '0px' : '38px',
           opacity: scrolled ? 0 : 1,
-          padding: scrolled ? '0' : undefined,
-        }}>
-        <div className="absolute inset-0 dot-grid opacity-20 pointer-events-none" />
+          padding: scrolled ? '0' : '8px 0',
+          boxShadow: 'inset 0 -1px 0 hsla(0,0%,100%,0.08)',
+        }}
+      >
+        {/* shimmer */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-40"
+          style={{
+            background:
+              'linear-gradient(110deg, transparent 30%, hsla(0,0%,100%,0.12) 50%, transparent 70%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 7s linear infinite',
+          }}
+        />
+        {/* glowing dot */}
+        <span
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full"
+          style={{ background: 'hsl(48,100%,60%)', boxShadow: '0 0 8px hsl(48,100%,60%)' }}
+        />
 
-        <div className="flex items-center gap-4 pl-4 flex-shrink-0 relative z-10">
-          <a href="tel:01840099853" className="flex items-center gap-1.5 hover:text-white/80 transition-colors">
-            <Phone size={11} /> 01840-099853
+        {/* Left — contact pills */}
+        <div className="flex items-center gap-1.5 pl-5 flex-shrink-0 relative z-10">
+          <a
+            href="tel:01840099853"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-105"
+            style={{ background: 'hsla(0,0%,100%,0.08)', backdropFilter: 'blur(8px)' }}
+          >
+            <Phone size={10} className="text-amber-300" /> 01840-099853
           </a>
-          <a href="mailto:info@shahedstore.com.bd" className="hidden sm:flex items-center gap-1.5 hover:text-white/80 transition-colors">
-            <Mail size={11} /> info@shahedstore.com.bd
+          <a
+            href="mailto:info@shahedstore.com.bd"
+            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-105"
+            style={{ background: 'hsla(0,0%,100%,0.08)', backdropFilter: 'blur(8px)' }}
+          >
+            <Mail size={10} className="text-cyan-300" /> info@shahedstore.com.bd
           </a>
         </div>
 
-        <div className="flex-1 overflow-hidden mx-3 relative z-10">
-          <div className="flex items-center gap-1.5 font-bold text-[11px]"
-            style={{ animation: 'marquee 28s linear infinite', whiteSpace: 'nowrap', display: 'inline-flex' }}>
-            <Sparkles size={11} className="text-yellow-300 flex-shrink-0" />
-            <span>
-              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • ৫০% ছাড় সীমিত সময়ের জন্য'}
-            </span>
-            <span className="ml-16">
-              <Sparkles size={11} className="text-yellow-300 inline mr-1.5" />
-              {announcement || 'FREE instant delivery • সব অর্ডারে ফ্রি ডেলিভারি • ৫০% ছাড় সীমিত সময়ের জন্য'}
-            </span>
+        {/* Middle — marquee */}
+        <div className="flex-1 overflow-hidden mx-4 relative z-10 mask-fade">
+          <div
+            className="flex items-center gap-10 whitespace-nowrap"
+            style={{ animation: 'marquee 32s linear infinite', display: 'inline-flex' }}
+          >
+            {[0, 1].map((k) => (
+              <span key={k} className="flex items-center gap-10">
+                <span className="flex items-center gap-1.5">
+                  <Sparkles size={11} className="text-amber-300" />
+                  <span className="font-semibold tracking-wide">
+                    {announcement || 'বিশেষ অফার! সব অর্ডারে ফ্রি ইনস্ট্যান্ট ডেলিভারি — ১০% পর্যন্ত ছাড় পান'}
+                  </span>
+                </span>
+                <span className="w-1 h-1 rounded-full bg-white/40" />
+                <span className="flex items-center gap-1.5 text-amber-200">
+                  <Star size={10} fill="currentColor" /> Trusted by 50,000+ customers
+                </span>
+                <span className="w-1 h-1 rounded-full bg-white/40" />
+                <span className="flex items-center gap-1.5 text-cyan-200">
+                  <Shield size={10} /> 100% Secure Payment
+                </span>
+              </span>
+            ))}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-[11px] pr-4 flex-shrink-0 relative z-10">
-          <span className="hidden md:flex items-center gap-1"><Star size={10} fill="currentColor" /> 4.9/5</span>
-          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: 'hsla(0,0%,100%,0.18)' }}>
-            <Shield size={10} /> Secured
+        {/* Right — rating + socials */}
+        <div className="flex items-center gap-2 pr-5 flex-shrink-0 relative z-10">
+          <span
+            className="hidden md:flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold"
+            style={{
+              background: 'linear-gradient(135deg, hsla(48,100%,60%,0.25), hsla(48,100%,60%,0.1))',
+              border: '1px solid hsla(48,100%,60%,0.4)',
+              color: 'hsl(48,100%,80%)',
+            }}
+          >
+            <Star size={9} fill="currentColor" /> 4.9
           </span>
-          <div className="hidden sm:flex items-center gap-1.5 ml-1 border-l border-white/30 pl-2">
+          <span
+            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px]"
+            style={{
+              background: 'linear-gradient(135deg, hsla(140,70%,55%,0.2), hsla(140,70%,55%,0.08))',
+              border: '1px solid hsla(140,70%,55%,0.35)',
+              color: 'hsl(140,70%,80%)',
+            }}
+          >
+            <Shield size={9} /> Secured
+          </span>
+          <div className="hidden sm:flex items-center gap-2 ml-1 pl-2.5 border-l border-white/15">
             {footerSettings.facebook_url && (
-              <a href={footerSettings.facebook_url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors" title="Facebook">
-                <Facebook size={13} />
+              <a href={footerSettings.facebook_url} target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 hover:text-amber-300 transition" title="Facebook">
+                <Facebook size={12} />
               </a>
             )}
             {footerSettings.whatsapp_url && (
-              <a href={footerSettings.whatsapp_url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors" title="WhatsApp">
-                <MessageCircle size={13} />
+              <a href={footerSettings.whatsapp_url} target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 hover:text-amber-300 transition" title="WhatsApp">
+                <MessageCircle size={12} />
               </a>
             )}
             {footerSettings.instagram_url && (
-              <a href={footerSettings.instagram_url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors" title="Instagram">
-                <Instagram size={13} />
+              <a href={footerSettings.instagram_url} target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 hover:text-amber-300 transition" title="Instagram">
+                <Instagram size={12} />
               </a>
             )}
             {footerSettings.telegram_url && (
-              <a href={footerSettings.telegram_url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors" title="Telegram">
-                <Send size={13} />
+              <a href={footerSettings.telegram_url} target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 hover:text-amber-300 transition" title="Telegram">
+                <Send size={12} />
               </a>
             )}
           </div>
@@ -366,6 +423,11 @@ const Navbar = () => {
 
       <style>{`
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .mask-fade {
+          mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+          -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+        }
       `}</style>
 
       {/* ── Main Navbar — Glassmorphism Card ── */}
