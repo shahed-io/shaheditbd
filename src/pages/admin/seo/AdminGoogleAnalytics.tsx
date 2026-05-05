@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { BarChart2, Save, Check, ExternalLink, Copy } from 'lucide-react';
 import { toast } from 'sonner';
+import Ga4RealtimeWidget from '@/components/admin/Ga4RealtimeWidget';
 
 const AdminGoogleAnalytics = () => {
   const [gaId, setGaId] = useState('');
