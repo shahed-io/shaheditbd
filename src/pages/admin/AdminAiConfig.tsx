@@ -130,6 +130,29 @@ const AdminAiConfig = () => {
       } else if (testType === 'openai') {
         const res = await fetch('https://api.openai.com/v1/models', { headers: { 'Authorization': `Bearer ${entry.value}` } });
         success = res.ok;
+      } else if (testType === 'anthropic') {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': entry.value,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ model: 'claude-3-5-haiku-latest', max_tokens: 5, messages: [{ role: 'user', content: 'OK' }] }),
+        });
+        success = res.ok;
+      } else if (testType === 'telegram') {
+        const res = await fetch(`https://api.telegram.org/bot${entry.value}/getMe`);
+        const j = await res.json().catch(() => ({}));
+        success = res.ok && j?.ok === true;
+      } else if (testType === 'http_url') {
+        // Generic URL ping (works for SMS gateways etc.)
+        if (!/^https?:\/\//.test(entry.value)) {
+          toast.error('URL format ঠিক না');
+        } else {
+          const res = await fetch(entry.value, { method: 'GET' }).catch(() => null);
+          success = !!res && (res.status < 500);
+        }
       }
       setTestResults(prev => ({ ...prev, [keyField]: success ? 'success' : 'error' }));
       if (success) toast.success('✅ API Key সঠিক!');
