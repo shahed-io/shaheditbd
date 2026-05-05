@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Search, Save, Check, ExternalLink, Copy, Globe } from 'lucide-react';
 import { toast } from 'sonner';
+import SearchConsoleWidget from '@/components/admin/SearchConsoleWidget';
 
 const AdminSearchConsole = () => {
   const [verifyCode, setVerifyCode] = useState('');
@@ -36,6 +37,9 @@ const AdminSearchConsole = () => {
           <p className="text-muted-foreground text-sm">Verify your site and submit sitemaps to Google</p>
         </div>
       </div>
+
+      {/* Performance widget — last 28 days */}
+      <SearchConsoleWidget />
 
       {/* Verification */}
       <div className="glass-card rounded-2xl p-6 space-y-4">
