@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, MailX, CheckCircle, AlertTriangle } from 'lucide-react';
+import SEOHead from '@/components/seo/SEOHead';
 
 const Unsubscribe = () => {
   const [searchParams] = useSearchParams();
@@ -43,6 +44,7 @@ const Unsubscribe = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <SEOHead title="Unsubscribe" description="Manage your email subscription." noIndex />
       <div className="max-w-md w-full text-center space-y-6">
         {status === 'loading' && (
           <div className="space-y-3">

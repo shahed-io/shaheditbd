@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
+import SEOHead from '@/components/seo/SEOHead';
 
 interface Account {
   id: string;
@@ -455,6 +456,11 @@ const Affiliate = () => {
   // ─── Approved/Pending Dashboard ────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Affiliate Program — Earn Commission"
+        description="Join the Shahed Store Affiliate Program. Share your referral link, earn commission on every sale, and withdraw via bKash/Nagad. Best digital affiliate program in Bangladesh."
+        keywords="affiliate program bangladesh, earn online bangladesh, referral program, shahed store affiliate, digital affiliate"
+      />
       <Navbar />
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="gap-2"><ArrowLeft size={14} /> Back to Dashboard</Button>

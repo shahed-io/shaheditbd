@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Lock, Eye, EyeOff, ShieldCheck, RefreshCw } from 'lucide-react';
 import logoIcon from '@/assets/logo-icon.webp';
+import SEOHead from '@/components/seo/SEOHead';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(160deg, hsl(230,25%,97%) 0%, hsl(243,20%,96%) 100%)' }}>
+      <SEOHead title="Reset Password" description="Reset your Shahed Store password." noIndex />
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-8">

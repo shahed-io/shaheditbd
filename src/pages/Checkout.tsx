@@ -20,6 +20,7 @@ import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
 import { getStoredAffiliateRef, clearStoredAffiliateRef } from '@/hooks/useAffiliateTracking';
 import { gTrackBeginCheckout, gTrackPurchase } from '@/components/store/GoogleTracking';
+import SEOHead from '@/components/seo/SEOHead';
 
 const ASSET_LOGOS: Record<string, string> = {
   bkash: bkashLogo,
@@ -601,6 +602,7 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
       {/* Login Required Banner for guests */}

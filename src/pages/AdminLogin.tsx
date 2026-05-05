@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
+import SEOHead from '@/components/seo/SEOHead';
 
 const AdminLogin = () => {
   const { signIn, signOut, isAdmin, user, loading } = useAuth();
@@ -66,6 +67,7 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <SEOHead title="Admin Login" description="Restricted area." noIndex />
       {/* Orbs */}
       <div className="orb orb-1 opacity-10 top-20 left-1/4 fixed" />
       <div className="orb orb-2 opacity-10 bottom-20 right-1/4 fixed" />
