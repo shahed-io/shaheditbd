@@ -301,78 +301,89 @@ const Navbar = () => {
       {/* ── Fixed wrapper for announcement + navbar ── */}
       <div className="fixed top-0 left-0 right-0 z-50">
 
-      {/* ── Top Announcement Bar — Glassmorphism Card matching site theme ── */}
+      {/* ── Top Announcement Bar — Premium Aurora Glass Bar ── */}
       <div
-        className="w-full transition-all duration-300 px-3"
+        className="w-full transition-all duration-300 px-2 sm:px-3"
         style={{
-          maxHeight: scrolled ? '0px' : '52px',
+          maxHeight: scrolled ? '0px' : '56px',
           opacity: scrolled ? 0 : 1,
           paddingTop: scrolled ? 0 : '8px',
           paddingBottom: scrolled ? 0 : '0',
         }}
       >
         <div
-          className="relative w-full flex items-center overflow-hidden rounded-2xl text-[11px] font-medium"
+          className="relative w-full flex items-center overflow-hidden rounded-2xl text-[11px] font-medium aurora-bar"
           style={{
             background:
-              'linear-gradient(120deg, hsla(var(--brand-h),85%,55%,0.18) 0%, hsla(var(--brand-h),60%,75%,0.10) 50%, hsla(var(--brand-h),85%,55%,0.18) 100%)',
-            backdropFilter: 'blur(24px) saturate(160%)',
-            WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-            border: '1px solid hsla(var(--brand-h),70%,60%,0.25)',
+              'linear-gradient(120deg, hsla(var(--brand-h),85%,18%,0.92) 0%, hsla(calc(var(--brand-h) + 25),80%,22%,0.88) 50%, hsla(calc(var(--brand-h) - 20),85%,18%,0.92) 100%)',
+            backdropFilter: 'blur(24px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+            border: '1px solid hsla(var(--brand-h),90%,70%,0.35)',
             boxShadow:
-              '0 8px 32px -12px hsla(var(--brand-h),70%,40%,0.18), inset 0 1px 0 hsla(0,0%,100%,0.5)',
-            color: 'hsl(var(--foreground))',
-            padding: '7px 10px',
+              '0 10px 40px -12px hsla(var(--brand-h),80%,30%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.18), inset 0 -1px 0 hsla(0,0%,0%,0.25)',
+            color: 'hsl(0,0%,98%)',
+            padding: '8px 10px',
           }}
         >
-          {/* floating colored blobs */}
+          {/* aurora floating blobs */}
           <span
-            className="absolute -left-8 -top-8 w-24 h-24 rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, hsla(var(--brand-h),90%,60%,0.35), transparent 70%)' }}
+            className="absolute -left-10 -top-10 w-32 h-32 rounded-full pointer-events-none aurora-blob-1"
+            style={{ background: 'radial-gradient(circle, hsla(var(--brand-h),95%,65%,0.55), transparent 70%)' }}
           />
           <span
-            className="absolute -right-8 -bottom-8 w-24 h-24 rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, hsla(calc(var(--brand-h) + 40),90%,60%,0.30), transparent 70%)' }}
+            className="absolute left-1/3 -bottom-12 w-32 h-32 rounded-full pointer-events-none aurora-blob-2"
+            style={{ background: 'radial-gradient(circle, hsla(calc(var(--brand-h) + 60),95%,65%,0.45), transparent 70%)' }}
+          />
+          <span
+            className="absolute -right-10 -top-10 w-32 h-32 rounded-full pointer-events-none aurora-blob-3"
+            style={{ background: 'radial-gradient(circle, hsla(calc(var(--brand-h) - 40),95%,65%,0.50), transparent 70%)' }}
           />
           {/* shimmer sweep */}
           <span
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'linear-gradient(110deg, transparent 35%, hsla(0,0%,100%,0.35) 50%, transparent 65%)',
+                'linear-gradient(110deg, transparent 38%, hsla(0,0%,100%,0.18) 50%, transparent 62%)',
               backgroundSize: '220% 100%',
-              animation: 'shimmer 8s linear infinite',
-              mixBlendMode: 'overlay',
+              animation: 'shimmer 7s linear infinite',
             }}
           />
 
-          {/* Left — contact glass pills */}
+          {/* Left — contact pills (vivid neon glass) */}
           <div className="flex items-center gap-1.5 flex-shrink-0 relative z-10">
             <a
               href="tel:01840099853"
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-[1.04]"
+              aria-label="Call us"
+              className="group flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-[1.06] active:scale-95"
               style={{
-                background: 'hsla(0,0%,100%,0.55)',
+                background: 'linear-gradient(135deg, hsla(0,0%,100%,0.18), hsla(0,0%,100%,0.06))',
                 backdropFilter: 'blur(10px)',
-                border: '1px solid hsla(0,0%,100%,0.6)',
-                boxShadow: '0 2px 8px hsla(var(--brand-h),60%,40%,0.12)',
+                border: '1px solid hsla(0,0%,100%,0.35)',
+                boxShadow: '0 2px 10px hsla(var(--brand-h),90%,40%,0.30)',
               }}
             >
-              <Phone size={10} className="text-primary" />
-              <span className="font-semibold">01840-099853</span>
+              <span className="w-4 h-4 rounded-full flex items-center justify-center"
+                style={{ background: 'linear-gradient(135deg, hsl(140,80%,55%), hsl(160,80%,45%))', boxShadow:'0 0 8px hsla(140,80%,55%,0.7)' }}>
+                <Phone size={9} className="text-white" />
+              </span>
+              <span className="font-semibold text-white tracking-wide">01840-099853</span>
             </a>
             <a
               href="mailto:info@shahedstore.com.bd"
-              className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-[1.04]"
+              aria-label="Email us"
+              className="hidden md:flex group items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-[1.06] active:scale-95"
               style={{
-                background: 'hsla(0,0%,100%,0.55)',
+                background: 'linear-gradient(135deg, hsla(0,0%,100%,0.18), hsla(0,0%,100%,0.06))',
                 backdropFilter: 'blur(10px)',
-                border: '1px solid hsla(0,0%,100%,0.6)',
-                boxShadow: '0 2px 8px hsla(var(--brand-h),60%,40%,0.12)',
+                border: '1px solid hsla(0,0%,100%,0.35)',
+                boxShadow: '0 2px 10px hsla(var(--brand-h),90%,40%,0.30)',
               }}
             >
-              <Mail size={10} className="text-primary" />
-              <span className="font-semibold">info@shahedstore.com.bd</span>
+              <span className="w-4 h-4 rounded-full flex items-center justify-center"
+                style={{ background: 'linear-gradient(135deg, hsl(var(--brand-h),95%,65%), hsl(calc(var(--brand-h) + 30),95%,55%))', boxShadow:'0 0 8px hsla(var(--brand-h),90%,60%,0.7)' }}>
+                <Mail size={9} className="text-white" />
+              </span>
+              <span className="font-semibold text-white tracking-wide">info@shahedstore.com.bd</span>
             </a>
           </div>
 
@@ -385,17 +396,17 @@ const Navbar = () => {
               {[0, 1].map((k) => (
                 <span key={k} className="flex items-center gap-8">
                   <span className="flex items-center gap-1.5">
-                    <Sparkles size={11} className="text-amber-500" />
-                    <span className="font-bold tracking-wide">
+                    <Sparkles size={11} className="text-amber-300 drop-shadow-[0_0_4px_rgba(252,211,77,0.8)]" />
+                    <span className="font-bold tracking-wide text-white">
                       {announcement || 'বিশেষ অফার! সব অর্ডারে ফ্রি ইনস্ট্যান্ট ডেলিভারি — ১০% পর্যন্ত ছাড় পান'}
                     </span>
                   </span>
-                  <span className="w-1 h-1 rounded-full bg-primary/50" />
-                  <span className="flex items-center gap-1.5 font-semibold text-primary">
+                  <span className="w-1 h-1 rounded-full bg-white/60" />
+                  <span className="flex items-center gap-1.5 font-semibold text-amber-200">
                     <Star size={10} fill="currentColor" /> Trusted by 50,000+ customers
                   </span>
-                  <span className="w-1 h-1 rounded-full bg-primary/50" />
-                  <span className="flex items-center gap-1.5 font-semibold text-emerald-600">
+                  <span className="w-1 h-1 rounded-full bg-white/60" />
+                  <span className="flex items-center gap-1.5 font-semibold text-emerald-300">
                     <Shield size={10} /> 100% Secure Payment
                   </span>
                 </span>
@@ -403,61 +414,61 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Right — glass badges + socials */}
+          {/* Right — vivid badges + social neon icons */}
           <div className="flex items-center gap-1.5 flex-shrink-0 relative z-10">
             <span
-              className="hidden md:flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
+              className="hidden md:flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-extrabold"
               style={{
-                background: 'linear-gradient(135deg, hsla(45,100%,60%,0.30), hsla(35,100%,55%,0.20))',
-                border: '1px solid hsla(40,100%,55%,0.5)',
-                color: 'hsl(35,80%,38%)',
-                backdropFilter: 'blur(8px)',
+                background: 'linear-gradient(135deg, hsl(45,100%,60%), hsl(35,100%,50%))',
+                border: '1px solid hsla(45,100%,75%,0.7)',
+                color: 'hsl(30,80%,18%)',
+                boxShadow: '0 2px 10px hsla(40,100%,55%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.5)',
               }}
             >
               <Star size={9} fill="currentColor" /> 4.9
             </span>
             <span
-              className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
+              className="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-extrabold"
               style={{
-                background: 'linear-gradient(135deg, hsla(140,70%,55%,0.25), hsla(160,70%,50%,0.18))',
-                border: '1px solid hsla(150,70%,50%,0.45)',
-                color: 'hsl(150,70%,30%)',
-                backdropFilter: 'blur(8px)',
+                background: 'linear-gradient(135deg, hsl(150,75%,50%), hsl(165,75%,40%))',
+                border: '1px solid hsla(150,90%,75%,0.7)',
+                color: 'hsl(150,90%,12%)',
+                boxShadow: '0 2px 10px hsla(150,80%,45%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.5)',
               }}
             >
               <Shield size={9} /> Secured
             </span>
-            <div className="hidden sm:flex items-center gap-1.5 ml-1 pl-2 border-l border-primary/25">
+            <div className="hidden sm:flex items-center gap-1.5 ml-1 pl-2 border-l border-white/25">
               {footerSettings.facebook_url && (
                 <a href={footerSettings.facebook_url} target="_blank" rel="noopener noreferrer"
-                  className="w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110"
-                  style={{ background: 'hsla(0,0%,100%,0.55)', border: '1px solid hsla(0,0%,100%,0.65)' }}
+                  className="social-neon w-7 h-7 flex items-center justify-center rounded-full transition-all hover:scale-115 active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, hsl(214,90%,55%), hsl(220,90%,45%))', boxShadow: '0 0 10px hsla(214,90%,55%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.4)', color:'#fff' }}
                   title="Facebook">
-                  <Facebook size={11} />
+                  <Facebook size={12} fill="currentColor" />
                 </a>
               )}
               {footerSettings.whatsapp_url && (
                 <a href={footerSettings.whatsapp_url} target="_blank" rel="noopener noreferrer"
-                  className="w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110"
-                  style={{ background: 'hsla(0,0%,100%,0.55)', border: '1px solid hsla(0,0%,100%,0.65)' }}
+                  className="social-neon w-7 h-7 flex items-center justify-center rounded-full transition-all hover:scale-115 active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, hsl(142,70%,45%), hsl(155,75%,38%))', boxShadow: '0 0 10px hsla(142,70%,45%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.4)', color:'#fff' }}
                   title="WhatsApp">
-                  <MessageCircle size={11} />
+                  <MessageCircle size={12} />
                 </a>
               )}
               {footerSettings.instagram_url && (
                 <a href={footerSettings.instagram_url} target="_blank" rel="noopener noreferrer"
-                  className="w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110"
-                  style={{ background: 'hsla(0,0%,100%,0.55)', border: '1px solid hsla(0,0%,100%,0.65)' }}
+                  className="social-neon w-7 h-7 flex items-center justify-center rounded-full transition-all hover:scale-115 active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, hsl(340,85%,55%), hsl(25,90%,55%))', boxShadow: '0 0 10px hsla(340,85%,55%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.4)', color:'#fff' }}
                   title="Instagram">
-                  <Instagram size={11} />
+                  <Instagram size={12} />
                 </a>
               )}
               {footerSettings.telegram_url && (
                 <a href={footerSettings.telegram_url} target="_blank" rel="noopener noreferrer"
-                  className="w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110"
-                  style={{ background: 'hsla(0,0%,100%,0.55)', border: '1px solid hsla(0,0%,100%,0.65)' }}
+                  className="social-neon w-7 h-7 flex items-center justify-center rounded-full transition-all hover:scale-115 active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, hsl(200,90%,55%), hsl(210,90%,45%))', boxShadow: '0 0 10px hsla(200,90%,55%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.4)', color:'#fff' }}
                   title="Telegram">
-                  <Send size={11} />
+                  <Send size={12} />
                 </a>
               )}
             </div>
@@ -468,6 +479,13 @@ const Navbar = () => {
       <style>{`
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         @keyframes shimmer { 0% { background-position: 220% 0; } 100% { background-position: -220% 0; } }
+        @keyframes blobFloat1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(20px,10px) scale(1.15); } }
+        @keyframes blobFloat2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-15px,-12px) scale(1.18); } }
+        @keyframes blobFloat3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-22px,15px) scale(1.10); } }
+        .aurora-blob-1 { animation: blobFloat1 9s ease-in-out infinite; }
+        .aurora-blob-2 { animation: blobFloat2 11s ease-in-out infinite; }
+        .aurora-blob-3 { animation: blobFloat3 13s ease-in-out infinite; }
+        .social-neon:hover { filter: brightness(1.15) saturate(1.2); transform: translateY(-1px) scale(1.12); }
         .mask-fade {
           mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
           -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
