@@ -86,6 +86,64 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   const itemTotal = product.price * initialQty;
   const finalTotal = Math.max(0, itemTotal - couponDiscount);
 
+  // Persistent session token for abandoned-checkout tracking (Quick Order)
+  const sessionTokenRef = useRef<string>('');
+  const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
+  const orderPlacedRef = useRef(false);
+  if (!sessionTokenRef.current) {
+    let tok = '';
+    try { tok = localStorage.getItem('quickorder_session_token') || ''; } catch {}
+    if (!tok) {
+      tok = 'qo_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+      try { localStorage.setItem('quickorder_session_token', tok); } catch {}
+    }
+    sessionTokenRef.current = tok;
+  }
+
+  // ── Save abandoned checkout (debounced) when user fills info but doesn't complete ──
+  useEffect(() => {
+    if (orderPlacedRef.current) return;
+    const hasContact = !!(form.email || form.phone || form.name);
+    if (!hasContact) return;
+    clearTimeout(abandonedTimer.current);
+    abandonedTimer.current = setTimeout(async () => {
+      try {
+        const payload = {
+          session_token: sessionTokenRef.current,
+          user_id: user?.id || null,
+          customer_name: form.name || null,
+          customer_email: form.email || null,
+          customer_phone: form.phone || null,
+          cart_items: [{
+            id: product.id,
+            name: product.name,
+            category: product.category,
+            price: product.price,
+            quantity: initialQty,
+            image: product.image,
+          }] as any,
+          item_count: initialQty,
+          subtotal: itemTotal,
+          discount_amount: couponDiscount,
+          total: finalTotal,
+          coupon_code: couponCode.trim().toUpperCase() || null,
+          payment_method: paymentMethod,
+          notes: customFields.length > 0
+            ? customFields.map(f => `${f.label}: ${customFieldValues[f.id] || '-'}`).join('\n')
+            : null,
+          page_url: typeof window !== 'undefined' ? window.location.href : null,
+          user_agent: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 500) : null,
+          updated_at: new Date().toISOString(),
+        };
+        const { error } = await supabase
+          .from('abandoned_checkouts')
+          .upsert(payload, { onConflict: 'session_token' });
+        if (error) console.warn('[quickorder abandoned] upsert error:', error.message);
+      } catch (e) { console.warn('[quickorder abandoned] save failed:', e); }
+    }, 1500);
+    return () => clearTimeout(abandonedTimer.current);
+  }, [form.name, form.email, form.phone, couponCode, couponDiscount, paymentMethod, customFieldValues, user?.id, initialQty]);
+
   // Auto-fill user info and fetch wallet balance
   useEffect(() => {
     if (!user) return;
@@ -242,6 +300,20 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
       } as any);
 
       setOrderNumber(orderNum);
+      orderPlacedRef.current = true;
+      // Mark abandoned row as converted (best-effort)
+      try {
+        await supabase.from('abandoned_checkouts').update({
+          converted: true,
+          converted_at: new Date().toISOString(),
+        } as any).eq('session_token', sessionTokenRef.current);
+      } catch {}
+      // Rotate token so next quick order starts fresh
+      try {
+        const newTok = 'qo_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem('quickorder_session_token', newTok);
+        sessionTokenRef.current = newTok;
+      } catch {}
       setStep('success');
     } catch (err) {
       console.error(err);
