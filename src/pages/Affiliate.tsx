@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
+import SEOHead from '@/components/seo/SEOHead';
 
 interface Account {
   id: string;
