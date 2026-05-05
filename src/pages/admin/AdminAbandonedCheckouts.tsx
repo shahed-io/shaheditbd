@@ -34,8 +34,7 @@ interface AbandonedRow {
 }
 
 type StatusFilter = 'all' | 'pending' | 'converted' | 'contacted';
-type DateFilter = 'all' | 'today' | '7d' | '30d';
-type QuickFilter = 'none' | 'has_email' | 'has_phone' | 'high_value' | 'logged_in' | 'guest';
+type StatusFilter = 'all' | 'pending' | 'converted' | 'contacted';
 
 const fmtBDT = (n: number) => `৳${Number(n || 0).toLocaleString('en-US')}`;
 const fmtDate = (d: string) => new Date(d).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' });
