@@ -771,6 +771,7 @@ const UserDashboard = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(240,30%,96%) 0%, hsl(260,25%,94%) 50%, hsl(280,20%,95%) 100%)' }}>
+      <SEOHead title="My Dashboard" description="Manage your orders, wallet, and account at Shahed Store." noIndex />
 
       {/* Ambient gradient blobs - desktop only for visual richness */}
       <div className="hidden md:block pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
