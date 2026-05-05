@@ -85,6 +85,10 @@ const Checkout = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
   const [walletBalance, setWalletBalance] = useState(0);
+  const [refCreditBalance, setRefCreditBalance] = useState(0);
+  const [refCreditApplied, setRefCreditApplied] = useState(0);
+  const [refCreditInput, setRefCreditInput] = useState('');
+  const [refCreditError, setRefCreditError] = useState('');
   const pendingSubmitRef = useRef(false);
 
   // Persistent session token for abandoned-checkout tracking
