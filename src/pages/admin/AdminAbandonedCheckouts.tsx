@@ -312,9 +312,13 @@ export default function AdminAbandonedCheckouts() {
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────────
-function StatCard({ label, value, icon: Icon, color, isText }: { label: string; value: any; icon: any; color: string; isText?: boolean }) {
+function StatCard({ label, value, icon: Icon, color, isText, active, onClick }: { label: string; value: any; icon: any; color: string; isText?: boolean; active?: boolean; onClick?: () => void }) {
   return (
-    <div className="rounded-2xl bg-card/50 backdrop-blur-xl border border-border/50 p-4 flex items-center justify-between">
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-left rounded-2xl bg-card/50 backdrop-blur-xl border p-4 flex items-center justify-between transition hover:scale-[1.02] hover:shadow-md ${active ? 'border-primary ring-2 ring-primary/40' : 'border-border/50'}`}
+    >
       <div>
         <div className="text-xs text-muted-foreground">{label}</div>
         <div className={`mt-1 font-bold ${isText ? 'text-lg' : 'text-2xl'} text-foreground`}>{value}</div>
@@ -322,7 +326,7 @@ function StatCard({ label, value, icon: Icon, color, isText }: { label: string; 
       <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center`}>
         <Icon className="text-white" size={18} />
       </div>
-    </div>
+    </button>
   );
 }
 
