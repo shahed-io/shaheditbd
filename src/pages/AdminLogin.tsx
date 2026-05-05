@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
+import SEOHead from '@/components/seo/SEOHead';
 
 const AdminLogin = () => {
   const { signIn, signOut, isAdmin, user, loading } = useAuth();
