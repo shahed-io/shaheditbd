@@ -227,16 +227,24 @@ const Checkout = () => {
           user_agent: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 500) : null,
           updated_at: new Date().toISOString(),
         };
-        const { data, error } = await supabase
+        const { error: upsertErr } = await supabase
           .from('abandoned_checkouts')
-          .upsert(payload, { onConflict: 'session_token' })
-          .select('id')
-          .single();
-        if (!error && data) {
-          abandonedRowIdRef.current = data.id;
+          .upsert(payload, { onConflict: 'session_token' });
+        if (upsertErr) {
+          console.warn('[abandoned] upsert error:', upsertErr.message);
+        } else {
           abandonedSavedRef.current = true;
+          // Best-effort id lookup (will quietly fail for guests under RLS)
+          if (!abandonedRowIdRef.current) {
+            const { data: row } = await supabase
+              .from('abandoned_checkouts')
+              .select('id')
+              .eq('session_token', sessionTokenRef.current)
+              .maybeSingle();
+            if (row?.id) abandonedRowIdRef.current = row.id;
+          }
         }
-      } catch { /* silent */ }
+      } catch (e) { console.warn('[abandoned] save failed:', e); }
     }, 1500);
     return () => clearTimeout(abandonedTimer.current);
   }, [form.name, form.email, form.phone, items, subtotal, discountAmount, finalTotal, coupon.isApplied, coupon.code, paymentMethod, orderNotes, user?.id]);
