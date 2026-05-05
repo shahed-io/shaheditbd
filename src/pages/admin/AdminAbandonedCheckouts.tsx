@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   ShoppingCart, Search, RefreshCw, Trash2, Eye, X, Mail, Phone, User as UserIcon,
-  CheckCircle2, Clock, MessageCircle, Copy, Check, Filter, Calendar, Package, FileText,
+  CheckCircle2, Clock, MessageCircle, Copy, Check, Calendar, Package, FileText,
 } from 'lucide-react';
 
 interface AbandonedRow {
@@ -34,8 +34,6 @@ interface AbandonedRow {
 }
 
 type StatusFilter = 'all' | 'pending' | 'converted' | 'contacted';
-type DateFilter = 'all' | 'today' | '7d' | '30d';
-type QuickFilter = 'none' | 'has_email' | 'has_phone' | 'high_value' | 'logged_in' | 'guest';
 
 const fmtBDT = (n: number) => `৳${Number(n || 0).toLocaleString('en-US')}`;
 const fmtDate = (d: string) => new Date(d).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' });
@@ -46,8 +44,6 @@ export default function AdminAbandonedCheckouts() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending');
-  const [dateFilter, setDateFilter] = useState<DateFilter>('all');
-  const [quickFilter, setQuickFilter] = useState<QuickFilter>('none');
   const [selected, setSelected] = useState<AbandonedRow | null>(null);
   const [copiedId, setCopiedId] = useState<string>('');
 
@@ -76,19 +72,6 @@ export default function AdminAbandonedCheckouts() {
       if (statusFilter === 'pending' && (r.converted || r.item_count === 0)) return false;
       if (statusFilter === 'converted' && !r.converted) return false;
       if (statusFilter === 'contacted' && !r.contacted) return false;
-      // Date filter
-      if (dateFilter !== 'all') {
-        const age = now - new Date(r.created_at).getTime();
-        if (dateFilter === 'today' && age > dayMs) return false;
-        if (dateFilter === '7d' && age > 7 * dayMs) return false;
-        if (dateFilter === '30d' && age > 30 * dayMs) return false;
-      }
-      // Quick filter
-      if (quickFilter === 'has_email' && !r.customer_email) return false;
-      if (quickFilter === 'has_phone' && !r.customer_phone) return false;
-      if (quickFilter === 'high_value' && Number(r.total || 0) < 1000) return false;
-      if (quickFilter === 'logged_in' && !r.user_id) return false;
-      if (quickFilter === 'guest' && r.user_id) return false;
       if (!q) return true;
       return (
         (r.customer_name || '').toLowerCase().includes(q) ||
@@ -98,7 +81,7 @@ export default function AdminAbandonedCheckouts() {
         (r.cart_items || []).some((ci: any) => String(ci?.name || '').toLowerCase().includes(q))
       );
     });
-  }, [rows, search, statusFilter, dateFilter, quickFilter]);
+  }, [rows, search, statusFilter]);
 
   const stats = useMemo(() => {
     const pending = rows.filter(r => !r.converted && r.item_count > 0);
@@ -212,62 +195,16 @@ export default function AdminAbandonedCheckouts() {
         </div>
       </div>
 
-      {/* Quick filters */}
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-          <Filter size={12} /> Quick:
-        </span>
-        {([
-          ['none', 'All'],
-          ['has_email', '📧 Has Email'],
-          ['has_phone', '📱 Has Phone'],
-          ['logged_in', '👤 Logged in'],
-          ['guest', '🕶️ Guest'],
-          ['high_value', '💎 ≥ ৳1,000'],
-        ] as [QuickFilter, string][]).map(([k, label]) => (
+      {search && (
+        <div className="flex">
           <button
-            key={k}
-            onClick={() => setQuickFilter(k)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              quickFilter === k
-                ? 'bg-primary/15 text-primary border-primary/40'
-                : 'bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted/60'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-        <span className="mx-2 h-4 w-px bg-border/60" />
-        <span className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-          <Calendar size={12} /> Date:
-        </span>
-        {([
-          ['all', 'All time'],
-          ['today', 'Today'],
-          ['7d', 'Last 7d'],
-          ['30d', 'Last 30d'],
-        ] as [DateFilter, string][]).map(([k, label]) => (
-          <button
-            key={k}
-            onClick={() => setDateFilter(k)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              dateFilter === k
-                ? 'bg-primary/15 text-primary border-primary/40'
-                : 'bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted/60'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-        {(quickFilter !== 'none' || dateFilter !== 'all' || search) && (
-          <button
-            onClick={() => { setQuickFilter('none'); setDateFilter('all'); setSearch(''); }}
+            onClick={() => setSearch('')}
             className="ml-auto px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500/20"
           >
-            Clear filters · {filtered.length} shown
+            Clear search · {filtered.length} shown
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Table */}
       <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-xl overflow-hidden">
