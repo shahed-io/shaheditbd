@@ -76,19 +76,6 @@ export default function AdminAbandonedCheckouts() {
       if (statusFilter === 'pending' && (r.converted || r.item_count === 0)) return false;
       if (statusFilter === 'converted' && !r.converted) return false;
       if (statusFilter === 'contacted' && !r.contacted) return false;
-      // Date filter
-      if (dateFilter !== 'all') {
-        const age = now - new Date(r.created_at).getTime();
-        if (dateFilter === 'today' && age > dayMs) return false;
-        if (dateFilter === '7d' && age > 7 * dayMs) return false;
-        if (dateFilter === '30d' && age > 30 * dayMs) return false;
-      }
-      // Quick filter
-      if (quickFilter === 'has_email' && !r.customer_email) return false;
-      if (quickFilter === 'has_phone' && !r.customer_phone) return false;
-      if (quickFilter === 'high_value' && Number(r.total || 0) < 1000) return false;
-      if (quickFilter === 'logged_in' && !r.user_id) return false;
-      if (quickFilter === 'guest' && r.user_id) return false;
       if (!q) return true;
       return (
         (r.customer_name || '').toLowerCase().includes(q) ||
