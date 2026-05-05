@@ -46,6 +46,8 @@ const AdminGoogleAnalytics = () => {
         </div>
       </div>
 
+      <Ga4RealtimeWidget gaId={gaId} />
+
       <div className="glass-card rounded-2xl p-6 space-y-4">
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1 block">
