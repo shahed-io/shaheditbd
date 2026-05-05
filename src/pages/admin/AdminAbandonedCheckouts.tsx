@@ -85,7 +85,7 @@ export default function AdminAbandonedCheckouts() {
         (r.cart_items || []).some((ci: any) => String(ci?.name || '').toLowerCase().includes(q))
       );
     });
-  }, [rows, search, statusFilter, dateFilter, quickFilter]);
+  }, [rows, search, statusFilter]);
 
   const stats = useMemo(() => {
     const pending = rows.filter(r => !r.converted && r.item_count > 0);
