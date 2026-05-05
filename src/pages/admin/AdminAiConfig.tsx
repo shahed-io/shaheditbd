@@ -13,9 +13,10 @@ interface ApiKeyEntry {
 const KNOWN_PROVIDERS: Record<string, { name: string; icon: string; color: string; bgColor: string; borderColor: string; testType?: string; link?: string; description?: string }> = {
   'gemini': { name: 'Google Gemini', icon: '🤖', color: '#4285F4', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/20', testType: 'gemini', link: 'https://aistudio.google.com/apikey', description: 'Google AI Studio থেকে API Key নিন' },
   'openai': { name: 'OpenAI (ChatGPT)', icon: '💬', color: '#10A37F', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/20', testType: 'openai', link: 'https://platform.openai.com/api-keys', description: 'OpenAI Dashboard থেকে API Key নিন' },
-  'telegram': { name: 'Telegram Bot', icon: '📱', color: '#0088CC', bgColor: 'bg-sky-500/10', borderColor: 'border-sky-500/20', description: 'Telegram Bot Token' },
+  'anthropic': { name: 'Anthropic Claude', icon: '🧠', color: '#D97757', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/20', testType: 'anthropic', link: 'https://console.anthropic.com/settings/keys', description: 'Anthropic Console থেকে API Key নিন' },
+  'telegram': { name: 'Telegram Bot', icon: '📱', color: '#0088CC', bgColor: 'bg-sky-500/10', borderColor: 'border-sky-500/20', testType: 'telegram', description: 'Telegram Bot Token (BotFather থেকে নিন)' },
   'bkash': { name: 'BKash Payment', icon: '💳', color: '#E2136E', bgColor: 'bg-pink-500/10', borderColor: 'border-pink-500/20', description: 'BKash Merchant API Credentials' },
-  'grahok': { name: 'Grahok SMS', icon: '📨', color: '#FF6B35', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/20', description: 'Grahok SMS API Credentials' },
+  'grahok': { name: 'Grahok SMS', icon: '📨', color: '#FF6B35', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/20', testType: 'http_url', description: 'Grahok SMS API Credentials' },
   'admin': { name: 'Admin Credentials', icon: '🔐', color: '#8B5CF6', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20', description: 'Admin login credentials' },
   'supabase': { name: 'Supabase / System', icon: '⚙️', color: '#3ECF8E', bgColor: 'bg-green-500/10', borderColor: 'border-green-500/20', description: 'সিস্টেম লেভেল কনফিগারেশন (পরিবর্তন সাবধানে করুন)' },
   'other': { name: 'অন্যান্য API Keys', icon: '🔑', color: '#F59E0B', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20', description: 'কাস্টম API Key ও কনফিগারেশন' },
@@ -23,11 +24,12 @@ const KNOWN_PROVIDERS: Record<string, { name: string; icon: string; color: strin
 
 function categorizeKey(key: string): string {
   const lk = key.toLowerCase();
-  if (lk.includes('gemini')) return 'gemini';
-  if (lk.includes('openai')) return 'openai';
-  if (lk.includes('telegram')) return 'telegram';
+  if (lk.includes('gemini') || lk.includes('google_ai') || lk.includes('googleai')) return 'gemini';
+  if (lk.includes('openai') || lk.includes('chatgpt') || lk.includes('gpt_') || lk.startsWith('gpt')) return 'openai';
+  if (lk.includes('anthropic') || lk.includes('claude')) return 'anthropic';
+  if (lk.includes('telegram') || lk.includes('tg_bot')) return 'telegram';
   if (lk.includes('bkash')) return 'bkash';
-  if (lk.includes('grahok')) return 'grahok';
+  if (lk.includes('grahok') || lk.includes('sms')) return 'grahok';
   if (lk.includes('admin')) return 'admin';
   if (lk.includes('supabase') || lk.includes('lovable')) return 'supabase';
   return 'other';
@@ -45,6 +47,8 @@ const AdminAiConfig = () => {
   const [newKeyValue, setNewKeyValue] = useState('');
   const [newKeyCategory, setNewKeyCategory] = useState('ai_config');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [statFilter, setStatFilter] = useState<'all' | 'active' | 'inactive' | 'verified'>('all');
 
   const fetchSettings = async () => {
     const { data } = await supabase.from('site_settings').select('*').in('category', ['ai_config', 'api_keys', 'integrations', 'credentials']);
@@ -126,6 +130,29 @@ const AdminAiConfig = () => {
       } else if (testType === 'openai') {
         const res = await fetch('https://api.openai.com/v1/models', { headers: { 'Authorization': `Bearer ${entry.value}` } });
         success = res.ok;
+      } else if (testType === 'anthropic') {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': entry.value,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ model: 'claude-3-5-haiku-latest', max_tokens: 5, messages: [{ role: 'user', content: 'OK' }] }),
+        });
+        success = res.ok;
+      } else if (testType === 'telegram') {
+        const res = await fetch(`https://api.telegram.org/bot${entry.value}/getMe`);
+        const j = await res.json().catch(() => ({}));
+        success = res.ok && j?.ok === true;
+      } else if (testType === 'http_url') {
+        // Generic URL ping (works for SMS gateways etc.)
+        if (!/^https?:\/\//.test(entry.value)) {
+          toast.error('URL format ঠিক না');
+        } else {
+          const res = await fetch(entry.value, { method: 'GET' }).catch(() => null);
+          success = !!res && (res.status < 500);
+        }
       }
       setTestResults(prev => ({ ...prev, [keyField]: success ? 'success' : 'error' }));
       if (success) toast.success('✅ API Key সঠিক!');
@@ -145,9 +172,18 @@ const AdminAiConfig = () => {
     grouped[cat].push(entry);
   });
 
-  const filteredGroups = Object.entries(grouped).filter(([, entries]) =>
-    entries.some(e => e.key.toLowerCase().includes(searchTerm.toLowerCase()) || e.value.toLowerCase().includes(searchTerm.toLowerCase()))
-  ).map(([cat, entries]) => [cat, entries.filter(e => e.key.toLowerCase().includes(searchTerm.toLowerCase()) || e.value.toLowerCase().includes(searchTerm.toLowerCase()))] as [string, ApiKeyEntry[]]);
+  const matchEntry = (e: ApiKeyEntry) => {
+    const q = searchTerm.toLowerCase();
+    const matchesSearch = !q || e.key.toLowerCase().includes(q) || e.value.toLowerCase().includes(q);
+    if (!matchesSearch) return false;
+    if (statFilter === 'active') return !!e.value;
+    if (statFilter === 'inactive') return !e.value;
+    if (statFilter === 'verified') return testResults[e.key] === 'success';
+    return true;
+  };
+  const filteredGroups = Object.entries(grouped)
+    .map(([cat, entries]) => [cat, entries.filter(matchEntry)] as [string, ApiKeyEntry[]])
+    .filter(([, entries]) => entries.length > 0);
 
   const totalKeys = dbSettings.length;
   const activeKeys = dbSettings.filter(e => e.value).length;
@@ -176,24 +212,26 @@ const AdminAiConfig = () => {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats - clickable filters */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="glass-card rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold text-primary">{totalKeys}</p>
-          <p className="text-xs text-muted-foreground">মোট Key</p>
-        </div>
-        <div className="glass-card rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold text-green-500">{activeKeys}</p>
-          <p className="text-xs text-muted-foreground">সক্রিয় Key</p>
-        </div>
-        <div className="glass-card rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{Object.keys(grouped).length}</p>
-          <p className="text-xs text-muted-foreground">ক্যাটাগরি</p>
-        </div>
-        <div className="glass-card rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold text-green-500">{Object.values(testResults).filter(r => r === 'success').length}</p>
-          <p className="text-xs text-muted-foreground">ভেরিফাইড</p>
-        </div>
+        {([
+          ['all', totalKeys, 'মোট Key', 'text-primary'],
+          ['active', activeKeys, 'সক্রিয় Key', 'text-green-500'],
+          ['inactive', totalKeys - activeKeys, 'নিষ্ক্রিয় Key', 'text-amber-500'],
+          ['verified', Object.values(testResults).filter(r => r === 'success').length, 'ভেরিফাইড', 'text-emerald-500'],
+        ] as const).map(([key, n, label, color]) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setStatFilter(key as any)}
+            className={`glass-card rounded-2xl p-4 text-center transition-all ${
+              statFilter === key ? 'ring-2 ring-primary scale-[1.02]' : 'hover:scale-[1.02]'
+            }`}
+          >
+            <p className={`text-2xl font-bold ${color}`}>{n}</p>
+            <p className="text-xs text-muted-foreground">{label}</p>
+          </button>
+        ))}
       </div>
 
       {/* Search */}
@@ -271,9 +309,14 @@ const AdminAiConfig = () => {
             const provider = KNOWN_PROVIDERS[cat] || KNOWN_PROVIDERS['other'];
             const testType = provider.testType;
 
+            const isCollapsed = !!collapsed[cat];
             return (
               <div key={cat} className={`glass-card rounded-2xl p-6 ${provider.borderColor} border`}>
-                <div className="flex items-center gap-3 mb-5">
+                <button
+                  type="button"
+                  onClick={() => setCollapsed(prev => ({ ...prev, [cat]: !prev[cat] }))}
+                  className="w-full flex items-center gap-3 mb-5 text-left hover:opacity-90 transition-opacity"
+                >
                   <div className={`w-10 h-10 rounded-xl ${provider.bgColor} flex items-center justify-center text-xl`}>
                     {provider.icon}
                   </div>
@@ -282,13 +325,15 @@ const AdminAiConfig = () => {
                     <p className="text-xs text-muted-foreground">
                       {provider.description}
                       {provider.link && (
-                        <> → <a href={provider.link} target="_blank" rel="noopener noreferrer" className="text-primary underline">Key নিন</a></>
+                        <> → <a onClick={(e) => e.stopPropagation()} href={provider.link} target="_blank" rel="noopener noreferrer" className="text-primary underline">Key নিন</a></>
                       )}
                     </p>
                   </div>
                   <span className="text-xs text-muted-foreground bg-muted/30 px-2 py-1 rounded-lg">{entries.length}টি</span>
-                </div>
+                  <span className="text-muted-foreground text-sm w-5 text-center">{isCollapsed ? '▸' : '▾'}</span>
+                </button>
 
+                {!isCollapsed && (
                 <div className="space-y-3">
                   {entries.map((entry) => {
                     const hasValue = !!entry.value;
@@ -348,6 +393,7 @@ const AdminAiConfig = () => {
                     );
                   })}
                 </div>
+                )}
               </div>
             );
           })}
