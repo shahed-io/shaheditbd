@@ -309,9 +309,14 @@ const AdminAiConfig = () => {
             const provider = KNOWN_PROVIDERS[cat] || KNOWN_PROVIDERS['other'];
             const testType = provider.testType;
 
+            const isCollapsed = !!collapsed[cat];
             return (
               <div key={cat} className={`glass-card rounded-2xl p-6 ${provider.borderColor} border`}>
-                <div className="flex items-center gap-3 mb-5">
+                <button
+                  type="button"
+                  onClick={() => setCollapsed(prev => ({ ...prev, [cat]: !prev[cat] }))}
+                  className="w-full flex items-center gap-3 mb-5 text-left hover:opacity-90 transition-opacity"
+                >
                   <div className={`w-10 h-10 rounded-xl ${provider.bgColor} flex items-center justify-center text-xl`}>
                     {provider.icon}
                   </div>
@@ -320,13 +325,15 @@ const AdminAiConfig = () => {
                     <p className="text-xs text-muted-foreground">
                       {provider.description}
                       {provider.link && (
-                        <> → <a href={provider.link} target="_blank" rel="noopener noreferrer" className="text-primary underline">Key নিন</a></>
+                        <> → <a onClick={(e) => e.stopPropagation()} href={provider.link} target="_blank" rel="noopener noreferrer" className="text-primary underline">Key নিন</a></>
                       )}
                     </p>
                   </div>
                   <span className="text-xs text-muted-foreground bg-muted/30 px-2 py-1 rounded-lg">{entries.length}টি</span>
-                </div>
+                  <span className="text-muted-foreground text-sm w-5 text-center">{isCollapsed ? '▸' : '▾'}</span>
+                </button>
 
+                {!isCollapsed && (
                 <div className="space-y-3">
                   {entries.map((entry) => {
                     const hasValue = !!entry.value;
