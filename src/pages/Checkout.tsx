@@ -601,6 +601,7 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
       {/* Login Required Banner for guests */}
