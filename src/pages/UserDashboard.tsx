@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import BrandLoader from '@/components/store/BrandLoader';
+import SEOHead from '@/components/seo/SEOHead';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
 import { usePaymentSettings } from '@/hooks/usePaymentSettings';
 import bkashLogo from '@/assets/payment/bkash.png';
