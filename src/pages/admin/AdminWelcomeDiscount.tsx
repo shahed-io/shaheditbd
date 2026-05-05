@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Gift, Settings, Trash2, Clock, Plus, GripVertical, RefreshCw, Eye, Sparkles, PlayCircle, RotateCcw, ExternalLink } from 'lucide-react';
+import { Gift, Settings, Trash2, Clock, Plus, GripVertical, RefreshCw, Eye, Sparkles, PlayCircle, RotateCcw, ExternalLink, TimerReset, Ban, CheckCircle2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 
 interface SpinPrize {
   id: string;
