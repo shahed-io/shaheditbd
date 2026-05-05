@@ -357,8 +357,8 @@ const Checkout = () => {
           customer_email: form.email,
           customer_phone: form.phone,
           subtotal,
-          discount_amount: discountAmount,
-          total: finalTotal,
+          discount_amount: discountAmount + refCreditApplied,
+          total: payableTotal,
           payment_method: paymentMethod,
           transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
           coupon_code: coupon.isApplied ? coupon.code : null,
@@ -366,7 +366,7 @@ const Checkout = () => {
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
           user_id: user?.id || null,
-          notes: orderNotes.trim() || null,
+          notes: (orderNotes.trim() || '') + (refCreditApplied > 0 ? `\n[Referral credit applied: ৳${refCreditApplied}]` : ''),
           affiliate_referral_code: affRef?.code || null,
         })
         .select()
@@ -374,11 +374,24 @@ const Checkout = () => {
 
       if (orderError) throw orderError;
 
+      // Redeem referral credit (server validates 2× rule)
+      if (refCreditApplied > 0 && user) {
+        const { data: redeemRes } = await (supabase as any).rpc('redeem_referral_credit', {
+          p_user_id: user.id,
+          p_amount: refCreditApplied,
+          p_order_subtotal: subtotal,
+          p_order_id: order.id,
+        });
+        if (!(redeemRes as any)?.success) {
+          throw new Error((redeemRes as any)?.error || 'Referral credit redeem failed');
+        }
+      }
+
       // Debit wallet if wallet payment
       if (paymentMethod === 'wallet' && user) {
         const { data: walletResult } = await supabase.rpc('wallet_debit' as any, {
           p_user_id: user.id,
-          p_amount: finalTotal,
+          p_amount: payableTotal,
           p_note: `অর্ডার পেমেন্ট - ${orderNum}`,
           p_reference_id: order.id,
           p_created_by: 'user',
