@@ -301,129 +301,173 @@ const Navbar = () => {
       {/* ── Fixed wrapper for announcement + navbar ── */}
       <div className="fixed top-0 left-0 right-0 z-50">
 
-      {/* ── Top Announcement Bar — Premium glass design ── */}
+      {/* ── Top Announcement Bar — Glassmorphism Card matching site theme ── */}
       <div
-        className="w-full text-white text-[11px] font-medium flex items-center overflow-hidden relative transition-all duration-300"
+        className="w-full transition-all duration-300 px-3"
         style={{
-          background:
-            'linear-gradient(95deg, hsl(252,60%,12%) 0%, hsl(258,75%,22%) 35%, hsl(220,85%,28%) 65%, hsl(252,60%,12%) 100%)',
-          maxHeight: scrolled ? '0px' : '38px',
+          maxHeight: scrolled ? '0px' : '52px',
           opacity: scrolled ? 0 : 1,
-          padding: scrolled ? '0' : '8px 0',
-          boxShadow: 'inset 0 -1px 0 hsla(0,0%,100%,0.08)',
+          paddingTop: scrolled ? 0 : '8px',
+          paddingBottom: scrolled ? 0 : '0',
         }}
       >
-        {/* shimmer */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-40"
+          className="relative w-full flex items-center overflow-hidden rounded-2xl text-[11px] font-medium"
           style={{
             background:
-              'linear-gradient(110deg, transparent 30%, hsla(0,0%,100%,0.12) 50%, transparent 70%)',
-            backgroundSize: '200% 100%',
-            animation: 'shimmer 7s linear infinite',
+              'linear-gradient(120deg, hsla(var(--brand-h),85%,55%,0.18) 0%, hsla(var(--brand-h),60%,75%,0.10) 50%, hsla(var(--brand-h),85%,55%,0.18) 100%)',
+            backdropFilter: 'blur(24px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+            border: '1px solid hsla(var(--brand-h),70%,60%,0.25)',
+            boxShadow:
+              '0 8px 32px -12px hsla(var(--brand-h),70%,40%,0.18), inset 0 1px 0 hsla(0,0%,100%,0.5)',
+            color: 'hsl(var(--foreground))',
+            padding: '7px 10px',
           }}
-        />
-        {/* glowing dot */}
-        <span
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full"
-          style={{ background: 'hsl(48,100%,60%)', boxShadow: '0 0 8px hsl(48,100%,60%)' }}
-        />
+        >
+          {/* floating colored blobs */}
+          <span
+            className="absolute -left-8 -top-8 w-24 h-24 rounded-full pointer-events-none"
+            style={{ background: 'radial-gradient(circle, hsla(var(--brand-h),90%,60%,0.35), transparent 70%)' }}
+          />
+          <span
+            className="absolute -right-8 -bottom-8 w-24 h-24 rounded-full pointer-events-none"
+            style={{ background: 'radial-gradient(circle, hsla(calc(var(--brand-h) + 40),90%,60%,0.30), transparent 70%)' }}
+          />
+          {/* shimmer sweep */}
+          <span
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(110deg, transparent 35%, hsla(0,0%,100%,0.35) 50%, transparent 65%)',
+              backgroundSize: '220% 100%',
+              animation: 'shimmer 8s linear infinite',
+              mixBlendMode: 'overlay',
+            }}
+          />
 
-        {/* Left — contact pills */}
-        <div className="flex items-center gap-1.5 pl-5 flex-shrink-0 relative z-10">
-          <a
-            href="tel:01840099853"
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-105"
-            style={{ background: 'hsla(0,0%,100%,0.08)', backdropFilter: 'blur(8px)' }}
-          >
-            <Phone size={10} className="text-amber-300" /> 01840-099853
-          </a>
-          <a
-            href="mailto:info@shahedstore.com.bd"
-            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-105"
-            style={{ background: 'hsla(0,0%,100%,0.08)', backdropFilter: 'blur(8px)' }}
-          >
-            <Mail size={10} className="text-cyan-300" /> info@shahedstore.com.bd
-          </a>
-        </div>
+          {/* Left — contact glass pills */}
+          <div className="flex items-center gap-1.5 flex-shrink-0 relative z-10">
+            <a
+              href="tel:01840099853"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-[1.04]"
+              style={{
+                background: 'hsla(0,0%,100%,0.55)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid hsla(0,0%,100%,0.6)',
+                boxShadow: '0 2px 8px hsla(var(--brand-h),60%,40%,0.12)',
+              }}
+            >
+              <Phone size={10} className="text-primary" />
+              <span className="font-semibold">01840-099853</span>
+            </a>
+            <a
+              href="mailto:info@shahedstore.com.bd"
+              className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all hover:scale-[1.04]"
+              style={{
+                background: 'hsla(0,0%,100%,0.55)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid hsla(0,0%,100%,0.6)',
+                boxShadow: '0 2px 8px hsla(var(--brand-h),60%,40%,0.12)',
+              }}
+            >
+              <Mail size={10} className="text-primary" />
+              <span className="font-semibold">info@shahedstore.com.bd</span>
+            </a>
+          </div>
 
-        {/* Middle — marquee */}
-        <div className="flex-1 overflow-hidden mx-4 relative z-10 mask-fade">
-          <div
-            className="flex items-center gap-10 whitespace-nowrap"
-            style={{ animation: 'marquee 32s linear infinite', display: 'inline-flex' }}
-          >
-            {[0, 1].map((k) => (
-              <span key={k} className="flex items-center gap-10">
-                <span className="flex items-center gap-1.5">
-                  <Sparkles size={11} className="text-amber-300" />
-                  <span className="font-semibold tracking-wide">
-                    {announcement || 'বিশেষ অফার! সব অর্ডারে ফ্রি ইনস্ট্যান্ট ডেলিভারি — ১০% পর্যন্ত ছাড় পান'}
+          {/* Middle — marquee */}
+          <div className="flex-1 overflow-hidden mx-3 relative z-10 mask-fade">
+            <div
+              className="flex items-center gap-10 whitespace-nowrap"
+              style={{ animation: 'marquee 32s linear infinite', display: 'inline-flex' }}
+            >
+              {[0, 1].map((k) => (
+                <span key={k} className="flex items-center gap-8">
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles size={11} className="text-amber-500" />
+                    <span className="font-bold tracking-wide">
+                      {announcement || 'বিশেষ অফার! সব অর্ডারে ফ্রি ইনস্ট্যান্ট ডেলিভারি — ১০% পর্যন্ত ছাড় পান'}
+                    </span>
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-primary/50" />
+                  <span className="flex items-center gap-1.5 font-semibold text-primary">
+                    <Star size={10} fill="currentColor" /> Trusted by 50,000+ customers
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-primary/50" />
+                  <span className="flex items-center gap-1.5 font-semibold text-emerald-600">
+                    <Shield size={10} /> 100% Secure Payment
                   </span>
                 </span>
-                <span className="w-1 h-1 rounded-full bg-white/40" />
-                <span className="flex items-center gap-1.5 text-amber-200">
-                  <Star size={10} fill="currentColor" /> Trusted by 50,000+ customers
-                </span>
-                <span className="w-1 h-1 rounded-full bg-white/40" />
-                <span className="flex items-center gap-1.5 text-cyan-200">
-                  <Shield size={10} /> 100% Secure Payment
-                </span>
-              </span>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Right — rating + socials */}
-        <div className="flex items-center gap-2 pr-5 flex-shrink-0 relative z-10">
-          <span
-            className="hidden md:flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold"
-            style={{
-              background: 'linear-gradient(135deg, hsla(48,100%,60%,0.25), hsla(48,100%,60%,0.1))',
-              border: '1px solid hsla(48,100%,60%,0.4)',
-              color: 'hsl(48,100%,80%)',
-            }}
-          >
-            <Star size={9} fill="currentColor" /> 4.9
-          </span>
-          <span
-            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px]"
-            style={{
-              background: 'linear-gradient(135deg, hsla(140,70%,55%,0.2), hsla(140,70%,55%,0.08))',
-              border: '1px solid hsla(140,70%,55%,0.35)',
-              color: 'hsl(140,70%,80%)',
-            }}
-          >
-            <Shield size={9} /> Secured
-          </span>
-          <div className="hidden sm:flex items-center gap-2 ml-1 pl-2.5 border-l border-white/15">
-            {footerSettings.facebook_url && (
-              <a href={footerSettings.facebook_url} target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 hover:text-amber-300 transition" title="Facebook">
-                <Facebook size={12} />
-              </a>
-            )}
-            {footerSettings.whatsapp_url && (
-              <a href={footerSettings.whatsapp_url} target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 hover:text-amber-300 transition" title="WhatsApp">
-                <MessageCircle size={12} />
-              </a>
-            )}
-            {footerSettings.instagram_url && (
-              <a href={footerSettings.instagram_url} target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 hover:text-amber-300 transition" title="Instagram">
-                <Instagram size={12} />
-              </a>
-            )}
-            {footerSettings.telegram_url && (
-              <a href={footerSettings.telegram_url} target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 hover:text-amber-300 transition" title="Telegram">
-                <Send size={12} />
-              </a>
-            )}
+          {/* Right — glass badges + socials */}
+          <div className="flex items-center gap-1.5 flex-shrink-0 relative z-10">
+            <span
+              className="hidden md:flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
+              style={{
+                background: 'linear-gradient(135deg, hsla(45,100%,60%,0.30), hsla(35,100%,55%,0.20))',
+                border: '1px solid hsla(40,100%,55%,0.5)',
+                color: 'hsl(35,80%,38%)',
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <Star size={9} fill="currentColor" /> 4.9
+            </span>
+            <span
+              className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
+              style={{
+                background: 'linear-gradient(135deg, hsla(140,70%,55%,0.25), hsla(160,70%,50%,0.18))',
+                border: '1px solid hsla(150,70%,50%,0.45)',
+                color: 'hsl(150,70%,30%)',
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <Shield size={9} /> Secured
+            </span>
+            <div className="hidden sm:flex items-center gap-1.5 ml-1 pl-2 border-l border-primary/25">
+              {footerSettings.facebook_url && (
+                <a href={footerSettings.facebook_url} target="_blank" rel="noopener noreferrer"
+                  className="w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110"
+                  style={{ background: 'hsla(0,0%,100%,0.55)', border: '1px solid hsla(0,0%,100%,0.65)' }}
+                  title="Facebook">
+                  <Facebook size={11} />
+                </a>
+              )}
+              {footerSettings.whatsapp_url && (
+                <a href={footerSettings.whatsapp_url} target="_blank" rel="noopener noreferrer"
+                  className="w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110"
+                  style={{ background: 'hsla(0,0%,100%,0.55)', border: '1px solid hsla(0,0%,100%,0.65)' }}
+                  title="WhatsApp">
+                  <MessageCircle size={11} />
+                </a>
+              )}
+              {footerSettings.instagram_url && (
+                <a href={footerSettings.instagram_url} target="_blank" rel="noopener noreferrer"
+                  className="w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110"
+                  style={{ background: 'hsla(0,0%,100%,0.55)', border: '1px solid hsla(0,0%,100%,0.65)' }}
+                  title="Instagram">
+                  <Instagram size={11} />
+                </a>
+              )}
+              {footerSettings.telegram_url && (
+                <a href={footerSettings.telegram_url} target="_blank" rel="noopener noreferrer"
+                  className="w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110"
+                  style={{ background: 'hsla(0,0%,100%,0.55)', border: '1px solid hsla(0,0%,100%,0.65)' }}
+                  title="Telegram">
+                  <Send size={11} />
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       <style>{`
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @keyframes shimmer { 0% { background-position: 220% 0; } 100% { background-position: -220% 0; } }
         .mask-fade {
           mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
           -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
