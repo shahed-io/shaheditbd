@@ -47,6 +47,8 @@ const AdminAiConfig = () => {
   const [newKeyValue, setNewKeyValue] = useState('');
   const [newKeyCategory, setNewKeyCategory] = useState('ai_config');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [statFilter, setStatFilter] = useState<'all' | 'active' | 'inactive' | 'verified'>('all');
 
   const fetchSettings = async () => {
     const { data } = await supabase.from('site_settings').select('*').in('category', ['ai_config', 'api_keys', 'integrations', 'credentials']);
