@@ -46,6 +46,8 @@ export default function AdminAbandonedCheckouts() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending');
+  const [dateFilter, setDateFilter] = useState<DateFilter>('all');
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>('none');
   const [selected, setSelected] = useState<AbandonedRow | null>(null);
   const [copiedId, setCopiedId] = useState<string>('');
 
