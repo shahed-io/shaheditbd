@@ -1,0 +1,2 @@
+CREATE POLICY "Admins can update welcome coupons" ON public.welcome_coupons FOR UPDATE TO authenticated USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can delete welcome coupons" ON public.welcome_coupons FOR DELETE TO authenticated USING (public.has_role(auth.uid(), 'admin'));
