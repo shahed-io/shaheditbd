@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Lock, Eye, EyeOff, ShieldCheck, RefreshCw } from 'lucide-react';
 import logoIcon from '@/assets/logo-icon.webp';
+import SEOHead from '@/components/seo/SEOHead';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
