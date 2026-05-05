@@ -329,12 +329,18 @@ const AdminAffiliates = () => {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <StatCard icon={Users} label="Active Affiliates" value={stats.totalAffiliates} color="text-emerald-600" />
-        <StatCard icon={Clock} label="Pending Apps" value={stats.pendingApps} color="text-amber-600" />
-        <StatCard icon={CheckCircle2} label="Pending Conv." value={stats.pendingConversions} color="text-blue-600" />
-        <StatCard icon={Wallet} label="Pending Payouts" value={`৳${stats.pendingPayouts.toFixed(0)}`} color="text-purple-600" />
-        <StatCard icon={DollarSign} label="Total Paid" value={`৳${stats.totalCommissionPaid.toFixed(0)}`} color="text-green-600" />
-        <StatCard icon={MousePointerClick} label="Total Clicks" value={stats.totalClicks} color="text-pink-600" />
+        <StatCard icon={Users} label="Active Affiliates" value={stats.totalAffiliates} color="text-emerald-600"
+          onClick={() => { setTab('accounts'); setStatusFilter('approved'); setAccountSearch(''); }} />
+        <StatCard icon={Clock} label="Pending Apps" value={stats.pendingApps} color="text-amber-600"
+          onClick={() => { setTab('accounts'); setStatusFilter('pending'); setAccountSearch(''); }} />
+        <StatCard icon={CheckCircle2} label="Pending Conv." value={stats.pendingConversions} color="text-blue-600"
+          onClick={() => setTab('conversions')} />
+        <StatCard icon={Wallet} label="Pending Payouts" value={`৳${stats.pendingPayouts.toFixed(0)}`} color="text-purple-600"
+          onClick={() => setTab('withdrawals')} />
+        <StatCard icon={DollarSign} label="Total Paid" value={`৳${stats.totalCommissionPaid.toFixed(0)}`} color="text-green-600"
+          onClick={() => setTab('withdrawals')} />
+        <StatCard icon={MousePointerClick} label="Total Clicks" value={stats.totalClicks} color="text-pink-600"
+          onClick={() => { setTab('accounts'); setStatusFilter('all'); }} />
       </div>
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
@@ -703,14 +709,18 @@ const AdminAffiliates = () => {
   );
 };
 
-const StatCard = ({ icon: Icon, label, value, color }: any) => (
-  <div className="bg-card border border-border rounded-2xl p-3">
+const StatCard = ({ icon: Icon, label, value, color, onClick }: any) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="bg-card border border-border rounded-2xl p-3 text-left transition-all hover:shadow-md hover:border-primary/40 hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/40"
+  >
     <div className="flex items-center gap-2 mb-1">
       <Icon size={14} className={color} />
       <span className="text-xs text-muted-foreground">{label}</span>
     </div>
     <div className={`text-xl font-bold ${color}`}>{value}</div>
-  </div>
+  </button>
 );
 
 const ToggleRow = ({ label, desc, checked, onChange }: { label: string; desc: string; checked: boolean; onChange: (v: boolean) => void }) => (
