@@ -212,24 +212,26 @@ const AdminAiConfig = () => {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats - clickable filters */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="glass-card rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold text-primary">{totalKeys}</p>
-          <p className="text-xs text-muted-foreground">মোট Key</p>
-        </div>
-        <div className="glass-card rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold text-green-500">{activeKeys}</p>
-          <p className="text-xs text-muted-foreground">সক্রিয় Key</p>
-        </div>
-        <div className="glass-card rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{Object.keys(grouped).length}</p>
-          <p className="text-xs text-muted-foreground">ক্যাটাগরি</p>
-        </div>
-        <div className="glass-card rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold text-green-500">{Object.values(testResults).filter(r => r === 'success').length}</p>
-          <p className="text-xs text-muted-foreground">ভেরিফাইড</p>
-        </div>
+        {([
+          ['all', totalKeys, 'মোট Key', 'text-primary'],
+          ['active', activeKeys, 'সক্রিয় Key', 'text-green-500'],
+          ['inactive', totalKeys - activeKeys, 'নিষ্ক্রিয় Key', 'text-amber-500'],
+          ['verified', Object.values(testResults).filter(r => r === 'success').length, 'ভেরিফাইড', 'text-emerald-500'],
+        ] as const).map(([key, n, label, color]) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setStatFilter(key as any)}
+            className={`glass-card rounded-2xl p-4 text-center transition-all ${
+              statFilter === key ? 'ring-2 ring-primary scale-[1.02]' : 'hover:scale-[1.02]'
+            }`}
+          >
+            <p className={`text-2xl font-bold ${color}`}>{n}</p>
+            <p className="text-xs text-muted-foreground">{label}</p>
+          </button>
+        ))}
       </div>
 
       {/* Search */}
