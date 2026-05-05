@@ -212,62 +212,16 @@ export default function AdminAbandonedCheckouts() {
         </div>
       </div>
 
-      {/* Quick filters */}
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-          <Filter size={12} /> Quick:
-        </span>
-        {([
-          ['none', 'All'],
-          ['has_email', '📧 Has Email'],
-          ['has_phone', '📱 Has Phone'],
-          ['logged_in', '👤 Logged in'],
-          ['guest', '🕶️ Guest'],
-          ['high_value', '💎 ≥ ৳1,000'],
-        ] as [QuickFilter, string][]).map(([k, label]) => (
+      {search && (
+        <div className="flex">
           <button
-            key={k}
-            onClick={() => setQuickFilter(k)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              quickFilter === k
-                ? 'bg-primary/15 text-primary border-primary/40'
-                : 'bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted/60'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-        <span className="mx-2 h-4 w-px bg-border/60" />
-        <span className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-          <Calendar size={12} /> Date:
-        </span>
-        {([
-          ['all', 'All time'],
-          ['today', 'Today'],
-          ['7d', 'Last 7d'],
-          ['30d', 'Last 30d'],
-        ] as [DateFilter, string][]).map(([k, label]) => (
-          <button
-            key={k}
-            onClick={() => setDateFilter(k)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              dateFilter === k
-                ? 'bg-primary/15 text-primary border-primary/40'
-                : 'bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted/60'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-        {(quickFilter !== 'none' || dateFilter !== 'all' || search) && (
-          <button
-            onClick={() => { setQuickFilter('none'); setDateFilter('all'); setSearch(''); }}
+            onClick={() => setSearch('')}
             className="ml-auto px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500/20"
           >
-            Clear filters · {filtered.length} shown
+            Clear search · {filtered.length} shown
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Table */}
       <div className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-xl overflow-hidden">
