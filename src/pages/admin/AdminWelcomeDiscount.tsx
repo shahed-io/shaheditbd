@@ -674,9 +674,33 @@ export default function AdminWelcomeDiscount() {
                         {new Date(c.expires_at).toLocaleString('en-BD', { dateStyle: 'short', timeStyle: 'short' })}
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(c.id)} className="text-destructive hover:text-destructive">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="flex items-center gap-1 justify-end flex-wrap">
+                          {!c.is_used && !isExpired && (
+                            <>
+                              <Button variant="outline" size="sm" onClick={() => extendMutation.mutate({ id: c.id, minutes: 60 })} title="Extend by 1 hour">
+                                <TimerReset className="w-3.5 h-3.5 mr-1" /> +1h
+                              </Button>
+                              <Button variant="outline" size="sm" onClick={() => extendMutation.mutate({ id: c.id, minutes: 1440 })} title="Extend by 1 day">
+                                +1d
+                              </Button>
+                              <Button variant="outline" size="sm" onClick={() => disableMutation.mutate(c.id)} title="Disable now" className="text-amber-600 hover:text-amber-600">
+                                <Ban className="w-3.5 h-3.5" />
+                              </Button>
+                            </>
+                          )}
+                          {!c.is_used && isExpired && (
+                            <Button variant="outline" size="sm" onClick={() => reactivateMutation.mutate({ id: c.id, minutes: 60 })} title="Reactivate for 1 hour" className="text-green-600 hover:text-green-600">
+                              <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Reactivate
+                            </Button>
+                          )}
+                          <ExpiryEditDialog
+                            currentExpiry={c.expires_at}
+                            onSave={(iso) => setExpiryMutation.mutate({ id: c.id, expiresAt: iso })}
+                          />
+                          <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(c.id)} className="text-destructive hover:text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
