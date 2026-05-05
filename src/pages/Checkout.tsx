@@ -85,6 +85,10 @@ const Checkout = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const abandonedTimer = useRef<ReturnType<typeof setTimeout>>();
   const [walletBalance, setWalletBalance] = useState(0);
+  const [refCreditBalance, setRefCreditBalance] = useState(0);
+  const [refCreditApplied, setRefCreditApplied] = useState(0);
+  const [refCreditInput, setRefCreditInput] = useState('');
+  const [refCreditError, setRefCreditError] = useState('');
   const pendingSubmitRef = useRef(false);
 
   // Persistent session token for abandoned-checkout tracking
@@ -124,7 +128,7 @@ const Checkout = () => {
   // Auto-fill from logged-in user profile + fetch wallet balance
   useEffect(() => {
     if (!user) return;
-    supabase.from('profiles').select('display_name, email, phone, wallet_balance').eq('user_id', user.id).single()
+    supabase.from('profiles').select('display_name, email, phone, wallet_balance, referral_credit_balance').eq('user_id', user.id).single()
       .then(({ data }) => {
         if (data) {
           setForm(prev => ({
@@ -133,6 +137,7 @@ const Checkout = () => {
             phone: prev.phone || data.phone || '',
           }));
           setWalletBalance((data as any).wallet_balance || 0);
+          setRefCreditBalance(Number((data as any).referral_credit_balance || 0));
         }
       });
   }, [user?.id]);
@@ -272,6 +277,23 @@ const Checkout = () => {
     }
   };
 
+  // Final payable after referral credit
+  const payableTotal = Math.max(0, finalTotal - refCreditApplied);
+
+  const handleApplyRefCredit = () => {
+    setRefCreditError('');
+    const amt = Math.floor(Number(refCreditInput) || 0);
+    if (amt <= 0) { setRefCreditError('সঠিক পরিমাণ দিন'); return; }
+    if (amt > refCreditBalance) { setRefCreditError(`আপনার ক্রেডিট মাত্র ৳${refCreditBalance}`); return; }
+    const maxAllowed = Math.floor(subtotal / 2);
+    if (amt > maxAllowed) {
+      setRefCreditError(`সর্বোচ্চ ৳${maxAllowed} apply করা যাবে। ৳${amt} apply করতে চাইলে কমপক্ষে ৳${amt * 2} এর product কিনতে হবে।`);
+      return;
+    }
+    setRefCreditApplied(amt);
+    toast.success(`✅ ৳${amt} রেফারেল ক্রেডিট প্রয়োগ হয়েছে`);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError('');
@@ -303,7 +325,7 @@ const Checkout = () => {
     // Wallet: check balance
     if (paymentMethod === 'wallet') {
       if (!user) { setSubmitError('Wallet পেমেন্টের জন্য লগইন করতে হবে'); return; }
-      if (walletBalance < finalTotal) {
+      if (walletBalance < payableTotal) {
         setSubmitError(`ওয়ালেট ব্যালেন্স অপর্যাপ্ত। বর্তমান ব্যালেন্স: ৳${walletBalance}`);
         return;
       }
@@ -335,8 +357,8 @@ const Checkout = () => {
           customer_email: form.email,
           customer_phone: form.phone,
           subtotal,
-          discount_amount: discountAmount,
-          total: finalTotal,
+          discount_amount: discountAmount + refCreditApplied,
+          total: payableTotal,
           payment_method: paymentMethod,
           transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
           coupon_code: coupon.isApplied ? coupon.code : null,
@@ -344,7 +366,7 @@ const Checkout = () => {
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
           user_id: user?.id || null,
-          notes: orderNotes.trim() || null,
+          notes: (orderNotes.trim() || '') + (refCreditApplied > 0 ? `\n[Referral credit applied: ৳${refCreditApplied}]` : ''),
           affiliate_referral_code: affRef?.code || null,
         })
         .select()
@@ -352,11 +374,24 @@ const Checkout = () => {
 
       if (orderError) throw orderError;
 
+      // Redeem referral credit (server validates 2× rule)
+      if (refCreditApplied > 0 && user) {
+        const { data: redeemRes } = await (supabase as any).rpc('redeem_referral_credit', {
+          p_user_id: user.id,
+          p_amount: refCreditApplied,
+          p_order_subtotal: subtotal,
+          p_order_id: order.id,
+        });
+        if (!(redeemRes as any)?.success) {
+          throw new Error((redeemRes as any)?.error || 'Referral credit redeem failed');
+        }
+      }
+
       // Debit wallet if wallet payment
       if (paymentMethod === 'wallet' && user) {
         const { data: walletResult } = await supabase.rpc('wallet_debit' as any, {
           p_user_id: user.id,
-          p_amount: finalTotal,
+          p_amount: payableTotal,
           p_note: `অর্ডার পেমেন্ট - ${orderNum}`,
           p_reference_id: order.id,
           p_created_by: 'user',
@@ -384,7 +419,7 @@ const Checkout = () => {
           user_id: user?.id || null,
           transaction_id: transactionId.trim(),
           payment_method: paymentMethod,
-          amount: finalTotal,
+          amount: payableTotal,
           status: 'pending',
         });
         if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
