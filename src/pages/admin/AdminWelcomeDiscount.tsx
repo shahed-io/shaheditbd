@@ -162,6 +162,72 @@ export default function AdminWelcomeDiscount() {
     },
   });
 
+  const extendMutation = useMutation({
+    mutationFn: async ({ id, minutes }: { id: string; minutes: number }) => {
+      const { data: row, error: fetchErr } = await supabase
+        .from('welcome_coupons').select('expires_at').eq('id', id).single();
+      if (fetchErr) throw fetchErr;
+      const base = new Date(row.expires_at) > new Date() ? new Date(row.expires_at) : new Date();
+      const newExpiry = new Date(base.getTime() + minutes * 60 * 1000).toISOString();
+      const { error } = await supabase
+        .from('welcome_coupons')
+        .update({ expires_at: newExpiry, is_used: false })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
+      toast.success('Coupon expiry updated');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Failed to extend'),
+  });
+
+  const setExpiryMutation = useMutation({
+    mutationFn: async ({ id, expiresAt }: { id: string; expiresAt: string }) => {
+      const { error } = await supabase
+        .from('welcome_coupons')
+        .update({ expires_at: expiresAt })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
+      toast.success('Expiry updated');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Update failed'),
+  });
+
+  const disableMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('welcome_coupons')
+        .update({ expires_at: new Date(Date.now() - 60_000).toISOString() })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
+      toast.success('Coupon disabled');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Disable failed'),
+  });
+
+  const reactivateMutation = useMutation({
+    mutationFn: async ({ id, minutes }: { id: string; minutes: number }) => {
+      const newExpiry = new Date(Date.now() + minutes * 60 * 1000).toISOString();
+      const { error } = await supabase
+        .from('welcome_coupons')
+        .update({ expires_at: newExpiry, is_used: false })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spin-coupons-list'] });
+      toast.success('Coupon reactivated');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Reactivate failed'),
+  });
+
   const updatePrize = (id: string, patch: Partial<SpinPrize>) => {
     setSettings(p => ({
       ...p,
