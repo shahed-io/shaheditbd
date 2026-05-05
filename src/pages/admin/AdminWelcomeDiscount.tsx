@@ -713,3 +713,46 @@ export default function AdminWelcomeDiscount() {
     </div>
   );
 }
+
+function ExpiryEditDialog({ currentExpiry, onSave }: { currentExpiry: string; onSave: (iso: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const toLocalInput = (iso: string) => {
+    const d = new Date(iso);
+    const tz = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - tz).toISOString().slice(0, 16);
+  };
+  const [value, setValue] = useState(toLocalInput(currentExpiry));
+
+  useEffect(() => {
+    if (open) setValue(toLocalInput(currentExpiry));
+  }, [open, currentExpiry]);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" title="Set custom expiry">
+          <Clock className="w-3.5 h-3.5" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Set Coupon Expiry</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-2">
+          <Label className="text-xs text-muted-foreground">New expiry date & time</Label>
+          <Input type="datetime-local" value={value} onChange={(e) => setValue(e.target.value)} />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              const iso = new Date(value).toISOString();
+              onSave(iso);
+              setOpen(false);
+            }}
+          >Save</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
