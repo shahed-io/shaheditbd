@@ -97,7 +97,7 @@ interface CustomOptionGroup {
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
+  const { addToCart, buyNow, toggleWishlist, isWishlisted, isInCart } = useCart();
 
   const [product,       setProduct]      = useState<ProductFull | null>(null);
   const [loading,       setLoading]      = useState(true);
