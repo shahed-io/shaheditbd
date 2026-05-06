@@ -198,12 +198,12 @@ async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
       </div>
     </div>
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;margin-bottom:20px;border-radius:8px;overflow:hidden">
-      <thead><tr bgcolor="${brandColor}" style="background:${brandColor};background-color:${brandColor}">
-        <th bgcolor="${brandColor}" align="center" style="background:${brandColor};background-color:${brandColor};color:#ffffff !important;font-size:14px;font-weight:700;padding:14px;text-align:center;mso-line-height-rule:exactly"><font color="#ffffff"><span style="color:#ffffff">#</span></font></th>
-        <th bgcolor="${brandColor}" align="left" style="background:${brandColor};background-color:${brandColor};color:#ffffff !important;font-size:14px;font-weight:700;padding:14px;text-align:left;mso-line-height-rule:exactly"><font color="#ffffff"><span style="color:#ffffff">পণ্যের নাম</span></font></th>
-        <th bgcolor="${brandColor}" align="center" style="background:${brandColor};background-color:${brandColor};color:#ffffff !important;font-size:14px;font-weight:700;padding:14px;text-align:center;mso-line-height-rule:exactly"><font color="#ffffff"><span style="color:#ffffff">পরিমাণ</span></font></th>
-        <th bgcolor="${brandColor}" align="right" style="background:${brandColor};background-color:${brandColor};color:#ffffff !important;font-size:14px;font-weight:700;padding:14px;text-align:right;mso-line-height-rule:exactly"><font color="#ffffff"><span style="color:#ffffff">দাম</span></font></th>
-        <th bgcolor="${brandColor}" align="right" style="background:${brandColor};background-color:${brandColor};color:#ffffff !important;font-size:14px;font-weight:700;padding:14px;text-align:right;mso-line-height-rule:exactly"><font color="#ffffff"><span style="color:#ffffff">মোট</span></font></th>
+      <thead><tr bgcolor="${hdr.bg}" style="background:${hdr.bg};background-color:${hdr.bg}">
+        <th bgcolor="${hdr.bg}" align="center" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:center;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">#</span></font></th>
+        <th bgcolor="${hdr.bg}" align="left" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:left;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">পণ্যের নাম</span></font></th>
+        <th bgcolor="${hdr.bg}" align="center" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:center;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">পরিমাণ</span></font></th>
+        <th bgcolor="${hdr.bg}" align="right" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:right;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">দাম</span></font></th>
+        <th bgcolor="${hdr.bg}" align="right" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:right;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">মোট</span></font></th>
       </tr></thead>
       <tbody>${itemsHtml}</tbody>
     </table>
