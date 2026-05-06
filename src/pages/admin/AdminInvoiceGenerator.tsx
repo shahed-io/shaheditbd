@@ -73,8 +73,18 @@ const AdminInvoiceGenerator = () => {
   const [items, setItems] = useState<InvoiceItem[]>([
     { id: crypto.randomUUID(), name: '', quantity: 1, price: 0 },
   ]);
+  const [products, setProducts] = useState<ProductOption[]>([]);
 
   useEffect(() => {
+    fetchNextInvoiceNumber().then(setInvoiceNumber);
+    (async () => {
+      const { data } = await supabase
+        .from('products')
+        .select('id, name, price')
+        .order('name', { ascending: true })
+        .limit(1000);
+      if (data) setProducts(data as ProductOption[]);
+    })();
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
