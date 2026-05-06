@@ -229,40 +229,70 @@ function escapeHtml(s: string): string {
 
 /**
  * Snapshot any DOM element into a single-page A4 PDF.
+ *
+ * Renders into a fixed-width off-screen clone (760px) so the downloaded PDF
+ * is identical regardless of the preview modal's current viewport width.
  */
 export async function downloadInvoicePdfFromElement(
   element: HTMLElement,
   filename: string
 ): Promise<void> {
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    backgroundColor: '#ffffff',
-    useCORS: true,
-    logging: false,
-  });
-  const imgData = canvas.toDataURL('image/png');
+  const FIXED_WIDTH = 760;
 
-  // A4 portrait at 72 DPI = 595 × 842 pt
-  const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
-  const pageW = pdf.internal.pageSize.getWidth();
-  const pageH = pdf.internal.pageSize.getHeight();
-  const margin = 24;
-  const availW = pageW - margin * 2;
+  // Clone into an off-screen sandbox so layout is independent of modal size.
+  const sandbox = document.createElement('div');
+  sandbox.style.cssText = `
+    position: fixed; left: -10000px; top: 0;
+    width: ${FIXED_WIDTH}px; background: #ffffff;
+    pointer-events: none; z-index: -1;
+  `;
+  const clone = element.cloneNode(true) as HTMLElement;
+  // Force consistent layout dimensions on the clone.
+  clone.style.width = `${FIXED_WIDTH}px`;
+  clone.style.maxWidth = `${FIXED_WIDTH}px`;
+  clone.style.minWidth = `${FIXED_WIDTH}px`;
+  clone.style.margin = '0';
+  clone.style.transform = 'none';
+  sandbox.appendChild(clone);
+  document.body.appendChild(sandbox);
 
-  const ratio = canvas.height / canvas.width;
-  let imgW = availW;
-  let imgH = imgW * ratio;
+  try {
+    // Let images / fonts settle.
+    await new Promise((r) => setTimeout(r, 80));
 
-  // If too tall for one page, scale down to fit
-  if (imgH > pageH - margin * 2) {
-    imgH = pageH - margin * 2;
-    imgW = imgH / ratio;
+    const canvas = await html2canvas(clone, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      logging: false,
+      width: FIXED_WIDTH,
+      windowWidth: FIXED_WIDTH,
+    });
+    const imgData = canvas.toDataURL('image/png');
+
+    // A4 portrait at 72 DPI = 595 × 842 pt
+    const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 24;
+    const availW = pageW - margin * 2;
+
+    const ratio = canvas.height / canvas.width;
+    let imgW = availW;
+    let imgH = imgW * ratio;
+
+    if (imgH > pageH - margin * 2) {
+      imgH = pageH - margin * 2;
+      imgW = imgH / ratio;
+    }
+
+    const x = (pageW - imgW) / 2;
+    const y = margin;
+    pdf.addImage(imgData, 'PNG', x, y, imgW, imgH, undefined, 'FAST');
+    pdf.save(filename);
+  } finally {
+    document.body.removeChild(sandbox);
   }
-
-  const x = (pageW - imgW) / 2;
-  const y = margin;
-  pdf.addImage(imgData, 'PNG', x, y, imgW, imgH, undefined, 'FAST');
-  pdf.save(filename);
 }
 
 /**
