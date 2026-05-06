@@ -111,42 +111,18 @@ export function classifyUserAgent(rawUa: string | undefined | null): BotClassifi
 export function isAutomatedBrowser(): boolean {
   if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
 
-  let signals = 0;
-  const nav = navigator as Navigator & { webdriver?: boolean; languages?: readonly string[] };
-  const w = window as unknown as Record<string, unknown>;
-
-  // Strongest: WebDriver flag (Selenium, Playwright, Puppeteer w/o stealth)
-  if (nav.webdriver === true) signals += 3;
-
-  // Phantom / Nightmare globals
-  if (w.__nightmare || w._phantom || w.callPhantom) signals += 3;
-  if (w.domAutomation || w.domAutomationController) signals += 3;
-  if (w.Buffer && typeof w.Buffer === 'function') signals += 2;
-  if (w.spawn || w.emit) signals += 1;
-
-  // Headless Chrome explicit UA
-  if (/HeadlessChrome|PhantomJS|Electron\//i.test(navigator.userAgent)) signals += 4;
-
-  // Real Chrome exposes window.chrome with a runtime; headless does not
+  // Only detect *unambiguous* headless / automation signatures.
+  // Runtime fingerprint heuristics (window.chrome, plugins, languages,
+  // permissions API) cause false positives on real mobile browsers
+  // (Chrome Android, Samsung Internet, in-app webviews, MIUI browsers,
+  // privacy browsers, etc.) — so we DO NOT use them anymore.
   try {
-    const isChromeUa = /chrome|chromium/i.test(navigator.userAgent);
-    const hasChromeObj = typeof (w as { chrome?: unknown }).chrome === 'object' && (w as { chrome?: { runtime?: unknown } }).chrome?.runtime !== undefined;
-    if (isChromeUa && !hasChromeObj) signals += 1;
+    if (/HeadlessChrome|PhantomJS|Electron\/|Puppeteer|Playwright/i.test(navigator.userAgent)) {
+      return true;
+    }
   } catch { /* ignore */ }
 
-  try {
-    if (Array.isArray(nav.languages) && nav.languages.length === 0) signals += 1;
-    if (navigator.plugins && navigator.plugins.length === 0 && /chrome/i.test(navigator.userAgent)) signals += 1;
-    if (navigator.mimeTypes && navigator.mimeTypes.length === 0 && /chrome/i.test(navigator.userAgent)) signals += 1;
-  } catch { /* ignore */ }
-
-  // Permissions API spoof — headless returns inconsistent values
-  try {
-    const perm = (navigator as Navigator & { permissions?: { query?: (d: PermissionDescriptor) => Promise<PermissionStatus> } }).permissions;
-    if (perm && typeof perm.query !== 'function') signals += 1;
-  } catch { /* ignore */ }
-
-  return signals >= 3;
+  return false;
 }
 
 // ──────────────────────────────────────────────────────────────
