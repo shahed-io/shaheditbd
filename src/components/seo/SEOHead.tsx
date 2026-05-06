@@ -63,11 +63,15 @@ const SEOHead = ({
   description = DEFAULT_DESC,
   ogImage = DEFAULT_OG,
   ogImages,
+  ogImageAlt,
   ogType = 'website',
   canonical,
   noIndex = false,
   schema,
   keywords,
+  prevUrl,
+  nextUrl,
+  article,
 }: SEOHeadProps) => {
   const { pathname, search } = useLocation();
 
