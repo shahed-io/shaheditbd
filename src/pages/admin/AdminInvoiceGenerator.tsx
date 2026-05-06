@@ -220,9 +220,10 @@ const AdminInvoiceGenerator = () => {
     toast.success('ফর্ম রিসেট হয়েছে');
   };
 
-  const brandColor = '#7c3aed';
-  const brandLight = '#f3f0ff';
-  const hdr = getInvoiceHeaderTheme(brandColor);
+  const brandColor = design.brandColor;
+  const brandLight = design.brandLight;
+  const hdr = resolveHeaderTheme(design);
+  const totalColor = resolveTotalColor(design);
   const dateFormatted = new Date(invoiceDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 
   return (
