@@ -12,9 +12,43 @@ interface InvoiceItem {
   price: number;
 }
 
-const generateInvoiceNumber = () => {
+interface ProductOption {
+  id: string;
+  name: string;
+  price: number;
+}
+
+const todayStamp = () => {
   const now = new Date();
-  return `INV-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+  return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+};
+
+const generateInvoiceNumber = () => {
+  return `INV-${todayStamp()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+};
+
+// Fetch the next sequential invoice number for today (INV-YYYYMMDD-0001 style)
+const fetchNextInvoiceNumber = async (): Promise<string> => {
+  try {
+    const stamp = todayStamp();
+    const prefix = `INV-${stamp}-`;
+    const { data, error } = await supabase
+      .from('orders')
+      .select('order_number')
+      .like('order_number', `${prefix}%`)
+      .order('order_number', { ascending: false })
+      .limit(1);
+    if (error) throw error;
+    let next = 1;
+    if (data && data[0]?.order_number) {
+      const tail = data[0].order_number.replace(prefix, '');
+      const n = parseInt(tail, 10);
+      if (!isNaN(n)) next = n + 1;
+    }
+    return `${prefix}${String(next).padStart(4, '0')}`;
+  } catch {
+    return generateInvoiceNumber();
+  }
 };
 
 const inputCls = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors";
