@@ -431,12 +431,12 @@ const AdminInvoiceGenerator = () => {
                 {/* Items Table */}
                 <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
                   <thead>
-                    <tr style={{ background: brandColor }}>
-                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'left', background: brandColor }}>#</th>
-                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'left', background: brandColor }}>পণ্যের নাম</th>
-                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'center', background: brandColor }}>পরিমাণ</th>
-                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'right', background: brandColor }}>দাম</th>
-                      <th style={{ color: '#ffffff', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '14px', textAlign: 'right', background: brandColor }}>মোট</th>
+                    <tr style={{ background: '#1a1a2e' }}>
+                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'left', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>#</th>
+                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'left', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>পণ্যের নাম</th>
+                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'center', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>পরিমাণ</th>
+                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'right', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>দাম</th>
+                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'right', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>মোট</th>
                     </tr>
                   </thead>
                   <tbody>
