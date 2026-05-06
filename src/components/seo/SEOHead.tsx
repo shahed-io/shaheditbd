@@ -57,11 +57,31 @@ const SEOHead = ({
   schema,
   keywords,
 }: SEOHeadProps) => {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+
+  // Canonical normalization:
+  // 1. Always strip query strings (prevents duplicate content from utm_, fbclid, gclid, ref, etc.)
+  // 2. Lowercase the path
+  // 3. Strip trailing slash (except root)
+  const normalizePath = (p: string) => {
+    let np = p.toLowerCase();
+    if (np.length > 1 && np.endsWith('/')) np = np.slice(0, -1);
+    return np;
+  };
+  const cleanPath = normalizePath(pathname);
+
+  // Detect tracking / duplicate-content params → force noindex on these variants
+  const TRACKING_PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'fbclid', 'gclid', 'msclkid', 'ref', 'ref_src', 'mc_cid', 'mc_eid', 'yclid', '_ga'];
+  const params = new URLSearchParams(search);
+  const hasTrackingParams = TRACKING_PARAMS.some(k => params.has(k));
+  // Pagination / filter params keep index but still canonical points to clean URL
+  const shouldNoIndex = noIndex || hasTrackingParams;
+
   const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} – Buy Digital Software at Best Price in Bangladesh`;
-  const canonicalUrl = canonical || `${SITE_URL}${pathname}`;
+  const canonicalUrl = canonical || `${SITE_URL}${cleanPath}`;
   const ogImageFull = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`;
   const gaInjected = useRef(false);
+
 
   // Fetch GA & GSC settings once
   useEffect(() => {
@@ -141,7 +161,8 @@ const SEOHead = ({
 
     // Basic meta
     setMeta('meta[name="description"]', description);
-    setMeta('meta[name="robots"]', noIndex ? 'noindex,nofollow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
+    setMeta('meta[name="robots"]', shouldNoIndex ? 'noindex,follow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
+    setMeta('meta[name="googlebot"]', shouldNoIndex ? 'noindex,follow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
     setMeta('meta[name="keywords"]', keywords || DEFAULT_KEYWORDS);
     setMeta('meta[name="author"]', 'Shahed Store');
     setMeta('meta[name="geo.region"]', 'BD');
@@ -218,7 +239,7 @@ const SEOHead = ({
       document.querySelectorAll('script[data-seo-schema]').forEach(s => s.remove());
       document.querySelectorAll('meta[data-extra-og-image]').forEach(el => el.remove());
     };
-  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, noIndex, schema, keywords, ogImages]);
+  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, shouldNoIndex, schema, keywords, ogImages]);
 
   return null;
 };
