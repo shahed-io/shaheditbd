@@ -4,9 +4,17 @@ import {
   Database, Download, RefreshCw, CheckCircle, Clock, FileJson,
   Package, ShoppingCart, Users, Tag, Upload, AlertTriangle,
   Shield, RotateCcw, Trash2, ChevronDown, ChevronUp, Loader2,
-  HardDrive, BarChart3, BookOpen, Ticket, Key, Grid3X3
+  HardDrive, BarChart3, BookOpen, Ticket, Key, Grid3X3, Archive, Image as ImageIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
+import JSZip from 'jszip';
+
+// All storage buckets to include in mega backup
+const STORAGE_BUCKETS = [
+  'product-images', 'category-images', 'software-images',
+  'email-assets', 'invoices', 'payment-proofs', 'refund-screenshots',
+];
+
 
 type BackupEntry = {
   id: number;
