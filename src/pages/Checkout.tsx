@@ -75,6 +75,7 @@ const Checkout = () => {
 
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [policyAgreements, setPolicyAgreements] = useState<Record<string, boolean>>({ terms: false, refund: false, privacy: false, order: false });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [transactionId, setTransactionId] = useState('');
   const [couponCode, setCouponCode] = useState(coupon.isApplied ? coupon.code : '');
@@ -328,8 +329,13 @@ const Checkout = () => {
       return;
     }
 
+    const allPoliciesAgreed = ['terms', 'refund', 'privacy', 'order'].every(k => policyAgreements[k]);
+    if (!allPoliciesAgreed) {
+      setSubmitError('সকল পলিসি (Terms, Refund, Privacy, Order) তে টিক দিন');
+      return;
+    }
     if (!termsAccepted) {
-      setSubmitError('Terms & Conditions মেনে নিতে হবে');
+      setSubmitError('সকল পলিসি মেনে অর্ডার নিশ্চিত করতে শেষ চেকবক্সে টিক দিন');
       return;
     }
 
@@ -817,21 +823,47 @@ const Checkout = () => {
             <p className="text-xs text-muted-foreground text-right">{orderNotes.length}/500</p>
           </div>
 
-          {/* Terms & Conditions */}
-          <div className="glass-card p-4 rounded-2xl border border-border">
-            <label className="flex items-start gap-3 cursor-pointer">
+          {/* Policy Agreements */}
+          <div className="glass-card p-5 rounded-2xl border border-border space-y-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Shield size={16} className="text-primary" />
+              <h3 className="font-bold text-foreground text-sm">Policy Agreement</h3>
+              <span className="text-xs text-destructive">*</span>
+            </div>
+            <p className="text-xs text-muted-foreground -mt-1 mb-2">
+              অর্ডার করার আগে অনুগ্রহ করে নিচের সকল পলিসি পড়ে সম্মতি দিন।
+            </p>
+            {[
+              { key: 'terms', label: 'Terms & Conditions', path: '/terms' },
+              { key: 'refund', label: 'Refund Policy', path: '/refund-policy' },
+              { key: 'privacy', label: 'Privacy Policy', path: '/privacy' },
+              { key: 'order', label: 'Order Policy', path: '/order-policy' },
+            ].map(p => (
+              <label key={p.key} className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={!!policyAgreements[p.key]}
+                  onChange={e => setPolicyAgreements(prev => ({ ...prev, [p.key]: e.target.checked }))}
+                  className="mt-0.5 w-4 h-4 accent-primary flex-shrink-0"
+                />
+                <span className="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
+                  আমি{' '}
+                  <button type="button" onClick={() => window.open(p.path, '_blank')} className="text-primary font-semibold hover:underline">
+                    {p.label}
+                  </button>
+                  {' '}পড়েছি এবং সম্মত আছি।
+                </span>
+              </label>
+            ))}
+            <label className="flex items-start gap-3 cursor-pointer pt-2 mt-1 border-t border-border/50">
               <input
                 type="checkbox"
                 checked={termsAccepted}
                 onChange={e => setTermsAccepted(e.target.checked)}
                 className="mt-0.5 w-4 h-4 accent-primary flex-shrink-0"
               />
-              <span className="text-sm text-muted-foreground leading-relaxed">
-                আমি{' '}
-                <button type="button" onClick={() => navigate('/terms')} className="text-primary hover:underline">Terms & Conditions</button>
-                {' '}এবং{' '}
-                <button type="button" onClick={() => navigate('/refund-policy')} className="text-primary hover:underline">Refund Policy</button>
-                {' '}পড়েছি এবং সম্মত আছি।
+              <span className="text-sm font-semibold text-foreground leading-relaxed">
+                আমি উপরোক্ত সকল পলিসি মেনে এই অর্ডারটি দিচ্ছি।
               </span>
             </label>
           </div>
@@ -844,7 +876,7 @@ const Checkout = () => {
 
           <button
             type="submit"
-            disabled={loading || !termsAccepted || items.length === 0}
+            disabled={loading || !termsAccepted || !['terms','refund','privacy','order'].every(k => policyAgreements[k]) || items.length === 0}
             className="w-full btn-glow py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (

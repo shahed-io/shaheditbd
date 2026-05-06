@@ -97,7 +97,7 @@ interface CustomOptionGroup {
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
+  const { addToCart, buyNow, toggleWishlist, isWishlisted, isInCart } = useCart();
 
   const [product,       setProduct]      = useState<ProductFull | null>(null);
   const [loading,       setLoading]      = useState(true);
@@ -922,7 +922,10 @@ const ProductDetail = () => {
 
                   {/* Buy Now — full-width primary */}
                   <button
-                    onClick={() => setShowModal(true)}
+                    onClick={() => {
+                      buyNow(cartItem, quantity);
+                      navigate('/checkout');
+                    }}
                     className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                     style={{
                       background: 'linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(245,243,255,0.82) 50%, rgba(235,245,255,0.88) 100%)',

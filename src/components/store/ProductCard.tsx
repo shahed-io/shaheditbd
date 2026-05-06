@@ -28,7 +28,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
   const [orbitActive, setOrbitActive] = useState(false);
   const [particles,   setParticles]   = useState<Particle[]>([]);
   const ref = useRef<HTMLDivElement>(null);
-  const { addToCart, isInCart }         = useCart();
+  const { addToCart, buyNow, isInCart }         = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const navigate = useNavigate();
 
@@ -168,7 +168,11 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
                 <div className="flex flex-col gap-2 mt-auto pt-2">
                   <button
-                    onClick={() => { setShowPreview(false); setShowModal(true); }}
+                    onClick={() => {
+                      setShowPreview(false);
+                      buyNow({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }, 1);
+                      navigate('/checkout');
+                    }}
                     className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.02]"
                     style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))', boxShadow: '0 0 20px hsla(271,91%,65%,0.4)' }}>
                     <CreditCard size={13} className="inline mr-1.5" /> Buy Now
@@ -407,7 +411,11 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
           <div className="space-y-2">
             <button
-              onClick={e => { e.stopPropagation(); setShowModal(true); }}
+              onClick={e => {
+                e.stopPropagation();
+                buyNow({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }, 1);
+                navigate('/checkout');
+              }}
               className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
               style={{
                 background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
