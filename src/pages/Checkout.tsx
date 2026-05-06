@@ -75,6 +75,7 @@ const Checkout = () => {
 
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [policyAgreements, setPolicyAgreements] = useState<Record<string, boolean>>({ terms: false, refund: false, privacy: false, order: false });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [transactionId, setTransactionId] = useState('');
   const [couponCode, setCouponCode] = useState(coupon.isApplied ? coupon.code : '');
