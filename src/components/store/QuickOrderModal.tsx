@@ -238,7 +238,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         setSubmitError(`ব্যালেন্স অপর্যাপ্ত। বর্তমান: ৳${walletBalance.toLocaleString()}, দরকার: ৳${finalTotal.toLocaleString()}`);
         return;
       }
-    } else {
+    } else if (paymentMethod !== 'bkash') {
       if (!transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     }
 
@@ -263,7 +263,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
           discount_amount: couponDiscount,
           total: finalTotal,
           payment_method: paymentMethod,
-          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
+          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : (paymentMethod === 'bkash' ? `BKASH-PENDING-${orderNum}` : transactionId.trim()),
           coupon_code: couponCode.trim().toUpperCase() || null,
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
@@ -298,6 +298,19 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         total: itemTotal,
         custom_field_values: customFields.length > 0 ? customFieldValues : {},
       } as any);
+
+      // bKash auto-pay: create payment & redirect to gateway
+      if (paymentMethod === 'bkash') {
+        const callbackURL = `${(import.meta as any).env.VITE_SUPABASE_URL}/functions/v1/bkash-callback`;
+        const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
+          body: { orderId: order.id, amount: finalTotal, callbackURL },
+        });
+        if (bkErr || !bkData?.bkashURL) {
+          throw new Error(bkData?.error || bkErr?.message || 'bKash পেমেন্ট শুরু করা যায়নি');
+        }
+        window.location.href = bkData.bkashURL;
+        return;
+      }
 
       setOrderNumber(orderNum);
       orderPlacedRef.current = true;
@@ -606,25 +619,35 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
               {/* MFS payment instructions */}
               {paymentMethod !== 'wallet' && (
                 <>
-                  <PaymentInstructions
-                    paymentMethodId={paymentMethod as PMId}
-                    amount={finalTotal}
-                    amountLabel="মোট পাঠান"
-                  />
-
-                  {/* Transaction ID */}
-                  <div>
-                    <label className="text-xs text-muted-foreground mb-1 block font-semibold">
-                      Transaction ID (TrxID) *
-                    </label>
-                    <input
-                      value={transactionId}
-                      onChange={e => setTransactionId(e.target.value)}
-                      placeholder="যেমন: 8F3K2P9X"
-                      maxLength={50}
-                      className={`${inputClass} font-mono tracking-wider`}
-                    />
-                  </div>
+                  {paymentMethod === 'bkash' ? (
+                    <div className="rounded-xl p-3 bg-pink-500/10 border border-pink-500/30 space-y-1.5">
+                      <p className="text-sm font-bold text-pink-700">⚡ bKash অটোমেটিক পেমেন্ট</p>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed">
+                        কনফার্ম করলে bKash পেমেন্ট পেজে যাবেন। OTP দিয়ে পেমেন্ট সম্পন্ন করলে অর্ডার অটো কনফার্ম — কোনো TrxID লাগবে না।
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <PaymentInstructions
+                        paymentMethodId={paymentMethod as PMId}
+                        amount={finalTotal}
+                        amountLabel="মোট পাঠান"
+                      />
+                      {/* Transaction ID */}
+                      <div>
+                        <label className="text-xs text-muted-foreground mb-1 block font-semibold">
+                          Transaction ID (TrxID) *
+                        </label>
+                        <input
+                          value={transactionId}
+                          onChange={e => setTransactionId(e.target.value)}
+                          placeholder="যেমন: 8F3K2P9X"
+                          maxLength={50}
+                          className={`${inputClass} font-mono tracking-wider`}
+                        />
+                      </div>
+                    </>
+                  )}
                 </>
               )}
 
