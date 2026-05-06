@@ -876,7 +876,7 @@ const Checkout = () => {
 
           <button
             type="submit"
-            disabled={loading || !termsAccepted || items.length === 0}
+            disabled={loading || !termsAccepted || !['terms','refund','privacy','order'].every(k => policyAgreements[k]) || items.length === 0}
             className="w-full btn-glow py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
