@@ -197,11 +197,11 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
             <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
               <thead>
                 <tr style={{ background: brandColor }}>
-                  <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, padding: '14px', textAlign: 'left', letterSpacing: '0.4px', textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>#</th>
-                  <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, padding: '14px', textAlign: 'left', letterSpacing: '0.4px', textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>পণ্যের নাম</th>
-                  <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, padding: '14px', textAlign: 'center', letterSpacing: '0.4px', textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>পরিমাণ</th>
-                  <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, padding: '14px', textAlign: 'right', letterSpacing: '0.4px', textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>দাম</th>
-                  <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, padding: '14px', textAlign: 'right', letterSpacing: '0.4px', textShadow: '0 1px 2px rgba(0,0,0,0.45)' }}>মোট</th>
+                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left' }}>#</th>
+                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left' }}>পণ্যের নাম</th>
+                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center' }}>পরিমাণ</th>
+                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>দাম</th>
+                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>মোট</th>
                 </tr>
               </thead>
               <tbody>
