@@ -12,6 +12,7 @@ interface VerificationConfig {
   baidu: string;
   norton: string;
   ahrefs: string;
+  semrush: string;
 }
 
 const PLATFORMS: { key: keyof VerificationConfig; label: string; emoji: string; help: string; example: string; metaTag: string; learn: string }[] = [
@@ -23,9 +24,10 @@ const PLATFORMS: { key: keyof VerificationConfig; label: string; emoji: string; 
   { key: 'baidu',     label: 'Baidu (China SEO)',     emoji: '🐾', help: 'ziyuan.baidu.com → Site verification → HTML tag', example: 'code-XXXX',                    metaTag: 'baidu-site-verification', learn: 'https://ziyuan.baidu.com' },
   { key: 'norton',    label: 'Norton Safe Web',       emoji: '🟡', help: 'safeweb.norton.com → Submit site for review', example: 'XXXXXXX',                          metaTag: 'norton-safeweb-site-verification', learn: 'https://safeweb.norton.com' },
   { key: 'ahrefs',    label: 'Ahrefs Webmaster',      emoji: '📈', help: 'ahrefs.com/webmaster-tools → Verify → Meta tag', example: 'abcdef123...',                  metaTag: 'ahrefs-site-verification', learn: 'https://ahrefs.com/webmaster-tools' },
+  { key: 'semrush',   label: 'Semrush',               emoji: '🟧', help: 'semrush.com → Projects → Site Audit → Verify ownership → HTML tag', example: 'abc123...',          metaTag: 'semrush-verification', learn: 'https://www.semrush.com/projects/' },
 ];
 
-const EMPTY: VerificationConfig = { google: '', bing: '', yandex: '', pinterest: '', facebook: '', baidu: '', norton: '', ahrefs: '' };
+const EMPTY: VerificationConfig = { google: '', bing: '', yandex: '', pinterest: '', facebook: '', baidu: '', norton: '', ahrefs: '', semrush: '' };
 
 const AdminSiteVerification = () => {
   const [cfg, setCfg] = useState<VerificationConfig>(EMPTY);

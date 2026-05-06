@@ -44,6 +44,7 @@ const VERIFICATION_META: Record<string, string> = {
   baidu: 'baidu-site-verification',
   norton: 'norton-safeweb-site-verification',
   ahrefs: 'ahrefs-site-verification',
+  semrush: 'semrush-verification',
 };
 
 const injectVerificationTags = (verif: Record<string, string>) => {
