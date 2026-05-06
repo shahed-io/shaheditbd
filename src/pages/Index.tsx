@@ -48,7 +48,23 @@ const Index = () => {
         description="Shahed Store – Bangladesh's most trusted digital software shop. Buy Windows 11, Microsoft Office 365, Adobe Creative Cloud, Antivirus, VPN & subscriptions at the lowest price. 100% genuine. Instant delivery."
         ogType="website"
         canonical="https://shahedstore.com.bd/"
-        schema={[organizationSchema(), websiteSchema()]}
+        schema={[
+          organizationSchema(),
+          websiteSchema(),
+          localBusinessSchema(),
+          speakableSchema(['h1', '.lead', '.hero-title']),
+          siteNavigationSchema([
+            { name: 'Home', url: '/' },
+            { name: 'Shop', url: '/shop' },
+            { name: 'Windows', url: '/shop?category=windows' },
+            { name: 'Microsoft Office', url: '/shop?category=microsoft-office' },
+            { name: 'Adobe', url: '/shop?category=adobe' },
+            { name: 'Antivirus', url: '/shop?category=antivirus' },
+            { name: 'Help Center', url: '/help' },
+            { name: 'Blog', url: '/blog' },
+            { name: 'Contact', url: '/contact-us' },
+          ]),
+        ]}
       />
       {/* Critical above-fold content — eager */}
       <Navbar />
