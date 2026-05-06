@@ -432,11 +432,11 @@ const AdminInvoiceGenerator = () => {
                 <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
                   <thead>
                     <tr style={{ background: '#1a1a2e' }}>
-                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'left', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>#</th>
-                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'left', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>পণ্যের নাম</th>
-                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'center', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>পরিমাণ</th>
-                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'right', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>দাম</th>
-                      <th style={{ color: '#ffffff', fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', padding: '14px', textAlign: 'right', background: '#1a1a2e', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>মোট</th>
+                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left', background: '#1a1a2e' }}>#</th>
+                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left', background: '#1a1a2e' }}>পণ্যের নাম</th>
+                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center', background: '#1a1a2e' }}>পরিমাণ</th>
+                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: '#1a1a2e' }}>দাম</th>
+                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: '#1a1a2e' }}>মোট</th>
                     </tr>
                   </thead>
                   <tbody>
