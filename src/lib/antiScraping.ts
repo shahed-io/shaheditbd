@@ -187,38 +187,55 @@ export function installCopyDeterrents(): () => void {
       const msg = FUN_MESSAGES[Math.floor(Math.random() * FUN_MESSAGES.length)];
       const el = document.createElement('div');
       el.id = id;
+      el.setAttribute('role', 'alert');
       el.innerHTML = `
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));">${msg.icon}</div>
-          <div style="display:flex;flex-direction:column;gap:2px;text-align:left;">
-            <div style="font-weight:700;font-size:14px;letter-spacing:.2px;">${msg.title}</div>
-            <div style="font-size:12px;opacity:.85;">${msg.sub}</div>
+        <div class="__cp_card">
+          <div class="__cp_blob __cp_blob_a"></div>
+          <div class="__cp_blob __cp_blob_b"></div>
+          <div class="__cp_inner">
+            <div class="__cp_icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="11" width="16" height="10" rx="2.5"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+              </svg>
+            </div>
+            <div class="__cp_text">
+              <div class="__cp_title">${msg.icon} ${msg.title}</div>
+              <div class="__cp_sub">${msg.sub}</div>
+            </div>
           </div>
-        </div>`;
-      el.setAttribute(
-        'style',
-        [
-          'position:fixed','z-index:99999','left:50%','bottom:28px',
-          'transform:translateX(-50%) translateY(20px)','opacity:0',
-          'background:linear-gradient(135deg,rgba(124,58,237,.95),rgba(15,23,42,.95))',
-          'backdrop-filter:blur(16px)','-webkit-backdrop-filter:blur(16px)',
-          'color:#fff','padding:14px 20px','border-radius:18px',
-          'border:1px solid rgba(255,255,255,.18)',
-          'font-family:system-ui,-apple-system,sans-serif',
-          'box-shadow:0 18px 50px -12px rgba(124,58,237,.55), 0 8px 24px rgba(0,0,0,.35)',
-          'max-width:92vw','transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s ease',
-          'pointer-events:none',
-        ].join(';')
-      );
+          <div class="__cp_bar"></div>
+        </div>
+        <style>
+          #${id}{position:fixed;left:50%;bottom:32px;z-index:99999;transform:translateX(-50%) translateY(24px) scale(.96);opacity:0;transition:transform .45s cubic-bezier(.2,.9,.25,1.15),opacity .35s ease;pointer-events:none;max-width:92vw;font-family:'Hind Siliguri',system-ui,-apple-system,sans-serif;}
+          #${id} .__cp_card{position:relative;overflow:hidden;border-radius:22px;padding:14px 18px 16px;min-width:300px;background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,255,255,.55));backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,.7);box-shadow:0 24px 60px -18px hsla(var(--brand-h,270),85%,50%,.45),0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.9);}
+          #${id} .__cp_blob{position:absolute;width:140px;height:140px;border-radius:50%;filter:blur(34px);opacity:.55;pointer-events:none;}
+          #${id} .__cp_blob_a{top:-50px;left:-40px;background:hsla(var(--brand-h,270),95%,65%,.7);}
+          #${id} .__cp_blob_b{bottom:-60px;right:-30px;background:hsla(calc(var(--brand-h,270) + 40),95%,65%,.55);}
+          #${id} .__cp_inner{position:relative;display:flex;align-items:center;gap:12px;}
+          #${id} .__cp_icon{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,hsl(var(--brand-h,270),85%,58%),hsl(calc(var(--brand-h,270) + 35),85%,55%));box-shadow:0 8px 18px -4px hsla(var(--brand-h,270),85%,50%,.55),inset 0 1px 0 rgba(255,255,255,.4);}
+          #${id} .__cp_text{display:flex;flex-direction:column;gap:2px;text-align:left;color:#0f172a;}
+          #${id} .__cp_title{font-weight:800;font-size:14px;letter-spacing:.1px;line-height:1.25;}
+          #${id} .__cp_sub{font-size:12px;line-height:1.35;color:#475569;font-weight:500;}
+          #${id} .__cp_bar{position:relative;height:3px;margin-top:12px;border-radius:99px;overflow:hidden;background:rgba(15,23,42,.08);}
+          #${id} .__cp_bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,hsl(var(--brand-h,270),85%,60%),hsl(calc(var(--brand-h,270) + 40),85%,60%));transform-origin:left;animation:__cp_p 2.6s linear forwards;}
+          @keyframes __cp_p{from{transform:scaleX(1);}to{transform:scaleX(0);}}
+          @media (prefers-color-scheme: dark){
+            #${id} .__cp_card{background:linear-gradient(135deg,rgba(30,30,45,.78),rgba(15,15,25,.6));border-color:rgba(255,255,255,.14);box-shadow:0 24px 60px -18px hsla(var(--brand-h,270),85%,50%,.55),0 8px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);}
+            #${id} .__cp_text{color:#f8fafc;}
+            #${id} .__cp_sub{color:#cbd5e1;}
+            #${id} .__cp_bar{background:rgba(255,255,255,.1);}
+          }
+        </style>`;
       document.body.appendChild(el);
       requestAnimationFrame(() => {
-        el.style.transform = 'translateX(-50%) translateY(0)';
+        el.style.transform = 'translateX(-50%) translateY(0) scale(1)';
         el.style.opacity = '1';
       });
       setTimeout(() => {
-        el.style.transform = 'translateX(-50%) translateY(20px)';
+        el.style.transform = 'translateX(-50%) translateY(24px) scale(.96)';
         el.style.opacity = '0';
-        setTimeout(() => el.remove(), 350);
+        setTimeout(() => el.remove(), 400);
       }, 2600);
     } catch { /* ignore */ }
   };
