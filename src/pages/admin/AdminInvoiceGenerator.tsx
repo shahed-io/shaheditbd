@@ -79,6 +79,7 @@ const AdminInvoiceGenerator = () => {
 
   useEffect(() => {
     fetchNextInvoiceNumber().then(setInvoiceNumber);
+    loadInvoiceDesign(true).then(setDesign);
     (async () => {
       const { data } = await supabase
         .from('products')
