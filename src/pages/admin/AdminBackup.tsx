@@ -404,9 +404,41 @@ Restore:
       {/* ── EXPORT TAB ── */}
       {restoreTab === 'export' && (
         <>
+          {/* ⭐ ONE-CLICK COMPLETE BACKUP HERO */}
+          <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-purple-500/10 to-pink-500/10 p-6 backdrop-blur-xl">
+            <div className="absolute -top-16 -right-16 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative flex flex-col lg:flex-row items-start lg:items-center gap-5 justify-between">
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/40 flex-shrink-0">
+                  <Archive size={26} className="text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                    এক ক্লিকে সম্পূর্ণ ব্যাকআপ
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/20 text-primary font-bold uppercase tracking-wider">All-in-One</span>
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1 max-w-xl">
+                    সকল <strong className="text-foreground">{TABLES.length}টি টেবিল</strong> + <strong className="text-foreground">সকল ছবি/ফাইল</strong> (storage buckets) + manifest একটিমাত্র ZIP ফাইলে। যেকোনো সময় restore করা যাবে।
+                  </p>
+                  {megaProgress && (
+                    <div className="mt-2 text-xs text-primary font-semibold flex items-center gap-2">
+                      <Loader2 size={12} className="animate-spin" /> {megaProgress}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <button onClick={exportEverything} disabled={!!exporting}
+                className="w-full lg:w-auto px-8 py-4 rounded-2xl font-bold text-base text-white bg-gradient-to-r from-primary via-purple-600 to-pink-600 shadow-xl shadow-primary/40 hover:shadow-primary/60 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
+                {exporting === 'mega' ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
+                <span>এখনই ব্যাকআপ নিন</span>
+              </button>
+            </div>
+          </div>
+
           <div className="glass-card rounded-2xl p-4 border border-primary/20 bg-primary/5 flex items-start gap-3">
             <Shield size={16} className="text-primary mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-muted-foreground">প্রতিটি টেবিলের ডেটা আলাদা JSON ফাইল হিসেবে ডাউনলোড করুন। <strong className="text-foreground">Full DB Backup</strong> এ সব টেবিল একসাথে এবং <strong className="text-primary">Complete Website Backup</strong> বাটনে সম্পূর্ণ ডাটাবেস + সকল ছবি/ফাইল ZIP আকারে এক ক্লিকে ডাউনলোড হবে।</p>
+            <p className="text-xs text-muted-foreground">নিচের প্রতিটি কার্ড থেকে আলাদা টেবিলের JSON ডাউনলোড করুন, অথবা উপরে থাকা <strong className="text-primary">"এখনই ব্যাকআপ নিন"</strong> বাটন চাপলে সম্পূর্ণ ডাটাবেস + সকল ছবি/ফাইল ZIP আকারে এক ক্লিকে download হবে।</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
