@@ -412,7 +412,7 @@ Restore:
         <>
           <div className="glass-card rounded-2xl p-4 border border-primary/20 bg-primary/5 flex items-start gap-3">
             <Shield size={16} className="text-primary mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-muted-foreground">প্রতিটি টেবিলের ডেটা আলাদা JSON ফাইল হিসেবে ডাউনলোড করুন। <strong className="text-foreground">Full Backup</strong> বাটনে সব টেবিল একসাথে ডাউনলোড হবে।</p>
+            <p className="text-xs text-muted-foreground">প্রতিটি টেবিলের ডেটা আলাদা JSON ফাইল হিসেবে ডাউনলোড করুন। <strong className="text-foreground">Full DB Backup</strong> এ সব টেবিল একসাথে এবং <strong className="text-primary">Complete Website Backup</strong> বাটনে সম্পূর্ণ ডাটাবেস + সকল ছবি/ফাইল ZIP আকারে এক ক্লিকে ডাউনলোড হবে।</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
