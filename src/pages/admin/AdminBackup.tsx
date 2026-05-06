@@ -147,25 +147,19 @@ const AdminBackup = () => {
       let totalRecords = 0;
       let totalFiles = 0;
 
-      // 1) Database tables → JSON
+      // 1) Database tables → JSON (single fetch, used for both per-table files and manifest)
+      const manifest: any = { exported_at: new Date().toISOString(), version: '3.0', store: 'Shahed Store', tables: {} };
       for (const { table, label } of TABLES) {
         setMegaProgress(`DB: ${label}…`);
         try {
           const rows = await fetchAllRows(table);
           dbFolder.file(`${table}.json`, JSON.stringify(rows, null, 2));
+          manifest.tables[table] = rows;
           totalRecords += rows.length;
         } catch (e: any) {
           dbFolder.file(`${table}.ERROR.txt`, e.message);
+          manifest.tables[table] = [];
         }
-      }
-
-      // 2) Combined manifest for easy restore
-      const manifest: any = { exported_at: new Date().toISOString(), version: '3.0', store: 'Shahed Store', tables: {} };
-      for (const { table } of TABLES) {
-        try {
-          const rows = await fetchAllRows(table);
-          manifest.tables[table] = rows;
-        } catch { /* skip */ }
       }
       zip.file('full_backup.json', JSON.stringify(manifest, null, 2));
 
