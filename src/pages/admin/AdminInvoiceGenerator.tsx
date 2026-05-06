@@ -12,9 +12,43 @@ interface InvoiceItem {
   price: number;
 }
 
-const generateInvoiceNumber = () => {
+interface ProductOption {
+  id: string;
+  name: string;
+  price: number;
+}
+
+const todayStamp = () => {
   const now = new Date();
-  return `INV-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+  return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+};
+
+const generateInvoiceNumber = () => {
+  return `INV-${todayStamp()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+};
+
+// Fetch the next sequential invoice number for today (INV-YYYYMMDD-0001 style)
+const fetchNextInvoiceNumber = async (): Promise<string> => {
+  try {
+    const stamp = todayStamp();
+    const prefix = `INV-${stamp}-`;
+    const { data, error } = await supabase
+      .from('orders')
+      .select('order_number')
+      .like('order_number', `${prefix}%`)
+      .order('order_number', { ascending: false })
+      .limit(1);
+    if (error) throw error;
+    let next = 1;
+    if (data && data[0]?.order_number) {
+      const tail = data[0].order_number.replace(prefix, '');
+      const n = parseInt(tail, 10);
+      if (!isNaN(n)) next = n + 1;
+    }
+    return `${prefix}${String(next).padStart(4, '0')}`;
+  } catch {
+    return generateInvoiceNumber();
+  }
 };
 
 const inputCls = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors";
@@ -39,8 +73,18 @@ const AdminInvoiceGenerator = () => {
   const [items, setItems] = useState<InvoiceItem[]>([
     { id: crypto.randomUUID(), name: '', quantity: 1, price: 0 },
   ]);
+  const [products, setProducts] = useState<ProductOption[]>([]);
 
   useEffect(() => {
+    fetchNextInvoiceNumber().then(setInvoiceNumber);
+    (async () => {
+      const { data } = await supabase
+        .from('products')
+        .select('id, name, price')
+        .order('name', { ascending: true })
+        .limit(1000);
+      if (data) setProducts(data as ProductOption[]);
+    })();
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
@@ -57,6 +101,12 @@ const AdminInvoiceGenerator = () => {
   const removeItem = (id: string) => items.length > 1 && setItems(p => p.filter(i => i.id !== id));
   const updateItem = (id: string, field: keyof InvoiceItem, value: any) =>
     setItems(p => p.map(i => i.id === id ? { ...i, [field]: value } : i));
+
+  const selectProduct = (id: string, productId: string) => {
+    const prod = products.find(p => p.id === productId);
+    if (!prod) return;
+    setItems(p => p.map(i => i.id === id ? { ...i, name: prod.name, price: Number(prod.price) || 0 } : i));
+  };
 
   const subtotal = items.reduce((s, i) => s + i.quantity * i.price, 0);
   const total = Math.max(0, subtotal - discount);
@@ -158,7 +208,7 @@ const AdminInvoiceGenerator = () => {
   };
 
   const handleReset = () => {
-    setInvoiceNumber(generateInvoiceNumber());
+    fetchNextInvoiceNumber().then(setInvoiceNumber);
     setInvoiceDate(new Date().toISOString().slice(0, 10));
     setCustomerName(''); setCustomerEmail(''); setCustomerPhone(''); setCustomerAddress('');
     setPaymentMethod('bkash'); setTransactionId(''); setNotes(''); setDiscount(0);
@@ -254,7 +304,19 @@ const AdminInvoiceGenerator = () => {
                 <div key={item.id} className="flex items-start gap-2 p-3 rounded-xl bg-muted/20 border border-border/50">
                   <span className="text-xs text-muted-foreground mt-2.5 w-5">{idx + 1}.</span>
                   <div className="flex-1 space-y-2">
-                    <input className={inputCls} placeholder="পণ্যের নাম / বিবরণ" value={item.name} onChange={e => updateItem(item.id, 'name', e.target.value)} />
+                    {products.length > 0 && (
+                      <select
+                        className={inputCls + ' text-xs'}
+                        value=""
+                        onChange={e => e.target.value && selectProduct(item.id, e.target.value)}
+                      >
+                        <option value="">— আমাদের পণ্য থেকে বাছাই করুন (অথবা নিচে manual লিখুন) —</option>
+                        {products.map(p => (
+                          <option key={p.id} value={p.id}>{p.name} — ৳{Number(p.price).toLocaleString()}</option>
+                        ))}
+                      </select>
+                    )}
+                    <input className={inputCls} placeholder="পণ্যের নাম / বিবরণ (manual)" value={item.name} onChange={e => updateItem(item.id, 'name', e.target.value)} />
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-[10px] text-muted-foreground">পরিমাণ</label>
@@ -304,7 +366,7 @@ const AdminInvoiceGenerator = () => {
               className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <Database size={16} />
-              {savedOrderId ? '✅ অর্ডারে সেভ হয়েছে' : saving ? 'সেভ হচ্ছে...' : '💾 অর্ডার হিসেবে সেভ করুন'}
+              <span>{savedOrderId ? 'অর্ডারে সেভ হয়েছে ✓' : saving ? 'সেভ হচ্ছে...' : 'অর্ডার হিসেবে সেভ করুন'}</span>
             </button>
             {savedOrderId && (
               <p className="text-[11px] text-center text-muted-foreground">
