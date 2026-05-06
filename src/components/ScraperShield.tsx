@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { evaluateClientProtection, installCopyDeterrents } from '@/lib/antiScraping';
+import { useAuth } from '@/hooks/useAuth';
 
 /**
  * ScraperShield
