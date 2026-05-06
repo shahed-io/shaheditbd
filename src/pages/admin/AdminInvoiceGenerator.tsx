@@ -3,7 +3,7 @@ import { Plus, Trash2, Printer, X, FileText, Save, Send, Database } from 'lucide
 import { toast } from 'sonner';
 import logoIcon from '@/assets/logo.png';
 import { downloadInvoicePdf, downloadInvoicePdfFromElement, type InvoiceData } from '@/lib/invoicePdf';
-import { getInvoiceHeaderTheme } from '@/lib/invoiceTheme';
+import { loadInvoiceDesign, resolveHeaderTheme, resolveTotalColor, DEFAULT_INVOICE_DESIGN, type InvoiceDesign } from '@/lib/invoiceSettings';
 import { supabase } from '@/integrations/supabase/client';
 
 interface InvoiceItem {
