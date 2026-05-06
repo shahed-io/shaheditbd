@@ -180,23 +180,107 @@ export function installCopyDeterrents(): () => void {
 
   const isInteractive = (el: EventTarget | null): boolean => {
     if (!(el instanceof HTMLElement)) return false;
-    if (el.closest('input, textarea, select, [contenteditable="true"], .allow-select, .allow-copy')) {
-      return true;
-    }
-    return false;
+    return !!el.closest(
+      'input, textarea, select, [contenteditable="true"], .allow-select, .allow-copy, [data-allow-select="true"]'
+    );
   };
 
-  // Right-click context menu, keyboard shortcuts (F12, Ctrl+U/S/Shift+I/J/C),
-  // text selection — সব স্বাভাবিকভাবে কাজ করবে।
-  // শুধু image/video direct drag-save protection রাখা হয়েছে।
+  const warn = () => {
+    try {
+      // Soft visual warning — non-blocking
+      const id = '__copy_warn_toast__';
+      if (document.getElementById(id)) return;
+      const el = document.createElement('div');
+      el.id = id;
+      el.textContent = '🛡️ এই ওয়েবসাইটের কনটেন্ট কপিরাইট-সুরক্ষিত — কপি/ডাউনলোড নিষিদ্ধ।';
+      el.setAttribute(
+        'style',
+        'position:fixed;z-index:99999;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-family:system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:90vw;text-align:center'
+      );
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2500);
+    } catch { /* ignore */ }
+  };
+
+  // Block right-click everywhere except inside form fields / allow zones
+  const onContextMenu = (e: MouseEvent) => {
+    if (isInteractive(e.target)) return;
+    e.preventDefault();
+    warn();
+  };
+
+  // Block copy / cut on protected zones
+  const onCopy = (e: ClipboardEvent) => {
+    if (isInteractive(e.target)) return;
+    e.preventDefault();
+    try { e.clipboardData?.setData('text/plain', '© Shahed Store — Content protected. https://shahedstore.com.bd'); } catch { /* ignore */ }
+    warn();
+  };
+
+  // Block drag of images, videos, and any element
   const onDragStart = (e: DragEvent) => {
-    const t = e.target as HTMLElement | null;
-    if (t && (t.tagName === 'IMG' || t.tagName === 'VIDEO')) e.preventDefault();
+    if (isInteractive(e.target)) return;
+    e.preventDefault();
   };
 
+  // Block selectstart on protected zones
+  const onSelectStart = (e: Event) => {
+    if (isInteractive(e.target)) return;
+    e.preventDefault();
+  };
+
+  // Block common DevTools shortcuts: F12, Ctrl+Shift+I/J/C, Ctrl+U, Ctrl+S
+  const onKeyDown = (e: KeyboardEvent) => {
+    const k = e.key?.toLowerCase();
+    if (e.key === 'F12') { e.preventDefault(); warn(); return; }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c'].includes(k)) {
+      e.preventDefault(); warn(); return;
+    }
+    if ((e.ctrlKey || e.metaKey) && ['u', 's'].includes(k)) {
+      e.preventDefault(); warn(); return;
+    }
+    // Block PrintScreen
+    if (e.key === 'PrintScreen') {
+      try { navigator.clipboard?.writeText(''); } catch { /* ignore */ }
+      warn();
+    }
+  };
+
+  document.addEventListener('contextmenu', onContextMenu);
+  document.addEventListener('copy', onCopy);
+  document.addEventListener('cut', onCopy);
   document.addEventListener('dragstart', onDragStart);
+  document.addEventListener('selectstart', onSelectStart);
+  document.addEventListener('keydown', onKeyDown);
+
+  // ── DevTools open detection (resize-gap heuristic) ──
+  // When DevTools opens (docked), inner vs outer dimensions diverge by >160px.
+  let devtoolsWarned = false;
+  const checkDevtools = () => {
+    const widthGap = window.outerWidth - window.innerWidth;
+    const heightGap = window.outerHeight - window.innerHeight;
+    const open = widthGap > 200 || heightGap > 200;
+    if (open && !devtoolsWarned) {
+      devtoolsWarned = true;
+      warn();
+      // Optional soft action: blur the page so design isn't easily inspected
+      document.documentElement.style.filter = 'blur(6px)';
+      document.documentElement.style.transition = 'filter .25s ease';
+    } else if (!open && devtoolsWarned) {
+      devtoolsWarned = false;
+      document.documentElement.style.filter = '';
+    }
+  };
+  const devtoolsTimer = window.setInterval(checkDevtools, 1500);
 
   return () => {
+    document.removeEventListener('contextmenu', onContextMenu);
+    document.removeEventListener('copy', onCopy);
+    document.removeEventListener('cut', onCopy);
     document.removeEventListener('dragstart', onDragStart);
+    document.removeEventListener('selectstart', onSelectStart);
+    document.removeEventListener('keydown', onKeyDown);
+    window.clearInterval(devtoolsTimer);
+    document.documentElement.style.filter = '';
   };
 }
