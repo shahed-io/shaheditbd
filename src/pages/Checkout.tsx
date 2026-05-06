@@ -180,6 +180,25 @@ const Checkout = () => {
     })();
   }, []);
 
+  // Handle bKash callback redirect (?bkash=success|failed|...)
+  useEffect(() => {
+    const bk = searchParams.get('bkash');
+    if (!bk) return;
+    if (bk === 'success') {
+      const ord = searchParams.get('order') || '';
+      const trx = searchParams.get('trx') || '';
+      clearCart();
+      setOrderNumber(ord);
+      setTransactionId(trx);
+      setOrderPlaced(true);
+      toast.success('bKash পেমেন্ট সফল হয়েছে! 🎉');
+    } else {
+      toast.error(`bKash পেমেন্ট ${bk === 'cancel' ? 'বাতিল' : 'ব্যর্থ'} হয়েছে। আবার চেষ্টা করুন।`);
+    }
+    // Clean URL
+    window.history.replaceState({}, '', '/checkout');
+  }, []);
+
   // Auto-apply coupon from URL ?coupon=CODE
   useEffect(() => {
     const urlCoupon = searchParams.get('coupon');
