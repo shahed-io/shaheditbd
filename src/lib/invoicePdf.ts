@@ -176,11 +176,11 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
     <table style="width:100%;border-collapse:collapse;margin-bottom:20px;border-radius:8px;overflow:hidden">
       <thead>
         <tr style="background:${brandColor}">
-          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:center;letter-spacing:0.5px">#</th>
-          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:left;letter-spacing:0.5px">পণ্যের নাম</th>
-          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:center;letter-spacing:0.5px">পরিমাণ</th>
-          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:right;letter-spacing:0.5px">দাম</th>
-          <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:right;letter-spacing:0.5px">মোট</th>
+          <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:center;letter-spacing:0.4px;text-shadow:0 1px 2px rgba(0,0,0,0.45)">#</th>
+          <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:left;letter-spacing:0.4px;text-shadow:0 1px 2px rgba(0,0,0,0.45)">পণ্যের নাম</th>
+          <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:center;letter-spacing:0.4px;text-shadow:0 1px 2px rgba(0,0,0,0.45)">পরিমাণ</th>
+          <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:right;letter-spacing:0.4px;text-shadow:0 1px 2px rgba(0,0,0,0.45)">দাম</th>
+          <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:right;letter-spacing:0.4px;text-shadow:0 1px 2px rgba(0,0,0,0.45)">মোট</th>
         </tr>
       </thead>
       <tbody>${itemsHtml}</tbody>

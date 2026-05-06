@@ -197,11 +197,11 @@ async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
     </div>
     <table style="width:100%;border-collapse:collapse;margin-bottom:20px;border-radius:8px;overflow:hidden">
       <thead><tr style="background:${brandColor}">
-        <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:center">#</th>
-        <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:left">পণ্যের নাম</th>
-        <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:center">পরিমাণ</th>
-        <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:right">দাম</th>
-        <th style="color:#fff;font-size:11px;text-transform:uppercase;padding:12px 14px;text-align:right">মোট</th>
+        <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,0.45)">#</th>
+        <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:left;text-shadow:0 1px 2px rgba(0,0,0,0.45)">পণ্যের নাম</th>
+        <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,0.45)">পরিমাণ</th>
+        <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:right;text-shadow:0 1px 2px rgba(0,0,0,0.45)">দাম</th>
+        <th style="color:#ffffff;font-size:13px;font-weight:800;padding:14px;text-align:right;text-shadow:0 1px 2px rgba(0,0,0,0.45)">মোট</th>
       </tr></thead>
       <tbody>${itemsHtml}</tbody>
     </table>
