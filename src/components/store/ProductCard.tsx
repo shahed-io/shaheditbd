@@ -28,7 +28,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
   const [orbitActive, setOrbitActive] = useState(false);
   const [particles,   setParticles]   = useState<Particle[]>([]);
   const ref = useRef<HTMLDivElement>(null);
-  const { addToCart, isInCart }         = useCart();
+  const { addToCart, buyNow, isInCart }         = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const navigate = useNavigate();
 
