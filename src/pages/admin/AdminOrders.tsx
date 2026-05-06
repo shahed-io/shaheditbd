@@ -137,6 +137,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
   const brandColor = '#7c3aed';
   const brandLight = '#f3f0ff';
   const brandDark = '#4c1d95';
+  const hdr = getInvoiceHeaderTheme(brandColor);
 
   return (
     <div className="fixed inset-0 z-[60] bg-background/90 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
