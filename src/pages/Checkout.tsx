@@ -762,13 +762,13 @@ const Checkout = () => {
             {/* Payment Instructions (only for non-wallet) */}
             {paymentMethod !== 'wallet' && (
               <>
-                {paymentMethod === 'bkash' ? (
+                {(paymentMethod === 'bkash' || paymentMethod === 'bkash_merchant') ? (
                   <div className="rounded-xl p-4 bg-pink-500/10 border border-pink-500/30 space-y-2">
                     <p className="text-sm font-bold text-pink-700 flex items-center gap-2">
                       <Smartphone size={16} /> bKash অটোমেটিক পেমেন্ট
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      "অর্ডার সম্পন্ন করুন" বাটনে ক্লিক করলে আপনি bKash পেমেন্ট পেজে যাবেন। সেখানে আপনার bKash নম্বর ও OTP দিয়ে পেমেন্ট সম্পন্ন করুন। পেমেন্ট সফল হলে অর্ডার অটোমেটিক কনফার্ম হয়ে যাবে — কোনো TrxID দিতে হবে না।
+                      "অর্ডার সম্পন্ন করুন" বাটনে ক্লিক করলে আপনি সরাসরি bKash পেমেন্ট পেজে যাবেন। সেখানে আপনার bKash নম্বর ও OTP দিয়ে পেমেন্ট সম্পন্ন করুন। পেমেন্ট সফল হলে অর্ডার অটোমেটিক কনফার্ম হয়ে যাবে — কোনো TrxID দিতে হবে না।
                     </p>
                   </div>
                 ) : (
