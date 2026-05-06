@@ -36,7 +36,7 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bkash_online' | 'bank_transfer' | 'wallet';
 
 const Checkout = () => {
   const {
@@ -55,6 +55,8 @@ const Checkout = () => {
   // Build dynamic payment methods from DB config
   const paymentMethods = [
     { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', number: '', type: 'Wallet Balance', logo: undefined as string | undefined },
+    // bKash Online — automatic API payment (always available, not from DB config)
+    { id: 'bkash_online' as PaymentMethod, label: 'bKash Online', color: 'from-pink-600 to-rose-600', number: '', type: 'Auto Pay', logo: bkashLogo as string | undefined },
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -339,7 +341,7 @@ const Checkout = () => {
       return;
     }
 
-    const isBkashAuto = paymentMethod === 'bkash' || paymentMethod === 'bkash_merchant';
+    const isBkashAuto = paymentMethod === 'bkash_online';
     if (paymentMethod !== 'wallet' && !isBkashAuto && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
@@ -762,13 +764,13 @@ const Checkout = () => {
             {/* Payment Instructions (only for non-wallet) */}
             {paymentMethod !== 'wallet' && (
               <>
-                {(paymentMethod === 'bkash' || paymentMethod === 'bkash_merchant') ? (
+                {paymentMethod === 'bkash_online' ? (
                   <div className="rounded-xl p-4 bg-pink-500/10 border border-pink-500/30 space-y-2">
                     <p className="text-sm font-bold text-pink-700 flex items-center gap-2">
-                      <Smartphone size={16} /> bKash অটোমেটিক পেমেন্ট
+                      <Smartphone size={16} /> bKash Online — অটোমেটিক পেমেন্ট
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      "অর্ডার সম্পন্ন করুন" বাটনে ক্লিক করলে আপনি সরাসরি bKash পেমেন্ট পেজে যাবেন। সেখানে আপনার bKash নম্বর ও OTP দিয়ে পেমেন্ট সম্পন্ন করুন। পেমেন্ট সফল হলে অর্ডার অটোমেটিক কনফার্ম হয়ে যাবে — কোনো TrxID দিতে হবে না।
+                      "অর্ডার সম্পন্ন করুন" বাটনে ক্লিক করলে আপনি সরাসরি bKash পেমেন্ট পেজে যাবেন। সেখানে আপনার bKash নম্বর ও OTP দিয়ে পেমেন্ট সম্পন্ন করুন। পেমেন্ট সফল হলে অর্ডার অটোমেটিক কনফার্ম ও ডেলিভারি হয়ে যাবে — কোনো TrxID দিতে হবে না।
                     </p>
                   </div>
                 ) : (
