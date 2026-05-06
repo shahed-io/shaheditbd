@@ -3,23 +3,42 @@ import { evaluateClientProtection, installCopyDeterrents } from '@/lib/antiScrap
 import { useAuth } from '@/hooks/useAuth';
 
 /**
- * ScraperShield
- * --------------------------------------------------------------
- * Mounts once at the app root. Decides — purely on the client —
- * whether the current visitor is:
- *   • a real human  → render the app + install soft anti-copy UX
- *   • an allowed search/AI bot (Google, Bing, GPT, Claude, …)
- *     → render the app fully, NO deterrents (SEO must stay clean)
- *   • a scraper / cloning tool → swap the page for a polite
- *     "Protected Content" notice so the design cannot be copied
- *
- * IMPORTANT: This never touches API requests, Supabase queries,
- * edge functions, or auth — only the visual layer. Backend keeps
- * working exactly as before.
+ * ScraperShield — mounts once at app root.
+ * Admin panel routes (/ceo/*) and admin users always bypass copy deterrents.
  */
 export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
   const [blocked, setBlocked] = useState(false);
   const { isAdmin } = useAuth();
+  const [pathname, setPathname] = useState(
+    typeof window !== 'undefined' ? window.location.pathname : '/'
+  );
+
+  // Track SPA route changes (pushState/replaceState don't fire popstate).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const update = () => setPathname(window.location.pathname);
+
+    const origPush = window.history.pushState;
+    const origReplace = window.history.replaceState;
+    window.history.pushState = function (...args) {
+      const r = origPush.apply(this, args as any);
+      window.dispatchEvent(new Event('locationchange'));
+      return r;
+    };
+    window.history.replaceState = function (...args) {
+      const r = origReplace.apply(this, args as any);
+      window.dispatchEvent(new Event('locationchange'));
+      return r;
+    };
+    window.addEventListener('popstate', update);
+    window.addEventListener('locationchange', update);
+    return () => {
+      window.history.pushState = origPush;
+      window.history.replaceState = origReplace;
+      window.removeEventListener('popstate', update);
+      window.removeEventListener('locationchange', update);
+    };
+  }, []);
 
   useEffect(() => {
     const decision = evaluateClientProtection();
@@ -32,29 +51,17 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    // Admins bypass copy deterrents — they can copy anything freely.
-    if (isAdmin) return;
+    // Admin panel routes — never install deterrents.
+    if (pathname.startsWith('/ceo')) return;
 
-    // Admin panel routes (/ceo/*) always bypass copy protection,
-    // even before auth state resolves, so admin work is never blocked.
-    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/ceo')) {
-      return;
-    }
+    // Admin users — bypass everywhere.
+    if (isAdmin) return;
 
     if (decision.classification === 'human') {
       const cleanup = installCopyDeterrents();
       return cleanup;
     }
-  }, [isAdmin]);
-
-  // Re-evaluate when route changes into/out of /ceo
-  useEffect(() => {
-    const handler = () => {
-      // Force a re-render by toggling a no-op state via location key
-    };
-    window.addEventListener('popstate', handler);
-    return () => window.removeEventListener('popstate', handler);
-  }, []);
+  }, [isAdmin, pathname]);
 
   if (blocked) {
     return (
