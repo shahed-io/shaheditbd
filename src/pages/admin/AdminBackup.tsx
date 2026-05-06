@@ -135,6 +135,116 @@ const AdminBackup = () => {
     setExporting(null);
   };
 
+  // ─── MEGA BACKUP: All DB tables + all Storage buckets bundled in a single ZIP ──
+  const [megaProgress, setMegaProgress] = useState<string>('');
+  const exportEverything = async () => {
+    setExporting('mega');
+    setMegaProgress('Initializing…');
+    try {
+      const zip = new JSZip();
+      const dbFolder = zip.folder('database')!;
+      const storageFolder = zip.folder('storage')!;
+      let totalRecords = 0;
+      let totalFiles = 0;
+
+      // 1) Database tables → JSON
+      for (const { table, label } of TABLES) {
+        setMegaProgress(`DB: ${label}…`);
+        try {
+          const rows = await fetchAllRows(table);
+          dbFolder.file(`${table}.json`, JSON.stringify(rows, null, 2));
+          totalRecords += rows.length;
+        } catch (e: any) {
+          dbFolder.file(`${table}.ERROR.txt`, e.message);
+        }
+      }
+
+      // 2) Combined manifest for easy restore
+      const manifest: any = { exported_at: new Date().toISOString(), version: '3.0', store: 'Shahed Store', tables: {} };
+      for (const { table } of TABLES) {
+        try {
+          const rows = await fetchAllRows(table);
+          manifest.tables[table] = rows;
+        } catch { /* skip */ }
+      }
+      zip.file('full_backup.json', JSON.stringify(manifest, null, 2));
+
+      // 3) Storage buckets → original files
+      for (const bucket of STORAGE_BUCKETS) {
+        setMegaProgress(`Storage: ${bucket}…`);
+        const bucketFolder = storageFolder.folder(bucket)!;
+        try {
+          // List files (recursive — buckets are usually flat but support folders)
+          const listAll = async (prefix = ''): Promise<{ path: string }[]> => {
+            const out: { path: string }[] = [];
+            const { data, error } = await supabase.storage.from(bucket).list(prefix, { limit: 1000, sortBy: { column: 'name', order: 'asc' } });
+            if (error || !data) return out;
+            for (const item of data) {
+              const full = prefix ? `${prefix}/${item.name}` : item.name;
+              if (item.id === null) {
+                // folder
+                const sub = await listAll(full);
+                out.push(...sub);
+              } else {
+                out.push({ path: full });
+              }
+            }
+            return out;
+          };
+          const files = await listAll('');
+          for (const f of files) {
+            try {
+              const { data: blob } = await supabase.storage.from(bucket).download(f.path);
+              if (blob) {
+                bucketFolder.file(f.path, await blob.arrayBuffer());
+                totalFiles++;
+              }
+            } catch { /* skip individual file */ }
+          }
+        } catch (e: any) {
+          bucketFolder.file('_ERROR.txt', e.message);
+        }
+      }
+
+      // 4) README
+      zip.file('README.txt',
+`Shahed Store — Complete Website Backup
+Exported: ${new Date().toISOString()}
+
+Contents:
+  /database/         — Each table as separate JSON file
+  /full_backup.json  — Single-file restore-ready manifest (use Restore tab → Full Backup)
+  /storage/          — All uploaded media (product images, invoices, etc.)
+  README.txt         — This file
+
+Stats:
+  • DB Records: ${totalRecords.toLocaleString()}
+  • Storage Files: ${totalFiles.toLocaleString()}
+  • Tables: ${TABLES.length}
+  • Buckets: ${STORAGE_BUCKETS.length}
+
+Restore:
+  Upload "full_backup.json" via the Restore tab to bring back all tables.
+  Storage files must be re-uploaded manually or via Supabase Dashboard.
+`);
+
+      setMegaProgress('Compressing ZIP…');
+      const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `shahed_store_complete_${today()}.zip`; a.click();
+      URL.revokeObjectURL(url);
+
+      addHistory({ label: 'Complete Website Backup (ZIP)', tableName: 'mega', date: new Date().toISOString(), records: totalRecords + totalFiles, type: 'export', status: 'success' });
+      toast.success(`✅ Complete Backup ডাউনলোড! (${totalRecords} রেকর্ড + ${totalFiles} ফাইল)`);
+    } catch (e: any) {
+      addHistory({ label: 'Complete Website Backup', tableName: 'mega', date: new Date().toISOString(), records: 0, type: 'export', status: 'error', error: e.message });
+      toast.error('Mega Backup ব্যর্থ: ' + e.message);
+    }
+    setMegaProgress('');
+    setExporting(null);
+  };
+
   // ─── Import: read file ────────────────────────────────────────────
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, mode: 'single' | 'full') => {
     const file = e.target.files?.[0];
