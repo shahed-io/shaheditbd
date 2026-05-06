@@ -106,10 +106,12 @@ function fmtDate(d: string | Date): string {
  */
 async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
   const logo = (await loadLogoBase64()) || '';
-  const brandColor = '#7c3aed';
-  const brandLight = '#f3f0ff';
-  const { getInvoiceHeaderTheme } = await import('./invoiceTheme');
-  const hdr = getInvoiceHeaderTheme(brandColor);
+  const { loadInvoiceDesign, resolveHeaderTheme, resolveTotalColor } = await import('./invoiceSettings');
+  const design = await loadInvoiceDesign();
+  const brandColor = design.brandColor;
+  const brandLight = design.brandLight;
+  const hdr = resolveHeaderTheme(design);
+  const totalColor = resolveTotalColor(design);
 
   const sub = data.subtotal ?? data.items.reduce((s, i) => s + i.quantity * i.price, 0);
   const disc = data.discount || 0;
@@ -117,8 +119,8 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
   const wrapper = document.createElement('div');
   wrapper.style.cssText = `
     position: fixed; left: -10000px; top: 0;
-    width: 760px; background: #ffffff; color: #1a1a2e;
-    padding: 40px; border-radius: 12px;
+    width: 760px; background: #ffffff; color: ${design.accentText};
+    padding: 40px; border-radius: ${design.borderRadius}px;
     font-family: 'Segoe UI', 'Noto Sans Bengali', Arial, sans-serif;
     box-sizing: border-box;
   `;
@@ -126,32 +128,33 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
   const itemsHtml = data.items.map((item, idx) => {
     const total = item.total ?? item.quantity * item.price;
     const keyRow = item.license_key
-      ? `<div style="font-size:11px;color:#7c3aed;font-family:monospace;margin-top:4px;background:#f3f0ff;padding:3px 8px;border-radius:4px;display:inline-block">Key: ${item.license_key}</div>`
+      ? `<div style="font-size:11px;color:${brandColor};font-family:monospace;margin-top:4px;background:${brandLight};padding:3px 8px;border-radius:4px;display:inline-block">Key: ${item.license_key}</div>`
       : '';
     return `
       <tr style="border-bottom:1px solid #eee;background:${idx % 2 === 0 ? '#fff' : '#faf9ff'}">
         <td style="padding:14px;font-size:13px;color:#666;text-align:center">${idx + 1}</td>
-        <td style="padding:14px;font-size:13px;color:#1a1a2e;font-weight:600">
+        <td style="padding:14px;font-size:13px;color:${design.accentText};font-weight:600">
           ${escapeHtml(item.name)}
           ${keyRow}
         </td>
         <td style="padding:14px;font-size:13px;color:#555;text-align:center">×${item.quantity}</td>
         <td style="padding:14px;font-size:13px;color:#555;text-align:right">${fmtMoney(item.price)}</td>
-        <td style="padding:14px;font-size:14px;color:#1a1a2e;text-align:right;font-weight:700">${fmtMoney(total)}</td>
+        <td style="padding:14px;font-size:14px;color:${design.accentText};text-align:right;font-weight:700">${fmtMoney(total)}</td>
       </tr>`;
   }).join('');
 
   const statusLabel = data.status ? (STATUS_LABELS[data.status] || data.status) : '';
   const pmLabel = data.paymentMethod ? (PM_LABELS[data.paymentMethod] || data.paymentMethod) : 'N/A';
+  const showLogo = design.showLogo && logo;
 
   wrapper.innerHTML = `
     <!-- Header -->
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:20px;border-bottom:3px solid ${brandColor}">
       <div style="display:flex;align-items:center;gap:14px">
-        ${logo ? `<img src="${logo}" alt="Shahed Store" style="height:54px;width:auto;object-fit:contain" crossorigin="anonymous" />` : ''}
+        ${showLogo ? `<img src="${logo}" alt="${escapeHtml(design.companyName)}" style="height:54px;width:auto;object-fit:contain" crossorigin="anonymous" />` : `<div style="font-size:18px;font-weight:800;color:${design.accentText}">${escapeHtml(design.companyName)}</div>`}
       </div>
       <div style="text-align:right">
-        <div style="font-size:32px;font-weight:800;color:${brandColor};letter-spacing:2px;line-height:1">INVOICE</div>
+        <div style="font-size:32px;font-weight:800;color:${brandColor};letter-spacing:2px;line-height:1">${escapeHtml(design.invoiceTitle)}</div>
         <div style="font-size:13px;color:#666;margin-top:6px;font-family:monospace">#${escapeHtml(data.invoiceNumber)}</div>
         <div style="font-size:12px;color:#888;margin-top:2px">${fmtDate(data.date)}</div>
       </div>
@@ -160,16 +163,16 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
     <!-- Customer + Payment -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
       <div style="background:${brandLight};border-radius:10px;padding:16px;border-left:4px solid ${brandColor}">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:10px">📋 বিলিং তথ্য</div>
-        <p style="font-size:15px;font-weight:700;color:#1a1a2e;margin:0 0 6px 0">${escapeHtml(data.customer.name || '-')}</p>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:10px">📋 ${escapeHtml(design.labelBilling)}</div>
+        <p style="font-size:15px;font-weight:700;color:${design.accentText};margin:0 0 6px 0">${escapeHtml(data.customer.name || '-')}</p>
         ${data.customer.email ? `<p style="font-size:12px;color:#555;margin:3px 0">✉️ ${escapeHtml(data.customer.email)}</p>` : ''}
         ${data.customer.phone ? `<p style="font-size:12px;color:#555;margin:3px 0">📱 ${escapeHtml(data.customer.phone)}</p>` : ''}
         ${data.customer.address ? `<p style="font-size:12px;color:#555;margin:3px 0">🏠 ${escapeHtml(data.customer.address)}</p>` : ''}
       </div>
       <div style="background:${brandLight};border-radius:10px;padding:16px;border-left:4px solid ${brandColor}">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:12px">💳 Payment Info</div>
-        <div style="font-size:12px;color:#555;line-height:1.9"><span style="display:inline-block;min-width:62px">Method:</span> <strong style="color:#1a1a2e">${escapeHtml(pmLabel)}</strong></div>
-        ${data.transactionId ? `<div style="font-size:12px;color:#555;line-height:1.9;margin-top:6px"><span style="display:inline-block;min-width:62px">TrxID:</span> <span style="color:#1a1a2e;font-family:monospace;background:#e8e5f7;padding:2px 8px;border-radius:4px;font-size:11px;display:inline-block;line-height:1.4">${escapeHtml(data.transactionId)}</span></div>` : ''}
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:12px">💳 ${escapeHtml(design.labelPayment)}</div>
+        <div style="font-size:12px;color:#555;line-height:1.9"><span style="display:inline-block;min-width:62px">Method:</span> <strong style="color:${design.accentText}">${escapeHtml(pmLabel)}</strong></div>
+        ${data.transactionId ? `<div style="font-size:12px;color:#555;line-height:1.9;margin-top:6px"><span style="display:inline-block;min-width:62px">TrxID:</span> <span style="color:${design.accentText};font-family:monospace;background:#e8e5f7;padding:2px 8px;border-radius:4px;font-size:11px;display:inline-block;line-height:1.4">${escapeHtml(data.transactionId)}</span></div>` : ''}
         ${statusLabel ? `<div style="font-size:12px;color:#555;line-height:1.9;margin-top:6px"><span style="display:inline-block;min-width:62px">Status:</span> <span style="background:${brandColor};color:#fff;padding:3px 12px;border-radius:999px;font-size:11px;font-weight:600;display:inline-block;line-height:1.4">${escapeHtml(statusLabel)}</span></div>` : ''}
       </div>
     </div>
@@ -179,10 +182,10 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
       <thead>
         <tr style="background:${hdr.bg}">
           <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:center">#</th>
-          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:left">পণ্যের নাম</th>
-          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:center">পরিমাণ</th>
-          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:right">দাম</th>
-          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:right">মোট</th>
+          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:left">${escapeHtml(design.labelItem)}</th>
+          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:center">${escapeHtml(design.labelQty)}</th>
+          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:right">${escapeHtml(design.labelPrice)}</th>
+          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:right">${escapeHtml(design.labelTotal)}</th>
         </tr>
       </thead>
       <tbody>${itemsHtml}</tbody>
@@ -192,12 +195,12 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
     <div style="display:flex;justify-content:flex-end;margin-bottom:24px">
       <div style="min-width:280px;background:${brandLight};border-radius:10px;padding:18px">
         <div style="display:flex;justify-content:space-between;font-size:13px;color:#555;margin-bottom:8px">
-          <span>Subtotal:</span><span>${fmtMoney(sub)}</span>
+          <span>${escapeHtml(design.labelSubtotal)}:</span><span>${fmtMoney(sub)}</span>
         </div>
-        ${disc > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#059669;margin-bottom:8px"><span>Discount:</span><span>-${fmtMoney(disc)}</span></div>` : ''}
+        ${disc > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#059669;margin-bottom:8px"><span>${escapeHtml(design.labelDiscount)}:</span><span>-${fmtMoney(disc)}</span></div>` : ''}
         <div style="height:1px;background:${brandColor};opacity:0.3;margin:10px 0"></div>
-        <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;color:${brandColor}">
-          <span>Total:</span><span>${fmtMoney(data.total)}</span>
+        <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;color:${totalColor}">
+          <span>${escapeHtml(design.labelGrandTotal)}:</span><span>${fmtMoney(data.total)}</span>
         </div>
       </div>
     </div>
@@ -210,9 +213,13 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
 
     <!-- Footer -->
     <div style="border-top:1px solid #eee;padding-top:16px;text-align:center">
-      <p style="font-size:13px;color:#666;margin:0 0 6px 0">ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!</p>
-      <p style="font-size:11px;color:#888;margin:0">🌐 shahedstore.com.bd  •  ✉️ info@shahedstore.com.bd</p>
-      <p style="font-size:10px;color:#aaa;margin-top:6px">This is a computer-generated invoice and does not require a signature.</p>
+      <p style="font-size:13px;color:#666;margin:0 0 6px 0">${escapeHtml(design.thankYouText)}</p>
+      <p style="font-size:11px;color:#888;margin:0">
+        ${design.companyWebsite ? `🌐 ${escapeHtml(design.companyWebsite)}` : ''}
+        ${design.companyEmail ? `  •  ✉️ ${escapeHtml(design.companyEmail)}` : ''}
+        ${design.companyPhone ? `  •  📞 ${escapeHtml(design.companyPhone)}` : ''}
+      </p>
+      <p style="font-size:10px;color:#aaa;margin-top:6px">${escapeHtml(design.footerNote)}</p>
     </div>
   `;
 
