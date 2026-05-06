@@ -339,7 +339,8 @@ const Checkout = () => {
       return;
     }
 
-    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    const isBkashAuto = paymentMethod === 'bkash' || paymentMethod === 'bkash_merchant';
+    if (paymentMethod !== 'wallet' && !isBkashAuto && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Wallet: check balance
@@ -380,7 +381,7 @@ const Checkout = () => {
           discount_amount: discountAmount + refCreditApplied,
           total: payableTotal,
           payment_method: paymentMethod,
-          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : (paymentMethod === 'bkash' ? `BKASH-PENDING-${orderNum}` : transactionId.trim()),
+          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : (isBkashAuto ? `BKASH-PENDING-${orderNum}` : transactionId.trim()),
           coupon_code: coupon.isApplied ? coupon.code : null,
           coupon_id: couponId,
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
@@ -433,7 +434,7 @@ const Checkout = () => {
       if (itemsError) throw itemsError;
 
       // Insert payment proof for non-wallet, non-bkash-auto payments (manual proofs)
-      if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash') {
+      if (paymentMethod !== 'wallet' && !isBkashAuto) {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
           order_id: order.id,
           user_id: user?.id || null,
@@ -446,7 +447,7 @@ const Checkout = () => {
       }
 
       // bKash auto-pay: create payment & redirect to gateway
-      if (paymentMethod === 'bkash') {
+      if (isBkashAuto) {
         const callbackURL = `${(import.meta as any).env.VITE_SUPABASE_URL}/functions/v1/bkash-callback`;
         const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
           body: { orderId: order.id, amount: payableTotal, callbackURL },
@@ -454,7 +455,6 @@ const Checkout = () => {
         if (bkErr || !bkData?.bkashURL) {
           throw new Error(bkData?.error || bkErr?.message || 'bKash পেমেন্ট শুরু করা যায়নি');
         }
-        // Persist minimal info & redirect
         try { localStorage.setItem('last_bkash_order', JSON.stringify({ orderNum, orderId: order.id })); } catch {}
         window.location.href = bkData.bkashURL;
         return;
@@ -762,13 +762,13 @@ const Checkout = () => {
             {/* Payment Instructions (only for non-wallet) */}
             {paymentMethod !== 'wallet' && (
               <>
-                {paymentMethod === 'bkash' ? (
+                {(paymentMethod === 'bkash' || paymentMethod === 'bkash_merchant') ? (
                   <div className="rounded-xl p-4 bg-pink-500/10 border border-pink-500/30 space-y-2">
                     <p className="text-sm font-bold text-pink-700 flex items-center gap-2">
                       <Smartphone size={16} /> bKash অটোমেটিক পেমেন্ট
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      "অর্ডার সম্পন্ন করুন" বাটনে ক্লিক করলে আপনি bKash পেমেন্ট পেজে যাবেন। সেখানে আপনার bKash নম্বর ও OTP দিয়ে পেমেন্ট সম্পন্ন করুন। পেমেন্ট সফল হলে অর্ডার অটোমেটিক কনফার্ম হয়ে যাবে — কোনো TrxID দিতে হবে না।
+                      "অর্ডার সম্পন্ন করুন" বাটনে ক্লিক করলে আপনি সরাসরি bKash পেমেন্ট পেজে যাবেন। সেখানে আপনার bKash নম্বর ও OTP দিয়ে পেমেন্ট সম্পন্ন করুন। পেমেন্ট সফল হলে অর্ডার অটোমেটিক কনফার্ম হয়ে যাবে — কোনো TrxID দিতে হবে না।
                     </p>
                   </div>
                 ) : (
