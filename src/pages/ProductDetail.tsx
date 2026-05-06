@@ -16,7 +16,7 @@ import {
 import QuickOrderModal from '@/components/store/QuickOrderModal';
 import SEOHead from '@/components/seo/SEOHead';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
-import { productSchema, breadcrumbSchema, faqSchema } from '@/components/seo/schemas';
+import { productSchema, breadcrumbSchema, faqSchema, softwareApplicationSchema, speakableSchema, reviewSchema } from '@/components/seo/schemas';
 import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 
@@ -404,6 +404,16 @@ const ProductDetail = () => {
       ...(product.categories ? [{ name: product.categories.name, url: `/shop?category=${product.categories.slug}` }] : []),
       { name: product.name, url: `/product/${product.slug}` },
     ]),
+    softwareApplicationSchema({
+      name: product.name,
+      description: seoDescription,
+      image: product.image_url,
+      slug: product.slug,
+      price: displayPrice,
+      category: product.categories?.name,
+      ...(reviewStats ? { rating: reviewStats.avg, reviewCount: reviewStats.count } : {}),
+    }),
+    speakableSchema(['h1', '.product-title', '.product-description', '.lead']),
     ...(faqs.length > 0 ? [faqSchema(faqs)] : []),
   ];
 

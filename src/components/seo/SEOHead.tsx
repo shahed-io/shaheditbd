@@ -7,11 +7,23 @@ interface SEOHeadProps {
   description?: string;
   ogImage?: string;
   ogImages?: string[];
+  ogImageAlt?: string;
   ogType?: 'website' | 'article' | 'product';
   canonical?: string;
   noIndex?: boolean;
   schema?: object | object[];
   keywords?: string;
+  /** Pagination (helps Google understand series of pages) */
+  prevUrl?: string;
+  nextUrl?: string;
+  /** Article-specific (blog posts) */
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    section?: string;
+    tags?: string[];
+  };
 }
 
 const SITE_NAME = 'Shahed Store';
@@ -51,11 +63,15 @@ const SEOHead = ({
   description = DEFAULT_DESC,
   ogImage = DEFAULT_OG,
   ogImages,
+  ogImageAlt,
   ogType = 'website',
   canonical,
   noIndex = false,
   schema,
   keywords,
+  prevUrl,
+  nextUrl,
+  article,
 }: SEOHeadProps) => {
   const { pathname, search } = useLocation();
 
@@ -216,9 +232,51 @@ const SEOHead = ({
     setMeta('meta[name="twitter:title"]', fullTitle);
     setMeta('meta[name="twitter:description"]', description);
     setMeta('meta[name="twitter:image"]', ogImageFull);
+    if (ogImageAlt) setMeta('meta[name="twitter:image:alt"]', ogImageAlt);
+    if (ogImageAlt) setMeta('meta[property="og:image:alt"]', ogImageAlt);
+
+    // AI-search hints (Google AI Overviews / Perplexity / ChatGPT Search)
+    setMeta('meta[name="ai-content-declaration"]', 'human-authored, may-be-cited-with-attribution');
+    setMeta('meta[name="rating"]', 'general');
+    setMeta('meta[name="distribution"]', 'global');
+    setMeta('meta[name="referrer"]', 'no-referrer-when-downgrade');
+    setMeta('meta[name="format-detection"]', 'telephone=yes');
 
     // Canonical
     setLink('canonical', canonicalUrl);
+
+    // Pagination (rel=prev/next) — kept for Bing/Yandex; Google ignores but harmless
+    document.querySelectorAll('link[rel="prev"], link[rel="next"]').forEach(el => el.remove());
+    if (prevUrl) {
+      const l = document.createElement('link');
+      l.setAttribute('rel', 'prev');
+      l.setAttribute('href', prevUrl);
+      document.head.appendChild(l);
+    }
+    if (nextUrl) {
+      const l = document.createElement('link');
+      l.setAttribute('rel', 'next');
+      l.setAttribute('href', nextUrl);
+      document.head.appendChild(l);
+    }
+
+    // Article meta (Open Graph article namespace) — only for blog posts
+    document.querySelectorAll('meta[data-article-meta]').forEach(el => el.remove());
+    if (ogType === 'article' && article) {
+      const addArt = (prop: string, content?: string) => {
+        if (!content) return;
+        const m = document.createElement('meta');
+        m.setAttribute('property', prop);
+        m.setAttribute('content', content);
+        m.setAttribute('data-article-meta', 'true');
+        document.head.appendChild(m);
+      };
+      addArt('article:published_time', article.publishedTime);
+      addArt('article:modified_time', article.modifiedTime);
+      addArt('article:author', article.author);
+      addArt('article:section', article.section);
+      article.tags?.forEach(t => addArt('article:tag', t));
+    }
 
     // JSON-LD Schema
     const existingScripts = document.querySelectorAll('script[data-seo-schema]');
@@ -238,8 +296,10 @@ const SEOHead = ({
     return () => {
       document.querySelectorAll('script[data-seo-schema]').forEach(s => s.remove());
       document.querySelectorAll('meta[data-extra-og-image]').forEach(el => el.remove());
+      document.querySelectorAll('meta[data-article-meta]').forEach(el => el.remove());
+      document.querySelectorAll('link[rel="prev"], link[rel="next"]').forEach(el => el.remove());
     };
-  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, shouldNoIndex, schema, keywords, ogImages]);
+  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, shouldNoIndex, schema, keywords, ogImages, ogImageAlt, prevUrl, nextUrl, article]);
 
   return null;
 };
