@@ -108,6 +108,8 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
   const logo = (await loadLogoBase64()) || '';
   const brandColor = '#7c3aed';
   const brandLight = '#f3f0ff';
+  const { getInvoiceHeaderTheme } = await import('./invoiceTheme');
+  const hdr = getInvoiceHeaderTheme(brandColor);
 
   const sub = data.subtotal ?? data.items.reduce((s, i) => s + i.quantity * i.price, 0);
   const disc = data.discount || 0;
