@@ -329,8 +329,13 @@ const Checkout = () => {
       return;
     }
 
+    const allPoliciesAgreed = ['terms', 'refund', 'privacy', 'order'].every(k => policyAgreements[k]);
+    if (!allPoliciesAgreed) {
+      setSubmitError('সকল পলিসি (Terms, Refund, Privacy, Order) তে টিক দিন');
+      return;
+    }
     if (!termsAccepted) {
-      setSubmitError('Terms & Conditions মেনে নিতে হবে');
+      setSubmitError('সকল পলিসি মেনে অর্ডার নিশ্চিত করতে শেষ চেকবক্সে টিক দিন');
       return;
     }
 
