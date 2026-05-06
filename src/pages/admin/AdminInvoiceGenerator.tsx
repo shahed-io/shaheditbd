@@ -208,7 +208,7 @@ const AdminInvoiceGenerator = () => {
   };
 
   const handleReset = () => {
-    setInvoiceNumber(generateInvoiceNumber());
+    fetchNextInvoiceNumber().then(setInvoiceNumber);
     setInvoiceDate(new Date().toISOString().slice(0, 10));
     setCustomerName(''); setCustomerEmail(''); setCustomerPhone(''); setCustomerAddress('');
     setPaymentMethod('bkash'); setTransactionId(''); setNotes(''); setDiscount(0);
