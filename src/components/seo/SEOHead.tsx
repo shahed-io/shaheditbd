@@ -7,11 +7,23 @@ interface SEOHeadProps {
   description?: string;
   ogImage?: string;
   ogImages?: string[];
+  ogImageAlt?: string;
   ogType?: 'website' | 'article' | 'product';
   canonical?: string;
   noIndex?: boolean;
   schema?: object | object[];
   keywords?: string;
+  /** Pagination (helps Google understand series of pages) */
+  prevUrl?: string;
+  nextUrl?: string;
+  /** Article-specific (blog posts) */
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    section?: string;
+    tags?: string[];
+  };
 }
 
 const SITE_NAME = 'Shahed Store';
