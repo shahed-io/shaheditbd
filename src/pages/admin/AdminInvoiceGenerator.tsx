@@ -304,7 +304,19 @@ const AdminInvoiceGenerator = () => {
                 <div key={item.id} className="flex items-start gap-2 p-3 rounded-xl bg-muted/20 border border-border/50">
                   <span className="text-xs text-muted-foreground mt-2.5 w-5">{idx + 1}.</span>
                   <div className="flex-1 space-y-2">
-                    <input className={inputCls} placeholder="পণ্যের নাম / বিবরণ" value={item.name} onChange={e => updateItem(item.id, 'name', e.target.value)} />
+                    {products.length > 0 && (
+                      <select
+                        className={inputCls + ' text-xs'}
+                        value=""
+                        onChange={e => e.target.value && selectProduct(item.id, e.target.value)}
+                      >
+                        <option value="">— আমাদের পণ্য থেকে বাছাই করুন (অথবা নিচে manual লিখুন) —</option>
+                        {products.map(p => (
+                          <option key={p.id} value={p.id}>{p.name} — ৳{Number(p.price).toLocaleString()}</option>
+                        ))}
+                      </select>
+                    )}
+                    <input className={inputCls} placeholder="পণ্যের নাম / বিবরণ (manual)" value={item.name} onChange={e => updateItem(item.id, 'name', e.target.value)} />
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-[10px] text-muted-foreground">পরিমাণ</label>
