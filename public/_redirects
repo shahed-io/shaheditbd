@@ -26,5 +26,21 @@
 /product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*ClaudeBot*
 /product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*ChatGPT-User*
 
+# ── Block direct access to source / markdown / config files ────
+# Prevents anyone from downloading our README, plan, or memory .md
+# files via the deployed site (returns 404).
+/*.md            /index.html  404
+/*.MD            /index.html  404
+/.lovable/*      /index.html  404
+/src/*           /index.html  404
+/supabase/*      /index.html  404
+/README*         /index.html  404
+/CHANGELOG*      /index.html  404
+/package.json    /index.html  404
+/package-lock.json  /index.html  404
+/bun.lockb       /index.html  404
+/tsconfig*       /index.html  404
+/vite.config*    /index.html  404
+
 # ── SPA fallback (for real users) ───────────────────────────────
 /*  /index.html  200

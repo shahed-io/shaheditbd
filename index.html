@@ -92,10 +92,15 @@
       html { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
       body {
         background: #ffffff; margin: 0;
-        /* user-select & touch-callout সম্পূর্ণ allow — right-click/copy/select সবই কাজ করবে */
+        /* Design protection — block selection on chrome/UI by default */
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
       }
-      /* Anti-copy CSS — chrome/design is non-selectable, but readable
-         content (descriptions, blog, inputs) stays fully selectable. */
+      /* Allow selection ONLY in readable content + form fields */
       input, textarea, select, [contenteditable="true"],
       .allow-select, .allow-copy, .prose, .prose *,
       .product-description, .product-description *,
@@ -106,7 +111,10 @@
         user-select: text;
         -webkit-touch-callout: default;
       }
-      img { -webkit-user-drag: none; -khtml-user-drag: none; user-drag: none; }
+      img, video { -webkit-user-drag: none; -khtml-user-drag: none; user-drag: none; }
+      @media print { body { display: none !important; }
+        body::after { content: '© Shahed Store — Printing protected.'; display: block !important; }
+      }
 
       /* Branded loader */
       #root:empty { display: flex; align-items: center; justify-content: center; min-height: 100vh; min-height: 100dvh; }
