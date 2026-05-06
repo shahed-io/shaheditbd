@@ -35,26 +35,11 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
     // Admins bypass copy deterrents — they can copy anything freely.
     if (isAdmin) return;
 
-    // Admin panel routes (/ceo/*) always bypass copy protection,
-    // even before auth state resolves, so admin work is never blocked.
-    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/ceo')) {
-      return;
-    }
-
     if (decision.classification === 'human') {
       const cleanup = installCopyDeterrents();
       return cleanup;
     }
   }, [isAdmin]);
-
-  // Re-evaluate when route changes into/out of /ceo
-  useEffect(() => {
-    const handler = () => {
-      // Force a re-render by toggling a no-op state via location key
-    };
-    window.addEventListener('popstate', handler);
-    return () => window.removeEventListener('popstate', handler);
-  }, []);
 
   if (blocked) {
     return (
