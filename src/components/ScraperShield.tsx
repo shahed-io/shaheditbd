@@ -19,28 +19,27 @@ import { useAuth } from '@/hooks/useAuth';
  */
 export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
   const [blocked, setBlocked] = useState(false);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const decision = evaluateClientProtection();
 
     if (decision.shouldBlock) {
       setBlocked(true);
-      // Also nuke the document so headless scrapers that dump
-      // innerHTML after JS executes get the protection notice
-      // instead of the real markup.
       try {
         document.title = 'Protected Content – Shahed Store';
       } catch { /* ignore */ }
       return;
     }
 
-    // Only install deterrents for real humans — never run them for
-    // allowed search bots (they don't execute JS anyway, but be safe).
+    // Admins bypass copy deterrents — they can copy anything freely.
+    if (isAdmin) return;
+
     if (decision.classification === 'human') {
       const cleanup = installCopyDeterrents();
       return cleanup;
     }
-  }, []);
+  }, [isAdmin]);
 
   if (blocked) {
     return (
