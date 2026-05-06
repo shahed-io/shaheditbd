@@ -107,6 +107,7 @@ const AdminCustomerLicenses      = lazy(() => import("./pages/admin/AdminCustome
 const AdminQuickSale             = lazy(() => import("./pages/admin/AdminQuickSale"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
+const AdminInvoiceDesign         = lazy(() => import("./pages/admin/AdminInvoiceDesign"));
 const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterSettings"));
 const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveChat"));
 const AdminTelegramBot           = lazy(() => import("./pages/admin/AdminTelegramBot"));
