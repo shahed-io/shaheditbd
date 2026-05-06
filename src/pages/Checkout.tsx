@@ -180,6 +180,25 @@ const Checkout = () => {
     })();
   }, []);
 
+  // Handle bKash callback redirect (?bkash=success|failed|...)
+  useEffect(() => {
+    const bk = searchParams.get('bkash');
+    if (!bk) return;
+    if (bk === 'success') {
+      const ord = searchParams.get('order') || '';
+      const trx = searchParams.get('trx') || '';
+      clearCart();
+      setOrderNumber(ord);
+      setTransactionId(trx);
+      setOrderPlaced(true);
+      toast.success('bKash পেমেন্ট সফল হয়েছে! 🎉');
+    } else {
+      toast.error(`bKash পেমেন্ট ${bk === 'cancel' ? 'বাতিল' : 'ব্যর্থ'} হয়েছে। আবার চেষ্টা করুন।`);
+    }
+    // Clean URL
+    window.history.replaceState({}, '', '/checkout');
+  }, []);
+
   // Auto-apply coupon from URL ?coupon=CODE
   useEffect(() => {
     const urlCoupon = searchParams.get('coupon');
@@ -320,7 +339,7 @@ const Checkout = () => {
       return;
     }
 
-    if (paymentMethod !== 'wallet' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Wallet: check balance
@@ -361,7 +380,7 @@ const Checkout = () => {
           discount_amount: discountAmount + refCreditApplied,
           total: payableTotal,
           payment_method: paymentMethod,
-          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
+          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : (paymentMethod === 'bkash' ? `BKASH-PENDING-${orderNum}` : transactionId.trim()),
           coupon_code: coupon.isApplied ? coupon.code : null,
           coupon_id: couponId,
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
@@ -413,8 +432,8 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
       if (itemsError) throw itemsError;
 
-      // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
-      if (paymentMethod !== 'wallet') {
+      // Insert payment proof for non-wallet, non-bkash-auto payments (manual proofs)
+      if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash') {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
           order_id: order.id,
           user_id: user?.id || null,
@@ -424,6 +443,21 @@ const Checkout = () => {
           status: 'pending',
         });
         if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
+      }
+
+      // bKash auto-pay: create payment & redirect to gateway
+      if (paymentMethod === 'bkash') {
+        const callbackURL = `${(import.meta as any).env.VITE_SUPABASE_URL}/functions/v1/bkash-callback`;
+        const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
+          body: { orderId: order.id, amount: payableTotal, callbackURL },
+        });
+        if (bkErr || !bkData?.bkashURL) {
+          throw new Error(bkData?.error || bkErr?.message || 'bKash পেমেন্ট শুরু করা যায়নি');
+        }
+        // Persist minimal info & redirect
+        try { localStorage.setItem('last_bkash_order', JSON.stringify({ orderNum, orderId: order.id })); } catch {}
+        window.location.href = bkData.bkashURL;
+        return;
       }
 
       // Record affiliate conversion (non-blocking, server validates)
@@ -728,26 +762,38 @@ const Checkout = () => {
             {/* Payment Instructions (only for non-wallet) */}
             {paymentMethod !== 'wallet' && (
               <>
-                <PaymentInstructions
-                  paymentMethodId={paymentMethod as PMId}
-                  amount={finalTotal}
-                  amountLabel="মোট পরিমাণ"
-                />
-
-                {/* Transaction ID */}
-                <div>
-                  <label className="text-sm text-muted-foreground mb-1 block font-semibold">
-                    {paymentMethod === 'bank_transfer' ? 'Bank Reference / TRN নম্বর *' : 'Transaction ID (TrxID) *'}
-                  </label>
-                  <input
-                    type="text"
-                    value={transactionId}
-                    onChange={e => setTransactionId(e.target.value)}
-                    placeholder={paymentMethod === 'bank_transfer' ? 'যেমন: TRN123456789' : 'যেমন: 8F3K2P9X'}
-                    maxLength={50}
-                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
-                  />
-                </div>
+                {paymentMethod === 'bkash' ? (
+                  <div className="rounded-xl p-4 bg-pink-500/10 border border-pink-500/30 space-y-2">
+                    <p className="text-sm font-bold text-pink-700 flex items-center gap-2">
+                      <Smartphone size={16} /> bKash অটোমেটিক পেমেন্ট
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      "অর্ডার সম্পন্ন করুন" বাটনে ক্লিক করলে আপনি bKash পেমেন্ট পেজে যাবেন। সেখানে আপনার bKash নম্বর ও OTP দিয়ে পেমেন্ট সম্পন্ন করুন। পেমেন্ট সফল হলে অর্ডার অটোমেটিক কনফার্ম হয়ে যাবে — কোনো TrxID দিতে হবে না।
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <PaymentInstructions
+                      paymentMethodId={paymentMethod as PMId}
+                      amount={finalTotal}
+                      amountLabel="মোট পরিমাণ"
+                    />
+                    {/* Transaction ID */}
+                    <div>
+                      <label className="text-sm text-muted-foreground mb-1 block font-semibold">
+                        {paymentMethod === 'bank_transfer' ? 'Bank Reference / TRN নম্বর *' : 'Transaction ID (TrxID) *'}
+                      </label>
+                      <input
+                        type="text"
+                        value={transactionId}
+                        onChange={e => setTransactionId(e.target.value)}
+                        placeholder={paymentMethod === 'bank_transfer' ? 'যেমন: TRN123456789' : 'যেমন: 8F3K2P9X'}
+                        maxLength={50}
+                        className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
+                      />
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
