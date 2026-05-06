@@ -364,9 +364,15 @@ Restore:
           <button onClick={fetchStats} disabled={loading} className="glass-card px-4 py-2.5 rounded-xl flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> রিফ্রেশ
           </button>
-          <button onClick={exportAll} disabled={!!exporting} className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold">
+          <button onClick={exportAll} disabled={!!exporting} className="glass-card px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold border border-primary/30 hover:border-primary/60 transition-all">
             {exporting === 'all' ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-            Full Backup
+            Full DB Backup
+          </button>
+          <button onClick={exportEverything} disabled={!!exporting} title="Database + Storage files (ZIP)"
+            className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-bold relative overflow-hidden">
+            {exporting === 'mega' ? <Loader2 size={14} className="animate-spin" /> : <Archive size={14} />}
+            <span>Complete Website Backup</span>
+            {megaProgress && <span className="text-[10px] opacity-80 font-normal hidden sm:inline">— {megaProgress}</span>}
           </button>
         </div>
       </div>
