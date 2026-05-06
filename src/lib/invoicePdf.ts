@@ -108,6 +108,8 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
   const logo = (await loadLogoBase64()) || '';
   const brandColor = '#7c3aed';
   const brandLight = '#f3f0ff';
+  const { getInvoiceHeaderTheme } = await import('./invoiceTheme');
+  const hdr = getInvoiceHeaderTheme(brandColor);
 
   const sub = data.subtotal ?? data.items.reduce((s, i) => s + i.quantity * i.price, 0);
   const disc = data.discount || 0;
@@ -175,12 +177,12 @@ async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
     <!-- Items table -->
     <table style="width:100%;border-collapse:collapse;margin-bottom:20px;border-radius:8px;overflow:hidden">
       <thead>
-        <tr style="background:${brandColor}">
-          <th style="color:#ffffff;font-size:14px;font-weight:700;padding:14px;text-align:center">#</th>
-          <th style="color:#ffffff;font-size:14px;font-weight:700;padding:14px;text-align:left">পণ্যের নাম</th>
-          <th style="color:#ffffff;font-size:14px;font-weight:700;padding:14px;text-align:center">পরিমাণ</th>
-          <th style="color:#ffffff;font-size:14px;font-weight:700;padding:14px;text-align:right">দাম</th>
-          <th style="color:#ffffff;font-size:14px;font-weight:700;padding:14px;text-align:right">মোট</th>
+        <tr style="background:${hdr.bg}">
+          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:center">#</th>
+          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:left">পণ্যের নাম</th>
+          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:center">পরিমাণ</th>
+          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:right">দাম</th>
+          <th style="background:${hdr.bg};color:${hdr.text};font-size:14px;font-weight:700;padding:14px;text-align:right">মোট</th>
         </tr>
       </thead>
       <tbody>${itemsHtml}</tbody>

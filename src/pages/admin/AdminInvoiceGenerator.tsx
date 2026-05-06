@@ -3,6 +3,7 @@ import { Plus, Trash2, Printer, X, FileText, Save, Send, Database } from 'lucide
 import { toast } from 'sonner';
 import logoIcon from '@/assets/logo.png';
 import { downloadInvoicePdf, downloadInvoicePdfFromElement, type InvoiceData } from '@/lib/invoicePdf';
+import { getInvoiceHeaderTheme } from '@/lib/invoiceTheme';
 import { supabase } from '@/integrations/supabase/client';
 
 interface InvoiceItem {
@@ -219,6 +220,7 @@ const AdminInvoiceGenerator = () => {
 
   const brandColor = '#7c3aed';
   const brandLight = '#f3f0ff';
+  const hdr = getInvoiceHeaderTheme(brandColor);
   const dateFormatted = new Date(invoiceDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 
   return (
@@ -431,12 +433,12 @@ const AdminInvoiceGenerator = () => {
                 {/* Items Table */}
                 <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
                   <thead>
-                    <tr style={{ background: '#1a1a2e' }}>
-                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left', background: '#1a1a2e' }}>#</th>
-                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left', background: '#1a1a2e' }}>পণ্যের নাম</th>
-                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center', background: '#1a1a2e' }}>পরিমাণ</th>
-                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: '#1a1a2e' }}>দাম</th>
-                      <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: '#1a1a2e' }}>মোট</th>
+                    <tr style={{ background: hdr.bg }}>
+                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left', background: hdr.bg }}>#</th>
+                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left', background: hdr.bg }}>পণ্যের নাম</th>
+                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center', background: hdr.bg }}>পরিমাণ</th>
+                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: hdr.bg }}>দাম</th>
+                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: hdr.bg }}>মোট</th>
                     </tr>
                   </thead>
                   <tbody>
