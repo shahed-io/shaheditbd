@@ -3,7 +3,7 @@ import { Plus, Trash2, Printer, X, FileText, Save, Send, Database } from 'lucide
 import { toast } from 'sonner';
 import logoIcon from '@/assets/logo.png';
 import { downloadInvoicePdf, downloadInvoicePdfFromElement, type InvoiceData } from '@/lib/invoicePdf';
-import { getInvoiceHeaderTheme } from '@/lib/invoiceTheme';
+import { loadInvoiceDesign, resolveHeaderTheme, resolveTotalColor, DEFAULT_INVOICE_DESIGN, type InvoiceDesign } from '@/lib/invoiceSettings';
 import { supabase } from '@/integrations/supabase/client';
 
 interface InvoiceItem {
@@ -60,6 +60,7 @@ const AdminInvoiceGenerator = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [saving, setSaving] = useState(false);
   const [savedOrderId, setSavedOrderId] = useState<string | null>(null);
+  const [design, setDesign] = useState<InvoiceDesign>(DEFAULT_INVOICE_DESIGN);
 
   const [invoiceNumber, setInvoiceNumber] = useState(generateInvoiceNumber());
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().slice(0, 10));
@@ -78,6 +79,7 @@ const AdminInvoiceGenerator = () => {
 
   useEffect(() => {
     fetchNextInvoiceNumber().then(setInvoiceNumber);
+    loadInvoiceDesign(true).then(setDesign);
     (async () => {
       const { data } = await supabase
         .from('products')
@@ -218,9 +220,10 @@ const AdminInvoiceGenerator = () => {
     toast.success('ফর্ম রিসেট হয়েছে');
   };
 
-  const brandColor = '#7c3aed';
-  const brandLight = '#f3f0ff';
-  const hdr = getInvoiceHeaderTheme(brandColor);
+  const brandColor = design.brandColor;
+  const brandLight = design.brandLight;
+  const hdr = resolveHeaderTheme(design);
+  const totalColor = resolveTotalColor(design);
   const dateFormatted = new Date(invoiceDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 
   return (
@@ -399,12 +402,12 @@ const AdminInvoiceGenerator = () => {
               </div>
             </div>
             <div className="overflow-y-auto flex-1 p-6">
-              <div ref={printRef} style={{ background: '#fff', color: '#1a1a2e', padding: '40px', borderRadius: '12px', fontFamily: "'Segoe UI', Arial, sans-serif" }}>
+              <div ref={printRef} style={{ background: '#fff', color: design.accentText, padding: '40px', borderRadius: `${design.borderRadius}px`, fontFamily: "'Segoe UI', Arial, sans-serif" }}>
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', paddingBottom: '20px', borderBottom: `3px solid ${brandColor}` }}>
-                  <div>{logoBase64 && <img src={logoBase64} alt="Logo" style={{ height: '48px', width: 'auto' }} />}</div>
+                  <div>{design.showLogo && logoBase64 && <img src={logoBase64} alt="Logo" style={{ height: '48px', width: 'auto' }} />}</div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '28px', fontWeight: 800, color: brandColor, letterSpacing: '2px' }}>INVOICE</div>
+                    <div style={{ fontSize: '28px', fontWeight: 800, color: brandColor, letterSpacing: '2px' }}>{design.invoiceTitle}</div>
                     <div style={{ fontSize: '13px', color: '#666', marginTop: '4px', fontFamily: 'monospace' }}>#{invoiceNumber}</div>
                     <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>{dateFormatted}</div>
                   </div>
@@ -413,16 +416,16 @@ const AdminInvoiceGenerator = () => {
                 {/* Customer + Payment */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '28px' }}>
                   <div style={{ background: brandLight, borderRadius: '10px', padding: '16px', borderLeft: `4px solid ${brandColor}` }}>
-                    <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '10px' }}>বিলিং তথ্য</div>
-                    <p style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a2e', marginBottom: '4px' }}>{customerName}</p>
+                    <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '10px' }}>{design.labelBilling}</div>
+                    <p style={{ fontSize: '15px', fontWeight: 700, color: design.accentText, marginBottom: '4px' }}>{customerName}</p>
                     {customerEmail && <p style={{ fontSize: '12px', color: '#555' }}>✉️ {customerEmail}</p>}
                     {customerPhone && <p style={{ fontSize: '12px', color: '#555', marginTop: '3px' }}>📱 {customerPhone}</p>}
                     {customerAddress && <p style={{ fontSize: '12px', color: '#555', marginTop: '3px' }}>📍 {customerAddress}</p>}
                   </div>
                   <div style={{ background: brandLight, borderRadius: '10px', padding: '16px', borderLeft: `4px solid ${brandColor}` }}>
-                    <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '12px' }}>💳 Payment Info</div>
-                    <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9 }}><span style={{ display: 'inline-block', minWidth: '62px' }}>Method:</span> <strong style={{ color: '#1a1a2e' }}>{PM_LABELS[paymentMethod] || paymentMethod}</strong></div>
-                    {transactionId && <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px' }}><span style={{ display: 'inline-block', minWidth: '62px' }}>TrxID:</span> <span style={{ color: '#1a1a2e', fontFamily: 'monospace', background: '#e8e5f7', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', display: 'inline-block', lineHeight: 1.4 }}>{transactionId}</span></div>}
+                    <div style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: brandColor, letterSpacing: '1.5px', marginBottom: '12px' }}>💳 {design.labelPayment}</div>
+                    <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9 }}><span style={{ display: 'inline-block', minWidth: '62px' }}>Method:</span> <strong style={{ color: design.accentText }}>{PM_LABELS[paymentMethod] || paymentMethod}</strong></div>
+                    {transactionId && <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px' }}><span style={{ display: 'inline-block', minWidth: '62px' }}>TrxID:</span> <span style={{ color: design.accentText, fontFamily: 'monospace', background: '#e8e5f7', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', display: 'inline-block', lineHeight: 1.4 }}>{transactionId}</span></div>}
                     <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.9, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ display: 'inline-block', minWidth: '62px' }}>Status:</span>
                       <span style={{ background: brandColor, color: '#ffffff', padding: '5px 14px', borderRadius: '999px', fontSize: '11px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', lineHeight: 1, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Paid</span>
@@ -435,20 +438,20 @@ const AdminInvoiceGenerator = () => {
                   <thead>
                     <tr style={{ background: hdr.bg }}>
                       <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left', background: hdr.bg }}>#</th>
-                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left', background: hdr.bg }}>পণ্যের নাম</th>
-                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center', background: hdr.bg }}>পরিমাণ</th>
-                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: hdr.bg }}>দাম</th>
-                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: hdr.bg }}>মোট</th>
+                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left', background: hdr.bg }}>{design.labelItem}</th>
+                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center', background: hdr.bg }}>{design.labelQty}</th>
+                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: hdr.bg }}>{design.labelPrice}</th>
+                      <th style={{ color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right', background: hdr.bg }}>{design.labelTotal}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {items.map((item, idx) => (
                       <tr key={item.id} style={{ borderBottom: '1px solid #eee', background: idx % 2 === 0 ? '#fff' : '#faf9ff' }}>
                         <td style={{ padding: '11px 14px', fontSize: '12px', color: '#888' }}>{idx + 1}</td>
-                        <td style={{ padding: '11px 14px', fontSize: '13px', color: '#1a1a2e', fontWeight: 500 }}>{item.name}</td>
+                        <td style={{ padding: '11px 14px', fontSize: '13px', color: design.accentText, fontWeight: 500 }}>{item.name}</td>
                         <td style={{ padding: '11px 14px', fontSize: '13px', textAlign: 'center', color: '#555' }}>×{item.quantity}</td>
                         <td style={{ padding: '11px 14px', fontSize: '13px', textAlign: 'right', color: '#555' }}>৳{Number(item.price).toLocaleString()}</td>
-                        <td style={{ padding: '11px 14px', fontSize: '14px', fontWeight: 700, textAlign: 'right', color: '#1a1a2e' }}>৳{(item.quantity * item.price).toLocaleString()}</td>
+                        <td style={{ padding: '11px 14px', fontSize: '14px', fontWeight: 700, textAlign: 'right', color: design.accentText }}>৳{(item.quantity * item.price).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -457,9 +460,9 @@ const AdminInvoiceGenerator = () => {
                 {/* Totals */}
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <div style={{ minWidth: '260px', background: brandLight, borderRadius: '10px', padding: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#555', marginBottom: '8px' }}><span>Subtotal:</span><span>৳{subtotal.toLocaleString()}</span></div>
-                    {discount > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#059669', marginBottom: '8px' }}><span>Discount:</span><span>-৳{discount.toLocaleString()}</span></div>}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 800, color: brandColor, borderTop: `2px solid ${brandColor}`, paddingTop: '10px', marginTop: '8px' }}><span>Total:</span><span>৳{total.toLocaleString()}</span></div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#555', marginBottom: '8px' }}><span>{design.labelSubtotal}:</span><span>৳{subtotal.toLocaleString()}</span></div>
+                    {discount > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#059669', marginBottom: '8px' }}><span>{design.labelDiscount}:</span><span>-৳{discount.toLocaleString()}</span></div>}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 800, color: totalColor, borderTop: `2px solid ${brandColor}`, paddingTop: '10px', marginTop: '8px' }}><span>{design.labelGrandTotal}:</span><span>৳{total.toLocaleString()}</span></div>
                   </div>
                 </div>
 
@@ -472,9 +475,13 @@ const AdminInvoiceGenerator = () => {
 
                 {/* Footer */}
                 <div style={{ marginTop: '28px', textAlign: 'center', borderTop: `2px solid ${brandLight}`, paddingTop: '18px' }}>
-                  <div style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!</div>
-                  <div style={{ fontSize: '11px', color: '#aaa' }}><div style={{ fontSize: '11px', color: '#aaa' }}>🌐 shahedstore.com.bd &nbsp;•&nbsp; 📧 info@shahedstore.com.bd</div></div>
-                  <div style={{ fontSize: '10px', color: '#ccc', marginTop: '8px' }}>This is a computer-generated invoice and does not require a signature.</div>
+                  <div style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>{design.thankYouText}</div>
+                  <div style={{ fontSize: '11px', color: '#aaa' }}>
+                    {design.companyWebsite && <>🌐 {design.companyWebsite}</>}
+                    {design.companyEmail && <> &nbsp;•&nbsp; 📧 {design.companyEmail}</>}
+                    {design.companyPhone && <> &nbsp;•&nbsp; 📞 {design.companyPhone}</>}
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#ccc', marginTop: '8px' }}>{design.footerNote}</div>
                 </div>
               </div>
             </div>

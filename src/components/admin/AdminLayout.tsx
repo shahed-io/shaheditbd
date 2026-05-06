@@ -44,6 +44,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: ShopIcon, label: 'Abandoned Checkouts', path: '/ceo/abandoned-checkouts', badge: 'new' },
       { icon: ShoppingCart, label: 'Quick Sale', path: '/ceo/quick-sale' },
       { icon: FileText, label: 'Invoice Generator', path: '/ceo/invoices' },
+      { icon: Palette, label: 'Invoice Design', path: '/ceo/invoice-design', badge: 'new' },
       { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
       { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
       { icon: KeyRound, label: 'Customer Licenses', path: '/ceo/customer-licenses', badge: 'new' },
