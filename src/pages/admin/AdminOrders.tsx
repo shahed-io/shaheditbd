@@ -198,12 +198,12 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
             {/* ─── Items Table ─── */}
             <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
               <thead>
-                <tr style={{ background: brandColor }}>
-                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left' }}>#</th>
-                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left' }}>পণ্যের নাম</th>
-                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center' }}>পরিমাণ</th>
-                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>দাম</th>
-                  <th style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>মোট</th>
+                <tr style={{ background: hdr.bg }}>
+                  <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left' }}>#</th>
+                  <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left' }}>পণ্যের নাম</th>
+                  <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center' }}>পরিমাণ</th>
+                  <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>দাম</th>
+                  <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>মোট</th>
                 </tr>
               </thead>
               <tbody>
