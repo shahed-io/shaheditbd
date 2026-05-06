@@ -102,6 +102,12 @@ const AdminInvoiceGenerator = () => {
   const updateItem = (id: string, field: keyof InvoiceItem, value: any) =>
     setItems(p => p.map(i => i.id === id ? { ...i, [field]: value } : i));
 
+  const selectProduct = (id: string, productId: string) => {
+    const prod = products.find(p => p.id === productId);
+    if (!prod) return;
+    setItems(p => p.map(i => i.id === id ? { ...i, name: prod.name, price: Number(prod.price) || 0 } : i));
+  };
+
   const subtotal = items.reduce((s, i) => s + i.quantity * i.price, 0);
   const total = Math.max(0, subtotal - discount);
 
