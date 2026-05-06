@@ -147,6 +147,8 @@ async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
   const cachedLogo = await loadLogoBase64(logoIcon);
   const brandColor = '#7c3aed';
   const brandLight = '#f3f0ff';
+  const { getInvoiceHeaderTheme } = await import('./invoiceTheme');
+  const hdr = getInvoiceHeaderTheme(brandColor);
   const sub = data.subtotal ?? data.items.reduce((s, i) => s + i.quantity * i.price, 0);
   const disc = data.discount || 0;
   const fmt = (n: number) => '৳' + Number(n || 0).toLocaleString('en-US');
