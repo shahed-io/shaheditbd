@@ -341,7 +341,7 @@ const Checkout = () => {
       return;
     }
 
-    const isBkashAuto = paymentMethod === 'bkash' || paymentMethod === 'bkash_merchant';
+    const isBkashAuto = paymentMethod === 'bkash_online';
     if (paymentMethod !== 'wallet' && !isBkashAuto && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
