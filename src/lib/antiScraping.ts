@@ -253,26 +253,6 @@ export function installCopyDeterrents(): () => void {
   document.addEventListener('selectstart', onSelectStart);
   document.addEventListener('keydown', onKeyDown);
 
-  // ── DevTools open detection (resize-gap heuristic) ──
-  // When DevTools opens (docked), inner vs outer dimensions diverge by >160px.
-  let devtoolsWarned = false;
-  const checkDevtools = () => {
-    const widthGap = window.outerWidth - window.innerWidth;
-    const heightGap = window.outerHeight - window.innerHeight;
-    const open = widthGap > 200 || heightGap > 200;
-    if (open && !devtoolsWarned) {
-      devtoolsWarned = true;
-      warn();
-      // Optional soft action: blur the page so design isn't easily inspected
-      document.documentElement.style.filter = 'blur(6px)';
-      document.documentElement.style.transition = 'filter .25s ease';
-    } else if (!open && devtoolsWarned) {
-      devtoolsWarned = false;
-      document.documentElement.style.filter = '';
-    }
-  };
-  const devtoolsTimer = window.setInterval(checkDevtools, 1500);
-
   return () => {
     document.removeEventListener('contextmenu', onContextMenu);
     document.removeEventListener('copy', onCopy);
@@ -280,7 +260,5 @@ export function installCopyDeterrents(): () => void {
     document.removeEventListener('dragstart', onDragStart);
     document.removeEventListener('selectstart', onSelectStart);
     document.removeEventListener('keydown', onKeyDown);
-    window.clearInterval(devtoolsTimer);
-    document.documentElement.style.filter = '';
   };
 }
