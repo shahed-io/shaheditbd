@@ -16,7 +16,7 @@ import {
 import QuickOrderModal from '@/components/store/QuickOrderModal';
 import SEOHead from '@/components/seo/SEOHead';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
-import { productSchema, breadcrumbSchema, faqSchema } from '@/components/seo/schemas';
+import { productSchema, breadcrumbSchema, faqSchema, softwareApplicationSchema, speakableSchema, reviewSchema } from '@/components/seo/schemas';
 import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 
