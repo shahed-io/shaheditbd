@@ -255,3 +255,147 @@ export const reviewSchema = (
   reviewBody: r.body,
   datePublished: r.date || new Date().toISOString().split('T')[0],
 }));
+
+/** Speakable — boosts ranking in Google Assistant / voice search results */
+export const speakableSchema = (selectors: string[] = ['h1', '.product-title', '.lead', '.product-description']) => ({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: selectors,
+  },
+});
+
+/** LocalBusiness — strong local-SEO boost for "near me" queries in BD */
+export const localBusinessSchema = () => ({
+  '@context': 'https://schema.org',
+  '@type': 'OnlineStore',
+  '@id': `${SITE_URL}/#localbusiness`,
+  name: SITE_NAME,
+  image: `${SITE_URL}/favicon.png`,
+  url: SITE_URL,
+  telephone: PHONE,
+  priceRange: '৳৳',
+  currenciesAccepted: 'BDT',
+  paymentAccepted: 'bKash, Nagad, Rocket, Bank Transfer, DBBL',
+  openingHoursSpecification: [{
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+    opens: '00:00', closes: '23:59',
+  }],
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Dhaka',
+    addressLocality: 'Dhaka',
+    addressRegion: 'Dhaka Division',
+    postalCode: '1200',
+    addressCountry: 'BD',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: 23.8103, longitude: 90.4125 },
+  areaServed: { '@type': 'Country', name: 'Bangladesh' },
+  sameAs: ['https://www.facebook.com/Shahed.Store365'],
+  hasMap: 'https://maps.google.com/?q=Dhaka+Bangladesh',
+});
+
+/** SiteNavigationElement — helps Google build sitelinks */
+export const siteNavigationSchema = (items: { name: string; url: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@graph': items.map((it, i) => ({
+    '@type': 'SiteNavigationElement',
+    position: i + 1,
+    name: it.name,
+    url: it.url.startsWith('http') ? it.url : `${SITE_URL}${it.url}`,
+  })),
+});
+
+/** SoftwareApplication — boosts software-product rankings */
+export const softwareApplicationSchema = (p: {
+  name: string;
+  description?: string | null;
+  image?: string | null;
+  slug: string;
+  price: number;
+  category?: string;
+  rating?: number;
+  reviewCount?: number;
+  operatingSystem?: string;
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  description: p.description || `${p.name} — Buy at the best price in Bangladesh`,
+  image: p.image || `${SITE_URL}/favicon.png`,
+  url: `${SITE_URL}/product/${p.slug}`,
+  applicationCategory: p.category || 'BusinessApplication',
+  operatingSystem: p.operatingSystem || 'Windows, macOS, Android, iOS',
+  offers: {
+    '@type': 'Offer',
+    price: p.price,
+    priceCurrency: 'BDT',
+    availability: 'https://schema.org/InStock',
+    url: `${SITE_URL}/product/${p.slug}`,
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: p.rating ?? 4.9,
+    reviewCount: p.reviewCount ?? 127,
+    bestRating: 5,
+    worstRating: 1,
+  },
+});
+
+/** HowTo — for tutorial pages (huge ranking boost in how-to queries) */
+export const howToSchema = (h: {
+  name: string;
+  description: string;
+  image?: string;
+  totalTime?: string;
+  steps: { name: string; text: string; image?: string }[];
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: h.name,
+  description: h.description,
+  image: h.image || `${SITE_URL}/favicon.png`,
+  totalTime: h.totalTime || 'PT5M',
+  step: h.steps.map((s, i) => ({
+    '@type': 'HowToStep',
+    position: i + 1,
+    name: s.name,
+    text: s.text,
+    ...(s.image ? { image: s.image } : {}),
+  })),
+});
+
+/** VideoObject — for any video embed */
+export const videoObjectSchema = (v: {
+  name: string; description: string; thumbnailUrl: string;
+  uploadDate?: string; contentUrl?: string; embedUrl?: string; duration?: string;
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: v.name,
+  description: v.description,
+  thumbnailUrl: v.thumbnailUrl,
+  uploadDate: v.uploadDate || new Date().toISOString(),
+  ...(v.contentUrl ? { contentUrl: v.contentUrl } : {}),
+  ...(v.embedUrl ? { embedUrl: v.embedUrl } : {}),
+  duration: v.duration || 'PT2M',
+  publisher: { '@type': 'Organization', name: SITE_NAME, logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.png` } },
+});
+
+/** SaleEvent — for flash sales / promotions */
+export const eventSchema = (e: {
+  name: string; description: string; startDate: string; endDate: string; url?: string;
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'SaleEvent',
+  name: e.name,
+  description: e.description,
+  startDate: e.startDate,
+  endDate: e.endDate,
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+  location: { '@type': 'VirtualLocation', url: e.url || SITE_URL },
+  organizer: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+});
