@@ -434,7 +434,7 @@ const Checkout = () => {
       if (itemsError) throw itemsError;
 
       // Insert payment proof for non-wallet, non-bkash-auto payments (manual proofs)
-      if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash') {
+      if (paymentMethod !== 'wallet' && !isBkashAuto) {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
           order_id: order.id,
           user_id: user?.id || null,
@@ -447,7 +447,7 @@ const Checkout = () => {
       }
 
       // bKash auto-pay: create payment & redirect to gateway
-      if (paymentMethod === 'bkash') {
+      if (isBkashAuto) {
         const callbackURL = `${(import.meta as any).env.VITE_SUPABASE_URL}/functions/v1/bkash-callback`;
         const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
           body: { orderId: order.id, amount: payableTotal, callbackURL },
@@ -455,7 +455,6 @@ const Checkout = () => {
         if (bkErr || !bkData?.bkashURL) {
           throw new Error(bkData?.error || bkErr?.message || 'bKash পেমেন্ট শুরু করা যায়নি');
         }
-        // Persist minimal info & redirect
         try { localStorage.setItem('last_bkash_order', JSON.stringify({ orderNum, orderId: order.id })); } catch {}
         window.location.href = bkData.bkashURL;
         return;
