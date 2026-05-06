@@ -195,20 +195,55 @@ export function installCopyDeterrents(): () => void {
     );
   };
 
+  const FUN_MESSAGES = [
+    { icon: '🕵️‍♂️', title: 'ধরা পড়ে গেছেন!', sub: 'এই ডিজাইন কপিরাইট-সুরক্ষিত — চুরি করার চেষ্টা বৃথা 😉' },
+    { icon: '🚫', title: 'উঁহু, এটা করা যাবে না!', sub: 'Shahed Store এর কনটেন্ট কপি করা নিষিদ্ধ।' },
+    { icon: '🛡️', title: 'কনটেন্ট লক করা আছে', sub: 'কপি করতে চাইলে আমাদের সাথে যোগাযোগ করুন — আমরা friendly! 💜' },
+    { icon: '🎯', title: 'নাইস ট্রাই!', sub: 'কিন্তু এই ওয়েবসাইটের ডিজাইন © Shahed Store এর সম্পত্তি।' },
+    { icon: '✨', title: 'কপি না করে কিনে নিন!', sub: 'আসল প্রোডাক্ট পেতে অর্ডার করুন shahedstore.com.bd তে।' },
+    { icon: '🔐', title: 'অ্যাক্সেস ডিনাইড', sub: 'এই পেজটি কপিরাইট আইন দ্বারা সুরক্ষিত।' },
+  ];
+
   const warn = () => {
     try {
-      // Soft visual warning — non-blocking
       const id = '__copy_warn_toast__';
       if (document.getElementById(id)) return;
+      const msg = FUN_MESSAGES[Math.floor(Math.random() * FUN_MESSAGES.length)];
       const el = document.createElement('div');
       el.id = id;
-      el.textContent = '🛡️ এই ওয়েবসাইটের কনটেন্ট কপিরাইট-সুরক্ষিত — কপি/ডাউনলোড নিষিদ্ধ।';
+      el.innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));">${msg.icon}</div>
+          <div style="display:flex;flex-direction:column;gap:2px;text-align:left;">
+            <div style="font-weight:700;font-size:14px;letter-spacing:.2px;">${msg.title}</div>
+            <div style="font-size:12px;opacity:.85;">${msg.sub}</div>
+          </div>
+        </div>`;
       el.setAttribute(
         'style',
-        'position:fixed;z-index:99999;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-family:system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:90vw;text-align:center'
+        [
+          'position:fixed','z-index:99999','left:50%','bottom:28px',
+          'transform:translateX(-50%) translateY(20px)','opacity:0',
+          'background:linear-gradient(135deg,rgba(124,58,237,.95),rgba(15,23,42,.95))',
+          'backdrop-filter:blur(16px)','-webkit-backdrop-filter:blur(16px)',
+          'color:#fff','padding:14px 20px','border-radius:18px',
+          'border:1px solid rgba(255,255,255,.18)',
+          'font-family:system-ui,-apple-system,sans-serif',
+          'box-shadow:0 18px 50px -12px rgba(124,58,237,.55), 0 8px 24px rgba(0,0,0,.35)',
+          'max-width:92vw','transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s ease',
+          'pointer-events:none',
+        ].join(';')
       );
       document.body.appendChild(el);
-      setTimeout(() => el.remove(), 2500);
+      requestAnimationFrame(() => {
+        el.style.transform = 'translateX(-50%) translateY(0)';
+        el.style.opacity = '1';
+      });
+      setTimeout(() => {
+        el.style.transform = 'translateX(-50%) translateY(20px)';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 350);
+      }, 2600);
     } catch { /* ignore */ }
   };
 
