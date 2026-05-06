@@ -220,6 +220,7 @@ const AdminInvoiceGenerator = () => {
 
   const brandColor = '#7c3aed';
   const brandLight = '#f3f0ff';
+  const hdr = getInvoiceHeaderTheme(brandColor);
   const dateFormatted = new Date(invoiceDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 
   return (
