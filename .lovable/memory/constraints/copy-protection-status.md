@@ -10,7 +10,7 @@ Copy protection is FULLY ACTIVE site-wide (reversed earlier "fully allowed" rule
 - `copy` / `cut` events replace clipboard with copyright notice
 - `dragstart`, `selectstart` blocked on chrome zones
 - DevTools shortcuts blocked (F12, Ctrl+Shift+I/J/C, Ctrl+U, Ctrl+S, PrintScreen)
-- DevTools open detection (resize-gap heuristic) blurs page while open
+- DevTools shortcuts blocked (no page blur — user explicitly rejected blur effect)
 - CSS `user-select: none` on body by default; readable content opted in via allow-list
 - `@media print` hides body to prevent print-to-PDF cloning
 - `_redirects` returns 404 for `/*.md`, `/.lovable/*`, `/src/*`, `/supabase/*`, `/README*`, `/package*.json`, `/tsconfig*`, `/vite.config*`
