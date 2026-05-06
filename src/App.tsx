@@ -42,7 +42,6 @@ const AdminCoupons          = lazy(() => import("./pages/admin/AdminCoupons"));
 const AdminSettings         = lazy(() => import("./pages/admin/AdminSettings"));
 const AdminTickets          = lazy(() => import("./pages/admin/AdminTickets"));
 const AdminPayments         = lazy(() => import("./pages/admin/AdminPayments"));
-const AdminBkashTest        = lazy(() => import("./pages/admin/AdminBkashTest"));
 const AdminCustomers        = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminReports          = lazy(() => import("./pages/admin/AdminReports"));
 const AdminMarketing        = lazy(() => import("./pages/admin/AdminMarketing"));
@@ -108,7 +107,6 @@ const AdminCustomerLicenses      = lazy(() => import("./pages/admin/AdminCustome
 const AdminQuickSale             = lazy(() => import("./pages/admin/AdminQuickSale"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
-const AdminInvoiceDesign         = lazy(() => import("./pages/admin/AdminInvoiceDesign"));
 const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterSettings"));
 const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveChat"));
 const AdminTelegramBot           = lazy(() => import("./pages/admin/AdminTelegramBot"));
@@ -250,7 +248,6 @@ const AppContent = () => {
             <Route path="ai-config" element={<AdminSuspense><AdminAiConfig /></AdminSuspense>} />
             <Route path="customers" element={<AdminSuspense><AdminCustomers /></AdminSuspense>} />
             <Route path="payments" element={<AdminSuspense><AdminPayments /></AdminSuspense>} />
-            <Route path="bkash-test" element={<AdminSuspense><AdminBkashTest /></AdminSuspense>} />
             <Route path="tickets" element={<AdminSuspense><AdminTickets /></AdminSuspense>} />
             <Route path="reports" element={<AdminSuspense><AdminReports /></AdminSuspense>} />
             <Route path="marketing" element={<AdminSuspense><AdminMarketing /></AdminSuspense>} />
@@ -294,7 +291,6 @@ const AppContent = () => {
             <Route path="quick-sale" element={<AdminSuspense><AdminQuickSale /></AdminSuspense>} />
             <Route path="popup-banner" element={<AdminSuspense><AdminPopupBanner /></AdminSuspense>} />
             <Route path="invoices" element={<AdminSuspense><AdminInvoiceGenerator /></AdminSuspense>} />
-            <Route path="invoice-design" element={<AdminSuspense><AdminInvoiceDesign /></AdminSuspense>} />
             <Route path="footer-settings" element={<AdminSuspense><AdminFooterSettings /></AdminSuspense>} />
             <Route path="live-chat" element={<AdminSuspense><AdminLiveChat /></AdminSuspense>} />
             <Route path="telegram-bot" element={<AdminSuspense><AdminTelegramBot /></AdminSuspense>} />

@@ -36,7 +36,7 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bkash_online' | 'bank_transfer' | 'wallet';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet';
 
 const Checkout = () => {
   const {
@@ -55,8 +55,6 @@ const Checkout = () => {
   // Build dynamic payment methods from DB config
   const paymentMethods = [
     { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', number: '', type: 'Wallet Balance', logo: undefined as string | undefined },
-    // bKash Online — automatic API payment (always available, not from DB config)
-    { id: 'bkash_online' as PaymentMethod, label: 'bKash Online', color: 'from-pink-600 to-rose-600', number: '', type: 'Auto Pay', logo: bkashLogo as string | undefined },
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -75,7 +73,6 @@ const Checkout = () => {
 
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [policyAgreements, setPolicyAgreements] = useState<Record<string, boolean>>({ terms: false, refund: false, privacy: false, order: false });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [transactionId, setTransactionId] = useState('');
   const [couponCode, setCouponCode] = useState(coupon.isApplied ? coupon.code : '');
@@ -181,25 +178,6 @@ const Checkout = () => {
         console.error('Telegram token load error:', e);
       }
     })();
-  }, []);
-
-  // Handle bKash callback redirect (?bkash=success|failed|...)
-  useEffect(() => {
-    const bk = searchParams.get('bkash');
-    if (!bk) return;
-    if (bk === 'success') {
-      const ord = searchParams.get('order') || '';
-      const trx = searchParams.get('trx') || '';
-      clearCart();
-      setOrderNumber(ord);
-      setTransactionId(trx);
-      setOrderPlaced(true);
-      toast.success('bKash পেমেন্ট সফল হয়েছে! 🎉');
-    } else {
-      toast.error(`bKash পেমেন্ট ${bk === 'cancel' ? 'বাতিল' : 'ব্যর্থ'} হয়েছে। আবার চেষ্টা করুন।`);
-    }
-    // Clean URL
-    window.history.replaceState({}, '', '/checkout');
   }, []);
 
   // Auto-apply coupon from URL ?coupon=CODE
@@ -329,13 +307,8 @@ const Checkout = () => {
       return;
     }
 
-    const allPoliciesAgreed = ['terms', 'refund', 'privacy', 'order'].every(k => policyAgreements[k]);
-    if (!allPoliciesAgreed) {
-      setSubmitError('সকল পলিসি (Terms, Refund, Privacy, Order) তে টিক দিন');
-      return;
-    }
     if (!termsAccepted) {
-      setSubmitError('সকল পলিসি মেনে অর্ডার নিশ্চিত করতে শেষ চেকবক্সে টিক দিন');
+      setSubmitError('Terms & Conditions মেনে নিতে হবে');
       return;
     }
 
@@ -347,8 +320,7 @@ const Checkout = () => {
       return;
     }
 
-    const isBkashAuto = paymentMethod === 'bkash_online';
-    if (paymentMethod !== 'wallet' && !isBkashAuto && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Wallet: check balance
@@ -389,7 +361,7 @@ const Checkout = () => {
           discount_amount: discountAmount + refCreditApplied,
           total: payableTotal,
           payment_method: paymentMethod,
-          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : (isBkashAuto ? `BKASH-PENDING-${orderNum}` : transactionId.trim()),
+          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
           coupon_code: coupon.isApplied ? coupon.code : null,
           coupon_id: couponId,
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
@@ -441,8 +413,8 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
       if (itemsError) throw itemsError;
 
-      // Insert payment proof for non-wallet, non-bkash-auto payments (manual proofs)
-      if (paymentMethod !== 'wallet' && !isBkashAuto) {
+      // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
+      if (paymentMethod !== 'wallet') {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
           order_id: order.id,
           user_id: user?.id || null,
@@ -452,20 +424,6 @@ const Checkout = () => {
           status: 'pending',
         });
         if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
-      }
-
-      // bKash auto-pay: create payment & redirect to gateway
-      if (isBkashAuto) {
-        const callbackURL = `${(import.meta as any).env.VITE_SUPABASE_URL}/functions/v1/bkash-callback`;
-        const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
-          body: { orderId: order.id, amount: payableTotal, callbackURL },
-        });
-        if (bkErr || !bkData?.bkashURL) {
-          throw new Error(bkData?.error || bkErr?.message || 'bKash পেমেন্ট শুরু করা যায়নি');
-        }
-        try { localStorage.setItem('last_bkash_order', JSON.stringify({ orderNum, orderId: order.id })); } catch {}
-        window.location.href = bkData.bkashURL;
-        return;
       }
 
       // Record affiliate conversion (non-blocking, server validates)
@@ -770,38 +728,26 @@ const Checkout = () => {
             {/* Payment Instructions (only for non-wallet) */}
             {paymentMethod !== 'wallet' && (
               <>
-                {paymentMethod === 'bkash_online' ? (
-                  <div className="rounded-xl p-4 bg-pink-500/10 border border-pink-500/30 space-y-2">
-                    <p className="text-sm font-bold text-pink-700 flex items-center gap-2">
-                      <Smartphone size={16} /> bKash Online — অটোমেটিক পেমেন্ট
-                    </p>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      "অর্ডার সম্পন্ন করুন" বাটনে ক্লিক করলে আপনি সরাসরি bKash পেমেন্ট পেজে যাবেন। সেখানে আপনার bKash নম্বর ও OTP দিয়ে পেমেন্ট সম্পন্ন করুন। পেমেন্ট সফল হলে অর্ডার অটোমেটিক কনফার্ম ও ডেলিভারি হয়ে যাবে — কোনো TrxID দিতে হবে না।
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <PaymentInstructions
-                      paymentMethodId={paymentMethod as PMId}
-                      amount={finalTotal}
-                      amountLabel="মোট পরিমাণ"
-                    />
-                    {/* Transaction ID */}
-                    <div>
-                      <label className="text-sm text-muted-foreground mb-1 block font-semibold">
-                        {paymentMethod === 'bank_transfer' ? 'Bank Reference / TRN নম্বর *' : 'Transaction ID (TrxID) *'}
-                      </label>
-                      <input
-                        type="text"
-                        value={transactionId}
-                        onChange={e => setTransactionId(e.target.value)}
-                        placeholder={paymentMethod === 'bank_transfer' ? 'যেমন: TRN123456789' : 'যেমন: 8F3K2P9X'}
-                        maxLength={50}
-                        className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
-                      />
-                    </div>
-                  </>
-                )}
+                <PaymentInstructions
+                  paymentMethodId={paymentMethod as PMId}
+                  amount={finalTotal}
+                  amountLabel="মোট পরিমাণ"
+                />
+
+                {/* Transaction ID */}
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block font-semibold">
+                    {paymentMethod === 'bank_transfer' ? 'Bank Reference / TRN নম্বর *' : 'Transaction ID (TrxID) *'}
+                  </label>
+                  <input
+                    type="text"
+                    value={transactionId}
+                    onChange={e => setTransactionId(e.target.value)}
+                    placeholder={paymentMethod === 'bank_transfer' ? 'যেমন: TRN123456789' : 'যেমন: 8F3K2P9X'}
+                    maxLength={50}
+                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
+                  />
+                </div>
               </>
             )}
           </div>
@@ -823,47 +769,21 @@ const Checkout = () => {
             <p className="text-xs text-muted-foreground text-right">{orderNotes.length}/500</p>
           </div>
 
-          {/* Policy Agreements */}
-          <div className="glass-card p-5 rounded-2xl border border-border space-y-3">
-            <div className="flex items-center gap-2 mb-1">
-              <Shield size={16} className="text-primary" />
-              <h3 className="font-bold text-foreground text-sm">Policy Agreement</h3>
-              <span className="text-xs text-destructive">*</span>
-            </div>
-            <p className="text-xs text-muted-foreground -mt-1 mb-2">
-              অর্ডার করার আগে অনুগ্রহ করে নিচের সকল পলিসি পড়ে সম্মতি দিন।
-            </p>
-            {[
-              { key: 'terms', label: 'Terms & Conditions', path: '/terms' },
-              { key: 'refund', label: 'Refund Policy', path: '/refund-policy' },
-              { key: 'privacy', label: 'Privacy Policy', path: '/privacy' },
-              { key: 'order', label: 'Order Policy', path: '/order-policy' },
-            ].map(p => (
-              <label key={p.key} className="flex items-start gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={!!policyAgreements[p.key]}
-                  onChange={e => setPolicyAgreements(prev => ({ ...prev, [p.key]: e.target.checked }))}
-                  className="mt-0.5 w-4 h-4 accent-primary flex-shrink-0"
-                />
-                <span className="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
-                  আমি{' '}
-                  <button type="button" onClick={() => window.open(p.path, '_blank')} className="text-primary font-semibold hover:underline">
-                    {p.label}
-                  </button>
-                  {' '}পড়েছি এবং সম্মত আছি।
-                </span>
-              </label>
-            ))}
-            <label className="flex items-start gap-3 cursor-pointer pt-2 mt-1 border-t border-border/50">
+          {/* Terms & Conditions */}
+          <div className="glass-card p-4 rounded-2xl border border-border">
+            <label className="flex items-start gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 checked={termsAccepted}
                 onChange={e => setTermsAccepted(e.target.checked)}
                 className="mt-0.5 w-4 h-4 accent-primary flex-shrink-0"
               />
-              <span className="text-sm font-semibold text-foreground leading-relaxed">
-                আমি উপরোক্ত সকল পলিসি মেনে এই অর্ডারটি দিচ্ছি।
+              <span className="text-sm text-muted-foreground leading-relaxed">
+                আমি{' '}
+                <button type="button" onClick={() => navigate('/terms')} className="text-primary hover:underline">Terms & Conditions</button>
+                {' '}এবং{' '}
+                <button type="button" onClick={() => navigate('/refund-policy')} className="text-primary hover:underline">Refund Policy</button>
+                {' '}পড়েছি এবং সম্মত আছি।
               </span>
             </label>
           </div>
@@ -876,7 +796,7 @@ const Checkout = () => {
 
           <button
             type="submit"
-            disabled={loading || !termsAccepted || !['terms','refund','privacy','order'].every(k => policyAgreements[k]) || items.length === 0}
+            disabled={loading || !termsAccepted || items.length === 0}
             className="w-full btn-glow py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
