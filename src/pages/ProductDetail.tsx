@@ -404,6 +404,16 @@ const ProductDetail = () => {
       ...(product.categories ? [{ name: product.categories.name, url: `/shop?category=${product.categories.slug}` }] : []),
       { name: product.name, url: `/product/${product.slug}` },
     ]),
+    softwareApplicationSchema({
+      name: product.name,
+      description: seoDescription,
+      image: product.image_url,
+      slug: product.slug,
+      price: displayPrice,
+      category: product.categories?.name,
+      ...(reviewStats ? { rating: reviewStats.avg, reviewCount: reviewStats.count } : {}),
+    }),
+    speakableSchema(['h1', '.product-title', '.product-description', '.lead']),
     ...(faqs.length > 0 ? [faqSchema(faqs)] : []),
   ];
 
