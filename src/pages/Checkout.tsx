@@ -381,7 +381,7 @@ const Checkout = () => {
           discount_amount: discountAmount + refCreditApplied,
           total: payableTotal,
           payment_method: paymentMethod,
-          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : (paymentMethod === 'bkash' ? `BKASH-PENDING-${orderNum}` : transactionId.trim()),
+          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : (isBkashAuto ? `BKASH-PENDING-${orderNum}` : transactionId.trim()),
           coupon_code: coupon.isApplied ? coupon.code : null,
           coupon_id: couponId,
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
