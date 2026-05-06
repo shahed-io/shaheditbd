@@ -4,9 +4,17 @@ import {
   Database, Download, RefreshCw, CheckCircle, Clock, FileJson,
   Package, ShoppingCart, Users, Tag, Upload, AlertTriangle,
   Shield, RotateCcw, Trash2, ChevronDown, ChevronUp, Loader2,
-  HardDrive, BarChart3, BookOpen, Ticket, Key, Grid3X3
+  HardDrive, BarChart3, BookOpen, Ticket, Key, Grid3X3, Archive, Image as ImageIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
+import JSZip from 'jszip';
+
+// All storage buckets to include in mega backup
+const STORAGE_BUCKETS = [
+  'product-images', 'category-images', 'software-images',
+  'email-assets', 'invoices', 'payment-proofs', 'refund-screenshots',
+];
+
 
 type BackupEntry = {
   id: number;
@@ -124,6 +132,116 @@ const AdminBackup = () => {
       addHistory({ label: 'Full Backup', tableName: 'all', date: new Date().toISOString(), records: 0, type: 'export', status: 'error', error: e.message });
       toast.error('Full Backup ব্যর্থ: ' + e.message);
     }
+    setExporting(null);
+  };
+
+  // ─── MEGA BACKUP: All DB tables + all Storage buckets bundled in a single ZIP ──
+  const [megaProgress, setMegaProgress] = useState<string>('');
+  const exportEverything = async () => {
+    setExporting('mega');
+    setMegaProgress('Initializing…');
+    try {
+      const zip = new JSZip();
+      const dbFolder = zip.folder('database')!;
+      const storageFolder = zip.folder('storage')!;
+      let totalRecords = 0;
+      let totalFiles = 0;
+
+      // 1) Database tables → JSON
+      for (const { table, label } of TABLES) {
+        setMegaProgress(`DB: ${label}…`);
+        try {
+          const rows = await fetchAllRows(table);
+          dbFolder.file(`${table}.json`, JSON.stringify(rows, null, 2));
+          totalRecords += rows.length;
+        } catch (e: any) {
+          dbFolder.file(`${table}.ERROR.txt`, e.message);
+        }
+      }
+
+      // 2) Combined manifest for easy restore
+      const manifest: any = { exported_at: new Date().toISOString(), version: '3.0', store: 'Shahed Store', tables: {} };
+      for (const { table } of TABLES) {
+        try {
+          const rows = await fetchAllRows(table);
+          manifest.tables[table] = rows;
+        } catch { /* skip */ }
+      }
+      zip.file('full_backup.json', JSON.stringify(manifest, null, 2));
+
+      // 3) Storage buckets → original files
+      for (const bucket of STORAGE_BUCKETS) {
+        setMegaProgress(`Storage: ${bucket}…`);
+        const bucketFolder = storageFolder.folder(bucket)!;
+        try {
+          // List files (recursive — buckets are usually flat but support folders)
+          const listAll = async (prefix = ''): Promise<{ path: string }[]> => {
+            const out: { path: string }[] = [];
+            const { data, error } = await supabase.storage.from(bucket).list(prefix, { limit: 1000, sortBy: { column: 'name', order: 'asc' } });
+            if (error || !data) return out;
+            for (const item of data) {
+              const full = prefix ? `${prefix}/${item.name}` : item.name;
+              if (item.id === null) {
+                // folder
+                const sub = await listAll(full);
+                out.push(...sub);
+              } else {
+                out.push({ path: full });
+              }
+            }
+            return out;
+          };
+          const files = await listAll('');
+          for (const f of files) {
+            try {
+              const { data: blob } = await supabase.storage.from(bucket).download(f.path);
+              if (blob) {
+                bucketFolder.file(f.path, await blob.arrayBuffer());
+                totalFiles++;
+              }
+            } catch { /* skip individual file */ }
+          }
+        } catch (e: any) {
+          bucketFolder.file('_ERROR.txt', e.message);
+        }
+      }
+
+      // 4) README
+      zip.file('README.txt',
+`Shahed Store — Complete Website Backup
+Exported: ${new Date().toISOString()}
+
+Contents:
+  /database/         — Each table as separate JSON file
+  /full_backup.json  — Single-file restore-ready manifest (use Restore tab → Full Backup)
+  /storage/          — All uploaded media (product images, invoices, etc.)
+  README.txt         — This file
+
+Stats:
+  • DB Records: ${totalRecords.toLocaleString()}
+  • Storage Files: ${totalFiles.toLocaleString()}
+  • Tables: ${TABLES.length}
+  • Buckets: ${STORAGE_BUCKETS.length}
+
+Restore:
+  Upload "full_backup.json" via the Restore tab to bring back all tables.
+  Storage files must be re-uploaded manually or via Supabase Dashboard.
+`);
+
+      setMegaProgress('Compressing ZIP…');
+      const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `shahed_store_complete_${today()}.zip`; a.click();
+      URL.revokeObjectURL(url);
+
+      addHistory({ label: 'Complete Website Backup (ZIP)', tableName: 'mega', date: new Date().toISOString(), records: totalRecords + totalFiles, type: 'export', status: 'success' });
+      toast.success(`✅ Complete Backup ডাউনলোড! (${totalRecords} রেকর্ড + ${totalFiles} ফাইল)`);
+    } catch (e: any) {
+      addHistory({ label: 'Complete Website Backup', tableName: 'mega', date: new Date().toISOString(), records: 0, type: 'export', status: 'error', error: e.message });
+      toast.error('Mega Backup ব্যর্থ: ' + e.message);
+    }
+    setMegaProgress('');
     setExporting(null);
   };
 
@@ -246,9 +364,15 @@ const AdminBackup = () => {
           <button onClick={fetchStats} disabled={loading} className="glass-card px-4 py-2.5 rounded-xl flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> রিফ্রেশ
           </button>
-          <button onClick={exportAll} disabled={!!exporting} className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold">
+          <button onClick={exportAll} disabled={!!exporting} className="glass-card px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold border border-primary/30 hover:border-primary/60 transition-all">
             {exporting === 'all' ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-            Full Backup
+            Full DB Backup
+          </button>
+          <button onClick={exportEverything} disabled={!!exporting} title="Database + Storage files (ZIP)"
+            className="btn-glow px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-bold relative overflow-hidden">
+            {exporting === 'mega' ? <Loader2 size={14} className="animate-spin" /> : <Archive size={14} />}
+            <span>Complete Website Backup</span>
+            {megaProgress && <span className="text-[10px] opacity-80 font-normal hidden sm:inline">— {megaProgress}</span>}
           </button>
         </div>
       </div>
@@ -288,7 +412,7 @@ const AdminBackup = () => {
         <>
           <div className="glass-card rounded-2xl p-4 border border-primary/20 bg-primary/5 flex items-start gap-3">
             <Shield size={16} className="text-primary mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-muted-foreground">প্রতিটি টেবিলের ডেটা আলাদা JSON ফাইল হিসেবে ডাউনলোড করুন। <strong className="text-foreground">Full Backup</strong> বাটনে সব টেবিল একসাথে ডাউনলোড হবে।</p>
+            <p className="text-xs text-muted-foreground">প্রতিটি টেবিলের ডেটা আলাদা JSON ফাইল হিসেবে ডাউনলোড করুন। <strong className="text-foreground">Full DB Backup</strong> এ সব টেবিল একসাথে এবং <strong className="text-primary">Complete Website Backup</strong> বাটনে সম্পূর্ণ ডাটাবেস + সকল ছবি/ফাইল ZIP আকারে এক ক্লিকে ডাউনলোড হবে।</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
