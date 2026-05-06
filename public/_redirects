@@ -3,6 +3,9 @@
 /sitemap_index.xml   https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap-index   200
 /product-sitemap.xml https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/sitemap         200
 /image-sitemap.xml   https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/image-sitemap   200
+/rss.xml             https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/rss-feed       200
+/feed.xml            https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/rss-feed       200
+/atom.xml            https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/rss-feed       200
 
 # ── Bot prerender for product pages ─────────────────────────────
 # When Googlebot / Bingbot / social crawlers hit a product URL we serve
