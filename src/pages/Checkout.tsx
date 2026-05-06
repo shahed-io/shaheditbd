@@ -339,7 +339,8 @@ const Checkout = () => {
       return;
     }
 
-    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    const isBkashAuto = paymentMethod === 'bkash' || paymentMethod === 'bkash_merchant';
+    if (paymentMethod !== 'wallet' && !isBkashAuto && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Wallet: check balance
