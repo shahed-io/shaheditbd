@@ -42,6 +42,7 @@ const AdminCoupons          = lazy(() => import("./pages/admin/AdminCoupons"));
 const AdminSettings         = lazy(() => import("./pages/admin/AdminSettings"));
 const AdminTickets          = lazy(() => import("./pages/admin/AdminTickets"));
 const AdminPayments         = lazy(() => import("./pages/admin/AdminPayments"));
+const AdminBkashTest        = lazy(() => import("./pages/admin/AdminBkashTest"));
 const AdminCustomers        = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminReports          = lazy(() => import("./pages/admin/AdminReports"));
 const AdminMarketing        = lazy(() => import("./pages/admin/AdminMarketing"));
@@ -249,6 +250,7 @@ const AppContent = () => {
             <Route path="ai-config" element={<AdminSuspense><AdminAiConfig /></AdminSuspense>} />
             <Route path="customers" element={<AdminSuspense><AdminCustomers /></AdminSuspense>} />
             <Route path="payments" element={<AdminSuspense><AdminPayments /></AdminSuspense>} />
+            <Route path="bkash-test" element={<AdminSuspense><AdminBkashTest /></AdminSuspense>} />
             <Route path="tickets" element={<AdminSuspense><AdminTickets /></AdminSuspense>} />
             <Route path="reports" element={<AdminSuspense><AdminReports /></AdminSuspense>} />
             <Route path="marketing" element={<AdminSuspense><AdminMarketing /></AdminSuspense>} />
