@@ -5,7 +5,7 @@ import HeroBanner from '@/components/store/HeroBanner';
 import TopProducts from '@/components/store/TopProducts';
 import { TickerBanner, FloatingButtons } from '@/components/store/Extras';
 import SEOHead from '@/components/seo/SEOHead';
-import { organizationSchema, websiteSchema } from '@/components/seo/schemas';
+import { organizationSchema, websiteSchema, localBusinessSchema, siteNavigationSchema, speakableSchema } from '@/components/seo/schemas';
 import AuthModal from '@/components/store/AuthModal';
 
 // Below-fold sections — lazy loaded after hero renders
