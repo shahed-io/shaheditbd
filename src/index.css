@@ -2127,3 +2127,17 @@ body.admin-page main > .admin-page-header + div > div.flex:first-child:has(> div
     transparent 100%);
 }
 
+
+/* AuthModal animations */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes floatParticle {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-12px) scale(1.3); opacity: 1; }
+}
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
