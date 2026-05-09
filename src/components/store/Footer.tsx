@@ -321,23 +321,10 @@ const Footer = () => {
 
     {/* ── Copyright ── */}
     <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.12)' }}>
-      <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3">
-        <div
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:shadow-md"
-          style={{
-            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.7))',
-            border: '1px solid hsla(258,40%,80%,0.35)',
-            boxShadow: '0 2px 8px -2px hsla(258,40%,40%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.7)',
-          }}
-        >
-          <span className="relative flex w-1.5 h-1.5">
-            <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-60" />
-            <span className="relative w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          </span>
-          <p className="text-[11px] font-fira whitespace-nowrap" style={{ color: 'hsl(226,35%,30%)' }}>
-            © {new Date().getFullYear()} <strong style={{ color: 'hsl(226,35%,15%)' }}>{settings.store_name}</strong>. All Rights Reserved.
-          </p>
-        </div>
+      <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p className="text-[11px] font-fira" style={{ color: 'hsl(226,35%,48%)' }}>
+          © {new Date().getFullYear()} <strong style={{ color: 'hsl(226,35%,20%)' }}>{settings.store_name}</strong> · All rights reserved.
+        </p>
         <a href={settings.website_url} target="_blank" rel="noopener noreferrer"
           className="flex items-center gap-1 text-[11px] font-fira transition-all hover:gap-1.5"
           style={{ color: 'hsl(226,35%,48%)' }}
