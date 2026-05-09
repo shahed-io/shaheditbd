@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft, Gift, Sparkles, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft, Gift, Sparkles, ShieldCheck, CheckCircle2, AlertCircle, Zap, Lock as LockIcon, Award, Headphones } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { toast } from 'sonner';
@@ -23,6 +23,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [loading, setLoading] = useState(false);
   const [forgotSent, setForgotSent] = useState(false);
   const [touched, setTouched] = useState<{ email?: boolean; password?: boolean; name?: boolean }>({});
+  const [rememberMe, setRememberMe] = useState(true);
+  const [capsLockOn, setCapsLockOn] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -38,7 +41,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const canSubmit = !loading && (
     mode === 'forgot' ? emailValid :
     mode === 'login' ? emailValid && pwLen >= 1 :
-    emailValid && passwordValid && nameValid
+    emailValid && passwordValid && nameValid && agreeTerms
   );
 
   // Auto-fill referral code from URL (?ref=CODE) and switch to signup
@@ -212,16 +215,49 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
         {/* Gradient header band with logo */}
         <div
-          className="relative px-8 pt-8 pb-6"
+          className="relative px-8 pt-8 pb-6 overflow-hidden"
           style={{
             background:
-              'linear-gradient(135deg, hsla(258,78%,55%,0.12) 0%, hsla(290,70%,60%,0.10) 50%, hsla(190,75%,55%,0.12) 100%)',
+              'linear-gradient(135deg, hsla(258,78%,55%,0.14) 0%, hsla(290,70%,60%,0.12) 50%, hsla(190,75%,55%,0.14) 100%)',
             borderBottom: '1px solid hsla(258,78%,75%,0.20)',
           }}
         >
+          {/* Animated shimmer overlay */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-40"
+            style={{
+              background:
+                'linear-gradient(110deg, transparent 30%, hsla(0,0%,100%,0.45) 50%, transparent 70%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 4s ease-in-out infinite',
+            }}
+          />
+          {/* Floating sparkle particles */}
+          <div className="pointer-events-none absolute inset-0">
+            {[
+              { top: '15%', left: '12%', delay: '0s', size: 4 },
+              { top: '70%', left: '8%', delay: '1.2s', size: 3 },
+              { top: '25%', right: '18%', delay: '0.6s', size: 5 },
+              { top: '60%', right: '12%', delay: '1.8s', size: 3 },
+              { top: '40%', left: '50%', delay: '2.4s', size: 4 },
+            ].map((p, i) => (
+              <span
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  ...p,
+                  width: p.size, height: p.size,
+                  background: 'linear-gradient(135deg, hsl(258,85%,70%), hsl(190,80%,65%))',
+                  boxShadow: '0 0 8px hsla(258,85%,70%,0.7)',
+                  animation: `floatParticle 3.5s ease-in-out ${p.delay} infinite`,
+                }}
+              />
+            ))}
+          </div>
+
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:rotate-90 z-10"
             style={{
               background: 'hsla(0,0%,100%,0.7)',
               border: '1px solid hsla(258,78%,75%,0.30)',
@@ -235,7 +271,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           {mode === 'forgot' && (
             <button
               onClick={() => resetAndSwitch('login')}
-              className="absolute top-5 left-5 flex items-center gap-1.5 text-xs font-semibold transition-colors"
+              className="absolute top-5 left-5 flex items-center gap-1.5 text-xs font-semibold transition-colors z-10"
               style={{ color: 'hsl(258,78%,45%)' }}
             >
               <ArrowLeft size={14} /> ফিরুন
@@ -243,9 +279,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           )}
 
           {/* Logo with glow ring */}
-          <div className="flex justify-center mb-4 mt-1">
+          <div className="flex justify-center mb-4 mt-1 relative">
             <div
-              className="relative p-3 rounded-2xl"
+              className="relative p-3 rounded-2xl transition-transform hover:scale-105"
               style={{
                 background: 'hsla(0,0%,100%,0.85)',
                 border: '1px solid hsla(258,78%,75%,0.35)',
@@ -258,6 +294,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 style={{
                   background:
                     'linear-gradient(135deg, hsl(258,85%,70%), hsl(190,80%,65%))',
+                  animation: 'pulseGlow 3s ease-in-out infinite',
                 }}
               />
               <BrandLogo size="md" />
@@ -273,7 +310,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 color: 'hsl(258,78%,45%)',
               }}
             >
-              <Sparkles size={10} /> Secure Access
+              <Sparkles size={10} className="animate-pulse" /> Secure Access
             </div>
             <h2
               className="text-2xl font-bold"
@@ -295,6 +332,28 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             </p>
           </div>
         </div>
+
+        {/* Signup benefits strip */}
+        {mode === 'signup' && (
+          <div
+            className="relative px-8 py-3 grid grid-cols-3 gap-2 text-center border-b"
+            style={{
+              background: 'linear-gradient(90deg, hsla(258,78%,98%,0.6), hsla(190,75%,97%,0.6))',
+              borderColor: 'hsla(258,78%,75%,0.15)',
+            }}
+          >
+            {[
+              { icon: <Gift size={14} />, label: '৫% ছাড়' },
+              { icon: <Award size={14} />, label: 'লয়ালটি পয়েন্ট' },
+              { icon: <Headphones size={14} />, label: '২৪/৭ সাপোর্ট' },
+            ].map((b, i) => (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <span style={{ color: 'hsl(258,78%,50%)' }}>{b.icon}</span>
+                <span className="text-[10px] font-semibold" style={{ color: 'hsl(258,78%,35%)' }}>{b.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Body */}
         <div className="relative px-8 py-6">
@@ -388,6 +447,8 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     value={password}
                     onChange={(v) => setPassword(v)}
                     onBlur={() => setTouched(t => ({ ...t, password: true }))}
+                    onKeyDown={(e) => setCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'))}
+                    onKeyUp={(e) => setCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'))}
                     valid={mode === 'signup' ? passwordValid : pwLen >= 1}
                     invalid={mode === 'signup' && touched.password && !passwordValid && pwLen > 0}
                     errorMsg="পাসওয়ার্ড কমপক্ষে ৮ অক্ষর, অক্ষর ও সংখ্যা থাকতে হবে"
@@ -398,6 +459,11 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                       </button>
                     }
                   />
+                  {capsLockOn && (
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold animate-fade-in" style={{ color: 'hsl(30,90%,45%)' }}>
+                      <AlertCircle size={12} /> Caps Lock চালু আছে
+                    </div>
+                  )}
                   {mode === 'signup' && password.length > 0 && (
                     <div className="mt-2 flex items-center gap-1.5">
                       {[0,1,2,3].map(i => (
@@ -441,32 +507,99 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </div>
               )}
 
-              {/* Forgot password link */}
+              {/* Remember me + Forgot password row */}
               {mode === 'login' && (
-                <div className="text-right -mt-2">
+                <div className="flex items-center justify-between -mt-1">
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <span className="relative inline-flex">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="peer sr-only"
+                      />
+                      <span
+                        className="w-4 h-4 rounded-md border flex items-center justify-center transition-all"
+                        style={{
+                          background: rememberMe
+                            ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(190,75%,50%))'
+                            : 'hsla(0,0%,100%,0.7)',
+                          borderColor: rememberMe ? 'hsl(258,78%,55%)' : 'hsla(258,40%,75%,0.5)',
+                          boxShadow: rememberMe ? '0 0 0 3px hsla(258,78%,60%,0.18)' : 'none',
+                        }}
+                      >
+                        {rememberMe && <CheckCircle2 size={10} className="text-white" />}
+                      </span>
+                    </span>
+                    <span className="text-xs font-medium" style={{ color: 'hsl(226,30%,40%)' }}>মনে রাখুন</span>
+                  </label>
                   <button type="button" onClick={() => resetAndSwitch('forgot')} className="text-xs font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
                 </div>
               )}
 
+              {/* Terms checkbox - signup only */}
+              {mode === 'signup' && (
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <span className="relative inline-flex mt-0.5">
+                    <input
+                      type="checkbox"
+                      checked={agreeTerms}
+                      onChange={(e) => setAgreeTerms(e.target.checked)}
+                      className="peer sr-only"
+                    />
+                    <span
+                      className="w-4 h-4 rounded-md border flex items-center justify-center transition-all"
+                      style={{
+                        background: agreeTerms
+                          ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(190,75%,50%))'
+                          : 'hsla(0,0%,100%,0.7)',
+                        borderColor: agreeTerms ? 'hsl(258,78%,55%)' : 'hsla(258,40%,75%,0.5)',
+                        boxShadow: agreeTerms ? '0 0 0 3px hsla(258,78%,60%,0.18)' : 'none',
+                      }}
+                    >
+                      {agreeTerms && <CheckCircle2 size={10} className="text-white" />}
+                    </span>
+                  </span>
+                  <span className="text-[11px] leading-relaxed" style={{ color: 'hsl(226,30%,40%)' }}>
+                    আমি{' '}
+                    <a href="/terms-conditions" target="_blank" className="font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>শর্তাবলী</a>
+                    {' '}এবং{' '}
+                    <a href="/privacy-policy" target="_blank" className="font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>প্রাইভেসি পলিসি</a>
+                    {' '}মেনে নিচ্ছি
+                  </span>
+                </label>
+              )}
+
               <button type="submit" disabled={!canSubmit}
-                className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="relative w-full py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden group"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(290,70%,55%) 50%, hsl(190,75%,50%) 100%)',
                   color: 'white',
                   boxShadow: '0 10px 30px -8px hsla(258,78%,50%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.35)',
                 }}
               >
+                {/* Shimmer effect on hover */}
+                <span
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(110deg, transparent 30%, hsla(0,0%,100%,0.35) 50%, transparent 70%)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 1.5s linear infinite',
+                  }}
+                />
                 {loading ? (
                   <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                 ) : (
                   mode === 'forgot' ? <KeyRound size={16} /> : <LogIn size={16} />
                 )}
-                {loading ? 'অপেক্ষা করুন...'
-                  : mode === 'login' ? 'লগইন করুন'
-                  : mode === 'signup' ? 'অ্যাকাউন্ট তৈরি করুন'
-                  : 'রিসেট লিংক পাঠান'}
+                <span className="relative">
+                  {loading ? 'অপেক্ষা করুন...'
+                    : mode === 'login' ? 'লগইন করুন'
+                    : mode === 'signup' ? 'অ্যাকাউন্ট তৈরি করুন'
+                    : 'রিসেট লিংক পাঠান'}
+                </span>
               </button>
             </form>
 
@@ -474,11 +607,25 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             {mode !== 'forgot' && (
               <p className="text-center text-sm text-muted-foreground mt-4">
                 {mode === 'login' ? 'অ্যাকাউন্ট নেই?' : 'ইতিমধ্যে অ্যাকাউন্ট আছে?'}{' '}
-                <button onClick={() => resetAndSwitch(mode === 'login' ? 'signup' : 'login')} className="text-primary hover:underline font-medium">
+                <button onClick={() => resetAndSwitch(mode === 'login' ? 'signup' : 'login')} className="text-primary hover:underline font-semibold story-link">
                   {mode === 'login' ? 'সাইনআপ করুন' : 'লগইন করুন'}
                 </button>
               </p>
             )}
+
+            {/* Trust badges footer */}
+            <div className="mt-5 pt-4 border-t flex items-center justify-around" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+              {[
+                { icon: <ShieldCheck size={12} />, label: 'SSL সুরক্ষিত' },
+                { icon: <LockIcon size={12} />, label: 'এনক্রিপ্টেড' },
+                { icon: <Zap size={12} />, label: 'দ্রুত লগইন' },
+              ].map((t, i) => (
+                <div key={i} className="flex items-center gap-1 text-[10px] font-semibold" style={{ color: 'hsl(226,30%,45%)' }}>
+                  <span style={{ color: 'hsl(158,70%,42%)' }}>{t.icon}</span>
+                  {t.label}
+                </div>
+              ))}
+            </div>
           </>
         )}
         </div>
@@ -494,6 +641,8 @@ interface GlassFieldProps {
   value: string;
   onChange: (v: string) => void;
   onBlur?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   valid?: boolean;
   invalid?: boolean;
   errorMsg?: string;
@@ -502,7 +651,7 @@ interface GlassFieldProps {
   rightSlot?: React.ReactNode;
 }
 
-const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, valid, invalid, errorMsg, required, uppercase, rightSlot }: GlassFieldProps) => {
+const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, onKeyDown, onKeyUp, valid, invalid, errorMsg, required, uppercase, rightSlot }: GlassFieldProps) => {
   const [focused, setFocused] = useState(false);
   const showCheck = valid && value.length > 0 && !invalid;
   const borderColor = invalid
@@ -546,6 +695,8 @@ const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, valid, i
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => { setFocused(false); onBlur?.(); }}
+          onKeyDown={onKeyDown}
+          onKeyUp={onKeyUp}
           className={`flex-1 bg-transparent border-0 outline-none px-3 py-3 text-sm placeholder:text-muted-foreground ${uppercase ? 'uppercase tracking-wider' : ''}`}
           style={{ color: 'hsl(226,40%,18%)' }}
         />
