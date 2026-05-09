@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft, Gift } from 'lucide-react';
+import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft, Gift, Sparkles, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import BrandLogo from '@/components/store/BrandLogo';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -161,31 +162,124 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 backdrop-blur-md"
+        style={{
+          background:
+            'radial-gradient(ellipse at top left, hsla(258,78%,55%,0.35), transparent 55%), radial-gradient(ellipse at bottom right, hsla(190,75%,55%,0.30), transparent 55%), hsla(226,40%,8%,0.55)',
+        }}
+        onClick={onClose}
+      />
 
-      <div className="relative glass-card rounded-2xl p-8 w-full max-w-md animate-scale-in border border-primary/30">
-        <button onClick={onClose} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors">
-          <X size={20} />
-        </button>
+      <div
+        className="relative w-full max-w-md animate-scale-in rounded-3xl overflow-hidden"
+        style={{
+          background:
+            'linear-gradient(160deg, hsla(0,0%,100%,0.92) 0%, hsla(258,78%,98%,0.88) 100%)',
+          border: '1px solid hsla(258,78%,75%,0.35)',
+          boxShadow:
+            '0 30px 80px -20px hsla(258,78%,40%,0.45), 0 8px 24px -8px hsla(190,75%,45%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+          backdropFilter: 'blur(28px)',
+        }}
+      >
+        {/* Decorative blobs */}
+        <div
+          className="pointer-events-none absolute -top-20 -right-20 w-56 h-56 rounded-full opacity-60 blur-3xl"
+          style={{ background: 'radial-gradient(circle, hsl(258,85%,70%) 0%, transparent 70%)' }}
+        />
+        <div
+          className="pointer-events-none absolute -bottom-24 -left-16 w-60 h-60 rounded-full opacity-50 blur-3xl"
+          style={{ background: 'radial-gradient(circle, hsl(190,80%,65%) 0%, transparent 70%)' }}
+        />
 
-        {/* Back button for forgot mode */}
-        {mode === 'forgot' && (
-          <button onClick={() => resetAndSwitch('login')} className="absolute top-4 left-4 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft size={16} /> ফিরুন
+        {/* Gradient header band with logo */}
+        <div
+          className="relative px-8 pt-8 pb-6"
+          style={{
+            background:
+              'linear-gradient(135deg, hsla(258,78%,55%,0.12) 0%, hsla(290,70%,60%,0.10) 50%, hsla(190,75%,55%,0.12) 100%)',
+            borderBottom: '1px solid hsla(258,78%,75%,0.20)',
+          }}
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            style={{
+              background: 'hsla(0,0%,100%,0.7)',
+              border: '1px solid hsla(258,78%,75%,0.30)',
+              color: 'hsl(258,78%,40%)',
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            <X size={18} />
           </button>
-        )}
 
-        {/* Header */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold gradient-text" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-            {mode === 'login' ? 'লগইন করুন' : mode === 'signup' ? 'অ্যাকাউন্ট তৈরি করুন' : 'পাসওয়ার্ড ভুলে গেছেন?'}
-          </h2>
-          <p className="text-muted-foreground text-sm mt-1">
-            {mode === 'login' ? 'আপনার অ্যাকাউন্টে প্রবেশ করুন'
-             : mode === 'signup' ? 'নতুন অ্যাকাউন্ট খুলুন'
-             : 'ইমেইলে রিসেট লিংক পাঠানো হবে'}
-          </p>
+          {mode === 'forgot' && (
+            <button
+              onClick={() => resetAndSwitch('login')}
+              className="absolute top-5 left-5 flex items-center gap-1.5 text-xs font-semibold transition-colors"
+              style={{ color: 'hsl(258,78%,45%)' }}
+            >
+              <ArrowLeft size={14} /> ফিরুন
+            </button>
+          )}
+
+          {/* Logo with glow ring */}
+          <div className="flex justify-center mb-4 mt-1">
+            <div
+              className="relative p-3 rounded-2xl"
+              style={{
+                background: 'hsla(0,0%,100%,0.85)',
+                border: '1px solid hsla(258,78%,75%,0.35)',
+                boxShadow:
+                  '0 10px 30px -8px hsla(258,78%,50%,0.35), inset 0 1px 0 hsla(0,0%,100%,0.95)',
+              }}
+            >
+              <div
+                className="absolute inset-0 rounded-2xl opacity-70 blur-md -z-10"
+                style={{
+                  background:
+                    'linear-gradient(135deg, hsl(258,85%,70%), hsl(190,80%,65%))',
+                }}
+              />
+              <BrandLogo size="md" />
+            </div>
+          </div>
+
+          <div className="text-center relative">
+            <div
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-2 text-[10px] font-bold uppercase tracking-wider"
+              style={{
+                background: 'hsla(0,0%,100%,0.75)',
+                border: '1px solid hsla(258,78%,75%,0.30)',
+                color: 'hsl(258,78%,45%)',
+              }}
+            >
+              <Sparkles size={10} /> Secure Access
+            </div>
+            <h2
+              className="text-2xl font-bold"
+              style={{
+                fontFamily: 'Rajdhani, sans-serif',
+                background:
+                  'linear-gradient(135deg, hsl(258,78%,40%) 0%, hsl(290,70%,45%) 50%, hsl(190,75%,40%) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              {mode === 'login' ? 'লগইন করুন' : mode === 'signup' ? 'অ্যাকাউন্ট তৈরি করুন' : 'পাসওয়ার্ড ভুলে গেছেন?'}
+            </h2>
+            <p className="text-xs mt-1.5" style={{ color: 'hsl(226,30%,40%)' }}>
+              {mode === 'login' ? 'আপনার অ্যাকাউন্টে প্রবেশ করুন'
+               : mode === 'signup' ? 'নতুন অ্যাকাউন্ট খুলুন'
+               : 'ইমেইলে রিসেট লিংক পাঠানো হবে'}
+            </p>
+          </div>
         </div>
+
+        {/* Body */}
+        <div className="relative px-8 py-6">
 
         {/* Forgot password sent state */}
         {mode === 'forgot' && forgotSent ? (
@@ -313,6 +407,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             )}
           </>
         )}
+        </div>
       </div>
     </div>
   );
