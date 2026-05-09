@@ -336,6 +336,7 @@ const AppContent = () => {
       {deferReady && (
         <Suspense fallback={null}>
           <MobileBottomNav />
+          {!location.pathname.startsWith('/ceo') && <FloatingSupport />}
         </Suspense>
       )}
     </>
