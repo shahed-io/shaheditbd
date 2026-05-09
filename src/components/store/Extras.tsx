@@ -160,6 +160,7 @@ const TickerBanner = () => {
   );
 };
 
-const FloatingButtons = () => <FloatingSupport />;
+// FloatingSupport is now mounted globally in App.tsx, so this is a no-op to avoid duplicates.
+const FloatingButtons = () => null;
 
 export { TickerBanner, FloatingButtons };
