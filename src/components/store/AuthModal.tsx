@@ -215,16 +215,49 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
         {/* Gradient header band with logo */}
         <div
-          className="relative px-8 pt-8 pb-6"
+          className="relative px-8 pt-8 pb-6 overflow-hidden"
           style={{
             background:
-              'linear-gradient(135deg, hsla(258,78%,55%,0.12) 0%, hsla(290,70%,60%,0.10) 50%, hsla(190,75%,55%,0.12) 100%)',
+              'linear-gradient(135deg, hsla(258,78%,55%,0.14) 0%, hsla(290,70%,60%,0.12) 50%, hsla(190,75%,55%,0.14) 100%)',
             borderBottom: '1px solid hsla(258,78%,75%,0.20)',
           }}
         >
+          {/* Animated shimmer overlay */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-40"
+            style={{
+              background:
+                'linear-gradient(110deg, transparent 30%, hsla(0,0%,100%,0.45) 50%, transparent 70%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 4s ease-in-out infinite',
+            }}
+          />
+          {/* Floating sparkle particles */}
+          <div className="pointer-events-none absolute inset-0">
+            {[
+              { top: '15%', left: '12%', delay: '0s', size: 4 },
+              { top: '70%', left: '8%', delay: '1.2s', size: 3 },
+              { top: '25%', right: '18%', delay: '0.6s', size: 5 },
+              { top: '60%', right: '12%', delay: '1.8s', size: 3 },
+              { top: '40%', left: '50%', delay: '2.4s', size: 4 },
+            ].map((p, i) => (
+              <span
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  ...p,
+                  width: p.size, height: p.size,
+                  background: 'linear-gradient(135deg, hsl(258,85%,70%), hsl(190,80%,65%))',
+                  boxShadow: '0 0 8px hsla(258,85%,70%,0.7)',
+                  animation: `floatParticle 3.5s ease-in-out ${p.delay} infinite`,
+                }}
+              />
+            ))}
+          </div>
+
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:rotate-90 z-10"
             style={{
               background: 'hsla(0,0%,100%,0.7)',
               border: '1px solid hsla(258,78%,75%,0.30)',
@@ -238,7 +271,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           {mode === 'forgot' && (
             <button
               onClick={() => resetAndSwitch('login')}
-              className="absolute top-5 left-5 flex items-center gap-1.5 text-xs font-semibold transition-colors"
+              className="absolute top-5 left-5 flex items-center gap-1.5 text-xs font-semibold transition-colors z-10"
               style={{ color: 'hsl(258,78%,45%)' }}
             >
               <ArrowLeft size={14} /> ফিরুন
@@ -246,9 +279,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           )}
 
           {/* Logo with glow ring */}
-          <div className="flex justify-center mb-4 mt-1">
+          <div className="flex justify-center mb-4 mt-1 relative">
             <div
-              className="relative p-3 rounded-2xl"
+              className="relative p-3 rounded-2xl transition-transform hover:scale-105"
               style={{
                 background: 'hsla(0,0%,100%,0.85)',
                 border: '1px solid hsla(258,78%,75%,0.35)',
@@ -261,6 +294,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 style={{
                   background:
                     'linear-gradient(135deg, hsl(258,85%,70%), hsl(190,80%,65%))',
+                  animation: 'pulseGlow 3s ease-in-out infinite',
                 }}
               />
               <BrandLogo size="md" />
@@ -276,7 +310,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 color: 'hsl(258,78%,45%)',
               }}
             >
-              <Sparkles size={10} /> Secure Access
+              <Sparkles size={10} className="animate-pulse" /> Secure Access
             </div>
             <h2
               className="text-2xl font-bold"
@@ -298,6 +332,28 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             </p>
           </div>
         </div>
+
+        {/* Signup benefits strip */}
+        {mode === 'signup' && (
+          <div
+            className="relative px-8 py-3 grid grid-cols-3 gap-2 text-center border-b"
+            style={{
+              background: 'linear-gradient(90deg, hsla(258,78%,98%,0.6), hsla(190,75%,97%,0.6))',
+              borderColor: 'hsla(258,78%,75%,0.15)',
+            }}
+          >
+            {[
+              { icon: <Gift size={14} />, label: '৫% ছাড়' },
+              { icon: <Award size={14} />, label: 'লয়ালটি পয়েন্ট' },
+              { icon: <Headphones size={14} />, label: '২৪/৭ সাপোর্ট' },
+            ].map((b, i) => (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <span style={{ color: 'hsl(258,78%,50%)' }}>{b.icon}</span>
+                <span className="text-[10px] font-semibold" style={{ color: 'hsl(258,78%,35%)' }}>{b.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Body */}
         <div className="relative px-8 py-6">
