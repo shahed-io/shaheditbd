@@ -55,6 +55,8 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched({ email: true, password: true, name: true });
+    if (!canSubmit) return;
     setLoading(true);
     try {
       if (mode === 'forgot') {
