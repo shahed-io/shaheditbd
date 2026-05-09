@@ -407,6 +407,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             )}
           </>
         )}
+        </div>
       </div>
     </div>
   );
