@@ -497,32 +497,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </div>
               )}
 
-              {/* Remember me + Forgot password row */}
+              {/* Forgot password link */}
               {mode === 'login' && (
-                <div className="flex items-center justify-between -mt-1">
-                  <label className="flex items-center gap-2 cursor-pointer group">
-                    <span className="relative inline-flex">
-                      <input
-                        type="checkbox"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        className="peer sr-only"
-                      />
-                      <span
-                        className="w-4 h-4 rounded-md border flex items-center justify-center transition-all"
-                        style={{
-                          background: rememberMe
-                            ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(190,75%,50%))'
-                            : 'hsla(0,0%,100%,0.7)',
-                          borderColor: rememberMe ? 'hsl(258,78%,55%)' : 'hsla(258,40%,75%,0.5)',
-                          boxShadow: rememberMe ? '0 0 0 3px hsla(258,78%,60%,0.18)' : 'none',
-                        }}
-                      >
-                        {rememberMe && <CheckCircle2 size={10} className="text-white" />}
-                      </span>
-                    </span>
-                    <span className="text-xs font-medium" style={{ color: 'hsl(226,30%,40%)' }}>মনে রাখুন</span>
-                  </label>
+                <div className="text-right -mt-1">
                   <button type="button" onClick={() => resetAndSwitch('forgot')} className="text-xs font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
