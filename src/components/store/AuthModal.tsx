@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft, Gift } from 'lucide-react';
+import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft, Gift, Sparkles, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import BrandLogo from '@/components/store/BrandLogo';
 
 interface AuthModalProps {
   isOpen: boolean;
