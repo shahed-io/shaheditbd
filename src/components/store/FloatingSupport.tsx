@@ -586,6 +586,56 @@ const FloatingSupport = () => {
           from { opacity: 0; }
           to   { opacity: 1; }
         }
+
+        /* Stacked dark glass pill buttons */
+        .fs-pill {
+          background: rgba(20, 20, 28, 0.88);
+          backdrop-filter: blur(20px) saturate(160%);
+          -webkit-backdrop-filter: blur(20px) saturate(160%);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .fs-pill:hover {
+          transform: translateX(-4px) translateY(-2px);
+          border-color: rgba(255, 255, 255, 0.18);
+          box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .fs-pill:active { transform: translateX(-2px) scale(0.98); }
+
+        /* Side help-pill next to FAB */
+        .fs-help-pill {
+          background: rgba(20, 20, 28, 0.88);
+          backdrop-filter: blur(20px) saturate(160%);
+          -webkit-backdrop-filter: blur(20px) saturate(160%);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+          animation: fsHelpIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        @keyframes fsHelpIn {
+          from { opacity: 0; transform: translateX(20px) scale(0.85); }
+          to   { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        /* Stagger entrance for stacked items */
+        .fs-pill-wrap {
+          opacity: 0;
+          transform: translateY(20px) scale(0.85);
+          animation: fsPillIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes fsPillIn {
+          0%   { opacity: 0; transform: translateY(20px) scale(0.85); }
+          60%  { opacity: 1; transform: translateY(-2px) scale(1.02); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* X icon spin-in on toggle */
+        .fs-x-rotate { animation: fsXRotate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes fsXRotate {
+          from { transform: rotate(-90deg) scale(0.6); opacity: 0; }
+          to   { transform: rotate(0) scale(1); opacity: 1; }
+        }
+
         .fab-ring {
           position: absolute;
           border-radius: 9999px;
