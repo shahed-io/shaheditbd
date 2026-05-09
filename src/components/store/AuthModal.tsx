@@ -507,32 +507,99 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </div>
               )}
 
-              {/* Forgot password link */}
+              {/* Remember me + Forgot password row */}
               {mode === 'login' && (
-                <div className="text-right -mt-2">
+                <div className="flex items-center justify-between -mt-1">
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <span className="relative inline-flex">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="peer sr-only"
+                      />
+                      <span
+                        className="w-4 h-4 rounded-md border flex items-center justify-center transition-all"
+                        style={{
+                          background: rememberMe
+                            ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(190,75%,50%))'
+                            : 'hsla(0,0%,100%,0.7)',
+                          borderColor: rememberMe ? 'hsl(258,78%,55%)' : 'hsla(258,40%,75%,0.5)',
+                          boxShadow: rememberMe ? '0 0 0 3px hsla(258,78%,60%,0.18)' : 'none',
+                        }}
+                      >
+                        {rememberMe && <CheckCircle2 size={10} className="text-white" />}
+                      </span>
+                    </span>
+                    <span className="text-xs font-medium" style={{ color: 'hsl(226,30%,40%)' }}>মনে রাখুন</span>
+                  </label>
                   <button type="button" onClick={() => resetAndSwitch('forgot')} className="text-xs font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
                 </div>
               )}
 
+              {/* Terms checkbox - signup only */}
+              {mode === 'signup' && (
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <span className="relative inline-flex mt-0.5">
+                    <input
+                      type="checkbox"
+                      checked={agreeTerms}
+                      onChange={(e) => setAgreeTerms(e.target.checked)}
+                      className="peer sr-only"
+                    />
+                    <span
+                      className="w-4 h-4 rounded-md border flex items-center justify-center transition-all"
+                      style={{
+                        background: agreeTerms
+                          ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(190,75%,50%))'
+                          : 'hsla(0,0%,100%,0.7)',
+                        borderColor: agreeTerms ? 'hsl(258,78%,55%)' : 'hsla(258,40%,75%,0.5)',
+                        boxShadow: agreeTerms ? '0 0 0 3px hsla(258,78%,60%,0.18)' : 'none',
+                      }}
+                    >
+                      {agreeTerms && <CheckCircle2 size={10} className="text-white" />}
+                    </span>
+                  </span>
+                  <span className="text-[11px] leading-relaxed" style={{ color: 'hsl(226,30%,40%)' }}>
+                    আমি{' '}
+                    <a href="/terms-conditions" target="_blank" className="font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>শর্তাবলী</a>
+                    {' '}এবং{' '}
+                    <a href="/privacy-policy" target="_blank" className="font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>প্রাইভেসি পলিসি</a>
+                    {' '}মেনে নিচ্ছি
+                  </span>
+                </label>
+              )}
+
               <button type="submit" disabled={!canSubmit}
-                className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="relative w-full py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden group"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(290,70%,55%) 50%, hsl(190,75%,50%) 100%)',
                   color: 'white',
                   boxShadow: '0 10px 30px -8px hsla(258,78%,50%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.35)',
                 }}
               >
+                {/* Shimmer effect on hover */}
+                <span
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(110deg, transparent 30%, hsla(0,0%,100%,0.35) 50%, transparent 70%)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 1.5s linear infinite',
+                  }}
+                />
                 {loading ? (
                   <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                 ) : (
                   mode === 'forgot' ? <KeyRound size={16} /> : <LogIn size={16} />
                 )}
-                {loading ? 'অপেক্ষা করুন...'
-                  : mode === 'login' ? 'লগইন করুন'
-                  : mode === 'signup' ? 'অ্যাকাউন্ট তৈরি করুন'
-                  : 'রিসেট লিংক পাঠান'}
+                <span className="relative">
+                  {loading ? 'অপেক্ষা করুন...'
+                    : mode === 'login' ? 'লগইন করুন'
+                    : mode === 'signup' ? 'অ্যাকাউন্ট তৈরি করুন'
+                    : 'রিসেট লিংক পাঠান'}
+                </span>
               </button>
             </form>
 
@@ -540,11 +607,25 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             {mode !== 'forgot' && (
               <p className="text-center text-sm text-muted-foreground mt-4">
                 {mode === 'login' ? 'অ্যাকাউন্ট নেই?' : 'ইতিমধ্যে অ্যাকাউন্ট আছে?'}{' '}
-                <button onClick={() => resetAndSwitch(mode === 'login' ? 'signup' : 'login')} className="text-primary hover:underline font-medium">
+                <button onClick={() => resetAndSwitch(mode === 'login' ? 'signup' : 'login')} className="text-primary hover:underline font-semibold story-link">
                   {mode === 'login' ? 'সাইনআপ করুন' : 'লগইন করুন'}
                 </button>
               </p>
             )}
+
+            {/* Trust badges footer */}
+            <div className="mt-5 pt-4 border-t flex items-center justify-around" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+              {[
+                { icon: <ShieldCheck size={12} />, label: 'SSL সুরক্ষিত' },
+                { icon: <LockIcon size={12} />, label: 'এনক্রিপ্টেড' },
+                { icon: <Zap size={12} />, label: 'দ্রুত লগইন' },
+              ].map((t, i) => (
+                <div key={i} className="flex items-center gap-1 text-[10px] font-semibold" style={{ color: 'hsl(226,30%,45%)' }}>
+                  <span style={{ color: 'hsl(158,70%,42%)' }}>{t.icon}</span>
+                  {t.label}
+                </div>
+              ))}
+            </div>
           </>
         )}
         </div>
