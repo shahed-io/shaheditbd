@@ -274,37 +274,55 @@ const Footer = () => {
     <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.12)' }}>
       <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
+          className="inline-flex items-center px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
           style={{
             background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
             border: '1px solid hsla(258,78%,75%,0.25)',
             boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
           }}
         >
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" style={{ background: 'hsl(226,35%,40%)' }} />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: 'hsl(226,35%,30%)' }} />
-          </span>
-          <p className="text-[11px] font-fira tracking-wide" style={{ color: 'hsl(226,35%,30%)' }}>
-            © {new Date().getFullYear()} <strong style={{ color: 'hsl(226,35%,15%)' }}>{settings.store_name}</strong>. All Rights Reserved.
+          <p className="text-[11px] font-fira tracking-wide">
+            <span style={{
+              background: 'linear-gradient(90deg, hsl(258,78%,45%), hsl(290,70%,50%))',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              fontWeight: 600,
+            }}>© {new Date().getFullYear()}</span>
+            {' '}
+            <strong style={{
+              background: 'linear-gradient(90deg, hsl(226,75%,30%), hsl(258,78%,40%))',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>{settings.store_name}</strong>
+            <span style={{ color: 'hsl(226,30%,45%)' }}>. </span>
+            <span style={{
+              background: 'linear-gradient(90deg, hsl(190,75%,40%), hsl(258,70%,50%))',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              fontWeight: 500,
+            }}>All Rights Reserved.</span>
           </p>
         </div>
         <a href={settings.website_url} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
+          className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
           style={{
             background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
             border: '1px solid hsla(258,78%,75%,0.25)',
             boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
-            color: 'hsl(226,35%,30%)',
           }}>
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" style={{ background: 'hsl(258,78%,55%)' }} />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: 'hsl(258,78%,45%)' }} />
-          </span>
-          <span className="text-[11px] font-fira tracking-wide">
+          <span className="text-[11px] font-fira tracking-wide" style={{
+            background: 'linear-gradient(90deg, hsl(258,78%,45%), hsl(290,70%,50%), hsl(190,75%,45%))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            fontWeight: 600,
+          }}>
             {settings.website_url.replace('https://','').replace('http://','')}
           </span>
-          <ExternalLink size={10} />
+          <ExternalLink size={10} style={{ color: 'hsl(258,78%,50%)' }} />
         </a>
       </div>
     </div>
