@@ -399,8 +399,9 @@ const FloatingSupport = () => {
         <>
           <div
             onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-[3px]"
-            style={{ animation: 'fadeInBg 0.25s ease-out' }}
+            className="fixed inset-0 z-40"
+            style={{ background: 'transparent' }}
+            aria-hidden
           />
           <div
             className="fixed right-4 sm:right-6 z-50 flex flex-col items-end gap-3 bottom-[calc(env(safe-area-inset-bottom,0px)+170px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+90px)] w-[min(calc(100vw-2rem),300px)]"
