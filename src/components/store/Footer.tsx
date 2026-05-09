@@ -281,16 +281,43 @@ const Footer = () => {
       }}>
       <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Cert badge */}
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
-            style={{ background: 'hsl(0,0%,100%)', boxShadow: '0 4px 12px hsla(258,78%,55%,0.18)', border: '1px solid hsla(258,78%,65%,0.20)' }}>
-            <img src={dbidLogo} alt="DBID Logo" className="w-8 h-8 object-contain" />
+        <div className="flex items-center gap-3 group">
+          <div className="relative flex-shrink-0">
+            {/* outer glow ring */}
+            <span aria-hidden className="absolute -inset-1 rounded-2xl opacity-70 blur-md transition-all duration-500 group-hover:opacity-100 group-hover:blur-lg"
+              style={{ background: 'conic-gradient(from 0deg, hsla(258,78%,60%,0.55), hsla(200,90%,55%,0.45), hsla(162,72%,45%,0.45), hsla(330,85%,60%,0.45), hsla(258,78%,60%,0.55))' }} />
+            {/* spinning gradient border */}
+            <span aria-hidden className="absolute -inset-[2px] rounded-[14px]"
+              style={{ background: 'conic-gradient(from 180deg, hsl(258,78%,60%), hsl(200,90%,55%), hsl(162,72%,45%), hsl(258,78%,60%))' }} />
+            <div className="relative w-12 h-12 rounded-[12px] flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105"
+              style={{
+                background: 'linear-gradient(135deg, hsl(0,0%,100%) 0%, hsla(258,78%,98%,1) 100%)',
+                boxShadow: '0 6px 18px hsla(258,78%,55%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+              }}>
+              <img src={dbidLogo} alt="DBID Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
+              {/* subtle shine */}
+              <span aria-hidden className="absolute inset-0 pointer-events-none"
+                style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.6) 0%, transparent 45%)' }} />
+            </div>
+            {/* verified tick */}
+            <span aria-hidden className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-white text-[9px] font-black"
+              style={{ background: 'linear-gradient(135deg, hsl(162,72%,42%), hsl(190,80%,45%))', boxShadow: '0 2px 6px hsla(162,72%,38%,0.45), 0 0 0 2px hsl(0,0%,100%)' }}>
+              ✓
+            </span>
           </div>
-          <div>
-            <p className="text-[11px] font-black font-sora tracking-widest" style={{ color: 'hsl(226,35%,15%)' }}>{settings.cert_title}</p>
-            <p className="text-[10px] font-fira mt-0.5" style={{ color: 'hsl(226,35%,48%)' }}>{settings.cert_id}</p>
+          <div className="min-w-0">
+            <p className="text-[11px] font-black font-sora tracking-widest leading-tight bg-clip-text text-transparent"
+              style={{ backgroundImage: 'linear-gradient(90deg, hsl(258,78%,40%) 0%, hsl(200,90%,38%) 50%, hsl(162,72%,32%) 100%)' }}>
+              {settings.cert_title}
+            </p>
+            <p className="text-[10px] font-fira mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+              style={{ background: 'hsla(258,78%,55%,0.08)', color: 'hsl(258,78%,38%)', border: '1px solid hsla(258,78%,65%,0.18)' }}>
+              <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+              {settings.cert_id}
+            </p>
           </div>
         </div>
+
 
         {/* Payments */}
         <div className="flex items-center gap-2 flex-wrap justify-center">
