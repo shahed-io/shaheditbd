@@ -29,6 +29,52 @@
 /product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*ClaudeBot*
 /product/:slug  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender?slug=:slug  200!  User-Agent=*ChatGPT-User*
 
+# ── Bot prerender for static & dynamic pages ───────────────────
+# Generic prerender (homepage, shop, blog, faqs, about, contact, etc.)
+/                  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/                 200!  User-Agent=*Googlebot*
+/                  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/                 200!  User-Agent=*bingbot*
+/                  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/                 200!  User-Agent=*YandexBot*
+/                  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/                 200!  User-Agent=*DuckDuckBot*
+/                  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/                 200!  User-Agent=*facebookexternalhit*
+/                  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/                 200!  User-Agent=*GPTBot*
+/                  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/                 200!  User-Agent=*PerplexityBot*
+/                  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/                 200!  User-Agent=*ClaudeBot*
+
+/shop              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/shop             200!  User-Agent=*Googlebot*
+/shop              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/shop             200!  User-Agent=*bingbot*
+/shop              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/shop             200!  User-Agent=*YandexBot*
+/shop              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/shop             200!  User-Agent=*GPTBot*
+/shop              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/shop             200!  User-Agent=*PerplexityBot*
+/shop              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/shop             200!  User-Agent=*ClaudeBot*
+
+/blog              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/blog             200!  User-Agent=*Googlebot*
+/blog              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/blog             200!  User-Agent=*bingbot*
+/blog              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/blog             200!  User-Agent=*GPTBot*
+/blog              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/blog             200!  User-Agent=*PerplexityBot*
+
+/blog/:slug        https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/blog&blogSlug=:slug  200!  User-Agent=*Googlebot*
+/blog/:slug        https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/blog&blogSlug=:slug  200!  User-Agent=*bingbot*
+/blog/:slug        https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/blog&blogSlug=:slug  200!  User-Agent=*facebookexternalhit*
+/blog/:slug        https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/blog&blogSlug=:slug  200!  User-Agent=*GPTBot*
+/blog/:slug        https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/blog&blogSlug=:slug  200!  User-Agent=*PerplexityBot*
+
+/faqs              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/faqs             200!  User-Agent=*Googlebot*
+/faqs              https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/faqs             200!  User-Agent=*bingbot*
+
+/about             https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/about            200!  User-Agent=*Googlebot*
+/about             https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/about            200!  User-Agent=*bingbot*
+
+/contact-us        https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/contact-us       200!  User-Agent=*Googlebot*
+/contact-us        https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/contact-us       200!  User-Agent=*bingbot*
+
+/free-tools        https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/free-tools       200!  User-Agent=*Googlebot*
+/free-tools        https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/free-tools       200!  User-Agent=*bingbot*
+
+/delivery-info     https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/delivery-info    200!  User-Agent=*Googlebot*
+/refund-policy     https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/refund-policy    200!  User-Agent=*Googlebot*
+/privacy-policy    https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/privacy-policy   200!  User-Agent=*Googlebot*
+/terms-conditions  https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/prerender-page?path=/terms-conditions 200!  User-Agent=*Googlebot*
+
 # ── Block direct access to source / markdown / config files ────
 # Prevents anyone from downloading our README, plan, or memory .md
 # files via the deployed site (returns 404).
