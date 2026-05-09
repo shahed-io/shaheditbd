@@ -22,8 +22,24 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [forgotSent, setForgotSent] = useState(false);
+  const [touched, setTouched] = useState<{ email?: boolean; password?: boolean; name?: boolean }>({});
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // Validations
+  const emailValid = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()), [email]);
+  const nameValid = name.trim().length >= 2;
+  const pwLen = password.length;
+  const pwHasLetter = /[A-Za-z]/.test(password);
+  const pwHasNumber = /\d/.test(password);
+  const pwScore = (pwLen >= 8 ? 1 : 0) + (pwHasLetter ? 1 : 0) + (pwHasNumber ? 1 : 0) + (/[^A-Za-z0-9]/.test(password) ? 1 : 0);
+  const passwordValid = pwLen >= 8 && pwHasLetter && pwHasNumber;
+
+  const canSubmit = !loading && (
+    mode === 'forgot' ? emailValid :
+    mode === 'login' ? emailValid && pwLen >= 1 :
+    emailValid && passwordValid && nameValid
+  );
 
   // Auto-fill referral code from URL (?ref=CODE) and switch to signup
   useEffect(() => {
