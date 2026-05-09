@@ -10,6 +10,15 @@ const SITE_URL = 'https://shahedstore.com.bd';
 const escape = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
+// W3C Datetime (ISO 8601) — full timestamp with timezone, e.g. 2026-05-09T12:34:56+00:00
+// Google honours this precision for `lastmod` and uses it to schedule re-crawls.
+const toW3C = (input: string | Date | null | undefined): string | null => {
+  if (!input) return null;
+  const d = typeof input === 'string' ? new Date(input) : input;
+  if (isNaN(d.getTime())) return null;
+  return d.toISOString().replace('Z', '+00:00');
+};
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
@@ -20,42 +29,79 @@ Deno.serve(async (req) => {
     );
 
     const urls: string[] = [];
+    const nowW3C = toW3C(new Date())!;
 
-    // ── Static pages ──────────────────────────────────────────────
-    const staticPages = [
-      { path: '/',               changefreq: 'daily',   priority: '1.0' },
-      { path: '/shop',           changefreq: 'daily',   priority: '0.9' },
-      { path: '/blog',           changefreq: 'weekly',  priority: '0.8' },
-      { path: '/link',           changefreq: 'monthly', priority: '0.7' },
-      { path: '/free-tools',     changefreq: 'monthly', priority: '0.7' },
-      { path: '/about',          changefreq: 'monthly', priority: '0.6' },
-      { path: '/contact',        changefreq: 'monthly', priority: '0.6' },
-      { path: '/faqs',           changefreq: 'monthly', priority: '0.7' },
-      { path: '/privacy-policy', changefreq: 'yearly',  priority: '0.3' },
-      { path: '/terms-conditions', changefreq: 'yearly', priority: '0.3' },
-      { path: '/refund-policy',  changefreq: 'yearly',  priority: '0.4' },
-      { path: '/return-policy',  changefreq: 'yearly',  priority: '0.4' },
-      { path: '/delivery-info',  changefreq: 'monthly', priority: '0.5' },
-      { path: '/order-policy',   changefreq: 'yearly',  priority: '0.3' },
+    // ── Fetch latest content first (parallel) ────────────────────
+    const [productsRes, categoriesRes, blogRes, helpRes] = await Promise.all([
+      supabase
+        .from('products')
+        .select('slug, updated_at, created_at, name, image_url, images, seo_title')
+        .eq('status', 'active')
+        .order('updated_at', { ascending: false })
+        .limit(5000),
+      supabase
+        .from('categories')
+        .select('slug, updated_at, created_at')
+        .eq('is_active', true),
+      supabase
+        .from('blog_posts')
+        .select('slug, updated_at, created_at, published_at')
+        .eq('status', 'published')
+        .order('updated_at', { ascending: false })
+        .limit(1000),
+      supabase
+        .from('help_articles')
+        .select('slug, updated_at, created_at')
+        .eq('status', 'published')
+        .order('updated_at', { ascending: false })
+        .limit(500),
+    ]);
+
+    const products = productsRes.data || [];
+    const categories = categoriesRes.data || [];
+    const blogPosts = blogRes.data || [];
+    const helpArticles = helpRes.data || [];
+
+    // Newest content timestamp drives static page lastmod
+    const newestProduct = products[0]?.updated_at;
+    const newestBlog = blogPosts[0]?.updated_at;
+    const newestHelp = helpArticles[0]?.updated_at;
+    const newestOverall = toW3C(
+      [newestProduct, newestBlog, newestHelp]
+        .filter(Boolean)
+        .sort()
+        .reverse()[0] || new Date()
+    )!;
+
+    // ── Static pages (with smart lastmod) ────────────────────────
+    const staticPages: Array<{ path: string; changefreq: string; priority: string; lastmod: string }> = [
+      { path: '/',                 changefreq: 'daily',   priority: '1.0', lastmod: newestOverall },
+      { path: '/shop',             changefreq: 'daily',   priority: '0.9', lastmod: toW3C(newestProduct) || nowW3C },
+      { path: '/blog',             changefreq: 'weekly',  priority: '0.8', lastmod: toW3C(newestBlog) || nowW3C },
+      { path: '/link',             changefreq: 'monthly', priority: '0.7', lastmod: toW3C(newestHelp) || nowW3C },
+      { path: '/free-tools',       changefreq: 'monthly', priority: '0.7', lastmod: nowW3C },
+      { path: '/about',            changefreq: 'monthly', priority: '0.6', lastmod: nowW3C },
+      { path: '/contact',          changefreq: 'monthly', priority: '0.6', lastmod: nowW3C },
+      { path: '/faqs',             changefreq: 'monthly', priority: '0.7', lastmod: nowW3C },
+      { path: '/privacy-policy',   changefreq: 'yearly',  priority: '0.3', lastmod: nowW3C },
+      { path: '/terms-conditions', changefreq: 'yearly',  priority: '0.3', lastmod: nowW3C },
+      { path: '/refund-policy',    changefreq: 'yearly',  priority: '0.4', lastmod: nowW3C },
+      { path: '/return-policy',    changefreq: 'yearly',  priority: '0.4', lastmod: nowW3C },
+      { path: '/delivery-info',    changefreq: 'monthly', priority: '0.5', lastmod: nowW3C },
+      { path: '/order-policy',     changefreq: 'yearly',  priority: '0.3', lastmod: nowW3C },
     ];
 
     for (const p of staticPages) {
       urls.push(`  <url>
     <loc>${SITE_URL}${p.path}</loc>
+    <lastmod>${p.lastmod}</lastmod>
     <changefreq>${p.changefreq}</changefreq>
     <priority>${p.priority}</priority>
   </url>`);
     }
 
     // ── Products (with images for Google Image indexing) ──────────
-    const { data: products } = await supabase
-      .from('products')
-      .select('slug, updated_at, name, image_url, images, seo_title')
-      .eq('status', 'active')
-      .order('updated_at', { ascending: false })
-      .limit(5000);
-
-    for (const p of products || []) {
+    for (const p of products) {
       const allImages: string[] = [];
       if (p.image_url) allImages.push(p.image_url);
       if (Array.isArray(p.images)) {
@@ -74,8 +120,11 @@ Deno.serve(async (req) => {
       <image:caption>${imageCaption}</image:caption>
     </image:image>`).join('');
 
+      const lastmod = toW3C(p.updated_at) || toW3C(p.created_at) || nowW3C;
+
       urls.push(`  <url>
-    <loc>${SITE_URL}/product/${escape(p.slug)}</loc>${p.updated_at ? `\n    <lastmod>${p.updated_at}</lastmod>` : ''}
+    <loc>${SITE_URL}/product/${escape(p.slug)}</loc>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="bn-BD" href="${SITE_URL}/product/${escape(p.slug)}" />
@@ -85,46 +134,33 @@ Deno.serve(async (req) => {
     }
 
     // ── Categories ───────────────────────────────────────────────
-    const { data: categories } = await supabase
-      .from('categories')
-      .select('slug, updated_at')
-      .eq('is_active', true);
-
-    for (const c of categories || []) {
+    for (const c of categories) {
+      const lastmod = toW3C(c.updated_at) || toW3C(c.created_at) || nowW3C;
       urls.push(`  <url>
-    <loc>${SITE_URL}/shop?category=${escape(c.slug)}</loc>${c.updated_at ? `\n    <lastmod>${c.updated_at.split('T')[0]}</lastmod>` : ''}
+    <loc>${SITE_URL}/shop?category=${escape(c.slug)}</loc>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`);
     }
 
     // ── Blog posts ───────────────────────────────────────────────
-    const { data: blogPosts } = await supabase
-      .from('blog_posts')
-      .select('slug, updated_at')
-      .eq('status', 'published')
-      .order('updated_at', { ascending: false })
-      .limit(1000);
-
-    for (const b of blogPosts || []) {
+    for (const b of blogPosts) {
+      const lastmod = toW3C(b.updated_at) || toW3C(b.published_at) || toW3C(b.created_at) || nowW3C;
       urls.push(`  <url>
-    <loc>${SITE_URL}/blog/${escape(b.slug)}</loc>${b.updated_at ? `\n    <lastmod>${b.updated_at.split('T')[0]}</lastmod>` : ''}
+    <loc>${SITE_URL}/blog/${escape(b.slug)}</loc>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>`);
     }
 
     // ── Help Articles ─────────────────────────────────────────────
-    const { data: helpArticles } = await supabase
-      .from('help_articles')
-      .select('slug, updated_at')
-      .eq('status', 'published')
-      .order('updated_at', { ascending: false })
-      .limit(500);
-
-    for (const h of helpArticles || []) {
+    for (const h of helpArticles) {
+      const lastmod = toW3C(h.updated_at) || toW3C(h.created_at) || nowW3C;
       urls.push(`  <url>
-    <loc>${SITE_URL}/link/${escape(h.slug)}</loc>${h.updated_at ? `\n    <lastmod>${h.updated_at.split('T')[0]}</lastmod>` : ''}
+    <loc>${SITE_URL}/link/${escape(h.slug)}</loc>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>`);
@@ -143,7 +179,9 @@ ${urls.join('\n')}
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+        // Short cache so freshly published items reflect quickly
+        'Cache-Control': 'public, max-age=300, s-maxage=300',
+        'X-Robots-Tag': 'noindex',
       },
     });
   } catch (error) {
