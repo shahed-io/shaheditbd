@@ -270,55 +270,6 @@ const Footer = () => {
       </div>
     </div>
 
-    {/* ── Trust bar ── */}
-    <div className="relative z-10 mx-4 sm:mx-6 lg:mx-8 mb-6 rounded-2xl overflow-hidden"
-      style={{
-        background: 'hsla(0,0%,100%,0.55)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        border: '1px solid hsla(258,78%,75%,0.18)',
-        boxShadow: '0 4px 24px hsla(258,78%,55%,0.06)',
-      }}>
-      <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-        {/* Cert badge */}
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
-            style={{ background: 'hsl(0,0%,100%)', boxShadow: '0 4px 12px hsla(258,78%,55%,0.18)', border: '1px solid hsla(258,78%,65%,0.20)' }}>
-            <img src={dbidLogo} alt="DBID Logo" className="w-8 h-8 object-contain" />
-          </div>
-          <div>
-            <p className="text-[11px] font-black font-sora tracking-widest" style={{ color: 'hsl(226,35%,15%)' }}>{settings.cert_title}</p>
-            <p className="text-[10px] font-fira mt-0.5" style={{ color: 'hsl(226,35%,48%)' }}>{settings.cert_id}</p>
-          </div>
-        </div>
-
-        {/* Payments */}
-        <div className="flex items-center gap-2 flex-wrap justify-center">
-          <span className="text-[10px] font-fira font-bold tracking-widest mr-1" style={{ color: 'hsl(226,35%,50%)' }}>PAYMENTS:</span>
-          {paymentMethods.map(pm => (
-            <span key={pm}
-              className="px-3 py-1.5 rounded-lg text-[10.5px] font-bold font-fira cursor-default transition-all hover:scale-105"
-              style={{
-                background: 'hsla(0,0%,100%,0.70)',
-                backdropFilter: 'blur(10px)',
-                color: 'hsl(258,78%,45%)',
-                border: '1px solid hsla(258,78%,75%,0.22)',
-                boxShadow: '0 1px 4px hsla(226,35%,12%,0.05)',
-              }}>
-              {pm}
-            </span>
-          ))}
-        </div>
-
-        {/* Status */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
-          style={{ background: 'hsla(162,72%,38%,0.08)', border: '1px solid hsla(162,72%,38%,0.20)' }}>
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[11px] font-fira font-medium" style={{ color: 'hsl(162,72%,30%)' }}>{settings.status_text}</span>
-        </div>
-      </div>
-    </div>
-
     {/* ── Copyright ── */}
     <div className="relative z-10 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.12)' }}>
       <div className="container-fluid py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
@@ -339,11 +290,21 @@ const Footer = () => {
           </p>
         </div>
         <a href={settings.website_url} target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-1 text-[11px] font-fira transition-all hover:gap-1.5"
-          style={{ color: 'hsl(226,35%,48%)' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,48%)'; }}>
-          {settings.website_url.replace('https://','').replace('http://','')} <ExternalLink size={10} />
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
+          style={{
+            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
+            border: '1px solid hsla(258,78%,75%,0.25)',
+            boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
+            color: 'hsl(226,35%,30%)',
+          }}>
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" style={{ background: 'hsl(258,78%,55%)' }} />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: 'hsl(258,78%,45%)' }} />
+          </span>
+          <span className="text-[11px] font-fira tracking-wide">
+            {settings.website_url.replace('https://','').replace('http://','')}
+          </span>
+          <ExternalLink size={10} />
         </a>
       </div>
     </div>
