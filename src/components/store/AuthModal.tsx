@@ -487,4 +487,97 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   );
 };
 
+interface GlassFieldProps {
+  icon: React.ReactNode;
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+  onBlur?: () => void;
+  valid?: boolean;
+  invalid?: boolean;
+  errorMsg?: string;
+  required?: boolean;
+  uppercase?: boolean;
+  rightSlot?: React.ReactNode;
+}
+
+const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, valid, invalid, errorMsg, required, uppercase, rightSlot }: GlassFieldProps) => {
+  const [focused, setFocused] = useState(false);
+  const showCheck = valid && value.length > 0 && !invalid;
+  const borderColor = invalid
+    ? 'hsl(0,75%,60%)'
+    : focused
+    ? 'hsl(258,78%,60%)'
+    : showCheck
+    ? 'hsla(158,75%,55%,0.55)'
+    : 'hsla(258,40%,80%,0.45)';
+  const glow = invalid
+    ? '0 0 0 4px hsla(0,75%,60%,0.12)'
+    : focused
+    ? '0 0 0 4px hsla(258,78%,60%,0.18), 0 8px 22px -8px hsla(258,78%,55%,0.35)'
+    : 'inset 0 1px 0 hsla(0,0%,100%,0.7)';
+  return (
+    <div>
+      <div
+        className="relative flex items-center rounded-xl transition-all duration-300"
+        style={{
+          background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85) 0%, hsla(258,78%,98%,0.75) 100%)',
+          border: `1px solid ${borderColor}`,
+          boxShadow: glow,
+          backdropFilter: 'blur(12px)',
+          transform: focused ? 'translateY(-1px)' : 'translateY(0)',
+        }}
+      >
+        <span
+          className="pl-3.5 transition-all duration-300"
+          style={{
+            color: invalid ? 'hsl(0,75%,55%)' : focused ? 'hsl(258,78%,55%)' : 'hsl(226,30%,55%)',
+            transform: focused ? 'scale(1.1)' : 'scale(1)',
+          }}
+        >
+          {icon}
+        </span>
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          required={required}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => { setFocused(false); onBlur?.(); }}
+          className={`flex-1 bg-transparent border-0 outline-none px-3 py-3 text-sm placeholder:text-muted-foreground ${uppercase ? 'uppercase tracking-wider' : ''}`}
+          style={{ color: 'hsl(226,40%,18%)' }}
+        />
+        <span className="pr-3.5 flex items-center gap-2">
+          {showCheck && (
+            <CheckCircle2 size={16} className="animate-scale-in" style={{ color: 'hsl(158,75%,45%)' }} />
+          )}
+          {invalid && !rightSlot && (
+            <AlertCircle size={16} className="animate-scale-in" style={{ color: 'hsl(0,75%,55%)' }} />
+          )}
+          {rightSlot}
+        </span>
+        {/* Animated bottom underline */}
+        <span
+          className="absolute left-3 right-3 bottom-0 h-[2px] rounded-full pointer-events-none transition-all duration-300"
+          style={{
+            background: invalid
+              ? 'linear-gradient(90deg, hsl(0,75%,60%), hsl(20,80%,60%))'
+              : 'linear-gradient(90deg, hsl(258,78%,60%), hsl(290,70%,60%), hsl(190,75%,55%))',
+            transform: focused ? 'scaleX(1)' : 'scaleX(0)',
+            transformOrigin: 'left',
+            opacity: focused ? 1 : 0,
+          }}
+        />
+      </div>
+      {invalid && errorMsg && (
+        <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold animate-fade-in" style={{ color: 'hsl(0,75%,50%)' }}>
+          <AlertCircle size={12} /> {errorMsg}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default AuthModal;
