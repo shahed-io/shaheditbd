@@ -41,7 +41,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const canSubmit = !loading && (
     mode === 'forgot' ? emailValid :
     mode === 'login' ? emailValid && pwLen >= 1 :
-    emailValid && passwordValid && nameValid
+    emailValid && passwordValid && nameValid && agreeTerms
   );
 
   // Auto-fill referral code from URL (?ref=CODE) and switch to signup
