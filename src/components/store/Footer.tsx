@@ -290,11 +290,21 @@ const Footer = () => {
           </p>
         </div>
         <a href={settings.website_url} target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-1 text-[11px] font-fira transition-all hover:gap-1.5"
-          style={{ color: 'hsl(226,35%,48%)' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(258,78%,50%)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'hsl(226,35%,48%)'; }}>
-          {settings.website_url.replace('https://','').replace('http://','')} <ExternalLink size={10} />
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md transition-all hover:scale-[1.02]"
+          style={{
+            background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,98%,0.75))',
+            border: '1px solid hsla(258,78%,75%,0.25)',
+            boxShadow: '0 4px 16px -4px hsla(258,78%,50%,0.12), inset 0 1px 0 hsla(0,0%,100%,0.6)',
+            color: 'hsl(226,35%,30%)',
+          }}>
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping" style={{ background: 'hsl(258,78%,55%)' }} />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: 'hsl(258,78%,45%)' }} />
+          </span>
+          <span className="text-[11px] font-fira tracking-wide">
+            {settings.website_url.replace('https://','').replace('http://','')}
+          </span>
+          <ExternalLink size={10} />
         </a>
       </div>
     </div>
