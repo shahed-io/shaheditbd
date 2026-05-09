@@ -588,29 +588,73 @@ const FloatingSupport = () => {
           to   { opacity: 1; }
         }
 
-        /* Stacked dark glass pill buttons */
+        /* Stacked dark glass pill buttons — premium gradient border + glow */
         .fs-pill {
-          background: rgba(20, 20, 28, 0.88);
-          backdrop-filter: blur(20px) saturate(160%);
-          -webkit-backdrop-filter: blur(20px) saturate(160%);
+          position: relative;
+          background:
+            linear-gradient(135deg, rgba(28,28,40,0.92) 0%, rgba(18,18,26,0.94) 100%);
           border: 1px solid rgba(255, 255, 255, 0.08);
-          box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+          box-shadow:
+            0 14px 36px -10px rgba(0,0,0,0.65),
+            0 2px 6px -2px rgba(0,0,0,0.4),
+            inset 0 1px 0 rgba(255,255,255,0.08);
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+          overflow: hidden;
+        }
+        /* Animated gradient border ring */
+        .fs-pill::before {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: 9999px;
+          padding: 1px;
+          background: linear-gradient(120deg,
+            hsla(271,91%,65%,0.55),
+            hsla(185,90%,52%,0.45),
+            hsla(320,90%,62%,0.4),
+            hsla(271,91%,65%,0.55));
+          background-size: 220% 220%;
+          -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor;
+                  mask-composite: exclude;
+          opacity: 0.55;
+          animation: fsBorderShift 6s linear infinite;
+          pointer-events: none;
+        }
+        /* Shine sweep on hover */
+        .fs-pill::after {
+          content: '';
+          position: absolute;
+          top: 0; left: -60%;
+          width: 50%; height: 100%;
+          background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%);
+          transform: skewX(-20deg);
+          transition: left 0.7s ease;
+          pointer-events: none;
+        }
+        .fs-pill:hover::after { left: 130%; }
+        @keyframes fsBorderShift {
+          0%   { background-position: 0% 50%; }
+          100% { background-position: 220% 50%; }
         }
         .fs-pill:hover {
           transform: translateX(-4px) translateY(-2px);
           border-color: rgba(255, 255, 255, 0.18);
-          box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          box-shadow:
+            0 22px 48px -12px rgba(0,0,0,0.75),
+            0 0 0 1px rgba(255,255,255,0.04),
+            inset 0 1px 0 rgba(255,255,255,0.12);
         }
+        .fs-pill:hover::before { opacity: 0.95; }
         .fs-pill:active { transform: translateX(-2px) scale(0.98); }
 
         /* Side help-pill next to FAB */
         .fs-help-pill {
-          background: rgba(20, 20, 28, 0.88);
-          backdrop-filter: blur(20px) saturate(160%);
-          -webkit-backdrop-filter: blur(20px) saturate(160%);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+          background: linear-gradient(135deg, rgba(28,28,40,0.92), rgba(18,18,26,0.94));
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow:
+            0 14px 36px -10px rgba(0,0,0,0.6),
+            inset 0 1px 0 rgba(255,255,255,0.08);
           animation: fsHelpIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
         @keyframes fsHelpIn {
