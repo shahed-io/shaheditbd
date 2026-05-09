@@ -651,7 +651,7 @@ interface GlassFieldProps {
   rightSlot?: React.ReactNode;
 }
 
-const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, valid, invalid, errorMsg, required, uppercase, rightSlot }: GlassFieldProps) => {
+const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, onKeyDown, onKeyUp, valid, invalid, errorMsg, required, uppercase, rightSlot }: GlassFieldProps) => {
   const [focused, setFocused] = useState(false);
   const showCheck = valid && value.length > 0 && !invalid;
   const borderColor = invalid
@@ -695,6 +695,8 @@ const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, valid, i
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => { setFocused(false); onBlur?.(); }}
+          onKeyDown={onKeyDown}
+          onKeyUp={onKeyUp}
           className={`flex-1 bg-transparent border-0 outline-none px-3 py-3 text-sm placeholder:text-muted-foreground ${uppercase ? 'uppercase tracking-wider' : ''}`}
           style={{ color: 'hsl(226,40%,18%)' }}
         />
