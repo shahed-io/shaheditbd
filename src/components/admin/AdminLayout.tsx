@@ -106,6 +106,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
       { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
       { icon: Globe, label: 'SEO Manager', path: '/ceo/seo' },
+      { icon: Activity, label: 'SEO Monitor', path: '/ceo/seo-monitor', badge: 'new' },
       { icon: ShieldCheck, label: 'Site Verification', path: '/ceo/site-verification' },
     ],
   },
