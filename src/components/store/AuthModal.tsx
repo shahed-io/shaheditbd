@@ -302,7 +302,6 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           </div>
 
           <div className="text-center relative">
-            </div>
             <h2
               className="text-2xl font-bold"
               style={{
