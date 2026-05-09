@@ -352,44 +352,90 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'signup' && (
-                <div className="relative">
-                  <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="text" placeholder="আপনার নাম" value={name} onChange={e => setName(e.target.value)} required
-                    className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors" />
-                </div>
+                <GlassField
+                  icon={<User size={16} />}
+                  type="text"
+                  placeholder="আপনার নাম"
+                  value={name}
+                  onChange={(v) => setName(v)}
+                  onBlur={() => setTouched(t => ({ ...t, name: true }))}
+                  valid={nameValid}
+                  invalid={touched.name && !nameValid && name.length > 0}
+                  errorMsg="নাম কমপক্ষে ২ অক্ষরের হতে হবে"
+                  required
+                />
               )}
 
-              <div className="relative">
-                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input type="email" placeholder="ইমেইল অ্যাড্রেস" value={email} onChange={e => setEmail(e.target.value)} required
-                  className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors" />
-              </div>
+              <GlassField
+                icon={<Mail size={16} />}
+                type="email"
+                placeholder="ইমেইল অ্যাড্রেস"
+                value={email}
+                onChange={(v) => setEmail(v)}
+                onBlur={() => setTouched(t => ({ ...t, email: true }))}
+                valid={emailValid}
+                invalid={touched.email && !emailValid && email.length > 0}
+                errorMsg="সঠিক ইমেইল অ্যাড্রেস দিন"
+                required
+              />
 
               {mode !== 'forgot' && (
-                <div className="relative">
-                  <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type={showPass ? 'text' : 'password'} placeholder="পাসওয়ার্ড" value={password} onChange={e => setPassword(e.target.value)} required
-                    className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-10 py-3 text-sm focus:outline-none focus:border-primary transition-colors" />
-                  <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+                <div>
+                  <GlassField
+                    icon={<Lock size={16} />}
+                    type={showPass ? 'text' : 'password'}
+                    placeholder="পাসওয়ার্ড"
+                    value={password}
+                    onChange={(v) => setPassword(v)}
+                    onBlur={() => setTouched(t => ({ ...t, password: true }))}
+                    valid={mode === 'signup' ? passwordValid : pwLen >= 1}
+                    invalid={mode === 'signup' && touched.password && !passwordValid && pwLen > 0}
+                    errorMsg="পাসওয়ার্ড কমপক্ষে ৮ অক্ষর, অক্ষর ও সংখ্যা থাকতে হবে"
+                    required
+                    rightSlot={
+                      <button type="button" onClick={() => setShowPass(!showPass)} className="text-muted-foreground hover:text-primary transition-colors">
+                        {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    }
+                  />
+                  {mode === 'signup' && password.length > 0 && (
+                    <div className="mt-2 flex items-center gap-1.5">
+                      {[0,1,2,3].map(i => (
+                        <div
+                          key={i}
+                          className="h-1 flex-1 rounded-full transition-all duration-300"
+                          style={{
+                            background: i < pwScore
+                              ? `linear-gradient(90deg, hsl(${pwScore <= 1 ? 0 : pwScore === 2 ? 30 : pwScore === 3 ? 45 : 158}, 80%, 55%), hsl(${pwScore <= 1 ? 0 : pwScore === 2 ? 30 : pwScore === 3 ? 45 : 158}, 80%, 65%))`
+                              : 'hsla(258,30%,85%,0.5)',
+                          }}
+                        />
+                      ))}
+                      <span className="text-[10px] font-semibold ml-1" style={{
+                        color: pwScore <= 1 ? 'hsl(0,70%,50%)' : pwScore === 2 ? 'hsl(30,80%,45%)' : pwScore === 3 ? 'hsl(45,85%,40%)' : 'hsl(158,75%,40%)'
+                      }}>
+                        {pwScore <= 1 ? 'দুর্বল' : pwScore === 2 ? 'মাঝারি' : pwScore === 3 ? 'ভালো' : 'শক্তিশালী'}
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Referral code field — signup only */}
               {mode === 'signup' && (
-                <div className="relative">
-                  <Gift size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input
+                <div>
+                  <GlassField
+                    icon={<Gift size={16} />}
                     type="text"
                     placeholder="রেফারেল কোড (ঐচ্ছিক)"
                     value={referralCode}
-                    onChange={e => setReferralCode(e.target.value.toUpperCase())}
-                    className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors uppercase"
+                    onChange={(v) => setReferralCode(v.toUpperCase())}
+                    valid={referralCode.length > 0}
+                    uppercase
                   />
                   {referralCode && (
-                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'hsl(158,80%,48%)' }}>
-                      <span>✓</span> কোড প্রয়োগ হলে ৫% স্থায়ী ছাড় পাবেন! Google দিয়ে সাইনআপ করলে রেফারারও ৳২০ পাবে।
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'hsl(158,80%,42%)' }}>
+                      <CheckCircle2 size={12} /> কোড প্রয়োগ হলে ৫% স্থায়ী ছাড় পাবেন! Google দিয়ে সাইনআপ করলে রেফারারও ৳২০ পাবে।
                     </div>
                   )}
                 </div>
@@ -398,15 +444,25 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               {/* Forgot password link */}
               {mode === 'login' && (
                 <div className="text-right -mt-2">
-                  <button type="button" onClick={() => resetAndSwitch('forgot')} className="text-xs text-primary hover:underline font-medium">
+                  <button type="button" onClick={() => resetAndSwitch('forgot')} className="text-xs font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
                 </div>
               )}
 
-              <button type="submit" disabled={loading}
-                className="w-full btn-glow py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
-                {mode === 'forgot' ? <KeyRound size={16} /> : <LogIn size={16} />}
+              <button type="submit" disabled={!canSubmit}
+                className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(290,70%,55%) 50%, hsl(190,75%,50%) 100%)',
+                  color: 'white',
+                  boxShadow: '0 10px 30px -8px hsla(258,78%,50%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.35)',
+                }}
+              >
+                {loading ? (
+                  <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                ) : (
+                  mode === 'forgot' ? <KeyRound size={16} /> : <LogIn size={16} />
+                )}
                 {loading ? 'অপেক্ষা করুন...'
                   : mode === 'login' ? 'লগইন করুন'
                   : mode === 'signup' ? 'অ্যাকাউন্ট তৈরি করুন'
