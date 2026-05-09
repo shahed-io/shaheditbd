@@ -447,6 +447,8 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     value={password}
                     onChange={(v) => setPassword(v)}
                     onBlur={() => setTouched(t => ({ ...t, password: true }))}
+                    onKeyDown={(e) => setCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'))}
+                    onKeyUp={(e) => setCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'))}
                     valid={mode === 'signup' ? passwordValid : pwLen >= 1}
                     invalid={mode === 'signup' && touched.password && !passwordValid && pwLen > 0}
                     errorMsg="পাসওয়ার্ড কমপক্ষে ৮ অক্ষর, অক্ষর ও সংখ্যা থাকতে হবে"
@@ -457,6 +459,11 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                       </button>
                     }
                   />
+                  {capsLockOn && (
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold animate-fade-in" style={{ color: 'hsl(30,90%,45%)' }}>
+                      <AlertCircle size={12} /> Caps Lock চালু আছে
+                    </div>
+                  )}
                   {mode === 'signup' && password.length > 0 && (
                     <div className="mt-2 flex items-center gap-1.5">
                       {[0,1,2,3].map(i => (
