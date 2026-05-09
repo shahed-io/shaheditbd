@@ -23,6 +23,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [loading, setLoading] = useState(false);
   const [forgotSent, setForgotSent] = useState(false);
   const [touched, setTouched] = useState<{ email?: boolean; password?: boolean; name?: boolean }>({});
+  const [rememberMe, setRememberMe] = useState(true);
+  const [capsLockOn, setCapsLockOn] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
