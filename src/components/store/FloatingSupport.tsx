@@ -519,44 +519,62 @@ const FloatingSupport = () => {
         </>
       )}
 
-      {/* ── Main FAB ── */}
+      {/* ── Main FAB + side label ── */}
       <div
-        className="fixed right-4 sm:right-6 z-50 flex items-center justify-center bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+16px)]"
+        className="fixed right-4 sm:right-6 z-50 flex items-center gap-3 bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+16px)]"
       >
-        {!chatOpen && !menuOpen && (
-          <>
-            <span className="fab-ring fab-ring-1" />
-            <span className="fab-ring fab-ring-2" />
-            <span className="fab-ring fab-ring-3" />
-          </>
+        {/* "সাহায্য চাই?" pill — only when menu is open */}
+        {menuOpen && !chatOpen && (
+          <div
+            className="fs-help-pill flex items-center gap-2 px-4 py-2.5 rounded-full"
+          >
+            <span className="relative flex w-2 h-2 flex-shrink-0">
+              <span className="absolute inline-flex w-full h-full rounded-full bg-green-300 opacity-75 animate-ping" />
+              <span className="relative inline-flex w-2 h-2 rounded-full bg-green-400" />
+            </span>
+            <div className="leading-tight">
+              <p className="text-[13px] font-bold text-white">সাহায্য চাই?</p>
+              <p className="text-[10px] text-white/60">২৪/৭ লাইভ সাপোর্ট</p>
+            </div>
+          </div>
         )}
 
-        {!chatOpen && !menuOpen && <span className="fab-comet" />}
-
-        <button
-          onClick={() => {
-            if (chatOpen) setChatOpen(false);
-            else setMenuOpen(o => !o);
-          }}
-          className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
-          style={{
-            background: (chatOpen || menuOpen)
-              ? 'hsl(var(--muted))'
-              : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-            boxShadow: (chatOpen || menuOpen)
-              ? 'none'
-              : '0 0 24px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3), 0 8px 24px hsla(215,40%,4%,0.5)',
-          }}
-          title="সাপোর্ট"
-        >
+        <div className="relative flex items-center justify-center">
           {!chatOpen && !menuOpen && (
-            <span className="absolute inset-0 rounded-full fab-pulse-inner" />
+            <>
+              <span className="fab-ring fab-ring-1" />
+              <span className="fab-ring fab-ring-2" />
+              <span className="fab-ring fab-ring-3" />
+              <span className="fab-comet" />
+            </>
           )}
-          {(chatOpen || menuOpen)
-            ? <X size={22} className="text-foreground" />
-            : <MessageCircle size={24} className="text-white relative z-10" />
-          }
-        </button>
+
+          <button
+            onClick={() => {
+              if (chatOpen) setChatOpen(false);
+              else setMenuOpen(o => !o);
+            }}
+            className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
+            style={{
+              background: (chatOpen || menuOpen)
+                ? 'rgba(20, 20, 28, 0.92)'
+                : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+              boxShadow: (chatOpen || menuOpen)
+                ? '0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)'
+                : '0 0 24px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3), 0 8px 24px hsla(215,40%,4%,0.5)',
+              border: (chatOpen || menuOpen) ? '1px solid rgba(255,255,255,0.12)' : 'none',
+            }}
+            title="সাপোর্ট"
+          >
+            {!chatOpen && !menuOpen && (
+              <span className="absolute inset-0 rounded-full fab-pulse-inner" />
+            )}
+            {(chatOpen || menuOpen)
+              ? <X size={22} className="text-white fs-x-rotate" />
+              : <MessageCircle size={24} className="text-white relative z-10" />
+            }
+          </button>
+        </div>
       </div>
 
       <style>{`
