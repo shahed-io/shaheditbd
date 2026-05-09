@@ -394,173 +394,126 @@ const FloatingSupport = () => {
         </div>
       )}
 
-      {/* ── Option Menu (shown when FAB clicked) ── */}
+      {/* ── Option Menu (stacked floating pill buttons) ── */}
       {menuOpen && !chatOpen && (
         <>
           <div
             onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 z-40 bg-foreground/10 backdrop-blur-[2px]"
-            style={{ animation: 'fadeInBg 0.2s ease-out' }}
+            className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-[3px]"
+            style={{ animation: 'fadeInBg 0.25s ease-out' }}
           />
           <div
-            className="fixed right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[320px] max-w-sm flex flex-col rounded-[28px] overflow-hidden bottom-[calc(env(safe-area-inset-bottom,0px)+160px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+80px)]"
-            style={{
-              animation: 'slideUpIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              background: 'rgba(255, 255, 255, 0.85)',
-              backdropFilter: 'blur(28px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.6)',
-              boxShadow: '0 24px 60px -12px hsla(258, 78%, 35%, 0.35), 0 8px 24px -4px hsla(258, 60%, 30%, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-            }}
+            className="fixed right-4 sm:right-6 z-50 flex flex-col items-end gap-3 bottom-[calc(env(safe-area-inset-bottom,0px)+170px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+90px)] w-[min(calc(100vw-2rem),300px)]"
           >
-            {/* Premium gradient header */}
-            <div
-              className="relative px-5 py-4 overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, hsl(258, 90%, 62%) 0%, hsl(280, 85%, 58%) 50%, hsl(310, 80%, 60%) 100%)',
-              }}
-            >
-              {/* Decorative orbs */}
-              <span className="absolute -top-8 -right-6 w-24 h-24 rounded-full opacity-40 blur-2xl" style={{ background: 'hsl(50, 100%, 70%)' }} />
-              <span className="absolute -bottom-10 -left-4 w-20 h-20 rounded-full opacity-30 blur-2xl" style={{ background: 'hsl(185, 100%, 70%)' }} />
+            {(() => {
+              // Build list in display order (top → bottom): AI, WhatsApp, custom sets, then label
+              const items: React.ReactNode[] = [];
 
-              <div className="relative flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 ring-2 ring-white/40"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.22)',
-                      backdropFilter: 'blur(8px)',
-                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15)',
-                    }}
+              if (config.chat_enabled) {
+                items.push(
+                  <button
+                    key="ai"
+                    onClick={openChat}
+                    className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
                   >
-                    <Headphones size={20} className="text-white drop-shadow" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-white text-[15px] font-bold leading-tight drop-shadow-sm">{config.fab_label}</p>
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <span className="relative flex w-1.5 h-1.5">
-                        <span className="absolute inline-flex w-full h-full rounded-full bg-green-300 opacity-75 animate-ping" />
-                        <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-green-400" />
-                      </span>
-                      <p className="text-white/90 text-[11px] font-medium">এখন অনলাইন · যেকোনো একটি বেছে নিন</p>
+                    <span
+                      className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-6"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+                        boxShadow: '0 6px 16px hsla(271, 91%, 60%, 0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
+                      }}
+                    >
+                      <Bot size={19} className="text-white" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[14px] font-bold text-white leading-tight">{config.ai_label}</p>
+                      <p className="text-[11px] text-white/60 truncate mt-0.5">{config.ai_subtitle}</p>
                     </div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setMenuOpen(false)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white/90 hover:bg-white/20 hover:text-white transition-all flex-shrink-0"
-                  aria-label="বন্ধ করুন"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-            </div>
+                  </button>
+                );
+              }
 
-            {/* Options list */}
-            <div className="p-2.5 flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto bg-white/40">
-              {config.chat_enabled && (
-                <button
-                  onClick={openChat}
-                  className="group/opt relative flex items-center gap-3 px-3 py-3 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.7)',
-                    border: '1px solid rgba(258, 78%, 70%, 0.2)',
-                    boxShadow: '0 1px 3px hsla(258, 40%, 30%, 0.04)',
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 20px hsla(258, 78%, 50%, 0.18), 0 2px 6px hsla(258, 40%, 30%, 0.08)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px hsla(258, 40%, 30%, 0.04)'; }}
-                >
-                  <span
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover/opt:scale-110 group-hover/opt:rotate-3"
-                    style={{
-                      background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-                      boxShadow: '0 6px 14px hsla(271, 91%, 60%, 0.35), inset 0 1px 0 rgba(255,255,255,0.3)',
-                    }}
+              if (config.whatsapp_enabled) {
+                items.push(
+                  <button
+                    key="wa"
+                    onClick={openWhatsApp}
+                    className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
                   >
-                    <Bot size={19} className="text-white" />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-[14px] font-bold text-foreground">{config.ai_label}</p>
-                      <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md text-white" style={{ background: 'linear-gradient(135deg, hsl(258,80%,60%), hsl(280,80%,55%))' }}>AI</span>
+                    <span
+                      className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-6"
+                      style={{
+                        background: 'linear-gradient(135deg, #25D366, #128C7E)',
+                        boxShadow: '0 6px 16px hsla(142, 70%, 40%, 0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
+                      }}
+                    >
+                      <MessageCircle size={19} className="text-white" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[14px] font-bold text-white leading-tight">{config.whatsapp_label}</p>
+                      <p className="text-[11px] text-white/60 truncate mt-0.5">{config.whatsapp_subtitle}</p>
                     </div>
-                    <p className="text-[11.5px] text-muted-foreground truncate mt-0.5">{config.ai_subtitle}</p>
-                  </div>
-                  <span className="relative flex w-2 h-2 flex-shrink-0">
-                    <span className="absolute inline-flex w-full h-full rounded-full bg-green-400 opacity-75 animate-ping" />
-                    <span className="relative inline-flex w-2 h-2 rounded-full bg-green-500" />
-                  </span>
-                </button>
-              )}
-              {config.whatsapp_enabled && (
-                <button
-                  onClick={openWhatsApp}
-                  className="group/opt relative flex items-center gap-3 px-3 py-3 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.7)',
-                    border: '1px solid hsla(142, 70%, 55%, 0.2)',
-                    boxShadow: '0 1px 3px hsla(258, 40%, 30%, 0.04)',
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 20px hsla(142, 70%, 45%, 0.20), 0 2px 6px hsla(258, 40%, 30%, 0.08)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px hsla(258, 40%, 30%, 0.04)'; }}
-                >
-                  <span
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover/opt:scale-110 group-hover/opt:rotate-3"
-                    style={{
-                      background: 'linear-gradient(135deg, #25D366, #128C7E)',
-                      boxShadow: '0 6px 14px hsla(142, 70%, 40%, 0.35), inset 0 1px 0 rgba(255,255,255,0.3)',
-                    }}
-                  >
-                    <MessageCircle size={19} className="text-white" />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-bold text-foreground">{config.whatsapp_label}</p>
-                    <p className="text-[11.5px] text-muted-foreground truncate mt-0.5">{config.whatsapp_subtitle}</p>
-                  </div>
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full text-green-700 bg-green-100 border border-green-200 flex-shrink-0">দ্রুত</span>
-                </button>
-              )}
-              {activeSets.map(set => {
+                  </button>
+                );
+              }
+
+              activeSets.forEach(set => {
                 const ChannelIcon = getFsIcon(set.icon);
-                return (
+                items.push(
                   <button
                     key={set.id}
                     onClick={() => openLiveSet(set)}
-                    className="group/opt relative flex items-center gap-3 px-3 py-3 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.7)',
-                      border: `1px solid ${set.icon_color}33`,
-                      boxShadow: '0 1px 3px hsla(258, 40%, 30%, 0.04)',
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 8px 20px ${set.icon_color}30, 0 2px 6px hsla(258, 40%, 30%, 0.08)`; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px hsla(258, 40%, 30%, 0.04)'; }}
+                    className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
                   >
                     <span
-                      className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover/opt:scale-110 group-hover/opt:rotate-3"
+                      className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-6"
                       style={{
                         background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)`,
-                        boxShadow: `0 6px 14px ${set.icon_color}59, inset 0 1px 0 rgba(255,255,255,0.3)`,
+                        boxShadow: `0 6px 16px ${set.icon_color}66, inset 0 1px 0 rgba(255,255,255,0.3)`,
                       }}
                     >
                       <ChannelIcon size={19} className="text-white" />
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-foreground">{set.label}</p>
-                      {set.subtitle && <p className="text-[11.5px] text-muted-foreground truncate mt-0.5">{set.subtitle}</p>}
+                      <p className="text-[14px] font-bold text-white leading-tight">{set.label}</p>
+                      {set.subtitle && <p className="text-[11px] text-white/60 truncate mt-0.5">{set.subtitle}</p>}
                     </div>
                   </button>
                 );
-              })}
-              {!config.chat_enabled && !config.whatsapp_enabled && activeSets.length === 0 && (
-                <p className="text-center text-xs text-muted-foreground py-6">কোনো সাপোর্ট চ্যানেল কনফিগার করা নেই</p>
-              )}
-            </div>
+              });
 
-            {/* Footer trust line */}
-            <div className="px-4 py-2.5 border-t border-white/60 bg-white/30 backdrop-blur-md flex items-center justify-center gap-1.5">
-              <span className="text-[10px] text-muted-foreground">Powered by</span>
-              <span className="text-[10.5px] font-bold bg-gradient-to-r from-[hsl(258,80%,55%)] to-[hsl(310,80%,55%)] bg-clip-text text-transparent">Shahed Store Support</span>
+              if (items.length === 0) {
+                return (
+                  <div className="fs-pill w-full px-4 py-3 rounded-full text-center text-xs text-white/70">
+                    কোনো সাপোর্ট চ্যানেল কনফিগার করা নেই
+                  </div>
+                );
+              }
+
+              // Stagger animation: bottom-most appears first (closest to FAB)
+              const total = items.length;
+              return items.map((node, i) => {
+                const delay = (total - 1 - i) * 0.06;
+                return (
+                  <div
+                    key={`wrap-${i}`}
+                    className="fs-pill-wrap w-full flex justify-end"
+                    style={{ animationDelay: `${delay}s` }}
+                  >
+                    {node}
+                  </div>
+                );
+              });
+            })()}
+
+            {/* Label / heading (appears last, just above FAB area) */}
+            <div
+              className="fs-pill-wrap w-full flex justify-end"
+              style={{ animationDelay: '0s' }}
+            >
+              <p className="text-[12px] font-medium text-white/70 px-2 pt-1">
+                {config.fab_label}
+              </p>
             </div>
           </div>
         </>
