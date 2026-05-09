@@ -302,15 +302,6 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           </div>
 
           <div className="text-center relative">
-            <div
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-2 text-[10px] font-bold uppercase tracking-wider"
-              style={{
-                background: 'hsla(0,0%,100%,0.75)',
-                border: '1px solid hsla(258,78%,75%,0.30)',
-                color: 'hsl(258,78%,45%)',
-              }}
-            >
-              <Sparkles size={10} className="animate-pulse" /> Secure Access
             </div>
             <h2
               className="text-2xl font-bold"
