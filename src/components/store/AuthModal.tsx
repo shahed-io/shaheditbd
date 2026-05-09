@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft, Gift, Sparkles, ShieldCheck } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { X, Mail, Lock, User, Eye, EyeOff, LogIn, KeyRound, ArrowLeft, Gift, Sparkles, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { toast } from 'sonner';
@@ -22,8 +22,24 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [forgotSent, setForgotSent] = useState(false);
+  const [touched, setTouched] = useState<{ email?: boolean; password?: boolean; name?: boolean }>({});
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // Validations
+  const emailValid = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()), [email]);
+  const nameValid = name.trim().length >= 2;
+  const pwLen = password.length;
+  const pwHasLetter = /[A-Za-z]/.test(password);
+  const pwHasNumber = /\d/.test(password);
+  const pwScore = (pwLen >= 8 ? 1 : 0) + (pwHasLetter ? 1 : 0) + (pwHasNumber ? 1 : 0) + (/[^A-Za-z0-9]/.test(password) ? 1 : 0);
+  const passwordValid = pwLen >= 8 && pwHasLetter && pwHasNumber;
+
+  const canSubmit = !loading && (
+    mode === 'forgot' ? emailValid :
+    mode === 'login' ? emailValid && pwLen >= 1 :
+    emailValid && passwordValid && nameValid
+  );
 
   // Auto-fill referral code from URL (?ref=CODE) and switch to signup
   useEffect(() => {
@@ -39,6 +55,8 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched({ email: true, password: true, name: true });
+    if (!canSubmit) return;
     setLoading(true);
     try {
       if (mode === 'forgot') {
@@ -334,44 +352,90 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'signup' && (
-                <div className="relative">
-                  <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="text" placeholder="আপনার নাম" value={name} onChange={e => setName(e.target.value)} required
-                    className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors" />
-                </div>
+                <GlassField
+                  icon={<User size={16} />}
+                  type="text"
+                  placeholder="আপনার নাম"
+                  value={name}
+                  onChange={(v) => setName(v)}
+                  onBlur={() => setTouched(t => ({ ...t, name: true }))}
+                  valid={nameValid}
+                  invalid={touched.name && !nameValid && name.length > 0}
+                  errorMsg="নাম কমপক্ষে ২ অক্ষরের হতে হবে"
+                  required
+                />
               )}
 
-              <div className="relative">
-                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input type="email" placeholder="ইমেইল অ্যাড্রেস" value={email} onChange={e => setEmail(e.target.value)} required
-                  className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors" />
-              </div>
+              <GlassField
+                icon={<Mail size={16} />}
+                type="email"
+                placeholder="ইমেইল অ্যাড্রেস"
+                value={email}
+                onChange={(v) => setEmail(v)}
+                onBlur={() => setTouched(t => ({ ...t, email: true }))}
+                valid={emailValid}
+                invalid={touched.email && !emailValid && email.length > 0}
+                errorMsg="সঠিক ইমেইল অ্যাড্রেস দিন"
+                required
+              />
 
               {mode !== 'forgot' && (
-                <div className="relative">
-                  <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type={showPass ? 'text' : 'password'} placeholder="পাসওয়ার্ড" value={password} onChange={e => setPassword(e.target.value)} required
-                    className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-10 py-3 text-sm focus:outline-none focus:border-primary transition-colors" />
-                  <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+                <div>
+                  <GlassField
+                    icon={<Lock size={16} />}
+                    type={showPass ? 'text' : 'password'}
+                    placeholder="পাসওয়ার্ড"
+                    value={password}
+                    onChange={(v) => setPassword(v)}
+                    onBlur={() => setTouched(t => ({ ...t, password: true }))}
+                    valid={mode === 'signup' ? passwordValid : pwLen >= 1}
+                    invalid={mode === 'signup' && touched.password && !passwordValid && pwLen > 0}
+                    errorMsg="পাসওয়ার্ড কমপক্ষে ৮ অক্ষর, অক্ষর ও সংখ্যা থাকতে হবে"
+                    required
+                    rightSlot={
+                      <button type="button" onClick={() => setShowPass(!showPass)} className="text-muted-foreground hover:text-primary transition-colors">
+                        {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    }
+                  />
+                  {mode === 'signup' && password.length > 0 && (
+                    <div className="mt-2 flex items-center gap-1.5">
+                      {[0,1,2,3].map(i => (
+                        <div
+                          key={i}
+                          className="h-1 flex-1 rounded-full transition-all duration-300"
+                          style={{
+                            background: i < pwScore
+                              ? `linear-gradient(90deg, hsl(${pwScore <= 1 ? 0 : pwScore === 2 ? 30 : pwScore === 3 ? 45 : 158}, 80%, 55%), hsl(${pwScore <= 1 ? 0 : pwScore === 2 ? 30 : pwScore === 3 ? 45 : 158}, 80%, 65%))`
+                              : 'hsla(258,30%,85%,0.5)',
+                          }}
+                        />
+                      ))}
+                      <span className="text-[10px] font-semibold ml-1" style={{
+                        color: pwScore <= 1 ? 'hsl(0,70%,50%)' : pwScore === 2 ? 'hsl(30,80%,45%)' : pwScore === 3 ? 'hsl(45,85%,40%)' : 'hsl(158,75%,40%)'
+                      }}>
+                        {pwScore <= 1 ? 'দুর্বল' : pwScore === 2 ? 'মাঝারি' : pwScore === 3 ? 'ভালো' : 'শক্তিশালী'}
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Referral code field — signup only */}
               {mode === 'signup' && (
-                <div className="relative">
-                  <Gift size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input
+                <div>
+                  <GlassField
+                    icon={<Gift size={16} />}
                     type="text"
                     placeholder="রেফারেল কোড (ঐচ্ছিক)"
                     value={referralCode}
-                    onChange={e => setReferralCode(e.target.value.toUpperCase())}
-                    className="w-full bg-muted/50 border border-border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors uppercase"
+                    onChange={(v) => setReferralCode(v.toUpperCase())}
+                    valid={referralCode.length > 0}
+                    uppercase
                   />
                   {referralCode && (
-                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'hsl(158,80%,48%)' }}>
-                      <span>✓</span> কোড প্রয়োগ হলে ৫% স্থায়ী ছাড় পাবেন! Google দিয়ে সাইনআপ করলে রেফারারও ৳২০ পাবে।
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'hsl(158,80%,42%)' }}>
+                      <CheckCircle2 size={12} /> কোড প্রয়োগ হলে ৫% স্থায়ী ছাড় পাবেন! Google দিয়ে সাইনআপ করলে রেফারারও ৳২০ পাবে।
                     </div>
                   )}
                 </div>
@@ -380,15 +444,25 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               {/* Forgot password link */}
               {mode === 'login' && (
                 <div className="text-right -mt-2">
-                  <button type="button" onClick={() => resetAndSwitch('forgot')} className="text-xs text-primary hover:underline font-medium">
+                  <button type="button" onClick={() => resetAndSwitch('forgot')} className="text-xs font-semibold hover:underline" style={{ color: 'hsl(258,78%,45%)' }}>
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
                 </div>
               )}
 
-              <button type="submit" disabled={loading}
-                className="w-full btn-glow py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
-                {mode === 'forgot' ? <KeyRound size={16} /> : <LogIn size={16} />}
+              <button type="submit" disabled={!canSubmit}
+                className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(258,78%,55%) 0%, hsl(290,70%,55%) 50%, hsl(190,75%,50%) 100%)',
+                  color: 'white',
+                  boxShadow: '0 10px 30px -8px hsla(258,78%,50%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.35)',
+                }}
+              >
+                {loading ? (
+                  <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                ) : (
+                  mode === 'forgot' ? <KeyRound size={16} /> : <LogIn size={16} />
+                )}
                 {loading ? 'অপেক্ষা করুন...'
                   : mode === 'login' ? 'লগইন করুন'
                   : mode === 'signup' ? 'অ্যাকাউন্ট তৈরি করুন'
@@ -409,6 +483,99 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         )}
         </div>
       </div>
+    </div>
+  );
+};
+
+interface GlassFieldProps {
+  icon: React.ReactNode;
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+  onBlur?: () => void;
+  valid?: boolean;
+  invalid?: boolean;
+  errorMsg?: string;
+  required?: boolean;
+  uppercase?: boolean;
+  rightSlot?: React.ReactNode;
+}
+
+const GlassField = ({ icon, type, placeholder, value, onChange, onBlur, valid, invalid, errorMsg, required, uppercase, rightSlot }: GlassFieldProps) => {
+  const [focused, setFocused] = useState(false);
+  const showCheck = valid && value.length > 0 && !invalid;
+  const borderColor = invalid
+    ? 'hsl(0,75%,60%)'
+    : focused
+    ? 'hsl(258,78%,60%)'
+    : showCheck
+    ? 'hsla(158,75%,55%,0.55)'
+    : 'hsla(258,40%,80%,0.45)';
+  const glow = invalid
+    ? '0 0 0 4px hsla(0,75%,60%,0.12)'
+    : focused
+    ? '0 0 0 4px hsla(258,78%,60%,0.18), 0 8px 22px -8px hsla(258,78%,55%,0.35)'
+    : 'inset 0 1px 0 hsla(0,0%,100%,0.7)';
+  return (
+    <div>
+      <div
+        className="relative flex items-center rounded-xl transition-all duration-300"
+        style={{
+          background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85) 0%, hsla(258,78%,98%,0.75) 100%)',
+          border: `1px solid ${borderColor}`,
+          boxShadow: glow,
+          backdropFilter: 'blur(12px)',
+          transform: focused ? 'translateY(-1px)' : 'translateY(0)',
+        }}
+      >
+        <span
+          className="pl-3.5 transition-all duration-300"
+          style={{
+            color: invalid ? 'hsl(0,75%,55%)' : focused ? 'hsl(258,78%,55%)' : 'hsl(226,30%,55%)',
+            transform: focused ? 'scale(1.1)' : 'scale(1)',
+          }}
+        >
+          {icon}
+        </span>
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          required={required}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => { setFocused(false); onBlur?.(); }}
+          className={`flex-1 bg-transparent border-0 outline-none px-3 py-3 text-sm placeholder:text-muted-foreground ${uppercase ? 'uppercase tracking-wider' : ''}`}
+          style={{ color: 'hsl(226,40%,18%)' }}
+        />
+        <span className="pr-3.5 flex items-center gap-2">
+          {showCheck && (
+            <CheckCircle2 size={16} className="animate-scale-in" style={{ color: 'hsl(158,75%,45%)' }} />
+          )}
+          {invalid && !rightSlot && (
+            <AlertCircle size={16} className="animate-scale-in" style={{ color: 'hsl(0,75%,55%)' }} />
+          )}
+          {rightSlot}
+        </span>
+        {/* Animated bottom underline */}
+        <span
+          className="absolute left-3 right-3 bottom-0 h-[2px] rounded-full pointer-events-none transition-all duration-300"
+          style={{
+            background: invalid
+              ? 'linear-gradient(90deg, hsl(0,75%,60%), hsl(20,80%,60%))'
+              : 'linear-gradient(90deg, hsl(258,78%,60%), hsl(290,70%,60%), hsl(190,75%,55%))',
+            transform: focused ? 'scaleX(1)' : 'scaleX(0)',
+            transformOrigin: 'left',
+            opacity: focused ? 1 : 0,
+          }}
+        />
+      </div>
+      {invalid && errorMsg && (
+        <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold animate-fade-in" style={{ color: 'hsl(0,75%,50%)' }}>
+          <AlertCircle size={12} /> {errorMsg}
+        </div>
+      )}
     </div>
   );
 };
