@@ -26,6 +26,7 @@ const FacebookPixel = lazy(() => import("@/components/store/FacebookPixel"));
 const GoogleTracking = lazy(() => import("@/components/store/GoogleTracking"));
 const MarketingPixels = lazy(() => import("@/components/store/MarketingPixels"));
 const MobileBottomNav = lazy(() => import("@/components/store/MobileBottomNav"));
+const FloatingSupport = lazy(() => import("@/components/store/FloatingSupport").then(m => ({ default: m.FloatingSupport })));
 
 // All other pages — lazy loaded
 const Checkout              = lazy(() => import("./pages/Checkout"));
@@ -335,6 +336,7 @@ const AppContent = () => {
       {deferReady && (
         <Suspense fallback={null}>
           <MobileBottomNav />
+          {!location.pathname.startsWith('/ceo') && <FloatingSupport />}
         </Suspense>
       )}
     </>
