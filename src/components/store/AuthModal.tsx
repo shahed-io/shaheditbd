@@ -641,6 +641,8 @@ interface GlassFieldProps {
   value: string;
   onChange: (v: string) => void;
   onBlur?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   valid?: boolean;
   invalid?: boolean;
   errorMsg?: string;
