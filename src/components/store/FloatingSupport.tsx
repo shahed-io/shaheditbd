@@ -590,18 +590,19 @@ const FloatingSupport = () => {
           to   { opacity: 1; }
         }
 
-        /* Stacked white-glass pill buttons — matches site glassmorphism theme */
+        /* Stacked violet-tinted glass pill buttons — pops against white backgrounds */
         .fs-pill {
           position: relative;
           background:
-            linear-gradient(135deg, hsla(0,0%,100%,0.78) 0%, hsla(258,60%,98%,0.72) 100%);
-          border: 1px solid hsla(258,40%,80%,0.35);
-          backdrop-filter: blur(28px) saturate(180%);
-          -webkit-backdrop-filter: blur(28px) saturate(180%);
+            linear-gradient(135deg, hsla(258,80%,97%,0.92) 0%, hsla(271,75%,94%,0.88) 50%, hsla(220,80%,96%,0.92) 100%);
+          border: 1.5px solid hsla(258,70%,72%,0.55);
+          backdrop-filter: blur(40px) saturate(200%);
+          -webkit-backdrop-filter: blur(40px) saturate(200%);
           box-shadow:
-            0 14px 40px -12px hsla(258,40%,30%,0.18),
-            0 2px 6px -2px hsla(258,40%,30%,0.08),
-            inset 0 1px 0 hsla(0,0%,100%,0.9);
+            0 18px 44px -10px hsla(258,70%,40%,0.28),
+            0 6px 14px -4px hsla(258,60%,40%,0.15),
+            0 0 0 1px hsla(258,60%,75%,0.18),
+            inset 0 1px 0 hsla(0,0%,100%,0.85);
           transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
           overflow: hidden;
         }
