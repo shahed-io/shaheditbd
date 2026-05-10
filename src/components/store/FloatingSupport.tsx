@@ -555,12 +555,12 @@ const FloatingSupport = () => {
             className="fab-btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
             style={{
               background: (chatOpen || menuOpen)
-                ? 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))'
-                : 'linear-gradient(140deg, hsl(271,91%,68%) 0%, hsl(290,85%,62%) 35%, hsl(210,90%,58%) 70%, hsl(185,90%,55%) 100%)',
+                ? 'linear-gradient(135deg, hsla(0,0%,100%,0.96), hsla(var(--brand-h),60%,96%,0.92))'
+                : 'linear-gradient(140deg, hsl(var(--brand-h),var(--brand-s),68%) 0%, hsl(var(--brand-h),var(--brand-s),52%) 45%, hsl(var(--brand-h),85%,42%) 75%, hsl(var(--accent-h),var(--accent-s),58%) 100%)',
               boxShadow: (chatOpen || menuOpen)
-                ? '0 18px 44px -10px hsla(258,70%,40%,0.32), 0 0 26px -6px hsla(271,91%,60%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
-                : '0 0 0 1px hsla(0,0%,100%,0.25) inset, 0 1px 0 hsla(0,0%,100%,0.45) inset, 0 -3px 8px hsla(258,90%,30%,0.3) inset, 0 8px 24px hsla(271,91%,55%,0.45), 0 0 32px hsla(185,90%,55%,0.35), 0 16px 40px -8px hsla(258,80%,30%,0.45)',
-              border: (chatOpen || menuOpen) ? '1.5px solid hsla(258,70%,72%,0.6)' : 'none',
+                ? '0 18px 44px -10px hsla(var(--brand-h),70%,35%,0.32), 0 0 26px -6px hsla(var(--brand-h),85%,55%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
+                : '0 0 0 1px hsla(0,0%,100%,0.25) inset, 0 1px 0 hsla(0,0%,100%,0.5) inset, 0 -3px 8px hsla(var(--brand-h),90%,25%,0.35) inset, 0 8px 24px hsla(var(--brand-h),85%,50%,0.5), 0 0 32px hsla(var(--accent-h),var(--accent-s),55%,0.32), 0 16px 40px -8px hsla(var(--brand-h),80%,28%,0.5)',
+              border: (chatOpen || menuOpen) ? '1.5px solid hsla(var(--brand-h),70%,72%,0.6)' : 'none',
               backdropFilter: (chatOpen || menuOpen) ? 'blur(40px) saturate(200%)' : 'none',
             }}
             title="সাপোর্ট"
