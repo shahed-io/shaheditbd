@@ -855,7 +855,7 @@ const FloatingSupport = () => {
           100% { transform: scale(2.8); opacity: 0; }
         }
         .fab-pulse-inner {
-          background: radial-gradient(circle, hsla(271,91%,65%,0.35) 0%, transparent 70%);
+          background: radial-gradient(circle, hsla(var(--brand-h),85%,60%,0.38) 0%, transparent 70%);
           animation: fab-inner-pulse 2s ease-in-out infinite;
         }
         @keyframes fab-inner-pulse {
