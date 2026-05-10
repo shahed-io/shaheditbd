@@ -682,16 +682,17 @@ const FloatingSupport = () => {
           to { transform: rotate(360deg); }
         }
 
-        /* Side help-pill next to FAB — white glass */
+        /* Side help-pill next to FAB — violet-tinted glass */
         .fs-help-pill {
-          background: linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,60%,98%,0.78));
-          border: 1px solid hsla(258,40%,80%,0.4);
-          backdrop-filter: blur(28px) saturate(180%);
-          -webkit-backdrop-filter: blur(28px) saturate(180%);
+          background: linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9));
+          border: 1.5px solid hsla(258,70%,72%,0.55);
+          backdrop-filter: blur(40px) saturate(200%);
+          -webkit-backdrop-filter: blur(40px) saturate(200%);
           box-shadow:
-            0 14px 36px -10px hsla(258,40%,30%,0.2),
-            0 0 22px -6px hsla(271,91%,60%,0.25),
-            inset 0 1px 0 hsla(0,0%,100%,0.9);
+            0 18px 44px -10px hsla(258,70%,40%,0.28),
+            0 0 26px -6px hsla(271,91%,60%,0.35),
+            0 0 0 1px hsla(258,60%,75%,0.18),
+            inset 0 1px 0 hsla(0,0%,100%,0.85);
           animation: fsHelpIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
         .fs-help-pill .fs-help-title { color: hsl(226,40%,18%); }
