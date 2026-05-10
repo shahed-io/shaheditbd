@@ -583,19 +583,18 @@ const FloatingSupport = () => {
           to   { opacity: 1; }
         }
 
-        /* Stacked dark glass pill buttons — premium gradient border + glow */
+        /* Stacked white-glass pill buttons — matches site glassmorphism theme */
         .fs-pill {
           position: relative;
           background:
-            linear-gradient(135deg, rgba(28,28,40,0.78) 0%, rgba(14,14,22,0.82) 100%);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          backdrop-filter: blur(24px) saturate(180%);
-          -webkit-backdrop-filter: blur(24px) saturate(180%);
+            linear-gradient(135deg, hsla(0,0%,100%,0.78) 0%, hsla(258,60%,98%,0.72) 100%);
+          border: 1px solid hsla(258,40%,80%,0.35);
+          backdrop-filter: blur(28px) saturate(180%);
+          -webkit-backdrop-filter: blur(28px) saturate(180%);
           box-shadow:
-            0 14px 40px -12px rgba(0,0,0,0.7),
-            0 2px 6px -2px rgba(0,0,0,0.4),
-            0 0 0 0 var(--pill-glow, transparent),
-            inset 0 1px 0 rgba(255,255,255,0.10);
+            0 14px 40px -12px hsla(258,40%,30%,0.18),
+            0 2px 6px -2px hsla(258,40%,30%,0.08),
+            inset 0 1px 0 hsla(0,0%,100%,0.9);
           transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
           overflow: hidden;
         }
@@ -608,15 +607,15 @@ const FloatingSupport = () => {
           padding: 1px;
           background: linear-gradient(120deg,
             var(--pill-glow, hsla(271,91%,65%,0.55)),
-            hsla(0,0%,100%,0.25),
+            hsla(0,0%,100%,0.4),
             var(--pill-glow, hsla(185,90%,52%,0.45)),
-            hsla(0,0%,100%,0.15),
+            hsla(0,0%,100%,0.3),
             var(--pill-glow, hsla(271,91%,65%,0.55)));
           background-size: 280% 280%;
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
-          opacity: 0.65;
+          opacity: 0.55;
           animation: fsBorderShift 5s linear infinite;
           pointer-events: none;
         }
@@ -626,7 +625,7 @@ const FloatingSupport = () => {
           position: absolute;
           top: 0; left: -60%;
           width: 50%; height: 100%;
-          background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+          background: linear-gradient(110deg, transparent 0%, hsla(0,0%,100%,0.55) 50%, transparent 100%);
           transform: skewX(-20deg);
           transition: left 0.7s ease;
           pointer-events: none;
@@ -638,20 +637,26 @@ const FloatingSupport = () => {
         }
         .fs-pill:hover {
           transform: translateX(-4px) translateY(-2px);
-          border-color: rgba(255, 255, 255, 0.20);
+          border-color: hsla(258,60%,65%,0.5);
           box-shadow:
-            0 24px 56px -12px rgba(0,0,0,0.8),
-            0 0 28px -4px var(--pill-glow, rgba(255,255,255,0.15)),
-            0 0 0 1px rgba(255,255,255,0.06),
-            inset 0 1px 0 rgba(255,255,255,0.14);
+            0 24px 56px -12px hsla(258,40%,30%,0.28),
+            0 0 28px -4px var(--pill-glow, hsla(258,60%,60%,0.2)),
+            inset 0 1px 0 hsla(0,0%,100%,1);
         }
         .fs-pill:hover::before { opacity: 1; }
         .fs-pill:active { transform: translateX(-2px) scale(0.98); }
+
+        /* Text colors for white glass */
+        .fs-pill .fs-pill-title { color: hsl(226,40%,18%); }
+        .fs-pill .fs-pill-subtitle { color: hsl(226,15%,45%); }
+
         .fs-pill-arrow {
           font-size: 16px;
+          color: hsl(226,15%,55%);
           transform: translateX(-2px);
+          transition: transform 0.3s ease, color 0.3s ease;
         }
-        .fs-pill:hover .fs-pill-arrow { transform: translateX(2px); }
+        .fs-pill:hover .fs-pill-arrow { transform: translateX(2px); color: hsl(258,78%,55%); }
 
         /* Icon container with conic-gradient halo ring */
         .fs-icon-wrap { display: inline-flex; padding: 2px; }
@@ -659,7 +664,7 @@ const FloatingSupport = () => {
           position: absolute;
           inset: -2px;
           border-radius: 9999px;
-          opacity: 0.55;
+          opacity: 0.5;
           filter: blur(2px);
           animation: fsIconSpin 6s linear infinite;
           pointer-events: none;
@@ -669,18 +674,20 @@ const FloatingSupport = () => {
           to { transform: rotate(360deg); }
         }
 
-        /* Side help-pill next to FAB */
+        /* Side help-pill next to FAB — white glass */
         .fs-help-pill {
-          background: linear-gradient(135deg, rgba(28,28,40,0.82), rgba(14,14,22,0.86));
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          backdrop-filter: blur(24px) saturate(180%);
-          -webkit-backdrop-filter: blur(24px) saturate(180%);
+          background: linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,60%,98%,0.78));
+          border: 1px solid hsla(258,40%,80%,0.4);
+          backdrop-filter: blur(28px) saturate(180%);
+          -webkit-backdrop-filter: blur(28px) saturate(180%);
           box-shadow:
-            0 14px 36px -10px rgba(0,0,0,0.65),
-            0 0 22px -6px hsla(271,91%,60%,0.35),
-            inset 0 1px 0 rgba(255,255,255,0.10);
+            0 14px 36px -10px hsla(258,40%,30%,0.2),
+            0 0 22px -6px hsla(271,91%,60%,0.25),
+            inset 0 1px 0 hsla(0,0%,100%,0.9);
           animation: fsHelpIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
+        .fs-help-pill .fs-help-title { color: hsl(226,40%,18%); }
+        .fs-help-pill .fs-help-sub { color: hsl(226,15%,45%); }
         @keyframes fsHelpIn {
           from { opacity: 0; transform: translateX(20px) scale(0.85); }
           to   { opacity: 1; transform: translateX(0) scale(1); }
