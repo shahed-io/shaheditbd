@@ -507,7 +507,7 @@ const FloatingSupport = () => {
               className="fs-pill-wrap w-full flex justify-end"
               style={{ animationDelay: '0s' }}
             >
-              <p className="text-[12px] font-semibold px-3 py-1 rounded-full" style={{ color: 'hsl(226,40%,25%)', background: 'hsla(0,0%,100%,0.7)', backdropFilter: 'blur(12px)', border: '1px solid hsla(258,40%,80%,0.3)' }}>
+              <p className="text-[12px] font-semibold px-3 py-1.5 rounded-full" style={{ color: 'hsl(258,78%,32%)', background: 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))', backdropFilter: 'blur(40px) saturate(200%)', border: '1.5px solid hsla(258,70%,72%,0.55)', boxShadow: '0 8px 20px -6px hsla(258,70%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.85)' }}>
                 {config.fab_label}
               </p>
             </div>
