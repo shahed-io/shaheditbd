@@ -682,18 +682,21 @@ const FloatingSupport = () => {
           to { transform: rotate(360deg); }
         }
 
-        /* Side help-pill next to FAB — premium violet-tinted glass with shine */
+        /* Side help-pill next to FAB — brand-themed gradient glass */
         .fs-help-pill {
           position: relative;
-          background: linear-gradient(135deg, hsla(258,80%,98%,0.95), hsla(271,75%,94%,0.92) 50%, hsla(220,80%,96%,0.95));
-          border: 1.5px solid hsla(258,70%,72%,0.55);
+          background: linear-gradient(135deg,
+            hsla(var(--brand-h),90%,60%,0.95),
+            hsla(var(--brand-h),85%,52%,0.92) 55%,
+            hsla(var(--accent-h),var(--accent-s),58%,0.95));
+          border: 1.5px solid hsla(var(--brand-h),90%,75%,0.55);
           backdrop-filter: blur(40px) saturate(200%);
           -webkit-backdrop-filter: blur(40px) saturate(200%);
           box-shadow:
-            0 18px 44px -10px hsla(258,70%,40%,0.3),
-            0 0 26px -6px hsla(271,91%,60%,0.4),
-            0 0 0 1px hsla(258,60%,75%,0.2),
-            inset 0 1px 0 hsla(0,0%,100%,0.9);
+            0 18px 44px -10px hsla(var(--brand-h),70%,35%,0.45),
+            0 0 26px -6px hsla(var(--brand-h),85%,55%,0.5),
+            0 0 0 1px hsla(var(--brand-h),60%,75%,0.25),
+            inset 0 1px 0 hsla(0,0%,100%,0.45);
           animation: fsHelpIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both, fsHelpBob 4s ease-in-out 0.6s infinite;
           overflow: hidden;
           transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
@@ -706,16 +709,16 @@ const FloatingSupport = () => {
           border-radius: 9999px;
           padding: 1.5px;
           background: linear-gradient(120deg,
-            hsla(271,91%,65%,0.65),
-            hsla(0,0%,100%,0.5),
-            hsla(185,90%,55%,0.55),
-            hsla(320,90%,65%,0.5),
-            hsla(271,91%,65%,0.65));
+            hsla(var(--brand-h),95%,80%,0.75),
+            hsla(0,0%,100%,0.55),
+            hsla(var(--accent-h),var(--accent-s),70%,0.6),
+            hsla(var(--brand-h),95%,75%,0.55),
+            hsla(var(--brand-h),95%,80%,0.75));
           background-size: 280% 280%;
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
-          opacity: 0.7;
+          opacity: 0.8;
           animation: fsBorderShift 5s linear infinite;
           pointer-events: none;
         }
@@ -723,7 +726,7 @@ const FloatingSupport = () => {
           position: absolute;
           top: 0; left: -60%;
           width: 50%; height: 100%;
-          background: linear-gradient(110deg, transparent 0%, hsla(0,0%,100%,0.6) 50%, transparent 100%);
+          background: linear-gradient(110deg, transparent 0%, hsla(0,0%,100%,0.5) 50%, transparent 100%);
           transform: skewX(-20deg);
           pointer-events: none;
           animation: fsHelpShine 4.5s ease-in-out 1.2s infinite;
@@ -736,22 +739,23 @@ const FloatingSupport = () => {
         .fs-help-pill:hover {
           transform: translateX(-3px) translateY(-2px) scale(1.03);
           box-shadow:
-            0 24px 56px -12px hsla(258,40%,30%,0.32),
-            0 0 32px -4px hsla(271,91%,60%,0.5),
-            inset 0 1px 0 hsla(0,0%,100%,1);
+            0 24px 56px -12px hsla(var(--brand-h),70%,30%,0.5),
+            0 0 32px -4px hsla(var(--brand-h),90%,55%,0.6),
+            inset 0 1px 0 hsla(0,0%,100%,0.6);
         }
         .fs-help-pill:active { transform: translateX(-1px) scale(0.97); }
         .fs-help-pill--active {
-          border-color: hsla(258,70%,60%,0.7);
+          border-color: hsla(var(--brand-h),85%,70%,0.8);
           box-shadow:
-            0 24px 56px -12px hsla(258,60%,40%,0.4),
-            0 0 32px -4px hsla(271,91%,60%,0.55),
-            inset 0 1px 0 hsla(0,0%,100%,1);
+            0 24px 56px -12px hsla(var(--brand-h),70%,30%,0.55),
+            0 0 32px -4px hsla(var(--brand-h),90%,55%,0.65),
+            inset 0 1px 0 hsla(0,0%,100%,0.6);
         }
         .fs-help-pill .fs-help-title {
-          color: hsl(220,30%,18%);
+          color: hsl(0,0%,100%);
+          text-shadow: 0 1px 2px hsla(var(--brand-h),70%,20%,0.45);
         }
-        .fs-help-pill .fs-help-sub { color: hsl(226,18%,42%); }
+        .fs-help-pill .fs-help-sub { color: hsla(0,0%,100%,0.88); }
         @keyframes fsHelpIn {
           from { opacity: 0; transform: translateX(20px) scale(0.85); }
           to   { opacity: 1; transform: translateX(0) scale(1); }
