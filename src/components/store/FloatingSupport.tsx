@@ -894,16 +894,16 @@ const FloatingSupport = () => {
           50%       { transform: translateY(-3px); }
         }
 
-        /* Soft aurora halo behind FAB */
+        /* Soft pastel halo behind FAB */
         .fab-halo {
           position: absolute;
-          width: 110px; height: 110px;
+          width: 96px; height: 96px;
           border-radius: 9999px;
           background: radial-gradient(circle,
-            hsla(271,91%,65%,0.35) 0%,
-            hsla(185,90%,55%,0.22) 40%,
-            transparent 70%);
-          filter: blur(8px);
+            hsla(258,90%,85%,0.5) 0%,
+            hsla(220,90%,90%,0.3) 45%,
+            transparent 72%);
+          filter: blur(6px);
           animation: fabHaloPulse 3.5s ease-in-out infinite;
           pointer-events: none;
         }
