@@ -62,10 +62,20 @@ const FloatingSupport = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [helpDismissed, setHelpDismissed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('fs_help_dismissed') === '1';
+  });
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const configLoaded = useRef(false);
   const sessionIdRef = useRef(crypto.randomUUID());
+
+  const dismissHelp = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setHelpDismissed(true);
+    try { localStorage.setItem('fs_help_dismissed', '1'); } catch {}
+  };
 
   // Load settings once
   useEffect(() => {
@@ -525,15 +535,16 @@ const FloatingSupport = () => {
         </>
       )}
 
-      {/* ── Main FAB + side label ── */}
+      {/* ── Main FAB + help pill stacked above ── */}
       <div
-        className="fixed right-4 sm:right-6 z-50 flex items-center gap-3 bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+16px)]"
+        className="fixed right-4 sm:right-6 z-50 flex flex-col items-end gap-2.5 bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+16px)]"
       >
-        {/* "সাহায্য চাই?" pill — always visible (except when chat panel is open) */}
-        {!chatOpen && (
-          <button
+        {/* "সাহায্য চাই?" pill — sits ABOVE the FAB, dismissible */}
+        {!chatOpen && !helpDismissed && (
+          <div
             onClick={() => setMenuOpen(o => !o)}
-            className={`fs-help-pill group flex items-center gap-2.5 pl-3 pr-4 py-2.5 rounded-full cursor-pointer ${menuOpen ? 'fs-help-pill--active' : ''}`}
+            className={`fs-help-pill group relative flex items-center gap-2.5 pl-3 pr-2 py-2 rounded-full cursor-pointer ${menuOpen ? 'fs-help-pill--active' : ''}`}
+            role="button"
             aria-label="সাহায্য চাই"
           >
             <span className="fs-help-dot relative flex w-2.5 h-2.5 flex-shrink-0">
@@ -544,19 +555,27 @@ const FloatingSupport = () => {
               <p className="fs-help-title text-[13px] font-extrabold tracking-tight">সাহায্য চাই?</p>
               <p className="fs-help-sub text-[10px] font-medium">২৪/৭ লাইভ সাপোর্ট</p>
             </div>
+            <button
+              onClick={dismissHelp}
+              className="fs-help-close ml-1 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
+              aria-label="বন্ধ করুন"
+              title="বন্ধ করুন"
+            >
+              <X size={13} strokeWidth={2.5} />
+            </button>
             <span className="fs-help-shine" aria-hidden />
-          </button>
+          </div>
         )}
 
         <div className="relative flex items-center justify-center fab-float">
           {!chatOpen && !menuOpen && (
             <>
+              <span className="fab-soft-ring fab-soft-ring-1" />
+              <span className="fab-soft-ring fab-soft-ring-2" />
+              <span className="fab-soft-ring fab-soft-ring-3" />
               <span className="fab-halo" />
               <span className="fab-ring fab-ring-1" />
               <span className="fab-ring fab-ring-2" />
-              <span className="fab-ring fab-ring-3" />
-              <span className="fab-comet" />
-              <span className="fab-comet fab-comet-2" />
             </>
           )}
 
@@ -569,25 +588,19 @@ const FloatingSupport = () => {
             style={{
               background: (chatOpen || menuOpen)
                 ? 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))'
-                : 'linear-gradient(140deg, hsl(271,91%,68%) 0%, hsl(290,85%,62%) 35%, hsl(210,90%,58%) 70%, hsl(185,90%,55%) 100%)',
+                : 'linear-gradient(145deg, hsl(258,85%,72%) 0%, hsl(258,78%,62%) 55%, hsl(255,72%,55%) 100%)',
               boxShadow: (chatOpen || menuOpen)
                 ? '0 18px 44px -10px hsla(258,70%,40%,0.32), 0 0 26px -6px hsla(271,91%,60%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
-                : '0 0 0 1px hsla(0,0%,100%,0.25) inset, 0 1px 0 hsla(0,0%,100%,0.45) inset, 0 -3px 8px hsla(258,90%,30%,0.3) inset, 0 8px 24px hsla(271,91%,55%,0.45), 0 0 32px hsla(185,90%,55%,0.35), 0 16px 40px -8px hsla(258,80%,30%,0.45)',
+                : 'inset 0 1.5px 0 hsla(0,0%,100%,0.55), inset 0 -3px 8px hsla(258,80%,30%,0.28), 0 10px 24px -4px hsla(258,85%,55%,0.45), 0 4px 12px -2px hsla(258,80%,40%,0.3)',
               border: (chatOpen || menuOpen) ? '1.5px solid hsla(258,70%,72%,0.6)' : 'none',
               backdropFilter: (chatOpen || menuOpen) ? 'blur(40px) saturate(200%)' : 'none',
             }}
             title="সাপোর্ট"
           >
-            {/* Conic-gradient rotating ring around FAB */}
-            {!chatOpen && !menuOpen && <span className="fab-conic-ring" />}
-            {/* Glossy top highlight */}
             {!chatOpen && !menuOpen && <span className="fab-gloss" />}
-            {!chatOpen && !menuOpen && (
-              <span className="absolute inset-0 rounded-full fab-pulse-inner" />
-            )}
             {(chatOpen || menuOpen)
               ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(258,78%,45%)' }} />
-              : <MessageCircle size={24} className="text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]" />
+              : <MessageCircle size={22} className="text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]" />
             }
           </button>
         </div>
@@ -881,16 +894,16 @@ const FloatingSupport = () => {
           50%       { transform: translateY(-3px); }
         }
 
-        /* Soft aurora halo behind FAB */
+        /* Soft pastel halo behind FAB */
         .fab-halo {
           position: absolute;
-          width: 110px; height: 110px;
+          width: 96px; height: 96px;
           border-radius: 9999px;
           background: radial-gradient(circle,
-            hsla(271,91%,65%,0.35) 0%,
-            hsla(185,90%,55%,0.22) 40%,
-            transparent 70%);
-          filter: blur(8px);
+            hsla(258,90%,85%,0.5) 0%,
+            hsla(220,90%,90%,0.3) 45%,
+            transparent 72%);
+          filter: blur(6px);
           animation: fabHaloPulse 3.5s ease-in-out infinite;
           pointer-events: none;
         }
@@ -941,12 +954,30 @@ const FloatingSupport = () => {
           animation: fab-ring-out 2.4s cubic-bezier(0.2,0.8,0.4,1) infinite;
           pointer-events: none;
         }
-        .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; }
-        .fab-ring-2 { width: 56px; height: 56px; animation-delay: 0.7s; border-color: hsla(185,90%,52%,0.4); }
-        .fab-ring-3 { width: 56px; height: 56px; animation-delay: 1.4s; border-color: hsla(320,90%,62%,0.35); }
+        .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; border-color: hsla(258,80%,72%,0.45); }
+        .fab-ring-2 { width: 56px; height: 56px; animation-delay: 1.2s; border-color: hsla(220,85%,75%,0.4); }
         @keyframes fab-ring-out {
           0%   { transform: scale(1);   opacity: 0.9; }
-          100% { transform: scale(2.8); opacity: 0; }
+          100% { transform: scale(2.4); opacity: 0; }
+        }
+
+        /* Static soft pastel concentric rings (screenshot-1 style) */
+        .fab-soft-ring {
+          position: absolute;
+          border-radius: 9999px;
+          pointer-events: none;
+        }
+        .fab-soft-ring-1 {
+          width: 78px; height: 78px;
+          background: radial-gradient(circle, hsla(258,90%,90%,0.55) 0%, hsla(258,90%,92%,0) 75%);
+        }
+        .fab-soft-ring-2 {
+          width: 100px; height: 100px;
+          background: radial-gradient(circle, hsla(220,95%,92%,0.45) 0%, hsla(220,95%,94%,0) 72%);
+        }
+        .fab-soft-ring-3 {
+          width: 124px; height: 124px;
+          background: radial-gradient(circle, hsla(195,95%,93%,0.38) 0%, hsla(195,95%,95%,0) 70%);
         }
         .fab-pulse-inner {
           background: radial-gradient(circle, hsla(271,91%,65%,0.35) 0%, transparent 70%);
@@ -956,6 +987,21 @@ const FloatingSupport = () => {
           0%, 100% { opacity: 0.4; transform: scale(0.8); }
           50%       { opacity: 1;   transform: scale(1.1); }
         }
+
+        /* Close (X) button on the help pill */
+        .fs-help-close {
+          background: hsla(258,40%,92%,0.65);
+          color: hsl(258,40%,38%);
+          border: 1px solid hsla(258,50%,75%,0.5);
+          transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+        .fs-help-close:hover {
+          background: hsla(258,80%,55%,0.92);
+          color: #fff;
+          transform: scale(1.08);
+          border-color: hsla(258,80%,55%,0.92);
+        }
+        .fs-help-close:active { transform: scale(0.92); }
         .fab-comet {
           position: absolute;
           width: 8px;
