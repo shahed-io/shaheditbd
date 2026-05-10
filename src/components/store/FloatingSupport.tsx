@@ -814,6 +814,12 @@ const FloatingSupport = () => {
           top: calc(50% - 4px);
           left: calc(50% - 4px);
         }
+        .fab-comet-2 {
+          background: hsl(320,90%,68%);
+          box-shadow: 0 0 10px hsl(320,90%,68%), 0 0 20px hsl(271,91%,65%);
+          animation-duration: 4.5s;
+          animation-direction: reverse;
+        }
         @keyframes fab-orbit {
           0%   { transform: rotate(0deg) translateX(36px); }
           100% { transform: rotate(360deg) translateX(36px); }
