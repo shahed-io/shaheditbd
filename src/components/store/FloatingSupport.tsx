@@ -793,8 +793,8 @@ const FloatingSupport = () => {
           width: 110px; height: 110px;
           border-radius: 9999px;
           background: radial-gradient(circle,
-            hsla(271,91%,65%,0.35) 0%,
-            hsla(185,90%,55%,0.22) 40%,
+            hsla(var(--brand-h),85%,60%,0.38) 0%,
+            hsla(var(--accent-h),var(--accent-s),58%,0.22) 45%,
             transparent 70%);
           filter: blur(8px);
           animation: fabHaloPulse 3.5s ease-in-out infinite;
