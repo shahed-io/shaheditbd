@@ -554,14 +554,13 @@ const FloatingSupport = () => {
             }}
             className="fab-btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
             style={{
-              background: (chatOpen || menuOpen)
-                ? 'linear-gradient(135deg, hsla(0,0%,100%,0.96), hsla(var(--brand-h),60%,96%,0.92))'
-                : 'linear-gradient(140deg, hsl(var(--brand-h),var(--brand-s),68%) 0%, hsl(var(--brand-h),var(--brand-s),52%) 45%, hsl(var(--brand-h),85%,42%) 75%, hsl(var(--accent-h),var(--accent-s),58%) 100%)',
+              background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(var(--brand-h),60%,97%,0.78) 55%, hsla(var(--accent-h),var(--accent-s),96%,0.85))',
               boxShadow: (chatOpen || menuOpen)
-                ? '0 18px 44px -10px hsla(var(--brand-h),70%,35%,0.32), 0 0 26px -6px hsla(var(--brand-h),85%,55%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
-                : '0 0 0 1px hsla(0,0%,100%,0.25) inset, 0 1px 0 hsla(0,0%,100%,0.5) inset, 0 -3px 8px hsla(var(--brand-h),90%,25%,0.35) inset, 0 8px 24px hsla(var(--brand-h),85%,50%,0.5), 0 0 32px hsla(var(--accent-h),var(--accent-s),55%,0.32), 0 16px 40px -8px hsla(var(--brand-h),80%,28%,0.5)',
-              border: (chatOpen || menuOpen) ? '1.5px solid hsla(var(--brand-h),70%,72%,0.6)' : 'none',
-              backdropFilter: (chatOpen || menuOpen) ? 'blur(40px) saturate(200%)' : 'none',
+                ? '0 14px 36px -10px hsla(var(--brand-h),55%,40%,0.25), 0 0 22px -6px hsla(var(--brand-h),85%,70%,0.3), inset 0 1px 0 hsla(0,0%,100%,1)'
+                : '0 12px 32px -10px hsla(var(--brand-h),50%,40%,0.2), 0 2px 8px -2px hsla(var(--brand-h),40%,30%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.95), inset 0 -1px 0 hsla(var(--brand-h),40%,90%,0.4)',
+              border: '1px solid hsla(0,0%,100%,0.7)',
+              backdropFilter: 'blur(28px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(28px) saturate(180%)',
             }}
             title="সাপোর্ট"
           >
@@ -574,7 +573,7 @@ const FloatingSupport = () => {
             )}
             {(chatOpen || menuOpen)
               ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(var(--brand-h),78%,42%)' }} />
-              : <MessageCircle size={24} className="text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]" />
+              : <MessageCircle size={24} className="relative z-10" style={{ color: 'hsl(var(--brand-h),70%,45%)' }} />
             }
           </button>
         </div>
