@@ -535,13 +535,15 @@ const FloatingSupport = () => {
           </div>
         )}
 
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center fab-float">
           {!chatOpen && !menuOpen && (
             <>
+              <span className="fab-halo" />
               <span className="fab-ring fab-ring-1" />
               <span className="fab-ring fab-ring-2" />
               <span className="fab-ring fab-ring-3" />
               <span className="fab-comet" />
+              <span className="fab-comet fab-comet-2" />
             </>
           )}
 
@@ -550,25 +552,29 @@ const FloatingSupport = () => {
               if (chatOpen) setChatOpen(false);
               else setMenuOpen(o => !o);
             }}
-            className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
+            className="fab-btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
             style={{
               background: (chatOpen || menuOpen)
-                ? 'linear-gradient(135deg, hsla(0,0%,100%,0.92), hsla(258,60%,98%,0.88))'
-                : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+                ? 'linear-gradient(135deg, hsla(0,0%,100%,0.94), hsla(258,60%,98%,0.9))'
+                : 'linear-gradient(140deg, hsl(271,91%,68%) 0%, hsl(290,85%,62%) 35%, hsl(210,90%,58%) 70%, hsl(185,90%,55%) 100%)',
               boxShadow: (chatOpen || menuOpen)
-                ? '0 14px 36px -10px hsla(258,40%,30%,0.28), 0 0 22px -6px hsla(271,91%,60%,0.3), inset 0 1px 0 hsla(0,0%,100%,1)'
-                : '0 0 24px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3), 0 8px 24px hsla(215,40%,4%,0.5)',
+                ? '0 14px 36px -10px hsla(258,40%,30%,0.28), 0 0 22px -6px hsla(271,91%,60%,0.35), inset 0 1px 0 hsla(0,0%,100%,1), inset 0 -2px 6px hsla(258,40%,80%,0.3)'
+                : '0 0 0 1px hsla(0,0%,100%,0.25) inset, 0 1px 0 hsla(0,0%,100%,0.45) inset, 0 -3px 8px hsla(258,90%,30%,0.3) inset, 0 8px 24px hsla(271,91%,55%,0.45), 0 0 32px hsla(185,90%,55%,0.35), 0 16px 40px -8px hsla(258,80%,30%,0.45)',
               border: (chatOpen || menuOpen) ? '1px solid hsla(258,40%,80%,0.4)' : 'none',
               backdropFilter: (chatOpen || menuOpen) ? 'blur(28px) saturate(180%)' : 'none',
             }}
             title="সাপোর্ট"
           >
+            {/* Conic-gradient rotating ring around FAB */}
+            {!chatOpen && !menuOpen && <span className="fab-conic-ring" />}
+            {/* Glossy top highlight */}
+            {!chatOpen && !menuOpen && <span className="fab-gloss" />}
             {!chatOpen && !menuOpen && (
               <span className="absolute inset-0 rounded-full fab-pulse-inner" />
             )}
             {(chatOpen || menuOpen)
               ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(258,78%,45%)' }} />
-              : <MessageCircle size={24} className="text-white relative z-10" />
+              : <MessageCircle size={24} className="text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]" />
             }
           </button>
         </div>
