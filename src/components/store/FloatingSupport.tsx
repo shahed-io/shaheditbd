@@ -954,12 +954,30 @@ const FloatingSupport = () => {
           animation: fab-ring-out 2.4s cubic-bezier(0.2,0.8,0.4,1) infinite;
           pointer-events: none;
         }
-        .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; }
-        .fab-ring-2 { width: 56px; height: 56px; animation-delay: 0.7s; border-color: hsla(185,90%,52%,0.4); }
-        .fab-ring-3 { width: 56px; height: 56px; animation-delay: 1.4s; border-color: hsla(320,90%,62%,0.35); }
+        .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; border-color: hsla(258,80%,72%,0.45); }
+        .fab-ring-2 { width: 56px; height: 56px; animation-delay: 1.2s; border-color: hsla(220,85%,75%,0.4); }
         @keyframes fab-ring-out {
           0%   { transform: scale(1);   opacity: 0.9; }
-          100% { transform: scale(2.8); opacity: 0; }
+          100% { transform: scale(2.4); opacity: 0; }
+        }
+
+        /* Static soft pastel concentric rings (screenshot-1 style) */
+        .fab-soft-ring {
+          position: absolute;
+          border-radius: 9999px;
+          pointer-events: none;
+        }
+        .fab-soft-ring-1 {
+          width: 78px; height: 78px;
+          background: radial-gradient(circle, hsla(258,90%,90%,0.55) 0%, hsla(258,90%,92%,0) 75%);
+        }
+        .fab-soft-ring-2 {
+          width: 100px; height: 100px;
+          background: radial-gradient(circle, hsla(220,95%,92%,0.45) 0%, hsla(220,95%,94%,0) 72%);
+        }
+        .fab-soft-ring-3 {
+          width: 124px; height: 124px;
+          background: radial-gradient(circle, hsla(195,95%,93%,0.38) 0%, hsla(195,95%,95%,0) 70%);
         }
         .fab-pulse-inner {
           background: radial-gradient(circle, hsla(271,91%,65%,0.35) 0%, transparent 70%);
@@ -969,6 +987,21 @@ const FloatingSupport = () => {
           0%, 100% { opacity: 0.4; transform: scale(0.8); }
           50%       { opacity: 1;   transform: scale(1.1); }
         }
+
+        /* Close (X) button on the help pill */
+        .fs-help-close {
+          background: hsla(258,40%,92%,0.65);
+          color: hsl(258,40%,38%);
+          border: 1px solid hsla(258,50%,75%,0.5);
+          transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+        .fs-help-close:hover {
+          background: hsla(258,80%,55%,0.92);
+          color: #fff;
+          transform: scale(1.08);
+          border-color: hsla(258,80%,55%,0.92);
+        }
+        .fs-help-close:active { transform: scale(0.92); }
         .fab-comet {
           position: absolute;
           width: 8px;
