@@ -529,8 +529,8 @@ const FloatingSupport = () => {
               <span className="relative inline-flex w-2 h-2 rounded-full bg-green-400" />
             </span>
             <div className="leading-tight">
-              <p className="text-[13px] font-bold text-white">সাহায্য চাই?</p>
-              <p className="text-[10px] text-white/60">২৪/৭ লাইভ সাপোর্ট</p>
+              <p className="fs-help-title text-[13px] font-bold">সাহায্য চাই?</p>
+              <p className="fs-help-sub text-[10px]">২৪/৭ লাইভ সাপোর্ট</p>
             </div>
           </div>
         )}
