@@ -507,7 +507,7 @@ const FloatingSupport = () => {
               className="fs-pill-wrap w-full flex justify-end"
               style={{ animationDelay: '0s' }}
             >
-              <p className="text-[12px] font-semibold px-3 py-1 rounded-full" style={{ color: 'hsl(226,40%,25%)', background: 'hsla(0,0%,100%,0.7)', backdropFilter: 'blur(12px)', border: '1px solid hsla(258,40%,80%,0.3)' }}>
+              <p className="text-[12px] font-semibold px-3 py-1.5 rounded-full" style={{ color: 'hsl(258,78%,32%)', background: 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))', backdropFilter: 'blur(40px) saturate(200%)', border: '1.5px solid hsla(258,70%,72%,0.55)', boxShadow: '0 8px 20px -6px hsla(258,70%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.85)' }}>
                 {config.fab_label}
               </p>
             </div>
@@ -555,13 +555,13 @@ const FloatingSupport = () => {
             className="fab-btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
             style={{
               background: (chatOpen || menuOpen)
-                ? 'linear-gradient(135deg, hsla(0,0%,100%,0.94), hsla(258,60%,98%,0.9))'
+                ? 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))'
                 : 'linear-gradient(140deg, hsl(271,91%,68%) 0%, hsl(290,85%,62%) 35%, hsl(210,90%,58%) 70%, hsl(185,90%,55%) 100%)',
               boxShadow: (chatOpen || menuOpen)
-                ? '0 14px 36px -10px hsla(258,40%,30%,0.28), 0 0 22px -6px hsla(271,91%,60%,0.35), inset 0 1px 0 hsla(0,0%,100%,1), inset 0 -2px 6px hsla(258,40%,80%,0.3)'
+                ? '0 18px 44px -10px hsla(258,70%,40%,0.32), 0 0 26px -6px hsla(271,91%,60%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
                 : '0 0 0 1px hsla(0,0%,100%,0.25) inset, 0 1px 0 hsla(0,0%,100%,0.45) inset, 0 -3px 8px hsla(258,90%,30%,0.3) inset, 0 8px 24px hsla(271,91%,55%,0.45), 0 0 32px hsla(185,90%,55%,0.35), 0 16px 40px -8px hsla(258,80%,30%,0.45)',
-              border: (chatOpen || menuOpen) ? '1px solid hsla(258,40%,80%,0.4)' : 'none',
-              backdropFilter: (chatOpen || menuOpen) ? 'blur(28px) saturate(180%)' : 'none',
+              border: (chatOpen || menuOpen) ? '1.5px solid hsla(258,70%,72%,0.6)' : 'none',
+              backdropFilter: (chatOpen || menuOpen) ? 'blur(40px) saturate(200%)' : 'none',
             }}
             title="সাপোর্ট"
           >
@@ -590,18 +590,19 @@ const FloatingSupport = () => {
           to   { opacity: 1; }
         }
 
-        /* Stacked white-glass pill buttons — matches site glassmorphism theme */
+        /* Stacked violet-tinted glass pill buttons — pops against white backgrounds */
         .fs-pill {
           position: relative;
           background:
-            linear-gradient(135deg, hsla(0,0%,100%,0.78) 0%, hsla(258,60%,98%,0.72) 100%);
-          border: 1px solid hsla(258,40%,80%,0.35);
-          backdrop-filter: blur(28px) saturate(180%);
-          -webkit-backdrop-filter: blur(28px) saturate(180%);
+            linear-gradient(135deg, hsla(258,80%,97%,0.92) 0%, hsla(271,75%,94%,0.88) 50%, hsla(220,80%,96%,0.92) 100%);
+          border: 1.5px solid hsla(258,70%,72%,0.55);
+          backdrop-filter: blur(40px) saturate(200%);
+          -webkit-backdrop-filter: blur(40px) saturate(200%);
           box-shadow:
-            0 14px 40px -12px hsla(258,40%,30%,0.18),
-            0 2px 6px -2px hsla(258,40%,30%,0.08),
-            inset 0 1px 0 hsla(0,0%,100%,0.9);
+            0 18px 44px -10px hsla(258,70%,40%,0.28),
+            0 6px 14px -4px hsla(258,60%,40%,0.15),
+            0 0 0 1px hsla(258,60%,75%,0.18),
+            inset 0 1px 0 hsla(0,0%,100%,0.85);
           transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
           overflow: hidden;
         }
@@ -681,16 +682,17 @@ const FloatingSupport = () => {
           to { transform: rotate(360deg); }
         }
 
-        /* Side help-pill next to FAB — white glass */
+        /* Side help-pill next to FAB — violet-tinted glass */
         .fs-help-pill {
-          background: linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,60%,98%,0.78));
-          border: 1px solid hsla(258,40%,80%,0.4);
-          backdrop-filter: blur(28px) saturate(180%);
-          -webkit-backdrop-filter: blur(28px) saturate(180%);
+          background: linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9));
+          border: 1.5px solid hsla(258,70%,72%,0.55);
+          backdrop-filter: blur(40px) saturate(200%);
+          -webkit-backdrop-filter: blur(40px) saturate(200%);
           box-shadow:
-            0 14px 36px -10px hsla(258,40%,30%,0.2),
-            0 0 22px -6px hsla(271,91%,60%,0.25),
-            inset 0 1px 0 hsla(0,0%,100%,0.9);
+            0 18px 44px -10px hsla(258,70%,40%,0.28),
+            0 0 26px -6px hsla(271,91%,60%,0.35),
+            0 0 0 1px hsla(258,60%,75%,0.18),
+            inset 0 1px 0 hsla(0,0%,100%,0.85);
           animation: fsHelpIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
         .fs-help-pill .fs-help-title { color: hsl(226,40%,18%); }
