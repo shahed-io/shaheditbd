@@ -843,13 +843,13 @@ const FloatingSupport = () => {
         .fab-ring {
           position: absolute;
           border-radius: 9999px;
-          border: 1.5px solid hsla(271,91%,65%,0.5);
+          border: 1.5px solid hsla(var(--brand-h),85%,60%,0.55);
           animation: fab-ring-out 2.4s cubic-bezier(0.2,0.8,0.4,1) infinite;
           pointer-events: none;
         }
         .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; }
-        .fab-ring-2 { width: 56px; height: 56px; animation-delay: 0.7s; border-color: hsla(185,90%,52%,0.4); }
-        .fab-ring-3 { width: 56px; height: 56px; animation-delay: 1.4s; border-color: hsla(320,90%,62%,0.35); }
+        .fab-ring-2 { width: 56px; height: 56px; animation-delay: 0.7s; border-color: hsla(var(--accent-h),var(--accent-s),55%,0.45); }
+        .fab-ring-3 { width: 56px; height: 56px; animation-delay: 1.4s; border-color: hsla(var(--brand-h),75%,55%,0.35); }
         @keyframes fab-ring-out {
           0%   { transform: scale(1);   opacity: 0.9; }
           100% { transform: scale(2.8); opacity: 0; }
