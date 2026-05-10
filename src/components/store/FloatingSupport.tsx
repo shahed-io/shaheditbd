@@ -553,12 +553,13 @@ const FloatingSupport = () => {
             className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
             style={{
               background: (chatOpen || menuOpen)
-                ? 'rgba(20, 20, 28, 0.92)'
+                ? 'linear-gradient(135deg, hsla(0,0%,100%,0.92), hsla(258,60%,98%,0.88))'
                 : 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
               boxShadow: (chatOpen || menuOpen)
-                ? '0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)'
+                ? '0 14px 36px -10px hsla(258,40%,30%,0.28), 0 0 22px -6px hsla(271,91%,60%,0.3), inset 0 1px 0 hsla(0,0%,100%,1)'
                 : '0 0 24px hsla(271,91%,65%,0.6), 0 0 50px hsla(185,90%,52%,0.3), 0 8px 24px hsla(215,40%,4%,0.5)',
-              border: (chatOpen || menuOpen) ? '1px solid rgba(255,255,255,0.12)' : 'none',
+              border: (chatOpen || menuOpen) ? '1px solid hsla(258,40%,80%,0.4)' : 'none',
+              backdropFilter: (chatOpen || menuOpen) ? 'blur(28px) saturate(180%)' : 'none',
             }}
             title="সাপোর্ট"
           >
@@ -566,7 +567,7 @@ const FloatingSupport = () => {
               <span className="absolute inset-0 rounded-full fab-pulse-inner" />
             )}
             {(chatOpen || menuOpen)
-              ? <X size={22} className="text-white fs-x-rotate" />
+              ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(258,78%,45%)' }} />
               : <MessageCircle size={24} className="text-white relative z-10" />
             }
           </button>
