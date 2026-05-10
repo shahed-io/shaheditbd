@@ -539,33 +539,6 @@ const FloatingSupport = () => {
       <div
         className="fixed right-4 sm:right-6 z-50 flex flex-col items-end gap-2.5 bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+16px)]"
       >
-        {/* "সাহায্য চাই?" pill — sits ABOVE the FAB, dismissible */}
-        {!chatOpen && !helpDismissed && (
-          <div
-            onClick={() => setMenuOpen(o => !o)}
-            className={`fs-help-pill group relative flex items-center gap-2.5 pl-3 pr-2 py-2 rounded-full cursor-pointer ${menuOpen ? 'fs-help-pill--active' : ''}`}
-            role="button"
-            aria-label="সাহায্য চাই"
-          >
-            <span className="fs-help-dot relative flex w-2.5 h-2.5 flex-shrink-0">
-              <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-300 opacity-80 animate-ping" />
-              <span className="relative inline-flex w-2.5 h-2.5 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 shadow-[0_0_8px_hsla(150,80%,50%,0.7)]" />
-            </span>
-            <div className="leading-tight text-left">
-              <p className="fs-help-title text-[13px] font-extrabold tracking-tight">সাহায্য চাই?</p>
-              <p className="fs-help-sub text-[10px] font-medium">২৪/৭ লাইভ সাপোর্ট</p>
-            </div>
-            <button
-              onClick={dismissHelp}
-              className="fs-help-close ml-1 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
-              aria-label="বন্ধ করুন"
-              title="বন্ধ করুন"
-            >
-              <X size={13} strokeWidth={2.5} />
-            </button>
-            <span className="fs-help-shine" aria-hidden />
-          </div>
-        )}
 
         <div className="relative flex items-center justify-center fab-float">
           {!chatOpen && !menuOpen && (
