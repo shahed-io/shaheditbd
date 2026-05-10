@@ -708,6 +708,70 @@ const FloatingSupport = () => {
           to { transform: rotate(360deg); }
         }
 
+        /* Glossy highlight on icon orb */
+        .fs-icon-orb { position: relative; overflow: hidden; }
+        .fs-icon-gloss {
+          position: absolute;
+          top: 2px; left: 8%;
+          width: 84%; height: 45%;
+          border-radius: 50%;
+          background: linear-gradient(180deg, hsla(0,0%,100%,0.55), hsla(0,0%,100%,0));
+          filter: blur(1px);
+          pointer-events: none;
+        }
+
+        /* Premium menu heading pill — sits above stacked options */
+        .fs-menu-heading {
+          position: relative;
+          background: linear-gradient(135deg, hsla(258,85%,98%,0.85), hsla(271,80%,95%,0.78) 50%, hsla(220,85%,97%,0.85));
+          border: 1.5px solid hsla(258,70%,75%,0.6);
+          backdrop-filter: blur(44px) saturate(220%);
+          -webkit-backdrop-filter: blur(44px) saturate(220%);
+          box-shadow:
+            0 12px 28px -8px hsla(258,70%,35%,0.28),
+            0 0 22px -6px hsla(271,91%,60%,0.35),
+            inset 0 1.5px 0 hsla(0,0%,100%,0.95),
+            inset 0 -1px 0 hsla(258,40%,85%,0.4);
+          overflow: hidden;
+        }
+        .fs-menu-heading::before {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: 9999px;
+          padding: 1.5px;
+          background: linear-gradient(120deg,
+            hsla(271,91%,65%,0.7),
+            hsla(0,0%,100%,0.5),
+            hsla(185,90%,55%,0.6),
+            hsla(320,90%,65%,0.55),
+            hsla(271,91%,65%,0.7));
+          background-size: 280% 280%;
+          -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor;
+                  mask-composite: exclude;
+          opacity: 0.7;
+          animation: fsBorderShift 5s linear infinite;
+          pointer-events: none;
+        }
+        .fs-menu-heading-dot {
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,55%));
+          box-shadow: 0 0 10px hsla(271,91%,60%,0.7);
+          animation: fsHeadingDotPulse 2s ease-in-out infinite;
+        }
+        @keyframes fsHeadingDotPulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50%       { transform: scale(1.35); opacity: 0.75; }
+        }
+        .fs-menu-heading-text {
+          background: linear-gradient(120deg, hsl(258,78%,32%), hsl(271,85%,42%), hsl(210,85%,38%));
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
         /* Side help-pill next to FAB — premium violet-tinted glass with shine */
         .fs-help-pill {
           position: relative;
