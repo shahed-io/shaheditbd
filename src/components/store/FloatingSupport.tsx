@@ -422,9 +422,15 @@ const FloatingSupport = () => {
                 <button
                   key={key}
                   onClick={onClick}
-                  className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
+                  className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2.5 rounded-full text-left"
                   style={{ ['--pill-glow' as any]: glowHsl }}
                 >
+                  {/* Inner aurora blob — adds depth behind the glass */}
+                  <span
+                    className="fs-pill-aurora"
+                    style={{ background: `radial-gradient(circle at 20% 50%, ${glowHsl}, transparent 60%)` }}
+                    aria-hidden
+                  />
                   <span className="fs-icon-wrap relative flex-shrink-0">
                     <span
                       className="fs-icon-ring"
@@ -433,20 +439,21 @@ const FloatingSupport = () => {
                       }}
                     />
                     <span
-                      className="relative w-11 h-11 rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[8deg]"
+                      className="fs-icon-orb relative w-11 h-11 rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[8deg]"
                       style={{
                         background: gradient,
-                        boxShadow: `0 6px 18px ${glowHsl}, inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 6px rgba(0,0,0,0.18)`,
+                        boxShadow: `0 8px 22px ${glowHsl}, 0 2px 6px rgba(0,0,0,0.15), inset 0 1.5px 0 rgba(255,255,255,0.5), inset 0 -3px 8px rgba(0,0,0,0.22)`,
                       }}
                     >
-                      <Icon size={19} className="text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
+                      <span className="fs-icon-gloss" aria-hidden />
+                      <Icon size={19} className="text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)] relative z-10" />
                     </span>
                   </span>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 relative z-10">
                     <p className="fs-pill-title text-[14px] font-bold leading-tight tracking-tight">{label}</p>
                     {subtitle && <p className="fs-pill-subtitle text-[11px] truncate mt-0.5">{subtitle}</p>}
                   </div>
-                  <span className="fs-pill-arrow">→</span>
+                  <span className="fs-pill-arrow relative z-10">→</span>
                 </button>
               );
 
@@ -507,9 +514,12 @@ const FloatingSupport = () => {
               className="fs-pill-wrap w-full flex justify-end"
               style={{ animationDelay: '0s' }}
             >
-              <p className="text-[12px] font-semibold px-3 py-1.5 rounded-full" style={{ color: 'hsl(258,78%,32%)', background: 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))', backdropFilter: 'blur(40px) saturate(200%)', border: '1.5px solid hsla(258,70%,72%,0.55)', boxShadow: '0 8px 20px -6px hsla(258,70%,40%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.85)' }}>
-                {config.fab_label}
-              </p>
+              <div className="fs-menu-heading inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full">
+                <span className="fs-menu-heading-dot" aria-hidden />
+                <p className="fs-menu-heading-text text-[12px] font-bold tracking-tight">
+                  {config.fab_label}
+                </p>
+              </div>
             </div>
           </div>
         </>
@@ -593,22 +603,35 @@ const FloatingSupport = () => {
           to   { opacity: 1; }
         }
 
-        /* Stacked violet-tinted glass pill buttons — pops against white backgrounds */
+        /* Stacked violet-tinted glass pill buttons — premium glassmorphism */
         .fs-pill {
           position: relative;
           background:
-            linear-gradient(135deg, hsla(258,80%,97%,0.92) 0%, hsla(271,75%,94%,0.88) 50%, hsla(220,80%,96%,0.92) 100%);
-          border: 1.5px solid hsla(258,70%,72%,0.55);
-          backdrop-filter: blur(40px) saturate(200%);
-          -webkit-backdrop-filter: blur(40px) saturate(200%);
+            linear-gradient(135deg, hsla(258,85%,98%,0.78) 0%, hsla(271,80%,95%,0.72) 45%, hsla(220,85%,97%,0.78) 100%);
+          border: 1.5px solid hsla(258,70%,75%,0.55);
+          backdrop-filter: blur(44px) saturate(220%);
+          -webkit-backdrop-filter: blur(44px) saturate(220%);
           box-shadow:
-            0 18px 44px -10px hsla(258,70%,40%,0.28),
-            0 6px 14px -4px hsla(258,60%,40%,0.15),
-            0 0 0 1px hsla(258,60%,75%,0.18),
-            inset 0 1px 0 hsla(0,0%,100%,0.85);
-          transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
+            0 22px 48px -12px hsla(258,70%,35%,0.32),
+            0 8px 18px -6px hsla(258,60%,40%,0.18),
+            0 0 0 1px hsla(258,60%,80%,0.22),
+            inset 0 1.5px 0 hsla(0,0%,100%,0.9),
+            inset 0 -1px 0 hsla(258,40%,85%,0.4);
+          transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
           overflow: hidden;
+          isolation: isolate;
         }
+        /* Aurora blob behind icon — adds depth */
+        .fs-pill-aurora {
+          position: absolute;
+          inset: 0;
+          opacity: 0.35;
+          filter: blur(14px);
+          z-index: 0;
+          pointer-events: none;
+          transition: opacity 0.4s ease;
+        }
+        .fs-pill:hover .fs-pill-aurora { opacity: 0.6; }
         /* Animated gradient border ring */
         .fs-pill::before {
           content: '';
@@ -683,6 +706,70 @@ const FloatingSupport = () => {
         .fs-pill:hover .fs-icon-ring { opacity: 0.95; filter: blur(3px); }
         @keyframes fsIconSpin {
           to { transform: rotate(360deg); }
+        }
+
+        /* Glossy highlight on icon orb */
+        .fs-icon-orb { position: relative; overflow: hidden; }
+        .fs-icon-gloss {
+          position: absolute;
+          top: 2px; left: 8%;
+          width: 84%; height: 45%;
+          border-radius: 50%;
+          background: linear-gradient(180deg, hsla(0,0%,100%,0.55), hsla(0,0%,100%,0));
+          filter: blur(1px);
+          pointer-events: none;
+        }
+
+        /* Premium menu heading pill — sits above stacked options */
+        .fs-menu-heading {
+          position: relative;
+          background: linear-gradient(135deg, hsla(258,85%,98%,0.85), hsla(271,80%,95%,0.78) 50%, hsla(220,85%,97%,0.85));
+          border: 1.5px solid hsla(258,70%,75%,0.6);
+          backdrop-filter: blur(44px) saturate(220%);
+          -webkit-backdrop-filter: blur(44px) saturate(220%);
+          box-shadow:
+            0 12px 28px -8px hsla(258,70%,35%,0.28),
+            0 0 22px -6px hsla(271,91%,60%,0.35),
+            inset 0 1.5px 0 hsla(0,0%,100%,0.95),
+            inset 0 -1px 0 hsla(258,40%,85%,0.4);
+          overflow: hidden;
+        }
+        .fs-menu-heading::before {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: 9999px;
+          padding: 1.5px;
+          background: linear-gradient(120deg,
+            hsla(271,91%,65%,0.7),
+            hsla(0,0%,100%,0.5),
+            hsla(185,90%,55%,0.6),
+            hsla(320,90%,65%,0.55),
+            hsla(271,91%,65%,0.7));
+          background-size: 280% 280%;
+          -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor;
+                  mask-composite: exclude;
+          opacity: 0.7;
+          animation: fsBorderShift 5s linear infinite;
+          pointer-events: none;
+        }
+        .fs-menu-heading-dot {
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,55%));
+          box-shadow: 0 0 10px hsla(271,91%,60%,0.7);
+          animation: fsHeadingDotPulse 2s ease-in-out infinite;
+        }
+        @keyframes fsHeadingDotPulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50%       { transform: scale(1.35); opacity: 0.75; }
+        }
+        .fs-menu-heading-text {
+          background: linear-gradient(120deg, hsl(258,78%,32%), hsl(271,85%,42%), hsl(210,85%,38%));
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
 
         /* Side help-pill next to FAB — premium violet-tinted glass with shine */
