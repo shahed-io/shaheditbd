@@ -588,10 +588,10 @@ const FloatingSupport = () => {
             style={{
               background: (chatOpen || menuOpen)
                 ? 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))'
-                : 'linear-gradient(135deg, hsl(265,82%,58%) 0%, hsl(245,80%,55%) 50%, hsl(215,90%,52%) 100%)',
+                : 'linear-gradient(135deg, hsl(20,95%,62%) 0%, hsl(8,88%,58%) 45%, hsl(340,82%,52%) 100%)',
               boxShadow: (chatOpen || menuOpen)
                 ? '0 18px 44px -10px hsla(258,70%,40%,0.32), 0 0 26px -6px hsla(271,91%,60%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
-                : 'inset 0 1.5px 0 hsla(0,0%,100%,0.55), inset 0 -3px 8px hsla(245,80%,28%,0.32), 0 10px 24px -4px hsla(245,85%,50%,0.5), 0 4px 12px -2px hsla(265,80%,45%,0.35)',
+                : 'inset 0 1.5px 0 hsla(0,0%,100%,0.55), inset 0 -3px 8px hsla(340,80%,28%,0.32), 0 10px 24px -4px hsla(15,90%,55%,0.5), 0 4px 12px -2px hsla(340,80%,45%,0.35)',
               border: (chatOpen || menuOpen) ? '1.5px solid hsla(258,70%,72%,0.6)' : 'none',
               backdropFilter: (chatOpen || menuOpen) ? 'blur(40px) saturate(200%)' : 'none',
             }}
