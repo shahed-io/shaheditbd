@@ -408,6 +408,55 @@ const CheckKey = () => {
                 </div>
               )}
 
+              {/* Live Keys — one-click copy */}
+              {results.filter(r => r.status === 'live').length > 0 && (
+                <div className="rounded-2xl p-5" style={{
+                  background: 'linear-gradient(135deg, hsla(142,71%,96%,0.95), hsla(142,71%,92%,0.85))',
+                  backdropFilter: 'blur(28px) saturate(180%)',
+                  border: '1px solid hsla(142,71%,45%,0.28)',
+                  boxShadow: '0 8px 32px hsla(142,71%,40%,0.12)',
+                }}>
+                  <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                    <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                      <CheckCircle2 size={16} className="text-emerald-600" />
+                      Live Keys ({results.filter(r => r.status === 'live').length})
+                    </h3>
+                    <button
+                      onClick={async () => {
+                        const liveKeys = results.filter(r => r.status === 'live').map(r => r.key);
+                        if (liveKeys.length === 0) return;
+                        await navigator.clipboard.writeText(liveKeys.join('\n'));
+                        toast.success(`Copied ${liveKeys.length} live key${liveKeys.length !== 1 ? 's' : ''}`);
+                      }}
+                      className="px-3 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-1.5 transition-all active:scale-95"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(142,71%,42%), hsl(142,71%,34%))',
+                        boxShadow: '0 4px 12px hsla(142,71%,40%,0.3)',
+                      }}
+                    >
+                      <Copy size={12} /> Copy All
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {results.filter(r => r.status === 'live').map((r, idx) => (
+                      <div key={idx} className="rounded-lg p-2.5 bg-white/70 border border-emerald-200/60 flex items-center justify-between gap-2">
+                        <p className="font-mono text-xs md:text-sm font-bold text-foreground break-all flex-1 min-w-0">{r.key}</p>
+                        <button
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(r.key);
+                            toast.success('Key copied');
+                          }}
+                          className="p-1.5 rounded-md hover:bg-emerald-100 shrink-0"
+                          title="Copy this key"
+                        >
+                          <Copy size={14} className="text-emerald-700" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Key History */}
               {user && (
                 <div className="rounded-2xl p-5" style={{
