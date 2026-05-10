@@ -682,51 +682,52 @@ const FloatingSupport = () => {
           to { transform: rotate(360deg); }
         }
 
-        /* Side help-pill next to FAB — brand-themed gradient glass */
+        /* Side help-pill — premium light glassmorphism with brand-tinted accents */
         .fs-help-pill {
           position: relative;
           background: linear-gradient(135deg,
-            hsla(var(--brand-h),90%,60%,0.95),
-            hsla(var(--brand-h),85%,52%,0.92) 55%,
-            hsla(var(--accent-h),var(--accent-s),58%,0.95));
-          border: 1.5px solid hsla(var(--brand-h),90%,75%,0.55);
-          backdrop-filter: blur(40px) saturate(200%);
-          -webkit-backdrop-filter: blur(40px) saturate(200%);
+            hsla(0,0%,100%,0.78),
+            hsla(var(--brand-h),60%,97%,0.7) 50%,
+            hsla(var(--accent-h),var(--accent-s),96%,0.78));
+          border: 1px solid hsla(0,0%,100%,0.7);
+          backdrop-filter: blur(28px) saturate(180%);
+          -webkit-backdrop-filter: blur(28px) saturate(180%);
           box-shadow:
-            0 18px 44px -10px hsla(var(--brand-h),70%,35%,0.45),
-            0 0 26px -6px hsla(var(--brand-h),85%,55%,0.5),
-            0 0 0 1px hsla(var(--brand-h),60%,75%,0.25),
-            inset 0 1px 0 hsla(0,0%,100%,0.45);
+            0 12px 32px -10px hsla(var(--brand-h),50%,40%,0.18),
+            0 2px 8px -2px hsla(var(--brand-h),40%,30%,0.08),
+            0 0 0 1px hsla(var(--brand-h),40%,80%,0.18),
+            inset 0 1px 0 hsla(0,0%,100%,0.95),
+            inset 0 -1px 0 hsla(var(--brand-h),40%,90%,0.4);
           animation: fsHelpIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both, fsHelpBob 4s ease-in-out 0.6s infinite;
           overflow: hidden;
           transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
         }
-        /* Animated gradient border ring on help pill */
+        /* Subtle animated gradient border */
         .fs-help-pill::before {
           content: '';
           position: absolute;
           inset: -1px;
           border-radius: 9999px;
-          padding: 1.5px;
+          padding: 1px;
           background: linear-gradient(120deg,
-            hsla(var(--brand-h),95%,80%,0.75),
-            hsla(0,0%,100%,0.55),
-            hsla(var(--accent-h),var(--accent-s),70%,0.6),
-            hsla(var(--brand-h),95%,75%,0.55),
-            hsla(var(--brand-h),95%,80%,0.75));
+            hsla(var(--brand-h),85%,75%,0.5),
+            hsla(0,0%,100%,0.85),
+            hsla(var(--accent-h),var(--accent-s),75%,0.45),
+            hsla(0,0%,100%,0.7),
+            hsla(var(--brand-h),85%,75%,0.5));
           background-size: 280% 280%;
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
-          opacity: 0.8;
-          animation: fsBorderShift 5s linear infinite;
+          opacity: 0.6;
+          animation: fsBorderShift 6s linear infinite;
           pointer-events: none;
         }
         .fs-help-pill .fs-help-shine {
           position: absolute;
           top: 0; left: -60%;
           width: 50%; height: 100%;
-          background: linear-gradient(110deg, transparent 0%, hsla(0,0%,100%,0.5) 50%, transparent 100%);
+          background: linear-gradient(110deg, transparent 0%, hsla(0,0%,100%,0.55) 50%, transparent 100%);
           transform: skewX(-20deg);
           pointer-events: none;
           animation: fsHelpShine 4.5s ease-in-out 1.2s infinite;
@@ -739,23 +740,23 @@ const FloatingSupport = () => {
         .fs-help-pill:hover {
           transform: translateX(-3px) translateY(-2px) scale(1.03);
           box-shadow:
-            0 24px 56px -12px hsla(var(--brand-h),70%,30%,0.5),
-            0 0 32px -4px hsla(var(--brand-h),90%,55%,0.6),
-            inset 0 1px 0 hsla(0,0%,100%,0.6);
+            0 18px 40px -12px hsla(var(--brand-h),55%,35%,0.25),
+            0 0 24px -6px hsla(var(--brand-h),85%,70%,0.3),
+            inset 0 1px 0 hsla(0,0%,100%,1);
         }
         .fs-help-pill:active { transform: translateX(-1px) scale(0.97); }
         .fs-help-pill--active {
-          border-color: hsla(var(--brand-h),85%,70%,0.8);
+          border-color: hsla(var(--brand-h),70%,75%,0.6);
           box-shadow:
-            0 24px 56px -12px hsla(var(--brand-h),70%,30%,0.55),
-            0 0 32px -4px hsla(var(--brand-h),90%,55%,0.65),
-            inset 0 1px 0 hsla(0,0%,100%,0.6);
+            0 18px 40px -12px hsla(var(--brand-h),55%,35%,0.28),
+            0 0 24px -6px hsla(var(--brand-h),85%,65%,0.35),
+            inset 0 1px 0 hsla(0,0%,100%,1);
         }
         .fs-help-pill .fs-help-title {
-          color: hsl(0,0%,100%);
-          text-shadow: 0 1px 2px hsla(var(--brand-h),70%,20%,0.45);
+          color: hsl(var(--brand-h),55%,28%);
+          letter-spacing: 0.01em;
         }
-        .fs-help-pill .fs-help-sub { color: hsla(0,0%,100%,0.88); }
+        .fs-help-pill .fs-help-sub { color: hsl(var(--brand-h),25%,45%); }
         @keyframes fsHelpIn {
           from { opacity: 0; transform: translateX(20px) scale(0.85); }
           to   { opacity: 1; transform: translateX(0) scale(1); }
