@@ -523,17 +523,14 @@ const FloatingSupport = () => {
         {!chatOpen && (
           <button
             onClick={() => setMenuOpen(o => !o)}
-            className={`fs-help-pill group flex items-center gap-2.5 pl-3 pr-4 py-2.5 rounded-full cursor-pointer ${menuOpen ? 'fs-help-pill--active' : ''}`}
-            aria-label="সাহায্য চাই"
+            className={`fs-help-pill group flex items-center gap-2 pl-2.5 pr-3 py-1.5 rounded-full cursor-pointer ${menuOpen ? 'fs-help-pill--active' : ''}`}
+            aria-label="২৪/৭ লাইভ সাপোর্ট"
           >
-            <span className="fs-help-dot relative flex w-2.5 h-2.5 flex-shrink-0">
+            <span className="fs-help-dot relative flex w-2 h-2 flex-shrink-0">
               <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-300 opacity-80 animate-ping" />
-              <span className="relative inline-flex w-2.5 h-2.5 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 shadow-[0_0_8px_hsla(150,80%,50%,0.7)]" />
+              <span className="relative inline-flex w-2 h-2 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 shadow-[0_0_8px_hsla(150,80%,50%,0.7)]" />
             </span>
-            <div className="leading-tight text-left">
-              <p className="fs-help-title text-[13px] font-extrabold tracking-tight">সাহায্য চাই?</p>
-              <p className="fs-help-sub text-[10px] font-medium">২৪/৭ লাইভ সাপোর্ট</p>
-            </div>
+            <p className="fs-help-title text-[11px] font-bold tracking-tight whitespace-nowrap">২৪/৭ লাইভ সাপোর্ট</p>
             <span className="fs-help-shine" aria-hidden />
           </button>
         )}
