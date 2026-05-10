@@ -906,8 +906,12 @@ const UserDashboard = () => {
                         style={{ background: `radial-gradient(circle, ${stat.glow} 0%, transparent 70%)`, filter: 'blur(20px)' }} aria-hidden="true" />
                       <div className="relative flex items-center gap-2 mb-1.5">
                         <div className="w-8 h-8 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-6"
-                          style={{ background: `linear-gradient(135deg, ${stat.accent}, ${stat.accent}dd)`, boxShadow: `0 4px 12px ${stat.glow}` }}>
-                          <stat.icon size={15} className="text-white" />
+                          style={{
+                            background: `linear-gradient(135deg, ${stat.accent} 0%, ${stat.accent} 60%, color-mix(in hsl, ${stat.accent} 75%, white) 100%)`,
+                            boxShadow: `0 4px 14px ${stat.glow}, inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 4px rgba(0,0,0,0.12)`,
+                            border: `1px solid color-mix(in hsl, ${stat.accent} 70%, white)`,
+                          }}>
+                          <stat.icon size={15} strokeWidth={2.5} color="#ffffff" style={{ filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.25))' }} />
                         </div>
                         <div className="text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">{stat.label}</div>
                       </div>
