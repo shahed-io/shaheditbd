@@ -749,11 +749,7 @@ const FloatingSupport = () => {
             inset 0 1px 0 hsla(0,0%,100%,1);
         }
         .fs-help-pill .fs-help-title {
-          color: hsl(258,78%,28%);
-          background: linear-gradient(120deg, hsl(258,78%,32%), hsl(271,85%,42%), hsl(210,85%,40%));
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
+          color: hsl(220,30%,18%);
         }
         .fs-help-pill .fs-help-sub { color: hsl(226,18%,42%); }
         @keyframes fsHelpIn {
