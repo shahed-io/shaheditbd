@@ -573,7 +573,7 @@ const FloatingSupport = () => {
               <span className="absolute inset-0 rounded-full fab-pulse-inner" />
             )}
             {(chatOpen || menuOpen)
-              ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(258,78%,45%)' }} />
+              ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(var(--brand-h),78%,42%)' }} />
               : <MessageCircle size={24} className="text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]" />
             }
           </button>
