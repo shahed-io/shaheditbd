@@ -719,6 +719,66 @@ const FloatingSupport = () => {
           to   { transform: rotate(0) scale(1); opacity: 1; }
         }
 
+        /* Subtle float animation on idle */
+        .fab-float { animation: fabFloat 4.5s ease-in-out infinite; }
+        @keyframes fabFloat {
+          0%, 100% { transform: translateY(0); }
+          50%       { transform: translateY(-3px); }
+        }
+
+        /* Soft aurora halo behind FAB */
+        .fab-halo {
+          position: absolute;
+          width: 110px; height: 110px;
+          border-radius: 9999px;
+          background: radial-gradient(circle,
+            hsla(271,91%,65%,0.35) 0%,
+            hsla(185,90%,55%,0.22) 40%,
+            transparent 70%);
+          filter: blur(8px);
+          animation: fabHaloPulse 3.5s ease-in-out infinite;
+          pointer-events: none;
+        }
+        @keyframes fabHaloPulse {
+          0%, 100% { opacity: 0.6; transform: scale(0.9); }
+          50%       { opacity: 1;   transform: scale(1.15); }
+        }
+
+        /* Rotating conic-gradient outer ring */
+        .fab-conic-ring {
+          position: absolute;
+          inset: -3px;
+          border-radius: 9999px;
+          padding: 2px;
+          background: conic-gradient(from 0deg,
+            hsla(271,91%,75%,0.9),
+            hsla(320,90%,70%,0.6),
+            hsla(185,90%,65%,0.9),
+            hsla(210,90%,70%,0.5),
+            hsla(271,91%,75%,0.9));
+          -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor;
+                  mask-composite: exclude;
+          animation: fabConicSpin 4s linear infinite;
+          pointer-events: none;
+          opacity: 0.85;
+        }
+        @keyframes fabConicSpin { to { transform: rotate(360deg); } }
+
+        /* Glossy top highlight */
+        .fab-gloss {
+          position: absolute;
+          top: 3px; left: 50%;
+          transform: translateX(-50%);
+          width: 70%; height: 40%;
+          border-radius: 50%;
+          background: linear-gradient(180deg, hsla(0,0%,100%,0.45) 0%, hsla(0,0%,100%,0.05) 60%, transparent 100%);
+          filter: blur(2px);
+          pointer-events: none;
+        }
+
+        .fab-btn:hover .fab-conic-ring { animation-duration: 2s; opacity: 1; }
+
         .fab-ring {
           position: absolute;
           border-radius: 9999px;
@@ -731,7 +791,7 @@ const FloatingSupport = () => {
         .fab-ring-3 { width: 56px; height: 56px; animation-delay: 1.4s; border-color: hsla(320,90%,62%,0.35); }
         @keyframes fab-ring-out {
           0%   { transform: scale(1);   opacity: 0.9; }
-          100% { transform: scale(2.5); opacity: 0; }
+          100% { transform: scale(2.8); opacity: 0; }
         }
         .fab-pulse-inner {
           background: radial-gradient(circle, hsla(271,91%,65%,0.35) 0%, transparent 70%);
