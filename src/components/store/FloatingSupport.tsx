@@ -603,22 +603,35 @@ const FloatingSupport = () => {
           to   { opacity: 1; }
         }
 
-        /* Stacked violet-tinted glass pill buttons — pops against white backgrounds */
+        /* Stacked violet-tinted glass pill buttons — premium glassmorphism */
         .fs-pill {
           position: relative;
           background:
-            linear-gradient(135deg, hsla(258,80%,97%,0.92) 0%, hsla(271,75%,94%,0.88) 50%, hsla(220,80%,96%,0.92) 100%);
-          border: 1.5px solid hsla(258,70%,72%,0.55);
-          backdrop-filter: blur(40px) saturate(200%);
-          -webkit-backdrop-filter: blur(40px) saturate(200%);
+            linear-gradient(135deg, hsla(258,85%,98%,0.78) 0%, hsla(271,80%,95%,0.72) 45%, hsla(220,85%,97%,0.78) 100%);
+          border: 1.5px solid hsla(258,70%,75%,0.55);
+          backdrop-filter: blur(44px) saturate(220%);
+          -webkit-backdrop-filter: blur(44px) saturate(220%);
           box-shadow:
-            0 18px 44px -10px hsla(258,70%,40%,0.28),
-            0 6px 14px -4px hsla(258,60%,40%,0.15),
-            0 0 0 1px hsla(258,60%,75%,0.18),
-            inset 0 1px 0 hsla(0,0%,100%,0.85);
-          transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
+            0 22px 48px -12px hsla(258,70%,35%,0.32),
+            0 8px 18px -6px hsla(258,60%,40%,0.18),
+            0 0 0 1px hsla(258,60%,80%,0.22),
+            inset 0 1.5px 0 hsla(0,0%,100%,0.9),
+            inset 0 -1px 0 hsla(258,40%,85%,0.4);
+          transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
           overflow: hidden;
+          isolation: isolate;
         }
+        /* Aurora blob behind icon — adds depth */
+        .fs-pill-aurora {
+          position: absolute;
+          inset: 0;
+          opacity: 0.35;
+          filter: blur(14px);
+          z-index: 0;
+          pointer-events: none;
+          transition: opacity 0.4s ease;
+        }
+        .fs-pill:hover .fs-pill-aurora { opacity: 0.6; }
         /* Animated gradient border ring */
         .fs-pill::before {
           content: '';
