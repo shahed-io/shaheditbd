@@ -685,24 +685,87 @@ const FloatingSupport = () => {
           to { transform: rotate(360deg); }
         }
 
-        /* Side help-pill next to FAB — violet-tinted glass */
+        /* Side help-pill next to FAB — premium violet-tinted glass with shine */
         .fs-help-pill {
-          background: linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9));
+          position: relative;
+          background: linear-gradient(135deg, hsla(258,80%,98%,0.95), hsla(271,75%,94%,0.92) 50%, hsla(220,80%,96%,0.95));
           border: 1.5px solid hsla(258,70%,72%,0.55);
           backdrop-filter: blur(40px) saturate(200%);
           -webkit-backdrop-filter: blur(40px) saturate(200%);
           box-shadow:
-            0 18px 44px -10px hsla(258,70%,40%,0.28),
-            0 0 26px -6px hsla(271,91%,60%,0.35),
-            0 0 0 1px hsla(258,60%,75%,0.18),
-            inset 0 1px 0 hsla(0,0%,100%,0.85);
-          animation: fsHelpIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            0 18px 44px -10px hsla(258,70%,40%,0.3),
+            0 0 26px -6px hsla(271,91%,60%,0.4),
+            0 0 0 1px hsla(258,60%,75%,0.2),
+            inset 0 1px 0 hsla(0,0%,100%,0.9);
+          animation: fsHelpIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both, fsHelpBob 4s ease-in-out 0.6s infinite;
+          overflow: hidden;
+          transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
         }
-        .fs-help-pill .fs-help-title { color: hsl(226,40%,18%); }
-        .fs-help-pill .fs-help-sub { color: hsl(226,15%,45%); }
+        /* Animated gradient border ring on help pill */
+        .fs-help-pill::before {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: 9999px;
+          padding: 1.5px;
+          background: linear-gradient(120deg,
+            hsla(271,91%,65%,0.65),
+            hsla(0,0%,100%,0.5),
+            hsla(185,90%,55%,0.55),
+            hsla(320,90%,65%,0.5),
+            hsla(271,91%,65%,0.65));
+          background-size: 280% 280%;
+          -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor;
+                  mask-composite: exclude;
+          opacity: 0.7;
+          animation: fsBorderShift 5s linear infinite;
+          pointer-events: none;
+        }
+        .fs-help-pill .fs-help-shine {
+          position: absolute;
+          top: 0; left: -60%;
+          width: 50%; height: 100%;
+          background: linear-gradient(110deg, transparent 0%, hsla(0,0%,100%,0.6) 50%, transparent 100%);
+          transform: skewX(-20deg);
+          pointer-events: none;
+          animation: fsHelpShine 4.5s ease-in-out 1.2s infinite;
+        }
+        @keyframes fsHelpShine {
+          0%   { left: -60%; }
+          35%  { left: 130%; }
+          100% { left: 130%; }
+        }
+        .fs-help-pill:hover {
+          transform: translateX(-3px) translateY(-2px) scale(1.03);
+          box-shadow:
+            0 24px 56px -12px hsla(258,40%,30%,0.32),
+            0 0 32px -4px hsla(271,91%,60%,0.5),
+            inset 0 1px 0 hsla(0,0%,100%,1);
+        }
+        .fs-help-pill:active { transform: translateX(-1px) scale(0.97); }
+        .fs-help-pill--active {
+          border-color: hsla(258,70%,60%,0.7);
+          box-shadow:
+            0 24px 56px -12px hsla(258,60%,40%,0.4),
+            0 0 32px -4px hsla(271,91%,60%,0.55),
+            inset 0 1px 0 hsla(0,0%,100%,1);
+        }
+        .fs-help-pill .fs-help-title {
+          color: hsl(258,78%,28%);
+          background: linear-gradient(120deg, hsl(258,78%,32%), hsl(271,85%,42%), hsl(210,85%,40%));
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+        .fs-help-pill .fs-help-sub { color: hsl(226,18%,42%); }
         @keyframes fsHelpIn {
           from { opacity: 0; transform: translateX(20px) scale(0.85); }
           to   { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes fsHelpBob {
+          0%, 100% { transform: translateY(0); }
+          50%       { transform: translateY(-2px); }
         }
 
         /* Stagger entrance for stacked items */
