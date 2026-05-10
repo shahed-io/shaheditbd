@@ -812,11 +812,11 @@ const FloatingSupport = () => {
           border-radius: 9999px;
           padding: 2px;
           background: conic-gradient(from 0deg,
-            hsla(271,91%,75%,0.9),
-            hsla(320,90%,70%,0.6),
-            hsla(185,90%,65%,0.9),
-            hsla(210,90%,70%,0.5),
-            hsla(271,91%,75%,0.9));
+            hsla(var(--brand-h),85%,72%,0.92),
+            hsla(var(--accent-h),var(--accent-s),65%,0.7),
+            hsla(var(--brand-h),85%,55%,0.9),
+            hsla(var(--accent-h),var(--accent-s),60%,0.55),
+            hsla(var(--brand-h),85%,72%,0.92));
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
