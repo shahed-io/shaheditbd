@@ -410,77 +410,72 @@ const FloatingSupport = () => {
               // Build list in display order (top → bottom): AI, WhatsApp, custom sets, then label
               const items: React.ReactNode[] = [];
 
-              if (config.chat_enabled) {
-                items.push(
-                  <button
-                    key="ai"
-                    onClick={openChat}
-                    className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
-                  >
+              const renderPill = (
+                key: string,
+                onClick: () => void,
+                gradient: string,
+                glowHsl: string,
+                Icon: any,
+                label: string,
+                subtitle?: string,
+              ) => (
+                <button
+                  key={key}
+                  onClick={onClick}
+                  className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
+                  style={{ ['--pill-glow' as any]: glowHsl }}
+                >
+                  <span className="fs-icon-wrap relative flex-shrink-0">
                     <span
-                      className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-6"
+                      className="fs-icon-ring"
                       style={{
-                        background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-                        boxShadow: '0 6px 16px hsla(271, 91%, 60%, 0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
+                        background: `conic-gradient(from 180deg, ${glowHsl}, transparent 40%, ${glowHsl} 80%, transparent)`,
+                      }}
+                    />
+                    <span
+                      className="relative w-11 h-11 rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[8deg]"
+                      style={{
+                        background: gradient,
+                        boxShadow: `0 6px 18px ${glowHsl}, inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 6px rgba(0,0,0,0.18)`,
                       }}
                     >
-                      <Bot size={19} className="text-white" />
+                      <Icon size={19} className="text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
                     </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-white leading-tight">{config.ai_label}</p>
-                      <p className="text-[11px] text-white/60 truncate mt-0.5">{config.ai_subtitle}</p>
-                    </div>
-                  </button>
-                );
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[14px] font-bold text-white leading-tight tracking-tight">{label}</p>
+                    {subtitle && <p className="text-[11px] text-white/65 truncate mt-0.5">{subtitle}</p>}
+                  </div>
+                  <span className="fs-pill-arrow text-white/30 group-hover:text-white/80 transition-all duration-300">→</span>
+                </button>
+              );
+
+              if (config.chat_enabled) {
+                items.push(renderPill(
+                  'ai', openChat,
+                  'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+                  'hsla(271,91%,60%,0.55)',
+                  Bot, config.ai_label, config.ai_subtitle,
+                ));
               }
 
               if (config.whatsapp_enabled) {
-                items.push(
-                  <button
-                    key="wa"
-                    onClick={openWhatsApp}
-                    className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
-                  >
-                    <span
-                      className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-6"
-                      style={{
-                        background: 'linear-gradient(135deg, #25D366, #128C7E)',
-                        boxShadow: '0 6px 16px hsla(142, 70%, 40%, 0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
-                      }}
-                    >
-                      <MessageCircle size={19} className="text-white" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-white leading-tight">{config.whatsapp_label}</p>
-                      <p className="text-[11px] text-white/60 truncate mt-0.5">{config.whatsapp_subtitle}</p>
-                    </div>
-                  </button>
-                );
+                items.push(renderPill(
+                  'wa', openWhatsApp,
+                  'linear-gradient(135deg, #25D366, #128C7E)',
+                  'hsla(142,70%,45%,0.55)',
+                  MessageCircle, config.whatsapp_label, config.whatsapp_subtitle,
+                ));
               }
 
               activeSets.forEach(set => {
                 const ChannelIcon = getFsIcon(set.icon);
-                items.push(
-                  <button
-                    key={set.id}
-                    onClick={() => openLiveSet(set)}
-                    className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
-                  >
-                    <span
-                      className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-6"
-                      style={{
-                        background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)`,
-                        boxShadow: `0 6px 16px ${set.icon_color}66, inset 0 1px 0 rgba(255,255,255,0.3)`,
-                      }}
-                    >
-                      <ChannelIcon size={19} className="text-white" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-white leading-tight">{set.label}</p>
-                      {set.subtitle && <p className="text-[11px] text-white/60 truncate mt-0.5">{set.subtitle}</p>}
-                    </div>
-                  </button>
-                );
+                items.push(renderPill(
+                  set.id, () => openLiveSet(set),
+                  `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)`,
+                  `${set.icon_color}99`,
+                  ChannelIcon, set.label, set.subtitle,
+                ));
               });
 
               if (items.length === 0) {
@@ -592,13 +587,16 @@ const FloatingSupport = () => {
         .fs-pill {
           position: relative;
           background:
-            linear-gradient(135deg, rgba(28,28,40,0.92) 0%, rgba(18,18,26,0.94) 100%);
+            linear-gradient(135deg, rgba(28,28,40,0.78) 0%, rgba(14,14,22,0.82) 100%);
           border: 1px solid rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(24px) saturate(180%);
+          -webkit-backdrop-filter: blur(24px) saturate(180%);
           box-shadow:
-            0 14px 36px -10px rgba(0,0,0,0.65),
+            0 14px 40px -12px rgba(0,0,0,0.7),
             0 2px 6px -2px rgba(0,0,0,0.4),
-            inset 0 1px 0 rgba(255,255,255,0.08);
-          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            0 0 0 0 var(--pill-glow, transparent),
+            inset 0 1px 0 rgba(255,255,255,0.10);
+          transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
           overflow: hidden;
         }
         /* Animated gradient border ring */
@@ -609,16 +607,17 @@ const FloatingSupport = () => {
           border-radius: 9999px;
           padding: 1px;
           background: linear-gradient(120deg,
-            hsla(271,91%,65%,0.55),
-            hsla(185,90%,52%,0.45),
-            hsla(320,90%,62%,0.4),
-            hsla(271,91%,65%,0.55));
-          background-size: 220% 220%;
+            var(--pill-glow, hsla(271,91%,65%,0.55)),
+            hsla(0,0%,100%,0.25),
+            var(--pill-glow, hsla(185,90%,52%,0.45)),
+            hsla(0,0%,100%,0.15),
+            var(--pill-glow, hsla(271,91%,65%,0.55)));
+          background-size: 280% 280%;
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
-          opacity: 0.55;
-          animation: fsBorderShift 6s linear infinite;
+          opacity: 0.65;
+          animation: fsBorderShift 5s linear infinite;
           pointer-events: none;
         }
         /* Shine sweep on hover */
@@ -627,7 +626,7 @@ const FloatingSupport = () => {
           position: absolute;
           top: 0; left: -60%;
           width: 50%; height: 100%;
-          background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%);
+          background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
           transform: skewX(-20deg);
           transition: left 0.7s ease;
           pointer-events: none;
@@ -635,27 +634,52 @@ const FloatingSupport = () => {
         .fs-pill:hover::after { left: 130%; }
         @keyframes fsBorderShift {
           0%   { background-position: 0% 50%; }
-          100% { background-position: 220% 50%; }
+          100% { background-position: 280% 50%; }
         }
         .fs-pill:hover {
           transform: translateX(-4px) translateY(-2px);
-          border-color: rgba(255, 255, 255, 0.18);
+          border-color: rgba(255, 255, 255, 0.20);
           box-shadow:
-            0 22px 48px -12px rgba(0,0,0,0.75),
-            0 0 0 1px rgba(255,255,255,0.04),
-            inset 0 1px 0 rgba(255,255,255,0.12);
+            0 24px 56px -12px rgba(0,0,0,0.8),
+            0 0 28px -4px var(--pill-glow, rgba(255,255,255,0.15)),
+            0 0 0 1px rgba(255,255,255,0.06),
+            inset 0 1px 0 rgba(255,255,255,0.14);
         }
-        .fs-pill:hover::before { opacity: 0.95; }
+        .fs-pill:hover::before { opacity: 1; }
         .fs-pill:active { transform: translateX(-2px) scale(0.98); }
+        .fs-pill-arrow {
+          font-size: 16px;
+          transform: translateX(-2px);
+        }
+        .fs-pill:hover .fs-pill-arrow { transform: translateX(2px); }
+
+        /* Icon container with conic-gradient halo ring */
+        .fs-icon-wrap { display: inline-flex; padding: 2px; }
+        .fs-icon-ring {
+          position: absolute;
+          inset: -2px;
+          border-radius: 9999px;
+          opacity: 0.55;
+          filter: blur(2px);
+          animation: fsIconSpin 6s linear infinite;
+          pointer-events: none;
+        }
+        .fs-pill:hover .fs-icon-ring { opacity: 0.95; filter: blur(3px); }
+        @keyframes fsIconSpin {
+          to { transform: rotate(360deg); }
+        }
 
         /* Side help-pill next to FAB */
         .fs-help-pill {
-          background: linear-gradient(135deg, rgba(28,28,40,0.92), rgba(18,18,26,0.94));
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: linear-gradient(135deg, rgba(28,28,40,0.82), rgba(14,14,22,0.86));
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          backdrop-filter: blur(24px) saturate(180%);
+          -webkit-backdrop-filter: blur(24px) saturate(180%);
           box-shadow:
-            0 14px 36px -10px rgba(0,0,0,0.6),
-            inset 0 1px 0 rgba(255,255,255,0.08);
-          animation: fsHelpIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            0 14px 36px -10px rgba(0,0,0,0.65),
+            0 0 22px -6px hsla(271,91%,60%,0.35),
+            inset 0 1px 0 rgba(255,255,255,0.10);
+          animation: fsHelpIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
         @keyframes fsHelpIn {
           from { opacity: 0; transform: translateX(20px) scale(0.85); }
