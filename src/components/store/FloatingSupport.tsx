@@ -556,10 +556,10 @@ const FloatingSupport = () => {
             style={{
               background: (chatOpen || menuOpen)
                 ? 'linear-gradient(135deg, hsla(0,0%,100%,0.9), hsla(var(--brand-h),60%,97%,0.85))'
-                : 'linear-gradient(140deg, hsl(var(--brand-h),85%,68%) 0%, hsl(var(--brand-h),80%,60%) 40%, hsl(195,90%,62%) 100%)',
+                : 'linear-gradient(180deg, hsl(258,90%,68%) 0%, hsl(230,90%,65%) 50%, hsl(195,95%,62%) 100%)',
               boxShadow: (chatOpen || menuOpen)
                 ? '0 14px 36px -10px hsla(var(--brand-h),55%,40%,0.25), 0 0 22px -6px hsla(var(--brand-h),85%,70%,0.3), inset 0 1px 0 hsla(0,0%,100%,1)'
-                : '0 10px 28px -8px hsla(var(--brand-h),70%,50%,0.4), 0 0 22px -4px hsla(195,90%,62%,0.35), inset 0 1px 0 hsla(0,0%,100%,0.5), inset 0 -2px 6px hsla(var(--brand-h),70%,40%,0.25)',
+                : '0 12px 32px -8px hsla(258,80%,55%,0.45), 0 0 26px -4px hsla(195,95%,62%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.55), inset 0 -2px 6px hsla(258,70%,40%,0.3)',
               border: (chatOpen || menuOpen) ? '1px solid hsla(0,0%,100%,0.7)' : '1px solid hsla(0,0%,100%,0.35)',
               backdropFilter: (chatOpen || menuOpen) ? 'blur(28px) saturate(180%)' : 'none',
               WebkitBackdropFilter: (chatOpen || menuOpen) ? 'blur(28px) saturate(180%)' : 'none',
