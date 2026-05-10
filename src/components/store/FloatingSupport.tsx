@@ -554,13 +554,15 @@ const FloatingSupport = () => {
             }}
             className="fab-btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
             style={{
-              background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(var(--brand-h),60%,97%,0.78) 55%, hsla(var(--accent-h),var(--accent-s),96%,0.85))',
+              background: (chatOpen || menuOpen)
+                ? 'linear-gradient(135deg, hsla(0,0%,100%,0.9), hsla(var(--brand-h),60%,97%,0.85))'
+                : 'linear-gradient(140deg, hsl(var(--brand-h),85%,68%) 0%, hsl(var(--brand-h),80%,60%) 40%, hsl(195,90%,62%) 100%)',
               boxShadow: (chatOpen || menuOpen)
                 ? '0 14px 36px -10px hsla(var(--brand-h),55%,40%,0.25), 0 0 22px -6px hsla(var(--brand-h),85%,70%,0.3), inset 0 1px 0 hsla(0,0%,100%,1)'
-                : '0 12px 32px -10px hsla(var(--brand-h),50%,40%,0.2), 0 2px 8px -2px hsla(var(--brand-h),40%,30%,0.08), inset 0 1px 0 hsla(0,0%,100%,0.95), inset 0 -1px 0 hsla(var(--brand-h),40%,90%,0.4)',
-              border: '1px solid hsla(0,0%,100%,0.7)',
-              backdropFilter: 'blur(28px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                : '0 10px 28px -8px hsla(var(--brand-h),70%,50%,0.4), 0 0 22px -4px hsla(195,90%,62%,0.35), inset 0 1px 0 hsla(0,0%,100%,0.5), inset 0 -2px 6px hsla(var(--brand-h),70%,40%,0.25)',
+              border: (chatOpen || menuOpen) ? '1px solid hsla(0,0%,100%,0.7)' : '1px solid hsla(0,0%,100%,0.35)',
+              backdropFilter: (chatOpen || menuOpen) ? 'blur(28px) saturate(180%)' : 'none',
+              WebkitBackdropFilter: (chatOpen || menuOpen) ? 'blur(28px) saturate(180%)' : 'none',
             }}
             title="সাপোর্ট"
           >
@@ -573,7 +575,7 @@ const FloatingSupport = () => {
             )}
             {(chatOpen || menuOpen)
               ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(var(--brand-h),78%,42%)' }} />
-              : <MessageCircle size={24} className="relative z-10" style={{ color: 'hsl(var(--brand-h),70%,45%)' }} />
+              : <MessageCircle size={24} className="text-white relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]" />
             }
           </button>
         </div>
