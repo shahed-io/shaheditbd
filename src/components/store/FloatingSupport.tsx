@@ -62,10 +62,20 @@ const FloatingSupport = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [helpDismissed, setHelpDismissed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('fs_help_dismissed') === '1';
+  });
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const configLoaded = useRef(false);
   const sessionIdRef = useRef(crypto.randomUUID());
+
+  const dismissHelp = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setHelpDismissed(true);
+    try { localStorage.setItem('fs_help_dismissed', '1'); } catch {}
+  };
 
   // Load settings once
   useEffect(() => {
