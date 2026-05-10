@@ -410,77 +410,72 @@ const FloatingSupport = () => {
               // Build list in display order (top → bottom): AI, WhatsApp, custom sets, then label
               const items: React.ReactNode[] = [];
 
-              if (config.chat_enabled) {
-                items.push(
-                  <button
-                    key="ai"
-                    onClick={openChat}
-                    className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
-                  >
+              const renderPill = (
+                key: string,
+                onClick: () => void,
+                gradient: string,
+                glowHsl: string,
+                Icon: any,
+                label: string,
+                subtitle?: string,
+              ) => (
+                <button
+                  key={key}
+                  onClick={onClick}
+                  className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
+                  style={{ ['--pill-glow' as any]: glowHsl }}
+                >
+                  <span className="fs-icon-wrap relative flex-shrink-0">
                     <span
-                      className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-6"
+                      className="fs-icon-ring"
                       style={{
-                        background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-                        boxShadow: '0 6px 16px hsla(271, 91%, 60%, 0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
+                        background: `conic-gradient(from 180deg, ${glowHsl}, transparent 40%, ${glowHsl} 80%, transparent)`,
+                      }}
+                    />
+                    <span
+                      className="relative w-11 h-11 rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[8deg]"
+                      style={{
+                        background: gradient,
+                        boxShadow: `0 6px 18px ${glowHsl}, inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 6px rgba(0,0,0,0.18)`,
                       }}
                     >
-                      <Bot size={19} className="text-white" />
+                      <Icon size={19} className="text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
                     </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-white leading-tight">{config.ai_label}</p>
-                      <p className="text-[11px] text-white/60 truncate mt-0.5">{config.ai_subtitle}</p>
-                    </div>
-                  </button>
-                );
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[14px] font-bold text-white leading-tight tracking-tight">{label}</p>
+                    {subtitle && <p className="text-[11px] text-white/65 truncate mt-0.5">{subtitle}</p>}
+                  </div>
+                  <span className="fs-pill-arrow text-white/30 group-hover:text-white/80 transition-all duration-300">→</span>
+                </button>
+              );
+
+              if (config.chat_enabled) {
+                items.push(renderPill(
+                  'ai', openChat,
+                  'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+                  'hsla(271,91%,60%,0.55)',
+                  Bot, config.ai_label, config.ai_subtitle,
+                ));
               }
 
               if (config.whatsapp_enabled) {
-                items.push(
-                  <button
-                    key="wa"
-                    onClick={openWhatsApp}
-                    className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
-                  >
-                    <span
-                      className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-6"
-                      style={{
-                        background: 'linear-gradient(135deg, #25D366, #128C7E)',
-                        boxShadow: '0 6px 16px hsla(142, 70%, 40%, 0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
-                      }}
-                    >
-                      <MessageCircle size={19} className="text-white" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-white leading-tight">{config.whatsapp_label}</p>
-                      <p className="text-[11px] text-white/60 truncate mt-0.5">{config.whatsapp_subtitle}</p>
-                    </div>
-                  </button>
-                );
+                items.push(renderPill(
+                  'wa', openWhatsApp,
+                  'linear-gradient(135deg, #25D366, #128C7E)',
+                  'hsla(142,70%,45%,0.55)',
+                  MessageCircle, config.whatsapp_label, config.whatsapp_subtitle,
+                ));
               }
 
               activeSets.forEach(set => {
                 const ChannelIcon = getFsIcon(set.icon);
-                items.push(
-                  <button
-                    key={set.id}
-                    onClick={() => openLiveSet(set)}
-                    className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
-                  >
-                    <span
-                      className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-6"
-                      style={{
-                        background: `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)`,
-                        boxShadow: `0 6px 16px ${set.icon_color}66, inset 0 1px 0 rgba(255,255,255,0.3)`,
-                      }}
-                    >
-                      <ChannelIcon size={19} className="text-white" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-white leading-tight">{set.label}</p>
-                      {set.subtitle && <p className="text-[11px] text-white/60 truncate mt-0.5">{set.subtitle}</p>}
-                    </div>
-                  </button>
-                );
+                items.push(renderPill(
+                  set.id, () => openLiveSet(set),
+                  `linear-gradient(135deg, ${set.icon_color}, ${set.icon_color}dd)`,
+                  `${set.icon_color}99`,
+                  ChannelIcon, set.label, set.subtitle,
+                ));
               });
 
               if (items.length === 0) {
