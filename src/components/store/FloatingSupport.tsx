@@ -443,10 +443,10 @@ const FloatingSupport = () => {
                     </span>
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-bold text-white leading-tight tracking-tight">{label}</p>
-                    {subtitle && <p className="text-[11px] text-white/65 truncate mt-0.5">{subtitle}</p>}
+                    <p className="fs-pill-title text-[14px] font-bold leading-tight tracking-tight">{label}</p>
+                    {subtitle && <p className="fs-pill-subtitle text-[11px] truncate mt-0.5">{subtitle}</p>}
                   </div>
-                  <span className="fs-pill-arrow text-white/30 group-hover:text-white/80 transition-all duration-300">→</span>
+                  <span className="fs-pill-arrow">→</span>
                 </button>
               );
 
