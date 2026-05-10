@@ -480,7 +480,7 @@ const FloatingSupport = () => {
 
               if (items.length === 0) {
                 return (
-                  <div className="fs-pill w-full px-4 py-3 rounded-full text-center text-xs text-white/70">
+                  <div className="fs-pill w-full px-4 py-3 rounded-full text-center text-xs" style={{ color: 'hsl(226,15%,45%)' }}>
                     কোনো সাপোর্ট চ্যানেল কনফিগার করা নেই
                   </div>
                 );
