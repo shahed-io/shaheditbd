@@ -587,13 +587,16 @@ const FloatingSupport = () => {
         .fs-pill {
           position: relative;
           background:
-            linear-gradient(135deg, rgba(28,28,40,0.92) 0%, rgba(18,18,26,0.94) 100%);
+            linear-gradient(135deg, rgba(28,28,40,0.78) 0%, rgba(14,14,22,0.82) 100%);
           border: 1px solid rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(24px) saturate(180%);
+          -webkit-backdrop-filter: blur(24px) saturate(180%);
           box-shadow:
-            0 14px 36px -10px rgba(0,0,0,0.65),
+            0 14px 40px -12px rgba(0,0,0,0.7),
             0 2px 6px -2px rgba(0,0,0,0.4),
-            inset 0 1px 0 rgba(255,255,255,0.08);
-          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            0 0 0 0 var(--pill-glow, transparent),
+            inset 0 1px 0 rgba(255,255,255,0.10);
+          transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease;
           overflow: hidden;
         }
         /* Animated gradient border ring */
@@ -604,16 +607,17 @@ const FloatingSupport = () => {
           border-radius: 9999px;
           padding: 1px;
           background: linear-gradient(120deg,
-            hsla(271,91%,65%,0.55),
-            hsla(185,90%,52%,0.45),
-            hsla(320,90%,62%,0.4),
-            hsla(271,91%,65%,0.55));
-          background-size: 220% 220%;
+            var(--pill-glow, hsla(271,91%,65%,0.55)),
+            hsla(0,0%,100%,0.25),
+            var(--pill-glow, hsla(185,90%,52%,0.45)),
+            hsla(0,0%,100%,0.15),
+            var(--pill-glow, hsla(271,91%,65%,0.55)));
+          background-size: 280% 280%;
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
-          opacity: 0.55;
-          animation: fsBorderShift 6s linear infinite;
+          opacity: 0.65;
+          animation: fsBorderShift 5s linear infinite;
           pointer-events: none;
         }
         /* Shine sweep on hover */
@@ -622,7 +626,7 @@ const FloatingSupport = () => {
           position: absolute;
           top: 0; left: -60%;
           width: 50%; height: 100%;
-          background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%);
+          background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
           transform: skewX(-20deg);
           transition: left 0.7s ease;
           pointer-events: none;
@@ -630,27 +634,52 @@ const FloatingSupport = () => {
         .fs-pill:hover::after { left: 130%; }
         @keyframes fsBorderShift {
           0%   { background-position: 0% 50%; }
-          100% { background-position: 220% 50%; }
+          100% { background-position: 280% 50%; }
         }
         .fs-pill:hover {
           transform: translateX(-4px) translateY(-2px);
-          border-color: rgba(255, 255, 255, 0.18);
+          border-color: rgba(255, 255, 255, 0.20);
           box-shadow:
-            0 22px 48px -12px rgba(0,0,0,0.75),
-            0 0 0 1px rgba(255,255,255,0.04),
-            inset 0 1px 0 rgba(255,255,255,0.12);
+            0 24px 56px -12px rgba(0,0,0,0.8),
+            0 0 28px -4px var(--pill-glow, rgba(255,255,255,0.15)),
+            0 0 0 1px rgba(255,255,255,0.06),
+            inset 0 1px 0 rgba(255,255,255,0.14);
         }
-        .fs-pill:hover::before { opacity: 0.95; }
+        .fs-pill:hover::before { opacity: 1; }
         .fs-pill:active { transform: translateX(-2px) scale(0.98); }
+        .fs-pill-arrow {
+          font-size: 16px;
+          transform: translateX(-2px);
+        }
+        .fs-pill:hover .fs-pill-arrow { transform: translateX(2px); }
+
+        /* Icon container with conic-gradient halo ring */
+        .fs-icon-wrap { display: inline-flex; padding: 2px; }
+        .fs-icon-ring {
+          position: absolute;
+          inset: -2px;
+          border-radius: 9999px;
+          opacity: 0.55;
+          filter: blur(2px);
+          animation: fsIconSpin 6s linear infinite;
+          pointer-events: none;
+        }
+        .fs-pill:hover .fs-icon-ring { opacity: 0.95; filter: blur(3px); }
+        @keyframes fsIconSpin {
+          to { transform: rotate(360deg); }
+        }
 
         /* Side help-pill next to FAB */
         .fs-help-pill {
-          background: linear-gradient(135deg, rgba(28,28,40,0.92), rgba(18,18,26,0.94));
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: linear-gradient(135deg, rgba(28,28,40,0.82), rgba(14,14,22,0.86));
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          backdrop-filter: blur(24px) saturate(180%);
+          -webkit-backdrop-filter: blur(24px) saturate(180%);
           box-shadow:
-            0 14px 36px -10px rgba(0,0,0,0.6),
-            inset 0 1px 0 rgba(255,255,255,0.08);
-          animation: fsHelpIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            0 14px 36px -10px rgba(0,0,0,0.65),
+            0 0 22px -6px hsla(271,91%,60%,0.35),
+            inset 0 1px 0 rgba(255,255,255,0.10);
+          animation: fsHelpIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
         @keyframes fsHelpIn {
           from { opacity: 0; transform: translateX(20px) scale(0.85); }
