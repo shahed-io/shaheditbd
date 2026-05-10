@@ -422,9 +422,15 @@ const FloatingSupport = () => {
                 <button
                   key={key}
                   onClick={onClick}
-                  className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2 rounded-full text-left"
+                  className="fs-pill group w-full flex items-center gap-3 pl-2 pr-4 py-2.5 rounded-full text-left"
                   style={{ ['--pill-glow' as any]: glowHsl }}
                 >
+                  {/* Inner aurora blob — adds depth behind the glass */}
+                  <span
+                    className="fs-pill-aurora"
+                    style={{ background: `radial-gradient(circle at 20% 50%, ${glowHsl}, transparent 60%)` }}
+                    aria-hidden
+                  />
                   <span className="fs-icon-wrap relative flex-shrink-0">
                     <span
                       className="fs-icon-ring"
@@ -433,20 +439,21 @@ const FloatingSupport = () => {
                       }}
                     />
                     <span
-                      className="relative w-11 h-11 rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[8deg]"
+                      className="fs-icon-orb relative w-11 h-11 rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[8deg]"
                       style={{
                         background: gradient,
-                        boxShadow: `0 6px 18px ${glowHsl}, inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 6px rgba(0,0,0,0.18)`,
+                        boxShadow: `0 8px 22px ${glowHsl}, 0 2px 6px rgba(0,0,0,0.15), inset 0 1.5px 0 rgba(255,255,255,0.5), inset 0 -3px 8px rgba(0,0,0,0.22)`,
                       }}
                     >
-                      <Icon size={19} className="text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
+                      <span className="fs-icon-gloss" aria-hidden />
+                      <Icon size={19} className="text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)] relative z-10" />
                     </span>
                   </span>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 relative z-10">
                     <p className="fs-pill-title text-[14px] font-bold leading-tight tracking-tight">{label}</p>
                     {subtitle && <p className="fs-pill-subtitle text-[11px] truncate mt-0.5">{subtitle}</p>}
                   </div>
-                  <span className="fs-pill-arrow">→</span>
+                  <span className="fs-pill-arrow relative z-10">→</span>
                 </button>
               );
 
