@@ -555,12 +555,12 @@ const FloatingSupport = () => {
             className="fab-btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
             style={{
               background: (chatOpen || menuOpen)
-                ? 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))'
-                : 'linear-gradient(140deg, hsl(271,91%,68%) 0%, hsl(290,85%,62%) 35%, hsl(210,90%,58%) 70%, hsl(185,90%,55%) 100%)',
+                ? 'linear-gradient(135deg, hsla(0,0%,100%,0.96), hsla(var(--brand-h),60%,96%,0.92))'
+                : 'linear-gradient(140deg, hsl(var(--brand-h),var(--brand-s),68%) 0%, hsl(var(--brand-h),var(--brand-s),52%) 45%, hsl(var(--brand-h),85%,42%) 75%, hsl(var(--accent-h),var(--accent-s),58%) 100%)',
               boxShadow: (chatOpen || menuOpen)
-                ? '0 18px 44px -10px hsla(258,70%,40%,0.32), 0 0 26px -6px hsla(271,91%,60%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
-                : '0 0 0 1px hsla(0,0%,100%,0.25) inset, 0 1px 0 hsla(0,0%,100%,0.45) inset, 0 -3px 8px hsla(258,90%,30%,0.3) inset, 0 8px 24px hsla(271,91%,55%,0.45), 0 0 32px hsla(185,90%,55%,0.35), 0 16px 40px -8px hsla(258,80%,30%,0.45)',
-              border: (chatOpen || menuOpen) ? '1.5px solid hsla(258,70%,72%,0.6)' : 'none',
+                ? '0 18px 44px -10px hsla(var(--brand-h),70%,35%,0.32), 0 0 26px -6px hsla(var(--brand-h),85%,55%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
+                : '0 0 0 1px hsla(0,0%,100%,0.25) inset, 0 1px 0 hsla(0,0%,100%,0.5) inset, 0 -3px 8px hsla(var(--brand-h),90%,25%,0.35) inset, 0 8px 24px hsla(var(--brand-h),85%,50%,0.5), 0 0 32px hsla(var(--accent-h),var(--accent-s),55%,0.32), 0 16px 40px -8px hsla(var(--brand-h),80%,28%,0.5)',
+              border: (chatOpen || menuOpen) ? '1.5px solid hsla(var(--brand-h),70%,72%,0.6)' : 'none',
               backdropFilter: (chatOpen || menuOpen) ? 'blur(40px) saturate(200%)' : 'none',
             }}
             title="সাপোর্ট"
@@ -573,7 +573,7 @@ const FloatingSupport = () => {
               <span className="absolute inset-0 rounded-full fab-pulse-inner" />
             )}
             {(chatOpen || menuOpen)
-              ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(258,78%,45%)' }} />
+              ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(var(--brand-h),78%,42%)' }} />
               : <MessageCircle size={24} className="text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]" />
             }
           </button>
@@ -793,8 +793,8 @@ const FloatingSupport = () => {
           width: 110px; height: 110px;
           border-radius: 9999px;
           background: radial-gradient(circle,
-            hsla(271,91%,65%,0.35) 0%,
-            hsla(185,90%,55%,0.22) 40%,
+            hsla(var(--brand-h),85%,60%,0.38) 0%,
+            hsla(var(--accent-h),var(--accent-s),58%,0.22) 45%,
             transparent 70%);
           filter: blur(8px);
           animation: fabHaloPulse 3.5s ease-in-out infinite;
@@ -812,11 +812,11 @@ const FloatingSupport = () => {
           border-radius: 9999px;
           padding: 2px;
           background: conic-gradient(from 0deg,
-            hsla(271,91%,75%,0.9),
-            hsla(320,90%,70%,0.6),
-            hsla(185,90%,65%,0.9),
-            hsla(210,90%,70%,0.5),
-            hsla(271,91%,75%,0.9));
+            hsla(var(--brand-h),85%,72%,0.92),
+            hsla(var(--accent-h),var(--accent-s),65%,0.7),
+            hsla(var(--brand-h),85%,55%,0.9),
+            hsla(var(--accent-h),var(--accent-s),60%,0.55),
+            hsla(var(--brand-h),85%,72%,0.92));
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
                   mask-composite: exclude;
@@ -843,19 +843,19 @@ const FloatingSupport = () => {
         .fab-ring {
           position: absolute;
           border-radius: 9999px;
-          border: 1.5px solid hsla(271,91%,65%,0.5);
+          border: 1.5px solid hsla(var(--brand-h),85%,60%,0.55);
           animation: fab-ring-out 2.4s cubic-bezier(0.2,0.8,0.4,1) infinite;
           pointer-events: none;
         }
         .fab-ring-1 { width: 56px; height: 56px; animation-delay: 0s; }
-        .fab-ring-2 { width: 56px; height: 56px; animation-delay: 0.7s; border-color: hsla(185,90%,52%,0.4); }
-        .fab-ring-3 { width: 56px; height: 56px; animation-delay: 1.4s; border-color: hsla(320,90%,62%,0.35); }
+        .fab-ring-2 { width: 56px; height: 56px; animation-delay: 0.7s; border-color: hsla(var(--accent-h),var(--accent-s),55%,0.45); }
+        .fab-ring-3 { width: 56px; height: 56px; animation-delay: 1.4s; border-color: hsla(var(--brand-h),75%,55%,0.35); }
         @keyframes fab-ring-out {
           0%   { transform: scale(1);   opacity: 0.9; }
           100% { transform: scale(2.8); opacity: 0; }
         }
         .fab-pulse-inner {
-          background: radial-gradient(circle, hsla(271,91%,65%,0.35) 0%, transparent 70%);
+          background: radial-gradient(circle, hsla(var(--brand-h),85%,60%,0.38) 0%, transparent 70%);
           animation: fab-inner-pulse 2s ease-in-out infinite;
         }
         @keyframes fab-inner-pulse {
