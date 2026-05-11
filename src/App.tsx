@@ -111,6 +111,7 @@ const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBa
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
 const AdminInvoiceDesign         = lazy(() => import("./pages/admin/AdminInvoiceDesign"));
 const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterSettings"));
+const AdminTextManager           = lazy(() => import("./pages/admin/AdminTextManager"));
 const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveChat"));
 const AdminTelegramBot           = lazy(() => import("./pages/admin/AdminTelegramBot"));
 const AdminStaffManagement       = lazy(() => import("./pages/admin/AdminStaffManagement"));
