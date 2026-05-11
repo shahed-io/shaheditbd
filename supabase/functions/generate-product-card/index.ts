@@ -85,11 +85,11 @@ You MUST create a premium square (1:1) product promotional card that EXACTLY mat
 - Icons: thin-outline style (1.5px stroke), dark charcoal, inside small circular outlines
 
 ═══ ABSOLUTE RULES (MUST FOLLOW) ═══
-- The "SHAHED STORE" element is a WHITE PILL containing a RED BADGE with WHITE TEXT — never just a glass pill
+- The "SHAHED STORE" element is a SOFT LAVENDER FROSTED-GLASS PILL with EMBOSSED 3D WHITE wordmark — NEVER a red rectangle, NEVER a red badge, NEVER any solid red color anywhere on the card
 - The brand pill on the right is a SOLID WHITE pill with the brand logo + name in dark charcoal
 - The contact info MUST be INSIDE the frosted card (bottom area) with a separator line above it
 - The floating 3D bubbles MUST be visible around the card edges (sky blue + mint/teal ONLY)
-- Background is PALE BLUE / OFF-WHITE only — NO pink, peach, lavender, or warm tones
+- Background is PALE BLUE / OFF-WHITE only (unless a style override changes it)
 - NO price tag, NO discount badge, NO marketing copy, NO promotional text
 - Square format exactly (1:1)
 - Every element crisp, readable, premium — luxury digital store aesthetic
