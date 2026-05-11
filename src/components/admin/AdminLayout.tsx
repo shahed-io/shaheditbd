@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAdminPrefetch, prefetchAdminRoute } from '@/hooks/useAdminPrefetch';
 import AdminCommandPalette from '@/components/admin/AdminCommandPalette';
 import { useAdminCopyAnywhere } from '@/hooks/useAdminCopyAnywhere';
+import AdminHeroHeader from '@/components/admin/AdminHeroHeader';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
