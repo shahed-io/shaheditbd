@@ -524,6 +524,14 @@ export default function AdminCustomers() {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 transition-colors border border-amber-500/20">
               <Lock size={13} /> পাসওয়ার্ড রিসেট
             </button>
+            <button onClick={() => toggleSuspend(selected)} disabled={actionLoading}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border disabled:opacity-50 ${
+                selected.is_suspended
+                  ? 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/20'
+                  : 'bg-orange-500/10 text-orange-600 hover:bg-orange-500/20 border-orange-500/20'
+              }`}>
+              {selected.is_suspended ? <><ShieldOff size={13} /> Unsuspend</> : <><Ban size={13} /> Suspend</>}
+            </button>
             <button onClick={() => deleteCustomer(selected)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors border border-destructive/20">
               <Trash2 size={13} /> ডিলিট
