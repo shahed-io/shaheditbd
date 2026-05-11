@@ -1053,6 +1053,10 @@ export default function AdminCustomers() {
                         <Button size="sm" variant="outline" onClick={() => openDetail(c)} className="h-7 text-xs gap-2">
                           <Eye size={12} /> বিস্তারিত
                         </Button>
+                        <button onClick={() => toggleSuspend(c)} title={c.is_suspended ? 'Unsuspend' : 'Suspend'}
+                          className={`p-1.5 rounded-lg transition-colors ${c.is_suspended ? 'text-emerald-600 hover:bg-emerald-500/10' : 'text-muted-foreground hover:text-orange-600 hover:bg-orange-500/10'}`}>
+                          {c.is_suspended ? <ShieldOff size={13} /> : <Ban size={13} />}
+                        </button>
                         <button onClick={() => deleteCustomer(c)}
                           className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
                           <Trash2 size={13} />
