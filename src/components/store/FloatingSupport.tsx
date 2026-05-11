@@ -120,6 +120,11 @@ const FloatingSupport = () => {
     window.open(`https://wa.me/${config.whatsapp_number}`, '_blank');
   };
 
+  const openPhoneCall = () => {
+    setMenuOpen(false);
+    window.location.href = `tel:${config.phone_number.replace(/[^0-9+]/g, '')}`;
+  };
+
   const openLiveSet = (set: LiveSet) => {
     setMenuOpen(false);
     let url = '';
@@ -340,12 +345,27 @@ const FloatingSupport = () => {
           )}
 
           {/* Other ways to contact — inside AI chat panel */}
-          {(config.whatsapp_enabled || activeSets.length > 0) && (
+          {(config.whatsapp_enabled || config.phone_enabled || activeSets.length > 0) && (
             <div className="px-3 pb-2 pt-1 border-t border-border/40">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-1">
                 অন্যান্য যোগাযোগের উপায়
               </p>
               <div className="flex flex-wrap gap-2">
+                {config.phone_enabled && (
+                  <button
+                    onClick={openPhoneCall}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-card border border-border/60 hover:border-blue-500/50 hover:shadow-sm transition-all group"
+                    title={config.phone_label}
+                  >
+                    <span
+                      className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}
+                    >
+                      <Phone size={12} className="text-white" />
+                    </span>
+                    <span className="text-xs font-medium text-foreground">{config.phone_label}</span>
+                  </button>
+                )}
                 {config.whatsapp_enabled && (
                   <button
                     onClick={openWhatsApp}
@@ -473,6 +493,15 @@ const FloatingSupport = () => {
                   'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
                   'hsla(271,91%,60%,0.55)',
                   Bot, config.ai_label, config.ai_subtitle,
+                ));
+              }
+
+              if (config.phone_enabled) {
+                items.push(renderPill(
+                  'phone', openPhoneCall,
+                  'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  'hsla(217,91%,60%,0.55)',
+                  Phone, config.phone_label, config.phone_subtitle,
                 ));
               }
 
