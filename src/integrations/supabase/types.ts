@@ -2090,6 +2090,7 @@ export type Database = {
           display_name: string | null
           email: string | null
           id: string
+          is_suspended: boolean
           phone: string | null
           points_balance: number
           referral_code: string | null
@@ -2099,6 +2100,8 @@ export type Database = {
           referral_earnings: number
           referred_by: string | null
           signup_ip: string | null
+          suspended_at: string | null
+          suspended_reason: string | null
           total_points_earned: number
           total_points_redeemed: number
           updated_at: string
@@ -2112,6 +2115,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          is_suspended?: boolean
           phone?: string | null
           points_balance?: number
           referral_code?: string | null
@@ -2121,6 +2125,8 @@ export type Database = {
           referral_earnings?: number
           referred_by?: string | null
           signup_ip?: string | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
           total_points_earned?: number
           total_points_redeemed?: number
           updated_at?: string
@@ -2134,6 +2140,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          is_suspended?: boolean
           phone?: string | null
           points_balance?: number
           referral_code?: string | null
@@ -2143,6 +2150,8 @@ export type Database = {
           referral_earnings?: number
           referred_by?: string | null
           signup_ip?: string | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
           total_points_earned?: number
           total_points_redeemed?: number
           updated_at?: string

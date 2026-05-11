@@ -194,6 +194,71 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ─── SUSPEND / UNSUSPEND USER ───
+    if (action === "suspend_user" || action === "unsuspend_user") {
+      const { user_id, reason } = body;
+      if (!user_id) {
+        return new Response(JSON.stringify({ error: "user_id required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (user_id === caller.id) {
+        return new Response(
+          JSON.stringify({ error: "You cannot suspend your own account" }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      const suspending = action === "suspend_user";
+      // Supabase ban: ~100 years for suspend, 'none' to lift
+      const ban_duration = suspending ? "876000h" : "none";
+
+      const { error: banError } =
+        await adminClient.auth.admin.updateUserById(user_id, {
+          ban_duration,
+        } as any);
+
+      if (banError) {
+        return new Response(
+          JSON.stringify({ error: banError.message }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      // Force sign out all active sessions when suspending
+      if (suspending) {
+        try {
+          await adminClient.auth.admin.signOut(user_id, "global");
+        } catch (_) {
+          // non-fatal
+        }
+      }
+
+      // Mirror state on profile for UI/visibility
+      await adminClient
+        .from("profiles")
+        .update({
+          is_suspended: suspending,
+          suspended_at: suspending ? new Date().toISOString() : null,
+          suspended_reason: suspending ? (reason || null) : null,
+        })
+        .eq("user_id", user_id);
+
+      return new Response(
+        JSON.stringify({ success: true, suspended: suspending }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     return new Response(
       JSON.stringify({ error: "Unknown action" }),
       {

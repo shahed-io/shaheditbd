@@ -8,7 +8,7 @@ import {
   Mail, Phone, Calendar, TrendingUp, TrendingDown, UserCheck, Award, Star,
   Key, Package, ChevronDown, ChevronRight, MessageCircle, Copy, Check,
   Edit3, Save, X, ArrowLeft, UserPlus, Trash2, Lock, Shield, EyeOff, EyeIcon,
-  Download, Upload
+  Download, Upload, Ban, ShieldOff
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +30,9 @@ type Customer = {
   points_balance?: number;
   total_points_earned?: number;
   total_points_redeemed?: number;
+  is_suspended?: boolean;
+  suspended_at?: string | null;
+  suspended_reason?: string | null;
 };
 
 type OrderItem = {
@@ -347,7 +350,46 @@ export default function AdminCustomers() {
     }
   };
 
-  // ─── Export CSV ───
+  // Suspend / Unsuspend customer account
+  const toggleSuspend = async (c: Customer) => {
+    const suspending = !c.is_suspended;
+    let reason: string | null = null;
+    if (suspending) {
+      const r = window.prompt(`"${c.display_name ?? c.email ?? 'এই কাস্টমার'}"-এর অ্যাকাউন্ট suspend করতে চান?\n\nকারণ লিখুন (ঐচ্ছিক):`, '');
+      if (r === null) return; // cancelled
+      reason = r.trim() || null;
+    } else {
+      if (!confirm(`"${c.display_name ?? c.email ?? 'এই কাস্টমার'}"-এর suspension তুলে দিতে চান?`)) return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await supabase.functions.invoke('admin-manage-users', {
+        body: {
+          action: suspending ? 'suspend_user' : 'unsuspend_user',
+          user_id: c.user_id,
+          reason,
+        },
+      });
+      if (res.error || res.data?.error) {
+        toast.error(res.data?.error || res.error?.message || 'অপারেশন ব্যর্থ');
+        return;
+      }
+      toast.success(suspending ? 'অ্যাকাউন্ট suspend করা হয়েছে' : 'Suspension তুলে দেওয়া হয়েছে');
+      if (selected?.id === c.id) {
+        setSelected({
+          ...selected,
+          is_suspended: suspending,
+          suspended_at: suspending ? new Date().toISOString() : null,
+          suspended_reason: suspending ? reason : null,
+        });
+      }
+      refetch();
+    } catch (e: any) {
+      toast.error(e.message || 'ত্রুটি');
+    } finally {
+      setActionLoading(false);
+    }
+  };
   const exportCSV = () => {
     const headers = ['নাম', 'ইমেইল', 'ফোন', 'যোগদান', 'অর্ডার', 'মোট খরচ', 'ওয়ালেট', 'পয়েন্ট'];
     const rows = filtered.map(c => [
@@ -469,8 +511,18 @@ export default function AdminCustomers() {
               {(selected.display_name ?? selected.email ?? '?')[0]?.toUpperCase()}
             </div>
             <div className="min-w-0">
-              <h1 className="text-lg font-bold text-foreground truncate">{selected.display_name ?? 'No Name'}</h1>
+              <h1 className="text-lg font-bold text-foreground truncate flex items-center gap-2">
+                {selected.display_name ?? 'No Name'}
+                {selected.is_suspended && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-600 border border-red-500/30">
+                    <Ban size={10} /> SUSPENDED
+                  </span>
+                )}
+              </h1>
               <p className="text-xs text-muted-foreground truncate">{selected.email}</p>
+              {selected.is_suspended && selected.suspended_reason && (
+                <p className="text-[11px] text-red-600/80 mt-0.5 truncate">কারণ: {selected.suspended_reason}</p>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -481,6 +533,14 @@ export default function AdminCustomers() {
             <button onClick={() => { setResetPasswordModal(selected.user_id); setNewPassword(''); setShowNewPassword(false); }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 transition-colors border border-amber-500/20">
               <Lock size={13} /> পাসওয়ার্ড রিসেট
+            </button>
+            <button onClick={() => toggleSuspend(selected)} disabled={actionLoading}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border disabled:opacity-50 ${
+                selected.is_suspended
+                  ? 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/20'
+                  : 'bg-orange-500/10 text-orange-600 hover:bg-orange-500/20 border-orange-500/20'
+              }`}>
+              {selected.is_suspended ? <><ShieldOff size={13} /> Unsuspend</> : <><Ban size={13} /> Suspend</>}
             </button>
             <button onClick={() => deleteCustomer(selected)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors border border-destructive/20">
@@ -954,7 +1014,14 @@ export default function AdminCustomers() {
                           {(c.display_name ?? c.email ?? '?')[0].toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-medium text-foreground text-xs">{c.display_name ?? 'No Name'}</div>
+                          <div className="font-medium text-foreground text-xs flex items-center gap-1.5">
+                            {c.display_name ?? 'No Name'}
+                            {c.is_suspended && (
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0 rounded text-[9px] font-bold bg-red-500/15 text-red-600 border border-red-500/30">
+                                <Ban size={8} /> SUSPENDED
+                              </span>
+                            )}
+                          </div>
                           <div className="text-[10px] text-muted-foreground">{c.email}</div>
                         </div>
                       </div>
@@ -986,6 +1053,10 @@ export default function AdminCustomers() {
                         <Button size="sm" variant="outline" onClick={() => openDetail(c)} className="h-7 text-xs gap-2">
                           <Eye size={12} /> বিস্তারিত
                         </Button>
+                        <button onClick={() => toggleSuspend(c)} title={c.is_suspended ? 'Unsuspend' : 'Suspend'}
+                          className={`p-1.5 rounded-lg transition-colors ${c.is_suspended ? 'text-emerald-600 hover:bg-emerald-500/10' : 'text-muted-foreground hover:text-orange-600 hover:bg-orange-500/10'}`}>
+                          {c.is_suspended ? <ShieldOff size={13} /> : <Ban size={13} />}
+                        </button>
                         <button onClick={() => deleteCustomer(c)}
                           className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
                           <Trash2 size={13} />
