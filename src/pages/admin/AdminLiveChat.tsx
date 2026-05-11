@@ -531,10 +531,11 @@ const AdminLiveChat = () => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="grid grid-cols-5 w-full max-w-3xl">
+        <TabsList className="grid grid-cols-6 w-full max-w-4xl">
           <TabsTrigger value="general">সাধারণ</TabsTrigger>
           <TabsTrigger value="ai-chat">AI চ্যাট</TabsTrigger>
           <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
+          <TabsTrigger value="phone">ফোন কল</TabsTrigger>
           <TabsTrigger value="live-sets">লাইভ সেট</TabsTrigger>
           <TabsTrigger value="chat-history" className="flex items-center gap-2"><History className="w-3.5 h-3.5" /> হিস্ট্রি</TabsTrigger>
         </TabsList>
