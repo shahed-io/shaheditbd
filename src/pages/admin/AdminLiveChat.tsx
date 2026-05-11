@@ -18,6 +18,11 @@ interface LiveChatSettings {
   whatsapp_number: string;
   whatsapp_label: string;
   whatsapp_subtitle: string;
+  // Phone Call
+  phone_enabled: boolean;
+  phone_number: string;
+  phone_label: string;
+  phone_subtitle: string;
   // AI Chat
   ai_label: string;
   ai_subtitle: string;
@@ -50,6 +55,10 @@ const DEFAULT_SETTINGS: LiveChatSettings = {
   whatsapp_number: '8801840099853',
   whatsapp_label: 'WhatsApp',
   whatsapp_subtitle: 'সরাসরি কথা বলুন',
+  phone_enabled: true,
+  phone_number: '01840-099853',
+  phone_label: 'ফোন করুন',
+  phone_subtitle: 'সরাসরি কল করুন',
   ai_label: 'AI Support',
   ai_subtitle: 'তাৎক্ষণিক উত্তর পান',
   ai_welcome_message: 'হ্যালো! 👋 আমি Shahed Store-এর AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!',
@@ -522,10 +531,11 @@ const AdminLiveChat = () => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="grid grid-cols-5 w-full max-w-3xl">
+        <TabsList className="grid grid-cols-6 w-full max-w-4xl">
           <TabsTrigger value="general">সাধারণ</TabsTrigger>
           <TabsTrigger value="ai-chat">AI চ্যাট</TabsTrigger>
           <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
+          <TabsTrigger value="phone">ফোন কল</TabsTrigger>
           <TabsTrigger value="live-sets">লাইভ সেট</TabsTrigger>
           <TabsTrigger value="chat-history" className="flex items-center gap-2"><History className="w-3.5 h-3.5" /> হিস্ট্রি</TabsTrigger>
         </TabsList>
@@ -567,6 +577,22 @@ const AdminLiveChat = () => {
                 <Switch
                   checked={settings.whatsapp_enabled}
                   onCheckedChange={(v) => setSettings(prev => ({ ...prev, whatsapp_enabled: v }))}
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}>
+                    <Phone className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">ফোন কল সাপোর্ট</p>
+                    <p className="text-xs text-muted-foreground">সরাসরি কল অপশন চালু/বন্ধ করুন</p>
+                  </div>
+                </div>
+                <Switch
+                  checked={settings.phone_enabled}
+                  onCheckedChange={(v) => setSettings(prev => ({ ...prev, phone_enabled: v }))}
                 />
               </div>
 
@@ -683,6 +709,45 @@ const AdminLiveChat = () => {
                   <Input
                     value={settings.whatsapp_subtitle}
                     onChange={e => setSettings(prev => ({ ...prev, whatsapp_subtitle: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Phone Call Tab */}
+        <TabsContent value="phone">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Phone className="w-5 h-5 text-blue-500" /> ফোন কল সেটিংস
+              </CardTitle>
+              <CardDescription>সরাসরি ফোন নম্বর এবং ডিসপ্লে টেক্সট পরিবর্তন করুন</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="space-y-2">
+                <Label>ফোন নম্বর</Label>
+                <Input
+                  value={settings.phone_number}
+                  onChange={e => setSettings(prev => ({ ...prev, phone_number: e.target.value }))}
+                  placeholder="01840-099853"
+                />
+                <p className="text-xs text-muted-foreground">যেকোনো ফরম্যাটে দিতে পারেন — অটো ক্লিন হয়ে কলে যাবে</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>বাটন লেবেল</Label>
+                  <Input
+                    value={settings.phone_label}
+                    onChange={e => setSettings(prev => ({ ...prev, phone_label: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>সাবটাইটেল</Label>
+                  <Input
+                    value={settings.phone_subtitle}
+                    onChange={e => setSettings(prev => ({ ...prev, phone_subtitle: e.target.value }))}
                   />
                 </div>
               </div>
