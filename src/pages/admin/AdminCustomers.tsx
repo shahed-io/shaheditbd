@@ -350,7 +350,46 @@ export default function AdminCustomers() {
     }
   };
 
-  // ─── Export CSV ───
+  // Suspend / Unsuspend customer account
+  const toggleSuspend = async (c: Customer) => {
+    const suspending = !c.is_suspended;
+    let reason: string | null = null;
+    if (suspending) {
+      const r = window.prompt(`"${c.display_name ?? c.email ?? 'এই কাস্টমার'}"-এর অ্যাকাউন্ট suspend করতে চান?\n\nকারণ লিখুন (ঐচ্ছিক):`, '');
+      if (r === null) return; // cancelled
+      reason = r.trim() || null;
+    } else {
+      if (!confirm(`"${c.display_name ?? c.email ?? 'এই কাস্টমার'}"-এর suspension তুলে দিতে চান?`)) return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await supabase.functions.invoke('admin-manage-users', {
+        body: {
+          action: suspending ? 'suspend_user' : 'unsuspend_user',
+          user_id: c.user_id,
+          reason,
+        },
+      });
+      if (res.error || res.data?.error) {
+        toast.error(res.data?.error || res.error?.message || 'অপারেশন ব্যর্থ');
+        return;
+      }
+      toast.success(suspending ? 'অ্যাকাউন্ট suspend করা হয়েছে' : 'Suspension তুলে দেওয়া হয়েছে');
+      if (selected?.id === c.id) {
+        setSelected({
+          ...selected,
+          is_suspended: suspending,
+          suspended_at: suspending ? new Date().toISOString() : null,
+          suspended_reason: suspending ? reason : null,
+        });
+      }
+      refetch();
+    } catch (e: any) {
+      toast.error(e.message || 'ত্রুটি');
+    } finally {
+      setActionLoading(false);
+    }
+  };
   const exportCSV = () => {
     const headers = ['নাম', 'ইমেইল', 'ফোন', 'যোগদান', 'অর্ডার', 'মোট খরচ', 'ওয়ালেট', 'পয়েন্ট'];
     const rows = filtered.map(c => [
