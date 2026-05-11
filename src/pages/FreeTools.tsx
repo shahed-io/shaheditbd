@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import { FloatingButtons } from '@/components/store/Extras';
