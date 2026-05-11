@@ -571,15 +571,35 @@ const Navbar = () => {
               {user ? (
                 <div className="hidden sm:flex items-center gap-1">
                   <button onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
-                    style={{ color: 'hsl(226,35%,28%)' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'hsla(258,78%,55%,0.08)'; e.currentTarget.style.color = 'hsl(258,78%,48%)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = ''; e.currentTarget.style.color = 'hsl(226,35%,28%)'; }}>
-                    <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-                      style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
-                      {avatarUrl ? <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" /> : initials}
-                    </div>
-                    <span className="hidden lg:inline">Dashboard</span>
+                    className="group relative flex items-center gap-2 pl-1 pr-3.5 py-1 rounded-full text-sm font-semibold transition-all duration-300"
+                    style={{
+                      color: 'hsl(258,78%,40%)',
+                      background: 'linear-gradient(135deg, hsla(0,0%,100%,0.85), hsla(258,78%,96%,0.75))',
+                      border: '1px solid hsla(258,78%,55%,0.25)',
+                      backdropFilter: 'blur(14px)',
+                      WebkitBackdropFilter: 'blur(14px)',
+                      boxShadow: '0 4px 14px -4px hsla(258,78%,55%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.9)',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 8px 22px -6px hsla(258,78%,55%,0.45), inset 0 1px 0 hsla(0,0%,100%,0.9)';
+                      e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.45)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = '';
+                      e.currentTarget.style.boxShadow = '0 4px 14px -4px hsla(258,78%,55%,0.25), inset 0 1px 0 hsla(0,0%,100%,0.9)';
+                      e.currentTarget.style.borderColor = 'hsla(258,78%,55%,0.25)';
+                    }}>
+                    <span className="relative flex-shrink-0">
+                      <span className="block w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white ring-2 ring-white"
+                        style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 2px 6px hsla(258,78%,45%,0.4)' }}>
+                        {avatarUrl ? <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" /> : initials}
+                      </span>
+                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                    </span>
+                    <span className="hidden lg:inline bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, hsl(258,78%,45%), hsl(200,90%,40%))' }}>
+                      Dashboard
+                    </span>
                   </button>
                   <button onClick={() => supabase.auth.signOut()}
                     className="p-2 rounded-xl transition-all"
