@@ -168,15 +168,21 @@ export default function RefundRequest() {
     setUploading(true);
     const urls: string[] = [];
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('লগইন প্রয়োজন');
       for (const item of screenshots) {
         const ext = item.file.name.split('.').pop() || 'jpg';
-        const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
         const { error } = await supabase.storage
           .from('refund-screenshots')
           .upload(path, item.file, { upsert: false });
         if (error) throw error;
-        const { data } = supabase.storage.from('refund-screenshots').getPublicUrl(path);
-        urls.push(data.publicUrl);
+        // Bucket is private — generate a long-lived signed URL (1 year)
+        const { data: signed, error: signErr } = await supabase.storage
+          .from('refund-screenshots')
+          .createSignedUrl(path, 60 * 60 * 24 * 365);
+        if (signErr || !signed) throw signErr || new Error('Signed URL ব্যর্থ');
+        urls.push(signed.signedUrl);
       }
     } finally {
       setUploading(false);
