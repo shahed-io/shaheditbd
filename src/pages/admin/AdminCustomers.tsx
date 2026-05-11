@@ -511,8 +511,18 @@ export default function AdminCustomers() {
               {(selected.display_name ?? selected.email ?? '?')[0]?.toUpperCase()}
             </div>
             <div className="min-w-0">
-              <h1 className="text-lg font-bold text-foreground truncate">{selected.display_name ?? 'No Name'}</h1>
+              <h1 className="text-lg font-bold text-foreground truncate flex items-center gap-2">
+                {selected.display_name ?? 'No Name'}
+                {selected.is_suspended && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-600 border border-red-500/30">
+                    <Ban size={10} /> SUSPENDED
+                  </span>
+                )}
+              </h1>
               <p className="text-xs text-muted-foreground truncate">{selected.email}</p>
+              {selected.is_suspended && selected.suspended_reason && (
+                <p className="text-[11px] text-red-600/80 mt-0.5 truncate">কারণ: {selected.suspended_reason}</p>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
