@@ -716,6 +716,45 @@ const AdminLiveChat = () => {
           </Card>
         </TabsContent>
 
+        {/* Phone Call Tab */}
+        <TabsContent value="phone">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Phone className="w-5 h-5 text-blue-500" /> ফোন কল সেটিংস
+              </CardTitle>
+              <CardDescription>সরাসরি ফোন নম্বর এবং ডিসপ্লে টেক্সট পরিবর্তন করুন</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="space-y-2">
+                <Label>ফোন নম্বর</Label>
+                <Input
+                  value={settings.phone_number}
+                  onChange={e => setSettings(prev => ({ ...prev, phone_number: e.target.value }))}
+                  placeholder="01840-099853"
+                />
+                <p className="text-xs text-muted-foreground">যেকোনো ফরম্যাটে দিতে পারেন — অটো ক্লিন হয়ে কলে যাবে</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>বাটন লেবেল</Label>
+                  <Input
+                    value={settings.phone_label}
+                    onChange={e => setSettings(prev => ({ ...prev, phone_label: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>সাবটাইটেল</Label>
+                  <Input
+                    value={settings.phone_subtitle}
+                    onChange={e => setSettings(prev => ({ ...prev, phone_subtitle: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* Live Sets Tab */}
         <TabsContent value="live-sets">
           <Card>
