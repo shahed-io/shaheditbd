@@ -509,7 +509,7 @@ const Navbar = () => {
               style={{ borderColor: 'hsla(258,78%,60%,0.20)', background: 'hsla(258,78%,55%,0.04)' }}
             >
               <Search size={14} className="text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-              <span className="text-sm text-muted-foreground flex-1">প্রোডাক্ট খুঁজুন...</span>
+              <span className="text-sm text-muted-foreground flex-1">Search products...</span>
               <kbd className="hidden lg:flex items-center gap-1 px-1.5 py-0.5 rounded-md border border-border/60 text-[10px] font-mono text-muted-foreground bg-muted/40 flex-shrink-0">
                 Ctrl K
               </kbd>
