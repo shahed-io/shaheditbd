@@ -298,6 +298,7 @@ const AppContent = () => {
             <Route path="invoices" element={<AdminSuspense><AdminInvoiceGenerator /></AdminSuspense>} />
             <Route path="invoice-design" element={<AdminSuspense><AdminInvoiceDesign /></AdminSuspense>} />
             <Route path="footer-settings" element={<AdminSuspense><AdminFooterSettings /></AdminSuspense>} />
+            <Route path="text-manager" element={<AdminSuspense><AdminTextManager /></AdminSuspense>} />
             <Route path="live-chat" element={<AdminSuspense><AdminLiveChat /></AdminSuspense>} />
             <Route path="telegram-bot" element={<AdminSuspense><AdminTelegramBot /></AdminSuspense>} />
             <Route path="staff" element={<AdminSuspense><AdminStaffManagement /></AdminSuspense>} />
