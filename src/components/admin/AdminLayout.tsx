@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminPrefetch, prefetchAdminRoute } from '@/hooks/useAdminPrefetch';
 import AdminCommandPalette from '@/components/admin/AdminCommandPalette';
+import { useAdminCopyAnywhere } from '@/hooks/useAdminCopyAnywhere';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
@@ -218,6 +219,9 @@ const AdminLayout = () => {
 
   useEffect(() => { fetchNotifs(); }, [fetchNotifs]);
   useEffect(() => { const iv = setInterval(fetchNotifs, 60000); return () => clearInterval(iv); }, [fetchNotifs]);
+
+  // Enable Alt+Click and double-click to copy any text in admin panel
+  useAdminCopyAnywhere();
 
   // Close mobile sidebar on route change
   useEffect(() => {
