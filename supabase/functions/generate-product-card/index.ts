@@ -105,7 +105,7 @@ ${sharedBlueprint(name, brand)}
 - Override ONLY the background: deep midnight indigo (#0a0d2e → #1a0d3a) with subtle electric blue glow
 - Bubbles glow with neon cyan and deep electric blue (keep the SAME bubble shape and arrangement, just neon-glow versions)
 - The frosted card becomes a DARK GLASS card: rgba(20,20,40,0.55) with a thin glowing 2px cyan border and soft outer glow
-- "SHAHED STORE" pill: KEEP THE SAME white pill with red SHAHED STORE badge inside (do NOT change)
+- "SHAHED STORE" pill: KEEP the soft lavender frosted-glass pill with embossed 3D white wordmark (do NOT change to red)
 - Brand pill on right: KEEP white pill with charcoal text (do NOT change)
 - Bottom contact line: keep dark charcoal text on the white-pill area (the whole contact strip lives on a subtle white sub-band so text stays dark and readable)
 - Vibe: cyberpunk premium with the SAME signature SHAHED STORE pill / brand pill / contact layout — only the canvas background and bubble glow differ
