@@ -1252,12 +1252,30 @@ const ALL_TOOLS = CATEGORIES.flatMap(c => c.tools);
 // MAIN PAGE
 // ═══════════════════════════════════════════════════════════════════════════
 const FreeTools = () => {
-  const [activeCategory, setActiveCategory] = useState('ai');
-  const [activeTool, setActiveTool] = useState<string | null>(null);
+  const { toolId } = useParams<{ toolId?: string }>();
+  const navigate = useNavigate();
+  const activeTool = toolId ?? null;
+
+  const activeTolObj = ALL_TOOLS.find(t => t.id === activeTool);
+  const setActiveTool = (id: string | null) => {
+    if (id) navigate(`/free-tools/${id}`);
+    else navigate('/free-tools');
+  };
+
+  const initialCat = activeTolObj
+    ? CATEGORIES.find(c => c.tools.some(t => t.id === activeTolObj.id))?.id ?? 'ai'
+    : 'ai';
+  const [activeCategory, setActiveCategory] = useState(initialCat);
   const [search, setSearch] = useState('');
 
+  useEffect(() => {
+    if (activeTolObj) {
+      const catId = CATEGORIES.find(c => c.tools.some(t => t.id === activeTolObj.id))?.id;
+      if (catId) setActiveCategory(catId);
+    }
+  }, [activeTolObj?.id]);
+
   const currentCat = CATEGORIES.find(c => c.id === activeCategory)!;
-  const activeTolObj = ALL_TOOLS.find(t => t.id === activeTool);
   const filteredTools = search.trim()
     ? ALL_TOOLS.filter(t => t.title.toLowerCase().includes(search.toLowerCase()) || t.subtitle.toLowerCase().includes(search.toLowerCase()))
     : currentCat.tools;
@@ -1265,7 +1283,11 @@ const FreeTools = () => {
 
   return (
     <div className="min-h-screen" style={{ background: 'hsl(var(--background))' }}>
-      <SEOHead title="Free Online Tools | Shahed Store" description="100% free — Image Resizer, QR Generator, AI Caption, Hashtag Generator, Password Generator and 40+ more tools." />
+      <SEOHead
+        title={activeTolObj ? `${activeTolObj.title} — Free Online Tool | Shahed Store` : 'Free Online Tools | Shahed Store'}
+        description={activeTolObj ? `${activeTolObj.subtitle}. 100% free, no signup required.` : '100% free — Image Resizer, QR Generator, AI Caption, Hashtag Generator, Password Generator and 40+ more tools.'}
+        canonical={`https://shahedstore.com.bd/free-tools${activeTool ? '/' + activeTool : ''}`}
+      />
       <Navbar />
 
       {/* ── Hero ── */}
