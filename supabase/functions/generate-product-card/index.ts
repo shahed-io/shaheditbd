@@ -122,6 +122,7 @@ You MUST create a premium square (1:1) product promotional card that EXACTLY mat
 - Square format exactly (1:1)
 - Every element crisp, readable, premium — luxury digital store aesthetic
 `.trim();
+};
 
 const STYLES = {
   dark_neon: {
