@@ -30,6 +30,9 @@ type Customer = {
   points_balance?: number;
   total_points_earned?: number;
   total_points_redeemed?: number;
+  is_suspended?: boolean;
+  suspended_at?: string | null;
+  suspended_reason?: string | null;
 };
 
 type OrderItem = {
