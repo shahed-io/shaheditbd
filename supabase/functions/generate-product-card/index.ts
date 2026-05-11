@@ -116,10 +116,23 @@ ${sharedBlueprint(name, brand)}
     prompt: (name: string, brand: string, _price: string, _category: string) => `
 ${sharedBlueprint(name, brand)}
 
-═══ STYLE OVERRIDE — "Light Glass" tone ═══
-- Keep the EXACT signature pale-blue / off-white background and sky-blue + mint bubbles from the shared blueprint
-- Bubbles slightly more prominent and glossy (this is THE signature Shahed Store look)
-- Vibe: bright, airy, premium daylight glassmorphism — identical to the LinkedIn / Adobe Creative Cloud / Figma reference cards
+═══ STYLE OVERRIDE — "Light Glass" tone (PASTEL COLORFUL GRADIENT + FROSTED GLASS — CamScanner colorful card reference) ═══
+CRITICAL: This style OVERRIDES the pale-blue-only background rule from the shared blueprint. For THIS style ONLY:
+
+- BACKGROUND: A soft, dreamy, MULTI-COLOR PASTEL GRADIENT covering the entire canvas (CamScanner-style colorful card):
+  • Smooth diagonal blend of pastel pink (#fbc2eb), pastel peach (#ffd6a5), pastel lavender (#c3b1e1),
+    pastel mint (#bde0c4), pastel sky blue (#a6c8ff), and pastel coral (#ffafcc)
+  • Buttery, airy, low-saturation pastel tones — NOT vibrant, NOT neon
+  • The colors flow into each other softly like watercolor — no harsh boundaries
+  • Bright, milky, daylight feel
+- BUBBLES: Replace the sky-blue + mint bubbles with soft 3D translucent pastel bubbles in
+  matching pastel pink, peach, lavender, mint, and sky-blue tones — same shape/placement as the
+  blueprint, just colorful pastel glossy spheres with subtle inner highlights
+- FROSTED GLASS CARD: Same white frosted glass card (rgba(255,255,255,0.55), heavy backdrop blur,
+  thin white border, soft shadow) — the pastel rainbow background shows softly through the frost
+- PILLS, LOGO, CONTACT LINE: KEEP IDENTICAL to the shared blueprint
+  (white SHAHED STORE pill with red badge, white brand pill, large center icon, bottom contact row)
+- Vibe: dreamy pastel rainbow glassmorphism — premium, soft, modern, like the CamScanner colorful card
 `.trim(),
   },
 
