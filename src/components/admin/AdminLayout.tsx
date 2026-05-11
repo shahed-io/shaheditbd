@@ -534,18 +534,27 @@ const AdminLayout = () => {
               location.pathname === i.path || (i.path !== '/ceo' && location.pathname.startsWith(i.path + '/'))
             );
             const HeaderIcon = currentItem?.icon || LayoutDashboard;
+            const decorBySection: Record<string, any[]> = {
+              Sales: [ShoppingCart, CreditCard, TrendingUp],
+              Catalog: [Package, Grid3X3, Star],
+              Customers: [Users, Headphones, MessageCircle],
+              Storefront: [Layout, Sliders, Megaphone],
+              Marketing: [Megaphone, Percent, Gift],
+              'Content & SEO': [BookOpen, Globe, FileText],
+              Reports: [TrendingUp, BarChart2, Activity],
+              Integrations: [Bot, KeyRound, Layers],
+              'AI Tools': [Brain, Sparkles, Bot],
+              System: [Shield, Database, Settings],
+              Overview: [LayoutDashboard, Activity, TrendingUp],
+            };
+            const decorIcons = decorBySection[pageMeta.section] || [HeaderIcon, TrendingUp, Activity];
             return (
-              <div className="admin-page-header">
-                <div className="admin-page-header-icon">
-                  <HeaderIcon />
-                </div>
-                <div className="admin-page-header-text">
-                  <h1>{pageMeta.title}</h1>
-                  <p className="admin-page-subtitle">
-                    {pageMeta.section ? `${pageMeta.section} • Manage and configure ${pageMeta.title.toLowerCase()}` : 'Welcome to your admin panel'}
-                  </p>
-                </div>
-              </div>
+              <AdminHeroHeader
+                title={pageMeta.title}
+                section={pageMeta.section}
+                Icon={HeaderIcon}
+                decorIcons={decorIcons}
+              />
             );
           })()}
           <Outlet />
