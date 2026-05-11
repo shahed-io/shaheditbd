@@ -1014,7 +1014,14 @@ export default function AdminCustomers() {
                           {(c.display_name ?? c.email ?? '?')[0].toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-medium text-foreground text-xs">{c.display_name ?? 'No Name'}</div>
+                          <div className="font-medium text-foreground text-xs flex items-center gap-1.5">
+                            {c.display_name ?? 'No Name'}
+                            {c.is_suspended && (
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0 rounded text-[9px] font-bold bg-red-500/15 text-red-600 border border-red-500/30">
+                                <Ban size={8} /> SUSPENDED
+                              </span>
+                            )}
+                          </div>
                           <div className="text-[10px] text-muted-foreground">{c.email}</div>
                         </div>
                       </div>
