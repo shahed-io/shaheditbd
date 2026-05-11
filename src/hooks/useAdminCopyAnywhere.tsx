@@ -56,11 +56,28 @@ export const useAdminCopyAnywhere = () => {
       copyText(text);
     };
 
+    // Auto-copy on left-mouse drag selection
+    const handleMouseUp = (e: MouseEvent) => {
+      if (e.button !== 0) return; // left button only
+      const target = e.target as HTMLElement | null;
+      if (target && isInteractive(target)) return;
+      // Defer so the selection is finalized
+      setTimeout(() => {
+        const sel = window.getSelection?.();
+        const text = sel?.toString() ?? '';
+        if (text.trim().length > 0) {
+          copyText(text);
+        }
+      }, 0);
+    };
+
     document.addEventListener('click', handleAltClick, true);
     document.addEventListener('dblclick', handleDoubleClick);
+    document.addEventListener('mouseup', handleMouseUp);
     return () => {
       document.removeEventListener('click', handleAltClick, true);
       document.removeEventListener('dblclick', handleDoubleClick);
+      document.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
 };
