@@ -18,7 +18,38 @@ const corsHeaders = {
 //   7. Bottom: separator line + contact row inside the card
 // ─────────────────────────────────────────────────────────────────────────────
 
-const sharedBlueprint = (name: string, brand: string) => `
+// Random tonal variants of the SHAHED STORE lavender pill so each generation
+// looks subtly different (matches references #2 and #3 in the brief).
+const PILL_VARIANTS = [
+  {
+    name: "Deep Lavender 3D",
+    bg: "linear-gradient from #b8b0d8 (top) → #8e84b8 (bottom), darker, more saturated lavender — like a soft 3D pillow",
+    text: "EXTRUDED 3D white letters with a clear inner-shadow & a soft purple drop-shadow (rgba(60,50,110,0.45)) — strong embossed feel",
+    radius: "~24px",
+  },
+  {
+    name: "Pastel Lavender Glass",
+    bg: "linear-gradient from #e3def2 (top) → #cfc6e8 (bottom), brighter pastel lavender frosted glass with rgba(255,255,255,0.4) sheen",
+    text: "Crisp bold white letters with a soft inner highlight and a faint lavender drop-shadow (rgba(120,110,180,0.3))",
+    radius: "~30px",
+  },
+  {
+    name: "Periwinkle Mist",
+    bg: "linear-gradient from #c8c4ec (top-left) → #b6b0e0 (bottom-right), cool periwinkle frosted glass with subtle inner glow",
+    text: "Bold white uppercase letters with a delicate embossed bevel and soft indigo shadow (rgba(80,70,140,0.4))",
+    radius: "~26px",
+  },
+  {
+    name: "Lilac Cloud",
+    bg: "linear-gradient from #ddd6f3 (top) → #c2b6e6 (bottom), light airy lilac with frosted-glass haze and very soft inner glow",
+    text: "Bold white wordmark with a gentle 3D bevel — looks softly carved into the lilac glass",
+    radius: "~28px",
+  },
+];
+
+const sharedBlueprint = (name: string, brand: string) => {
+  const v = PILL_VARIANTS[Math.floor(Math.random() * PILL_VARIANTS.length)];
+  return `
 You MUST create a premium square (1:1) product promotional card that EXACTLY matches the Shahed Store signature house style. This layout is NON-NEGOTIABLE — every element must look IDENTICAL to the reference cards previously generated for this store (LinkedIn, Adobe Creative Cloud, Figma Premium, Microsoft Office 365, Windows 11 Pro):
 
 ═══ BACKGROUND (full canvas, behind everything) ═══
@@ -45,19 +76,16 @@ You MUST create a premium square (1:1) product promotional card that EXACTLY mat
 - Background bubbles subtly show THROUGH the frosted card
 
 ═══ TOP ROW INSIDE CARD (28px padding from card edges) ═══
-- LEFT — "SHAHED STORE" GLASS PILL (NO red rectangle, NO solid colors):
-  • A SINGLE rounded glassmorphic pill (~28px radius, ~56px tall)
-  • Pill background: SOFT LAVENDER / LIGHT PURPLE GRADIENT — frosted glass:
-    linear-gradient from #d8d4f0 (top-left) → #c7c0e8 (bottom-right),
-    with rgba(255,255,255,0.35) frosted overlay and heavy backdrop blur
-  • Thin 1.5px inner highlight border at the top edge (rgba(255,255,255,0.7))
-    and a subtle darker shadow underneath (rgba(120,110,180,0.25)) for a 3D pillow look
-  • Inside the pill: the words "SHAHED STORE" written in EMBOSSED 3D WHITE letters
-    - Bold uppercase sans-serif, crisp letter-spacing
-    - White (#ffffff) with a subtle inner shadow giving an embossed/extruded 3D feel
-    - Soft drop-shadow under the text in muted lavender (rgba(90,80,150,0.35))
-  • NO red rectangle, NO red badge, NO solid red anywhere — purely a soft
-    lavender frosted-glass pill with embossed white wordmark
+- LEFT — "SHAHED STORE" GLASS PILL (NO red rectangle, NO solid red, NO solid color badge):
+  • A SINGLE rounded glassmorphic pill — variant style: "${v.name}"
+  • Corner radius: ${v.radius}, height ~56px, comfortable horizontal padding
+  • Pill background: ${v.bg} — frosted glass with backdrop blur,
+    a thin ~1.5px inner highlight at the top edge (rgba(255,255,255,0.7)) and
+    a soft outer drop-shadow underneath for a 3D pillow look
+  • Inside the pill: the words "SHAHED STORE" in BOLD UPPERCASE sans-serif —
+    ${v.text}
+  • NO red, NO solid color rectangle, NO badge inside — the pill itself is the badge
+  • Looks like soft lavender / purple frosted glass with a beautifully embossed white wordmark
 - RIGHT — BRAND PILL:
   • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.95), subtle soft shadow, ~26px radius, ~52px tall)
   • Contains the small square brand/product LOGO ICON on the left (~34px, original colors)
@@ -94,6 +122,7 @@ You MUST create a premium square (1:1) product promotional card that EXACTLY mat
 - Square format exactly (1:1)
 - Every element crisp, readable, premium — luxury digital store aesthetic
 `.trim();
+};
 
 const STYLES = {
   dark_neon: {
@@ -132,7 +161,7 @@ CRITICAL: This style OVERRIDES the pale-blue-only background rule from the share
 - FROSTED GLASS CARD: Same white frosted glass card (rgba(255,255,255,0.55), heavy backdrop blur,
   thin white border, soft shadow) — the pastel rainbow background shows softly through the frost
 - PILLS, LOGO, CONTACT LINE: KEEP IDENTICAL to the shared blueprint
-  (white SHAHED STORE pill with red badge, white brand pill, large center icon, bottom contact row)
+  (lavender frosted-glass SHAHED STORE pill with embossed 3D white wordmark — NO red, NO solid color badge — white brand pill, large center icon, bottom contact row)
 - Vibe: dreamy pastel rainbow glassmorphism — premium, soft, modern, like the CamScanner colorful card
 `.trim(),
   },
