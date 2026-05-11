@@ -18,6 +18,11 @@ interface LiveChatSettings {
   whatsapp_number: string;
   whatsapp_label: string;
   whatsapp_subtitle: string;
+  // Phone Call
+  phone_enabled: boolean;
+  phone_number: string;
+  phone_label: string;
+  phone_subtitle: string;
   // AI Chat
   ai_label: string;
   ai_subtitle: string;
@@ -50,6 +55,10 @@ const DEFAULT_SETTINGS: LiveChatSettings = {
   whatsapp_number: '8801840099853',
   whatsapp_label: 'WhatsApp',
   whatsapp_subtitle: 'সরাসরি কথা বলুন',
+  phone_enabled: true,
+  phone_number: '01840-099853',
+  phone_label: 'ফোন করুন',
+  phone_subtitle: 'সরাসরি কল করুন',
   ai_label: 'AI Support',
   ai_subtitle: 'তাৎক্ষণিক উত্তর পান',
   ai_welcome_message: 'হ্যালো! 👋 আমি Shahed Store-এর AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!',
