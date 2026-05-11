@@ -7,21 +7,15 @@ const corsHeaders = {
 };
 
 // ─── SHARED DESIGN BLUEPRINT ─────────────────────────────────────────────────
-// Signature SHAHED STORE house style (matches the reference cards exactly):
-//   1. Soft pale-blue / off-white airy background (NOT pastel pink/peach)
-//   2. Multiple soft floating 3D BUBBLES around the card — only sky-blue and
-//      mint/teal tones (NO pink/lavender/peach)
-//   3. A single large WHITE FROSTED GLASS card centered (~80% of image) with
-//      crisp rounded corners and a thin white border
-//   4. Inside the card top-left: WHITE rounded pill containing a small RED
-//      rectangle badge with "SHAHED STORE" in WHITE bold letters (pill itself
-//      is white, badge inside is red)
-//   5. Inside the card top-right: WHITE rounded pill with brand logo + name
-//      in dark charcoal text
-//   6. Center of the card: VERY LARGE clean square app icon of the product
-//   7. Bottom of the card: a subtle thin separator line, then a contact line
-//      🌐 www.shahedstore.com.bd     📞 +880 1840-099853
-//      in dark charcoal text — INSIDE the white glass card
+// Signature SHAHED STORE house style:
+//   1. Soft pale-blue / off-white airy background
+//   2. Floating 3D bubbles (sky-blue + mint) around the card
+//   3. Large white frosted glass card centered (~82% of canvas)
+//   4. Top-left: SOFT LAVENDER/PURPLE GLASSMORPHIC PILL containing
+//      "SHAHED STORE" in EMBOSSED 3D WHITE letters (NO red rectangle)
+//   5. Top-right: white pill with brand logo + name
+//   6. Center: very large clean app icon of the product
+//   7. Bottom: separator line + contact row inside the card
 // ─────────────────────────────────────────────────────────────────────────────
 
 const sharedBlueprint = (name: string, brand: string) => `
