@@ -132,7 +132,7 @@ CRITICAL: This style OVERRIDES the pale-blue-only background rule from the share
 - FROSTED GLASS CARD: Same white frosted glass card (rgba(255,255,255,0.55), heavy backdrop blur,
   thin white border, soft shadow) — the pastel rainbow background shows softly through the frost
 - PILLS, LOGO, CONTACT LINE: KEEP IDENTICAL to the shared blueprint
-  (white SHAHED STORE pill with red badge, white brand pill, large center icon, bottom contact row)
+  (lavender frosted-glass SHAHED STORE pill with embossed 3D white wordmark — NO red, NO solid color badge — white brand pill, large center icon, bottom contact row)
 - Vibe: dreamy pastel rainbow glassmorphism — premium, soft, modern, like the CamScanner colorful card
 `.trim(),
   },
