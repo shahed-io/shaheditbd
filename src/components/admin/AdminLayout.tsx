@@ -82,6 +82,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Layers, label: 'Popup Banner', path: '/ceo/popup-banner' },
       { icon: Layout, label: 'Pages', path: '/ceo/pages' },
       { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
+      { icon: FileText, label: 'Text Manager', path: '/ceo/text-manager' },
       { icon: Palette, label: 'Themes', path: '/ceo/themes' },
     ],
   },

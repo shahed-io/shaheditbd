@@ -111,6 +111,7 @@ const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBa
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
 const AdminInvoiceDesign         = lazy(() => import("./pages/admin/AdminInvoiceDesign"));
 const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterSettings"));
+const AdminTextManager           = lazy(() => import("./pages/admin/AdminTextManager"));
 const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveChat"));
 const AdminTelegramBot           = lazy(() => import("./pages/admin/AdminTelegramBot"));
 const AdminStaffManagement       = lazy(() => import("./pages/admin/AdminStaffManagement"));
@@ -297,6 +298,7 @@ const AppContent = () => {
             <Route path="invoices" element={<AdminSuspense><AdminInvoiceGenerator /></AdminSuspense>} />
             <Route path="invoice-design" element={<AdminSuspense><AdminInvoiceDesign /></AdminSuspense>} />
             <Route path="footer-settings" element={<AdminSuspense><AdminFooterSettings /></AdminSuspense>} />
+            <Route path="text-manager" element={<AdminSuspense><AdminTextManager /></AdminSuspense>} />
             <Route path="live-chat" element={<AdminSuspense><AdminLiveChat /></AdminSuspense>} />
             <Route path="telegram-bot" element={<AdminSuspense><AdminTelegramBot /></AdminSuspense>} />
             <Route path="staff" element={<AdminSuspense><AdminStaffManagement /></AdminSuspense>} />
