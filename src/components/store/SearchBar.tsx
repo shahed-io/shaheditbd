@@ -221,7 +221,7 @@ const useGoogleSearch = () => {
       .or(orParts.join(','))
       .order('total_sales', { ascending: false })
       .limit(12);
-    return data || [];
+    return (data || []) as unknown as Product[];
   }, []);
 
   // AI fuzzy match — only called when DB results are sparse
