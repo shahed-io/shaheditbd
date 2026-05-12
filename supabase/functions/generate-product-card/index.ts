@@ -463,8 +463,9 @@ serve(async (req) => {
 
     // ── Phase 3: Lovable AI Gateway fallback (uses Lovable credits) ─────────
     const GATEWAY_MODELS = [
-      "google/gemini-3-pro-image-preview",
+      "google/gemini-2.5-flash-image",
       "google/gemini-3.1-flash-image-preview",
+      "google/gemini-3-pro-image-preview",
     ];
 
     if (!data) {
@@ -472,18 +473,40 @@ serve(async (req) => {
         const model = GATEWAY_MODELS[attempt];
         console.log(`Gateway fallback attempt ${attempt + 1}: ${model}`);
 
-        const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        // Build content: if reference image exists, send multi-part; else plain string.
+        // Some image-preview models reject the multi-part array shape, so we
+        // also retry with a plain text string on 400.
+        const buildBody = (useMultipart: boolean) => ({
+          model,
+          messages: [{
+            role: "user" as const,
+            content: useMultipart && imageUrl ? userContent : promptText,
+          }],
+          modalities: ["image", "text"],
+        });
+
+        let response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${LOVABLE_API_KEY}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            model,
-            messages: [{ role: "user", content: userContent }],
-            modalities: ["image", "text"],
-          }),
+          body: JSON.stringify(buildBody(true)),
         });
+
+        // Retry once with plain-text content if multipart was rejected
+        if (response.status === 400 && imageUrl) {
+          const errPreview = await response.text().catch(() => "");
+          console.warn(`Gateway 400 with multipart, retrying text-only: ${errPreview.substring(0, 120)}`);
+          response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(buildBody(false)),
+          });
+        }
 
         if (response.status === 402) {
           console.warn("Gateway credits exhausted");
