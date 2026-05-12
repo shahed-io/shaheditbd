@@ -1435,10 +1435,22 @@ const UserDashboard = () => {
                                 )}
 
                                 {/* Price Breakdown */}
-                                <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm pt-2 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm pt-2 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
                                   <span className="text-muted-foreground">Subtotal: <span className="font-semibold text-foreground">৳{(order.subtotal || 0).toLocaleString()}</span></span>
                                   {(order.discount_amount || 0) > 0 && <span className="text-emerald-600 font-semibold">{t(selectedLang, 'discount_off')}: -৳{(order.discount_amount || 0).toLocaleString()}</span>}
                                   <span className="font-bold text-primary">{t(selectedLang, 'total')}: ৳{order.total.toLocaleString()}</span>
+                                  <button
+                                    onClick={() => handleDownloadInvoice(order)}
+                                    disabled={downloadingInvoice === order.id}
+                                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed"
+                                    style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsla(258,78%,65%,0.85))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.25)' }}
+                                  >
+                                    {downloadingInvoice === order.id ? (
+                                      <><Loader2 size={13} className="animate-spin" /> তৈরি হচ্ছে…</>
+                                    ) : (
+                                      <><Download size={13} /> Invoice PDF</>
+                                    )}
+                                  </button>
                                 </div>
 
                                 {/* Notes */}
