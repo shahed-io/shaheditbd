@@ -143,13 +143,14 @@ STRICT SEO STRUCTURE — follow exactly in this order:
 8. ### 🚀 এখনই কিনুন (Call To Action)
    - 1-2 action-oriented lines with urgency
 
---- FOOTER (ALWAYS AT THE VERY END) ---
-9. ### ⚠️ গুরুত্বপূর্ণ তথ্য (Important Notes)
-🔐 আমরা একটি সার্টিফাইড ডিজিটাল ই-কমার্স প্ল্যাটফর্ম, বাণিজ্য মন্ত্রণালয়, গণপ্রজাতন্ত্রী বাংলাদেশ কর্তৃক নিবন্ধিত।
-Our DBID Number: 586772174 — ensuring secure and authentic digital product delivery.
-❌ বিক্রিত পণ্য ফেরতযোগ্য নয়।
-❌ কেনার ২ দিনের মধ্যে পণ্য সক্রিয় করুন।
-⚠️ নির্ধারিত সময়ের মধ্যে সক্রিয় না করলে ওয়ারেন্টি বা সাপোর্ট বাতিল হতে পারে।
+--- FOOTER (ALWAYS AT THE VERY END — copy this block EXACTLY, do NOT translate or alter) ---
+9. ### ⚠️ Important Notes
+
+❌ Sold Products Are Not Returnable.
+
+🛒 The product will be delivered instantly or within 1 hours (Rare cases: up to 24 hours)
+
+❌ Any of our products are requested to be activated within two days maximum. Otherwise the warranty will be void.
 
 CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.
 
@@ -212,7 +213,7 @@ For the description field, follow this exact structure:
 6. ### 🔍 SEO কীওয়ার্ড সেকশন (2-3 sentences, Bangladesh keywords, 2+ cities)
 7. ### 🏪 কেন Shahed Store? (3-4 trust points)
 8. ### 🚀 এখনই কিনুন (Call To Action)
-9. ### ⚠️ গুরুত্বপূর্ণ তথ্য (Important Notes — ALWAYS LAST — DBID 586772174, non-refundable, activate within 2 days)
+9. ### ⚠️ Important Notes (ALWAYS LAST — copy this footer EXACTLY as below, do NOT translate)\n\n❌ Sold Products Are Not Returnable.\n\n🛒 The product will be delivered instantly or within 1 hours (Rare cases: up to 24 hours)\n\n❌ Any of our products are requested to be activated within two days maximum. Otherwise the warranty will be void.
 
 CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.
 
@@ -247,13 +248,14 @@ The user provides a DEMO/SAMPLE description as reference. You MUST:
 3. Replace all product-specific details (name, features, pricing, plans, account type) with the new product's details.
 4. Maintain Bangladesh SEO optimization: include product keywords + "বাংলাদেশ", BDT prices, buying intent words.
 5. Keep the same section count — if demo has 8 sections, new one should also have 8 sections.
-6. Always end with the Important Notes footer:
-   ### ⚠️ গুরুত্বপূর্ণ তথ্য (Important Notes)
-   🔐 আমরা একটি সার্টিফাইড ডিজিটাল ই-কমার্স প্ল্যাটফর্ম, বাণিজ্য মন্ত্রণালয়, গণপ্রজাতন্ত্রী বাংলাদেশ কর্তৃক নিবন্ধিত।
-   Our DBID Number: 586772174 — ensuring secure and authentic digital product delivery.
-   ❌ বিক্রিত পণ্য ফেরতযোগ্য নয়।
-   ❌ কেনার ২ দিনের মধ্যে পণ্য সক্রিয় করুন।
-   ⚠️ নির্ধারিত সময়ের মধ্যে সক্রিয় না করলে ওয়ারেন্টি বা সাপোর্ট বাতিল হতে পারে।
+6. Always end with this Important Notes footer (copy EXACTLY, do NOT translate or modify):
+   ### ⚠️ Important Notes
+
+   ❌ Sold Products Are Not Returnable.
+
+   🛒 The product will be delivered instantly or within 1 hours (Rare cases: up to 24 hours)
+
+   ❌ Any of our products are requested to be activated within two days maximum. Otherwise the warranty will be void.
 
 CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.
 
