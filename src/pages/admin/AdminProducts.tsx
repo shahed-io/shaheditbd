@@ -1801,7 +1801,7 @@ const AdminProducts = () => {
                     <div>
                       <label className={lc}>Featured Image</label>
                       <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
-                        onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
+                        onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); e.target.value = ''; }} />
                       <div className="flex gap-3 items-start">
                         <div className="w-24 h-24 rounded-xl border-2 border-dashed border-border bg-muted/30 flex-shrink-0 overflow-hidden flex items-center justify-center cursor-pointer hover:border-primary transition-colors"
                           onClick={() => fileInputRef.current?.click()}>
