@@ -476,7 +476,50 @@ const UserDashboard = () => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, items: (itemsRes.data || []) as OrderItem[], timeline: (timelineRes.data || []) as TimelineEvent[] } : o));
   };
 
-  const fetchAddresses = async () => {
+  const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(null);
+  const handleDownloadInvoice = async (order: Order) => {
+    try {
+      setDownloadingInvoice(order.id);
+      let items = order.items;
+      if (!items) {
+        const { data } = await supabase
+          .from('order_items')
+          .select('id, product_name, price, quantity, total, license_key')
+          .eq('order_id', order.id);
+        items = (data || []) as OrderItem[];
+      }
+      const invoiceData: InvoiceData = {
+        invoiceNumber: order.order_number,
+        date: order.created_at,
+        customer: {
+          name: profile?.display_name || user?.email?.split('@')[0] || 'Customer',
+          email: profile?.email || user?.email || undefined,
+          phone: profile?.phone || undefined,
+        },
+        items: (items || []).map(i => ({
+          name: i.product_name,
+          quantity: i.quantity,
+          price: i.price,
+          total: i.total,
+          license_key: i.license_key,
+        })),
+        subtotal: order.subtotal,
+        discount: order.discount_amount || 0,
+        total: order.total,
+        paymentMethod: order.payment_method || undefined,
+        transactionId: order.transaction_id || undefined,
+        status: order.status,
+        notes: order.notes || undefined,
+      };
+      await downloadInvoicePdf(invoiceData);
+      toast.success('✅ Invoice ডাউনলোড হয়েছে');
+    } catch (e) {
+      console.error(e);
+      toast.error('Invoice ডাউনলোড করতে সমস্যা হয়েছে');
+    } finally {
+      setDownloadingInvoice(null);
+    }
+  };
     if (!user) return; setAddressLoading(true);
     const { data } = await supabase.from('addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false });
     setAddresses((data || []) as Address[]); setAddressLoading(false);
