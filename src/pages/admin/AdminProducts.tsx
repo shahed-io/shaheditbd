@@ -316,6 +316,72 @@ const AdminProducts = () => {
     </button>
   );
 
+  // ── Auto SEO for ALL products (bulk) ──────────────────────────
+  const runAutoSeoAll = async () => {
+    setShowAutoSeoConfirm(false);
+    const targets = (autoSeoMode === 'missing'
+      ? products.filter(p => !p.seo_title || !p.seo_description || (p.seo_title || '').trim().length < 5 || (p.seo_description || '').trim().length < 10)
+      : products);
+    if (targets.length === 0) {
+      toast.info('সব প্রোডাক্টে ইতিমধ্যে SEO সেট করা আছে।');
+      return;
+    }
+    setAutoSeoRunning(true);
+    autoSeoCancelRef.current = false;
+    setAutoSeoProgress({ done: 0, total: targets.length, current: '' });
+    let success = 0;
+    let failed = 0;
+    for (let i = 0; i < targets.length; i++) {
+      if (autoSeoCancelRef.current) break;
+      const p = targets[i];
+      setAutoSeoProgress({ done: i, total: targets.length, current: p.name });
+      try {
+        const catName = categories.find(c => c.id === p.category_id)?.name || '';
+        const { data, error } = await supabase.functions.invoke('generate-product-content', {
+          body: {
+            productName: p.name,
+            category: catName,
+            brand: (p as any).brand || '',
+            productType: (p as any).product_type || '',
+            price: p.price ? String(p.price) : '',
+            durationPlans: '',
+            accountType: (p as any).account_type || '',
+            subtitle: (p as any).subtitle || '',
+            type: 'seo',
+          },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        const result = data?.result || {};
+        const seo_title = String(result.seo_title || '').substring(0, 60);
+        const seo_description = String(result.seo_description || '').substring(0, 160);
+        if (!seo_title && !seo_description) throw new Error('Empty SEO from AI');
+        const { error: upErr } = await supabase
+          .from('products')
+          .update({ seo_title, seo_description })
+          .eq('id', p.id);
+        if (upErr) throw upErr;
+        success++;
+        // Optimistic local update
+        setProducts(prev => prev.map(x => x.id === p.id ? { ...x, seo_title, seo_description } : x));
+      } catch (err: any) {
+        console.error('Auto SEO failed for', p.name, err);
+        failed++;
+      }
+      // Small delay to respect rate limits
+      await new Promise(r => setTimeout(r, 600));
+    }
+    setAutoSeoProgress({ done: targets.length, total: targets.length, current: '' });
+    setAutoSeoRunning(false);
+    if (autoSeoCancelRef.current) {
+      toast.info(`বন্ধ করা হয়েছে। সফল: ${success}, ব্যর্থ: ${failed}`);
+    } else {
+      toast.success(`✨ Auto SEO সম্পূর্ণ! সফল: ${success}${failed ? `, ব্যর্থ: ${failed}` : ''}`);
+    }
+    setTimeout(() => setAutoSeoProgress(null), 2500);
+  };
+
+
   // ── Demo Style AI Generator ───────────────────────────────────
   const generateDemoStyle = async () => {
     if (!form.name.trim()) { toast.error('প্রথমে প্রোডাক্টের নাম দিন'); return; }
