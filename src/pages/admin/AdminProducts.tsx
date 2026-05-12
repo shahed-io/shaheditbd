@@ -999,6 +999,87 @@ const AdminProducts = () => {
         </div>
       </div>
 
+      {/* ======= AUTO SEO CONFIRM MODAL ======= */}
+      {showAutoSeoConfirm && !autoSeoRunning && (() => {
+        const missingCount = products.filter(p => !p.seo_title || !p.seo_description || (p.seo_title || '').trim().length < 5 || (p.seo_description || '').trim().length < 10).length;
+        const targetCount = autoSeoMode === 'missing' ? missingCount : products.length;
+        return (
+          <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="glass-card rounded-2xl w-full max-w-md p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl" style={{ background: 'linear-gradient(135deg, hsl(265 85% 60% / 0.2), hsl(200 90% 55% / 0.2))' }}>
+                  <Sparkles size={22} className="text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">Auto SEO Generator</h3>
+                  <p className="text-xs text-muted-foreground">AI প্রতিটি প্রোডাক্টের নাম ও তথ্য অনুযায়ী SEO তৈরি করবে</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="flex items-start gap-3 p-3 rounded-xl border border-border hover:border-primary/40 cursor-pointer transition-colors">
+                  <input type="radio" name="seo-mode" checked={autoSeoMode === 'missing'} onChange={() => setAutoSeoMode('missing')} className="mt-1" />
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold text-foreground">শুধু missing SEO ({missingCount} টি)</div>
+                    <div className="text-[11px] text-muted-foreground">যেগুলোতে SEO Title বা Description নেই — শুধু সেগুলো প্রসেস হবে।</div>
+                  </div>
+                </label>
+                <label className="flex items-start gap-3 p-3 rounded-xl border border-border hover:border-primary/40 cursor-pointer transition-colors">
+                  <input type="radio" name="seo-mode" checked={autoSeoMode === 'all'} onChange={() => setAutoSeoMode('all')} className="mt-1" />
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold text-foreground">সব প্রোডাক্ট ({products.length} টি)</div>
+                    <div className="text-[11px] text-muted-foreground">পুরোনো SEO ওভাররাইট করে নতুন AI SEO তৈরি হবে।</div>
+                  </div>
+                </label>
+              </div>
+              <div className="text-[11px] text-muted-foreground bg-muted/30 rounded-lg p-3 leading-relaxed">
+                ⏱️ আনুমানিক সময়: ~{Math.ceil(targetCount * 4 / 60)} মিনিট। চলাকালে অন্য কাজ চালিয়ে যেতে পারেন।
+              </div>
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setShowAutoSeoConfirm(false)} className="px-4 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors">বাতিল</button>
+                <button
+                  type="button"
+                  onClick={runAutoSeoAll}
+                  disabled={targetCount === 0}
+                  className="px-5 py-2 rounded-lg text-sm font-semibold text-white shadow-lg disabled:opacity-50"
+                  style={{ background: 'linear-gradient(135deg, hsl(265 85% 60%), hsl(200 90% 55%))' }}
+                >
+                  ✨ শুরু করুন ({targetCount})
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ======= AUTO SEO PROGRESS OVERLAY ======= */}
+      {autoSeoProgress && (
+        <div className="fixed bottom-4 right-4 z-50 glass-card rounded-2xl p-4 w-80 shadow-2xl border border-primary/30">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-primary" />
+              <span className="text-sm font-semibold text-foreground">Auto SEO চলছে</span>
+            </div>
+            {autoSeoRunning && (
+              <button onClick={() => { autoSeoCancelRef.current = true; }} className="text-[11px] text-muted-foreground hover:text-destructive">বন্ধ করুন</button>
+            )}
+          </div>
+          <div className="text-[11px] text-muted-foreground mb-2 truncate">
+            {autoSeoProgress.current || 'সম্পূর্ণ!'}
+          </div>
+          <div className="h-2 rounded-full bg-muted/40 overflow-hidden">
+            <div
+              className="h-full transition-all duration-300"
+              style={{
+                width: `${(autoSeoProgress.done / Math.max(autoSeoProgress.total, 1)) * 100}%`,
+                background: 'linear-gradient(90deg, hsl(265 85% 60%), hsl(200 90% 55%))',
+              }}
+            />
+          </div>
+          <div className="text-[11px] text-muted-foreground mt-1.5 text-right">
+            {autoSeoProgress.done} / {autoSeoProgress.total}
+          </div>
+        </div>
+      )}
 
       {/* ======= PRODUCT FORM MODAL ======= */}
       {showForm && (
