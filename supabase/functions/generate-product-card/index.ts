@@ -46,16 +46,12 @@ You MUST create a premium square (1:1) product promotional card that EXACTLY mat
 - Background bubbles subtly show THROUGH the frosted card
 
 ═══ TOP ROW INSIDE CARD (28px padding from card edges) ═══
-- LEFT — "SHAHED STORE" GLASS PILL (NO red rectangle, NO solid red, NO solid color badge):
-  • A SINGLE rounded glassmorphic pill — variant style: "${v.name}"
-  • Corner radius: ${v.radius}, height ~56px, comfortable horizontal padding
-  • Pill background: ${v.bg} — frosted glass with backdrop blur,
-    a thin ~1.5px inner highlight at the top edge (rgba(255,255,255,0.7)) and
-    a soft outer drop-shadow underneath for a 3D pillow look
-  • Inside the pill: the words "SHAHED STORE" in BOLD UPPERCASE sans-serif —
-    ${v.text}
-  • NO red, NO solid color rectangle, NO badge inside — the pill itself is the badge
-  • Looks like soft lavender / purple frosted glass with a beautifully embossed white wordmark
+- LEFT — "SHAHED STORE" BADGE (CRITICAL — exact double-pill construction):
+  • An OUTER rounded WHITE pill (rgba(255,255,255,0.98), ~28px corner radius, ~56px tall, soft drop shadow, thin 1px white inner border)
+  • INSIDE that white pill, a SMALLER INNER ROUNDED RECTANGLE filled with SOLID BRIGHT RED (#e63946), ~18px corner radius, snug padding (~10px horizontal, ~6px vertical) inside the white pill
+  • Inside the RED inner rectangle: the words "SHAHED STORE" in WHITE bold uppercase sans-serif (~13–14px, tight letter-spacing)
+  • Final look: WHITE pill wrapping a RED rectangle that holds white "SHAHED STORE" text — like a premium price-tag badge
+  • This is a NON-NEGOTIABLE signature element — every card MUST show this exact white-outer / red-inner / white-text construction
 - RIGHT — BRAND PILL:
   • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.95), subtle soft shadow, ~26px radius, ~52px tall)
   • Contains the small square brand/product LOGO ICON on the left (~34px, original colors)
@@ -83,7 +79,7 @@ You MUST create a premium square (1:1) product promotional card that EXACTLY mat
 - Icons: thin-outline style (1.5px stroke), dark charcoal, inside small circular outlines
 
 ═══ ABSOLUTE RULES (MUST FOLLOW) ═══
-- The "SHAHED STORE" element is a SOFT LAVENDER FROSTED-GLASS PILL with EMBOSSED 3D WHITE wordmark — NEVER a red rectangle, NEVER a red badge, NEVER any solid red color anywhere on the card
+- The "SHAHED STORE" badge MUST be a WHITE OUTER PILL containing an INNER SOLID RED (#e63946) RECTANGLE with WHITE bold uppercase "SHAHED STORE" text — NEVER a glass pill, NEVER lavender, NEVER purple, NEVER white-text-on-glass
 - The brand pill on the right is a SOLID WHITE pill with the brand logo + name in dark charcoal
 - The contact info MUST be INSIDE the frosted card (bottom area) with a separator line above it
 - The floating 3D bubbles MUST be visible around the card edges (sky blue + mint/teal ONLY)
