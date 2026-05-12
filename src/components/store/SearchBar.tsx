@@ -177,11 +177,16 @@ const useGoogleSearch = () => {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
 
+  // Cache active product catalog (id+name) for AI fuzzy matching
+  const catalogRef = useRef<Array<{ id: string; name: string; category?: string | null }>>([]);
+  const aiAbortRef = useRef<AbortController | null>(null);
+  const aiCacheRef = useRef<Map<string, string[]>>(new Map());
+
   useEffect(() => {
-    supabase.from('categories').select('id, name, slug').eq('is_active', true).order('sort_order').limit(8)
+    supabase.from('categories').select('id, name, slug').eq('is_active', true).order('sort_order').limit(50)
       .then(({ data }) => {
         if (data) {
-          setCategories(data);
+          setCategories(data.slice(0, 8));
           const map: Record<string, string> = {};
           data.forEach((c: Category) => { map[c.id] = c.name; });
           setCategoryMap(map);
@@ -191,6 +196,65 @@ const useGoogleSearch = () => {
     supabase.from('products').select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
       .eq('status', 'active').order('total_sales', { ascending: false }).limit(6)
       .then(({ data }) => { if (data) setTrendingProducts(data); });
+
+    // Build lightweight catalog for AI fuzzy matching (id + name only)
+    supabase.from('products').select('id, name, category_id').eq('status', 'active').limit(400)
+      .then(({ data }) => {
+        if (data) catalogRef.current = data.map((p: any) => ({ id: p.id, name: p.name, category: p.category_id }));
+      });
+  }, []);
+
+  // Tokenized DB search: handles partial words & multi-word queries better than a single ilike
+  const dbSearch = useCallback(async (q: string) => {
+    const tokens = q.split(/\s+/).map(t => t.trim()).filter(t => t.length >= 2).slice(0, 5);
+    const orParts: string[] = [`name.ilike.%${q}%`, `short_description.ilike.%${q}%`];
+    tokens.forEach(t => {
+      const safe = t.replace(/[%,()]/g, '');
+      if (safe) {
+        orParts.push(`name.ilike.%${safe}%`);
+        orParts.push(`short_description.ilike.%${safe}%`);
+      }
+    });
+    const { data } = await supabase.from('products')
+      .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
+      .eq('status', 'active')
+      .or(orParts.join(','))
+      .order('total_sales', { ascending: false })
+      .limit(12);
+    return (data || []) as unknown as Product[];
+  }, []);
+
+  // AI fuzzy match — only called when DB results are sparse
+  const aiSearch = useCallback(async (q: string): Promise<Product[]> => {
+    if (!catalogRef.current.length) return [];
+    const cached = aiCacheRef.current.get(q.toLowerCase());
+    let matchedIds: string[] | null = cached || null;
+
+    if (!matchedIds) {
+      try {
+        aiAbortRef.current?.abort();
+        const ac = new AbortController();
+        aiAbortRef.current = ac;
+        const { data, error } = await supabase.functions.invoke('ai-search-match', {
+          body: { query: q, products: catalogRef.current },
+        });
+        if (error || !data) return [];
+        matchedIds = Array.isArray(data.matchedIds) ? data.matchedIds : [];
+        aiCacheRef.current.set(q.toLowerCase(), matchedIds);
+      } catch {
+        return [];
+      }
+    }
+
+    if (!matchedIds || matchedIds.length === 0) return [];
+    const { data: prods } = await supabase.from('products')
+      .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
+      .in('id', matchedIds)
+      .eq('status', 'active');
+    if (!prods) return [];
+    // Preserve AI ranking order
+    const order = new Map(matchedIds.map((id, i) => [id, i]));
+    return [...prods].sort((a: any, b: any) => (order.get(a.id) ?? 99) - (order.get(b.id) ?? 99));
   }, []);
 
   const fetchSuggestions = useCallback(async (q: string) => {
@@ -198,34 +262,38 @@ const useGoogleSearch = () => {
     setLoading(true);
     setActiveIdx(-1);
     try {
-      const { data } = await supabase.from('products')
-        .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
-        .eq('status', 'active')
-        .or(`name.ilike.%${q}%,short_description.ilike.%${q}%`)
-        .order('total_sales', { ascending: false })
-        .limit(8);
+      let data: Product[] = await dbSearch(q);
 
-      if (data) {
-        // Extract unique name-based suggestions (Google-style text suggestions)
-        const nameSet = new Set<string>();
-        const textSuggestions: string[] = [];
-        data.forEach(p => {
-          const lower = p.name.toLowerCase();
-          if (!nameSet.has(lower)) {
-            nameSet.add(lower);
-            textSuggestions.push(p.name);
-          }
-        });
-        setSuggestions(textSuggestions.slice(0, 5));
-        setProducts(data);
+      // Fallback to AI when DB matches are sparse OR query looks unusual (no ASCII letters / very short)
+      const sparse = data.length < 3;
+      if (sparse) {
+        const aiResults = await aiSearch(q);
+        if (aiResults.length > 0) {
+          // Merge: existing DB results first, then AI matches not already present
+          const existing = new Set(data.map((p: any) => p.id));
+          const merged = [...data, ...aiResults.filter(p => !existing.has(p.id))];
+          data = merged.slice(0, 12);
+        }
       }
+
+      const nameSet = new Set<string>();
+      const textSuggestions: string[] = [];
+      data.forEach((p: any) => {
+        const lower = p.name.toLowerCase();
+        if (!nameSet.has(lower)) {
+          nameSet.add(lower);
+          textSuggestions.push(p.name);
+        }
+      });
+      setSuggestions(textSuggestions.slice(0, 5));
+      setProducts(data as Product[]);
     } catch {
       setSuggestions([]);
       setProducts([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [dbSearch, aiSearch]);
 
   const handleChange = (val: string) => {
     setQuery(val);

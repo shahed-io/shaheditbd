@@ -176,7 +176,12 @@ const Shop = () => {
         .eq('status', 'active');
 
       if (productIds !== null) query = query.in('id', productIds);
-      if (search) query = query.ilike('name', `%${search}%`);
+      if (search) {
+        const tokens = search.split(/\s+/).map(t => t.replace(/[%,()]/g, '')).filter(t => t.length >= 2).slice(0, 5);
+        const orParts = [`name.ilike.%${search}%`, `short_description.ilike.%${search}%`];
+        tokens.forEach(t => { orParts.push(`name.ilike.%${t}%`); orParts.push(`short_description.ilike.%${t}%`); });
+        query = query.or(orParts.join(','));
+      }
 
       switch (sort) {
         case 'price_asc':  query = query.order('price', { ascending: true }); break;
@@ -187,7 +192,35 @@ const Shop = () => {
       }
 
       const { data } = await query.limit(60);
-      setProducts((data as Product[]) || []);
+      let results = (data as Product[]) || [];
+
+      // AI fuzzy fallback when normal search yields no results (typos, shortcuts, mixed lang)
+      if (search && results.length === 0) {
+        try {
+          const { data: catalog } = await supabase.from('products')
+            .select('id, name, category_id').eq('status', 'active').limit(400);
+          if (catalog && catalog.length > 0) {
+            const { data: ai } = await supabase.functions.invoke('ai-search-match', {
+              body: { query: search, products: catalog },
+            });
+            const ids: string[] = ai?.matchedIds || [];
+            if (ids.length > 0) {
+              const { data: prods } = await supabase.from('products')
+                .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description')
+                .in('id', ids)
+                .eq('status', 'active');
+              const order = new Map(ids.map((id, i) => [id, i]));
+              results = ((prods as Product[]) || []).sort(
+                (a, b) => (order.get(a.id) ?? 99) - (order.get(b.id) ?? 99)
+              );
+            }
+          }
+        } catch (e) {
+          console.warn('AI search fallback failed:', e);
+        }
+      }
+
+      setProducts(results);
       setLoading(false);
     };
     fetchProducts();
