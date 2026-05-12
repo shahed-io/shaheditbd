@@ -146,23 +146,25 @@ ${sharedBlueprint(name, brand)}
     prompt: (name: string, brand: string, _price: string, _category: string) => `
 ${sharedBlueprint(name, brand)}
 
-═══ STYLE OVERRIDE — "Light Glass" tone (PASTEL COLORFUL GRADIENT + FROSTED GLASS — CamScanner colorful card reference) ═══
-CRITICAL: This style OVERRIDES the pale-blue-only background rule from the shared blueprint. For THIS style ONLY:
+═══ STYLE OVERRIDE — "Light Glass" tone (SIGNATURE SHAHED STORE PURPLE→PINK→BLUE GLASSMORPHISM) ═══
+CRITICAL: This style OVERRIDES the pale-blue-only background rule from the shared blueprint. For THIS style ONLY, reproduce EXACTLY the signature SHAHED STORE light-glass card look:
 
-- BACKGROUND: A soft, dreamy, MULTI-COLOR PASTEL GRADIENT covering the entire canvas (CamScanner-style colorful card):
-  • Smooth diagonal blend of pastel pink (#fbc2eb), pastel peach (#ffd6a5), pastel lavender (#c3b1e1),
-    pastel mint (#bde0c4), pastel sky blue (#a6c8ff), and pastel coral (#ffafcc)
-  • Buttery, airy, low-saturation pastel tones — NOT vibrant, NOT neon
-  • The colors flow into each other softly like watercolor — no harsh boundaries
-  • Bright, milky, daylight feel
-- BUBBLES: Replace the sky-blue + mint bubbles with soft 3D translucent pastel bubbles in
-  matching pastel pink, peach, lavender, mint, and sky-blue tones — same shape/placement as the
-  blueprint, just colorful pastel glossy spheres with subtle inner highlights
-- FROSTED GLASS CARD: Same white frosted glass card (rgba(255,255,255,0.55), heavy backdrop blur,
-  thin white border, soft shadow) — the pastel rainbow background shows softly through the frost
-- PILLS, LOGO, CONTACT LINE: KEEP IDENTICAL to the shared blueprint
-  (lavender frosted-glass SHAHED STORE pill with embossed 3D white wordmark — NO red, NO solid color badge — white brand pill, large center icon, bottom contact row)
-- Vibe: dreamy pastel rainbow glassmorphism — premium, soft, modern, like the CamScanner colorful card
+- BACKGROUND (MANDATORY — diagonal smooth gradient, NO watercolor blotches, NO multi-color rainbow chaos):
+  • Top-left corner: soft lavender purple (#b8a4e3 → #c9b6f0)
+  • Top-right corner: soft pink / rose (#f5b8d0 → #f7c6d6)
+  • Bottom-left corner: pastel sky blue (#bcd5ee → #cfe0f3)
+  • Bottom-right corner: warm peach / soft coral (#fcd5b5 → #ffd9c0)
+  • Smooth, buttery diagonal blend — purple top-left → pink top-right → blue bottom-left → peach bottom-right
+  • Airy, daylight, low-saturation — premium glassmorphism aesthetic (NOT neon, NOT rainbow, NOT pastel mint/green)
+  • NO green, NO mint, NO yellow anywhere in background
+- BUBBLES: 6-10 soft 3D translucent WHITE / very-light glossy spheres scattered around the card edges
+  (NOT colored bubbles — keep them subtle white/translucent so they read as gentle highlights on the gradient)
+- FROSTED GLASS CARD: Centered ~82% width white frosted glass (rgba(255,255,255,0.45-0.55), heavy backdrop blur ~28px,
+  thin white border rgba(255,255,255,0.85), 28px radius, soft drop shadow) — the purple-pink-blue-peach gradient shows softly through the frost
+- TOP-LEFT pill: SOFT LAVENDER FROSTED-GLASS pill (rgba(255,255,255,0.35) with subtle purple tint) containing "SHAHED STORE" in WHITE bold uppercase with subtle embossed shadow — NO red badge in this style
+- TOP-RIGHT pill: solid white pill with brand logo + brand/product name in dark charcoal
+- BOTTOM contact row: thin separator + globe + www.shahedstore.com.bd  ·  phone + +880 1840-099853 in dark charcoal — INSIDE the frosted card
+- Vibe: dreamy purple-pink-blue glassmorphism, premium and modern — exactly like the reference Office 365 / AutoDesk SHAHED STORE cards
 `.trim(),
   },
 
