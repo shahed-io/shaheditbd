@@ -1835,141 +1835,215 @@ const AdminProducts = () => {
                         </div>
                       </div>
 
-                      {/* AI Glassmorphism Card Generator */}
-                      <div
-                        className="relative rounded-2xl overflow-hidden p-4 space-y-3"
-                        style={{
-                          background: 'linear-gradient(135deg, hsla(271,91%,65%,0.10) 0%, hsla(217,91%,60%,0.10) 100%)',
-                          border: '1px solid hsla(271,91%,65%,0.30)',
-                          backdropFilter: 'blur(12px)',
-                        }}
-                      >
-                        <div className="absolute top-0 left-0 right-0 h-px"
-                          style={{ background: 'linear-gradient(90deg, transparent, hsla(271,91%,65%,0.6), transparent)' }} />
-
-                        {/* Header */}
-                        <div className="flex items-center gap-2">
-                          <div className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-base"
-                            style={{ background: 'linear-gradient(135deg, hsla(271,91%,65%,0.20), hsla(217,91%,60%,0.20))', border: '1px solid hsla(271,91%,65%,0.30)' }}>
-                            🎨
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-foreground leading-none">AI Card Generator</p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">Shahed Store ব্র্যান্ডিংসহ প্রোডাক্ট কার্ড তৈরি করুন</p>
-                          </div>
-                        </div>
-
-                        {/* Style Selector */}
-                        <div>
-                          <p className="text-[11px] text-muted-foreground mb-2 font-medium">ডিজাইন স্টাইল বেছে নিন:</p>
-                          <div className="grid grid-cols-2 gap-1.5">
-                            {CARD_STYLES.map(style => (
-                              <button
-                                key={style.value}
-                                type="button"
-                                onClick={() => setCardStyle(style.value)}
-                                className="flex flex-col items-start px-3 py-2 rounded-xl border text-left transition-all"
-                                style={{
-                                  background: cardStyle === style.value
-                                    ? 'hsla(271,91%,65%,0.18)'
-                                    : 'hsla(0,0%,100%,0.05)',
-                                  border: cardStyle === style.value
-                                    ? '1.5px solid hsla(271,91%,65%,0.70)'
-                                    : '1px solid hsla(271,91%,65%,0.15)',
-                                  boxShadow: cardStyle === style.value ? '0 0 10px hsla(271,91%,65%,0.20)' : 'none',
-                                }}
-                              >
-                                <span className="text-xs font-semibold text-foreground">{style.label}</span>
-                                <span className="text-[10px] text-muted-foreground leading-tight mt-0.5">{style.desc}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Style Preview Hint */}
-                        <div className="rounded-xl px-3 py-2 text-[11px] text-muted-foreground flex items-start gap-2"
-                          style={{ background: 'hsla(0,0%,100%,0.05)', border: '1px dashed hsla(271,91%,65%,0.20)' }}>
-                          <span>💡</span>
-                          <span>
-                            {cardStyle === 'dark_neon' && 'গাঢ় ব্যাকগ্রাউন্ড + নিয়ন গ্লোয়িং বর্ডার, Shahed Store ব্র্যান্ডিং সহ — রেফারেন্স: Grok card'}
-                            {cardStyle === 'light_glass' && 'পাস্টেল কালার গ্রেডিয়েন্ট + ফ্রস্টেড গ্লাস কার্ড — রেফারেন্স: CamScanner colorful card'}
-                            {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল Shahed Store ব্যাজ — রেফারেন্স: CamScanner clean card'}
-                            {cardStyle === 'vibrant_promo' && 'সফট অরোরা গ্রেডিয়েন্ট + হোয়াইট গ্লাস কার্ড, লাইট প্রিমিয়াম প্রোডাক্ট শোকেস'}
-                            {cardStyle === 'glass_gradient' && 'ডার্ক ব্যাকগ্রাউন্ড + মাল্টি-কালার গ্লোয়িং গ্রেডিয়েন্ট বর্ডার, প্রিমিয়াম গ্লাসমরফিজম'}
-                            {cardStyle === 'glassmorphism_ui' && 'প্রিমিয়াম হোয়াইট গ্লাস কার্ড + অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট, Apple Vision Pro স্টাইল'}
-                          </span>
-                        </div>
-
-                        {/* Generate Button */}
-                        <button
-                          type="button"
-                          onClick={generateAiCard}
-                          disabled={aiCardLoading || imageUploading}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
+                      {/* AI Card Generator — Premium Edition */}
+                      <div className="relative group">
+                        {/* Animated gradient halo */}
+                        <div
+                          className="absolute -inset-[1.5px] rounded-[22px] opacity-80 group-hover:opacity-100 transition-opacity"
                           style={{
-                            background: aiCardLoading
-                              ? 'hsla(271,91%,65%,0.40)'
-                              : 'linear-gradient(135deg, hsl(271,91%,60%), hsl(217,91%,55%))',
-                            boxShadow: '0 4px 20px hsla(271,91%,65%,0.35)',
+                            background: 'conic-gradient(from 0deg, hsl(271,91%,65%), hsl(217,91%,60%), hsl(190,95%,55%), hsl(330,85%,65%), hsl(271,91%,65%))',
+                            filter: 'blur(8px)',
+                            animation: 'spin 12s linear infinite',
+                          }}
+                        />
+                        <div
+                          className="relative rounded-[20px] overflow-hidden p-5 space-y-4"
+                          style={{
+                            background: 'linear-gradient(180deg, hsla(0,0%,100%,0.92) 0%, hsla(250,40%,98%,0.95) 100%)',
+                            backdropFilter: 'blur(28px)',
+                            WebkitBackdropFilter: 'blur(28px)',
+                            border: '1px solid hsla(0,0%,100%,0.9)',
+                            boxShadow: '0 20px 50px -12px hsla(271,91%,40%,0.25), inset 0 1px 0 hsla(0,0%,100%,1)',
                           }}
                         >
-                          {aiCardLoading
-                            ? <><Loader2 size={15} className="animate-spin" /> AI তৈরি হচ্ছে...</>
-                            : <><Wand2 size={15} /> ✨ এই স্টাইলে Card তৈরি করুন</>}
-                        </button>
+                          {/* Decorative blobs */}
+                          <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full opacity-40"
+                            style={{ background: 'radial-gradient(circle, hsla(271,91%,65%,0.5), transparent 70%)' }} />
+                          <div className="pointer-events-none absolute -bottom-20 -left-16 w-56 h-56 rounded-full opacity-40"
+                            style={{ background: 'radial-gradient(circle, hsla(217,91%,60%,0.45), transparent 70%)' }} />
 
-                        {aiCardLoading && (
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <div className="flex gap-2">
-                              {[0, 0.2, 0.4].map((d, i) => (
-                                <div key={i} className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: `${d}s` }} />
-                              ))}
+                          {/* Header */}
+                          <div className="relative flex items-center gap-3">
+                            <div
+                              className="flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-lg"
+                              style={{
+                                background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))',
+                                boxShadow: '0 8px 24px -6px hsla(271,91%,65%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.5)',
+                              }}
+                            >
+                              <Wand2 size={20} className="text-white" />
                             </div>
-                            AI ছবি তৈরি করছে, WEBP কনভার্ট করছে এবং সেভ করছে...
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="text-base font-bold text-foreground leading-none tracking-tight">AI Card Generator</p>
+                                <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold tracking-wider text-white"
+                                  style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))' }}>
+                                  PREMIUM
+                                </span>
+                              </div>
+                              <p className="text-[11.5px] text-muted-foreground mt-1">Shahed Store ব্র্যান্ডিংসহ প্রিমিয়াম প্রোডাক্ট কার্ড তৈরি করুন</p>
+                            </div>
                           </div>
-                        )}
 
-                        {/* AI Card Preview Modal */}
-                        {aiCardPreview && (
-                          <div className="rounded-2xl overflow-hidden border border-primary/30 space-y-3"
-                            style={{ background: 'hsla(271,91%,65%,0.08)' }}>
-                            <div className="p-3 pb-0">
-                              <p className="text-xs font-semibold text-foreground mb-2">🖼️ জেনারেট করা ইমেজ প্রিভিউ:</p>
-                              <div className="rounded-xl overflow-hidden border border-border bg-background">
-                                <img
-                                  src={aiCardPreview}
-                                  alt="AI Generated Card Preview"
-                                  className="w-full h-auto max-h-[300px] object-contain"
-                                />
+                          {/* Style Selector — Premium Cards */}
+                          <div className="relative">
+                            <div className="flex items-center justify-between mb-2.5">
+                              <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">ডিজাইন স্টাইল</p>
+                              <span className="text-[10px] text-muted-foreground/70">{CARD_STYLES.length} টি স্টাইল</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              {CARD_STYLES.map(style => {
+                                const active = cardStyle === style.value;
+                                return (
+                                  <button
+                                    key={style.value}
+                                    type="button"
+                                    onClick={() => setCardStyle(style.value)}
+                                    className="relative flex items-center gap-2.5 p-2 rounded-xl text-left transition-all hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
+                                    style={{
+                                      background: active
+                                        ? 'linear-gradient(135deg, hsla(271,91%,65%,0.12), hsla(217,91%,60%,0.12))'
+                                        : 'hsla(0,0%,100%,0.6)',
+                                      border: active
+                                        ? '1.5px solid hsl(271,91%,65%)'
+                                        : '1px solid hsla(0,0%,0%,0.06)',
+                                      boxShadow: active
+                                        ? '0 6px 20px -6px hsla(271,91%,65%,0.35), inset 0 1px 0 hsla(0,0%,100%,0.6)'
+                                        : '0 2px 6px -2px hsla(0,0%,0%,0.06)',
+                                    }}
+                                  >
+                                    <div
+                                      className="flex-shrink-0 w-11 h-11 rounded-lg flex items-center justify-center text-lg"
+                                      style={{
+                                        background: style.preview,
+                                        border: '1px solid hsla(0,0%,100%,0.6)',
+                                        boxShadow: 'inset 0 1px 4px hsla(0,0%,0%,0.15), 0 2px 6px -2px hsla(0,0%,0%,0.15)',
+                                      }}
+                                    >
+                                      <span style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}>{style.icon}</span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-[12px] font-semibold text-foreground leading-tight truncate">{style.label}</p>
+                                      <p className="text-[10px] text-muted-foreground leading-tight mt-0.5 line-clamp-2">{style.desc}</p>
+                                    </div>
+                                    {active && (
+                                      <div className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+                                        style={{ background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))' }}>
+                                        ✓
+                                      </div>
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Style Hint */}
+                          <div
+                            className="relative rounded-xl px-3 py-2.5 text-[11.5px] flex items-start gap-2"
+                            style={{
+                              background: 'linear-gradient(135deg, hsla(271,91%,65%,0.06), hsla(217,91%,60%,0.06))',
+                              border: '1px solid hsla(271,91%,65%,0.18)',
+                            }}
+                          >
+                            <span className="text-base leading-none mt-0.5">💡</span>
+                            <span className="text-foreground/80 leading-snug">
+                              {cardStyle === 'dark_neon' && 'গাঢ় ব্যাকগ্রাউন্ড + নিয়ন গ্লোয়িং বর্ডার, Shahed Store ব্র্যান্ডিং সহ'}
+                              {cardStyle === 'light_glass' && 'পাস্টেল কালার গ্রেডিয়েন্ট + ফ্রস্টেড গ্লাস কার্ড'}
+                              {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল Shahed Store ব্যাজ'}
+                              {cardStyle === 'vibrant_promo' && 'সফট অরোরা গ্রেডিয়েন্ট + হোয়াইট গ্লাস কার্ড, লাইট প্রিমিয়াম'}
+                              {cardStyle === 'glass_gradient' && 'ডার্ক ব্যাকগ্রাউন্ড + মাল্টি-কালার গ্লোয়িং গ্রেডিয়েন্ট বর্ডার'}
+                              {cardStyle === 'glassmorphism_ui' && 'প্রিমিয়াম হোয়াইট গ্লাস কার্ড + অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট'}
+                            </span>
+                          </div>
+
+                          {/* Generate Button — Premium */}
+                          <button
+                            type="button"
+                            onClick={generateAiCard}
+                            disabled={aiCardLoading || imageUploading}
+                            className="relative w-full overflow-hidden flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl text-sm font-bold text-white disabled:opacity-60 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.98] group/btn"
+                            style={{
+                              background: 'linear-gradient(135deg, hsl(271,91%,60%) 0%, hsl(245,85%,58%) 50%, hsl(217,91%,55%) 100%)',
+                              boxShadow: '0 12px 32px -8px hsla(271,91%,60%,0.55), inset 0 1px 0 hsla(0,0%,100%,0.3)',
+                            }}
+                          >
+                            {!aiCardLoading && (
+                              <span
+                                className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity pointer-events-none"
+                                style={{
+                                  background: 'linear-gradient(110deg, transparent 30%, hsla(0,0%,100%,0.35) 50%, transparent 70%)',
+                                  animation: 'shimmer 2s linear infinite',
+                                  backgroundSize: '200% 100%',
+                                }}
+                              />
+                            )}
+                            <span className="relative flex items-center gap-2">
+                              {aiCardLoading
+                                ? <><Loader2 size={16} className="animate-spin" /> AI তৈরি হচ্ছে...</>
+                                : <><Sparkles size={16} /> এই স্টাইলে Card তৈরি করুন</>}
+                            </span>
+                          </button>
+
+                          {aiCardLoading && (
+                            <div className="relative rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-[11.5px] text-foreground/80"
+                              style={{ background: 'hsla(271,91%,65%,0.08)', border: '1px dashed hsla(271,91%,65%,0.30)' }}>
+                              <div className="flex gap-1.5">
+                                {[0, 0.15, 0.3].map((d, i) => (
+                                  <div key={i} className="w-1.5 h-1.5 rounded-full animate-bounce"
+                                    style={{ animationDelay: `${d}s`, background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(217,91%,60%))' }} />
+                                ))}
+                              </div>
+                              <span>AI ছবি জেনারেট, WEBP কনভার্ট ও সেভ করছে…</span>
+                            </div>
+                          )}
+
+                          {/* Preview */}
+                          {aiCardPreview && (
+                            <div className="relative rounded-2xl overflow-hidden space-y-3"
+                              style={{
+                                background: 'linear-gradient(180deg, hsla(0,0%,100%,0.7), hsla(250,40%,98%,0.7))',
+                                border: '1px solid hsla(271,91%,65%,0.30)',
+                                boxShadow: '0 10px 30px -10px hsla(271,91%,40%,0.25)',
+                              }}>
+                              <div className="p-3 pb-0">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                  <p className="text-xs font-bold text-foreground">জেনারেট সম্পন্ন — প্রিভিউ</p>
+                                </div>
+                                <div className="rounded-xl overflow-hidden border border-border/60 bg-background shadow-inner">
+                                  <img src={aiCardPreview} alt="AI Generated Card Preview" className="w-full h-auto max-h-[320px] object-contain" />
+                                </div>
+                              </div>
+                              <div className="flex gap-2 p-3 pt-0">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setForm(prev => ({ ...prev, image_url: aiCardPreview }));
+                                    setImagePreview(aiCardPreview);
+                                    setAiCardPreview(null);
+                                    toast.success('✅ ইমেজ সেট করা হয়েছে!');
+                                  }}
+                                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.98]"
+                                  style={{
+                                    background: 'linear-gradient(135deg, hsl(142,71%,45%), hsl(160,84%,39%))',
+                                    boxShadow: '0 6px 18px -4px hsla(142,71%,45%,0.45)',
+                                  }}
+                                >
+                                  ✅ ব্যবহার করুন
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => { setAiCardPreview(null); toast.info('ইমেজ বাতিল করা হয়েছে'); }}
+                                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold text-foreground transition-all hover:bg-muted"
+                                  style={{ background: 'hsla(0,0%,100%,0.7)', border: '1px solid hsla(0,0%,0%,0.08)' }}
+                                >
+                                  ❌ বাতিল করুন
+                                </button>
                               </div>
                             </div>
-                            <div className="flex gap-2 p-3 pt-0">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setForm(prev => ({ ...prev, image_url: aiCardPreview }));
-                                  setImagePreview(aiCardPreview);
-                                  setAiCardPreview(null);
-                                  toast.success('✅ ইমেজ সেট করা হয়েছে!');
-                                }}
-                                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
-                                style={{ background: 'linear-gradient(135deg, hsl(142,71%,45%), hsl(142,71%,35%))' }}
-                              >
-                                ✅ ব্যবহার করুন
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setAiCardPreview(null);
-                                  toast.info('ইমেজ বাতিল করা হয়েছে');
-                                }}
-                                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-foreground border border-border transition-all hover:bg-muted"
-                              >
-                                ❌ বাতিল করুন
-                              </button>
-                            </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
 
