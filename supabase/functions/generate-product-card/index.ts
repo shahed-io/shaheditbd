@@ -130,14 +130,19 @@ const STYLES = {
     prompt: (name: string, brand: string, _price: string, _category: string) => `
 ${sharedBlueprint(name, brand)}
 
-═══ STYLE OVERRIDE — "Dark Neon" tone ═══
-- Override ONLY the background: deep midnight indigo (#0a0d2e → #1a0d3a) with subtle electric blue glow
-- Bubbles glow with neon cyan and deep electric blue (keep the SAME bubble shape and arrangement, just neon-glow versions)
-- The frosted card becomes a DARK GLASS card: rgba(20,20,40,0.55) with a thin glowing 2px cyan border and soft outer glow
-- "SHAHED STORE" pill: KEEP the soft lavender frosted-glass pill with embossed 3D white wordmark (do NOT change to red)
-- Brand pill on right: KEEP white pill with charcoal text (do NOT change)
-- Bottom contact line: keep dark charcoal text on the white-pill area (the whole contact strip lives on a subtle white sub-band so text stays dark and readable)
-- Vibe: cyberpunk premium with the SAME signature SHAHED STORE pill / brand pill / contact layout — only the canvas background and bubble glow differ
+═══ STYLE OVERRIDE — "Dark Neon" tone (SIGNATURE NEON-GLOW DARK CARD — Grok reference) ═══
+CRITICAL: This style OVERRIDES the pale-blue background and bubble rules. For THIS style ONLY:
+
+- BACKGROUND: Deep midnight navy / near-black (#0a0d1f → #14132e → #0a0d1f) with a subtle radial purple-blue glow behind the card
+- NO bubbles in this style — replace with a soft floor reflection / glow under the card and a few faint lens-flare sparkles at the corners
+- MAIN CARD: A large rounded-square DARK GLASS panel (rgba(20,18,40,0.45), 28px radius, heavy backdrop blur)
+  with a thick GLOWING NEON BORDER flowing in pink (#ff5cf4) → magenta (#c44cff) → electric blue (#3a8bff) → cyan (#5ee7ff)
+  — the border emits a strong outer halo/bloom (purple-pink on the left, electric blue on the right) that lights up the surrounding dark background
+- TOP-LEFT: NO SHAHED STORE pill in this style (omit it — keep the corner clean so the neon glow reads)
+- TOP-RIGHT pill: solid white pill with the brand logo + brand name in dark charcoal (KEEP signature white brand pill)
+- CENTER hero icon: large app/brand icon with a soft inner glow and subtle reflection beneath it, sitting in the middle of the dark glass panel
+- BOTTOM contact strip: a translucent dark sub-band INSIDE the card holding globe + www.shahedstore.com.bd  ·  phone + +880 1840-099853 in WHITE text with small circular neon-blue icon backgrounds
+- Vibe: cyberpunk premium, cinematic neon glow — exactly like the reference Grok / xAI dark neon card
 `.trim(),
   },
 
