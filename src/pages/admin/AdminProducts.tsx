@@ -961,8 +961,24 @@ const AdminProducts = () => {
             className="w-full bg-muted/30 border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
           />
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-3 flex-shrink-0 flex-wrap">
           <span className="text-xs text-muted-foreground hidden sm:inline">{products.length} products</span>
+          {/* Auto SEO bulk button */}
+          <button
+            type="button"
+            onClick={() => { setAutoSeoMode('missing'); setShowAutoSeoConfirm(true); }}
+            disabled={autoSeoRunning}
+            title="AI দিয়ে সব প্রোডাক্টের SEO Title ও Meta Description অটো-জেনারেট করুন"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
+            style={{
+              background: 'linear-gradient(135deg, hsl(265 85% 60%), hsl(200 90% 55%))',
+              boxShadow: '0 8px 24px hsl(265 85% 60% / 0.35)',
+            }}
+          >
+            {autoSeoRunning
+              ? <><Loader2 size={16} className="animate-spin" /> Auto SEO চলছে...</>
+              : <><Sparkles size={16} strokeWidth={2.5} /> Auto SEO (All)</>}
+          </button>
           <button
             type="button"
             onClick={() => {
