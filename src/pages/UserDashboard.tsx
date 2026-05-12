@@ -33,6 +33,7 @@ import {
 import BrandLogo from '@/components/store/BrandLogo';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
+import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
 
 interface Profile {
   display_name: string | null;
@@ -473,6 +474,51 @@ const UserDashboard = () => {
       supabase.from('order_timeline').select('id, status, note, created_at').eq('order_id', orderId).order('created_at', { ascending: true }),
     ]);
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, items: (itemsRes.data || []) as OrderItem[], timeline: (timelineRes.data || []) as TimelineEvent[] } : o));
+  };
+
+  const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(null);
+  const handleDownloadInvoice = async (order: Order) => {
+    try {
+      setDownloadingInvoice(order.id);
+      let items = order.items;
+      if (!items) {
+        const { data } = await supabase
+          .from('order_items')
+          .select('id, product_name, price, quantity, total, license_key')
+          .eq('order_id', order.id);
+        items = (data || []) as OrderItem[];
+      }
+      const invoiceData: InvoiceData = {
+        invoiceNumber: order.order_number,
+        date: order.created_at,
+        customer: {
+          name: profile?.display_name || user?.email?.split('@')[0] || 'Customer',
+          email: profile?.email || user?.email || undefined,
+          phone: profile?.phone || undefined,
+        },
+        items: (items || []).map(i => ({
+          name: i.product_name,
+          quantity: i.quantity,
+          price: i.price,
+          total: i.total,
+          license_key: i.license_key,
+        })),
+        subtotal: order.subtotal,
+        discount: order.discount_amount || 0,
+        total: order.total,
+        paymentMethod: order.payment_method || undefined,
+        transactionId: order.transaction_id || undefined,
+        status: order.status,
+        notes: order.notes || undefined,
+      };
+      await downloadInvoicePdf(invoiceData);
+      toast.success('✅ Invoice ডাউনলোড হয়েছে');
+    } catch (e) {
+      console.error(e);
+      toast.error('Invoice ডাউনলোড করতে সমস্যা হয়েছে');
+    } finally {
+      setDownloadingInvoice(null);
+    }
   };
 
   const fetchAddresses = async () => {
@@ -1389,10 +1435,22 @@ const UserDashboard = () => {
                                 )}
 
                                 {/* Price Breakdown */}
-                                <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm pt-2 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
+                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm pt-2 border-t" style={{ borderColor: 'hsla(258,78%,75%,0.15)' }}>
                                   <span className="text-muted-foreground">Subtotal: <span className="font-semibold text-foreground">৳{(order.subtotal || 0).toLocaleString()}</span></span>
                                   {(order.discount_amount || 0) > 0 && <span className="text-emerald-600 font-semibold">{t(selectedLang, 'discount_off')}: -৳{(order.discount_amount || 0).toLocaleString()}</span>}
                                   <span className="font-bold text-primary">{t(selectedLang, 'total')}: ৳{order.total.toLocaleString()}</span>
+                                  <button
+                                    onClick={() => handleDownloadInvoice(order)}
+                                    disabled={downloadingInvoice === order.id}
+                                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed"
+                                    style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), hsla(258,78%,65%,0.85))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.25)' }}
+                                  >
+                                    {downloadingInvoice === order.id ? (
+                                      <><Loader2 size={13} className="animate-spin" /> তৈরি হচ্ছে…</>
+                                    ) : (
+                                      <><Download size={13} /> Invoice PDF</>
+                                    )}
+                                  </button>
                                 </div>
 
                                 {/* Notes */}
