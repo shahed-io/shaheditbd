@@ -6,49 +6,19 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version",
 };
 
-// ─── SHARED DESIGN BLUEPRINT ─────────────────────────────────────────────────
+// ─── SHARED DESIGN BLUEPRINT (LOCKED SIGNATURE — DO NOT CHANGE) ─────────────
 // Signature SHAHED STORE house style:
 //   1. Soft pale-blue / off-white airy background
-//   2. Floating 3D bubbles (sky-blue + mint) around the card
+//   2. Floating 3D bubbles (sky-blue + mint ONLY) around the card
 //   3. Large white frosted glass card centered (~82% of canvas)
-//   4. Top-left: SOFT LAVENDER/PURPLE GLASSMORPHIC PILL containing
-//      "SHAHED STORE" in EMBOSSED 3D WHITE letters (NO red rectangle)
-//   5. Top-right: white pill with brand logo + name
-//   6. Center: very large clean app icon of the product
-//   7. Bottom: separator line + contact row inside the card
+//   4. Top-left: WHITE OUTER PILL containing an INNER RED rectangle badge (#e63946)
+//      with "SHAHED STORE" in WHITE bold uppercase
+//   5. Top-right: white pill with brand logo + name in dark charcoal
+//   6. Center: very large clean app icon / official brand logo
+//   7. Bottom: thin separator + contact row (globe + phone) inside the card
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Random tonal variants of the SHAHED STORE lavender pill so each generation
-// looks subtly different (matches references #2 and #3 in the brief).
-const PILL_VARIANTS = [
-  {
-    name: "Deep Lavender 3D",
-    bg: "linear-gradient from #b8b0d8 (top) → #8e84b8 (bottom), darker, more saturated lavender — like a soft 3D pillow",
-    text: "EXTRUDED 3D white letters with a clear inner-shadow & a soft purple drop-shadow (rgba(60,50,110,0.45)) — strong embossed feel",
-    radius: "~24px",
-  },
-  {
-    name: "Pastel Lavender Glass",
-    bg: "linear-gradient from #e3def2 (top) → #cfc6e8 (bottom), brighter pastel lavender frosted glass with rgba(255,255,255,0.4) sheen",
-    text: "Crisp bold white letters with a soft inner highlight and a faint lavender drop-shadow (rgba(120,110,180,0.3))",
-    radius: "~30px",
-  },
-  {
-    name: "Periwinkle Mist",
-    bg: "linear-gradient from #c8c4ec (top-left) → #b6b0e0 (bottom-right), cool periwinkle frosted glass with subtle inner glow",
-    text: "Bold white uppercase letters with a delicate embossed bevel and soft indigo shadow (rgba(80,70,140,0.4))",
-    radius: "~26px",
-  },
-  {
-    name: "Lilac Cloud",
-    bg: "linear-gradient from #ddd6f3 (top) → #c2b6e6 (bottom), light airy lilac with frosted-glass haze and very soft inner glow",
-    text: "Bold white wordmark with a gentle 3D bevel — looks softly carved into the lilac glass",
-    radius: "~28px",
-  },
-];
-
 const sharedBlueprint = (name: string, brand: string) => {
-  const v = PILL_VARIANTS[Math.floor(Math.random() * PILL_VARIANTS.length)];
   return `
 You MUST create a premium square (1:1) product promotional card that EXACTLY matches the Shahed Store signature house style. This layout is NON-NEGOTIABLE — every element must look IDENTICAL to the reference cards previously generated for this store (LinkedIn, Adobe Creative Cloud, Figma Premium, Microsoft Office 365, Windows 11 Pro):
 
@@ -76,16 +46,12 @@ You MUST create a premium square (1:1) product promotional card that EXACTLY mat
 - Background bubbles subtly show THROUGH the frosted card
 
 ═══ TOP ROW INSIDE CARD (28px padding from card edges) ═══
-- LEFT — "SHAHED STORE" GLASS PILL (NO red rectangle, NO solid red, NO solid color badge):
-  • A SINGLE rounded glassmorphic pill — variant style: "${v.name}"
-  • Corner radius: ${v.radius}, height ~56px, comfortable horizontal padding
-  • Pill background: ${v.bg} — frosted glass with backdrop blur,
-    a thin ~1.5px inner highlight at the top edge (rgba(255,255,255,0.7)) and
-    a soft outer drop-shadow underneath for a 3D pillow look
-  • Inside the pill: the words "SHAHED STORE" in BOLD UPPERCASE sans-serif —
-    ${v.text}
-  • NO red, NO solid color rectangle, NO badge inside — the pill itself is the badge
-  • Looks like soft lavender / purple frosted glass with a beautifully embossed white wordmark
+- LEFT — "SHAHED STORE" BADGE (CRITICAL — exact double-pill construction):
+  • An OUTER rounded WHITE pill (rgba(255,255,255,0.98), ~28px corner radius, ~56px tall, soft drop shadow, thin 1px white inner border)
+  • INSIDE that white pill, a SMALLER INNER ROUNDED RECTANGLE filled with SOLID BRIGHT RED (#e63946), ~18px corner radius, snug padding (~10px horizontal, ~6px vertical) inside the white pill
+  • Inside the RED inner rectangle: the words "SHAHED STORE" in WHITE bold uppercase sans-serif (~13–14px, tight letter-spacing)
+  • Final look: WHITE pill wrapping a RED rectangle that holds white "SHAHED STORE" text — like a premium price-tag badge
+  • This is a NON-NEGOTIABLE signature element — every card MUST show this exact white-outer / red-inner / white-text construction
 - RIGHT — BRAND PILL:
   • A clean SOLID WHITE rounded pill (rgba(255,255,255,0.95), subtle soft shadow, ~26px radius, ~52px tall)
   • Contains the small square brand/product LOGO ICON on the left (~34px, original colors)
@@ -113,7 +79,7 @@ You MUST create a premium square (1:1) product promotional card that EXACTLY mat
 - Icons: thin-outline style (1.5px stroke), dark charcoal, inside small circular outlines
 
 ═══ ABSOLUTE RULES (MUST FOLLOW) ═══
-- The "SHAHED STORE" element is a SOFT LAVENDER FROSTED-GLASS PILL with EMBOSSED 3D WHITE wordmark — NEVER a red rectangle, NEVER a red badge, NEVER any solid red color anywhere on the card
+- The "SHAHED STORE" badge MUST be a WHITE OUTER PILL containing an INNER SOLID RED (#e63946) RECTANGLE with WHITE bold uppercase "SHAHED STORE" text — NEVER a glass pill, NEVER lavender, NEVER purple, NEVER white-text-on-glass
 - The brand pill on the right is a SOLID WHITE pill with the brand logo + name in dark charcoal
 - The contact info MUST be INSIDE the frosted card (bottom area) with a separator line above it
 - The floating 3D bubbles MUST be visible around the card edges (sky blue + mint/teal ONLY)
@@ -130,19 +96,14 @@ const STYLES = {
     prompt: (name: string, brand: string, _price: string, _category: string) => `
 ${sharedBlueprint(name, brand)}
 
-═══ STYLE OVERRIDE — "Dark Neon" tone (SIGNATURE NEON-GLOW DARK CARD — Grok reference) ═══
-CRITICAL: This style OVERRIDES the pale-blue background and bubble rules. For THIS style ONLY:
-
+═══ STYLE OVERRIDE — "Dark Neon" tone ═══
 - BACKGROUND: Deep midnight navy / near-black (#0a0d1f → #14132e → #0a0d1f) with a subtle radial purple-blue glow behind the card
-- NO bubbles in this style — replace with a soft floor reflection / glow under the card and a few faint lens-flare sparkles at the corners
-- MAIN CARD: A large rounded-square DARK GLASS panel (rgba(20,18,40,0.45), 28px radius, heavy backdrop blur)
-  with a thick GLOWING NEON BORDER flowing in pink (#ff5cf4) → magenta (#c44cff) → electric blue (#3a8bff) → cyan (#5ee7ff)
-  — the border emits a strong outer halo/bloom (purple-pink on the left, electric blue on the right) that lights up the surrounding dark background
-- TOP-LEFT: NO SHAHED STORE pill in this style (omit it — keep the corner clean so the neon glow reads)
-- TOP-RIGHT pill: solid white pill with the brand logo + brand name in dark charcoal (KEEP signature white brand pill)
-- CENTER hero icon: large app/brand icon with a soft inner glow and subtle reflection beneath it, sitting in the middle of the dark glass panel
-- BOTTOM contact strip: a translucent dark sub-band INSIDE the card holding globe + www.shahedstore.com.bd  ·  phone + +880 1840-099853 in WHITE text with small circular neon-blue icon backgrounds
-- Vibe: cyberpunk premium, cinematic neon glow — exactly like the reference Grok / xAI dark neon card
+- BUBBLES: Replace the sky-blue/mint bubbles with soft glowing neon orbs (electric blue + magenta + cyan), still scattered around the card edges
+- MAIN CARD: Keep the same white frosted glass card (rgba(255,255,255,0.55), 28px radius) so all signature elements stay readable; add a thin glowing neon outer border (pink → magenta → blue → cyan) and a soft outer halo
+- KEEP the signature SHAHED STORE white-outer-pill / inner-red-rectangle badge in the top-left (NEVER omit it)
+- KEEP the signature white brand pill in the top-right (logo + name in dark charcoal)
+- KEEP the signature center hero icon, separator line, and bottom contact row INSIDE the card with dark-charcoal text — IDENTICAL to the standard signature layout
+- Vibe: cyberpunk premium night version of the signature card — neon glow only on background/border, the white card and all its contents stay 100% intact
 `.trim(),
   },
 
@@ -151,25 +112,11 @@ CRITICAL: This style OVERRIDES the pale-blue background and bubble rules. For TH
     prompt: (name: string, brand: string, _price: string, _category: string) => `
 ${sharedBlueprint(name, brand)}
 
-═══ STYLE OVERRIDE — "Light Glass" tone (SIGNATURE SHAHED STORE PURPLE→PINK→BLUE GLASSMORPHISM) ═══
-CRITICAL: This style OVERRIDES the pale-blue-only background rule from the shared blueprint. For THIS style ONLY, reproduce EXACTLY the signature SHAHED STORE light-glass card look:
-
-- BACKGROUND (MANDATORY — diagonal smooth gradient, NO watercolor blotches, NO multi-color rainbow chaos):
-  • Top-left corner: soft lavender purple (#b8a4e3 → #c9b6f0)
-  • Top-right corner: soft pink / rose (#f5b8d0 → #f7c6d6)
-  • Bottom-left corner: pastel sky blue (#bcd5ee → #cfe0f3)
-  • Bottom-right corner: warm peach / soft coral (#fcd5b5 → #ffd9c0)
-  • Smooth, buttery diagonal blend — purple top-left → pink top-right → blue bottom-left → peach bottom-right
-  • Airy, daylight, low-saturation — premium glassmorphism aesthetic (NOT neon, NOT rainbow, NOT pastel mint/green)
-  • NO green, NO mint, NO yellow anywhere in background
-- BUBBLES: 6-10 soft 3D translucent WHITE / very-light glossy spheres scattered around the card edges
-  (NOT colored bubbles — keep them subtle white/translucent so they read as gentle highlights on the gradient)
-- FROSTED GLASS CARD: Centered ~82% width white frosted glass (rgba(255,255,255,0.45-0.55), heavy backdrop blur ~28px,
-  thin white border rgba(255,255,255,0.85), 28px radius, soft drop shadow) — the purple-pink-blue-peach gradient shows softly through the frost
-- TOP-LEFT pill: SOFT LAVENDER FROSTED-GLASS pill (rgba(255,255,255,0.35) with subtle purple tint) containing "SHAHED STORE" in WHITE bold uppercase with subtle embossed shadow — NO red badge in this style
-- TOP-RIGHT pill: solid white pill with brand logo + brand/product name in dark charcoal
-- BOTTOM contact row: thin separator + globe + www.shahedstore.com.bd  ·  phone + +880 1840-099853 in dark charcoal — INSIDE the frosted card
-- Vibe: dreamy purple-pink-blue glassmorphism, premium and modern — exactly like the reference Office 365 / AutoDesk SHAHED STORE cards
+═══ STYLE OVERRIDE — "Light Glass" tone ═══
+- Keep the signature pale-blue / off-white background and sky-blue + mint bubbles EXACTLY as defined in the shared blueprint
+- Slightly brighter, whiter frosted card (rgba(255,255,255,0.6)) with a delicate inner highlight at the top edge
+- KEEP the white-outer-pill / inner-red-rectangle "SHAHED STORE" badge, the white brand pill, the hero icon, and the bottom contact row exactly as in the signature
+- Vibe: brighter, cleaner glassmorphism variant of the standard signature card
 `.trim(),
   },
 
