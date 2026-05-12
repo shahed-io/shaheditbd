@@ -1801,7 +1801,7 @@ const AdminProducts = () => {
                     <div>
                       <label className={lc}>Featured Image</label>
                       <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
-                        onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
+                        onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); e.target.value = ''; }} />
                       <div className="flex gap-3 items-start">
                         <div className="w-24 h-24 rounded-xl border-2 border-dashed border-border bg-muted/30 flex-shrink-0 overflow-hidden flex items-center justify-center cursor-pointer hover:border-primary transition-colors"
                           onClick={() => fileInputRef.current?.click()}>
@@ -2035,7 +2035,7 @@ const AdminProducts = () => {
                     <div>
                       <label className={lc}>Gallery Images <span className="text-muted-foreground/60">(multiple)</span></label>
                       <input ref={galleryInputRef} type="file" accept="image/*" multiple className="hidden"
-                        onChange={e => { if (e.target.files?.length) handleGalleryUpload(e.target.files); }} />
+                        onChange={e => { if (e.target.files?.length) handleGalleryUpload(e.target.files); e.target.value = ''; }} />
                       {form.images && form.images.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-3">
                           {form.images.map((img, i) => (
