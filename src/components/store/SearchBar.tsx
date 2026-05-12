@@ -262,7 +262,7 @@ const useGoogleSearch = () => {
     setLoading(true);
     setActiveIdx(-1);
     try {
-      let data = await dbSearch(q);
+      let data: Product[] = await dbSearch(q);
 
       // Fallback to AI when DB matches are sparse OR query looks unusual (no ASCII letters / very short)
       const sparse = data.length < 3;
