@@ -476,12 +476,12 @@ const AdminProducts = () => {
   };
 
   const CARD_STYLES = [
-    { value: 'dark_neon', label: '🌌 Dark Neon', desc: 'গাঢ় ব্যাকগ্রাউন্ড, নিয়ন গ্লোয়িং বর্ডার' },
-    { value: 'light_glass', label: '🌸 Light Glass', desc: 'পাস্টেল গ্রেডিয়েন্ট, ফ্রস্টেড গ্লাস' },
-    { value: 'clean_light', label: '🩵 Clean Light', desc: 'ক্লিন হোয়াইট, বোকে এফেক্ট' },
-    { value: 'vibrant_promo', label: '🌈 Soft Aurora', desc: 'সফট অরোরা গ্রেডিয়েন্ট, লাইট প্রিমিয়াম' },
-    { value: 'glass_gradient', label: '✨ Glass Gradient', desc: 'গ্লাসমরফিজম গ্রেডিয়েন্ট বর্ডার' },
-    { value: 'glassmorphism_ui', label: '🪟 Glassmorphism UI', desc: 'প্রিমিয়াম হোয়াইট গ্লাস, অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট' },
+    { value: 'dark_neon', label: 'Dark Neon', icon: '🌌', desc: 'গাঢ় ব্যাকগ্রাউন্ড, নিয়ন গ্লোয়িং বর্ডার', preview: 'linear-gradient(135deg,#0a0d1f 0%,#14132e 50%,#0a0d1f 100%)', accent: '#5ee7ff' },
+    { value: 'light_glass', label: 'Light Glass', icon: '🌸', desc: 'পাস্টেল গ্রেডিয়েন্ট, ফ্রস্টেড গ্লাস', preview: 'linear-gradient(135deg,#e8eef5 0%,#cfe0f3 100%)', accent: '#a8c5e8' },
+    { value: 'clean_light', label: 'Clean Light', icon: '🩵', desc: 'ক্লিন হোয়াইট, বোকে এফেক্ট', preview: 'linear-gradient(135deg,#ffffff 0%,#f0f4f8 100%)', accent: '#e63946' },
+    { value: 'vibrant_promo', label: 'Soft Aurora', icon: '🌈', desc: 'সফট অরোরা গ্রেডিয়েন্ট, লাইট প্রিমিয়াম', preview: 'linear-gradient(135deg,#a8e6cf 0%,#dcedc1 50%,#ffd3b6 100%)', accent: '#ff8b94' },
+    { value: 'glass_gradient', label: 'Glass Gradient', icon: '✨', desc: 'গ্লাসমরফিজম গ্রেডিয়েন্ট বর্ডার', preview: 'linear-gradient(135deg,#1a1a2e 0%,#16213e 100%)', accent: 'linear-gradient(90deg,#ff5cf4,#5ee7ff)' },
+    { value: 'glassmorphism_ui', label: 'Glassmorphism UI', icon: '🪟', desc: 'প্রিমিয়াম হোয়াইট গ্লাস, অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট', preview: 'linear-gradient(135deg,#fef3c7 0%,#e0e7ff 100%)', accent: '#6366f1' },
   ] as const;
 
   // ── AI Glassmorphism Card Generator ──────────────────────────
