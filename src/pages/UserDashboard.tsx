@@ -406,7 +406,15 @@ const UserDashboard = () => {
 
   const fetchProfile = async () => {
     if (!user) return;
-    const { data } = await supabase.from('profiles').select('display_name, username, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned, total_points_redeemed').eq('user_id', user.id).single();
+    let data: any = null;
+    let lastErr: any = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) await new Promise(r => setTimeout(r, 400 * attempt));
+      const res = await supabase.from('profiles').select('display_name, username, email, phone, avatar_url, referral_code, referral_earnings, referral_credit, referral_discount, points_balance, total_points_earned, total_points_redeemed').eq('user_id', user.id).maybeSingle();
+      if (!res.error && res.data) { data = res.data; break; }
+      lastErr = res.error;
+      if (!res.error) break; // no row but no error — stop retrying
+    }
     if (data) {
       setProfile({ display_name: data.display_name, username: (data as any).username || null, email: data.email, phone: data.phone, avatar_url: data.avatar_url, referral_code: (data as any).referral_code || null, referral_earnings: (data as any).referral_earnings || 0, referral_credit: (data as any).referral_credit || 0, referral_discount: (data as any).referral_discount || 0 });
       setUsernameInput((data as any).username || '');
@@ -414,6 +422,7 @@ const UserDashboard = () => {
       setTotalPointsEarned((data as any).total_points_earned || 0);
       setTotalPointsRedeemed((data as any).total_points_redeemed || 0);
     } else {
+      if (lastErr) console.warn('fetchProfile failed after retries:', lastErr.message);
       setProfile({ display_name: user.user_metadata?.display_name || '', username: null, email: user.email || '', phone: '', avatar_url: null, referral_code: null, referral_earnings: 0, referral_credit: 0, referral_discount: 0 });
     }
   };
