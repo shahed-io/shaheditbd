@@ -33,6 +33,7 @@ import {
 import BrandLogo from '@/components/store/BrandLogo';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
+import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
 
 interface Profile {
   display_name: string | null;
