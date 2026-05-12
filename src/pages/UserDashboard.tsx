@@ -520,6 +520,8 @@ const UserDashboard = () => {
       setDownloadingInvoice(null);
     }
   };
+
+  const fetchAddresses = async () => {
     if (!user) return; setAddressLoading(true);
     const { data } = await supabase.from('addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false });
     setAddresses((data || []) as Address[]); setAddressLoading(false);
