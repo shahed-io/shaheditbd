@@ -2035,7 +2035,7 @@ const AdminProducts = () => {
                     <div>
                       <label className={lc}>Gallery Images <span className="text-muted-foreground/60">(multiple)</span></label>
                       <input ref={galleryInputRef} type="file" accept="image/*" multiple className="hidden"
-                        onChange={e => { if (e.target.files?.length) handleGalleryUpload(e.target.files); }} />
+                        onChange={e => { if (e.target.files?.length) handleGalleryUpload(e.target.files); e.target.value = ''; }} />
                       {form.images && form.images.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-3">
                           {form.images.map((img, i) => (
