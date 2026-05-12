@@ -248,13 +248,14 @@ The user provides a DEMO/SAMPLE description as reference. You MUST:
 3. Replace all product-specific details (name, features, pricing, plans, account type) with the new product's details.
 4. Maintain Bangladesh SEO optimization: include product keywords + "বাংলাদেশ", BDT prices, buying intent words.
 5. Keep the same section count — if demo has 8 sections, new one should also have 8 sections.
-6. Always end with the Important Notes footer:
-   ### ⚠️ গুরুত্বপূর্ণ তথ্য (Important Notes)
-   🔐 আমরা একটি সার্টিফাইড ডিজিটাল ই-কমার্স প্ল্যাটফর্ম, বাণিজ্য মন্ত্রণালয়, গণপ্রজাতন্ত্রী বাংলাদেশ কর্তৃক নিবন্ধিত।
-   Our DBID Number: 586772174 — ensuring secure and authentic digital product delivery.
-   ❌ বিক্রিত পণ্য ফেরতযোগ্য নয়।
-   ❌ কেনার ২ দিনের মধ্যে পণ্য সক্রিয় করুন।
-   ⚠️ নির্ধারিত সময়ের মধ্যে সক্রিয় না করলে ওয়ারেন্টি বা সাপোর্ট বাতিল হতে পারে।
+6. Always end with this Important Notes footer (copy EXACTLY, do NOT translate or modify):
+   ### ⚠️ Important Notes
+
+   ❌ Sold Products Are Not Returnable.
+
+   🛒 The product will be delivered instantly or within 1 hours (Rare cases: up to 24 hours)
+
+   ❌ Any of our products are requested to be activated within two days maximum. Otherwise the warranty will be void.
 
 CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.
 
