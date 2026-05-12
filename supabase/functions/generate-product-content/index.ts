@@ -213,7 +213,7 @@ For the description field, follow this exact structure:
 6. ### 🔍 SEO কীওয়ার্ড সেকশন (2-3 sentences, Bangladesh keywords, 2+ cities)
 7. ### 🏪 কেন Shahed Store? (3-4 trust points)
 8. ### 🚀 এখনই কিনুন (Call To Action)
-9. ### ⚠️ গুরুত্বপূর্ণ তথ্য (Important Notes — ALWAYS LAST — DBID 586772174, non-refundable, activate within 2 days)
+9. ### ⚠️ Important Notes (ALWAYS LAST — copy this footer EXACTLY as below, do NOT translate)\n\n❌ Sold Products Are Not Returnable.\n\n🛒 The product will be delivered instantly or within 1 hours (Rare cases: up to 24 hours)\n\n❌ Any of our products are requested to be activated within two days maximum. Otherwise the warranty will be void.
 
 CRITICAL PUNCTUATION RULE: After any English word, number, or alphanumeric content, ALWAYS use English period (.) not Bengali danda (।). Only use । at the end of purely Bengali sentences.
 
