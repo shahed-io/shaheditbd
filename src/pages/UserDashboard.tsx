@@ -314,6 +314,19 @@ const UserDashboard = () => {
   };
 
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
+
+  const refetchActiveTab = () => {
+    if (!user) return;
+    fetchProfile();
+    if (activeTab === 'orders') fetchOrders();
+    if (activeTab === 'addresses') fetchAddresses();
+    if (activeTab === 'notifications') fetchNotifications();
+    if (activeTab === 'referral') fetchReferrals();
+    if (activeTab === 'wallet') fetchWallet();
+    if (activeTab === 'points') fetchPoints();
+    if (activeTab === 'licenses') fetchLicenses();
+  };
+
   useEffect(() => { if (user) fetchProfile(); }, [user]);
   useEffect(() => {
     if (!user) return;
@@ -325,6 +338,22 @@ const UserDashboard = () => {
     if (activeTab === 'points') fetchPoints();
     if (activeTab === 'licenses') fetchLicenses();
   }, [activeTab, user]);
+
+  // Refetch when tab/window regains focus or comes back online — fixes "data missing after sleep/switch"
+  useEffect(() => {
+    if (!user) return;
+    const onVisible = () => { if (document.visibilityState === 'visible') refetchActiveTab(); };
+    const onFocus = () => refetchActiveTab();
+    const onOnline = () => refetchActiveTab();
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('online', onOnline);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('online', onOnline);
+    };
+  }, [user, activeTab]);
 
   // Realtime order updates - live preview
   useEffect(() => {
