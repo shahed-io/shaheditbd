@@ -209,6 +209,12 @@ const AdminProducts = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [showBulkConfirm, setShowBulkConfirm] = useState(false);
+  // Auto SEO bulk state
+  const [autoSeoRunning, setAutoSeoRunning] = useState(false);
+  const [autoSeoProgress, setAutoSeoProgress] = useState<{ done: number; total: number; current: string } | null>(null);
+  const [autoSeoMode, setAutoSeoMode] = useState<'missing' | 'all'>('missing');
+  const [showAutoSeoConfirm, setShowAutoSeoConfirm] = useState(false);
+  const autoSeoCancelRef = useRef(false);
   // Extra categories dropdown open state
   const [extraCatOpen, setExtraCatOpen] = useState(false);
 
