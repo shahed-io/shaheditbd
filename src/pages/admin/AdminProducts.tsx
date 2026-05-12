@@ -1835,32 +1835,16 @@ const AdminProducts = () => {
                         </div>
                       </div>
 
-                      {/* AI Card Generator — Premium Edition */}
-                      <div className="relative group">
-                        {/* Animated gradient halo */}
+                      {/* AI Card Generator — Clean Premium */}
+                      <div className="relative">
                         <div
-                          className="absolute -inset-[1.5px] rounded-[22px] opacity-80 group-hover:opacity-100 transition-opacity"
+                          className="relative rounded-2xl overflow-hidden p-5 space-y-4"
                           style={{
-                            background: 'conic-gradient(from 0deg, hsl(271,91%,65%), hsl(217,91%,60%), hsl(190,95%,55%), hsl(330,85%,65%), hsl(271,91%,65%))',
-                            filter: 'blur(8px)',
-                            animation: 'spin 12s linear infinite',
-                          }}
-                        />
-                        <div
-                          className="relative rounded-[20px] overflow-hidden p-5 space-y-4"
-                          style={{
-                            background: 'linear-gradient(180deg, hsla(0,0%,100%,0.92) 0%, hsla(250,40%,98%,0.95) 100%)',
-                            backdropFilter: 'blur(28px)',
-                            WebkitBackdropFilter: 'blur(28px)',
-                            border: '1px solid hsla(0,0%,100%,0.9)',
-                            boxShadow: '0 20px 50px -12px hsla(271,91%,40%,0.25), inset 0 1px 0 hsla(0,0%,100%,1)',
+                            background: '#ffffff',
+                            border: '1px solid hsl(240, 6%, 90%)',
+                            boxShadow: '0 1px 3px hsla(240,10%,20%,0.06), 0 8px 24px -12px hsla(240,10%,20%,0.08)',
                           }}
                         >
-                          {/* Decorative blobs */}
-                          <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full opacity-40"
-                            style={{ background: 'radial-gradient(circle, hsla(271,91%,65%,0.5), transparent 70%)' }} />
-                          <div className="pointer-events-none absolute -bottom-20 -left-16 w-56 h-56 rounded-full opacity-40"
-                            style={{ background: 'radial-gradient(circle, hsla(217,91%,60%,0.45), transparent 70%)' }} />
 
                           {/* Header */}
                           <div className="relative flex items-center gap-3">
