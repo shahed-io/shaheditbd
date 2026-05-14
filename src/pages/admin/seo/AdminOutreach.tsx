@@ -345,6 +345,20 @@ const AdminOutreach = () => {
             <table className="w-full text-xs">
               <thead className="bg-muted/20 text-muted-foreground">
                 <tr>
+                  <th className="text-left px-3 py-2.5 font-medium w-8">
+                    <input
+                      type="checkbox"
+                      checked={filtered.length > 0 && filtered.every(p => selected.has(p.id))}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setSelected(new Set(filtered.map(p => p.id)));
+                        } else {
+                          setSelected(new Set());
+                        }
+                      }}
+                      className="accent-primary"
+                    />
+                  </th>
                   <th className="text-left px-4 py-2.5 font-medium">Site</th>
                   <th className="text-left px-3 py-2.5 font-medium">Category</th>
                   <th className="text-left px-3 py-2.5 font-medium">Contact</th>
