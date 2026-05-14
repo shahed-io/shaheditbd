@@ -40,10 +40,14 @@ const CATEGORIES = ['tech_blog', 'facebook_group', 'youtube', 'forum', 'news', '
 const CHANNELS   = ['email', 'facebook', 'linkedin', 'whatsapp', 'form'];
 const TEMPLATES  = ['guest_post', 'review', 'resource_link', 'partnership'];
 
-const TEMPLATE_BODIES: Record<string, { subject: string; body: string }> = {
-  guest_post: {
-    subject: 'Guest post idea for {{site_name}} — Free practical guide for your readers',
-    body: `Hi {{contact_name}},
+type Variant = { label: string; subject: string; body: string };
+
+const TEMPLATE_VARIANTS: Record<string, Variant[]> = {
+  guest_post: [
+    {
+      label: 'Friendly / Educational',
+      subject: 'Guest post idea for {{site_name}} — Free practical guide for your readers',
+      body: `Hi {{contact_name}},
 
 I'm Shahed from Shahed Store (shahedstore.com.bd) — a Bangladeshi digital software store serving 10,000+ local customers with genuine Microsoft, Adobe, AI tool, and other licenses.
 
@@ -61,10 +65,52 @@ Thanks for considering,
 Shahed
 shahedstore.com.bd
 WhatsApp: +880 ...`,
-  },
-  review: {
-    subject: 'Free product for honest review — Shahed Store',
-    body: `Hi {{contact_name}},
+    },
+    {
+      label: 'Short & Direct',
+      subject: '{{site_name}} guest post — 1500 words, ready in 3 days',
+      body: `Hi {{contact_name}},
+
+Quick one — I run shahedstore.com.bd (BD's genuine software marketplace, 10k+ customers).
+
+I'd like to write a guest post for {{site_name}}:
+
+  "How Bangladeshi Freelancers Can Save 60% on Software Licenses in 2026"
+
+1500 words, original, with real BD pricing data. Just one author-bio link in return.
+
+Yes / no — happy either way.
+
+Shahed
+shahedstore.com.bd`,
+    },
+    {
+      label: 'Data-driven Pitch',
+      subject: 'Exclusive 2026 BD software pricing data for {{site_name}}',
+      body: `Hi {{contact_name}},
+
+I'm Shahed — founder of Shahed Store, where we've processed 10,000+ digital software orders across Bangladesh in the last 18 months.
+
+We have proprietary data on what BD users actually pay (and save) for Microsoft 365, Adobe CC, ChatGPT Plus, Canva Pro, etc. — broken down by city, payment method (bKash/Nagad/card) and freelancer vs student vs business buyer.
+
+I'd love to turn this into an exclusive data-driven post for {{site_name}}:
+
+  "The State of Software Spending in Bangladesh — 2026 Report"
+
+All charts, original research, no competitor mentions. Just one author-bio backlink.
+
+Interested? I can send a sample chart today.
+
+Best,
+Shahed
+shahedstore.com.bd`,
+    },
+  ],
+  review: [
+    {
+      label: 'No-strings Free Product',
+      subject: 'Free product for honest review — Shahed Store',
+      body: `Hi {{contact_name}},
 
 I run Shahed Store (shahedstore.com.bd) — Bangladesh's trusted source for genuine Microsoft 365, Adobe, ChatGPT Plus, Canva Pro and other digital licenses with bKash/Nagad payment and 1-hour delivery.
 
@@ -75,10 +121,90 @@ If interested, just reply with the product you'd like and I'll send the license 
 Thanks,
 Shahed
 shahedstore.com.bd`,
-  },
-  resource_link: {
-    subject: 'Resource for your readers — genuine software prices in BD',
-    body: `Hi {{contact_name}},
+    },
+    {
+      label: 'Comparison Review',
+      subject: '{{site_name}} review request — compare us with 3 other BD sellers',
+      body: `Hi {{contact_name}},
+
+Big fan of how {{site_name}} reviews local services honestly.
+
+Would you be open to a comparison review of Bangladeshi digital software sellers (Shahed Store vs 3 others your readers know)? I'll cover the cost of all 4 products so the test is fair, and you keep full editorial control — including saying we're worse if we are.
+
+If yes, I'll send the budget and product list within 24 hours.
+
+Shahed
+shahedstore.com.bd`,
+    },
+    {
+      label: 'YouTube / Video Pitch',
+      subject: 'Video review collab — free Microsoft 365 + ChatGPT Plus for {{site_name}}',
+      body: `Hi {{contact_name}},
+
+Loved your recent videos on {{site_name}} — your audience is exactly the people we serve at Shahed Store (BD freelancers and small businesses buying genuine software).
+
+I'd like to send you free 1-year Microsoft 365 + ChatGPT Plus + Canva Pro licenses (worth ৳8,000+) for an honest video review. No script, no required mentions — just your real opinion.
+
+If you're interested, reply with your delivery email and I'll activate everything within an hour.
+
+Cheers,
+Shahed
+shahedstore.com.bd`,
+    },
+  ],
+  partnership: [
+    {
+      label: 'Affiliate Partnership',
+      subject: 'Partnership idea between {{site_name}} and Shahed Store',
+      body: `Hi {{contact_name}},
+
+I'm Shahed, founder of Shahed Store (shahedstore.com.bd) — Bangladesh's digital software marketplace.
+
+I'd like to explore a small partnership with {{site_name}}: an affiliate or referral arrangement where your readers get a discount code and your team earns commission on sales. We currently pay 10% on every order through our referral program.
+
+If that sounds interesting, I'd love to jump on a 15-min call this week.
+
+Thanks,
+Shahed
+shahedstore.com.bd`,
+    },
+    {
+      label: 'Co-marketing / Bundle',
+      subject: 'Co-marketing idea: bundle {{site_name}} audience with Shahed Store offer',
+      body: `Hi {{contact_name}},
+
+Quick idea — I run Shahed Store (shahedstore.com.bd), BD's largest genuine software marketplace.
+
+What if we ran a joint campaign for {{site_name}}'s audience? For example: an exclusive "{{site_name}} reader" bundle (Microsoft 365 + Canva Pro + ChatGPT Plus at 30% off) — you promote, we fulfill, and we split revenue 50/50 on every sale.
+
+No upfront cost on either side. If it flops, we both walk away.
+
+Worth a quick call?
+
+Shahed
+shahedstore.com.bd`,
+    },
+    {
+      label: 'White-label / Reseller',
+      subject: 'White-label software supply for {{site_name}}',
+      body: `Hi {{contact_name}},
+
+If {{site_name}} ever wanted to offer software licenses to your audience under your own brand — we can supply genuine Microsoft, Adobe, AI tool licenses at wholesale price, instant API delivery, and bKash/Nagad/card settlement.
+
+You set the retail price. We handle activation, support, and refunds invisibly.
+
+We already power 5+ BD resellers this way. If it's a fit for {{site_name}}, I'm happy to share pricing and the full reseller deck.
+
+Best,
+Shahed
+shahedstore.com.bd`,
+    },
+  ],
+  resource_link: [
+    {
+      label: 'Soft Resource Mention',
+      subject: 'Resource for your readers — genuine software prices in BD',
+      body: `Hi {{contact_name}},
 
 I noticed your post/article about software pricing in Bangladesh — really useful piece.
 
@@ -91,29 +217,32 @@ No obligation at all — just thought it might add value if you ever update the 
 Best,
 Shahed
 shahedstore.com.bd`,
-  },
-  partnership: {
-    subject: 'Partnership idea between {{site_name}} and Shahed Store',
-    body: `Hi {{contact_name}},
+    },
+    {
+      label: 'Broken Link Replacement',
+      subject: 'Broken link on {{site_name}} — possible replacement',
+      body: `Hi {{contact_name}},
 
-I'm Shahed, founder of Shahed Store (shahedstore.com.bd) — Bangladesh's digital software marketplace.
+While reading your guide on {{site_name}}, I noticed one of the outbound links to a software pricing page seems broken / outdated.
 
-I'd like to explore a small partnership with {{site_name}}: an affiliate or referral arrangement where your readers get a discount code and your team earns commission on sales. We currently pay 10% on every order through our referral program.
+If you're updating it anyway, a current alternative could be our live BD pricing page:
 
-If that sounds interesting, I'd love to jump on a 15-min call this week.
+  https://shahedstore.com.bd/shop
 
-Thanks,
+It's updated weekly with bKash/Nagad prices and is free to reference. Totally up to you — just wanted to flag it.
+
+Cheers,
 Shahed
 shahedstore.com.bd`,
-  },
+    },
+  ],
 };
 
-const renderTemplate = (tpl: string, p: Prospect) => {
-  const t = TEMPLATE_BODIES[tpl] || TEMPLATE_BODIES.guest_post;
+const renderVariant = (v: Variant, p: Prospect) => {
   const replace = (s: string) =>
     s.split('{{site_name}}').join(p.site_name)
      .split('{{contact_name}}').join(p.contact_name || 'there');
-  return { subject: replace(t.subject), body: replace(t.body) };
+  return { subject: replace(v.subject), body: replace(v.body) };
 };
 
 const CSV_HEADERS = ['Site Name', 'Site URL', 'Contact Name', 'Contact Email', 'Contact Channel', 'Category', 'Domain Authority', 'Status', 'Pitch Template', 'Published URL', 'Notes', 'Last Contacted', 'Follow Up'];
@@ -172,6 +301,7 @@ const AdminOutreach = () => {
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Partial<Prospect> | null>(null);
   const [showTpl, setShowTpl] = useState<Prospect | null>(null);
+  const [variantIdx, setVariantIdx] = useState(0);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [timelineFor, setTimelineFor] = useState<Prospect | null>(null);
 
@@ -359,7 +489,7 @@ const AdminOutreach = () => {
                       </p>
                     </div>
                     <Pill status={p.status} />
-                    <button onClick={() => setShowTpl(p)} title="Open pitch" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
+                    <button onClick={() => (setVariantIdx(0), setShowTpl(p))} title="Open pitch" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
                       <Mail size={13} />
                     </button>
                     <button onClick={() => setTimelineFor(p)} title="Log activity" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
@@ -560,7 +690,7 @@ const AdminOutreach = () => {
                           <History size={14} />
                         </button>
                         <button
-                          onClick={() => setShowTpl(p)}
+                          onClick={() => (setVariantIdx(0), setShowTpl(p))}
                           title="View pitch template"
                           className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary"
                         >
@@ -676,7 +806,9 @@ const AdminOutreach = () => {
 
       {/* Template viewer */}
       {showTpl && (() => {
-        const t = renderTemplate(showTpl.pitch_template, showTpl);
+        const variants = TEMPLATE_VARIANTS[showTpl.pitch_template] || TEMPLATE_VARIANTS.guest_post;
+        const safeIdx = Math.min(variantIdx, variants.length - 1);
+        const t = renderVariant(variants[safeIdx], showTpl);
         return (
           <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowTpl(null)}>
             <div className="glass-card rounded-2xl p-6 w-full max-w-2xl space-y-4" onClick={e => e.stopPropagation()}>
@@ -687,6 +819,20 @@ const AdminOutreach = () => {
                 </h3>
                 <span className="text-xs text-muted-foreground">For: {showTpl.site_name}</span>
               </div>
+
+              {/* Variant tabs */}
+              <div className="flex items-center gap-1.5 flex-wrap border-b border-border pb-2">
+                {variants.map((v, i) => (
+                  <button
+                    key={v.label}
+                    onClick={() => setVariantIdx(i)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition ${i === safeIdx ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'}`}
+                  >
+                    Variant {i + 1} · {v.label}
+                  </button>
+                ))}
+              </div>
+
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Subject</label>
@@ -708,16 +854,24 @@ const AdminOutreach = () => {
                 <textarea readOnly value={t.body} rows={14}
                   className="w-full bg-muted/20 rounded-lg p-3 text-sm text-foreground border border-border font-mono resize-none focus:outline-none" />
               </div>
-              <div className="flex justify-between items-center pt-2">
-                <a
-                  href={showTpl.contact_email
-                    ? `mailto:${showTpl.contact_email}?subject=${encodeURIComponent(t.subject)}&body=${encodeURIComponent(t.body)}`
-                    : '#'}
-                  onClick={(e) => { if (!showTpl.contact_email) { e.preventDefault(); toast.error('No email on file'); } }}
-                  className="btn-glow inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
-                >
-                  <Send size={14} /> Open in Email Client
-                </a>
+              <div className="flex justify-between items-center pt-2 gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(`Subject: ${t.subject}\n\n${t.body}`); toast.success('Full email copied'); }}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm bg-muted/40 hover:bg-muted/60 text-foreground"
+                  >
+                    <Copy size={13} /> Copy All
+                  </button>
+                  <a
+                    href={showTpl.contact_email
+                      ? `mailto:${showTpl.contact_email}?subject=${encodeURIComponent(t.subject)}&body=${encodeURIComponent(t.body)}`
+                      : '#'}
+                    onClick={(e) => { if (!showTpl.contact_email) { e.preventDefault(); toast.error('No email on file'); } }}
+                    className="btn-glow inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+                  >
+                    <Send size={14} /> Open in Email Client
+                  </a>
+                </div>
                 <button onClick={() => setShowTpl(null)} className="px-4 py-2 rounded-lg text-sm bg-muted/40 hover:bg-muted/60 text-foreground">Close</button>
               </div>
             </div>
