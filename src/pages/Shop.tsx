@@ -118,6 +118,8 @@ const Shop = () => {
   const [loading, setLoading]       = useState(true);
   const [search, setSearch]         = useState(searchParams.get('q') || '');
   const [sort, setSort]             = useState('newest');
+  const [didYouMean, setDidYouMean] = useState<string>('');
+  const [aiAssisted, setAiAssisted] = useState(false);
 
   const activeCatSlug = searchParams.get('category') || '';
 
