@@ -1558,6 +1558,53 @@ export type Database = {
           },
         ]
       }
+      outreach_logs: {
+        Row: {
+          channel: string | null
+          created_at: string
+          created_by: string | null
+          event_type: string
+          id: string
+          message: string | null
+          occurred_at: string
+          prospect_id: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          channel?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_type?: string
+          id?: string
+          message?: string | null
+          occurred_at?: string
+          prospect_id: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          channel?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_type?: string
+          id?: string
+          message?: string | null
+          occurred_at?: string
+          prospect_id?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_logs_prospect_id_fkey"
+            columns: ["prospect_id"]
+            isOneToOne: false
+            referencedRelation: "outreach_prospects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       outreach_prospects: {
         Row: {
           category: string | null

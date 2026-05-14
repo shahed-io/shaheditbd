@@ -4,8 +4,9 @@ import { toast } from 'sonner';
 import {
   Plus, Mail, Globe, Edit3, Trash2, Copy, ExternalLink, Search,
   CheckCircle2, Clock, XCircle, MessageSquare, Send, FileText,
-  Download,
+  Download, History,
 } from 'lucide-react';
+import OutreachTimelineModal from '@/components/admin/OutreachTimelineModal';
 
 interface Prospect {
   id: string;
@@ -172,6 +173,7 @@ const AdminOutreach = () => {
   const [editing, setEditing] = useState<Partial<Prospect> | null>(null);
   const [showTpl, setShowTpl] = useState<Prospect | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [timelineFor, setTimelineFor] = useState<Prospect | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -420,6 +422,13 @@ const AdminOutreach = () => {
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <button
+                          onClick={() => setTimelineFor(p)}
+                          title="Activity timeline"
+                          className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary"
+                        >
+                          <History size={14} />
+                        </button>
+                        <button
                           onClick={() => setShowTpl(p)}
                           title="View pitch template"
                           className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary"
@@ -576,6 +585,14 @@ const AdminOutreach = () => {
           </div>
         );
       })()}
+      {timelineFor && (
+        <OutreachTimelineModal
+          prospectId={timelineFor.id}
+          prospectName={timelineFor.site_name}
+          onClose={() => setTimelineFor(null)}
+          onLogChanged={load}
+        />
+      )}
     </div>
   );
 };
