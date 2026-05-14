@@ -295,6 +295,45 @@ const AdminOutreach = () => {
         </div>
       </div>
 
+      {/* Export bar */}
+      {selected.size > 0 && (
+        <div className="flex items-center gap-3 glass-card rounded-xl px-4 py-2.5">
+          <span className="text-xs text-muted-foreground">{selected.size} selected</span>
+          <div className="flex-1" />
+          <button
+            onClick={() => {
+              const rows = filtered.filter(p => selected.has(p.id));
+              const csv = toCSV(rows);
+              const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(blob);
+              a.download = `outreach_export_${new Date().toISOString().slice(0,10)}.csv`;
+              a.click();
+              toast.success('CSV downloaded');
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-400/10 text-green-400 border border-green-400/30 hover:bg-green-400/20 transition"
+          >
+            <Download size={12} /> Export CSV
+          </button>
+          <button
+            onClick={() => {
+              const rows = filtered.filter(p => selected.has(p.id));
+              const tsv = toTSV(rows);
+              navigator.clipboard.writeText(tsv).then(() => toast.success('Copied — paste directly into Google Sheets'));
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition"
+          >
+            <Copy size={12} /> Copy for Google Sheets
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="text-xs text-muted-foreground hover:text-foreground underline"
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
       {/* Table */}
       <div className="glass-card rounded-2xl overflow-hidden">
         {loading ? (
