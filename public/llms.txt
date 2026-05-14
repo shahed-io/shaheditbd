@@ -1,0 +1,31 @@
+# Shahed Store
+
+> Bangladesh's most trusted digital software shop. Genuine license keys, subscriptions, and digital products with instant delivery and bKash/Nagad payment.
+
+Shahed Store sells original Microsoft, Adobe, Netflix, Spotify, antivirus, VPN, and other digital software at the best price in Bangladesh. ১০০% genuine. Instant delivery (1–24h). Local BDT payments via bKash, Nagad, and bank transfer.
+
+## Pages
+
+- [Home](/): Featured digital software, flash sales, and categories.
+- [Shop](/shop): Browse and search the full catalog of digital software, license keys, and subscriptions.
+- [Blog](/blog): Tutorials, guides, and news about digital software and services.
+- [FAQs](/faqs): Common questions about delivery, payment, refunds, and activation.
+- [About Us](/about-us): About Shahed Store and our mission.
+- [Contact Us](/contact-us): Reach our customer support team.
+- [Help Center](/help): Software downloads, activation help, and troubleshooting.
+- [Free Tools](/free-tools): Free utilities and resources.
+- [Delivery Info](/delivery-info): Delivery timelines and process.
+- [Refund Policy](/refund-policy): Refund eligibility and process.
+- [Return Policy](/return-policy): Return rules for digital products.
+- [Privacy Policy](/privacy-policy): How we handle your data.
+- [Terms & Conditions](/terms-conditions): Terms of service.
+- [Order Policy](/order-policy): Order placement and fulfillment rules.
+- [Check Key](/check-key): Verify a license key purchased from Shahed Store.
+- [Get CID](/get-cid): Microsoft CID generator tool.
+- [Install App](/install-app): Install Shahed Store as a PWA.
+- [Affiliate Program](/affiliate): Earn commissions by referring customers.
+
+## Optional
+
+- [Refund Request](/refund-request): Submit a refund request (login required).
+- [User Dashboard](/dashboard): Customer account, orders, wallet, and licenses.
