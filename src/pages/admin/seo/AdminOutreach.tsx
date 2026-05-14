@@ -645,8 +645,16 @@ const AdminOutreach = () => {
                   {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               </label>
-              <label className="col-span-2 text-xs">
-                <span className="text-muted-foreground">Published URL (after success)</span>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Follow-up Reminder</span>
+                <input
+                  type="date"
+                  value={editing.follow_up_at ? new Date(editing.follow_up_at).toISOString().slice(0, 10) : ''}
+                  onChange={e => setEditing({ ...editing, follow_up_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+              </label>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Published URL</span>
                 <input value={editing.published_url || ''} onChange={e => setEditing({ ...editing, published_url: e.target.value })}
                   placeholder="https://"
                   className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary" />
