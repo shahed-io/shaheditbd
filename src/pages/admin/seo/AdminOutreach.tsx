@@ -146,6 +146,7 @@ const AdminOutreach = () => {
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Partial<Prospect> | null>(null);
   const [showTpl, setShowTpl] = useState<Prospect | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const load = async () => {
     setLoading(true);
