@@ -109,8 +109,8 @@ shahedstore.com.bd`,
 const renderTemplate = (tpl: string, p: Prospect) => {
   const t = TEMPLATE_BODIES[tpl] || TEMPLATE_BODIES.guest_post;
   const replace = (s: string) =>
-    s.replaceAll('{{site_name}}', p.site_name)
-     .replaceAll('{{contact_name}}', p.contact_name || 'there');
+    s.split('{{site_name}}').join(p.site_name)
+     .split('{{contact_name}}').join(p.contact_name || 'there');
   return { subject: replace(t.subject), body: replace(t.body) };
 };
 

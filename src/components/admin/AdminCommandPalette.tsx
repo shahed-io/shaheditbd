@@ -84,6 +84,7 @@ const STATIC_COMMANDS: CommandItem[] = [
   { id: 'help', label: 'Help Center', description: 'Help articles', icon: HelpCircle, path: '/ceo/help', group: 'Content & SEO', keywords: 'help faq article documentation' },
   { id: 'media', label: 'Media Library', description: 'All uploaded images', icon: ImageIcon, path: '/ceo/media-library', group: 'Content & SEO', keywords: 'media image photo upload' },
   { id: 'seo', label: 'SEO Settings', description: 'Search engine optimization', icon: Globe, path: '/ceo/seo', group: 'Content & SEO', keywords: 'seo google search ranking meta' },
+  { id: 'outreach', label: 'Backlink Outreach', description: 'Track guest posts & link partnerships', icon: Globe, path: '/ceo/seo/outreach', group: 'Content & SEO', keywords: 'outreach backlink guest post pitch link building' },
 
   // System
   { id: 'settings', label: 'Settings', description: 'Site-wide configuration', icon: Settings, path: '/ceo/settings', group: 'System', keywords: 'settings config preferences' },
