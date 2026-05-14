@@ -40,10 +40,14 @@ const CATEGORIES = ['tech_blog', 'facebook_group', 'youtube', 'forum', 'news', '
 const CHANNELS   = ['email', 'facebook', 'linkedin', 'whatsapp', 'form'];
 const TEMPLATES  = ['guest_post', 'review', 'resource_link', 'partnership'];
 
-const TEMPLATE_BODIES: Record<string, { subject: string; body: string }> = {
-  guest_post: {
-    subject: 'Guest post idea for {{site_name}} — Free practical guide for your readers',
-    body: `Hi {{contact_name}},
+type Variant = { label: string; subject: string; body: string };
+
+const TEMPLATE_VARIANTS: Record<string, Variant[]> = {
+  guest_post: [
+    {
+      label: 'Friendly / Educational',
+      subject: 'Guest post idea for {{site_name}} — Free practical guide for your readers',
+      body: `Hi {{contact_name}},
 
 I'm Shahed from Shahed Store (shahedstore.com.bd) — a Bangladeshi digital software store serving 10,000+ local customers with genuine Microsoft, Adobe, AI tool, and other licenses.
 
@@ -61,10 +65,52 @@ Thanks for considering,
 Shahed
 shahedstore.com.bd
 WhatsApp: +880 ...`,
-  },
-  review: {
-    subject: 'Free product for honest review — Shahed Store',
-    body: `Hi {{contact_name}},
+    },
+    {
+      label: 'Short & Direct',
+      subject: '{{site_name}} guest post — 1500 words, ready in 3 days',
+      body: `Hi {{contact_name}},
+
+Quick one — I run shahedstore.com.bd (BD's genuine software marketplace, 10k+ customers).
+
+I'd like to write a guest post for {{site_name}}:
+
+  "How Bangladeshi Freelancers Can Save 60% on Software Licenses in 2026"
+
+1500 words, original, with real BD pricing data. Just one author-bio link in return.
+
+Yes / no — happy either way.
+
+Shahed
+shahedstore.com.bd`,
+    },
+    {
+      label: 'Data-driven Pitch',
+      subject: 'Exclusive 2026 BD software pricing data for {{site_name}}',
+      body: `Hi {{contact_name}},
+
+I'm Shahed — founder of Shahed Store, where we've processed 10,000+ digital software orders across Bangladesh in the last 18 months.
+
+We have proprietary data on what BD users actually pay (and save) for Microsoft 365, Adobe CC, ChatGPT Plus, Canva Pro, etc. — broken down by city, payment method (bKash/Nagad/card) and freelancer vs student vs business buyer.
+
+I'd love to turn this into an exclusive data-driven post for {{site_name}}:
+
+  "The State of Software Spending in Bangladesh — 2026 Report"
+
+All charts, original research, no competitor mentions. Just one author-bio backlink.
+
+Interested? I can send a sample chart today.
+
+Best,
+Shahed
+shahedstore.com.bd`,
+    },
+  ],
+  review: [
+    {
+      label: 'No-strings Free Product',
+      subject: 'Free product for honest review — Shahed Store',
+      body: `Hi {{contact_name}},
 
 I run Shahed Store (shahedstore.com.bd) — Bangladesh's trusted source for genuine Microsoft 365, Adobe, ChatGPT Plus, Canva Pro and other digital licenses with bKash/Nagad payment and 1-hour delivery.
 
@@ -75,10 +121,90 @@ If interested, just reply with the product you'd like and I'll send the license 
 Thanks,
 Shahed
 shahedstore.com.bd`,
-  },
-  resource_link: {
-    subject: 'Resource for your readers — genuine software prices in BD',
-    body: `Hi {{contact_name}},
+    },
+    {
+      label: 'Comparison Review',
+      subject: '{{site_name}} review request — compare us with 3 other BD sellers',
+      body: `Hi {{contact_name}},
+
+Big fan of how {{site_name}} reviews local services honestly.
+
+Would you be open to a comparison review of Bangladeshi digital software sellers (Shahed Store vs 3 others your readers know)? I'll cover the cost of all 4 products so the test is fair, and you keep full editorial control — including saying we're worse if we are.
+
+If yes, I'll send the budget and product list within 24 hours.
+
+Shahed
+shahedstore.com.bd`,
+    },
+    {
+      label: 'YouTube / Video Pitch',
+      subject: 'Video review collab — free Microsoft 365 + ChatGPT Plus for {{site_name}}',
+      body: `Hi {{contact_name}},
+
+Loved your recent videos on {{site_name}} — your audience is exactly the people we serve at Shahed Store (BD freelancers and small businesses buying genuine software).
+
+I'd like to send you free 1-year Microsoft 365 + ChatGPT Plus + Canva Pro licenses (worth ৳8,000+) for an honest video review. No script, no required mentions — just your real opinion.
+
+If you're interested, reply with your delivery email and I'll activate everything within an hour.
+
+Cheers,
+Shahed
+shahedstore.com.bd`,
+    },
+  ],
+  partnership: [
+    {
+      label: 'Affiliate Partnership',
+      subject: 'Partnership idea between {{site_name}} and Shahed Store',
+      body: `Hi {{contact_name}},
+
+I'm Shahed, founder of Shahed Store (shahedstore.com.bd) — Bangladesh's digital software marketplace.
+
+I'd like to explore a small partnership with {{site_name}}: an affiliate or referral arrangement where your readers get a discount code and your team earns commission on sales. We currently pay 10% on every order through our referral program.
+
+If that sounds interesting, I'd love to jump on a 15-min call this week.
+
+Thanks,
+Shahed
+shahedstore.com.bd`,
+    },
+    {
+      label: 'Co-marketing / Bundle',
+      subject: 'Co-marketing idea: bundle {{site_name}} audience with Shahed Store offer',
+      body: `Hi {{contact_name}},
+
+Quick idea — I run Shahed Store (shahedstore.com.bd), BD's largest genuine software marketplace.
+
+What if we ran a joint campaign for {{site_name}}'s audience? For example: an exclusive "{{site_name}} reader" bundle (Microsoft 365 + Canva Pro + ChatGPT Plus at 30% off) — you promote, we fulfill, and we split revenue 50/50 on every sale.
+
+No upfront cost on either side. If it flops, we both walk away.
+
+Worth a quick call?
+
+Shahed
+shahedstore.com.bd`,
+    },
+    {
+      label: 'White-label / Reseller',
+      subject: 'White-label software supply for {{site_name}}',
+      body: `Hi {{contact_name}},
+
+If {{site_name}} ever wanted to offer software licenses to your audience under your own brand — we can supply genuine Microsoft, Adobe, AI tool licenses at wholesale price, instant API delivery, and bKash/Nagad/card settlement.
+
+You set the retail price. We handle activation, support, and refunds invisibly.
+
+We already power 5+ BD resellers this way. If it's a fit for {{site_name}}, I'm happy to share pricing and the full reseller deck.
+
+Best,
+Shahed
+shahedstore.com.bd`,
+    },
+  ],
+  resource_link: [
+    {
+      label: 'Soft Resource Mention',
+      subject: 'Resource for your readers — genuine software prices in BD',
+      body: `Hi {{contact_name}},
 
 I noticed your post/article about software pricing in Bangladesh — really useful piece.
 
@@ -91,29 +217,32 @@ No obligation at all — just thought it might add value if you ever update the 
 Best,
 Shahed
 shahedstore.com.bd`,
-  },
-  partnership: {
-    subject: 'Partnership idea between {{site_name}} and Shahed Store',
-    body: `Hi {{contact_name}},
+    },
+    {
+      label: 'Broken Link Replacement',
+      subject: 'Broken link on {{site_name}} — possible replacement',
+      body: `Hi {{contact_name}},
 
-I'm Shahed, founder of Shahed Store (shahedstore.com.bd) — Bangladesh's digital software marketplace.
+While reading your guide on {{site_name}}, I noticed one of the outbound links to a software pricing page seems broken / outdated.
 
-I'd like to explore a small partnership with {{site_name}}: an affiliate or referral arrangement where your readers get a discount code and your team earns commission on sales. We currently pay 10% on every order through our referral program.
+If you're updating it anyway, a current alternative could be our live BD pricing page:
 
-If that sounds interesting, I'd love to jump on a 15-min call this week.
+  https://shahedstore.com.bd/shop
 
-Thanks,
+It's updated weekly with bKash/Nagad prices and is free to reference. Totally up to you — just wanted to flag it.
+
+Cheers,
 Shahed
 shahedstore.com.bd`,
-  },
+    },
+  ],
 };
 
-const renderTemplate = (tpl: string, p: Prospect) => {
-  const t = TEMPLATE_BODIES[tpl] || TEMPLATE_BODIES.guest_post;
+const renderVariant = (v: Variant, p: Prospect) => {
   const replace = (s: string) =>
     s.split('{{site_name}}').join(p.site_name)
      .split('{{contact_name}}').join(p.contact_name || 'there');
-  return { subject: replace(t.subject), body: replace(t.body) };
+  return { subject: replace(v.subject), body: replace(v.body) };
 };
 
 const CSV_HEADERS = ['Site Name', 'Site URL', 'Contact Name', 'Contact Email', 'Contact Channel', 'Category', 'Domain Authority', 'Status', 'Pitch Template', 'Published URL', 'Notes', 'Last Contacted', 'Follow Up'];
