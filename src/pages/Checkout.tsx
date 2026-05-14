@@ -774,6 +774,58 @@ const Checkout = () => {
                     className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
                   />
                 </div>
+
+                {/* Optional Payment Screenshot */}
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block font-semibold flex items-center gap-2">
+                    <ImageIcon size={14} className="text-muted-foreground" />
+                    Payment Screenshot
+                    <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+                  </label>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    পেমেন্ট প্রমাণ হিসেবে স্ক্রিনশট আপলোড করুন (ঐচ্ছিক — দ্রুত ভেরিফাই হবে)
+                  </p>
+                  {!screenshotPreview ? (
+                    <label
+                      htmlFor="payment-screenshot-input"
+                      className="flex flex-col items-center justify-center w-full p-5 bg-muted/20 border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/30 hover:border-primary/40 transition-all"
+                    >
+                      <Upload size={20} className="text-muted-foreground mb-1.5" />
+                      <span className="text-sm text-foreground font-medium">স্ক্রিনশট সিলেক্ট করুন</span>
+                      <span className="text-xs text-muted-foreground mt-0.5">JPG, PNG • সর্বোচ্চ ৫MB</span>
+                      <input
+                        id="payment-screenshot-input"
+                        ref={screenshotInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleScreenshotChange}
+                        className="hidden"
+                      />
+                    </label>
+                  ) : (
+                    <div className="relative rounded-xl overflow-hidden border border-border bg-muted/20">
+                      <img
+                        src={screenshotPreview}
+                        alt="Payment screenshot preview"
+                        className="w-full max-h-64 object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeScreenshot}
+                        className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1.5 transition-colors"
+                        aria-label="Remove screenshot"
+                      >
+                        <X size={14} />
+                      </button>
+                      <div className="px-3 py-2 text-xs text-muted-foreground flex items-center justify-between bg-muted/30">
+                        <span className="truncate">{paymentScreenshot?.name}</span>
+                        <span className="flex-shrink-0 ml-2">
+                          {paymentScreenshot && (paymentScreenshot.size / 1024).toFixed(0)} KB
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </div>
