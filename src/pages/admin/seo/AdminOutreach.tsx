@@ -307,6 +307,78 @@ const AdminOutreach = () => {
         </button>
       </div>
 
+      {/* Today's Tasks */}
+      {(() => {
+        const now = new Date();
+        const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
+        const active = (p: Prospect) => !['published', 'declined', 'no_reply'].includes(p.status);
+        const overdue = list.filter(p => active(p) && p.follow_up_at && new Date(p.follow_up_at) < new Date(new Date().setHours(0,0,0,0)));
+        const dueToday = list.filter(p => active(p) && p.follow_up_at && new Date(p.follow_up_at) >= new Date(new Date().setHours(0,0,0,0)) && new Date(p.follow_up_at) <= todayEnd);
+        const stalled = list.filter(p => p.status === 'contacted' && p.last_contacted_at && (now.getTime() - new Date(p.last_contacted_at).getTime()) > 7 * 24 * 3600 * 1000 && !p.follow_up_at);
+        const tasks = [
+          ...overdue.map(p => ({ p, kind: 'overdue' as const })),
+          ...dueToday.map(p => ({ p, kind: 'today' as const })),
+          ...stalled.map(p => ({ p, kind: 'stalled' as const })),
+        ];
+        if (tasks.length === 0) {
+          return (
+            <div className="glass-card rounded-2xl p-4 flex items-center gap-3">
+              <CheckCircle2 size={18} className="text-green-500" />
+              <div>
+                <p className="text-sm font-semibold text-foreground">All clear for today 🎉</p>
+                <p className="text-xs text-muted-foreground">No follow-ups due. Set a follow-up date on any prospect to get reminders here.</p>
+              </div>
+            </div>
+          );
+        }
+        const badge = (k: 'overdue' | 'today' | 'stalled') => {
+          if (k === 'overdue') return { label: 'Overdue', cls: 'bg-red-500/15 text-red-500 border-red-500/30' };
+          if (k === 'today') return { label: 'Due Today', cls: 'bg-amber-500/15 text-amber-500 border-amber-500/30' };
+          return { label: 'Stalled 7d+', cls: 'bg-blue-500/15 text-blue-500 border-blue-500/30' };
+        };
+        return (
+          <div className="glass-card rounded-2xl p-4 border border-primary/30">
+            <div className="flex items-center gap-2 mb-3">
+              <Bell size={16} className="text-primary" />
+              <h3 className="font-bold text-foreground text-sm">Today's Tasks</h3>
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">{tasks.length}</span>
+              <span className="ml-auto text-[11px] text-muted-foreground">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+            </div>
+            <div className="space-y-2 max-h-72 overflow-y-auto">
+              {tasks.map(({ p, kind }) => {
+                const b = badge(kind);
+                return (
+                  <div key={`${kind}-${p.id}`} className="flex items-center gap-2 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/30 border border-border/40">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${b.cls} whitespace-nowrap`}>{b.label}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{p.site_name}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {p.contact_name || p.contact_email || '—'}
+                        {p.follow_up_at && <> · <CalendarClock size={9} className="inline" /> {fmtDate(p.follow_up_at)}</>}
+                        {kind === 'stalled' && p.last_contacted_at && <> · contacted {fmtDate(p.last_contacted_at)}</>}
+                      </p>
+                    </div>
+                    <Pill status={p.status} />
+                    <button onClick={() => setShowTpl(p)} title="Open pitch" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
+                      <Mail size={13} />
+                    </button>
+                    <button onClick={() => setTimelineFor(p)} title="Log activity" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
+                      <History size={13} />
+                    </button>
+                    <button onClick={() => snooze(p.id, 3)} title="Snooze 3 days" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-amber-500">
+                      <AlarmClock size={13} />
+                    </button>
+                    <button onClick={() => markDone(p.id)} title="Mark done" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-green-500">
+                      <CheckCircle2 size={13} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="glass-card rounded-2xl p-4">
