@@ -371,6 +371,19 @@ const AdminOutreach = () => {
               <tbody>
                 {filtered.map(p => (
                   <tr key={p.id} className="border-t border-border/40 hover:bg-muted/10">
+                    <td className="px-3 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selected.has(p.id)}
+                        onChange={e => {
+                          const next = new Set(selected);
+                          if (e.target.checked) next.add(p.id);
+                          else next.delete(p.id);
+                          setSelected(next);
+                        }}
+                        className="accent-primary"
+                      />
+                    </td>
                     <td className="px-4 py-3">
                       <div className="font-semibold text-foreground">{p.site_name}</div>
                       {p.site_url && (
