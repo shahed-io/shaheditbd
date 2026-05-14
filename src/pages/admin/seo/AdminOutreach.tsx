@@ -585,6 +585,14 @@ const AdminOutreach = () => {
           </div>
         );
       })()}
+      {timelineFor && (
+        <OutreachTimelineModal
+          prospectId={timelineFor.id}
+          prospectName={timelineFor.site_name}
+          onClose={() => setTimelineFor(null)}
+          onLogChanged={load}
+        />
+      )}
     </div>
   );
 };
