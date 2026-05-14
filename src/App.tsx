@@ -94,6 +94,7 @@ const AdminImageSeo         = lazy(() => import("./pages/admin/seo/AdminImageSeo
 const AdminSlugEditor       = lazy(() => import("./pages/admin/seo/AdminSlugEditor"));
 const AdminRedirects        = lazy(() => import("./pages/admin/seo/AdminRedirects"));
 const AdminBrokenLinks      = lazy(() => import("./pages/admin/seo/AdminBrokenLinks"));
+const AdminOutreach         = lazy(() => import("./pages/admin/seo/AdminOutreach"));
 const AdminWallet           = lazy(() => import("./pages/admin/AdminWallet"));
 const AdminHeroBanner       = lazy(() => import("./pages/admin/AdminHeroBanner"));
 const AdminFlashSale        = lazy(() => import("./pages/admin/AdminFlashSale"));
@@ -278,6 +279,7 @@ const AppContent = () => {
             <Route path="seo/slugs" element={<AdminSuspense><AdminSlugEditor /></AdminSuspense>} />
             <Route path="seo/redirects" element={<AdminSuspense><AdminRedirects /></AdminSuspense>} />
             <Route path="seo/broken-links" element={<AdminSuspense><AdminBrokenLinks /></AdminSuspense>} />
+            <Route path="seo/outreach" element={<AdminSuspense><AdminOutreach /></AdminSuspense>} />
             <Route path="attributes" element={<AdminSuspense><AdminAttributes /></AdminSuspense>} />
             <Route path="pages" element={<AdminSuspense><AdminPages /></AdminSuspense>} />
             <Route path="software-downloads" element={<AdminSuspense><AdminSoftwareDownloads /></AdminSuspense>} />

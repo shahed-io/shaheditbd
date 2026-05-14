@@ -1558,6 +1558,63 @@ export type Database = {
           },
         ]
       }
+      outreach_prospects: {
+        Row: {
+          category: string | null
+          contact_channel: string | null
+          contact_email: string | null
+          contact_name: string | null
+          created_at: string
+          domain_authority: number | null
+          follow_up_at: string | null
+          id: string
+          last_contacted_at: string | null
+          notes: string | null
+          pitch_template: string | null
+          published_url: string | null
+          site_name: string
+          site_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          contact_channel?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          domain_authority?: number | null
+          follow_up_at?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          notes?: string | null
+          pitch_template?: string | null
+          published_url?: string | null
+          site_name: string
+          site_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          contact_channel?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          domain_authority?: number | null
+          follow_up_at?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          notes?: string | null
+          pitch_template?: string | null
+          published_url?: string | null
+          site_name?: string
+          site_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payment_proofs: {
         Row: {
           admin_notes: string | null
