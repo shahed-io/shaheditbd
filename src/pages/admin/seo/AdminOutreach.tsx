@@ -115,6 +115,31 @@ const renderTemplate = (tpl: string, p: Prospect) => {
   return { subject: replace(t.subject), body: replace(t.body) };
 };
 
+const CSV_HEADERS = ['Site Name', 'Site URL', 'Contact Name', 'Contact Email', 'Contact Channel', 'Category', 'Domain Authority', 'Status', 'Pitch Template', 'Published URL', 'Notes', 'Last Contacted', 'Follow Up'];
+
+const toCSV = (rows: Prospect[]) => {
+  const escape = (v: string | null) => {
+    if (v == null) return '';
+    if (v.includes(',') || v.includes('"') || v.includes('\n')) return '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  };
+  const lines = [CSV_HEADERS.join(','), ...rows.map(r =>
+    [r.site_name, r.site_url, r.contact_name, r.contact_email, r.contact_channel, r.category, r.domain_authority, r.status, r.pitch_template, r.published_url, r.notes, r.last_contacted_at, r.follow_up_at]
+      .map(v => escape(String(v ?? '')))
+      .join(',')
+  )];
+  return lines.join('\n');
+};
+
+const toTSV = (rows: Prospect[]) => {
+  const lines = [CSV_HEADERS.join('\t'), ...rows.map(r =>
+    [r.site_name, r.site_url, r.contact_name, r.contact_email, r.contact_channel, r.category, r.domain_authority, r.status, r.pitch_template, r.published_url, r.notes, r.last_contacted_at, r.follow_up_at]
+      .map(v => String(v ?? '').replace(/\t/g, ' '))
+      .join('\t')
+  )];
+  return lines.join('\n');
+};
+
 const Pill = ({ status }: { status: string }) => {
   const s = STATUSES.find(x => x.value === status) || STATUSES[0];
   const Icon = s.icon;
