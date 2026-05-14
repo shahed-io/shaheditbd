@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import {
   ArrowLeft, ShoppingCart, Tag, CheckCircle, Smartphone,
-  Minus, Plus, Trash2, X, Loader2, Shield, Info, ChevronDown, User, LogIn, FileText, Wallet, Package
+  Minus, Plus, Trash2, X, Loader2, Shield, Info, ChevronDown, User, LogIn, FileText, Wallet, Package, Upload, Image as ImageIcon
 } from 'lucide-react';
 import AuthModal from '@/components/store/AuthModal';
 import { z } from 'zod';
@@ -75,6 +75,32 @@ const Checkout = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [transactionId, setTransactionId] = useState('');
+  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const screenshotInputRef = useRef<HTMLInputElement>(null);
+
+  const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('শুধুমাত্র ছবি আপলোড করুন');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('ছবির সাইজ ৫MB এর কম হতে হবে');
+      return;
+    }
+    setPaymentScreenshot(file);
+    const reader = new FileReader();
+    reader.onload = ev => setScreenshotPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const removeScreenshot = () => {
+    setPaymentScreenshot(null);
+    setScreenshotPreview(null);
+    if (screenshotInputRef.current) screenshotInputRef.current.value = '';
+  };
   const [couponCode, setCouponCode] = useState(coupon.isApplied ? coupon.code : '');
   const [couponError, setCouponError] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
@@ -413,6 +439,32 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
       if (itemsError) throw itemsError;
 
+      // Upload optional payment screenshot (non-blocking — order succeeds even if upload fails)
+      let screenshotUrl: string | null = null;
+      if (paymentMethod !== 'wallet' && paymentScreenshot) {
+        try {
+          const folder = user?.id || 'guest';
+          const ext = paymentScreenshot.name.split('.').pop()?.toLowerCase() || 'jpg';
+          const path = `${folder}/${order.id}-${Date.now()}.${ext}`;
+          const { error: uploadErr } = await supabase.storage
+            .from('payment-proofs')
+            .upload(path, paymentScreenshot, {
+              contentType: paymentScreenshot.type,
+              upsert: false,
+            });
+          if (uploadErr) {
+            console.error('[Checkout] screenshot upload error:', uploadErr);
+          } else {
+            const { data: signed } = await supabase.storage
+              .from('payment-proofs')
+              .createSignedUrl(path, 60 * 60 * 24 * 365);
+            screenshotUrl = signed?.signedUrl || path;
+          }
+        } catch (e) {
+          console.error('[Checkout] screenshot upload failed:', e);
+        }
+      }
+
       // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
       if (paymentMethod !== 'wallet') {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
@@ -421,6 +473,7 @@ const Checkout = () => {
           transaction_id: transactionId.trim(),
           payment_method: paymentMethod,
           amount: payableTotal,
+          screenshot_url: screenshotUrl,
           status: 'pending',
         });
         if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
@@ -747,6 +800,58 @@ const Checkout = () => {
                     maxLength={50}
                     className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
                   />
+                </div>
+
+                {/* Optional Payment Screenshot */}
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block font-semibold flex items-center gap-2">
+                    <ImageIcon size={14} className="text-muted-foreground" />
+                    Payment Screenshot
+                    <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+                  </label>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    পেমেন্ট প্রমাণ হিসেবে স্ক্রিনশট আপলোড করুন (ঐচ্ছিক — দ্রুত ভেরিফাই হবে)
+                  </p>
+                  {!screenshotPreview ? (
+                    <label
+                      htmlFor="payment-screenshot-input"
+                      className="flex flex-col items-center justify-center w-full p-5 bg-muted/20 border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/30 hover:border-primary/40 transition-all"
+                    >
+                      <Upload size={20} className="text-muted-foreground mb-1.5" />
+                      <span className="text-sm text-foreground font-medium">স্ক্রিনশট সিলেক্ট করুন</span>
+                      <span className="text-xs text-muted-foreground mt-0.5">JPG, PNG • সর্বোচ্চ ৫MB</span>
+                      <input
+                        id="payment-screenshot-input"
+                        ref={screenshotInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleScreenshotChange}
+                        className="hidden"
+                      />
+                    </label>
+                  ) : (
+                    <div className="relative rounded-xl overflow-hidden border border-border bg-muted/20">
+                      <img
+                        src={screenshotPreview}
+                        alt="Payment screenshot preview"
+                        className="w-full max-h-64 object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeScreenshot}
+                        className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1.5 transition-colors"
+                        aria-label="Remove screenshot"
+                      >
+                        <X size={14} />
+                      </button>
+                      <div className="px-3 py-2 text-xs text-muted-foreground flex items-center justify-between bg-muted/30">
+                        <span className="truncate">{paymentScreenshot?.name}</span>
+                        <span className="flex-shrink-0 ml-2">
+                          {paymentScreenshot && (paymentScreenshot.size / 1024).toFixed(0)} KB
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </>
             )}
