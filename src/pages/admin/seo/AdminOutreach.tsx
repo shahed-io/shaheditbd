@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import {
   Plus, Mail, Globe, Edit3, Trash2, Copy, ExternalLink, Search,
   CheckCircle2, Clock, XCircle, MessageSquare, Send, FileText,
-  Download, History,
+  Download, History, Bell, AlarmClock, CalendarClock,
 } from 'lucide-react';
 import OutreachTimelineModal from '@/components/admin/OutreachTimelineModal';
 
@@ -188,6 +188,65 @@ const AdminOutreach = () => {
 
   useEffect(() => { load(); }, []);
 
+  // Auto-create notifications for due / overdue follow-ups (dedup per prospect per day)
+  useEffect(() => {
+    if (loading || list.length === 0) return;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const now = new Date();
+      const todayKey = now.toISOString().slice(0, 10);
+      const due = list.filter(p =>
+        p.follow_up_at &&
+        new Date(p.follow_up_at) <= now &&
+        !['published', 'declined', 'no_reply'].includes(p.status)
+      );
+      if (due.length === 0) return;
+      // Fetch existing notifications today linked to outreach to dedup
+      const { data: existing } = await supabase
+        .from('notifications')
+        .select('link')
+        .eq('user_id', user.id)
+        .gte('created_at', `${todayKey}T00:00:00.000Z`)
+        .like('link', '/ceo/seo/outreach%');
+      const existingKeys = new Set((existing || []).map((n: any) => n.link));
+      const toInsert = due
+        .map(p => ({
+          user_id: user.id,
+          title: '🔔 Outreach follow-up due',
+          message: `Time to follow up with ${p.site_name}${p.contact_name ? ` (${p.contact_name})` : ''}.`,
+          type: 'info',
+          link: `/ceo/seo/outreach?focus=${p.id}&d=${todayKey}`,
+        }))
+        .filter(n => !existingKeys.has(n.link));
+      if (toInsert.length > 0) {
+        await supabase.from('notifications').insert(toInsert);
+      }
+    })();
+  }, [loading, list]);
+
+  const snooze = async (id: string, days: number) => {
+    const dt = new Date();
+    dt.setDate(dt.getDate() + days);
+    const { error } = await supabase
+      .from('outreach_prospects')
+      .update({ follow_up_at: dt.toISOString() })
+      .eq('id', id);
+    if (error) return toast.error(error.message);
+    toast.success(`Snoozed ${days} day${days > 1 ? 's' : ''}`);
+    load();
+  };
+
+  const markDone = async (id: string) => {
+    const { error } = await supabase
+      .from('outreach_prospects')
+      .update({ follow_up_at: null, last_contacted_at: new Date().toISOString() })
+      .eq('id', id);
+    if (error) return toast.error(error.message);
+    toast.success('Marked done for today');
+    load();
+  };
+
   const save = async () => {
     if (!editing?.site_name?.trim()) { toast.error('Site name is required'); return; }
     const payload = { ...editing };
@@ -247,6 +306,78 @@ const AdminOutreach = () => {
           <Plus size={14} /> Add Prospect
         </button>
       </div>
+
+      {/* Today's Tasks */}
+      {(() => {
+        const now = new Date();
+        const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
+        const active = (p: Prospect) => !['published', 'declined', 'no_reply'].includes(p.status);
+        const overdue = list.filter(p => active(p) && p.follow_up_at && new Date(p.follow_up_at) < new Date(new Date().setHours(0,0,0,0)));
+        const dueToday = list.filter(p => active(p) && p.follow_up_at && new Date(p.follow_up_at) >= new Date(new Date().setHours(0,0,0,0)) && new Date(p.follow_up_at) <= todayEnd);
+        const stalled = list.filter(p => p.status === 'contacted' && p.last_contacted_at && (now.getTime() - new Date(p.last_contacted_at).getTime()) > 7 * 24 * 3600 * 1000 && !p.follow_up_at);
+        const tasks = [
+          ...overdue.map(p => ({ p, kind: 'overdue' as const })),
+          ...dueToday.map(p => ({ p, kind: 'today' as const })),
+          ...stalled.map(p => ({ p, kind: 'stalled' as const })),
+        ];
+        if (tasks.length === 0) {
+          return (
+            <div className="glass-card rounded-2xl p-4 flex items-center gap-3">
+              <CheckCircle2 size={18} className="text-green-500" />
+              <div>
+                <p className="text-sm font-semibold text-foreground">All clear for today 🎉</p>
+                <p className="text-xs text-muted-foreground">No follow-ups due. Set a follow-up date on any prospect to get reminders here.</p>
+              </div>
+            </div>
+          );
+        }
+        const badge = (k: 'overdue' | 'today' | 'stalled') => {
+          if (k === 'overdue') return { label: 'Overdue', cls: 'bg-red-500/15 text-red-500 border-red-500/30' };
+          if (k === 'today') return { label: 'Due Today', cls: 'bg-amber-500/15 text-amber-500 border-amber-500/30' };
+          return { label: 'Stalled 7d+', cls: 'bg-blue-500/15 text-blue-500 border-blue-500/30' };
+        };
+        return (
+          <div className="glass-card rounded-2xl p-4 border border-primary/30">
+            <div className="flex items-center gap-2 mb-3">
+              <Bell size={16} className="text-primary" />
+              <h3 className="font-bold text-foreground text-sm">Today's Tasks</h3>
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">{tasks.length}</span>
+              <span className="ml-auto text-[11px] text-muted-foreground">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+            </div>
+            <div className="space-y-2 max-h-72 overflow-y-auto">
+              {tasks.map(({ p, kind }) => {
+                const b = badge(kind);
+                return (
+                  <div key={`${kind}-${p.id}`} className="flex items-center gap-2 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/30 border border-border/40">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${b.cls} whitespace-nowrap`}>{b.label}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{p.site_name}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {p.contact_name || p.contact_email || '—'}
+                        {p.follow_up_at && <> · <CalendarClock size={9} className="inline" /> {fmtDate(p.follow_up_at)}</>}
+                        {kind === 'stalled' && p.last_contacted_at && <> · contacted {fmtDate(p.last_contacted_at)}</>}
+                      </p>
+                    </div>
+                    <Pill status={p.status} />
+                    <button onClick={() => setShowTpl(p)} title="Open pitch" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
+                      <Mail size={13} />
+                    </button>
+                    <button onClick={() => setTimelineFor(p)} title="Log activity" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
+                      <History size={13} />
+                    </button>
+                    <button onClick={() => snooze(p.id, 3)} title="Snooze 3 days" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-amber-500">
+                      <AlarmClock size={13} />
+                    </button>
+                    <button onClick={() => markDone(p.id)} title="Mark done" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-green-500">
+                      <CheckCircle2 size={13} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -514,8 +645,16 @@ const AdminOutreach = () => {
                   {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               </label>
-              <label className="col-span-2 text-xs">
-                <span className="text-muted-foreground">Published URL (after success)</span>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Follow-up Reminder</span>
+                <input
+                  type="date"
+                  value={editing.follow_up_at ? new Date(editing.follow_up_at).toISOString().slice(0, 10) : ''}
+                  onChange={e => setEditing({ ...editing, follow_up_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+              </label>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Published URL</span>
                 <input value={editing.published_url || ''} onChange={e => setEditing({ ...editing, published_url: e.target.value })}
                   placeholder="https://"
                   className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary" />
