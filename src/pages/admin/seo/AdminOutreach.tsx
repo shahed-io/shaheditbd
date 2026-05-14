@@ -489,7 +489,7 @@ const AdminOutreach = () => {
                       </p>
                     </div>
                     <Pill status={p.status} />
-                    <button onClick={() => setShowTpl(p)} title="Open pitch" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
+                    <button onClick={() => (setVariantIdx(0), setShowTpl(p))} title="Open pitch" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
                       <Mail size={13} />
                     </button>
                     <button onClick={() => setTimelineFor(p)} title="Log activity" className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary">
@@ -690,7 +690,7 @@ const AdminOutreach = () => {
                           <History size={14} />
                         </button>
                         <button
-                          onClick={() => setShowTpl(p)}
+                          onClick={() => (setVariantIdx(0), setShowTpl(p))}
                           title="View pitch template"
                           className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary"
                         >
