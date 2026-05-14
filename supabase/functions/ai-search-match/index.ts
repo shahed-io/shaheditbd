@@ -76,7 +76,7 @@ Return matchedIds: [] ONLY if the catalog has absolutely nothing remotely relate
         { role: "system", content: system },
         { role: "user", content: user },
       ],
-      maxTokens: 800,
+      maxTokens: 1200,
     });
 
     // Extract first JSON block from the response
@@ -91,13 +91,14 @@ Return matchedIds: [] ONLY if the catalog has absolutely nothing remotely relate
 
     const validIds = new Set(products.map((p) => p.id));
     const matchedIds: string[] = Array.isArray(parsed.matchedIds)
-      ? parsed.matchedIds.filter((id: any) => typeof id === "string" && validIds.has(id)).slice(0, 12)
+      ? parsed.matchedIds.filter((id: any) => typeof id === "string" && validIds.has(id)).slice(0, 16)
       : [];
 
     return new Response(
       JSON.stringify({
         matchedIds,
         correctedQuery: typeof parsed.correctedQuery === "string" ? parsed.correctedQuery : query,
+        didYouMean: typeof parsed.didYouMean === "string" ? parsed.didYouMean : "",
         keywords: Array.isArray(parsed.keywords) ? parsed.keywords.slice(0, 8) : [],
         provider: result.provider,
       }),
