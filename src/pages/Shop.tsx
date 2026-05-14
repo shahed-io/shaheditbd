@@ -198,11 +198,15 @@ const Shop = () => {
       let usedAi = false;
       let dym = '';
 
-      // AI fuzzy fallback when normal search yields sparse results (typos, shortcuts, mixed lang)
+      // AI fuzzy fallback when normal search yields sparse results (typos, shortcuts, mixed lang).
+      // IMPORTANT: respects active category + sort so suggestions stay inside the user's filter scope.
       if (search && results.length < 4) {
         try {
-          const { data: catalog } = await supabase.from('products')
-            .select('id, name, category_id').eq('status', 'active').limit(600);
+          let catalogQuery = supabase.from('products')
+            .select('id, name, category_id').eq('status', 'active');
+          // Restrict the AI's candidate pool to the active category (multi-category aware)
+          if (productIds !== null) catalogQuery = catalogQuery.in('id', productIds);
+          const { data: catalog } = await catalogQuery.limit(600);
           if (catalog && catalog.length > 0) {
             const { data: ai } = await supabase.functions.invoke('ai-search-match', {
               body: { query: search, products: catalog },
@@ -210,16 +214,29 @@ const Shop = () => {
             const ids: string[] = ai?.matchedIds || [];
             dym = typeof ai?.didYouMean === 'string' ? ai.didYouMean : '';
             if (ids.length > 0) {
-              const { data: prods } = await supabase.from('products')
-                .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description')
+              let prodQuery = supabase.from('products')
+                .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description, total_sales, created_at')
                 .in('id', ids)
                 .eq('status', 'active');
-              const order = new Map(ids.map((id, i) => [id, i]));
-              const aiResults = ((prods as Product[]) || []).sort(
-                (a, b) => (order.get(a.id) ?? 99) - (order.get(b.id) ?? 99)
+              // Re-apply category filter as a defence in depth (catalog may have been cached)
+              if (productIds !== null) prodQuery = prodQuery.in('id', productIds);
+              const { data: prods } = await prodQuery;
+              // Order by AI relevance first
+              const relevance = new Map(ids.map((id, i) => [id, i]));
+              let aiResults = ((prods as Product[]) || []).sort(
+                (a, b) => (relevance.get(a.id) ?? 99) - (relevance.get(b.id) ?? 99),
               );
               const existing = new Set(results.map(p => p.id));
-              const merged = [...results, ...aiResults.filter(p => !existing.has(p.id))];
+              let merged = [...results, ...aiResults.filter(p => !existing.has(p.id))];
+              // Re-apply the user's sort on the merged list so AI suggestions obey
+              // the active sort (price_asc / price_desc / discount / popular).
+              const sortFns: Record<string, (a: Product, b: Product) => number> = {
+                price_asc:  (a, b) => a.price - b.price,
+                price_desc: (a, b) => b.price - a.price,
+                discount:   (a, b) => (b.discount_percent ?? -1) - (a.discount_percent ?? -1),
+                popular:    (a, b) => ((b as any).total_sales ?? -1) - ((a as any).total_sales ?? -1),
+              };
+              if (sortFns[sort]) merged = [...merged].sort(sortFns[sort]);
               if (results.length === 0 && merged.length > 0) usedAi = true;
               results = merged;
             }
