@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Search, Save, Check, ExternalLink, Copy, Globe } from 'lucide-react';
 import { toast } from 'sonner';
 import SearchConsoleWidget from '@/components/admin/SearchConsoleWidget';
+import SitemapStatusWidget from '@/components/admin/SitemapStatusWidget';
 
 const AdminSearchConsole = () => {
   const [verifyCode, setVerifyCode] = useState('');
@@ -37,6 +38,9 @@ const AdminSearchConsole = () => {
           <p className="text-muted-foreground text-sm">Verify your site and submit sitemaps to Google</p>
         </div>
       </div>
+
+      {/* Indexing & sitemap status — live from GSC connector */}
+      <SitemapStatusWidget />
 
       {/* Performance widget — last 28 days */}
       <SearchConsoleWidget />
