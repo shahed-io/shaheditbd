@@ -1,0 +1,490 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import {
+  Plus, Mail, Globe, Edit3, Trash2, Copy, ExternalLink, Search,
+  CheckCircle2, Clock, XCircle, MessageSquare, Send, FileText,
+} from 'lucide-react';
+
+interface Prospect {
+  id: string;
+  site_name: string;
+  site_url: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_channel: string;
+  category: string;
+  domain_authority: number | null;
+  status: string;
+  pitch_template: string;
+  notes: string | null;
+  last_contacted_at: string | null;
+  follow_up_at: string | null;
+  published_url: string | null;
+  created_at: string;
+}
+
+const STATUSES = [
+  { value: 'prospect',    label: 'Prospect',    color: 'hsl(220 15% 60%)', icon: Search },
+  { value: 'contacted',   label: 'Contacted',   color: 'hsl(220 90% 60%)', icon: Send },
+  { value: 'replied',     label: 'Replied',     color: 'hsl(280 80% 65%)', icon: MessageSquare },
+  { value: 'negotiating', label: 'Negotiating', color: 'hsl(40 95% 55%)',  icon: Clock },
+  { value: 'published',   label: 'Published',   color: 'hsl(150 70% 45%)', icon: CheckCircle2 },
+  { value: 'declined',    label: 'Declined',    color: 'hsl(0 80% 60%)',   icon: XCircle },
+  { value: 'no_reply',    label: 'No Reply',    color: 'hsl(0 0% 50%)',    icon: XCircle },
+];
+
+const CATEGORIES = ['tech_blog', 'facebook_group', 'youtube', 'forum', 'news', 'other'];
+const CHANNELS   = ['email', 'facebook', 'linkedin', 'whatsapp', 'form'];
+const TEMPLATES  = ['guest_post', 'review', 'resource_link', 'partnership'];
+
+const TEMPLATE_BODIES: Record<string, { subject: string; body: string }> = {
+  guest_post: {
+    subject: 'Guest post idea for {{site_name}} — Free practical guide for your readers',
+    body: `Hi {{contact_name}},
+
+I'm Shahed from Shahed Store (shahedstore.com.bd) — a Bangladeshi digital software store serving 10,000+ local customers with genuine Microsoft, Adobe, AI tool, and other licenses.
+
+I've been a regular reader of {{site_name}} and I think your audience would find this guest post useful:
+
+  "Windows 11 Genuine License vs Crack — A Practical Buyer's Guide for Bangladeshi Users (2026)"
+
+It would cover real BD pricing, bKash/Nagad payment, activation steps, and how to spot fake keys — entirely educational, not promotional. I'm happy to adapt the angle to whatever fits {{site_name}}'s tone best.
+
+In return, all I ask is one author bio link back to shahedstore.com.bd.
+
+Would this work for you? Happy to send a full draft within 3 days.
+
+Thanks for considering,
+Shahed
+shahedstore.com.bd
+WhatsApp: +880 ...`,
+  },
+  review: {
+    subject: 'Free product for honest review — Shahed Store',
+    body: `Hi {{contact_name}},
+
+I run Shahed Store (shahedstore.com.bd) — Bangladesh's trusted source for genuine Microsoft 365, Adobe, ChatGPT Plus, Canva Pro and other digital licenses with bKash/Nagad payment and 1-hour delivery.
+
+I'd love to send you any product from our catalog (worth up to ৳5,000) for a no-strings-attached honest review on {{site_name}}. You're welcome to share both the good and the bad.
+
+If interested, just reply with the product you'd like and I'll send the license today.
+
+Thanks,
+Shahed
+shahedstore.com.bd`,
+  },
+  resource_link: {
+    subject: 'Resource for your readers — genuine software prices in BD',
+    body: `Hi {{contact_name}},
+
+I noticed your post/article about software pricing in Bangladesh — really useful piece.
+
+We maintain a regularly-updated comparison page on Shahed Store that lists current BD prices for Microsoft 365, Adobe, Canva Pro, ChatGPT Plus, Grammarly, CapCut Pro and more (paid via bKash/Nagad, instant delivery). It might be a useful resource link for your readers:
+
+  https://shahedstore.com.bd/shop
+
+No obligation at all — just thought it might add value if you ever update the post.
+
+Best,
+Shahed
+shahedstore.com.bd`,
+  },
+  partnership: {
+    subject: 'Partnership idea between {{site_name}} and Shahed Store',
+    body: `Hi {{contact_name}},
+
+I'm Shahed, founder of Shahed Store (shahedstore.com.bd) — Bangladesh's digital software marketplace.
+
+I'd like to explore a small partnership with {{site_name}}: an affiliate or referral arrangement where your readers get a discount code and your team earns commission on sales. We currently pay 10% on every order through our referral program.
+
+If that sounds interesting, I'd love to jump on a 15-min call this week.
+
+Thanks,
+Shahed
+shahedstore.com.bd`,
+  },
+};
+
+const renderTemplate = (tpl: string, p: Prospect) => {
+  const t = TEMPLATE_BODIES[tpl] || TEMPLATE_BODIES.guest_post;
+  const replace = (s: string) =>
+    s.replaceAll('{{site_name}}', p.site_name)
+     .replaceAll('{{contact_name}}', p.contact_name || 'there');
+  return { subject: replace(t.subject), body: replace(t.body) };
+};
+
+const Pill = ({ status }: { status: string }) => {
+  const s = STATUSES.find(x => x.value === status) || STATUSES[0];
+  const Icon = s.icon;
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium"
+      style={{ background: `${s.color}22`, color: s.color, border: `1px solid ${s.color}55` }}
+    >
+      <Icon size={10} /> {s.label}
+    </span>
+  );
+};
+
+const fmtDate = (iso: string | null) => {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
+const empty: Partial<Prospect> = {
+  site_name: '', site_url: '', contact_name: '', contact_email: '',
+  contact_channel: 'email', category: 'tech_blog', status: 'prospect',
+  pitch_template: 'guest_post', notes: '',
+};
+
+const AdminOutreach = () => {
+  const [list, setList] = useState<Prospect[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<string>('all');
+  const [search, setSearch] = useState('');
+  const [editing, setEditing] = useState<Partial<Prospect> | null>(null);
+  const [showTpl, setShowTpl] = useState<Prospect | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('outreach_prospects')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) toast.error(error.message);
+    setList(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const save = async () => {
+    if (!editing?.site_name?.trim()) { toast.error('Site name is required'); return; }
+    const payload = { ...editing };
+    if (payload.id) {
+      const { error } = await supabase.from('outreach_prospects').update(payload).eq('id', payload.id);
+      if (error) return toast.error(error.message);
+      toast.success('Updated');
+    } else {
+      const { error } = await supabase.from('outreach_prospects').insert(payload as any);
+      if (error) return toast.error(error.message);
+      toast.success('Added');
+    }
+    setEditing(null);
+    load();
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm('Delete this prospect?')) return;
+    const { error } = await supabase.from('outreach_prospects').delete().eq('id', id);
+    if (error) return toast.error(error.message);
+    toast.success('Deleted');
+    load();
+  };
+
+  const setStatus = async (id: string, status: string) => {
+    const patch: any = { status };
+    if (status === 'contacted') patch.last_contacted_at = new Date().toISOString();
+    const { error } = await supabase.from('outreach_prospects').update(patch).eq('id', id);
+    if (error) return toast.error(error.message);
+    load();
+  };
+
+  const filtered = list.filter(p => {
+    if (filter !== 'all' && p.status !== filter) return false;
+    if (search && !`${p.site_name} ${p.site_url ?? ''} ${p.contact_email ?? ''}`.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  const counts = STATUSES.map(s => ({ ...s, count: list.filter(p => p.status === s.value).length }));
+  const total = list.length;
+  const published = list.filter(p => p.status === 'published').length;
+  const conversion = total > 0 ? Math.round((published / total) * 100) : 0;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+            Backlink <span className="gradient-text">Outreach Tracker</span>
+          </h1>
+          <p className="text-muted-foreground text-sm">Track guest posts, reviews & link partnerships with BD tech communities</p>
+        </div>
+        <button
+          onClick={() => setEditing({ ...empty })}
+          className="btn-glow inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
+        >
+          <Plus size={14} /> Add Prospect
+        </button>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="glass-card rounded-2xl p-4">
+          <p className="text-xs text-muted-foreground mb-1">Total Prospects</p>
+          <p className="text-2xl font-bold text-foreground">{total}</p>
+        </div>
+        <div className="glass-card rounded-2xl p-4">
+          <p className="text-xs text-muted-foreground mb-1">Contacted</p>
+          <p className="text-2xl font-bold text-foreground">{counts.find(c => c.value === 'contacted')!.count}</p>
+        </div>
+        <div className="glass-card rounded-2xl p-4">
+          <p className="text-xs text-muted-foreground mb-1">Published Links</p>
+          <p className="text-2xl font-bold text-green-500">{published}</p>
+        </div>
+        <div className="glass-card rounded-2xl p-4">
+          <p className="text-xs text-muted-foreground mb-1">Conversion Rate</p>
+          <p className="text-2xl font-bold text-foreground">{conversion}%</p>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <button
+          onClick={() => setFilter('all')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition ${filter === 'all' ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'}`}
+        >
+          All ({list.length})
+        </button>
+        {counts.map(s => (
+          <button
+            key={s.value}
+            onClick={() => setFilter(s.value)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition ${filter === s.value ? 'text-white' : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'}`}
+            style={filter === s.value ? { background: s.color, borderColor: s.color } : {}}
+          >
+            {s.label} ({s.count})
+          </button>
+        ))}
+        <div className="ml-auto relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search…"
+            className="bg-background border border-border rounded-lg pl-8 pr-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary w-56"
+          />
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="glass-card rounded-2xl overflow-hidden">
+        {loading ? (
+          <div className="p-12 text-center text-sm text-muted-foreground">Loading…</div>
+        ) : filtered.length === 0 ? (
+          <div className="p-12 text-center text-sm text-muted-foreground">No prospects yet. Click "Add Prospect" to start.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead className="bg-muted/20 text-muted-foreground">
+                <tr>
+                  <th className="text-left px-4 py-2.5 font-medium">Site</th>
+                  <th className="text-left px-3 py-2.5 font-medium">Category</th>
+                  <th className="text-left px-3 py-2.5 font-medium">Contact</th>
+                  <th className="text-left px-3 py-2.5 font-medium">Pitch</th>
+                  <th className="text-left px-3 py-2.5 font-medium">Status</th>
+                  <th className="text-left px-3 py-2.5 font-medium">Last Contact</th>
+                  <th className="text-right px-4 py-2.5 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map(p => (
+                  <tr key={p.id} className="border-t border-border/40 hover:bg-muted/10">
+                    <td className="px-4 py-3">
+                      <div className="font-semibold text-foreground">{p.site_name}</div>
+                      {p.site_url && (
+                        <a href={p.site_url} target="_blank" rel="noopener noreferrer"
+                          className="text-[11px] text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+                          {p.site_url.replace(/^https?:\/\//, '').slice(0, 40)} <ExternalLink size={9} />
+                        </a>
+                      )}
+                      {p.published_url && (
+                        <a href={p.published_url} target="_blank" rel="noopener noreferrer"
+                          className="block text-[11px] text-green-500 hover:underline mt-0.5">
+                          ↗ Published link
+                        </a>
+                      )}
+                    </td>
+                    <td className="px-3 py-3 text-muted-foreground capitalize">{p.category.replace('_', ' ')}</td>
+                    <td className="px-3 py-3">
+                      {p.contact_name && <div className="text-foreground">{p.contact_name}</div>}
+                      {p.contact_email && <div className="text-[11px] text-muted-foreground break-all">{p.contact_email}</div>}
+                      <div className="text-[10px] uppercase text-muted-foreground/70">{p.contact_channel}</div>
+                    </td>
+                    <td className="px-3 py-3 text-muted-foreground capitalize">{p.pitch_template.replace('_', ' ')}</td>
+                    <td className="px-3 py-3">
+                      <select
+                        value={p.status}
+                        onChange={e => setStatus(p.id, e.target.value)}
+                        className="bg-transparent border border-border rounded-md px-1.5 py-0.5 text-[11px] text-foreground focus:outline-none focus:border-primary"
+                      >
+                        {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                      </select>
+                      <div className="mt-1"><Pill status={p.status} /></div>
+                    </td>
+                    <td className="px-3 py-3 text-muted-foreground">{fmtDate(p.last_contacted_at)}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={() => setShowTpl(p)}
+                          title="View pitch template"
+                          className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary"
+                        >
+                          <FileText size={14} />
+                        </button>
+                        <button
+                          onClick={() => setEditing(p)}
+                          title="Edit"
+                          className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary"
+                        >
+                          <Edit3 size={14} />
+                        </button>
+                        <button
+                          onClick={() => remove(p.id)}
+                          title="Delete"
+                          className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-red-500"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Edit modal */}
+      {editing && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
+          <div className="glass-card rounded-2xl p-6 w-full max-w-lg space-y-3" onClick={e => e.stopPropagation()}>
+            <h3 className="font-bold text-foreground text-lg">{editing.id ? 'Edit Prospect' : 'New Prospect'}</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="col-span-2 text-xs">
+                <span className="text-muted-foreground">Site Name *</span>
+                <input value={editing.site_name || ''} onChange={e => setEditing({ ...editing, site_name: e.target.value })}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+              </label>
+              <label className="col-span-2 text-xs">
+                <span className="text-muted-foreground">Site URL</span>
+                <input value={editing.site_url || ''} onChange={e => setEditing({ ...editing, site_url: e.target.value })}
+                  placeholder="https://"
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+              </label>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Contact Name</span>
+                <input value={editing.contact_name || ''} onChange={e => setEditing({ ...editing, contact_name: e.target.value })}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+              </label>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Contact Email</span>
+                <input value={editing.contact_email || ''} onChange={e => setEditing({ ...editing, contact_email: e.target.value })}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+              </label>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Channel</span>
+                <select value={editing.contact_channel || 'email'} onChange={e => setEditing({ ...editing, contact_channel: e.target.value })}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary capitalize">
+                  {CHANNELS.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </label>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Category</span>
+                <select value={editing.category || 'tech_blog'} onChange={e => setEditing({ ...editing, category: e.target.value })}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary">
+                  {CATEGORIES.map(c => <option key={c} value={c}>{c.replace('_', ' ')}</option>)}
+                </select>
+              </label>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Pitch Template</span>
+                <select value={editing.pitch_template || 'guest_post'} onChange={e => setEditing({ ...editing, pitch_template: e.target.value })}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary">
+                  {TEMPLATES.map(t => <option key={t} value={t}>{t.replace('_', ' ')}</option>)}
+                </select>
+              </label>
+              <label className="text-xs">
+                <span className="text-muted-foreground">Status</span>
+                <select value={editing.status || 'prospect'} onChange={e => setEditing({ ...editing, status: e.target.value })}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary">
+                  {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                </select>
+              </label>
+              <label className="col-span-2 text-xs">
+                <span className="text-muted-foreground">Published URL (after success)</span>
+                <input value={editing.published_url || ''} onChange={e => setEditing({ ...editing, published_url: e.target.value })}
+                  placeholder="https://"
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+              </label>
+              <label className="col-span-2 text-xs">
+                <span className="text-muted-foreground">Notes</span>
+                <textarea value={editing.notes || ''} onChange={e => setEditing({ ...editing, notes: e.target.value })}
+                  rows={3}
+                  className="w-full mt-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary resize-none" />
+              </label>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button onClick={() => setEditing(null)} className="px-4 py-2 rounded-lg text-sm bg-muted/40 hover:bg-muted/60 text-foreground">Cancel</button>
+              <button onClick={save} className="btn-glow px-4 py-2 rounded-lg text-sm font-medium">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Template viewer */}
+      {showTpl && (() => {
+        const t = renderTemplate(showTpl.pitch_template, showTpl);
+        return (
+          <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowTpl(null)}>
+            <div className="glass-card rounded-2xl p-6 w-full max-w-2xl space-y-4" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-foreground text-lg flex items-center gap-2">
+                  <Mail size={18} className="text-primary" />
+                  Pitch Template — <span className="capitalize">{showTpl.pitch_template.replace('_', ' ')}</span>
+                </h3>
+                <span className="text-xs text-muted-foreground">For: {showTpl.site_name}</span>
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Subject</label>
+                  <button onClick={() => { navigator.clipboard.writeText(t.subject); toast.success('Subject copied'); }}
+                    className="text-[11px] text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+                    <Copy size={11} /> Copy
+                  </button>
+                </div>
+                <div className="bg-muted/20 rounded-lg p-3 text-sm text-foreground border border-border">{t.subject}</div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Body</label>
+                  <button onClick={() => { navigator.clipboard.writeText(t.body); toast.success('Body copied'); }}
+                    className="text-[11px] text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+                    <Copy size={11} /> Copy
+                  </button>
+                </div>
+                <textarea readOnly value={t.body} rows={14}
+                  className="w-full bg-muted/20 rounded-lg p-3 text-sm text-foreground border border-border font-mono resize-none focus:outline-none" />
+              </div>
+              <div className="flex justify-between items-center pt-2">
+                <a
+                  href={showTpl.contact_email
+                    ? `mailto:${showTpl.contact_email}?subject=${encodeURIComponent(t.subject)}&body=${encodeURIComponent(t.body)}`
+                    : '#'}
+                  onClick={(e) => { if (!showTpl.contact_email) { e.preventDefault(); toast.error('No email on file'); } }}
+                  className="btn-glow inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+                >
+                  <Send size={14} /> Open in Email Client
+                </a>
+                <button onClick={() => setShowTpl(null)} className="px-4 py-2 rounded-lg text-sm bg-muted/40 hover:bg-muted/60 text-foreground">Close</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+    </div>
+  );
+};
+
+export default AdminOutreach;
