@@ -172,6 +172,9 @@ const useGoogleSearch = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [didYouMean, setDidYouMean] = useState<string>('');
+  const [usedAi, setUsedAi] = useState(false);
   const [recent, setRecent] = useState<string[]>(getRecent());
   const [activeIdx, setActiveIdx] = useState(-1);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -180,7 +183,8 @@ const useGoogleSearch = () => {
   // Cache active product catalog (id+name) for AI fuzzy matching
   const catalogRef = useRef<Array<{ id: string; name: string; category?: string | null }>>([]);
   const aiAbortRef = useRef<AbortController | null>(null);
-  const aiCacheRef = useRef<Map<string, string[]>>(new Map());
+  const aiCacheRef = useRef<Map<string, { ids: string[]; didYouMean: string }>>(new Map());
+  const reqIdRef = useRef(0);
 
   useEffect(() => {
     supabase.from('categories').select('id, name, slug').eq('is_active', true).order('sort_order').limit(50)
@@ -198,7 +202,7 @@ const useGoogleSearch = () => {
       .then(({ data }) => { if (data) setTrendingProducts(data); });
 
     // Build lightweight catalog for AI fuzzy matching (id + name only)
-    supabase.from('products').select('id, name, category_id').eq('status', 'active').limit(400)
+    supabase.from('products').select('id, name, category_id').eq('status', 'active').limit(600)
       .then(({ data }) => {
         if (data) catalogRef.current = data.map((p: any) => ({ id: p.id, name: p.name, category: p.category_id }));
       });
@@ -224,11 +228,13 @@ const useGoogleSearch = () => {
     return (data || []) as unknown as Product[];
   }, []);
 
-  // AI fuzzy match — only called when DB results are sparse
-  const aiSearch = useCallback(async (q: string): Promise<Product[]> => {
-    if (!catalogRef.current.length) return [];
-    const cached = aiCacheRef.current.get(q.toLowerCase());
-    let matchedIds: string[] | null = cached || null;
+  // AI fuzzy match — returns matched products + didYouMean hint
+  const aiSearch = useCallback(async (q: string): Promise<{ products: Product[]; didYouMean: string }> => {
+    if (!catalogRef.current.length) return { products: [], didYouMean: '' };
+    const cacheKey = q.toLowerCase().trim();
+    const cached = aiCacheRef.current.get(cacheKey);
+    let matchedIds: string[] | null = cached?.ids || null;
+    let dym = cached?.didYouMean || '';
 
     if (!matchedIds) {
       try {
@@ -238,60 +244,77 @@ const useGoogleSearch = () => {
         const { data, error } = await supabase.functions.invoke('ai-search-match', {
           body: { query: q, products: catalogRef.current },
         });
-        if (error || !data) return [];
+        if (error || !data) return { products: [], didYouMean: '' };
         matchedIds = Array.isArray(data.matchedIds) ? data.matchedIds : [];
-        aiCacheRef.current.set(q.toLowerCase(), matchedIds);
+        dym = typeof data.didYouMean === 'string' ? data.didYouMean : '';
+        aiCacheRef.current.set(cacheKey, { ids: matchedIds, didYouMean: dym });
       } catch {
-        return [];
+        return { products: [], didYouMean: '' };
       }
     }
 
-    if (!matchedIds || matchedIds.length === 0) return [];
+    if (!matchedIds || matchedIds.length === 0) return { products: [], didYouMean: dym };
     const { data: prods } = await supabase.from('products')
       .select('id, name, slug, price, original_price, discount_percent, image_url, short_description, category_id, total_sales')
       .in('id', matchedIds)
       .eq('status', 'active');
-    if (!prods) return [];
-    // Preserve AI ranking order
+    if (!prods) return { products: [], didYouMean: dym };
     const order = new Map(matchedIds.map((id, i) => [id, i]));
-    return [...prods].sort((a: any, b: any) => (order.get(a.id) ?? 99) - (order.get(b.id) ?? 99));
+    const sorted = [...prods].sort((a: any, b: any) => (order.get(a.id) ?? 99) - (order.get(b.id) ?? 99));
+    return { products: sorted as Product[], didYouMean: dym };
   }, []);
 
   const fetchSuggestions = useCallback(async (q: string) => {
-    if (!q.trim()) { setSuggestions([]); setProducts([]); return; }
+    if (!q.trim()) { setSuggestions([]); setProducts([]); setDidYouMean(''); setUsedAi(false); return; }
+    const myReq = ++reqIdRef.current;
     setLoading(true);
     setActiveIdx(-1);
+    setDidYouMean('');
+    setUsedAi(false);
     try {
       let data: Product[] = await dbSearch(q);
+      if (myReq !== reqIdRef.current) return;
 
-      // Fallback to AI when DB matches are sparse OR query looks unusual (no ASCII letters / very short)
-      const sparse = data.length < 3;
-      if (sparse) {
-        const aiResults = await aiSearch(q);
-        if (aiResults.length > 0) {
-          // Merge: existing DB results first, then AI matches not already present
-          const existing = new Set(data.map((p: any) => p.id));
-          const merged = [...data, ...aiResults.filter(p => !existing.has(p.id))];
-          data = merged.slice(0, 12);
-        }
-      }
-
-      const nameSet = new Set<string>();
-      const textSuggestions: string[] = [];
+      // Show DB results immediately
+      const initialNames = new Set<string>();
+      const initialSuggestions: string[] = [];
       data.forEach((p: any) => {
         const lower = p.name.toLowerCase();
-        if (!nameSet.has(lower)) {
-          nameSet.add(lower);
-          textSuggestions.push(p.name);
-        }
+        if (!initialNames.has(lower)) { initialNames.add(lower); initialSuggestions.push(p.name); }
       });
-      setSuggestions(textSuggestions.slice(0, 5));
+      setSuggestions(initialSuggestions.slice(0, 5));
       setProducts(data as Product[]);
-    } catch {
-      setSuggestions([]);
-      setProducts([]);
-    } finally {
       setLoading(false);
+
+      // Always run AI in parallel when query is non-trivial — catches typos even with some DB matches
+      const shouldRunAi = q.trim().length >= 2 && data.length < 6;
+      if (shouldRunAi) {
+        setAiLoading(true);
+        const { products: aiResults, didYouMean: dym } = await aiSearch(q);
+        if (myReq !== reqIdRef.current) return;
+        if (aiResults.length > 0) {
+          const existing = new Set(data.map((p: any) => p.id));
+          const merged = [...data, ...aiResults.filter(p => !existing.has(p.id))].slice(0, 12);
+          const nameSet = new Set<string>();
+          const textSuggestions: string[] = [];
+          merged.forEach((p: any) => {
+            const lower = p.name.toLowerCase();
+            if (!nameSet.has(lower)) { nameSet.add(lower); textSuggestions.push(p.name); }
+          });
+          setSuggestions(textSuggestions.slice(0, 5));
+          setProducts(merged);
+          setUsedAi(data.length === 0);
+        }
+        if (dym && dym.toLowerCase() !== q.toLowerCase().trim()) setDidYouMean(dym);
+        setAiLoading(false);
+      }
+    } catch {
+      if (myReq === reqIdRef.current) {
+        setSuggestions([]);
+        setProducts([]);
+        setLoading(false);
+        setAiLoading(false);
+      }
     }
   }, [dbSearch, aiSearch]);
 
@@ -299,7 +322,7 @@ const useGoogleSearch = () => {
     setQuery(val);
     setActiveIdx(-1);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!val.trim()) { setSuggestions([]); setProducts([]); return; }
+    if (!val.trim()) { setSuggestions([]); setProducts([]); setDidYouMean(''); setUsedAi(false); return; }
     debounceRef.current = setTimeout(() => fetchSuggestions(val), 180);
   };
 
@@ -329,7 +352,8 @@ const useGoogleSearch = () => {
 
   return {
     query, setQuery, suggestions, products, trendingProducts,
-    categories, categoryMap, loading, recent, activeIdx, setActiveIdx,
+    categories, categoryMap, loading, aiLoading, didYouMean, usedAi,
+    recent, activeIdx, setActiveIdx,
     handleChange, handleSelect, handleSubmit, handleSuggestionSelect, refreshRecent,
   };
 };
