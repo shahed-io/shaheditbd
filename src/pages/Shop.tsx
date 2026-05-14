@@ -434,6 +434,30 @@ const Shop = () => {
               )}
             </div>
 
+            {/* Did-you-mean / AI-assisted banner */}
+            {!loading && search && (didYouMean || aiAssisted) && (
+              <div className="mb-4 p-3 rounded-xl border border-primary/20 bg-primary/5 flex items-center gap-2 text-sm flex-wrap">
+                <span className="text-base">✨</span>
+                {didYouMean ? (
+                  <span className="text-foreground">
+                    আপনি কি খুঁজছিলেন{' '}
+                    <button
+                      onClick={() => { setSearch(didYouMean); setSearchParams({ q: didYouMean }); }}
+                      className="font-bold text-primary hover:underline"
+                    >
+                      {didYouMean}
+                    </button>
+                    {' '}? &nbsp;
+                  </span>
+                ) : null}
+                {aiAssisted && (
+                  <span className="text-muted-foreground">
+                    &ldquo;<span className="font-semibold text-foreground">{search}</span>&rdquo; এর জন্য সরাসরি ফলাফল নেই — AI দ্বারা সম্পর্কিত প্রোডাক্ট দেখানো হচ্ছে।
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Products */}
             {loading ? (
               <div className="flex items-center justify-center py-20">
@@ -443,7 +467,10 @@ const Shop = () => {
               <div className="text-center py-24 text-muted-foreground">
                 <div className="text-5xl mb-4">🔍</div>
                 <div className="font-semibold text-lg">কোনো প্রোডাক্ট পাওয়া যায়নি</div>
-                <button onClick={() => { setSearch(''); setCategory(''); }}
+                {search && (
+                  <div className="text-sm mt-2">&ldquo;{search}&rdquo; এর জন্য কোনো মিল পাওয়া যায়নি</div>
+                )}
+                <button onClick={() => { setSearch(''); setCategory(''); setSearchParams({}); }}
                   className="mt-4 px-6 py-2.5 rounded-xl text-sm font-bold text-white"
                   style={{ background: 'hsl(258,78%,55%)' }}>
                   সব দেখুন
