@@ -73,8 +73,7 @@ describe('parseAiSearchResponse', () => {
 
   it('ignores non-string keywords / matchedIds', () => {
     const r = parseAiSearchResponse(
-      // @ts-expect-error - intentionally malformed payload
-      { matchedIds: 'p1', keywords: { bad: true } },
+      { matchedIds: 'p1' as unknown as string[], keywords: { bad: true } as unknown as string[] },
       catalogIds,
       'q',
     );
