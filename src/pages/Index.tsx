@@ -68,20 +68,22 @@ const Index = () => {
       />
       {/* Critical above-fold content — eager */}
       <Navbar />
-      <HeroBanner />
-      <TickerBanner />
-      <TopProducts />
+      <main>
+        <HeroBanner />
+        <TickerBanner />
+        <TopProducts />
 
-      {/* Below-fold — lazy loaded */}
-      <Suspense fallback={<SectionSkeleton />}>
-        <FlashSale />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <WhyChooseUs />
-      </Suspense>
-      <Suspense fallback={<div className="py-12" />}>
-        <Testimonials />
-      </Suspense>
+        {/* Below-fold — lazy loaded */}
+        <Suspense fallback={<SectionSkeleton />}>
+          <FlashSale />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <WhyChooseUs />
+        </Suspense>
+        <Suspense fallback={<div className="py-12" />}>
+          <Testimonials />
+        </Suspense>
+      </main>
       <Suspense fallback={<div className="py-8" />}>
         <Footer />
       </Suspense>
