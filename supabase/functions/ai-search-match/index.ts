@@ -31,21 +31,27 @@ Deno.serve(async (req) => {
     }
 
     // Trim catalog to keep prompt small
-    const catalog = products.slice(0, 400).map((p) => ({
+    const catalog = products.slice(0, 600).map((p) => ({
       id: p.id,
       name: p.name,
       category: p.category || undefined,
     }));
 
-    const system = `You are a smart product search assistant for a Bangladeshi digital software store.
-Given a user's possibly misspelled / shortcut / mixed-language (Bangla + English) search query and a JSON catalog of products,
-return the most relevant products. Handle:
-- typos (e.g. "ofice" → "Office", "windws" → "Windows", "nflx" → "Netflix")
-- shortcuts ("win 11" → "Windows 11", "ms office" → "Microsoft Office")
-- synonyms ("antivirus" → "Kaspersky", "Norton", "Bitdefender")
-- Bangla/English mix ("উইন্ডোজ" → "Windows", "নেটফ্লিক্স" → "Netflix")
-- partial / vague queries
-Pick ONLY products that genuinely relate to what the user likely wants.
+    const system = `You are an EXTREMELY forgiving fuzzy product search assistant for a Bangladeshi digital software store (Shahed Store).
+Your #1 goal: NEVER return an empty list if there's even a remotely related product. Always suggest something useful.
+
+Handle aggressively:
+- Heavy typos & misspellings (e.g. "ofice" → "Office", "windws"/"windoss"/"winddoz" → "Windows", "nflx"/"netflics"/"netflex" → "Netflix", "adoby"/"adobi" → "Adobe", "kasperky"/"kasparsky" → "Kaspersky")
+- Phonetic / Banglish typing ("ofish", "officeh", "neetflix", "uindoj", "addobi", "anti virus", "vipien")
+- Shortcuts & abbreviations ("win 11" → "Windows 11", "ms office" → "Microsoft Office", "o365" → "Office 365", "av" → "antivirus")
+- Synonyms & categories ("antivirus" → all antivirus products like Kaspersky, Norton, Bitdefender, McAfee, ESET; "vpn" → all VPN products; "design software" → Adobe, Canva)
+- Bangla / English mix ("উইন্ডোজ" → "Windows", "নেটফ্লিক্স" → "Netflix", "অফিস" → "Office", "অ্যান্টিভাইরাস" → "antivirus")
+- Partial words ("net" → Netflix, "win" → Windows, "off" → Office)
+- Vague / category queries ("movie" → Netflix, Prime; "music" → Spotify, YouTube Premium; "ai" → ChatGPT, Gemini)
+- Brand-only queries — return ALL products from that brand
+- If query is gibberish but contains a recognizable substring, still match on that substring
+
+CRITICAL: If the query has even partial similarity to anything in the catalog, INCLUDE IT. Be generous, not strict.
 Return STRICT JSON. No markdown, no commentary.`;
 
     const user = `User query: "${query}"
@@ -55,12 +61,14 @@ ${JSON.stringify(catalog)}
 
 Return STRICT JSON of this shape:
 {
-  "correctedQuery": "best-guess corrected/expanded query in same language",
+  "correctedQuery": "best-guess corrected/expanded query in English (e.g. 'Microsoft Office' for 'ofice')",
+  "didYouMean": "user-facing suggestion if the original query had a clear typo, else empty string",
   "keywords": ["keyword1", "keyword2"],
   "matchedIds": ["product-id-1", "product-id-2", ...]
 }
 
-Order matchedIds by relevance, max 12. If nothing relates, return matchedIds: [].`;
+Order matchedIds by relevance, max 16. Always try to return at least 3-6 ids if anything in the catalog is even loosely related.
+Return matchedIds: [] ONLY if the catalog has absolutely nothing remotely related (e.g. user searches "pizza" in a software store).`;
 
     const result = await callAIWithFallback({
       model: "google/gemini-2.5-flash-lite",
@@ -68,7 +76,7 @@ Order matchedIds by relevance, max 12. If nothing relates, return matchedIds: []
         { role: "system", content: system },
         { role: "user", content: user },
       ],
-      maxTokens: 800,
+      maxTokens: 1200,
     });
 
     // Extract first JSON block from the response
@@ -83,13 +91,14 @@ Order matchedIds by relevance, max 12. If nothing relates, return matchedIds: []
 
     const validIds = new Set(products.map((p) => p.id));
     const matchedIds: string[] = Array.isArray(parsed.matchedIds)
-      ? parsed.matchedIds.filter((id: any) => typeof id === "string" && validIds.has(id)).slice(0, 12)
+      ? parsed.matchedIds.filter((id: any) => typeof id === "string" && validIds.has(id)).slice(0, 16)
       : [];
 
     return new Response(
       JSON.stringify({
         matchedIds,
         correctedQuery: typeof parsed.correctedQuery === "string" ? parsed.correctedQuery : query,
+        didYouMean: typeof parsed.didYouMean === "string" ? parsed.didYouMean : "",
         keywords: Array.isArray(parsed.keywords) ? parsed.keywords.slice(0, 8) : [],
         provider: result.provider,
       }),

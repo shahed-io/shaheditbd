@@ -118,6 +118,8 @@ const Shop = () => {
   const [loading, setLoading]       = useState(true);
   const [search, setSearch]         = useState(searchParams.get('q') || '');
   const [sort, setSort]             = useState('newest');
+  const [didYouMean, setDidYouMean] = useState<string>('');
+  const [aiAssisted, setAiAssisted] = useState(false);
 
   const activeCatSlug = searchParams.get('category') || '';
 
@@ -193,26 +195,33 @@ const Shop = () => {
 
       const { data } = await query.limit(60);
       let results = (data as Product[]) || [];
+      let usedAi = false;
+      let dym = '';
 
-      // AI fuzzy fallback when normal search yields no results (typos, shortcuts, mixed lang)
-      if (search && results.length === 0) {
+      // AI fuzzy fallback when normal search yields sparse results (typos, shortcuts, mixed lang)
+      if (search && results.length < 4) {
         try {
           const { data: catalog } = await supabase.from('products')
-            .select('id, name, category_id').eq('status', 'active').limit(400);
+            .select('id, name, category_id').eq('status', 'active').limit(600);
           if (catalog && catalog.length > 0) {
             const { data: ai } = await supabase.functions.invoke('ai-search-match', {
               body: { query: search, products: catalog },
             });
             const ids: string[] = ai?.matchedIds || [];
+            dym = typeof ai?.didYouMean === 'string' ? ai.didYouMean : '';
             if (ids.length > 0) {
               const { data: prods } = await supabase.from('products')
                 .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description')
                 .in('id', ids)
                 .eq('status', 'active');
               const order = new Map(ids.map((id, i) => [id, i]));
-              results = ((prods as Product[]) || []).sort(
+              const aiResults = ((prods as Product[]) || []).sort(
                 (a, b) => (order.get(a.id) ?? 99) - (order.get(b.id) ?? 99)
               );
+              const existing = new Set(results.map(p => p.id));
+              const merged = [...results, ...aiResults.filter(p => !existing.has(p.id))];
+              if (results.length === 0 && merged.length > 0) usedAi = true;
+              results = merged;
             }
           }
         } catch (e) {
@@ -220,6 +229,8 @@ const Shop = () => {
         }
       }
 
+      setDidYouMean(dym && dym.toLowerCase() !== search.toLowerCase().trim() ? dym : '');
+      setAiAssisted(usedAi);
       setProducts(results);
       setLoading(false);
     };
@@ -423,6 +434,30 @@ const Shop = () => {
               )}
             </div>
 
+            {/* Did-you-mean / AI-assisted banner */}
+            {!loading && search && (didYouMean || aiAssisted) && (
+              <div className="mb-4 p-3 rounded-xl border border-primary/20 bg-primary/5 flex items-center gap-2 text-sm flex-wrap">
+                <span className="text-base">✨</span>
+                {didYouMean ? (
+                  <span className="text-foreground">
+                    আপনি কি খুঁজছিলেন{' '}
+                    <button
+                      onClick={() => { setSearch(didYouMean); setSearchParams({ q: didYouMean }); }}
+                      className="font-bold text-primary hover:underline"
+                    >
+                      {didYouMean}
+                    </button>
+                    {' '}? &nbsp;
+                  </span>
+                ) : null}
+                {aiAssisted && (
+                  <span className="text-muted-foreground">
+                    &ldquo;<span className="font-semibold text-foreground">{search}</span>&rdquo; এর জন্য সরাসরি ফলাফল নেই — AI দ্বারা সম্পর্কিত প্রোডাক্ট দেখানো হচ্ছে।
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Products */}
             {loading ? (
               <div className="flex items-center justify-center py-20">
@@ -432,7 +467,10 @@ const Shop = () => {
               <div className="text-center py-24 text-muted-foreground">
                 <div className="text-5xl mb-4">🔍</div>
                 <div className="font-semibold text-lg">কোনো প্রোডাক্ট পাওয়া যায়নি</div>
-                <button onClick={() => { setSearch(''); setCategory(''); }}
+                {search && (
+                  <div className="text-sm mt-2">&ldquo;{search}&rdquo; এর জন্য কোনো মিল পাওয়া যায়নি</div>
+                )}
+                <button onClick={() => { setSearch(''); setCategory(''); setSearchParams({}); }}
                   className="mt-4 px-6 py-2.5 rounded-xl text-sm font-bold text-white"
                   style={{ background: 'hsl(258,78%,55%)' }}>
                   সব দেখুন
