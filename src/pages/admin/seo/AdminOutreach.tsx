@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import {
   Plus, Mail, Globe, Edit3, Trash2, Copy, ExternalLink, Search,
   CheckCircle2, Clock, XCircle, MessageSquare, Send, FileText,
+  Download,
 } from 'lucide-react';
 
 interface Prospect {
