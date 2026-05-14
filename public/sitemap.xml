@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Sitemap Index — points to /sitemap and /image-sitemap on the project
-  domain. /_redirects proxies these to live edge functions that query
-  the database in real-time, so every product, category, and blog
-  post update is reflected immediately.
+  Sitemap Index — points to sub-sitemaps served via /_redirects on the
+  project domain. The redirects proxy to live edge functions that
+  query the database in real-time, so every product, category, and
+  blog post update is reflected immediately.
 -->
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>https://shahedstore.com.bd/sitemap</loc>
+    <loc>https://shahedstore.com.bd/product-sitemap.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://shahedstore.com.bd/image-sitemap</loc>
+    <loc>https://shahedstore.com.bd/image-sitemap.xml</loc>
   </sitemap>
 </sitemapindex>
