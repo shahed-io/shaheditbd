@@ -459,10 +459,6 @@ const Checkout = () => {
               .from('payment-proofs')
               .createSignedUrl(path, 60 * 60 * 24 * 365);
             screenshotUrl = signed?.signedUrl || path;
-            await supabase
-              .from('orders')
-              .update({ screenshot_url: screenshotUrl })
-              .eq('id', order.id);
           }
         } catch (e) {
           console.error('[Checkout] screenshot upload failed:', e);
