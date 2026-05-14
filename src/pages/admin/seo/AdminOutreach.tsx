@@ -301,6 +301,7 @@ const AdminOutreach = () => {
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Partial<Prospect> | null>(null);
   const [showTpl, setShowTpl] = useState<Prospect | null>(null);
+  const [variantIdx, setVariantIdx] = useState(0);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [timelineFor, setTimelineFor] = useState<Prospect | null>(null);
 
