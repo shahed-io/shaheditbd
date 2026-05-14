@@ -439,6 +439,36 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
       if (itemsError) throw itemsError;
 
+      // Upload optional payment screenshot (non-blocking — order succeeds even if upload fails)
+      let screenshotUrl: string | null = null;
+      if (paymentMethod !== 'wallet' && paymentScreenshot) {
+        try {
+          const folder = user?.id || 'guest';
+          const ext = paymentScreenshot.name.split('.').pop()?.toLowerCase() || 'jpg';
+          const path = `${folder}/${order.id}-${Date.now()}.${ext}`;
+          const { error: uploadErr } = await supabase.storage
+            .from('payment-proofs')
+            .upload(path, paymentScreenshot, {
+              contentType: paymentScreenshot.type,
+              upsert: false,
+            });
+          if (uploadErr) {
+            console.error('[Checkout] screenshot upload error:', uploadErr);
+          } else {
+            const { data: signed } = await supabase.storage
+              .from('payment-proofs')
+              .createSignedUrl(path, 60 * 60 * 24 * 365);
+            screenshotUrl = signed?.signedUrl || path;
+            await supabase
+              .from('orders')
+              .update({ screenshot_url: screenshotUrl })
+              .eq('id', order.id);
+          }
+        } catch (e) {
+          console.error('[Checkout] screenshot upload failed:', e);
+        }
+      }
+
       // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
       if (paymentMethod !== 'wallet') {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
@@ -447,6 +477,7 @@ const Checkout = () => {
           transaction_id: transactionId.trim(),
           payment_method: paymentMethod,
           amount: payableTotal,
+          screenshot_url: screenshotUrl,
           status: 'pending',
         });
         if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
