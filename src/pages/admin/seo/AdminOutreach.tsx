@@ -188,6 +188,65 @@ const AdminOutreach = () => {
 
   useEffect(() => { load(); }, []);
 
+  // Auto-create notifications for due / overdue follow-ups (dedup per prospect per day)
+  useEffect(() => {
+    if (loading || list.length === 0) return;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const now = new Date();
+      const todayKey = now.toISOString().slice(0, 10);
+      const due = list.filter(p =>
+        p.follow_up_at &&
+        new Date(p.follow_up_at) <= now &&
+        !['published', 'declined', 'no_reply'].includes(p.status)
+      );
+      if (due.length === 0) return;
+      // Fetch existing notifications today linked to outreach to dedup
+      const { data: existing } = await supabase
+        .from('notifications')
+        .select('link')
+        .eq('user_id', user.id)
+        .gte('created_at', `${todayKey}T00:00:00.000Z`)
+        .like('link', '/ceo/seo/outreach%');
+      const existingKeys = new Set((existing || []).map((n: any) => n.link));
+      const toInsert = due
+        .map(p => ({
+          user_id: user.id,
+          title: '🔔 Outreach follow-up due',
+          message: `Time to follow up with ${p.site_name}${p.contact_name ? ` (${p.contact_name})` : ''}.`,
+          type: 'info',
+          link: `/ceo/seo/outreach?focus=${p.id}&d=${todayKey}`,
+        }))
+        .filter(n => !existingKeys.has(n.link));
+      if (toInsert.length > 0) {
+        await supabase.from('notifications').insert(toInsert);
+      }
+    })();
+  }, [loading, list]);
+
+  const snooze = async (id: string, days: number) => {
+    const dt = new Date();
+    dt.setDate(dt.getDate() + days);
+    const { error } = await supabase
+      .from('outreach_prospects')
+      .update({ follow_up_at: dt.toISOString() })
+      .eq('id', id);
+    if (error) return toast.error(error.message);
+    toast.success(`Snoozed ${days} day${days > 1 ? 's' : ''}`);
+    load();
+  };
+
+  const markDone = async (id: string) => {
+    const { error } = await supabase
+      .from('outreach_prospects')
+      .update({ follow_up_at: null, last_contacted_at: new Date().toISOString() })
+      .eq('id', id);
+    if (error) return toast.error(error.message);
+    toast.success('Marked done for today');
+    load();
+  };
+
   const save = async () => {
     if (!editing?.site_name?.trim()) { toast.error('Site name is required'); return; }
     const payload = { ...editing };
