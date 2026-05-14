@@ -173,6 +173,7 @@ const AdminOutreach = () => {
   const [editing, setEditing] = useState<Partial<Prospect> | null>(null);
   const [showTpl, setShowTpl] = useState<Prospect | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [timelineFor, setTimelineFor] = useState<Prospect | null>(null);
 
   const load = async () => {
     setLoading(true);
