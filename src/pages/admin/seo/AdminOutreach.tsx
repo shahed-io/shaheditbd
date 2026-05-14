@@ -422,6 +422,13 @@ const AdminOutreach = () => {
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <button
+                          onClick={() => setTimelineFor(p)}
+                          title="Activity timeline"
+                          className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary"
+                        >
+                          <History size={14} />
+                        </button>
+                        <button
                           onClick={() => setShowTpl(p)}
                           title="View pitch template"
                           className="p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-primary"
