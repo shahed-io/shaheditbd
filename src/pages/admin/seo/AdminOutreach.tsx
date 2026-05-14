@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import {
   Plus, Mail, Globe, Edit3, Trash2, Copy, ExternalLink, Search,
   CheckCircle2, Clock, XCircle, MessageSquare, Send, FileText,
+  Download,
 } from 'lucide-react';
 
 interface Prospect {
@@ -114,6 +115,31 @@ const renderTemplate = (tpl: string, p: Prospect) => {
   return { subject: replace(t.subject), body: replace(t.body) };
 };
 
+const CSV_HEADERS = ['Site Name', 'Site URL', 'Contact Name', 'Contact Email', 'Contact Channel', 'Category', 'Domain Authority', 'Status', 'Pitch Template', 'Published URL', 'Notes', 'Last Contacted', 'Follow Up'];
+
+const toCSV = (rows: Prospect[]) => {
+  const escape = (v: string | null) => {
+    if (v == null) return '';
+    if (v.includes(',') || v.includes('"') || v.includes('\n')) return '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  };
+  const lines = [CSV_HEADERS.join(','), ...rows.map(r =>
+    [r.site_name, r.site_url, r.contact_name, r.contact_email, r.contact_channel, r.category, r.domain_authority, r.status, r.pitch_template, r.published_url, r.notes, r.last_contacted_at, r.follow_up_at]
+      .map(v => escape(String(v ?? '')))
+      .join(',')
+  )];
+  return lines.join('\n');
+};
+
+const toTSV = (rows: Prospect[]) => {
+  const lines = [CSV_HEADERS.join('\t'), ...rows.map(r =>
+    [r.site_name, r.site_url, r.contact_name, r.contact_email, r.contact_channel, r.category, r.domain_authority, r.status, r.pitch_template, r.published_url, r.notes, r.last_contacted_at, r.follow_up_at]
+      .map(v => String(v ?? '').replace(/\t/g, ' '))
+      .join('\t')
+  )];
+  return lines.join('\n');
+};
+
 const Pill = ({ status }: { status: string }) => {
   const s = STATUSES.find(x => x.value === status) || STATUSES[0];
   const Icon = s.icon;
@@ -145,6 +171,7 @@ const AdminOutreach = () => {
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Partial<Prospect> | null>(null);
   const [showTpl, setShowTpl] = useState<Prospect | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const load = async () => {
     setLoading(true);
@@ -268,6 +295,45 @@ const AdminOutreach = () => {
         </div>
       </div>
 
+      {/* Export bar */}
+      {selected.size > 0 && (
+        <div className="flex items-center gap-3 glass-card rounded-xl px-4 py-2.5">
+          <span className="text-xs text-muted-foreground">{selected.size} selected</span>
+          <div className="flex-1" />
+          <button
+            onClick={() => {
+              const rows = filtered.filter(p => selected.has(p.id));
+              const csv = toCSV(rows);
+              const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(blob);
+              a.download = `outreach_export_${new Date().toISOString().slice(0,10)}.csv`;
+              a.click();
+              toast.success('CSV downloaded');
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-400/10 text-green-400 border border-green-400/30 hover:bg-green-400/20 transition"
+          >
+            <Download size={12} /> Export CSV
+          </button>
+          <button
+            onClick={() => {
+              const rows = filtered.filter(p => selected.has(p.id));
+              const tsv = toTSV(rows);
+              navigator.clipboard.writeText(tsv).then(() => toast.success('Copied — paste directly into Google Sheets'));
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition"
+          >
+            <Copy size={12} /> Copy for Google Sheets
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="text-xs text-muted-foreground hover:text-foreground underline"
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
       {/* Table */}
       <div className="glass-card rounded-2xl overflow-hidden">
         {loading ? (
@@ -279,6 +345,20 @@ const AdminOutreach = () => {
             <table className="w-full text-xs">
               <thead className="bg-muted/20 text-muted-foreground">
                 <tr>
+                  <th className="text-left px-3 py-2.5 font-medium w-8">
+                    <input
+                      type="checkbox"
+                      checked={filtered.length > 0 && filtered.every(p => selected.has(p.id))}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setSelected(new Set(filtered.map(p => p.id)));
+                        } else {
+                          setSelected(new Set());
+                        }
+                      }}
+                      className="accent-primary"
+                    />
+                  </th>
                   <th className="text-left px-4 py-2.5 font-medium">Site</th>
                   <th className="text-left px-3 py-2.5 font-medium">Category</th>
                   <th className="text-left px-3 py-2.5 font-medium">Contact</th>
@@ -291,6 +371,19 @@ const AdminOutreach = () => {
               <tbody>
                 {filtered.map(p => (
                   <tr key={p.id} className="border-t border-border/40 hover:bg-muted/10">
+                    <td className="px-3 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selected.has(p.id)}
+                        onChange={e => {
+                          const next = new Set(selected);
+                          if (e.target.checked) next.add(p.id);
+                          else next.delete(p.id);
+                          setSelected(next);
+                        }}
+                        className="accent-primary"
+                      />
+                    </td>
                     <td className="px-4 py-3">
                       <div className="font-semibold text-foreground">{p.site_name}</div>
                       {p.site_url && (
