@@ -806,7 +806,9 @@ const AdminOutreach = () => {
 
       {/* Template viewer */}
       {showTpl && (() => {
-        const t = renderTemplate(showTpl.pitch_template, showTpl);
+        const variants = TEMPLATE_VARIANTS[showTpl.pitch_template] || TEMPLATE_VARIANTS.guest_post;
+        const safeIdx = Math.min(variantIdx, variants.length - 1);
+        const t = renderVariant(variants[safeIdx], showTpl);
         return (
           <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowTpl(null)}>
             <div className="glass-card rounded-2xl p-6 w-full max-w-2xl space-y-4" onClick={e => e.stopPropagation()}>
@@ -817,6 +819,20 @@ const AdminOutreach = () => {
                 </h3>
                 <span className="text-xs text-muted-foreground">For: {showTpl.site_name}</span>
               </div>
+
+              {/* Variant tabs */}
+              <div className="flex items-center gap-1.5 flex-wrap border-b border-border pb-2">
+                {variants.map((v, i) => (
+                  <button
+                    key={v.label}
+                    onClick={() => setVariantIdx(i)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition ${i === safeIdx ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'}`}
+                  >
+                    Variant {i + 1} · {v.label}
+                  </button>
+                ))}
+              </div>
+
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Subject</label>
@@ -838,16 +854,24 @@ const AdminOutreach = () => {
                 <textarea readOnly value={t.body} rows={14}
                   className="w-full bg-muted/20 rounded-lg p-3 text-sm text-foreground border border-border font-mono resize-none focus:outline-none" />
               </div>
-              <div className="flex justify-between items-center pt-2">
-                <a
-                  href={showTpl.contact_email
-                    ? `mailto:${showTpl.contact_email}?subject=${encodeURIComponent(t.subject)}&body=${encodeURIComponent(t.body)}`
-                    : '#'}
-                  onClick={(e) => { if (!showTpl.contact_email) { e.preventDefault(); toast.error('No email on file'); } }}
-                  className="btn-glow inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
-                >
-                  <Send size={14} /> Open in Email Client
-                </a>
+              <div className="flex justify-between items-center pt-2 gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(`Subject: ${t.subject}\n\n${t.body}`); toast.success('Full email copied'); }}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm bg-muted/40 hover:bg-muted/60 text-foreground"
+                  >
+                    <Copy size={13} /> Copy All
+                  </button>
+                  <a
+                    href={showTpl.contact_email
+                      ? `mailto:${showTpl.contact_email}?subject=${encodeURIComponent(t.subject)}&body=${encodeURIComponent(t.body)}`
+                      : '#'}
+                    onClick={(e) => { if (!showTpl.contact_email) { e.preventDefault(); toast.error('No email on file'); } }}
+                    className="btn-glow inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+                  >
+                    <Send size={14} /> Open in Email Client
+                  </a>
+                </div>
                 <button onClick={() => setShowTpl(null)} className="px-4 py-2 rounded-lg text-sm bg-muted/40 hover:bg-muted/60 text-foreground">Close</button>
               </div>
             </div>
