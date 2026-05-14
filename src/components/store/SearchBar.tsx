@@ -535,6 +535,27 @@ const DesktopSearchPalette = ({ onClose }: { onClose: () => void }) => {
         {/* ─── When query: show suggestions + products ─── */}
         {hasQuery && !s.loading && (
           <>
+            {/* Did-you-mean banner */}
+            {(s.didYouMean || s.usedAi) && (
+              <div className="px-5 py-2 border-b border-border/30 bg-primary/5 flex items-center gap-2 text-xs">
+                <Zap size={12} className="text-primary flex-shrink-0" />
+                {s.didYouMean ? (
+                  <span className="text-foreground">
+                    আপনি কি খুঁজছিলেন{' '}
+                    <button
+                      onClick={() => { s.setQuery(s.didYouMean); s.handleChange(s.didYouMean); }}
+                      className="font-bold text-primary hover:underline"
+                    >
+                      {s.didYouMean}
+                    </button>
+                    {' '}?
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">AI দ্বারা সম্পর্কিত প্রোডাক্ট সাজেস্ট করা হয়েছে</span>
+                )}
+                {s.aiLoading && <span className="ml-auto text-[10px] text-muted-foreground">AI সার্চ চলছে…</span>}
+              </div>
+            )}
             {/* Text suggestions (Google-style) */}
             {s.suggestions.length > 0 && (
               <div className="py-1">
