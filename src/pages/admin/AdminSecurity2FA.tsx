@@ -183,6 +183,62 @@ const AdminSecurity2FA = () => {
               </button>
             </div>
           </div>
+
+          {/* Reset / Lost Authenticator */}
+          <div className="border-t border-border/50 pt-4 space-y-2">
+            <p className="text-sm font-semibold flex items-center gap-2">
+              <RefreshCw size={14} className="text-primary" /> Lost your Authenticator?
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Reset the current setup and scan a new QR code. Authorized either by your active admin
+              session, or by a fresh email verification code sent to all admins.
+            </p>
+
+            {!resetMode ? (
+              <button
+                onClick={() => setResetMode(true)}
+                className="px-4 py-2 border border-primary/40 text-primary rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-primary/10"
+              >
+                <RefreshCw size={14} /> Reset Authenticator
+              </button>
+            ) : (
+              <div className="space-y-3 bg-muted/30 border border-border rounded-xl p-3">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={handleSendResetEmail}
+                    disabled={resetSending}
+                    className="px-3 py-2 border border-border rounded-lg text-xs font-medium flex items-center gap-1.5 disabled:opacity-50"
+                  >
+                    <MailCheck size={13} /> {resetSending ? 'Sending…' : 'Email me a reset code'}
+                  </button>
+                </div>
+                {resetSentInfo && (
+                  <div className="text-xs text-primary bg-primary/10 border border-primary/30 rounded-lg px-3 py-2">{resetSentInfo}</div>
+                )}
+                <input
+                  value={resetEmailCode}
+                  onChange={(e) => setResetEmailCode(e.target.value)}
+                  placeholder="Email code (optional if logged-in session is valid)"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleConfirmReset}
+                    disabled={resetting}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold disabled:opacity-50"
+                  >
+                    {resetting ? 'Resetting…' : 'Confirm Reset & Show New QR'}
+                  </button>
+                  <button
+                    onClick={() => { setResetMode(false); setResetEmailCode(''); setResetSentInfo(''); }}
+                    className="px-4 py-2 border border-border rounded-lg text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
