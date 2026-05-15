@@ -17,6 +17,10 @@ interface Props {
   renewUrl?: string
   customMessage?: string
   orderNumber?: string
+  couponCode?: string
+  discountPercent?: number
+  couponValidUntil?: string
+  specialOffer?: string
 }
 
 const badge = {
@@ -48,6 +52,10 @@ const SubscriptionRenewalReminder = ({
   renewUrl = 'https://shahedstore.com.bd/shop',
   customMessage,
   orderNumber,
+  couponCode,
+  discountPercent,
+  couponValidUntil,
+  specialOffer,
 }: Props) => {
   const expired = typeof daysLeft === 'number' && daysLeft < 0
   const status = expired
@@ -86,14 +94,61 @@ const SubscriptionRenewalReminder = ({
             </Section>
 
             {customMessage ? (
-              <Text style={textStyle}>{customMessage}</Text>
+              <Text style={{ ...textStyle, whiteSpace: 'pre-wrap' as const }}>{customMessage}</Text>
             ) : (
               <Text style={textStyle}>
                 {expired
-                  ? 'Your subscription has already ended. To continue enjoying uninterrupted access, please renew it as soon as possible.'
-                  : 'To avoid any interruption in your service, please renew your subscription before the expiry date.'}
+                  ? '⏰ Your subscription has already ended. To continue enjoying uninterrupted access, please renew it as soon as possible.'
+                  : '🔔 To avoid any interruption in your service, please renew your subscription before the expiry date.'}
               </Text>
             )}
+
+            {couponCode ? (
+              <Section style={{
+                background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)',
+                border: `2px dashed ${BRAND_PURPLE}`,
+                borderRadius: '14px',
+                padding: '20px',
+                margin: '0 0 24px',
+                textAlign: 'center' as const,
+              }}>
+                <Text style={{ ...featureTitle, color: BRAND_PURPLE, margin: '0 0 8px', fontSize: '14px' }}>
+                  🎁 Your Personal Discount Coupon
+                </Text>
+                <Text style={{ fontSize: '13px', color: '#4b5563', margin: '0 0 12px' }}>
+                  {discountPercent ? `${discountPercent}% OFF` : 'Special discount'} on <strong>{productName}</strong> — just for you.
+                </Text>
+                <div style={{
+                  display: 'inline-block',
+                  background: '#ffffff',
+                  border: `1.5px solid ${BRAND_PURPLE}`,
+                  borderRadius: '10px',
+                  padding: '10px 22px',
+                  fontFamily: 'monospace, monospace',
+                  fontSize: '20px',
+                  fontWeight: 700,
+                  letterSpacing: '2px',
+                  color: BRAND_PURPLE,
+                }}>{couponCode}</div>
+                <Text style={{ fontSize: '11px', color: '#6b7280', margin: '12px 0 0' }}>
+                  ✨ One-time use • Only for this product{couponValidUntil ? ` • Valid until ${couponValidUntil}` : ''}
+                </Text>
+              </Section>
+            ) : null}
+
+            {specialOffer ? (
+              <Section style={{
+                background: '#fef3c7',
+                border: '1px solid #fcd34d',
+                borderRadius: '12px',
+                padding: '14px 18px',
+                margin: '0 0 24px',
+              }}>
+                <Text style={{ fontSize: '13px', color: '#78350f', margin: 0 }}>
+                  🌟 <strong>Special offer:</strong> {specialOffer}
+                </Text>
+              </Section>
+            ) : null}
 
             <Section style={featureBox}>
               <Text style={featureTitle}>What you get on renewal</Text>

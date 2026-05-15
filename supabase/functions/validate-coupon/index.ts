@@ -10,7 +10,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const { code, orderTotal } = await req.json();
+    const { code, orderTotal, customerEmail, productIds } = await req.json();
 
     if (!code || typeof code !== 'string' || code.length > 30) {
       return new Response(JSON.stringify({ valid: false, message: 'কুপন কোড সঠিক নয়' }), {
@@ -86,7 +86,7 @@ serve(async (req) => {
     // --- Regular coupons table ---
     const { data, error } = await supabase
       .from('coupons')
-      .select('id, code, discount_type, discount_value, min_order_amount, max_uses, uses_count, is_active, expires_at')
+      .select('id, code, discount_type, discount_value, min_order_amount, max_uses, uses_count, is_active, expires_at, customer_email, product_id')
       .eq('code', trimmedCode)
       .eq('is_active', true)
       .single();
@@ -95,6 +95,31 @@ serve(async (req) => {
       return new Response(JSON.stringify({ valid: false, message: 'কুপন কোড সঠিক নয়' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
       });
+    }
+
+    // Personal coupon — restricted to specific customer email
+    if (data.customer_email) {
+      const submitted = (customerEmail || '').toString().trim().toLowerCase();
+      if (!submitted) {
+        return new Response(JSON.stringify({ valid: false, message: 'এই কুপন ব্যবহারের জন্য লগইন করুন বা ইমেইল দিন' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
+        });
+      }
+      if (submitted !== data.customer_email) {
+        return new Response(JSON.stringify({ valid: false, message: 'এই কুপন আপনার অ্যাকাউন্টের জন্য নয়' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
+        });
+      }
+    }
+
+    // Product-restricted coupon — must be applied with that product in cart
+    if (data.product_id) {
+      const ids: string[] = Array.isArray(productIds) ? productIds.map((x: any) => String(x)) : [];
+      if (!ids.includes(String(data.product_id))) {
+        return new Response(JSON.stringify({ valid: false, message: 'এই কুপন শুধুমাত্র নির্দিষ্ট প্রোডাক্টের জন্য — সেই প্রোডাক্ট কার্টে যোগ করুন' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
+        });
+      }
     }
 
     if (data.expires_at && new Date(data.expires_at) < new Date()) {

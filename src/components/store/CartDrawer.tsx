@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { X, ShoppingCart, Plus, Minus, Trash2, ArrowRight, Tag, Loader2, Heart, CheckCircle } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -13,6 +14,7 @@ const CartDrawer = () => {
     coupon, setCoupon, resetCoupon,
   } = useCart();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [couponInput, setCouponInput] = useState(coupon.isApplied ? coupon.code : '');
   const [couponLoading, setCouponLoading] = useState(false);
@@ -24,7 +26,12 @@ const CartDrawer = () => {
     setCouponError('');
     try {
       const { data, error } = await supabase.functions.invoke('validate-coupon', {
-        body: { code: couponInput.trim().toUpperCase(), orderTotal: subtotal },
+        body: {
+          code: couponInput.trim().toUpperCase(),
+          orderTotal: subtotal,
+          customerEmail: user?.email || '',
+          productIds: items.map((it: any) => it.id).filter(Boolean),
+        },
       });
       if (error || !data?.valid) {
         setCouponError(data?.message || 'Invalid coupon code');

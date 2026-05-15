@@ -10,6 +10,10 @@ interface Body {
   tone?: string;
   language?: 'en' | 'bn';
   extraNotes?: string;
+  couponCode?: string;
+  discountPercent?: number;
+  couponValidUntil?: string;
+  specialOffer?: string;
 }
 
 Deno.serve(async (req) => {
@@ -22,8 +26,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const lang = body.language === 'bn' ? 'Bengali' : 'English';
-    const tone = body.tone || 'professional, warm, concise';
+    const lang = body.language === 'bn' ? 'Bengali (বাংলা)' : 'English';
+    const tone = body.tone || 'professional, warm, friendly';
     const days = body.daysLeft;
     const expiryStatus = days == null
       ? 'Expiry date is approaching'
@@ -31,16 +35,34 @@ Deno.serve(async (req) => {
       : days === 0 ? 'Expires today'
       : `Expires in ${days} day(s)`;
 
-    const sys = `You write subscription renewal reminder emails for an online software store (Shahed Store).
-Output must be plain text body only — NO subject line, NO greeting like "Dear", NO signature/footer (the email template adds branding, greeting, CTA and footer automatically).
-Write 3-5 short paragraphs in ${lang}. Tone: ${tone}.
-Mention the product name, the expiry status naturally, the value of renewing, and a soft call to renew.
-Do NOT invent prices, discount codes, or features that weren't given. Do NOT include URLs (the template renders the renew button).`;
+    const couponBlock = body.couponCode
+      ? `\nA personal one-time discount coupon has been generated specifically for this customer:
+- Coupon code: ${body.couponCode}
+- Discount: ${body.discountPercent || 0}% off on ${body.productName}
+- Valid until: ${body.couponValidUntil || 'a limited time'}
+- One-time use, only for this customer's email and only on this product.`
+      : '';
+
+    const offerBlock = body.specialOffer ? `\nSpecial offer to highlight: ${body.specialOffer}` : '';
+
+    const sys = `You write subscription renewal reminder emails for an online software store (Shahed Store / শাহেদ স্টোর).
+
+Output rules:
+- Plain text body only — NO subject line, NO "Dear" greeting, NO signature/footer (the email template adds the brand header, greeting, CTA button, coupon block and footer).
+- Write in ${lang}. Tone: ${tone}.
+- 4–6 short, scannable paragraphs. Use line breaks generously.
+- Sprinkle tasteful emojis throughout (✨ 🎁 ⏰ 🔔 💎 ⭐ 🚀 🎉 🛡️ 💳 🙏) — about one per paragraph, placed naturally, never spammy. Do NOT start every line with an emoji.
+- Mention the product name, the expiry status naturally, and the value of renewing on time.
+${body.couponCode ? `- IMPORTANT: Mention the personal discount coupon clearly. State the discount percent and that it is a one-time, personal coupon just for this customer on this specific product. Mention the validity. Do NOT print the coupon code in the body — the template renders the coupon code in a styled box.` : ''}
+${body.specialOffer ? '- Weave the special offer naturally into the message.' : ''}
+- End with a soft, professional call to renew.
+- Do NOT invent prices or features that were not given. Do NOT include URLs (the template renders the renew button).
+- Bengali output must use the spelling "শাহেদ স্টোর" (never "শাহিদ" / "সাহেদ" / "শাহীদ").`;
 
     const usr = `Product: ${body.productName}
 Customer name: ${body.customerName || '(unknown)'}
 Expiry date: ${body.expiryDate || '(not specified)'}
-Status: ${expiryStatus}
+Status: ${expiryStatus}${couponBlock}${offerBlock}
 ${body.extraNotes ? `Extra notes from admin: ${body.extraNotes}` : ''}
 
 Write the email body now.`;
@@ -50,7 +72,7 @@ Write the email body now.`;
         { role: 'system', content: sys },
         { role: 'user', content: usr },
       ],
-      maxTokens: 600,
+      maxTokens: 800,
     });
 
     return new Response(JSON.stringify({ message: text.trim(), provider }), {

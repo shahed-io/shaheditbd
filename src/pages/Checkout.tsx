@@ -288,7 +288,12 @@ const Checkout = () => {
     setCouponError('');
     try {
       const { data, error } = await supabase.functions.invoke('validate-coupon', {
-        body: { code: c, orderTotal: subtotal },
+        body: {
+          code: c,
+          orderTotal: subtotal,
+          customerEmail: form.email || user?.email || '',
+          productIds: items.map((it: any) => it.id).filter(Boolean),
+        },
       });
       if (error || !data?.valid) {
         setCouponError(data?.message || 'কুপন কোড সঠিক নয়');

@@ -1055,6 +1055,7 @@ export type Database = {
         Row: {
           code: string
           created_at: string
+          customer_email: string | null
           description: string | null
           discount_type: string
           discount_value: number
@@ -1063,12 +1064,15 @@ export type Database = {
           is_active: boolean | null
           max_uses: number | null
           min_order_amount: number | null
+          product_id: string | null
+          source: string | null
           updated_at: string
           uses_count: number | null
         }
         Insert: {
           code: string
           created_at?: string
+          customer_email?: string | null
           description?: string | null
           discount_type?: string
           discount_value: number
@@ -1077,12 +1081,15 @@ export type Database = {
           is_active?: boolean | null
           max_uses?: number | null
           min_order_amount?: number | null
+          product_id?: string | null
+          source?: string | null
           updated_at?: string
           uses_count?: number | null
         }
         Update: {
           code?: string
           created_at?: string
+          customer_email?: string | null
           description?: string | null
           discount_type?: string
           discount_value?: number
@@ -1091,10 +1098,20 @@ export type Database = {
           is_active?: boolean | null
           max_uses?: number | null
           min_order_amount?: number | null
+          product_id?: string | null
+          source?: string | null
           updated_at?: string
           uses_count?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "coupons_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_send_log: {
         Row: {
