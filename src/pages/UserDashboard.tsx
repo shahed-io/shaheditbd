@@ -411,6 +411,20 @@ const UserDashboard = () => {
     setLicensesLoading(false);
   };
 
+  const fetchSubscriptions = async () => {
+    if (!user) return;
+    setSubsLoading(true);
+    const { data } = await supabase
+      .from('order_items')
+      .select('id, product_name, expires_at, last_reminder_sent_at, created_at, orders!inner(user_id, order_number, status, created_at)')
+      .eq('orders.user_id', user.id)
+      .eq('orders.status', 'completed')
+      .not('expires_at', 'is', null)
+      .order('expires_at', { ascending: true });
+    setSubscriptions(data || []);
+    setSubsLoading(false);
+  };
+
   const fetchProfile = async () => {
     if (!user) return;
     let data: any = null;
