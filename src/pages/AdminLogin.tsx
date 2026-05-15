@@ -111,6 +111,23 @@ const AdminLogin = () => {
     }
   };
 
+  const handleSendEmailOtp = async () => {
+    setError('');
+    setEmailSentInfo('');
+    setEmailSending(true);
+    try {
+      const r = await sendEmailOtp();
+      const n = r?.sentTo ?? 0;
+      setEmailSentInfo(`✉ A 6-digit code was sent to ${n} admin email${n === 1 ? '' : 's'}. It expires in 10 minutes.`);
+      // If user was on enroll stage, move them to OTP stage so they can log in
+      setStage('2fa');
+    } catch (err) {
+      setError((err as Error).message || 'Could not send email code');
+    } finally {
+      setEmailSending(false);
+    }
+  };
+
   const handleGoEnroll = () => {
     navigate('/ceo/security?force=1', { replace: true });
   };
