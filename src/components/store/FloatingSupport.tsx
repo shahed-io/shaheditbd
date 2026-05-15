@@ -56,7 +56,23 @@ const DEFAULTS: LiveChatConfig = {
   ai_subtitle: 'তাৎক্ষণিক উত্তর পান',
   ai_welcome_message: 'হ্যালো! 👋 আমি Shahed Store-এর AI সহকারী। Windows, Office, Adobe, Netflix, Spotify সহ যেকোনো প্রোডাক্ট সম্পর্কে প্রশ্ন করুন!',
   ai_placeholder: 'আপনার প্রশ্ন লিখুন...',
-  quick_suggestions: ['💰 দাম জানতে চাই', '📦 কোন প্রোডাক্ট ভালো?', '🚚 ডেলিভারি কতক্ষণ?'],
+  quick_suggestions: [
+    '💰 দাম কত?',
+    '🎁 কোনো ডিসকাউন্ট আছে?',
+    '🎟️ কুপন কোড দিন',
+    '🪟 Windows 11 কিনতে চাই',
+    '📊 Office 365 আছে?',
+    '🎬 Netflix সাবস্ক্রিপশন',
+    '🎵 Spotify Premium',
+    '🎨 Adobe Creative Cloud',
+    '⚡ IDM Key লাগবে',
+    '💳 পেমেন্ট কিভাবে করব?',
+    '🚚 কতক্ষণে ডেলিভারি পাব?',
+    '✅ লাইসেন্স কি অরিজিনাল?',
+    '🆘 আমার অর্ডার কোথায়?',
+    '🔄 রিফান্ড পলিসি কী?',
+    '📞 সরাসরি কল করতে চাই',
+  ],
   fab_label: 'কোনটি পছন্দ করবেন?',
   live_sets: [],
 };
@@ -340,12 +356,12 @@ const FloatingSupport = () => {
             <div ref={bottomRef} />
           </div>
 
-          {/* Quick suggestions */}
+          {/* Quick suggestions — horizontal scroll so many chips fit */}
           {messages.length <= 1 && config.quick_suggestions.length > 0 && (
-            <div className="px-3 pb-2 flex flex-wrap gap-1.5">
+            <div className="px-3 pb-2 flex gap-1.5 overflow-x-auto scrollbar-thin snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {config.quick_suggestions.map(q => (
                 <button key={q} onClick={() => { setInput(q); setTimeout(() => inputRef.current?.focus(), 50); }}
-                  className="text-xs px-2.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors">
+                  className="shrink-0 snap-start text-xs px-2.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors whitespace-nowrap">
                   {q}
                 </button>
               ))}
