@@ -743,6 +743,36 @@ export default function AdminSubscriptionReminders() {
                 placeholder="Add a personal note. Leave blank to use the default reminder text."
               />
             </div>
+
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-3">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <Checkbox checked={includeCoupon} onCheckedChange={(v) => setIncludeCoupon(!!v)} />
+                🎁 Generate a personal one-time coupon for each recipient
+              </label>
+              {includeCoupon && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium">Discount %</label>
+                    <Input type="number" min={1} max={90} value={couponPercent}
+                      onChange={e => setCouponPercent(Math.max(1, Math.min(90, Number(e.target.value) || 0)))} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium">Valid (days)</label>
+                    <Input type="number" min={1} max={90} value={couponValidDays}
+                      onChange={e => setCouponValidDays(Math.max(1, Math.min(90, Number(e.target.value) || 0)))} />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="text-xs font-medium">Special offer text (optional)</label>
+                    <Input value={specialOffer} onChange={e => setSpecialOffer(e.target.value)}
+                      placeholder="e.g. Free 1-month bonus on renewal" />
+                  </div>
+                </div>
+              )}
+              <p className="text-[11px] text-muted-foreground">
+                Each recipient gets a unique <code>RENEW-XXXX</code> code locked to their email + product. One-time use.
+              </p>
+            </div>
+
             {sending && (
               <div className="text-sm">
                 Sending… {sendProgress.done}/{sendProgress.total}
