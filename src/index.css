@@ -379,6 +379,11 @@
     scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100vw;
+    /* Fluid root font-size: 14px on tiny phones → 17px on large desktops.
+       Every rem-based size in the app scales smoothly with viewport width. */
+    font-size: clamp(14px, 0.875rem + 0.25vw, 17px);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -397,6 +402,33 @@
     max-width: 100vw;
     width: 100%;
     position: relative;
+    /* Respect notches & home indicators on iPhone / Android */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* ─── Universal responsive safety net ─── */
+  img, video, canvas, svg, picture, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
+  }
+  /* Long words / URLs / emails should never blow out a card */
+  p, span, a, h1, h2, h3, h4, h5, h6, li, td, th, label {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  /* Inputs scale with parent — no hardcoded widths breaking on phones */
+  input, textarea, select, button {
+    max-width: 100%;
+  }
+  /* Native tables stay scrollable horizontally on narrow screens
+     instead of squishing or overflowing the page. */
+  .table-responsive,
+  .prose table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Dark themes get dark body backgrounds */
