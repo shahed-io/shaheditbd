@@ -52,6 +52,7 @@ const AdminSecurity2FA = () => {
     try {
       const r = await enable(setupCode.trim());
       setBackupCodes(r.backupCodes ?? []);
+      if (r?.token) setStoredToken(r.token);
       setEnabled(true);
       setSetupData(null);
       setSetupCode('');

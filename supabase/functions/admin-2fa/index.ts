@@ -163,7 +163,18 @@ Deno.serve(async (req) => {
         })
         .eq("user_id", userId);
 
-      return json({ success: true, backupCodes });
+      // Also issue a session token so the user isn't immediately bounced to login
+      const sessionToken = generateSessionToken();
+      const expiresAt = new Date(Date.now() + SESSION_TTL_HOURS * 3600 * 1000).toISOString();
+      await admin.from("admin_2fa_sessions").insert({
+        user_id: userId,
+        token: sessionToken,
+        user_agent: req.headers.get("user-agent")?.slice(0, 300) ?? null,
+        ip: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null,
+        expires_at: expiresAt,
+      });
+
+      return json({ success: true, backupCodes, token: sessionToken, expiresAt });
     }
 
     // ─── verify-login: TOTP or backup code → issue session token ───
