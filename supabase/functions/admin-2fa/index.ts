@@ -62,6 +62,16 @@ function verifyTotp(secret: string, code: string): boolean {
   return delta !== null;
 }
 
+async function sha256(input: string): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
+  return Array.from(new Uint8Array(buf)).map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+
+function generateEmailCode(): string {
+  const n = crypto.getRandomValues(new Uint32Array(1))[0] % 1_000_000;
+  return n.toString().padStart(6, "0");
+}
+
 const BodySchema = z.object({
   action: z.enum([
     "status",
@@ -71,6 +81,7 @@ const BodySchema = z.object({
     "validate-session",
     "disable",
     "logout",
+    "send-email-otp",
   ]),
   code: z.string().trim().optional(),
   token: z.string().trim().optional(),
