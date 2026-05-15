@@ -115,7 +115,7 @@ export default function AdminSubscriptionReminders() {
       })).filter(r => r.customer_email);
 
       const plRows: SubRow[] = ((pl as any[]) || []).map(r => ({
-        source: 'personal_license',
+        source: 'personal_license' as const,
         id: r.id,
         product_id: null,
         product_name: r.name,
