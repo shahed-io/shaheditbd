@@ -400,7 +400,7 @@ Deno.serve(async (req) => {
         .lt("expires_at", new Date().toISOString())
         .eq("user_id", userId);
 
-      return json({ success: true, token: sessionToken, expiresAt, remembered });
+      return json({ success: true, token: sessionToken, expiresAt, remembered, usedBackup: !!usedBackup });
     }
 
     // ─── validate-session ───
