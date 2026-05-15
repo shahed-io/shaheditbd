@@ -72,6 +72,26 @@ export const DEFAULT_INVOICE_DESIGN: InvoiceDesign = {
 let cache: InvoiceDesign | null = null;
 let loadingPromise: Promise<InvoiceDesign> | null = null;
 
+function parseValue(raw: any): Partial<InvoiceDesign> {
+  if (!raw) return {};
+  // String case — older rows may have stored the JSON as a text blob
+  if (typeof raw === 'string') {
+    try { return JSON.parse(raw) as Partial<InvoiceDesign>; } catch { return {}; }
+  }
+  // Corrupted character-indexed object {0:"{", 1:"\"", ...} → reassemble & parse
+  if (typeof raw === 'object' && !Array.isArray(raw) && '0' in raw && '1' in raw) {
+    try {
+      const reconstructed = Object.keys(raw)
+        .filter((k) => /^\d+$/.test(k))
+        .sort((a, b) => Number(a) - Number(b))
+        .map((k) => raw[k])
+        .join('');
+      return JSON.parse(reconstructed) as Partial<InvoiceDesign>;
+    } catch { return {}; }
+  }
+  return raw as Partial<InvoiceDesign>;
+}
+
 export async function loadInvoiceDesign(force = false): Promise<InvoiceDesign> {
   if (!force && cache) return cache;
   if (!force && loadingPromise) return loadingPromise;
@@ -84,7 +104,7 @@ export async function loadInvoiceDesign(force = false): Promise<InvoiceDesign> {
         .maybeSingle();
       const merged: InvoiceDesign = {
         ...DEFAULT_INVOICE_DESIGN,
-        ...((data?.value as Partial<InvoiceDesign>) || {}),
+        ...parseValue(data?.value),
       };
       cache = merged;
       return merged;
@@ -99,18 +119,36 @@ export async function loadInvoiceDesign(force = false): Promise<InvoiceDesign> {
 }
 
 export async function saveInvoiceDesign(design: InvoiceDesign): Promise<void> {
+  // Ensure we always write a clean plain object (never a stringified blob)
+  const clean: InvoiceDesign = JSON.parse(JSON.stringify(design));
   const { error } = await supabase
     .from('site_settings')
     .upsert(
-      { key: 'invoice_design', value: design as any, category: 'invoice' },
+      { key: 'invoice_design', value: clean as any, category: 'invoice' },
       { onConflict: 'key' }
     );
   if (error) throw error;
-  cache = design;
+  cache = clean;
+  // Broadcast so any open tab / module reloads its design
+  try {
+    new BroadcastChannel('invoice_design').postMessage({ type: 'updated', design: clean });
+  } catch { /* noop */ }
 }
 
 export function clearInvoiceDesignCache() {
   cache = null;
+}
+
+// Auto-invalidate cache in this tab when another tab/module saves a new design
+if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
+  try {
+    const ch = new BroadcastChannel('invoice_design');
+    ch.onmessage = (ev) => {
+      if (ev.data?.type === 'updated') {
+        cache = (ev.data.design as InvoiceDesign) || null;
+      }
+    };
+  } catch { /* noop */ }
 }
 
 /**
