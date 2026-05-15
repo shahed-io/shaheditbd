@@ -11,7 +11,8 @@ const corsHeaders = {
 };
 
 const ISSUER = "Shahed Store Admin";
-const SESSION_TTL_HOURS = 12;
+const DEFAULT_SESSION_TTL_HOURS = 12;
+const DEFAULT_REMEMBER_TTL_DAYS = 30;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -84,9 +85,17 @@ const BodySchema = z.object({
     "send-email-otp",
     "reset",
     "regenerate-backup-codes",
+    "get-config",
+    "update-config",
   ]),
   code: z.string().trim().optional(),
   token: z.string().trim().optional(),
+  remember: z.boolean().optional(),
+  config: z.object({
+    session_ttl_hours: z.number().int().min(1).max(720).optional(),
+    remember_device_ttl_days: z.number().int().min(1).max(365).optional(),
+    allow_remember_device: z.boolean().optional(),
+  }).optional(),
 });
 
 Deno.serve(async (req) => {
