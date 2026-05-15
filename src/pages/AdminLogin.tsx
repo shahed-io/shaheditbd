@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import BrandLoader from '@/components/store/BrandLoader';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, Mail, ShieldCheck, KeyRound, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ShieldCheck, KeyRound, ArrowLeft, MailCheck } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
 import SEOHead from '@/components/seo/SEOHead';
 import { useAdmin2FA, setStoredToken, getStoredToken } from '@/hooks/useAdmin2FA';
@@ -10,7 +10,7 @@ import { useAdmin2FA, setStoredToken, getStoredToken } from '@/hooks/useAdmin2FA
 const AdminLogin = () => {
   const { signIn, signOut, isAdmin, user, loading } = useAuth();
   const navigate = useNavigate();
-  const { status: get2faStatus, verifyLogin, validateSession } = useAdmin2FA();
+  const { status: get2faStatus, verifyLogin, validateSession, sendEmailOtp } = useAdmin2FA();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +22,8 @@ const AdminLogin = () => {
   const [stage, setStage] = useState<'password' | '2fa' | 'enroll'>('password');
   const [otp, setOtp] = useState('');
   const [verifying, setVerifying] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSentInfo, setEmailSentInfo] = useState<string>('');
 
   // After admin login, decide: needs 2FA challenge / enrollment / proceed
   useEffect(() => {
