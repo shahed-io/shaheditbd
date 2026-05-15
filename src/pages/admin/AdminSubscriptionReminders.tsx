@@ -82,6 +82,12 @@ export default function AdminSubscriptionReminders() {
   const [sending, setSending] = useState(false);
   const [sendProgress, setSendProgress] = useState({ done: 0, total: 0, failed: 0 });
 
+  // Per-recipient personal discount coupon (shared by manual + bulk)
+  const [includeCoupon, setIncludeCoupon] = useState(true);
+  const [couponPercent, setCouponPercent] = useState<number>(15);
+  const [couponValidDays, setCouponValidDays] = useState<number>(7);
+  const [specialOffer, setSpecialOffer] = useState('');
+
   // Manual / AI composer
   const [mProductId, setMProductId] = useState<string>('');
   const [mProductName, setMProductName] = useState('');
@@ -90,7 +96,7 @@ export default function AdminSubscriptionReminders() {
   const [mCustomerEmail, setMCustomerEmail] = useState('');
   const [mExpiry, setMExpiry] = useState('');
   const [mLanguage, setMLanguage] = useState<'en' | 'bn'>('bn');
-  const [mTone, setMTone] = useState('professional, warm, concise');
+  const [mTone, setMTone] = useState('professional, warm, friendly');
   const [mNotes, setMNotes] = useState('');
   const [mMessage, setMMessage] = useState('');
   const [mGenerating, setMGenerating] = useState(false);
