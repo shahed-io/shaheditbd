@@ -129,9 +129,57 @@ const AdminSecurity2FA = () => {
     navigator.clipboard.writeText(text).then(() => toast.success('Copied'));
   };
 
-  const qrUrl = setupData
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(setupData.otpauthUrl)}`
-    : null;
+  const handleRegenerate = async () => {
+    if (!confirm('This will invalidate your old backup codes and generate 8 new ones. Continue?')) return;
+    setRegenerating(true);
+    try {
+      const sessionToken = getStoredToken() || undefined;
+      const codeInput = regenCode.trim() || undefined;
+      const r = await regenerateBackupCodes({ token: sessionToken, code: codeInput });
+      setBackupCodes(r.backupCodes ?? []);
+      setRegenMode(false);
+      setRegenCode('');
+      toast.success('New backup codes generated.');
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setRegenerating(false);
+  };
+
+  const printBackupCodes = (codes: string[]) => {
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Admin 2FA Backup Codes</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:40px;max-width:600px;margin:auto;color:#111}
+  h1{font-size:20px;margin-bottom:4px}
+  .meta{color:#555;font-size:13px;margin-bottom:24px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;border:1px solid #ddd;border-radius:12px;padding:20px;background:#fafafa}
+  .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;letter-spacing:1px;padding:8px 12px;background:#fff;border:1px dashed #bbb;border-radius:8px;text-align:center}
+  .warn{margin-top:24px;padding:12px;background:#fff7e6;border:1px solid #f0c674;border-radius:8px;font-size:13px;color:#8a5a00}
+  .footer{margin-top:24px;font-size:11px;color:#888;text-align:center}
+</style></head><body>
+<h1>Shahed Store — Admin 2FA Backup Codes</h1>
+<div class="meta">Generated: ${new Date().toLocaleString()}</div>
+<div class="grid">${codes.map(c => `<div class="code">${c}</div>`).join('')}</div>
+<div class="warn">⚠ Each code can be used only once. Keep this page in a safe place. Anyone with these codes can bypass your authenticator.</div>
+<div class="footer">Shahed Store Admin Panel</div>
+<script>window.onload=()=>{window.print();}</script>
+</body></html>`;
+    const w = window.open('', '_blank', 'width=720,height=900');
+    if (!w) { toast.error('Popup blocked. Allow popups to print.'); return; }
+    w.document.write(html);
+    w.document.close();
+  };
+
+  const downloadBackupCodes = (codes: string[]) => {
+    const text = `Shahed Store — Admin 2FA Backup Codes\nGenerated: ${new Date().toISOString()}\n\n${codes.join('\n')}\n\nEach code is single-use. Keep safe.\n`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `admin-2fa-backup-codes-${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   if (loading) {
     return (
