@@ -78,6 +78,9 @@ serve(async (req) => {
         discount,
         couponId: wc.id,
         welcomeCoupon: true,
+        discountType: wc.discount_type === 'fixed' ? 'fixed' : 'percentage',
+        discountValue: wc.discount_type === 'fixed' ? wc.discount_amount : wc.discount_percent,
+        message: '✅ Welcome কুপন approved!',
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
       });
@@ -144,7 +147,16 @@ serve(async (req) => {
       ? Math.round(orderTotal * data.discount_value / 100)
       : Math.min(data.discount_value, orderTotal);
 
-    return new Response(JSON.stringify({ valid: true, discount, couponId: data.id }), {
+    return new Response(JSON.stringify({
+      valid: true,
+      discount,
+      couponId: data.id,
+      discountType: data.discount_type,
+      discountValue: data.discount_value,
+      message: data.discount_type === 'percentage'
+        ? `✅ কুপন approved — ${data.discount_value}% ছাড়!`
+        : `✅ কুপন approved — ৳${data.discount_value} ছাড়!`,
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
     });
   } catch (err) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Edit, Trash2, Tag, Copy, CheckCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Tag, Copy, CheckCircle, Sparkles, Calendar, TrendingUp, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 import { z } from 'zod';
@@ -234,63 +234,97 @@ const AdminCoupons = () => {
         ) : coupons.map((coupon) => {
           const expired = isExpired(coupon.expires_at);
           const usage = usagePercent(coupon);
+          const isPercent = coupon.discount_type === 'percentage';
+          const valueLabel = isPercent ? `${coupon.discount_value}%` : `৳${coupon.discount_value}`;
           return (
-            <div key={coupon.id} className={`glass-card-hover rounded-2xl p-5 ${expired ? 'opacity-60' : ''}`}>
-              {/* Header */}
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-primary text-lg">{coupon.code}</span>
-                    <button
-                      onClick={() => copyCode(coupon.code, coupon.id)}
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                      title="Copy code"
-                    >
-                      {copiedId === coupon.id ? <CheckCircle size={14} className="text-primary" /> : <Copy size={14} />}
-                    </button>
+            <div
+              key={coupon.id}
+              className={`group relative overflow-hidden rounded-2xl border border-primary/15 bg-gradient-to-br from-background/80 via-primary/[0.04] to-background/80 backdrop-blur-xl p-5 shadow-[0_8px_30px_-12px_rgba(99,102,241,0.25)] hover:shadow-[0_15px_40px_-10px_rgba(99,102,241,0.4)] hover:border-primary/40 transition-all duration-500 ${expired ? 'opacity-60' : ''}`}
+            >
+              {/* Decorative blob */}
+              <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-purple-500/20 blur-3xl opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <div className="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-gradient-to-br from-pink-500/20 to-amber-400/15 blur-3xl opacity-50 pointer-events-none" />
+
+              {/* Ticket notch perforations */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 w-4 h-4 rounded-full bg-background border border-primary/15" />
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 w-4 h-4 rounded-full bg-background border border-primary/15" />
+
+              <div className="relative">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={13} className="text-amber-400 animate-pulse" />
+                      <span className="font-mono font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-lg truncate">
+                        {coupon.code}
+                      </span>
+                      <button
+                        onClick={() => copyCode(coupon.code, coupon.id)}
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                        title="Copy code"
+                      >
+                        {copiedId === coupon.id ? <CheckCircle size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                      </button>
+                    </div>
+                    {coupon.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{coupon.description}</p>}
                   </div>
-                  {coupon.description && <p className="text-xs text-muted-foreground mt-0.5">{coupon.description}</p>}
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => handleEdit(coupon)} className="p-1.5 text-muted-foreground hover:text-primary"><Edit size={14} /></button>
-                  <button onClick={() => handleDelete(coupon.id)} className="p-1.5 text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
-                </div>
-              </div>
-
-              {/* Discount badge */}
-              <div className="flex items-center gap-2 flex-wrap mb-3">
-                <span className="glass-card px-3 py-1 rounded-full text-xs font-bold text-primary">
-                  {coupon.discount_type === 'percentage' ? `${coupon.discount_value}% OFF` : `৳${coupon.discount_value} OFF`}
-                </span>
-                {coupon.min_order_amount > 0 && (
-                  <span className="text-xs text-muted-foreground">Min: ৳{coupon.min_order_amount}</span>
-                )}
-                <span className={`text-xs px-2 py-0.5 rounded-full ${coupon.is_active && !expired ? 'text-green-400 bg-green-400/10' : 'text-red-400 bg-red-400/10'}`}>
-                  {expired ? 'Expired' : coupon.is_active ? 'Active' : 'Inactive'}
-                </span>
-              </div>
-
-              {/* Usage bar */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Used: {coupon.uses_count} times</span>
-                  <span>{coupon.max_uses ? `Limit: ${coupon.max_uses}` : 'Unlimited'}</span>
-                </div>
-                {usage !== null && (
-                  <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${usage >= 100 ? 'bg-destructive' : usage >= 80 ? 'bg-secondary' : 'bg-primary'}`}
-                      style={{ width: `${usage}%` }}
-                    />
+                  <div className="flex gap-1 shrink-0">
+                    <button onClick={() => handleEdit(coupon)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"><Edit size={14} /></button>
+                    <button onClick={() => handleDelete(coupon.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"><Trash2 size={14} /></button>
                   </div>
+                </div>
+
+                {/* Big discount display */}
+                <div className="my-4 flex items-end gap-2">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-primary via-fuchsia-500 to-pink-500 leading-none">
+                      {valueLabel}
+                    </span>
+                    <span className="text-xs font-bold text-primary/70 uppercase tracking-wider">OFF</span>
+                  </div>
+                </div>
+
+                {/* Meta chips */}
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide ${coupon.is_active && !expired ? 'text-emerald-300 bg-emerald-400/10 border border-emerald-400/30' : 'text-red-300 bg-red-400/10 border border-red-400/30'}`}>
+                    {expired ? 'Expired' : coupon.is_active ? '● Active' : 'Inactive'}
+                  </span>
+                  {coupon.min_order_amount > 0 && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted/40 text-muted-foreground border border-border">
+                      Min ৳{coupon.min_order_amount}
+                    </span>
+                  )}
+                  {coupon.customer_email && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-400/10 text-purple-300 border border-purple-400/30 flex items-center gap-1">
+                      <Users size={9} /> Personal
+                    </span>
+                  )}
+                </div>
+
+                {/* Usage bar */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="flex items-center gap-1 text-muted-foreground">
+                      <TrendingUp size={11} /> Used: <span className="font-bold text-foreground">{coupon.uses_count}</span>
+                    </span>
+                    <span className="text-muted-foreground">{coupon.max_uses ? `of ${coupon.max_uses}` : '∞ Unlimited'}</span>
+                  </div>
+                  {usage !== null && (
+                    <div className="h-1.5 bg-muted/40 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-700 ${usage >= 100 ? 'bg-gradient-to-r from-red-500 to-rose-500' : usage >= 80 ? 'bg-gradient-to-r from-amber-500 to-orange-500' : 'bg-gradient-to-r from-primary via-fuchsia-500 to-pink-500'}`}
+                        style={{ width: `${Math.max(3, usage)}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {coupon.expires_at && (
+                  <p className="text-[11px] text-muted-foreground mt-3 flex items-center gap-1">
+                    <Calendar size={11} /> Expires {new Date(coupon.expires_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </p>
                 )}
               </div>
-
-              {coupon.expires_at && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Expires: {new Date(coupon.expires_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                </p>
-              )}
             </div>
           );
         })}

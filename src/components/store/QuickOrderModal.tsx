@@ -216,6 +216,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         setCouponDiscount(0);
       } else {
         setCouponDiscount(data.discount);
+        toast.success(data.message || `✅ কুপন approved! ৳${data.discount} ছাড়`);
       }
     } catch {
       setCouponError('কুপন চেক করতে সমস্যা হয়েছে');
@@ -559,7 +560,21 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                   </button>
                 </div>
                 {couponError && <p className="text-destructive text-xs mt-1">{couponError}</p>}
-                {couponDiscount > 0 && <p className="text-green-500 text-xs mt-1">✅ ৳{couponDiscount.toLocaleString()} ছাড় পেয়েছেন!</p>}
+                {couponDiscount > 0 && (
+                  <div className="mt-2 relative overflow-hidden rounded-xl border border-emerald-400/40 bg-gradient-to-r from-emerald-500/15 via-green-500/10 to-emerald-500/15 px-3 py-2 shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)]">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.25),transparent_60%)] pointer-events-none" />
+                    <div className="relative flex items-center gap-2">
+                      <div className="relative">
+                        <CheckCircle size={15} className="text-emerald-400" />
+                        <span className="absolute inset-0 rounded-full bg-emerald-400/40 blur-md animate-pulse" />
+                      </div>
+                      <div className="flex flex-col leading-tight">
+                        <span className="text-[10px] uppercase tracking-wider text-emerald-300/80 font-bold">Approved ✨</span>
+                        <span className="text-xs font-bold text-emerald-300">৳{couponDiscount.toLocaleString()} ছাড় পেয়েছেন!</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Price Summary */}
