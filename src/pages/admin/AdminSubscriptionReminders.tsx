@@ -378,6 +378,118 @@ export default function AdminSubscriptionReminders() {
         </Card>
       </div>
 
+      {/* ===== Manual / AI Reminder Composer ===== */}
+      <Card className="p-4 space-y-3 border-primary/30">
+        <div>
+          <h2 className="font-semibold flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            Manual / AI Reminder
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Send to any customer (offline / manual purchase). Pick a product, AI writes a professional reminder, then auto-sends.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium">Product</label>
+            <Popover open={mProductOpen} onOpenChange={setMProductOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" className="w-full justify-between font-normal">
+                  {mProductName || 'Search product…'}
+                  <Search className="h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-0 w-[--radix-popover-trigger-width]" align="start">
+                <Command>
+                  <CommandInput placeholder="Type product name…" />
+                  <CommandList>
+                    <CommandEmpty>No product found.</CommandEmpty>
+                    <CommandGroup>
+                      {products.map(p => (
+                        <CommandItem
+                          key={p.id}
+                          value={p.name}
+                          onSelect={() => { setMProductId(p.id); setMProductName(p.name); setMProductOpen(false); }}
+                        >
+                          {p.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            <Input
+              className="mt-1"
+              placeholder="…or type custom product name"
+              value={mProductName}
+              onChange={e => { setMProductName(e.target.value); setMProductId(''); }}
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium">Customer email</label>
+            <Input type="email" placeholder="customer@example.com" value={mCustomerEmail} onChange={e => setMCustomerEmail(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs font-medium">Customer name</label>
+            <Input placeholder="Optional" value={mCustomerName} onChange={e => setMCustomerName(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs font-medium">Expiry date (optional)</label>
+            <Input type="date" value={mExpiry} onChange={e => setMExpiry(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs font-medium">Language</label>
+            <Select value={mLanguage} onValueChange={(v: any) => setMLanguage(v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bn">Bengali (বাংলা)</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-xs font-medium">Tone</label>
+            <Input value={mTone} onChange={e => setMTone(e.target.value)} placeholder="professional, warm, concise" />
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium">Notes for AI (optional)</label>
+          <Input value={mNotes} onChange={e => setMNotes(e.target.value)} placeholder="e.g. mention loyalty discount, mention 24/7 support" />
+        </div>
+
+        <div>
+          <label className="text-xs font-medium flex items-center justify-between">
+            <span>Email body (AI-generated, editable)</span>
+            {mDaysLeft != null && (
+              <Badge variant={mDaysLeft < 0 || mDaysLeft <= 7 ? 'destructive' : 'secondary'}>
+                {mDaysLeft < 0 ? `Expired ${Math.abs(mDaysLeft)}d ago` : `${mDaysLeft}d left`}
+              </Badge>
+            )}
+          </label>
+          <Textarea rows={8} value={mMessage} onChange={e => setMMessage(e.target.value)} placeholder="Click ‘Generate with AI’ to draft a professional reminder…" />
+        </div>
+
+        <div className="flex flex-wrap gap-2 items-center justify-between">
+          <label className="flex items-center gap-2 text-sm">
+            <Checkbox checked={mAutoSend} onCheckedChange={(v) => setMAutoSend(!!v)} />
+            Auto-send right after AI generates
+          </label>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => generateAI(false)} disabled={mGenerating || mSending}>
+              {mGenerating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Wand2 className="h-4 w-4 mr-2" />}
+              Generate with AI
+            </Button>
+            <Button onClick={() => (!mMessage ? generateAI(true) : sendManual())} disabled={mGenerating || mSending}>
+              {mSending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
+              {!mMessage ? 'Generate & Send' : 'Send Email'}
+            </Button>
+          </div>
+        </div>
+      </Card>
+
       <Card className="p-4 space-y-3">
         <div className="flex flex-wrap gap-2 items-center">
           <div className="relative flex-1 min-w-[220px]">
