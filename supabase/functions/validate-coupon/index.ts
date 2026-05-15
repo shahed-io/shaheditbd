@@ -10,7 +10,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const { code, orderTotal } = await req.json();
+    const { code, orderTotal, customerEmail, productIds } = await req.json();
 
     if (!code || typeof code !== 'string' || code.length > 30) {
       return new Response(JSON.stringify({ valid: false, message: 'কুপন কোড সঠিক নয়' }), {
