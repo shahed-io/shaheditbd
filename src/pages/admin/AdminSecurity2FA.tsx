@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAdmin2FA, setStoredToken, getStoredToken } from '@/hooks/useAdmin2FA';
-import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle, RefreshCw, MailCheck, Printer, Download } from 'lucide-react';
+import { useAdmin2FA, setStoredToken, getStoredToken, type Admin2FAConfig } from '@/hooks/useAdmin2FA';
+import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle, RefreshCw, MailCheck, Printer, Download, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSecurity2FA = () => {
-  const { status, setup, enable, disable, sendEmailOtp, reset, regenerateBackupCodes } = useAdmin2FA();
+  const { status, setup, enable, disable, sendEmailOtp, reset, regenerateBackupCodes, getConfig, updateConfig } = useAdmin2FA();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const isForced = params.get('force') === '1';
@@ -35,6 +35,11 @@ const AdminSecurity2FA = () => {
   const [regenCode, setRegenCode] = useState('');
   const [regenerating, setRegenerating] = useState(false);
 
+  // Session config
+  const [config, setConfig] = useState<Admin2FAConfig | null>(null);
+  const [configForm, setConfigForm] = useState<Admin2FAConfig | null>(null);
+  const [savingConfig, setSavingConfig] = useState(false);
+
   const refresh = async () => {
     setLoading(true);
     try {
@@ -47,6 +52,24 @@ const AdminSecurity2FA = () => {
   };
 
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, []);
+
+  // Load 2FA session config
+  useEffect(() => {
+    getConfig().then((c) => { setConfig(c); setConfigForm(c); }).catch(() => { /* ignore */ });
+  }, [getConfig]);
+
+  const handleSaveConfig = async () => {
+    if (!configForm) return;
+    setSavingConfig(true);
+    try {
+      const r = await updateConfig(configForm);
+      if (r?.config) { setConfig(r.config); setConfigForm(r.config); }
+      toast.success('Session settings saved.');
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setSavingConfig(false);
+  };
 
   const handleStartSetup = async () => {
     try {
