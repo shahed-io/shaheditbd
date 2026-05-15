@@ -7,8 +7,9 @@ import { toast } from 'sonner';
 const AdminSecurity2FA = () => {
   const { status, setup, enable, disable, sendEmailOtp, reset, regenerateBackupCodes, getConfig, updateConfig } = useAdmin2FA();
   const navigate = useNavigate();
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const isForced = params.get('force') === '1';
+  const isRecover = params.get('recover') === '1';
 
   const [loading, setLoading] = useState(true);
   const [enabled, setEnabled] = useState(false);
@@ -26,6 +27,7 @@ const AdminSecurity2FA = () => {
   // Reset flow (lost authenticator)
   const [resetMode, setResetMode] = useState(false);
   const [resetEmailCode, setResetEmailCode] = useState('');
+  const [resetBackupCode, setResetBackupCode] = useState('');
   const [resetSending, setResetSending] = useState(false);
   const [resetSentInfo, setResetSentInfo] = useState('');
   const [resetting, setResetting] = useState(false);
@@ -132,12 +134,17 @@ const AdminSecurity2FA = () => {
     setResetting(true);
     try {
       const sessionToken = getStoredToken() || undefined;
-      const codeInput = resetEmailCode.trim() || undefined;
+      // Prefer backup code → email code → session token
+      const codeInput =
+        resetBackupCode.trim() ||
+        resetEmailCode.trim() ||
+        undefined;
       await reset({ token: sessionToken, code: codeInput });
       toast.success('Authenticator reset. Scan the new QR below.');
       setEnabled(false);
       setResetMode(false);
       setResetEmailCode('');
+      setResetBackupCode('');
       setResetSentInfo('');
       const r = await setup();
       setSetupData({ secret: r.secret, otpauthUrl: r.otpauthUrl });
@@ -147,6 +154,31 @@ const AdminSecurity2FA = () => {
     }
     setResetting(false);
   };
+
+  // Auto-recover flow: triggered when admin lands here after logging in with a backup code
+  useEffect(() => {
+    if (!isRecover || loading) return;
+    (async () => {
+      try {
+        const sessionToken = getStoredToken() || undefined;
+        if (!sessionToken) return;
+        await reset({ token: sessionToken });
+        const r = await setup();
+        setSetupData({ secret: r.secret, otpauthUrl: r.otpauthUrl });
+        setEnabled(false);
+        setBackupCodes(null);
+        toast.success('Backup code accepted. Scan the new QR to set up your Authenticator.');
+      } catch (e) {
+        toast.error((e as Error).message);
+      } finally {
+        // Strip the query param so refresh doesn't repeat
+        const next = new URLSearchParams(params);
+        next.delete('recover');
+        setParams(next, { replace: true });
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRecover, loading]);
 
   const copy = (text: string) => {
     navigator.clipboard.writeText(text).then(() => toast.success('Copied'));
@@ -380,9 +412,18 @@ const AdminSecurity2FA = () => {
                   <div className="text-xs text-primary bg-primary/10 border border-primary/30 rounded-lg px-3 py-2">{resetSentInfo}</div>
                 )}
                 <input
+                  value={resetBackupCode}
+                  onChange={(e) => setResetBackupCode(e.target.value)}
+                  placeholder="Backup code (e.g. a1b2-c3d4) — fastest recovery"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono"
+                />
+                <div className="text-[11px] text-muted-foreground -mt-1">
+                  Have a saved backup code? Paste it here for instant reset — no email needed.
+                </div>
+                <input
                   value={resetEmailCode}
                   onChange={(e) => setResetEmailCode(e.target.value)}
-                  placeholder="Email code (optional if logged-in session is valid)"
+                  placeholder="…or email code (optional if logged-in session is valid)"
                   className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono"
                 />
                 <div className="flex gap-2">
@@ -394,7 +435,7 @@ const AdminSecurity2FA = () => {
                     {resetting ? 'Resetting…' : 'Confirm Reset & Show New QR'}
                   </button>
                   <button
-                    onClick={() => { setResetMode(false); setResetEmailCode(''); setResetSentInfo(''); }}
+                    onClick={() => { setResetMode(false); setResetEmailCode(''); setResetBackupCode(''); setResetSentInfo(''); }}
                     className="px-4 py-2 border border-border rounded-lg text-sm"
                   >
                     Cancel
