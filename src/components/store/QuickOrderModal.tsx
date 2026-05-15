@@ -683,6 +683,53 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                       className={`${inputClass} font-mono tracking-wider`}
                     />
                   </div>
+
+                  {/* Optional payment screenshot */}
+                  <div>
+                    <label className="text-xs text-muted-foreground mb-1 flex items-center gap-1.5 font-semibold">
+                      <Camera size={12}/> পেমেন্ট স্ক্রিনশট
+                      <span className="text-[10px] text-muted-foreground/70 font-normal">(ঐচ্ছিক)</span>
+                    </label>
+                    <p className="text-[11px] text-muted-foreground mb-2">
+                      পেমেন্ট প্রমাণ হিসেবে স্ক্রিনশট দিলে দ্রুত ভেরিফাই হবে
+                    </p>
+                    {!screenshotPreview ? (
+                      <label
+                        htmlFor="quickorder-screenshot-input"
+                        className="flex flex-col items-center justify-center w-full p-4 bg-muted/20 border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/30 hover:border-primary/40 transition-all"
+                      >
+                        <Upload size={18} className="text-muted-foreground mb-1" />
+                        <span className="text-xs text-foreground font-medium">স্ক্রিনশট সিলেক্ট করুন</span>
+                        <span className="text-[10px] text-muted-foreground mt-0.5">JPG, PNG • সর্বোচ্চ ৫MB</span>
+                        <input
+                          id="quickorder-screenshot-input"
+                          ref={screenshotInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleScreenshotChange}
+                          className="hidden"
+                        />
+                      </label>
+                    ) : (
+                      <div className="relative rounded-xl overflow-hidden border border-border bg-muted/20">
+                        <img src={screenshotPreview} alt="Payment screenshot preview" className="w-full max-h-48 object-contain" />
+                        <button
+                          type="button"
+                          onClick={removeScreenshot}
+                          className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1.5 transition-colors"
+                          aria-label="Remove screenshot"
+                        >
+                          <X size={12} />
+                        </button>
+                        <div className="px-3 py-1.5 text-[11px] text-muted-foreground flex items-center justify-between bg-muted/30">
+                          <span className="truncate">{paymentScreenshot?.name}</span>
+                          <span className="flex-shrink-0 ml-2">
+                            {paymentScreenshot && (paymentScreenshot.size / 1024).toFixed(0)} KB
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
 
