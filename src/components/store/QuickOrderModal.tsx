@@ -322,6 +322,41 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         custom_field_values: customFields.length > 0 ? customFieldValues : {},
       } as any);
 
+      // Optional payment screenshot upload (non-blocking)
+      let screenshotUrl: string | null = null;
+      if (paymentMethod !== 'wallet' && paymentScreenshot) {
+        try {
+          const folder = user?.id || 'guest';
+          const ext = paymentScreenshot.name.split('.').pop()?.toLowerCase() || 'jpg';
+          const path = `${folder}/${order.id}-${Date.now()}.${ext}`;
+          const { error: uploadErr } = await supabase.storage
+            .from('payment-proofs')
+            .upload(path, paymentScreenshot, { contentType: paymentScreenshot.type, upsert: false });
+          if (!uploadErr) {
+            const { data: signed } = await supabase.storage
+              .from('payment-proofs')
+              .createSignedUrl(path, 60 * 60 * 24 * 365);
+            screenshotUrl = signed?.signedUrl || path;
+          } else {
+            console.error('[QuickOrder] screenshot upload error:', uploadErr);
+          }
+        } catch (e) { console.error('[QuickOrder] screenshot upload failed:', e); }
+      }
+
+      // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
+      if (paymentMethod !== 'wallet') {
+        const { error: proofError } = await supabase.from('payment_proofs').insert({
+          order_id: order.id,
+          user_id: user?.id || null,
+          transaction_id: transactionId.trim(),
+          payment_method: paymentMethod,
+          amount: finalTotal,
+          screenshot_url: screenshotUrl,
+          status: 'pending',
+        });
+        if (proofError) console.error('[QuickOrder] payment_proof insert error:', proofError);
+      }
+
       setOrderNumber(orderNum);
       orderPlacedRef.current = true;
       // Mark abandoned row as converted (best-effort)
