@@ -134,12 +134,17 @@ const AdminSecurity2FA = () => {
     setResetting(true);
     try {
       const sessionToken = getStoredToken() || undefined;
-      const codeInput = resetEmailCode.trim() || undefined;
+      // Prefer backup code → email code → session token
+      const codeInput =
+        resetBackupCode.trim() ||
+        resetEmailCode.trim() ||
+        undefined;
       await reset({ token: sessionToken, code: codeInput });
       toast.success('Authenticator reset. Scan the new QR below.');
       setEnabled(false);
       setResetMode(false);
       setResetEmailCode('');
+      setResetBackupCode('');
       setResetSentInfo('');
       const r = await setup();
       setSetupData({ secret: r.secret, otpauthUrl: r.otpauthUrl });
@@ -149,6 +154,31 @@ const AdminSecurity2FA = () => {
     }
     setResetting(false);
   };
+
+  // Auto-recover flow: triggered when admin lands here after logging in with a backup code
+  useEffect(() => {
+    if (!isRecover || loading) return;
+    (async () => {
+      try {
+        const sessionToken = getStoredToken() || undefined;
+        if (!sessionToken) return;
+        await reset({ token: sessionToken });
+        const r = await setup();
+        setSetupData({ secret: r.secret, otpauthUrl: r.otpauthUrl });
+        setEnabled(false);
+        setBackupCodes(null);
+        toast.success('Backup code accepted. Scan the new QR to set up your Authenticator.');
+      } catch (e) {
+        toast.error((e as Error).message);
+      } finally {
+        // Strip the query param so refresh doesn't repeat
+        const next = new URLSearchParams(params);
+        next.delete('recover');
+        setParams(next, { replace: true });
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRecover, loading]);
 
   const copy = (text: string) => {
     navigator.clipboard.writeText(text).then(() => toast.success('Copied'));
