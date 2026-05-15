@@ -10,7 +10,8 @@ export type Admin2FAAction =
   | 'disable'
   | 'logout'
   | 'send-email-otp'
-  | 'reset';
+  | 'reset'
+  | 'regenerate-backup-codes';
 
 export const TOKEN_KEY = 'admin_2fa_token';
 
@@ -44,5 +45,7 @@ export function useAdmin2FA() {
   const sendEmailOtp  = useCallback(() => call2FA('send-email-otp'), []);
   const reset         = useCallback((opts: { token?: string; code?: string }) =>
     call2FA('reset', opts), []);
-  return { status, setup, enable, verifyLogin, validateSession: validateSess, disable, logout, sendEmailOtp, reset };
+  const regenerateBackupCodes = useCallback((opts: { token?: string; code?: string }) =>
+    call2FA('regenerate-backup-codes', opts), []);
+  return { status, setup, enable, verifyLogin, validateSession: validateSess, disable, logout, sendEmailOtp, reset, regenerateBackupCodes };
 }

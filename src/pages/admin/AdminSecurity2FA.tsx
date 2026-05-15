@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAdmin2FA, setStoredToken, getStoredToken } from '@/hooks/useAdmin2FA';
-import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle, RefreshCw, MailCheck } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle, RefreshCw, MailCheck, Printer, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSecurity2FA = () => {
-  const { status, setup, enable, disable, sendEmailOtp, reset } = useAdmin2FA();
+  const { status, setup, enable, disable, sendEmailOtp, reset, regenerateBackupCodes } = useAdmin2FA();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const isForced = params.get('force') === '1';
@@ -29,6 +29,11 @@ const AdminSecurity2FA = () => {
   const [resetSending, setResetSending] = useState(false);
   const [resetSentInfo, setResetSentInfo] = useState('');
   const [resetting, setResetting] = useState(false);
+
+  // Regenerate backup codes flow
+  const [regenMode, setRegenMode] = useState(false);
+  const [regenCode, setRegenCode] = useState('');
+  const [regenerating, setRegenerating] = useState(false);
 
   const refresh = async () => {
     setLoading(true);
@@ -122,6 +127,58 @@ const AdminSecurity2FA = () => {
 
   const copy = (text: string) => {
     navigator.clipboard.writeText(text).then(() => toast.success('Copied'));
+  };
+
+  const handleRegenerate = async () => {
+    if (!confirm('This will invalidate your old backup codes and generate 8 new ones. Continue?')) return;
+    setRegenerating(true);
+    try {
+      const sessionToken = getStoredToken() || undefined;
+      const codeInput = regenCode.trim() || undefined;
+      const r = await regenerateBackupCodes({ token: sessionToken, code: codeInput });
+      setBackupCodes(r.backupCodes ?? []);
+      setRegenMode(false);
+      setRegenCode('');
+      toast.success('New backup codes generated.');
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setRegenerating(false);
+  };
+
+  const printBackupCodes = (codes: string[]) => {
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Admin 2FA Backup Codes</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:40px;max-width:600px;margin:auto;color:#111}
+  h1{font-size:20px;margin-bottom:4px}
+  .meta{color:#555;font-size:13px;margin-bottom:24px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;border:1px solid #ddd;border-radius:12px;padding:20px;background:#fafafa}
+  .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;letter-spacing:1px;padding:8px 12px;background:#fff;border:1px dashed #bbb;border-radius:8px;text-align:center}
+  .warn{margin-top:24px;padding:12px;background:#fff7e6;border:1px solid #f0c674;border-radius:8px;font-size:13px;color:#8a5a00}
+  .footer{margin-top:24px;font-size:11px;color:#888;text-align:center}
+</style></head><body>
+<h1>Shahed Store — Admin 2FA Backup Codes</h1>
+<div class="meta">Generated: ${new Date().toLocaleString()}</div>
+<div class="grid">${codes.map(c => `<div class="code">${c}</div>`).join('')}</div>
+<div class="warn">⚠ Each code can be used only once. Keep this page in a safe place. Anyone with these codes can bypass your authenticator.</div>
+<div class="footer">Shahed Store Admin Panel</div>
+<script>window.onload=()=>{window.print();}</script>
+</body></html>`;
+    const w = window.open('', '_blank', 'width=720,height=900');
+    if (!w) { toast.error('Popup blocked. Allow popups to print.'); return; }
+    w.document.write(html);
+    w.document.close();
+  };
+
+  const downloadBackupCodes = (codes: string[]) => {
+    const text = `Shahed Store — Admin 2FA Backup Codes\nGenerated: ${new Date().toISOString()}\n\n${codes.join('\n')}\n\nEach code is single-use. Keep safe.\n`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `admin-2fa-backup-codes-${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const qrUrl = setupData
@@ -239,25 +296,78 @@ const AdminSecurity2FA = () => {
               </div>
             )}
           </div>
+
+          {/* Regenerate backup codes */}
+          <div className="border-t border-border/50 pt-4 space-y-2">
+            <p className="text-sm font-semibold flex items-center gap-2">
+              <KeyRound size={14} className="text-primary" /> Backup Codes
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Generate 8 single-use recovery codes. Use them to log in if you lose your authenticator.
+              Generating new codes will invalidate any previous codes.
+            </p>
+            {!regenMode ? (
+              <button
+                onClick={() => setRegenMode(true)}
+                className="px-4 py-2 border border-primary/40 text-primary rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-primary/10"
+              >
+                <KeyRound size={14} /> Generate Backup Codes
+              </button>
+            ) : (
+              <div className="space-y-3 bg-muted/30 border border-border rounded-xl p-3">
+                <p className="text-xs text-muted-foreground">
+                  Enter your current 6-digit Authenticator code (or an email code) to confirm.
+                  Skip this if your admin session is still valid.
+                </p>
+                <input
+                  value={regenCode}
+                  onChange={(e) => setRegenCode(e.target.value)}
+                  placeholder="123456 (optional if session valid)"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleRegenerate}
+                    disabled={regenerating}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold disabled:opacity-50"
+                  >
+                    {regenerating ? 'Generating…' : 'Generate Codes'}
+                  </button>
+                  <button
+                    onClick={() => { setRegenMode(false); setRegenCode(''); }}
+                    className="px-4 py-2 border border-border rounded-lg text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {/* Backup codes (one-time display) */}
       {backupCodes && (
         <div className="admin-glass-card p-6 rounded-2xl space-y-3">
-          <h2 className="font-bold text-lg flex items-center gap-2"><KeyRound size={18} /> Backup Codes</h2>
+          <h2 className="font-bold text-lg flex items-center gap-2"><KeyRound size={18} /> Your Backup Codes</h2>
           <p className="text-xs text-muted-foreground">
-            ⚠ Save these codes somewhere safe. Each code works only once if you lose access to your authenticator.
-            They will <strong>not</strong> be shown again.
+            ⚠ Save these codes now. Each code works only <strong>once</strong> if you lose access to your authenticator.
+            They will <strong>not</strong> be shown again — copy, download, or print before leaving this page.
           </p>
           <div className="grid grid-cols-2 gap-2 font-mono text-sm bg-muted/40 p-4 rounded-xl">
-            {backupCodes.map((c) => <div key={c}>{c}</div>)}
+            {backupCodes.map((c) => <div key={c} className="px-2 py-1 bg-background/60 rounded text-center tracking-wider">{c}</div>)}
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button onClick={() => copy(backupCodes.join('\n'))} className="px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm flex items-center gap-1.5">
               <Copy size={14} /> Copy All
             </button>
-            <button onClick={() => { setBackupCodes(null); navigate('/ceo'); }} className="px-3 py-2 border border-border rounded-lg text-sm">
+            <button onClick={() => printBackupCodes(backupCodes)} className="px-3 py-2 border border-border rounded-lg text-sm flex items-center gap-1.5">
+              <Printer size={14} /> Print
+            </button>
+            <button onClick={() => downloadBackupCodes(backupCodes)} className="px-3 py-2 border border-border rounded-lg text-sm flex items-center gap-1.5">
+              <Download size={14} /> Download .txt
+            </button>
+            <button onClick={() => { setBackupCodes(null); refresh(); }} className="px-3 py-2 border border-border rounded-lg text-sm ml-auto">
               I've Saved Them
             </button>
           </div>
