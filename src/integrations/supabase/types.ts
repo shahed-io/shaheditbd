@@ -170,6 +170,30 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_2fa_config: {
+        Row: {
+          allow_remember_device: boolean
+          id: number
+          remember_device_ttl_days: number
+          session_ttl_hours: number
+          updated_at: string
+        }
+        Insert: {
+          allow_remember_device?: boolean
+          id?: number
+          remember_device_ttl_days?: number
+          session_ttl_hours?: number
+          updated_at?: string
+        }
+        Update: {
+          allow_remember_device?: boolean
+          id?: number
+          remember_device_ttl_days?: number
+          session_ttl_hours?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_2fa_sessions: {
         Row: {
           created_at: string

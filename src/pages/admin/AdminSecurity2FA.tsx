@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAdmin2FA, setStoredToken, getStoredToken } from '@/hooks/useAdmin2FA';
-import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle, RefreshCw, MailCheck, Printer, Download } from 'lucide-react';
+import { useAdmin2FA, setStoredToken, getStoredToken, type Admin2FAConfig } from '@/hooks/useAdmin2FA';
+import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle, RefreshCw, MailCheck, Printer, Download, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSecurity2FA = () => {
-  const { status, setup, enable, disable, sendEmailOtp, reset, regenerateBackupCodes } = useAdmin2FA();
+  const { status, setup, enable, disable, sendEmailOtp, reset, regenerateBackupCodes, getConfig, updateConfig } = useAdmin2FA();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const isForced = params.get('force') === '1';
@@ -35,6 +35,11 @@ const AdminSecurity2FA = () => {
   const [regenCode, setRegenCode] = useState('');
   const [regenerating, setRegenerating] = useState(false);
 
+  // Session config
+  const [config, setConfig] = useState<Admin2FAConfig | null>(null);
+  const [configForm, setConfigForm] = useState<Admin2FAConfig | null>(null);
+  const [savingConfig, setSavingConfig] = useState(false);
+
   const refresh = async () => {
     setLoading(true);
     try {
@@ -47,6 +52,24 @@ const AdminSecurity2FA = () => {
   };
 
   useEffect(() => { refresh(); /* eslint-disable-next-line */ }, []);
+
+  // Load 2FA session config
+  useEffect(() => {
+    getConfig().then((c) => { setConfig(c); setConfigForm(c); }).catch(() => { /* ignore */ });
+  }, [getConfig]);
+
+  const handleSaveConfig = async () => {
+    if (!configForm) return;
+    setSavingConfig(true);
+    try {
+      const r = await updateConfig(configForm);
+      if (r?.config) { setConfig(r.config); setConfigForm(r.config); }
+      toast.success('Session settings saved.');
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setSavingConfig(false);
+  };
 
   const handleStartSetup = async () => {
     try {
@@ -215,7 +238,91 @@ const AdminSecurity2FA = () => {
         )}
       </div>
 
-      {/* Enabled status */}
+      {/* Session settings */}
+      {configForm && (
+        <div className="admin-glass-card p-6 rounded-2xl space-y-4">
+          <div className="flex items-center gap-2">
+            <Clock size={18} className="text-primary" />
+            <h2 className="font-bold text-lg">Session Settings</h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Control how long an admin stays signed in after passing 2FA, and whether the
+            "Remember this device" option appears at login.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <label className="space-y-1.5 block">
+              <span className="text-xs font-semibold flex items-center justify-between">
+                <span>Standard session length</span>
+                <span className="text-muted-foreground font-normal">{configForm.session_ttl_hours}h</span>
+              </span>
+              <input
+                type="number"
+                min={1}
+                max={720}
+                value={configForm.session_ttl_hours}
+                onChange={(e) => setConfigForm({ ...configForm, session_ttl_hours: Number(e.target.value) || 1 })}
+                className="w-full bg-muted/40 border border-border rounded-lg px-3 py-2 text-sm font-mono"
+              />
+              <span className="text-[11px] text-muted-foreground">Hours (1–720). Default 12.</span>
+            </label>
+
+            <label className="space-y-1.5 block">
+              <span className="text-xs font-semibold flex items-center justify-between">
+                <span>"Remember this device" length</span>
+                <span className="text-muted-foreground font-normal">{configForm.remember_device_ttl_days}d</span>
+              </span>
+              <input
+                type="number"
+                min={1}
+                max={365}
+                value={configForm.remember_device_ttl_days}
+                onChange={(e) => setConfigForm({ ...configForm, remember_device_ttl_days: Number(e.target.value) || 1 })}
+                disabled={!configForm.allow_remember_device}
+                className="w-full bg-muted/40 border border-border rounded-lg px-3 py-2 text-sm font-mono disabled:opacity-50"
+              />
+              <span className="text-[11px] text-muted-foreground">Days (1–365). Default 30.</span>
+            </label>
+          </div>
+
+          <label className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl border border-border bg-muted/20 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={configForm.allow_remember_device}
+              onChange={(e) => setConfigForm({ ...configForm, allow_remember_device: e.target.checked })}
+              className="mt-0.5 w-4 h-4 accent-primary"
+            />
+            <div className="flex-1 text-xs">
+              <div className="font-semibold">Allow "Remember this device" at login</div>
+              <div className="text-muted-foreground">
+                When off, every login uses the standard session length above.
+              </div>
+            </div>
+          </label>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSaveConfig}
+              disabled={savingConfig || JSON.stringify(configForm) === JSON.stringify(config)}
+              className="px-5 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold disabled:opacity-50"
+            >
+              {savingConfig ? 'Saving…' : 'Save Settings'}
+            </button>
+            {config && JSON.stringify(configForm) !== JSON.stringify(config) && (
+              <button
+                onClick={() => setConfigForm(config)}
+                className="px-4 py-2 border border-border rounded-lg text-sm"
+              >
+                Reset
+              </button>
+            )}
+            <span className="text-[11px] text-muted-foreground ml-auto">
+              Changes apply to <strong>new</strong> logins. Existing sessions keep their original expiry.
+            </span>
+          </div>
+        </div>
+      )}
+
       {enabled && !backupCodes && (
         <div className="admin-glass-card p-6 rounded-2xl space-y-4">
           <div className="flex items-center gap-2 text-emerald-600 font-semibold">
