@@ -2,27 +2,61 @@ import { useState, useEffect } from 'react';
 import BrandLoader from '@/components/store/BrandLoader';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ShieldCheck, KeyRound, ArrowLeft } from 'lucide-react';
 import BrandLogo from '@/components/store/BrandLogo';
 import SEOHead from '@/components/seo/SEOHead';
+import { useAdmin2FA, setStoredToken, getStoredToken } from '@/hooks/useAdmin2FA';
 
 const AdminLogin = () => {
   const { signIn, signOut, isAdmin, user, loading } = useAuth();
   const navigate = useNavigate();
+  const { status: get2faStatus, verifyLogin, validateSession } = useAdmin2FA();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect as soon as isAdmin confirmed — regardless of submitting state
-  useEffect(() => {
-    if (!loading && user && isAdmin) {
-      navigate('/ceo', { replace: true });
-    }
-  }, [user, isAdmin, loading, navigate]);
+  // 2FA challenge state
+  const [stage, setStage] = useState<'password' | '2fa' | 'enroll'>('password');
+  const [otp, setOtp] = useState('');
+  const [verifying, setVerifying] = useState(false);
 
-  // Only show spinner during initial auth load (not during admin check after login)
+  // After admin login, decide: needs 2FA challenge / enrollment / proceed
+  useEffect(() => {
+    if (loading || !user || !isAdmin) return;
+
+    (async () => {
+      try {
+        const { enabled } = await get2faStatus();
+        if (!enabled) {
+          // No 2FA yet → force enrollment
+          setStage('enroll');
+          setSubmitting(false);
+          return;
+        }
+        // 2FA enabled — check existing session
+        const existing = getStoredToken();
+        if (existing) {
+          const r = await validateSession(existing);
+          if (r?.valid) {
+            navigate('/ceo', { replace: true });
+            return;
+          }
+          setStoredToken(null);
+        }
+        setStage('2fa');
+        setSubmitting(false);
+      } catch (e) {
+        console.error(e);
+        setError('2FA সিস্টেম লোড করতে সমস্যা হয়েছে।');
+        setSubmitting(false);
+      }
+    })();
+  }, [user, isAdmin, loading, get2faStatus, validateSession, navigate]);
+
+  // Initial loading spinner
   if (loading && !user && !submitting) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -31,29 +65,20 @@ const AdminLogin = () => {
     );
   }
 
-  // Non-admin logged-in user
+  // Non-admin
   if (!loading && user && !isAdmin) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="glass-card rounded-3xl p-8 w-full max-w-md text-center space-y-4">
           <div className="text-destructive text-lg font-semibold">Access Denied</div>
           <p className="text-muted-foreground text-sm">You do not have admin privileges.</p>
-          <button onClick={() => { signOut(); }} className="btn-glow py-2 px-6 rounded-xl text-sm">Sign Out</button>
+          <button onClick={() => signOut()} className="btn-glow py-2 px-6 rounded-xl text-sm">Sign Out</button>
         </div>
       </div>
     );
   }
 
-  // Show spinner while admin check is in progress after login
-  if (submitting || (user && loading)) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <BrandLoader size="md" />
-      </div>
-    );
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSubmitting(true);
@@ -65,77 +90,156 @@ const AdminLogin = () => {
     // On success: onAuthStateChange fires → isAdmin set → useEffect redirects
   };
 
+  const handleVerify2FA = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setVerifying(true);
+    try {
+      const r = await verifyLogin(otp.trim());
+      if (r?.token) {
+        setStoredToken(r.token);
+        navigate('/ceo', { replace: true });
+      } else {
+        setError('Invalid code');
+      }
+    } catch (err) {
+      setError((err as Error).message || 'Invalid code');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const handleGoEnroll = () => {
+    navigate('/ceo/security?force=1', { replace: true });
+  };
+
+  const handleCancel = async () => {
+    setStoredToken(null);
+    await signOut();
+    setStage('password');
+    setOtp('');
+    setError('');
+  };
+
+  // Show spinner during transitions
+  if (submitting) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <BrandLoader size="md" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <SEOHead title="Admin Login" description="Restricted area." noIndex />
-      {/* Orbs */}
       <div className="orb orb-1 opacity-10 top-20 left-1/4 fixed" />
       <div className="orb orb-2 opacity-10 bottom-20 right-1/4 fixed" />
 
       <div className="glass-card rounded-3xl p-8 w-full max-w-md space-y-8 animate-slide-up">
-        {/* Logo */}
         <div className="flex justify-center mb-2">
           <BrandLogo size="md" />
         </div>
         <div className="flex items-center justify-center gap-2 mt-3 text-muted-foreground text-sm">
           <ShieldCheck size={14} className="text-primary" />
-          Admin Dashboard Login
+          {stage === 'password' && 'Admin Dashboard Login'}
+          {stage === '2fa' && 'Two-Factor Verification'}
+          {stage === 'enroll' && 'Enable Two-Factor Auth'}
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">Email Address</label>
+        {stage === 'password' && (
+          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1.5 block">Email Address</label>
+              <div className="relative">
+                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@shahedstore.com.bd"
+                  required
+                  className="w-full bg-muted/40 border border-border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm text-muted-foreground mb-1.5 block">Password</label>
+              <div className="relative">
+                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type={showPass ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="w-full bg-muted/40 border border-border rounded-xl pl-10 pr-10 py-3 text-sm focus:outline-none focus:border-primary"
+                />
+                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary">
+                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-destructive text-sm">{error}</div>
+            )}
+
+            <button type="submit" disabled={submitting} className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2">
+              <ShieldCheck size={18} />
+              Sign In to Dashboard
+            </button>
+          </form>
+        )}
+
+        {stage === '2fa' && (
+          <form onSubmit={handleVerify2FA} className="space-y-4">
+            <p className="text-sm text-center text-muted-foreground">
+              Open <strong>Google Authenticator</strong> and enter the 6-digit code, or use a backup code.
+            </p>
             <div className="relative">
-              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <KeyRound size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@shahedstore.com.bd"
+                type="text"
+                inputMode="text"
+                autoFocus
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="123456 or backup code"
                 required
-                className="w-full bg-muted/40 border border-border rounded-xl pl-10 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                className="w-full bg-muted/40 border border-border rounded-xl pl-10 pr-4 py-3 text-base tracking-[0.3em] text-center font-mono focus:outline-none focus:border-primary"
               />
             </div>
-          </div>
+            {error && <div className="bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-destructive text-sm">{error}</div>}
+            <button type="submit" disabled={verifying} className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2">
+              <ShieldCheck size={18} />
+              {verifying ? 'Verifying…' : 'Verify & Continue'}
+            </button>
+            <button type="button" onClick={handleCancel} className="w-full text-xs text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5">
+              <ArrowLeft size={12} /> Cancel & Sign Out
+            </button>
+          </form>
+        )}
 
-          <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">Password</label>
-            <div className="relative">
-              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type={showPass ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full bg-muted/40 border border-border rounded-xl pl-10 pr-10 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-              />
-              <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary">
-                {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
+        {stage === 'enroll' && (
+          <div className="space-y-4 text-center">
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm">
+              <p className="font-semibold text-amber-700 dark:text-amber-300 mb-1">⚠ Two-Factor Authentication Required</p>
+              <p className="text-muted-foreground text-xs leading-relaxed">
+                For maximum security, the admin panel requires Google Authenticator. Set it up now to continue.
+              </p>
             </div>
+            <button onClick={handleGoEnroll} className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2">
+              <ShieldCheck size={18} /> Set Up Now
+            </button>
+            <button onClick={handleCancel} className="w-full text-xs text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5">
+              <ArrowLeft size={12} /> Sign Out
+            </button>
           </div>
+        )}
 
-          {error && (
-            <div className="bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-destructive text-sm">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2"
-          >
-            <ShieldCheck size={18} />
-            Sign In to Dashboard
-          </button>
-        </form>
-
-        <p className="text-center text-xs text-muted-foreground">
-          🔒 Secure Admin Access Only
-        </p>
+        <p className="text-center text-xs text-muted-foreground">🔒 Secure Admin Access Only</p>
       </div>
     </div>
   );

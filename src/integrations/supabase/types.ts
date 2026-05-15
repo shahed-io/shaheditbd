@@ -140,6 +140,66 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_2fa: {
+        Row: {
+          backup_codes: string[]
+          created_at: string
+          enabled: boolean
+          last_used_at: string | null
+          secret: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          backup_codes?: string[]
+          created_at?: string
+          enabled?: boolean
+          last_used_at?: string | null
+          secret: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          backup_codes?: string[]
+          created_at?: string
+          enabled?: boolean
+          last_used_at?: string | null
+          secret?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
+      admin_2fa_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          ip: string | null
+          token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          ip?: string | null
+          token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip?: string | null
+          token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       affiliate_accounts: {
         Row: {
           admin_note: string | null

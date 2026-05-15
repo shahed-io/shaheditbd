@@ -8,6 +8,7 @@ import { useAdminPrefetch, prefetchAdminRoute } from '@/hooks/useAdminPrefetch';
 import AdminCommandPalette from '@/components/admin/AdminCommandPalette';
 import { useAdminCopyAnywhere } from '@/hooks/useAdminCopyAnywhere';
 import AdminHeroHeader from '@/components/admin/AdminHeroHeader';
+import { useAdmin2FA, getStoredToken, setStoredToken } from '@/hooks/useAdmin2FA';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
@@ -135,11 +136,12 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Sparkles, label: 'AI API Config', path: '/ceo/ai-config' },
     ],
   },
-  {
+    {
     title: 'System',
     items: [
       { icon: Users, label: 'Staff Management', path: '/ceo/staff' },
       { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
+      { icon: ShieldCheck, label: '2FA Security', path: '/ceo/security', badge: 'new' },
       { icon: Database, label: 'Backup', path: '/ceo/backup' },
       { icon: Settings, label: 'General Settings', path: '/ceo/settings' },
     ],
@@ -162,7 +164,10 @@ const getPageTitle = (pathname: string): { title: string; section: string } => {
 };
 
 const AdminLayout = () => {
-  const { user, isAdmin, loading, signOut } = useAuth();
+  const { user, isAdmin, loading, signOut: rawSignOut } = useAuth();
+  const { status: get2faStatus, validateSession, logout: logout2fa } = useAdmin2FA();
+  const [twoFaChecked, setTwoFaChecked] = useState(false);
+  const [twoFaRequired, setTwoFaRequired] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<string[]>([]);
@@ -172,6 +177,43 @@ const AdminLayout = () => {
   const [navSearch, setNavSearch] = useState('');
   const [cmdOpen, setCmdOpen] = useState(false);
   const location = useLocation();
+
+  // Wrap signOut to clear 2FA session token
+  const signOut = useCallback(async () => {
+    const t = getStoredToken();
+    if (t) { try { await logout2fa(t); } catch { /* ignore */ } }
+    setStoredToken(null);
+    await rawSignOut();
+  }, [rawSignOut, logout2fa]);
+
+  // Verify 2FA session on mount + when user changes
+  useEffect(() => {
+    let cancelled = false;
+    if (!user || !isAdmin) { setTwoFaChecked(false); setTwoFaRequired(false); return; }
+    setTwoFaChecked(false);
+    (async () => {
+      try {
+        const s = await get2faStatus();
+        if (cancelled) return;
+        if (!s?.enabled) {
+          // Not enrolled → require enrollment (but allow access to /ceo/security)
+          setTwoFaRequired(true);
+          setTwoFaChecked(true);
+          return;
+        }
+        const tok = getStoredToken();
+        if (!tok) { setTwoFaRequired(true); setTwoFaChecked(true); return; }
+        const r = await validateSession(tok);
+        if (cancelled) return;
+        if (r?.valid) { setTwoFaRequired(false); setTwoFaChecked(true); }
+        else { setStoredToken(null); setTwoFaRequired(true); setTwoFaChecked(true); }
+      } catch (e) {
+        if (!cancelled) { setTwoFaRequired(true); setTwoFaChecked(true); }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user, isAdmin, get2faStatus, validateSession]);
+
 
   // Global ⌘K / Ctrl+K shortcut for command palette
   useEffect(() => {
@@ -240,6 +282,21 @@ const AdminLayout = () => {
   );
 
   if (!user || !isAdmin) return <Navigate to="/ceo/login" replace />;
+
+  // 2FA gate: require a valid TOTP session for every admin route except the security page (so users can enroll/recover)
+  if (!twoFaChecked) {
+    return (
+      <div className="min-h-screen admin-gradient-bg flex items-center justify-center">
+        <div className="admin-glass-card p-8 flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground font-medium">Verifying security…</p>
+        </div>
+      </div>
+    );
+  }
+  if (twoFaRequired && !location.pathname.startsWith('/ceo/security')) {
+    return <Navigate to="/ceo/login" replace />;
+  }
 
   const toggleSection = (title: string) => {
     setCollapsedSections(prev =>
