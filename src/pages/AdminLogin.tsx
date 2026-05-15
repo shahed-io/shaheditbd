@@ -215,7 +215,8 @@ const AdminLogin = () => {
         {stage === '2fa' && (
           <form onSubmit={handleVerify2FA} className="space-y-4">
             <p className="text-sm text-center text-muted-foreground">
-              Open <strong>Google Authenticator</strong> and enter the 6-digit code, or use a backup code.
+              Enter your <strong>Google Authenticator</strong> 6-digit code, a backup code,
+              or request a code by email below.
             </p>
             <div className="relative">
               <KeyRound size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -225,15 +226,27 @@ const AdminLogin = () => {
                 autoFocus
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                placeholder="123456 or backup code"
+                placeholder="123456 / backup / email code"
                 required
                 className="w-full bg-muted/40 border border-border rounded-xl pl-10 pr-4 py-3 text-base tracking-[0.3em] text-center font-mono focus:outline-none focus:border-primary"
               />
             </div>
+            {emailSentInfo && (
+              <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-3 text-primary text-xs leading-relaxed">{emailSentInfo}</div>
+            )}
             {error && <div className="bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-destructive text-sm">{error}</div>}
             <button type="submit" disabled={verifying} className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2">
               <ShieldCheck size={18} />
               {verifying ? 'Verifying…' : 'Verify & Continue'}
+            </button>
+            <button
+              type="button"
+              onClick={handleSendEmailOtp}
+              disabled={emailSending}
+              className="w-full py-3 rounded-xl font-medium text-sm border border-border bg-muted/30 hover:bg-muted/60 flex items-center justify-center gap-2 transition"
+            >
+              <MailCheck size={16} />
+              {emailSending ? 'Sending…' : 'Email me a code instead'}
             </button>
             <button type="button" onClick={handleCancel} className="w-full text-xs text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5">
               <ArrowLeft size={12} /> Cancel & Sign Out
@@ -244,13 +257,23 @@ const AdminLogin = () => {
         {stage === 'enroll' && (
           <div className="space-y-4 text-center">
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm">
-              <p className="font-semibold text-amber-700 dark:text-amber-300 mb-1">⚠ Two-Factor Authentication Required</p>
+              <p className="font-semibold text-amber-700 dark:text-amber-300 mb-1">⚠ Two-Factor Authentication Recommended</p>
               <p className="text-muted-foreground text-xs leading-relaxed">
-                For maximum security, the admin panel requires Google Authenticator. Set it up now to continue.
+                For maximum security, set up Google Authenticator. If you can't right now, you can
+                also receive a one-time code by email.
               </p>
             </div>
             <button onClick={handleGoEnroll} className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2">
-              <ShieldCheck size={18} /> Set Up Now
+              <ShieldCheck size={18} /> Set Up Authenticator
+            </button>
+            <button
+              type="button"
+              onClick={handleSendEmailOtp}
+              disabled={emailSending}
+              className="w-full py-3 rounded-xl font-medium text-sm border border-border bg-muted/30 hover:bg-muted/60 flex items-center justify-center gap-2 transition"
+            >
+              <MailCheck size={16} />
+              {emailSending ? 'Sending…' : 'Email me a login code instead'}
             </button>
             <button onClick={handleCancel} className="w-full text-xs text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5">
               <ArrowLeft size={12} /> Sign Out
