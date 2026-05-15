@@ -14,6 +14,7 @@ const CartDrawer = () => {
     coupon, setCoupon, resetCoupon,
   } = useCart();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [couponInput, setCouponInput] = useState(coupon.isApplied ? coupon.code : '');
   const [couponLoading, setCouponLoading] = useState(false);
