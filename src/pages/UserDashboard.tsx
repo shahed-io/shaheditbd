@@ -307,6 +307,9 @@ const UserDashboard = () => {
   const [myLicenses, setMyLicenses] = useState<any[]>([]);
   const [licensesLoading, setLicensesLoading] = useState(false);
   const [licenseVisibility, setLicenseVisibility] = useState<Record<string, boolean>>({});
+  // Subscriptions state
+  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [subsLoading, setSubsLoading] = useState(false);
 
   // Mobile-friendly tab switch: also show content panel
   const handleTabSwitch = (tab: TabId) => {
