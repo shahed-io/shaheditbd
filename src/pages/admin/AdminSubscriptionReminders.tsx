@@ -272,6 +272,75 @@ export default function AdminSubscriptionReminders() {
     await load();
   };
 
+  // ============= Manual / AI Composer =============
+  const mDaysLeft = useMemo(() => mExpiry ? daysBetween(new Date(mExpiry).toISOString()) : null, [mExpiry]);
+
+  const sendManual = async (overrideMsg?: string) => {
+    const finalMsg = (overrideMsg ?? mMessage).trim();
+    if (!mCustomerEmail.trim() || !/.+@.+\..+/.test(mCustomerEmail)) {
+      toast.error('Valid customer email required'); return;
+    }
+    if (!mProductName.trim()) { toast.error('Product name required'); return; }
+    if (!finalMsg) { toast.error('Message is empty — generate or write one'); return; }
+    setMSending(true);
+    try {
+      const idem = `manual-subrenew-${mCustomerEmail}-${mProductId || mProductName}-${Date.now()}`;
+      const { error } = await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'subscription-renewal-reminder',
+          recipientEmail: mCustomerEmail,
+          idempotencyKey: idem,
+          templateData: {
+            customerName: mCustomerName || 'Customer',
+            productName: mProductName,
+            expiryDate: mExpiry ? fmtDate(new Date(mExpiry).toISOString()) : '',
+            daysLeft: mDaysLeft,
+            renewUrl: SITE + '/shop',
+            customMessage: finalMsg,
+          },
+        },
+      });
+      if (error) throw error;
+      toast.success(`Reminder sent to ${mCustomerEmail}`);
+      setMMessage(''); setMNotes(''); setMCustomerEmail(''); setMCustomerName(''); setMExpiry('');
+    } catch (e: any) {
+      toast.error('Send failed: ' + (e?.message || 'unknown'));
+    } finally {
+      setMSending(false);
+    }
+  };
+
+  const generateAI = async (autoSendAfter?: boolean) => {
+    if (!mProductName.trim()) { toast.error('Select or type a product first'); return; }
+    setMGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-compose-reminder', {
+        body: {
+          productName: mProductName,
+          customerName: mCustomerName || undefined,
+          expiryDate: mExpiry ? fmtDate(new Date(mExpiry).toISOString()) : undefined,
+          daysLeft: mDaysLeft,
+          language: mLanguage,
+          tone: mTone,
+          extraNotes: mNotes || undefined,
+        },
+      });
+      if (error) throw error;
+      const msg = (data as any)?.message;
+      if (!msg) throw new Error('Empty AI response');
+      setMMessage(msg);
+      toast.success('AI message generated');
+      if (autoSendAfter ?? mAutoSend) {
+        await sendManual(msg);
+      }
+    } catch (e: any) {
+      toast.error('AI failed: ' + (e?.message || 'unknown'));
+    } finally {
+      setMGenerating(false);
+    }
+  };
+
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
