@@ -243,6 +243,24 @@ const AdminLogin = () => {
               <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-3 text-primary text-xs leading-relaxed">{emailSentInfo}</div>
             )}
             {error && <div className="bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-destructive text-sm">{error}</div>}
+
+            {(twoFaConfig?.allow_remember_device ?? true) && (
+              <label className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl border border-border bg-muted/30 cursor-pointer hover:bg-muted/50 transition">
+                <input
+                  type="checkbox"
+                  checked={rememberDevice}
+                  onChange={(e) => setRememberDevice(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-primary cursor-pointer"
+                />
+                <div className="flex-1 text-xs">
+                  <div className="font-semibold text-foreground">Remember this device</div>
+                  <div className="text-muted-foreground">
+                    Stay signed in for {twoFaConfig?.remember_device_ttl_days ?? 30} days. Otherwise this session lasts {twoFaConfig?.session_ttl_hours ?? 12} hours. Don't enable on shared devices.
+                  </div>
+                </div>
+              </label>
+            )}
+
             <button type="submit" disabled={verifying} className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2">
               <ShieldCheck size={18} />
               {verifying ? 'Verifying…' : 'Verify & Continue'}
