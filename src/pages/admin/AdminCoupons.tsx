@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Edit, Trash2, Tag, Copy, CheckCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Tag, Copy, CheckCircle, Sparkles, Calendar, TrendingUp, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
 import { z } from 'zod';
