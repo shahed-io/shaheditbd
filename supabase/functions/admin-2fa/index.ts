@@ -188,33 +188,136 @@ Deno.serve(async (req) => {
       return json({ success: true, backupCodes, token: sessionToken, expiresAt });
     }
 
-    // ─── verify-login: TOTP or backup code → issue session token ───
+    // ─── send-email-otp: generate code and email it to ALL admin emails ───
+    if (action === "send-email-otp") {
+      // Generate 6-digit code, hash it, store
+      const otpCode = generateEmailCode();
+      const hash = await sha256(otpCode);
+      const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 min
+      const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
+
+      // Invalidate previous unused codes for this user
+      await admin
+        .from("admin_email_otps")
+        .update({ used_at: new Date().toISOString() })
+        .eq("user_id", userId)
+        .is("used_at", null);
+
+      await admin.from("admin_email_otps").insert({
+        user_id: userId,
+        code_hash: hash,
+        expires_at: expires,
+        ip,
+      });
+
+      // Look up ALL admin user_ids → emails (from profiles, fallback to auth)
+      const { data: adminRoles } = await admin
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "admin");
+
+      const adminIds = (adminRoles ?? []).map((r: { user_id: string }) => r.user_id);
+      const recipientEmails = new Set<string>();
+
+      if (adminIds.length) {
+        const { data: profs } = await admin
+          .from("profiles")
+          .select("user_id, email")
+          .in("user_id", adminIds);
+        for (const p of profs ?? []) {
+          if (p?.email) recipientEmails.add(String(p.email).toLowerCase());
+        }
+      }
+      // Always include the requesting admin's email as a guarantee
+      if (userData.user.email) recipientEmails.add(userData.user.email.toLowerCase());
+
+      // Fan out via send-transactional-email
+      const requestedByEmail = userData.user.email ?? "unknown";
+      const sendPromises = Array.from(recipientEmails).map((to) =>
+        admin.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "admin-2fa-code",
+            recipientEmail: to,
+            templateData: {
+              code: otpCode,
+              requestedByEmail,
+              ip: ip ?? "",
+              expiresInMinutes: 10,
+            },
+          },
+        }).catch((e) => ({ error: e }))
+      );
+      const results = await Promise.all(sendPromises);
+      const sentCount = results.filter((r: any) => !r?.error).length;
+
+      console.log(`[admin-2fa] email OTP sent to ${sentCount}/${recipientEmails.size} admins for ${requestedByEmail}`);
+
+      return json({
+        success: true,
+        sentTo: sentCount,
+        totalAdmins: recipientEmails.size,
+        expiresAt: expires,
+      });
+    }
+
+    // ─── verify-login: TOTP, backup, OR email OTP → issue session token ───
     if (action === "verify-login") {
       if (!code) return json({ error: "Code required" }, 400);
+
+      const cleaned = code.replace(/\s+/g, "");
+      let ok = false;
+      let usedBackup: string | null = null;
+      let usedEmailOtpId: string | null = null;
+
+      // Try TOTP / backup first (only if 2FA enabled)
       const { data: row } = await admin
         .from("admin_2fa")
         .select("secret, enabled, backup_codes")
         .eq("user_id", userId)
         .maybeSingle();
-      if (!row || !row.enabled) return json({ error: "2FA not enabled" }, 400);
 
-      const cleaned = code.replace(/\s+/g, "");
-      let ok = false;
-      let usedBackup: string | null = null;
-
-      if (/^\d{6}$/.test(cleaned)) {
-        ok = verifyTotp(row.secret, cleaned);
-      } else if (row.backup_codes?.includes(cleaned.toLowerCase())) {
-        ok = true;
-        usedBackup = cleaned.toLowerCase();
+      if (row?.enabled) {
+        if (/^\d{6}$/.test(cleaned)) {
+          ok = verifyTotp(row.secret, cleaned);
+        }
+        if (!ok && row.backup_codes?.includes(cleaned.toLowerCase())) {
+          ok = true;
+          usedBackup = cleaned.toLowerCase();
+        }
       }
 
-      if (!ok) return json({ error: "Invalid code" }, 400);
+      // Fallback: email OTP (works even without TOTP enabled)
+      if (!ok && /^\d{6}$/.test(cleaned)) {
+        const hash = await sha256(cleaned);
+        const { data: otpRow } = await admin
+          .from("admin_email_otps")
+          .select("id, expires_at, used_at, attempts")
+          .eq("user_id", userId)
+          .eq("code_hash", hash)
+          .is("used_at", null)
+          .gt("expires_at", new Date().toISOString())
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-      // Consume backup code if used
-      if (usedBackup) {
+        if (otpRow) {
+          ok = true;
+          usedEmailOtpId = otpRow.id;
+        }
+      }
+
+      if (!ok) return json({ error: "Invalid or expired code" }, 400);
+
+      // Consume backup code
+      if (usedBackup && row) {
         const remaining = (row.backup_codes ?? []).filter((c: string) => c !== usedBackup);
         await admin.from("admin_2fa").update({ backup_codes: remaining }).eq("user_id", userId);
+      }
+      // Consume email OTP
+      if (usedEmailOtpId) {
+        await admin.from("admin_email_otps")
+          .update({ used_at: new Date().toISOString() })
+          .eq("id", usedEmailOtpId);
       }
 
       // Issue session token
@@ -229,9 +332,11 @@ Deno.serve(async (req) => {
         expires_at: expiresAt,
       });
 
-      await admin.from("admin_2fa").update({ last_used_at: new Date().toISOString() }).eq("user_id", userId);
+      if (row?.enabled) {
+        await admin.from("admin_2fa").update({ last_used_at: new Date().toISOString() }).eq("user_id", userId);
+      }
 
-      // Cleanup old expired sessions for this user
+      // Cleanup expired
       await admin
         .from("admin_2fa_sessions")
         .delete()
