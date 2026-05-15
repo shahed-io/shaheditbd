@@ -82,6 +82,7 @@ const BodySchema = z.object({
     "disable",
     "logout",
     "send-email-otp",
+    "reset",
   ]),
   code: z.string().trim().optional(),
   token: z.string().trim().optional(),
