@@ -40,11 +40,11 @@ const CartDrawer = () => {
       }
       setCoupon({
         code: couponInput.trim().toUpperCase(),
-        discount: data.discount,
-        type: data.type || 'fixed',
+        discount: data.discountValue ?? data.discount,
+        type: data.discountType || (data.discountValue ? 'percentage' : 'fixed'),
         isApplied: true,
       });
-      toast.success(`Coupon applied! ৳${data.discount} off`);
+      toast.success(data.message || `✅ Coupon approved! ৳${data.discount} off`);
     } catch {
       setCouponError('Could not validate coupon');
     } finally {
