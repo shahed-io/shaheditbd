@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, MessageCircle, CreditCard, CheckCircle, Tag, ChevronDown, Wallet, Loader2, Shield, Package, LogIn } from 'lucide-react';
+import { X, MessageCircle, CreditCard, CheckCircle, Tag, ChevronDown, Wallet, Loader2, Shield, Package, LogIn, Upload, Camera } from 'lucide-react';
+import { toast } from 'sonner';
 import AuthModal from '@/components/store/AuthModal';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
