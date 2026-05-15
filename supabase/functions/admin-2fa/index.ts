@@ -233,7 +233,7 @@ Deno.serve(async (req) => {
 
       // Also issue a session token so the user isn't immediately bounced to login
       const sessionToken = generateSessionToken();
-      const expiresAt = new Date(Date.now() + SESSION_TTL_HOURS * 3600 * 1000).toISOString();
+      const { expiresAt, remembered } = await computeExpiresAt(remember);
       await admin.from("admin_2fa_sessions").insert({
         user_id: userId,
         token: sessionToken,
@@ -242,7 +242,7 @@ Deno.serve(async (req) => {
         expires_at: expiresAt,
       });
 
-      return json({ success: true, backupCodes, token: sessionToken, expiresAt });
+      return json({ success: true, backupCodes, token: sessionToken, expiresAt, remembered });
     }
 
     // ─── send-email-otp: generate code and email it to ALL admin emails ───
@@ -379,7 +379,7 @@ Deno.serve(async (req) => {
 
       // Issue session token
       const sessionToken = generateSessionToken();
-      const expiresAt = new Date(Date.now() + SESSION_TTL_HOURS * 3600 * 1000).toISOString();
+      const { expiresAt, remembered } = await computeExpiresAt(remember);
 
       await admin.from("admin_2fa_sessions").insert({
         user_id: userId,
@@ -400,7 +400,7 @@ Deno.serve(async (req) => {
         .lt("expires_at", new Date().toISOString())
         .eq("user_id", userId);
 
-      return json({ success: true, token: sessionToken, expiresAt });
+      return json({ success: true, token: sessionToken, expiresAt, remembered });
     }
 
     // ─── validate-session ───
