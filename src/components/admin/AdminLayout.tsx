@@ -399,6 +399,7 @@ const AdminLayout = () => {
                     {section.items.map((item) => {
                       const isActive = location.pathname === item.path ||
                         (item.path !== '/ceo' && location.pathname.startsWith(item.path + '/'));
+                      const accent = getItemAccent(item.path);
                       return (
                         <NavLink
                           key={item.path}
@@ -408,19 +409,23 @@ const AdminLayout = () => {
                           onMouseEnter={() => prefetchAdminRoute(item.path)}
                           onTouchStart={() => prefetchAdminRoute(item.path)}
                           onFocus={() => prefetchAdminRoute(item.path)}
+                          style={{
+                            ['--item-from' as any]: accent.from,
+                            ['--item-to' as any]: accent.to,
+                          }}
                           className={`admin-nav-item ${isActive ? 'active' : ''} ${!showLabel ? 'justify-center px-2' : ''}`}
                         >
-                          <item.icon size={17} className="flex-shrink-0" />
+                          <item.icon size={15} className="flex-shrink-0" strokeWidth={2.25} />
                           {showLabel && (
                             <>
                               <span className="flex-1 truncate">{item.label}</span>
                               {item.badge === 'live' && (
-                                <span className="flex items-center gap-2 text-[9px] font-bold text-violet-600 bg-violet-100 dark:bg-violet-900/40 dark:text-violet-300 px-1.5 py-0.5 rounded-md ring-1 ring-violet-300/40">
-                                  <span className="w-1 h-1 rounded-full bg-violet-500 animate-pulse" /> LIVE
+                                <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-300 px-1.5 py-0.5 rounded-md ring-1 ring-emerald-300/50">
+                                  <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> LIVE
                                 </span>
                               )}
                               {item.badge === 'new' && (
-                                <span className="text-[9px] font-bold text-white bg-gradient-to-r from-violet-500 to-violet-600 px-1.5 py-0.5 rounded-md shadow-sm">NEW</span>
+                                <span className="text-[9px] font-bold text-white bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 px-1.5 py-0.5 rounded-md shadow-sm">NEW</span>
                               )}
                             </>
                           )}
