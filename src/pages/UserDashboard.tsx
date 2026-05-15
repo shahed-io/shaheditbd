@@ -2153,7 +2153,175 @@ const UserDashboard = () => {
                 </div>
               )}
 
-              {/* ── Wallet Tab ── */}
+              {/* ── Subscriptions Tab ── */}
+              {activeTab === 'subscriptions' && (() => {
+                const now = Date.now();
+                const dayMs = 86400000;
+                const enriched = subscriptions.map((s: any) => {
+                  const exp = s.expires_at ? new Date(s.expires_at).getTime() : null;
+                  const days = exp != null ? Math.ceil((exp - now) / dayMs) : null;
+                  let bucket: 'expired' | 'critical' | 'warning' | 'safe' = 'safe';
+                  if (days == null) bucket = 'safe';
+                  else if (days < 0) bucket = 'expired';
+                  else if (days <= 7) bucket = 'critical';
+                  else if (days <= 30) bucket = 'warning';
+                  return { ...s, _days: days, _bucket: bucket };
+                });
+                const stats = {
+                  total: enriched.length,
+                  expired: enriched.filter(e => e._bucket === 'expired').length,
+                  critical: enriched.filter(e => e._bucket === 'critical').length,
+                  warning: enriched.filter(e => e._bucket === 'warning').length,
+                };
+                const colorOf = (b: string) =>
+                  b === 'expired' ? { bg: 'hsla(0,84%,55%,0.10)', fg: 'hsl(0,75%,45%)', border: 'hsla(0,84%,55%,0.28)' } :
+                  b === 'critical' ? { bg: 'hsla(25,95%,55%,0.10)', fg: 'hsl(20,90%,45%)', border: 'hsla(25,95%,55%,0.28)' } :
+                  b === 'warning' ? { bg: 'hsla(45,95%,55%,0.10)', fg: 'hsl(35,85%,40%)', border: 'hsla(45,95%,55%,0.28)' } :
+                  { bg: 'hsla(162,72%,46%,0.10)', fg: 'hsl(162,72%,38%)', border: 'hsla(162,72%,46%,0.25)' };
+                const labelOf = (b: string, d: number | null) =>
+                  d == null ? 'Active' :
+                  b === 'expired' ? `Expired ${Math.abs(d)} day${Math.abs(d) === 1 ? '' : 's'} ago` :
+                  d === 0 ? 'Expires today' :
+                  b === 'critical' ? `${d} day${d === 1 ? '' : 's'} left` :
+                  b === 'warning' ? `${d} days left` :
+                  `${d} days left`;
+
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-foreground flex items-center gap-2">
+                        <Clock size={16} className="text-primary" />
+                        My Subscriptions
+                      </h3>
+                      <button onClick={fetchSubscriptions} className="p-2 rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all">
+                        <RefreshCw size={14} className={subsLoading ? 'animate-spin' : ''} />
+                      </button>
+                    </div>
+
+                    {/* Stat tiles */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+                      {[
+                        { k: 'Total', v: stats.total, c: { bg: 'hsla(258,78%,55%,0.08)', fg: 'hsl(258,78%,50%)', border: 'hsla(258,78%,55%,0.22)' } },
+                        { k: 'Expired', v: stats.expired, c: colorOf('expired') },
+                        { k: '≤ 7 days', v: stats.critical, c: colorOf('critical') },
+                        { k: '≤ 30 days', v: stats.warning, c: colorOf('warning') },
+                      ].map(s => (
+                        <div key={s.k} className="rounded-2xl p-3" style={{ background: s.c.bg, border: `1px solid ${s.c.border}` }}>
+                          <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: s.c.fg, opacity: 0.85 }}>{s.k}</p>
+                          <p className="text-xl font-black mt-1" style={{ color: s.c.fg }}>{s.v}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Auto-reminder hint */}
+                    <div className="flex items-start gap-2.5 rounded-2xl p-3 text-xs"
+                      style={{ background: 'hsla(258,78%,55%,0.06)', border: '1px solid hsla(258,78%,55%,0.18)' }}>
+                      <Bell size={14} className="text-primary mt-0.5 flex-shrink-0" />
+                      <div className="text-foreground/80">
+                        We will automatically email and notify you <strong>7 days before</strong> any subscription expires.
+                        You can also see real-time status here anytime.
+                      </div>
+                    </div>
+
+                    {subsLoading ? (
+                      <div className="flex items-center justify-center py-16">
+                        <RefreshCw size={20} className="animate-spin text-primary" />
+                      </div>
+                    ) : enriched.length === 0 ? (
+                      <div className="text-center py-16 text-muted-foreground rounded-2xl border border-dashed border-border">
+                        <Clock size={40} className="mx-auto mb-3 opacity-20" />
+                        <p className="font-medium text-sm">No subscriptions found</p>
+                        <p className="text-xs mt-1">Subscription products with an expiry date will appear here</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {enriched.map((s: any) => {
+                          const c = colorOf(s._bucket);
+                          const total = s.expires_at && s.created_at
+                            ? Math.max(1, Math.ceil((new Date(s.expires_at).getTime() - new Date(s.created_at).getTime()) / dayMs))
+                            : null;
+                          const elapsed = s.created_at
+                            ? Math.max(0, Math.ceil((now - new Date(s.created_at).getTime()) / dayMs))
+                            : null;
+                          const pct = total && elapsed != null ? Math.min(100, Math.max(0, (elapsed / total) * 100)) : 0;
+                          return (
+                            <div key={s.id} className="rounded-2xl border overflow-hidden"
+                              style={{ background: 'hsl(var(--card))', borderColor: c.border }}>
+                              <div className="flex items-center gap-3 px-4 py-3"
+                                style={{ background: c.bg, borderBottom: `1px solid ${c.border}` }}>
+                                <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                                  style={{ background: c.bg, border: `1px solid ${c.border}` }}>
+                                  <Clock size={14} style={{ color: c.fg }} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-bold text-sm text-foreground truncate">{s.product_name}</p>
+                                  <p className="text-[10px] text-muted-foreground">
+                                    Order #{s.orders?.order_number}
+                                    {s.created_at ? ` · Started ${new Date(s.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}` : ''}
+                                  </p>
+                                </div>
+                                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
+                                  style={{ background: c.bg, color: c.fg, border: `1px solid ${c.border}` }}>
+                                  {labelOf(s._bucket, s._days)}
+                                </span>
+                              </div>
+
+                              <div className="p-4 space-y-3">
+                                <div className="grid grid-cols-2 gap-3 text-xs">
+                                  <div>
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Expires on</p>
+                                    <p className="font-bold text-foreground text-sm">
+                                      {s.expires_at ? new Date(s.expires_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Reminder sent</p>
+                                    <p className="font-medium text-foreground/80 text-xs">
+                                      {s.last_reminder_sent_at
+                                        ? new Date(s.last_reminder_sent_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                                        : 'Not yet'}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {total != null && (
+                                  <div>
+                                    <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wide mb-1.5"
+                                      style={{ color: c.fg }}>
+                                      <span>Lifetime</span>
+                                      <span>{Math.min(elapsed!, total)} / {total} days</span>
+                                    </div>
+                                    <div className="h-2 rounded-full overflow-hidden" style={{ background: 'hsl(var(--muted))' }}>
+                                      <div className="h-full rounded-full transition-all"
+                                        style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${c.fg}, ${c.fg})`, opacity: s._bucket === 'expired' ? 0.5 : 1 }} />
+                                    </div>
+                                  </div>
+                                )}
+
+                                <div className="flex flex-wrap gap-2 pt-1">
+                                  <button
+                                    onClick={() => navigate('/shop')}
+                                    className={`px-3 py-2 text-xs rounded-xl flex items-center gap-1.5 ${gradBtn}`}
+                                    style={gradBtnStyle}>
+                                    <RefreshCw size={12} /> Renew Now
+                                  </button>
+                                  <button
+                                    onClick={() => handleTabSwitch('orders')}
+                                    className="px-3 py-2 text-xs rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all flex items-center gap-1.5">
+                                    <Package size={12} /> View Order
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+
               {activeTab === 'wallet' && (
                 <div className="space-y-5">
                   {/* Balance Card */}
