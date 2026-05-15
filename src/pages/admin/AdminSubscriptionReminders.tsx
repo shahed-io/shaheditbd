@@ -82,6 +82,21 @@ export default function AdminSubscriptionReminders() {
   const [sending, setSending] = useState(false);
   const [sendProgress, setSendProgress] = useState({ done: 0, total: 0, failed: 0 });
 
+  // Manual / AI composer
+  const [mProductId, setMProductId] = useState<string>('');
+  const [mProductName, setMProductName] = useState('');
+  const [mProductOpen, setMProductOpen] = useState(false);
+  const [mCustomerName, setMCustomerName] = useState('');
+  const [mCustomerEmail, setMCustomerEmail] = useState('');
+  const [mExpiry, setMExpiry] = useState('');
+  const [mLanguage, setMLanguage] = useState<'en' | 'bn'>('bn');
+  const [mTone, setMTone] = useState('professional, warm, concise');
+  const [mNotes, setMNotes] = useState('');
+  const [mMessage, setMMessage] = useState('');
+  const [mGenerating, setMGenerating] = useState(false);
+  const [mSending, setMSending] = useState(false);
+  const [mAutoSend, setMAutoSend] = useState(true);
+
   const load = async () => {
     setLoading(true);
     try {
