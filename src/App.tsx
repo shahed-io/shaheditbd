@@ -107,6 +107,7 @@ const AdminProductReviews        = lazy(() => import("./pages/admin/AdminProduct
 const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFacebookPixel"));
 const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
 const AdminCustomerLicenses      = lazy(() => import("./pages/admin/AdminCustomerLicenses"));
+const AdminSubscriptionReminders = lazy(() => import("./pages/admin/AdminSubscriptionReminders"));
 const AdminQuickSale             = lazy(() => import("./pages/admin/AdminQuickSale"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
@@ -296,6 +297,7 @@ const AppContent = () => {
             <Route path="facebook-pixel" element={<AdminSuspense><AdminFacebookPixel /></AdminSuspense>} />
             <Route path="licenses" element={<AdminSuspense><AdminLicenses /></AdminSuspense>} />
             <Route path="customer-licenses" element={<AdminSuspense><AdminCustomerLicenses /></AdminSuspense>} />
+            <Route path="subscription-reminders" element={<AdminSuspense><AdminSubscriptionReminders /></AdminSuspense>} />
             <Route path="quick-sale" element={<AdminSuspense><AdminQuickSale /></AdminSuspense>} />
             <Route path="popup-banner" element={<AdminSuspense><AdminPopupBanner /></AdminSuspense>} />
             <Route path="invoices" element={<AdminSuspense><AdminInvoiceGenerator /></AdminSuspense>} />
