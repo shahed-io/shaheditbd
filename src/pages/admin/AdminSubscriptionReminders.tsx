@@ -224,6 +224,35 @@ export default function AdminSubscriptionReminders() {
     }
   };
 
+  // Generate a unique per-recipient coupon
+  const createPersonalCoupon = async (params: {
+    customerEmail: string;
+    productId: string | null;
+    productName: string;
+  }): Promise<{ code: string; validUntil: string } | null> => {
+    if (!includeCoupon || couponPercent <= 0) return null;
+    try {
+      const rand = Array.from(crypto.getRandomValues(new Uint8Array(4)))
+        .map(b => b.toString(36)).join('').toUpperCase().slice(0, 6);
+      const code = `RENEW-${rand}`;
+      const expiresAt = new Date(Date.now() + couponValidDays * 24 * 60 * 60 * 1000).toISOString();
+      const { error } = await supabase.from('coupons').insert({
+        code,
+        description: `Personal renewal offer for ${params.productName}`,
+        discount_type: 'percentage',
+        discount_value: couponPercent,
+        max_uses: 1,
+        is_active: true,
+        expires_at: expiresAt,
+        customer_email: params.customerEmail,
+        product_id: params.productId,
+        source: 'renewal_reminder',
+      } as any);
+      if (error) { console.error('[coupon] create error', error); return null; }
+      return { code, validUntil: fmtDate(expiresAt) };
+    } catch (e) { console.error('[coupon] create exception', e); return null; }
+  };
+
   const openSend = () => {
     if (selectedRows.length === 0) {
       toast.error('Select at least one customer');
