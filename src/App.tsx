@@ -131,6 +131,7 @@ const AdminGetCIDTools           = lazy(() => import("./pages/admin/AdminGetCIDT
 const AdminCidCredits            = lazy(() => import("./pages/admin/AdminCidCredits"));
 const GetCID                     = lazy(() => import("./pages/GetCID"));
 const CheckKey                   = lazy(() => import("./pages/CheckKey"));
+const AdminSecurity2FA           = lazy(() => import("./pages/admin/AdminSecurity2FA"));
 
 
 const queryClient = new QueryClient({
@@ -317,6 +318,7 @@ const AppContent = () => {
 
             <Route path="getcid-tools" element={<AdminSuspense><AdminGetCIDTools /></AdminSuspense>} />
             <Route path="cid-credits" element={<AdminSuspense><AdminCidCredits /></AdminSuspense>} />
+            <Route path="security" element={<AdminSuspense><AdminSecurity2FA /></AdminSuspense>} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
