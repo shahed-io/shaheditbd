@@ -29,7 +29,7 @@ interface SEOHeadProps {
 const SITE_NAME = 'Shahed Store';
 const SITE_URL = 'https://shahedstore.com.bd';
 const DEFAULT_DESC = 'Shahed Store – Bangladesh\'s most trusted digital software shop. Buy Windows 11, Microsoft Office 365, Adobe Creative Cloud, Antivirus, VPN & subscriptions at the lowest price. 100% genuine. Instant delivery.';
-const DEFAULT_OG = '/favicon.png';
+const DEFAULT_OG = '/og-image.jpg';
 const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, shahed store';
 
 // Cache for GA/GSC settings so we only fetch once per session
@@ -151,8 +151,11 @@ const SEOHead = ({
     // Title
     document.title = fullTitle;
 
-    // Lang
-    document.documentElement.lang = 'en';
+    // Lang — keep Bengali primary (matches site content); critical for BD search ranking.
+    // Previously hardcoded to 'en' which prevented Google from ranking Bengali queries.
+    if (document.documentElement.lang !== 'bn') {
+      document.documentElement.lang = 'bn';
+    }
 
     const setMeta = (sel: string, content: string) => {
       let el = document.querySelector(sel) as HTMLMetaElement | null;
