@@ -83,6 +83,28 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>({});
   const [customFieldErrors, setCustomFieldErrors] = useState<Record<string, string>>({});
 
+  // Optional payment proof screenshot
+  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const screenshotInputRef = useRef<HTMLInputElement>(null);
+
+  const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { toast.error('শুধুমাত্র ছবি আপলোড করুন'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error('ছবির সাইজ ৫MB এর কম হতে হবে'); return; }
+    setPaymentScreenshot(file);
+    const reader = new FileReader();
+    reader.onload = ev => setScreenshotPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const removeScreenshot = () => {
+    setPaymentScreenshot(null);
+    setScreenshotPreview(null);
+    if (screenshotInputRef.current) screenshotInputRef.current.value = '';
+  };
+
   const customFields: CustomField[] = product.customFields || [];
   const itemTotal = product.price * initialQty;
   const finalTotal = Math.max(0, itemTotal - couponDiscount);
