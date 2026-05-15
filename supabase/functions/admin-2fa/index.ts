@@ -451,9 +451,10 @@ Deno.serve(async (req) => {
           .maybeSingle();
         if (sess) authorized = true;
       }
-      // Auth path B: caller supplies a fresh email OTP code
+      // Auth path B: caller supplies a fresh email OTP code (6 digits) OR a backup code (xxxx-xxxx)
       if (!authorized && code) {
         const cleaned = code.replace(/\s+/g, "");
+        // B1: numeric 6-digit email OTP
         if (/^\d{6}$/.test(cleaned)) {
           const hash = await sha256(cleaned);
           const { data: otpRow } = await admin
@@ -473,9 +474,23 @@ Deno.serve(async (req) => {
               .eq("id", otpRow.id);
           }
         }
+        // B2: backup code (consume it on success)
+        if (!authorized) {
+          const { data: row2 } = await admin
+            .from("admin_2fa")
+            .select("backup_codes")
+            .eq("user_id", userId)
+            .maybeSingle();
+          const lower = cleaned.toLowerCase();
+          if (row2?.backup_codes?.includes(lower)) {
+            authorized = true;
+            const remaining = (row2.backup_codes ?? []).filter((c: string) => c !== lower);
+            await admin.from("admin_2fa").update({ backup_codes: remaining }).eq("user_id", userId);
+          }
+        }
       }
       if (!authorized) {
-        return json({ error: "Verification required. Provide a valid session token or fresh email code." }, 401);
+        return json({ error: "Verification required. Provide a backup code, email code, or valid session." }, 401);
       }
 
       await admin.from("admin_2fa").delete().eq("user_id", userId);
