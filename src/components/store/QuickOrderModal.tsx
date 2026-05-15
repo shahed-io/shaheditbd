@@ -216,6 +216,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         setCouponDiscount(0);
       } else {
         setCouponDiscount(data.discount);
+        toast.success(data.message || `✅ কুপন approved! ৳${data.discount} ছাড়`);
       }
     } catch {
       setCouponError('কুপন চেক করতে সমস্যা হয়েছে');
