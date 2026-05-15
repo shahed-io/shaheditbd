@@ -101,7 +101,7 @@ export default function AdminSubscriptionReminders() {
       setProducts((prods || []) as ProductOpt[]);
 
       const oiRows: SubRow[] = ((oi as any[]) || []).map(r => ({
-        source: 'order_item',
+        source: 'order_item' as const,
         id: r.id,
         product_id: r.product_id,
         product_name: r.product_name,
