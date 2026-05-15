@@ -26,7 +26,12 @@ const CartDrawer = () => {
     setCouponError('');
     try {
       const { data, error } = await supabase.functions.invoke('validate-coupon', {
-        body: { code: couponInput.trim().toUpperCase(), orderTotal: subtotal },
+        body: {
+          code: couponInput.trim().toUpperCase(),
+          orderTotal: subtotal,
+          customerEmail: user?.email || '',
+          productIds: items.map((it: any) => it.id).filter(Boolean),
+        },
       });
       if (error || !data?.valid) {
         setCouponError(data?.message || 'Invalid coupon code');
