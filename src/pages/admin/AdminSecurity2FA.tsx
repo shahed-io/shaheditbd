@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAdmin2FA, setStoredToken } from '@/hooks/useAdmin2FA';
-import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle } from 'lucide-react';
+import { useAdmin2FA, setStoredToken, getStoredToken } from '@/hooks/useAdmin2FA';
+import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle, RefreshCw, MailCheck } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSecurity2FA = () => {
-  const { status, setup, enable, disable } = useAdmin2FA();
+  const { status, setup, enable, disable, sendEmailOtp, reset } = useAdmin2FA();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const isForced = params.get('force') === '1';
@@ -22,6 +22,13 @@ const AdminSecurity2FA = () => {
   // Disable flow
   const [disableCode, setDisableCode] = useState('');
   const [disabling, setDisabling] = useState(false);
+
+  // Reset flow (lost authenticator)
+  const [resetMode, setResetMode] = useState(false);
+  const [resetEmailCode, setResetEmailCode] = useState('');
+  const [resetSending, setResetSending] = useState(false);
+  const [resetSentInfo, setResetSentInfo] = useState('');
+  const [resetting, setResetting] = useState(false);
 
   const refresh = async () => {
     setLoading(true);
@@ -77,6 +84,40 @@ const AdminSecurity2FA = () => {
       toast.error((e as Error).message);
     }
     setDisabling(false);
+  };
+
+  const handleSendResetEmail = async () => {
+    setResetSending(true);
+    setResetSentInfo('');
+    try {
+      const r = await sendEmailOtp();
+      const n = r?.sentTo ?? 0;
+      setResetSentInfo(`✉ Reset code sent to ${n} admin email${n === 1 ? '' : 's'}. Expires in 10 minutes.`);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setResetSending(false);
+  };
+
+  const handleConfirmReset = async () => {
+    if (!confirm('This will erase the current Authenticator setup and let you scan a new QR. Continue?')) return;
+    setResetting(true);
+    try {
+      const sessionToken = getStoredToken() || undefined;
+      const codeInput = resetEmailCode.trim() || undefined;
+      await reset({ token: sessionToken, code: codeInput });
+      toast.success('Authenticator reset. Scan the new QR below.');
+      setEnabled(false);
+      setResetMode(false);
+      setResetEmailCode('');
+      setResetSentInfo('');
+      const r = await setup();
+      setSetupData({ secret: r.secret, otpauthUrl: r.otpauthUrl });
+      setBackupCodes(null);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setResetting(false);
   };
 
   const copy = (text: string) => {
@@ -141,6 +182,62 @@ const AdminSecurity2FA = () => {
                 {disabling ? 'Disabling…' : 'Disable'}
               </button>
             </div>
+          </div>
+
+          {/* Reset / Lost Authenticator */}
+          <div className="border-t border-border/50 pt-4 space-y-2">
+            <p className="text-sm font-semibold flex items-center gap-2">
+              <RefreshCw size={14} className="text-primary" /> Lost your Authenticator?
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Reset the current setup and scan a new QR code. Authorized either by your active admin
+              session, or by a fresh email verification code sent to all admins.
+            </p>
+
+            {!resetMode ? (
+              <button
+                onClick={() => setResetMode(true)}
+                className="px-4 py-2 border border-primary/40 text-primary rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-primary/10"
+              >
+                <RefreshCw size={14} /> Reset Authenticator
+              </button>
+            ) : (
+              <div className="space-y-3 bg-muted/30 border border-border rounded-xl p-3">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={handleSendResetEmail}
+                    disabled={resetSending}
+                    className="px-3 py-2 border border-border rounded-lg text-xs font-medium flex items-center gap-1.5 disabled:opacity-50"
+                  >
+                    <MailCheck size={13} /> {resetSending ? 'Sending…' : 'Email me a reset code'}
+                  </button>
+                </div>
+                {resetSentInfo && (
+                  <div className="text-xs text-primary bg-primary/10 border border-primary/30 rounded-lg px-3 py-2">{resetSentInfo}</div>
+                )}
+                <input
+                  value={resetEmailCode}
+                  onChange={(e) => setResetEmailCode(e.target.value)}
+                  placeholder="Email code (optional if logged-in session is valid)"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleConfirmReset}
+                    disabled={resetting}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold disabled:opacity-50"
+                  >
+                    {resetting ? 'Resetting…' : 'Confirm Reset & Show New QR'}
+                  </button>
+                  <button
+                    onClick={() => { setResetMode(false); setResetEmailCode(''); setResetSentInfo(''); }}
+                    className="px-4 py-2 border border-border rounded-lg text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

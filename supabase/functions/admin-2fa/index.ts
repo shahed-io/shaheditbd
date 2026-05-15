@@ -82,6 +82,7 @@ const BodySchema = z.object({
     "disable",
     "logout",
     "send-email-otp",
+    "reset",
   ]),
   code: z.string().trim().optional(),
   token: z.string().trim().optional(),
@@ -377,6 +378,52 @@ Deno.serve(async (req) => {
 
       await admin.from("admin_2fa").delete().eq("user_id", userId);
       await admin.from("admin_2fa_sessions").delete().eq("user_id", userId);
+      return json({ success: true });
+    }
+
+    // ─── reset: wipe TOTP secret so admin can re-enroll (requires valid 2FA session OR email OTP code) ───
+    if (action === "reset") {
+      // Auth path A: caller has a valid admin_2fa_sessions token (passed login already)
+      let authorized = false;
+      if (token) {
+        const { data: sess } = await admin
+          .from("admin_2fa_sessions")
+          .select("expires_at")
+          .eq("user_id", userId)
+          .eq("token", token)
+          .gt("expires_at", new Date().toISOString())
+          .maybeSingle();
+        if (sess) authorized = true;
+      }
+      // Auth path B: caller supplies a fresh email OTP code
+      if (!authorized && code) {
+        const cleaned = code.replace(/\s+/g, "");
+        if (/^\d{6}$/.test(cleaned)) {
+          const hash = await sha256(cleaned);
+          const { data: otpRow } = await admin
+            .from("admin_email_otps")
+            .select("id")
+            .eq("user_id", userId)
+            .eq("code_hash", hash)
+            .is("used_at", null)
+            .gt("expires_at", new Date().toISOString())
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (otpRow) {
+            authorized = true;
+            await admin.from("admin_email_otps")
+              .update({ used_at: new Date().toISOString() })
+              .eq("id", otpRow.id);
+          }
+        }
+      }
+      if (!authorized) {
+        return json({ error: "Verification required. Provide a valid session token or fresh email code." }, 401);
+      }
+
+      await admin.from("admin_2fa").delete().eq("user_id", userId);
+      // Keep current sessions alive so admin doesn't get bounced while re-enrolling
       return json({ success: true });
     }
 
