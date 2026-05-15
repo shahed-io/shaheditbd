@@ -27,6 +27,7 @@ const AdminSecurity2FA = () => {
   // Reset flow (lost authenticator)
   const [resetMode, setResetMode] = useState(false);
   const [resetEmailCode, setResetEmailCode] = useState('');
+  const [resetBackupCode, setResetBackupCode] = useState('');
   const [resetSending, setResetSending] = useState(false);
   const [resetSentInfo, setResetSentInfo] = useState('');
   const [resetting, setResetting] = useState(false);
