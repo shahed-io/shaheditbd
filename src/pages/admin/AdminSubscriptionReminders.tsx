@@ -16,7 +16,9 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Mail, RefreshCw, Save, Send, CalendarClock, Search, Loader2, Filter } from 'lucide-react';
+import { Mail, RefreshCw, Save, Send, CalendarClock, Search, Loader2, Filter, Sparkles, Wand2 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 
 type SourceKind = 'order_item' | 'personal_license';
 
