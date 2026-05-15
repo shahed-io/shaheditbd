@@ -108,7 +108,11 @@ const AdminLogin = () => {
       const r = await verifyLogin(otp.trim(), rememberDevice);
       if (r?.token) {
         setStoredToken(r.token, !!r.remembered);
-        navigate('/ceo', { replace: true });
+        if (r.usedBackup) {
+          navigate('/ceo/security?recover=1', { replace: true });
+        } else {
+          navigate('/ceo', { replace: true });
+        }
       } else {
         setError('Invalid code');
       }
