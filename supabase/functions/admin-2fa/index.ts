@@ -58,8 +58,8 @@ function verifyTotp(secret: string, code: string): boolean {
     period: 30,
     secret: OTPAuth.Secret.fromBase32(secret),
   });
-  // ±1 window (90s tolerance)
-  const delta = totp.validate({ token: code, window: 1 });
+  // ±2 window (~150s tolerance) to handle device/server clock drift
+  const delta = totp.validate({ token: code, window: 2 });
   return delta !== null;
 }
 
