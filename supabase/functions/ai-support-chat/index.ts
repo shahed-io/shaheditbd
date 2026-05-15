@@ -46,6 +46,55 @@ serve(async (req) => {
       console.error("Failed to fetch products:", e);
     }
 
+    // Fetch contact phone number from site_settings
+    let supportPhone = "01840099853";
+    try {
+      const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+      const { data: phoneRow } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "site_phone")
+        .maybeSingle();
+      if (phoneRow?.value) supportPhone = String(phoneRow.value);
+    } catch (e) {
+      console.error("Failed to fetch site_phone:", e);
+    }
+
+    // Fetch active coupons + welcome offer for discount context
+    let couponContext = "";
+    try {
+      const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+      const nowIso = new Date().toISOString();
+      const { data: coupons } = await supabase
+        .from("coupons")
+        .select("code, description, discount_type, discount_value, min_order_amount, max_uses, uses_count, expires_at")
+        .eq("is_active", true);
+
+      const activeCoupons = (coupons || []).filter((c: any) => {
+        if (c.expires_at && new Date(c.expires_at) < new Date(nowIso)) return false;
+        if (c.max_uses != null && (c.uses_count || 0) >= c.max_uses) return false;
+        return true;
+      });
+
+      if (activeCoupons.length > 0) {
+        couponContext = "\n\n🎁 বর্তমানে সক্রিয় ডিসকাউন্ট কুপন (গ্রাহককে কেবল এগুলোই বলবেন):\n";
+        for (const c of activeCoupons) {
+          const val = c.discount_type === "percentage"
+            ? `${c.discount_value}% ছাড়`
+            : `৳${c.discount_value} ছাড়`;
+          const minOrd = c.min_order_amount ? ` (ন্যূনতম অর্ডার ৳${c.min_order_amount})` : "";
+          const exp = c.expires_at ? ` — মেয়াদ: ${new Date(c.expires_at).toLocaleDateString("bn-BD")}` : "";
+          const desc = c.description ? ` — ${c.description}` : "";
+          couponContext += `- **${c.code}**: ${val}${minOrd}${exp}${desc}\n`;
+        }
+        couponContext += "\nচেকআউট পেজে কুপন কোড বসিয়ে \"Apply\" করলে ছাড় পেয়ে যাবেন।";
+      } else {
+        couponContext = "\n\n🎁 ডিসকাউন্ট: এই মুহূর্তে সাধারণ পাবলিক কুপন সক্রিয় নেই, তবে নতুন ইউজারদের জন্য Welcome Offer (সাইনআপের পর অটো-জেনারেট হওয়া WELCOME-XXXX কোড) এবং রেফারেল কোড ব্যবহার করলে ৫% স্থায়ী ছাড় পাওয়া যায়।";
+      }
+    } catch (e) {
+      console.error("Failed to fetch coupons:", e);
+    }
+
     const systemPrompt = `আপনি Shahed Store-এর AI সহকারী "Shahed AI"। আপনি বাংলা ও ইংরেজি উভয় ভাষায় সাহায্য করতে পারেন। গ্রাহক যে ভাষায় কথা বলবেন, সেই ভাষায় উত্তর দিন।
 
 🏪 Shahed Store সম্পর্কে:
