@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Save, RotateCcw, Palette, FileText } from 'lucide-react';
+import { Save, RotateCcw, Palette, FileText, Code2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   loadInvoiceDesign,
