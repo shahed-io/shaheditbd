@@ -1007,14 +1007,23 @@ const Checkout = () => {
                       {couponError && <p className="text-destructive text-xs">{couponError}</p>}
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded-xl px-3 py-2">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle size={14} className="text-green-400" />
-                        <span className="text-xs text-green-400 font-medium">{coupon.code} — ৳{discountAmount.toLocaleString()} ছাড়</span>
+                    <div className="relative overflow-hidden rounded-xl border border-emerald-400/40 bg-gradient-to-r from-emerald-500/15 via-green-500/10 to-emerald-500/15 px-3 py-2.5 shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)]">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.25),transparent_60%)] pointer-events-none" />
+                      <div className="relative flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="relative">
+                            <CheckCircle size={16} className="text-emerald-400" />
+                            <span className="absolute inset-0 rounded-full bg-emerald-400/40 blur-md animate-pulse" />
+                          </div>
+                          <div className="flex flex-col leading-tight">
+                            <span className="text-[10px] uppercase tracking-wider text-emerald-300/80 font-bold">Approved ✨</span>
+                            <span className="text-xs font-bold text-emerald-300">{coupon.code} · ৳{discountAmount.toLocaleString()} ছাড়</span>
+                          </div>
+                        </div>
+                        <button type="button" onClick={() => { resetCoupon(); setCouponCode(''); }} className="text-muted-foreground hover:text-destructive p-1">
+                          <X size={13} />
+                        </button>
                       </div>
-                      <button type="button" onClick={() => { resetCoupon(); setCouponCode(''); }} className="text-muted-foreground hover:text-destructive">
-                        <X size={13} />
-                      </button>
                     </div>
                   )}
                 </div>
