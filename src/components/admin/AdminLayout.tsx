@@ -110,6 +110,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
       { icon: Globe, label: 'SEO Manager', path: '/ceo/seo' },
       { icon: Activity, label: 'SEO Monitor', path: '/ceo/seo-monitor', badge: 'new' },
+      { icon: Search, label: 'Search Console', path: '/ceo/seo/search-console' },
       { icon: ShieldCheck, label: 'Site Verification', path: '/ceo/site-verification' },
     ],
   },
