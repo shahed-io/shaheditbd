@@ -181,6 +181,10 @@ const AdminSecurity2FA = () => {
     URL.revokeObjectURL(url);
   };
 
+  const qrUrl = setupData
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(setupData.otpauthUrl)}`
+    : null;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
