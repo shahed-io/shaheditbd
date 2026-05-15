@@ -528,6 +528,36 @@ export default function AdminSubscriptionReminders() {
           <Input value={mNotes} onChange={e => setMNotes(e.target.value)} placeholder="e.g. mention loyalty discount, mention 24/7 support" />
         </div>
 
+        {/* Personal coupon settings (shared with bulk send) */}
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-3">
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <Checkbox checked={includeCoupon} onCheckedChange={(v) => setIncludeCoupon(!!v)} />
+            🎁 Attach a personal one-time discount coupon for this customer
+          </label>
+          {includeCoupon && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label className="text-xs font-medium">Discount %</label>
+                <Input type="number" min={1} max={90} value={couponPercent}
+                  onChange={e => setCouponPercent(Math.max(1, Math.min(90, Number(e.target.value) || 0)))} />
+              </div>
+              <div>
+                <label className="text-xs font-medium">Valid for (days)</label>
+                <Input type="number" min={1} max={90} value={couponValidDays}
+                  onChange={e => setCouponValidDays(Math.max(1, Math.min(90, Number(e.target.value) || 0)))} />
+              </div>
+              <div>
+                <label className="text-xs font-medium">Special offer text (optional)</label>
+                <Input value={specialOffer} onChange={e => setSpecialOffer(e.target.value)}
+                  placeholder="e.g. Free 1-month bonus on renewal" />
+              </div>
+            </div>
+          )}
+          <p className="text-[11px] text-muted-foreground">
+            A unique <code>RENEW-XXXX</code> coupon is generated per recipient, locked to their email and the product. One-time use only.
+          </p>
+        </div>
+
         <div>
           <label className="text-xs font-medium flex items-center justify-between">
             <span>Email body (AI-generated, editable)</span>
