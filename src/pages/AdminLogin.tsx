@@ -10,7 +10,7 @@ import { useAdmin2FA, setStoredToken, getStoredToken } from '@/hooks/useAdmin2FA
 const AdminLogin = () => {
   const { signIn, signOut, isAdmin, user, loading } = useAuth();
   const navigate = useNavigate();
-  const { status: get2faStatus, verifyLogin, validateSession, sendEmailOtp } = useAdmin2FA();
+  const { status: get2faStatus, verifyLogin, validateSession, sendEmailOtp, getConfig } = useAdmin2FA();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +24,14 @@ const AdminLogin = () => {
   const [verifying, setVerifying] = useState(false);
   const [emailSending, setEmailSending] = useState(false);
   const [emailSentInfo, setEmailSentInfo] = useState<string>('');
+  const [rememberDevice, setRememberDevice] = useState(false);
+  const [twoFaConfig, setTwoFaConfig] = useState<{ session_ttl_hours: number; remember_device_ttl_days: number; allow_remember_device: boolean } | null>(null);
+
+  // Fetch 2FA config (TTL labels) once admin is identified
+  useEffect(() => {
+    if (!user || !isAdmin) return;
+    getConfig().then(setTwoFaConfig).catch(() => { /* keep defaults */ });
+  }, [user, isAdmin, getConfig]);
 
   // After admin login, decide: needs 2FA challenge / enrollment / proceed
   useEffect(() => {
@@ -97,9 +105,9 @@ const AdminLogin = () => {
     setError('');
     setVerifying(true);
     try {
-      const r = await verifyLogin(otp.trim());
+      const r = await verifyLogin(otp.trim(), rememberDevice);
       if (r?.token) {
-        setStoredToken(r.token);
+        setStoredToken(r.token, !!r.remembered);
         navigate('/ceo', { replace: true });
       } else {
         setError('Invalid code');
