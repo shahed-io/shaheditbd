@@ -310,7 +310,7 @@ export default function AdminSubscriptionReminders() {
   // ============= Manual / AI Composer =============
   const mDaysLeft = useMemo(() => mExpiry ? daysBetween(new Date(mExpiry).toISOString()) : null, [mExpiry]);
 
-  const sendManual = async (overrideMsg?: string) => {
+  const sendManual = async (overrideMsg?: string, couponOverride?: { code: string; validUntil: string } | null) => {
     const finalMsg = (overrideMsg ?? mMessage).trim();
     if (!mCustomerEmail.trim() || !/.+@.+\..+/.test(mCustomerEmail)) {
       toast.error('Valid customer email required'); return;
@@ -319,6 +319,13 @@ export default function AdminSubscriptionReminders() {
     if (!finalMsg) { toast.error('Message is empty — generate or write one'); return; }
     setMSending(true);
     try {
+      const coupon = couponOverride !== undefined
+        ? couponOverride
+        : await createPersonalCoupon({
+            customerEmail: mCustomerEmail,
+            productId: mProductId || null,
+            productName: mProductName,
+          });
       const idem = `manual-subrenew-${mCustomerEmail}-${mProductId || mProductName}-${Date.now()}`;
       const { error } = await supabase.functions.invoke('send-transactional-email', {
         body: {
@@ -332,11 +339,17 @@ export default function AdminSubscriptionReminders() {
             daysLeft: mDaysLeft,
             renewUrl: SITE + '/shop',
             customMessage: finalMsg,
+            couponCode: coupon?.code,
+            discountPercent: coupon ? couponPercent : undefined,
+            couponValidUntil: coupon?.validUntil,
+            specialOffer: specialOffer || undefined,
           },
         },
       });
       if (error) throw error;
-      toast.success(`Reminder sent to ${mCustomerEmail}`);
+      toast.success(
+        `Reminder sent to ${mCustomerEmail}${coupon ? ` (coupon ${coupon.code})` : ''}`,
+      );
       setMMessage(''); setMNotes(''); setMCustomerEmail(''); setMCustomerName(''); setMExpiry('');
     } catch (e: any) {
       toast.error('Send failed: ' + (e?.message || 'unknown'));
@@ -349,6 +362,14 @@ export default function AdminSubscriptionReminders() {
     if (!mProductName.trim()) { toast.error('Select or type a product first'); return; }
     setMGenerating(true);
     try {
+      // Generate coupon first so AI knows about it
+      const coupon = (autoSendAfter ?? mAutoSend)
+        ? await createPersonalCoupon({
+            customerEmail: mCustomerEmail || 'preview@example.com',
+            productId: mProductId || null,
+            productName: mProductName,
+          })
+        : null;
       const { data, error } = await supabase.functions.invoke('ai-compose-reminder', {
         body: {
           productName: mProductName,
@@ -358,6 +379,10 @@ export default function AdminSubscriptionReminders() {
           language: mLanguage,
           tone: mTone,
           extraNotes: mNotes || undefined,
+          couponCode: coupon?.code,
+          discountPercent: coupon ? couponPercent : undefined,
+          couponValidUntil: coupon?.validUntil,
+          specialOffer: specialOffer || undefined,
         },
       });
       if (error) throw error;
