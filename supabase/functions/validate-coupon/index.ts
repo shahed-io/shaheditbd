@@ -78,6 +78,9 @@ serve(async (req) => {
         discount,
         couponId: wc.id,
         welcomeCoupon: true,
+        discountType: wc.discount_type === 'fixed' ? 'fixed' : 'percentage',
+        discountValue: wc.discount_type === 'fixed' ? wc.discount_amount : wc.discount_percent,
+        message: '✅ Welcome কুপন approved!',
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200,
       });
