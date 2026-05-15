@@ -1,73 +1,27 @@
 /// <reference types="npm:@types/react@18.3.1" />
-
 import * as React from 'npm:react@18.3.1'
-
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Preview,
-  Text,
-} from 'npm:@react-email/components@0.0.22'
+import { EmailLayout, H1, P, CTA, Small, InfoBox, Brand } from './_layout.tsx'
 
 interface RecoveryEmailProps {
   siteName: string
   confirmationUrl: string
 }
 
-export const RecoveryEmail = ({
-  siteName,
-  confirmationUrl,
-}: RecoveryEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>Reset your password for {siteName}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>Reset your password</Heading>
-        <Text style={text}>
-          We received a request to reset your password for {siteName}. Click
-          the button below to choose a new password.
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Reset Password
-        </Button>
-        <Text style={footer}>
-          If you didn't request a password reset, you can safely ignore this
-          email. Your password will not be changed.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
+export const RecoveryEmail = ({ siteName, confirmationUrl }: RecoveryEmailProps) => (
+  <EmailLayout preview={`Reset your password for ${siteName || Brand.name}`}>
+    <H1>Reset your password 🔐</H1>
+    <P>
+      We received a request to reset the password for your {siteName || Brand.name} account.
+      Click the button below to choose a new password.
+    </P>
+    <CTA href={confirmationUrl}>Reset Password</CTA>
+    <InfoBox>
+      For your security, this link will expire shortly. If it expires, simply request a new one from the login page.
+    </InfoBox>
+    <Small>
+      If you didn't request a password reset, you can safely ignore this email — your password will remain unchanged.
+    </Small>
+  </EmailLayout>
 )
 
 export default RecoveryEmail
-
-const main = { backgroundColor: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif' }
-const container = { padding: '24px 28px', maxWidth: '560px' }
-const h1 = {
-  fontSize: '24px',
-  fontWeight: 'bold' as const,
-  color: 'hsl(226, 35%, 12%)',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '15px',
-  color: 'hsl(220, 15%, 35%)',
-  lineHeight: '1.6',
-  margin: '0 0 24px',
-}
-const button = {
-  backgroundColor: 'hsl(258, 78%, 55%)',
-  color: '#ffffff',
-  fontSize: '15px',
-  fontWeight: 'bold' as const,
-  borderRadius: '12px',
-  padding: '14px 28px',
-  textDecoration: 'none',
-  display: 'inline-block',
-}
-const footer = { fontSize: '12px', color: 'hsl(220, 15%, 50%)', margin: '32px 0 0' }
