@@ -52,6 +52,10 @@ const SubscriptionRenewalReminder = ({
   renewUrl = 'https://shahedstore.com.bd/shop',
   customMessage,
   orderNumber,
+  couponCode,
+  discountPercent,
+  couponValidUntil,
+  specialOffer,
 }: Props) => {
   const expired = typeof daysLeft === 'number' && daysLeft < 0
   const status = expired
