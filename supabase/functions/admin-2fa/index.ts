@@ -129,7 +129,53 @@ Deno.serve(async (req) => {
 
     const parsed = BodySchema.safeParse(await req.json().catch(() => ({})));
     if (!parsed.success) return json({ error: "Invalid request" }, 400);
-    const { action, code, token } = parsed.data;
+    const { action, code, token, remember, config } = parsed.data;
+
+    // Helper: load (or default) admin 2FA config
+    const loadConfig = async () => {
+      const { data } = await admin
+        .from("admin_2fa_config")
+        .select("session_ttl_hours, remember_device_ttl_days, allow_remember_device")
+        .eq("id", 1)
+        .maybeSingle();
+      return {
+        session_ttl_hours: data?.session_ttl_hours ?? DEFAULT_SESSION_TTL_HOURS,
+        remember_device_ttl_days: data?.remember_device_ttl_days ?? DEFAULT_REMEMBER_TTL_DAYS,
+        allow_remember_device: data?.allow_remember_device ?? true,
+      };
+    };
+
+    const computeExpiresAt = async (rememberFlag?: boolean) => {
+      const cfg = await loadConfig();
+      const useRemember = !!rememberFlag && cfg.allow_remember_device;
+      const ms = useRemember
+        ? cfg.remember_device_ttl_days * 24 * 3600 * 1000
+        : cfg.session_ttl_hours * 3600 * 1000;
+      return {
+        expiresAt: new Date(Date.now() + ms).toISOString(),
+        remembered: useRemember,
+        ttlHours: useRemember ? cfg.remember_device_ttl_days * 24 : cfg.session_ttl_hours,
+      };
+    };
+
+    // ─── get-config ───
+    if (action === "get-config") {
+      return json(await loadConfig());
+    }
+
+    // ─── update-config ───
+    if (action === "update-config") {
+      if (!config) return json({ error: "config required" }, 400);
+      const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+      if (config.session_ttl_hours !== undefined) patch.session_ttl_hours = config.session_ttl_hours;
+      if (config.remember_device_ttl_days !== undefined) patch.remember_device_ttl_days = config.remember_device_ttl_days;
+      if (config.allow_remember_device !== undefined) patch.allow_remember_device = config.allow_remember_device;
+      const { error } = await admin
+        .from("admin_2fa_config")
+        .upsert({ id: 1, ...patch }, { onConflict: "id" });
+      if (error) return json({ error: error.message }, 500);
+      return json({ success: true, config: await loadConfig() });
+    }
 
     // ─── status ───
     if (action === "status") {
