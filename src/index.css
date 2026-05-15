@@ -1154,18 +1154,6 @@ body.admin-page main > * {
   transform: translateY(-50%);
   z-index: 3;
 }
-}
-.admin-nav-item.active::before {
-  content: '';
-  display: block;
-  position: absolute;
-  left: -2px; top: 25%; bottom: 25%;
-  width: 3px;
-  border-radius: 0 4px 4px 0;
-  background: linear-gradient(180deg, hsl(258, 78%, 55%), hsl(200, 90%, 50%));
-  box-shadow: 0 0 12px hsla(258, 78%, 55%, 0.6);
-  z-index: 2;
-}
 html[data-theme="dark-cyber"] .admin-nav-item.active,
 html[data-theme="midnight-purple"] .admin-nav-item.active {
   background: linear-gradient(135deg,
