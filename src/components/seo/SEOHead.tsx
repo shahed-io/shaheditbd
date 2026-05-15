@@ -151,8 +151,11 @@ const SEOHead = ({
     // Title
     document.title = fullTitle;
 
-    // Lang
-    document.documentElement.lang = 'en';
+    // Lang — keep Bengali primary (matches site content); critical for BD search ranking.
+    // Previously hardcoded to 'en' which prevented Google from ranking Bengali queries.
+    if (document.documentElement.lang !== 'bn') {
+      document.documentElement.lang = 'bn';
+    }
 
     const setMeta = (sel: string, content: string) => {
       let el = document.querySelector(sel) as HTMLMetaElement | null;
