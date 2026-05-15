@@ -46,6 +46,55 @@ serve(async (req) => {
       console.error("Failed to fetch products:", e);
     }
 
+    // Fetch contact phone number from site_settings
+    let supportPhone = "01840099853";
+    try {
+      const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+      const { data: phoneRow } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "site_phone")
+        .maybeSingle();
+      if (phoneRow?.value) supportPhone = String(phoneRow.value);
+    } catch (e) {
+      console.error("Failed to fetch site_phone:", e);
+    }
+
+    // Fetch active coupons + welcome offer for discount context
+    let couponContext = "";
+    try {
+      const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+      const nowIso = new Date().toISOString();
+      const { data: coupons } = await supabase
+        .from("coupons")
+        .select("code, description, discount_type, discount_value, min_order_amount, max_uses, uses_count, expires_at")
+        .eq("is_active", true);
+
+      const activeCoupons = (coupons || []).filter((c: any) => {
+        if (c.expires_at && new Date(c.expires_at) < new Date(nowIso)) return false;
+        if (c.max_uses != null && (c.uses_count || 0) >= c.max_uses) return false;
+        return true;
+      });
+
+      if (activeCoupons.length > 0) {
+        couponContext = "\n\n🎁 বর্তমানে সক্রিয় ডিসকাউন্ট কুপন (গ্রাহককে কেবল এগুলোই বলবেন):\n";
+        for (const c of activeCoupons) {
+          const val = c.discount_type === "percentage"
+            ? `${c.discount_value}% ছাড়`
+            : `৳${c.discount_value} ছাড়`;
+          const minOrd = c.min_order_amount ? ` (ন্যূনতম অর্ডার ৳${c.min_order_amount})` : "";
+          const exp = c.expires_at ? ` — মেয়াদ: ${new Date(c.expires_at).toLocaleDateString("bn-BD")}` : "";
+          const desc = c.description ? ` — ${c.description}` : "";
+          couponContext += `- **${c.code}**: ${val}${minOrd}${exp}${desc}\n`;
+        }
+        couponContext += "\nচেকআউট পেজে কুপন কোড বসিয়ে \"Apply\" করলে ছাড় পেয়ে যাবেন।";
+      } else {
+        couponContext = "\n\n🎁 ডিসকাউন্ট: এই মুহূর্তে সাধারণ পাবলিক কুপন সক্রিয় নেই, তবে নতুন ইউজারদের জন্য Welcome Offer (সাইনআপের পর অটো-জেনারেট হওয়া WELCOME-XXXX কোড) এবং রেফারেল কোড ব্যবহার করলে ৫% স্থায়ী ছাড় পাওয়া যায়।";
+      }
+    } catch (e) {
+      console.error("Failed to fetch coupons:", e);
+    }
+
     const systemPrompt = `আপনি Shahed Store-এর AI সহকারী "Shahed AI"। আপনি বাংলা ও ইংরেজি উভয় ভাষায় সাহায্য করতে পারেন। গ্রাহক যে ভাষায় কথা বলবেন, সেই ভাষায় উত্তর দিন।
 
 🏪 Shahed Store সম্পর্কে:
@@ -53,16 +102,24 @@ serve(async (req) => {
 - সম্পূর্ণ অরিজিনাল ও জেনুইন লাইসেন্স প্রদান করা হয়
 - পেমেন্ট: BKash, Nagad গ্রহণ করা হয়
 - ডেলিভারি: পেমেন্ট কনফার্মেশনের পর ১-২৪ ঘণ্টার মধ্যে ইমেইলে পাঠানো হয়
-- WhatsApp: 01840099853
 - ওয়েবসাইট: www.shahedstore.com.bd
-${productContext}
+
+📞 যোগাযোগের উপায় (গ্রাহক জিজ্ঞেস করলে এই তথ্য দিন):
+- 📱 **সরাসরি কল**: ${supportPhone} (সকাল ১০টা — রাত ১০টা)
+- 💬 **WhatsApp চ্যাট/কল**: ${supportPhone} — দ্রুত উত্তরের জন্য সবচেয়ে ভালো উপায়
+- ✉️ **ইমেইল**: support@shahedstore.com.bd
+- কেউ "কল করব কিভাবে?" জিজ্ঞেস করলে: সরাসরি **${supportPhone}** নম্বরে ডায়াল করতে বলুন এবং WhatsApp লিংক \`https://wa.me/88${supportPhone}\` দিন
+${productContext}${couponContext}
 
 📋 আপনার দায়িত্ব:
 - প্রোডাক্টের দাম, ছাড়, ফিচার সম্পর্কে বিস্তারিত তথ্য দিন
 - অর্ডার ও পেমেন্ট প্রক্রিয়া ব্যাখ্যা করুন
 - ডেলিভারি সময় জানান
 - কোন প্রোডাক্টটি কাস্টমারের জন্য উপযুক্ত তা সাজেস্ট করুন
-- সমস্যা সমাধান না হলে WhatsApp (01840099853) এ যোগাযোগ করতে বলুন
+- গ্রাহক ডিসকাউন্ট/অফার/কুপন জিজ্ঞেস করলে শুধুমাত্র উপরের তালিকায় থাকা সক্রিয় কুপন কোডই বলবেন — কখনোই বানিয়ে কুপন কোড দিবেন না
+- যদি কোনো সক্রিয় পাবলিক কুপন না থাকে: Welcome Offer (নতুন সাইনআপে অটো WELCOME-XXXX), রেফারেল প্রোগ্রাম (৫% স্থায়ী ছাড় + ৳২০ বোনাস), লয়ালটি পয়েন্ট (১০ পয়েন্ট/৳১০০, ২ পয়েন্ট = ৳১) ও চলমান ফ্ল্যাশ সেলের কথা বলুন
+- কুপন কিভাবে ব্যবহার করবে জিজ্ঞেস করলে বলুন: কার্টে গিয়ে চেকআউট পেজে "কুপন কোড" ফিল্ডে কোড বসিয়ে **Apply** চাপুন
+- সমস্যা সমাধান না হলে কল/WhatsApp (${supportPhone}) এ যোগাযোগ করতে বলুন
 - সংক্ষিপ্ত, বন্ধুত্বপূর্ণ ও সহায়ক উত্তর দিন
 
 ✍️ উত্তরের ফরম্যাট (অত্যন্ত গুরুত্বপূর্ণ — অবশ্যই মেনে চলুন):
@@ -70,21 +127,10 @@ ${productContext}
 - প্রতিটি আলাদা পয়েন্ট নতুন লাইনে লিখুন — কখনোই সব তথ্য একটানা প্যারাগ্রাফে লিখবেন না
 - একাধিক বিষয় থাকলে **bullet list** ব্যবহার করুন (\`-\` বা \`•\` দিয়ে শুরু করে প্রতিটি পয়েন্ট নতুন লাইনে)
 - ধাপে ধাপে কিছু বোঝালে **numbered list** (1. 2. 3.) ব্যবহার করুন
-- প্রোডাক্টের নাম, দাম, গুরুত্বপূর্ণ শব্দ \`**bold**\` করুন
+- প্রোডাক্টের নাম, দাম, কুপন কোড, গুরুত্বপূর্ণ শব্দ \`**bold**\` করুন
 - প্রতিটি প্যারাগ্রাফের মাঝে একটি **খালি লাইন** রাখুন (\\n\\n)
-- ইমোজি ব্যবহার করুন (💰 দাম, 📦 প্রোডাক্ট, 🚚 ডেলিভারি, ✅ সুবিধা, 📞 যোগাযোগ) যাতে দ্রুত স্ক্যান করা যায়
-- উত্তর সংক্ষিপ্ত রাখুন (সাধারণত ৩–৭ লাইন), কিন্তু পাঠযোগ্যতা সবার আগে
-
-📌 উদাহরণ ভালো ফরম্যাট:
-\`\`\`
-🎯 আপনার জন্য সেরা ৩টি প্রোডাক্ট:
-
-- **Microsoft Office 2021** — ৳১,২০০ (অফিসের কাজের জন্য)
-- **Adobe Creative Cloud** — ৳২,৫০০ (ডিজাইনের জন্য)
-- **Windows 11 Pro** — ৳৮০০ (পিসি অ্যাক্টিভেশন)
-
-🚚 ডেলিভারি: পেমেন্টের ১–২৪ ঘণ্টার মধ্যে ইমেইলে।
-\`\`\``;
+- ইমোজি ব্যবহার করুন (💰 দাম, 📦 প্রোডাক্ট, 🚚 ডেলিভারি, ✅ সুবিধা, 📞 যোগাযোগ, 🎁 ডিসকাউন্ট) যাতে দ্রুত স্ক্যান করা যায়
+- উত্তর সংক্ষিপ্ত রাখুন (সাধারণত ৩–৭ লাইন), কিন্তু পাঠযোগ্যতা সবার আগে`;
 
     const aiMessages = [
       { role: "system", content: systemPrompt },
