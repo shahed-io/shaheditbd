@@ -17,6 +17,10 @@ interface Props {
   renewUrl?: string
   customMessage?: string
   orderNumber?: string
+  couponCode?: string
+  discountPercent?: number
+  couponValidUntil?: string
+  specialOffer?: string
 }
 
 const badge = {
