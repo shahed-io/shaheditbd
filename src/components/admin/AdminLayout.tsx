@@ -8,6 +8,7 @@ import { useAdminPrefetch, prefetchAdminRoute } from '@/hooks/useAdminPrefetch';
 import AdminCommandPalette from '@/components/admin/AdminCommandPalette';
 import { useAdminCopyAnywhere } from '@/hooks/useAdminCopyAnywhere';
 import AdminHeroHeader from '@/components/admin/AdminHeroHeader';
+import { useAdmin2FA, getStoredToken, setStoredToken } from '@/hooks/useAdmin2FA';
 
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
@@ -135,11 +136,12 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Sparkles, label: 'AI API Config', path: '/ceo/ai-config' },
     ],
   },
-  {
+    {
     title: 'System',
     items: [
       { icon: Users, label: 'Staff Management', path: '/ceo/staff' },
       { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
+      { icon: ShieldCheck, label: '2FA Security', path: '/ceo/security', badge: 'new' },
       { icon: Database, label: 'Backup', path: '/ceo/backup' },
       { icon: Settings, label: 'General Settings', path: '/ceo/settings' },
     ],
@@ -240,6 +242,21 @@ const AdminLayout = () => {
   );
 
   if (!user || !isAdmin) return <Navigate to="/ceo/login" replace />;
+
+  // 2FA gate: require a valid TOTP session for every admin route except the security page (so users can enroll/recover)
+  if (!twoFaChecked) {
+    return (
+      <div className="min-h-screen admin-gradient-bg flex items-center justify-center">
+        <div className="admin-glass-card p-8 flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground font-medium">Verifying security…</p>
+        </div>
+      </div>
+    );
+  }
+  if (twoFaRequired && !location.pathname.startsWith('/ceo/security')) {
+    return <Navigate to="/ceo/login" replace />;
+  }
 
   const toggleSection = (title: string) => {
     setCollapsedSections(prev =>
