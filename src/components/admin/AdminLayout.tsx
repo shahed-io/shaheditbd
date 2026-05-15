@@ -73,6 +73,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Headphones, label: 'Support Tickets', path: '/ceo/tickets' },
       { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
       { icon: Mail, label: 'Newsletter', path: '/ceo/newsletter' },
+      { icon: Mail, label: 'Renewal Reminders', path: '/ceo/subscription-reminders', badge: 'new' },
     ],
   },
   {
