@@ -265,12 +265,17 @@ export default function AdminSubscriptionReminders() {
     setSending(true);
     setSendProgress({ done: 0, total: selectedRows.length, failed: 0 });
     let done = 0, failed = 0;
-    // Group per product+customer for clean idempotency keys
     for (const r of selectedRows) {
       try {
         const days = daysBetween(r.expires_at);
         const today = new Date().toISOString().slice(0, 10);
         const idem = `subrenew-${r.source}-${r.id}-${today}`;
+        // Per-recipient personal coupon (one-time, email + product locked)
+        const coupon = await createPersonalCoupon({
+          customerEmail: r.customer_email,
+          productId: r.source === 'order_item' ? r.product_id : null,
+          productName: r.product_name,
+        });
         const { error } = await supabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'subscription-renewal-reminder',
@@ -284,20 +289,23 @@ export default function AdminSubscriptionReminders() {
               renewUrl: renewUrl || (SITE + '/shop'),
               customMessage: customMsg || undefined,
               orderNumber: r.order_number || undefined,
+              couponCode: coupon?.code,
+              discountPercent: coupon ? couponPercent : undefined,
+              couponValidUntil: coupon?.validUntil,
+              specialOffer: specialOffer || undefined,
             },
           },
         });
         if (error) throw error;
-        // mark reminder sent
         const table = r.source === 'order_item' ? 'order_items' : 'personal_licenses';
         await supabase.from(table).update({ last_reminder_sent_at: new Date().toISOString() }).eq('id', r.id);
         done++;
-      } catch {
+      } catch (e) {
+        console.error('[sendAll] failed for', r.customer_email, e);
         failed++;
       }
       setSendProgress({ done: done + failed, total: selectedRows.length, failed });
-      // small spacing for rate-limit politeness
-      await new Promise(res => setTimeout(res, 120));
+      await new Promise(res => setTimeout(res, 150));
     }
     setSending(false);
     toast.success(`Sent ${done} email${done === 1 ? '' : 's'}${failed ? `, ${failed} failed` : ''}`);
@@ -310,7 +318,7 @@ export default function AdminSubscriptionReminders() {
   // ============= Manual / AI Composer =============
   const mDaysLeft = useMemo(() => mExpiry ? daysBetween(new Date(mExpiry).toISOString()) : null, [mExpiry]);
 
-  const sendManual = async (overrideMsg?: string) => {
+  const sendManual = async (overrideMsg?: string, couponOverride?: { code: string; validUntil: string } | null) => {
     const finalMsg = (overrideMsg ?? mMessage).trim();
     if (!mCustomerEmail.trim() || !/.+@.+\..+/.test(mCustomerEmail)) {
       toast.error('Valid customer email required'); return;
@@ -319,6 +327,13 @@ export default function AdminSubscriptionReminders() {
     if (!finalMsg) { toast.error('Message is empty — generate or write one'); return; }
     setMSending(true);
     try {
+      const coupon = couponOverride !== undefined
+        ? couponOverride
+        : await createPersonalCoupon({
+            customerEmail: mCustomerEmail,
+            productId: mProductId || null,
+            productName: mProductName,
+          });
       const idem = `manual-subrenew-${mCustomerEmail}-${mProductId || mProductName}-${Date.now()}`;
       const { error } = await supabase.functions.invoke('send-transactional-email', {
         body: {
@@ -332,11 +347,17 @@ export default function AdminSubscriptionReminders() {
             daysLeft: mDaysLeft,
             renewUrl: SITE + '/shop',
             customMessage: finalMsg,
+            couponCode: coupon?.code,
+            discountPercent: coupon ? couponPercent : undefined,
+            couponValidUntil: coupon?.validUntil,
+            specialOffer: specialOffer || undefined,
           },
         },
       });
       if (error) throw error;
-      toast.success(`Reminder sent to ${mCustomerEmail}`);
+      toast.success(
+        `Reminder sent to ${mCustomerEmail}${coupon ? ` (coupon ${coupon.code})` : ''}`,
+      );
       setMMessage(''); setMNotes(''); setMCustomerEmail(''); setMCustomerName(''); setMExpiry('');
     } catch (e: any) {
       toast.error('Send failed: ' + (e?.message || 'unknown'));
@@ -349,6 +370,14 @@ export default function AdminSubscriptionReminders() {
     if (!mProductName.trim()) { toast.error('Select or type a product first'); return; }
     setMGenerating(true);
     try {
+      // Generate coupon first so AI knows about it
+      const coupon = (autoSendAfter ?? mAutoSend)
+        ? await createPersonalCoupon({
+            customerEmail: mCustomerEmail || 'preview@example.com',
+            productId: mProductId || null,
+            productName: mProductName,
+          })
+        : null;
       const { data, error } = await supabase.functions.invoke('ai-compose-reminder', {
         body: {
           productName: mProductName,
@@ -358,6 +387,10 @@ export default function AdminSubscriptionReminders() {
           language: mLanguage,
           tone: mTone,
           extraNotes: mNotes || undefined,
+          couponCode: coupon?.code,
+          discountPercent: coupon ? couponPercent : undefined,
+          couponValidUntil: coupon?.validUntil,
+          specialOffer: specialOffer || undefined,
         },
       });
       if (error) throw error;
@@ -493,6 +526,36 @@ export default function AdminSubscriptionReminders() {
         <div>
           <label className="text-xs font-medium">Notes for AI (optional)</label>
           <Input value={mNotes} onChange={e => setMNotes(e.target.value)} placeholder="e.g. mention loyalty discount, mention 24/7 support" />
+        </div>
+
+        {/* Personal coupon settings (shared with bulk send) */}
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-3">
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <Checkbox checked={includeCoupon} onCheckedChange={(v) => setIncludeCoupon(!!v)} />
+            🎁 Attach a personal one-time discount coupon for this customer
+          </label>
+          {includeCoupon && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label className="text-xs font-medium">Discount %</label>
+                <Input type="number" min={1} max={90} value={couponPercent}
+                  onChange={e => setCouponPercent(Math.max(1, Math.min(90, Number(e.target.value) || 0)))} />
+              </div>
+              <div>
+                <label className="text-xs font-medium">Valid for (days)</label>
+                <Input type="number" min={1} max={90} value={couponValidDays}
+                  onChange={e => setCouponValidDays(Math.max(1, Math.min(90, Number(e.target.value) || 0)))} />
+              </div>
+              <div>
+                <label className="text-xs font-medium">Special offer text (optional)</label>
+                <Input value={specialOffer} onChange={e => setSpecialOffer(e.target.value)}
+                  placeholder="e.g. Free 1-month bonus on renewal" />
+              </div>
+            </div>
+          )}
+          <p className="text-[11px] text-muted-foreground">
+            A unique <code>RENEW-XXXX</code> coupon is generated per recipient, locked to their email and the product. One-time use only.
+          </p>
         </div>
 
         <div>
@@ -680,6 +743,36 @@ export default function AdminSubscriptionReminders() {
                 placeholder="Add a personal note. Leave blank to use the default reminder text."
               />
             </div>
+
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-3">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <Checkbox checked={includeCoupon} onCheckedChange={(v) => setIncludeCoupon(!!v)} />
+                🎁 Generate a personal one-time coupon for each recipient
+              </label>
+              {includeCoupon && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium">Discount %</label>
+                    <Input type="number" min={1} max={90} value={couponPercent}
+                      onChange={e => setCouponPercent(Math.max(1, Math.min(90, Number(e.target.value) || 0)))} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium">Valid (days)</label>
+                    <Input type="number" min={1} max={90} value={couponValidDays}
+                      onChange={e => setCouponValidDays(Math.max(1, Math.min(90, Number(e.target.value) || 0)))} />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="text-xs font-medium">Special offer text (optional)</label>
+                    <Input value={specialOffer} onChange={e => setSpecialOffer(e.target.value)}
+                      placeholder="e.g. Free 1-month bonus on renewal" />
+                  </div>
+                </div>
+              )}
+              <p className="text-[11px] text-muted-foreground">
+                Each recipient gets a unique <code>RENEW-XXXX</code> code locked to their email + product. One-time use.
+              </p>
+            </div>
+
             {sending && (
               <div className="text-sm">
                 Sending… {sendProgress.done}/{sendProgress.total}
