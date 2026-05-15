@@ -7,8 +7,9 @@ import { toast } from 'sonner';
 const AdminSecurity2FA = () => {
   const { status, setup, enable, disable, sendEmailOtp, reset, regenerateBackupCodes, getConfig, updateConfig } = useAdmin2FA();
   const navigate = useNavigate();
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const isForced = params.get('force') === '1';
+  const isRecover = params.get('recover') === '1';
 
   const [loading, setLoading] = useState(true);
   const [enabled, setEnabled] = useState(false);
