@@ -1510,7 +1510,9 @@ export type Database = {
         Row: {
           created_at: string
           custom_field_values: Json | null
+          expires_at: string | null
           id: string
+          last_reminder_sent_at: string | null
           license_key: string | null
           order_id: string
           price: number
@@ -1522,7 +1524,9 @@ export type Database = {
         Insert: {
           created_at?: string
           custom_field_values?: Json | null
+          expires_at?: string | null
           id?: string
+          last_reminder_sent_at?: string | null
           license_key?: string | null
           order_id: string
           price: number
@@ -1534,7 +1538,9 @@ export type Database = {
         Update: {
           created_at?: string
           custom_field_values?: Json | null
+          expires_at?: string | null
           id?: string
+          last_reminder_sent_at?: string | null
           license_key?: string | null
           order_id?: string
           price?: number
@@ -1836,12 +1842,14 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          customer_email: string | null
           customer_name: string | null
           customer_phone: string | null
           delivered_at: string | null
           expires_at: string | null
           id: string
           key_value: string | null
+          last_reminder_sent_at: string | null
           name: string
           note: string | null
           password: string | null
@@ -1852,12 +1860,14 @@ export type Database = {
         Insert: {
           category?: string | null
           created_at?: string
+          customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           delivered_at?: string | null
           expires_at?: string | null
           id?: string
           key_value?: string | null
+          last_reminder_sent_at?: string | null
           name: string
           note?: string | null
           password?: string | null
@@ -1868,12 +1878,14 @@ export type Database = {
         Update: {
           category?: string | null
           created_at?: string
+          customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           delivered_at?: string | null
           expires_at?: string | null
           id?: string
           key_value?: string | null
+          last_reminder_sent_at?: string | null
           name?: string
           note?: string | null
           password?: string | null
