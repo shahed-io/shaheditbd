@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAdmin2FA, setStoredToken } from '@/hooks/useAdmin2FA';
-import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle } from 'lucide-react';
+import { useAdmin2FA, setStoredToken, getStoredToken } from '@/hooks/useAdmin2FA';
+import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle, RefreshCw, MailCheck } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSecurity2FA = () => {
-  const { status, setup, enable, disable } = useAdmin2FA();
+  const { status, setup, enable, disable, sendEmailOtp, reset } = useAdmin2FA();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const isForced = params.get('force') === '1';
@@ -22,6 +22,13 @@ const AdminSecurity2FA = () => {
   // Disable flow
   const [disableCode, setDisableCode] = useState('');
   const [disabling, setDisabling] = useState(false);
+
+  // Reset flow (lost authenticator)
+  const [resetMode, setResetMode] = useState(false);
+  const [resetEmailCode, setResetEmailCode] = useState('');
+  const [resetSending, setResetSending] = useState(false);
+  const [resetSentInfo, setResetSentInfo] = useState('');
+  const [resetting, setResetting] = useState(false);
 
   const refresh = async () => {
     setLoading(true);
