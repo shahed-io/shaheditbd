@@ -8,7 +8,8 @@ export type Admin2FAAction =
   | 'verify-login'
   | 'validate-session'
   | 'disable'
-  | 'logout';
+  | 'logout'
+  | 'send-email-otp';
 
 export const TOKEN_KEY = 'admin_2fa_token';
 
@@ -39,5 +40,6 @@ export function useAdmin2FA() {
   const validateSess  = useCallback((token: string) => call2FA('validate-session', { token }), []);
   const disable       = useCallback((code: string) => call2FA('disable', { code }), []);
   const logout        = useCallback((token: string) => call2FA('logout', { token }), []);
-  return { status, setup, enable, verifyLogin, validateSession: validateSess, disable, logout };
+  const sendEmailOtp  = useCallback(() => call2FA('send-email-otp'), []);
+  return { status, setup, enable, verifyLogin, validateSession: validateSess, disable, logout, sendEmailOtp };
 }

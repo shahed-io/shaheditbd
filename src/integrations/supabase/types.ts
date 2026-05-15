@@ -200,6 +200,39 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_email_otps: {
+        Row: {
+          attempts: number
+          code_hash: string
+          created_at: string
+          expires_at: string
+          id: string
+          ip: string | null
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          ip?: string | null
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip?: string | null
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       affiliate_accounts: {
         Row: {
           admin_note: string | null
