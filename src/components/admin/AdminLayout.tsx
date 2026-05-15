@@ -32,6 +32,28 @@ interface AdminNotif {
 type MenuItem = { icon: any; label: string; path: string; badge?: 'live' | 'new' };
 type MenuSection = { title: string; items: MenuItem[] };
 
+// ─── Premium per-item color palette (filled gradient chips) ───
+const ITEM_PALETTE: Array<[string, string]> = [
+  ['262 83% 62%', '252 83% 70%'], // violet
+  ['158 70% 45%', '160 70% 38%'], // emerald
+  ['28 92% 56%',  '20 92% 52%'],  // orange
+  ['330 82% 60%', '316 82% 60%'], // pink
+  ['0 78% 60%',   '350 80% 55%'], // red
+  ['38 92% 52%',  '30 92% 50%'],  // gold
+  ['142 70% 42%', '152 70% 38%'], // green
+  ['199 88% 50%', '188 88% 46%'], // sky
+  ['258 78% 58%', '268 78% 60%'], // indigo
+  ['172 80% 40%', '182 80% 38%'], // teal
+  ['12 88% 58%',  '22 88% 56%'],  // coral
+  ['286 75% 58%', '296 75% 56%'], // fuchsia
+];
+function getItemAccent(path: string): { from: string; to: string } {
+  let h = 0;
+  for (let i = 0; i < path.length; i++) h = (h * 31 + path.charCodeAt(i)) >>> 0;
+  const [from, to] = ITEM_PALETTE[h % ITEM_PALETTE.length];
+  return { from, to };
+}
+
 // ─── Grouped sidebar — clear sections instead of one long flat list ───
 const MENU_SECTIONS: MenuSection[] = [
   {
