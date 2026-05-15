@@ -265,12 +265,17 @@ export default function AdminSubscriptionReminders() {
     setSending(true);
     setSendProgress({ done: 0, total: selectedRows.length, failed: 0 });
     let done = 0, failed = 0;
-    // Group per product+customer for clean idempotency keys
     for (const r of selectedRows) {
       try {
         const days = daysBetween(r.expires_at);
         const today = new Date().toISOString().slice(0, 10);
         const idem = `subrenew-${r.source}-${r.id}-${today}`;
+        // Per-recipient personal coupon (one-time, email + product locked)
+        const coupon = await createPersonalCoupon({
+          customerEmail: r.customer_email,
+          productId: r.source === 'order_item' ? r.product_id : null,
+          productName: r.product_name,
+        });
         const { error } = await supabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'subscription-renewal-reminder',
@@ -284,20 +289,23 @@ export default function AdminSubscriptionReminders() {
               renewUrl: renewUrl || (SITE + '/shop'),
               customMessage: customMsg || undefined,
               orderNumber: r.order_number || undefined,
+              couponCode: coupon?.code,
+              discountPercent: coupon ? couponPercent : undefined,
+              couponValidUntil: coupon?.validUntil,
+              specialOffer: specialOffer || undefined,
             },
           },
         });
         if (error) throw error;
-        // mark reminder sent
         const table = r.source === 'order_item' ? 'order_items' : 'personal_licenses';
         await supabase.from(table).update({ last_reminder_sent_at: new Date().toISOString() }).eq('id', r.id);
         done++;
-      } catch {
+      } catch (e) {
+        console.error('[sendAll] failed for', r.customer_email, e);
         failed++;
       }
       setSendProgress({ done: done + failed, total: selectedRows.length, failed });
-      // small spacing for rate-limit politeness
-      await new Promise(res => setTimeout(res, 120));
+      await new Promise(res => setTimeout(res, 150));
     }
     setSending(false);
     toast.success(`Sent ${done} email${done === 1 ? '' : 's'}${failed ? `, ${failed} failed` : ''}`);
