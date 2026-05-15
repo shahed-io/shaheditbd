@@ -300,8 +300,13 @@ const Checkout = () => {
         resetCoupon();
         return;
       }
-      setCoupon({ code: c, discount: data.discount, type: data.type || 'fixed', isApplied: true });
-      toast.success(`✅ কুপন প্রয়োগ হয়েছে! ৳${data.discount} ছাড়`);
+      setCoupon({
+        code: c,
+        discount: data.discountValue ?? data.discount,
+        type: data.discountType || (data.discountValue ? 'percentage' : 'fixed'),
+        isApplied: true,
+      });
+      toast.success(data.message || `✅ কুপন approved! ৳${data.discount} ছাড়`);
     } catch {
       setCouponError('কুপন চেক করতে সমস্যা হয়েছে');
     } finally {
