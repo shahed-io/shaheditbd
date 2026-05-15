@@ -32,6 +32,28 @@ interface AdminNotif {
 type MenuItem = { icon: any; label: string; path: string; badge?: 'live' | 'new' };
 type MenuSection = { title: string; items: MenuItem[] };
 
+// ─── Premium per-item color palette (filled gradient chips) ───
+const ITEM_PALETTE: Array<[string, string]> = [
+  ['262 83% 62%', '252 83% 70%'], // violet
+  ['158 70% 45%', '160 70% 38%'], // emerald
+  ['28 92% 56%',  '20 92% 52%'],  // orange
+  ['330 82% 60%', '316 82% 60%'], // pink
+  ['0 78% 60%',   '350 80% 55%'], // red
+  ['38 92% 52%',  '30 92% 50%'],  // gold
+  ['142 70% 42%', '152 70% 38%'], // green
+  ['199 88% 50%', '188 88% 46%'], // sky
+  ['258 78% 58%', '268 78% 60%'], // indigo
+  ['172 80% 40%', '182 80% 38%'], // teal
+  ['12 88% 58%',  '22 88% 56%'],  // coral
+  ['286 75% 58%', '296 75% 56%'], // fuchsia
+];
+function getItemAccent(path: string): { from: string; to: string } {
+  let h = 0;
+  for (let i = 0; i < path.length; i++) h = (h * 31 + path.charCodeAt(i)) >>> 0;
+  const [from, to] = ITEM_PALETTE[h % ITEM_PALETTE.length];
+  return { from, to };
+}
+
 // ─── Grouped sidebar — clear sections instead of one long flat list ───
 const MENU_SECTIONS: MenuSection[] = [
   {
@@ -377,6 +399,7 @@ const AdminLayout = () => {
                     {section.items.map((item) => {
                       const isActive = location.pathname === item.path ||
                         (item.path !== '/ceo' && location.pathname.startsWith(item.path + '/'));
+                      const accent = getItemAccent(item.path);
                       return (
                         <NavLink
                           key={item.path}
@@ -386,19 +409,23 @@ const AdminLayout = () => {
                           onMouseEnter={() => prefetchAdminRoute(item.path)}
                           onTouchStart={() => prefetchAdminRoute(item.path)}
                           onFocus={() => prefetchAdminRoute(item.path)}
+                          style={{
+                            ['--item-from' as any]: accent.from,
+                            ['--item-to' as any]: accent.to,
+                          }}
                           className={`admin-nav-item ${isActive ? 'active' : ''} ${!showLabel ? 'justify-center px-2' : ''}`}
                         >
-                          <item.icon size={17} className="flex-shrink-0" />
+                          <item.icon size={15} className="flex-shrink-0" strokeWidth={2.25} />
                           {showLabel && (
                             <>
                               <span className="flex-1 truncate">{item.label}</span>
                               {item.badge === 'live' && (
-                                <span className="flex items-center gap-2 text-[9px] font-bold text-violet-600 bg-violet-100 dark:bg-violet-900/40 dark:text-violet-300 px-1.5 py-0.5 rounded-md ring-1 ring-violet-300/40">
-                                  <span className="w-1 h-1 rounded-full bg-violet-500 animate-pulse" /> LIVE
+                                <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-300 px-1.5 py-0.5 rounded-md ring-1 ring-emerald-300/50">
+                                  <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> LIVE
                                 </span>
                               )}
                               {item.badge === 'new' && (
-                                <span className="text-[9px] font-bold text-white bg-gradient-to-r from-violet-500 to-violet-600 px-1.5 py-0.5 rounded-md shadow-sm">NEW</span>
+                                <span className="text-[9px] font-bold text-white bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 px-1.5 py-0.5 rounded-md shadow-sm">NEW</span>
                               )}
                             </>
                           )}
