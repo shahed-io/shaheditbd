@@ -86,6 +86,40 @@ const AdminSecurity2FA = () => {
     setDisabling(false);
   };
 
+  const handleSendResetEmail = async () => {
+    setResetSending(true);
+    setResetSentInfo('');
+    try {
+      const r = await sendEmailOtp();
+      const n = r?.sentTo ?? 0;
+      setResetSentInfo(`✉ Reset code sent to ${n} admin email${n === 1 ? '' : 's'}. Expires in 10 minutes.`);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setResetSending(false);
+  };
+
+  const handleConfirmReset = async () => {
+    if (!confirm('This will erase the current Authenticator setup and let you scan a new QR. Continue?')) return;
+    setResetting(true);
+    try {
+      const sessionToken = getStoredToken() || undefined;
+      const codeInput = resetEmailCode.trim() || undefined;
+      await reset({ token: sessionToken, code: codeInput });
+      toast.success('Authenticator reset. Scan the new QR below.');
+      setEnabled(false);
+      setResetMode(false);
+      setResetEmailCode('');
+      setResetSentInfo('');
+      const r = await setup();
+      setSetupData({ secret: r.secret, otpauthUrl: r.otpauthUrl });
+      setBackupCodes(null);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setResetting(false);
+  };
+
   const copy = (text: string) => {
     navigator.clipboard.writeText(text).then(() => toast.success('Copied'));
   };
