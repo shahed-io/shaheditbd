@@ -83,6 +83,7 @@ const BodySchema = z.object({
     "logout",
     "send-email-otp",
     "reset",
+    "regenerate-backup-codes",
   ]),
   code: z.string().trim().optional(),
   token: z.string().trim().optional(),
@@ -425,6 +426,66 @@ Deno.serve(async (req) => {
       await admin.from("admin_2fa").delete().eq("user_id", userId);
       // Keep current sessions alive so admin doesn't get bounced while re-enrolling
       return json({ success: true });
+    }
+
+    // ─── regenerate-backup-codes: issue 8 fresh codes (requires valid 2FA session, TOTP, or email OTP) ───
+    if (action === "regenerate-backup-codes") {
+      const { data: row } = await admin
+        .from("admin_2fa")
+        .select("secret, enabled")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (!row?.enabled) return json({ error: "2FA must be enabled first" }, 400);
+
+      let authorized = false;
+      // Path A: valid session token
+      if (token) {
+        const { data: sess } = await admin
+          .from("admin_2fa_sessions")
+          .select("expires_at")
+          .eq("user_id", userId)
+          .eq("token", token)
+          .gt("expires_at", new Date().toISOString())
+          .maybeSingle();
+        if (sess) authorized = true;
+      }
+      // Path B: TOTP or email OTP code
+      if (!authorized && code) {
+        const cleaned = code.replace(/\s+/g, "");
+        if (/^\d{6}$/.test(cleaned)) {
+          if (verifyTotp(row.secret, cleaned)) {
+            authorized = true;
+          } else {
+            const hash = await sha256(cleaned);
+            const { data: otpRow } = await admin
+              .from("admin_email_otps")
+              .select("id")
+              .eq("user_id", userId)
+              .eq("code_hash", hash)
+              .is("used_at", null)
+              .gt("expires_at", new Date().toISOString())
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (otpRow) {
+              authorized = true;
+              await admin.from("admin_email_otps")
+                .update({ used_at: new Date().toISOString() })
+                .eq("id", otpRow.id);
+            }
+          }
+        }
+      }
+      if (!authorized) {
+        return json({ error: "Verification required. Provide your 6-digit code or email code." }, 401);
+      }
+
+      const backupCodes = generateBackupCodes();
+      await admin.from("admin_2fa")
+        .update({ backup_codes: backupCodes })
+        .eq("user_id", userId);
+
+      return json({ success: true, backupCodes });
     }
 
     // ─── logout: invalidate current session token ───
