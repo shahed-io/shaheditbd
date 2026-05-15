@@ -412,9 +412,18 @@ const AdminSecurity2FA = () => {
                   <div className="text-xs text-primary bg-primary/10 border border-primary/30 rounded-lg px-3 py-2">{resetSentInfo}</div>
                 )}
                 <input
+                  value={resetBackupCode}
+                  onChange={(e) => setResetBackupCode(e.target.value)}
+                  placeholder="Backup code (e.g. a1b2-c3d4) — fastest recovery"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono"
+                />
+                <div className="text-[11px] text-muted-foreground -mt-1">
+                  Have a saved backup code? Paste it here for instant reset — no email needed.
+                </div>
+                <input
                   value={resetEmailCode}
                   onChange={(e) => setResetEmailCode(e.target.value)}
-                  placeholder="Email code (optional if logged-in session is valid)"
+                  placeholder="…or email code (optional if logged-in session is valid)"
                   className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono"
                 />
                 <div className="flex gap-2">
@@ -426,7 +435,7 @@ const AdminSecurity2FA = () => {
                     {resetting ? 'Resetting…' : 'Confirm Reset & Show New QR'}
                   </button>
                   <button
-                    onClick={() => { setResetMode(false); setResetEmailCode(''); setResetSentInfo(''); }}
+                    onClick={() => { setResetMode(false); setResetEmailCode(''); setResetBackupCode(''); setResetSentInfo(''); }}
                     className="px-4 py-2 border border-border rounded-lg text-sm"
                   >
                     Cancel
