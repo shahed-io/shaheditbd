@@ -204,7 +204,12 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
     setCouponError('');
     try {
       const { data, error } = await supabase.functions.invoke('validate-coupon', {
-        body: { code: couponCode.trim().toUpperCase(), orderTotal: itemTotal },
+        body: {
+          code: couponCode.trim().toUpperCase(),
+          orderTotal: itemTotal,
+          customerEmail: form.email || user?.email || '',
+          productIds: [product.id].filter(Boolean),
+        },
       });
       if (error || !data?.valid) {
         setCouponError(data?.message || 'কুপন কোড সঠিক নয়');
