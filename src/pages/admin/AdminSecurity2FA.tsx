@@ -1,0 +1,220 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAdmin2FA, setStoredToken } from '@/hooks/useAdmin2FA';
+import { ShieldCheck, ShieldAlert, Copy, KeyRound, Loader2, AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
+
+const AdminSecurity2FA = () => {
+  const { status, setup, enable, disable } = useAdmin2FA();
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const isForced = params.get('force') === '1';
+
+  const [loading, setLoading] = useState(true);
+  const [enabled, setEnabled] = useState(false);
+
+  // Setup flow
+  const [setupData, setSetupData] = useState<{ secret: string; otpauthUrl: string } | null>(null);
+  const [setupCode, setSetupCode] = useState('');
+  const [enabling, setEnabling] = useState(false);
+  const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
+
+  // Disable flow
+  const [disableCode, setDisableCode] = useState('');
+  const [disabling, setDisabling] = useState(false);
+
+  const refresh = async () => {
+    setLoading(true);
+    try {
+      const r = await status();
+      setEnabled(!!r?.enabled);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => { refresh(); /* eslint-disable-next-line */ }, []);
+
+  const handleStartSetup = async () => {
+    try {
+      const r = await setup();
+      setSetupData({ secret: r.secret, otpauthUrl: r.otpauthUrl });
+      setBackupCodes(null);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
+  const handleEnable = async () => {
+    if (!setupCode.trim()) return;
+    setEnabling(true);
+    try {
+      const r = await enable(setupCode.trim());
+      setBackupCodes(r.backupCodes ?? []);
+      setEnabled(true);
+      setSetupData(null);
+      setSetupCode('');
+      toast.success('2FA সফলভাবে চালু হয়েছে।');
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setEnabling(false);
+  };
+
+  const handleDisable = async () => {
+    if (!disableCode.trim()) return;
+    if (!confirm('আপনি কি নিশ্চিত যে 2FA বন্ধ করতে চান?')) return;
+    setDisabling(true);
+    try {
+      await disable(disableCode.trim());
+      setEnabled(false);
+      setDisableCode('');
+      setStoredToken(null);
+      toast.success('2FA বন্ধ করা হয়েছে।');
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+    setDisabling(false);
+  };
+
+  const copy = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => toast.success('Copied'));
+  };
+
+  const qrUrl = setupData
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(setupData.otpauthUrl)}`
+    : null;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
+      <div className="admin-glass-card p-6 rounded-2xl">
+        <div className="flex items-center gap-3 mb-2">
+          {enabled ? (
+            <ShieldCheck className="text-emerald-500" />
+          ) : (
+            <ShieldAlert className="text-amber-500" />
+          )}
+          <h1 className="text-xl font-bold">Two-Factor Authentication</h1>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Protect the admin panel with Google Authenticator. After your password, you'll need a 6-digit code from your phone.
+        </p>
+        {isForced && !enabled && (
+          <div className="mt-4 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex gap-2 text-sm">
+            <AlertTriangle size={16} className="text-amber-600 mt-0.5" />
+            <span>2FA setup is required to access the admin dashboard. Please complete enrollment below.</span>
+          </div>
+        )}
+      </div>
+
+      {/* Enabled status */}
+      {enabled && !backupCodes && (
+        <div className="admin-glass-card p-6 rounded-2xl space-y-4">
+          <div className="flex items-center gap-2 text-emerald-600 font-semibold">
+            <ShieldCheck size={18} /> 2FA is currently <span className="underline">enabled</span>
+          </div>
+          <div className="border-t border-border/50 pt-4 space-y-2">
+            <p className="text-sm font-semibold flex items-center gap-2"><AlertTriangle size={14} className="text-destructive" /> Disable 2FA</p>
+            <p className="text-xs text-muted-foreground">Enter your current 6-digit code (or a backup code) to disable.</p>
+            <div className="flex gap-2">
+              <input
+                value={disableCode}
+                onChange={(e) => setDisableCode(e.target.value)}
+                placeholder="123456"
+                className="flex-1 bg-muted/40 border border-border rounded-lg px-3 py-2 text-sm font-mono"
+              />
+              <button
+                onClick={handleDisable}
+                disabled={disabling}
+                className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg text-sm font-semibold disabled:opacity-50"
+              >
+                {disabling ? 'Disabling…' : 'Disable'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Backup codes (one-time display) */}
+      {backupCodes && (
+        <div className="admin-glass-card p-6 rounded-2xl space-y-3">
+          <h2 className="font-bold text-lg flex items-center gap-2"><KeyRound size={18} /> Backup Codes</h2>
+          <p className="text-xs text-muted-foreground">
+            ⚠ Save these codes somewhere safe. Each code works only once if you lose access to your authenticator.
+            They will <strong>not</strong> be shown again.
+          </p>
+          <div className="grid grid-cols-2 gap-2 font-mono text-sm bg-muted/40 p-4 rounded-xl">
+            {backupCodes.map((c) => <div key={c}>{c}</div>)}
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => copy(backupCodes.join('\n'))} className="px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm flex items-center gap-1.5">
+              <Copy size={14} /> Copy All
+            </button>
+            <button onClick={() => { setBackupCodes(null); navigate('/ceo'); }} className="px-3 py-2 border border-border rounded-lg text-sm">
+              I've Saved Them
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Setup flow */}
+      {!enabled && !setupData && (
+        <div className="admin-glass-card p-6 rounded-2xl space-y-3">
+          <p className="text-sm">Click below to generate your secret and QR code.</p>
+          <button onClick={handleStartSetup} className="px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold">
+            Start Setup
+          </button>
+        </div>
+      )}
+
+      {!enabled && setupData && (
+        <div className="admin-glass-card p-6 rounded-2xl space-y-4">
+          <h2 className="font-bold">Step 1 — Scan QR with Google Authenticator</h2>
+          <div className="flex flex-col md:flex-row gap-6 items-center">
+            {qrUrl && (
+              <img src={qrUrl} alt="2FA QR Code" className="w-56 h-56 rounded-xl border border-border bg-white p-2" />
+            )}
+            <div className="flex-1 space-y-2 w-full">
+              <p className="text-xs text-muted-foreground">Or enter this secret manually:</p>
+              <div className="flex gap-2">
+                <code className="flex-1 bg-muted/40 px-3 py-2 rounded-lg text-xs font-mono break-all">{setupData.secret}</code>
+                <button onClick={() => copy(setupData.secret)} className="p-2 border border-border rounded-lg"><Copy size={14} /></button>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-border/50 pt-4 space-y-2">
+            <h2 className="font-bold">Step 2 — Enter the 6-digit code</h2>
+            <div className="flex gap-2">
+              <input
+                value={setupCode}
+                onChange={(e) => setSetupCode(e.target.value)}
+                placeholder="123456"
+                className="flex-1 bg-muted/40 border border-border rounded-lg px-3 py-2 text-base font-mono tracking-widest text-center"
+                autoFocus
+              />
+              <button
+                onClick={handleEnable}
+                disabled={enabling || setupCode.length < 6}
+                className="px-5 py-2 btn-glow rounded-lg text-sm font-semibold disabled:opacity-50"
+              >
+                {enabling ? 'Enabling…' : 'Enable 2FA'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminSecurity2FA;
