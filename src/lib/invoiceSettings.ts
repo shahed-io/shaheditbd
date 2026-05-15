@@ -139,6 +139,18 @@ export function clearInvoiceDesignCache() {
   cache = null;
 }
 
+// Auto-invalidate cache in this tab when another tab/module saves a new design
+if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
+  try {
+    const ch = new BroadcastChannel('invoice_design');
+    ch.onmessage = (ev) => {
+      if (ev.data?.type === 'updated') {
+        cache = (ev.data.design as InvoiceDesign) || null;
+      }
+    };
+  } catch { /* noop */ }
+}
+
 /**
  * Resolve "auto" header background using brand luminance so text stays
  * readable. Returns a concrete bg/text pair ready to inline.
