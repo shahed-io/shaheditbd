@@ -225,6 +225,55 @@ const AdminInvoiceDesign = () => {
               <Field label="Grand total row"><input className={inputCls} value={design.labelGrandTotal} onChange={(e) => update('labelGrandTotal', e.target.value)} /></Field>
             </div>
           </section>
+
+          {/* Manual JSON editor */}
+          <section className="glass-card rounded-2xl p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-sm text-foreground flex items-center gap-2">
+                <Code2 size={16} /> Manual JSON Editor
+              </h2>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    try {
+                      const parsed = JSON.parse(jsonText);
+                      setDesign({ ...DEFAULT_INVOICE_DESIGN, ...parsed });
+                      setJsonError(null);
+                      toast.success('Applied to preview. Click "Save Design" to persist.');
+                    } catch (e: any) {
+                      setJsonError(e?.message || 'Invalid JSON');
+                      toast.error('Invalid JSON: ' + (e?.message || ''));
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:opacity-90"
+                >
+                  Apply JSON
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setJsonText(JSON.stringify(design, null, 2));
+                    setJsonError(null);
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-border hover:bg-muted/30"
+                >
+                  Reload
+                </button>
+              </div>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Edit any value directly. Click "Apply JSON" to push it to the live preview, then "Save Design" to persist.
+            </p>
+            <textarea
+              value={jsonText}
+              onChange={(e) => { setJsonText(e.target.value); setJsonError(null); }}
+              spellCheck={false}
+              rows={16}
+              className="w-full font-mono text-xs bg-muted/20 border border-border rounded-xl p-3 text-foreground focus:outline-none focus:border-primary"
+            />
+            {jsonError && <p className="text-xs text-red-500">⚠️ {jsonError}</p>}
+          </section>
         </div>
 
         {/* RIGHT — Live preview */}
