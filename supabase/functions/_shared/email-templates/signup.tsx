@@ -1,18 +1,7 @@
 /// <reference types="npm:@types/react@18.3.1" />
-
 import * as React from 'npm:react@18.3.1'
-
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
-} from 'npm:@react-email/components@0.0.22'
+import { Link } from 'npm:@react-email/components@0.0.22'
+import { EmailLayout, H1, P, CTA, Small, InfoBox, Brand } from './_layout.tsx'
 
 interface SignupEmailProps {
   siteName: string
@@ -21,68 +10,22 @@ interface SignupEmailProps {
   confirmationUrl: string
 }
 
-export const SignupEmail = ({
-  siteName,
-  siteUrl,
-  recipient,
-  confirmationUrl,
-}: SignupEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>Confirm your email for {siteName}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>Confirm your email</Heading>
-        <Text style={text}>
-          Thanks for signing up for{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          !
-        </Text>
-        <Text style={text}>
-          Please confirm your email address (
-          <Link href={`mailto:${recipient}`} style={link}>
-            {recipient}
-          </Link>
-          ) by clicking the button below:
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Verify Email
-        </Button>
-        <Text style={footer}>
-          If you didn't create an account, you can safely ignore this email.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
+export const SignupEmail = ({ siteName, recipient, confirmationUrl }: SignupEmailProps) => (
+  <EmailLayout preview={`Confirm your email for ${siteName || Brand.name}`}>
+    <H1>Welcome to {siteName || Brand.name} 🎉</H1>
+    <P>
+      Thanks for signing up! Please confirm your email address{' '}
+      (<Link href={`mailto:${recipient}`} style={{ color: Brand.primary, textDecoration: 'none', fontWeight: 600 }}>{recipient}</Link>){' '}
+      to activate your account.
+    </P>
+    <CTA href={confirmationUrl}>Verify Email Address</CTA>
+    <InfoBox>
+      Once verified, you'll get instant access to premium digital software, exclusive offers, and 24/7 support.
+    </InfoBox>
+    <Small>
+      Didn't sign up? You can safely ignore this email — no account will be created.
+    </Small>
+  </EmailLayout>
 )
 
 export default SignupEmail
-
-const main = { backgroundColor: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif' }
-const container = { padding: '24px 28px', maxWidth: '560px' }
-const h1 = {
-  fontSize: '24px',
-  fontWeight: 'bold' as const,
-  color: 'hsl(226, 35%, 12%)',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '15px',
-  color: 'hsl(220, 15%, 35%)',
-  lineHeight: '1.6',
-  margin: '0 0 24px',
-}
-const link = { color: 'hsl(258, 78%, 55%)', textDecoration: 'underline' }
-const button = {
-  backgroundColor: 'hsl(258, 78%, 55%)',
-  color: '#ffffff',
-  fontSize: '15px',
-  fontWeight: 'bold' as const,
-  borderRadius: '12px',
-  padding: '14px 28px',
-  textDecoration: 'none',
-  display: 'inline-block',
-}
-const footer = { fontSize: '12px', color: 'hsl(220, 15%, 50%)', margin: '32px 0 0' }
