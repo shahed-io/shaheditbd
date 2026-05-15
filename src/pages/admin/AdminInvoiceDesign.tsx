@@ -80,13 +80,21 @@ const AdminInvoiceDesign = () => {
   const [design, setDesign] = useState<InvoiceDesign>(DEFAULT_INVOICE_DESIGN);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [jsonText, setJsonText] = useState('');
+  const [jsonError, setJsonError] = useState<string | null>(null);
 
   useEffect(() => {
     loadInvoiceDesign(true).then((d) => {
       setDesign(d);
+      setJsonText(JSON.stringify(d, null, 2));
       setLoading(false);
     });
   }, []);
+
+  // Keep JSON textarea in sync when fields are edited via UI
+  useEffect(() => {
+    if (!loading) setJsonText(JSON.stringify(design, null, 2));
+  }, [design, loading]);
 
   const update = <K extends keyof InvoiceDesign>(k: K, v: InvoiceDesign[K]) =>
     setDesign((p) => ({ ...p, [k]: v }));
