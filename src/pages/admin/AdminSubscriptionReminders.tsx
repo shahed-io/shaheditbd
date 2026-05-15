@@ -16,7 +16,9 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Mail, RefreshCw, Save, Send, CalendarClock, Search, Loader2, Filter } from 'lucide-react';
+import { Mail, RefreshCw, Save, Send, CalendarClock, Search, Loader2, Filter, Sparkles, Wand2 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 
 type SourceKind = 'order_item' | 'personal_license';
 
@@ -79,6 +81,21 @@ export default function AdminSubscriptionReminders() {
   const [renewUrl, setRenewUrl] = useState(SITE + '/shop');
   const [sending, setSending] = useState(false);
   const [sendProgress, setSendProgress] = useState({ done: 0, total: 0, failed: 0 });
+
+  // Manual / AI composer
+  const [mProductId, setMProductId] = useState<string>('');
+  const [mProductName, setMProductName] = useState('');
+  const [mProductOpen, setMProductOpen] = useState(false);
+  const [mCustomerName, setMCustomerName] = useState('');
+  const [mCustomerEmail, setMCustomerEmail] = useState('');
+  const [mExpiry, setMExpiry] = useState('');
+  const [mLanguage, setMLanguage] = useState<'en' | 'bn'>('bn');
+  const [mTone, setMTone] = useState('professional, warm, concise');
+  const [mNotes, setMNotes] = useState('');
+  const [mMessage, setMMessage] = useState('');
+  const [mGenerating, setMGenerating] = useState(false);
+  const [mSending, setMSending] = useState(false);
+  const [mAutoSend, setMAutoSend] = useState(true);
 
   const load = async () => {
     setLoading(true);
@@ -255,6 +272,75 @@ export default function AdminSubscriptionReminders() {
     await load();
   };
 
+  // ============= Manual / AI Composer =============
+  const mDaysLeft = useMemo(() => mExpiry ? daysBetween(new Date(mExpiry).toISOString()) : null, [mExpiry]);
+
+  const sendManual = async (overrideMsg?: string) => {
+    const finalMsg = (overrideMsg ?? mMessage).trim();
+    if (!mCustomerEmail.trim() || !/.+@.+\..+/.test(mCustomerEmail)) {
+      toast.error('Valid customer email required'); return;
+    }
+    if (!mProductName.trim()) { toast.error('Product name required'); return; }
+    if (!finalMsg) { toast.error('Message is empty — generate or write one'); return; }
+    setMSending(true);
+    try {
+      const idem = `manual-subrenew-${mCustomerEmail}-${mProductId || mProductName}-${Date.now()}`;
+      const { error } = await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'subscription-renewal-reminder',
+          recipientEmail: mCustomerEmail,
+          idempotencyKey: idem,
+          templateData: {
+            customerName: mCustomerName || 'Customer',
+            productName: mProductName,
+            expiryDate: mExpiry ? fmtDate(new Date(mExpiry).toISOString()) : '',
+            daysLeft: mDaysLeft,
+            renewUrl: SITE + '/shop',
+            customMessage: finalMsg,
+          },
+        },
+      });
+      if (error) throw error;
+      toast.success(`Reminder sent to ${mCustomerEmail}`);
+      setMMessage(''); setMNotes(''); setMCustomerEmail(''); setMCustomerName(''); setMExpiry('');
+    } catch (e: any) {
+      toast.error('Send failed: ' + (e?.message || 'unknown'));
+    } finally {
+      setMSending(false);
+    }
+  };
+
+  const generateAI = async (autoSendAfter?: boolean) => {
+    if (!mProductName.trim()) { toast.error('Select or type a product first'); return; }
+    setMGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-compose-reminder', {
+        body: {
+          productName: mProductName,
+          customerName: mCustomerName || undefined,
+          expiryDate: mExpiry ? fmtDate(new Date(mExpiry).toISOString()) : undefined,
+          daysLeft: mDaysLeft,
+          language: mLanguage,
+          tone: mTone,
+          extraNotes: mNotes || undefined,
+        },
+      });
+      if (error) throw error;
+      const msg = (data as any)?.message;
+      if (!msg) throw new Error('Empty AI response');
+      setMMessage(msg);
+      toast.success('AI message generated');
+      if (autoSendAfter ?? mAutoSend) {
+        await sendManual(msg);
+      }
+    } catch (e: any) {
+      toast.error('AI failed: ' + (e?.message || 'unknown'));
+    } finally {
+      setMGenerating(false);
+    }
+  };
+
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -291,6 +377,118 @@ export default function AdminSubscriptionReminders() {
           <div className="text-2xl font-bold">{stats.in30}</div>
         </Card>
       </div>
+
+      {/* ===== Manual / AI Reminder Composer ===== */}
+      <Card className="p-4 space-y-3 border-primary/30">
+        <div>
+          <h2 className="font-semibold flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            Manual / AI Reminder
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Send to any customer (offline / manual purchase). Pick a product, AI writes a professional reminder, then auto-sends.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium">Product</label>
+            <Popover open={mProductOpen} onOpenChange={setMProductOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" className="w-full justify-between font-normal">
+                  {mProductName || 'Search product…'}
+                  <Search className="h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-0 w-[--radix-popover-trigger-width]" align="start">
+                <Command>
+                  <CommandInput placeholder="Type product name…" />
+                  <CommandList>
+                    <CommandEmpty>No product found.</CommandEmpty>
+                    <CommandGroup>
+                      {products.map(p => (
+                        <CommandItem
+                          key={p.id}
+                          value={p.name}
+                          onSelect={() => { setMProductId(p.id); setMProductName(p.name); setMProductOpen(false); }}
+                        >
+                          {p.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            <Input
+              className="mt-1"
+              placeholder="…or type custom product name"
+              value={mProductName}
+              onChange={e => { setMProductName(e.target.value); setMProductId(''); }}
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium">Customer email</label>
+            <Input type="email" placeholder="customer@example.com" value={mCustomerEmail} onChange={e => setMCustomerEmail(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs font-medium">Customer name</label>
+            <Input placeholder="Optional" value={mCustomerName} onChange={e => setMCustomerName(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs font-medium">Expiry date (optional)</label>
+            <Input type="date" value={mExpiry} onChange={e => setMExpiry(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs font-medium">Language</label>
+            <Select value={mLanguage} onValueChange={(v: any) => setMLanguage(v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bn">Bengali (বাংলা)</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-xs font-medium">Tone</label>
+            <Input value={mTone} onChange={e => setMTone(e.target.value)} placeholder="professional, warm, concise" />
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium">Notes for AI (optional)</label>
+          <Input value={mNotes} onChange={e => setMNotes(e.target.value)} placeholder="e.g. mention loyalty discount, mention 24/7 support" />
+        </div>
+
+        <div>
+          <label className="text-xs font-medium flex items-center justify-between">
+            <span>Email body (AI-generated, editable)</span>
+            {mDaysLeft != null && (
+              <Badge variant={mDaysLeft < 0 || mDaysLeft <= 7 ? 'destructive' : 'secondary'}>
+                {mDaysLeft < 0 ? `Expired ${Math.abs(mDaysLeft)}d ago` : `${mDaysLeft}d left`}
+              </Badge>
+            )}
+          </label>
+          <Textarea rows={8} value={mMessage} onChange={e => setMMessage(e.target.value)} placeholder="Click ‘Generate with AI’ to draft a professional reminder…" />
+        </div>
+
+        <div className="flex flex-wrap gap-2 items-center justify-between">
+          <label className="flex items-center gap-2 text-sm">
+            <Checkbox checked={mAutoSend} onCheckedChange={(v) => setMAutoSend(!!v)} />
+            Auto-send right after AI generates
+          </label>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => generateAI(false)} disabled={mGenerating || mSending}>
+              {mGenerating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Wand2 className="h-4 w-4 mr-2" />}
+              Generate with AI
+            </Button>
+            <Button onClick={() => (!mMessage ? generateAI(true) : sendManual())} disabled={mGenerating || mSending}>
+              {mSending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
+              {!mMessage ? 'Generate & Send' : 'Send Email'}
+            </Button>
+          </div>
+        </div>
+      </Card>
 
       <Card className="p-4 space-y-3">
         <div className="flex flex-wrap gap-2 items-center">
