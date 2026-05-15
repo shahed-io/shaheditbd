@@ -296,25 +296,78 @@ const AdminSecurity2FA = () => {
               </div>
             )}
           </div>
+
+          {/* Regenerate backup codes */}
+          <div className="border-t border-border/50 pt-4 space-y-2">
+            <p className="text-sm font-semibold flex items-center gap-2">
+              <KeyRound size={14} className="text-primary" /> Backup Codes
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Generate 8 single-use recovery codes. Use them to log in if you lose your authenticator.
+              Generating new codes will invalidate any previous codes.
+            </p>
+            {!regenMode ? (
+              <button
+                onClick={() => setRegenMode(true)}
+                className="px-4 py-2 border border-primary/40 text-primary rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-primary/10"
+              >
+                <KeyRound size={14} /> Generate Backup Codes
+              </button>
+            ) : (
+              <div className="space-y-3 bg-muted/30 border border-border rounded-xl p-3">
+                <p className="text-xs text-muted-foreground">
+                  Enter your current 6-digit Authenticator code (or an email code) to confirm.
+                  Skip this if your admin session is still valid.
+                </p>
+                <input
+                  value={regenCode}
+                  onChange={(e) => setRegenCode(e.target.value)}
+                  placeholder="123456 (optional if session valid)"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm font-mono"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleRegenerate}
+                    disabled={regenerating}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold disabled:opacity-50"
+                  >
+                    {regenerating ? 'Generating…' : 'Generate Codes'}
+                  </button>
+                  <button
+                    onClick={() => { setRegenMode(false); setRegenCode(''); }}
+                    className="px-4 py-2 border border-border rounded-lg text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {/* Backup codes (one-time display) */}
       {backupCodes && (
         <div className="admin-glass-card p-6 rounded-2xl space-y-3">
-          <h2 className="font-bold text-lg flex items-center gap-2"><KeyRound size={18} /> Backup Codes</h2>
+          <h2 className="font-bold text-lg flex items-center gap-2"><KeyRound size={18} /> Your Backup Codes</h2>
           <p className="text-xs text-muted-foreground">
-            ⚠ Save these codes somewhere safe. Each code works only once if you lose access to your authenticator.
-            They will <strong>not</strong> be shown again.
+            ⚠ Save these codes now. Each code works only <strong>once</strong> if you lose access to your authenticator.
+            They will <strong>not</strong> be shown again — copy, download, or print before leaving this page.
           </p>
           <div className="grid grid-cols-2 gap-2 font-mono text-sm bg-muted/40 p-4 rounded-xl">
-            {backupCodes.map((c) => <div key={c}>{c}</div>)}
+            {backupCodes.map((c) => <div key={c} className="px-2 py-1 bg-background/60 rounded text-center tracking-wider">{c}</div>)}
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button onClick={() => copy(backupCodes.join('\n'))} className="px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm flex items-center gap-1.5">
               <Copy size={14} /> Copy All
             </button>
-            <button onClick={() => { setBackupCodes(null); navigate('/ceo'); }} className="px-3 py-2 border border-border rounded-lg text-sm">
+            <button onClick={() => printBackupCodes(backupCodes)} className="px-3 py-2 border border-border rounded-lg text-sm flex items-center gap-1.5">
+              <Printer size={14} /> Print
+            </button>
+            <button onClick={() => downloadBackupCodes(backupCodes)} className="px-3 py-2 border border-border rounded-lg text-sm flex items-center gap-1.5">
+              <Download size={14} /> Download .txt
+            </button>
+            <button onClick={() => { setBackupCodes(null); refresh(); }} className="px-3 py-2 border border-border rounded-lg text-sm ml-auto">
               I've Saved Them
             </button>
           </div>
