@@ -5,6 +5,7 @@ import { lovable } from '@/integrations/lovable/index';
 import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BrandLogo from '@/components/store/BrandLogo';
+import { sendWelcomeEmail } from '@/lib/loginNotifier';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -84,6 +85,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         if (error) throw error;
 
         toast.success('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
+
+        // Fire-and-forget welcome email (login-notification fires automatically via useAuth)
+        sendWelcomeEmail(email, name);
 
         // Email signup referral: referred user gets 5% discount only (no wallet credit)
         // Referrer gets ৳20 ONLY when referred user signs up via Google OAuth

@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { sendLoginNotification } from '@/lib/loginNotifier';
 
 interface AuthContextType {
   user: User | null;
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // IMPORTANT: Do NOT use async/await directly in onAuthStateChange callback
     // as it can cause Supabase client deadlocks. Use .then() chains instead.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
       if (!mounted) return;
 
       setSession(newSession);
@@ -53,6 +54,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (newSession?.user) {
         const userId = newSession.user.id;
+        const userEmail = newSession.user.email || '';
+        const displayName = (newSession.user.user_metadata as any)?.display_name
+          || (newSession.user.user_metadata as any)?.full_name
+          || undefined;
         // Defer the role check outside the callback to avoid deadlock
         setTimeout(() => {
           if (!mounted) return;
@@ -60,6 +65,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (mounted) {
               setIsAdmin(isAdminResult);
               setLoading(false);
+            }
+            // Send login notification on actual sign-in events (skip silent token refreshes / initial restores)
+            if (userEmail && (event === 'SIGNED_IN' || event === 'USER_UPDATED')) {
+              sendLoginNotification({
+                email: userEmail,
+                customerName: displayName,
+                isAdmin: isAdminResult,
+              });
             }
           });
         }, 0);
