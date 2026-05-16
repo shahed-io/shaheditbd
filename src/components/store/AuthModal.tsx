@@ -137,8 +137,13 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       if (msg.includes('Invalid login credentials')) friendlyMsg = 'ইমেইল বা পাসওয়ার্ড ভুল';
       else if (msg.includes('already registered') || msg.includes('already been registered')) friendlyMsg = 'এই ইমেইল দিয়ে আগেই একাউন্ট তৈরি করা হয়েছে';
       else if (msg.includes('Email not confirmed')) friendlyMsg = 'অনুগ্রহ করে আপনার ইমেইল ভেরিফাই করুন';
-      else if (msg.includes('Password should be')) friendlyMsg = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে';
-      else if (msg.includes('rate limit') || msg.includes('too many')) friendlyMsg = 'অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।';
+      else if (msg.includes('Password should be')) friendlyMsg = 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে';
+      else if (msg.toLowerCase().includes('weak') || msg.toLowerCase().includes('pwned') || msg.toLowerCase().includes('compromised') || msg.toLowerCase().includes('leak')) friendlyMsg = 'এই পাসওয়ার্ডটি অনিরাপদ (অনলাইনে ফাঁস হওয়া পাসওয়ার্ড)। অনুগ্রহ করে একটি শক্তিশালী ও ভিন্ন পাসওয়ার্ড ব্যবহার করুন — যেমন বড়/ছোট হাতের অক্ষর, সংখ্যা ও বিশেষ চিহ্ন মিলিয়ে।';
+      else if (msg.toLowerCase().includes('invalid email') || msg.toLowerCase().includes('email address') && msg.toLowerCase().includes('invalid')) friendlyMsg = 'ইমেইল ঠিকানাটি সঠিক নয়। সঠিক ইমেইল দিন।';
+      else if (msg.toLowerCase().includes('signup') && msg.toLowerCase().includes('disabled')) friendlyMsg = 'নতুন অ্যাকাউন্ট তৈরি বর্তমানে বন্ধ রয়েছে।';
+      else if (msg.toLowerCase().includes('sending') && msg.toLowerCase().includes('email')) friendlyMsg = 'ভেরিফিকেশন ইমেইল পাঠানো যায়নি। কিছুক্ষণ পর আবার চেষ্টা করুন।';
+      else if (msg.includes('rate limit') || msg.includes('too many') || msg.toLowerCase().includes('over_email_send_rate_limit')) friendlyMsg = 'অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।';
+      else if (msg) friendlyMsg = msg;
       toast.error(friendlyMsg);
     } finally {
       setLoading(false);
