@@ -500,17 +500,19 @@ const OrderDetailModal = ({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-        <div className="glass-card rounded-2xl w-full max-w-2xl max-h-[93vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
+        <div className="glass-card rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[93vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
 
           {/* Modal Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border flex-shrink-0">
-            <div>
-              <h2 className="text-lg font-bold text-foreground">অর্ডার #{order.order_number}</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">{new Date(order.created_at).toLocaleString('en-BD')}</p>
+          <div className="flex items-start justify-between gap-2 px-4 sm:px-5 py-3 sm:py-4 border-b border-border flex-shrink-0">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-base sm:text-lg font-bold text-foreground truncate">অর্ডার #{order.order_number}</h2>
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${cfg.color}`}>{cfg.label}</span>
+                <p className="text-[11px] text-muted-foreground">{new Date(order.created_at).toLocaleString('en-BD')}</p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-medium border ${cfg.color}`}>{cfg.label}</span>
+            <div className="flex items-center gap-1 flex-shrink-0">
               <button onClick={() => setShowInvoice(true)} title="Invoice" className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors">
                 <FileText size={15} />
               </button>
