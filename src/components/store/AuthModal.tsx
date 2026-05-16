@@ -86,6 +86,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
         toast.success('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
 
+        // Fire-and-forget welcome email (login-notification fires automatically via useAuth)
+        sendWelcomeEmail(email, name);
+
         // Email signup referral: referred user gets 5% discount only (no wallet credit)
         // Referrer gets ৳20 ONLY when referred user signs up via Google OAuth
         if (referralCode.trim() && data.user) {
