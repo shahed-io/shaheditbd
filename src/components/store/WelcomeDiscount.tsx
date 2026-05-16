@@ -354,10 +354,10 @@ export default function WelcomeDiscount() {
   }).join(', ');
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-3 sm:p-4 animate-in fade-in duration-300 overflow-y-auto overscroll-contain">
       {/* Glass backdrop */}
       <div
-        className="absolute inset-0"
+        className="fixed inset-0"
         style={{
           background: 'linear-gradient(135deg, hsl(var(--primary) / 0.50), hsl(var(--brand2-h) var(--brand2-s) 20% / 0.42), hsl(var(--accent) / 0.22))',
           backdropFilter: 'blur(12px)',
@@ -366,7 +366,7 @@ export default function WelcomeDiscount() {
         onClick={handleClose}
       />
 
-      <div className="relative w-full max-w-[430px] animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+      <div className="relative w-full max-w-[430px] my-auto animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
         {/* Glassmorphism card */}
         <div
           className="relative rounded-3xl overflow-hidden"
@@ -393,11 +393,11 @@ export default function WelcomeDiscount() {
           <div className={`relative px-6 pb-4 ${previewMode ? 'pt-10' : 'pt-6'} border-b border-white/40`}>
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 p-1.5 rounded-full text-slate-600 hover:bg-white/60 hover:text-slate-900 transition-colors"
-              style={{ zIndex: previewMode ? 31 : 'auto', top: previewMode ? '36px' : '16px' }}
+              className="absolute top-3 right-3 w-9 h-9 sm:w-8 sm:h-8 p-0 flex items-center justify-center rounded-full bg-white/80 backdrop-blur text-slate-700 hover:bg-white hover:text-slate-900 shadow-md transition-colors active:scale-95"
+              style={{ zIndex: previewMode ? 31 : 20, top: previewMode ? '40px' : '12px' }}
               aria-label="Close"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5 sm:w-4 sm:h-4" strokeWidth={2.4} />
             </button>
 
             <div className="flex items-center gap-2 mb-2">

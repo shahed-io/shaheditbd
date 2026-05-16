@@ -72,22 +72,22 @@ const PopupBanner = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] flex items-start sm:items-center justify-center p-4 overflow-y-auto overscroll-contain"
       style={{ background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(6px)' }}
       onClick={handleClose}
     >
       <div
-        className="relative max-w-md w-full animate-in zoom-in-95 fade-in duration-300"
+        className="relative max-w-md w-full my-auto animate-in zoom-in-95 fade-in duration-300"
         onClick={e => e.stopPropagation()}
       >
-        {/* Close button */}
+        {/* Close button — placed inside the image area on mobile so it never gets clipped */}
         <button
           onClick={handleClose}
-          className="absolute -top-3 -right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full shadow-lg transition-all hover:scale-110"
-          style={{ background: 'hsl(258,78%,55%)', color: 'white' }}
+          className="absolute top-2 right-2 sm:-top-3 sm:-right-3 z-20 w-10 h-10 sm:w-9 sm:h-9 flex items-center justify-center rounded-full shadow-xl transition-all active:scale-95 hover:scale-110"
+          style={{ background: 'hsl(258,78%,55%)', color: 'white', boxShadow: '0 4px 14px rgba(0,0,0,0.45), 0 0 0 2px rgba(255,255,255,0.9)' }}
           aria-label="Close"
         >
-          <X size={15} />
+          <X size={20} strokeWidth={2.6} />
         </button>
 
         {/* Banner image */}
@@ -113,7 +113,7 @@ const PopupBanner = () => {
         </div>
 
         {/* Click outside hint */}
-        <p className="text-center text-white/50 text-[11px] mt-3">
+        <p className="text-center text-white/60 text-[11px] mt-3 pb-2">
           বাইরে ক্লিক করলে বন্ধ হবে
         </p>
       </div>
