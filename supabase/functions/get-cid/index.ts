@@ -536,7 +536,7 @@ Deno.serve(async (req) => {
       }
 
       // Log generation
-      await supabase.from('cid_generations').insert({
+      const { data: genRow } = await supabase.from('cid_generations').insert({
         user_id: auth.user.id,
         operator: 'microsoft',
         operator_name: 'Microsoft Confirmation ID',
@@ -544,7 +544,45 @@ Deno.serve(async (req) => {
         result: { cid: cidValue, provider: usedProvider },
         status: 'success',
         cost: 1,
-      });
+      }).select('id').single();
+
+      // 📧 Auto-send Confirmation ID to the user's email (fire-and-forget)
+      try {
+        const userEmail = auth.user.email;
+        if (userEmail) {
+          // Fetch display name (best-effort)
+          let customerName = userEmail.split('@')[0];
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('full_name')
+              .eq('id', auth.user.id)
+              .maybeSingle();
+            if (profile?.full_name) customerName = profile.full_name;
+          } catch (_) { /* ignore */ }
+
+          supabase.functions.invoke('send-transactional-email', {
+            body: {
+              templateName: 'cid-delivery',
+              recipientEmail: userEmail,
+              idempotencyKey: `cid-delivery-${genRow?.id || `${auth.user.id}-${Date.now()}`}`,
+              templateData: {
+                customerName,
+                installationId: iid,
+                confirmationId: cidValue,
+                remainingCredits: newBalance,
+                generatedAt: new Date().toISOString(),
+              },
+            },
+          }).then(() => {
+            console.log(`[cid-delivery-email] sent to ${userEmail}`);
+          }).catch((e) => {
+            console.error('[cid-delivery-email] send failed', e);
+          });
+        }
+      } catch (e) {
+        console.error('[cid-delivery-email] unexpected error', e);
+      }
 
       return json({ ok: true, cid: cidValue, balance: newBalance });
     }
