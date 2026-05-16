@@ -7,7 +7,7 @@ import {
 export const BRAND = {
   name: 'Shahed Store',
   url: 'https://shahedstore.com.bd',
-  logo: 'https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/email-assets/logo-email.png?v=3',
+  logo: 'https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/email-assets/logo-email.png?v=4',
   primary: '#7c3aed',
   primaryDark: '#6d28d9',
   primaryLight: '#f5f1ff',
