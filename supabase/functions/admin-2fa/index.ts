@@ -290,8 +290,8 @@ Deno.serve(async (req) => {
 
       // Fan out via send-transactional-email (direct fetch with service role)
       const requestedByEmail = userData.user.email ?? "unknown";
-      const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-      const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const SUPABASE_URL2 = Deno.env.get("SUPABASE_URL")!;
+      const SERVICE_KEY2 = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
       const sendPromises = Array.from(recipientEmails).map(async (to) => {
         try {
           const r = await fetch(`${SUPABASE_URL}/functions/v1/send-transactional-email`, {
