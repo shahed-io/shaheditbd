@@ -354,10 +354,10 @@ export default function WelcomeDiscount() {
   }).join(', ');
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-3 sm:p-4 animate-in fade-in duration-300 overflow-y-auto overscroll-contain">
       {/* Glass backdrop */}
       <div
-        className="absolute inset-0"
+        className="fixed inset-0"
         style={{
           background: 'linear-gradient(135deg, hsl(var(--primary) / 0.50), hsl(var(--brand2-h) var(--brand2-s) 20% / 0.42), hsl(var(--accent) / 0.22))',
           backdropFilter: 'blur(12px)',
@@ -366,7 +366,7 @@ export default function WelcomeDiscount() {
         onClick={handleClose}
       />
 
-      <div className="relative w-full max-w-[430px] animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+      <div className="relative w-full max-w-[430px] my-auto animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
         {/* Glassmorphism card */}
         <div
           className="relative rounded-3xl overflow-hidden"
