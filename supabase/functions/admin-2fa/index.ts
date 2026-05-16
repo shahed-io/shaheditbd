@@ -288,22 +288,41 @@ Deno.serve(async (req) => {
       // Always include the requesting admin's email as a guarantee
       if (userData.user.email) recipientEmails.add(userData.user.email.toLowerCase());
 
-      // Fan out via send-transactional-email
+      // Fan out via send-transactional-email (direct fetch with service role)
       const requestedByEmail = userData.user.email ?? "unknown";
-      const sendPromises = Array.from(recipientEmails).map((to) =>
-        admin.functions.invoke("send-transactional-email", {
-          body: {
-            templateName: "admin-2fa-code",
-            recipientEmail: to,
-            templateData: {
-              code: otpCode,
-              requestedByEmail,
-              ip: ip ?? "",
-              expiresInMinutes: 10,
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+      const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const sendPromises = Array.from(recipientEmails).map(async (to) => {
+        try {
+          const r = await fetch(`${SUPABASE_URL}/functions/v1/send-transactional-email`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${SERVICE_KEY}`,
+              "apikey": SERVICE_KEY,
             },
-          },
-        }).catch((e) => ({ error: e }))
-      );
+            body: JSON.stringify({
+              templateName: "admin-2fa-code",
+              recipientEmail: to,
+              templateData: {
+                code: otpCode,
+                requestedByEmail,
+                ip: ip ?? "",
+                expiresInMinutes: 10,
+              },
+            }),
+          });
+          if (!r.ok) {
+            const txt = await r.text();
+            console.error(`[admin-2fa] send failed for ${to}: ${r.status} ${txt}`);
+            return { error: txt };
+          }
+          return { ok: true };
+        } catch (e) {
+          console.error(`[admin-2fa] send exception for ${to}:`, e);
+          return { error: String(e) };
+        }
+      });
       const results = await Promise.all(sendPromises);
       const sentCount = results.filter((r: any) => !r?.error).length;
 
