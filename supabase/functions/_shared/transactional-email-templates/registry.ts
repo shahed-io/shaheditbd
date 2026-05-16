@@ -16,9 +16,11 @@ import { template as admin2faCode } from './admin-2fa-code.tsx'
 import { template as subscriptionRenewalReminder } from './subscription-renewal-reminder.tsx'
 import { template as cidDelivery } from './cid-delivery.tsx'
 import { template as loginNotification } from './login-notification.tsx'
+import { template as orderStatusUpdate } from './order-status-update.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'order-confirmation': orderConfirmation,
+  'order-status-update': orderStatusUpdate,
   'welcome': welcome,
   'invoice-delivery': invoiceDelivery,
   'cid-account-credentials': cidAccountCredentials,
