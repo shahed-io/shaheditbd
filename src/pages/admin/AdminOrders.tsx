@@ -1108,7 +1108,68 @@ const AdminOrders = () => {
             {hasActiveFilters && <button onClick={resetFilters} className="mt-3 text-xs text-primary hover:underline">ফিল্টার রিসেট করুন</button>}
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            {/* Mobile Card List (< md) */}
+            <div className="md:hidden divide-y divide-border/30">
+              {filtered.map((order) => {
+                const cfg = STATUS_CONFIG[order.status];
+                return (
+                  <div key={order.id} className={`p-3 ${selectedIds.has(order.id) ? 'bg-primary/5' : ''}`}>
+                    <div className="flex items-start gap-2.5">
+                      <input type="checkbox" checked={selectedIds.has(order.id)}
+                        onChange={() => toggleSelect(order.id)} className="w-4 h-4 mt-1 accent-primary rounded flex-shrink-0" />
+                      <button onClick={() => setSelectedOrder(order)} className="flex-1 min-w-0 text-left">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <span className="font-mono font-bold text-primary text-xs truncate">#{order.order_number}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border flex-shrink-0 ${cfg?.color || ''}`}>
+                            {cfg?.label || order.status}
+                          </span>
+                        </div>
+                        <div className="text-sm font-medium text-foreground truncate">{order.customer_name}</div>
+                        <div className="text-[11px] text-muted-foreground truncate">{order.customer_email}</div>
+                        {order.customer_phone && <div className="text-[11px] text-muted-foreground">{order.customer_phone}</div>}
+                        <div className="flex items-center justify-between gap-2 mt-1.5 flex-wrap">
+                          <span className="font-bold text-foreground text-sm">৳{Number(order.total).toLocaleString()}</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {PM_LABELS[order.payment_method] || order.payment_method}
+                            {order.payment_status === 'verified' && <span className="text-emerald-500 ml-1">✓</span>}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {new Date(order.created_at).toLocaleDateString('en-BD', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-end gap-1 mt-2 pt-2 border-t border-border/30">
+                      {order.payment_status !== 'verified' && order.status === 'pending' && (
+                        <button onClick={() => updateOrder(order.id, { payment_status: 'verified', status: 'processing' }, '✅ Verified!')}
+                          className="p-2 text-emerald-500 bg-emerald-500/10 rounded-lg">
+                          <CheckCircle size={16} />
+                        </button>
+                      )}
+                      {order.status === 'processing' && (
+                        <button onClick={() => updateOrder(order.id, { status: 'delivered' }, '🚚 Delivered!')}
+                          className="p-2 text-cyan-500 bg-cyan-500/10 rounded-lg">
+                          <Truck size={16} />
+                        </button>
+                      )}
+                      <button onClick={() => downloadOrderInvoicePdf(order)} className="p-2 text-primary bg-primary/10 rounded-lg">
+                        <Download size={16} />
+                      </button>
+                      <button onClick={() => sendCustomerWhatsApp(order)} className={`p-2 rounded-lg ${newOrderIds.has(order.id) ? 'text-[#25D366] bg-[#25D366]/10 animate-pulse' : 'text-[#25D366] bg-[#25D366]/10'}`}>
+                        <MessageCircle size={16} />
+                      </button>
+                      <button onClick={() => setSelectedOrder(order)} className="p-2 text-primary bg-primary/10 rounded-lg">
+                        <Eye size={16} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table (>= md) */}
+            <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/20">
@@ -1196,14 +1257,12 @@ const AdminOrders = () => {
                               <Truck size={14} />
                             </button>
                           )}
-                          {/* PDF Invoice Download Button — works for any status */}
                           <button
                             onClick={() => downloadOrderInvoicePdf(order)}
                             title="PDF ইনভয়েস ডাউনলোড করুন"
                             className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
                             <Download size={14} />
                           </button>
-                          {/* Customer WhatsApp Button */}
                           <button
                             onClick={() => sendCustomerWhatsApp(order)}
                             title="কাস্টমারকে WhatsApp মেসেজ পাঠান"
@@ -1222,7 +1281,8 @@ const AdminOrders = () => {
                 })}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
       </div>
 
