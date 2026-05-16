@@ -511,13 +511,33 @@ const Checkout = () => {
         } catch { /* silent */ }
       }
 
-      // Send order confirmation email to customer (non-blocking)
-      supabase.functions.invoke('send-order-email', {
-        body: { type: 'order_confirmation', orderId: order.id },
-      }).then(({ error }) => {
-        if (error) console.error('[Checkout] order_confirmation email error:', error);
-        else console.log('[Checkout] order_confirmation email sent for order:', order.id);
-      });
+      // Send order confirmation email to customer via queue-based system (reliable + logged)
+      if (form.email) {
+        const PM_LABELS: Record<string, string> = {
+          bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'Upay',
+          bkash_merchant: 'BKash Merchant', wallet: 'Wallet',
+        };
+        supabase.functions.invoke('send-transactional-email', {
+          body: {
+            templateName: 'order-confirmation',
+            recipientEmail: form.email,
+            idempotencyKey: `order-confirm-${order.id}`,
+            templateData: {
+              customerName: form.name || 'Customer',
+              orderNumber: orderNum,
+              orderTotal: `${finalTotal.toLocaleString()} BDT`,
+              orderItems: items.map(it => ({
+                name: it.name + (it.variant ? ` (${it.variant})` : ''),
+                quantity: it.quantity,
+                price: `${(it.price * it.quantity).toLocaleString()} BDT`,
+              })),
+              paymentMethod: PM_LABELS[paymentMethod] || paymentMethod,
+            },
+          },
+        }).then(({ error }) => {
+          if (error) console.error('[Checkout] order confirmation email error:', error);
+        });
+      }
 
       // Notify all admins via email (non-blocking)
       supabase.functions.invoke('send-order-email', {

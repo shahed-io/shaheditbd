@@ -849,15 +849,25 @@ const AdminOrders = () => {
     if (error) { toast.error(handleDbError(error)); }
     else {
       toast.success(successMsg);
-      // Send status update email if status changed
+      // Send status update email via queue-based system (reliable + logged)
       if (updates.status) {
-        try {
-          await supabase.functions.invoke('send-order-email', {
-            body: { type: 'status_update', orderId: id, newStatus: updates.status },
-          });
-        } catch (e) { console.error('Email send failed:', e); }
-        // Telegram status notification
         const ord = orders.find((o: any) => o.id === id);
+        if (ord?.customer_email) {
+          supabase.functions.invoke('send-transactional-email', {
+            body: {
+              templateName: 'order-status-update',
+              recipientEmail: ord.customer_email,
+              idempotencyKey: `order-status-${id}-${updates.status}`,
+              templateData: {
+                customerName: ord.customer_name || 'Customer',
+                orderNumber: ord.order_number,
+                newStatus: updates.status,
+                orderTotal: ord.total ? `${Number(ord.total).toLocaleString()} BDT` : undefined,
+              },
+            },
+          }).catch((e) => console.error('Status email failed:', e));
+        }
+        // Telegram status notification
         supabase.functions.invoke('notify-telegram-event', {
           body: {
             title: `🔄 অর্ডার Status Update → ${String(updates.status).toUpperCase()}`,
