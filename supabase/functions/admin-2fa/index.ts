@@ -294,12 +294,13 @@ Deno.serve(async (req) => {
       const SERVICE_KEY2 = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
       const sendPromises = Array.from(recipientEmails).map(async (to) => {
         try {
-          const r = await fetch(`${SUPABASE_URL}/functions/v1/send-transactional-email`, {
+          const r = await fetch(`${SUPABASE_URL2}/functions/v1/send-transactional-email`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${SERVICE_KEY}`,
-              "apikey": SERVICE_KEY,
+              // Forward the caller's JWT (admin user) — required because send-transactional-email has verify_jwt=true
+              "Authorization": authHeader,
+              "apikey": ANON_KEY,
             },
             body: JSON.stringify({
               templateName: "admin-2fa-code",
