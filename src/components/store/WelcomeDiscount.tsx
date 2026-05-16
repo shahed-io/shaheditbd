@@ -393,11 +393,11 @@ export default function WelcomeDiscount() {
           <div className={`relative px-6 pb-4 ${previewMode ? 'pt-10' : 'pt-6'} border-b border-white/40`}>
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 p-1.5 rounded-full text-slate-600 hover:bg-white/60 hover:text-slate-900 transition-colors"
-              style={{ zIndex: previewMode ? 31 : 'auto', top: previewMode ? '36px' : '16px' }}
+              className="absolute top-3 right-3 w-9 h-9 sm:w-8 sm:h-8 p-0 flex items-center justify-center rounded-full bg-white/80 backdrop-blur text-slate-700 hover:bg-white hover:text-slate-900 shadow-md transition-colors active:scale-95"
+              style={{ zIndex: previewMode ? 31 : 20, top: previewMode ? '40px' : '12px' }}
               aria-label="Close"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5 sm:w-4 sm:h-4" strokeWidth={2.4} />
             </button>
 
             <div className="flex items-center gap-2 mb-2">
