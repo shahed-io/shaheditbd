@@ -464,7 +464,7 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="min-h-screen admin-gradient-bg">
+    <div className="min-h-screen admin-gradient-bg admin-root">
       {/* Mobile overlay */}
       {mobileSidebarOpen && (
         <div
