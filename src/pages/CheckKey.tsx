@@ -230,7 +230,7 @@ const CheckKey = () => {
   };
 
   const officeBadge = (cat: OfficeResult['category']) => {
-    if (cat === 'success') return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ background: 'hsl(142,71%,40%)' }}><CheckCircle2 size={12} /> VALID</span>;
+    if (cat === 'success') return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ background: 'hsl(142,71%,40%)' }}><span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> ONLINE</span>;
     if (cat === 'mfa') return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ background: 'hsl(38,92%,50%)' }}><ShieldAlert size={12} /> MFA</span>;
     if (cat === 'invalid') return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ background: 'hsl(0,72%,51%)' }}><XCircle size={12} /> INVALID</span>;
     return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ background: 'hsl(220,9%,46%)' }}><AlertCircle size={12} /> UNKNOWN</span>;
