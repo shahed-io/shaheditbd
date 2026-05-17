@@ -1382,7 +1382,111 @@ const AdminLicenses = () => {
             <p className="font-medium text-sm">কোনো license key পাওয়া যায়নি</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          {/* Mobile card list */}
+          <div className="md:hidden divide-y divide-border/40">
+            {filtered.map(lic => {
+              const st = STATUS_CONFIG[lic.status] || STATUS_CONFIG.available;
+              const StIcon = st.icon;
+              const isVisible = showValues[lic.id];
+              const typeLabel = KEY_TYPES.find(t => t.value === lic.key_type)?.label || lic.key_type;
+              return (
+                <div key={lic.id} className={`p-3 ${selectedIds.has(lic.id) ? 'bg-primary/5' : ''}`}>
+                  <div className="flex items-start gap-2 mb-2">
+                    <input type="checkbox" checked={selectedIds.has(lic.id)}
+                      onChange={() => toggleSelect(lic.id)}
+                      className="h-4 w-4 mt-1 rounded border-border accent-primary cursor-pointer flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                          style={{ background: 'hsla(258,78%,68%,0.12)', color: 'hsl(258,78%,68%)' }}>
+                          {typeLabel}
+                        </span>
+                        <span className="flex items-center gap-1 text-[11px] font-semibold" style={{ color: st.color }}>
+                          <StIcon size={11} />
+                          {st.label}
+                        </span>
+                      </div>
+                      <div className="text-xs font-medium text-foreground truncate">{lic.product_name}</div>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <code className="text-[11px] font-mono text-foreground break-all flex-1 min-w-0">
+                          {isVisible ? lic.key_value : maskValue(lic.key_value)}
+                        </code>
+                        <button onClick={() => toggleShow(lic.id)} className="text-muted-foreground p-1 flex-shrink-0">
+                          {isVisible ? <EyeOff size={12} /> : <Eye size={12} />}
+                        </button>
+                        {isVisible && (
+                          <button onClick={() => copyToClipboard(lic.key_value)} className="text-muted-foreground p-1 flex-shrink-0">
+                            <Copy size={12} />
+                          </button>
+                        )}
+                      </div>
+                      {lic.extra_info && (
+                        <div className="text-[10px] text-muted-foreground mt-0.5 font-mono break-all">
+                          {isVisible ? lic.extra_info : '••••••••'}
+                        </div>
+                      )}
+                      {(lic.customer_name || lic.delivered_to_phone) && (
+                        <div className="mt-2 pt-2 border-t border-border/30 text-[11px] space-y-0.5">
+                          {lic.customer_name && (
+                            <div className="text-foreground"><span className="text-muted-foreground">কাস্টমার: </span>{lic.customer_name} {lic.order_number && <span className="text-muted-foreground">#{lic.order_number}</span>}</div>
+                          )}
+                          {lic.delivered_to_phone && (
+                            <div className="flex items-center gap-1 text-foreground">
+                              <Phone size={10} className="text-green-500" />
+                              <span className="font-mono">{lic.delivered_to_phone}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <div className="flex flex-wrap items-center gap-1 mt-2">
+                        <button onClick={() => openEditModal(lic)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10">
+                          <Edit3 size={13} />
+                        </button>
+                        {lic.status === 'available' && (
+                          <>
+                            <button onClick={() => openAssignModal(lic)} className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10">
+                              <UserPlus size={13} />
+                            </button>
+                            <button onClick={() => openWaModal(lic)} className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10">
+                              <MessageCircle size={13} />
+                            </button>
+                            <button onClick={() => handleRevoke(lic.id)} className="px-2 py-1 rounded-lg text-[10px] font-medium border border-border text-muted-foreground">
+                              Revoke
+                            </button>
+                          </>
+                        )}
+                        {lic.status === 'assigned' && (
+                          <>
+                            <button onClick={() => handleUnassign(lic)} className="p-1.5 rounded-lg text-muted-foreground hover:text-orange-600 hover:bg-orange-500/10">
+                              <UserMinus size={13} />
+                            </button>
+                            <button onClick={() => handleInvoicePrint(lic)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10">
+                              <FileText size={13} />
+                            </button>
+                            <button onClick={() => openEmailModal(lic)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10">
+                              <Mail size={13} />
+                            </button>
+                            <button onClick={() => openWaModal(lic)} className="p-1.5 rounded-lg text-muted-foreground hover:text-green-600 hover:bg-green-500/10">
+                              <MessageCircle size={13} />
+                            </button>
+                          </>
+                        )}
+                        {lic.status !== 'assigned' && (
+                          <button onClick={() => handleDelete(lic.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+                            <Trash2 size={13} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
@@ -1539,6 +1643,7 @@ const AdminLicenses = () => {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
 
