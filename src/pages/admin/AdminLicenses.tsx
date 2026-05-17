@@ -103,7 +103,7 @@ const AdminLicenses = () => {
 
   // Edit modal state
   const [editModal, setEditModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
-  const [editForm, setEditForm] = useState({ key_value: '', extra_info: '', key_type: 'license', product_id: '', status: 'available' });
+  const [editForm, setEditForm] = useState({ key_value: '', extra_info: '', key_type: 'license', product_id: '', status: 'available', variant: '' });
   const [editSaving, setEditSaving] = useState(false);
 
   // Assign modal state
