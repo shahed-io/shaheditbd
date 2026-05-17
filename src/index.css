@@ -2408,3 +2408,19 @@ body.admin-page main > .admin-page-header + div > div.flex:first-child:has(> div
   0%, 100% { opacity: 0.7; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.08); }
 }
+
+/* Admin panel mobile table fix — ensure tables scroll horizontally
+   instead of squishing columns into letter-per-line stacks */
+@media (max-width: 767px) {
+  .admin-root .overflow-x-auto > table {
+    min-width: max-content;
+    width: max-content;
+  }
+  .admin-root .overflow-x-auto > table th,
+  .admin-root .overflow-x-auto > table td {
+    white-space: nowrap;
+  }
+  .admin-root .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
