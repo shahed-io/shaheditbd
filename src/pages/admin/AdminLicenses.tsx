@@ -2009,7 +2009,13 @@ const AdminLicenses = () => {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Email *</label>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block flex items-center gap-1.5">
+                  <Tag size={11} className="text-primary" /> Variant / Option
+                </label>
+                <input value={editForm.variant} onChange={e => setEditForm(p => ({ ...p, variant: e.target.value }))}
+                  placeholder="যেমন: 1 Year, 5 Devices (খালি রাখলে কোনো option নেই)"
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary" />
+              </div>
                 <input value={editForm.key_value} onChange={e => setEditForm(p => ({ ...p, key_value: e.target.value }))}
                   className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary" />
               </div>
