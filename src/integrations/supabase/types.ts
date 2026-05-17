@@ -176,6 +176,7 @@ export type Database = {
           id: number
           remember_device_ttl_days: number
           session_ttl_hours: number
+          system_enabled: boolean
           updated_at: string
         }
         Insert: {
@@ -183,6 +184,7 @@ export type Database = {
           id?: number
           remember_device_ttl_days?: number
           session_ttl_hours?: number
+          system_enabled?: boolean
           updated_at?: string
         }
         Update: {
@@ -190,6 +192,7 @@ export type Database = {
           id?: number
           remember_device_ttl_days?: number
           session_ttl_hours?: number
+          system_enabled?: boolean
           updated_at?: string
         }
         Relationships: []

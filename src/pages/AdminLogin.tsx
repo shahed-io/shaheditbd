@@ -39,7 +39,12 @@ const AdminLogin = () => {
 
     (async () => {
       try {
-        const { enabled } = await get2faStatus();
+        const { enabled, systemEnabled } = await get2faStatus();
+        if (systemEnabled === false) {
+          // Global 2FA disabled by admin → skip the challenge entirely
+          navigate('/ceo', { replace: true });
+          return;
+        }
         if (!enabled) {
           // No 2FA yet → force enrollment
           setStage('enroll');

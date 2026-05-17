@@ -95,6 +95,7 @@ const BodySchema = z.object({
     session_ttl_hours: z.number().int().min(1).max(720).optional(),
     remember_device_ttl_days: z.number().int().min(1).max(365).optional(),
     allow_remember_device: z.boolean().optional(),
+    system_enabled: z.boolean().optional(),
   }).optional(),
 });
 
@@ -135,13 +136,14 @@ Deno.serve(async (req) => {
     const loadConfig = async () => {
       const { data } = await admin
         .from("admin_2fa_config")
-        .select("session_ttl_hours, remember_device_ttl_days, allow_remember_device")
+        .select("session_ttl_hours, remember_device_ttl_days, allow_remember_device, system_enabled")
         .eq("id", 1)
         .maybeSingle();
       return {
         session_ttl_hours: data?.session_ttl_hours ?? DEFAULT_SESSION_TTL_HOURS,
         remember_device_ttl_days: data?.remember_device_ttl_days ?? DEFAULT_REMEMBER_TTL_DAYS,
         allow_remember_device: data?.allow_remember_device ?? true,
+        system_enabled: data?.system_enabled ?? true,
       };
     };
 
@@ -170,6 +172,7 @@ Deno.serve(async (req) => {
       if (config.session_ttl_hours !== undefined) patch.session_ttl_hours = config.session_ttl_hours;
       if (config.remember_device_ttl_days !== undefined) patch.remember_device_ttl_days = config.remember_device_ttl_days;
       if (config.allow_remember_device !== undefined) patch.allow_remember_device = config.allow_remember_device;
+      if (config.system_enabled !== undefined) patch.system_enabled = config.system_enabled;
       const { error } = await admin
         .from("admin_2fa_config")
         .upsert({ id: 1, ...patch }, { onConflict: "id" });
@@ -179,12 +182,13 @@ Deno.serve(async (req) => {
 
     // ─── status ───
     if (action === "status") {
+      const cfg = await loadConfig();
       const { data } = await admin
         .from("admin_2fa")
         .select("enabled")
         .eq("user_id", userId)
         .maybeSingle();
-      return json({ enabled: !!data?.enabled });
+      return json({ enabled: !!data?.enabled, systemEnabled: cfg.system_enabled });
     }
 
     // ─── setup: generate (or regenerate) pending secret ───

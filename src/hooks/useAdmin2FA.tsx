@@ -62,6 +62,7 @@ export interface Admin2FAConfig {
   session_ttl_hours: number;
   remember_device_ttl_days: number;
   allow_remember_device: boolean;
+  system_enabled: boolean;
 }
 
 export function useAdmin2FA() {
