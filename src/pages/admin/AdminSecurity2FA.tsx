@@ -282,6 +282,25 @@ const AdminSecurity2FA = () => {
             "Remember this device" option appears at login.
           </p>
 
+          {/* Master switch: Authenticator system on/off */}
+          <label className={`flex items-start gap-3 px-4 py-3 rounded-xl border cursor-pointer transition ${configForm.system_enabled ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-amber-500/40 bg-amber-500/5'}`}>
+            <input
+              type="checkbox"
+              checked={configForm.system_enabled}
+              onChange={(e) => setConfigForm({ ...configForm, system_enabled: e.target.checked })}
+              className="mt-0.5 w-4 h-4 accent-primary"
+            />
+            <div className="flex-1 text-xs">
+              <div className="font-semibold text-sm flex items-center gap-2">
+                {configForm.system_enabled ? <ShieldCheck size={14} className="text-emerald-600" /> : <ShieldAlert size={14} className="text-amber-600" />}
+                Authenticator system {configForm.system_enabled ? 'ENABLED' : 'DISABLED'} (global)
+              </div>
+              <div className="text-muted-foreground mt-1">
+                Master switch for the entire admin 2FA system. When OFF, no admin will be asked for an authenticator code at login. Individual enrollments are preserved and re-activate when this is turned back ON.
+              </div>
+            </div>
+          </label>
+
           <div className="grid md:grid-cols-2 gap-4">
             <label className="space-y-1.5 block">
               <span className="text-xs font-semibold flex items-center justify-between">
