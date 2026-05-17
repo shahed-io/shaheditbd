@@ -69,6 +69,10 @@ const DEFAULT_SETTINGS: LiveChatSettings = {
   ai_placeholder: 'আপনার প্রশ্ন লিখুন...',
   quick_suggestions: ['💰 দাম জানতে চাই', '📦 কোন প্রোডাক্ট ভালো?', '🚚 ডেলিভারি কতক্ষণ?'],
   fab_label: 'কোনটি পছন্দ করবেন?',
+  fab_color_from: 'hsl(265,82%,58%)',
+  fab_color_mid: 'hsl(245,80%,55%)',
+  fab_color_to: 'hsl(215,90%,52%)',
+  fab_icon_color: '#ffffff',
   live_sets: [],
 };
 
