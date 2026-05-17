@@ -51,16 +51,8 @@ const AdminLogin = () => {
           setSubmitting(false);
           return;
         }
-        // 2FA enabled — check existing session
-        const existing = getStoredToken();
-        if (existing) {
-          const r = await validateSession(existing);
-          if (r?.valid) {
-            navigate('/ceo', { replace: true });
-            return;
-          }
-          setStoredToken(null);
-        }
+        // 2FA enabled — ALWAYS require fresh code every login (no session reuse)
+        setStoredToken(null);
         setStage('2fa');
         setSubmitting(false);
       } catch (e) {
