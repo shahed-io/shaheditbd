@@ -255,9 +255,10 @@ const AdminLicenses = () => {
       key_type: bulkType,
       key_value: item.key_value,
       extra_info: item.extra_info || null,
+      variant: bulkVariant.trim() || null,
       status: 'available' as const,
     }));
-    const { error } = await supabase.from('license_keys').insert(rows);
+    const { error } = await supabase.from('license_keys').insert(rows as any);
     setAiImporting(false);
     if (error) { toast.error('Import failed: ' + error.message); return; }
     toast.success(`${rows.length}টি license key AI থেকে যোগ হয়েছে!`);
