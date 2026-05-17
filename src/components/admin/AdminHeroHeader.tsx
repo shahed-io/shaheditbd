@@ -121,39 +121,6 @@ const AdminHeroHeader = ({ title, section, Icon, decorIcons }: AdminHeroHeaderPr
           </p>
         </div>
 
-        {/* Live stat widgets */}
-        <div className="admin-hero-stats">
-          <StatChip
-            Icon={ShoppingCart}
-            label="Orders Today"
-            value={isLoading ? '…' : data?.ordersToday ?? 0}
-            accent="violet"
-          />
-          <StatChip
-            Icon={DollarSign}
-            label="Revenue"
-            value={isLoading ? '…' : formatBDT(data?.revenueToday ?? 0)}
-            accent="emerald"
-          />
-          <StatChip
-            Icon={Users}
-            label="New Users"
-            value={isLoading ? '…' : data?.newCustomers ?? 0}
-            accent="amber"
-          />
-          <StatChip
-            Icon={AlertTriangle}
-            label="Low Stock"
-            value={isLoading ? '…' : data?.lowStock ?? 0}
-            accent="rose"
-          />
-        </div>
-      </div>
-
-      {/* Live pulse indicator */}
-      <div className="admin-hero-live">
-        <span className="admin-hero-live-dot" />
-        LIVE
       </div>
     </div>
   );
