@@ -17,10 +17,19 @@ export type Admin2FAAction =
 
 export const TOKEN_KEY = 'admin_2fa_token';
 
-/** Read token: prefer remembered (localStorage) → fall back to session-only. */
+/**
+ * Read token — TAB-SCOPED ONLY.
+ * Admin must re-verify the Authenticator code every time they enter the
+ * panel in a new tab / browser session. Any legacy persistent token in
+ * localStorage is purged on read.
+ */
 export function getStoredToken(): string | null {
   try {
-    return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+    // Purge any leftover persistent token from the old "remember device" flow
+    if (localStorage.getItem(TOKEN_KEY)) {
+      localStorage.removeItem(TOKEN_KEY);
+    }
+    return sessionStorage.getItem(TOKEN_KEY);
   } catch {
     return null;
   }

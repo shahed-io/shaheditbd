@@ -312,8 +312,24 @@ const AdminLayout = () => {
 
   if (!user || !isAdmin) return <Navigate to="/ceo/login" replace />;
 
-  // 2FA gate removed — admin panel is directly accessible after login
-  void twoFaChecked; void twoFaRequired;
+  // Strict 2FA gate — admin must verify Authenticator code on every entry.
+  // Wait for the 2FA check to finish before rendering anything.
+  if (!twoFaChecked) {
+    return (
+      <div className="min-h-screen admin-gradient-bg flex items-center justify-center">
+        <div className="admin-glass-card p-8 flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground font-medium">Verifying security…</p>
+        </div>
+      </div>
+    );
+  }
+  // If 2FA is required (no valid session) and admin is NOT on the security
+  // enrollment page, force them back to /ceo/login to enter a fresh code.
+  if (twoFaRequired && location.pathname !== '/ceo/security') {
+    setStoredToken(null);
+    return <Navigate to="/ceo/login" replace />;
+  }
 
   const toggleSection = (title: string) => {
     setCollapsedSections(prev =>

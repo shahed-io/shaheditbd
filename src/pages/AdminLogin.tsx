@@ -51,16 +51,8 @@ const AdminLogin = () => {
           setSubmitting(false);
           return;
         }
-        // 2FA enabled — check existing session
-        const existing = getStoredToken();
-        if (existing) {
-          const r = await validateSession(existing);
-          if (r?.valid) {
-            navigate('/ceo', { replace: true });
-            return;
-          }
-          setStoredToken(null);
-        }
+        // 2FA enabled — ALWAYS require fresh code every login (no session reuse)
+        setStoredToken(null);
         setStage('2fa');
         setSubmitting(false);
       } catch (e) {
@@ -110,9 +102,11 @@ const AdminLogin = () => {
     setError('');
     setVerifying(true);
     try {
-      const r = await verifyLogin(otp.trim(), rememberDevice);
+      const r = await verifyLogin(otp.trim(), false);
       if (r?.token) {
-        setStoredToken(r.token, !!r.remembered);
+        // Tab-scoped session only — dies when tab closes, forcing re-verify
+        // next time admin opens the panel.
+        setStoredToken(r.token, false);
         if (r.usedBackup) {
           navigate('/ceo/security?recover=1', { replace: true });
         } else {
@@ -253,22 +247,10 @@ const AdminLogin = () => {
             )}
             {error && <div className="bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-destructive text-sm">{error}</div>}
 
-            {(twoFaConfig?.allow_remember_device ?? true) && (
-              <label className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl border border-border bg-muted/30 cursor-pointer hover:bg-muted/50 transition">
-                <input
-                  type="checkbox"
-                  checked={rememberDevice}
-                  onChange={(e) => setRememberDevice(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 accent-primary cursor-pointer"
-                />
-                <div className="flex-1 text-xs">
-                  <div className="font-semibold text-foreground">Remember this device</div>
-                  <div className="text-muted-foreground">
-                    Stay signed in for {twoFaConfig?.remember_device_ttl_days ?? 30} days. Otherwise this session lasts {twoFaConfig?.session_ttl_hours ?? 12} hours. Don't enable on shared devices.
-                  </div>
-                </div>
-              </label>
-            )}
+            <div className="bg-muted/30 border border-border rounded-xl px-3 py-2.5 text-xs text-muted-foreground text-center">
+              🔒 প্রতিবার Admin Panel এ ঢোকার সময় Authenticator code দিয়ে verify করতে হবে।
+            </div>
+
 
             <button type="submit" disabled={verifying} className="w-full btn-glow py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2">
               <ShieldCheck size={18} />
