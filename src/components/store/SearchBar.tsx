@@ -81,13 +81,16 @@ const SuggestionItem = ({
         {highlight(text, query)}
       </span>
       {onFill && (
-        <button
+        <span
+          role="button"
+          tabIndex={-1}
           onClick={(e) => { e.stopPropagation(); onFill(); }}
-          className="flex-shrink-0 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-muted transition-all"
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); onFill(); } }}
+          className="flex-shrink-0 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-muted transition-all cursor-pointer"
           title="সার্চ বক্সে বসান"
         >
           <ArrowUpLeft size={14} className="text-muted-foreground" />
-        </button>
+        </span>
       )}
       {rightAction}
     </button>
