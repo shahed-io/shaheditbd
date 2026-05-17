@@ -108,6 +108,7 @@ const AdminFacebookPixel         = lazy(() => import("./pages/admin/AdminFaceboo
 const AdminLicenses              = lazy(() => import("./pages/admin/AdminLicenses"));
 const AdminCustomerLicenses      = lazy(() => import("./pages/admin/AdminCustomerLicenses"));
 const AdminSubscriptionReminders = lazy(() => import("./pages/admin/AdminSubscriptionReminders"));
+const AdminEmailDashboard        = lazy(() => import("./pages/admin/AdminEmailDashboard"));
 const AdminQuickSale             = lazy(() => import("./pages/admin/AdminQuickSale"));
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
