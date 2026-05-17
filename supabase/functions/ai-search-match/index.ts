@@ -23,6 +23,7 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const query: string = (body?.query || "").toString().trim().slice(0, 200);
     const products: ProductLite[] = Array.isArray(body?.products) ? body.products : [];
+    const strict: boolean = body?.strict === true;
 
     if (!query || products.length === 0) {
       return new Response(JSON.stringify({ matchedIds: [], correctedQuery: query }), {
@@ -37,7 +38,18 @@ Deno.serve(async (req) => {
       category: p.category || undefined,
     }));
 
-    const system = `You are an EXTREMELY forgiving fuzzy product search assistant for a Bangladeshi digital software store (Shahed Store).
+    const system = strict
+      ? `You are a STRICT product search matcher for a Bangladeshi digital software store (Shahed Store).
+Return ONLY products that genuinely match the user's query (typos, abbreviations, Bangla/English mix, synonyms allowed).
+DO NOT return loosely-related or unrelated products. If the query targets something the store does not sell, return an empty matchedIds array.
+Examples:
+- "ofice" → match "Microsoft Office" products (typo)
+- "নেটফ্লিক্স" → match Netflix (translation)
+- "win 11" → match Windows 11 (abbreviation)
+- "google meet" → return [] if no Google Meet product exists (do NOT suggest Zoom, Teams, etc.)
+- "pizza" → return [] (unrelated)
+Return STRICT JSON. No markdown.`
+      : `You are an EXTREMELY forgiving fuzzy product search assistant for a Bangladeshi digital software store (Shahed Store).
 Your #1 goal: NEVER return an empty list if there's even a remotely related product. Always suggest something useful.
 
 Handle aggressively:
