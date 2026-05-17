@@ -39,6 +39,10 @@ interface LiveChatConfig {
   ai_placeholder: string;
   quick_suggestions: string[];
   fab_label: string;
+  fab_color_from?: string;
+  fab_color_mid?: string;
+  fab_color_to?: string;
+  fab_icon_color?: string;
   live_sets: LiveSet[];
 }
 
@@ -79,6 +83,10 @@ const DEFAULTS: LiveChatConfig = {
     '🔄 রিফান্ড পলিসি কী?',
   ],
   fab_label: 'কোনটি পছন্দ করবেন?',
+  fab_color_from: '#7d3df0',
+  fab_color_mid: '#3540e3',
+  fab_color_to: '#1873ef',
+  fab_icon_color: '#ffffff',
   live_sets: [],
 };
 
@@ -619,7 +627,7 @@ const FloatingSupport = () => {
             style={{
               background: (chatOpen || menuOpen)
                 ? 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))'
-                : 'linear-gradient(135deg, hsl(265,82%,58%) 0%, hsl(245,80%,55%) 50%, hsl(215,90%,52%) 100%)',
+                : `linear-gradient(135deg, ${config.fab_color_from || 'hsl(265,82%,58%)'} 0%, ${config.fab_color_mid || 'hsl(245,80%,55%)'} 50%, ${config.fab_color_to || 'hsl(215,90%,52%)'} 100%)`,
               boxShadow: (chatOpen || menuOpen)
                 ? '0 18px 44px -10px hsla(258,70%,40%,0.32), 0 0 26px -6px hsla(271,91%,60%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
                 : 'inset 0 1.5px 0 hsla(0,0%,100%,0.55), inset 0 -3px 8px hsla(245,80%,28%,0.32), 0 10px 24px -4px hsla(245,85%,50%,0.5), 0 4px 12px -2px hsla(265,80%,45%,0.35)',
@@ -631,7 +639,7 @@ const FloatingSupport = () => {
             {!chatOpen && !menuOpen && <span className="fab-gloss" />}
             {(chatOpen || menuOpen)
               ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(258,78%,45%)' }} />
-              : <MessageCircle size={22} className="text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]" />
+              : <MessageCircle size={22} className="relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]" style={{ color: config.fab_icon_color || '#ffffff' }} />
             }
           </button>
         </div>
