@@ -122,6 +122,12 @@ const Shop = () => {
   const [aiAssisted, setAiAssisted] = useState(false);
 
   const activeCatSlug = searchParams.get('category') || '';
+  const urlQ = searchParams.get('q') || '';
+
+  // Sync `search` state with URL ?q= so navigating from navbar search updates results
+  useEffect(() => {
+    setSearch(urlQ);
+  }, [urlQ]);
 
   const [imgVersion, setImgVersion] = useState(() => Date.now());
 
