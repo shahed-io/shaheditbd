@@ -2055,7 +2055,7 @@ const AdminLicenses = () => {
                           {item.license_key && <p className="text-[10px] text-muted-foreground font-mono">Key: {item.license_key.slice(0, 15)}...</p>}
                         </div>
                         <button
-                          onClick={() => handleAssign(item.id)}
+                          onClick={() => handleAssign(item.id, item.product_name)}
                           disabled={assigning}
                           className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all"
                           style={{ background: 'hsla(162,72%,46%,0.15)', color: 'hsl(162,72%,36%)' }}
