@@ -90,6 +90,8 @@ const AdminLicenses = () => {
   const [showBulk, setShowBulk] = useState(false);
   const [bulkProductId, setBulkProductId] = useState('');
   const [bulkType, setBulkType] = useState('license');
+  const [bulkVariant, setBulkVariant] = useState('');
+  const [filterVariant, setFilterVariant] = useState('');
   const [bulkSaving, setBulkSaving] = useState(false);
   const [emailModal, setEmailModal] = useState<{ open: boolean; license: LicenseKey | null; email: string }>({ open: false, license: null, email: '' });
   const [sendingEmail, setSendingEmail] = useState(false);
