@@ -612,6 +612,63 @@ const AdminLiveChat = () => {
                   placeholder="কোনটি পছন্দ করবেন?"
                 />
               </div>
+
+              {/* Support Button Color Customization */}
+              <div className="p-4 rounded-xl border border-border bg-muted/30 space-y-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="font-medium text-foreground">সাপোর্ট বাটনের কালার</p>
+                    <p className="text-xs text-muted-foreground">ফ্লোটিং সাপোর্ট বাটনের গ্রেডিয়েন্ট ও আইকন কালার পরিবর্তন করুন</p>
+                  </div>
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg flex-shrink-0"
+                    style={{
+                      background: `linear-gradient(135deg, ${settings.fab_color_from || '#7d3df0'} 0%, ${settings.fab_color_mid || '#3540e3'} 50%, ${settings.fab_color_to || '#1873ef'} 100%)`,
+                    }}
+                  >
+                    <MessageCircle size={22} style={{ color: settings.fab_icon_color || '#ffffff' }} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { key: 'fab_color_from', label: 'কালার ১ (শুরু)', def: '#7d3df0' },
+                    { key: 'fab_color_mid', label: 'কালার ২ (মাঝ)', def: '#3540e3' },
+                    { key: 'fab_color_to', label: 'কালার ৩ (শেষ)', def: '#1873ef' },
+                    { key: 'fab_icon_color', label: 'আইকন কালার', def: '#ffffff' },
+                  ].map(({ key, label, def }) => (
+                    <div key={key} className="space-y-1.5">
+                      <Label className="text-xs">{label}</Label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={(settings as any)[key] || def}
+                          onChange={e => setSettings(prev => ({ ...prev, [key]: e.target.value }))}
+                          className="w-10 h-10 rounded-md border border-border cursor-pointer bg-transparent"
+                        />
+                        <Input
+                          value={(settings as any)[key] || def}
+                          onChange={e => setSettings(prev => ({ ...prev, [key]: e.target.value }))}
+                          className="h-10 text-xs font-mono"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSettings(prev => ({
+                    ...prev,
+                    fab_color_from: '#7d3df0',
+                    fab_color_mid: '#3540e3',
+                    fab_color_to: '#1873ef',
+                    fab_icon_color: '#ffffff',
+                  }))}
+                >
+                  ডিফল্ট কালার রিসেট করুন
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
