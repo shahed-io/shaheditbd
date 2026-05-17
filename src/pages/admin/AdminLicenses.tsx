@@ -188,8 +188,9 @@ const AdminLicenses = () => {
       key_type: form.key_type,
       key_value: form.key_value.trim(),
       extra_info: form.extra_info.trim() || null,
+      variant: form.variant.trim() || null,
       status: 'available',
-    });
+    } as any);
     setSaving(false);
     if (error) { toast.error('Save failed: ' + error.message); return; }
     toast.success('License key যোগ করা হয়েছে!');
