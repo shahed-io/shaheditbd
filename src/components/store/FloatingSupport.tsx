@@ -39,6 +39,10 @@ interface LiveChatConfig {
   ai_placeholder: string;
   quick_suggestions: string[];
   fab_label: string;
+  fab_color_from?: string;
+  fab_color_mid?: string;
+  fab_color_to?: string;
+  fab_icon_color?: string;
   live_sets: LiveSet[];
 }
 
