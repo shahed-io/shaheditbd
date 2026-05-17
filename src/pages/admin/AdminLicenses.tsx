@@ -1466,7 +1466,7 @@ const AdminLicenses = () => {
                           {st.label}
                         </span>
                       </div>
-                      <div className="text-xs font-medium text-foreground truncate">{lic.product_name}</div>
+                      <div className="text-xs font-medium text-foreground truncate">{lic.product_name}{lic.variant && <span className="ml-1.5 inline-block text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600">{lic.variant}</span>}</div>
                       <div className="flex items-center gap-1.5 mt-1">
                         <code className="text-[11px] font-mono text-foreground break-all flex-1 min-w-0">
                           {isVisible ? lic.key_value : maskValue(lic.key_value)}
