@@ -83,6 +83,10 @@ const DEFAULTS: LiveChatConfig = {
     '🔄 রিফান্ড পলিসি কী?',
   ],
   fab_label: 'কোনটি পছন্দ করবেন?',
+  fab_color_from: 'hsl(265,82%,58%)',
+  fab_color_mid: 'hsl(245,80%,55%)',
+  fab_color_to: 'hsl(215,90%,52%)',
+  fab_icon_color: '#ffffff',
   live_sets: [],
 };
 
