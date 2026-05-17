@@ -564,25 +564,39 @@ Deno.serve(async (req) => {
           } catch (_) { /* ignore */ }
 
           const orderId = genRow?.id ? String(genRow.id) : `${auth.user.id}-${Date.now()}`;
-          const { error: emailErr } = await supabase.functions.invoke('send-transactional-email', {
-            body: {
-              templateName: 'cid-delivery',
-              recipientEmail: userEmail,
-              idempotencyKey: `cid-delivery-${orderId}`,
-              templateData: {
-                customerName,
-                orderId,
-                installationId: iid,
-                confirmationId: cidValue,
-                remainingCredits: newBalance,
-                generatedAt: new Date().toISOString(),
+          try {
+            const SUPABASE_URL2 = Deno.env.get('SUPABASE_URL')!;
+            const ANON_KEY2 = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+            const callerAuth = req.headers.get('Authorization') ?? '';
+            const r = await fetch(`${SUPABASE_URL2}/functions/v1/send-transactional-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': callerAuth,
+                'apikey': ANON_KEY2,
               },
-            },
-          });
-          if (emailErr) {
-            console.error('[cid-delivery-email] invoke error', emailErr);
-          } else {
-            console.log(`[cid-delivery-email] enqueued for ${userEmail}`);
+              body: JSON.stringify({
+                templateName: 'cid-delivery',
+                recipientEmail: userEmail,
+                idempotencyKey: `cid-delivery-${orderId}`,
+                templateData: {
+                  customerName,
+                  orderId,
+                  installationId: iid,
+                  confirmationId: cidValue,
+                  remainingCredits: newBalance,
+                  generatedAt: new Date().toISOString(),
+                },
+              }),
+            });
+            if (!r.ok) {
+              const txt = await r.text();
+              console.error(`[cid-delivery-email] send failed: ${r.status} ${txt}`);
+            } else {
+              console.log(`[cid-delivery-email] enqueued for ${userEmail}`);
+            }
+          } catch (fetchErr) {
+            console.error('[cid-delivery-email] fetch error', fetchErr);
           }
         } else {
           console.warn('[cid-delivery-email] no email on auth.user — skipped');
