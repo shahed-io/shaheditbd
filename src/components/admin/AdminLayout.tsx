@@ -96,6 +96,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: MessageCircle, label: 'Live Chat', path: '/ceo/live-chat' },
       { icon: Mail, label: 'Newsletter', path: '/ceo/newsletter' },
       { icon: Mail, label: 'Renewal Reminders', path: '/ceo/subscription-reminders', badge: 'new' },
+      { icon: Activity, label: 'Email Dashboard', path: '/ceo/email-dashboard', badge: 'new' },
     ],
   },
   {
