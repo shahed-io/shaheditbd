@@ -334,6 +334,10 @@ const AdminLicenses = () => {
   const filtered = licenses.filter(l => {
     if (filterStatus !== 'all' && l.status !== filterStatus) return false;
     if (filterProduct !== 'all' && l.product_id !== filterProduct) return false;
+    if (filterVariant.trim()) {
+      const v = filterVariant.trim().toLowerCase();
+      if (!(l.variant || '').toLowerCase().includes(v)) return false;
+    }
     if (onlyAvailable && l.status !== 'available') return false;
     if (productNameQuery.trim()) {
       const q = productNameQuery.trim().toLowerCase();
@@ -343,6 +347,7 @@ const AdminLicenses = () => {
       const q = search.toLowerCase();
       return l.key_value.toLowerCase().includes(q) ||
         (l.product_name || '').toLowerCase().includes(q) ||
+        (l.variant || '').toLowerCase().includes(q) ||
         (l.order_number || '').toLowerCase().includes(q) ||
         (l.customer_name || '').toLowerCase().includes(q);
     }
