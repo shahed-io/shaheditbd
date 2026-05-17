@@ -218,6 +218,12 @@ const AdminLayout = () => {
       try {
         const s = await get2faStatus();
         if (cancelled) return;
+        if (s?.systemEnabled === false) {
+          // Master switch off → no 2FA required at all
+          setTwoFaRequired(false);
+          setTwoFaChecked(true);
+          return;
+        }
         if (!s?.enabled) {
           // Not enrolled → require enrollment (but allow access to /ceo/security)
           setTwoFaRequired(true);
