@@ -102,9 +102,10 @@ const AdminLogin = () => {
     setError('');
     setVerifying(true);
     try {
-      const r = await verifyLogin(otp.trim(), rememberDevice);
+      const r = await verifyLogin(otp.trim(), false);
       if (r?.token) {
-        setStoredToken(r.token, !!r.remembered);
+        // Do NOT persist session — admin must re-verify on every entry
+        setStoredToken(null);
         if (r.usedBackup) {
           navigate('/ceo/security?recover=1', { replace: true });
         } else {
