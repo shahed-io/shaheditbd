@@ -299,6 +299,7 @@ const AppContent = () => {
             <Route path="licenses" element={<AdminSuspense><AdminLicenses /></AdminSuspense>} />
             <Route path="customer-licenses" element={<AdminSuspense><AdminCustomerLicenses /></AdminSuspense>} />
             <Route path="subscription-reminders" element={<AdminSuspense><AdminSubscriptionReminders /></AdminSuspense>} />
+            <Route path="email-dashboard" element={<AdminSuspense><AdminEmailDashboard /></AdminSuspense>} />
             <Route path="quick-sale" element={<AdminSuspense><AdminQuickSale /></AdminSuspense>} />
             <Route path="popup-banner" element={<AdminSuspense><AdminPopupBanner /></AdminSuspense>} />
             <Route path="invoices" element={<AdminSuspense><AdminInvoiceGenerator /></AdminSuspense>} />
