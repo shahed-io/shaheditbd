@@ -286,24 +286,23 @@ const useGoogleSearch = () => {
       setProducts(data as Product[]);
       setLoading(false);
 
-      // Always run AI in parallel when query is non-trivial — catches typos even with some DB matches
-      const shouldRunAi = q.trim().length >= 2 && data.length < 6;
+      // Only run AI fallback when DB returned ZERO matches.
+      // If the product exists in our catalog, show it directly — don't pollute with AI fuzzy matches.
+      const shouldRunAi = q.trim().length >= 2 && data.length === 0;
       if (shouldRunAi) {
         setAiLoading(true);
         const { products: aiResults, didYouMean: dym } = await aiSearch(q);
         if (myReq !== reqIdRef.current) return;
         if (aiResults.length > 0) {
-          const existing = new Set(data.map((p: any) => p.id));
-          const merged = [...data, ...aiResults.filter(p => !existing.has(p.id))].slice(0, 12);
           const nameSet = new Set<string>();
           const textSuggestions: string[] = [];
-          merged.forEach((p: any) => {
+          aiResults.forEach((p: any) => {
             const lower = p.name.toLowerCase();
             if (!nameSet.has(lower)) { nameSet.add(lower); textSuggestions.push(p.name); }
           });
           setSuggestions(textSuggestions.slice(0, 5));
-          setProducts(merged);
-          setUsedAi(data.length === 0);
+          setProducts(aiResults.slice(0, 12));
+          setUsedAi(true);
         }
         if (dym && dym.toLowerCase() !== q.toLowerCase().trim()) setDidYouMean(dym);
         setAiLoading(false);
