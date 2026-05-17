@@ -419,23 +419,7 @@ const Shop = () => {
           {/* Main content */}
           <div className="flex-1 min-w-0">
             {/* Filter bar */}
-            <div className="flex flex-wrap items-center gap-3 mb-6">
-              <div className="flex-1 min-w-[180px] relative">
-                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="প্রোডাক্ট খুঁজুন..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-8 py-2.5 text-sm rounded-xl border bg-background text-foreground focus:outline-none"
-                  style={{ borderColor: 'hsl(var(--border))' }}
-                />
-                {search && (
-                  <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
+            <div className="flex flex-wrap items-center justify-end gap-3 mb-6">
               <select value={sort} onChange={e => setSort(e.target.value)}
                 className="px-3 py-2.5 text-sm rounded-xl border bg-background text-foreground focus:outline-none cursor-pointer"
                 style={{ borderColor: 'hsl(var(--border))' }}>
