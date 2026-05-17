@@ -104,8 +104,9 @@ const AdminLogin = () => {
     try {
       const r = await verifyLogin(otp.trim(), false);
       if (r?.token) {
-        // Do NOT persist session — admin must re-verify on every entry
-        setStoredToken(null);
+        // Tab-scoped session only — dies when tab closes, forcing re-verify
+        // next time admin opens the panel.
+        setStoredToken(r.token, false);
         if (r.usedBackup) {
           navigate('/ceo/security?recover=1', { replace: true });
         } else {
