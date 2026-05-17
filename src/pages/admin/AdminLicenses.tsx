@@ -708,16 +708,23 @@ const AdminLicenses = () => {
     setAssignSearching(false);
   };
 
-  const handleAssign = async (orderItemId: string) => {
+  const handleAssign = async (orderItemId: string, orderItemProductName?: string) => {
     if (!assignModal.license) return;
     setAssigning(true);
+    // Auto-detect variant from order item name (e.g. "Office 365 (1 Year)")
+    const detectedVariant = parseVariantFromProductName(orderItemProductName);
+    const updatePayload: any = {
+      status: 'assigned',
+      order_item_id: orderItemId,
+      assigned_at: new Date().toISOString(),
+    };
+    // Only overwrite variant if the license didn't already have one
+    if (detectedVariant && !assignModal.license.variant) {
+      updatePayload.variant = detectedVariant;
+    }
     const { error } = await supabase
       .from('license_keys')
-      .update({
-        status: 'assigned',
-        order_item_id: orderItemId,
-        assigned_at: new Date().toISOString(),
-      })
+      .update(updatePayload)
       .eq('id', assignModal.license.id);
 
     if (!error) {
