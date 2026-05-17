@@ -95,6 +95,7 @@ const BodySchema = z.object({
     session_ttl_hours: z.number().int().min(1).max(720).optional(),
     remember_device_ttl_days: z.number().int().min(1).max(365).optional(),
     allow_remember_device: z.boolean().optional(),
+    system_enabled: z.boolean().optional(),
   }).optional(),
 });
 
