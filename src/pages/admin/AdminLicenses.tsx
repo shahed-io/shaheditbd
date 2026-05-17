@@ -935,6 +935,23 @@ const AdminLicenses = () => {
                 className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary resize-none"
               />
             </div>
+            {/* Variant / Option (Optional) */}
+            <div className="sm:col-span-2">
+              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block flex items-center gap-1.5">
+                <Tag size={11} className="text-primary" />
+                Variant / Option (Optional)
+                <span className="text-[10px] font-normal text-muted-foreground/70">— যেমন: 1 Year, 5 Devices, Personal</span>
+              </label>
+              <input
+                value={form.variant}
+                onChange={e => setForm(p => ({ ...p, variant: e.target.value }))}
+                placeholder="যে option-এর জন্য এই key — যেমন: 1 Year"
+                className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                কাস্টমার যখন এই option-এ অর্ডার করবেন, তখন সিস্টেম এই key-টাই অটো ডেলিভার করবে।
+              </p>
+            </div>
           </div>
           <div className="flex gap-3 mt-4">
             <button onClick={handleSave} disabled={saving}
