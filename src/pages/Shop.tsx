@@ -415,7 +415,39 @@ const Shop = () => {
           {/* Main content */}
           <div className="flex-1 min-w-0">
             {/* Filter bar */}
-            <div className="flex flex-wrap items-center justify-end gap-3 mb-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+              <div className="relative flex-1 min-w-[200px] max-w-md">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={e => {
+                    const v = e.target.value;
+                    setSearch(v);
+                    const params: Record<string, string> = {};
+                    if (activeCatSlug) params.category = activeCatSlug;
+                    if (v) params.q = v;
+                    setSearchParams(params);
+                  }}
+                  placeholder="প্রোডাক্ট খুঁজুন..."
+                  className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  style={{ borderColor: 'hsl(var(--border))' }}
+                />
+                {search && (
+                  <button
+                    onClick={() => {
+                      setSearch('');
+                      const params: Record<string, string> = {};
+                      if (activeCatSlug) params.category = activeCatSlug;
+                      setSearchParams(params);
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted"
+                    aria-label="Clear search"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
               <select value={sort} onChange={e => setSort(e.target.value)}
                 className="px-3 py-2.5 text-sm rounded-xl border bg-background text-foreground focus:outline-none cursor-pointer"
                 style={{ borderColor: 'hsl(var(--border))' }}>
