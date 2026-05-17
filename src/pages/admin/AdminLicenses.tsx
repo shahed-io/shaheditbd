@@ -24,6 +24,7 @@ type LicenseKey = {
   key_value: string;
   key_type: string;
   extra_info: string | null;
+  variant: string | null;
   status: string;
   product_id: string | null;
   order_item_id: string | null;
@@ -55,11 +56,19 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }>
   revoked:             { label: 'Revoked',             color: 'hsl(0,72%,51%)',    icon: XCircle },
 };
 
+// Parse the variant/option label out of an order_items.product_name like "Office 365 (1 Year)"
+const parseVariantFromProductName = (name?: string | null): string | null => {
+  if (!name) return null;
+  const m = name.match(/\(([^()]+)\)\s*$/);
+  return m ? m[1].trim() : null;
+};
+
 const emptyForm = {
   product_id: '',
   key_type: 'license',
   key_value: '',
   extra_info: '',
+  variant: '',
 };
 
 
@@ -81,6 +90,8 @@ const AdminLicenses = () => {
   const [showBulk, setShowBulk] = useState(false);
   const [bulkProductId, setBulkProductId] = useState('');
   const [bulkType, setBulkType] = useState('license');
+  const [bulkVariant, setBulkVariant] = useState('');
+  const [filterVariant, setFilterVariant] = useState('');
   const [bulkSaving, setBulkSaving] = useState(false);
   const [emailModal, setEmailModal] = useState<{ open: boolean; license: LicenseKey | null; email: string }>({ open: false, license: null, email: '' });
   const [sendingEmail, setSendingEmail] = useState(false);
@@ -92,7 +103,7 @@ const AdminLicenses = () => {
 
   // Edit modal state
   const [editModal, setEditModal] = useState<{ open: boolean; license: LicenseKey | null }>({ open: false, license: null });
-  const [editForm, setEditForm] = useState({ key_value: '', extra_info: '', key_type: 'license', product_id: '', status: 'available' });
+  const [editForm, setEditForm] = useState({ key_value: '', extra_info: '', key_type: 'license', product_id: '', status: 'available', variant: '' });
   const [editSaving, setEditSaving] = useState(false);
 
   // Assign modal state
@@ -177,8 +188,9 @@ const AdminLicenses = () => {
       key_type: form.key_type,
       key_value: form.key_value.trim(),
       extra_info: form.extra_info.trim() || null,
+      variant: form.variant.trim() || null,
       status: 'available',
-    });
+    } as any);
     setSaving(false);
     if (error) { toast.error('Save failed: ' + error.message); return; }
     toast.success('License key যোগ করা হয়েছে!');
@@ -196,9 +208,10 @@ const AdminLicenses = () => {
       product_id: bulkProductId,
       key_type: bulkType,
       key_value: line,
+      variant: bulkVariant.trim() || null,
       status: 'available',
     }));
-    const { error } = await supabase.from('license_keys').insert(rows);
+    const { error } = await supabase.from('license_keys').insert(rows as any);
     setBulkSaving(false);
     if (error) { toast.error('Bulk import failed'); return; }
     toast.success(`${lines.length}টি license key যোগ করা হয়েছে!`);
@@ -242,9 +255,10 @@ const AdminLicenses = () => {
       key_type: bulkType,
       key_value: item.key_value,
       extra_info: item.extra_info || null,
+      variant: bulkVariant.trim() || null,
       status: 'available' as const,
     }));
-    const { error } = await supabase.from('license_keys').insert(rows);
+    const { error } = await supabase.from('license_keys').insert(rows as any);
     setAiImporting(false);
     if (error) { toast.error('Import failed: ' + error.message); return; }
     toast.success(`${rows.length}টি license key AI থেকে যোগ হয়েছে!`);
@@ -320,6 +334,10 @@ const AdminLicenses = () => {
   const filtered = licenses.filter(l => {
     if (filterStatus !== 'all' && l.status !== filterStatus) return false;
     if (filterProduct !== 'all' && l.product_id !== filterProduct) return false;
+    if (filterVariant.trim()) {
+      const v = filterVariant.trim().toLowerCase();
+      if (!(l.variant || '').toLowerCase().includes(v)) return false;
+    }
     if (onlyAvailable && l.status !== 'available') return false;
     if (productNameQuery.trim()) {
       const q = productNameQuery.trim().toLowerCase();
@@ -329,6 +347,7 @@ const AdminLicenses = () => {
       const q = search.toLowerCase();
       return l.key_value.toLowerCase().includes(q) ||
         (l.product_name || '').toLowerCase().includes(q) ||
+        (l.variant || '').toLowerCase().includes(q) ||
         (l.order_number || '').toLowerCase().includes(q) ||
         (l.customer_name || '').toLowerCase().includes(q);
     }
@@ -646,6 +665,7 @@ const AdminLicenses = () => {
       key_type: lic.key_type,
       product_id: lic.product_id || '',
       status: lic.status,
+      variant: lic.variant || '',
     });
     setEditModal({ open: true, license: lic });
   };
@@ -661,8 +681,9 @@ const AdminLicenses = () => {
         extra_info: editForm.extra_info.trim() || null,
         key_type: editForm.key_type,
         product_id: editForm.product_id || null,
+        variant: editForm.variant.trim() || null,
         status: editForm.status,
-      })
+      } as any)
       .eq('id', editModal.license.id);
     setEditSaving(false);
     if (error) return toast.error('আপডেট ব্যর্থ: ' + error.message);
@@ -692,16 +713,23 @@ const AdminLicenses = () => {
     setAssignSearching(false);
   };
 
-  const handleAssign = async (orderItemId: string) => {
+  const handleAssign = async (orderItemId: string, orderItemProductName?: string) => {
     if (!assignModal.license) return;
     setAssigning(true);
+    // Auto-detect variant from order item name (e.g. "Office 365 (1 Year)")
+    const detectedVariant = parseVariantFromProductName(orderItemProductName);
+    const updatePayload: any = {
+      status: 'assigned',
+      order_item_id: orderItemId,
+      assigned_at: new Date().toISOString(),
+    };
+    // Only overwrite variant if the license didn't already have one
+    if (detectedVariant && !assignModal.license.variant) {
+      updatePayload.variant = detectedVariant;
+    }
     const { error } = await supabase
       .from('license_keys')
-      .update({
-        status: 'assigned',
-        order_item_id: orderItemId,
-        assigned_at: new Date().toISOString(),
-      })
+      .update(updatePayload)
       .eq('id', assignModal.license.id);
 
     if (!error) {
@@ -907,6 +935,23 @@ const AdminLicenses = () => {
                 className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary resize-none"
               />
             </div>
+            {/* Variant / Option (Optional) */}
+            <div className="sm:col-span-2">
+              <label className="text-xs font-semibold text-muted-foreground mb-1.5 block flex items-center gap-1.5">
+                <Tag size={11} className="text-primary" />
+                Variant / Option (Optional)
+                <span className="text-[10px] font-normal text-muted-foreground/70">— যেমন: 1 Year, 5 Devices, Personal</span>
+              </label>
+              <input
+                value={form.variant}
+                onChange={e => setForm(p => ({ ...p, variant: e.target.value }))}
+                placeholder="যে option-এর জন্য এই key — যেমন: 1 Year"
+                className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                কাস্টমার যখন এই option-এ অর্ডার করবেন, তখন সিস্টেম এই key-টাই অটো ডেলিভার করবে।
+              </p>
+            </div>
           </div>
           <div className="flex gap-3 mt-4">
             <button onClick={handleSave} disabled={saving}
@@ -1010,6 +1055,20 @@ const AdminLicenses = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Variant / Option for bulk */}
+          <div className="mb-3">
+            <label className="text-xs font-semibold text-muted-foreground mb-1.5 block flex items-center gap-1.5">
+              <Tag size={11} className="text-amber-500" />
+              Variant / Option (Optional) — সব key এই option-এ লাগু হবে
+            </label>
+            <input
+              value={bulkVariant}
+              onChange={e => setBulkVariant(e.target.value)}
+              placeholder="যেমন: 1 Year, 5 Devices, Personal (খালি রাখলে কোনো option থাকবে না)"
+              className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+            />
           </div>
 
           {/* CSV/TXT File Upload */}
@@ -1407,7 +1466,7 @@ const AdminLicenses = () => {
                           {st.label}
                         </span>
                       </div>
-                      <div className="text-xs font-medium text-foreground truncate">{lic.product_name}</div>
+                      <div className="text-xs font-medium text-foreground truncate">{lic.product_name}{lic.variant && <span className="ml-1.5 inline-block text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600">{lic.variant}</span>}</div>
                       <div className="flex items-center gap-1.5 mt-1">
                         <code className="text-[11px] font-mono text-foreground break-all flex-1 min-w-0">
                           {isVisible ? lic.key_value : maskValue(lic.key_value)}
@@ -1546,7 +1605,10 @@ const AdminLicenses = () => {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs text-foreground font-medium">{lic.product_name}</span>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-xs text-foreground font-medium">{lic.product_name}</span>
+                          {lic.variant && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 whitespace-nowrap">{lic.variant}</span>}
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <span className="flex items-center gap-1.5 text-xs font-semibold"
@@ -1950,6 +2012,14 @@ const AdminLicenses = () => {
                 </select>
               </div>
               <div>
+                <label className="text-xs font-semibold text-muted-foreground mb-1.5 block flex items-center gap-1.5">
+                  <Tag size={11} className="text-primary" /> Variant / Option
+                </label>
+                <input value={editForm.variant} onChange={e => setEditForm(p => ({ ...p, variant: e.target.value }))}
+                  placeholder="যেমন: 1 Year, 5 Devices (খালি রাখলে কোনো option নেই)"
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary" />
+              </div>
+              <div>
                 <label className="text-xs font-semibold text-muted-foreground mb-1.5 block">Email *</label>
                 <input value={editForm.key_value} onChange={e => setEditForm(p => ({ ...p, key_value: e.target.value }))}
                   className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-primary" />
@@ -2032,7 +2102,7 @@ const AdminLicenses = () => {
                           {item.license_key && <p className="text-[10px] text-muted-foreground font-mono">Key: {item.license_key.slice(0, 15)}...</p>}
                         </div>
                         <button
-                          onClick={() => handleAssign(item.id)}
+                          onClick={() => handleAssign(item.id, item.product_name)}
                           disabled={assigning}
                           className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all"
                           style={{ background: 'hsla(162,72%,46%,0.15)', color: 'hsl(162,72%,36%)' }}

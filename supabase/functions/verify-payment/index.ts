@@ -94,18 +94,40 @@ Deno.serve(async (req) => {
     if (action === 'approve') {
       const { data: orderItems } = await supabaseAdmin
         .from('order_items')
-        .select('id, product_id, quantity')
+        .select('id, product_id, product_name, quantity')
         .eq('order_id', orderId);
 
       if (orderItems) {
         for (const item of orderItems) {
           if (!item.product_id) continue;
-          const { data: keys } = await supabaseAdmin
-            .from('license_keys')
-            .select('id, key_value')
-            .eq('product_id', item.product_id)
-            .eq('status', 'available')
-            .limit(item.quantity);
+
+          // Parse variant/option from product_name like "Office 365 (1 Year)"
+          const variantMatch = (item.product_name || '').match(/\(([^()]+)\)\s*$/);
+          const variant = variantMatch ? variantMatch[1].trim() : null;
+
+          // Prefer keys matching this specific variant; fallback to keys without a variant
+          let keys: any[] | null = null;
+          if (variant) {
+            const { data: variantKeys } = await supabaseAdmin
+              .from('license_keys')
+              .select('id, key_value')
+              .eq('product_id', item.product_id)
+              .eq('variant', variant)
+              .eq('status', 'available')
+              .limit(item.quantity);
+            keys = variantKeys || null;
+          }
+          if (!keys || keys.length < item.quantity) {
+            const need = item.quantity - (keys?.length || 0);
+            const { data: noVariantKeys } = await supabaseAdmin
+              .from('license_keys')
+              .select('id, key_value')
+              .eq('product_id', item.product_id)
+              .is('variant', null)
+              .eq('status', 'available')
+              .limit(need);
+            keys = [...(keys || []), ...(noVariantKeys || [])];
+          }
 
           if (keys && keys.length > 0) {
             for (const key of keys) {
