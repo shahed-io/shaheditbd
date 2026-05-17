@@ -660,6 +660,7 @@ const AdminLicenses = () => {
       key_type: lic.key_type,
       product_id: lic.product_id || '',
       status: lic.status,
+      variant: lic.variant || '',
     });
     setEditModal({ open: true, license: lic });
   };
@@ -675,8 +676,9 @@ const AdminLicenses = () => {
         extra_info: editForm.extra_info.trim() || null,
         key_type: editForm.key_type,
         product_id: editForm.product_id || null,
+        variant: editForm.variant.trim() || null,
         status: editForm.status,
-      })
+      } as any)
       .eq('id', editModal.license.id);
     setEditSaving(false);
     if (error) return toast.error('আপডেট ব্যর্থ: ' + error.message);
