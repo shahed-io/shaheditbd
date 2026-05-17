@@ -1605,7 +1605,10 @@ const AdminLicenses = () => {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs text-foreground font-medium">{lic.product_name}</span>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-xs text-foreground font-medium">{lic.product_name}</span>
+                          {lic.variant && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 whitespace-nowrap">{lic.variant}</span>}
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <span className="flex items-center gap-1.5 text-xs font-semibold"
