@@ -24,6 +24,7 @@ type LicenseKey = {
   key_value: string;
   key_type: string;
   extra_info: string | null;
+  variant: string | null;
   status: string;
   product_id: string | null;
   order_item_id: string | null;
@@ -55,11 +56,19 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }>
   revoked:             { label: 'Revoked',             color: 'hsl(0,72%,51%)',    icon: XCircle },
 };
 
+// Parse the variant/option label out of an order_items.product_name like "Office 365 (1 Year)"
+const parseVariantFromProductName = (name?: string | null): string | null => {
+  if (!name) return null;
+  const m = name.match(/\(([^()]+)\)\s*$/);
+  return m ? m[1].trim() : null;
+};
+
 const emptyForm = {
   product_id: '',
   key_type: 'license',
   key_value: '',
   extra_info: '',
+  variant: '',
 };
 
 
