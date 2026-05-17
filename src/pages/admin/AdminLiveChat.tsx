@@ -32,6 +32,10 @@ interface LiveChatSettings {
   quick_suggestions: string[];
   // FAB
   fab_label: string;
+  fab_color_from?: string;
+  fab_color_mid?: string;
+  fab_color_to?: string;
+  fab_icon_color?: string;
   // Live Chat Sets (multiple support channels)
   live_sets: LiveSet[];
 }
