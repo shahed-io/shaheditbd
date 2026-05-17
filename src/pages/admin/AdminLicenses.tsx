@@ -1057,6 +1057,20 @@ const AdminLicenses = () => {
             </div>
           </div>
 
+          {/* Variant / Option for bulk */}
+          <div className="mb-3">
+            <label className="text-xs font-semibold text-muted-foreground mb-1.5 block flex items-center gap-1.5">
+              <Tag size={11} className="text-amber-500" />
+              Variant / Option (Optional) — সব key এই option-এ লাগু হবে
+            </label>
+            <input
+              value={bulkVariant}
+              onChange={e => setBulkVariant(e.target.value)}
+              placeholder="যেমন: 1 Year, 5 Devices, Personal (খালি রাখলে কোনো option থাকবে না)"
+              className="w-full bg-muted/20 border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+            />
+          </div>
+
           {/* CSV/TXT File Upload */}
           <div className="mb-3">
             <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 cursor-pointer transition-colors bg-muted/10">
