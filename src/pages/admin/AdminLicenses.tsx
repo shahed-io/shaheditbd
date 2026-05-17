@@ -208,9 +208,10 @@ const AdminLicenses = () => {
       product_id: bulkProductId,
       key_type: bulkType,
       key_value: line,
+      variant: bulkVariant.trim() || null,
       status: 'available',
     }));
-    const { error } = await supabase.from('license_keys').insert(rows);
+    const { error } = await supabase.from('license_keys').insert(rows as any);
     setBulkSaving(false);
     if (error) { toast.error('Bulk import failed'); return; }
     toast.success(`${lines.length}টি license key যোগ করা হয়েছে!`);
