@@ -823,21 +823,46 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                 </div>
               )}
 
-              <button
-                onClick={handlePlaceOrder}
-                disabled={loading || (paymentMethod === 'wallet' && walletBalance < finalTotal)}
-                className="w-full btn-glow py-3.5 rounded-xl font-bold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <><Loader2 size={16} className="animate-spin" /> Processing...</>
-                ) : paymentMethod === 'wallet' ? (
-                  <><Wallet size={16} /> ওয়ালেট দিয়ে অর্ডার করুন — ৳{finalTotal.toLocaleString()}</>
-                ) : paymentMethod === 'bkash_online' ? (
-                  <><CreditCard size={16} /> bKash দিয়ে পরিশোধ করুন — ৳{finalTotal.toLocaleString()}</>
-                ) : (
-                  <><CreditCard size={16} /> অর্ডার কনফার্ম করুন</>
-                )}
-              </button>
+              {paymentMethod === 'bkash_online' ? (
+                <button
+                  onClick={handlePlaceOrder}
+                  disabled={loading}
+                  className="group relative w-full overflow-hidden rounded-2xl py-3.5 px-5 font-bold text-sm text-white shadow-[0_12px_40px_-8px_rgba(226,0,116,0.55)] transition-all duration-300 hover:shadow-[0_18px_55px_-8px_rgba(226,0,116,0.75)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                  style={{ background: 'linear-gradient(135deg, #ff2e87 0%, #e2007a 45%, #b8005f 100%)' }}
+                >
+                  <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
+                  <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl bg-gradient-to-b from-white/25 to-transparent" />
+                  <span className="relative flex items-center justify-center gap-3">
+                    {loading ? (
+                      <><Loader2 size={16} className="animate-spin" /> Processing…</>
+                    ) : (
+                      <>
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
+                          <img src={bkashLogo} alt="bKash" className="h-4 w-4 object-contain" />
+                        </span>
+                        <span className="tracking-wide">bKash দিয়ে পরিশোধ করুন</span>
+                        <span className="ml-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-extrabold backdrop-blur-sm">
+                          ৳{finalTotal.toLocaleString()}
+                        </span>
+                      </>
+                    )}
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={handlePlaceOrder}
+                  disabled={loading || (paymentMethod === 'wallet' && walletBalance < finalTotal)}
+                  className="w-full btn-glow py-3.5 rounded-xl font-bold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <><Loader2 size={16} className="animate-spin" /> Processing...</>
+                  ) : paymentMethod === 'wallet' ? (
+                    <><Wallet size={16} /> ওয়ালেট দিয়ে অর্ডার করুন — ৳{finalTotal.toLocaleString()}</>
+                  ) : (
+                    <><CreditCard size={16} /> অর্ডার কনফার্ম করুন</>
+                  )}
+                </button>
+              )}
 
               <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
                 <Shield size={11}/> নিরাপদ পেমেন্ট — আপনার তথ্য সুরক্ষিত
