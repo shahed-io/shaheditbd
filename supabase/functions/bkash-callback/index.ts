@@ -93,14 +93,15 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const token = await grantToken();
-    const execRes = await fetch(`${BASE}/tokenized/checkout/execute`, {
+    const cfg = await loadConfig(supabase);
+    const token = await grantToken(cfg);
+    const execRes = await fetch(`${baseUrl(cfg.mode)}/tokenized/checkout/execute`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': token,
-        'X-APP-Key': APP_KEY,
+        'X-APP-Key': cfg.app_key,
       },
       body: JSON.stringify({ paymentID }),
     });
