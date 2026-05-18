@@ -185,10 +185,18 @@ const Shop = () => {
 
       if (productIds !== null) query = query.in('id', productIds);
       if (search) {
-        const tokens = search.split(/\s+/).map(t => t.replace(/[%,()]/g, '')).filter(t => t.length >= 2).slice(0, 5);
-        const orParts = [`name.ilike.%${search}%`, `short_description.ilike.%${search}%`];
-        tokens.forEach(t => { orParts.push(`name.ilike.%${t}%`); orParts.push(`short_description.ilike.%${t}%`); });
-        query = query.or(orParts.join(','));
+        const phrase = search.trim().replace(/[%,()]/g, '');
+        const tokens = phrase.split(/\s+/).filter(t => t.length >= 2).slice(0, 5);
+        if (tokens.length <= 1) {
+          // Single word / phrase — match against name or short_description
+          query = query.or(`name.ilike.%${phrase}%,short_description.ilike.%${phrase}%`);
+        } else {
+          // Multi-word — require EVERY token to be present (AND), each across name OR short_description.
+          // Prevents partial matches like "windows 11 Pro" returning every product containing only "Pro".
+          tokens.forEach(t => {
+            query = query.or(`name.ilike.%${t}%,short_description.ilike.%${t}%`);
+          });
+        }
       }
 
       switch (sort) {
