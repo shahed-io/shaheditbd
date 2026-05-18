@@ -15,6 +15,7 @@ import rocketLogo from '@/assets/payment/rocket.png';
 import upayLogo from '@/assets/payment/upay.png';
 import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
 import type { CustomField } from '@/pages/admin/AdminProducts';
+import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 
 const ASSET_LOGOS: Record<string, string> = {
   bkash: bkashLogo,
@@ -62,6 +63,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   const { user } = useAuth();
   const navigate = useNavigate();
   const { configs: paymentConfigs } = usePaymentSettings();
+  const bkashContent = useBkashPgwContent();
 
   const [step, setStep] = useState<'info' | 'payment' | 'success'>('info');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
@@ -724,15 +726,16 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                 <div className="rounded-2xl p-4 space-y-2 border border-pink-400/30 bg-pink-500/8">
                   <div className="flex items-center gap-2">
                     <img src={bkashLogo} alt="bKash" className="h-6 w-auto" />
-                    <span className="text-sm font-bold text-foreground">bKash Online Payment (PGW)</span>
+                    <span className="text-sm font-bold text-foreground">{bkashContent.title}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    "অর্ডার দিন" বাটনে ক্লিক করলে আপনাকে bKash-এর সিকিউর পেমেন্ট পেজে নিয়ে যাওয়া হবে। সফল পেমেন্টের পর অর্ডার স্বয়ংক্রিয়ভাবে কনফার্ম হবে।
+                  <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {bkashContent.description}
                   </p>
-                  <ul className="text-[11px] text-muted-foreground space-y-1 pl-4 list-disc">
-                    <li>কোনো TrxID বা স্ক্রিনশট দিতে হবে না</li>
-                    <li>পেমেন্ট সফল হলেই লাইসেন্স সাথে সাথে ডেলিভারি</li>
-                  </ul>
+                  {bkashContent.bullets.length > 0 && (
+                    <ul className="text-[11px] text-muted-foreground space-y-1 pl-4 list-disc">
+                      {bkashContent.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                    </ul>
+                  )}
                 </div>
               )}
 

@@ -9,8 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Save, ShieldCheck, AlertTriangle, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Save, ShieldCheck, AlertTriangle, Loader2, Plus, Trash2, FileText } from 'lucide-react';
+import { BKASH_CONTENT_KEY, DEFAULT_BKASH_CONTENT, type BkashPgwContent } from '@/hooks/useBkashPgwContent';
 
 const KEY = 'bkash_pgw_config';
 
@@ -37,6 +39,7 @@ const DEFAULT_CFG: BkashCfg = {
 export default function AdminBkashPGW() {
   const qc = useQueryClient();
   const [form, setForm] = useState<BkashCfg>(DEFAULT_CFG);
+  const [content, setContent] = useState<BkashPgwContent>(DEFAULT_BKASH_CONTENT);
   const [showSecrets, setShowSecrets] = useState(false);
 
   const { data, isLoading } = useQuery({
@@ -56,7 +59,24 @@ export default function AdminBkashPGW() {
     },
   });
 
+  const { data: contentData } = useQuery({
+    queryKey: ['bkash-pgw-content-admin'],
+    queryFn: async (): Promise<BkashPgwContent> => {
+      const { data } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', BKASH_CONTENT_KEY)
+        .maybeSingle();
+      if (data?.value) {
+        try { return { ...DEFAULT_BKASH_CONTENT, ...JSON.parse(data.value) }; }
+        catch { return DEFAULT_BKASH_CONTENT; }
+      }
+      return DEFAULT_BKASH_CONTENT;
+    },
+  });
+
   useEffect(() => { if (data) setForm(data); }, [data]);
+  useEffect(() => { if (contentData) setContent(contentData); }, [contentData]);
 
   const save = useMutation({
     mutationFn: async (next: BkashCfg) => {
@@ -74,7 +94,30 @@ export default function AdminBkashPGW() {
     onError: (e: Error) => toast.error(e.message || 'Failed to save'),
   });
 
+  const saveContent = useMutation({
+    mutationFn: async (next: BkashPgwContent) => {
+      const cleaned: BkashPgwContent = {
+        title: next.title.trim() || DEFAULT_BKASH_CONTENT.title,
+        description: next.description.trim() || DEFAULT_BKASH_CONTENT.description,
+        amount_prefix: next.amount_prefix.trim() || DEFAULT_BKASH_CONTENT.amount_prefix,
+        bullets: next.bullets.map(b => b.trim()).filter(Boolean),
+      };
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({ key: BKASH_CONTENT_KEY, value: JSON.stringify(cleaned), category: 'public' }, { onConflict: 'key' });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Checkout content saved');
+      qc.invalidateQueries({ queryKey: ['bkash-pgw-content-admin'] });
+      qc.invalidateQueries({ queryKey: ['bkash-pgw-content'] });
+    },
+    onError: (e: Error) => toast.error(e.message || 'Failed to save'),
+  });
+
   const update = <K extends keyof BkashCfg>(k: K, v: BkashCfg[K]) => setForm((f) => ({ ...f, [k]: v }));
+  const updateContent = <K extends keyof BkashPgwContent>(k: K, v: BkashPgwContent[K]) =>
+    setContent((c) => ({ ...c, [k]: v }));
 
   if (isLoading) {
     return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin" /></div>;
@@ -218,6 +261,110 @@ export default function AdminBkashPGW() {
           Save Settings
         </Button>
       </div>
+
+      {/* ─── Customer-facing content editor ─── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-pink-600" />
+            Checkout Display Content
+          </CardTitle>
+          <CardDescription>
+            Customize the text shown to customers when they select "bKash (Online)" on Checkout & Quick Order.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="bk_title">Title</Label>
+            <Input
+              id="bk_title"
+              value={content.title}
+              onChange={(e) => updateContent('title', e.target.value)}
+              placeholder="bKash Online Payment (PGW)"
+            />
+          </div>
+          <div>
+            <Label htmlFor="bk_desc">Description</Label>
+            <Textarea
+              id="bk_desc"
+              value={content.description}
+              onChange={(e) => updateContent('description', e.target.value)}
+              rows={3}
+              placeholder="Describe the bKash Online flow…"
+            />
+          </div>
+          <div>
+            <Label htmlFor="bk_amount">Amount Line Prefix</Label>
+            <Input
+              id="bk_amount"
+              value={content.amount_prefix}
+              onChange={(e) => updateContent('amount_prefix', e.target.value)}
+              placeholder="💳 মোট পরিশোধ:"
+            />
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Shown on Checkout right before the total amount.
+            </p>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <Label>Bullet Points</Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => updateContent('bullets', [...content.bullets, ''])}
+              >
+                <Plus className="h-4 w-4 mr-1" /> Add
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {content.bullets.map((b, i) => (
+                <div key={i} className="flex gap-2">
+                  <Input
+                    value={b}
+                    onChange={(e) => {
+                      const next = [...content.bullets];
+                      next[i] = e.target.value;
+                      updateContent('bullets', next);
+                    }}
+                    placeholder={`Bullet ${i + 1}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => updateContent('bullets', content.bullets.filter((_, idx) => idx !== i))}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              ))}
+              {content.bullets.length === 0 && (
+                <p className="text-xs text-muted-foreground">No bullet points — add one above.</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => contentData && setContent(contentData)}
+              disabled={saveContent.isPending}
+            >
+              Reset
+            </Button>
+            <Button
+              onClick={() => saveContent.mutate(content)}
+              disabled={saveContent.isPending}
+              className="bg-pink-600 hover:bg-pink-700"
+            >
+              {saveContent.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+              Save Content
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
