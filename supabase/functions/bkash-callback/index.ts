@@ -113,9 +113,10 @@ Deno.serve(async (req) => {
     const ok = execData?.statusCode === '0000' && execData?.transactionStatus === 'Completed';
 
     if (ok && order) {
+      // Auto-complete order: triggers will assign licenses + award points + send notifications
       await supabase.from('orders').update({
         payment_status: 'paid',
-        status: 'processing',
+        status: 'completed',
         transaction_id: execData.trxID || paymentID,
       }).eq('id', order.id);
 
