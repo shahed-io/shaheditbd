@@ -723,13 +723,15 @@ const UserDashboard = () => {
       // Optional: upload screenshot
       let screenshotUrl: string | null = null;
       if (topupScreenshot) {
-        const ext = topupScreenshot.name.split('.').pop() || 'jpg';
-        const path = `topup/${user.id}/${Date.now()}.${ext}`;
-        const { error: upErr } = await supabase.storage.from('payment-proofs').upload(path, topupScreenshot, { upsert: false, contentType: topupScreenshot.type });
-        if (!upErr) {
-          const { data: pub } = supabase.storage.from('payment-proofs').getPublicUrl(path);
-          screenshotUrl = pub?.publicUrl || null;
-        }
+        try {
+          const ext = topupScreenshot.name.split('.').pop()?.toLowerCase() || 'jpg';
+          const path = `topup/${user.id}/${Date.now()}.${ext}`;
+          const { error: upErr } = await supabase.storage.from('payment-proofs').upload(path, topupScreenshot, { upsert: false, contentType: topupScreenshot.type });
+          if (!upErr) {
+            const { data: signed } = await supabase.storage.from('payment-proofs').createSignedUrl(path, 60 * 60 * 24 * 365);
+            screenshotUrl = signed?.signedUrl || path;
+          }
+        } catch (e) { console.error('[Topup] screenshot upload failed', e); }
       }
       const { error } = await (supabase.from('wallet_topup_requests' as any) as any).insert({
         user_id: user.id,
