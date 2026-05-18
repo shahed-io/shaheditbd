@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Save, ShieldCheck, AlertTriangle, Loader2, Plus, Trash2, FileText } from 'lucide-react';
+import { Eye, EyeOff, Save, ShieldCheck, AlertTriangle, Loader2, Plus, Trash2, FileText, Upload, ImageIcon, X } from 'lucide-react';
 import { BKASH_CONTENT_KEY, DEFAULT_BKASH_CONTENT, type BkashPgwContent } from '@/hooks/useBkashPgwContent';
 
 const KEY = 'bkash_pgw_config';
@@ -101,6 +101,7 @@ export default function AdminBkashPGW() {
         description: next.description.trim() || DEFAULT_BKASH_CONTENT.description,
         amount_prefix: next.amount_prefix.trim() || DEFAULT_BKASH_CONTENT.amount_prefix,
         bullets: next.bullets.map(b => b.trim()).filter(Boolean),
+        logo_url: (next.logo_url || '').trim(),
       };
       const { error } = await supabase
         .from('site_settings')
@@ -274,6 +275,68 @@ export default function AdminBkashPGW() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Logo upload */}
+          <div>
+            <Label>bKash Logo</Label>
+            <p className="text-[11px] text-muted-foreground mb-2">
+              Upload a custom bKash logo (PNG/JPG/SVG, ≤2MB). Shown on Checkout & Quick Order info block. Leave empty to use the default bundled logo.
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="h-16 w-16 rounded-xl border border-border bg-muted/30 flex items-center justify-center overflow-hidden flex-shrink-0">
+                {content.logo_url ? (
+                  <img src={content.logo_url} alt="bKash logo preview" className="h-full w-full object-contain" />
+                ) : (
+                  <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                )}
+              </div>
+              <div className="flex-1 flex flex-wrap gap-2">
+                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background hover:bg-muted/30 cursor-pointer text-sm font-medium transition-colors">
+                  <Upload className="h-4 w-4" />
+                  {content.logo_url ? 'Replace Logo' : 'Upload Logo'}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      e.target.value = '';
+                      if (!file) return;
+                      if (file.size > 2 * 1024 * 1024) {
+                        toast.error('File too large (max 2MB)');
+                        return;
+                      }
+                      try {
+                        const ext = file.name.split('.').pop() || 'png';
+                        const path = `bkash-pgw/logo-${Date.now()}.${ext}`;
+                        const { error: upErr } = await supabase.storage
+                          .from('product-images')
+                          .upload(path, file, { upsert: true, contentType: file.type });
+                        if (upErr) throw upErr;
+                        const { data: { publicUrl } } = supabase.storage
+                          .from('product-images')
+                          .getPublicUrl(path);
+                        updateContent('logo_url', publicUrl);
+                        toast.success('Logo uploaded — click "Save Content" to apply');
+                      } catch (err: any) {
+                        toast.error(err?.message || 'Upload failed');
+                      }
+                    }}
+                  />
+                </label>
+                {content.logo_url && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => updateContent('logo_url', '')}
+                  >
+                    <X className="h-4 w-4 mr-1" /> Remove
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div>
             <Label htmlFor="bk_title">Title</Label>
             <Input

@@ -53,11 +53,12 @@ const Checkout = () => {
   const { user } = useAuth();
   const { configs: paymentConfigs } = usePaymentSettings();
   const bkashContent = useBkashPgwContent();
+  const bkashLogoSrc = bkashContent.logo_url || bkashLogo;
 
   // Build dynamic payment methods from DB config
   const paymentMethods = [
     { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', number: '', type: 'Wallet Balance', logo: undefined as string | undefined },
-    { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-pink-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogo },
+    { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-pink-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogoSrc },
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -884,7 +885,7 @@ const Checkout = () => {
             {paymentMethod === 'bkash_online' && (
               <div className="rounded-xl p-4 space-y-2 border bg-pink-500/10 border-pink-500/30">
                 <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                  <img src={bkashLogo} alt="bKash" className="h-6 w-auto" />
+                  <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
                   <span>{bkashContent.title}</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -1048,7 +1049,7 @@ const Checkout = () => {
                 ) : (
                   <>
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
-                      <img src={bkashLogo} alt="bKash" className="h-5 w-5 object-contain" />
+                      <img src={bkashLogoSrc} alt="bKash" className="h-5 w-5 object-contain" />
                     </span>
                     <span className="tracking-wide">
                       bKash দিয়ে পরিশোধ করুন

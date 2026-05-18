@@ -6,6 +6,7 @@ export type BkashPgwContent = {
   description: string;
   bullets: string[];
   amount_prefix: string; // e.g. "💳 মোট পরিশোধ:"
+  logo_url: string;       // custom bKash logo (overrides bundled asset when set)
 };
 
 export const DEFAULT_BKASH_CONTENT: BkashPgwContent = {
@@ -17,6 +18,7 @@ export const DEFAULT_BKASH_CONTENT: BkashPgwContent = {
     'পেমেন্ট সফল হলেই লাইসেন্স সাথে সাথে ডেলিভারি',
   ],
   amount_prefix: '💳 মোট পরিশোধ:',
+  logo_url: '',
 };
 
 export const BKASH_CONTENT_KEY = 'bkash_pgw_content';
