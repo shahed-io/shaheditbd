@@ -885,7 +885,7 @@ const Checkout = () => {
             {paymentMethod === 'bkash_online' && (
               <div className="rounded-xl p-4 space-y-2 border bg-pink-500/10 border-pink-500/30">
                 <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                  <img src={bkashLogo} alt="bKash" className="h-6 w-auto" />
+                  <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
                   <span>{bkashContent.title}</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
