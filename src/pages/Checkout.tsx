@@ -245,7 +245,27 @@ const Checkout = () => {
       setOrderNumber(ord);
       setPaymentMethod('bkash_online');
       setOrderPlaced(true);
+      setBkashDelivered(null);
       toast.success('✅ bKash পেমেন্ট সফল!');
+      // Check if licenses were auto-assigned (License Manager had stock)
+      (async () => {
+        const checkDelivery = async (): Promise<boolean> => {
+          const { data: orderRow } = await supabase
+            .from('orders').select('id').eq('order_number', ord).maybeSingle();
+          if (!orderRow?.id) return false;
+          const { data: items } = await supabase
+            .from('order_items').select('license_key').eq('order_id', orderRow.id);
+          if (!items || items.length === 0) return false;
+          return items.every(i => !!i.license_key && i.license_key.trim() !== '');
+        };
+        // Retry a few times since trigger runs async
+        for (let i = 0; i < 5; i++) {
+          const delivered = await checkDelivery();
+          if (delivered) { setBkashDelivered(true); return; }
+          await new Promise(r => setTimeout(r, 1200));
+        }
+        setBkashDelivered(false);
+      })();
     } else if (bkash === 'cancel') {
       setSubmitError('bKash পেমেন্ট বাতিল করা হয়েছে। আবার চেষ্টা করুন।');
     } else if (bkash === 'failure' || bkash === 'error') {
