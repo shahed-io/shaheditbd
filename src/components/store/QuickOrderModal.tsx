@@ -267,7 +267,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         setSubmitError(`ব্যালেন্স অপর্যাপ্ত। বর্তমান: ৳${walletBalance.toLocaleString()}, দরকার: ৳${finalTotal.toLocaleString()}`);
         return;
       }
-    } else {
+    } else if (paymentMethod !== 'bkash_online') {
       if (!transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     }
 
@@ -292,7 +292,10 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
           discount_amount: couponDiscount,
           total: finalTotal,
           payment_method: paymentMethod,
-          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
+          transaction_id:
+            paymentMethod === 'wallet' ? `WALLET-${orderNum}` :
+            paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
+            transactionId.trim(),
           coupon_code: couponCode.trim().toUpperCase() || null,
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
@@ -349,8 +352,8 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         } catch (e) { console.error('[QuickOrder] screenshot upload failed:', e); }
       }
 
-      // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
-      if (paymentMethod !== 'wallet') {
+      // Insert payment proof for non-wallet / non-online payments so admin sees it in /ceo/payments
+      if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online') {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
           order_id: order.id,
           user_id: user?.id || null,
@@ -361,6 +364,33 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
           status: 'pending',
         });
         if (proofError) console.error('[QuickOrder] payment_proof insert error:', proofError);
+      }
+
+      // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
+      if (paymentMethod === 'bkash_online') {
+        try {
+          const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
+            body: {
+              orderId: order.id,
+              orderNumber: orderNum,
+              amount: finalTotal,
+              customerPhone: form.phone,
+            },
+          });
+          if (bkErr || !bkData?.bkashURL) {
+            console.error('[QuickOrder] bKash create payment error:', bkErr, bkData);
+            setSubmitError('bKash পেমেন্ট শুরু করা যায়নি। আবার চেষ্টা করুন।');
+            setLoading(false);
+            return;
+          }
+          window.location.href = bkData.bkashURL;
+          return;
+        } catch (e) {
+          console.error('[QuickOrder] bKash invoke failed:', e);
+          setSubmitError('bKash পেমেন্ট গেটওয়ে কানেক্ট হয়নি। আবার চেষ্টা করুন।');
+          setLoading(false);
+          return;
+        }
       }
 
       setOrderNumber(orderNum);
@@ -397,9 +427,17 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
       isWallet: false,
     }));
 
+  const bkashOnlineOption: PaymentOption = {
+    id: 'bkash_online' as PaymentMethod,
+    label: 'bKash (Online)',
+    color: 'from-pink-600 to-rose-700',
+    logo: bkashLogo,
+    isWallet: false,
+  };
+
   const allMethods: PaymentOption[] = user
-    ? [{ id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, ...dynamicMethods]
-    : dynamicMethods;
+    ? [{ id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, bkashOnlineOption, ...dynamicMethods]
+    : [bkashOnlineOption, ...dynamicMethods];
 
   return (
     <>
@@ -681,8 +719,25 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                 </div>
               )}
 
+              {/* bKash Online (PGW) info block */}
+              {paymentMethod === 'bkash_online' && (
+                <div className="rounded-2xl p-4 space-y-2 border border-pink-400/30 bg-pink-500/8">
+                  <div className="flex items-center gap-2">
+                    <img src={bkashLogo} alt="bKash" className="h-6 w-auto" />
+                    <span className="text-sm font-bold text-foreground">bKash Online Payment (PGW)</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    "অর্ডার দিন" বাটনে ক্লিক করলে আপনাকে bKash-এর সিকিউর পেমেন্ট পেজে নিয়ে যাওয়া হবে। সফল পেমেন্টের পর অর্ডার স্বয়ংক্রিয়ভাবে কনফার্ম হবে।
+                  </p>
+                  <ul className="text-[11px] text-muted-foreground space-y-1 pl-4 list-disc">
+                    <li>কোনো TrxID বা স্ক্রিনশট দিতে হবে না</li>
+                    <li>পেমেন্ট সফল হলেই লাইসেন্স সাথে সাথে ডেলিভারি</li>
+                  </ul>
+                </div>
+              )}
+
               {/* MFS payment instructions */}
-              {paymentMethod !== 'wallet' && (
+              {paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && (
                 <>
                   <PaymentInstructions
                     paymentMethodId={paymentMethod as PMId}
@@ -774,6 +829,8 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                   <><Loader2 size={16} className="animate-spin" /> Processing...</>
                 ) : paymentMethod === 'wallet' ? (
                   <><Wallet size={16} /> ওয়ালেট দিয়ে অর্ডার করুন — ৳{finalTotal.toLocaleString()}</>
+                ) : paymentMethod === 'bkash_online' ? (
+                  <><CreditCard size={16} /> bKash দিয়ে পরিশোধ করুন — ৳{finalTotal.toLocaleString()}</>
                 ) : (
                   <><CreditCard size={16} /> অর্ডার কনফার্ম করুন</>
                 )}
