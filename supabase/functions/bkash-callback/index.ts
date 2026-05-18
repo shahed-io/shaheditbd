@@ -136,6 +136,12 @@ Deno.serve(async (req) => {
     return redirect(`${SITE_URL}/checkout?bkash=failure&order=${orderNumber}`);
   } catch (e) {
     console.error('[bkash-callback] error', e);
+    if (order) {
+      await supabase.from('orders').update({
+        payment_status: 'failed',
+        status: 'cancelled',
+      }).eq('id', order.id);
+    }
     return redirect(`${SITE_URL}/checkout?bkash=error&order=${orderNumber}`);
   }
 });
