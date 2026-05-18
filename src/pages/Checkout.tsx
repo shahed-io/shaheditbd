@@ -245,7 +245,7 @@ const Checkout = () => {
       setOrderNumber(ord);
       setPaymentMethod('bkash_online');
       setOrderPlaced(true);
-      setBkashDelivered(null);
+      setInstantDelivered(null);
       toast.success('✅ bKash পেমেন্ট সফল!');
       // Check if licenses were auto-assigned (License Manager had stock)
       (async () => {
@@ -261,10 +261,10 @@ const Checkout = () => {
         // Retry a few times since trigger runs async
         for (let i = 0; i < 5; i++) {
           const delivered = await checkDelivery();
-          if (delivered) { setBkashDelivered(true); return; }
+          if (delivered) { setInstantDelivered(true); return; }
           await new Promise(r => setTimeout(r, 1200));
         }
-        setBkashDelivered(false);
+        setInstantDelivered(false);
       })();
     } else if (bkash === 'cancel') {
       setSubmitError('bKash পেমেন্ট বাতিল করা হয়েছে। আবার চেষ্টা করুন।');
@@ -743,9 +743,9 @@ const Checkout = () => {
         <div className="max-w-md w-full text-center space-y-6">
           {(() => {
             const isBkash = paymentMethod === 'bkash_online';
-            const delivered = isBkash && bkashDelivered === true;
-            const checking = isBkash && bkashDelivered === null;
-            const pending = isBkash && bkashDelivered === false;
+            const delivered = isBkash && instantDelivered === true;
+            const checking = isBkash && instantDelivered === null;
+            const pending = isBkash && instantDelivered === false;
             const ringClass = delivered
               ? 'bg-pink-500/20 border-2 border-pink-500/40'
               : 'bg-green-500/20 border-2 border-green-500/40';
