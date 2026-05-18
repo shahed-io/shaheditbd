@@ -719,8 +719,25 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                 </div>
               )}
 
+              {/* bKash Online (PGW) info block */}
+              {paymentMethod === 'bkash_online' && (
+                <div className="rounded-2xl p-4 space-y-2 border border-pink-400/30 bg-pink-500/8">
+                  <div className="flex items-center gap-2">
+                    <img src={bkashLogo} alt="bKash" className="h-6 w-auto" />
+                    <span className="text-sm font-bold text-foreground">bKash Online Payment (PGW)</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    "অর্ডার দিন" বাটনে ক্লিক করলে আপনাকে bKash-এর সিকিউর পেমেন্ট পেজে নিয়ে যাওয়া হবে। সফল পেমেন্টের পর অর্ডার স্বয়ংক্রিয়ভাবে কনফার্ম হবে।
+                  </p>
+                  <ul className="text-[11px] text-muted-foreground space-y-1 pl-4 list-disc">
+                    <li>কোনো TrxID বা স্ক্রিনশট দিতে হবে না</li>
+                    <li>পেমেন্ট সফল হলেই লাইসেন্স সাথে সাথে ডেলিভারি</li>
+                  </ul>
+                </div>
+              )}
+
               {/* MFS payment instructions */}
-              {paymentMethod !== 'wallet' && (
+              {paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && (
                 <>
                   <PaymentInstructions
                     paymentMethodId={paymentMethod as PMId}
