@@ -3,6 +3,7 @@ import BrandLoader from '@/components/store/BrandLoader';
 import SEOHead from '@/components/seo/SEOHead';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
 import { usePaymentSettings } from '@/hooks/usePaymentSettings';
+import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 import bkashLogo from '@/assets/payment/bkash.png';
 import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
