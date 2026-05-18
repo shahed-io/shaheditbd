@@ -434,7 +434,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
     id: 'bkash_online' as PaymentMethod,
     label: 'bKash (Online)',
     color: 'from-pink-600 to-rose-700',
-    logo: bkashLogo,
+    logo: bkashLogoSrc,
     isWallet: false,
   };
 
@@ -742,7 +742,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
               {paymentMethod === 'bkash_online' && (
                 <div className="rounded-2xl p-4 space-y-2 border border-pink-400/30 bg-pink-500/8">
                   <div className="flex items-center gap-2">
-                    <img src={bkashLogo} alt="bKash" className="h-6 w-auto" />
+                    <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
                     <span className="text-sm font-bold text-foreground">{bkashContent.title}</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -855,7 +855,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                     ) : (
                       <>
                         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
-                          <img src={bkashLogo} alt="bKash" className="h-4 w-4 object-contain" />
+                          <img src={bkashLogoSrc} alt="bKash" className="h-4 w-4 object-contain" />
                         </span>
                         <span className="tracking-wide">bKash দিয়ে পরিশোধ করুন</span>
                         <span className="ml-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-extrabold backdrop-blur-sm">
