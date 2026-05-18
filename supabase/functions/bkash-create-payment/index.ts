@@ -8,26 +8,51 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const MODE = (Deno.env.get('BKASH_MODE') || 'sandbox').toLowerCase();
-const BASE = MODE === 'live'
-  ? 'https://tokenized.pay.bka.sh/v1.2.0-beta'
-  : 'https://tokenized.sandbox.bka.sh/v1.2.0-beta';
+interface BkashCfg {
+  mode: string;
+  app_key: string;
+  app_secret: string;
+  username: string;
+  password: string;
+  is_active: boolean;
+}
 
-const APP_KEY = Deno.env.get('BKASH_APP_KEY') || '';
-const APP_SECRET = Deno.env.get('BKASH_APP_SECRET') || '';
-const USERNAME = Deno.env.get('BKASH_USERNAME') || '';
-const PASSWORD = Deno.env.get('BKASH_PASSWORD') || '';
+async function loadConfig(supabase: ReturnType<typeof createClient>): Promise<BkashCfg> {
+  const { data } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'bkash_pgw_config')
+    .maybeSingle();
+  let cfg: Partial<BkashCfg> = {};
+  if (data?.value) {
+    try { cfg = JSON.parse(data.value); } catch { /* ignore */ }
+  }
+  return {
+    mode: (cfg.mode || Deno.env.get('BKASH_MODE') || 'sandbox').toLowerCase(),
+    app_key: cfg.app_key || Deno.env.get('BKASH_APP_KEY') || '',
+    app_secret: cfg.app_secret || Deno.env.get('BKASH_APP_SECRET') || '',
+    username: cfg.username || Deno.env.get('BKASH_USERNAME') || '',
+    password: cfg.password || Deno.env.get('BKASH_PASSWORD') || '',
+    is_active: cfg.is_active !== false,
+  };
+}
 
-async function grantToken(): Promise<string> {
-  const res = await fetch(`${BASE}/tokenized/checkout/token/grant`, {
+function baseUrl(mode: string) {
+  return mode === 'live'
+    ? 'https://tokenized.pay.bka.sh/v1.2.0-beta'
+    : 'https://tokenized.sandbox.bka.sh/v1.2.0-beta';
+}
+
+async function grantToken(cfg: BkashCfg): Promise<string> {
+  const res = await fetch(`${baseUrl(cfg.mode)}/tokenized/checkout/token/grant`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'username': USERNAME,
-      'password': PASSWORD,
+      'username': cfg.username,
+      'password': cfg.password,
     },
-    body: JSON.stringify({ app_key: APP_KEY, app_secret: APP_SECRET }),
+    body: JSON.stringify({ app_key: cfg.app_key, app_secret: cfg.app_secret }),
   });
   const data = await res.json();
   if (!data?.id_token) {
