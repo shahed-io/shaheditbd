@@ -267,7 +267,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         setSubmitError(`ব্যালেন্স অপর্যাপ্ত। বর্তমান: ৳${walletBalance.toLocaleString()}, দরকার: ৳${finalTotal.toLocaleString()}`);
         return;
       }
-    } else {
+    } else if (paymentMethod !== 'bkash_online') {
       if (!transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     }
 
