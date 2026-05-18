@@ -15,7 +15,9 @@ import {
 import {
   Search, RefreshCw, CheckCircle2, XCircle, Clock, AlertTriangle,
   Eye, Smartphone, Hash, Receipt, Wallet, Filter, Download,
+  Copy, User, Mail, Phone, CreditCard, Calendar, CheckCheck,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Tx = {
   id: string;
