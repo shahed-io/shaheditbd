@@ -631,13 +631,16 @@ export default function AdminPayments() {
 
   const filtered = payments.filter(p => {
     const matchStatus = statusFilter === 'all' || p.status === statusFilter;
+    const matchMethod = methodFilter === 'all' || p.payment_method === methodFilter;
     const q = search.toLowerCase();
     const matchSearch = !q
       || p.transaction_id.toLowerCase().includes(q)
+      || (p.payment_method ?? '').toLowerCase().includes(q)
+      || (methodLabels[p.payment_method] ?? '').toLowerCase().includes(q)
       || (p.orders?.order_number ?? '').toLowerCase().includes(q)
       || (p.orders?.customer_name ?? '').toLowerCase().includes(q)
       || (p.orders?.customer_email ?? '').toLowerCase().includes(q);
-    return matchStatus && matchSearch;
+    return matchStatus && matchMethod && matchSearch;
   });
 
   const counts = {
