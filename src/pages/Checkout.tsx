@@ -479,8 +479,8 @@ const Checkout = () => {
         }
       }
 
-      // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
-      if (paymentMethod !== 'wallet') {
+      // Insert payment proof for manual non-wallet, non-PGW payments so admin sees it in /ceo/payments
+      if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online') {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
           order_id: order.id,
           user_id: user?.id || null,
@@ -491,6 +491,34 @@ const Checkout = () => {
           status: 'pending',
         });
         if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
+      }
+
+      // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
+      if (paymentMethod === 'bkash_online') {
+        try {
+          const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
+            body: {
+              orderId: order.id,
+              orderNumber: orderNum,
+              amount: payableTotal,
+              payerReference: form.phone || orderNum,
+            },
+          });
+          if (bkErr || !bkData?.bkashURL) {
+            console.error('[Checkout] bkash-create error:', bkErr, bkData);
+            setSubmitError('bKash পেমেন্ট শুরু করা যায়নি। আবার চেষ্টা করুন।');
+            setLoading(false);
+            return;
+          }
+          // Redirect user to bKash hosted page
+          window.location.href = bkData.bkashURL;
+          return;
+        } catch (e) {
+          console.error('[Checkout] bkash invoke failed:', e);
+          setSubmitError('bKash পেমেন্ট গেটওয়ে কানেক্ট হয়নি। আবার চেষ্টা করুন।');
+          setLoading(false);
+          return;
+        }
       }
 
       // Record affiliate conversion (non-blocking, server validates)
