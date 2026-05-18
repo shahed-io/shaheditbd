@@ -1061,19 +1061,43 @@ const Checkout = () => {
                 )}
               </span>
             </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={loading || !termsAccepted || items.length === 0}
-              className="w-full btn-glow py-4 rounded-xl font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <><Loader2 size={16} className="animate-spin" /> Processing...</>
-              ) : (
-                <>অর্ডার দিন — ৳{finalTotal.toLocaleString()}</>
-              )}
-            </button>
-          )}
+          ) : (() => {
+            const isWallet = paymentMethod === 'wallet';
+            const gradient = isWallet
+              ? 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 45%, #4c1d95 100%)'
+              : 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 45%, #1e3a8a 100%)';
+            const shadow = isWallet
+              ? 'shadow-[0_12px_40px_-8px_rgba(139,92,246,0.55)] hover:shadow-[0_18px_55px_-8px_rgba(139,92,246,0.75)]'
+              : 'shadow-[0_12px_40px_-8px_rgba(79,70,229,0.55)] hover:shadow-[0_18px_55px_-8px_rgba(79,70,229,0.75)]';
+            return (
+              <button
+                type="submit"
+                disabled={loading || !termsAccepted || items.length === 0}
+                className={`group relative w-full overflow-hidden rounded-2xl py-4 px-5 font-bold text-base text-white ${shadow} transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0`}
+                style={{ background: gradient }}
+              >
+                <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
+                <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl bg-gradient-to-b from-white/25 to-transparent" />
+                <span className="relative flex items-center justify-center gap-3">
+                  {loading ? (
+                    <><Loader2 size={18} className="animate-spin" /> Processing…</>
+                  ) : (
+                    <>
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
+                        {isWallet ? <Wallet size={16} className="text-violet-700" /> : <FileText size={16} className="text-indigo-700" />}
+                      </span>
+                      <span className="tracking-wide">
+                        {isWallet ? 'ওয়ালেট দিয়ে পরিশোধ করুন' : 'অর্ডার কনফার্ম করুন'}
+                      </span>
+                      <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">
+                        ৳{(isWallet ? finalTotal : payableTotal).toLocaleString()}
+                      </span>
+                    </>
+                  )}
+                </span>
+              </button>
+            );
+          })()}
 
           <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
             <Shield size={12} /> Secure checkout — Your data is protected
