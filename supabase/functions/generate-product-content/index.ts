@@ -172,9 +172,21 @@ IMPORTANT:
       systemPrompt = `You are a Bangladesh Google SEO expert for a digital software store. Return ONLY valid JSON in this exact format: {"seo_title": "...", "seo_description": "..."}.
 
 No markdown, no extra text.
+
+CRITICAL — Bangladeshi users actually search Google in ENGLISH using patterns like:
+  - "idm price in bd"
+  - "windows 11 pro price in bangladesh"
+  - "office 365 price bd"
+  - "[product] price in bd" / "[product] price in bangladesh" / "[product] buy bd"
+So the SEO title MUST contain one of these EXACT English patterns to rank.
+
 RULES:
-- seo_title: max 60 chars. Format: "[Product Name] কিনুন | সেরা দাম | Shahed Store" OR "[Product Name] – Buy at ৳[price] | Shahed Store BD". Include main keyword + Bangladesh/BD signal.
-- seo_description: max 160 chars. Bangla-English mix. Must include: price in ৳, one action word (কিনুন/Buy), "Bangladesh" or "বাংলাদেশ", trust signal (genuine/original/100% original).
+- seo_title: max 60 chars. MUST start with the short common product name (e.g. "IDM", "Windows 11 Pro", "Office 365") followed by "Price in BD" or "Price in Bangladesh". Then trust phrase. Example formats (pick best fit):
+    * "IDM Price in BD ৳[price] | Lifetime Key | Shahed Store"
+    * "Windows 11 Pro Price in Bangladesh – Buy Genuine Key"
+    * "Office 365 Price in BD | Original License | Shahed Store"
+  Use the SHORT common name (IDM, not "Internet Download Manager Lifetime Key").
+- seo_description: max 160 chars. Bangla-English mix. MUST include: exact price in ৳, the phrase "price in BD" or "in Bangladesh", action word (কিনুন/Buy), trust signal (100% genuine/original/অরিজিনাল), instant delivery.
 - Write naturally like a Bangladeshi user would search.`;
 
       const ctx = [
@@ -186,9 +198,10 @@ RULES:
         price && `Price: ৳${price}`,
       ].filter(Boolean).join(", ");
 
-      userPrompt = `Generate Bangladesh-SEO-optimized title and meta description for: ${ctx}. Pricing: ${durationInfo}. 
-SEO Title must include product name + buying intent + "Shahed Store" (max 60 chars).
-Meta Description must include price in ৳, Bangladesh/বাংলাদেশ, and "genuine/original/অরিজিনাল" (max 160 chars).`;
+      userPrompt = `Generate Bangladesh-SEO-optimized title and meta description for: ${ctx}. Pricing: ${durationInfo}.
+
+SEO Title MUST contain the SHORT product name + "Price in BD" or "Price in Bangladesh" (this is how BD users search Google). Max 60 chars.
+Meta Description MUST include exact ৳ price, "price in BD"/"in Bangladesh", "100% genuine" or "অরিজিনাল", and "instant delivery". Max 160 chars.`;
 
     } else if (type === "all") {
       maxTokens = 2800;
