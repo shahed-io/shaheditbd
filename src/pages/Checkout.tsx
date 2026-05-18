@@ -110,7 +110,7 @@ const Checkout = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
-  const [bkashDelivered, setBkashDelivered] = useState<boolean | null>(null); // null = checking, true = licenses assigned, false = pending
+  const [instantDelivered, setInstantDelivered] = useState<boolean | null>(null); // null = checking, true = licenses assigned, false = pending
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [summaryOpen, setSummaryOpen] = useState(true);
@@ -245,7 +245,7 @@ const Checkout = () => {
       setOrderNumber(ord);
       setPaymentMethod('bkash_online');
       setOrderPlaced(true);
-      setBkashDelivered(null);
+      setInstantDelivered(null);
       toast.success('✅ bKash পেমেন্ট সফল!');
       // Check if licenses were auto-assigned (License Manager had stock)
       (async () => {
@@ -261,10 +261,10 @@ const Checkout = () => {
         // Retry a few times since trigger runs async
         for (let i = 0; i < 5; i++) {
           const delivered = await checkDelivery();
-          if (delivered) { setBkashDelivered(true); return; }
+          if (delivered) { setInstantDelivered(true); return; }
           await new Promise(r => setTimeout(r, 1200));
         }
-        setBkashDelivered(false);
+        setInstantDelivered(false);
       })();
     } else if (bkash === 'cancel') {
       setSubmitError('bKash পেমেন্ট বাতিল করা হয়েছে। আবার চেষ্টা করুন।');
@@ -515,6 +515,30 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
       if (itemsError) throw itemsError;
 
+      // ── Wallet payment: try auto-assign licenses → auto-complete if stock available ──
+      let walletInstantDelivered: boolean | null = null; // null = not wallet, true = delivered, false = pending
+      if (paymentMethod === 'wallet') {
+        try {
+          const { data: assignRes } = await (supabase as any).rpc('auto_assign_licenses', { p_order_id: order.id });
+          const assigned = (assignRes as any)?.assigned || 0;
+          const needed = (assignRes as any)?.needed || 0;
+          if (needed > 0 && assigned === needed) {
+            // All licenses assigned — mark order completed (triggers points, telegram, emails)
+            const { error: updErr } = await supabase
+              .from('orders')
+              .update({ status: 'completed', payment_status: 'paid' })
+              .eq('id', order.id);
+            if (!updErr) walletInstantDelivered = true;
+            else walletInstantDelivered = false;
+          } else {
+            walletInstantDelivered = false;
+          }
+        } catch (e) {
+          console.error('[Checkout] wallet auto-assign error:', e);
+          walletInstantDelivered = false;
+        }
+      }
+
       // Upload optional payment screenshot (non-blocking — order succeeds even if upload fails)
       let screenshotUrl: string | null = null;
       if (paymentMethod !== 'wallet' && paymentScreenshot) {
@@ -698,6 +722,7 @@ const Checkout = () => {
 
       clearCart();
       setOrderNumber(orderNum);
+      if (paymentMethod === 'wallet') setInstantDelivered(walletInstantDelivered);
       setOrderPlaced(true);
 
       // Fire Google Ads + GA4 Purchase conversion (non-blocking, after success)
@@ -742,14 +767,17 @@ const Checkout = () => {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center space-y-6">
           {(() => {
+            const isInstant = paymentMethod === 'bkash_online' || paymentMethod === 'wallet';
+            const isWallet = paymentMethod === 'wallet';
             const isBkash = paymentMethod === 'bkash_online';
-            const delivered = isBkash && bkashDelivered === true;
-            const checking = isBkash && bkashDelivered === null;
-            const pending = isBkash && bkashDelivered === false;
-            const ringClass = delivered
-              ? 'bg-pink-500/20 border-2 border-pink-500/40'
-              : 'bg-green-500/20 border-2 border-green-500/40';
-            const iconClass = delivered ? 'text-pink-500' : 'text-green-400';
+            const delivered = isInstant && instantDelivered === true;
+            const checking = isInstant && instantDelivered === null;
+            const pending = isInstant && instantDelivered === false;
+            const accent = isWallet
+              ? { ring: 'bg-violet-500/20 border-2 border-violet-500/40', icon: 'text-violet-500', tint: 'from-violet-500/10 to-violet-600/5 border-violet-400/30', label: 'text-violet-700', source: 'ওয়ালেট' }
+              : { ring: 'bg-pink-500/20 border-2 border-pink-500/40', icon: 'text-pink-500', tint: 'from-pink-500/10 to-pink-600/5 border-pink-400/30', label: 'text-pink-600', source: 'bKash' };
+            const ringClass = delivered ? accent.ring : 'bg-green-500/20 border-2 border-green-500/40';
+            const iconClass = delivered ? accent.icon : 'text-green-400';
             return (
               <>
                 <div className={`w-24 h-24 rounded-full ${ringClass} flex items-center justify-center mx-auto`}>
@@ -763,9 +791,9 @@ const Checkout = () => {
                     অর্ডার নম্বর: <span className="text-primary font-mono font-bold">{orderNumber}</span>
                   </p>
                   {delivered ? (
-                    <div className="mt-3 p-4 rounded-2xl bg-gradient-to-br from-pink-500/10 to-pink-600/5 border border-pink-400/30 text-left space-y-1.5">
-                      <p className="text-sm font-bold text-pink-600 flex items-center gap-2">🚀 ইনস্ট্যান্ট ডেলিভারি সম্পন্ন</p>
-                      <p className="text-xs text-foreground/80">bKash পেমেন্ট সফলভাবে গৃহীত হয়েছে এবং আপনার অর্ডার <span className="font-bold text-green-600">কমপ্লিট</span> হয়েছে।</p>
+                    <div className={`mt-3 p-4 rounded-2xl bg-gradient-to-br ${accent.tint} border text-left space-y-1.5`}>
+                      <p className={`text-sm font-bold ${accent.label} flex items-center gap-2`}>🚀 ইনস্ট্যান্ট ডেলিভারি সম্পন্ন</p>
+                      <p className="text-xs text-foreground/80">{accent.source} পেমেন্ট সফলভাবে গৃহীত হয়েছে এবং আপনার অর্ডার <span className="font-bold text-green-600">কমপ্লিট</span> হয়েছে।</p>
                       <p className="text-xs text-muted-foreground">লাইসেন্স কি এখনই আপনার ড্যাশবোর্ড ও ইমেইলে পাঠানো হয়েছে। দয়া করে "আমার অর্ডার" থেকে দেখে নিন।</p>
                     </div>
                   ) : checking ? (
@@ -773,14 +801,10 @@ const Checkout = () => {
                       পেমেন্ট গৃহীত হয়েছে। লাইসেন্স স্টক যাচাই করা হচ্ছে, একটু অপেক্ষা করুন…
                     </p>
                   ) : pending ? (
-                    <p className="text-sm text-muted-foreground mt-3">
-                      পেমেন্ট সফলভাবে গৃহীত হয়েছে। বর্তমানে লাইসেন্স স্টক না থাকায় ম্যানুয়াল প্রসেসিং চলছে — সাধারণত ১–২ ঘন্টার মধ্যে আপনার ইমেইলে লাইসেন্স কি পাঠানো হবে।
-                    </p>
-                  ) : paymentMethod === 'wallet' ? (
-                    <div className="mt-3 p-4 rounded-2xl bg-violet-500/10 border border-violet-400/30 text-left space-y-1.5">
-                      <p className="text-sm font-bold text-violet-700 flex items-center gap-2"><Wallet size={15} /> ওয়ালেট পেমেন্ট সম্পন্ন</p>
-                      <p className="text-xs text-violet-600">আপনার ওয়ালেট থেকে ৳{finalTotal.toLocaleString()} কেটে নেওয়া হয়েছে।</p>
-                      <p className="text-xs text-muted-foreground">লাইসেন্স কি শীঘ্রই আপনার ড্যাশবোর্ডে দেখা যাবে।</p>
+                    <div className={`mt-3 p-4 rounded-2xl bg-amber-500/10 border border-amber-400/30 text-left space-y-1.5`}>
+                      <p className="text-sm font-bold text-amber-700 flex items-center gap-2">⏳ পেমেন্ট সম্পন্ন — ডেলিভারি প্রসেসিং</p>
+                      <p className="text-xs text-foreground/80">{accent.source} পেমেন্ট সফলভাবে গৃহীত হয়েছে। বর্তমানে লাইসেন্স স্টক না থাকায় ম্যানুয়াল প্রসেসিং চলছে।</p>
+                      <p className="text-xs text-muted-foreground">সাধারণত ১–২ ঘন্টার মধ্যে আপনার ইমেইল ও ড্যাশবোর্ডে লাইসেন্স কি পাঠানো হবে।</p>
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground mt-3">
