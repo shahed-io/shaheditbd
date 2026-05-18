@@ -515,6 +515,30 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
       if (itemsError) throw itemsError;
 
+      // ── Wallet payment: try auto-assign licenses → auto-complete if stock available ──
+      let walletInstantDelivered: boolean | null = null; // null = not wallet, true = delivered, false = pending
+      if (paymentMethod === 'wallet') {
+        try {
+          const { data: assignRes } = await (supabase as any).rpc('auto_assign_licenses', { p_order_id: order.id });
+          const assigned = (assignRes as any)?.assigned || 0;
+          const needed = (assignRes as any)?.needed || 0;
+          if (needed > 0 && assigned === needed) {
+            // All licenses assigned — mark order completed (triggers points, telegram, emails)
+            const { error: updErr } = await supabase
+              .from('orders')
+              .update({ status: 'completed', payment_status: 'paid' })
+              .eq('id', order.id);
+            if (!updErr) walletInstantDelivered = true;
+            else walletInstantDelivered = false;
+          } else {
+            walletInstantDelivered = false;
+          }
+        } catch (e) {
+          console.error('[Checkout] wallet auto-assign error:', e);
+          walletInstantDelivered = false;
+        }
+      }
+
       // Upload optional payment screenshot (non-blocking — order succeeds even if upload fails)
       let screenshotUrl: string | null = null;
       if (paymentMethod !== 'wallet' && paymentScreenshot) {
