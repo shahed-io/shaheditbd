@@ -51,7 +51,9 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
   rejected: { label: 'Rejected', color: 'bg-destructive/15 text-destructive border-destructive/30', icon: XCircle },
 };
 const methodLabels: Record<string, string> = {
+  bkash_online: 'bKash (Online)',
   bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', bank: 'Bank Transfer',
+  bank_transfer: 'Bank Transfer', upay: 'উপায়', bkash_merchant: 'BKash Merchant', wallet: 'Wallet',
 };
 
 // ── Empty method template ───────────────────────────────────
