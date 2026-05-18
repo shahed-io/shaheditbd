@@ -574,6 +574,7 @@ export default function AdminPayments() {
   const [activeTab, setActiveTab] = useState<'proofs' | 'settings'>('proofs');
   const [search, setSearch]         = useState('');
   const [statusFilter, setStatus]   = useState('all');
+  const [methodFilter, setMethod]   = useState('all');
   const [selected, setSelected]     = useState<PaymentProof | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const [imgOpen, setImgOpen]       = useState(false);
