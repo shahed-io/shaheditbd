@@ -110,6 +110,7 @@ const Checkout = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [bkashDelivered, setBkashDelivered] = useState<boolean | null>(null); // null = checking, true = licenses assigned, false = pending
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [summaryOpen, setSummaryOpen] = useState(true);
