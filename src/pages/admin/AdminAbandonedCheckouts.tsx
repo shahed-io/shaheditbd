@@ -352,6 +352,15 @@ export default function AdminAbandonedCheckouts() {
                         <button onClick={() => setSelected(r)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" title="View">
                           <Eye size={15} />
                         </button>
+                        {!r.converted && r.item_count > 0 && (
+                          <button
+                            onClick={() => setConvertRow(r)}
+                            className="p-2 rounded-lg hover:bg-primary/10 text-primary"
+                            title="Convert to Order"
+                          >
+                            <ArrowRightCircle size={15} />
+                          </button>
+                        )}
                         {r.customer_phone && (
                           <a
                             href={waLink(r.customer_phone, r.customer_name)}
