@@ -395,6 +395,16 @@ export default function AdminAbandonedCheckouts() {
           copiedId={copiedId}
           onDelete={() => handleDelete(selected.id)}
           waLink={waLink}
+          onConvert={() => setConvertRow(selected)}
+        />
+      )}
+
+      {/* Convert to Order modal */}
+      {convertRow && (
+        <ConvertModal
+          row={convertRow}
+          onClose={() => setConvertRow(null)}
+          onConfirm={(opts) => convertToOrder(convertRow, opts)}
         />
       )}
     </div>
