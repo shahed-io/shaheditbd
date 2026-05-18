@@ -15,7 +15,9 @@ import {
 import {
   Search, RefreshCw, CheckCircle2, XCircle, Clock, AlertTriangle,
   Eye, Smartphone, Hash, Receipt, Wallet, Filter, Download,
+  Copy, User, Mail, Phone, CreditCard, Calendar, CheckCheck,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Tx = {
   id: string;
@@ -271,53 +273,100 @@ export default function AdminBkashTransactions() {
         </CardContent>
       </Card>
 
-      {/* Detail dialog */}
+      {/* Detail dialog — premium redesign */}
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Receipt className="h-5 w-5 text-pink-600" /> Transaction Details
-            </DialogTitle>
-            <DialogDescription>Full bKash payment record</DialogDescription>
-          </DialogHeader>
-          {selected && (
-            <div className="space-y-3 text-sm">
-              <Row label="Status" value={
-                <Badge variant="outline" className={(statusBadge[selected.status]?.cls) || ''}>
-                  {statusBadge[selected.status]?.label || selected.status}
-                </Badge>
-              } />
-              <Row label="Mode" value={<Badge variant={selected.mode === 'live' ? 'destructive' : 'secondary'}>{selected.mode}</Badge>} />
-              <Row label="Order #" value={<span className="font-mono">{selected.order_number || '—'}</span>} />
-              <Row label="Payment ID" value={<span className="font-mono text-xs">{selected.payment_id || '—'}</span>} />
-              <Row label="TrxID" value={<span className="font-mono text-xs">{selected.trx_id || '—'}</span>} />
-              <Row label="Amount" value={<span className="font-semibold">৳{Number(selected.amount).toLocaleString()} {selected.currency}</span>} />
-              <Row label="Customer" value={<>
-                <div>{selected.customer_name || '—'}</div>
-                <div className="text-xs text-muted-foreground">{selected.customer_email}</div>
-                <div className="text-xs text-muted-foreground">{selected.customer_phone}</div>
-              </>} />
-              <Row label="Payer MSISDN" value={<span className="font-mono text-pink-600">{selected.payer_msisdn || '—'}</span>} />
-              <Row label="Payer Reference" value={<span className="font-mono text-xs">{selected.payer_reference || '—'}</span>} />
-              <Row label="Status Code" value={<span className="font-mono text-xs">{selected.status_code || '—'}</span>} />
-              <Row label="Status Message" value={<span className="text-xs">{selected.status_message || '—'}</span>} />
-              <Row label="Created" value={format(new Date(selected.created_at), 'dd MMM yyyy, hh:mm:ss a')} />
-              <Row label="Paid At" value={selected.paid_at ? format(new Date(selected.paid_at), 'dd MMM yyyy, hh:mm:ss a') : '—'} />
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 bg-gradient-to-br from-white via-pink-50/30 to-rose-50/40 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 border-pink-200/50 dark:border-pink-900/30">
+          {selected && (() => {
+            const st = statusBadge[selected.status];
+            const StatusIcon = st?.icon || Clock;
+            const isSuccess = selected.status === 'completed';
+            return (
+              <>
+                {/* Premium gradient header */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 px-6 pt-6 pb-20 text-white">
+                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, white 0%, transparent 40%), radial-gradient(circle at 80% 80%, white 0%, transparent 40%)' }} />
+                  <DialogHeader className="relative space-y-1">
+                    <DialogTitle className="flex items-center gap-2 text-white text-lg">
+                      <div className="h-9 w-9 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+                        <Receipt className="h-5 w-5" />
+                      </div>
+                      bKash Transaction
+                    </DialogTitle>
+                    <DialogDescription className="text-pink-100/90 text-xs">
+                      {selected.order_number || 'Payment record'} • {format(new Date(selected.created_at), 'dd MMM yyyy, hh:mm a')}
+                    </DialogDescription>
+                  </DialogHeader>
+                </div>
 
-              {selected.raw_execute && (
-                <details className="mt-2 border rounded-lg p-3">
-                  <summary className="cursor-pointer text-xs font-semibold text-muted-foreground">Execute response (raw)</summary>
-                  <pre className="mt-2 text-[10px] bg-muted/40 p-2 rounded overflow-x-auto">{JSON.stringify(selected.raw_execute, null, 2)}</pre>
-                </details>
-              )}
-              {selected.raw_create && (
-                <details className="border rounded-lg p-3">
-                  <summary className="cursor-pointer text-xs font-semibold text-muted-foreground">Create response (raw)</summary>
-                  <pre className="mt-2 text-[10px] bg-muted/40 p-2 rounded overflow-x-auto">{JSON.stringify(selected.raw_create, null, 2)}</pre>
-                </details>
-              )}
-            </div>
-          )}
+                {/* Floating amount card */}
+                <div className="px-6 -mt-14 relative">
+                  <div className="rounded-2xl bg-white dark:bg-zinc-900 border border-pink-200/60 dark:border-zinc-800 shadow-xl p-5 flex items-center justify-between">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Amount Paid</div>
+                      <div className="text-3xl font-bold text-pink-600 mt-1">৳{Number(selected.amount).toLocaleString()}<span className="text-sm font-normal text-muted-foreground ml-1">{selected.currency}</span></div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <Badge variant="outline" className={`${st?.cls || ''} font-semibold gap-1 px-3 py-1`}>
+                        <StatusIcon className="h-3.5 w-3.5" />
+                        {st?.label || selected.status}
+                      </Badge>
+                      <Badge variant={selected.mode === 'live' ? 'destructive' : 'secondary'} className="text-[10px] uppercase">
+                        {selected.mode} mode
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="px-6 py-5 space-y-4">
+                  {/* Transaction IDs */}
+                  <SectionCard icon={Hash} title="Transaction IDs" tint="pink">
+                    <CopyRow label="TrxID" value={selected.trx_id} highlight />
+                    <CopyRow label="Payment ID" value={selected.payment_id} mono />
+                    <CopyRow label="Order #" value={selected.order_number} mono />
+                  </SectionCard>
+
+                  {/* Payer */}
+                  <SectionCard icon={Smartphone} title="Payer Information" tint="rose">
+                    <CopyRow label="Payer Number" value={selected.payer_msisdn} highlight />
+                    <CopyRow label="Payer Reference" value={selected.payer_reference} mono />
+                  </SectionCard>
+
+                  {/* Customer */}
+                  <SectionCard icon={User} title="Customer" tint="violet">
+                    <InfoRow icon={User} label="Name" value={selected.customer_name} />
+                    <InfoRow icon={Mail} label="Email" value={selected.customer_email} />
+                    <InfoRow icon={Phone} label="Phone" value={selected.customer_phone} />
+                  </SectionCard>
+
+                  {/* Gateway response */}
+                  <SectionCard icon={CreditCard} title="Gateway Response" tint="slate">
+                    <InfoRow label="Status Code" value={selected.status_code} mono />
+                    <InfoRow label="Status Message" value={selected.status_message} />
+                    <InfoRow icon={Calendar} label="Created" value={format(new Date(selected.created_at), 'dd MMM yyyy, hh:mm:ss a')} />
+                    {selected.paid_at && <InfoRow icon={CheckCheck} label="Paid At" value={format(new Date(selected.paid_at), 'dd MMM yyyy, hh:mm:ss a')} />}
+                  </SectionCard>
+
+                  {/* Raw responses */}
+                  {(selected.raw_execute || selected.raw_create) && (
+                    <div className="space-y-2">
+                      {selected.raw_execute && (
+                        <details className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 backdrop-blur p-3">
+                          <summary className="cursor-pointer text-xs font-semibold text-muted-foreground hover:text-foreground">Execute response (raw JSON)</summary>
+                          <pre className="mt-2 text-[10px] bg-zinc-50 dark:bg-zinc-950 p-3 rounded-lg overflow-x-auto border border-zinc-200 dark:border-zinc-800">{JSON.stringify(selected.raw_execute, null, 2)}</pre>
+                        </details>
+                      )}
+                      {selected.raw_create && (
+                        <details className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 backdrop-blur p-3">
+                          <summary className="cursor-pointer text-xs font-semibold text-muted-foreground hover:text-foreground">Create response (raw JSON)</summary>
+                          <pre className="mt-2 text-[10px] bg-zinc-50 dark:bg-zinc-950 p-3 rounded-lg overflow-x-auto border border-zinc-200 dark:border-zinc-800">{JSON.stringify(selected.raw_create, null, 2)}</pre>
+                        </details>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </>
+            );
+          })()}
         </DialogContent>
       </Dialog>
     </div>
@@ -332,6 +381,64 @@ function StatCard({ label, value, cls }: { label: string; value: string | number
         <div className={`text-2xl font-bold mt-1 ${cls}`}>{value}</div>
       </CardContent>
     </Card>
+  );
+}
+
+const tintMap: Record<string, string> = {
+  pink: 'from-pink-500/10 to-rose-500/5 border-pink-200/60 dark:border-pink-900/40 text-pink-600',
+  rose: 'from-rose-500/10 to-pink-500/5 border-rose-200/60 dark:border-rose-900/40 text-rose-600',
+  violet: 'from-violet-500/10 to-purple-500/5 border-violet-200/60 dark:border-violet-900/40 text-violet-600',
+  slate: 'from-slate-500/10 to-zinc-500/5 border-slate-200/60 dark:border-slate-800/60 text-slate-600 dark:text-slate-300',
+};
+
+function SectionCard({ icon: Icon, title, tint, children }: { icon: any; title: string; tint: string; children: React.ReactNode }) {
+  const cls = tintMap[tint] || tintMap.pink;
+  const [grad, border, text] = [cls, cls, cls];
+  return (
+    <div className={`rounded-2xl border bg-gradient-to-br ${cls} backdrop-blur-sm overflow-hidden`}>
+      <div className={`flex items-center gap-2 px-4 py-2.5 border-b border-current/10 ${text.split(' ').filter(c=>c.startsWith('text-')).join(' ')}`}>
+        <Icon className="h-4 w-4" />
+        <span className="text-xs font-bold uppercase tracking-wide">{title}</span>
+      </div>
+      <div className="bg-white/70 dark:bg-zinc-900/70 divide-y divide-zinc-100 dark:divide-zinc-800">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function CopyRow({ label, value, mono, highlight }: { label: string; value: string | null; mono?: boolean; highlight?: boolean }) {
+  const copy = () => {
+    if (!value) return;
+    navigator.clipboard.writeText(value);
+    toast.success(`${label} copied`);
+  };
+  return (
+    <div className="flex items-center justify-between gap-3 px-4 py-2.5 group">
+      <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold shrink-0">{label}</span>
+      <div className="flex items-center gap-2 min-w-0">
+        <span className={`truncate ${mono ? 'font-mono text-xs' : 'text-sm'} ${highlight ? 'text-pink-600 font-semibold' : 'text-foreground'}`}>
+          {value || '—'}
+        </span>
+        {value && (
+          <button onClick={copy} className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-pink-500/10 text-muted-foreground hover:text-pink-600">
+            <Copy className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function InfoRow({ icon: Icon, label, value, mono }: { icon?: any; label: string; value: string | null; mono?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-3 px-4 py-2.5">
+      <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold shrink-0">
+        {Icon && <Icon className="h-3.5 w-3.5" />}
+        {label}
+      </span>
+      <span className={`${mono ? 'font-mono text-xs' : 'text-sm'} text-foreground text-right truncate`}>{value || '—'}</span>
+    </div>
   );
 }
 
