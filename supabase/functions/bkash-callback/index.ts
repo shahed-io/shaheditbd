@@ -89,6 +89,9 @@ Deno.serve(async (req) => {
         status: 'cancelled',
       }).eq('id', order.id);
     }
+    await supabase.from('bkash_transactions')
+      .update({ status: status === 'cancel' ? 'cancelled' : 'failed', status_message: `User ${status} at bKash` })
+      .eq('payment_id', paymentID);
     return redirect(`${SITE_URL}/checkout?bkash=${status}&order=${orderNumber}`);
   }
 
@@ -123,6 +126,18 @@ Deno.serve(async (req) => {
         admin_notes: 'Auto-approved by bKash PGW',
       }).eq('order_id', order.id);
 
+      // Log success on bkash_transactions
+      await supabase.from('bkash_transactions').update({
+        trx_id: execData.trxID || null,
+        payer_msisdn: execData.customerMsisdn || execData.payerReference || null,
+        status: 'completed',
+        status_code: execData.statusCode,
+        status_message: execData.statusMessage || 'Completed',
+        raw_execute: execData,
+        paid_at: new Date().toISOString(),
+        amount: execData.amount ? Number(execData.amount) : undefined,
+      }).eq('payment_id', paymentID);
+
       return redirect(`${SITE_URL}/checkout?bkash=success&order=${orderNumber}&trx=${encodeURIComponent(execData.trxID || '')}`);
     }
 
@@ -132,6 +147,12 @@ Deno.serve(async (req) => {
         status: 'cancelled',
       }).eq('id', order.id);
     }
+    await supabase.from('bkash_transactions').update({
+      status: 'failed',
+      status_code: execData?.statusCode || null,
+      status_message: execData?.statusMessage || 'execute failed',
+      raw_execute: execData,
+    }).eq('payment_id', paymentID);
     console.error('[bkash-callback] execute failed', execData);
     return redirect(`${SITE_URL}/checkout?bkash=failure&order=${orderNumber}`);
   } catch (e) {
@@ -142,6 +163,10 @@ Deno.serve(async (req) => {
         status: 'cancelled',
       }).eq('id', order.id);
     }
+    await supabase.from('bkash_transactions').update({
+      status: 'failed',
+      status_message: (e as Error).message,
+    }).eq('payment_id', paymentID);
     return redirect(`${SITE_URL}/checkout?bkash=error&order=${orderNumber}`);
   }
 });
