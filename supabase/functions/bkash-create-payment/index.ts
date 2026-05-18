@@ -65,7 +65,19 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    if (!APP_KEY || !APP_SECRET || !USERNAME || !PASSWORD) {
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    );
+
+    const cfg = await loadConfig(supabase);
+
+    if (!cfg.is_active) {
+      return new Response(JSON.stringify({ error: 'bKash PGW is disabled' }), {
+        status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    if (!cfg.app_key || !cfg.app_secret || !cfg.username || !cfg.password) {
       return new Response(JSON.stringify({ error: 'bKash credentials not configured' }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -77,11 +89,6 @@ Deno.serve(async (req) => {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    );
 
     // Verify order exists & is pending
     const { data: order, error: orderErr } = await supabase
@@ -100,19 +107,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    const token = await grantToken();
+    const token = await grantToken(cfg);
 
     const callbackURL = `${Deno.env.get('SUPABASE_URL')}/functions/v1/bkash-callback`;
     const merchantInvoiceNumber = String(orderNumber).slice(0, 36);
     const amountStr = Number(amount).toFixed(2);
 
-    const createRes = await fetch(`${BASE}/tokenized/checkout/create`, {
+    const createRes = await fetch(`${baseUrl(cfg.mode)}/tokenized/checkout/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': token,
-        'X-APP-Key': APP_KEY,
+        'X-APP-Key': cfg.app_key,
       },
       body: JSON.stringify({
         mode: '0011',
