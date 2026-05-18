@@ -83,28 +83,69 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { orderId, amount, orderNumber, payerReference, customerPhone } = await req.json();
-    if (!orderId || !amount || !orderNumber) {
-      return new Response(JSON.stringify({ error: 'orderId, amount, orderNumber required' }), {
+    const body = await req.json();
+    const { orderId, amount, orderNumber, payerReference, customerPhone } = body;
+    const purpose: string = body.purpose === 'wallet_topup' ? 'wallet_topup' : 'order';
+    const userId: string | undefined = body.userId;
+
+    if (!amount) {
+      return new Response(JSON.stringify({ error: 'amount required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Verify order exists & is pending
-    const { data: order, error: orderErr } = await supabase
-      .from('orders')
-      .select('id, order_number, total, payment_status, status, user_id, customer_name, customer_email, customer_phone')
-      .eq('id', orderId)
-      .single();
-    if (orderErr || !order) {
-      return new Response(JSON.stringify({ error: 'Order not found' }), {
-        status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    if (order.payment_status === 'paid') {
-      return new Response(JSON.stringify({ error: 'Order already paid' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    let order: any = null;
+    let topupRequestId: string | null = null;
+    let merchantInvoiceBase = orderNumber;
+
+    if (purpose === 'order') {
+      if (!orderId || !orderNumber) {
+        return new Response(JSON.stringify({ error: 'orderId, orderNumber required' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const { data: o, error: orderErr } = await supabase
+        .from('orders')
+        .select('id, order_number, total, payment_status, status, user_id, customer_name, customer_email, customer_phone')
+        .eq('id', orderId)
+        .single();
+      if (orderErr || !o) {
+        return new Response(JSON.stringify({ error: 'Order not found' }), {
+          status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (o.payment_status === 'paid') {
+        return new Response(JSON.stringify({ error: 'Order already paid' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      order = o;
+    } else {
+      // wallet_topup
+      if (!userId) {
+        return new Response(JSON.stringify({ error: 'userId required for wallet topup' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      // Create a pending top-up request placeholder; TrxID will be updated after bKash success
+      const { data: topup, error: topupErr } = await supabase
+        .from('wallet_topup_requests')
+        .insert({
+          user_id: userId,
+          amount: Number(amount),
+          payment_method: 'bkash_online',
+          transaction_id: 'PENDING-BKASH',
+          status: 'pending',
+        })
+        .select('id')
+        .single();
+      if (topupErr || !topup) {
+        return new Response(JSON.stringify({ error: 'Failed to create topup request', details: topupErr?.message }), {
+          status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      topupRequestId = topup.id;
+      merchantInvoiceBase = `TOPUP-${topup.id.slice(0, 8).toUpperCase()}`;
     }
 
     const token = await grantToken(cfg);
