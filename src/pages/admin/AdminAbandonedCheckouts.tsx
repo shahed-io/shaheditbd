@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   ShoppingCart, Search, RefreshCw, Trash2, Eye, X, Mail, Phone, User as UserIcon,
   CheckCircle2, Clock, MessageCircle, Copy, Check, Calendar, Package, FileText,
+  ArrowRightCircle,
 } from 'lucide-react';
+
+type OrderStatus = 'pending' | 'processing' | 'completed' | 'cancelled' | 'delivered' | 'failed';
+type PayStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 
 interface AbandonedRow {
   id: string;
@@ -40,12 +45,14 @@ const fmtDate = (d: string) => new Date(d).toLocaleString('en-GB', { dateStyle: 
 const inputCls = 'w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors';
 
 export default function AdminAbandonedCheckouts() {
+  const navigate = useNavigate();
   const [rows, setRows] = useState<AbandonedRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending');
   const [selected, setSelected] = useState<AbandonedRow | null>(null);
   const [copiedId, setCopiedId] = useState<string>('');
+  const [convertRow, setConvertRow] = useState<AbandonedRow | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -120,6 +127,80 @@ export default function AdminAbandonedCheckouts() {
     const { error } = await supabase.from('abandoned_checkouts').update({ admin_notes: notes }).eq('id', id);
     if (error) return toast.error(error.message);
     toast.success('Notes saved');
+  };
+
+  const convertToOrder = async (
+    row: AbandonedRow,
+    opts: { status: OrderStatus; paymentStatus: PayStatus; paymentMethod: string; transactionId: string; adminNote: string; redirect: boolean }
+  ) => {
+    if (!row.cart_items || row.cart_items.length === 0) {
+      toast.error('Cart is empty — cannot create order');
+      return;
+    }
+    if (!row.customer_name?.trim() || (!row.customer_email?.trim() && !row.customer_phone?.trim())) {
+      toast.error('Customer name + email/phone required');
+      return;
+    }
+
+    try {
+      // Generate order number  AB-YYMMDD-XXXX
+      const now = new Date();
+      const y = now.getFullYear().toString().slice(-2);
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      const { count } = await supabase.from('orders').select('id', { count: 'exact', head: true });
+      const seq = String((count || 0) + 1).padStart(4, '0');
+      const orderNumber = `AB-${y}${m}${d}-${seq}`;
+
+      const { data: order, error: orderErr } = await supabase.from('orders').insert({
+        order_number: orderNumber,
+        customer_name: row.customer_name!.trim(),
+        customer_email: (row.customer_email?.trim() || `${row.customer_phone?.trim()}@recovered.local`),
+        customer_phone: row.customer_phone?.trim() || null,
+        user_id: row.user_id,
+        payment_method: opts.paymentMethod || row.payment_method || 'bkash',
+        payment_status: opts.paymentStatus,
+        transaction_id: opts.transactionId.trim() || null,
+        notes: row.notes || null,
+        admin_notes: opts.adminNote.trim() || `Recovered from abandoned checkout ${row.id}`,
+        subtotal: row.subtotal,
+        discount_amount: row.discount_amount,
+        total: row.total,
+        coupon_code: row.coupon_code,
+        status: opts.status,
+      } as any).select('id').single();
+
+      if (orderErr || !order) throw orderErr || new Error('Order creation failed');
+
+      const itemsPayload = (row.cart_items || []).map((it: any) => ({
+        order_id: order.id,
+        product_id: it.id || it.product_id || null,
+        product_name: it.name + (it.variant ? ` (${it.variant})` : ''),
+        price: Number(it.price || 0),
+        quantity: Number(it.quantity || 1),
+        total: Number(it.price || 0) * Number(it.quantity || 1),
+      }));
+      const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
+      if (itemsErr) throw itemsErr;
+
+      // Mark abandoned checkout as converted
+      await supabase.from('abandoned_checkouts').update({
+        converted: true,
+        converted_order_id: order.id,
+        converted_at: new Date().toISOString(),
+      }).eq('id', row.id);
+
+      setRows(prev => prev.map(r => r.id === row.id ? { ...r, converted: true, converted_order_id: order.id, converted_at: new Date().toISOString() } : r));
+      setConvertRow(null);
+      if (selected?.id === row.id) setSelected(null);
+
+      toast.success(`Order ${orderNumber} created`);
+      if (opts.redirect) {
+        navigate(`/ceo/orders?focus=${order.id}`);
+      }
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to create order');
+    }
   };
 
   const copy = (text: string, id: string) => {
@@ -271,6 +352,15 @@ export default function AdminAbandonedCheckouts() {
                         <button onClick={() => setSelected(r)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" title="View">
                           <Eye size={15} />
                         </button>
+                        {!r.converted && r.item_count > 0 && (
+                          <button
+                            onClick={() => setConvertRow(r)}
+                            className="p-2 rounded-lg hover:bg-primary/10 text-primary"
+                            title="Convert to Order"
+                          >
+                            <ArrowRightCircle size={15} />
+                          </button>
+                        )}
                         {r.customer_phone && (
                           <a
                             href={waLink(r.customer_phone, r.customer_name)}
@@ -305,6 +395,16 @@ export default function AdminAbandonedCheckouts() {
           copiedId={copiedId}
           onDelete={() => handleDelete(selected.id)}
           waLink={waLink}
+          onConvert={() => setConvertRow(selected)}
+        />
+      )}
+
+      {/* Convert to Order modal */}
+      {convertRow && (
+        <ConvertModal
+          row={convertRow}
+          onClose={() => setConvertRow(null)}
+          onConfirm={(opts) => convertToOrder(convertRow, opts)}
         />
       )}
     </div>
@@ -332,7 +432,7 @@ function StatCard({ label, value, icon: Icon, color, isText, active, onClick }: 
 
 // ─── Detail Drawer ────────────────────────────────────────────────────────
 function DetailDrawer({
-  row, onClose, onContacted, onSaveNotes, onCopy, copiedId, onDelete, waLink,
+  row, onClose, onContacted, onSaveNotes, onCopy, copiedId, onDelete, waLink, onConvert,
 }: {
   row: AbandonedRow;
   onClose: () => void;
@@ -342,6 +442,7 @@ function DetailDrawer({
   copiedId: string;
   onDelete: () => void;
   waLink: (p: string, n: string | null) => string;
+  onConvert: () => void;
 }) {
   const [notes, setNotes] = useState(row.admin_notes || '');
   useEffect(() => { setNotes(row.admin_notes || ''); }, [row.id]);
@@ -438,6 +539,14 @@ function DetailDrawer({
 
           {/* Actions */}
           <div className="flex flex-wrap gap-2 pt-2">
+            {!row.converted && row.item_count > 0 && (
+              <button
+                onClick={onConvert}
+                className="w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 hover:opacity-90 shadow"
+              >
+                <ArrowRightCircle size={16} /> Convert to Order
+              </button>
+            )}
             {row.customer_phone && (
               <a
                 href={waLink(row.customer_phone, row.customer_name)}
@@ -509,6 +618,154 @@ function Field({
           {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
         </button>
       )}
+    </div>
+  );
+}
+
+// ─── Convert to Order Modal ───────────────────────────────────────────────
+function ConvertModal({
+  row, onClose, onConfirm,
+}: {
+  row: AbandonedRow;
+  onClose: () => void;
+  onConfirm: (opts: { status: OrderStatus; paymentStatus: PayStatus; paymentMethod: string; transactionId: string; adminNote: string; redirect: boolean }) => void | Promise<void>;
+}) {
+  const [status, setStatus] = useState<OrderStatus>('pending');
+  const [paymentStatus, setPaymentStatus] = useState<PayStatus>('pending');
+  const [paymentMethod, setPaymentMethod] = useState<string>(row.payment_method || 'bkash');
+  const [transactionId, setTransactionId] = useState('');
+  const [adminNote, setAdminNote] = useState('');
+  const [redirect, setRedirect] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      await onConfirm({ status, paymentStatus, paymentMethod, transactionId, adminNote, redirect });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const statuses: { v: OrderStatus; label: string; color: string }[] = [
+    { v: 'pending',    label: 'Pending',    color: 'bg-amber-500/15 text-amber-600 border-amber-500/40' },
+    { v: 'processing', label: 'Processing', color: 'bg-blue-500/15 text-blue-600 border-blue-500/40' },
+    { v: 'completed',  label: 'Completed',  color: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/40' },
+    { v: 'delivered',  label: 'Delivered',  color: 'bg-purple-500/15 text-purple-600 border-purple-500/40' },
+    { v: 'cancelled',  label: 'Cancelled',  color: 'bg-rose-500/15 text-rose-600 border-rose-500/40' },
+    { v: 'failed',     label: 'Failed',     color: 'bg-red-500/15 text-red-600 border-red-500/40' },
+  ];
+
+  const payStatuses: { v: PayStatus; label: string }[] = [
+    { v: 'pending',  label: 'Pending' },
+    { v: 'paid',     label: 'Paid' },
+    { v: 'failed',   label: 'Failed' },
+    { v: 'refunded', label: 'Refunded' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+      <div className="w-full max-w-lg bg-background border border-border rounded-2xl shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <div>
+            <h3 className="text-lg font-bold">Convert to Order</h3>
+            <p className="text-xs text-muted-foreground">{row.customer_name || 'Unknown'} · {fmtBDT(row.total)} · {row.item_count} item(s)</p>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-muted"><X size={18} /></button>
+        </div>
+
+        <div className="p-5 space-y-5 max-h-[70vh] overflow-y-auto">
+          {/* Order status */}
+          <div>
+            <label className="text-xs font-semibold uppercase text-muted-foreground mb-2 block">Order Status</label>
+            <div className="grid grid-cols-3 gap-2">
+              {statuses.map(s => (
+                <button
+                  key={s.v}
+                  type="button"
+                  onClick={() => setStatus(s.v)}
+                  className={`px-3 py-2 rounded-xl text-xs font-medium border transition ${status === s.v ? s.color + ' ring-2 ring-primary/30' : 'bg-muted/30 text-muted-foreground border-border hover:bg-muted/60'}`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Payment status */}
+          <div>
+            <label className="text-xs font-semibold uppercase text-muted-foreground mb-2 block">Payment Status</label>
+            <div className="grid grid-cols-4 gap-2">
+              {payStatuses.map(p => (
+                <button
+                  key={p.v}
+                  type="button"
+                  onClick={() => setPaymentStatus(p.v)}
+                  className={`px-3 py-2 rounded-xl text-xs font-medium border transition ${paymentStatus === p.v ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/30 text-muted-foreground border-border hover:bg-muted/60'}`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Payment method + tx id */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Payment Method</label>
+              <input
+                value={paymentMethod}
+                onChange={e => setPaymentMethod(e.target.value)}
+                placeholder="bkash / nagad / bank"
+                className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Transaction ID</label>
+              <input
+                value={transactionId}
+                onChange={e => setTransactionId(e.target.value)}
+                placeholder="Optional"
+                className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+
+          {/* Admin note */}
+          <div>
+            <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Admin Note</label>
+            <textarea
+              value={adminNote}
+              onChange={e => setAdminNote(e.target.value)}
+              rows={2}
+              placeholder="Internal note for this recovered order…"
+              className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          {/* Redirect toggle */}
+          <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+            <input type="checkbox" checked={redirect} onChange={e => setRedirect(e.target.checked)} />
+            Open order in Orders page after creation
+          </label>
+        </div>
+
+        <div className="flex gap-2 p-4 border-t border-border bg-muted/20">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-medium hover:bg-muted/70"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={submit}
+            disabled={submitting}
+            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50"
+          >
+            <ArrowRightCircle size={16} /> {submitting ? 'Creating…' : 'Create Order'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
