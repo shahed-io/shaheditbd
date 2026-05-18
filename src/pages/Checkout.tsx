@@ -1010,7 +1010,7 @@ const Checkout = () => {
             {loading ? (
               <><Loader2 size={16} className="animate-spin" /> Processing...</>
             ) : (
-              <>অর্ডার দিন — ৳{finalTotal.toLocaleString()}</>
+              <>{paymentMethod === 'bkash_online' ? `bKash দিয়ে পরিশোধ করুন — ৳${payableTotal.toLocaleString()}` : `অর্ডার দিন — ৳${finalTotal.toLocaleString()}`}</>
             )}
           </button>
 
