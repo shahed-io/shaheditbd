@@ -217,6 +217,30 @@ const Checkout = () => {
     }
   }, []);
 
+  // ── Handle bKash PGW callback return (?bkash=success|failure|cancel|error&order=...) ──
+  useEffect(() => {
+    const bkash = searchParams.get('bkash');
+    const ord = searchParams.get('order');
+    if (!bkash) return;
+    if (bkash === 'success' && ord) {
+      clearCart();
+      setOrderNumber(ord);
+      setPaymentMethod('bkash_online');
+      setOrderPlaced(true);
+      toast.success('✅ bKash পেমেন্ট সফল!');
+    } else if (bkash === 'cancel') {
+      setSubmitError('bKash পেমেন্ট বাতিল করা হয়েছে। আবার চেষ্টা করুন।');
+    } else if (bkash === 'failure' || bkash === 'error') {
+      setSubmitError('bKash পেমেন্ট ব্যর্থ হয়েছে। অন্য পদ্ধতি ব্যবহার করুন অথবা আবার চেষ্টা করুন।');
+    } else if (bkash === 'missing') {
+      setSubmitError('bKash পেমেন্ট তথ্য পাওয়া যায়নি।');
+    }
+    // Clean URL
+    const newUrl = window.location.pathname;
+    window.history.replaceState({}, '', newUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Fire begin_checkout once on mount when there are items
   useEffect(() => {
     if (items.length === 0) return;
