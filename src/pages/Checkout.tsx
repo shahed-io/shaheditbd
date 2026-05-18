@@ -36,7 +36,7 @@ const checkoutSchema = z.object({
   phone: z.string().trim().regex(/^(\+880|0)[0-9]{10}$/, 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)').max(20),
 });
 
-type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet';
+type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 'bank_transfer' | 'wallet' | 'bkash_online';
 
 const Checkout = () => {
   const {
@@ -55,6 +55,7 @@ const Checkout = () => {
   // Build dynamic payment methods from DB config
   const paymentMethods = [
     { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', number: '', type: 'Wallet Balance', logo: undefined as string | undefined },
+    { id: 'bkash_online' as PaymentMethod, label: 'bKash (Online)', color: 'from-pink-600 to-rose-700', number: '', type: 'bKash PGW', logo: bkashLogo },
     ...paymentConfigs
       .filter(c => c.isActive)
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -216,6 +217,30 @@ const Checkout = () => {
     }
   }, []);
 
+  // ── Handle bKash PGW callback return (?bkash=success|failure|cancel|error&order=...) ──
+  useEffect(() => {
+    const bkash = searchParams.get('bkash');
+    const ord = searchParams.get('order');
+    if (!bkash) return;
+    if (bkash === 'success' && ord) {
+      clearCart();
+      setOrderNumber(ord);
+      setPaymentMethod('bkash_online');
+      setOrderPlaced(true);
+      toast.success('✅ bKash পেমেন্ট সফল!');
+    } else if (bkash === 'cancel') {
+      setSubmitError('bKash পেমেন্ট বাতিল করা হয়েছে। আবার চেষ্টা করুন।');
+    } else if (bkash === 'failure' || bkash === 'error') {
+      setSubmitError('bKash পেমেন্ট ব্যর্থ হয়েছে। অন্য পদ্ধতি ব্যবহার করুন অথবা আবার চেষ্টা করুন।');
+    } else if (bkash === 'missing') {
+      setSubmitError('bKash পেমেন্ট তথ্য পাওয়া যায়নি।');
+    }
+    // Clean URL
+    const newUrl = window.location.pathname;
+    window.history.replaceState({}, '', newUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Fire begin_checkout once on mount when there are items
   useEffect(() => {
     if (items.length === 0) return;
@@ -356,7 +381,7 @@ const Checkout = () => {
       return;
     }
 
-    if (paymentMethod !== 'wallet' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
+    if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
 
     // Wallet: check balance
@@ -397,7 +422,10 @@ const Checkout = () => {
           discount_amount: discountAmount + refCreditApplied,
           total: payableTotal,
           payment_method: paymentMethod,
-          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
+          transaction_id:
+            paymentMethod === 'wallet' ? `WALLET-${orderNum}` :
+            paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
+            transactionId.trim(),
           coupon_code: coupon.isApplied ? coupon.code : null,
           coupon_id: couponId,
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
@@ -475,8 +503,8 @@ const Checkout = () => {
         }
       }
 
-      // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
-      if (paymentMethod !== 'wallet') {
+      // Insert payment proof for manual non-wallet, non-PGW payments so admin sees it in /ceo/payments
+      if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online') {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
           order_id: order.id,
           user_id: user?.id || null,
@@ -487,6 +515,34 @@ const Checkout = () => {
           status: 'pending',
         });
         if (proofError) console.error('[Checkout] payment_proof insert error:', proofError);
+      }
+
+      // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
+      if (paymentMethod === 'bkash_online') {
+        try {
+          const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
+            body: {
+              orderId: order.id,
+              orderNumber: orderNum,
+              amount: payableTotal,
+              payerReference: form.phone || orderNum,
+            },
+          });
+          if (bkErr || !bkData?.bkashURL) {
+            console.error('[Checkout] bkash-create error:', bkErr, bkData);
+            setSubmitError('bKash পেমেন্ট শুরু করা যায়নি। আবার চেষ্টা করুন।');
+            setLoading(false);
+            return;
+          }
+          // Redirect user to bKash hosted page
+          window.location.href = bkData.bkashURL;
+          return;
+        } catch (e) {
+          console.error('[Checkout] bkash invoke failed:', e);
+          setSubmitError('bKash পেমেন্ট গেটওয়ে কানেক্ট হয়নি। আবার চেষ্টা করুন।');
+          setLoading(false);
+          return;
+        }
       }
 
       // Record affiliate conversion (non-blocking, server validates)
@@ -808,8 +864,25 @@ const Checkout = () => {
               </div>
             )}
 
-            {/* Payment Instructions (only for non-wallet) */}
-            {paymentMethod !== 'wallet' && (
+            {/* bKash Online (PGW) info block */}
+            {paymentMethod === 'bkash_online' && (
+              <div className="rounded-xl p-4 space-y-2 border bg-pink-500/10 border-pink-500/30">
+                <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                  <img src={bkashLogo} alt="bKash" className="h-6 w-auto" />
+                  <span>bKash Online Payment (PGW)</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  "অর্ডার দিন" বাটনে ক্লিক করলে আপনাকে bKash-এর সিকিউর পেমেন্ট পেজে নিয়ে যাওয়া হবে।
+                  পেমেন্ট সম্পন্ন হলে স্বয়ংক্রিয়ভাবে আপনার অর্ডার কনফার্ম হবে — কোনো Transaction ID দেওয়ার দরকার নেই।
+                </p>
+                <p className="text-xs text-pink-600 dark:text-pink-300 font-medium">
+                  💳 মোট পরিশোধ: ৳{payableTotal.toLocaleString()}
+                </p>
+              </div>
+            )}
+
+            {/* Payment Instructions (only for manual methods) */}
+            {paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && (
               <>
                 <PaymentInstructions
                   paymentMethodId={paymentMethod as PMId}
@@ -937,7 +1010,7 @@ const Checkout = () => {
             {loading ? (
               <><Loader2 size={16} className="animate-spin" /> Processing...</>
             ) : (
-              <>অর্ডার দিন — ৳{finalTotal.toLocaleString()}</>
+              <>{paymentMethod === 'bkash_online' ? `bKash দিয়ে পরিশোধ করুন — ৳${payableTotal.toLocaleString()}` : `অর্ডার দিন — ৳${finalTotal.toLocaleString()}`}</>
             )}
           </button>
 
