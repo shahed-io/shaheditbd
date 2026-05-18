@@ -259,6 +259,7 @@ const AppContent = () => {
             <Route path="customers" element={<AdminSuspense><AdminCustomers /></AdminSuspense>} />
             <Route path="payments" element={<AdminSuspense><AdminPayments /></AdminSuspense>} />
             <Route path="bkash-pgw" element={<AdminSuspense><AdminBkashPGW /></AdminSuspense>} />
+            <Route path="bkash-transactions" element={<AdminSuspense><AdminBkashTransactions /></AdminSuspense>} />
             <Route path="tickets" element={<AdminSuspense><AdminTickets /></AdminSuspense>} />
             <Route path="reports" element={<AdminSuspense><AdminReports /></AdminSuspense>} />
             <Route path="marketing" element={<AdminSuspense><AdminMarketing /></AdminSuspense>} />
