@@ -432,7 +432,7 @@ function StatCard({ label, value, icon: Icon, color, isText, active, onClick }: 
 
 // ─── Detail Drawer ────────────────────────────────────────────────────────
 function DetailDrawer({
-  row, onClose, onContacted, onSaveNotes, onCopy, copiedId, onDelete, waLink,
+  row, onClose, onContacted, onSaveNotes, onCopy, copiedId, onDelete, waLink, onConvert,
 }: {
   row: AbandonedRow;
   onClose: () => void;
@@ -442,6 +442,7 @@ function DetailDrawer({
   copiedId: string;
   onDelete: () => void;
   waLink: (p: string, n: string | null) => string;
+  onConvert: () => void;
 }) {
   const [notes, setNotes] = useState(row.admin_notes || '');
   useEffect(() => { setNotes(row.admin_notes || ''); }, [row.id]);
