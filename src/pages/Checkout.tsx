@@ -1049,7 +1049,7 @@ const Checkout = () => {
                 ) : (
                   <>
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
-                      <img src={bkashLogo} alt="bKash" className="h-5 w-5 object-contain" />
+                      <img src={bkashLogoSrc} alt="bKash" className="h-5 w-5 object-contain" />
                     </span>
                     <span className="tracking-wide">
                       bKash দিয়ে পরিশোধ করুন
