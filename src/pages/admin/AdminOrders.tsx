@@ -68,8 +68,10 @@ const PAYMENT_STATUS_COLORS: Record<string, string> = {
 };
 
 const PM_LABELS: Record<string, string> = {
+  bkash_online: 'bKash (Online)',
   bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket',
   upay: 'উপায়', bkash_merchant: 'BKash Merchant',
+  bank_transfer: 'Bank Transfer', wallet: 'Wallet',
 };
 
 const inputCls = "w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors";

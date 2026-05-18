@@ -51,7 +51,9 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
   rejected: { label: 'Rejected', color: 'bg-destructive/15 text-destructive border-destructive/30', icon: XCircle },
 };
 const methodLabels: Record<string, string> = {
+  bkash_online: 'bKash (Online)',
   bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', bank: 'Bank Transfer',
+  bank_transfer: 'Bank Transfer', upay: 'উপায়', bkash_merchant: 'BKash Merchant', wallet: 'Wallet',
 };
 
 // ── Empty method template ───────────────────────────────────
@@ -572,6 +574,7 @@ export default function AdminPayments() {
   const [activeTab, setActiveTab] = useState<'proofs' | 'settings'>('proofs');
   const [search, setSearch]         = useState('');
   const [statusFilter, setStatus]   = useState('all');
+  const [methodFilter, setMethod]   = useState('all');
   const [selected, setSelected]     = useState<PaymentProof | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const [imgOpen, setImgOpen]       = useState(false);
@@ -628,13 +631,16 @@ export default function AdminPayments() {
 
   const filtered = payments.filter(p => {
     const matchStatus = statusFilter === 'all' || p.status === statusFilter;
+    const matchMethod = methodFilter === 'all' || p.payment_method === methodFilter;
     const q = search.toLowerCase();
     const matchSearch = !q
       || p.transaction_id.toLowerCase().includes(q)
+      || (p.payment_method ?? '').toLowerCase().includes(q)
+      || (methodLabels[p.payment_method] ?? '').toLowerCase().includes(q)
       || (p.orders?.order_number ?? '').toLowerCase().includes(q)
       || (p.orders?.customer_name ?? '').toLowerCase().includes(q)
       || (p.orders?.customer_email ?? '').toLowerCase().includes(q);
-    return matchStatus && matchSearch;
+    return matchStatus && matchMethod && matchSearch;
   });
 
   const counts = {
@@ -733,6 +739,18 @@ export default function AdminPayments() {
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="approved">Approved</SelectItem>
                 <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={methodFilter} onValueChange={setMethod}>
+              <SelectTrigger className="w-44 bg-muted/30">
+                <CreditCard size={14} className="mr-2 text-muted-foreground" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Methods</SelectItem>
+                {Object.entries(methodLabels).map(([k, v]) => (
+                  <SelectItem key={k} value={k}>{v}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
