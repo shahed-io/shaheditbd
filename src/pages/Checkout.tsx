@@ -52,6 +52,7 @@ const Checkout = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { configs: paymentConfigs } = usePaymentSettings();
+  const bkashContent = useBkashPgwContent();
 
   // Build dynamic payment methods from DB config
   const paymentMethods = [
