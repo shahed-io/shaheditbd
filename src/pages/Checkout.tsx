@@ -110,6 +110,7 @@ const Checkout = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [bkashDelivered, setBkashDelivered] = useState<boolean | null>(null); // null = checking, true = licenses assigned, false = pending
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [summaryOpen, setSummaryOpen] = useState(true);
@@ -244,7 +245,27 @@ const Checkout = () => {
       setOrderNumber(ord);
       setPaymentMethod('bkash_online');
       setOrderPlaced(true);
+      setBkashDelivered(null);
       toast.success('✅ bKash পেমেন্ট সফল!');
+      // Check if licenses were auto-assigned (License Manager had stock)
+      (async () => {
+        const checkDelivery = async (): Promise<boolean> => {
+          const { data: orderRow } = await supabase
+            .from('orders').select('id').eq('order_number', ord).maybeSingle();
+          if (!orderRow?.id) return false;
+          const { data: items } = await supabase
+            .from('order_items').select('license_key').eq('order_id', orderRow.id);
+          if (!items || items.length === 0) return false;
+          return items.every(i => !!i.license_key && i.license_key.trim() !== '');
+        };
+        // Retry a few times since trigger runs async
+        for (let i = 0; i < 5; i++) {
+          const delivered = await checkDelivery();
+          if (delivered) { setBkashDelivered(true); return; }
+          await new Promise(r => setTimeout(r, 1200));
+        }
+        setBkashDelivered(false);
+      })();
     } else if (bkash === 'cancel') {
       setSubmitError('bKash পেমেন্ট বাতিল করা হয়েছে। আবার চেষ্টা করুন।');
     } else if (bkash === 'failure' || bkash === 'error') {
@@ -720,35 +741,57 @@ const Checkout = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center space-y-6">
-          <div className={`w-24 h-24 rounded-full ${paymentMethod === 'bkash_online' ? 'bg-pink-500/20 border-2 border-pink-500/40' : 'bg-green-500/20 border-2 border-green-500/40'} flex items-center justify-center mx-auto`}>
-            <CheckCircle size={44} className={paymentMethod === 'bkash_online' ? 'text-pink-500' : 'text-green-400'} />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {paymentMethod === 'bkash_online' ? '✅ অর্ডার ডেলিভারি সম্পন্ন!' : 'অর্ডার সফল! 🎉'}
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              অর্ডার নম্বর: <span className="text-primary font-mono font-bold">{orderNumber}</span>
-            </p>
-            {paymentMethod === 'bkash_online' ? (
-              <div className="mt-3 p-4 rounded-2xl bg-gradient-to-br from-pink-500/10 to-pink-600/5 border border-pink-400/30 text-left space-y-1.5">
-                <p className="text-sm font-bold text-pink-600 flex items-center gap-2">🚀 ইনস্ট্যান্ট ডেলিভারি সম্পন্ন</p>
-                <p className="text-xs text-foreground/80">bKash পেমেন্ট সফলভাবে গৃহীত হয়েছে এবং আপনার অর্ডার <span className="font-bold text-green-600">কমপ্লিট</span> হয়েছে।</p>
-                <p className="text-xs text-muted-foreground">লাইসেন্স কি এখনই আপনার ড্যাশবোর্ড ও ইমেইলে পাঠানো হয়েছে। দয়া করে "আমার অর্ডার" থেকে দেখে নিন।</p>
-              </div>
-            ) : paymentMethod === 'wallet' ? (
-              <div className="mt-3 p-4 rounded-2xl bg-violet-500/10 border border-violet-400/30 text-left space-y-1.5">
-                <p className="text-sm font-bold text-violet-700 flex items-center gap-2"><Wallet size={15} /> ওয়ালেট পেমেন্ট সম্পন্ন</p>
-                <p className="text-xs text-violet-600">আপনার ওয়ালেট থেকে ৳{finalTotal.toLocaleString()} কেটে নেওয়া হয়েছে।</p>
-                <p className="text-xs text-muted-foreground">লাইসেন্স কি শীঘ্রই আপনার ড্যাশবোর্ডে দেখা যাবে।</p>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground mt-3">
-                পেমেন্ট যাচাইয়ের পর আপনার ইমেইলে লাইসেন্স কি পাঠানো হবে।
-                সাধারণত ১–২ ঘন্টার মধ্যে।
-              </p>
-            )}
-          </div>
+          {(() => {
+            const isBkash = paymentMethod === 'bkash_online';
+            const delivered = isBkash && bkashDelivered === true;
+            const checking = isBkash && bkashDelivered === null;
+            const pending = isBkash && bkashDelivered === false;
+            const ringClass = delivered
+              ? 'bg-pink-500/20 border-2 border-pink-500/40'
+              : 'bg-green-500/20 border-2 border-green-500/40';
+            const iconClass = delivered ? 'text-pink-500' : 'text-green-400';
+            return (
+              <>
+                <div className={`w-24 h-24 rounded-full ${ringClass} flex items-center justify-center mx-auto`}>
+                  {checking ? <Loader2 size={44} className="text-muted-foreground animate-spin" /> : <CheckCircle size={44} className={iconClass} />}
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">
+                    {delivered ? '✅ অর্ডার ডেলিভারি সম্পন্ন!' : checking ? 'ডেলিভারি যাচাই করা হচ্ছে…' : 'অর্ডার সফল! 🎉'}
+                  </h1>
+                  <p className="text-muted-foreground mt-2">
+                    অর্ডার নম্বর: <span className="text-primary font-mono font-bold">{orderNumber}</span>
+                  </p>
+                  {delivered ? (
+                    <div className="mt-3 p-4 rounded-2xl bg-gradient-to-br from-pink-500/10 to-pink-600/5 border border-pink-400/30 text-left space-y-1.5">
+                      <p className="text-sm font-bold text-pink-600 flex items-center gap-2">🚀 ইনস্ট্যান্ট ডেলিভারি সম্পন্ন</p>
+                      <p className="text-xs text-foreground/80">bKash পেমেন্ট সফলভাবে গৃহীত হয়েছে এবং আপনার অর্ডার <span className="font-bold text-green-600">কমপ্লিট</span> হয়েছে।</p>
+                      <p className="text-xs text-muted-foreground">লাইসেন্স কি এখনই আপনার ড্যাশবোর্ড ও ইমেইলে পাঠানো হয়েছে। দয়া করে "আমার অর্ডার" থেকে দেখে নিন।</p>
+                    </div>
+                  ) : checking ? (
+                    <p className="text-sm text-muted-foreground mt-3">
+                      পেমেন্ট গৃহীত হয়েছে। লাইসেন্স স্টক যাচাই করা হচ্ছে, একটু অপেক্ষা করুন…
+                    </p>
+                  ) : pending ? (
+                    <p className="text-sm text-muted-foreground mt-3">
+                      পেমেন্ট সফলভাবে গৃহীত হয়েছে। বর্তমানে লাইসেন্স স্টক না থাকায় ম্যানুয়াল প্রসেসিং চলছে — সাধারণত ১–২ ঘন্টার মধ্যে আপনার ইমেইলে লাইসেন্স কি পাঠানো হবে।
+                    </p>
+                  ) : paymentMethod === 'wallet' ? (
+                    <div className="mt-3 p-4 rounded-2xl bg-violet-500/10 border border-violet-400/30 text-left space-y-1.5">
+                      <p className="text-sm font-bold text-violet-700 flex items-center gap-2"><Wallet size={15} /> ওয়ালেট পেমেন্ট সম্পন্ন</p>
+                      <p className="text-xs text-violet-600">আপনার ওয়ালেট থেকে ৳{finalTotal.toLocaleString()} কেটে নেওয়া হয়েছে।</p>
+                      <p className="text-xs text-muted-foreground">লাইসেন্স কি শীঘ্রই আপনার ড্যাশবোর্ডে দেখা যাবে।</p>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground mt-3">
+                      পেমেন্ট যাচাইয়ের পর আপনার ইমেইলে লাইসেন্স কি পাঠানো হবে।
+                      সাধারণত ১–২ ঘন্টার মধ্যে।
+                    </p>
+                  )}
+                </div>
+              </>
+            );
+          })()}
           <div className="flex gap-3 justify-center">
             <button onClick={() => navigate('/')} className="px-6 py-3 rounded-xl font-semibold text-sm border border-border text-muted-foreground hover:text-foreground transition-colors">
               হোমে ফিরে যাও
