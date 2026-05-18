@@ -255,6 +255,8 @@ const UserDashboard = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { wishlistItems } = useWishlist();
   const { configs: paymentConfigs } = usePaymentSettings();
+  const bkashContent = useBkashPgwContent();
+  const bkashLogoSrc = bkashContent.logo_url || bkashLogo;
 
   const [activeTab, setActiveTab] = useState<TabId>(() => {
     const tab = searchParams.get('tab') as TabId;
