@@ -720,19 +720,27 @@ const Checkout = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center space-y-6">
-          <div className="w-24 h-24 rounded-full bg-green-500/20 border-2 border-green-500/40 flex items-center justify-center mx-auto">
-            <CheckCircle size={44} className="text-green-400" />
+          <div className={`w-24 h-24 rounded-full ${paymentMethod === 'bkash_online' ? 'bg-pink-500/20 border-2 border-pink-500/40' : 'bg-green-500/20 border-2 border-green-500/40'} flex items-center justify-center mx-auto`}>
+            <CheckCircle size={44} className={paymentMethod === 'bkash_online' ? 'text-pink-500' : 'text-green-400'} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">অর্ডার সফল! 🎉</h1>
+            <h1 className="text-2xl font-bold text-foreground">
+              {paymentMethod === 'bkash_online' ? '✅ অর্ডার ডেলিভারি সম্পন্ন!' : 'অর্ডার সফল! 🎉'}
+            </h1>
             <p className="text-muted-foreground mt-2">
               অর্ডার নম্বর: <span className="text-primary font-mono font-bold">{orderNumber}</span>
             </p>
-            {paymentMethod === 'wallet' ? (
+            {paymentMethod === 'bkash_online' ? (
+              <div className="mt-3 p-4 rounded-2xl bg-gradient-to-br from-pink-500/10 to-pink-600/5 border border-pink-400/30 text-left space-y-1.5">
+                <p className="text-sm font-bold text-pink-600 flex items-center gap-2">🚀 ইনস্ট্যান্ট ডেলিভারি সম্পন্ন</p>
+                <p className="text-xs text-foreground/80">bKash পেমেন্ট সফলভাবে গৃহীত হয়েছে এবং আপনার অর্ডার <span className="font-bold text-green-600">কমপ্লিট</span> হয়েছে।</p>
+                <p className="text-xs text-muted-foreground">লাইসেন্স কি এখনই আপনার ড্যাশবোর্ড ও ইমেইলে পাঠানো হয়েছে। দয়া করে "আমার অর্ডার" থেকে দেখে নিন।</p>
+              </div>
+            ) : paymentMethod === 'wallet' ? (
               <div className="mt-3 p-4 rounded-2xl bg-violet-500/10 border border-violet-400/30 text-left space-y-1.5">
                 <p className="text-sm font-bold text-violet-700 flex items-center gap-2"><Wallet size={15} /> ওয়ালেট পেমেন্ট সম্পন্ন</p>
                 <p className="text-xs text-violet-600">আপনার ওয়ালেট থেকে ৳{finalTotal.toLocaleString()} কেটে নেওয়া হয়েছে।</p>
-                <p className="text-xs text-muted-foreground">অর্ডারটি প্রক্রিয়াধীন। লাইসেন্স কি শীঘ্রই আপনার ড্যাশবোর্ডে দেখা যাবে।</p>
+                <p className="text-xs text-muted-foreground">লাইসেন্স কি শীঘ্রই আপনার ড্যাশবোর্ডে দেখা যাবে।</p>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground mt-3">
