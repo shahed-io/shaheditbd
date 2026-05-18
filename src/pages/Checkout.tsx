@@ -864,8 +864,25 @@ const Checkout = () => {
               </div>
             )}
 
-            {/* Payment Instructions (only for non-wallet) */}
-            {paymentMethod !== 'wallet' && (
+            {/* bKash Online (PGW) info block */}
+            {paymentMethod === 'bkash_online' && (
+              <div className="rounded-xl p-4 space-y-2 border bg-pink-500/10 border-pink-500/30">
+                <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                  <img src={bkashLogo} alt="bKash" className="h-6 w-auto" />
+                  <span>bKash Online Payment (PGW)</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  "অর্ডার দিন" বাটনে ক্লিক করলে আপনাকে bKash-এর সিকিউর পেমেন্ট পেজে নিয়ে যাওয়া হবে।
+                  পেমেন্ট সম্পন্ন হলে স্বয়ংক্রিয়ভাবে আপনার অর্ডার কনফার্ম হবে — কোনো Transaction ID দেওয়ার দরকার নেই।
+                </p>
+                <p className="text-xs text-pink-600 dark:text-pink-300 font-medium">
+                  💳 মোট পরিশোধ: ৳{payableTotal.toLocaleString()}
+                </p>
+              </div>
+            )}
+
+            {/* Payment Instructions (only for manual methods) */}
+            {paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && (
               <>
                 <PaymentInstructions
                   paymentMethodId={paymentMethod as PMId}
