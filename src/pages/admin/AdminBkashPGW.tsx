@@ -261,6 +261,110 @@ export default function AdminBkashPGW() {
           Save Settings
         </Button>
       </div>
+
+      {/* ─── Customer-facing content editor ─── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-pink-600" />
+            Checkout Display Content
+          </CardTitle>
+          <CardDescription>
+            Customize the text shown to customers when they select "bKash (Online)" on Checkout & Quick Order.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="bk_title">Title</Label>
+            <Input
+              id="bk_title"
+              value={content.title}
+              onChange={(e) => updateContent('title', e.target.value)}
+              placeholder="bKash Online Payment (PGW)"
+            />
+          </div>
+          <div>
+            <Label htmlFor="bk_desc">Description</Label>
+            <Textarea
+              id="bk_desc"
+              value={content.description}
+              onChange={(e) => updateContent('description', e.target.value)}
+              rows={3}
+              placeholder="Describe the bKash Online flow…"
+            />
+          </div>
+          <div>
+            <Label htmlFor="bk_amount">Amount Line Prefix</Label>
+            <Input
+              id="bk_amount"
+              value={content.amount_prefix}
+              onChange={(e) => updateContent('amount_prefix', e.target.value)}
+              placeholder="💳 মোট পরিশোধ:"
+            />
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Shown on Checkout right before the total amount.
+            </p>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <Label>Bullet Points</Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => updateContent('bullets', [...content.bullets, ''])}
+              >
+                <Plus className="h-4 w-4 mr-1" /> Add
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {content.bullets.map((b, i) => (
+                <div key={i} className="flex gap-2">
+                  <Input
+                    value={b}
+                    onChange={(e) => {
+                      const next = [...content.bullets];
+                      next[i] = e.target.value;
+                      updateContent('bullets', next);
+                    }}
+                    placeholder={`Bullet ${i + 1}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => updateContent('bullets', content.bullets.filter((_, idx) => idx !== i))}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              ))}
+              {content.bullets.length === 0 && (
+                <p className="text-xs text-muted-foreground">No bullet points — add one above.</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => contentData && setContent(contentData)}
+              disabled={saveContent.isPending}
+            >
+              Reset
+            </Button>
+            <Button
+              onClick={() => saveContent.mutate(content)}
+              disabled={saveContent.isPending}
+              className="bg-pink-600 hover:bg-pink-700"
+            >
+              {saveContent.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+              Save Content
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
