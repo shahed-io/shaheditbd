@@ -64,6 +64,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   const navigate = useNavigate();
   const { configs: paymentConfigs } = usePaymentSettings();
   const bkashContent = useBkashPgwContent();
+  const bkashLogoSrc = bkashContent.logo_url || bkashLogo;
 
   const [step, setStep] = useState<'info' | 'payment' | 'success'>('info');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
