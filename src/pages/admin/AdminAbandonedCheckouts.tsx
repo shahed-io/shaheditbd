@@ -621,3 +621,151 @@ function Field({
     </div>
   );
 }
+
+// ─── Convert to Order Modal ───────────────────────────────────────────────
+function ConvertModal({
+  row, onClose, onConfirm,
+}: {
+  row: AbandonedRow;
+  onClose: () => void;
+  onConfirm: (opts: { status: OrderStatus; paymentStatus: PayStatus; paymentMethod: string; transactionId: string; adminNote: string; redirect: boolean }) => void | Promise<void>;
+}) {
+  const [status, setStatus] = useState<OrderStatus>('pending');
+  const [paymentStatus, setPaymentStatus] = useState<PayStatus>('pending');
+  const [paymentMethod, setPaymentMethod] = useState<string>(row.payment_method || 'bkash');
+  const [transactionId, setTransactionId] = useState('');
+  const [adminNote, setAdminNote] = useState('');
+  const [redirect, setRedirect] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      await onConfirm({ status, paymentStatus, paymentMethod, transactionId, adminNote, redirect });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const statuses: { v: OrderStatus; label: string; color: string }[] = [
+    { v: 'pending',    label: 'Pending',    color: 'bg-amber-500/15 text-amber-600 border-amber-500/40' },
+    { v: 'processing', label: 'Processing', color: 'bg-blue-500/15 text-blue-600 border-blue-500/40' },
+    { v: 'completed',  label: 'Completed',  color: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/40' },
+    { v: 'delivered',  label: 'Delivered',  color: 'bg-purple-500/15 text-purple-600 border-purple-500/40' },
+    { v: 'cancelled',  label: 'Cancelled',  color: 'bg-rose-500/15 text-rose-600 border-rose-500/40' },
+    { v: 'failed',     label: 'Failed',     color: 'bg-red-500/15 text-red-600 border-red-500/40' },
+  ];
+
+  const payStatuses: { v: PayStatus; label: string }[] = [
+    { v: 'pending',  label: 'Pending' },
+    { v: 'paid',     label: 'Paid' },
+    { v: 'failed',   label: 'Failed' },
+    { v: 'refunded', label: 'Refunded' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+      <div className="w-full max-w-lg bg-background border border-border rounded-2xl shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <div>
+            <h3 className="text-lg font-bold">Convert to Order</h3>
+            <p className="text-xs text-muted-foreground">{row.customer_name || 'Unknown'} · {fmtBDT(row.total)} · {row.item_count} item(s)</p>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-muted"><X size={18} /></button>
+        </div>
+
+        <div className="p-5 space-y-5 max-h-[70vh] overflow-y-auto">
+          {/* Order status */}
+          <div>
+            <label className="text-xs font-semibold uppercase text-muted-foreground mb-2 block">Order Status</label>
+            <div className="grid grid-cols-3 gap-2">
+              {statuses.map(s => (
+                <button
+                  key={s.v}
+                  type="button"
+                  onClick={() => setStatus(s.v)}
+                  className={`px-3 py-2 rounded-xl text-xs font-medium border transition ${status === s.v ? s.color + ' ring-2 ring-primary/30' : 'bg-muted/30 text-muted-foreground border-border hover:bg-muted/60'}`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Payment status */}
+          <div>
+            <label className="text-xs font-semibold uppercase text-muted-foreground mb-2 block">Payment Status</label>
+            <div className="grid grid-cols-4 gap-2">
+              {payStatuses.map(p => (
+                <button
+                  key={p.v}
+                  type="button"
+                  onClick={() => setPaymentStatus(p.v)}
+                  className={`px-3 py-2 rounded-xl text-xs font-medium border transition ${paymentStatus === p.v ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/30 text-muted-foreground border-border hover:bg-muted/60'}`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Payment method + tx id */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Payment Method</label>
+              <input
+                value={paymentMethod}
+                onChange={e => setPaymentMethod(e.target.value)}
+                placeholder="bkash / nagad / bank"
+                className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Transaction ID</label>
+              <input
+                value={transactionId}
+                onChange={e => setTransactionId(e.target.value)}
+                placeholder="Optional"
+                className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+
+          {/* Admin note */}
+          <div>
+            <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Admin Note</label>
+            <textarea
+              value={adminNote}
+              onChange={e => setAdminNote(e.target.value)}
+              rows={2}
+              placeholder="Internal note for this recovered order…"
+              className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          {/* Redirect toggle */}
+          <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+            <input type="checkbox" checked={redirect} onChange={e => setRedirect(e.target.checked)} />
+            Open order in Orders page after creation
+          </label>
+        </div>
+
+        <div className="flex gap-2 p-4 border-t border-border bg-muted/20">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-medium hover:bg-muted/70"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={submit}
+            disabled={submitting}
+            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50"
+          >
+            <ArrowRightCircle size={16} /> {submitting ? 'Creating…' : 'Create Order'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
