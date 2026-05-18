@@ -101,6 +101,7 @@ export default function AdminBkashPGW() {
         description: next.description.trim() || DEFAULT_BKASH_CONTENT.description,
         amount_prefix: next.amount_prefix.trim() || DEFAULT_BKASH_CONTENT.amount_prefix,
         bullets: next.bullets.map(b => b.trim()).filter(Boolean),
+        logo_url: (next.logo_url || '').trim(),
       };
       const { error } = await supabase
         .from('site_settings')
