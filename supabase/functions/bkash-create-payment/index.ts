@@ -8,26 +8,51 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const MODE = (Deno.env.get('BKASH_MODE') || 'sandbox').toLowerCase();
-const BASE = MODE === 'live'
-  ? 'https://tokenized.pay.bka.sh/v1.2.0-beta'
-  : 'https://tokenized.sandbox.bka.sh/v1.2.0-beta';
+interface BkashCfg {
+  mode: string;
+  app_key: string;
+  app_secret: string;
+  username: string;
+  password: string;
+  is_active: boolean;
+}
 
-const APP_KEY = Deno.env.get('BKASH_APP_KEY') || '';
-const APP_SECRET = Deno.env.get('BKASH_APP_SECRET') || '';
-const USERNAME = Deno.env.get('BKASH_USERNAME') || '';
-const PASSWORD = Deno.env.get('BKASH_PASSWORD') || '';
+async function loadConfig(supabase: ReturnType<typeof createClient>): Promise<BkashCfg> {
+  const { data } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'bkash_pgw_config')
+    .maybeSingle();
+  let cfg: Partial<BkashCfg> = {};
+  if (data?.value) {
+    try { cfg = JSON.parse(data.value); } catch { /* ignore */ }
+  }
+  return {
+    mode: (cfg.mode || Deno.env.get('BKASH_MODE') || 'sandbox').toLowerCase(),
+    app_key: cfg.app_key || Deno.env.get('BKASH_APP_KEY') || '',
+    app_secret: cfg.app_secret || Deno.env.get('BKASH_APP_SECRET') || '',
+    username: cfg.username || Deno.env.get('BKASH_USERNAME') || '',
+    password: cfg.password || Deno.env.get('BKASH_PASSWORD') || '',
+    is_active: cfg.is_active !== false,
+  };
+}
 
-async function grantToken(): Promise<string> {
-  const res = await fetch(`${BASE}/tokenized/checkout/token/grant`, {
+function baseUrl(mode: string) {
+  return mode === 'live'
+    ? 'https://tokenized.pay.bka.sh/v1.2.0-beta'
+    : 'https://tokenized.sandbox.bka.sh/v1.2.0-beta';
+}
+
+async function grantToken(cfg: BkashCfg): Promise<string> {
+  const res = await fetch(`${baseUrl(cfg.mode)}/tokenized/checkout/token/grant`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'username': USERNAME,
-      'password': PASSWORD,
+      'username': cfg.username,
+      'password': cfg.password,
     },
-    body: JSON.stringify({ app_key: APP_KEY, app_secret: APP_SECRET }),
+    body: JSON.stringify({ app_key: cfg.app_key, app_secret: cfg.app_secret }),
   });
   const data = await res.json();
   if (!data?.id_token) {
@@ -40,7 +65,19 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    if (!APP_KEY || !APP_SECRET || !USERNAME || !PASSWORD) {
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    );
+
+    const cfg = await loadConfig(supabase);
+
+    if (!cfg.is_active) {
+      return new Response(JSON.stringify({ error: 'bKash PGW is disabled' }), {
+        status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    if (!cfg.app_key || !cfg.app_secret || !cfg.username || !cfg.password) {
       return new Response(JSON.stringify({ error: 'bKash credentials not configured' }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -52,11 +89,6 @@ Deno.serve(async (req) => {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    );
 
     // Verify order exists & is pending
     const { data: order, error: orderErr } = await supabase
@@ -75,19 +107,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    const token = await grantToken();
+    const token = await grantToken(cfg);
 
     const callbackURL = `${Deno.env.get('SUPABASE_URL')}/functions/v1/bkash-callback`;
     const merchantInvoiceNumber = String(orderNumber).slice(0, 36);
     const amountStr = Number(amount).toFixed(2);
 
-    const createRes = await fetch(`${BASE}/tokenized/checkout/create`, {
+    const createRes = await fetch(`${baseUrl(cfg.mode)}/tokenized/checkout/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': token,
-        'X-APP-Key': APP_KEY,
+        'X-APP-Key': cfg.app_key,
       },
       body: JSON.stringify({
         mode: '0011',
