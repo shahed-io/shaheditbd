@@ -313,18 +313,9 @@ const AdminLayout = () => {
 
   if (!user || !isAdmin) return <Navigate to="/ceo/login" replace />;
 
-  // Strict 2FA gate — admin must verify Authenticator code on every entry.
-  // Wait for the 2FA check to finish before rendering anything.
-  if (!twoFaChecked) {
-    return (
-      <div className="min-h-screen admin-gradient-bg flex items-center justify-center">
-        <div className="admin-glass-card p-8 flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
-          <p className="text-sm text-muted-foreground font-medium">Verifying security…</p>
-        </div>
-      </div>
-    );
-  }
+  // 2FA verification runs silently in the background. We do NOT block the UI
+  // with a "Verifying security…" screen — admin content renders immediately,
+  // and if the session turns out to be invalid the redirect below kicks in.
   // If 2FA is required (no valid session) and admin is NOT on the security
   // enrollment page, force them back to /ceo/login to enter a fresh code.
   if (twoFaRequired && location.pathname !== '/ceo/security') {
