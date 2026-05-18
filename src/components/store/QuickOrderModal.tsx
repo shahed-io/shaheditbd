@@ -292,7 +292,10 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
           discount_amount: couponDiscount,
           total: finalTotal,
           payment_method: paymentMethod,
-          transaction_id: paymentMethod === 'wallet' ? `WALLET-${orderNum}` : transactionId.trim(),
+          transaction_id:
+            paymentMethod === 'wallet' ? `WALLET-${orderNum}` :
+            paymentMethod === 'bkash_online' ? `BKASH-PENDING-${orderNum}` :
+            transactionId.trim(),
           coupon_code: couponCode.trim().toUpperCase() || null,
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
