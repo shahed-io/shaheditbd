@@ -427,9 +427,17 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
       isWallet: false,
     }));
 
+  const bkashOnlineOption: PaymentOption = {
+    id: 'bkash_online' as PaymentMethod,
+    label: 'bKash (Online)',
+    color: 'from-pink-600 to-rose-700',
+    logo: bkashLogo,
+    isWallet: false,
+  };
+
   const allMethods: PaymentOption[] = user
-    ? [{ id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, ...dynamicMethods]
-    : dynamicMethods;
+    ? [{ id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, bkashOnlineOption, ...dynamicMethods]
+    : [bkashOnlineOption, ...dynamicMethods];
 
   return (
     <>
