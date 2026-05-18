@@ -439,7 +439,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   };
 
   const allMethods: PaymentOption[] = user
-    ? [{ id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, bkashOnlineOption, ...dynamicMethods]
+    ? [bkashOnlineOption, ...dynamicMethods, { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }]
     : [bkashOnlineOption, ...dynamicMethods];
 
   // Auto-correct payment method if current one is disabled/unavailable in admin config
