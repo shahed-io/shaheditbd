@@ -45,12 +45,14 @@ const fmtDate = (d: string) => new Date(d).toLocaleString('en-GB', { dateStyle: 
 const inputCls = 'w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors';
 
 export default function AdminAbandonedCheckouts() {
+  const navigate = useNavigate();
   const [rows, setRows] = useState<AbandonedRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending');
   const [selected, setSelected] = useState<AbandonedRow | null>(null);
   const [copiedId, setCopiedId] = useState<string>('');
+  const [convertRow, setConvertRow] = useState<AbandonedRow | null>(null);
 
   const load = async () => {
     setLoading(true);
