@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { orderId, amount, orderNumber, payerReference } = await req.json();
+    const { orderId, amount, orderNumber, payerReference, customerPhone } = await req.json();
     if (!orderId || !amount || !orderNumber) {
       return new Response(JSON.stringify({ error: 'orderId, amount, orderNumber required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
     // Verify order exists & is pending
     const { data: order, error: orderErr } = await supabase
       .from('orders')
-      .select('id, order_number, total, payment_status, status')
+      .select('id, order_number, total, payment_status, status, user_id, customer_name, customer_email, customer_phone')
       .eq('id', orderId)
       .single();
     if (orderErr || !order) {
@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         mode: '0011',
-        payerReference: payerReference || merchantInvoiceNumber,
+        payerReference: payerReference || customerPhone || merchantInvoiceNumber,
         callbackURL,
         amount: amountStr,
         currency: 'BDT',
@@ -136,6 +136,22 @@ Deno.serve(async (req) => {
 
     if (createData?.statusCode !== '0000' || !createData?.bkashURL) {
       console.error('[bkash-create] failed', createData);
+      // Log failed initiation
+      await supabase.from('bkash_transactions').insert({
+        order_id: order.id,
+        order_number: order.order_number,
+        user_id: order.user_id,
+        customer_name: order.customer_name,
+        customer_email: order.customer_email,
+        customer_phone: order.customer_phone,
+        payer_reference: payerReference || customerPhone || merchantInvoiceNumber,
+        amount: Number(amount),
+        status: 'failed',
+        mode: cfg.mode,
+        status_code: createData?.statusCode || null,
+        status_message: createData?.statusMessage || 'create failed',
+        raw_create: createData,
+      });
       return new Response(JSON.stringify({ error: 'bKash create failed', details: createData }), {
         status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -149,6 +165,24 @@ Deno.serve(async (req) => {
         payment_status: 'pending',
       })
       .eq('id', orderId);
+
+    // Log initiated transaction
+    await supabase.from('bkash_transactions').insert({
+      payment_id: createData.paymentID,
+      order_id: order.id,
+      order_number: order.order_number,
+      user_id: order.user_id,
+      customer_name: order.customer_name,
+      customer_email: order.customer_email,
+      customer_phone: order.customer_phone,
+      payer_reference: payerReference || customerPhone || merchantInvoiceNumber,
+      amount: Number(amount),
+      status: 'initiated',
+      mode: cfg.mode,
+      status_code: createData.statusCode,
+      status_message: createData.statusMessage || null,
+      raw_create: createData,
+    });
 
     return new Response(JSON.stringify({
       paymentID: createData.paymentID,
