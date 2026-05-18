@@ -72,6 +72,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Palette, label: 'Invoice Design', path: '/ceo/invoice-design', badge: 'new' },
       { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
       { icon: CreditCard, label: 'bKash PGW', path: '/ceo/bkash-pgw', badge: 'new' },
+      { icon: Receipt, label: 'bKash Transactions', path: '/ceo/bkash-transactions', badge: 'new' },
       { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
       { icon: KeyRound, label: 'Customer Licenses', path: '/ceo/customer-licenses', badge: 'new' },
     ],
