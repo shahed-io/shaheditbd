@@ -352,8 +352,8 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
         } catch (e) { console.error('[QuickOrder] screenshot upload failed:', e); }
       }
 
-      // Insert payment proof for non-wallet payments so admin sees it in /ceo/payments
-      if (paymentMethod !== 'wallet') {
+      // Insert payment proof for non-wallet / non-online payments so admin sees it in /ceo/payments
+      if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online') {
         const { error: proofError } = await supabase.from('payment_proofs').insert({
           order_id: order.id,
           user_id: user?.id || null,
@@ -364,6 +364,33 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
           status: 'pending',
         });
         if (proofError) console.error('[QuickOrder] payment_proof insert error:', proofError);
+      }
+
+      // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
+      if (paymentMethod === 'bkash_online') {
+        try {
+          const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
+            body: {
+              orderId: order.id,
+              orderNumber: orderNum,
+              amount: finalTotal,
+              customerPhone: form.phone,
+            },
+          });
+          if (bkErr || !bkData?.bkashURL) {
+            console.error('[QuickOrder] bKash create payment error:', bkErr, bkData);
+            setSubmitError('bKash পেমেন্ট শুরু করা যায়নি। আবার চেষ্টা করুন।');
+            setLoading(false);
+            return;
+          }
+          window.location.href = bkData.bkashURL;
+          return;
+        } catch (e) {
+          console.error('[QuickOrder] bKash invoke failed:', e);
+          setSubmitError('bKash পেমেন্ট গেটওয়ে কানেক্ট হয়নি। আবার চেষ্টা করুন।');
+          setLoading(false);
+          return;
+        }
       }
 
       setOrderNumber(orderNum);
