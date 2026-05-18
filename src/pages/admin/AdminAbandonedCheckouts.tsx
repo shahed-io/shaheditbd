@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   ShoppingCart, Search, RefreshCw, Trash2, Eye, X, Mail, Phone, User as UserIcon,
   CheckCircle2, Clock, MessageCircle, Copy, Check, Calendar, Package, FileText,
+  ArrowRightCircle,
 } from 'lucide-react';
+
+type OrderStatus = 'pending' | 'processing' | 'completed' | 'cancelled' | 'delivered' | 'failed';
+type PayStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 
 interface AbandonedRow {
   id: string;
