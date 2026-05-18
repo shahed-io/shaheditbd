@@ -829,6 +829,8 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
                   <><Loader2 size={16} className="animate-spin" /> Processing...</>
                 ) : paymentMethod === 'wallet' ? (
                   <><Wallet size={16} /> ওয়ালেট দিয়ে অর্ডার করুন — ৳{finalTotal.toLocaleString()}</>
+                ) : paymentMethod === 'bkash_online' ? (
+                  <><CreditCard size={16} /> bKash দিয়ে পরিশোধ করুন — ৳{finalTotal.toLocaleString()}</>
                 ) : (
                   <><CreditCard size={16} /> অর্ডার কনফার্ম করুন</>
                 )}
