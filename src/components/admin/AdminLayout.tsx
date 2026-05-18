@@ -13,7 +13,7 @@ import { useAdmin2FA, getStoredToken, setStoredToken } from '@/hooks/useAdmin2FA
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
   LogOut, Menu, X, Bell, Search, ChevronDown, ChevronRight,
-  Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
+  Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp, Receipt,
   Megaphone, Shield, Database, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Bot, KeyRound, Star, BarChart2,
   ImageIcon, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles, Activity,
