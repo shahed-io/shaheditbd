@@ -741,6 +741,18 @@ export default function AdminPayments() {
                 <SelectItem value="rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={methodFilter} onValueChange={setMethod}>
+              <SelectTrigger className="w-44 bg-muted/30">
+                <CreditCard size={14} className="mr-2 text-muted-foreground" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Methods</SelectItem>
+                {Object.entries(methodLabels).map(([k, v]) => (
+                  <SelectItem key={k} value={k}>{v}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Table */}
