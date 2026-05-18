@@ -3,6 +3,7 @@ import BrandLoader from '@/components/store/BrandLoader';
 import SEOHead from '@/components/seo/SEOHead';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
 import { usePaymentSettings } from '@/hooks/usePaymentSettings';
+import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
 import bkashLogo from '@/assets/payment/bkash.png';
 import nagadLogo from '@/assets/payment/nagad.png';
 import rocketLogo from '@/assets/payment/rocket.png';
@@ -254,6 +255,8 @@ const UserDashboard = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { wishlistItems } = useWishlist();
   const { configs: paymentConfigs } = usePaymentSettings();
+  const bkashContent = useBkashPgwContent();
+  const bkashLogoSrc = bkashContent.logo_url || bkashLogo;
 
   const [activeTab, setActiveTab] = useState<TabId>(() => {
     const tab = searchParams.get('tab') as TabId;
@@ -291,8 +294,11 @@ const UserDashboard = () => {
   const [topupRequests, setTopupRequests] = useState<any[]>([]);
   const [topupStep, setTopupStep] = useState(0);
   const [topupAmount, setTopupAmount] = useState('');
-  const [topupPaymentMethod, setTopupPaymentMethod] = useState('bkash');
+  const [topupPaymentMethod, setTopupPaymentMethod] = useState<string>('bkash_online');
   const [topupTxId, setTopupTxId] = useState('');
+  const [topupScreenshot, setTopupScreenshot] = useState<File | null>(null);
+  const [topupScreenshotPreview, setTopupScreenshotPreview] = useState<string | null>(null);
+  const topupScreenshotInputRef = useRef<HTMLInputElement>(null);
   const [topupProcessing, setTopupProcessing] = useState(false);
   const [selectedLang, setSelectedLang] = useState<LangCode>(getStoredLang());
   // Points state
@@ -657,28 +663,85 @@ const UserDashboard = () => {
     setWalletLoading(false);
   };
 
-  const TOPUP_PAYMENT_METHODS = paymentConfigs
-    .filter(c => c.isActive)
-    .sort((a, b) => a.sortOrder - b.sortOrder)
-    .map(c => ({
-      id: c.id,
-      label: c.label,
-      number: c.number,
-      type: c.type,
-      logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
-      color: 'from-gray-600 to-gray-700',
-    }));
+  const TOPUP_PAYMENT_METHODS = [
+    { id: 'bkash_online', label: 'bKash (Online)', number: '', type: 'bKash PGW', logo: bkashLogoSrc, color: 'from-pink-600 to-rose-700' },
+    ...paymentConfigs
+      .filter(c => c.isActive)
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map(c => ({
+        id: c.id,
+        label: c.label,
+        number: c.number,
+        type: c.type,
+        logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
+        color: 'from-gray-600 to-gray-700',
+      })),
+  ];
+
+  const handleTopupScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { toast.error('শুধুমাত্র ছবি আপলোড করুন'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error('ছবির সাইজ ৫MB এর কম হতে হবে'); return; }
+    setTopupScreenshot(file);
+    const reader = new FileReader();
+    reader.onload = ev => setTopupScreenshotPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const removeTopupScreenshot = () => {
+    setTopupScreenshot(null);
+    setTopupScreenshotPreview(null);
+    if (topupScreenshotInputRef.current) topupScreenshotInputRef.current.value = '';
+  };
 
   const handleTopupSubmit = async () => {
     if (!user) return;
     const amt = parseFloat(topupAmount);
     if (!amt || amt < 10) { toast.error('Minimum ৳10 required'); return; }
-    if (!topupTxId.trim()) { toast.error('Please enter transaction ID'); return; }
     setTopupProcessing(true);
     try {
-      const { error } = await (supabase.from('wallet_topup_requests' as any) as any).insert({ user_id: user.id, amount: amt, payment_method: topupPaymentMethod, transaction_id: topupTxId.trim(), status: 'pending' });
+      // bKash Online: redirect to PGW and let callback credit wallet automatically
+      if (topupPaymentMethod === 'bkash_online') {
+        const { data, error } = await supabase.functions.invoke('bkash-create-payment', {
+          body: {
+            purpose: 'wallet_topup',
+            userId: user.id,
+            amount: amt,
+            payerReference: profile.phone || user.email,
+            customerPhone: profile.phone || '',
+          },
+        });
+        if (error || !data?.bkashURL) {
+          throw new Error(data?.error || error?.message || 'bKash payment initiation failed');
+        }
+        window.location.href = data.bkashURL;
+        return;
+      }
+      // Manual methods: require TrxID
+      if (!topupTxId.trim()) { toast.error('Please enter transaction ID'); setTopupProcessing(false); return; }
+      // Optional: upload screenshot
+      let screenshotUrl: string | null = null;
+      if (topupScreenshot) {
+        try {
+          const ext = topupScreenshot.name.split('.').pop()?.toLowerCase() || 'jpg';
+          const path = `topup/${user.id}/${Date.now()}.${ext}`;
+          const { error: upErr } = await supabase.storage.from('payment-proofs').upload(path, topupScreenshot, { upsert: false, contentType: topupScreenshot.type });
+          if (!upErr) {
+            const { data: signed } = await supabase.storage.from('payment-proofs').createSignedUrl(path, 60 * 60 * 24 * 365);
+            screenshotUrl = signed?.signedUrl || path;
+          }
+        } catch (e) { console.error('[Topup] screenshot upload failed', e); }
+      }
+      const { error } = await (supabase.from('wallet_topup_requests' as any) as any).insert({
+        user_id: user.id,
+        amount: amt,
+        payment_method: topupPaymentMethod,
+        transaction_id: topupTxId.trim(),
+        screenshot_url: screenshotUrl,
+        status: 'pending',
+      });
       if (error) throw error;
-      // Fire-and-forget Telegram notify
       supabase.functions.invoke('notify-telegram-event', {
         body: {
           title: '💰 নতুন Wallet Top-up Request',
@@ -693,8 +756,10 @@ const UserDashboard = () => {
         },
       }).catch(() => {});
       toast.success('✅ Top-up request submitted! Admin will verify and credit your wallet.');
-      setTopupStep(2); setTopupTxId('');
-    } catch { toast.error('Failed to submit request. Please try again.'); }
+      setTopupStep(2); setTopupTxId(''); removeTopupScreenshot();
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to submit request. Please try again.');
+    }
     setTopupProcessing(false);
   };
 
@@ -2388,43 +2453,182 @@ const UserDashboard = () => {
 
                       {/* STEP 1: Payment */}
                       {topupStep === 1 && (() => {
-                        const pm = TOPUP_PAYMENT_METHODS.find(p => p.id === topupPaymentMethod) || TOPUP_PAYMENT_METHODS[0];
+                        const amt = parseFloat(topupAmount) || 0;
+                        const isBkashOnline = topupPaymentMethod === 'bkash_online';
                         return (
                           <div className="space-y-4">
                             <div className="flex items-center justify-between">
                               <p className="text-sm font-semibold text-foreground">Top-up: <span className="text-primary font-black">৳{topupAmount}</span></p>
                               <button onClick={() => setTopupStep(0)} className="text-xs text-muted-foreground hover:text-primary underline">Change</button>
                             </div>
+
+                            {/* Checkout-style method picker (logo cards) */}
                             <div>
                               <label className={labelCls}>Select Payment Method</label>
-                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                                 {TOPUP_PAYMENT_METHODS.map(p => (
-                                  <button key={p.id} onClick={() => setTopupPaymentMethod(p.id)}
-                                    className={`flex flex-col items-center gap-1 p-3 rounded-xl border text-xs font-semibold transition-all ${
-                                      topupPaymentMethod === p.id ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-primary/40 bg-white/60'
-                                    }`}>
-                                    <img src={p.logo} alt={p.label} className="h-7 w-auto object-contain rounded" /><span className="text-xs">{p.label}</span>
+                                  <button
+                                    key={p.id}
+                                    type="button"
+                                    onClick={() => setTopupPaymentMethod(p.id)}
+                                    className={`flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl text-xs font-semibold transition-all border-2 ${
+                                      topupPaymentMethod === p.id
+                                        ? 'border-primary bg-primary/8 scale-105 shadow-md text-foreground'
+                                        : 'border-border bg-background/60 hover:border-primary/40 text-muted-foreground'
+                                    }`}
+                                  >
+                                    {p.logo ? (
+                                      <img src={p.logo} alt={p.label} className="h-8 w-auto object-contain rounded-md" />
+                                    ) : (
+                                      <div className={`h-8 w-10 rounded-md flex items-center justify-center bg-gradient-to-br ${p.color}`}>
+                                        <Wallet size={16} className="text-white" />
+                                      </div>
+                                    )}
+                                    <span>{p.label}</span>
                                   </button>
                                 ))}
                               </div>
                             </div>
-                            <PaymentInstructions
-                              paymentMethodId={topupPaymentMethod as import('@/components/store/PaymentInstructions').PMId}
-                              amount={parseFloat(topupAmount) || 0}
-                              amountLabel="টপ-আপ পরিমাণ"
-                            />
-                            <div>
-                              <label className={labelCls}>Transaction ID (TrxID)</label>
-                              <input value={topupTxId} onChange={e => setTopupTxId(e.target.value)} placeholder="Enter your TrxID after payment"
-                                className="w-full rounded-xl px-4 py-3 text-sm outline-none border border-border bg-white/60 text-foreground focus:border-primary focus:bg-white/80" />
-                            </div>
-                            <div className="flex gap-3">
-                              <button onClick={() => setTopupStep(0)} className="flex-1 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors" style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}>Back</button>
-                              <button onClick={handleTopupSubmit} disabled={topupProcessing || !topupTxId.trim()}
-                                className={`flex-1 py-3 text-sm flex items-center justify-center gap-2 disabled:opacity-50 ${gradBtn}`} style={gradBtnStyle}>
-                                {topupProcessing ? <><RefreshCw size={14} className="animate-spin" /> Submitting...</> : 'Submit Request'}
+
+                            {/* bKash Online (PGW) info block */}
+                            {isBkashOnline && (
+                              <div className="rounded-xl p-4 space-y-2 border bg-pink-500/10 border-pink-500/30">
+                                <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                                  <img src={bkashLogoSrc} alt="bKash" className="h-6 w-auto" />
+                                  <span>{bkashContent.title}</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
+                                  {bkashContent.description}
+                                </p>
+                                {bkashContent.bullets.length > 0 && (
+                                  <ul className="text-[11px] text-muted-foreground space-y-1 pl-4 list-disc">
+                                    {bkashContent.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                                  </ul>
+                                )}
+                                <p className="text-xs text-pink-600 dark:text-pink-300 font-medium">
+                                  {bkashContent.amount_prefix} ৳{amt.toLocaleString()}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Manual: instructions + TrxID + screenshot */}
+                            {!isBkashOnline && (
+                              <>
+                                <PaymentInstructions
+                                  paymentMethodId={topupPaymentMethod as import('@/components/store/PaymentInstructions').PMId}
+                                  amount={amt}
+                                  amountLabel="টপ-আপ পরিমাণ"
+                                />
+                                <div>
+                                  <label className="text-sm text-muted-foreground mb-1 block font-semibold">Transaction ID (TrxID) *</label>
+                                  <input
+                                    value={topupTxId}
+                                    onChange={e => setTopupTxId(e.target.value)}
+                                    placeholder="যেমন: 8F3K2P9X"
+                                    maxLength={50}
+                                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono text-sm"
+                                  />
+                                </div>
+                                {/* Optional screenshot */}
+                                <div>
+                                  <label className="text-sm text-muted-foreground mb-1 block font-semibold flex items-center gap-2">
+                                    <Upload size={14} className="text-muted-foreground" />
+                                    Payment Screenshot
+                                    <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+                                  </label>
+                                  {!topupScreenshotPreview ? (
+                                    <label
+                                      htmlFor="topup-screenshot-input"
+                                      className="flex flex-col items-center justify-center w-full p-5 bg-muted/20 border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/30 hover:border-primary/40 transition-all"
+                                    >
+                                      <Upload size={20} className="text-muted-foreground mb-1.5" />
+                                      <span className="text-sm text-foreground font-medium">স্ক্রিনশট সিলেক্ট করুন</span>
+                                      <span className="text-xs text-muted-foreground mt-0.5">JPG, PNG • সর্বোচ্চ ৫MB</span>
+                                      <input
+                                        id="topup-screenshot-input"
+                                        ref={topupScreenshotInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleTopupScreenshotChange}
+                                        className="hidden"
+                                      />
+                                    </label>
+                                  ) : (
+                                    <div className="relative rounded-xl overflow-hidden border border-border bg-muted/20">
+                                      <img src={topupScreenshotPreview} alt="Payment screenshot preview" className="w-full max-h-64 object-contain" />
+                                      <button type="button" onClick={removeTopupScreenshot} className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1.5 transition-colors" aria-label="Remove screenshot">
+                                        <X size={14} />
+                                      </button>
+                                      <div className="px-3 py-2 text-xs text-muted-foreground flex items-center justify-between bg-muted/30">
+                                        <span className="truncate">{topupScreenshot?.name}</span>
+                                        <span className="flex-shrink-0 ml-2">{topupScreenshot && (topupScreenshot.size / 1024).toFixed(0)} KB</span>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            )}
+
+                            {/* Submit row: back + premium gradient pill (Checkout-style) */}
+                            <div className="flex gap-3 pt-1">
+                              <button
+                                onClick={() => setTopupStep(0)}
+                                className="px-5 py-3 rounded-2xl text-sm font-semibold text-muted-foreground hover:bg-white/60 transition-colors"
+                                style={{ border: '1px solid hsla(258,78%,75%,0.3)' }}
+                              >
+                                Back
                               </button>
+                              {isBkashOnline ? (
+                                <button
+                                  type="button"
+                                  onClick={handleTopupSubmit}
+                                  disabled={topupProcessing}
+                                  className="group relative flex-1 overflow-hidden rounded-2xl py-3.5 px-5 font-bold text-base text-white shadow-[0_12px_40px_-8px_rgba(226,0,116,0.55)] transition-all duration-300 hover:shadow-[0_18px_55px_-8px_rgba(226,0,116,0.75)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                                  style={{ background: 'linear-gradient(135deg, #ff2e87 0%, #e2007a 45%, #b8005f 100%)' }}
+                                >
+                                  <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
+                                  <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl bg-gradient-to-b from-white/25 to-transparent" />
+                                  <span className="relative flex items-center justify-center gap-3">
+                                    {topupProcessing ? (
+                                      <><Loader2 size={18} className="animate-spin" /> Processing…</>
+                                    ) : (
+                                      <>
+                                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
+                                          <img src={bkashLogoSrc} alt="bKash" className="h-5 w-5 object-contain" />
+                                        </span>
+                                        <span className="tracking-wide">bKash দিয়ে টপ-আপ করুন</span>
+                                        <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">৳{amt.toLocaleString()}</span>
+                                      </>
+                                    )}
+                                  </span>
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={handleTopupSubmit}
+                                  disabled={topupProcessing || !topupTxId.trim()}
+                                  className="group relative flex-1 overflow-hidden rounded-2xl py-3.5 px-5 font-bold text-base text-white shadow-[0_12px_40px_-8px_rgba(79,70,229,0.55)] transition-all duration-300 hover:shadow-[0_18px_55px_-8px_rgba(79,70,229,0.75)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                                  style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 45%, #1e3a8a 100%)' }}
+                                >
+                                  <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
+                                  <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl bg-gradient-to-b from-white/25 to-transparent" />
+                                  <span className="relative flex items-center justify-center gap-3">
+                                    {topupProcessing ? (
+                                      <><Loader2 size={18} className="animate-spin" /> Submitting…</>
+                                    ) : (
+                                      <>
+                                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-white/40">
+                                          <CreditCard size={16} className="text-indigo-700" />
+                                        </span>
+                                        <span className="tracking-wide">Submit Top-up Request</span>
+                                        <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">৳{amt.toLocaleString()}</span>
+                                      </>
+                                    )}
+                                  </span>
+                                </button>
+                              )}
                             </div>
+                            <p className="text-[11px] text-center text-muted-foreground">🔒 নিরাপদ পেমেন্ট — আপনার তথ্য সুরক্ষিত</p>
                           </div>
                         );
                       })()}

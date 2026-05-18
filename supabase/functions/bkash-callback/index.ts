@@ -72,7 +72,17 @@ Deno.serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
   );
 
-  // Find the order by paymentID stored in transaction_id
+  // Look up bkash_transactions for this paymentID to know purpose
+  const { data: bkTx } = await supabase
+    .from('bkash_transactions')
+    .select('id, purpose, topup_request_id, user_id, amount, order_id')
+    .eq('payment_id', paymentID)
+    .maybeSingle();
+
+  const purpose = (bkTx as any)?.purpose || 'order';
+  const topupRequestId = (bkTx as any)?.topup_request_id || null;
+
+  // Find the order by paymentID stored in transaction_id (for order purpose)
   const { data: order } = await supabase
     .from('orders')
     .select('id, order_number, total, user_id, payment_status, status')
@@ -80,6 +90,13 @@ Deno.serve(async (req) => {
     .maybeSingle();
 
   const orderNumber = order?.order_number || '';
+
+  const successRedirect = () => purpose === 'wallet_topup'
+    ? `${SITE_URL}/dashboard?tab=wallet&bkash=success`
+    : `${SITE_URL}/checkout?bkash=success&order=${orderNumber}`;
+  const failRedirect = (s: string) => purpose === 'wallet_topup'
+    ? `${SITE_URL}/dashboard?tab=wallet&bkash=${s}`
+    : `${SITE_URL}/checkout?bkash=${s}&order=${orderNumber}`;
 
   // Cancelled or failed at bKash UI
   if (status === 'cancel' || status === 'failure') {
@@ -89,10 +106,16 @@ Deno.serve(async (req) => {
         status: 'cancelled',
       }).eq('id', order.id);
     }
+    if (purpose === 'wallet_topup' && topupRequestId) {
+      await supabase.from('wallet_topup_requests').update({
+        status: 'rejected',
+        admin_notes: `User ${status} at bKash`,
+      }).eq('id', topupRequestId);
+    }
     await supabase.from('bkash_transactions')
       .update({ status: status === 'cancel' ? 'cancelled' : 'failed', status_message: `User ${status} at bKash` })
       .eq('payment_id', paymentID);
-    return redirect(`${SITE_URL}/checkout?bkash=${status}&order=${orderNumber}`);
+    return redirect(failRedirect(status));
   }
 
   try {
@@ -112,21 +135,7 @@ Deno.serve(async (req) => {
 
     const ok = execData?.statusCode === '0000' && execData?.transactionStatus === 'Completed';
 
-    if (ok && order) {
-      // Auto-complete order: triggers will assign licenses + award points + send notifications
-      await supabase.from('orders').update({
-        payment_status: 'paid',
-        status: 'completed',
-        transaction_id: execData.trxID || paymentID,
-      }).eq('id', order.id);
-
-      // Mark related payment_proof as approved if any
-      await supabase.from('payment_proofs').update({
-        status: 'approved',
-        reviewed_at: new Date().toISOString(),
-        admin_notes: 'Auto-approved by bKash PGW',
-      }).eq('order_id', order.id);
-
+    if (ok) {
       // Log success on bkash_transactions
       await supabase.from('bkash_transactions').update({
         trx_id: execData.trxID || null,
@@ -139,6 +148,46 @@ Deno.serve(async (req) => {
         amount: execData.amount ? Number(execData.amount) : undefined,
       }).eq('payment_id', paymentID);
 
+      if (purpose === 'wallet_topup' && bkTx) {
+        // Credit wallet automatically
+        const creditAmount = Number(execData.amount || (bkTx as any).amount);
+        const userId = (bkTx as any).user_id;
+        if (userId && creditAmount > 0) {
+          await supabase.rpc('wallet_credit', {
+            p_user_id: userId,
+            p_amount: creditAmount,
+            p_note: `bKash Online Top-up (TrxID: ${execData.trxID || paymentID})`,
+            p_reference_id: execData.trxID || paymentID,
+            p_created_by: 'bkash_pgw',
+          });
+        }
+        if (topupRequestId) {
+          await supabase.from('wallet_topup_requests').update({
+            status: 'approved',
+            transaction_id: execData.trxID || paymentID,
+            admin_notes: 'Auto-approved by bKash PGW',
+            reviewed_at: new Date().toISOString(),
+          }).eq('id', topupRequestId);
+        }
+        return redirect(successRedirect());
+      }
+
+      if (order) {
+        // Auto-complete order: triggers will assign licenses + award points + send notifications
+        await supabase.from('orders').update({
+          payment_status: 'paid',
+          status: 'completed',
+          transaction_id: execData.trxID || paymentID,
+        }).eq('id', order.id);
+
+        // Mark related payment_proof as approved if any
+        await supabase.from('payment_proofs').update({
+          status: 'approved',
+          reviewed_at: new Date().toISOString(),
+          admin_notes: 'Auto-approved by bKash PGW',
+        }).eq('order_id', order.id);
+      }
+
       return redirect(`${SITE_URL}/checkout?bkash=success&order=${orderNumber}&trx=${encodeURIComponent(execData.trxID || '')}`);
     }
 
@@ -148,6 +197,12 @@ Deno.serve(async (req) => {
         status: 'cancelled',
       }).eq('id', order.id);
     }
+    if (purpose === 'wallet_topup' && topupRequestId) {
+      await supabase.from('wallet_topup_requests').update({
+        status: 'rejected',
+        admin_notes: execData?.statusMessage || 'execute failed',
+      }).eq('id', topupRequestId);
+    }
     await supabase.from('bkash_transactions').update({
       status: 'failed',
       status_code: execData?.statusCode || null,
@@ -155,7 +210,7 @@ Deno.serve(async (req) => {
       raw_execute: execData,
     }).eq('payment_id', paymentID);
     console.error('[bkash-callback] execute failed', execData);
-    return redirect(`${SITE_URL}/checkout?bkash=failure&order=${orderNumber}`);
+    return redirect(failRedirect('failure'));
   } catch (e) {
     console.error('[bkash-callback] error', e);
     if (order) {
@@ -164,10 +219,16 @@ Deno.serve(async (req) => {
         status: 'cancelled',
       }).eq('id', order.id);
     }
+    if (purpose === 'wallet_topup' && topupRequestId) {
+      await supabase.from('wallet_topup_requests').update({
+        status: 'rejected',
+        admin_notes: (e as Error).message,
+      }).eq('id', topupRequestId);
+    }
     await supabase.from('bkash_transactions').update({
       status: 'failed',
       status_message: (e as Error).message,
     }).eq('payment_id', paymentID);
-    return redirect(`${SITE_URL}/checkout?bkash=error&order=${orderNumber}`);
+    return redirect(failRedirect('error'));
   }
 });
