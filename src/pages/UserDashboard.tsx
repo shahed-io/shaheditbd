@@ -663,28 +663,83 @@ const UserDashboard = () => {
     setWalletLoading(false);
   };
 
-  const TOPUP_PAYMENT_METHODS = paymentConfigs
-    .filter(c => c.isActive)
-    .sort((a, b) => a.sortOrder - b.sortOrder)
-    .map(c => ({
-      id: c.id,
-      label: c.label,
-      number: c.number,
-      type: c.type,
-      logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
-      color: 'from-gray-600 to-gray-700',
-    }));
+  const TOPUP_PAYMENT_METHODS = [
+    { id: 'bkash_online', label: 'bKash (Online)', number: '', type: 'bKash PGW', logo: bkashLogoSrc, color: 'from-pink-600 to-rose-700' },
+    ...paymentConfigs
+      .filter(c => c.isActive)
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map(c => ({
+        id: c.id,
+        label: c.label,
+        number: c.number,
+        type: c.type,
+        logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
+        color: 'from-gray-600 to-gray-700',
+      })),
+  ];
+
+  const handleTopupScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { toast.error('শুধুমাত্র ছবি আপলোড করুন'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error('ছবির সাইজ ৫MB এর কম হতে হবে'); return; }
+    setTopupScreenshot(file);
+    const reader = new FileReader();
+    reader.onload = ev => setTopupScreenshotPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const removeTopupScreenshot = () => {
+    setTopupScreenshot(null);
+    setTopupScreenshotPreview(null);
+    if (topupScreenshotInputRef.current) topupScreenshotInputRef.current.value = '';
+  };
 
   const handleTopupSubmit = async () => {
     if (!user) return;
     const amt = parseFloat(topupAmount);
     if (!amt || amt < 10) { toast.error('Minimum ৳10 required'); return; }
-    if (!topupTxId.trim()) { toast.error('Please enter transaction ID'); return; }
     setTopupProcessing(true);
     try {
-      const { error } = await (supabase.from('wallet_topup_requests' as any) as any).insert({ user_id: user.id, amount: amt, payment_method: topupPaymentMethod, transaction_id: topupTxId.trim(), status: 'pending' });
+      // bKash Online: redirect to PGW and let callback credit wallet automatically
+      if (topupPaymentMethod === 'bkash_online') {
+        const { data, error } = await supabase.functions.invoke('bkash-create-payment', {
+          body: {
+            purpose: 'wallet_topup',
+            userId: user.id,
+            amount: amt,
+            payerReference: profile.phone || user.email,
+            customerPhone: profile.phone || '',
+          },
+        });
+        if (error || !data?.bkashURL) {
+          throw new Error(data?.error || error?.message || 'bKash payment initiation failed');
+        }
+        window.location.href = data.bkashURL;
+        return;
+      }
+      // Manual methods: require TrxID
+      if (!topupTxId.trim()) { toast.error('Please enter transaction ID'); setTopupProcessing(false); return; }
+      // Optional: upload screenshot
+      let screenshotUrl: string | null = null;
+      if (topupScreenshot) {
+        const ext = topupScreenshot.name.split('.').pop() || 'jpg';
+        const path = `topup/${user.id}/${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage.from('payment-proofs').upload(path, topupScreenshot, { upsert: false, contentType: topupScreenshot.type });
+        if (!upErr) {
+          const { data: pub } = supabase.storage.from('payment-proofs').getPublicUrl(path);
+          screenshotUrl = pub?.publicUrl || null;
+        }
+      }
+      const { error } = await (supabase.from('wallet_topup_requests' as any) as any).insert({
+        user_id: user.id,
+        amount: amt,
+        payment_method: topupPaymentMethod,
+        transaction_id: topupTxId.trim(),
+        screenshot_url: screenshotUrl,
+        status: 'pending',
+      });
       if (error) throw error;
-      // Fire-and-forget Telegram notify
       supabase.functions.invoke('notify-telegram-event', {
         body: {
           title: '💰 নতুন Wallet Top-up Request',
@@ -699,8 +754,10 @@ const UserDashboard = () => {
         },
       }).catch(() => {});
       toast.success('✅ Top-up request submitted! Admin will verify and credit your wallet.');
-      setTopupStep(2); setTopupTxId('');
-    } catch { toast.error('Failed to submit request. Please try again.'); }
+      setTopupStep(2); setTopupTxId(''); removeTopupScreenshot();
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to submit request. Please try again.');
+    }
     setTopupProcessing(false);
   };
 
