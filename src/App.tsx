@@ -44,6 +44,7 @@ const AdminSettings         = lazy(() => import("./pages/admin/AdminSettings"));
 const AdminTickets          = lazy(() => import("./pages/admin/AdminTickets"));
 const AdminPayments         = lazy(() => import("./pages/admin/AdminPayments"));
 const AdminBkashPGW         = lazy(() => import("./pages/admin/AdminBkashPGW"));
+const AdminBkashTransactions = lazy(() => import("./pages/admin/AdminBkashTransactions"));
 const AdminCustomers        = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminReports          = lazy(() => import("./pages/admin/AdminReports"));
 const AdminMarketing        = lazy(() => import("./pages/admin/AdminMarketing"));
