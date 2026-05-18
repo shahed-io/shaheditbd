@@ -39,6 +39,7 @@ const DEFAULT_CFG: BkashCfg = {
 export default function AdminBkashPGW() {
   const qc = useQueryClient();
   const [form, setForm] = useState<BkashCfg>(DEFAULT_CFG);
+  const [content, setContent] = useState<BkashPgwContent>(DEFAULT_BKASH_CONTENT);
   const [showSecrets, setShowSecrets] = useState(false);
 
   const { data, isLoading } = useQuery({
@@ -58,7 +59,24 @@ export default function AdminBkashPGW() {
     },
   });
 
+  const { data: contentData } = useQuery({
+    queryKey: ['bkash-pgw-content-admin'],
+    queryFn: async (): Promise<BkashPgwContent> => {
+      const { data } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', BKASH_CONTENT_KEY)
+        .maybeSingle();
+      if (data?.value) {
+        try { return { ...DEFAULT_BKASH_CONTENT, ...JSON.parse(data.value) }; }
+        catch { return DEFAULT_BKASH_CONTENT; }
+      }
+      return DEFAULT_BKASH_CONTENT;
+    },
+  });
+
   useEffect(() => { if (data) setForm(data); }, [data]);
+  useEffect(() => { if (contentData) setContent(contentData); }, [contentData]);
 
   const save = useMutation({
     mutationFn: async (next: BkashCfg) => {
@@ -76,7 +94,30 @@ export default function AdminBkashPGW() {
     onError: (e: Error) => toast.error(e.message || 'Failed to save'),
   });
 
+  const saveContent = useMutation({
+    mutationFn: async (next: BkashPgwContent) => {
+      const cleaned: BkashPgwContent = {
+        title: next.title.trim() || DEFAULT_BKASH_CONTENT.title,
+        description: next.description.trim() || DEFAULT_BKASH_CONTENT.description,
+        amount_prefix: next.amount_prefix.trim() || DEFAULT_BKASH_CONTENT.amount_prefix,
+        bullets: next.bullets.map(b => b.trim()).filter(Boolean),
+      };
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({ key: BKASH_CONTENT_KEY, value: JSON.stringify(cleaned), category: 'public' }, { onConflict: 'key' });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Checkout content saved');
+      qc.invalidateQueries({ queryKey: ['bkash-pgw-content-admin'] });
+      qc.invalidateQueries({ queryKey: ['bkash-pgw-content'] });
+    },
+    onError: (e: Error) => toast.error(e.message || 'Failed to save'),
+  });
+
   const update = <K extends keyof BkashCfg>(k: K, v: BkashCfg[K]) => setForm((f) => ({ ...f, [k]: v }));
+  const updateContent = <K extends keyof BkashPgwContent>(k: K, v: BkashPgwContent[K]) =>
+    setContent((c) => ({ ...c, [k]: v }));
 
   if (isLoading) {
     return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin" /></div>;
