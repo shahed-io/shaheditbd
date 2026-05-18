@@ -203,6 +203,7 @@ export default function AdminAbandonedCheckouts() {
     }
   };
 
+  const copy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(''), 1200);
