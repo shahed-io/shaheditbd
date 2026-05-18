@@ -294,8 +294,11 @@ const UserDashboard = () => {
   const [topupRequests, setTopupRequests] = useState<any[]>([]);
   const [topupStep, setTopupStep] = useState(0);
   const [topupAmount, setTopupAmount] = useState('');
-  const [topupPaymentMethod, setTopupPaymentMethod] = useState('bkash');
+  const [topupPaymentMethod, setTopupPaymentMethod] = useState<string>('bkash_online');
   const [topupTxId, setTopupTxId] = useState('');
+  const [topupScreenshot, setTopupScreenshot] = useState<File | null>(null);
+  const [topupScreenshotPreview, setTopupScreenshotPreview] = useState<string | null>(null);
+  const topupScreenshotInputRef = useRef<HTMLInputElement>(null);
   const [topupProcessing, setTopupProcessing] = useState(false);
   const [selectedLang, setSelectedLang] = useState<LangCode>(getStoredLang());
   // Points state
