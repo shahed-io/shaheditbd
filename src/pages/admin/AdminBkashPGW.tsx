@@ -9,8 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Save, ShieldCheck, AlertTriangle, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Save, ShieldCheck, AlertTriangle, Loader2, Plus, Trash2, FileText } from 'lucide-react';
+import { BKASH_CONTENT_KEY, DEFAULT_BKASH_CONTENT, type BkashPgwContent } from '@/hooks/useBkashPgwContent';
 
 const KEY = 'bkash_pgw_config';
 
