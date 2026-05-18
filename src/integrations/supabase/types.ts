@@ -637,11 +637,13 @@ export type Database = {
           payer_msisdn: string | null
           payer_reference: string | null
           payment_id: string | null
+          purpose: string
           raw_create: Json | null
           raw_execute: Json | null
           status: string
           status_code: string | null
           status_message: string | null
+          topup_request_id: string | null
           trx_id: string | null
           updated_at: string
           user_id: string | null
@@ -661,11 +663,13 @@ export type Database = {
           payer_msisdn?: string | null
           payer_reference?: string | null
           payment_id?: string | null
+          purpose?: string
           raw_create?: Json | null
           raw_execute?: Json | null
           status?: string
           status_code?: string | null
           status_message?: string | null
+          topup_request_id?: string | null
           trx_id?: string | null
           updated_at?: string
           user_id?: string | null
@@ -685,11 +689,13 @@ export type Database = {
           payer_msisdn?: string | null
           payer_reference?: string | null
           payment_id?: string | null
+          purpose?: string
           raw_create?: Json | null
           raw_execute?: Json | null
           status?: string
           status_code?: string | null
           status_message?: string | null
+          topup_request_id?: string | null
           trx_id?: string | null
           updated_at?: string
           user_id?: string | null
@@ -700,6 +706,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bkash_transactions_topup_request_id_fkey"
+            columns: ["topup_request_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_topup_requests"
             referencedColumns: ["id"]
           },
         ]
