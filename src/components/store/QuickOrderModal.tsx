@@ -441,6 +441,22 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
     ? [{ id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', isWallet: true }, bkashOnlineOption, ...dynamicMethods]
     : [bkashOnlineOption, ...dynamicMethods];
 
+  // Auto-correct payment method if current one is disabled/unavailable in admin config
+  useEffect(() => {
+    if (allMethods.length === 0) return;
+    const isValid = allMethods.some(pm => pm.id === paymentMethod);
+    if (!isValid) {
+      const preferred =
+        allMethods.find(pm => pm.id === 'bkash_online') ||
+        allMethods.find(pm => pm.id !== 'wallet') ||
+        allMethods[0];
+      setPaymentMethod(preferred.id);
+      setTransactionId('');
+      setSubmitError('');
+    }
+  }, [allMethods.map(m => m.id).join(','), paymentMethod]);
+
+
   return (
     <>
     <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />

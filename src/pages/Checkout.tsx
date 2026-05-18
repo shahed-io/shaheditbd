@@ -142,6 +142,20 @@ const Checkout = () => {
     }
   }, [user]);
 
+  // Auto-correct payment method if current one is disabled/unavailable in admin config
+  useEffect(() => {
+    if (availablePaymentMethods.length === 0) return;
+    const isValid = availablePaymentMethods.some(pm => pm.id === paymentMethod);
+    if (!isValid) {
+      // Prefer bkash_online → first non-wallet → first
+      const preferred =
+        availablePaymentMethods.find(pm => pm.id === 'bkash_online') ||
+        availablePaymentMethods.find(pm => pm.id !== 'wallet') ||
+        availablePaymentMethods[0];
+      setPaymentMethod(preferred.id);
+    }
+  }, [availablePaymentMethods, paymentMethod]);
+
   // Auto-submit after login if there was a pending submit
   useEffect(() => {
     if (user && pendingSubmitRef.current) {
