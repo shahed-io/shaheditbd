@@ -621,6 +621,89 @@ export type Database = {
           },
         ]
       }
+      bkash_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          id: string
+          mode: string
+          order_id: string | null
+          order_number: string | null
+          paid_at: string | null
+          payer_msisdn: string | null
+          payer_reference: string | null
+          payment_id: string | null
+          raw_create: Json | null
+          raw_execute: Json | null
+          status: string
+          status_code: string | null
+          status_message: string | null
+          trx_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          mode?: string
+          order_id?: string | null
+          order_number?: string | null
+          paid_at?: string | null
+          payer_msisdn?: string | null
+          payer_reference?: string | null
+          payment_id?: string | null
+          raw_create?: Json | null
+          raw_execute?: Json | null
+          status?: string
+          status_code?: string | null
+          status_message?: string | null
+          trx_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          mode?: string
+          order_id?: string | null
+          order_number?: string | null
+          paid_at?: string | null
+          payer_msisdn?: string | null
+          payer_reference?: string | null
+          payment_id?: string | null
+          raw_create?: Json | null
+          raw_execute?: Json | null
+          status?: string
+          status_code?: string | null
+          status_message?: string | null
+          trx_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bkash_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_categories: {
         Row: {
           color: string | null

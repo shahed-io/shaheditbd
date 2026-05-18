@@ -13,7 +13,7 @@ import { useAdmin2FA, getStoredToken, setStoredToken } from '@/hooks/useAdmin2FA
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
   LogOut, Menu, X, Bell, Search, ChevronDown, ChevronRight,
-  Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp,
+  Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp, Receipt,
   Megaphone, Shield, Database, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Bot, KeyRound, Star, BarChart2,
   ImageIcon, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles, Activity,
@@ -72,6 +72,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Palette, label: 'Invoice Design', path: '/ceo/invoice-design', badge: 'new' },
       { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
       { icon: CreditCard, label: 'bKash PGW', path: '/ceo/bkash-pgw', badge: 'new' },
+      { icon: Receipt, label: 'bKash Transactions', path: '/ceo/bkash-transactions', badge: 'new' },
       { icon: KeyRound, label: 'License Manager', path: '/ceo/licenses' },
       { icon: KeyRound, label: 'Customer Licenses', path: '/ceo/customer-licenses', badge: 'new' },
     ],
