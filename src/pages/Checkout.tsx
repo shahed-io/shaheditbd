@@ -722,6 +722,7 @@ const Checkout = () => {
 
       clearCart();
       setOrderNumber(orderNum);
+      if (paymentMethod === 'wallet') setInstantDelivered(walletInstantDelivered);
       setOrderPlaced(true);
 
       // Fire Google Ads + GA4 Purchase conversion (non-blocking, after success)
