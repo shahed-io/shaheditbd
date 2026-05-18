@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
     const token = await grantToken(cfg);
 
     const callbackURL = `${Deno.env.get('SUPABASE_URL')}/functions/v1/bkash-callback`;
-    const merchantInvoiceNumber = String(orderNumber).slice(0, 36);
+    const merchantInvoiceNumber = String(merchantInvoiceBase || 'INV').slice(0, 36);
     const amountStr = Number(amount).toFixed(2);
 
     const createRes = await fetch(`${baseUrl(cfg.mode)}/tokenized/checkout/create`, {
@@ -177,14 +177,13 @@ Deno.serve(async (req) => {
 
     if (createData?.statusCode !== '0000' || !createData?.bkashURL) {
       console.error('[bkash-create] failed', createData);
-      // Log failed initiation
       await supabase.from('bkash_transactions').insert({
-        order_id: order.id,
-        order_number: order.order_number,
-        user_id: order.user_id,
-        customer_name: order.customer_name,
-        customer_email: order.customer_email,
-        customer_phone: order.customer_phone,
+        order_id: order?.id || null,
+        order_number: order?.order_number || null,
+        user_id: order?.user_id || userId || null,
+        customer_name: order?.customer_name || null,
+        customer_email: order?.customer_email || null,
+        customer_phone: order?.customer_phone || null,
         payer_reference: payerReference || customerPhone || merchantInvoiceNumber,
         amount: Number(amount),
         status: 'failed',
@@ -192,30 +191,40 @@ Deno.serve(async (req) => {
         status_code: createData?.statusCode || null,
         status_message: createData?.statusMessage || 'create failed',
         raw_create: createData,
+        purpose,
+        topup_request_id: topupRequestId,
       });
+      if (purpose === 'wallet_topup' && topupRequestId) {
+        await supabase.from('wallet_topup_requests').update({ status: 'rejected', admin_notes: 'bKash create failed' }).eq('id', topupRequestId);
+      }
       return new Response(JSON.stringify({ error: 'bKash create failed', details: createData }), {
         status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Save paymentID to order so callback can match
-    await supabase
-      .from('orders')
-      .update({
-        transaction_id: createData.paymentID,
-        payment_status: 'pending',
-      })
-      .eq('id', orderId);
+    if (purpose === 'order' && order) {
+      await supabase
+        .from('orders')
+        .update({
+          transaction_id: createData.paymentID,
+          payment_status: 'pending',
+        })
+        .eq('id', orderId);
+    } else if (purpose === 'wallet_topup' && topupRequestId) {
+      await supabase
+        .from('wallet_topup_requests')
+        .update({ transaction_id: createData.paymentID })
+        .eq('id', topupRequestId);
+    }
 
-    // Log initiated transaction
     await supabase.from('bkash_transactions').insert({
       payment_id: createData.paymentID,
-      order_id: order.id,
-      order_number: order.order_number,
-      user_id: order.user_id,
-      customer_name: order.customer_name,
-      customer_email: order.customer_email,
-      customer_phone: order.customer_phone,
+      order_id: order?.id || null,
+      order_number: order?.order_number || null,
+      user_id: order?.user_id || userId || null,
+      customer_name: order?.customer_name || null,
+      customer_email: order?.customer_email || null,
+      customer_phone: order?.customer_phone || null,
       payer_reference: payerReference || customerPhone || merchantInvoiceNumber,
       amount: Number(amount),
       status: 'initiated',
@@ -223,6 +232,8 @@ Deno.serve(async (req) => {
       status_code: createData.statusCode,
       status_message: createData.statusMessage || null,
       raw_create: createData,
+      purpose,
+      topup_request_id: topupRequestId,
     });
 
     return new Response(JSON.stringify({
