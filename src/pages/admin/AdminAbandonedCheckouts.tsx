@@ -539,6 +539,14 @@ function DetailDrawer({
 
           {/* Actions */}
           <div className="flex flex-wrap gap-2 pt-2">
+            {!row.converted && row.item_count > 0 && (
+              <button
+                onClick={onConvert}
+                className="w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 hover:opacity-90 shadow"
+              >
+                <ArrowRightCircle size={16} /> Convert to Order
+              </button>
+            )}
             {row.customer_phone && (
               <a
                 href={waLink(row.customer_phone, row.customer_name)}
