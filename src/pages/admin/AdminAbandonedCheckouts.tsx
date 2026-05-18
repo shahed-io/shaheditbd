@@ -129,7 +129,80 @@ export default function AdminAbandonedCheckouts() {
     toast.success('Notes saved');
   };
 
-  const copy = (text: string, id: string) => {
+  const convertToOrder = async (
+    row: AbandonedRow,
+    opts: { status: OrderStatus; paymentStatus: PayStatus; paymentMethod: string; transactionId: string; adminNote: string; redirect: boolean }
+  ) => {
+    if (!row.cart_items || row.cart_items.length === 0) {
+      toast.error('Cart is empty — cannot create order');
+      return;
+    }
+    if (!row.customer_name?.trim() || (!row.customer_email?.trim() && !row.customer_phone?.trim())) {
+      toast.error('Customer name + email/phone required');
+      return;
+    }
+
+    try {
+      // Generate order number  AB-YYMMDD-XXXX
+      const now = new Date();
+      const y = now.getFullYear().toString().slice(-2);
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      const { count } = await supabase.from('orders').select('id', { count: 'exact', head: true });
+      const seq = String((count || 0) + 1).padStart(4, '0');
+      const orderNumber = `AB-${y}${m}${d}-${seq}`;
+
+      const { data: order, error: orderErr } = await supabase.from('orders').insert({
+        order_number: orderNumber,
+        customer_name: row.customer_name!.trim(),
+        customer_email: (row.customer_email?.trim() || `${row.customer_phone?.trim()}@recovered.local`),
+        customer_phone: row.customer_phone?.trim() || null,
+        user_id: row.user_id,
+        payment_method: opts.paymentMethod || row.payment_method || 'bkash',
+        payment_status: opts.paymentStatus,
+        transaction_id: opts.transactionId.trim() || null,
+        notes: row.notes || null,
+        admin_notes: opts.adminNote.trim() || `Recovered from abandoned checkout ${row.id}`,
+        subtotal: row.subtotal,
+        discount_amount: row.discount_amount,
+        total: row.total,
+        coupon_code: row.coupon_code,
+        status: opts.status,
+      } as any).select('id').single();
+
+      if (orderErr || !order) throw orderErr || new Error('Order creation failed');
+
+      const itemsPayload = (row.cart_items || []).map((it: any) => ({
+        order_id: order.id,
+        product_id: it.id || it.product_id || null,
+        product_name: it.name + (it.variant ? ` (${it.variant})` : ''),
+        price: Number(it.price || 0),
+        quantity: Number(it.quantity || 1),
+        total: Number(it.price || 0) * Number(it.quantity || 1),
+      }));
+      const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
+      if (itemsErr) throw itemsErr;
+
+      // Mark abandoned checkout as converted
+      await supabase.from('abandoned_checkouts').update({
+        converted: true,
+        converted_order_id: order.id,
+        converted_at: new Date().toISOString(),
+      }).eq('id', row.id);
+
+      setRows(prev => prev.map(r => r.id === row.id ? { ...r, converted: true, converted_order_id: order.id, converted_at: new Date().toISOString() } : r));
+      setConvertRow(null);
+      if (selected?.id === row.id) setSelected(null);
+
+      toast.success(`Order ${orderNumber} created`);
+      if (opts.redirect) {
+        navigate(`/ceo/orders?focus=${order.id}`);
+      }
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to create order');
+    }
+  };
+
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(''), 1200);
