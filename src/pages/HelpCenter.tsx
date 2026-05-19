@@ -305,7 +305,7 @@ const HelpCenter = () => {
                   <div className="w-16 h-16 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0"
                     style={{ background: 'hsla(258,78%,55%,0.07)' }}>
                     {sw.image_url ? (
-                      <img src={sw.image_url} alt={sw.name} className="w-full h-full object-contain p-1" />
+                      <img src={sw.image_url} alt={`${sw.name} — Software Download for Bangladesh`} title={sw.name} loading="lazy" decoding="async" className="w-full h-full object-contain p-1" />
                     ) : (
                       <Download size={24} className="text-primary" />
                     )}
