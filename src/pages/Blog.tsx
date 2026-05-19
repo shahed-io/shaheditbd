@@ -318,7 +318,7 @@ const Blog = () => {
                     {/* Image */}
                     {post.featured_image ? (
                       <div className="h-44 overflow-hidden">
-                        <img src={post.featured_image} alt={post.title}
+                        <img src={post.featured_image} alt={`${post.title} — Shahed Store Blog Bangladesh`} title={post.title} loading="lazy" decoding="async"
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                       </div>
                     ) : (
