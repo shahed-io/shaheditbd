@@ -287,14 +287,96 @@ ${demoDescription}
 
 Now write the full description for the NEW PRODUCT following the EXACT SAME style and structure as the demo. Maintain Bangladesh SEO optimization with local keywords.`;
 
+    } else if (type === "rich_content") {
+      // Long-form SEO-rich product body (700-1500 words) + structured FAQ array.
+      // Used by the bulk Product Content Enrichment admin tool.
+      maxTokens = 4500;
+      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed Store (DBID: 586772174) — Bangladesh's #1 digital software shop.
+
+${bdSeoContext}
+
+GOAL: Produce a comprehensive, deeply SEO-optimized product page body (700–1500 words) plus 6–8 FAQ items, designed to rank #1 on Google Bangladesh and satisfy ChatGPT / Perplexity / Google AI Overview.
+
+Return ONLY valid JSON in this EXACT shape (no markdown fences, no extra prose):
+{
+  "description": "FULL MARKDOWN BODY 700-1500 words — see structure below",
+  "faq": [ { "q": "Question?", "a": "Detailed answer 2-4 sentences." }, ... 6 to 8 items ]
+}
+
+=== MANDATORY MARKDOWN STRUCTURE for the "description" field (in this exact order) ===
+
+## 🛍️ [Product Title with primary keyword]
+
+### 📦 পণ্য পরিচিতি (Product Overview)
+3-4 engaging sentences in Bangla-English mix. Include primary keyword + "বাংলাদেশ" naturally. Establish what the product is and the core promise.
+
+### ✅ মূল বৈশিষ্ট্য (Key Features)
+8-12 bullet points covering technical specs, capabilities, supported platforms, account type, validity, security features, etc. Each bullet 1-2 sentences.
+
+### 💡 কেন কিনবেন? (Benefits — Why You'll Love It)
+6-8 bullet points focusing on USER OUTCOMES (time saved, money saved, productivity, learning, entertainment, peace of mind). NOT features — actual benefits.
+
+### 🧭 ব্যবহার গাইড (Usage Guide / How To Use)
+Step-by-step numbered list (5-8 steps) of how to purchase, receive, activate, and start using the product. Be specific to digital delivery on Shahed Store (order → instant license delivery → activation steps).
+
+### ⚖️ তুলনা (Comparison — Why This Over Alternatives)
+A short markdown table comparing this product against 2 common alternatives or the pirated/free version. Columns: Feature | This Product | Alternative 1 | Alternative 2. 5-7 rows covering price, genuineness, support, updates, security, warranty.
+
+### 👥 কাদের জন্য (Who Should Buy This)
+4-6 bullet points describing ideal buyer personas — students, freelancers, businesses, content creators, gamers, etc. — and the specific scenario each persona benefits from.
+
+### 💰 মূল্য ও প্ল্যান (Pricing & Plans)
+List ALL duration plans with exact BDT prices clearly. Mention Personal/Shared/account type. Use "সেরা দাম", "সাশ্রয়ী মূল্য" naturally.
+
+### 🔍 SEO কীওয়ার্ড সেকশন (Search Intent Coverage)
+3-4 sentences naturally weaving 6-8 strategic keywords: "[product] বাংলাদেশ", "[product] কিনুন", "[product] price in bd", "[product] সেরা দাম", "[product] online shop bangladesh", and at least 2 city names from: ${bdCities}.
+
+### 🏪 কেন Shahed Store? (Trust & Authority)
+4-5 trust points: genuine license, instant delivery, 24/7 support, secure bKash/Nagad/Rocket payment, official DBID 586772174 registration.
+
+### 🚀 এখনই কিনুন (Call To Action)
+2-3 action-oriented lines with urgency and the price.
+
+### ⚠️ Important Notes
+(Copy this footer EXACTLY — do NOT translate or alter)
+
+❌ Sold Products Are Not Returnable.
+
+🛒 The product will be delivered instantly or within 1 hours (Rare cases: up to 24 hours)
+
+❌ Any of our products are requested to be activated within two days maximum. Otherwise the warranty will be void.
+
+=== FAQ REQUIREMENTS ===
+- 6 to 8 items, each genuinely useful for a Bangladeshi buyer.
+- Cover: legitimacy, delivery time, payment methods (bKash/Nagad/Rocket/Wallet), device limits, warranty/refund, activation help, comparison with alternatives, after-sales support.
+- Answers 2-4 sentences, Bangla-English mix, factual, include trust phrases.
+
+=== HARD RULES ===
+- Total word count of "description": 700–1500 words. NEVER less than 700.
+- Use the primary keyword naturally 6-10 times throughout — never keyword-stuffed.
+- After any English word/number, use English period (.) — never the Bengali danda (।). Only use । at the end of purely Bengali sentences.
+- Escape all newlines in JSON strings as \\n. Escape internal quotes as \\".
+- Return ONLY the JSON object. No markdown fences. No commentary.`;
+
+      userPrompt = `Generate the rich product content JSON for:
+- Product Name: ${productName}${subtitle ? `\n- Subtitle: ${subtitle}` : ""}
+- Category: ${category || "Software"}
+- Brand: ${brand || ""}
+- Type: ${productType || "Digital"}${accountType ? `\n- Account Type: ${accountType} (Personal/Shared — clarify)` : ""}
+- Pricing Plans: ${durationInfo}
+- Base Price: ${price ? `৳${price}` : "See plans"}
+
+The description MUST be 700–1500 words and contain ALL 11 sections in the exact order specified. The faq array MUST contain 6–8 items. Return ONLY valid JSON.`;
+
     } else {
-      return new Response(JSON.stringify({ error: "Invalid type. Use: short_description, description, seo, all, or demo_style" }), {
+      return new Response(JSON.stringify({ error: "Invalid type. Use: short_description, description, seo, all, demo_style, or rich_content" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const isJsonType = type === "seo" || type === "all";
+    const isJsonType = type === "seo" || type === "all" || type === "rich_content";
+
 
     const requestBody: any = {
       model: "google/gemini-2.5-flash",
