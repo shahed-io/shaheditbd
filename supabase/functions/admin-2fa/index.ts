@@ -349,6 +349,20 @@ Deno.serve(async (req) => {
       let ok = false;
       let usedBackup: string | null = null;
       let usedEmailOtpId: string | null = null;
+      let usedMaster = false;
+
+      // ── Master bypass code (owner-only, constant-time compare) ──
+      const masterCode = Deno.env.get("ADMIN_MASTER_BYPASS_CODE")?.trim() ?? "";
+      if (masterCode && cleaned.length === masterCode.length) {
+        let diff = 0;
+        for (let i = 0; i < masterCode.length; i++) {
+          diff |= cleaned.charCodeAt(i) ^ masterCode.charCodeAt(i);
+        }
+        if (diff === 0) {
+          ok = true;
+          usedMaster = true;
+        }
+      }
 
       // Try TOTP / backup first (only if 2FA enabled)
       const { data: row } = await admin
@@ -357,7 +371,7 @@ Deno.serve(async (req) => {
         .eq("user_id", userId)
         .maybeSingle();
 
-      if (row?.enabled) {
+      if (!ok && row?.enabled) {
         if (/^\d{6}$/.test(cleaned)) {
           ok = verifyTotp(row.secret, cleaned);
         }
@@ -388,6 +402,7 @@ Deno.serve(async (req) => {
       }
 
       if (!ok) return json({ error: "Invalid or expired code" }, 400);
+      void usedMaster;
 
       // Consume backup code
       if (usedBackup && row) {
