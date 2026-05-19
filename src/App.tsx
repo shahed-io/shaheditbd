@@ -280,6 +280,7 @@ const AppContent = () => {
             <Route path="seo/keywords" element={<AdminSuspense><AdminKeywords /></AdminSuspense>} />
             <Route path="seo/pages" element={<AdminSuspense><AdminPageSeo /></AdminSuspense>} />
             <Route path="seo/products" element={<AdminSuspense><AdminProductSeo /></AdminSuspense>} />
+            <Route path="seo/product-content" element={<AdminSuspense><AdminProductContent /></AdminSuspense>} />
             <Route path="seo/faq" element={<AdminSuspense><AdminFaqManager /></AdminSuspense>} />
             <Route path="seo/reviews" element={<AdminSuspense><AdminReviews /></AdminSuspense>} />
             <Route path="seo/analytics" element={<AdminSuspense><AdminGoogleAnalytics /></AdminSuspense>} />
