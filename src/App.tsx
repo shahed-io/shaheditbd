@@ -59,6 +59,7 @@ const BlogPost              = lazy(() => import("./pages/BlogPost"));
 const HelpCenter            = lazy(() => import("./pages/HelpCenter"));
 const AdminBlog             = lazy(() => import("./pages/admin/AdminBlog"));
 const AdminBlogTopics       = lazy(() => import("./pages/admin/AdminBlogTopics"));
+const AdminTopicalAuthority = lazy(() => import("./pages/admin/AdminTopicalAuthority"));
 const AdminHelp             = lazy(() => import("./pages/admin/AdminHelp"));
 const AdminSEO              = lazy(() => import("./pages/admin/AdminSEO"));
 const AdminSEOMonitor       = lazy(() => import("./pages/admin/AdminSEOMonitor"));
@@ -271,6 +272,7 @@ const AppContent = () => {
             <Route path="referrals" element={<AdminSuspense><AdminReferrals /></AdminSuspense>} />
             <Route path="blog" element={<AdminSuspense><AdminBlog /></AdminSuspense>} />
             <Route path="blog/ai-topics" element={<AdminSuspense><AdminBlogTopics /></AdminSuspense>} />
+            <Route path="blog/topical-authority" element={<AdminSuspense><AdminTopicalAuthority /></AdminSuspense>} />
             <Route path="help" element={<AdminSuspense><AdminHelp /></AdminSuspense>} />
             <Route path="seo" element={<AdminSuspense><AdminSEO /></AdminSuspense>} />
             <Route path="seo-monitor" element={<AdminSuspense><AdminSEOMonitor /></AdminSuspense>} />

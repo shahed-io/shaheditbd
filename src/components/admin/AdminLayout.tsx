@@ -16,7 +16,7 @@ import {
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp, Receipt,
   Megaphone, Shield, Database, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Bot, KeyRound, Star, BarChart2,
-  ImageIcon, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles, Activity,
+  ImageIcon, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles, Activity, Network,
   ShoppingCart as ShopIcon, CreditCard as CreditIcon,
 } from 'lucide-react';
 
@@ -134,6 +134,7 @@ const MENU_SECTIONS: MenuSection[] = [
     items: [
       { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
       { icon: Sparkles, label: 'AI Blog Topics', path: '/ceo/blog/ai-topics', badge: 'new' },
+      { icon: Network, label: 'Topical Authority', path: '/ceo/blog/topical-authority', badge: 'new' },
       { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
       { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
       { icon: Globe, label: 'SEO Manager', path: '/ceo/seo' },
