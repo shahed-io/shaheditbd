@@ -75,14 +75,12 @@ export default function AdminImageAudit() {
   useEffect(() => {
     (async () => {
       const urls = new Set<string>(DEFAULT_PAGES);
-      const [{ data: products }, { data: blogs }, { data: cats }] = await Promise.all([
-        supabase.from("products").select("slug").eq("is_active", true).limit(30),
-        supabase.from("blog_posts").select("slug").eq("is_published", true).limit(30),
-        supabase.from("categories").select("slug").limit(20),
-      ]);
-      products?.forEach((p) => p.slug && urls.add(`/product/${p.slug}`));
-      blogs?.forEach((b) => b.slug && urls.add(`/blog/${b.slug}`));
-      cats?.forEach((c) => c.slug && urls.add(`/shop?category=${c.slug}`));
+      const productsRes: any = await supabase.from("products").select("slug").eq("is_active", true).limit(30);
+      const blogsRes: any = await supabase.from("blog_posts").select("slug").eq("is_published", true).limit(30);
+      const catsRes: any = await supabase.from("categories").select("slug").limit(20);
+      (productsRes.data ?? []).forEach((p: any) => p.slug && urls.add(`/product/${p.slug}`));
+      (blogsRes.data ?? []).forEach((b: any) => b.slug && urls.add(`/blog/${b.slug}`));
+      (catsRes.data ?? []).forEach((c: any) => c.slug && urls.add(`/shop?category=${c.slug}`));
       setPages(
         Array.from(urls).map((url) => ({
           url,
