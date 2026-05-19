@@ -194,7 +194,7 @@ const Blog = () => {
                   {/* Image */}
                   {post.featured_image ? (
                     <div className={`overflow-hidden ${i === 0 ? 'h-56' : 'h-40'}`}>
-                      <img src={post.featured_image} alt={post.title}
+                      <img src={post.featured_image} alt={`${post.title} — Shahed Store Blog Bangladesh`} title={post.title} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" fetchPriority={i === 0 ? 'high' : 'auto'}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     </div>
                   ) : (
