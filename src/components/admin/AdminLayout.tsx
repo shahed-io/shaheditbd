@@ -133,6 +133,7 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'Content & SEO',
     items: [
       { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
+      { icon: Sparkles, label: 'AI Blog Topics', path: '/ceo/blog/ai-topics', badge: 'new' },
       { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
       { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
       { icon: Globe, label: 'SEO Manager', path: '/ceo/seo' },
