@@ -61,6 +61,7 @@ const AdminBlog             = lazy(() => import("./pages/admin/AdminBlog"));
 const AdminHelp             = lazy(() => import("./pages/admin/AdminHelp"));
 const AdminSEO              = lazy(() => import("./pages/admin/AdminSEO"));
 const AdminSEOMonitor       = lazy(() => import("./pages/admin/AdminSEOMonitor"));
+const AdminSemrush          = lazy(() => import("./pages/admin/AdminSemrush"));
 const AdminAttributes       = lazy(() => import("./pages/admin/AdminAttributes"));
 const AdminPages            = lazy(() => import("./pages/admin/AdminPages"));
 const AdminSoftwareDownloads= lazy(() => import("./pages/admin/AdminSoftwareDownloads"));
@@ -270,6 +271,7 @@ const AppContent = () => {
             <Route path="help" element={<AdminSuspense><AdminHelp /></AdminSuspense>} />
             <Route path="seo" element={<AdminSuspense><AdminSEO /></AdminSuspense>} />
             <Route path="seo-monitor" element={<AdminSuspense><AdminSEOMonitor /></AdminSuspense>} />
+            <Route path="semrush" element={<AdminSuspense><AdminSemrush /></AdminSuspense>} />
             <Route path="seo/meta-tags" element={<AdminSuspense><AdminMetaTags /></AdminSuspense>} />
             <Route path="seo/sitemap" element={<AdminSuspense><AdminSitemap /></AdminSuspense>} />
             <Route path="seo/robots" element={<AdminSuspense><AdminRobots /></AdminSuspense>} />
