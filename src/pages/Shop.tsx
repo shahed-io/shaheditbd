@@ -395,7 +395,10 @@ const Shop = () => {
                             ? <img
                                 key={imgSrc}
                                 src={imgSrc}
-                                alt={cat.name}
+                                alt={`${cat.name} Category — Digital Software & Licenses in Bangladesh`}
+                                title={cat.name}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full h-full object-cover"
                                 onError={e => {
                                   const img = e.currentTarget as HTMLImageElement;
