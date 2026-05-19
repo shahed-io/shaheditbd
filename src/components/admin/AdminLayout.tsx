@@ -136,6 +136,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
       { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
       { icon: Globe, label: 'SEO Manager', path: '/ceo/seo' },
+      { icon: FileText, label: 'Product Content (AI)', path: '/ceo/seo/product-content', badge: 'new' },
       { icon: Activity, label: 'SEO Monitor', path: '/ceo/seo-monitor', badge: 'new' },
       { icon: TrendingUp, label: 'Semrush Rankings', path: '/ceo/semrush', badge: 'new' },
       { icon: Search, label: 'Search Console', path: '/ceo/seo/search-console' },
