@@ -134,6 +134,7 @@ const MENU_SECTIONS: MenuSection[] = [
     items: [
       { icon: BookOpen, label: 'Blog', path: '/ceo/blog' },
       { icon: Sparkles, label: 'AI Blog Topics', path: '/ceo/blog/ai-topics', badge: 'new' },
+      { icon: Network, label: 'Topical Authority', path: '/ceo/blog/topical-authority', badge: 'new' },
       { icon: HelpCircle, label: 'Help Center', path: '/ceo/help' },
       { icon: ImageIcon, label: 'Media Library', path: '/ceo/media-library' },
       { icon: Globe, label: 'SEO Manager', path: '/ceo/seo' },
