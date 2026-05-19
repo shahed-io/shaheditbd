@@ -61,6 +61,7 @@ const AdminBlog             = lazy(() => import("./pages/admin/AdminBlog"));
 const AdminHelp             = lazy(() => import("./pages/admin/AdminHelp"));
 const AdminSEO              = lazy(() => import("./pages/admin/AdminSEO"));
 const AdminSEOMonitor       = lazy(() => import("./pages/admin/AdminSEOMonitor"));
+const AdminSemrush          = lazy(() => import("./pages/admin/AdminSemrush"));
 const AdminAttributes       = lazy(() => import("./pages/admin/AdminAttributes"));
 const AdminPages            = lazy(() => import("./pages/admin/AdminPages"));
 const AdminSoftwareDownloads= lazy(() => import("./pages/admin/AdminSoftwareDownloads"));
