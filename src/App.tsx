@@ -91,6 +91,7 @@ const AdminKeywords         = lazy(() => import("./pages/admin/seo/AdminKeywords
 const AdminPageSeo          = lazy(() => import("./pages/admin/seo/AdminPageSeo"));
 const AdminProductSeo       = lazy(() => import("./pages/admin/seo/AdminProductSeo"));
 const AdminProductContent   = lazy(() => import("./pages/admin/seo/AdminProductContent"));
+const AdminImageAudit       = lazy(() => import("./pages/admin/seo/AdminImageAudit"));
 const AdminFaqManager       = lazy(() => import("./pages/admin/seo/AdminFaqManager"));
 const AdminReviews          = lazy(() => import("./pages/admin/seo/AdminReviews"));
 const AdminGoogleAnalytics  = lazy(() => import("./pages/admin/seo/AdminGoogleAnalytics"));
@@ -285,6 +286,7 @@ const AppContent = () => {
             <Route path="seo/pages" element={<AdminSuspense><AdminPageSeo /></AdminSuspense>} />
             <Route path="seo/products" element={<AdminSuspense><AdminProductSeo /></AdminSuspense>} />
             <Route path="seo/product-content" element={<AdminSuspense><AdminProductContent /></AdminSuspense>} />
+            <Route path="seo/image-audit" element={<AdminSuspense><AdminImageAudit /></AdminSuspense>} />
             <Route path="seo/faq" element={<AdminSuspense><AdminFaqManager /></AdminSuspense>} />
             <Route path="seo/reviews" element={<AdminSuspense><AdminReviews /></AdminSuspense>} />
             <Route path="seo/analytics" element={<AdminSuspense><AdminGoogleAnalytics /></AdminSuspense>} />
