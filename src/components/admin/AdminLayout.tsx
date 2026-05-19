@@ -16,7 +16,7 @@ import {
   Grid3X3, Percent, FileText, CreditCard, Headphones, TrendingUp, Receipt,
   Megaphone, Shield, Database, Gift, BookOpen, HelpCircle, Globe, Layout, FolderDown,
   Bot, KeyRound, Star, BarChart2,
-  ImageIcon, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles, Activity, Network,
+  ImageIcon, ImageOff, ArrowLeftRight, Wallet, Sliders, Flame, Mail, Facebook, Layers, ShieldCheck, MessageCircle, Brain, AlertTriangle, Palette, Sparkles, Activity, Network,
   ShoppingCart as ShopIcon, CreditCard as CreditIcon,
 } from 'lucide-react';
 
