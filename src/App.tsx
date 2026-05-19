@@ -272,6 +272,7 @@ const AppContent = () => {
             <Route path="referrals" element={<AdminSuspense><AdminReferrals /></AdminSuspense>} />
             <Route path="blog" element={<AdminSuspense><AdminBlog /></AdminSuspense>} />
             <Route path="blog/ai-topics" element={<AdminSuspense><AdminBlogTopics /></AdminSuspense>} />
+            <Route path="blog/topical-authority" element={<AdminSuspense><AdminTopicalAuthority /></AdminSuspense>} />
             <Route path="help" element={<AdminSuspense><AdminHelp /></AdminSuspense>} />
             <Route path="seo" element={<AdminSuspense><AdminSEO /></AdminSuspense>} />
             <Route path="seo-monitor" element={<AdminSuspense><AdminSEOMonitor /></AdminSuspense>} />
