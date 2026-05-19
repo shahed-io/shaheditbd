@@ -72,7 +72,7 @@ const ShopProductCard = ({ product }: { product: Product }) => {
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-muted">
         {product.image_url
-          ? <img src={product.image_url} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          ? <img src={product.image_url} alt={`${product.name} — Buy Online in Bangladesh at Shahed Store`} title={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
           : <div className="w-full h-full flex items-center justify-center text-4xl" style={{ background: 'hsla(258,78%,55%,0.06)' }}>🛒</div>
         }
         {discount && (
