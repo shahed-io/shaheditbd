@@ -188,6 +188,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           quantity: r.quantity || 1,
         }));
         setItems(dbItems);
+        setSelectedKeys(dbItems.map(itemKey));
       } catch { /* silent */ }
     })();
   }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
