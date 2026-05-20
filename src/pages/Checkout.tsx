@@ -41,13 +41,27 @@ type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay' | 'bkash_merchant' | 
 
 const Checkout = () => {
   const {
-    items, subtotal, discountAmount, taxAmount, serviceFee, finalTotal,
-    clearCart, updateQuantity, removeFromCart,
+    items: allItems, subtotal, discountAmount, taxAmount, serviceFee, finalTotal,
+    clearCart, updateQuantity, removeFromCart, removeItems,
     coupon, setCoupon, resetCoupon,
     orderNotes, setOrderNotes,
     termsAccepted, setTermsAccepted,
     saveAbandonedCart,
+    selectedKeys, selectedItems, itemKey: getItemKey,
   } = useCart();
+  // Only checkout the user-selected items; if no selection (e.g. legacy redirect), fall back to all items
+  const items = selectedKeys.length > 0 ? selectedItems : allItems;
+  const checkoutKeysRef = useRef<string[]>(items.map(getItemKey));
+  // Keep ref in sync until order placed
+  useEffect(() => { checkoutKeysRef.current = items.map(getItemKey); }, [items, getItemKey]);
+  const finishCart = () => {
+    const keys = checkoutKeysRef.current;
+    if (keys.length > 0 && keys.length < allItems.length) {
+      removeItems(keys);
+    } else {
+      clearCart();
+    }
+  };
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
