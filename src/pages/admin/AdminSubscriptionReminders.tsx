@@ -318,49 +318,74 @@ export default function AdminSubscriptionReminders() {
   // ============= Manual / AI Composer =============
   const mDaysLeft = useMemo(() => mExpiry ? daysBetween(new Date(mExpiry).toISOString()) : null, [mExpiry]);
 
+  // Parse multiple emails from a textarea (comma / newline / semicolon / space separated)
+  const parseEmails = (raw: string): string[] => {
+    const list = raw.split(/[\s,;]+/).map(s => s.trim()).filter(Boolean);
+    const valid: string[] = [];
+    const seen = new Set<string>();
+    for (const e of list) {
+      const lc = e.toLowerCase();
+      if (!/.+@.+\..+/.test(lc) || seen.has(lc)) continue;
+      seen.add(lc);
+      valid.push(lc);
+    }
+    return valid;
+  };
+
   const sendManual = async (overrideMsg?: string, couponOverride?: { code: string; validUntil: string } | null) => {
     const finalMsg = (overrideMsg ?? mMessage).trim();
-    if (!mCustomerEmail.trim() || !/.+@.+\..+/.test(mCustomerEmail)) {
-      toast.error('Valid customer email required'); return;
+    const emails = parseEmails(mCustomerEmail);
+    if (emails.length === 0) {
+      toast.error('Add at least one valid email'); return;
     }
     if (!mProductName.trim()) { toast.error('Product name required'); return; }
     if (!finalMsg) { toast.error('Message is empty — generate or write one'); return; }
     setMSending(true);
+    let done = 0, failed = 0;
     try {
-      const coupon = couponOverride !== undefined
-        ? couponOverride
-        : await createPersonalCoupon({
-            customerEmail: mCustomerEmail,
-            productId: mProductId || null,
-            productName: mProductName,
+      for (const email of emails) {
+        try {
+          const coupon = couponOverride !== undefined
+            ? couponOverride
+            : await createPersonalCoupon({
+                customerEmail: email,
+                productId: mProductId || null,
+                productName: mProductName,
+              });
+          const idem = `manual-subrenew-${email}-${mProductId || mProductName}-${Date.now()}`;
+          const { error } = await supabase.functions.invoke('send-transactional-email', {
+            body: {
+              templateName: 'subscription-renewal-reminder',
+              recipientEmail: email,
+              idempotencyKey: idem,
+              templateData: {
+                customerName: mCustomerName || 'Customer',
+                productName: mProductName,
+                expiryDate: mExpiry ? fmtDate(new Date(mExpiry).toISOString()) : '',
+                daysLeft: mDaysLeft,
+                renewUrl: SITE + '/shop',
+                customMessage: finalMsg,
+                couponCode: coupon?.code,
+                discountPercent: coupon ? couponPercent : undefined,
+                couponValidUntil: coupon?.validUntil,
+                specialOffer: specialOffer || undefined,
+              },
+            },
           });
-      const idem = `manual-subrenew-${mCustomerEmail}-${mProductId || mProductName}-${Date.now()}`;
-      const { error } = await supabase.functions.invoke('send-transactional-email', {
-        body: {
-          templateName: 'subscription-renewal-reminder',
-          recipientEmail: mCustomerEmail,
-          idempotencyKey: idem,
-          templateData: {
-            customerName: mCustomerName || 'Customer',
-            productName: mProductName,
-            expiryDate: mExpiry ? fmtDate(new Date(mExpiry).toISOString()) : '',
-            daysLeft: mDaysLeft,
-            renewUrl: SITE + '/shop',
-            customMessage: finalMsg,
-            couponCode: coupon?.code,
-            discountPercent: coupon ? couponPercent : undefined,
-            couponValidUntil: coupon?.validUntil,
-            specialOffer: specialOffer || undefined,
-          },
-        },
-      });
-      if (error) throw error;
-      toast.success(
-        `Reminder sent to ${mCustomerEmail}${coupon ? ` (coupon ${coupon.code})` : ''}`,
-      );
-      setMMessage(''); setMNotes(''); setMCustomerEmail(''); setMCustomerName(''); setMExpiry('');
-    } catch (e: any) {
-      toast.error('Send failed: ' + (e?.message || 'unknown'));
+          if (error) throw error;
+          done++;
+        } catch (e: any) {
+          console.error('[sendManual] failed for', email, e);
+          failed++;
+        }
+        // Light pacing to avoid burst rate-limits
+        await new Promise(res => setTimeout(res, 120));
+      }
+      if (done > 0) toast.success(`Reminder sent to ${done} recipient${done === 1 ? '' : 's'}${failed ? ` — ${failed} failed` : ''}`);
+      else toast.error(`All ${failed} send${failed === 1 ? '' : 's'} failed`);
+      if (failed === 0) {
+        setMMessage(''); setMNotes(''); setMCustomerEmail(''); setMCustomerName(''); setMExpiry('');
+      }
     } finally {
       setMSending(false);
     }
