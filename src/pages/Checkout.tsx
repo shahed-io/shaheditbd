@@ -255,7 +255,7 @@ const Checkout = () => {
     const ord = searchParams.get('order');
     if (!bkash) return;
     if (bkash === 'success' && ord) {
-      clearCart();
+      finishCart();
       setOrderNumber(ord);
       setPaymentMethod('bkash_online');
       setOrderPlaced(true);
