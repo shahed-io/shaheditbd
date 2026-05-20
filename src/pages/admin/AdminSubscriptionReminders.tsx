@@ -16,7 +16,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Mail, RefreshCw, Save, Send, CalendarClock, Search, Loader2, Filter, Sparkles, Wand2 } from 'lucide-react';
+import { Mail, RefreshCw, Save, Send, CalendarClock, Search, Loader2, Filter, Sparkles, Wand2, History, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 
@@ -102,6 +102,71 @@ export default function AdminSubscriptionReminders() {
   const [mGenerating, setMGenerating] = useState(false);
   const [mSending, setMSending] = useState(false);
   const [mAutoSend, setMAutoSend] = useState(true);
+
+  // ===== Send History =====
+  interface HistoryRow {
+    message_id: string;
+    recipient_email: string;
+    status: string;
+    error_message: string | null;
+    created_at: string;
+  }
+  const [history, setHistory] = useState<HistoryRow[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historySearch, setHistorySearch] = useState('');
+  const [historyStatus, setHistoryStatus] = useState<'all' | 'sent' | 'failed' | 'pending'>('all');
+
+  const loadHistory = async () => {
+    setHistoryLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('email_send_log')
+        .select('message_id, recipient_email, status, error_message, created_at')
+        .eq('template_name', 'subscription-renewal-reminder')
+        .order('created_at', { ascending: false })
+        .limit(500);
+      if (error) throw error;
+      // Deduplicate by message_id (keep latest status — first occurrence since ordered desc)
+      const seen = new Set<string>();
+      const dedup: HistoryRow[] = [];
+      for (const r of (data || []) as HistoryRow[]) {
+        const key = r.message_id || `${r.recipient_email}-${r.created_at}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        dedup.push(r);
+      }
+      setHistory(dedup);
+    } catch (e: any) {
+      toast.error('History load failed: ' + (e?.message || 'unknown'));
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  useEffect(() => { loadHistory(); }, []);
+
+  const historyFiltered = useMemo(() => {
+    const q = historySearch.trim().toLowerCase();
+    return history.filter(h => {
+      if (historyStatus !== 'all') {
+        if (historyStatus === 'sent' && h.status !== 'sent') return false;
+        if (historyStatus === 'failed' && !['dlq', 'failed', 'bounced'].includes(h.status)) return false;
+        if (historyStatus === 'pending' && h.status !== 'pending') return false;
+      }
+      if (q && !h.recipient_email.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [history, historySearch, historyStatus]);
+
+  const historyStats = useMemo(() => {
+    const out = { total: history.length, sent: 0, failed: 0, pending: 0 };
+    history.forEach(h => {
+      if (h.status === 'sent') out.sent++;
+      else if (['dlq', 'failed', 'bounced'].includes(h.status)) out.failed++;
+      else if (h.status === 'pending') out.pending++;
+    });
+    return out;
+  }, [history]);
 
   const load = async () => {
     setLoading(true);
@@ -312,7 +377,7 @@ export default function AdminSubscriptionReminders() {
     setSendOpen(false);
     setSelected({});
     setCustomMsg('');
-    await load();
+    await Promise.all([load(), loadHistory()]);
   };
 
   // ============= Manual / AI Composer =============
@@ -388,6 +453,8 @@ export default function AdminSubscriptionReminders() {
       }
     } finally {
       setMSending(false);
+      // Refresh history a moment later so queued emails have a row
+      setTimeout(() => { loadHistory(); }, 800);
     }
   };
 
@@ -735,6 +802,123 @@ export default function AdminSubscriptionReminders() {
           </p>
         )}
       </Card>
+
+      {/* ============== Send History ============== */}
+      <Card className="p-4 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <History className="h-5 w-5 text-primary" />
+            <div>
+              <h2 className="text-lg font-semibold">Reminder Send History</h2>
+              <p className="text-xs text-muted-foreground">
+                Every renewal email sent from this page — delivery status, recipient, and errors.
+              </p>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" onClick={loadHistory} disabled={historyLoading}>
+            {historyLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+            Refresh
+          </Button>
+        </div>
+
+        {/* stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <Card className="p-3">
+            <div className="text-xs text-muted-foreground">Total</div>
+            <div className="text-xl font-bold">{historyStats.total}</div>
+          </Card>
+          <Card className="p-3">
+            <div className="text-xs text-muted-foreground flex items-center gap-1"><CheckCircle2 className="h-3 w-3 text-green-600" /> Delivered</div>
+            <div className="text-xl font-bold text-green-600">{historyStats.sent}</div>
+          </Card>
+          <Card className="p-3">
+            <div className="text-xs text-muted-foreground flex items-center gap-1"><XCircle className="h-3 w-3 text-destructive" /> Failed</div>
+            <div className="text-xl font-bold text-destructive">{historyStats.failed}</div>
+          </Card>
+          <Card className="p-3">
+            <div className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3 text-amber-500" /> Pending</div>
+            <div className="text-xl font-bold text-amber-500">{historyStats.pending}</div>
+          </Card>
+        </div>
+
+        {/* filters */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              className="pl-8"
+              placeholder="Search by email…"
+              value={historySearch}
+              onChange={e => setHistorySearch(e.target.value)}
+            />
+          </div>
+          <Select value={historyStatus} onValueChange={(v: any) => setHistoryStatus(v)}>
+            <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="sent">Delivered</SelectItem>
+              <SelectItem value="failed">Failed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="border rounded-lg overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Recipient</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Sent at</TableHead>
+                <TableHead>Error</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {historyLoading && (
+                <TableRow><TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin inline mr-2" /> Loading history…
+                </TableCell></TableRow>
+              )}
+              {!historyLoading && historyFiltered.length === 0 && (
+                <TableRow><TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
+                  No reminder emails have been sent yet.
+                </TableCell></TableRow>
+              )}
+              {!historyLoading && historyFiltered.slice(0, 100).map((h) => {
+                const isSent = h.status === 'sent';
+                const isFailed = ['dlq', 'failed', 'bounced'].includes(h.status);
+                const variant = isSent ? 'default' : isFailed ? 'destructive' : 'secondary';
+                return (
+                  <TableRow key={`${h.message_id}-${h.created_at}`}>
+                    <TableCell className="text-sm break-all">{h.recipient_email}</TableCell>
+                    <TableCell>
+                      <Badge variant={variant as any} className="capitalize">
+                        {isSent ? 'Delivered' : isFailed ? 'Failed' : h.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                      {new Date(h.created_at).toLocaleString('en-GB', {
+                        day: '2-digit', month: 'short', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit',
+                      })}
+                    </TableCell>
+                    <TableCell className="text-xs text-destructive max-w-[300px] truncate" title={h.error_message || ''}>
+                      {h.error_message || '—'}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+        {historyFiltered.length > 100 && (
+          <p className="text-xs text-muted-foreground">
+            Showing first 100 of {historyFiltered.length} entries. Use filters to narrow down.
+          </p>
+        )}
+      </Card>
+
+
 
       {/* Edit expiry date */}
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
