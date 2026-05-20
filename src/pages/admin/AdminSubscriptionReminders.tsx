@@ -103,6 +103,71 @@ export default function AdminSubscriptionReminders() {
   const [mSending, setMSending] = useState(false);
   const [mAutoSend, setMAutoSend] = useState(true);
 
+  // ===== Send History =====
+  interface HistoryRow {
+    message_id: string;
+    recipient_email: string;
+    status: string;
+    error_message: string | null;
+    created_at: string;
+  }
+  const [history, setHistory] = useState<HistoryRow[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historySearch, setHistorySearch] = useState('');
+  const [historyStatus, setHistoryStatus] = useState<'all' | 'sent' | 'failed' | 'pending'>('all');
+
+  const loadHistory = async () => {
+    setHistoryLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('email_send_log')
+        .select('message_id, recipient_email, status, error_message, created_at')
+        .eq('template_name', 'subscription-renewal-reminder')
+        .order('created_at', { ascending: false })
+        .limit(500);
+      if (error) throw error;
+      // Deduplicate by message_id (keep latest status — first occurrence since ordered desc)
+      const seen = new Set<string>();
+      const dedup: HistoryRow[] = [];
+      for (const r of (data || []) as HistoryRow[]) {
+        const key = r.message_id || `${r.recipient_email}-${r.created_at}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        dedup.push(r);
+      }
+      setHistory(dedup);
+    } catch (e: any) {
+      toast.error('History load failed: ' + (e?.message || 'unknown'));
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  useEffect(() => { loadHistory(); }, []);
+
+  const historyFiltered = useMemo(() => {
+    const q = historySearch.trim().toLowerCase();
+    return history.filter(h => {
+      if (historyStatus !== 'all') {
+        if (historyStatus === 'sent' && h.status !== 'sent') return false;
+        if (historyStatus === 'failed' && !['dlq', 'failed', 'bounced'].includes(h.status)) return false;
+        if (historyStatus === 'pending' && h.status !== 'pending') return false;
+      }
+      if (q && !h.recipient_email.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [history, historySearch, historyStatus]);
+
+  const historyStats = useMemo(() => {
+    const out = { total: history.length, sent: 0, failed: 0, pending: 0 };
+    history.forEach(h => {
+      if (h.status === 'sent') out.sent++;
+      else if (['dlq', 'failed', 'bounced'].includes(h.status)) out.failed++;
+      else if (h.status === 'pending') out.pending++;
+    });
+    return out;
+  }, [history]);
+
   const load = async () => {
     setLoading(true);
     try {
