@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { X, ShoppingCart, Plus, Minus, Trash2, ArrowRight, Tag, Loader2, Heart, CheckCircle } from 'lucide-react';
+import { X, ShoppingCart, Plus, Minus, Trash2, ArrowRight, Tag, Loader2, Heart, CheckCircle, Check } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -12,9 +12,12 @@ const CartDrawer = () => {
     cartCount, removeFromCart, updateQuantity, clearCart,
     wishlist, wishlistOpen, setWishlistOpen, toggleWishlist, addToCart,
     coupon, setCoupon, resetCoupon,
+    selectedKeys, toggleSelected, selectAll, clearSelected, isSelected, itemKey,
   } = useCart();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const allSelected = items.length > 0 && selectedKeys.length === items.length;
+  const someSelected = selectedKeys.length > 0;
 
   const [couponInput, setCouponInput] = useState(coupon.isApplied ? coupon.code : '');
   const [couponLoading, setCouponLoading] = useState(false);
@@ -91,6 +94,24 @@ const CartDrawer = () => {
           </div>
         </div>
 
+        {/* Select-all bar */}
+        {items.length > 0 && (
+          <div className="flex items-center justify-between px-5 py-2 border-b border-border/60 bg-muted/10 flex-shrink-0">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-xs font-medium text-foreground">
+              <span
+                onClick={() => allSelected ? clearSelected() : selectAll()}
+                className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${allSelected ? 'bg-primary border-primary' : 'border-muted-foreground/40 hover:border-primary'}`}
+              >
+                {allSelected && <Check size={11} className="text-background" strokeWidth={3} />}
+              </span>
+              <span onClick={() => allSelected ? clearSelected() : selectAll()}>Select all</span>
+            </label>
+            <span className="text-xs text-muted-foreground">
+              {selectedKeys.length} of {items.length} selected
+            </span>
+          </div>
+        )}
+
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
           {items.length === 0 ? (
@@ -105,11 +126,26 @@ const CartDrawer = () => {
               </button>
             </div>
           ) : (
-            items.map(item => (
-              <div key={`${item.id}-${item.variant}`} className="flex gap-3 p-3 rounded-xl border border-border bg-card hover:border-border/80 transition-colors group">
+            items.map(item => {
+              const k = itemKey(item);
+              const checked = isSelected(k);
+              return (
+              <div
+                key={`${item.id}-${item.variant}`}
+                className={`flex gap-3 p-3 rounded-xl border bg-card transition-colors group ${checked ? 'border-primary/60 shadow-[0_0_0_1px_hsl(var(--primary)/0.3)]' : 'border-border hover:border-border/80'}`}
+              >
+                {/* Checkbox */}
+                <button
+                  onClick={() => toggleSelected(k)}
+                  aria-label={checked ? 'Deselect item' : 'Select item'}
+                  className={`mt-1 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${checked ? 'bg-primary border-primary' : 'border-muted-foreground/40 hover:border-primary'}`}
+                >
+                  {checked && <Check size={13} className="text-background" strokeWidth={3} />}
+                </button>
                 <img
                   src={item.image} alt={item.name}
-                  className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                  className="w-16 h-16 rounded-lg object-cover flex-shrink-0 cursor-pointer"
+                  onClick={() => toggleSelected(k)}
                   onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/64x64/0a1628/00b4d8?text=P'; }}
                 />
                 <div className="flex-1 min-w-0">
@@ -119,14 +155,14 @@ const CartDrawer = () => {
                     {/* Quantity */}
                     <div className="flex items-center gap-0 border border-border rounded-lg overflow-hidden bg-muted/20">
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.id, item.quantity - 1, item.variant)}
                         className="px-2.5 py-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
                       >
                         <Minus size={11} />
                       </button>
                       <span className="px-2 text-sm font-bold text-foreground min-w-[28px] text-center">{item.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.id, item.quantity + 1, item.variant)}
                         className="px-2.5 py-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
                       >
                         <Plus size={11} />
@@ -135,7 +171,7 @@ const CartDrawer = () => {
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-primary">৳{(item.price * item.quantity).toLocaleString()}</span>
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item.id, item.variant)}
                         className="p-1.5 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
                       >
                         <Trash2 size={13} />
@@ -144,7 +180,8 @@ const CartDrawer = () => {
                   </div>
                 </div>
               </div>
-            ))
+              );
+            })
           )}
         </div>
 
@@ -223,11 +260,22 @@ const CartDrawer = () => {
             </div>
 
             <button
-              onClick={() => { setCartOpen(false); navigate('/checkout'); }}
-              className="w-full btn-glow py-3 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm"
+              onClick={() => {
+                if (!someSelected) { toast.error('চেকআউটের জন্য অন্তত একটি product select করুন'); return; }
+                setCartOpen(false);
+                navigate('/checkout');
+              }}
+              disabled={!someSelected}
+              className="w-full btn-glow py-3 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Proceed to Checkout <ArrowRight size={15} />
+              {someSelected ? `Pay Selected (${selectedKeys.length}) · ৳${finalTotal.toLocaleString()}` : 'Select items to checkout'}
+              {someSelected && <ArrowRight size={15} />}
             </button>
+            {items.length > selectedKeys.length && someSelected && (
+              <p className="text-[11px] text-muted-foreground text-center">
+                বাকি {items.length - selectedKeys.length}টি product পরে কেনার জন্য cart-এ save থাকবে
+              </p>
+            )}
           </div>
         )}
       </div>

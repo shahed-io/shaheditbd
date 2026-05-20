@@ -1,51 +1,60 @@
-## Office 365 Account Checker — Setup Plan
+# Persistent Cart + Multi-Select Checkout
 
-`/check-key` page-এ একটা নতুন **tab system** যোগ করব: **Product Key** এবং **Office 365 Account**। দুটো tool একই page-এ থাকবে, design language same রাখব।
+বর্তমান cart শুধু `localStorage`-এ থাকে এবং payment success-এ পুরোটাই clear হয়ে যায়। নতুন behavior:
 
-### 1. Database
-নতুন table `office365_check_history`:
-- `id`, `user_id` (uuid, FK auth.users), `username` (text), `status_acc` (text), `checked_at`
-- ⚠️ Password **save হবে না** (security best practice — শুধু username + result store হবে)
-- RLS: user শুধু নিজের history দেখবে / insert করবে; admin সব দেখবে
+- Login করা user-এর cart Supabase-এ save হবে (device-এ device-এ sync, payment-এর পরেও থাকবে)।
+- প্রতিটা item-এ checkbox থাকবে → user যেগুলো select করবে শুধু সেগুলোই checkout/pay হবে।
+- Payment success হলে শুধু **paid items** cart থেকে remove হবে, বাকিগুলো DB-তে save থাকবে পরে কেনার জন্য।
 
-### 2. Edge Function: `check-office365`
-- Auth required (Bearer token, like `check-key`)
-- Input: `{ accounts: [{ username, password }, ...] }` (max 100 per request, Zod validation)
-- Forwards POST request to `https://getcid.info/api-check-account-office-365` as JSON array
-- Returns parsed results: `[{ userName, status_acc }]`
-- Logs only `username + status_acc` to history table (password never persisted)
-- Rate limit safety: chunks of 50, small delay between batches (provider blocks rapid IPs)
-- Error handling: network/timeout/IP-block detection with friendly Bengali fallback message
+## কী কী হবে
 
-### 3. Frontend: `src/pages/CheckKey.tsx`
-- Top-এ **Tabs** component (shadcn) → "Product Key" | "Office 365 Account"
-- Office 365 tab content:
-  - Textarea: prompt — `email:password` per line (auto-parse `:`, `|`, tab, comma)
-  - "Check Accounts" button (gradient, same style as Check Key)
-  - Result cards with status badges:
-    - `success` → green ✅
-    - `more_information_required` → yellow ⚠️ (MFA enabled — credentials valid)
-    - `invalid_grant` / `unauthorized` → red ❌ (wrong password)
-    - others → gray
-  - Stats bar: Total / Valid / Invalid / MFA
-  - Copy/Export valid accounts button
-- **Private history section** (per-tab): user-wise, last 50 entries, password masked completely (only `user@domain.com → status` shown)
-- "How It Works" panel updated for Office 365 tab
+1. **নতুন table `user_cart_items`** (RLS-protected, user নিজের cart-ই manage করতে পারবে):
+   - `product_id`, `name`, `category`, `price`, `original_price`, `image`, `variant`, `quantity`, `created_at`
+   - Unique `(user_id, product_id, variant)` যাতে duplicate না হয়।
 
-### 4. UX details
-- Same glassmorphism card style as existing Check Key
-- Bengali instructions, status meanings explained
-- Login required (existing AuthModal trigger reused)
-- Mobile responsive
+2. **`useCart` hook upgrade:**
+   - Login হলে: localStorage cart → DB-তে merge upsert, তারপর DB থেকে load।
+   - Logout/guest: আগের মতই localStorage।
+   - নতুন state: `selectedIds: Set<string>`; helpers — `toggleSelected`, `selectAll`, `clearSelected`, `selectedItems`, `selectedSubtotal`, `selectedFinalTotal`।
+   - নতুন `removeItems(ids[])` — purchase success-এ শুধু paid items মুছবে (localStorage + DB)।
+   - `clearCart()` শুধু explicit "Clear all" button-এ ব্যবহার হবে।
 
-### Files to change
+3. **`CartDrawer` UI update:**
+   - প্রতিটা item-এর বাঁয়ে checkbox; header-এ "Select all" checkbox।
+   - Footer-এ Subtotal/Total **selected items**-এর হিসাবে দেখাবে (badge: "3 of 5 selected")।
+   - Button: কিছু select থাকলে "Pay Selected (৳X)", না থাকলে disabled অথবা "Select items to checkout"।
+
+4. **`Checkout.tsx` update:**
+   - URL/state থেকে selected ids আসবে; render-এ শুধু সেগুলো দেখাবে।
+   - Order place হওয়ার পর `clearCart()`-এর বদলে `removeItems(paidIds)` কল হবে — বাকি items cart-এ থাকবে।
+   - Abandoned-cart save logic একই থাকবে।
+
+5. **Realtime sync (optional, light):** একই account দুই tab-এ খুললে cart sync থাকবে (`postgres_changes` subscription on `user_cart_items`)।
+
+## Technical details
+
 ```text
-NEW   supabase/functions/check-office365/index.ts
-NEW   migration: office365_check_history table + RLS
-EDIT  src/pages/CheckKey.tsx       (add tabs + Office365 panel)
+user_cart_items
+├── id (uuid, PK)
+├── user_id (uuid, NOT NULL)
+├── product_id (text)         ← keep text because legacy cart uses number|string
+├── name, category, image, variant (text)
+├── price, original_price (numeric)
+├── quantity (int, default 1)
+└── created_at / updated_at
+
+RLS:
+- SELECT/INSERT/UPDATE/DELETE: auth.uid() = user_id
+UNIQUE INDEX (user_id, product_id, coalesce(variant,''))
 ```
 
-### Notes
-- API public বলে confirm করেছেন → কোনো secret লাগবে না
-- Password hash বা plain কোনোটাই DB-তে রাখব না — শুধু username + result (security)
-- 100/check limit respect করব (provider rule)
+`useCart` flow:
+```
+mount → load localStorage
+if user logs in → upsert local items to DB → fetch DB items → setItems(dbItems) → clear local
+if user logs out → keep last items in localStorage only
+addToCart / updateQty / remove → optimistic local update + DB write (debounced for qty)
+purchase success → removeItems(paidIds) → DB delete those rows
+```
+
+কোনো existing feature (coupon, wishlist, abandoned cart, buyNow) ভাঙবে না — শুধু cart-items এর storage এবং checkout selection যোগ হবে।

@@ -2954,6 +2954,51 @@ export type Database = {
         }
         Relationships: []
       }
+      user_cart_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          image: string | null
+          name: string
+          original_price: number | null
+          price: number
+          product_id: string
+          quantity: number
+          updated_at: string
+          user_id: string
+          variant: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image?: string | null
+          name: string
+          original_price?: number | null
+          price?: number
+          product_id: string
+          quantity?: number
+          updated_at?: string
+          user_id: string
+          variant?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image?: string | null
+          name?: string
+          original_price?: number | null
+          price?: number
+          product_id?: string
+          quantity?: number
+          updated_at?: string
+          user_id?: string
+          variant?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
