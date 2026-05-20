@@ -453,6 +453,8 @@ export default function AdminSubscriptionReminders() {
       }
     } finally {
       setMSending(false);
+      // Refresh history a moment later so queued emails have a row
+      setTimeout(() => { loadHistory(); }, 800);
     }
   };
 
