@@ -98,7 +98,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [orderNotes, setOrderNotes] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [serviceFee] = useState(DEFAULT_SERVICE_FEE);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('cart') || '[]') as CartItem[];
+      // Default: all items selected
+      return stored.map(i => `${i.id}__${i.variant || ''}`);
+    } catch { return []; }
+  });
 
   // Track which user we've synced for, to avoid duplicate syncs
   const syncedUserRef = useRef<string | null>(null);
