@@ -188,13 +188,25 @@ const Checkout = () => {
   // Auto-fill from logged-in user profile + fetch wallet balance
   useEffect(() => {
     if (!user) return;
+    const metaName =
+      (user.user_metadata as any)?.full_name ||
+      (user.user_metadata as any)?.name ||
+      (user.user_metadata as any)?.display_name ||
+      '';
+    const metaPhone = (user.user_metadata as any)?.phone || '';
+    // Pre-fill immediately from auth metadata so the name appears even before profile fetch
+    setForm(prev => ({
+      name: prev.name || metaName,
+      email: prev.email || user.email || '',
+      phone: prev.phone || metaPhone,
+    }));
     supabase.from('profiles').select('display_name, email, phone, wallet_balance, referral_credit_balance').eq('user_id', user.id).single()
       .then(({ data }) => {
         if (data) {
           setForm(prev => ({
-            name: prev.name || data.display_name || '',
+            name: prev.name || data.display_name || metaName || '',
             email: prev.email || data.email || user.email || '',
-            phone: prev.phone || data.phone || '',
+            phone: prev.phone || data.phone || metaPhone || '',
           }));
           setWalletBalance((data as any).wallet_balance || 0);
           setRefCreditBalance(Number((data as any).referral_credit_balance || 0));

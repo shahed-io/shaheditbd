@@ -117,26 +117,29 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // === DB sync helpers ===
   const dbUpsertItem = useCallback(async (uid: string, item: CartItem) => {
     try {
-      await supabase.from('user_cart_items').upsert({
+      const { error } = await supabase.from('user_cart_items').upsert({
         user_id: uid,
         product_id: String(item.id),
         name: item.name,
         category: item.category || null,
         image: item.image || null,
-        variant: item.variant || null,
+        variant: item.variant || '',
         price: item.price,
         original_price: item.originalPrice ?? null,
         quantity: item.quantity,
       }, { onConflict: 'user_id,product_id,variant' });
-    } catch { /* silent */ }
+      if (error) console.warn('[cart] upsert error:', error.message);
+    } catch (e) { console.warn('[cart] upsert ex:', e); }
   }, []);
 
   const dbDeleteItems = useCallback(async (uid: string, productKeys: { product_id: string; variant: string | null }[]) => {
     try {
       for (const k of productKeys) {
-        let q = supabase.from('user_cart_items').delete().eq('user_id', uid).eq('product_id', k.product_id);
-        q = k.variant ? q.eq('variant', k.variant) : q.is('variant', null);
-        await q;
+        await supabase.from('user_cart_items')
+          .delete()
+          .eq('user_id', uid)
+          .eq('product_id', k.product_id)
+          .eq('variant', k.variant || '');
       }
     } catch { /* silent */ }
   }, []);
@@ -152,31 +155,31 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     (async () => {
       try {
-        // 1) Upload any local items first (merge)
         const local = items;
         if (local.length > 0) {
-          await supabase.from('user_cart_items').upsert(
+          const { error: upErr } = await supabase.from('user_cart_items').upsert(
             local.map(it => ({
               user_id: userId,
               product_id: String(it.id),
               name: it.name,
               category: it.category || null,
               image: it.image || null,
-              variant: it.variant || null,
+              variant: it.variant || '',
               price: it.price,
               original_price: it.originalPrice ?? null,
               quantity: it.quantity,
             })),
             { onConflict: 'user_id,product_id,variant' }
           );
+          if (upErr) console.warn('[cart] merge upsert error:', upErr.message);
         }
-        // 2) Fetch the merged DB cart
         const { data, error } = await supabase
           .from('user_cart_items')
           .select('*')
           .eq('user_id', userId)
           .order('created_at', { ascending: true });
-        if (error || !data) return;
+        if (error) { console.warn('[cart] fetch error:', error.message); return; }
+        if (!data) return;
         const dbItems: CartItem[] = data.map((r: any) => ({
           id: r.product_id,
           name: r.name,
@@ -187,9 +190,18 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           originalPrice: r.original_price != null ? Number(r.original_price) : undefined,
           quantity: r.quantity || 1,
         }));
-        setItems(dbItems);
-        setSelectedKeys(dbItems.map(itemKey));
-      } catch { /* silent */ }
+        // Merge with any local items not yet on server (e.g. just added pre-login)
+        const merged = [...dbItems];
+        for (const it of local) {
+          if (!merged.find(d => String(d.id) === String(it.id) && (d.variant || '') === (it.variant || ''))) {
+            merged.push(it);
+          }
+        }
+        if (merged.length > 0) {
+          setItems(merged);
+          setSelectedKeys(merged.map(itemKey));
+        }
+      } catch (e) { console.warn('[cart] sync ex:', e); }
     })();
   }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
