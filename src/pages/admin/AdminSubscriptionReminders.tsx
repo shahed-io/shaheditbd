@@ -521,8 +521,22 @@ export default function AdminSubscriptionReminders() {
             />
           </div>
           <div>
-            <label className="text-xs font-medium">Customer email</label>
-            <Input type="email" placeholder="customer@example.com" value={mCustomerEmail} onChange={e => setMCustomerEmail(e.target.value)} />
+            <label className="text-xs font-medium flex items-center justify-between">
+              <span>Customer email(s)</span>
+              {(() => {
+                const c = parseEmails(mCustomerEmail).length;
+                return c > 0 ? <Badge variant="secondary" className="text-[10px]">{c} recipient{c === 1 ? '' : 's'}</Badge> : null;
+              })()}
+            </label>
+            <Textarea
+              rows={3}
+              placeholder={'customer1@example.com, customer2@example.com\nor one email per line'}
+              value={mCustomerEmail}
+              onChange={e => setMCustomerEmail(e.target.value)}
+            />
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Separate multiple emails with comma, space, or new line. Each recipient gets their own personal coupon.
+            </p>
           </div>
           <div>
             <label className="text-xs font-medium">Customer name</label>
