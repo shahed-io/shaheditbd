@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { X, ShoppingCart, Plus, Minus, Trash2, ArrowRight, Tag, Loader2, Heart, CheckCircle } from 'lucide-react';
+import { X, ShoppingCart, Plus, Minus, Trash2, ArrowRight, Tag, Loader2, Heart, CheckCircle, Check } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -12,9 +12,12 @@ const CartDrawer = () => {
     cartCount, removeFromCart, updateQuantity, clearCart,
     wishlist, wishlistOpen, setWishlistOpen, toggleWishlist, addToCart,
     coupon, setCoupon, resetCoupon,
+    selectedKeys, toggleSelected, selectAll, clearSelected, isSelected, itemKey,
   } = useCart();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const allSelected = items.length > 0 && selectedKeys.length === items.length;
+  const someSelected = selectedKeys.length > 0;
 
   const [couponInput, setCouponInput] = useState(coupon.isApplied ? coupon.code : '');
   const [couponLoading, setCouponLoading] = useState(false);
