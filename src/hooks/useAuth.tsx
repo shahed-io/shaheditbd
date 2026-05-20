@@ -66,8 +66,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               setIsAdmin(isAdminResult);
               setLoading(false);
             }
-            // Send login notification on actual sign-in events (skip silent token refreshes / initial restores)
-            if (userEmail && (event === 'SIGNED_IN' || event === 'USER_UPDATED')) {
+            // Login notification emails are currently DISABLED (per admin request).
+            // To re-enable in future, set LOGIN_NOTIFICATIONS_ENABLED = true.
+            const LOGIN_NOTIFICATIONS_ENABLED = false;
+            if (LOGIN_NOTIFICATIONS_ENABLED && userEmail && (event === 'SIGNED_IN' || event === 'USER_UPDATED')) {
               sendLoginNotification({
                 email: userEmail,
                 customerName: displayName,
