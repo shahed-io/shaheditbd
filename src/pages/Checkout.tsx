@@ -734,7 +734,7 @@ const Checkout = () => {
         sessionTokenRef.current = newTok;
       } catch {}
 
-      clearCart();
+      finishCart();
       setOrderNumber(orderNum);
       if (paymentMethod === 'wallet') setInstantDelivered(walletInstantDelivered);
       setOrderPlaced(true);
