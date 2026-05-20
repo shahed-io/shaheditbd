@@ -94,6 +94,24 @@ const CartDrawer = () => {
           </div>
         </div>
 
+        {/* Select-all bar */}
+        {items.length > 0 && (
+          <div className="flex items-center justify-between px-5 py-2 border-b border-border/60 bg-muted/10 flex-shrink-0">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-xs font-medium text-foreground">
+              <span
+                onClick={() => allSelected ? clearSelected() : selectAll()}
+                className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${allSelected ? 'bg-primary border-primary' : 'border-muted-foreground/40 hover:border-primary'}`}
+              >
+                {allSelected && <Check size={11} className="text-background" strokeWidth={3} />}
+              </span>
+              <span onClick={() => allSelected ? clearSelected() : selectAll()}>Select all</span>
+            </label>
+            <span className="text-xs text-muted-foreground">
+              {selectedKeys.length} of {items.length} selected
+            </span>
+          </div>
+        )}
+
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
           {items.length === 0 ? (
