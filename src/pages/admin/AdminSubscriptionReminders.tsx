@@ -377,7 +377,7 @@ export default function AdminSubscriptionReminders() {
     setSendOpen(false);
     setSelected({});
     setCustomMsg('');
-    await load();
+    await Promise.all([load(), loadHistory()]);
   };
 
   // ============= Manual / AI Composer =============
