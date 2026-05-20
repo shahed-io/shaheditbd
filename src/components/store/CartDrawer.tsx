@@ -260,11 +260,22 @@ const CartDrawer = () => {
             </div>
 
             <button
-              onClick={() => { setCartOpen(false); navigate('/checkout'); }}
-              className="w-full btn-glow py-3 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm"
+              onClick={() => {
+                if (!someSelected) { toast.error('চেকআউটের জন্য অন্তত একটি product select করুন'); return; }
+                setCartOpen(false);
+                navigate('/checkout');
+              }}
+              disabled={!someSelected}
+              className="w-full btn-glow py-3 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Proceed to Checkout <ArrowRight size={15} />
+              {someSelected ? `Pay Selected (${selectedKeys.length}) · ৳${finalTotal.toLocaleString()}` : 'Select items to checkout'}
+              {someSelected && <ArrowRight size={15} />}
             </button>
+            {items.length > selectedKeys.length && someSelected && (
+              <p className="text-[11px] text-muted-foreground text-center">
+                বাকি {items.length - selectedKeys.length}টি product পরে কেনার জন্য cart-এ save থাকবে
+              </p>
+            )}
           </div>
         )}
       </div>
