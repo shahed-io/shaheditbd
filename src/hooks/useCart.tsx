@@ -117,26 +117,29 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // === DB sync helpers ===
   const dbUpsertItem = useCallback(async (uid: string, item: CartItem) => {
     try {
-      await supabase.from('user_cart_items').upsert({
+      const { error } = await supabase.from('user_cart_items').upsert({
         user_id: uid,
         product_id: String(item.id),
         name: item.name,
         category: item.category || null,
         image: item.image || null,
-        variant: item.variant || null,
+        variant: item.variant || '',
         price: item.price,
         original_price: item.originalPrice ?? null,
         quantity: item.quantity,
       }, { onConflict: 'user_id,product_id,variant' });
-    } catch { /* silent */ }
+      if (error) console.warn('[cart] upsert error:', error.message);
+    } catch (e) { console.warn('[cart] upsert ex:', e); }
   }, []);
 
   const dbDeleteItems = useCallback(async (uid: string, productKeys: { product_id: string; variant: string | null }[]) => {
     try {
       for (const k of productKeys) {
-        let q = supabase.from('user_cart_items').delete().eq('user_id', uid).eq('product_id', k.product_id);
-        q = k.variant ? q.eq('variant', k.variant) : q.is('variant', null);
-        await q;
+        await supabase.from('user_cart_items')
+          .delete()
+          .eq('user_id', uid)
+          .eq('product_id', k.product_id)
+          .eq('variant', k.variant || '');
       }
     } catch { /* silent */ }
   }, []);
