@@ -69,6 +69,45 @@ export default function AdminPaymentLinks() {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
+  const quickGenerate = async () => {
+    const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
+    const slug = `pay-${Date.now().toString(36)}-${rand.toLowerCase()}`;
+    const payload = {
+      slug,
+      title: `Quick Payment Link ${rand}`,
+      description: null,
+      product_id: null,
+      product_name: null,
+      product_image: null,
+      amount: null,
+      original_amount: null,
+      quantity: 1,
+      allow_qty_change: false,
+      is_open_form: true,
+      payment_methods: [
+        { name: 'bKash', number: '', instructions: 'Send Money and submit the Transaction ID below.' },
+        { name: 'Nagad', number: '', instructions: 'Send Money and submit the Transaction ID below.' },
+        { name: 'Rocket', number: '', instructions: 'Send Money and submit the Transaction ID below.' },
+      ],
+      required_fields: { name: true, phone: true, email: false, address: false, note: true },
+      custom_fields: [],
+      max_uses: null,
+      expires_at: null,
+      status: 'active',
+      redirect_url: null,
+    };
+    try {
+      const { data, error } = await supabase.from('payment_links').insert(payload).select('slug').single();
+      if (error) throw error;
+      const url = `${window.location.origin}/pay/${data.slug}`;
+      await navigator.clipboard.writeText(url).catch(() => {});
+      toast.success('Link generated & copied to clipboard');
+      load();
+    } catch (e: any) {
+      toast.error(e.message || 'Generation failed');
+    }
+  };
+
   const saveLink = async () => {
     if (!editor) return;
     if (!editor.title.trim() || !editor.product_name.trim() || editor.amount <= 0) {
