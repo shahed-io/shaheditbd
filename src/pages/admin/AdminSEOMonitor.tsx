@@ -2,12 +2,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Activity, RefreshCw, ExternalLink, CheckCircle2, AlertTriangle,
-  XCircle, FileText, Image as ImageIcon, Rss, Globe, Search,
-  Database, Code2, Send, Clock,
+  XCircle, FileText, Rss, Globe, Search,
+  Database, Code2, Send, Clock, Zap, HardDrive,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface SitemapStat { name: string; url: string; count: number; status: 'ok' | 'fail' | 'loading'; lastFetch?: string; }
+interface SitemapStat {
+  name: string;
+  url: string;
+  count: number;
+  status: 'ok' | 'fail' | 'loading' | 'warn';
+  lastFetch?: string;
+  responseMs?: number;
+  bytes?: number;
+  httpStatus?: number;
+  lastModified?: string | null;
+  contentType?: string;
+  error?: string;
+  sample?: string[];
+}
 interface PingLog { id: string; entity: 'product' | 'blog'; title: string; slug: string; updated_at: string; }
 interface SchemaCheck { type: string; present: boolean; valid: boolean; note?: string; }
 
