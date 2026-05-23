@@ -86,7 +86,7 @@ const AdminProductContent = () => {
   const stats = useMemo(() => {
     const total = products.length;
     const thin = products.filter((p) => wordCount(p.description) < MIN_WORDS).length;
-    const noFaq = products.filter((p) => faqCount(p.faq) < 4).length;
+    const noFaq = products.filter((p) => faqCount(p.faq, p.description) < MIN_FAQ).length;
     return { total, thin, noFaq, ok: total - thin };
   }, [products]);
 
