@@ -137,7 +137,7 @@ Deno.serve(async (req) => {
         body: {
           type: 'payment_link_submission',
           title: '💳 New Payment Link Submission',
-          message: `${d.customer_name} (${d.customer_phone})\n${link.product_name}\n৳${total}\nTxn: ${d.transaction_id}`,
+          message: `${d.customer_name} (${d.customer_phone})\n${effectiveProductName}\n৳${total}\nTxn: ${d.transaction_id}`,
         },
       });
     } catch (_) {}
