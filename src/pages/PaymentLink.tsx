@@ -121,6 +121,9 @@ export default function PaymentLink() {
 
     setSubmitting(true);
     try {
+      const { data, error } = await supabase.functions.invoke('submit-payment-link', {
+        body: {
+          slug,
           ...form,
           quantity: link.allow_qty_change ? form.quantity : link.quantity,
           custom_field_values: customFields,
