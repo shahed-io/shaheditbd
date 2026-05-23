@@ -19,32 +19,16 @@ type Product = {
   product_type?: string | null;
 };
 
-// Bengali descriptions are denser than English — 400 words is solid SEO depth
-const MIN_WORDS = 400;
-const MIN_FAQ = 3;
+const MIN_WORDS = 700;
+const MIN_FAQ = 4;
 
 function wordCount(text: string | null | undefined): number {
   if (!text) return 0;
-  // Strip markdown/HTML noise so symbols don't inflate count
-  const clean = text.replace(/<[^>]+>/g, ' ').replace(/[#*_`>|\-]+/g, ' ');
-  return clean.trim().split(/\s+/).filter(Boolean).length;
+  return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
-// Detect FAQs either in the dedicated `faq` JSON column OR embedded in the description
-// (Bengali product pages often store Q&A inline as "প্রশ্ন:" / "## FAQ" markdown).
-function faqCount(faq: any, description?: string | null): number {
-  if (Array.isArray(faq) && faq.length > 0) return faq.length;
-  if (!description) return 0;
-  const d = description;
-  const bnQ = (d.match(/প্রশ্ন\s*[:?]/g) || []).length;
-  if (bnQ > 0) return bnQ;
-  const enQ = (d.match(/\bQ\s*\d*\s*[:.]/g) || []).length;
-  if (enQ > 0) return enQ;
-  // FAQ-style heading + bullet questions ending with ?
-  if (/##\s*(FAQ|প্রায়শই|Frequently)/i.test(d)) {
-    const qs = (d.match(/\?/g) || []).length;
-    return qs;
-  }
+function faqCount(faq: any, _description?: string | null): number {
+  if (Array.isArray(faq)) return faq.length;
   return 0;
 }
 
