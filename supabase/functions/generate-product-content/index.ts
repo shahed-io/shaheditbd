@@ -368,14 +368,51 @@ List ALL duration plans with exact BDT prices clearly. Mention Personal/Shared/a
 
 The description MUST be 700–1500 words and contain ALL 11 sections in the exact order specified. The faq array MUST contain 6–8 items. Return ONLY valid JSON.`;
 
+    } else if (type === "faq") {
+      // Generate FAQ ONLY — grounded in the existing product description + metadata
+      maxTokens = 2500;
+      systemPrompt = `You are a senior eCommerce SEO content strategist for Shahed Store (DBID: 586772174) — Bangladesh's #1 digital software shop.
+
+${bdSeoContext}
+
+GOAL: Produce a high-quality FAQ array (6–8 items) for the product. Use the EXISTING product description provided as the primary source of truth — do NOT invent features, specs, durations, or facts that contradict it. Every answer must be factually accurate and grounded in the product details.
+
+Return ONLY valid JSON in this EXACT shape (no markdown fences, no extra prose):
+{
+  "faq": [ { "q": "Question?", "a": "Detailed accurate answer 2-4 sentences." }, ... 6 to 8 items ]
+}
+
+=== FAQ REQUIREMENTS ===
+- 6 to 8 items, every one genuinely useful for a Bangladeshi buyer.
+- Cover these intents (mix and adapt to product type): legitimacy/genuineness, how to receive/delivery time, payment methods (bKash/Nagad/Rocket/Wallet/Card), device limits, account type (Personal vs Shared) if applicable, warranty/refund policy, activation help, comparison with pirated/free alternatives, after-sales support, can existing account/email be used.
+- Questions in Bangla-English mix, exactly how a Bangladeshi customer would ask.
+- Answers 2–4 sentences, factual, grounded in the supplied product details, Bangla-English mix, include trust phrases like "১০০% genuine", "instant delivery", "official license" where truthful.
+- After any English word/number use English period (.) — never the Bengali danda (।). Only use । at the end of purely Bengali sentences.
+- Do NOT contradict pricing, duration plans, or features stated in the existing description.
+- Escape all newlines as \\n and internal quotes as \\". Return ONLY the JSON object.`;
+
+      userPrompt = `Generate the FAQ JSON for this product:
+
+- Product Name: ${productName}${subtitle ? `\n- Subtitle: ${subtitle}` : ""}
+- Category: ${category || "Software"}
+- Brand: ${brand || ""}
+- Type: ${productType || "Digital"}${accountType ? `\n- Account Type: ${accountType}` : ""}
+- Pricing Plans: ${durationInfo}
+- Base Price: ${price ? `৳${price}` : "See plans"}
+
+=== EXISTING PRODUCT DESCRIPTION (source of truth — do not contradict) ===
+${(demoDescription || "").slice(0, 8000) || "(no existing description — base answers on the metadata above and standard Shahed Store policies)"}
+
+Return ONLY the JSON object with 6–8 FAQ items.`;
+
     } else {
-      return new Response(JSON.stringify({ error: "Invalid type. Use: short_description, description, seo, all, demo_style, or rich_content" }), {
+      return new Response(JSON.stringify({ error: "Invalid type. Use: short_description, description, seo, all, demo_style, rich_content, or faq" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const isJsonType = type === "seo" || type === "all" || type === "rich_content";
+    const isJsonType = type === "seo" || type === "all" || type === "rich_content" || type === "faq";
 
 
     const requestBody: any = {

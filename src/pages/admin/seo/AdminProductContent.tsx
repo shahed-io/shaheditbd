@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   FileText, Wand2, Loader2, Zap, AlertCircle, Search,
-  CheckCircle2, ExternalLink, RefreshCw, Eye, X, Undo2,
+  CheckCircle2, ExternalLink, RefreshCw, Eye, X, Undo2, HelpCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -38,6 +38,7 @@ const AdminProductContent = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'thin' | 'ok'>('thin');
   const [generating, setGenerating] = useState<string | null>(null);
+  const [faqGenerating, setFaqGenerating] = useState<string | null>(null);
   const [restoring, setRestoring] = useState<string | null>(null);
   const [bulkRunning, setBulkRunning] = useState(false);
   const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0, failed: 0 });
@@ -189,6 +190,67 @@ const AdminProductContent = () => {
     if (ok) toast.success(`"${product.name}" restored ✓`);
   };
 
+  const generateFaqOne = async (product: Product): Promise<boolean> => {
+    setFaqGenerating(product.id);
+    try {
+      // 1) Backup current description + faq FIRST (so Restore reverts both)
+      const { error: bkErr } = await supabase.from('product_content_backups').insert({
+        product_id: product.id,
+        description: product.description,
+        faq: product.faq,
+      });
+      if (bkErr) throw new Error('Backup failed: ' + bkErr.message);
+
+      // 2) Call AI with type "faq" — uses the existing description as the source of truth
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const res = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/generate-product-content`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            type: 'faq',
+            productName: product.name,
+            category: product.category?.name || '',
+            brand: product.brand || '',
+            productType: product.product_type || 'Digital',
+            price: product.price,
+            demoDescription: product.description || '',
+          }),
+        },
+      );
+      const json = await res.json();
+      if (json.error) throw new Error(json.error);
+
+      const result = json.result;
+      const faqArr: Array<{ q: string; a: string }> = Array.isArray(result?.faq) ? result.faq : [];
+      if (faqArr.length < 4) throw new Error('AI returned too few FAQ items; retry shortly.');
+
+      // 3) Update ONLY faq column (preserve description)
+      const { error } = await supabase.from('products').update({ faq: faqArr }).eq('id', product.id);
+      if (error) throw error;
+
+      setProducts((prev) =>
+        prev.map((p) => (p.id === product.id ? { ...p, faq: faqArr } : p)),
+      );
+      setBackupMap((prev) => ({ ...prev, [product.id]: (prev[product.id] || 0) + 1 }));
+      return true;
+    } catch (err: any) {
+      toast.error(`FAQ "${product.name}": ${err.message || 'AI error'}`);
+      return false;
+    } finally {
+      setFaqGenerating(null);
+    }
+  };
+
+  const handleSingleFaq = async (product: Product) => {
+    const ok = await generateFaqOne(product);
+    if (ok) toast.success(`"${product.name}" FAQ generated ✓`);
+  };
+
+
   const handleBulk = async (onlyThin: boolean) => {
     const targets = products.filter((p) => (onlyThin ? wordCount(p.description) < MIN_WORDS : true));
     if (targets.length === 0) { toast.info('No products to enrich'); return; }
@@ -229,6 +291,29 @@ const AdminProductContent = () => {
     setBulkRunning(false);
     toast.success(`Restored: ${targets.length - failed}${failed ? `, ${failed} failed` : ''}`);
   };
+
+  const handleBulkFaq = async (onlyMissing: boolean) => {
+    const targets = products.filter((p) => (onlyMissing ? faqCount(p.faq) < MIN_FAQ : true));
+    if (targets.length === 0) { toast.info('No products need FAQ generation'); return; }
+    if (!confirm(`Generate FAQ for ${targets.length} product${targets.length === 1 ? '' : 's'} using AI? The AI will read each product's existing description and create accurate FAQs. Previous FAQ will be backed up. ETA ~${Math.ceil(targets.length * 6 / 60)} min.`)) return;
+
+    bulkCancelRef.current = false;
+    setBulkRunning(true);
+    setBulkProgress({ done: 0, total: targets.length, failed: 0 });
+
+    let failed = 0;
+    for (let i = 0; i < targets.length; i++) {
+      if (bulkCancelRef.current) break;
+      const ok = await generateFaqOne(targets[i]);
+      if (!ok) failed++;
+      setBulkProgress({ done: i + 1, total: targets.length, failed });
+      if (i < targets.length - 1) await new Promise((r) => setTimeout(r, 1000));
+    }
+
+    setBulkRunning(false);
+    toast.success(`FAQ done: ${targets.length - failed} generated${failed ? `, ${failed} failed` : ''}`);
+  };
+
 
 
   return (
@@ -277,10 +362,26 @@ const AdminProductContent = () => {
             <Wand2 size={14} /> Regenerate ALL ({stats.total})
           </button>
           <button
+            disabled={bulkRunning || stats.noFaq === 0}
+            onClick={() => handleBulkFaq(true)}
+            className="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium flex items-center gap-2 text-sm disabled:opacity-50"
+            title="AI reads each product description and writes accurate FAQs"
+          >
+            <HelpCircle size={14} /> Generate Missing FAQs ({stats.noFaq})
+          </button>
+          <button
+            disabled={bulkRunning}
+            onClick={() => handleBulkFaq(false)}
+            className="px-4 py-2 rounded-lg border border-emerald-500/40 text-emerald-600 hover:bg-emerald-500/10 flex items-center gap-2 text-sm disabled:opacity-50"
+            title="Regenerate FAQ for every product based on its description"
+          >
+            <HelpCircle size={14} /> Regenerate ALL FAQs ({stats.total})
+          </button>
+          <button
             disabled={bulkRunning || Object.keys(backupMap).length === 0}
             onClick={handleBulkRestore}
             className="px-4 py-2 rounded-lg border border-amber-500/40 text-amber-600 hover:bg-amber-500/10 flex items-center gap-2 text-sm disabled:opacity-50"
-            title="Restore previous descriptions from latest backup"
+            title="Restore previous content from latest backup"
           >
             <Undo2 size={14} /> Restore All ({Object.keys(backupMap).length})
           </button>
@@ -309,7 +410,7 @@ const AdminProductContent = () => {
         )}
         <div className="text-xs text-muted-foreground flex items-start gap-2">
           <AlertCircle size={14} className="mt-0.5 shrink-0" />
-          <span>Each enrichment automatically <strong>backs up</strong> the product's current <code>description</code> before overwriting. Use the amber <Undo2 className="inline" size={11}/> Restore button to revert. FAQ is preserved untouched.</span>
+          <span>Every AI run automatically <strong>backs up</strong> the product's current <code>description</code> and <code>FAQ</code> before overwriting. Use the amber <Undo2 className="inline" size={11}/> Restore to revert. FAQ generation reads the existing description so answers stay factually accurate.</span>
         </div>
       </div>
 
@@ -417,6 +518,15 @@ const AdminProductContent = () => {
                               {restoring === p.id ? <Loader2 className="animate-spin" size={14} /> : <Undo2 size={14} />}
                             </button>
                           )}
+                          <button
+                            disabled={faqGenerating === p.id || bulkRunning}
+                            onClick={() => handleSingleFaq(p)}
+                            className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-xs font-medium flex items-center gap-1 disabled:opacity-50"
+                            title="Generate FAQ from this product's description"
+                          >
+                            {faqGenerating === p.id ? <Loader2 className="animate-spin" size={12} /> : <HelpCircle size={12} />}
+                            FAQ
+                          </button>
                           <button
                             disabled={generating === p.id || bulkRunning}
                             onClick={() => handleSingle(p)}
