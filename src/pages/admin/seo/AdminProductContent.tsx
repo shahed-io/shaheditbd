@@ -176,7 +176,7 @@ const AdminProductContent = () => {
             <FileText className="text-primary" /> Product Content Enrichment
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Bulk-generate 700–1500 word SEO-rich descriptions with Features, Benefits, Usage Guide, FAQ, Comparison & Who Should Buy sections.
+            Bulk-generate {MIN_WORDS}–1500 word SEO-rich descriptions with Features, Benefits, Usage Guide, FAQ, Comparison & Who Should Buy sections.
           </p>
         </div>
         <button
