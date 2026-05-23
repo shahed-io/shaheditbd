@@ -10,11 +10,12 @@ import { sendWelcomeEmail } from '@/lib/loginNotifier';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  redirectAfterLogin?: boolean;
 }
 
 type Mode = 'login' | 'signup' | 'forgot';
 
-const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
+const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true }: AuthModalProps) => {
   const [mode, setMode] = useState<Mode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -75,7 +76,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         if (error) throw error;
         toast.success('সফলভাবে লগইন হয়েছে!');
         onClose();
-        navigate('/dashboard');
+        if (redirectAfterLogin) navigate('/dashboard');
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
