@@ -141,6 +141,9 @@ const AdminCidCredits            = lazy(() => import("./pages/admin/AdminCidCred
 const GetCID                     = lazy(() => import("./pages/GetCID"));
 const CheckKey                   = lazy(() => import("./pages/CheckKey"));
 const AdminSecurity2FA           = lazy(() => import("./pages/admin/AdminSecurity2FA"));
+const AdminPaymentLinks          = lazy(() => import("./pages/admin/AdminPaymentLinks"));
+const PaymentLink                = lazy(() => import("./pages/PaymentLink"));
+const PaymentLinkTrack           = lazy(() => import("./pages/PaymentLinkTrack"));
 
 
 const queryClient = new QueryClient({
