@@ -407,6 +407,16 @@ const AdminProductContent = () => {
                               <Eye size={14} />
                             </button>
                           )}
+                          {(backupMap[p.id] || 0) > 0 && (
+                            <button
+                              disabled={restoring === p.id || bulkRunning}
+                              onClick={() => handleRestoreSingle(p)}
+                              className="p-2 rounded-lg border border-amber-500/40 text-amber-600 hover:bg-amber-500/10 disabled:opacity-50"
+                              title={`Restore previous (${backupMap[p.id]} backup${backupMap[p.id] > 1 ? 's' : ''})`}
+                            >
+                              {restoring === p.id ? <Loader2 className="animate-spin" size={14} /> : <Undo2 size={14} />}
+                            </button>
+                          )}
                           <button
                             disabled={generating === p.id || bulkRunning}
                             onClick={() => handleSingle(p)}
