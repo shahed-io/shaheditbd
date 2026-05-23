@@ -215,7 +215,7 @@ export default function PaymentLink() {
           </CardContent>
         </Card>
 
-        <form onSubmit={handleSubmit}>
+        <form id="payment-link-form" onSubmit={handleSubmit}>
           {link.is_open_form && (
             <Card className="mb-4"><CardContent className="p-6 space-y-4">
               <h2 className="text-lg font-semibold">কোন পণ্য / সার্ভিস কিনছেন</h2>
