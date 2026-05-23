@@ -113,6 +113,19 @@ export default function PaymentLink() {
 
     setSubmitting(true);
     try {
+      // Require login before submission. If not logged in, persist form data and redirect.
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        try {
+          sessionStorage.setItem(PENDING_KEY, JSON.stringify({ form, customFields }));
+        } catch {}
+        toast.info('সাবমিট করতে লগইন করুন — লগইনের পর অর্ডার নিজে থেকেই সাবমিট হবে');
+        const redirect = encodeURIComponent(`/pay/${slug}`);
+        navigate(`/auth?redirect=${redirect}`);
+        setSubmitting(false);
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('submit-payment-link', {
         body: {
           slug,
@@ -126,6 +139,7 @@ export default function PaymentLink() {
       if (error) throw error;
       if ((data as any)?.error) throw new Error((data as any).error);
       const id = (data as any).id;
+      sessionStorage.removeItem(PENDING_KEY);
       toast.success('সাবমিট সফল! অ্যাডমিন রিভিউ করছে।');
       if (link.redirect_url) {
         window.location.href = link.redirect_url;
