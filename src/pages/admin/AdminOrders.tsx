@@ -1023,7 +1023,7 @@ const AdminOrders = () => {
                 statusFilter === s ? 'btn-glow border-transparent' : 'glass-card border-border text-muted-foreground hover:text-primary'
               }`}
             >
-              {s === 'all' ? 'সব অর্ডার' : cfg?.label}
+              {s === 'all' ? 'All Orders' : cfg?.label}
               <span className={`min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center ${statusFilter === s ? 'bg-white/20' : 'bg-muted/50'}`}>
                 {statusCounts[s] || 0}
               </span>
