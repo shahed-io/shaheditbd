@@ -91,13 +91,83 @@
     <priority>0.4</priority>
   </url>
   <url>
+    <loc>https://shahedstore.com.bd/product/adobe-creative-cloud-all-apps</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773859789781-s3mh6n55.jpg</image:loc>
+      <image:title>Adobe Creative Cloud All Apps </image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/chorki-premium-subscription-price-in-bangladesh</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774196389962-uxf2z6vg.png</image:loc>
+      <image:title>Chorki Premium Subscription Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://shahedstore.com.bd/product/chtgpt-plus-price-in-bangladesh</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774722773937-6pl8d444.png</image:loc>
       <image:title>Ch@tGPT Plus Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/cpcut-pro-price-in-bangladesh</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774178843862-mx5dfvol.png</image:loc>
+      <image:title>C@PCut Pro Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/cnva-pro-price-in-bangladesh</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774188559249-ryo7my9c.png</image:loc>
+      <image:title>C@nva Pro Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/1111-warp-vpn-premium-price-in-bd</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776143371798-igzsjnns.png</image:loc>
+      <image:title>1.1.1.1 + WARP VPN Premium Price in BD</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/autodesk-subscription-price-in-bangladesh</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774176339829-tywdyi74.png</image:loc>
+      <image:title>AutoDesk Subscription Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/amazon-prime-video-premium-price-in-bb</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774199430550-gu3qhzf6.png</image:loc>
+      <image:title>Amazon Prime Video Premium Price in BB</image:title>
     </image:image>
   </url>
   <url>
@@ -231,16 +301,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/cnva-pro-price-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774188559249-ryo7my9c.png</image:loc>
-      <image:title>C@nva Pro Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/product/microsoft-office-365-personal-price-in-bangladesh</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
@@ -248,86 +308,6 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774191973761-0eyv67ap.png</image:loc>
       <image:title>Microsoft Office 365 Personal Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/windows-11-home-license-key-price-in-bd</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774123357131-zy0mpdre.png</image:loc>
-      <image:title>Windows 11 Home License Key Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/windows-11-pro-for-workstations-key-price-in-bd</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773829329487-08wkzlyvq6aa.webp</image:loc>
-      <image:title>Windows 11 Pro for Workstations Key Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/coursera-plus-subscription-price-in-bd</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774388124157-puf83wbm.png</image:loc>
-      <image:title>Coursera Plus Subscription Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/internet-download-manager-idm-lifetime-key</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773826322605-q9qiqe4mcc.webp</image:loc>
-      <image:title>Internet Download Manager (IDM) Lifetime Key</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/office-2021-pro-plus-non-sync-license-key-price-in-bd</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773839591999-922ndfmws67.webp</image:loc>
-      <image:title>Office 2021 Pro Plus Non Sync License Key Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/windows-10-home-license-key-price-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776142116101-rwy62yqt.png</image:loc>
-      <image:title>Windows 10 Home License Key Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/nrdvpn-premium-subscription-price-in-bd</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773862023072-xb9xm8xt.png</image:loc>
-      <image:title>N@rdVPN Premium Subscription Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/windows-server-2022-standard-price-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776537988343-qp8fs3g3.png</image:loc>
-      <image:title>Windows Server 2022 Standard Price in Bangladesh</image:title>
     </image:image>
   </url>
   <url>
@@ -421,26 +401,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/adobe-creative-cloud-all-apps</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773859789781-s3mh6n55.jpg</image:loc>
-      <image:title>Adobe Creative Cloud All Apps </image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/chorki-premium-subscription-price-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774196389962-uxf2z6vg.png</image:loc>
-      <image:title>Chorki Premium Subscription Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/product/grammarly-premium-price-in-bangladesh</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
@@ -501,13 +461,13 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/amazon-prime-video-premium-price-in-bb</loc>
+    <loc>https://shahedstore.com.bd/product/microsoft-project-2021-professional-price-in-bd</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774199430550-gu3qhzf6.png</image:loc>
-      <image:title>Amazon Prime Video Premium Price in BB</image:title>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773788031772-gemxmrgt6h7.webp</image:loc>
+      <image:title>Microsoft Project 2021 Professional Price in BD</image:title>
     </image:image>
   </url>
   <url>
@@ -581,16 +541,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/1111-warp-vpn-premium-price-in-bd</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776143371798-igzsjnns.png</image:loc>
-      <image:title>1.1.1.1 + WARP VPN Premium Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/product/purevpn-subscription-in-bd</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
@@ -638,16 +588,6 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774556650977-oiyj8rcr.png</image:loc>
       <image:title>Leonardo AI Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/netflix-subscription-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774198884859-7vn5xgga.png</image:loc>
-      <image:title>Netflix Subscription in Bangladesh</image:title>
     </image:image>
   </url>
   <url>
@@ -731,13 +671,13 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/microsoft-project-2021-professional-price-in-bd</loc>
+    <loc>https://shahedstore.com.bd/product/netflix-subscription-in-bangladesh</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773788031772-gemxmrgt6h7.webp</image:loc>
-      <image:title>Microsoft Project 2021 Professional Price in BD</image:title>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774198884859-7vn5xgga.png</image:loc>
+      <image:title>Netflix Subscription in Bangladesh</image:title>
     </image:image>
   </url>
   <url>
@@ -758,16 +698,6 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1778598875381-rjom7sox.png</image:loc>
       <image:title>Curs0r Pro Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/cpcut-pro-price-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774178843862-mx5dfvol.png</image:loc>
-      <image:title>C@PCut Pro Price in Bangladesh</image:title>
     </image:image>
   </url>
   <url>
@@ -851,16 +781,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/autodesk-subscription-price-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774176339829-tywdyi74.png</image:loc>
-      <image:title>AutoDesk Subscription Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/product/microsoft-office-2010-pro-plus-license-key-price-in-bd</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
@@ -888,6 +808,86 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774178558853-f6o52x3b.png</image:loc>
       <image:title>iTunes Gift Card Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/windows-11-home-license-key-price-in-bd</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774123357131-zy0mpdre.png</image:loc>
+      <image:title>Windows 11 Home License Key Price in BD</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/windows-11-pro-for-workstations-key-price-in-bd</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773829329487-08wkzlyvq6aa.webp</image:loc>
+      <image:title>Windows 11 Pro for Workstations Key Price in BD</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/coursera-plus-subscription-price-in-bd</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774388124157-puf83wbm.png</image:loc>
+      <image:title>Coursera Plus Subscription Price in BD</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/internet-download-manager-idm-lifetime-key</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773826322605-q9qiqe4mcc.webp</image:loc>
+      <image:title>Internet Download Manager (IDM) Lifetime Key</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/office-2021-pro-plus-non-sync-license-key-price-in-bd</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773839591999-922ndfmws67.webp</image:loc>
+      <image:title>Office 2021 Pro Plus Non Sync License Key Price in BD</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/windows-10-home-license-key-price-in-bangladesh</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776142116101-rwy62yqt.png</image:loc>
+      <image:title>Windows 10 Home License Key Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/nrdvpn-premium-subscription-price-in-bd</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773862023072-xb9xm8xt.png</image:loc>
+      <image:title>N@rdVPN Premium Subscription Price in BD</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/windows-server-2022-standard-price-in-bangladesh</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776537988343-qp8fs3g3.png</image:loc>
+      <image:title>Windows Server 2022 Standard Price in Bangladesh</image:title>
     </image:image>
   </url>
   <url>
@@ -984,16 +984,6 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776110605678-8dqtjuqz.png</image:loc>
       <image:title>Unlock Your Potential: Udemy Premium Price in Bangladesh &amp; Affordable Learning at Shahed Store</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/blog/ullu-price-in-bangladesh-review-buy-bangladesh</loc>
-    <lastmod>2026-04-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776109948488-uj3c46oi.png</image:loc>
-      <image:title>Ul@lU Price in Bangladesh: Secure Your Digital Life with Affordable Protection from Shahed Store</image:title>
     </image:image>
   </url>
   <url>
