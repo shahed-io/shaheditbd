@@ -902,6 +902,57 @@ body.admin-page {
   color: hsl(var(--ad-text));
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
+  /* Fluid base — scales 13px (320px viewport) → 16px (1440px+) */
+  font-size: clamp(13px, 0.78rem + 0.28vw, 16px);
+  line-height: 1.55;
+}
+
+/* ── Fluid typography for admin panel — auto-scales with viewport ── */
+body.admin-page h1,
+body.admin-page .text-4xl { font-size: clamp(1.5rem, 1.05rem + 1.6vw, 2.25rem) !important; line-height: 1.15; }
+body.admin-page h2,
+body.admin-page .text-3xl { font-size: clamp(1.3rem, 0.95rem + 1.25vw, 1.875rem) !important; line-height: 1.2; }
+body.admin-page h3,
+body.admin-page .text-2xl { font-size: clamp(1.15rem, 0.9rem + 0.9vw, 1.5rem) !important; line-height: 1.25; }
+body.admin-page .text-xl  { font-size: clamp(1.05rem, 0.88rem + 0.55vw, 1.25rem) !important; line-height: 1.3; }
+body.admin-page .text-lg  { font-size: clamp(0.98rem, 0.88rem + 0.35vw, 1.125rem) !important; line-height: 1.4; }
+body.admin-page .text-base{ font-size: clamp(0.9rem, 0.82rem + 0.25vw, 1rem) !important; }
+body.admin-page .text-sm  { font-size: clamp(0.8rem, 0.74rem + 0.18vw, 0.875rem) !important; }
+body.admin-page .text-xs  { font-size: clamp(0.7rem, 0.66rem + 0.12vw, 0.75rem) !important; }
+
+/* Prevent awkward mid-word breaks in admin labels/badges/buttons */
+body.admin-page button,
+body.admin-page [role="tab"],
+body.admin-page label,
+body.admin-page nav a,
+body.admin-page .admin-nav-item {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+/* Long values (emails, IDs, URLs) wrap cleanly instead of overflowing */
+body.admin-page .font-mono,
+body.admin-page a[href^="mailto:"],
+body.admin-page a[href^="http"] {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Tables: keep headers on one line, allow cells to wrap cleanly */
+body.admin-page th { white-space: nowrap; }
+body.admin-page td { word-break: break-word; overflow-wrap: anywhere; }
+
+/* Page header title scales fluidly */
+body.admin-page .admin-page-header h1,
+body.admin-page .admin-page-header .text-2xl,
+body.admin-page .admin-page-header .text-3xl {
+  font-size: clamp(1.25rem, 0.95rem + 1.1vw, 1.875rem) !important;
+}
+
+@media (max-width: 480px) {
+  body.admin-page { line-height: 1.5; }
+  body.admin-page .admin-page-header { padding: 1rem !important; }
 }
 
 body.admin-page,
