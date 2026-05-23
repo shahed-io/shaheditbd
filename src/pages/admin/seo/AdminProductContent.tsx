@@ -190,8 +190,8 @@ const AdminProductContent = () => {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard label="Total Products" value={stats.total} />
-        <StatCard label="Thin Content (<700w)" value={stats.thin} tone="warn" />
-        <StatCard label="Missing FAQ (<4)" value={stats.noFaq} tone="warn" />
+        <StatCard label={`Thin Content (<${MIN_WORDS}w)`} value={stats.thin} tone="warn" />
+        <StatCard label={`Missing FAQ (<${MIN_FAQ})`} value={stats.noFaq} tone="warn" />
         <StatCard label="SEO-Ready" value={stats.ok} tone="ok" />
       </div>
 
