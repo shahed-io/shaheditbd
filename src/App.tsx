@@ -141,6 +141,9 @@ const AdminCidCredits            = lazy(() => import("./pages/admin/AdminCidCred
 const GetCID                     = lazy(() => import("./pages/GetCID"));
 const CheckKey                   = lazy(() => import("./pages/CheckKey"));
 const AdminSecurity2FA           = lazy(() => import("./pages/admin/AdminSecurity2FA"));
+const AdminPaymentLinks          = lazy(() => import("./pages/admin/AdminPaymentLinks"));
+const PaymentLink                = lazy(() => import("./pages/PaymentLink"));
+const PaymentLinkTrack           = lazy(() => import("./pages/PaymentLinkTrack"));
 
 
 const queryClient = new QueryClient({
@@ -249,6 +252,8 @@ const AppContent = () => {
           <Route path="/link" element={<HelpCenter />} />
           <Route path="/link/:slug" element={<HelpCenter />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/pay/:slug" element={<PaymentLink />} />
+          <Route path="/pay/track/:id" element={<PaymentLinkTrack />} />
           <Route path="/ceo/login" element={<AdminLogin />} />
           <Route path="/ceo" element={<AdminLayout />}>
             <Route index element={<AdminSuspense><AdminDashboard /></AdminSuspense>} />
@@ -315,6 +320,7 @@ const AppContent = () => {
             <Route path="subscription-reminders" element={<AdminSuspense><AdminSubscriptionReminders /></AdminSuspense>} />
             <Route path="email-dashboard" element={<AdminSuspense><AdminEmailDashboard /></AdminSuspense>} />
             <Route path="quick-sale" element={<AdminSuspense><AdminQuickSale /></AdminSuspense>} />
+            <Route path="payment-links" element={<AdminSuspense><AdminPaymentLinks /></AdminSuspense>} />
             <Route path="popup-banner" element={<AdminSuspense><AdminPopupBanner /></AdminSuspense>} />
             <Route path="invoices" element={<AdminSuspense><AdminInvoiceGenerator /></AdminSuspense>} />
             <Route path="invoice-design" element={<AdminSuspense><AdminInvoiceDesign /></AdminSuspense>} />

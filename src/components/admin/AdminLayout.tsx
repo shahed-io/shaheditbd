@@ -68,6 +68,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: ShoppingCart, label: 'Orders', path: '/ceo/orders', badge: 'live' },
       { icon: ShopIcon, label: 'Abandoned Checkouts', path: '/ceo/abandoned-checkouts', badge: 'new' },
       { icon: ShoppingCart, label: 'Quick Sale', path: '/ceo/quick-sale' },
+      { icon: CreditCard, label: 'Payment Links', path: '/ceo/payment-links', badge: 'new' },
       { icon: FileText, label: 'Invoice Generator', path: '/ceo/invoices' },
       { icon: Palette, label: 'Invoice Design', path: '/ceo/invoice-design', badge: 'new' },
       { icon: CreditCard, label: 'Payments', path: '/ceo/payments' },
