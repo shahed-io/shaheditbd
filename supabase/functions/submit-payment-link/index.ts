@@ -19,6 +19,8 @@ const Schema = z.object({
   payment_screenshot_url: z.string().url().max(800).optional().or(z.literal('')),
   custom_field_values: z.record(z.string(), z.any()).optional(),
   customer_note: z.string().max(2000).optional(),
+  open_product_name: z.string().trim().max(200).optional(),
+  open_amount: z.number().positive().max(10_000_000).optional(),
 });
 
 Deno.serve(async (req) => {
@@ -62,8 +64,24 @@ Deno.serve(async (req) => {
       });
     }
 
-    const qty = link.allow_qty_change && d.quantity ? d.quantity : link.quantity;
-    const total = Number(link.amount) * qty;
+    const qty = link.allow_qty_change && d.quantity ? d.quantity : (link.quantity || 1);
+
+    let effectiveProductName = link.product_name;
+    let effectiveProductImage = link.product_image;
+    let effectiveAmount = Number(link.amount || 0);
+
+    if (link.is_open_form) {
+      if (!d.open_product_name || !d.open_amount) {
+        return new Response(JSON.stringify({ error: 'পণ্যের নাম ও পরিমাণ দিন' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      effectiveProductName = d.open_product_name;
+      effectiveAmount = d.open_amount;
+      effectiveProductImage = null;
+    }
+
+    const total = effectiveAmount * qty;
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
     const ua = req.headers.get('user-agent')?.slice(0, 500) || null;
 
@@ -89,9 +107,9 @@ Deno.serve(async (req) => {
         customer_email: d.customer_email || null,
         customer_address: d.customer_address || null,
         product_id: link.product_id,
-        product_name: link.product_name,
-        product_image: link.product_image,
-        amount: link.amount,
+        product_name: effectiveProductName,
+        product_image: effectiveProductImage,
+        amount: effectiveAmount,
         quantity: qty,
         total,
         payment_method: d.payment_method,
@@ -119,7 +137,7 @@ Deno.serve(async (req) => {
         body: {
           type: 'payment_link_submission',
           title: '💳 New Payment Link Submission',
-          message: `${d.customer_name} (${d.customer_phone})\n${link.product_name}\n৳${total}\nTxn: ${d.transaction_id}`,
+          message: `${d.customer_name} (${d.customer_phone})\n${effectiveProductName}\n৳${total}\nTxn: ${d.transaction_id}`,
         },
       });
     } catch (_) {}

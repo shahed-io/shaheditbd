@@ -2011,7 +2011,7 @@ export type Database = {
       payment_links: {
         Row: {
           allow_qty_change: boolean
-          amount: number
+          amount: number | null
           created_at: string
           created_by: string | null
           current_uses: number
@@ -2019,12 +2019,13 @@ export type Database = {
           description: string | null
           expires_at: string | null
           id: string
+          is_open_form: boolean
           max_uses: number | null
           original_amount: number | null
           payment_methods: Json
           product_id: string | null
           product_image: string | null
-          product_name: string
+          product_name: string | null
           quantity: number
           redirect_url: string | null
           required_fields: Json
@@ -2035,7 +2036,7 @@ export type Database = {
         }
         Insert: {
           allow_qty_change?: boolean
-          amount: number
+          amount?: number | null
           created_at?: string
           created_by?: string | null
           current_uses?: number
@@ -2043,12 +2044,13 @@ export type Database = {
           description?: string | null
           expires_at?: string | null
           id?: string
+          is_open_form?: boolean
           max_uses?: number | null
           original_amount?: number | null
           payment_methods?: Json
           product_id?: string | null
           product_image?: string | null
-          product_name: string
+          product_name?: string | null
           quantity?: number
           redirect_url?: string | null
           required_fields?: Json
@@ -2059,7 +2061,7 @@ export type Database = {
         }
         Update: {
           allow_qty_change?: boolean
-          amount?: number
+          amount?: number | null
           created_at?: string
           created_by?: string | null
           current_uses?: number
@@ -2067,12 +2069,13 @@ export type Database = {
           description?: string | null
           expires_at?: string | null
           id?: string
+          is_open_form?: boolean
           max_uses?: number | null
           original_amount?: number | null
           payment_methods?: Json
           product_id?: string | null
           product_image?: string | null
-          product_name?: string
+          product_name?: string | null
           quantity?: number
           redirect_url?: string | null
           required_fields?: Json

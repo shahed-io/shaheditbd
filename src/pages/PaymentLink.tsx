@@ -25,6 +25,7 @@ export default function PaymentLink() {
     customer_name: '', customer_phone: '', customer_email: '', customer_address: '',
     quantity: 1, payment_method: '', transaction_id: '', sender_number: '',
     payment_screenshot_url: '', customer_note: '',
+    open_product_name: '', open_amount: '' as string | number,
   });
   const [customFields, setCustomFields] = useState<Record<string, string>>({});
 
@@ -59,6 +60,11 @@ export default function PaymentLink() {
     e.preventDefault();
     if (!form.customer_name.trim()) return toast.error('আপনার নাম দিন');
     if (!form.customer_phone.trim()) return toast.error('ফোন নাম্বার দিন');
+    if (link.is_open_form) {
+      if (!form.open_product_name.trim()) return toast.error('কোন পণ্য / সার্ভিসের জন্য পেমেন্ট সেটা লিখুন');
+      const amt = Number(form.open_amount);
+      if (!amt || amt <= 0) return toast.error('পরিমাণ (৳) সঠিকভাবে দিন');
+    }
     if (!form.payment_method) return toast.error('পেমেন্ট মেথড নির্বাচন করুন');
     if (!form.transaction_id.trim()) return toast.error('Transaction ID দিন');
 
@@ -82,6 +88,8 @@ export default function PaymentLink() {
           ...form,
           quantity: link.allow_qty_change ? form.quantity : link.quantity,
           custom_field_values: customFields,
+          open_product_name: link.is_open_form ? form.open_product_name : undefined,
+          open_amount: link.is_open_form ? Number(form.open_amount) : undefined,
         },
       });
       if (error) throw error;
@@ -131,33 +139,54 @@ export default function PaymentLink() {
   const selectedMethod = methods.find(m => m.name === form.payment_method);
   const cfArr: CustomField[] = link.custom_fields || [];
   const qty = link.allow_qty_change ? form.quantity : link.quantity;
-  const total = Number(link.amount) * qty;
+  const effectiveAmount = link.is_open_form ? Number(form.open_amount || 0) : Number(link.amount || 0);
+  const total = effectiveAmount * qty;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 py-6 px-4">
       <div className="max-w-2xl mx-auto space-y-4">
         <Card className="overflow-hidden">
           <CardContent className="p-0">
-            {link.product_image && (
+            {link.product_image && !link.is_open_form && (
               <div className="aspect-video bg-muted overflow-hidden">
                 <img src={link.product_image} alt={link.product_name} className="w-full h-full object-cover" />
               </div>
             )}
             <div className="p-6 space-y-2">
               <h1 className="text-2xl font-bold">{link.title}</h1>
-              <p className="text-sm text-muted-foreground">{link.product_name}</p>
+              {!link.is_open_form && link.product_name && <p className="text-sm text-muted-foreground">{link.product_name}</p>}
               {link.description && <p className="text-sm whitespace-pre-line">{link.description}</p>}
-              <div className="flex items-baseline gap-2 pt-2">
-                <span className="text-3xl font-bold text-primary">৳{Number(link.amount).toLocaleString('bn-BD')}</span>
-                {link.original_amount && Number(link.original_amount) > Number(link.amount) && (
-                  <span className="text-sm line-through text-muted-foreground">৳{Number(link.original_amount).toLocaleString('bn-BD')}</span>
-                )}
-              </div>
+              {!link.is_open_form ? (
+                <div className="flex items-baseline gap-2 pt-2">
+                  <span className="text-3xl font-bold text-primary">৳{Number(link.amount).toLocaleString('bn-BD')}</span>
+                  {link.original_amount && Number(link.original_amount) > Number(link.amount) && (
+                    <span className="text-sm line-through text-muted-foreground">৳{Number(link.original_amount).toLocaleString('bn-BD')}</span>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground pt-2">নিচে আপনার বিস্তারিত তথ্য, পরিমাণ ও পেমেন্ট তথ্য দিন।</p>
+              )}
             </div>
           </CardContent>
         </Card>
 
         <form onSubmit={handleSubmit}>
+          {link.is_open_form && (
+            <Card className="mb-4"><CardContent className="p-6 space-y-4">
+              <h2 className="text-lg font-semibold">কোন পণ্য / সার্ভিস কিনছেন</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="sm:col-span-2">
+                  <Label>পণ্য / সার্ভিসের নাম *</Label>
+                  <Input value={form.open_product_name} onChange={e => setForm({ ...form, open_product_name: e.target.value })} placeholder="যেমন: Office 365 — 1 Year" required />
+                </div>
+                <div>
+                  <Label>পরিমাণ (৳) *</Label>
+                  <Input type="number" min={1} value={form.open_amount} onChange={e => setForm({ ...form, open_amount: e.target.value })} placeholder="0" required />
+                </div>
+              </div>
+            </CardContent></Card>
+          )}
+
           <Card><CardContent className="p-6 space-y-4">
             <h2 className="text-lg font-semibold">আপনার তথ্য</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
