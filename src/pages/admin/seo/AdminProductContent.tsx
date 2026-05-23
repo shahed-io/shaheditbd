@@ -240,7 +240,7 @@ const AdminProductContent = () => {
             <FileText className="text-primary" /> Product Content Enrichment
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Bulk-generate {MIN_WORDS}–1500 word SEO-rich descriptions with Features, Benefits, Usage Guide, FAQ, Comparison & Who Should Buy sections.
+            Generates descriptions using the SAME 9-section format as the main Product editor. Each run backs up the previous description, so you can Restore anytime.
           </p>
         </div>
         <button
