@@ -372,11 +372,11 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
         <div className="overflow-y-auto flex-1 p-5 space-y-4">
           {/* Customer */}
           <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">কাস্টমার তথ্য</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Customer Info</p>
             <div className="grid grid-cols-2 gap-3">
-              <input placeholder="নাম *" value={form.customer_name} onChange={e => setForm(p => ({ ...p, customer_name: e.target.value }))} className={inputClass} />
-              <input placeholder="ইমেইল *" type="email" value={form.customer_email} onChange={e => setForm(p => ({ ...p, customer_email: e.target.value }))} className={inputClass} />
-              <input placeholder="ফোন" value={form.customer_phone} onChange={e => setForm(p => ({ ...p, customer_phone: e.target.value }))} className={inputClass} />
+              <input placeholder="Name *" value={form.customer_name} onChange={e => setForm(p => ({ ...p, customer_name: e.target.value }))} className={inputClass} />
+              <input placeholder="Email *" type="email" value={form.customer_email} onChange={e => setForm(p => ({ ...p, customer_email: e.target.value }))} className={inputClass} />
+              <input placeholder="Phone" value={form.customer_phone} onChange={e => setForm(p => ({ ...p, customer_phone: e.target.value }))} className={inputClass} />
               <select value={form.payment_method} onChange={e => setForm(p => ({ ...p, payment_method: e.target.value }))} className={inputClass}>
                 {Object.entries(PM_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
@@ -392,15 +392,15 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
           {/* Products */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">পণ্যসমূহ</p>
-              <button onClick={addItem} className="text-xs text-primary hover:underline flex items-center gap-2"><Plus size={11} /> যোগ করুন</button>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Products</p>
+              <button onClick={addItem} className="text-xs text-primary hover:underline flex items-center gap-2"><Plus size={11} /> Add Item</button>
             </div>
             <div className="space-y-2">
               {items.map((item, idx) => (
                 <div key={idx} className="flex gap-2 items-start">
-                  <input placeholder="পণ্যের নাম *" value={item.product_name} onChange={e => updateItem(idx, 'product_name', e.target.value)} className={`${inputClass} flex-1`} />
+                  <input placeholder="Product name *" value={item.product_name} onChange={e => updateItem(idx, 'product_name', e.target.value)} className={`${inputClass} flex-1`} />
                   <input type="number" min={1} value={item.quantity} onChange={e => updateItem(idx, 'quantity', parseInt(e.target.value) || 1)} className={`${inputClass} w-16 text-center`} />
-                  <input type="number" min={0} placeholder="মূল্য" value={item.price || ''} onChange={e => updateItem(idx, 'price', e.target.value)} className={`${inputClass} w-24`} />
+                  <input type="number" min={0} placeholder="Price" value={item.price || ''} onChange={e => updateItem(idx, 'price', e.target.value)} className={`${inputClass} w-24`} />
                   {items.length > 1 && (
                     <button onClick={() => removeItem(idx)} className="p-2 text-muted-foreground hover:text-destructive mt-0.5"><X size={14} /></button>
                   )}
@@ -408,14 +408,14 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
               ))}
             </div>
             <div className="flex justify-end mt-2">
-              <span className="text-sm font-bold text-primary">সর্বমোট: ৳{subtotal.toLocaleString()}</span>
+              <span className="text-sm font-bold text-primary">Subtotal: ৳{subtotal.toLocaleString()}</span>
             </div>
           </div>
 
           {/* Status & Notes */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">অর্ডার স্ট্যাটাস</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Order Status</label>
               <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value }))} className={inputClass}>
                 {ALL_STATUSES.map(s => <option key={s} value={s}>{STATUS_CONFIG[s]?.label || s}</option>)}
               </select>
