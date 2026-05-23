@@ -114,6 +114,8 @@ export default function PaymentLink() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       pendingSubmitRef.current = true;
+      // Persist form state so it survives any OAuth full-page redirect
+      try { sessionStorage.setItem(PENDING_KEY, JSON.stringify({ form, customFields })); } catch {}
       toast.info('সাবমিট করতে লগইন করুন — লগইনের পর অর্ডার নিজে থেকেই সাবমিট হবে');
       setShowAuthModal(true);
       return;
