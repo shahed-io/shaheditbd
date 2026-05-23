@@ -318,8 +318,8 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
     setItems(prev => prev.map((it, i) => i === idx ? { ...it, [field]: value } : it));
 
   const handleCreate = async () => {
-    if (!form.customer_name || !form.customer_email) { toast.error('নাম ও ইমেইল আবশ্যক'); return; }
-    if (items.some(i => !i.product_name)) { toast.error('সব প্রোডাক্টের নাম দিন'); return; }
+    if (!form.customer_name || !form.customer_email) { toast.error('Name and email are required'); return; }
+    if (items.some(i => !i.product_name)) { toast.error('All product names are required'); return; }
     setLoading(true);
     try {
       const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
