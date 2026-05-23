@@ -953,15 +953,15 @@ const AdminOrders = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3 flex-wrap">
           <p className="text-sm text-muted-foreground">
-            <span className="font-bold text-foreground">{orders.length}</span> মোট অর্ডার
+            <span className="font-bold text-foreground">{orders.length}</span> total orders
           </p>
           {adminWhatsapp ? (
             <span className="flex items-center gap-2 text-[11px] text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-              <MessageCircle size={10} /> WhatsApp সক্রিয়
+              <MessageCircle size={10} /> WhatsApp Active
             </span>
           ) : (
             <span className="flex items-center gap-2 text-[11px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-              <Bell size={10} /> WhatsApp নম্বর দিন Settings-এ
+              <Bell size={10} /> Add WhatsApp number in Settings
             </span>
           )}
         </div>
