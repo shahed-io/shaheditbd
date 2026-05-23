@@ -13,15 +13,14 @@ export default function PaymentLinkTrack() {
     if (!id) return;
     let mounted = true;
     const load = async () => {
-      const { data } = await supabase.from('payment_link_submissions').select('*').eq('id', id).maybeSingle();
-      if (mounted) { setSub(data); setLoading(false); }
+      const { data } = await supabase.rpc('get_payment_submission_public', { p_id: id });
+      const row = Array.isArray(data) ? data[0] : data;
+      if (mounted) { setSub(row || null); setLoading(false); }
     };
     load();
-    const ch = supabase.channel(`pls-${id}`)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'payment_link_submissions', filter: `id=eq.${id}` }, (p) => {
-        setSub(p.new);
-      }).subscribe();
-    return () => { mounted = false; supabase.removeChannel(ch); };
+    // Poll for status updates every 10s (replaces realtime, which would require public read)
+    const iv = setInterval(load, 10000);
+    return () => { mounted = false; clearInterval(iv); };
   }, [id]);
 
   if (loading) return <div className="min-h-screen grid place-items-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
