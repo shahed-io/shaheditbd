@@ -543,13 +543,13 @@ const OrderDetailModal = ({
                 {/* Customer + Payment */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="glass-card rounded-xl p-4 space-y-2">
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><User size={12} className="text-primary" /> কাস্টমার</p>
+                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><User size={12} className="text-primary" /> Customer</p>
                     <p className="font-semibold text-foreground text-sm">{order.customer_name}</p>
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Mail size={11} />{order.customer_email}</p>
                     {order.customer_phone && <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Phone size={11} />{order.customer_phone}</p>}
                   </div>
                   <div className="glass-card rounded-xl p-4 space-y-2">
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><CreditCard size={12} className="text-primary" /> পেমেন্ট</p>
+                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><CreditCard size={12} className="text-primary" /> Payment</p>
                     <div className="text-xs space-y-1.5">
                       <div className="flex justify-between"><span className="text-muted-foreground">Method:</span><span className="font-medium">{PM_LABELS[order.payment_method] || order.payment_method}</span></div>
                       {order.transaction_id && (
@@ -560,11 +560,11 @@ const OrderDetailModal = ({
                       )}
                       <div className="flex justify-between"><span className="text-muted-foreground">Payment:</span><span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${PAYMENT_STATUS_COLORS[order.payment_status] || ''}`}>{order.payment_status || 'pending'}</span></div>
                       <div className="flex justify-between font-bold border-t border-border pt-1.5">
-                        <span className="text-muted-foreground">মোট:</span>
+                        <span className="text-muted-foreground">Total:</span>
                         <span className="text-primary">৳{Number(order.total).toLocaleString()}</span>
                       </div>
                       {Number(order.discount_amount) > 0 && (
-                        <div className="flex justify-between text-xs text-emerald-500"><span>ছাড়:</span><span>-৳{Number(order.discount_amount).toLocaleString()}</span></div>
+                        <div className="flex justify-between text-xs text-emerald-500"><span>Discount:</span><span>-৳{Number(order.discount_amount).toLocaleString()}</span></div>
                       )}
                     </div>
                   </div>
@@ -573,7 +573,7 @@ const OrderDetailModal = ({
                 {/* Order Items */}
                 {order.order_items?.length > 0 && (
                   <div>
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-2"><Package size={12} className="text-primary" /> পণ্যসমূহ</p>
+                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-2"><Package size={12} className="text-primary" /> Products</p>
                     <div className="space-y-1.5">
                       {order.order_items.map((item: any) => (
                         <div key={item.id} className="flex justify-between items-start glass-card rounded-xl p-3 text-sm">
@@ -591,24 +591,24 @@ const OrderDetailModal = ({
 
                 {/* Action Buttons */}
                 <div>
-                  <p className="text-xs font-semibold text-foreground mb-2">দ্রুত অ্যাকশন</p>
+                  <p className="text-xs font-semibold text-foreground mb-2">Quick Actions</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {order.payment_status !== 'verified' && !['cancelled', 'failed'].includes(order.status) && (
-                      <button onClick={() => doUpdate({ payment_status: 'verified', status: 'processing' }, '✅ পেমেন্ট ভেরিফাই হয়েছে!')}
+                      <button onClick={() => doUpdate({ payment_status: 'verified', status: 'processing' }, '✅ Payment verified!')}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold btn-glow disabled:opacity-50">
-                        <CheckCircle size={12} /> পেমেন্ট ভেরিফাই
+                        <CheckCircle size={12} /> Verify Payment
                       </button>
                     )}
                     {order.status === 'processing' && (
-                      <button onClick={() => doUpdate({ status: 'delivered' }, '🚚 ডেলিভার্ড মার্ক করা হয়েছে!')}
+                      <button onClick={() => doUpdate({ status: 'delivered' }, '🚚 Marked as delivered!')}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-cyan-500/40 text-cyan-500 hover:bg-cyan-500/10 transition-colors disabled:opacity-50">
-                        <Truck size={12} /> ডেলিভার্ড
+                        <Truck size={12} /> Delivered
                       </button>
                     )}
                     {order.status === 'delivered' && (
-                      <button onClick={() => doUpdate({ status: 'completed' }, '✅ অর্ডার সম্পন্ন!')}
+                      <button onClick={() => doUpdate({ status: 'completed' }, '✅ Order completed!')}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-emerald-500/40 text-emerald-500 hover:bg-emerald-500/10 transition-colors disabled:opacity-50">
-                        <CheckCircle2 size={12} /> সম্পন্ন
+                        <CheckCircle2 size={12} /> Complete
                       </button>
                     )}
                     {order.customer_phone && (
@@ -620,19 +620,19 @@ const OrderDetailModal = ({
                     {order.customer_phone && (
                       <button onClick={() => downloadOrderInvoicePdf(order)}
                         className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-primary/30 text-primary hover:bg-primary/10 transition-colors">
-                        <Download size={12} /> PDF ডাউনলোড
+                        <Download size={12} /> Download PDF
                       </button>
                     )}
                     {!['cancelled', 'refunded', 'failed'].includes(order.status) && (
-                      <button onClick={() => { if (confirm('বাতিল করবেন?')) doUpdate({ status: 'cancelled' }, '❌ বাতিল করা হয়েছে'); }}
+                      <button onClick={() => { if (confirm('Cancel this order?')) doUpdate({ status: 'cancelled' }, '❌ Cancelled'); }}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50">
-                        <Ban size={12} /> বাতিল
+                        <Ban size={12} /> Cancel
                       </button>
                     )}
                     {order.status === 'cancelled' && (
-                      <button onClick={() => { if (confirm('রিফান্ড মার্ক?')) doUpdate({ status: 'refunded' }, '↩️ রিফান্ড মার্ক'); }}
+                      <button onClick={() => { if (confirm('Mark as refunded?')) doUpdate({ status: 'refunded' }, '↩️ Marked as refunded'); }}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-purple-500/30 text-purple-500 hover:bg-purple-500/10 transition-colors disabled:opacity-50">
-                        <RotateCcw size={12} /> রিফান্ড
+                        <RotateCcw size={12} /> Refund
                       </button>
                     )}
                   </div>
@@ -641,10 +641,10 @@ const OrderDetailModal = ({
                 {/* Status Dropdown */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">Status পরিবর্তন</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">Change Status</label>
                     <select
                       value={order.status}
-                      onChange={e => doUpdate({ status: e.target.value }, '✅ Status আপডেট')}
+                      onChange={e => doUpdate({ status: e.target.value }, '✅ Status updated')}
                       className={inputCls}
                     >
                       {ALL_STATUSES.map(s => <option key={s} value={s}>{STATUS_CONFIG[s]?.label || s}</option>)}
@@ -654,7 +654,7 @@ const OrderDetailModal = ({
                     <label className="text-xs text-muted-foreground mb-1 block">Payment Status</label>
                     <select
                       value={order.payment_status || 'pending'}
-                      onChange={e => doUpdate({ payment_status: e.target.value }, '✅ Payment status আপডেট')}
+                      onChange={e => doUpdate({ payment_status: e.target.value }, '✅ Payment status updated')}
                       className={inputCls}
                     >
                       <option value="pending">Pending</option>
@@ -666,9 +666,9 @@ const OrderDetailModal = ({
 
                 {/* WhatsApp custom message */}
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">WhatsApp কাস্টম মেসেজ (ঐচ্ছিক)</label>
+                  <label className="text-xs text-muted-foreground mb-1 block">WhatsApp Custom Message (optional)</label>
                   <textarea rows={2} value={deliveryNote} onChange={e => setDeliveryNote(e.target.value)}
-                    placeholder="লাইসেন্স কি, ডেলিভারি নির্দেশনা..."
+                    placeholder="License key, delivery instructions..."
                     className={`${inputCls} resize-none`} />
                 </div>
 
