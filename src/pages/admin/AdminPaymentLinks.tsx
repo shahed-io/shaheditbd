@@ -88,6 +88,7 @@ export default function AdminPaymentLinks() {
         { name: 'bKash', number: '', instructions: 'Send Money and submit the Transaction ID below.' },
         { name: 'Nagad', number: '', instructions: 'Send Money and submit the Transaction ID below.' },
         { name: 'Rocket', number: '', instructions: 'Send Money and submit the Transaction ID below.' },
+        { name: 'Bank', number: '', instructions: 'Bank transfer / deposit. Submit the deposit slip or reference number below.' },
       ],
       required_fields: { name: true, phone: true, email: false, address: false, note: true },
       custom_fields: [],

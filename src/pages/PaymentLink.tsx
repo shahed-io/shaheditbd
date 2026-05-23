@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from 'sonner';
 import { Loader2, Upload, CheckCircle2, AlertCircle, Copy } from 'lucide-react';
+import AuthModal from '@/components/store/AuthModal';
 
 type PaymentMethod = { name: string; number?: string; instructions?: string };
 type CustomField = { label: string; type?: 'text' | 'email' | 'number'; required?: boolean };
@@ -20,6 +21,8 @@ export default function PaymentLink() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const pendingSubmitRef = useRef(false);
 
   const [form, setForm] = useState({
     customer_name: '', customer_phone: '', customer_email: '', customer_address: '',
@@ -29,6 +32,8 @@ export default function PaymentLink() {
   });
   const [customFields, setCustomFields] = useState<Record<string, string>>({});
 
+  const PENDING_KEY = `pending_payment_link_submission_${slug}`;
+
   useEffect(() => {
     (async () => {
       if (!slug) return;
@@ -36,9 +41,34 @@ export default function PaymentLink() {
       if (error || !data) { setLoading(false); return; }
       setLink(data);
       setForm(f => ({ ...f, quantity: data.quantity || 1, payment_method: (data.payment_methods?.[0]?.name) || '' }));
+      // Restore any pending form data (e.g. after login redirect)
+      try {
+        const saved = sessionStorage.getItem(PENDING_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.form) setForm(parsed.form);
+          if (parsed.customFields) setCustomFields(parsed.customFields);
+        }
+      } catch {}
       setLoading(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
+
+  // Listen for sign-in and auto-submit if a submission was pending
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session && pendingSubmitRef.current) {
+        pendingSubmitRef.current = false;
+        setShowAuthModal(false);
+        setTimeout(() => {
+          const formEl = document.getElementById('payment-link-form') as HTMLFormElement | null;
+          formEl?.requestSubmit();
+        }, 400);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleUpload = async (file: File) => {
     if (file.size > 5 * 1024 * 1024) { toast.error('ছবি 5MB-এর কম হতে হবে'); return; }
@@ -80,6 +110,15 @@ export default function PaymentLink() {
       }
     }
 
+    // Require login before submission. If not logged in, open AuthModal — auto-submit on sign-in.
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      pendingSubmitRef.current = true;
+      toast.info('সাবমিট করতে লগইন করুন — লগইনের পর অর্ডার নিজে থেকেই সাবমিট হবে');
+      setShowAuthModal(true);
+      return;
+    }
+
     setSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke('submit-payment-link', {
@@ -95,6 +134,7 @@ export default function PaymentLink() {
       if (error) throw error;
       if ((data as any)?.error) throw new Error((data as any).error);
       const id = (data as any).id;
+      sessionStorage.removeItem(PENDING_KEY);
       toast.success('সাবমিট সফল! অ্যাডমিন রিভিউ করছে।');
       if (link.redirect_url) {
         window.location.href = link.redirect_url;
@@ -170,7 +210,7 @@ export default function PaymentLink() {
           </CardContent>
         </Card>
 
-        <form onSubmit={handleSubmit}>
+        <form id="payment-link-form" onSubmit={handleSubmit}>
           {link.is_open_form && (
             <Card className="mb-4"><CardContent className="p-6 space-y-4">
               <h2 className="text-lg font-semibold">কোন পণ্য / সার্ভিস কিনছেন</h2>
@@ -250,14 +290,30 @@ export default function PaymentLink() {
 
             <div>
               <Label>পেমেন্ট স্ক্রিনশট (Optional)</Label>
-              <div className="mt-1 flex items-center gap-3">
-                <label className="flex-1 cursor-pointer border-2 border-dashed border-border rounded-lg p-4 text-center hover:bg-muted/40 transition">
+              <div className="mt-1 space-y-3">
+                <label className="block cursor-pointer border-2 border-dashed border-border rounded-lg p-4 text-center hover:bg-muted/40 transition">
                   <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && handleUpload(e.target.files[0])} disabled={uploading} />
                   {uploading ? <Loader2 className="w-5 h-5 mx-auto animate-spin" /> : form.payment_screenshot_url ? (
-                    <span className="text-sm text-green-600 flex items-center justify-center gap-2"><CheckCircle2 className="w-4 h-4" /> আপলোড সম্পন্ন</span>
+                    <span className="text-sm text-green-600 flex items-center justify-center gap-2"><CheckCircle2 className="w-4 h-4" /> {form.payment_screenshot_url ? 'অন্য ছবি আপলোড করুন' : 'আপলোড সম্পন্ন'}</span>
                   ) : <span className="text-sm text-muted-foreground flex items-center justify-center gap-2"><Upload className="w-4 h-4" /> ছবি আপলোড করুন</span>}
                 </label>
-                {form.payment_screenshot_url && <img src={form.payment_screenshot_url} className="w-16 h-16 object-cover rounded border" />}
+                {form.payment_screenshot_url && (
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="text-xs text-muted-foreground mb-2">প্রিভিউ — ছবিটি স্পষ্ট দেখা যাচ্ছে কিনা যাচাই করুন</p>
+                    <a href={form.payment_screenshot_url} target="_blank" rel="noopener noreferrer" className="block">
+                      <img
+                        src={form.payment_screenshot_url}
+                        alt="Payment screenshot preview"
+                        className="w-full max-h-80 object-contain rounded-md border bg-background"
+                      />
+                    </a>
+                    <div className="flex justify-end mt-2">
+                      <Button type="button" size="sm" variant="ghost" onClick={() => setForm(f => ({ ...f, payment_screenshot_url: '' }))}>
+                        ছবি মুছুন
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -272,6 +328,7 @@ export default function PaymentLink() {
           </CardContent></Card>
         </form>
       </div>
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 }
