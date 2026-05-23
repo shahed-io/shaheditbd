@@ -997,7 +997,7 @@ const AdminOrders = () => {
         </button>
         <button onClick={() => setStatusFilter('processing')} className="glass-card rounded-2xl p-4 text-left hover:border-blue-500/40 transition-colors">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">প্রসেসিং</span>
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Processing</span>
             <div className="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-500 flex items-center justify-center"><RefreshCw size={14} /></div>
           </div>
           <p className="text-xl font-bold text-foreground">{processingCount}</p>
