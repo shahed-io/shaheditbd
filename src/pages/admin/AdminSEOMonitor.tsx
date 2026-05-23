@@ -2,12 +2,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Activity, RefreshCw, ExternalLink, CheckCircle2, AlertTriangle,
-  XCircle, FileText, Image as ImageIcon, Rss, Globe, Search,
-  Database, Code2, Send, Clock,
+  XCircle, FileText, Rss, Globe, Search,
+  Database, Code2, Send, Clock, Zap, HardDrive,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface SitemapStat { name: string; url: string; count: number; status: 'ok' | 'fail' | 'loading'; lastFetch?: string; }
+interface SitemapStat {
+  name: string;
+  url: string;
+  count: number;
+  status: 'ok' | 'fail' | 'loading' | 'warn';
+  lastFetch?: string;
+  responseMs?: number;
+  bytes?: number;
+  httpStatus?: number;
+  lastModified?: string | null;
+  contentType?: string;
+  error?: string;
+  sample?: string[];
+}
 interface PingLog { id: string; entity: 'product' | 'blog'; title: string; slug: string; updated_at: string; }
 interface SchemaCheck { type: string; present: boolean; valid: boolean; note?: string; }
 
@@ -48,23 +61,41 @@ const AdminSEOMonitor = () => {
 
   /* ───────── fetchers ───────── */
   const fetchSitemaps = useCallback(async () => {
-    const updated = await Promise.all(sitemaps.map(async (s) => {
-      try {
-        const r = await fetch(s.url, { cache: 'no-store' });
-        if (!r.ok) return { ...s, status: 'fail' as const, count: 0, lastFetch: new Date().toISOString() };
-        const text = await r.text();
-        let count = 0;
-        if (s.name.endsWith('.xml')) {
-          count = (text.match(/<url>|<item>/g) || []).length;
-        } else {
-          count = text.split('\n').filter(l => l.trim().toLowerCase().startsWith('sitemap:')).length;
-        }
-        return { ...s, status: 'ok' as const, count, lastFetch: new Date().toISOString() };
-      } catch {
-        return { ...s, status: 'fail' as const, count: 0, lastFetch: new Date().toISOString() };
-      }
-    }));
-    setSitemaps(updated);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const r = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/seo-monitor-check`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ site: SITE }),
+        },
+      );
+      const json = await r.json();
+      if (!json.ok) throw new Error(json.error || 'Check failed');
+      const now = new Date().toISOString();
+      setSitemaps(
+        json.results.map((res: any): SitemapStat => ({
+          name: res.name,
+          url: res.url,
+          count: res.count,
+          status: res.ok ? 'ok' : res.status >= 200 && res.status < 400 ? 'warn' : 'fail',
+          lastFetch: now,
+          responseMs: res.responseMs,
+          bytes: res.bytes,
+          httpStatus: res.status,
+          lastModified: res.lastModified,
+          contentType: res.contentType,
+          error: res.error,
+          sample: res.sample,
+        })),
+      );
+    } catch (e: any) {
+      toast.error('SEO check failed', { description: e.message });
+      setSitemaps((prev) => prev.map((s) => ({ ...s, status: 'fail' as const })));
+    }
   }, []);
 
   const fetchDbStats = useCallback(async () => {
@@ -208,22 +239,44 @@ const AdminSEOMonitor = () => {
       <Card>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold flex items-center gap-2"><FileText className="h-4 w-4 text-primary" />Sitemap & Feed Status</h2>
+          <span className="text-xs text-muted-foreground">Server-side check (CORS-safe)</span>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[700px]">
             <thead>
               <tr className="text-left text-xs text-muted-foreground border-b border-border">
                 <th className="pb-2">File</th>
-                <th className="pb-2">URLs</th>
+                <th className="pb-2 text-right">URLs</th>
+                <th className="pb-2 text-right">HTTP</th>
+                <th className="pb-2 text-right"><Zap className="h-3 w-3 inline" /> Time</th>
+                <th className="pb-2 text-right"><HardDrive className="h-3 w-3 inline" /> Size</th>
                 <th className="pb-2">Status</th>
                 <th className="pb-2 text-right">Open</th>
               </tr>
             </thead>
             <tbody>
               {sitemaps.map(s => (
-                <tr key={s.name} className="border-b border-border/50 last:border-0">
-                  <td className="py-3 font-mono text-xs">{s.name}</td>
-                  <td className="py-3">{s.status === 'loading' ? '—' : s.count}</td>
+                <tr key={s.name} className="border-b border-border/50 last:border-0 align-top">
+                  <td className="py-3">
+                    <div className="font-mono text-xs">{s.name}</div>
+                    {s.error && <div className="text-[10px] text-red-500 mt-1 max-w-[200px] truncate" title={s.error}>{s.error}</div>}
+                    {s.sample && s.sample.length > 0 && (
+                      <details className="mt-1">
+                        <summary className="text-[10px] text-muted-foreground cursor-pointer hover:text-primary">Sample entries</summary>
+                        <div className="text-[10px] font-mono text-muted-foreground mt-1 space-y-0.5">
+                          {s.sample.map((x, i) => <div key={i} className="truncate max-w-[280px]" title={x}>{x}</div>)}
+                        </div>
+                      </details>
+                    )}
+                  </td>
+                  <td className="py-3 text-right tabular-nums font-medium">{s.status === 'loading' ? '—' : s.count.toLocaleString()}</td>
+                  <td className="py-3 text-right tabular-nums text-xs">
+                    {s.httpStatus ? (
+                      <span className={s.httpStatus >= 200 && s.httpStatus < 300 ? 'text-emerald-600' : 'text-red-600'}>{s.httpStatus}</span>
+                    ) : '—'}
+                  </td>
+                  <td className="py-3 text-right tabular-nums text-xs text-muted-foreground">{s.responseMs ? `${s.responseMs}ms` : '—'}</td>
+                  <td className="py-3 text-right tabular-nums text-xs text-muted-foreground">{s.bytes ? `${(s.bytes / 1024).toFixed(1)}KB` : '—'}</td>
                   <td className="py-3"><StatusBadge status={s.status} /></td>
                   <td className="py-3 text-right">
                     <a href={s.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
