@@ -970,7 +970,7 @@ const AdminOrders = () => {
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold"
           >
-            <Plus size={14} /> নতুন অর্ডার
+            <Plus size={14} /> New Order
           </button>
           <button onClick={fetchOrders} className="glass-card px-4 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors">
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
