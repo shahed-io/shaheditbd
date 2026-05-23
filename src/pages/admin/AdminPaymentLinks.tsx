@@ -24,7 +24,7 @@ const emptyLink = {
   product_name: '', product_image: '',
   amount: 0, original_amount: null as number | null,
   quantity: 1, allow_qty_change: false,
-  payment_methods: [{ name: 'bKash', number: '', instructions: 'Send Money করে Transaction ID দিন' }] as PaymentMethod[],
+  payment_methods: [{ name: 'bKash', number: '', instructions: 'Send Money to this number and submit the Transaction ID below.' }] as PaymentMethod[],
   required_fields: { name: true, phone: true, email: false, address: false, note: false },
   custom_fields: [] as CustomField[],
   max_uses: null as number | null,
