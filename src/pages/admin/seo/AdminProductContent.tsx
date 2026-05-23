@@ -191,6 +191,67 @@ const AdminProductContent = () => {
     if (ok) toast.success(`"${product.name}" restored ✓`);
   };
 
+  const generateFaqOne = async (product: Product): Promise<boolean> => {
+    setFaqGenerating(product.id);
+    try {
+      // 1) Backup current description + faq FIRST (so Restore reverts both)
+      const { error: bkErr } = await supabase.from('product_content_backups').insert({
+        product_id: product.id,
+        description: product.description,
+        faq: product.faq,
+      });
+      if (bkErr) throw new Error('Backup failed: ' + bkErr.message);
+
+      // 2) Call AI with type "faq" — uses the existing description as the source of truth
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const res = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/generate-product-content`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            type: 'faq',
+            productName: product.name,
+            category: product.category?.name || '',
+            brand: product.brand || '',
+            productType: product.product_type || 'Digital',
+            price: product.price,
+            demoDescription: product.description || '',
+          }),
+        },
+      );
+      const json = await res.json();
+      if (json.error) throw new Error(json.error);
+
+      const result = json.result;
+      const faqArr: Array<{ q: string; a: string }> = Array.isArray(result?.faq) ? result.faq : [];
+      if (faqArr.length < 4) throw new Error('AI returned too few FAQ items; retry shortly.');
+
+      // 3) Update ONLY faq column (preserve description)
+      const { error } = await supabase.from('products').update({ faq: faqArr }).eq('id', product.id);
+      if (error) throw error;
+
+      setProducts((prev) =>
+        prev.map((p) => (p.id === product.id ? { ...p, faq: faqArr } : p)),
+      );
+      setBackupMap((prev) => ({ ...prev, [product.id]: (prev[product.id] || 0) + 1 }));
+      return true;
+    } catch (err: any) {
+      toast.error(`FAQ "${product.name}": ${err.message || 'AI error'}`);
+      return false;
+    } finally {
+      setFaqGenerating(null);
+    }
+  };
+
+  const handleSingleFaq = async (product: Product) => {
+    const ok = await generateFaqOne(product);
+    if (ok) toast.success(`"${product.name}" FAQ generated ✓`);
+  };
+
+
   const handleBulk = async (onlyThin: boolean) => {
     const targets = products.filter((p) => (onlyThin ? wordCount(p.description) < MIN_WORDS : true));
     if (targets.length === 0) { toast.info('No products to enrich'); return; }
