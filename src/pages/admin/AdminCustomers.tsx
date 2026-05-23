@@ -950,22 +950,30 @@ export default function AdminCustomers() {
         </div>
       )}
 
-      {/* Stat cards */}
+      {/* Stat cards (clickable → detail drawer) */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {[
-          { label: 'মোট কাস্টমার', value: customers.length, icon: Users, color: 'text-primary' },
-          { label: 'সক্রিয় ক্রেতা', value: activeCustomers, icon: UserCheck, color: 'text-emerald-500' },
-          { label: 'মোট অর্ডার', value: customers.reduce((s, c) => s + (c.order_count ?? 0), 0), icon: ShoppingBag, color: 'text-blue-500' },
-          { label: 'মোট আয়', value: `৳${totalRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-amber-500' },
-          { label: 'মোট পয়েন্ট', value: customers.reduce((s, c) => s + (c.points_balance ?? 0), 0).toLocaleString(), icon: Award, color: 'text-orange-500' },
-        ].map(stat => (
-          <div key={stat.label} className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-2 mb-2">
-              <stat.icon size={16} className={stat.color} />
-              <span className="text-xs text-muted-foreground">{stat.label}</span>
+        {([
+          { key: 'total',   label: 'মোট কাস্টমার', value: customers.length, icon: Users, color: 'text-primary' },
+          { key: 'active',  label: 'সক্রিয় ক্রেতা', value: activeCustomers, icon: UserCheck, color: 'text-emerald-500' },
+          { key: 'orders',  label: 'মোট অর্ডার', value: customers.reduce((s, c) => s + (c.order_count ?? 0), 0), icon: ShoppingBag, color: 'text-blue-500' },
+          { key: 'revenue', label: 'মোট আয়', value: `৳${totalRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-amber-500' },
+          { key: 'points',  label: 'মোট পয়েন্ট', value: customers.reduce((s, c) => s + (c.points_balance ?? 0), 0).toLocaleString(), icon: Award, color: 'text-orange-500' },
+        ] as const).map(stat => (
+          <button
+            key={stat.label}
+            onClick={() => setStatDrawer(stat.key as any)}
+            className="text-left bg-card rounded-xl p-4 border border-border hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5 transition-all group"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <stat.icon size={16} className={stat.color} />
+                <span className="text-xs text-muted-foreground">{stat.label}</span>
+              </div>
+              <ChevronRight size={14} className="text-muted-foreground/40 group-hover:text-primary transition-colors" />
             </div>
             <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-          </div>
+            <div className="text-[10px] text-muted-foreground/70 mt-1">বিস্তারিত দেখতে ক্লিক করুন</div>
+          </button>
         ))}
       </div>
 
