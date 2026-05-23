@@ -1904,6 +1904,185 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_link_submissions: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          created_at: string
+          custom_field_values: Json
+          customer_address: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_note: string | null
+          customer_phone: string
+          id: string
+          ip_address: string | null
+          link_slug: string
+          order_id: string | null
+          order_number: string | null
+          payment_link_id: string | null
+          payment_method: string
+          payment_screenshot_url: string | null
+          product_id: string | null
+          product_image: string | null
+          product_name: string
+          quantity: number
+          reviewed_at: string | null
+          reviewed_by: string | null
+          sender_number: string | null
+          status: string
+          total: number
+          transaction_id: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          amount: number
+          created_at?: string
+          custom_field_values?: Json
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_note?: string | null
+          customer_phone: string
+          id?: string
+          ip_address?: string | null
+          link_slug: string
+          order_id?: string | null
+          order_number?: string | null
+          payment_link_id?: string | null
+          payment_method: string
+          payment_screenshot_url?: string | null
+          product_id?: string | null
+          product_image?: string | null
+          product_name: string
+          quantity?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sender_number?: string | null
+          status?: string
+          total: number
+          transaction_id: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          created_at?: string
+          custom_field_values?: Json
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_note?: string | null
+          customer_phone?: string
+          id?: string
+          ip_address?: string | null
+          link_slug?: string
+          order_id?: string | null
+          order_number?: string | null
+          payment_link_id?: string | null
+          payment_method?: string
+          payment_screenshot_url?: string | null
+          product_id?: string | null
+          product_image?: string | null
+          product_name?: string
+          quantity?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sender_number?: string | null
+          status?: string
+          total?: number
+          transaction_id?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_link_submissions_payment_link_id_fkey"
+            columns: ["payment_link_id"]
+            isOneToOne: false
+            referencedRelation: "payment_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_links: {
+        Row: {
+          allow_qty_change: boolean
+          amount: number
+          created_at: string
+          created_by: string | null
+          current_uses: number
+          custom_fields: Json
+          description: string | null
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          original_amount: number | null
+          payment_methods: Json
+          product_id: string | null
+          product_image: string | null
+          product_name: string
+          quantity: number
+          redirect_url: string | null
+          required_fields: Json
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          allow_qty_change?: boolean
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          current_uses?: number
+          custom_fields?: Json
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          original_amount?: number | null
+          payment_methods?: Json
+          product_id?: string | null
+          product_image?: string | null
+          product_name: string
+          quantity?: number
+          redirect_url?: string | null
+          required_fields?: Json
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          allow_qty_change?: boolean
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          current_uses?: number
+          custom_fields?: Json
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          original_amount?: number | null
+          payment_methods?: Json
+          product_id?: string | null
+          product_image?: string | null
+          product_name?: string
+          quantity?: number
+          redirect_url?: string | null
+          required_fields?: Json
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payment_proofs: {
         Row: {
           admin_notes: string | null
