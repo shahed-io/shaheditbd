@@ -990,7 +990,7 @@ const AdminOrders = () => {
         </div>
         <button onClick={() => setStatusFilter('pending')} className="glass-card rounded-2xl p-4 text-left hover:border-amber-500/40 transition-colors">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">পেন্ডিং</span>
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Pending</span>
             <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-500 flex items-center justify-center"><Clock size={14} /></div>
           </div>
           <p className="text-xl font-bold text-foreground">{pendingCount}</p>
