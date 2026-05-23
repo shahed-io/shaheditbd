@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   FileText, Wand2, Loader2, Zap, AlertCircle, Search,
-  CheckCircle2, ExternalLink, RefreshCw, Eye, X,
+  CheckCircle2, ExternalLink, RefreshCw, Eye, X, Undo2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -38,18 +38,26 @@ const AdminProductContent = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'thin' | 'ok'>('thin');
   const [generating, setGenerating] = useState<string | null>(null);
+  const [restoring, setRestoring] = useState<string | null>(null);
   const [bulkRunning, setBulkRunning] = useState(false);
   const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0, failed: 0 });
   const bulkCancelRef = useRef(false);
   const [preview, setPreview] = useState<Product | null>(null);
+  const [backupMap, setBackupMap] = useState<Record<string, number>>({}); // product_id -> backup count
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('products')
-      .select('id, name, slug, price, description, faq, status, brand, product_type, category:category_id(name)')
-      .order('name');
-    setProducts((data as any) || []);
+    const [{ data: prods }, { data: backups }] = await Promise.all([
+      supabase
+        .from('products')
+        .select('id, name, slug, price, description, faq, status, brand, product_type, category:category_id(name)')
+        .order('name'),
+      supabase.from('product_content_backups').select('product_id'),
+    ]);
+    setProducts((prods as any) || []);
+    const counts: Record<string, number> = {};
+    (backups || []).forEach((b: any) => { counts[b.product_id] = (counts[b.product_id] || 0) + 1; });
+    setBackupMap(counts);
     setLoading(false);
   };
 
@@ -77,6 +85,16 @@ const AdminProductContent = () => {
   const generateOne = async (product: Product): Promise<boolean> => {
     setGenerating(product.id);
     try {
+      // 1) Backup current description + faq FIRST
+      const { error: bkErr } = await supabase.from('product_content_backups').insert({
+        product_id: product.id,
+        description: product.description,
+        faq: product.faq,
+      });
+      if (bkErr) throw new Error('Backup failed: ' + bkErr.message);
+
+      // 2) Call AI with the SAME `type: "description"` that AdminProducts uses
+      //    → produces the standard 9-section markdown matching existing products
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
@@ -86,7 +104,7 @@ const AdminProductContent = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify({
-            type: 'rich_content',
+            type: 'description',
             productName: product.name,
             category: product.category?.name || '',
             brand: product.brand || '',
@@ -98,22 +116,19 @@ const AdminProductContent = () => {
       const json = await res.json();
       if (json.error) throw new Error(json.error);
 
-      const description: string = json.description || json.result?.description || '';
-      const faq: any[] = json.faq || json.result?.faq || [];
-
-      if (!description || wordCount(description) < 400) {
+      const description: string = (typeof json.result === 'string' ? json.result : json.result?.description) || '';
+      if (!description || wordCount(description) < 300) {
         throw new Error('AI returned too-short content; retry shortly.');
       }
 
-      const updatePayload: any = { description };
-      if (Array.isArray(faq) && faq.length > 0) updatePayload.faq = faq;
-
-      const { error } = await supabase.from('products').update(updatePayload).eq('id', product.id);
+      // 3) Update ONLY description (preserve existing FAQ — matches the existing system)
+      const { error } = await supabase.from('products').update({ description }).eq('id', product.id);
       if (error) throw error;
 
       setProducts((prev) =>
-        prev.map((p) => (p.id === product.id ? { ...p, description, faq: updatePayload.faq ?? p.faq } : p)),
+        prev.map((p) => (p.id === product.id ? { ...p, description } : p)),
       );
+      setBackupMap((prev) => ({ ...prev, [product.id]: (prev[product.id] || 0) + 1 }));
       return true;
     } catch (err: any) {
       toast.error(`"${product.name}": ${err.message || 'AI error'}`);
@@ -128,10 +143,56 @@ const AdminProductContent = () => {
     if (ok) toast.success(`"${product.name}" enriched ✓`);
   };
 
+  const restoreOne = async (product: Product): Promise<boolean> => {
+    setRestoring(product.id);
+    try {
+      const { data: bk, error: bkErr } = await supabase
+        .from('product_content_backups')
+        .select('id, description, faq')
+        .eq('product_id', product.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (bkErr) throw bkErr;
+      if (!bk) throw new Error('No backup found');
+
+      const { error } = await supabase
+        .from('products')
+        .update({ description: bk.description, faq: bk.faq })
+        .eq('id', product.id);
+      if (error) throw error;
+
+      // consume the backup we just restored
+      await supabase.from('product_content_backups').delete().eq('id', bk.id);
+
+      setProducts((prev) =>
+        prev.map((p) => (p.id === product.id ? { ...p, description: bk.description, faq: bk.faq } : p)),
+      );
+      setBackupMap((prev) => {
+        const next = { ...prev };
+        const c = (next[product.id] || 1) - 1;
+        if (c <= 0) delete next[product.id]; else next[product.id] = c;
+        return next;
+      });
+      return true;
+    } catch (err: any) {
+      toast.error(`Restore failed for "${product.name}": ${err.message}`);
+      return false;
+    } finally {
+      setRestoring(null);
+    }
+  };
+
+  const handleRestoreSingle = async (product: Product) => {
+    if (!confirm(`Restore previous description for "${product.name}"? Current AI-generated content will be replaced with the last backup.`)) return;
+    const ok = await restoreOne(product);
+    if (ok) toast.success(`"${product.name}" restored ✓`);
+  };
+
   const handleBulk = async (onlyThin: boolean) => {
     const targets = products.filter((p) => (onlyThin ? wordCount(p.description) < MIN_WORDS : true));
     if (targets.length === 0) { toast.info('No products to enrich'); return; }
-    if (!confirm(`Enrich ${targets.length} product${targets.length === 1 ? '' : 's'} with AI? This may take ${Math.ceil(targets.length * 8 / 60)} minutes.`)) return;
+    if (!confirm(`Enrich ${targets.length} product${targets.length === 1 ? '' : 's'} with AI? Previous descriptions will be backed up. ETA ~${Math.ceil(targets.length * 8 / 60)} min.`)) return;
 
     bulkCancelRef.current = false;
     setBulkRunning(true);
@@ -143,13 +204,32 @@ const AdminProductContent = () => {
       const ok = await generateOne(targets[i]);
       if (!ok) failed++;
       setBulkProgress({ done: i + 1, total: targets.length, failed });
-      // Soft rate-limit between calls
       if (i < targets.length - 1) await new Promise((r) => setTimeout(r, 1200));
     }
 
     setBulkRunning(false);
     toast.success(`Done: ${targets.length - failed} enriched${failed ? `, ${failed} failed` : ''}`);
   };
+
+  const handleBulkRestore = async () => {
+    const targets = products.filter((p) => (backupMap[p.id] || 0) > 0);
+    if (targets.length === 0) { toast.info('No backups to restore'); return; }
+    if (!confirm(`Restore previous descriptions for ${targets.length} product${targets.length === 1 ? '' : 's'}? Current AI-generated content will be reverted to the last backup.`)) return;
+
+    bulkCancelRef.current = false;
+    setBulkRunning(true);
+    setBulkProgress({ done: 0, total: targets.length, failed: 0 });
+    let failed = 0;
+    for (let i = 0; i < targets.length; i++) {
+      if (bulkCancelRef.current) break;
+      const ok = await restoreOne(targets[i]);
+      if (!ok) failed++;
+      setBulkProgress({ done: i + 1, total: targets.length, failed });
+    }
+    setBulkRunning(false);
+    toast.success(`Restored: ${targets.length - failed}${failed ? `, ${failed} failed` : ''}`);
+  };
+
 
   return (
     <div className="space-y-6 p-4 md:p-6">
@@ -160,7 +240,7 @@ const AdminProductContent = () => {
             <FileText className="text-primary" /> Product Content Enrichment
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Bulk-generate {MIN_WORDS}–1500 word SEO-rich descriptions with Features, Benefits, Usage Guide, FAQ, Comparison & Who Should Buy sections.
+            Generates descriptions using the SAME 9-section format as the main Product editor. Each run backs up the previous description, so you can Restore anytime.
           </p>
         </div>
         <button
@@ -196,6 +276,14 @@ const AdminProductContent = () => {
           >
             <Wand2 size={14} /> Regenerate ALL ({stats.total})
           </button>
+          <button
+            disabled={bulkRunning || Object.keys(backupMap).length === 0}
+            onClick={handleBulkRestore}
+            className="px-4 py-2 rounded-lg border border-amber-500/40 text-amber-600 hover:bg-amber-500/10 flex items-center gap-2 text-sm disabled:opacity-50"
+            title="Restore previous descriptions from latest backup"
+          >
+            <Undo2 size={14} /> Restore All ({Object.keys(backupMap).length})
+          </button>
           {bulkRunning && (
             <button
               onClick={() => { bulkCancelRef.current = true; }}
@@ -221,7 +309,7 @@ const AdminProductContent = () => {
         )}
         <div className="text-xs text-muted-foreground flex items-start gap-2">
           <AlertCircle size={14} className="mt-0.5 shrink-0" />
-          <span>Each enrichment overwrites the product's <code>description</code> and <code>faq</code> with AI-generated SEO content. Bulk processing pauses 1.2s between calls to respect rate limits.</span>
+          <span>Each enrichment automatically <strong>backs up</strong> the product's current <code>description</code> before overwriting. Use the amber <Undo2 className="inline" size={11}/> Restore button to revert. FAQ is preserved untouched.</span>
         </div>
       </div>
 
@@ -317,6 +405,16 @@ const AdminProductContent = () => {
                               title="Preview"
                             >
                               <Eye size={14} />
+                            </button>
+                          )}
+                          {(backupMap[p.id] || 0) > 0 && (
+                            <button
+                              disabled={restoring === p.id || bulkRunning}
+                              onClick={() => handleRestoreSingle(p)}
+                              className="p-2 rounded-lg border border-amber-500/40 text-amber-600 hover:bg-amber-500/10 disabled:opacity-50"
+                              title={`Restore previous (${backupMap[p.id]} backup${backupMap[p.id] > 1 ? 's' : ''})`}
+                            >
+                              {restoring === p.id ? <Loader2 className="animate-spin" size={14} /> : <Undo2 size={14} />}
                             </button>
                           )}
                           <button
