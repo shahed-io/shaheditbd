@@ -1326,9 +1326,10 @@ const AdminProducts = () => {
                         <label className={lc} style={{marginBottom:0}}>Full Description</label>
                         <AiBtn fieldType="description" label="AI Generate" />
                       </div>
-                      <textarea rows={4} value={form.description}
+                      <textarea rows={14} value={form.description}
                         onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
-                        placeholder="Detailed product description..." className={`${ic} resize-none`} />
+                        placeholder="Detailed product description..."
+                        className={`${ic} resize-y text-sm leading-relaxed min-h-[320px]`} />
                     </div>
 
                     {/* ── Demo Style AI Panel ── */}
