@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from 'sonner';
 import { Loader2, Upload, CheckCircle2, AlertCircle, Copy } from 'lucide-react';
+import AuthModal from '@/components/store/AuthModal';
 
 type PaymentMethod = { name: string; number?: string; instructions?: string };
 type CustomField = { label: string; type?: 'text' | 'email' | 'number'; required?: boolean };
