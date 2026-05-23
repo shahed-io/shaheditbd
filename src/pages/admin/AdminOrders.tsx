@@ -807,7 +807,7 @@ const AdminOrders = () => {
         const newOrder = payload.new as any;
         setNewOrderIds(prev => new Set(prev).add(newOrder.id));
         toast.success(
-          `🛍️ নতুন অর্ডার! #${newOrder.order_number}`,
+          `🛍️ New order! #${newOrder.order_number}`,
           {
             duration: 10000,
             action: newOrder.customer_phone ? {
