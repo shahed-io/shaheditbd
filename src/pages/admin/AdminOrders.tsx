@@ -1004,7 +1004,7 @@ const AdminOrders = () => {
         </button>
         <button onClick={() => setStatusFilter('completed')} className="glass-card rounded-2xl p-4 text-left hover:border-emerald-500/40 transition-colors">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">সম্পন্ন</span>
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Completed</span>
             <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-500 flex items-center justify-center"><CheckCircle2 size={14} /></div>
           </div>
           <p className="text-xl font-bold text-foreground">{completedCount}</p>
