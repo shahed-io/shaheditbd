@@ -232,7 +232,7 @@ export default function PaymentLink() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div><Label>নাম *</Label><Input value={form.customer_name} onChange={e => setForm({ ...form, customer_name: e.target.value })} required /></div>
               <div><Label>ফোন *</Label><Input value={form.customer_phone} onChange={e => setForm({ ...form, customer_phone: e.target.value })} required /></div>
-              {req.email && <div className="sm:col-span-2"><Label>ইমেইল</Label><Input type="email" value={form.customer_email} onChange={e => setForm({ ...form, customer_email: e.target.value })} /></div>}
+              <div className="sm:col-span-2"><Label>ইমেইল {req.email ? '*' : '(Optional)'}</Label><Input type="email" value={form.customer_email} onChange={e => setForm({ ...form, customer_email: e.target.value })} required={!!req.email} /></div>
               {req.address && <div className="sm:col-span-2"><Label>ঠিকানা</Label><Textarea value={form.customer_address} onChange={e => setForm({ ...form, customer_address: e.target.value })} /></div>}
               {link.allow_qty_change && (
                 <div><Label>পরিমাণ</Label><Input type="number" min={1} max={100} value={form.quantity} onChange={e => setForm({ ...form, quantity: Math.max(1, parseInt(e.target.value) || 1) })} /></div>
