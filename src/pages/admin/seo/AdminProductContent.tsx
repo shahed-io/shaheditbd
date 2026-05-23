@@ -38,18 +38,26 @@ const AdminProductContent = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'thin' | 'ok'>('thin');
   const [generating, setGenerating] = useState<string | null>(null);
+  const [restoring, setRestoring] = useState<string | null>(null);
   const [bulkRunning, setBulkRunning] = useState(false);
   const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0, failed: 0 });
   const bulkCancelRef = useRef(false);
   const [preview, setPreview] = useState<Product | null>(null);
+  const [backupMap, setBackupMap] = useState<Record<string, number>>({}); // product_id -> backup count
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('products')
-      .select('id, name, slug, price, description, faq, status, brand, product_type, category:category_id(name)')
-      .order('name');
-    setProducts((data as any) || []);
+    const [{ data: prods }, { data: backups }] = await Promise.all([
+      supabase
+        .from('products')
+        .select('id, name, slug, price, description, faq, status, brand, product_type, category:category_id(name)')
+        .order('name'),
+      supabase.from('product_content_backups').select('product_id'),
+    ]);
+    setProducts((prods as any) || []);
+    const counts: Record<string, number> = {};
+    (backups || []).forEach((b: any) => { counts[b.product_id] = (counts[b.product_id] || 0) + 1; });
+    setBackupMap(counts);
     setLoading(false);
   };
 
@@ -77,6 +85,16 @@ const AdminProductContent = () => {
   const generateOne = async (product: Product): Promise<boolean> => {
     setGenerating(product.id);
     try {
+      // 1) Backup current description + faq FIRST
+      const { error: bkErr } = await supabase.from('product_content_backups').insert({
+        product_id: product.id,
+        description: product.description,
+        faq: product.faq,
+      });
+      if (bkErr) throw new Error('Backup failed: ' + bkErr.message);
+
+      // 2) Call AI with the SAME `type: "description"` that AdminProducts uses
+      //    → produces the standard 9-section markdown matching existing products
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
@@ -86,7 +104,7 @@ const AdminProductContent = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify({
-            type: 'rich_content',
+            type: 'description',
             productName: product.name,
             category: product.category?.name || '',
             brand: product.brand || '',
@@ -98,22 +116,19 @@ const AdminProductContent = () => {
       const json = await res.json();
       if (json.error) throw new Error(json.error);
 
-      const description: string = json.description || json.result?.description || '';
-      const faq: any[] = json.faq || json.result?.faq || [];
-
-      if (!description || wordCount(description) < 400) {
+      const description: string = (typeof json.result === 'string' ? json.result : json.result?.description) || '';
+      if (!description || wordCount(description) < 300) {
         throw new Error('AI returned too-short content; retry shortly.');
       }
 
-      const updatePayload: any = { description };
-      if (Array.isArray(faq) && faq.length > 0) updatePayload.faq = faq;
-
-      const { error } = await supabase.from('products').update(updatePayload).eq('id', product.id);
+      // 3) Update ONLY description (preserve existing FAQ — matches the existing system)
+      const { error } = await supabase.from('products').update({ description }).eq('id', product.id);
       if (error) throw error;
 
       setProducts((prev) =>
-        prev.map((p) => (p.id === product.id ? { ...p, description, faq: updatePayload.faq ?? p.faq } : p)),
+        prev.map((p) => (p.id === product.id ? { ...p, description } : p)),
       );
+      setBackupMap((prev) => ({ ...prev, [product.id]: (prev[product.id] || 0) + 1 }));
       return true;
     } catch (err: any) {
       toast.error(`"${product.name}": ${err.message || 'AI error'}`);
@@ -128,10 +143,56 @@ const AdminProductContent = () => {
     if (ok) toast.success(`"${product.name}" enriched ✓`);
   };
 
+  const restoreOne = async (product: Product): Promise<boolean> => {
+    setRestoring(product.id);
+    try {
+      const { data: bk, error: bkErr } = await supabase
+        .from('product_content_backups')
+        .select('id, description, faq')
+        .eq('product_id', product.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (bkErr) throw bkErr;
+      if (!bk) throw new Error('No backup found');
+
+      const { error } = await supabase
+        .from('products')
+        .update({ description: bk.description, faq: bk.faq })
+        .eq('id', product.id);
+      if (error) throw error;
+
+      // consume the backup we just restored
+      await supabase.from('product_content_backups').delete().eq('id', bk.id);
+
+      setProducts((prev) =>
+        prev.map((p) => (p.id === product.id ? { ...p, description: bk.description, faq: bk.faq } : p)),
+      );
+      setBackupMap((prev) => {
+        const next = { ...prev };
+        const c = (next[product.id] || 1) - 1;
+        if (c <= 0) delete next[product.id]; else next[product.id] = c;
+        return next;
+      });
+      return true;
+    } catch (err: any) {
+      toast.error(`Restore failed for "${product.name}": ${err.message}`);
+      return false;
+    } finally {
+      setRestoring(null);
+    }
+  };
+
+  const handleRestoreSingle = async (product: Product) => {
+    if (!confirm(`Restore previous description for "${product.name}"? Current AI-generated content will be replaced with the last backup.`)) return;
+    const ok = await restoreOne(product);
+    if (ok) toast.success(`"${product.name}" restored ✓`);
+  };
+
   const handleBulk = async (onlyThin: boolean) => {
     const targets = products.filter((p) => (onlyThin ? wordCount(p.description) < MIN_WORDS : true));
     if (targets.length === 0) { toast.info('No products to enrich'); return; }
-    if (!confirm(`Enrich ${targets.length} product${targets.length === 1 ? '' : 's'} with AI? This may take ${Math.ceil(targets.length * 8 / 60)} minutes.`)) return;
+    if (!confirm(`Enrich ${targets.length} product${targets.length === 1 ? '' : 's'} with AI? Previous descriptions will be backed up. ETA ~${Math.ceil(targets.length * 8 / 60)} min.`)) return;
 
     bulkCancelRef.current = false;
     setBulkRunning(true);
@@ -143,13 +204,32 @@ const AdminProductContent = () => {
       const ok = await generateOne(targets[i]);
       if (!ok) failed++;
       setBulkProgress({ done: i + 1, total: targets.length, failed });
-      // Soft rate-limit between calls
       if (i < targets.length - 1) await new Promise((r) => setTimeout(r, 1200));
     }
 
     setBulkRunning(false);
     toast.success(`Done: ${targets.length - failed} enriched${failed ? `, ${failed} failed` : ''}`);
   };
+
+  const handleBulkRestore = async () => {
+    const targets = products.filter((p) => (backupMap[p.id] || 0) > 0);
+    if (targets.length === 0) { toast.info('No backups to restore'); return; }
+    if (!confirm(`Restore previous descriptions for ${targets.length} product${targets.length === 1 ? '' : 's'}? Current AI-generated content will be reverted to the last backup.`)) return;
+
+    bulkCancelRef.current = false;
+    setBulkRunning(true);
+    setBulkProgress({ done: 0, total: targets.length, failed: 0 });
+    let failed = 0;
+    for (let i = 0; i < targets.length; i++) {
+      if (bulkCancelRef.current) break;
+      const ok = await restoreOne(targets[i]);
+      if (!ok) failed++;
+      setBulkProgress({ done: i + 1, total: targets.length, failed });
+    }
+    setBulkRunning(false);
+    toast.success(`Restored: ${targets.length - failed}${failed ? `, ${failed} failed` : ''}`);
+  };
+
 
   return (
     <div className="space-y-6 p-4 md:p-6">
