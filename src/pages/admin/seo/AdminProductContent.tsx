@@ -19,15 +19,32 @@ type Product = {
   product_type?: string | null;
 };
 
-const MIN_WORDS = 700;
+// Bengali descriptions are denser than English — 400 words is solid SEO depth
+const MIN_WORDS = 400;
+const MIN_FAQ = 3;
 
 function wordCount(text: string | null | undefined): number {
   if (!text) return 0;
-  return text.trim().split(/\s+/).filter(Boolean).length;
+  // Strip markdown/HTML noise so symbols don't inflate count
+  const clean = text.replace(/<[^>]+>/g, ' ').replace(/[#*_`>|\-]+/g, ' ');
+  return clean.trim().split(/\s+/).filter(Boolean).length;
 }
 
-function faqCount(faq: any): number {
-  if (Array.isArray(faq)) return faq.length;
+// Detect FAQs either in the dedicated `faq` JSON column OR embedded in the description
+// (Bengali product pages often store Q&A inline as "প্রশ্ন:" / "## FAQ" markdown).
+function faqCount(faq: any, description?: string | null): number {
+  if (Array.isArray(faq) && faq.length > 0) return faq.length;
+  if (!description) return 0;
+  const d = description;
+  const bnQ = (d.match(/প্রশ্ন\s*[:?]/g) || []).length;
+  if (bnQ > 0) return bnQ;
+  const enQ = (d.match(/\bQ\s*\d*\s*[:.]/g) || []).length;
+  if (enQ > 0) return enQ;
+  // FAQ-style heading + bullet questions ending with ?
+  if (/##\s*(FAQ|প্রায়শই|Frequently)/i.test(d)) {
+    const qs = (d.match(/\?/g) || []).length;
+    return qs;
+  }
   return 0;
 }
 
@@ -69,7 +86,7 @@ const AdminProductContent = () => {
   const stats = useMemo(() => {
     const total = products.length;
     const thin = products.filter((p) => wordCount(p.description) < MIN_WORDS).length;
-    const noFaq = products.filter((p) => faqCount(p.faq) < 4).length;
+    const noFaq = products.filter((p) => faqCount(p.faq, p.description) < MIN_FAQ).length;
     return { total, thin, noFaq, ok: total - thin };
   }, [products]);
 
@@ -159,7 +176,7 @@ const AdminProductContent = () => {
             <FileText className="text-primary" /> Product Content Enrichment
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Bulk-generate 700–1500 word SEO-rich descriptions with Features, Benefits, Usage Guide, FAQ, Comparison & Who Should Buy sections.
+            Bulk-generate {MIN_WORDS}–1500 word SEO-rich descriptions with Features, Benefits, Usage Guide, FAQ, Comparison & Who Should Buy sections.
           </p>
         </div>
         <button
@@ -173,8 +190,8 @@ const AdminProductContent = () => {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard label="Total Products" value={stats.total} />
-        <StatCard label="Thin Content (<700w)" value={stats.thin} tone="warn" />
-        <StatCard label="Missing FAQ (<4)" value={stats.noFaq} tone="warn" />
+        <StatCard label={`Thin Content (<${MIN_WORDS}w)`} value={stats.thin} tone="warn" />
+        <StatCard label={`Missing FAQ (<${MIN_FAQ})`} value={stats.noFaq} tone="warn" />
         <StatCard label="SEO-Ready" value={stats.ok} tone="ok" />
       </div>
 
