@@ -10,11 +10,12 @@ import { sendWelcomeEmail } from '@/lib/loginNotifier';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  redirectAfterLogin?: boolean;
 }
 
 type Mode = 'login' | 'signup' | 'forgot';
 
-const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
+const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true }: AuthModalProps) => {
   const [mode, setMode] = useState<Mode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
