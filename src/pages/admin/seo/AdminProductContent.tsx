@@ -309,7 +309,7 @@ const AdminProductContent = () => {
         )}
         <div className="text-xs text-muted-foreground flex items-start gap-2">
           <AlertCircle size={14} className="mt-0.5 shrink-0" />
-          <span>Each enrichment overwrites the product's <code>description</code> and <code>faq</code> with AI-generated SEO content. Bulk processing pauses 1.2s between calls to respect rate limits.</span>
+          <span>Each enrichment automatically <strong>backs up</strong> the product's current <code>description</code> before overwriting. Use the amber <Undo2 className="inline" size={11}/> Restore button to revert. FAQ is preserved untouched.</span>
         </div>
       </div>
 
