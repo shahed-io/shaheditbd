@@ -39,24 +39,24 @@ const orderToInvoiceData = (order: any): InvoiceData => ({
 });
 
 const downloadOrderInvoicePdf = async (order: any) => {
-  const tid = toast.loading('Generating PDF...');
+  const tid = toast.loading('PDF তৈরি হচ্ছে...');
   try {
     await downloadInvoicePdf(orderToInvoiceData(order));
-    toast.success('PDF downloaded — now attach it in WhatsApp', { id: tid });
+    toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp এ Attach করে পাঠান', { id: tid });
   } catch (e: any) {
-    toast.error('Failed to generate PDF: ' + (e?.message || 'Unknown'), { id: tid });
+    toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
   }
 };
 
 // ─── Status Config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any; dot: string }> = {
-  pending:    { label: 'Pending',    color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',         icon: Clock,         dot: 'bg-amber-500' },
-  processing: { label: 'Processing', color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',            icon: RefreshCw,     dot: 'bg-blue-500' },
-  delivered:  { label: 'Delivered',  color: 'text-cyan-500 bg-cyan-500/10 border-cyan-500/30',            icon: Truck,         dot: 'bg-cyan-500' },
-  completed:  { label: 'Completed',  color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/30',   icon: CheckCircle2,  dot: 'bg-emerald-500' },
-  cancelled:  { label: 'Cancelled',  color: 'text-red-500 bg-red-500/10 border-red-500/30',               icon: XCircle,       dot: 'bg-red-500' },
-  refunded:   { label: 'Refunded',   color: 'text-purple-500 bg-purple-500/10 border-purple-500/30',      icon: RotateCcw,     dot: 'bg-purple-500' },
-  failed:     { label: 'Failed',     color: 'text-rose-600 bg-rose-600/10 border-rose-600/30',            icon: AlertTriangle, dot: 'bg-rose-600' },
+  pending:    { label: 'পেন্ডিং',    color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',         icon: Clock,         dot: 'bg-amber-500' },
+  processing: { label: 'প্রসেসিং',   color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',            icon: RefreshCw,     dot: 'bg-blue-500' },
+  delivered:  { label: 'ডেলিভার্ড', color: 'text-cyan-500 bg-cyan-500/10 border-cyan-500/30',             icon: Truck,         dot: 'bg-cyan-500' },
+  completed:  { label: 'সম্পন্ন',    color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/30',   icon: CheckCircle2,  dot: 'bg-emerald-500' },
+  cancelled:  { label: 'বাতিল',      color: 'text-red-500 bg-red-500/10 border-red-500/30',               icon: XCircle,       dot: 'bg-red-500' },
+  refunded:   { label: 'রিফান্ড',    color: 'text-purple-500 bg-purple-500/10 border-purple-500/30',      icon: RotateCcw,     dot: 'bg-purple-500' },
+  failed:     { label: 'ব্যর্থ',      color: 'text-rose-600 bg-rose-600/10 border-rose-600/30',            icon: AlertTriangle, dot: 'bg-rose-600' },
 };
 
 const ALL_STATUSES = ['pending', 'processing', 'delivered', 'completed', 'cancelled', 'refunded', 'failed'];
@@ -70,7 +70,7 @@ const PAYMENT_STATUS_COLORS: Record<string, string> = {
 const PM_LABELS: Record<string, string> = {
   bkash_online: 'bKash (Online)',
   bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket',
-  upay: 'Upay', bkash_merchant: 'BKash Merchant',
+  upay: 'উপায়', bkash_merchant: 'BKash Merchant',
   bank_transfer: 'Bank Transfer', wallet: 'Wallet',
 };
 
@@ -122,12 +122,12 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
 
   const handleDownloadPdf = async () => {
     if (!printRef.current) return downloadOrderInvoicePdf(order);
-    const tid = toast.loading('Generating PDF...');
+    const tid = toast.loading('PDF তৈরি হচ্ছে...');
     try {
       await downloadInvoicePdfFromElement(printRef.current, `invoice-${order.order_number}.pdf`);
-      toast.success('PDF downloaded — now attach it in WhatsApp', { id: tid });
+      toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp এ Attach করে পাঠান', { id: tid });
     } catch (e: any) {
-      toast.error('Failed to generate PDF: ' + (e?.message || 'Unknown'), { id: tid });
+      toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
     }
   };
 
@@ -149,7 +149,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
           <h3 className="font-bold text-foreground text-sm">Invoice #{order.order_number}</h3>
           <div className="flex gap-2">
             <button onClick={handleDownloadPdf} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-primary/30 text-primary hover:bg-primary/10 text-xs font-semibold transition-colors">
-              <Download size={13} /> Download PDF
+              <Download size={13} /> PDF ডাউনলোড
             </button>
             <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-glow text-xs font-semibold">
               <Printer size={13} /> Print / PDF
@@ -205,7 +205,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
                   <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left' }}>পণ্যের নাম</th>
                   <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center' }}>পরিমাণ</th>
                   <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>দাম</th>
-                  <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>Total</th>
+                  <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>মোট</th>
                 </tr>
               </thead>
               <tbody>
@@ -269,7 +269,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
 
 // ─── Order Timeline Component ───────────────────────────────────────────────
 const OrderTimeline = ({ timeline }: { timeline: any[] }) => {
-  if (!timeline.length) return <p className="text-xs text-muted-foreground text-center py-4">No history</p>;
+  if (!timeline.length) return <p className="text-xs text-muted-foreground text-center py-4">কোনো ইতিহাস নেই</p>;
 
   return (
     <div className="space-y-0">
@@ -318,8 +318,8 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
     setItems(prev => prev.map((it, i) => i === idx ? { ...it, [field]: value } : it));
 
   const handleCreate = async () => {
-    if (!form.customer_name || !form.customer_email) { toast.error('Name and email are required'); return; }
-    if (items.some(i => !i.product_name)) { toast.error('All product names are required'); return; }
+    if (!form.customer_name || !form.customer_email) { toast.error('নাম ও ইমেইল আবশ্যক'); return; }
+    if (items.some(i => !i.product_name)) { toast.error('সব প্রোডাক্টের নাম দিন'); return; }
     setLoading(true);
     try {
       const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
@@ -349,7 +349,7 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
         total: Number(i.price) * i.quantity,
       }));
       await supabase.from('order_items').insert(orderItems);
-      toast.success(`✅ Order created: ${orderNum}`);
+      toast.success(`✅ অর্ডার তৈরি হয়েছে: ${orderNum}`);
       onSuccess();
       onClose();
     } catch (err: any) {
@@ -365,18 +365,18 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
       <div className="glass-card rounded-2xl w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-border flex-shrink-0">
-          <h2 className="font-bold text-foreground">Create New Order</h2>
+          <h2 className="font-bold text-foreground">নতুন অর্ডার তৈরি করুন</h2>
           <button onClick={onClose} className="p-1.5 rounded-xl text-muted-foreground hover:text-foreground"><X size={16} /></button>
         </div>
 
         <div className="overflow-y-auto flex-1 p-5 space-y-4">
           {/* Customer */}
           <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Customer Info</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">কাস্টমার তথ্য</p>
             <div className="grid grid-cols-2 gap-3">
-              <input placeholder="Name *" value={form.customer_name} onChange={e => setForm(p => ({ ...p, customer_name: e.target.value }))} className={inputClass} />
-              <input placeholder="Email *" type="email" value={form.customer_email} onChange={e => setForm(p => ({ ...p, customer_email: e.target.value }))} className={inputClass} />
-              <input placeholder="Phone" value={form.customer_phone} onChange={e => setForm(p => ({ ...p, customer_phone: e.target.value }))} className={inputClass} />
+              <input placeholder="নাম *" value={form.customer_name} onChange={e => setForm(p => ({ ...p, customer_name: e.target.value }))} className={inputClass} />
+              <input placeholder="ইমেইল *" type="email" value={form.customer_email} onChange={e => setForm(p => ({ ...p, customer_email: e.target.value }))} className={inputClass} />
+              <input placeholder="ফোন" value={form.customer_phone} onChange={e => setForm(p => ({ ...p, customer_phone: e.target.value }))} className={inputClass} />
               <select value={form.payment_method} onChange={e => setForm(p => ({ ...p, payment_method: e.target.value }))} className={inputClass}>
                 {Object.entries(PM_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
@@ -392,15 +392,15 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
           {/* Products */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Products</p>
-              <button onClick={addItem} className="text-xs text-primary hover:underline flex items-center gap-2"><Plus size={11} /> Add Item</button>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">পণ্যসমূহ</p>
+              <button onClick={addItem} className="text-xs text-primary hover:underline flex items-center gap-2"><Plus size={11} /> যোগ করুন</button>
             </div>
             <div className="space-y-2">
               {items.map((item, idx) => (
                 <div key={idx} className="flex gap-2 items-start">
-                  <input placeholder="Product name *" value={item.product_name} onChange={e => updateItem(idx, 'product_name', e.target.value)} className={`${inputClass} flex-1`} />
+                  <input placeholder="পণ্যের নাম *" value={item.product_name} onChange={e => updateItem(idx, 'product_name', e.target.value)} className={`${inputClass} flex-1`} />
                   <input type="number" min={1} value={item.quantity} onChange={e => updateItem(idx, 'quantity', parseInt(e.target.value) || 1)} className={`${inputClass} w-16 text-center`} />
-                  <input type="number" min={0} placeholder="Price" value={item.price || ''} onChange={e => updateItem(idx, 'price', e.target.value)} className={`${inputClass} w-24`} />
+                  <input type="number" min={0} placeholder="মূল্য" value={item.price || ''} onChange={e => updateItem(idx, 'price', e.target.value)} className={`${inputClass} w-24`} />
                   {items.length > 1 && (
                     <button onClick={() => removeItem(idx)} className="p-2 text-muted-foreground hover:text-destructive mt-0.5"><X size={14} /></button>
                   )}
@@ -408,14 +408,14 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
               ))}
             </div>
             <div className="flex justify-end mt-2">
-              <span className="text-sm font-bold text-primary">Subtotal: ৳{subtotal.toLocaleString()}</span>
+              <span className="text-sm font-bold text-primary">সর্বমোট: ৳{subtotal.toLocaleString()}</span>
             </div>
           </div>
 
           {/* Status & Notes */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Order Status</label>
+              <label className="text-xs text-muted-foreground mb-1 block">অর্ডার স্ট্যাটাস</label>
               <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value }))} className={inputClass}>
                 {ALL_STATUSES.map(s => <option key={s} value={s}>{STATUS_CONFIG[s]?.label || s}</option>)}
               </select>
@@ -432,10 +432,10 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
         </div>
 
         <div className="px-5 py-4 border-t border-border flex gap-3 flex-shrink-0">
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm glass-card border border-border text-muted-foreground hover:text-foreground transition-colors">Cancel</button>
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm glass-card border border-border text-muted-foreground hover:text-foreground transition-colors">বাতিল</button>
           <button onClick={handleCreate} disabled={loading} className="flex-1 py-2.5 rounded-xl text-sm btn-glow font-semibold flex items-center justify-center gap-2 disabled:opacity-50">
             {loading ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
-            Create Order
+            অর্ডার তৈরি করুন
           </button>
         </div>
       </div>
@@ -508,7 +508,7 @@ const OrderDetailModal = ({
           {/* Modal Header */}
           <div className="flex items-start justify-between gap-2 px-4 sm:px-5 py-3 sm:py-4 border-b border-border flex-shrink-0">
             <div className="min-w-0 flex-1">
-              <h2 className="text-base sm:text-lg font-bold text-foreground truncate">Order #{order.order_number}</h2>
+              <h2 className="text-base sm:text-lg font-bold text-foreground truncate">অর্ডার #{order.order_number}</h2>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${cfg.color}`}>{cfg.label}</span>
                 <p className="text-[11px] text-muted-foreground">{new Date(order.created_at).toLocaleString('en-BD')}</p>
@@ -532,7 +532,7 @@ const OrderDetailModal = ({
                 onClick={() => setActiveTab(t)}
                 className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${activeTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                {t === 'details' ? '📋 Details' : '📅 History'}
+                {t === 'details' ? '📋 বিবরণ' : '📅 ইতিহাস'}
               </button>
             ))}
           </div>
@@ -543,13 +543,13 @@ const OrderDetailModal = ({
                 {/* Customer + Payment */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="glass-card rounded-xl p-4 space-y-2">
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><User size={12} className="text-primary" /> Customer</p>
+                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><User size={12} className="text-primary" /> কাস্টমার</p>
                     <p className="font-semibold text-foreground text-sm">{order.customer_name}</p>
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Mail size={11} />{order.customer_email}</p>
                     {order.customer_phone && <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Phone size={11} />{order.customer_phone}</p>}
                   </div>
                   <div className="glass-card rounded-xl p-4 space-y-2">
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><CreditCard size={12} className="text-primary" /> Payment</p>
+                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><CreditCard size={12} className="text-primary" /> পেমেন্ট</p>
                     <div className="text-xs space-y-1.5">
                       <div className="flex justify-between"><span className="text-muted-foreground">Method:</span><span className="font-medium">{PM_LABELS[order.payment_method] || order.payment_method}</span></div>
                       {order.transaction_id && (
@@ -560,11 +560,11 @@ const OrderDetailModal = ({
                       )}
                       <div className="flex justify-between"><span className="text-muted-foreground">Payment:</span><span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${PAYMENT_STATUS_COLORS[order.payment_status] || ''}`}>{order.payment_status || 'pending'}</span></div>
                       <div className="flex justify-between font-bold border-t border-border pt-1.5">
-                        <span className="text-muted-foreground">Total:</span>
+                        <span className="text-muted-foreground">মোট:</span>
                         <span className="text-primary">৳{Number(order.total).toLocaleString()}</span>
                       </div>
                       {Number(order.discount_amount) > 0 && (
-                        <div className="flex justify-between text-xs text-emerald-500"><span>Discount:</span><span>-৳{Number(order.discount_amount).toLocaleString()}</span></div>
+                        <div className="flex justify-between text-xs text-emerald-500"><span>ছাড়:</span><span>-৳{Number(order.discount_amount).toLocaleString()}</span></div>
                       )}
                     </div>
                   </div>
@@ -573,7 +573,7 @@ const OrderDetailModal = ({
                 {/* Order Items */}
                 {order.order_items?.length > 0 && (
                   <div>
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-2"><Package size={12} className="text-primary" /> Products</p>
+                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-2"><Package size={12} className="text-primary" /> পণ্যসমূহ</p>
                     <div className="space-y-1.5">
                       {order.order_items.map((item: any) => (
                         <div key={item.id} className="flex justify-between items-start glass-card rounded-xl p-3 text-sm">
@@ -591,24 +591,24 @@ const OrderDetailModal = ({
 
                 {/* Action Buttons */}
                 <div>
-                  <p className="text-xs font-semibold text-foreground mb-2">Quick Actions</p>
+                  <p className="text-xs font-semibold text-foreground mb-2">দ্রুত অ্যাকশন</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {order.payment_status !== 'verified' && !['cancelled', 'failed'].includes(order.status) && (
-                      <button onClick={() => doUpdate({ payment_status: 'verified', status: 'processing' }, '✅ Payment verified!')}
+                      <button onClick={() => doUpdate({ payment_status: 'verified', status: 'processing' }, '✅ পেমেন্ট ভেরিফাই হয়েছে!')}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold btn-glow disabled:opacity-50">
-                        <CheckCircle size={12} /> Verify Payment
+                        <CheckCircle size={12} /> পেমেন্ট ভেরিফাই
                       </button>
                     )}
                     {order.status === 'processing' && (
-                      <button onClick={() => doUpdate({ status: 'delivered' }, '🚚 Marked as delivered!')}
+                      <button onClick={() => doUpdate({ status: 'delivered' }, '🚚 ডেলিভার্ড মার্ক করা হয়েছে!')}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-cyan-500/40 text-cyan-500 hover:bg-cyan-500/10 transition-colors disabled:opacity-50">
-                        <Truck size={12} /> Delivered
+                        <Truck size={12} /> ডেলিভার্ড
                       </button>
                     )}
                     {order.status === 'delivered' && (
-                      <button onClick={() => doUpdate({ status: 'completed' }, '✅ Order completed!')}
+                      <button onClick={() => doUpdate({ status: 'completed' }, '✅ অর্ডার সম্পন্ন!')}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-emerald-500/40 text-emerald-500 hover:bg-emerald-500/10 transition-colors disabled:opacity-50">
-                        <CheckCircle2 size={12} /> Complete
+                        <CheckCircle2 size={12} /> সম্পন্ন
                       </button>
                     )}
                     {order.customer_phone && (
@@ -620,19 +620,19 @@ const OrderDetailModal = ({
                     {order.customer_phone && (
                       <button onClick={() => downloadOrderInvoicePdf(order)}
                         className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-primary/30 text-primary hover:bg-primary/10 transition-colors">
-                        <Download size={12} /> Download PDF
+                        <Download size={12} /> PDF ডাউনলোড
                       </button>
                     )}
                     {!['cancelled', 'refunded', 'failed'].includes(order.status) && (
-                      <button onClick={() => { if (confirm('Cancel this order?')) doUpdate({ status: 'cancelled' }, '❌ Cancelled'); }}
+                      <button onClick={() => { if (confirm('বাতিল করবেন?')) doUpdate({ status: 'cancelled' }, '❌ বাতিল করা হয়েছে'); }}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50">
-                        <Ban size={12} /> Cancel
+                        <Ban size={12} /> বাতিল
                       </button>
                     )}
                     {order.status === 'cancelled' && (
-                      <button onClick={() => { if (confirm('Mark as refunded?')) doUpdate({ status: 'refunded' }, '↩️ Marked as refunded'); }}
+                      <button onClick={() => { if (confirm('রিফান্ড মার্ক?')) doUpdate({ status: 'refunded' }, '↩️ রিফান্ড মার্ক'); }}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold glass-card border border-purple-500/30 text-purple-500 hover:bg-purple-500/10 transition-colors disabled:opacity-50">
-                        <RotateCcw size={12} /> Refund
+                        <RotateCcw size={12} /> রিফান্ড
                       </button>
                     )}
                   </div>
@@ -641,10 +641,10 @@ const OrderDetailModal = ({
                 {/* Status Dropdown */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">Change Status</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">Status পরিবর্তন</label>
                     <select
                       value={order.status}
-                      onChange={e => doUpdate({ status: e.target.value }, '✅ Status updated')}
+                      onChange={e => doUpdate({ status: e.target.value }, '✅ Status আপডেট')}
                       className={inputCls}
                     >
                       {ALL_STATUSES.map(s => <option key={s} value={s}>{STATUS_CONFIG[s]?.label || s}</option>)}
@@ -654,7 +654,7 @@ const OrderDetailModal = ({
                     <label className="text-xs text-muted-foreground mb-1 block">Payment Status</label>
                     <select
                       value={order.payment_status || 'pending'}
-                      onChange={e => doUpdate({ payment_status: e.target.value }, '✅ Payment status updated')}
+                      onChange={e => doUpdate({ payment_status: e.target.value }, '✅ Payment status আপডেট')}
                       className={inputCls}
                     >
                       <option value="pending">Pending</option>
@@ -666,9 +666,9 @@ const OrderDetailModal = ({
 
                 {/* WhatsApp custom message */}
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">WhatsApp Custom Message (optional)</label>
+                  <label className="text-xs text-muted-foreground mb-1 block">WhatsApp কাস্টম মেসেজ (ঐচ্ছিক)</label>
                   <textarea rows={2} value={deliveryNote} onChange={e => setDeliveryNote(e.target.value)}
-                    placeholder="License key, delivery instructions..."
+                    placeholder="লাইসেন্স কি, ডেলিভারি নির্দেশনা..."
                     className={`${inputCls} resize-none`} />
                 </div>
 
@@ -681,7 +681,7 @@ const OrderDetailModal = ({
                       className={`${inputCls} resize-none flex-1`} />
                     <button onClick={handleSaveNote} disabled={savingNote}
                       className="px-3 rounded-xl glass-card border border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors self-stretch disabled:opacity-50">
-                      {savingNote ? <Loader2 size={12} className="animate-spin" /> : 'Save'}
+                      {savingNote ? <Loader2 size={12} className="animate-spin" /> : 'সেভ'}
                     </button>
                   </div>
                   {order.notes && <p className="text-xs text-muted-foreground mt-1">🗒️ Customer: {order.notes}</p>}
@@ -689,7 +689,7 @@ const OrderDetailModal = ({
               </>
             ) : (
               <div>
-                <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-3"><Calendar size={12} className="text-primary" /> Order History</p>
+                <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-3"><Calendar size={12} className="text-primary" /> অর্ডার ইতিহাস</p>
                 {timelineLoading ? (
                   <div className="space-y-2">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-12 bg-muted/30 rounded-xl animate-pulse" />)}</div>
                 ) : (
@@ -782,7 +782,7 @@ const AdminOrders = () => {
   // Send WhatsApp to customer's phone number
   const sendCustomerWhatsApp = useCallback((order: any) => {
     const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
-    if (!phone) { toast.error('Customer phone number is missing'); return; }
+    if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
     const items = order.order_items?.map((i: any) => `- ${i.product_name} x${i.quantity}`).join('\n') || '';
     const msg = encodeURIComponent(
       `SHAHED STORE\n` +
@@ -807,7 +807,7 @@ const AdminOrders = () => {
         const newOrder = payload.new as any;
         setNewOrderIds(prev => new Set(prev).add(newOrder.id));
         toast.success(
-          `🛍️ New order! #${newOrder.order_number}`,
+          `🛍️ নতুন অর্ডার! #${newOrder.order_number}`,
           {
             duration: 10000,
             action: newOrder.customer_phone ? {
@@ -874,7 +874,7 @@ const AdminOrders = () => {
         // Telegram status notification
         supabase.functions.invoke('notify-telegram-event', {
           body: {
-            title: `🔄 Order Status Update → ${String(updates.status).toUpperCase()}`,
+            title: `🔄 অর্ডার Status Update → ${String(updates.status).toUpperCase()}`,
             lines: [
               ord?.order_number ? `🧾 #${ord.order_number}` : null,
               ord?.customer_name ? `👤 ${ord.customer_name}` : null,
@@ -922,12 +922,12 @@ const AdminOrders = () => {
 
   const executeBulkAction = async () => {
     if (!bulkAction || selectedIds.size === 0) return;
-    if (!confirm(`Change status of ${selectedIds.size} orders to "${bulkAction}"?`)) return;
+    if (!confirm(`${selectedIds.size}টি অর্ডারের স্ট্যাটাস "${bulkAction}" এ পরিবর্তন করবেন?`)) return;
     setBulkLoading(true);
     try {
       const { error } = await supabase.from('orders').update({ status: bulkAction as any }).in('id', Array.from(selectedIds));
       if (error) throw error;
-      toast.success(`✅ ${selectedIds.size} orders updated!`);
+      toast.success(`✅ ${selectedIds.size}টি অর্ডার আপডেট হয়েছে!`);
       setSelectedIds(new Set());
       setBulkAction('');
       fetchOrders();
@@ -953,15 +953,15 @@ const AdminOrders = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3 flex-wrap">
           <p className="text-sm text-muted-foreground">
-            <span className="font-bold text-foreground">{orders.length}</span> total orders
+            <span className="font-bold text-foreground">{orders.length}</span> মোট অর্ডার
           </p>
           {adminWhatsapp ? (
             <span className="flex items-center gap-2 text-[11px] text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-              <MessageCircle size={10} /> WhatsApp Active
+              <MessageCircle size={10} /> WhatsApp সক্রিয়
             </span>
           ) : (
             <span className="flex items-center gap-2 text-[11px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-              <Bell size={10} /> Add WhatsApp number in Settings
+              <Bell size={10} /> WhatsApp নম্বর দিন Settings-এ
             </span>
           )}
         </div>
@@ -970,7 +970,7 @@ const AdminOrders = () => {
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold"
           >
-            <Plus size={14} /> New Order
+            <Plus size={14} /> নতুন অর্ডার
           </button>
           <button onClick={fetchOrders} className="glass-card px-4 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors">
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
@@ -983,28 +983,28 @@ const AdminOrders = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="glass-card rounded-2xl p-4">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Total Revenue</span>
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">মোট রেভিনিউ</span>
             <div className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center"><CreditCard size={14} /></div>
           </div>
           <p className="text-xl font-bold text-foreground">৳{totalRevenue.toLocaleString()}</p>
         </div>
         <button onClick={() => setStatusFilter('pending')} className="glass-card rounded-2xl p-4 text-left hover:border-amber-500/40 transition-colors">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Pending</span>
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">পেন্ডিং</span>
             <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-500 flex items-center justify-center"><Clock size={14} /></div>
           </div>
           <p className="text-xl font-bold text-foreground">{pendingCount}</p>
         </button>
         <button onClick={() => setStatusFilter('processing')} className="glass-card rounded-2xl p-4 text-left hover:border-blue-500/40 transition-colors">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Processing</span>
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">প্রসেসিং</span>
             <div className="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-500 flex items-center justify-center"><RefreshCw size={14} /></div>
           </div>
           <p className="text-xl font-bold text-foreground">{processingCount}</p>
         </button>
         <button onClick={() => setStatusFilter('completed')} className="glass-card rounded-2xl p-4 text-left hover:border-emerald-500/40 transition-colors">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Completed</span>
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">সম্পন্ন</span>
             <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-500 flex items-center justify-center"><CheckCircle2 size={14} /></div>
           </div>
           <p className="text-xl font-bold text-foreground">{completedCount}</p>
@@ -1023,7 +1023,7 @@ const AdminOrders = () => {
                 statusFilter === s ? 'btn-glow border-transparent' : 'glass-card border-border text-muted-foreground hover:text-primary'
               }`}
             >
-              {s === 'all' ? 'All Orders' : cfg?.label}
+              {s === 'all' ? 'সব অর্ডার' : cfg?.label}
               <span className={`min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center ${statusFilter === s ? 'bg-white/20' : 'bg-muted/50'}`}>
                 {statusCounts[s] || 0}
               </span>
@@ -1038,12 +1038,12 @@ const AdminOrders = () => {
           <div className="relative flex-1">
             <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Order ID, name, email, TrxID..."
+              placeholder="অর্ডার ID, নাম, ইমেইল, TrxID..."
               className="w-full bg-muted/30 border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
           </div>
           <button onClick={() => setShowFilters(!showFilters)}
             className={`px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 border transition-all ${showFilters ? 'btn-glow border-transparent' : 'glass-card border-border text-muted-foreground hover:text-foreground'}`}>
-            <SlidersHorizontal size={14} /> Filters
+            <SlidersHorizontal size={14} /> ফিল্টার
             {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-primary" />}
           </button>
           {hasActiveFilters && (
@@ -1057,21 +1057,21 @@ const AdminOrders = () => {
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Payment Method</label>
               <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} className={inputCls}>
-                <option value="all">All</option>
+                <option value="all">সব</option>
                 {Object.entries(PM_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">From Date</label>
+              <label className="text-xs text-muted-foreground mb-1 block">তারিখ থেকে</label>
               <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className={inputCls} />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">To Date</label>
+              <label className="text-xs text-muted-foreground mb-1 block">তারিখ পর্যন্ত</label>
               <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className={inputCls} />
             </div>
             <div className="flex items-end">
               <div className="glass-card rounded-xl px-4 py-2.5 text-xs text-muted-foreground w-full text-center">
-                {filtered.length} results
+                {filtered.length} ফলাফল
               </div>
             </div>
           </div>
@@ -1081,19 +1081,19 @@ const AdminOrders = () => {
       {/* Bulk Action Toolbar */}
       {selectedIds.size > 0 && (
         <div className="glass-card rounded-2xl p-3 flex flex-wrap items-center gap-3">
-          <span className="text-xs font-semibold text-primary">{selectedIds.size} selected</span>
+          <span className="text-xs font-semibold text-primary">{selectedIds.size}টি সিলেক্ট করা হয়েছে</span>
           <select value={bulkAction} onChange={e => setBulkAction(e.target.value)}
             className="bg-muted/30 border border-border rounded-xl px-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary">
-            <option value="">Select action</option>
+            <option value="">অ্যাকশন নির্বাচন করুন</option>
             {ALL_STATUSES.map(s => <option key={s} value={s}>{STATUS_CONFIG[s]?.label || s}</option>)}
           </select>
           <button onClick={executeBulkAction} disabled={!bulkAction || bulkLoading}
             className="btn-glow px-4 py-1.5 rounded-xl text-xs font-semibold disabled:opacity-50 flex items-center gap-1.5">
             {bulkLoading ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle size={12} />}
-            Apply
+            প্রয়োগ করুন
           </button>
           <button onClick={() => { setSelectedIds(new Set()); setBulkAction(''); }}
-            className="text-xs text-muted-foreground hover:text-destructive transition-colors">Cancel</button>
+            className="text-xs text-muted-foreground hover:text-destructive transition-colors">বাতিল</button>
         </div>
       )}
 
@@ -1106,8 +1106,8 @@ const AdminOrders = () => {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
             <Package size={48} className="mx-auto mb-3 opacity-30" />
-            <p className="font-medium">No orders found</p>
-            {hasActiveFilters && <button onClick={resetFilters} className="mt-3 text-xs text-primary hover:underline">Reset filters</button>}
+            <p className="font-medium">কোনো অর্ডার পাওয়া যায়নি</p>
+            {hasActiveFilters && <button onClick={resetFilters} className="mt-3 text-xs text-primary hover:underline">ফিল্টার রিসেট করুন</button>}
           </div>
         ) : (
           <>
@@ -1180,13 +1180,13 @@ const AdminOrders = () => {
                       onChange={toggleSelectAll} className="w-3.5 h-3.5 accent-primary rounded" />
                   </th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Order #</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Customer</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden lg:table-cell">Products</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden md:table-cell">Payment</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Total</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">কাস্টমার</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden lg:table-cell">প্রোডাক্ট</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden md:table-cell">পেমেন্ট</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">মোট</th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Status</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden md:table-cell">Date</th>
-                  <th className="text-right px-4 py-3 text-xs text-muted-foreground font-medium">Actions</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden md:table-cell">তারিখ</th>
+                  <th className="text-right px-4 py-3 text-xs text-muted-foreground font-medium">অ্যাকশন</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/30">
@@ -1247,27 +1247,27 @@ const AdminOrders = () => {
                         <div className="flex items-center justify-end gap-2">
                           {order.payment_status !== 'verified' && order.status === 'pending' && (
                             <button onClick={() => updateOrder(order.id, { payment_status: 'verified', status: 'processing' }, '✅ Verified!')}
-                              title="Verify Payment"
+                              title="পেমেন্ট ভেরিফাই"
                               className="p-1.5 text-muted-foreground hover:text-emerald-500 transition-colors rounded-lg hover:bg-emerald-500/10">
                               <CheckCircle size={14} />
                             </button>
                           )}
                           {order.status === 'processing' && (
                             <button onClick={() => updateOrder(order.id, { status: 'delivered' }, '🚚 Delivered!')}
-                              title="Mark as Delivered"
+                              title="ডেলিভার্ড মার্ক"
                               className="p-1.5 text-muted-foreground hover:text-cyan-500 transition-colors rounded-lg hover:bg-cyan-500/10">
                               <Truck size={14} />
                             </button>
                           )}
                           <button
                             onClick={() => downloadOrderInvoicePdf(order)}
-                            title="Download PDF invoice"
+                            title="PDF ইনভয়েস ডাউনলোড করুন"
                             className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
                             <Download size={14} />
                           </button>
                           <button
                             onClick={() => sendCustomerWhatsApp(order)}
-                            title="Send WhatsApp message to customer"
+                            title="কাস্টমারকে WhatsApp মেসেজ পাঠান"
                             className={`p-1.5 transition-colors rounded-lg ${newOrderIds.has(order.id) ? 'text-[#25D366] bg-[#25D366]/10 animate-pulse' : 'text-muted-foreground hover:text-[#25D366] hover:bg-[#25D366]/10'}`}>
                             <MessageCircle size={14} />
                           </button>
@@ -1291,10 +1291,10 @@ const AdminOrders = () => {
       {/* Summary Footer */}
       {filtered.length > 0 && (
         <div className="glass-card rounded-xl px-5 py-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
-          <span>Showing: <strong className="text-foreground">{filtered.length}</strong></span>
-          <span>Total value: <strong className="text-primary">৳{filtered.reduce((s, o) => s + Number(o.total), 0).toLocaleString()}</strong></span>
-          <span>Pending verification: <strong className="text-amber-500">{filtered.filter(o => o.payment_status !== 'verified' && !['cancelled', 'failed'].includes(o.status)).length}</strong></span>
-          <span>Completed: <strong className="text-emerald-500">{filtered.filter(o => o.status === 'completed').length}</strong></span>
+          <span>দেখাচ্ছে: <strong className="text-foreground">{filtered.length}</strong></span>
+          <span>মোট মূল্য: <strong className="text-primary">৳{filtered.reduce((s, o) => s + Number(o.total), 0).toLocaleString()}</strong></span>
+          <span>ভেরিফাই বাকি: <strong className="text-amber-500">{filtered.filter(o => o.payment_status !== 'verified' && !['cancelled', 'failed'].includes(o.status)).length}</strong></span>
+          <span>সম্পন্ন: <strong className="text-emerald-500">{filtered.filter(o => o.status === 'completed').length}</strong></span>
         </div>
       )}
 
