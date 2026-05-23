@@ -782,7 +782,7 @@ const AdminOrders = () => {
   // Send WhatsApp to customer's phone number
   const sendCustomerWhatsApp = useCallback((order: any) => {
     const phone = order.customer_phone?.replace(/\D/g, '').replace(/^0/, '880');
-    if (!phone) { toast.error('কাস্টমারের ফোন নম্বর নেই'); return; }
+    if (!phone) { toast.error('Customer phone number is missing'); return; }
     const items = order.order_items?.map((i: any) => `- ${i.product_name} x${i.quantity}`).join('\n') || '';
     const msg = encodeURIComponent(
       `SHAHED STORE\n` +
