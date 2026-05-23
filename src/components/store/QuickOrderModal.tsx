@@ -135,8 +135,6 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
     abandonedTimer.current = setTimeout(async () => {
       try {
         const payload = {
-          session_token: sessionTokenRef.current,
-          user_id: user?.id || null,
           customer_name: form.name || null,
           customer_email: form.email || null,
           customer_phone: form.phone || null,
@@ -147,7 +145,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
             price: product.price,
             quantity: initialQty,
             image: product.image,
-          }] as any,
+          }],
           item_count: initialQty,
           subtotal: itemTotal,
           discount_amount: couponDiscount,
@@ -159,11 +157,11 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
             : null,
           page_url: typeof window !== 'undefined' ? window.location.href : null,
           user_agent: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 500) : null,
-          updated_at: new Date().toISOString(),
         };
-        const { error } = await supabase
-          .from('abandoned_checkouts')
-          .upsert(payload, { onConflict: 'session_token' });
+        const { error } = await supabase.rpc('upsert_abandoned_checkout', {
+          p_session_token: sessionTokenRef.current,
+          p_payload: payload as any,
+        });
         if (error) console.warn('[quickorder abandoned] upsert error:', error.message);
       } catch (e) { console.warn('[quickorder abandoned] save failed:', e); }
     }, 1500);
