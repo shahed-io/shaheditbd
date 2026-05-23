@@ -55,24 +55,20 @@ export default function PaymentLink() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
-  // After login, auto-submit if we restored a pending submission
+  // Listen for sign-in and auto-submit if a submission was pending
   useEffect(() => {
-    if (loading || !link) return;
-    const saved = sessionStorage.getItem(PENDING_KEY);
-    if (!saved) return;
-    (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        sessionStorage.removeItem(PENDING_KEY);
-        // small delay so state has settled
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session && pendingSubmitRef.current) {
+        pendingSubmitRef.current = false;
+        setShowAuthModal(false);
         setTimeout(() => {
           const formEl = document.getElementById('payment-link-form') as HTMLFormElement | null;
           formEl?.requestSubmit();
-        }, 300);
+        }, 400);
       }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, link]);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleUpload = async (file: File) => {
     if (file.size > 5 * 1024 * 1024) { toast.error('ছবি 5MB-এর কম হতে হবে'); return; }
