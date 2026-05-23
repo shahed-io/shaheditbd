@@ -29,6 +29,8 @@ export default function PaymentLink() {
   });
   const [customFields, setCustomFields] = useState<Record<string, string>>({});
 
+  const PENDING_KEY = `pending_payment_link_submission_${slug}`;
+
   useEffect(() => {
     (async () => {
       if (!slug) return;
@@ -36,9 +38,38 @@ export default function PaymentLink() {
       if (error || !data) { setLoading(false); return; }
       setLink(data);
       setForm(f => ({ ...f, quantity: data.quantity || 1, payment_method: (data.payment_methods?.[0]?.name) || '' }));
+      // Restore any pending form data (e.g. after login redirect)
+      try {
+        const saved = sessionStorage.getItem(PENDING_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.form) setForm(parsed.form);
+          if (parsed.customFields) setCustomFields(parsed.customFields);
+        }
+      } catch {}
       setLoading(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
+
+  // After login, auto-submit if we restored a pending submission
+  useEffect(() => {
+    if (loading || !link) return;
+    const saved = sessionStorage.getItem(PENDING_KEY);
+    if (!saved) return;
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        sessionStorage.removeItem(PENDING_KEY);
+        // small delay so state has settled
+        setTimeout(() => {
+          const formEl = document.getElementById('payment-link-form') as HTMLFormElement | null;
+          formEl?.requestSubmit();
+        }, 300);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, link]);
 
   const handleUpload = async (file: File) => {
     if (file.size > 5 * 1024 * 1024) { toast.error('ছবি 5MB-এর কম হতে হবে'); return; }
