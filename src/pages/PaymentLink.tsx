@@ -42,15 +42,27 @@ export default function PaymentLink() {
       setLink(data);
       setForm(f => ({ ...f, quantity: data.quantity || 1, payment_method: (data.payment_methods?.[0]?.name) || '' }));
       // Restore any pending form data (e.g. after login redirect)
+      let hadPending = false;
       try {
         const saved = sessionStorage.getItem(PENDING_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed.form) setForm(parsed.form);
           if (parsed.customFields) setCustomFields(parsed.customFields);
+          hadPending = true;
         }
       } catch {}
       setLoading(false);
+      // If user is now logged in and we had a pending submission (after OAuth redirect), auto-submit
+      if (hadPending) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          setTimeout(() => {
+            const formEl = document.getElementById('payment-link-form') as HTMLFormElement | null;
+            formEl?.requestSubmit();
+          }, 500);
+        }
+      }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
