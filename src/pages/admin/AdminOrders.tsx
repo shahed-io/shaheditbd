@@ -922,12 +922,12 @@ const AdminOrders = () => {
 
   const executeBulkAction = async () => {
     if (!bulkAction || selectedIds.size === 0) return;
-    if (!confirm(`${selectedIds.size}টি অর্ডারের স্ট্যাটাস "${bulkAction}" এ পরিবর্তন করবেন?`)) return;
+    if (!confirm(`Change status of ${selectedIds.size} orders to "${bulkAction}"?`)) return;
     setBulkLoading(true);
     try {
       const { error } = await supabase.from('orders').update({ status: bulkAction as any }).in('id', Array.from(selectedIds));
       if (error) throw error;
-      toast.success(`✅ ${selectedIds.size}টি অর্ডার আপডেট হয়েছে!`);
+      toast.success(`✅ ${selectedIds.size} orders updated!`);
       setSelectedIds(new Set());
       setBulkAction('');
       fetchOrders();
