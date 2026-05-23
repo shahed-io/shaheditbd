@@ -239,22 +239,44 @@ const AdminSEOMonitor = () => {
       <Card>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold flex items-center gap-2"><FileText className="h-4 w-4 text-primary" />Sitemap & Feed Status</h2>
+          <span className="text-xs text-muted-foreground">Server-side check (CORS-safe)</span>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[700px]">
             <thead>
               <tr className="text-left text-xs text-muted-foreground border-b border-border">
                 <th className="pb-2">File</th>
-                <th className="pb-2">URLs</th>
+                <th className="pb-2 text-right">URLs</th>
+                <th className="pb-2 text-right">HTTP</th>
+                <th className="pb-2 text-right"><Zap className="h-3 w-3 inline" /> Time</th>
+                <th className="pb-2 text-right"><HardDrive className="h-3 w-3 inline" /> Size</th>
                 <th className="pb-2">Status</th>
                 <th className="pb-2 text-right">Open</th>
               </tr>
             </thead>
             <tbody>
               {sitemaps.map(s => (
-                <tr key={s.name} className="border-b border-border/50 last:border-0">
-                  <td className="py-3 font-mono text-xs">{s.name}</td>
-                  <td className="py-3">{s.status === 'loading' ? '—' : s.count}</td>
+                <tr key={s.name} className="border-b border-border/50 last:border-0 align-top">
+                  <td className="py-3">
+                    <div className="font-mono text-xs">{s.name}</div>
+                    {s.error && <div className="text-[10px] text-red-500 mt-1 max-w-[200px] truncate" title={s.error}>{s.error}</div>}
+                    {s.sample && s.sample.length > 0 && (
+                      <details className="mt-1">
+                        <summary className="text-[10px] text-muted-foreground cursor-pointer hover:text-primary">Sample entries</summary>
+                        <div className="text-[10px] font-mono text-muted-foreground mt-1 space-y-0.5">
+                          {s.sample.map((x, i) => <div key={i} className="truncate max-w-[280px]" title={x}>{x}</div>)}
+                        </div>
+                      </details>
+                    )}
+                  </td>
+                  <td className="py-3 text-right tabular-nums font-medium">{s.status === 'loading' ? '—' : s.count.toLocaleString()}</td>
+                  <td className="py-3 text-right tabular-nums text-xs">
+                    {s.httpStatus ? (
+                      <span className={s.httpStatus >= 200 && s.httpStatus < 300 ? 'text-emerald-600' : 'text-red-600'}>{s.httpStatus}</span>
+                    ) : '—'}
+                  </td>
+                  <td className="py-3 text-right tabular-nums text-xs text-muted-foreground">{s.responseMs ? `${s.responseMs}ms` : '—'}</td>
+                  <td className="py-3 text-right tabular-nums text-xs text-muted-foreground">{s.bytes ? `${(s.bytes / 1024).toFixed(1)}KB` : '—'}</td>
                   <td className="py-3"><StatusBadge status={s.status} /></td>
                   <td className="py-3 text-right">
                     <a href={s.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
