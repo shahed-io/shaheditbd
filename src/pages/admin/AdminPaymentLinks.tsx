@@ -139,7 +139,14 @@ export default function AdminPaymentLinks() {
           <h1 className="text-2xl font-bold flex items-center gap-2"><Link2 className="w-6 h-6 text-primary" /> Payment Links</h1>
           <p className="text-sm text-muted-foreground">Create shareable payment links and review customer submissions.</p>
         </div>
-        <Button onClick={() => setEditor({ ...emptyLink })}><Plus className="w-4 h-4 mr-2" /> New Link</Button>
+        <div className="flex gap-2">
+          <Button variant="default" onClick={quickGenerate}>
+            <Plus className="w-4 h-4 mr-2" /> Quick Generate Link
+          </Button>
+          <Button variant="outline" onClick={() => setEditor({ ...emptyLink })}>
+            <Edit className="w-4 h-4 mr-2" /> Custom Link
+          </Button>
+        </div>
       </div>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
