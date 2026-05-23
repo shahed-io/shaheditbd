@@ -24,7 +24,7 @@ const emptyLink = {
   product_name: '', product_image: '',
   amount: 0, original_amount: null as number | null,
   quantity: 1, allow_qty_change: false,
-  payment_methods: [{ name: 'bKash', number: '', instructions: 'Send Money করে Transaction ID দিন' }] as PaymentMethod[],
+  payment_methods: [{ name: 'bKash', number: '', instructions: 'Send Money to this number and submit the Transaction ID below.' }] as PaymentMethod[],
   required_fields: { name: true, phone: true, email: false, address: false, note: false },
   custom_fields: [] as CustomField[],
   max_uses: null as number | null,
@@ -244,61 +244,110 @@ export default function AdminPaymentLinks() {
 
       {/* Link editor */}
       <Dialog open={!!editor} onOpenChange={(o) => !o && setEditor(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editor?.id ? 'Edit' : 'New'} Payment Link</DialogTitle></DialogHeader>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/60">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Link2 className="w-5 h-5 text-primary" />
+              {editor?.id ? 'Edit Payment Link' : 'New Payment Link'}
+            </DialogTitle>
+            <p className="text-xs text-muted-foreground mt-1">Configure a shareable checkout link for your customers.</p>
+          </DialogHeader>
           {editor && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div><Label>Title *</Label><Input value={editor.title} onChange={e => setEditor({ ...editor, title: e.target.value, slug: editor.slug || slugify(e.target.value) })} /></div>
-                <div><Label>Slug (URL)</Label><Input value={editor.slug} onChange={e => setEditor({ ...editor, slug: slugify(e.target.value) })} placeholder="auto-generated" /></div>
-              </div>
+            <div className="px-6 py-5 space-y-5">
+              {/* Basics */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-4">
+                <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Basics</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label>Title <span className="text-destructive">*</span></Label>
+                    <Input value={editor.title} onChange={e => setEditor({ ...editor, title: e.target.value, slug: editor.slug || slugify(e.target.value) })} placeholder="e.g. Office 365 — 1 Year" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Slug (URL)</Label>
+                    <Input value={editor.slug} onChange={e => setEditor({ ...editor, slug: slugify(e.target.value) })} placeholder="auto-generated" />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Description</Label>
+                  <Textarea rows={2} value={editor.description || ''} onChange={e => setEditor({ ...editor, description: e.target.value })} placeholder="Shown on the payment page below the title" />
+                </div>
+              </section>
 
-              <div>
-                <Label>Product (from catalog)</Label>
-                <Select value={editor.product_id || 'custom'} onValueChange={v => {
-                  if (v === 'custom') return setEditor({ ...editor, product_id: null });
-                  const p = products.find(x => x.id === v);
-                  if (p) setEditor({ ...editor, product_id: p.id, product_name: p.name, product_image: p.image, amount: p.price });
-                }}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="custom">— Custom product —</SelectItem>
-                    {products.map(p => <SelectItem key={p.id} value={p.id}>{p.name} (৳{p.price})</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Product */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-4">
+                <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Product</h3>
+                <div className="space-y-1.5">
+                  <Label>Pick from catalog</Label>
+                  <Select value={editor.product_id || 'custom'} onValueChange={v => {
+                    if (v === 'custom') return setEditor({ ...editor, product_id: null });
+                    const p = products.find(x => x.id === v);
+                    if (p) setEditor({ ...editor, product_id: p.id, product_name: p.name, product_image: p.image, amount: p.price });
+                  }}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="custom">— Custom product —</SelectItem>
+                      {products.map(p => <SelectItem key={p.id} value={p.id}>{p.name} (৳{p.price})</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label>Product name <span className="text-destructive">*</span></Label>
+                    <Input value={editor.product_name} onChange={e => setEditor({ ...editor, product_name: e.target.value })} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Product image URL</Label>
+                    <Input value={editor.product_image} onChange={e => setEditor({ ...editor, product_image: e.target.value })} placeholder="https://..." />
+                  </div>
+                </div>
+              </section>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div><Label>Product name *</Label><Input value={editor.product_name} onChange={e => setEditor({ ...editor, product_name: e.target.value })} /></div>
-                <div><Label>Product image URL</Label><Input value={editor.product_image} onChange={e => setEditor({ ...editor, product_image: e.target.value })} /></div>
-                <div><Label>Amount * (৳)</Label><Input type="number" value={editor.amount} onChange={e => setEditor({ ...editor, amount: parseFloat(e.target.value) || 0 })} /></div>
-                <div><Label>Original amount (optional)</Label><Input type="number" value={editor.original_amount || ''} onChange={e => setEditor({ ...editor, original_amount: parseFloat(e.target.value) || null })} /></div>
-                <div><Label>Quantity</Label><Input type="number" value={editor.quantity} onChange={e => setEditor({ ...editor, quantity: parseInt(e.target.value) || 1 })} /></div>
-                <div className="flex items-center gap-2 mt-6"><Switch checked={editor.allow_qty_change} onCheckedChange={v => setEditor({ ...editor, allow_qty_change: v })} /><Label>Allow customer to change quantity</Label></div>
-              </div>
+              {/* Pricing */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-4">
+                <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Pricing & Quantity</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <Label>Amount (৳) <span className="text-destructive">*</span></Label>
+                    <Input type="number" value={editor.amount} onChange={e => setEditor({ ...editor, amount: parseFloat(e.target.value) || 0 })} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Original amount</Label>
+                    <Input type="number" value={editor.original_amount || ''} onChange={e => setEditor({ ...editor, original_amount: parseFloat(e.target.value) || null })} placeholder="Optional (strike-through)" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Quantity</Label>
+                    <Input type="number" value={editor.quantity} onChange={e => setEditor({ ...editor, quantity: parseInt(e.target.value) || 1 })} />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between rounded-lg border border-border/60 bg-background/60 px-3 py-2">
+                  <Label className="cursor-pointer">Allow customer to change quantity</Label>
+                  <Switch checked={editor.allow_qty_change} onCheckedChange={v => setEditor({ ...editor, allow_qty_change: v })} />
+                </div>
+              </section>
 
-              <div><Label>Description</Label><Textarea value={editor.description || ''} onChange={e => setEditor({ ...editor, description: e.target.value })} /></div>
-
-              <div>
-                <Label>Required customer fields</Label>
-                <div className="flex flex-wrap gap-3 mt-2">
+              {/* Customer fields */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-3">
+                <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Required Customer Fields</h3>
+                <p className="text-xs text-muted-foreground">Name & phone are always required.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {(['email', 'address', 'note'] as const).map(f => (
-                    <label key={f} className="flex items-center gap-2">
+                    <div key={f} className="flex items-center justify-between rounded-lg border border-border/60 bg-background/60 px-3 py-2">
+                      <Label className="capitalize cursor-pointer">{f}</Label>
                       <Switch checked={!!(editor.required_fields as any)[f]} onCheckedChange={v => setEditor({ ...editor, required_fields: { ...editor.required_fields, [f]: v } })} />
-                      <span className="text-sm capitalize">{f}</span>
-                    </label>
+                    </div>
                   ))}
                 </div>
-              </div>
+              </section>
 
-              <div>
+              {/* Payment methods */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label>Payment methods</Label>
+                  <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Payment Methods</h3>
                   <Button size="sm" variant="outline" onClick={() => setEditor({ ...editor, payment_methods: [...editor.payment_methods, { name: '', number: '', instructions: '' }] })}><Plus className="w-3 h-3 mr-1" /> Add</Button>
                 </div>
-                <div className="space-y-2 mt-2">
+                <div className="space-y-2">
                   {editor.payment_methods.map((m, i) => (
-                    <div key={i} className="grid grid-cols-12 gap-2 items-start">
+                    <div key={i} className="grid grid-cols-12 gap-2 items-center rounded-lg border border-border/60 bg-background/60 p-2">
                       <Input className="col-span-3" placeholder="Name (bKash)" value={m.name} onChange={e => { const a = [...editor.payment_methods]; a[i] = { ...a[i], name: e.target.value }; setEditor({ ...editor, payment_methods: a }); }} />
                       <Input className="col-span-3" placeholder="Number" value={m.number} onChange={e => { const a = [...editor.payment_methods]; a[i] = { ...a[i], number: e.target.value }; setEditor({ ...editor, payment_methods: a }); }} />
                       <Input className="col-span-5" placeholder="Instructions" value={m.instructions} onChange={e => { const a = [...editor.payment_methods]; a[i] = { ...a[i], instructions: e.target.value }; setEditor({ ...editor, payment_methods: a }); }} />
@@ -306,45 +355,60 @@ export default function AdminPaymentLinks() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
 
-              <div>
+              {/* Custom fields */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label>Custom fields (extra fields to collect)</Label>
+                  <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Custom Fields</h3>
                   <Button size="sm" variant="outline" onClick={() => setEditor({ ...editor, custom_fields: [...editor.custom_fields, { label: '', type: 'text', required: false }] })}><Plus className="w-3 h-3 mr-1" /> Add</Button>
                 </div>
-                <div className="space-y-2 mt-2">
+                {editor.custom_fields.length === 0 && <p className="text-xs text-muted-foreground">No custom fields. Add fields like "PC Username", "Device ID" etc.</p>}
+                <div className="space-y-2">
                   {editor.custom_fields.map((f, i) => (
-                    <div key={i} className="grid grid-cols-12 gap-2 items-center">
+                    <div key={i} className="grid grid-cols-12 gap-2 items-center rounded-lg border border-border/60 bg-background/60 p-2">
                       <Input className="col-span-6" placeholder="Field label (e.g. PC Username)" value={f.label} onChange={e => { const a = [...editor.custom_fields]; a[i] = { ...a[i], label: e.target.value }; setEditor({ ...editor, custom_fields: a }); }} />
                       <Select value={f.type || 'text'} onValueChange={v => { const a = [...editor.custom_fields]; a[i] = { ...a[i], type: v as any }; setEditor({ ...editor, custom_fields: a }); }}>
                         <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
                         <SelectContent><SelectItem value="text">Text</SelectItem><SelectItem value="email">Email</SelectItem><SelectItem value="number">Number</SelectItem></SelectContent>
                       </Select>
-                      <label className="col-span-2 flex items-center gap-1 text-sm"><Switch checked={!!f.required} onCheckedChange={v => { const a = [...editor.custom_fields]; a[i] = { ...a[i], required: v }; setEditor({ ...editor, custom_fields: a }); }} /> Req</label>
+                      <label className="col-span-2 flex items-center gap-1 text-xs"><Switch checked={!!f.required} onCheckedChange={v => { const a = [...editor.custom_fields]; a[i] = { ...a[i], required: v }; setEditor({ ...editor, custom_fields: a }); }} /> Req</label>
                       <Button size="sm" variant="ghost" className="col-span-1" onClick={() => setEditor({ ...editor, custom_fields: editor.custom_fields.filter((_, j) => j !== i) })}><Trash2 className="w-4 h-4 text-destructive" /></Button>
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div><Label>Max uses</Label><Input type="number" value={editor.max_uses || ''} onChange={e => setEditor({ ...editor, max_uses: parseInt(e.target.value) || null })} /></div>
-                <div><Label>Expires at</Label><Input type="datetime-local" value={editor.expires_at?.slice(0, 16) || ''} onChange={e => setEditor({ ...editor, expires_at: e.target.value ? new Date(e.target.value).toISOString() : null })} /></div>
-                <div><Label>Status</Label>
-                  <Select value={editor.status} onValueChange={v => setEditor({ ...editor, status: v as any })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent><SelectItem value="active">Active</SelectItem><SelectItem value="paused">Paused</SelectItem></SelectContent>
-                  </Select>
+              {/* Limits & Status */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-4">
+                <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Limits & Status</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <Label>Max uses</Label>
+                    <Input type="number" value={editor.max_uses || ''} onChange={e => setEditor({ ...editor, max_uses: parseInt(e.target.value) || null })} placeholder="Unlimited" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Expires at</Label>
+                    <Input type="datetime-local" value={editor.expires_at?.slice(0, 16) || ''} onChange={e => setEditor({ ...editor, expires_at: e.target.value ? new Date(e.target.value).toISOString() : null })} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Status</Label>
+                    <Select value={editor.status} onValueChange={v => setEditor({ ...editor, status: v as any })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent><SelectItem value="active">Active</SelectItem><SelectItem value="paused">Paused</SelectItem></SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              </div>
-
-              <div><Label>Redirect URL after submission (optional)</Label><Input value={editor.redirect_url || ''} onChange={e => setEditor({ ...editor, redirect_url: e.target.value })} placeholder="https://..." /></div>
+                <div className="space-y-1.5">
+                  <Label>Redirect URL after submission</Label>
+                  <Input value={editor.redirect_url || ''} onChange={e => setEditor({ ...editor, redirect_url: e.target.value })} placeholder="https://... (optional)" />
+                </div>
+              </section>
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="px-6 py-4 border-t border-border/60 bg-card/30">
             <Button variant="outline" onClick={() => setEditor(null)}>Cancel</Button>
-            <Button onClick={saveLink}>Save</Button>
+            <Button onClick={saveLink}>{editor?.id ? 'Update Link' : 'Create Link'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
