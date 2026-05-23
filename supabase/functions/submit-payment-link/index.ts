@@ -128,8 +128,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // bump current_uses
-    await supabase.from('payment_links').update({ current_uses: (link.current_uses || 0) + 1 }).eq('id', link.id);
+    // bump current_uses; for quick-generate (open form) links, expire after first submission
+    const updates: Record<string, unknown> = { current_uses: (link.current_uses || 0) + 1 };
+    if (link.is_open_form) updates.status = 'expired';
+    await supabase.from('payment_links').update(updates).eq('id', link.id);
 
     // Fire Telegram alert (best-effort)
     try {
