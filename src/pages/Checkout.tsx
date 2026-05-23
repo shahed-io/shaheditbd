@@ -720,14 +720,10 @@ const Checkout = () => {
 
       // Mark abandoned-checkout row as converted (non-blocking)
       try {
-        await supabase
-          .from('abandoned_checkouts')
-          .update({
-            converted: true,
-            converted_order_id: order.id,
-            converted_at: new Date().toISOString(),
-          })
-          .eq('session_token', sessionTokenRef.current);
+        await supabase.rpc('mark_abandoned_checkout_converted', {
+          p_session_token: sessionTokenRef.current,
+          p_order_id: order.id,
+        });
       } catch { /* silent */ }
       // Reset session token for next checkout
       try {
