@@ -124,6 +124,7 @@ export default function AdminCustomers() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
+  const [statDrawer, setStatDrawer] = useState<null | 'total' | 'active' | 'orders' | 'revenue' | 'points'>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: customers = [], isLoading, refetch } = useQuery({
