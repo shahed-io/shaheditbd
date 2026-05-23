@@ -369,15 +369,36 @@ const FloatingSupport = () => {
             <div ref={bottomRef} />
           </div>
 
-          {/* Quick suggestions — horizontal scroll so many chips fit */}
+          {/* Quick suggestions — auto-scrolling live marquee (pauses on hover) */}
           {messages.length <= 1 && config.quick_suggestions.length > 0 && (
-            <div className="px-3 pb-2 flex gap-1.5 overflow-x-auto scrollbar-thin snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {config.quick_suggestions.map(q => (
-                <button key={q} onClick={() => { setInput(q); setTimeout(() => inputRef.current?.focus(), 50); }}
-                  className="shrink-0 snap-start text-xs px-2.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors whitespace-nowrap">
-                  {q}
-                </button>
-              ))}
+            <div
+              className="px-3 pb-2 group relative overflow-hidden"
+              style={{
+                WebkitMaskImage:
+                  'linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%)',
+                maskImage:
+                  'linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%)',
+              }}
+            >
+              <div
+                className="flex gap-1.5 w-max animate-[support-marquee_28s_linear_infinite] group-hover:[animation-play-state:paused]"
+              >
+                {[...config.quick_suggestions, ...config.quick_suggestions].map((q, i) => (
+                  <button
+                    key={`${q}-${i}`}
+                    onClick={() => { setInput(q); setTimeout(() => inputRef.current?.focus(), 50); }}
+                    className="shrink-0 text-xs px-2.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors whitespace-nowrap"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+              <style>{`
+                @keyframes support-marquee {
+                  from { transform: translateX(0); }
+                  to   { transform: translateX(-50%); }
+                }
+              `}</style>
             </div>
           )}
 
