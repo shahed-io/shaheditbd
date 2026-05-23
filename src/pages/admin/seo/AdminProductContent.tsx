@@ -41,7 +41,6 @@ const AdminProductContent = () => {
   const [faqGenerating, setFaqGenerating] = useState<string | null>(null);
   const [restoring, setRestoring] = useState<string | null>(null);
   const [bulkRunning, setBulkRunning] = useState(false);
-  const [bulkMode, setBulkMode] = useState<'description' | 'faq' | 'restore' | null>(null);
   const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0, failed: 0 });
   const bulkCancelRef = useRef(false);
   const [preview, setPreview] = useState<Product | null>(null);
