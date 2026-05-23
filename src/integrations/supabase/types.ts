@@ -3458,6 +3458,22 @@ export type Database = {
         Returns: number
       }
       generate_affiliate_code: { Args: never; Returns: string }
+      get_payment_submission_public: {
+        Args: { p_id: string }
+        Returns: {
+          admin_note: string
+          amount: number
+          created_at: string
+          id: string
+          order_number: string
+          payment_method: string
+          product_name: string
+          quantity: number
+          status: string
+          total: number
+          transaction_id: string
+        }[]
+      }
       get_referral_tier: { Args: { referral_count: number }; Returns: Json }
       has_role: {
         Args: {
@@ -3468,6 +3484,10 @@ export type Database = {
       }
       is_username_available: {
         Args: { p_user_id?: string; p_username: string }
+        Returns: boolean
+      }
+      mark_abandoned_checkout_converted: {
+        Args: { p_order_id: string; p_session_token: string }
         Returns: boolean
       }
       move_to_dlq: {
@@ -3542,6 +3562,10 @@ export type Database = {
       reject_affiliate_conversion: {
         Args: { p_conversion_id: string; p_reason?: string }
         Returns: Json
+      }
+      upsert_abandoned_checkout: {
+        Args: { p_payload: Json; p_session_token: string }
+        Returns: string
       }
       wallet_credit: {
         Args: {
