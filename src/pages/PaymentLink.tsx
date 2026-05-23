@@ -134,6 +134,10 @@ export default function PaymentLink() {
     );
   }
 
+  const req = link.required_fields || {};
+  const methods: PaymentMethod[] = link.payment_methods || [];
+  const selectedMethod = methods.find(m => m.name === form.payment_method);
+  const cfArr: CustomField[] = link.custom_fields || [];
   const qty = link.allow_qty_change ? form.quantity : link.quantity;
   const effectiveAmount = link.is_open_form ? Number(form.open_amount || 0) : Number(link.amount || 0);
   const total = effectiveAmount * qty;
