@@ -461,53 +461,93 @@ export default function AdminPaymentLinks() {
 
       {/* Submission viewer */}
       <Dialog open={!!viewSub} onOpenChange={(o) => !o && setViewSub(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Submission Details</DialogTitle></DialogHeader>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/60">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Inbox className="w-5 h-5 text-primary" />
+              Submission Details
+            </DialogTitle>
+            <p className="text-xs text-muted-foreground mt-1">Review the customer's payment submission and approve or reject it.</p>
+          </DialogHeader>
           {viewSub && (
-            <div className="space-y-4 text-sm">
-              <div className="grid grid-cols-2 gap-3">
-                <div><span className="text-muted-foreground">Customer:</span> <div className="font-medium">{viewSub.customer_name}</div></div>
-                <div><span className="text-muted-foreground">Phone:</span> <div className="font-medium">{viewSub.customer_phone}</div></div>
-                {viewSub.customer_email && <div><span className="text-muted-foreground">Email:</span> <div>{viewSub.customer_email}</div></div>}
-                {viewSub.customer_address && <div className="col-span-2"><span className="text-muted-foreground">Address:</span> <div>{viewSub.customer_address}</div></div>}
-                <div><span className="text-muted-foreground">Product:</span> <div className="font-medium">{viewSub.product_name}</div></div>
-                <div><span className="text-muted-foreground">Quantity × Amount:</span> <div>{viewSub.quantity} × ৳{Number(viewSub.amount).toLocaleString()} = <b>৳{Number(viewSub.total).toLocaleString()}</b></div></div>
-                <div><span className="text-muted-foreground">Payment method:</span> <div className="font-medium">{viewSub.payment_method}</div></div>
-                <div><span className="text-muted-foreground">Transaction ID:</span> <div className="font-mono">{viewSub.transaction_id}</div></div>
-                {viewSub.sender_number && <div><span className="text-muted-foreground">Sender number:</span> <div className="font-mono">{viewSub.sender_number}</div></div>}
-                <div><span className="text-muted-foreground">Status:</span> <Badge>{viewSub.status}</Badge></div>
-              </div>
-              {viewSub.customer_note && <div><span className="text-muted-foreground">Customer note:</span><div className="p-2 bg-muted/40 rounded mt-1 whitespace-pre-line">{viewSub.customer_note}</div></div>}
-              {viewSub.custom_field_values && Object.keys(viewSub.custom_field_values).length > 0 && (
-                <div>
-                  <span className="text-muted-foreground">Custom fields:</span>
-                  <div className="mt-1 space-y-1">
-                    {Object.entries(viewSub.custom_field_values).map(([k, v]) => (
-                      <div key={k} className="flex gap-2"><span className="text-muted-foreground">{k}:</span> <span className="font-medium">{String(v)}</span></div>
-                    ))}
+            <div className="px-6 py-5 space-y-5 text-sm">
+              {/* Customer */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-3">
+                <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Customer</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div><div className="text-xs text-muted-foreground mb-0.5">Name</div><div className="font-medium">{viewSub.customer_name}</div></div>
+                  <div><div className="text-xs text-muted-foreground mb-0.5">Phone</div><div className="font-medium font-mono">{viewSub.customer_phone}</div></div>
+                  {viewSub.customer_email && <div><div className="text-xs text-muted-foreground mb-0.5">Email</div><div className="font-medium break-all">{viewSub.customer_email}</div></div>}
+                  {viewSub.customer_address && <div className="sm:col-span-2"><div className="text-xs text-muted-foreground mb-0.5">Address</div><div>{viewSub.customer_address}</div></div>}
+                </div>
+              </section>
+
+              {/* Order */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Order</h3>
+                  <Badge variant={viewSub.status === 'pending' ? 'secondary' : viewSub.status === 'approved' ? 'default' : 'destructive'} className="capitalize">{viewSub.status}</Badge>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div><div className="text-xs text-muted-foreground mb-0.5">Product</div><div className="font-medium">{viewSub.product_name}</div></div>
+                  <div><div className="text-xs text-muted-foreground mb-0.5">Quantity × Amount</div><div>{viewSub.quantity} × ৳{Number(viewSub.amount).toLocaleString()} = <b className="text-primary">৳{Number(viewSub.total).toLocaleString()}</b></div></div>
+                </div>
+                {viewSub.custom_field_values && Object.keys(viewSub.custom_field_values).length > 0 && (
+                  <div className="pt-2 border-t border-border/40">
+                    <div className="text-xs text-muted-foreground mb-2">Custom fields</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {Object.entries(viewSub.custom_field_values).map(([k, v]) => (
+                        <div key={k} className="flex gap-2 text-sm"><span className="text-muted-foreground">{k}:</span><span className="font-medium">{String(v)}</span></div>
+                      ))}
+                    </div>
                   </div>
+                )}
+              </section>
+
+              {/* Payment */}
+              <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-3">
+                <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Payment</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div><div className="text-xs text-muted-foreground mb-0.5">Method</div><div className="font-medium">{viewSub.payment_method}</div></div>
+                  <div><div className="text-xs text-muted-foreground mb-0.5">Transaction ID</div><div className="font-mono break-all">{viewSub.transaction_id}</div></div>
+                  {viewSub.sender_number && <div><div className="text-xs text-muted-foreground mb-0.5">Sender number</div><div className="font-mono">{viewSub.sender_number}</div></div>}
+                </div>
+                {viewSub.payment_screenshot_url && (
+                  <div className="pt-2 border-t border-border/40">
+                    <div className="text-xs text-muted-foreground mb-2">Payment screenshot</div>
+                    <a href={viewSub.payment_screenshot_url} target="_blank" rel="noreferrer" className="inline-block">
+                      <img src={viewSub.payment_screenshot_url} className="max-w-full max-h-80 rounded-lg border border-border/60 hover:border-primary/60 transition-colors" />
+                    </a>
+                  </div>
+                )}
+              </section>
+
+              {viewSub.customer_note && (
+                <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-2">
+                  <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Customer note</h3>
+                  <div className="text-sm whitespace-pre-line p-3 bg-muted/40 rounded-lg border border-border/40">{viewSub.customer_note}</div>
+                </section>
+              )}
+
+              {viewSub.order_number && (
+                <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 flex items-center gap-3">
+                  <Check className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                  <div className="text-sm"><b>Order created:</b> <span className="font-mono">{viewSub.order_number}</span></div>
                 </div>
               )}
-              {viewSub.payment_screenshot_url && (
-                <div>
-                  <span className="text-muted-foreground">Payment screenshot:</span>
-                  <a href={viewSub.payment_screenshot_url} target="_blank" rel="noreferrer" className="block mt-2">
-                    <img src={viewSub.payment_screenshot_url} className="max-w-full max-h-80 rounded border" />
-                  </a>
-                </div>
-              )}
-              {viewSub.order_number && <div className="p-3 bg-green-50 border border-green-200 rounded"><b>Order created:</b> <span className="font-mono">{viewSub.order_number}</span></div>}
+
               {viewSub.status === 'pending' && (
-                <div>
-                  <Label>Admin note (optional)</Label>
-                  <Textarea value={adminNote} onChange={e => setAdminNote(e.target.value)} placeholder="Reason for rejection or extra notes" />
-                </div>
+                <section className="rounded-xl border border-border/60 bg-card/40 p-4 space-y-2">
+                  <Label className="text-sm font-semibold text-foreground/80 uppercase tracking-wide">Admin note (optional)</Label>
+                  <Textarea rows={3} value={adminNote} onChange={e => setAdminNote(e.target.value)} placeholder="Reason for rejection or extra notes" />
+                </section>
               )}
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="px-6 py-4 border-t border-border/60 bg-muted/20 sm:justify-end gap-2">
             {viewSub?.status === 'pending' ? (
               <>
+                <Button variant="outline" onClick={() => setViewSub(null)}>Cancel</Button>
                 <Button variant="destructive" disabled={reviewing} onClick={() => reviewSubmission('reject')}><XIcon className="w-4 h-4 mr-1" /> Reject</Button>
                 <Button disabled={reviewing} onClick={() => reviewSubmission('approve')}>{reviewing ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Check className="w-4 h-4 mr-1" />} Approve & Create Order</Button>
               </>
