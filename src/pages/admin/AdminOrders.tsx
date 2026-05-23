@@ -1057,21 +1057,21 @@ const AdminOrders = () => {
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Payment Method</label>
               <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} className={inputCls}>
-                <option value="all">সব</option>
+                <option value="all">All</option>
                 {Object.entries(PM_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">তারিখ থেকে</label>
+              <label className="text-xs text-muted-foreground mb-1 block">From Date</label>
               <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className={inputCls} />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">তারিখ পর্যন্ত</label>
+              <label className="text-xs text-muted-foreground mb-1 block">To Date</label>
               <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className={inputCls} />
             </div>
             <div className="flex items-end">
               <div className="glass-card rounded-xl px-4 py-2.5 text-xs text-muted-foreground w-full text-center">
-                {filtered.length} ফলাফল
+                {filtered.length} results
               </div>
             </div>
           </div>
