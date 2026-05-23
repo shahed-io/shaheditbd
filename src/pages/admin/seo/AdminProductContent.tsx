@@ -276,6 +276,14 @@ const AdminProductContent = () => {
           >
             <Wand2 size={14} /> Regenerate ALL ({stats.total})
           </button>
+          <button
+            disabled={bulkRunning || Object.keys(backupMap).length === 0}
+            onClick={handleBulkRestore}
+            className="px-4 py-2 rounded-lg border border-amber-500/40 text-amber-600 hover:bg-amber-500/10 flex items-center gap-2 text-sm disabled:opacity-50"
+            title="Restore previous descriptions from latest backup"
+          >
+            <Undo2 size={14} /> Restore All ({Object.keys(backupMap).length})
+          </button>
           {bulkRunning && (
             <button
               onClick={() => { bulkCancelRef.current = true; }}
