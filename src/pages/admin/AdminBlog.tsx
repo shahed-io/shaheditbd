@@ -134,9 +134,23 @@ const AdminBlog = () => {
 
   const pendingComments = comments.filter(c => c.status === 'pending').length;
 
-  // AI Blog Generator
+  // Products without an existing blog post (slug-based detection — same as edge fn)
+  const newProducts = products.filter(
+    (prod) => !posts.some((p) => p.slug?.includes(prod.slug))
+  );
+
+  // AI Blog Generator — generates for selected new products only (or all new if none selected)
   const handleGenerateBulk = async () => {
-    if (!confirm(`সব প্রোডাক্টের জন্য AI ব্লগ তৈরি করবেন? (${products.length}টি প্রোডাক্ট)\nনতুন ব্লগ তৈরি হবে, যেগুলোর ব্লগ আছে সেগুলো skip হবে।`)) return;
+    const targetIds = selectedProducts.length > 0
+      ? selectedProducts
+      : newProducts.map((p) => p.id);
+
+    if (targetIds.length === 0) {
+      toast.info('সব প্রোডাক্টের জন্য ইতিমধ্যে ব্লগ তৈরি আছে — নতুন প্রোডাক্ট নেই।');
+      return;
+    }
+    if (!confirm(`${targetIds.length}টি নতুন প্রোডাক্টের জন্য AI ব্লগ তৈরি করবেন?`)) return;
+
     setAiGenerating(true);
     setAiProgress([]);
     setAiMode('bulk');
@@ -149,7 +163,7 @@ const AdminBlog = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ bulk: true, auto_publish: autoPublish, ai_model: aiModel }),
+        body: JSON.stringify({ product_ids: targetIds, auto_publish: autoPublish, ai_model: aiModel }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -162,6 +176,7 @@ const AdminBlog = () => {
       setAiProgress(data.results || []);
       const { summary } = data;
       toast.success(`✅ সম্পন্ন! ${summary.success} নতুন ব্লগ, ${summary.skipped} skip, ${summary.errors} error`);
+      setSelectedProducts([]);
       fetchAll();
     } catch (e: any) {
       toast.error('Error: ' + e.message);
