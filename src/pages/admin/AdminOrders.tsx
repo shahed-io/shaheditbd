@@ -50,13 +50,13 @@ const downloadOrderInvoicePdf = async (order: any) => {
 
 // ─── Status Config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any; dot: string }> = {
-  pending:    { label: 'পেন্ডিং',    color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',         icon: Clock,         dot: 'bg-amber-500' },
-  processing: { label: 'প্রসেসিং',   color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',            icon: RefreshCw,     dot: 'bg-blue-500' },
-  delivered:  { label: 'ডেলিভার্ড', color: 'text-cyan-500 bg-cyan-500/10 border-cyan-500/30',             icon: Truck,         dot: 'bg-cyan-500' },
-  completed:  { label: 'সম্পন্ন',    color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/30',   icon: CheckCircle2,  dot: 'bg-emerald-500' },
-  cancelled:  { label: 'বাতিল',      color: 'text-red-500 bg-red-500/10 border-red-500/30',               icon: XCircle,       dot: 'bg-red-500' },
-  refunded:   { label: 'রিফান্ড',    color: 'text-purple-500 bg-purple-500/10 border-purple-500/30',      icon: RotateCcw,     dot: 'bg-purple-500' },
-  failed:     { label: 'ব্যর্থ',      color: 'text-rose-600 bg-rose-600/10 border-rose-600/30',            icon: AlertTriangle, dot: 'bg-rose-600' },
+  pending:    { label: 'Pending',    color: 'text-amber-500 bg-amber-500/10 border-amber-500/30',         icon: Clock,         dot: 'bg-amber-500' },
+  processing: { label: 'Processing', color: 'text-blue-500 bg-blue-500/10 border-blue-500/30',            icon: RefreshCw,     dot: 'bg-blue-500' },
+  delivered:  { label: 'Delivered',  color: 'text-cyan-500 bg-cyan-500/10 border-cyan-500/30',            icon: Truck,         dot: 'bg-cyan-500' },
+  completed:  { label: 'Completed',  color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/30',   icon: CheckCircle2,  dot: 'bg-emerald-500' },
+  cancelled:  { label: 'Cancelled',  color: 'text-red-500 bg-red-500/10 border-red-500/30',               icon: XCircle,       dot: 'bg-red-500' },
+  refunded:   { label: 'Refunded',   color: 'text-purple-500 bg-purple-500/10 border-purple-500/30',      icon: RotateCcw,     dot: 'bg-purple-500' },
+  failed:     { label: 'Failed',     color: 'text-rose-600 bg-rose-600/10 border-rose-600/30',            icon: AlertTriangle, dot: 'bg-rose-600' },
 };
 
 const ALL_STATUSES = ['pending', 'processing', 'delivered', 'completed', 'cancelled', 'refunded', 'failed'];
