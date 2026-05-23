@@ -205,7 +205,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
                   <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'left' }}>পণ্যের নাম</th>
                   <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'center' }}>পরিমাণ</th>
                   <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>দাম</th>
-                  <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>মোট</th>
+                  <th style={{ background: hdr.bg, color: hdr.text, fontSize: '14px', fontWeight: 700, padding: '14px', textAlign: 'right' }}>Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -1180,13 +1180,13 @@ const AdminOrders = () => {
                       onChange={toggleSelectAll} className="w-3.5 h-3.5 accent-primary rounded" />
                   </th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Order #</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">কাস্টমার</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden lg:table-cell">প্রোডাক্ট</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden md:table-cell">পেমেন্ট</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">মোট</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Customer</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden lg:table-cell">Products</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden md:table-cell">Payment</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Total</th>
                   <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium">Status</th>
-                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden md:table-cell">তারিখ</th>
-                  <th className="text-right px-4 py-3 text-xs text-muted-foreground font-medium">অ্যাকশন</th>
+                  <th className="text-left px-4 py-3 text-xs text-muted-foreground font-medium hidden md:table-cell">Date</th>
+                  <th className="text-right px-4 py-3 text-xs text-muted-foreground font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/30">
@@ -1247,27 +1247,27 @@ const AdminOrders = () => {
                         <div className="flex items-center justify-end gap-2">
                           {order.payment_status !== 'verified' && order.status === 'pending' && (
                             <button onClick={() => updateOrder(order.id, { payment_status: 'verified', status: 'processing' }, '✅ Verified!')}
-                              title="পেমেন্ট ভেরিফাই"
+                              title="Verify Payment"
                               className="p-1.5 text-muted-foreground hover:text-emerald-500 transition-colors rounded-lg hover:bg-emerald-500/10">
                               <CheckCircle size={14} />
                             </button>
                           )}
                           {order.status === 'processing' && (
                             <button onClick={() => updateOrder(order.id, { status: 'delivered' }, '🚚 Delivered!')}
-                              title="ডেলিভার্ড মার্ক"
+                              title="Mark as Delivered"
                               className="p-1.5 text-muted-foreground hover:text-cyan-500 transition-colors rounded-lg hover:bg-cyan-500/10">
                               <Truck size={14} />
                             </button>
                           )}
                           <button
                             onClick={() => downloadOrderInvoicePdf(order)}
-                            title="PDF ইনভয়েস ডাউনলোড করুন"
+                            title="Download PDF invoice"
                             className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
                             <Download size={14} />
                           </button>
                           <button
                             onClick={() => sendCustomerWhatsApp(order)}
-                            title="কাস্টমারকে WhatsApp মেসেজ পাঠান"
+                            title="Send WhatsApp message to customer"
                             className={`p-1.5 transition-colors rounded-lg ${newOrderIds.has(order.id) ? 'text-[#25D366] bg-[#25D366]/10 animate-pulse' : 'text-muted-foreground hover:text-[#25D366] hover:bg-[#25D366]/10'}`}>
                             <MessageCircle size={14} />
                           </button>
@@ -1291,10 +1291,10 @@ const AdminOrders = () => {
       {/* Summary Footer */}
       {filtered.length > 0 && (
         <div className="glass-card rounded-xl px-5 py-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
-          <span>দেখাচ্ছে: <strong className="text-foreground">{filtered.length}</strong></span>
-          <span>মোট মূল্য: <strong className="text-primary">৳{filtered.reduce((s, o) => s + Number(o.total), 0).toLocaleString()}</strong></span>
-          <span>ভেরিফাই বাকি: <strong className="text-amber-500">{filtered.filter(o => o.payment_status !== 'verified' && !['cancelled', 'failed'].includes(o.status)).length}</strong></span>
-          <span>সম্পন্ন: <strong className="text-emerald-500">{filtered.filter(o => o.status === 'completed').length}</strong></span>
+          <span>Showing: <strong className="text-foreground">{filtered.length}</strong></span>
+          <span>Total value: <strong className="text-primary">৳{filtered.reduce((s, o) => s + Number(o.total), 0).toLocaleString()}</strong></span>
+          <span>Pending verification: <strong className="text-amber-500">{filtered.filter(o => o.payment_status !== 'verified' && !['cancelled', 'failed'].includes(o.status)).length}</strong></span>
+          <span>Completed: <strong className="text-emerald-500">{filtered.filter(o => o.status === 'completed').length}</strong></span>
         </div>
       )}
 
