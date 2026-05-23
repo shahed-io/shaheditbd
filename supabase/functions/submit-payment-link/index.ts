@@ -64,8 +64,24 @@ Deno.serve(async (req) => {
       });
     }
 
-    const qty = link.allow_qty_change && d.quantity ? d.quantity : link.quantity;
-    const total = Number(link.amount) * qty;
+    const qty = link.allow_qty_change && d.quantity ? d.quantity : (link.quantity || 1);
+
+    let effectiveProductName = link.product_name;
+    let effectiveProductImage = link.product_image;
+    let effectiveAmount = Number(link.amount || 0);
+
+    if (link.is_open_form) {
+      if (!d.open_product_name || !d.open_amount) {
+        return new Response(JSON.stringify({ error: 'পণ্যের নাম ও পরিমাণ দিন' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      effectiveProductName = d.open_product_name;
+      effectiveAmount = d.open_amount;
+      effectiveProductImage = null;
+    }
+
+    const total = effectiveAmount * qty;
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
     const ua = req.headers.get('user-agent')?.slice(0, 500) || null;
 
