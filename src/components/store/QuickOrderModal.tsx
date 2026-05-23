@@ -398,10 +398,10 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
       orderPlacedRef.current = true;
       // Mark abandoned row as converted (best-effort)
       try {
-        await supabase.from('abandoned_checkouts').update({
-          converted: true,
-          converted_at: new Date().toISOString(),
-        } as any).eq('session_token', sessionTokenRef.current);
+        await supabase.rpc('mark_abandoned_checkout_converted', {
+          p_session_token: sessionTokenRef.current,
+          p_order_id: null as any,
+        });
       } catch {}
       // Rotate token so next quick order starts fresh
       try {
