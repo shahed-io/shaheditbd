@@ -1038,12 +1038,12 @@ const AdminOrders = () => {
           <div className="relative flex-1">
             <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="অর্ডার ID, নাম, ইমেইল, TrxID..."
+              placeholder="Order ID, name, email, TrxID..."
               className="w-full bg-muted/30 border border-border rounded-xl pl-16 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors" />
           </div>
           <button onClick={() => setShowFilters(!showFilters)}
             className={`px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 border transition-all ${showFilters ? 'btn-glow border-transparent' : 'glass-card border-border text-muted-foreground hover:text-foreground'}`}>
-            <SlidersHorizontal size={14} /> ফিল্টার
+            <SlidersHorizontal size={14} /> Filters
             {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-primary" />}
           </button>
           {hasActiveFilters && (
