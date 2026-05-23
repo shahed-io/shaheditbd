@@ -874,7 +874,7 @@ const AdminOrders = () => {
         // Telegram status notification
         supabase.functions.invoke('notify-telegram-event', {
           body: {
-            title: `🔄 অর্ডার Status Update → ${String(updates.status).toUpperCase()}`,
+            title: `🔄 Order Status Update → ${String(updates.status).toUpperCase()}`,
             lines: [
               ord?.order_number ? `🧾 #${ord.order_number}` : null,
               ord?.customer_name ? `👤 ${ord.customer_name}` : null,
