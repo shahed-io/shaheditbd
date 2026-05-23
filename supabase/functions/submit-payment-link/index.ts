@@ -19,6 +19,8 @@ const Schema = z.object({
   payment_screenshot_url: z.string().url().max(800).optional().or(z.literal('')),
   custom_field_values: z.record(z.string(), z.any()).optional(),
   customer_note: z.string().max(2000).optional(),
+  open_product_name: z.string().trim().max(200).optional(),
+  open_amount: z.number().positive().max(10_000_000).optional(),
 });
 
 Deno.serve(async (req) => {
