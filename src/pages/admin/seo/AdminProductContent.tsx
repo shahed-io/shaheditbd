@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   FileText, Wand2, Loader2, Zap, AlertCircle, Search,
-  CheckCircle2, ExternalLink, RefreshCw, Eye, X, Undo2,
+  CheckCircle2, ExternalLink, RefreshCw, Eye, X, Undo2, HelpCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
