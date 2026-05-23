@@ -39,12 +39,12 @@ const orderToInvoiceData = (order: any): InvoiceData => ({
 });
 
 const downloadOrderInvoicePdf = async (order: any) => {
-  const tid = toast.loading('PDF তৈরি হচ্ছে...');
+  const tid = toast.loading('Generating PDF...');
   try {
     await downloadInvoicePdf(orderToInvoiceData(order));
-    toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp এ Attach করে পাঠান', { id: tid });
+    toast.success('PDF downloaded — now attach it in WhatsApp', { id: tid });
   } catch (e: any) {
-    toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
+    toast.error('Failed to generate PDF: ' + (e?.message || 'Unknown'), { id: tid });
   }
 };
 
@@ -70,7 +70,7 @@ const PAYMENT_STATUS_COLORS: Record<string, string> = {
 const PM_LABELS: Record<string, string> = {
   bkash_online: 'bKash (Online)',
   bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket',
-  upay: 'উপায়', bkash_merchant: 'BKash Merchant',
+  upay: 'Upay', bkash_merchant: 'BKash Merchant',
   bank_transfer: 'Bank Transfer', wallet: 'Wallet',
 };
 
@@ -122,12 +122,12 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
 
   const handleDownloadPdf = async () => {
     if (!printRef.current) return downloadOrderInvoicePdf(order);
-    const tid = toast.loading('PDF তৈরি হচ্ছে...');
+    const tid = toast.loading('Generating PDF...');
     try {
       await downloadInvoicePdfFromElement(printRef.current, `invoice-${order.order_number}.pdf`);
-      toast.success('PDF ডাউনলোড হয়েছে — এখন WhatsApp এ Attach করে পাঠান', { id: tid });
+      toast.success('PDF downloaded — now attach it in WhatsApp', { id: tid });
     } catch (e: any) {
-      toast.error('PDF তৈরি করতে সমস্যা: ' + (e?.message || 'Unknown'), { id: tid });
+      toast.error('Failed to generate PDF: ' + (e?.message || 'Unknown'), { id: tid });
     }
   };
 
@@ -149,7 +149,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
           <h3 className="font-bold text-foreground text-sm">Invoice #{order.order_number}</h3>
           <div className="flex gap-2">
             <button onClick={handleDownloadPdf} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-card border border-primary/30 text-primary hover:bg-primary/10 text-xs font-semibold transition-colors">
-              <Download size={13} /> PDF ডাউনলোড
+              <Download size={13} /> Download PDF
             </button>
             <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-glow text-xs font-semibold">
               <Printer size={13} /> Print / PDF
@@ -269,7 +269,7 @@ const OrderInvoice = ({ order, onClose }: { order: any; onClose: () => void }) =
 
 // ─── Order Timeline Component ───────────────────────────────────────────────
 const OrderTimeline = ({ timeline }: { timeline: any[] }) => {
-  if (!timeline.length) return <p className="text-xs text-muted-foreground text-center py-4">কোনো ইতিহাস নেই</p>;
+  if (!timeline.length) return <p className="text-xs text-muted-foreground text-center py-4">No history</p>;
 
   return (
     <div className="space-y-0">
@@ -349,7 +349,7 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
         total: Number(i.price) * i.quantity,
       }));
       await supabase.from('order_items').insert(orderItems);
-      toast.success(`✅ অর্ডার তৈরি হয়েছে: ${orderNum}`);
+      toast.success(`✅ Order created: ${orderNum}`);
       onSuccess();
       onClose();
     } catch (err: any) {
@@ -365,7 +365,7 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
       <div className="glass-card rounded-2xl w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-border flex-shrink-0">
-          <h2 className="font-bold text-foreground">নতুন অর্ডার তৈরি করুন</h2>
+          <h2 className="font-bold text-foreground">Create New Order</h2>
           <button onClick={onClose} className="p-1.5 rounded-xl text-muted-foreground hover:text-foreground"><X size={16} /></button>
         </div>
 
@@ -432,10 +432,10 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
         </div>
 
         <div className="px-5 py-4 border-t border-border flex gap-3 flex-shrink-0">
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm glass-card border border-border text-muted-foreground hover:text-foreground transition-colors">বাতিল</button>
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm glass-card border border-border text-muted-foreground hover:text-foreground transition-colors">Cancel</button>
           <button onClick={handleCreate} disabled={loading} className="flex-1 py-2.5 rounded-xl text-sm btn-glow font-semibold flex items-center justify-center gap-2 disabled:opacity-50">
             {loading ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
-            অর্ডার তৈরি করুন
+            Create Order
           </button>
         </div>
       </div>
@@ -508,7 +508,7 @@ const OrderDetailModal = ({
           {/* Modal Header */}
           <div className="flex items-start justify-between gap-2 px-4 sm:px-5 py-3 sm:py-4 border-b border-border flex-shrink-0">
             <div className="min-w-0 flex-1">
-              <h2 className="text-base sm:text-lg font-bold text-foreground truncate">অর্ডার #{order.order_number}</h2>
+              <h2 className="text-base sm:text-lg font-bold text-foreground truncate">Order #{order.order_number}</h2>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${cfg.color}`}>{cfg.label}</span>
                 <p className="text-[11px] text-muted-foreground">{new Date(order.created_at).toLocaleString('en-BD')}</p>
@@ -532,7 +532,7 @@ const OrderDetailModal = ({
                 onClick={() => setActiveTab(t)}
                 className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${activeTab === t ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                {t === 'details' ? '📋 বিবরণ' : '📅 ইতিহাস'}
+                {t === 'details' ? '📋 Details' : '📅 History'}
               </button>
             ))}
           </div>
@@ -681,7 +681,7 @@ const OrderDetailModal = ({
                       className={`${inputCls} resize-none flex-1`} />
                     <button onClick={handleSaveNote} disabled={savingNote}
                       className="px-3 rounded-xl glass-card border border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors self-stretch disabled:opacity-50">
-                      {savingNote ? <Loader2 size={12} className="animate-spin" /> : 'সেভ'}
+                      {savingNote ? <Loader2 size={12} className="animate-spin" /> : 'Save'}
                     </button>
                   </div>
                   {order.notes && <p className="text-xs text-muted-foreground mt-1">🗒️ Customer: {order.notes}</p>}
@@ -689,7 +689,7 @@ const OrderDetailModal = ({
               </>
             ) : (
               <div>
-                <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-3"><Calendar size={12} className="text-primary" /> অর্ডার ইতিহাস</p>
+                <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-3"><Calendar size={12} className="text-primary" /> Order History</p>
                 {timelineLoading ? (
                   <div className="space-y-2">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-12 bg-muted/30 rounded-xl animate-pulse" />)}</div>
                 ) : (
@@ -1106,8 +1106,8 @@ const AdminOrders = () => {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
             <Package size={48} className="mx-auto mb-3 opacity-30" />
-            <p className="font-medium">কোনো অর্ডার পাওয়া যায়নি</p>
-            {hasActiveFilters && <button onClick={resetFilters} className="mt-3 text-xs text-primary hover:underline">ফিল্টার রিসেট করুন</button>}
+            <p className="font-medium">No orders found</p>
+            {hasActiveFilters && <button onClick={resetFilters} className="mt-3 text-xs text-primary hover:underline">Reset filters</button>}
           </div>
         ) : (
           <>
