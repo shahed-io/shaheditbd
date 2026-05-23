@@ -1935,6 +1935,7 @@ export type Database = {
           transaction_id: string
           updated_at: string
           user_agent: string | null
+          user_id: string | null
         }
         Insert: {
           admin_note?: string | null
@@ -1966,6 +1967,7 @@ export type Database = {
           transaction_id: string
           updated_at?: string
           user_agent?: string | null
+          user_id?: string | null
         }
         Update: {
           admin_note?: string | null
@@ -1997,6 +1999,7 @@ export type Database = {
           transaction_id?: string
           updated_at?: string
           user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
