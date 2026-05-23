@@ -363,10 +363,26 @@ const AdminProductContent = () => {
             <Wand2 size={14} /> Regenerate ALL ({stats.total})
           </button>
           <button
+            disabled={bulkRunning || stats.noFaq === 0}
+            onClick={() => handleBulkFaq(true)}
+            className="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium flex items-center gap-2 text-sm disabled:opacity-50"
+            title="AI reads each product description and writes accurate FAQs"
+          >
+            <HelpCircle size={14} /> Generate Missing FAQs ({stats.noFaq})
+          </button>
+          <button
+            disabled={bulkRunning}
+            onClick={() => handleBulkFaq(false)}
+            className="px-4 py-2 rounded-lg border border-emerald-500/40 text-emerald-600 hover:bg-emerald-500/10 flex items-center gap-2 text-sm disabled:opacity-50"
+            title="Regenerate FAQ for every product based on its description"
+          >
+            <HelpCircle size={14} /> Regenerate ALL FAQs ({stats.total})
+          </button>
+          <button
             disabled={bulkRunning || Object.keys(backupMap).length === 0}
             onClick={handleBulkRestore}
             className="px-4 py-2 rounded-lg border border-amber-500/40 text-amber-600 hover:bg-amber-500/10 flex items-center gap-2 text-sm disabled:opacity-50"
-            title="Restore previous descriptions from latest backup"
+            title="Restore previous content from latest backup"
           >
             <Undo2 size={14} /> Restore All ({Object.keys(backupMap).length})
           </button>
