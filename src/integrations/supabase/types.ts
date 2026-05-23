@@ -2322,6 +2322,41 @@ export type Database = {
           },
         ]
       }
+      product_content_backups: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          faq: Json | null
+          id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          faq?: Json | null
+          id?: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          faq?: Json | null
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_content_backups_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_option_groups: {
         Row: {
           created_at: string
