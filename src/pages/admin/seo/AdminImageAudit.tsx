@@ -255,11 +255,11 @@ export default function AdminImageAudit() {
 
   const filteredIssues = filter === "all" ? issues : issues.filter((i) => i.issues.includes(filter));
 
+  useEffect(() => { document.title = "Image SEO Audit — Admin"; }, []);
+
   return (
     <div className="space-y-6 p-4 md:p-6">
-      <Helmet>
-        <title>Image SEO Audit — Admin</title>
-      </Helmet>
+
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
