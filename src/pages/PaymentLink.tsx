@@ -295,14 +295,30 @@ export default function PaymentLink() {
 
             <div>
               <Label>পেমেন্ট স্ক্রিনশট (Optional)</Label>
-              <div className="mt-1 flex items-center gap-3">
-                <label className="flex-1 cursor-pointer border-2 border-dashed border-border rounded-lg p-4 text-center hover:bg-muted/40 transition">
+              <div className="mt-1 space-y-3">
+                <label className="block cursor-pointer border-2 border-dashed border-border rounded-lg p-4 text-center hover:bg-muted/40 transition">
                   <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && handleUpload(e.target.files[0])} disabled={uploading} />
                   {uploading ? <Loader2 className="w-5 h-5 mx-auto animate-spin" /> : form.payment_screenshot_url ? (
-                    <span className="text-sm text-green-600 flex items-center justify-center gap-2"><CheckCircle2 className="w-4 h-4" /> আপলোড সম্পন্ন</span>
+                    <span className="text-sm text-green-600 flex items-center justify-center gap-2"><CheckCircle2 className="w-4 h-4" /> {form.payment_screenshot_url ? 'অন্য ছবি আপলোড করুন' : 'আপলোড সম্পন্ন'}</span>
                   ) : <span className="text-sm text-muted-foreground flex items-center justify-center gap-2"><Upload className="w-4 h-4" /> ছবি আপলোড করুন</span>}
                 </label>
-                {form.payment_screenshot_url && <img src={form.payment_screenshot_url} className="w-16 h-16 object-cover rounded border" />}
+                {form.payment_screenshot_url && (
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="text-xs text-muted-foreground mb-2">প্রিভিউ — ছবিটি স্পষ্ট দেখা যাচ্ছে কিনা যাচাই করুন</p>
+                    <a href={form.payment_screenshot_url} target="_blank" rel="noopener noreferrer" className="block">
+                      <img
+                        src={form.payment_screenshot_url}
+                        alt="Payment screenshot preview"
+                        className="w-full max-h-80 object-contain rounded-md border bg-background"
+                      />
+                    </a>
+                    <div className="flex justify-end mt-2">
+                      <Button type="button" size="sm" variant="ghost" onClick={() => setForm(f => ({ ...f, payment_screenshot_url: '' }))}>
+                        ছবি মুছুন
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
