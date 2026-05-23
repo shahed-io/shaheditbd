@@ -330,7 +330,7 @@ export default function PaymentLink() {
           </CardContent></Card>
         </form>
       </div>
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} />
     </div>
   );
 }
