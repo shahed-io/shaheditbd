@@ -60,6 +60,11 @@ export default function PaymentLink() {
     e.preventDefault();
     if (!form.customer_name.trim()) return toast.error('আপনার নাম দিন');
     if (!form.customer_phone.trim()) return toast.error('ফোন নাম্বার দিন');
+    if (link.is_open_form) {
+      if (!form.open_product_name.trim()) return toast.error('কোন পণ্য / সার্ভিসের জন্য পেমেন্ট সেটা লিখুন');
+      const amt = Number(form.open_amount);
+      if (!amt || amt <= 0) return toast.error('পরিমাণ (৳) সঠিকভাবে দিন');
+    }
     if (!form.payment_method) return toast.error('পেমেন্ট মেথড নির্বাচন করুন');
     if (!form.transaction_id.trim()) return toast.error('Transaction ID দিন');
 
@@ -83,6 +88,8 @@ export default function PaymentLink() {
           ...form,
           quantity: link.allow_qty_change ? form.quantity : link.quantity,
           custom_field_values: customFields,
+          open_product_name: link.is_open_form ? form.open_product_name : undefined,
+          open_amount: link.is_open_form ? Number(form.open_amount) : undefined,
         },
       });
       if (error) throw error;
