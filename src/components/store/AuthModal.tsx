@@ -76,7 +76,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true }: AuthModalProp
         if (error) throw error;
         toast.success('সফলভাবে লগইন হয়েছে!');
         onClose();
-        navigate('/dashboard');
+        if (redirectAfterLogin) navigate('/dashboard');
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
