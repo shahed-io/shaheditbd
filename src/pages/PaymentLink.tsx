@@ -21,6 +21,8 @@ export default function PaymentLink() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const pendingSubmitRef = useRef(false);
 
   const [form, setForm] = useState({
     customer_name: '', customer_phone: '', customer_email: '', customer_address: '',
