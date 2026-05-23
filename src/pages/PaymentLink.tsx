@@ -25,6 +25,7 @@ export default function PaymentLink() {
     customer_name: '', customer_phone: '', customer_email: '', customer_address: '',
     quantity: 1, payment_method: '', transaction_id: '', sender_number: '',
     payment_screenshot_url: '', customer_note: '',
+    open_product_name: '', open_amount: '' as string | number,
   });
   const [customFields, setCustomFields] = useState<Record<string, string>>({});
 
