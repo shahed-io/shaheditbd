@@ -15,6 +15,9 @@ import { Input } from '@/components/ui/input';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select';
+import {
+  Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
+} from '@/components/ui/sheet';
 
 type Customer = {
   id: string;
@@ -121,6 +124,7 @@ export default function AdminCustomers() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
+  const [statDrawer, setStatDrawer] = useState<null | 'total' | 'active' | 'orders' | 'revenue' | 'points'>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: customers = [], isLoading, refetch } = useQuery({
@@ -946,22 +950,30 @@ export default function AdminCustomers() {
         </div>
       )}
 
-      {/* Stat cards */}
+      {/* Stat cards (clickable → detail drawer) */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {[
-          { label: 'মোট কাস্টমার', value: customers.length, icon: Users, color: 'text-primary' },
-          { label: 'সক্রিয় ক্রেতা', value: activeCustomers, icon: UserCheck, color: 'text-emerald-500' },
-          { label: 'মোট অর্ডার', value: customers.reduce((s, c) => s + (c.order_count ?? 0), 0), icon: ShoppingBag, color: 'text-blue-500' },
-          { label: 'মোট আয়', value: `৳${totalRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-amber-500' },
-          { label: 'মোট পয়েন্ট', value: customers.reduce((s, c) => s + (c.points_balance ?? 0), 0).toLocaleString(), icon: Award, color: 'text-orange-500' },
-        ].map(stat => (
-          <div key={stat.label} className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-2 mb-2">
-              <stat.icon size={16} className={stat.color} />
-              <span className="text-xs text-muted-foreground">{stat.label}</span>
+        {([
+          { key: 'total',   label: 'মোট কাস্টমার', value: customers.length, icon: Users, color: 'text-primary' },
+          { key: 'active',  label: 'সক্রিয় ক্রেতা', value: activeCustomers, icon: UserCheck, color: 'text-emerald-500' },
+          { key: 'orders',  label: 'মোট অর্ডার', value: customers.reduce((s, c) => s + (c.order_count ?? 0), 0), icon: ShoppingBag, color: 'text-blue-500' },
+          { key: 'revenue', label: 'মোট আয়', value: `৳${totalRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-amber-500' },
+          { key: 'points',  label: 'মোট পয়েন্ট', value: customers.reduce((s, c) => s + (c.points_balance ?? 0), 0).toLocaleString(), icon: Award, color: 'text-orange-500' },
+        ] as const).map(stat => (
+          <button
+            key={stat.label}
+            onClick={() => setStatDrawer(stat.key as any)}
+            className="text-left bg-card rounded-xl p-4 border border-border hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5 transition-all group"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <stat.icon size={16} className={stat.color} />
+                <span className="text-xs text-muted-foreground">{stat.label}</span>
+              </div>
+              <ChevronRight size={14} className="text-muted-foreground/40 group-hover:text-primary transition-colors" />
             </div>
             <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-          </div>
+            <div className="text-[10px] text-muted-foreground/70 mt-1">বিস্তারিত দেখতে ক্লিক করুন</div>
+          </button>
         ))}
       </div>
 
@@ -1070,6 +1082,119 @@ export default function AdminCustomers() {
           </div>
         )}
       </div>
+
+      {/* Stat detail drawer (office-style breakdown) */}
+      <Sheet open={!!statDrawer} onOpenChange={(o) => !o && setStatDrawer(null)}>
+        <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto">
+          {statDrawer && (() => {
+            const cfg = {
+              total:   { title: 'মোট কাস্টমার', desc: 'সব রেজিস্টার্ড কাস্টমার (নতুন আগে)', icon: Users, color: 'text-primary' },
+              active:  { title: 'সক্রিয় ক্রেতা', desc: 'যারা কমপক্ষে ১টি অর্ডার করেছে', icon: UserCheck, color: 'text-emerald-500' },
+              orders:  { title: 'মোট অর্ডার', desc: 'সর্বোচ্চ অর্ডার করা কাস্টমার', icon: ShoppingBag, color: 'text-blue-500' },
+              revenue: { title: 'মোট আয়', desc: 'সর্বোচ্চ খরচ করা কাস্টমার (Top Spenders)', icon: TrendingUp, color: 'text-amber-500' },
+              points:  { title: 'মোট পয়েন্ট', desc: 'সর্বোচ্চ পয়েন্ট হোল্ডার', icon: Award, color: 'text-orange-500' },
+            }[statDrawer];
+            const Icon = cfg.icon;
+
+            let list: Customer[] = [];
+            if (statDrawer === 'total')   list = [...customers];
+            if (statDrawer === 'active')  list = customers.filter(c => (c.order_count ?? 0) > 0);
+            if (statDrawer === 'orders')  list = [...customers].sort((a, b) => (b.order_count ?? 0) - (a.order_count ?? 0)).filter(c => (c.order_count ?? 0) > 0);
+            if (statDrawer === 'revenue') list = [...customers].sort((a, b) => (b.total_spent ?? 0) - (a.total_spent ?? 0)).filter(c => (c.total_spent ?? 0) > 0);
+            if (statDrawer === 'points')  list = [...customers].sort((a, b) => (b.points_balance ?? 0) - (a.points_balance ?? 0)).filter(c => (c.points_balance ?? 0) > 0);
+            const top = list.slice(0, 50);
+
+            const totalOrdersAll = customers.reduce((s, c) => s + (c.order_count ?? 0), 0);
+            const avgSpend = activeCustomers > 0 ? totalRevenue / activeCustomers : 0;
+            const conversionRate = customers.length > 0 ? (activeCustomers / customers.length) * 100 : 0;
+
+            return (
+              <>
+                <SheetHeader>
+                  <SheetTitle className="flex items-center gap-2">
+                    <Icon size={18} className={cfg.color} />
+                    {cfg.title}
+                  </SheetTitle>
+                  <SheetDescription>{cfg.desc}</SheetDescription>
+                </SheetHeader>
+
+                {/* Quick summary tiles */}
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {statDrawer === 'total' && (
+                    <>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Active</div><div className="text-lg font-bold">{activeCustomers}</div></div>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Conversion</div><div className="text-lg font-bold">{conversionRate.toFixed(1)}%</div></div>
+                    </>
+                  )}
+                  {statDrawer === 'active' && (
+                    <>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Avg Spend</div><div className="text-lg font-bold">৳{avgSpend.toFixed(0)}</div></div>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Conversion</div><div className="text-lg font-bold">{conversionRate.toFixed(1)}%</div></div>
+                    </>
+                  )}
+                  {statDrawer === 'orders' && (
+                    <>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Total Orders</div><div className="text-lg font-bold">{totalOrdersAll}</div></div>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Avg / Buyer</div><div className="text-lg font-bold">{activeCustomers > 0 ? (totalOrdersAll / activeCustomers).toFixed(1) : '0'}</div></div>
+                    </>
+                  )}
+                  {statDrawer === 'revenue' && (
+                    <>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Total</div><div className="text-lg font-bold">৳{totalRevenue.toLocaleString()}</div></div>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Avg / Buyer</div><div className="text-lg font-bold">৳{avgSpend.toFixed(0)}</div></div>
+                    </>
+                  )}
+                  {statDrawer === 'points' && (
+                    <>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Total Points</div><div className="text-lg font-bold">{customers.reduce((s, c) => s + (c.points_balance ?? 0), 0).toLocaleString()}</div></div>
+                      <div className="bg-muted/30 rounded-lg p-3"><div className="text-[10px] text-muted-foreground uppercase">Holders</div><div className="text-lg font-bold">{list.length}</div></div>
+                    </>
+                  )}
+                </div>
+
+                {/* List */}
+                <div className="mt-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {statDrawer === 'total' ? 'সব কাস্টমার' : statDrawer === 'active' ? 'সক্রিয় ক্রেতা' : 'Top ৫০'}
+                    </h4>
+                    <span className="text-xs text-muted-foreground">{list.length} জন</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {top.length === 0 && (
+                      <div className="text-sm text-muted-foreground text-center py-8">কোনো ডেটা নেই</div>
+                    )}
+                    {top.map((c, i) => {
+                      const metric =
+                        statDrawer === 'orders'  ? `${c.order_count ?? 0} অর্ডার` :
+                        statDrawer === 'revenue' ? `৳${(c.total_spent ?? 0).toLocaleString()}` :
+                        statDrawer === 'points'  ? `${(c.points_balance ?? 0).toLocaleString()} pts` :
+                        statDrawer === 'active'  ? `${c.order_count ?? 0} অর্ডার` :
+                        format(new Date(c.created_at), 'dd MMM yyyy');
+                      return (
+                        <button
+                          key={c.id}
+                          onClick={() => { setStatDrawer(null); openDetail(c); }}
+                          className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-muted/40 transition-colors text-left"
+                        >
+                          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground text-[11px] font-bold shrink-0">
+                            {i + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium truncate">{c.display_name || c.email || 'No Name'}</div>
+                            <div className="text-[11px] text-muted-foreground truncate">{c.email || c.phone || '—'}</div>
+                          </div>
+                          <div className="text-xs font-semibold text-foreground/80 shrink-0">{metric}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
