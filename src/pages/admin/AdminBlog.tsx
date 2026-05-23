@@ -134,9 +134,23 @@ const AdminBlog = () => {
 
   const pendingComments = comments.filter(c => c.status === 'pending').length;
 
-  // AI Blog Generator
+  // Products without an existing blog post (slug-based detection — same as edge fn)
+  const newProducts = products.filter(
+    (prod) => !posts.some((p) => p.slug?.includes(prod.slug))
+  );
+
+  // AI Blog Generator — generates for selected new products only (or all new if none selected)
   const handleGenerateBulk = async () => {
-    if (!confirm(`সব প্রোডাক্টের জন্য AI ব্লগ তৈরি করবেন? (${products.length}টি প্রোডাক্ট)\nনতুন ব্লগ তৈরি হবে, যেগুলোর ব্লগ আছে সেগুলো skip হবে।`)) return;
+    const targetIds = selectedProducts.length > 0
+      ? selectedProducts
+      : newProducts.map((p) => p.id);
+
+    if (targetIds.length === 0) {
+      toast.info('সব প্রোডাক্টের জন্য ইতিমধ্যে ব্লগ তৈরি আছে — নতুন প্রোডাক্ট নেই।');
+      return;
+    }
+    if (!confirm(`${targetIds.length}টি নতুন প্রোডাক্টের জন্য AI ব্লগ তৈরি করবেন?`)) return;
+
     setAiGenerating(true);
     setAiProgress([]);
     setAiMode('bulk');
@@ -149,7 +163,7 @@ const AdminBlog = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ bulk: true, auto_publish: autoPublish, ai_model: aiModel }),
+        body: JSON.stringify({ product_ids: targetIds, auto_publish: autoPublish, ai_model: aiModel }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -162,6 +176,7 @@ const AdminBlog = () => {
       setAiProgress(data.results || []);
       const { summary } = data;
       toast.success(`✅ সম্পন্ন! ${summary.success} নতুন ব্লগ, ${summary.skipped} skip, ${summary.errors} error`);
+      setSelectedProducts([]);
       fetchAll();
     } catch (e: any) {
       toast.error('Error: ' + e.message);
@@ -493,18 +508,28 @@ const AdminBlog = () => {
               <span className="text-sm text-foreground">সাথে সাথে Publish করুন <span className="text-muted-foreground">(off রাখলে Draft হবে)</span></span>
             </label>
 
-            {/* Bulk Generate */}
-            <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/10">
-              <div>
-                <p className="font-semibold text-foreground text-sm">🚀 সব প্রোডাক্টের জন্য ব্লগ তৈরি করুন</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{products.length}টি প্রোডাক্ট · {aiModel === 'openai' ? 'GPT-4o' : 'Gemini 1.5 Pro'} দিয়ে লেখা হবে</p>
+            {/* Bulk Generate — only new products */}
+            <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/10 gap-3 flex-wrap">
+              <div className="min-w-0">
+                <p className="font-semibold text-foreground text-sm">🚀 নতুন প্রোডাক্টের জন্য ব্লগ তৈরি করুন</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {selectedProducts.length > 0
+                    ? `${selectedProducts.length}টি সিলেক্টেড`
+                    : `${newProducts.length}টি নতুন প্রোডাক্ট (ব্লগ নেই)`}
+                  {' · '}
+                  {aiModel === 'openai' ? 'GPT-4o' : 'Gemini 1.5 Pro'} দিয়ে লেখা হবে
+                </p>
               </div>
               <button
                 onClick={handleGenerateBulk}
-                disabled={aiGenerating}
+                disabled={aiGenerating || newProducts.length === 0}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl btn-glow text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap">
                 {aiGenerating && aiMode === 'bulk' ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
-                {aiGenerating && aiMode === 'bulk' ? 'তৈরি হচ্ছে...' : 'সব জেনারেট করুন'}
+                {aiGenerating && aiMode === 'bulk'
+                  ? 'তৈরি হচ্ছে...'
+                  : selectedProducts.length > 0
+                    ? `${selectedProducts.length}টি জেনারেট করুন`
+                    : 'সব নতুনগুলো জেনারেট করুন'}
               </button>
             </div>
           </div>
@@ -537,17 +562,41 @@ const AdminBlog = () => {
             </div>
           )}
 
-          {/* Per-Product List */}
+          {/* New Products List — products WITHOUT a blog post */}
           <div className="glass-card rounded-2xl overflow-hidden">
-            <div className="px-5 py-3 border-b border-border bg-muted/10 flex items-center justify-between">
-              <h3 className="font-bold text-foreground text-sm">প্রোডাক্ট তালিকা — এককভাবে ব্লগ তৈরি করুন</h3>
-              <span className="text-xs text-muted-foreground">{products.length}টি প্রোডাক্ট</span>
+            <div className="px-5 py-3 border-b border-border bg-muted/10 flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={newProducts.length > 0 && selectedProducts.length === newProducts.length}
+                  onChange={(e) => setSelectedProducts(e.target.checked ? newProducts.map(p => p.id) : [])}
+                  className="w-4 h-4 rounded border-border accent-primary cursor-pointer"
+                  disabled={newProducts.length === 0}
+                />
+                <h3 className="font-bold text-foreground text-sm">নতুন প্রোডাক্ট — সিলেক্ট করে ব্লগ তৈরি করুন</h3>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {newProducts.length}টি নতুন · {products.length - newProducts.length}টি ব্লগ আছে
+              </span>
             </div>
             <div className="divide-y divide-border/30 max-h-[500px] overflow-y-auto">
-              {products.map((prod) => {
-                const hasBlog = posts.some(p => p.slug?.includes(prod.slug) || p.slug?.includes(prod.id));
+              {newProducts.length === 0 && (
+                <div className="px-5 py-10 text-center text-sm text-muted-foreground">
+                  🎉 সব প্রোডাক্টের জন্য ইতিমধ্যে ব্লগ তৈরি আছে। নতুন প্রোডাক্ট অ্যাড করলে এখানে দেখাবে।
+                </div>
+              )}
+              {newProducts.map((prod) => {
+                const checked = selectedProducts.includes(prod.id);
                 return (
-                  <div key={prod.id} className="flex items-center gap-3 px-5 py-3 hover:bg-muted/10 transition-colors">
+                  <label key={prod.id} className="flex items-center gap-3 px-5 py-3 hover:bg-muted/10 transition-colors cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => setSelectedProducts(prev =>
+                        e.target.checked ? [...prev, prod.id] : prev.filter(id => id !== prod.id)
+                      )}
+                      className="w-4 h-4 rounded border-border accent-primary cursor-pointer flex-shrink-0"
+                    />
                     {prod.image_url ? (
                       <img src={prod.image_url} alt={prod.name} className="w-9 h-9 rounded-lg object-cover flex-shrink-0" />
                     ) : (
@@ -557,18 +606,14 @@ const AdminBlog = () => {
                       <p className="text-xs font-semibold text-foreground truncate">{prod.name}</p>
                       <p className="text-[10px] text-muted-foreground">{(prod.categories as any)?.name || '—'}</p>
                     </div>
-                    {hasBlog ? (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold whitespace-nowrap">✓ ব্লগ আছে</span>
-                    ) : (
-                      <button
-                        onClick={() => handleGenerateSingle(prod.id, prod.name)}
-                        disabled={aiGenerating}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 whitespace-nowrap">
-                        {aiGenerating ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />}
-                        AI ব্লগ
-                      </button>
-                    )}
-                  </div>
+                    <button
+                      onClick={(e) => { e.preventDefault(); handleGenerateSingle(prod.id, prod.name); }}
+                      disabled={aiGenerating}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 whitespace-nowrap">
+                      {aiGenerating ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />}
+                      AI ব্লগ
+                    </button>
+                  </label>
                 );
               })}
             </div>

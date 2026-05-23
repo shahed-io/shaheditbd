@@ -75,6 +75,7 @@ serve(async (req) => {
   try {
     const {
       product_id,
+      product_ids,
       auto_publish = false,
       bulk = false,
     } = await req.json();
@@ -83,7 +84,16 @@ serve(async (req) => {
 
     // ─── Fetch product(s) ────────────────────────────────────────────
     let products: any[] = [];
-    if (bulk) {
+    if (Array.isArray(product_ids) && product_ids.length > 0) {
+      // Targeted multi-product (selected new products)
+      const { data, error } = await supabase
+        .from("products")
+        .select("*, categories!products_category_id_fkey(name)")
+        .in("id", product_ids)
+        .eq("status", "active");
+      if (error) throw new Error("Products fetch error: " + error.message);
+      products = data || [];
+    } else if (bulk) {
       const { data, error } = await supabase
         .from("products")
         .select("*, categories!products_category_id_fkey(name)")
