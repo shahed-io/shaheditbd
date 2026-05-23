@@ -520,6 +520,15 @@ const AdminProductContent = () => {
                             </button>
                           )}
                           <button
+                            disabled={faqGenerating === p.id || bulkRunning}
+                            onClick={() => handleSingleFaq(p)}
+                            className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-xs font-medium flex items-center gap-1 disabled:opacity-50"
+                            title="Generate FAQ from this product's description"
+                          >
+                            {faqGenerating === p.id ? <Loader2 className="animate-spin" size={12} /> : <HelpCircle size={12} />}
+                            FAQ
+                          </button>
+                          <button
                             disabled={generating === p.id || bulkRunning}
                             onClick={() => handleSingle(p)}
                             className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium flex items-center gap-1 disabled:opacity-50"
