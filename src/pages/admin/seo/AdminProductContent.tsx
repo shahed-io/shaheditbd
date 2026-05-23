@@ -293,6 +293,29 @@ const AdminProductContent = () => {
     toast.success(`Restored: ${targets.length - failed}${failed ? `, ${failed} failed` : ''}`);
   };
 
+  const handleBulkFaq = async (onlyMissing: boolean) => {
+    const targets = products.filter((p) => (onlyMissing ? faqCount(p.faq) < MIN_FAQ : true));
+    if (targets.length === 0) { toast.info('No products need FAQ generation'); return; }
+    if (!confirm(`Generate FAQ for ${targets.length} product${targets.length === 1 ? '' : 's'} using AI? The AI will read each product's existing description and create accurate FAQs. Previous FAQ will be backed up. ETA ~${Math.ceil(targets.length * 6 / 60)} min.`)) return;
+
+    bulkCancelRef.current = false;
+    setBulkRunning(true);
+    setBulkProgress({ done: 0, total: targets.length, failed: 0 });
+
+    let failed = 0;
+    for (let i = 0; i < targets.length; i++) {
+      if (bulkCancelRef.current) break;
+      const ok = await generateFaqOne(targets[i]);
+      if (!ok) failed++;
+      setBulkProgress({ done: i + 1, total: targets.length, failed });
+      if (i < targets.length - 1) await new Promise((r) => setTimeout(r, 1000));
+    }
+
+    setBulkRunning(false);
+    toast.success(`FAQ done: ${targets.length - failed} generated${failed ? `, ${failed} failed` : ''}`);
+  };
+
+
 
   return (
     <div className="space-y-6 p-4 md:p-6">
