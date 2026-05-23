@@ -1,7 +1,11 @@
 // Server-side SEO health checker: fetches sitemaps/feeds/robots from the public site
 // and returns structured stats. Bypasses browser CORS for the admin SEO Monitor page.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
 interface CheckResult {
   name: string;
