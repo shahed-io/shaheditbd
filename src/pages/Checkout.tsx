@@ -328,15 +328,13 @@ const Checkout = () => {
     abandonedTimer.current = setTimeout(async () => {
       try {
         const payload = {
-          session_token: sessionTokenRef.current,
-          user_id: user?.id || null,
           customer_name: form.name || null,
           customer_email: form.email || null,
           customer_phone: form.phone || null,
           cart_items: items.map(i => ({
             id: i.id, name: i.name, category: i.category,
             price: i.price, quantity: i.quantity, variant: i.variant || null, image: i.image,
-          })) as any,
+          })),
           item_count: items.reduce((s, i) => s + i.quantity, 0),
           subtotal,
           discount_amount: discountAmount,
@@ -346,24 +344,16 @@ const Checkout = () => {
           notes: orderNotes?.trim() || null,
           page_url: typeof window !== 'undefined' ? window.location.href : null,
           user_agent: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 500) : null,
-          updated_at: new Date().toISOString(),
         };
-        const { error: upsertErr } = await supabase
-          .from('abandoned_checkouts')
-          .upsert(payload, { onConflict: 'session_token' });
+        const { data: rowId, error: upsertErr } = await supabase.rpc('upsert_abandoned_checkout', {
+          p_session_token: sessionTokenRef.current,
+          p_payload: payload as any,
+        });
         if (upsertErr) {
           console.warn('[abandoned] upsert error:', upsertErr.message);
         } else {
           abandonedSavedRef.current = true;
-          // Best-effort id lookup (will quietly fail for guests under RLS)
-          if (!abandonedRowIdRef.current) {
-            const { data: row } = await supabase
-              .from('abandoned_checkouts')
-              .select('id')
-              .eq('session_token', sessionTokenRef.current)
-              .maybeSingle();
-            if (row?.id) abandonedRowIdRef.current = row.id;
-          }
+          if (rowId) abandonedRowIdRef.current = rowId as string;
         }
       } catch (e) { console.warn('[abandoned] save failed:', e); }
     }, 1500);
