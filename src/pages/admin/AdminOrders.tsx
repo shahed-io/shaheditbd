@@ -773,7 +773,14 @@ const AdminOrders = () => {
       .from('orders')
       .select('*, order_items(*)')
       .order('created_at', { ascending: false });
-    setOrders(data || []);
+    // Hide bKash Online orders where payment is not completed (pending/failed/cancelled).
+    // Those incomplete attempts are visible in the bKash Transactions panel instead,
+    // so they don't pollute the Orders list with payments the customer never finished.
+    const visible = (data || []).filter((o: any) => {
+      if (o.payment_method !== 'bkash_online') return true;
+      return o.payment_status === 'paid';
+    });
+    setOrders(visible);
     setLoading(false);
   }, []);
 
