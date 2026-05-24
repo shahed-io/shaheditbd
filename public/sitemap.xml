@@ -91,26 +91,6 @@
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/adobe-creative-cloud-all-apps</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773859789781-s3mh6n55.jpg</image:loc>
-      <image:title>Adobe Creative Cloud All Apps </image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/chorki-premium-subscription-price-in-bangladesh</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774196389962-uxf2z6vg.png</image:loc>
-      <image:title>Chorki Premium Subscription Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/product/chtgpt-plus-price-in-bangladesh</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -141,16 +121,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/1111-warp-vpn-premium-price-in-bd</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776143371798-igzsjnns.png</image:loc>
-      <image:title>1.1.1.1 + WARP VPN Premium Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/product/autodesk-subscription-price-in-bangladesh</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -161,13 +131,43 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/amazon-prime-video-premium-price-in-bb</loc>
+    <loc>https://shahedstore.com.bd/product/1111-warp-vpn-premium-price-in-bd</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1776143371798-igzsjnns.png</image:loc>
+      <image:title>1.1.1.1 + WARP VPN Premium Price in BD</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/amazon-prme-video-premium-price-in-bb</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774199430550-gu3qhzf6.png</image:loc>
-      <image:title>Amazon Prime Video Premium Price in BB</image:title>
+      <image:title>Amazon Pr!me Video Premium Price in BB</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/adobe-creative-cloud-all-apps</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773859789781-s3mh6n55.jpg</image:loc>
+      <image:title>Adobe Creative Cloud All Apps </image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/chorki-premium-subscription-price-in-bangladesh</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774196389962-uxf2z6vg.png</image:loc>
+      <image:title>Chorki Premium Subscription Price in Bangladesh</image:title>
     </image:image>
   </url>
   <url>
