@@ -812,6 +812,10 @@ const AdminOrders = () => {
     const channel = supabase.channel('orders-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
         const newOrder = payload.new as any;
+        // Skip bKash Online orders that are still pending — they only count once the customer actually pays
+        if (newOrder.payment_method === 'bkash_online' && newOrder.payment_status !== 'paid') {
+          return;
+        }
         setNewOrderIds(prev => new Set(prev).add(newOrder.id));
         toast.success(
           `🛍️ নতুন অর্ডার! #${newOrder.order_number}`,
