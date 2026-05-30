@@ -2510,9 +2510,31 @@ const AdminProducts = () => {
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground">{product.total_sales}</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${statusColor[product.status] || ''}`}>
-                        {product.status.replace('_', ' ')}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={product.status === 'active'}
+                          title={product.status === 'active' ? 'Visible on website — click to hide' : 'Hidden from website — click to show'}
+                          onClick={async () => {
+                            const next = product.status === 'active' ? 'draft' : 'active';
+                            setProducts(prev => prev.map(p => p.id === product.id ? { ...p, status: next } : p));
+                            const { error } = await supabase.from('products').update({ status: next }).eq('id', product.id);
+                            if (error) {
+                              setProducts(prev => prev.map(p => p.id === product.id ? { ...p, status: product.status } : p));
+                              toast.error('Failed to update visibility');
+                            } else {
+                              toast.success(next === 'active' ? 'Product is now visible on site' : 'Product hidden from site');
+                            }
+                          }}
+                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${product.status === 'active' ? 'bg-green-500' : 'bg-muted'}`}
+                        >
+                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${product.status === 'active' ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                        </button>
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${statusColor[product.status] || 'bg-muted text-muted-foreground'}`}>
+                          {product.status.replace('_', ' ')}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
