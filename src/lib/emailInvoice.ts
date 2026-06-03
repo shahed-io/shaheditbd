@@ -185,7 +185,7 @@ async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
       <div style="background:${brandLight};border-radius:10px;padding:16px;border-left:4px solid ${brandColor}">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:10px">📋 বিলিং তথ্য</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:10px">📋 Billing Info</div>
         <p style="font-size:15px;font-weight:700;color:#1a1a2e;margin:0 0 6px 0">${esc(data.customer.name || '-')}</p>
         ${data.customer.email ? `<p style="font-size:12px;color:#555;margin:3px 0">✉️ ${esc(data.customer.email)}</p>` : ''}
         ${data.customer.phone ? `<p style="font-size:12px;color:#555;margin:3px 0">📱 ${esc(data.customer.phone)}</p>` : ''}
