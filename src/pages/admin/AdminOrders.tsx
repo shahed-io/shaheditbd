@@ -415,7 +415,7 @@ const CreateOrderModal = ({ onClose, onSuccess }: { onClose: () => void; onSucce
           {/* Status & Notes */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">অর্ডার স্ট্যাটাস</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Order Status</label>
               <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value }))} className={inputClass}>
                 {ALL_STATUSES.map(s => <option key={s} value={s}>{STATUS_CONFIG[s]?.label || s}</option>)}
               </select>

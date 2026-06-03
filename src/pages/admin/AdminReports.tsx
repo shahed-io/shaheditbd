@@ -186,7 +186,7 @@ const AdminReports = () => {
         {/* Orders by Status */}
         <div className="glass-card rounded-2xl p-6">
           <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
-            <BarChart3 size={16} className="text-primary" /> অর্ডার স্ট্যাটাস
+            <BarChart3 size={16} className="text-primary" /> Order Status
           </h3>
           {loading ? <div className="h-44 animate-pulse bg-muted/20 rounded-xl" /> : (
             <ResponsiveContainer width="100%" height={200}>

@@ -205,7 +205,7 @@ export default function AdminCustomers() {
     if (error) { toast.error('স্ট্যাটাস আপডেট ব্যর্থ'); return; }
     setCustOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
     setEditingOrderStatus(null);
-    toast.success('অর্ডার স্ট্যাটাস আপডেট হয়েছে');
+    toast.success('Order status updated');
   };
 
   const updateLicenseStatus = async (licId: string, newStatus: string, orderId: string) => {
