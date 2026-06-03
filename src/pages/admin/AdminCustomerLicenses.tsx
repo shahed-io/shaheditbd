@@ -12,7 +12,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw } from 'lucide-react';
+import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw, Send } from 'lucide-react';
 
 interface CustomerHit {
   user_id: string | null;
@@ -64,6 +64,57 @@ export default function AdminCustomerLicenses() {
   const [newLicenseKey, setNewLicenseKey] = useState('');
   const [newQty, setNewQty] = useState(1);
   const [newPrice, setNewPrice] = useState(0);
+
+  // Email delivery state
+  const [emailingItemId, setEmailingItemId] = useState<string | null>(null);
+  const [emailingOrderId, setEmailingOrderId] = useState<string | null>(null);
+
+  // ===== Email license(s) =====
+  const sendLicenseEmail = async (
+    order: OrderRow,
+    items: OrderItem[],
+    trackerKey: { item?: string; order?: string },
+  ) => {
+    const recipient = order.customer_email || activeCustomer?.email || '';
+    if (!recipient || !recipient.includes('@')) {
+      toast.error('Customer email missing — cannot send.');
+      return;
+    }
+    const payloadItems = items
+      .filter((i) => (i.license_key || '').trim())
+      .map((i) => ({
+        productName: i.product_name,
+        quantity: i.quantity,
+        licenseKey: (i.license_key || '').trim(),
+      }));
+    if (payloadItems.length === 0) {
+      toast.error('No license keys assigned to send.');
+      return;
+    }
+    if (trackerKey.item) setEmailingItemId(trackerKey.item);
+    if (trackerKey.order) setEmailingOrderId(trackerKey.order);
+    try {
+      const { error } = await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'license-delivery',
+          recipientEmail: recipient,
+          idempotencyKey: `license-${order.id}-${trackerKey.item || 'all'}-${Date.now()}`,
+          templateData: {
+            customerName: order.customer_name || activeCustomer?.display_name || 'Customer',
+            orderNumber: order.order_number,
+            items: payloadItems,
+          },
+        },
+      });
+      if (error) throw error;
+      toast.success(`License sent to ${recipient}`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to send email');
+    } finally {
+      setEmailingItemId(null);
+      setEmailingOrderId(null);
+    }
+  };
 
   // ===== Search customers =====
   const search = async () => {
@@ -311,7 +362,7 @@ export default function AdminCustomerLicenses() {
                     {new Date(o.created_at).toLocaleString()} · ৳{Number(o.total).toLocaleString()}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <Select value={o.status} onValueChange={(v) => updateStatus(o.id, v)}>
                     <SelectTrigger className="w-[150px] h-9">
                       <SelectValue />
@@ -321,6 +372,18 @@ export default function AdminCustomerLicenses() {
                     </SelectContent>
                   </Select>
                   <Badge variant={o.payment_status === 'paid' ? 'default' : 'outline'}>{o.payment_status}</Badge>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => sendLicenseEmail(o, o.order_items, { order: o.id })}
+                    disabled={emailingOrderId === o.id || !o.order_items.some((i) => (i.license_key || '').trim())}
+                    title={o.customer_email ? `Email all licenses to ${o.customer_email}` : 'No customer email on order'}
+                  >
+                    {emailingOrderId === o.id
+                      ? <Loader2 size={13} className="animate-spin" />
+                      : <Send size={13} />}
+                    <span className="ml-1 hidden sm:inline">Email All Licenses</span>
+                  </Button>
                 </div>
               </div>
 
@@ -342,9 +405,21 @@ export default function AdminCustomerLicenses() {
                         <p className="text-xs text-amber-600 mt-1">No license assigned</p>
                       )}
                     </div>
-                    <div className="flex gap-1 flex-shrink-0">
+                    <div className="flex gap-1 flex-shrink-0 flex-wrap">
                       <Button size="sm" variant="outline" onClick={() => openEdit(o.id, item)}>
                         <KeyRound size={13} /><span className="ml-1 hidden sm:inline">Edit Key</span>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => sendLicenseEmail(o, [item], { item: item.id })}
+                        disabled={emailingItemId === item.id || !(item.license_key || '').trim()}
+                        title={o.customer_email ? `Email this license to ${o.customer_email}` : 'No customer email on order'}
+                      >
+                        {emailingItemId === item.id
+                          ? <Loader2 size={13} className="animate-spin" />
+                          : <Send size={13} />}
+                        <span className="ml-1 hidden sm:inline">Email</span>
                       </Button>
                       <Button size="sm" variant="outline" onClick={() => removeItem(item.id)} className="text-destructive hover:text-destructive">
                         <Trash2 size={13} />
