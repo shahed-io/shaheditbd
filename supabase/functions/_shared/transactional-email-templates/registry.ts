@@ -17,6 +17,7 @@ import { template as subscriptionRenewalReminder } from './subscription-renewal-
 import { template as cidDelivery } from './cid-delivery.tsx'
 import { template as loginNotification } from './login-notification.tsx'
 import { template as orderStatusUpdate } from './order-status-update.tsx'
+import { template as licenseDelivery } from './license-delivery.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'order-confirmation': orderConfirmation,
@@ -28,4 +29,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'subscription-renewal-reminder': subscriptionRenewalReminder,
   'cid-delivery': cidDelivery,
   'login-notification': loginNotification,
+  'license-delivery': licenseDelivery,
 };
