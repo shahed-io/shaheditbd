@@ -362,7 +362,7 @@ export default function AdminCustomerLicenses() {
                     {new Date(o.created_at).toLocaleString()} · ৳{Number(o.total).toLocaleString()}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <Select value={o.status} onValueChange={(v) => updateStatus(o.id, v)}>
                     <SelectTrigger className="w-[150px] h-9">
                       <SelectValue />
@@ -372,6 +372,18 @@ export default function AdminCustomerLicenses() {
                     </SelectContent>
                   </Select>
                   <Badge variant={o.payment_status === 'paid' ? 'default' : 'outline'}>{o.payment_status}</Badge>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => sendLicenseEmail(o, o.order_items, { order: o.id })}
+                    disabled={emailingOrderId === o.id || !o.order_items.some((i) => (i.license_key || '').trim())}
+                    title={o.customer_email ? `Email all licenses to ${o.customer_email}` : 'No customer email on order'}
+                  >
+                    {emailingOrderId === o.id
+                      ? <Loader2 size={13} className="animate-spin" />
+                      : <Send size={13} />}
+                    <span className="ml-1 hidden sm:inline">Email All Licenses</span>
+                  </Button>
                 </div>
               </div>
 
@@ -393,9 +405,21 @@ export default function AdminCustomerLicenses() {
                         <p className="text-xs text-amber-600 mt-1">No license assigned</p>
                       )}
                     </div>
-                    <div className="flex gap-1 flex-shrink-0">
+                    <div className="flex gap-1 flex-shrink-0 flex-wrap">
                       <Button size="sm" variant="outline" onClick={() => openEdit(o.id, item)}>
                         <KeyRound size={13} /><span className="ml-1 hidden sm:inline">Edit Key</span>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => sendLicenseEmail(o, [item], { item: item.id })}
+                        disabled={emailingItemId === item.id || !(item.license_key || '').trim()}
+                        title={o.customer_email ? `Email this license to ${o.customer_email}` : 'No customer email on order'}
+                      >
+                        {emailingItemId === item.id
+                          ? <Loader2 size={13} className="animate-spin" />
+                          : <Send size={13} />}
+                        <span className="ml-1 hidden sm:inline">Email</span>
                       </Button>
                       <Button size="sm" variant="outline" onClick={() => removeItem(item.id)} className="text-destructive hover:text-destructive">
                         <Trash2 size={13} />
