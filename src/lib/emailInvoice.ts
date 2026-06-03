@@ -215,9 +215,9 @@ async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
         <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;color:${brandColor}"><span>Total:</span><span>${fmt(data.total)}</span></div>
       </div>
     </div>
-    ${data.notes ? `<div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:14px;margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">📝 নোট:</div><div style="font-size:13px;color:#78350f">${esc(data.notes)}</div></div>` : ''}
+    ${data.notes ? `<div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:14px;margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">📝 Note:</div><div style="font-size:13px;color:#78350f">${esc(data.notes)}</div></div>` : ''}
     <div style="border-top:1px solid #eee;padding-top:16px;text-align:center">
-      <p style="font-size:13px;color:#666;margin:0 0 6px 0">ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!</p>
+      <p style="font-size:13px;color:#666;margin:0 0 6px 0">Thank you for shopping with us!</p>
       <p style="font-size:11px;color:#888;margin:0">🌐 shahedstore.com.bd  •  ✉️ info@shahedstore.com.bd</p>
     </div>`;
   return wrapper;
