@@ -324,7 +324,7 @@ const AdminDashboard = () => {
 
       {/* ── Section: Revenue ── */}
       <div>
-        <h2 className="admin-section-title">রেভিনিউ ওভারভিউ</h2>
+        <h2 className="admin-section-title">Revenue Overview</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard label="Today's Sales" value={stats.todaySales} icon={TrendingUp} gradient="from-primary to-primary/60" prefix="৳" onClick={() => navigate('/ceo/orders?filter=today')} />
           <StatCard label="This Month Revenue" value={stats.monthRevenue} icon={DollarSign} gradient="from-purple-500 to-violet-600" prefix="৳" changePct={revenueGrowth} change="vs last month" onClick={() => navigate('/ceo/orders?filter=month')} />
@@ -335,7 +335,7 @@ const AdminDashboard = () => {
 
       {/* ── Section: Orders ── */}
       <div>
-        <h2 className="admin-section-title">অর্ডার স্ট্যাটাস</h2>
+        <h2 className="admin-section-title">Order Status</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
             { label: 'Total Orders', value: stats.totalOrders, icon: ShoppingCart, gradient: 'from-primary to-primary/70', changePct: ordersGrowth, onClick: () => navigate('/ceo/orders') },
