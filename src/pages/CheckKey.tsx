@@ -219,7 +219,11 @@ const CheckKey = () => {
     toast.success(`Copied ${valid.length} valid account${valid.length !== 1 ? 's' : ''}`);
   };
 
-  const statusBadge = (status: string) => {
+  const statusBadge = (status: string, errorCode?: string | null, meaning?: string | null) => {
+    const isOnline = (errorCode || '').toLowerCase().includes('online') || (meaning || '').toLowerCase().includes('online');
+    if (status === 'live' && isOnline) {
+      return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ background: 'hsl(142,71%,40%)' }}><span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> ONLINE</span>;
+    }
     if (status === 'live') {
       return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ background: 'hsl(142,71%,40%)' }}><CheckCircle2 size={12} /> LIVE</span>;
     }
@@ -396,7 +400,7 @@ const CheckKey = () => {
                             )}
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            {statusBadge(r.status)}
+                            {statusBadge(r.status, r.errorCode, r.meaning)}
                             <button onClick={() => copyResult(r.key, r.status)} className="p-1.5 rounded-md hover:bg-muted/60" title="Copy">
                               <Copy size={14} className="text-muted-foreground" />
                             </button>
@@ -505,7 +509,7 @@ const CheckKey = () => {
                                   </p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
-                                  {statusBadge(h.status)}
+                                  {statusBadge(h.status, h.error_code, null)}
                                   <button onClick={() => copyResult(h.key_value, h.status)} className="p-1.5 rounded-md hover:bg-muted/60" title="Copy">
                                     <Copy size={14} className="text-muted-foreground" />
                                   </button>
