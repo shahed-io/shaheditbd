@@ -12,7 +12,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw } from 'lucide-react';
+import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw, Send } from 'lucide-react';
 
 interface CustomerHit {
   user_id: string | null;
