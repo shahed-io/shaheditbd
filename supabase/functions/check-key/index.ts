@@ -30,6 +30,12 @@ function classify(errorCode: string | null | undefined): { status: 'live' | 'dea
   const key = (match ? match[0] : errorCode).toUpperCase();
   const mapped = STATUS_MAP[key];
   if (mapped) return mapped;
+  // Text-based responses from PidMS (no hex code)
+  const lower = errorCode.toLowerCase();
+  if (lower.includes('online')) return { status: 'live', meaning: 'Online — valid key, can be activated online' };
+  if (lower.includes('phone')) return { status: 'live', meaning: 'Valid — requires phone activation' };
+  if (lower.includes('block')) return { status: 'dead', meaning: 'Key is blocked' };
+  if (lower.includes('invalid') || lower.includes('fake')) return { status: 'dead', meaning: 'Invalid or fake key' };
   return { status: 'unknown', meaning: `Code ${key}` };
 }
 
