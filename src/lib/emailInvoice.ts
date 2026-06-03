@@ -185,7 +185,7 @@ async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
       <div style="background:${brandLight};border-radius:10px;padding:16px;border-left:4px solid ${brandColor}">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:10px">📋 বিলিং তথ্য</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${brandColor};letter-spacing:1.5px;margin-bottom:10px">📋 Billing Info</div>
         <p style="font-size:15px;font-weight:700;color:#1a1a2e;margin:0 0 6px 0">${esc(data.customer.name || '-')}</p>
         ${data.customer.email ? `<p style="font-size:12px;color:#555;margin:3px 0">✉️ ${esc(data.customer.email)}</p>` : ''}
         ${data.customer.phone ? `<p style="font-size:12px;color:#555;margin:3px 0">📱 ${esc(data.customer.phone)}</p>` : ''}
@@ -200,10 +200,10 @@ async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;margin-bottom:20px;border-radius:8px;overflow:hidden">
       <thead><tr bgcolor="${hdr.bg}" style="background:${hdr.bg};background-color:${hdr.bg}">
         <th bgcolor="${hdr.bg}" align="center" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:center;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">#</span></font></th>
-        <th bgcolor="${hdr.bg}" align="left" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:left;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">পণ্যের নাম</span></font></th>
-        <th bgcolor="${hdr.bg}" align="center" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:center;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">পরিমাণ</span></font></th>
-        <th bgcolor="${hdr.bg}" align="right" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:right;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">দাম</span></font></th>
-        <th bgcolor="${hdr.bg}" align="right" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:right;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">মোট</span></font></th>
+        <th bgcolor="${hdr.bg}" align="left" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:left;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">Item</span></font></th>
+        <th bgcolor="${hdr.bg}" align="center" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:center;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">Qty</span></font></th>
+        <th bgcolor="${hdr.bg}" align="right" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:right;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">Price</span></font></th>
+        <th bgcolor="${hdr.bg}" align="right" style="background:${hdr.bg};background-color:${hdr.bg};color:${hdr.text} !important;font-size:14px;font-weight:700;padding:14px;text-align:right;mso-line-height-rule:exactly"><font color="${hdr.text}"><span style="color:${hdr.text}">Total</span></font></th>
       </tr></thead>
       <tbody>${itemsHtml}</tbody>
     </table>
@@ -215,9 +215,9 @@ async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
         <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;color:${brandColor}"><span>Total:</span><span>${fmt(data.total)}</span></div>
       </div>
     </div>
-    ${data.notes ? `<div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:14px;margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">📝 নোট:</div><div style="font-size:13px;color:#78350f">${esc(data.notes)}</div></div>` : ''}
+    ${data.notes ? `<div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:14px;margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">📝 Note:</div><div style="font-size:13px;color:#78350f">${esc(data.notes)}</div></div>` : ''}
     <div style="border-top:1px solid #eee;padding-top:16px;text-align:center">
-      <p style="font-size:13px;color:#666;margin:0 0 6px 0">ধন্যবাদ আমাদের সাথে কেনাকাটা করার জন্য!</p>
+      <p style="font-size:13px;color:#666;margin:0 0 6px 0">Thank you for shopping with us!</p>
       <p style="font-size:11px;color:#888;margin:0">🌐 shahedstore.com.bd  •  ✉️ info@shahedstore.com.bd</p>
     </div>`;
   return wrapper;
