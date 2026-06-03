@@ -65,6 +65,57 @@ export default function AdminCustomerLicenses() {
   const [newQty, setNewQty] = useState(1);
   const [newPrice, setNewPrice] = useState(0);
 
+  // Email delivery state
+  const [emailingItemId, setEmailingItemId] = useState<string | null>(null);
+  const [emailingOrderId, setEmailingOrderId] = useState<string | null>(null);
+
+  // ===== Email license(s) =====
+  const sendLicenseEmail = async (
+    order: OrderRow,
+    items: OrderItem[],
+    trackerKey: { item?: string; order?: string },
+  ) => {
+    const recipient = order.customer_email || activeCustomer?.email || '';
+    if (!recipient || !recipient.includes('@')) {
+      toast.error('Customer email missing — cannot send.');
+      return;
+    }
+    const payloadItems = items
+      .filter((i) => (i.license_key || '').trim())
+      .map((i) => ({
+        productName: i.product_name,
+        quantity: i.quantity,
+        licenseKey: (i.license_key || '').trim(),
+      }));
+    if (payloadItems.length === 0) {
+      toast.error('No license keys assigned to send.');
+      return;
+    }
+    if (trackerKey.item) setEmailingItemId(trackerKey.item);
+    if (trackerKey.order) setEmailingOrderId(trackerKey.order);
+    try {
+      const { error } = await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'license-delivery',
+          recipientEmail: recipient,
+          idempotencyKey: `license-${order.id}-${trackerKey.item || 'all'}-${Date.now()}`,
+          templateData: {
+            customerName: order.customer_name || activeCustomer?.display_name || 'Customer',
+            orderNumber: order.order_number,
+            items: payloadItems,
+          },
+        },
+      });
+      if (error) throw error;
+      toast.success(`License sent to ${recipient}`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to send email');
+    } finally {
+      setEmailingItemId(null);
+      setEmailingOrderId(null);
+    }
+  };
+
   // ===== Search customers =====
   const search = async () => {
     const q = query.trim();
