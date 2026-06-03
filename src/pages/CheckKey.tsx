@@ -509,7 +509,7 @@ const CheckKey = () => {
                                   </p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
-                                  {statusBadge(h.status)}
+                                  {statusBadge(h.status, h.error_code, null)}
                                   <button onClick={() => copyResult(h.key_value, h.status)} className="p-1.5 rounded-md hover:bg-muted/60" title="Copy">
                                     <Copy size={14} className="text-muted-foreground" />
                                   </button>
