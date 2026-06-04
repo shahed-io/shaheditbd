@@ -1449,6 +1449,12 @@ const AdminOrders = () => {
                       <button onClick={() => setSelectedOrder(order)} className="p-2 text-primary bg-primary/10 rounded-lg">
                         <Eye size={16} />
                       </button>
+                      <button onClick={() => setEditingOrder(order)} title="এডিট" className="p-2 text-amber-500 bg-amber-500/10 rounded-lg">
+                        <Edit2 size={16} />
+                      </button>
+                      <button onClick={() => deleteOrder(order)} title="মুছুন" className="p-2 text-red-500 bg-red-500/10 rounded-lg">
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                 );
