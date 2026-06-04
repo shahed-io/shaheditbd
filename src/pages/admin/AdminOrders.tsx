@@ -981,6 +981,7 @@ const AdminOrders = () => {
   const [dateTo, setDateTo] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [editingOrder, setEditingOrder] = useState<any>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [copiedTrx, setCopiedTrx] = useState<string | null>(null);
   const [adminWhatsapp, setAdminWhatsapp] = useState('');
