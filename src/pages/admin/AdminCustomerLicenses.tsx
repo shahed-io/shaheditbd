@@ -27,6 +27,7 @@ interface OrderItem {
   product_name: string;
   quantity: number;
   license_key: string | null;
+  expires_at: string | null;
 }
 
 interface OrderRow {
