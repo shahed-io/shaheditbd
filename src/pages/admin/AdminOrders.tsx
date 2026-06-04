@@ -1165,6 +1165,17 @@ const AdminOrders = () => {
     }
   };
 
+  const deleteOrder = async (order: any) => {
+    if (!confirm(`অর্ডার #${order.order_number} সম্পূর্ণভাবে মুছে ফেলবেন? এটি undo করা যাবে না।`)) return;
+    const tid = toast.loading('মুছে ফেলা হচ্ছে...');
+    const { error } = await supabase.from('orders').delete().eq('id', order.id);
+    if (error) { toast.error(handleDbError(error), { id: tid }); return; }
+    toast.success('🗑️ অর্ডার মুছে ফেলা হয়েছে', { id: tid });
+    if (selectedOrder?.id === order.id) setSelectedOrder(null);
+    if (editingOrder?.id === order.id) setEditingOrder(null);
+    fetchOrders();
+  };
+
   const copyTrx = (trxId: string, orderId: string) => {
     navigator.clipboard.writeText(trxId);
     setCopiedTrx(orderId);
