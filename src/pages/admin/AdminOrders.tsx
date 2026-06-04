@@ -1564,8 +1564,21 @@ const AdminOrders = () => {
                           </button>
                           <button
                             onClick={() => setSelectedOrder(order)}
+                            title="বিস্তারিত দেখুন"
                             className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
                             <Eye size={14} />
+                          </button>
+                          <button
+                            onClick={() => setEditingOrder(order)}
+                            title="এডিট করুন"
+                            className="p-1.5 text-muted-foreground hover:text-amber-500 transition-colors rounded-lg hover:bg-amber-500/10">
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={() => deleteOrder(order)}
+                            title="মুছে ফেলুন"
+                            className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10">
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       </td>
