@@ -12,7 +12,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw, Send } from 'lucide-react';
+import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw, Send, CalendarClock, CalendarPlus, CalendarX } from 'lucide-react';
 
 interface CustomerHit {
   user_id: string | null;
@@ -27,6 +27,7 @@ interface OrderItem {
   product_name: string;
   quantity: number;
   license_key: string | null;
+  expires_at: string | null;
 }
 
 interface OrderRow {
@@ -68,6 +69,15 @@ export default function AdminCustomerLicenses() {
   // Email delivery state
   const [emailingItemId, setEmailingItemId] = useState<string | null>(null);
   const [emailingOrderId, setEmailingOrderId] = useState<string | null>(null);
+
+  // Renewal / extension dialog state
+  const [renewItem, setRenewItem] = useState<{ orderId: string; item: OrderItem } | null>(null);
+  const [renewMode, setRenewMode] = useState<'extend' | 'set'>('extend');
+  const [renewBase, setRenewBase] = useState<'current' | 'today'>('current');
+  const [renewAmount, setRenewAmount] = useState<number>(1);
+  const [renewUnit, setRenewUnit] = useState<'days' | 'months' | 'years'>('years');
+  const [renewDate, setRenewDate] = useState<string>('');
+  const [renewSaving, setRenewSaving] = useState(false);
 
   // ===== Email license(s) =====
   const sendLicenseEmail = async (
@@ -177,7 +187,7 @@ export default function AdminCustomerLicenses() {
     try {
       let q = supabase
         .from('orders')
-        .select('id, order_number, status, payment_status, total, created_at, customer_email, customer_name, customer_phone, user_id, order_items(id, product_id, product_name, quantity, license_key)')
+        .select('id, order_number, status, payment_status, total, created_at, customer_email, customer_name, customer_phone, user_id, order_items(id, product_id, product_name, quantity, license_key, expires_at)')
         .order('created_at', { ascending: false });
 
       // Match by user_id OR by email/phone (handles guest orders too)
@@ -274,6 +284,79 @@ export default function AdminCustomerLicenses() {
       setSaving(false);
     }
   };
+
+  // ===== Renew / Extend license expiry =====
+  const openRenew = (orderId: string, item: OrderItem) => {
+    setRenewItem({ orderId, item });
+    setRenewMode('extend');
+    setRenewBase(item.expires_at && new Date(item.expires_at) > new Date() ? 'current' : 'today');
+    setRenewAmount(1);
+    setRenewUnit('years');
+    setRenewDate(item.expires_at ? item.expires_at.slice(0, 10) : '');
+  };
+
+  const computeNewExpiry = (): Date | null => {
+    if (!renewItem) return null;
+    if (renewMode === 'set') {
+      if (!renewDate) return null;
+      return new Date(renewDate + 'T23:59:59');
+    }
+    const baseDate =
+      renewBase === 'current' && renewItem.item.expires_at
+        ? new Date(renewItem.item.expires_at)
+        : new Date();
+    const d = new Date(baseDate);
+    const amt = Number(renewAmount) || 0;
+    if (renewUnit === 'days') d.setDate(d.getDate() + amt);
+    else if (renewUnit === 'months') d.setMonth(d.getMonth() + amt);
+    else d.setFullYear(d.getFullYear() + amt);
+    return d;
+  };
+
+  const saveRenew = async () => {
+    if (!renewItem) return;
+    const newExp = computeNewExpiry();
+    if (!newExp || isNaN(newExp.getTime())) {
+      toast.error('Please pick a valid date / amount');
+      return;
+    }
+    setRenewSaving(true);
+    try {
+      const { error } = await supabase
+        .from('order_items')
+        .update({ expires_at: newExp.toISOString(), last_reminder_sent_at: null })
+        .eq('id', renewItem.item.id);
+      if (error) throw error;
+      toast.success(`Expiry updated → ${newExp.toLocaleDateString()}`);
+      setRenewItem(null);
+      refresh();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update expiry');
+    } finally {
+      setRenewSaving(false);
+    }
+  };
+
+  const clearExpiry = async () => {
+    if (!renewItem) return;
+    if (!confirm('Remove expiry date (mark as lifetime / no expiry)?')) return;
+    setRenewSaving(true);
+    try {
+      const { error } = await supabase
+        .from('order_items')
+        .update({ expires_at: null, last_reminder_sent_at: null })
+        .eq('id', renewItem.item.id);
+      if (error) throw error;
+      toast.success('Expiry cleared');
+      setRenewItem(null);
+      refresh();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed');
+    } finally {
+      setRenewSaving(false);
+    }
+  };
+
 
   return (
     <div className="space-y-6 p-4 md:p-6">
@@ -404,10 +487,28 @@ export default function AdminCustomerLicenses() {
                       ) : (
                         <p className="text-xs text-amber-600 mt-1">No license assigned</p>
                       )}
+                      {(() => {
+                        if (!item.expires_at) {
+                          return <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1"><CalendarClock size={11} /> Lifetime / no expiry</p>;
+                        }
+                        const exp = new Date(item.expires_at);
+                        const days = Math.ceil((exp.getTime() - Date.now()) / 86400000);
+                        const expired = days < 0;
+                        const soon = !expired && days <= 14;
+                        return (
+                          <p className={`text-[11px] mt-1 flex items-center gap-1 font-medium ${expired ? 'text-red-500' : soon ? 'text-amber-600' : 'text-emerald-600'}`}>
+                            <CalendarClock size={11} />
+                            Expires: {exp.toLocaleDateString()} {expired ? `(expired ${-days}d ago)` : `(${days}d left)`}
+                          </p>
+                        );
+                      })()}
                     </div>
                     <div className="flex gap-1 flex-shrink-0 flex-wrap">
                       <Button size="sm" variant="outline" onClick={() => openEdit(o.id, item)}>
                         <KeyRound size={13} /><span className="ml-1 hidden sm:inline">Edit Key</span>
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => openRenew(o.id, item)} title="Renew / extend license expiry">
+                        <CalendarPlus size={13} /><span className="ml-1 hidden sm:inline">Renew</span>
                       </Button>
                       <Button
                         size="sm"
@@ -496,6 +597,106 @@ export default function AdminCustomerLicenses() {
             <Button onClick={saveAdd} disabled={saving}>
               {saving ? <Loader2 className="animate-spin" size={14} /> : <Plus size={14} />}
               <span className="ml-2">Add</span>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Renew / Extend License Dialog */}
+      <Dialog open={!!renewItem} onOpenChange={(o) => !o && setRenewItem(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><CalendarPlus size={18} /> Renew / Extend License</DialogTitle>
+          </DialogHeader>
+          {renewItem && (
+            <div className="space-y-4">
+              <div className="p-3 rounded-lg bg-muted/40 border text-sm">
+                <p className="font-medium">{renewItem.item.product_name}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Current expiry: <strong>{renewItem.item.expires_at ? new Date(renewItem.item.expires_at).toLocaleString() : 'No expiry (lifetime)'}</strong>
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button type="button" size="sm" variant={renewMode === 'extend' ? 'default' : 'outline'} onClick={() => setRenewMode('extend')} className="flex-1">
+                  Extend by duration
+                </Button>
+                <Button type="button" size="sm" variant={renewMode === 'set' ? 'default' : 'outline'} onClick={() => setRenewMode('set')} className="flex-1">
+                  Set exact date
+                </Button>
+              </div>
+
+              {renewMode === 'extend' ? (
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-medium mb-1 block">Add from</label>
+                    <Select value={renewBase} onValueChange={(v) => setRenewBase(v as any)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="current" disabled={!renewItem.item.expires_at}>Current expiry date</SelectItem>
+                        <SelectItem value="today">Today</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-medium mb-1 block">Amount</label>
+                      <Input type="number" min={1} value={renewAmount} onChange={(e) => setRenewAmount(Math.max(1, +e.target.value))} />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium mb-1 block">Unit</label>
+                      <Select value={renewUnit} onValueChange={(v) => setRenewUnit(v as any)}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="days">Days</SelectItem>
+                          <SelectItem value="months">Months</SelectItem>
+                          <SelectItem value="years">Years</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: '+1 month', a: 1, u: 'months' as const },
+                      { label: '+3 months', a: 3, u: 'months' as const },
+                      { label: '+6 months', a: 6, u: 'months' as const },
+                      { label: '+1 year', a: 1, u: 'years' as const },
+                      { label: '+2 years', a: 2, u: 'years' as const },
+                    ].map((p) => (
+                      <Button key={p.label} type="button" size="sm" variant="outline" onClick={() => { setRenewAmount(p.a); setRenewUnit(p.u); }}>
+                        {p.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label className="text-xs font-medium mb-1 block">New expiry date</label>
+                  <Input type="date" value={renewDate} onChange={(e) => setRenewDate(e.target.value)} />
+                </div>
+              )}
+
+              {(() => {
+                const d = computeNewExpiry();
+                return d && !isNaN(d.getTime()) ? (
+                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/30 text-sm">
+                    New expiry: <strong>{d.toLocaleDateString()}</strong>{' '}
+                    <span className="text-xs text-muted-foreground">({Math.ceil((d.getTime() - Date.now()) / 86400000)} days from today)</span>
+                  </div>
+                ) : null;
+              })()}
+            </div>
+          )}
+          <DialogFooter className="flex-wrap gap-2">
+            {renewItem?.item.expires_at && (
+              <Button variant="outline" onClick={clearExpiry} disabled={renewSaving} className="text-destructive hover:text-destructive mr-auto">
+                <CalendarX size={14} /><span className="ml-2">Clear expiry</span>
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => setRenewItem(null)}>Cancel</Button>
+            <Button onClick={saveRenew} disabled={renewSaving}>
+              {renewSaving ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} />}
+              <span className="ml-2">Save new expiry</span>
             </Button>
           </DialogFooter>
         </DialogContent>
