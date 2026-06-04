@@ -6,7 +6,7 @@ import {
   Filter, X, Calendar, Phone, Mail, User, AlertTriangle,
   CreditCard, Package, MessageCircle, Copy, Check, SlidersHorizontal,
   Plus, FileText, Download, Clock, ChevronRight, Send, Printer,
-  Ban, CheckCircle2, Loader2, Bell
+  Ban, CheckCircle2, Loader2, Bell, Edit2, Trash2, Save, Minus
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
@@ -707,6 +707,268 @@ const OrderDetailModal = ({
   );
 };
 
+// ─── Edit Order Modal ──────────────────────────────────────────────────────
+interface EditItem {
+  id?: string;
+  product_id?: string | null;
+  product_name: string;
+  quantity: number;
+  price: number;
+  license_key?: string | null;
+  _new?: boolean;
+}
+
+const EditOrderModal = ({
+  order, onClose, onSaved,
+}: {
+  order: any;
+  onClose: () => void;
+  onSaved: () => void;
+}) => {
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    customer_name: order.customer_name || '',
+    customer_email: order.customer_email || '',
+    customer_phone: order.customer_phone || '',
+    payment_method: order.payment_method || 'bkash',
+    transaction_id: order.transaction_id || '',
+    payment_status: order.payment_status || 'pending',
+    status: order.status || 'pending',
+    discount_amount: Number(order.discount_amount) || 0,
+    notes: order.notes || '',
+    admin_notes: order.admin_notes || '',
+  });
+  const [items, setItems] = useState<EditItem[]>(
+    (order.order_items || []).map((i: any) => ({
+      id: i.id,
+      product_id: i.product_id,
+      product_name: i.product_name,
+      quantity: Number(i.quantity) || 1,
+      price: Number(i.price) || 0,
+      license_key: i.license_key,
+    }))
+  );
+
+  const subtotal = items.reduce((s, i) => s + (Number(i.price) || 0) * (Number(i.quantity) || 0), 0);
+  const total = Math.max(0, subtotal - (Number(form.discount_amount) || 0));
+
+  const updateItem = (idx: number, patch: Partial<EditItem>) => {
+    setItems(prev => prev.map((it, i) => i === idx ? { ...it, ...patch } : it));
+  };
+  const removeItem = (idx: number) => setItems(prev => prev.filter((_, i) => i !== idx));
+  const addItem = () => setItems(prev => [...prev, { product_name: '', quantity: 1, price: 0, _new: true }]);
+
+  const handleSave = async () => {
+    if (items.length === 0) { toast.error('কমপক্ষে একটি পণ্য থাকতে হবে'); return; }
+    for (const it of items) {
+      if (!it.product_name.trim()) { toast.error('সব পণ্যের নাম দিন'); return; }
+      if (it.quantity <= 0) { toast.error('পরিমাণ 1 বা বেশি হতে হবে'); return; }
+    }
+    setSaving(true);
+    try {
+      // 1. Update order itself
+      const { error: ordErr } = await supabase.from('orders').update({
+        customer_name: form.customer_name,
+        customer_email: form.customer_email,
+        customer_phone: form.customer_phone || null,
+        payment_method: form.payment_method,
+        transaction_id: form.transaction_id || null,
+        payment_status: form.payment_status,
+        status: form.status,
+        discount_amount: Number(form.discount_amount) || 0,
+        subtotal,
+        total,
+        notes: form.notes || null,
+        admin_notes: form.admin_notes || null,
+      }).eq('id', order.id);
+      if (ordErr) throw ordErr;
+
+      // 2. Diff order_items
+      const existingIds = new Set((order.order_items || []).map((i: any) => i.id));
+      const keptIds = new Set(items.filter(i => i.id).map(i => i.id!));
+      const toDelete = [...existingIds].filter(id => !keptIds.has(id as string));
+      if (toDelete.length > 0) {
+        const { error } = await supabase.from('order_items').delete().in('id', toDelete as string[]);
+        if (error) throw error;
+      }
+      for (const it of items) {
+        const itemTotal = (Number(it.price) || 0) * (Number(it.quantity) || 0);
+        if (it.id) {
+          const { error } = await supabase.from('order_items').update({
+            product_name: it.product_name,
+            quantity: it.quantity,
+            price: it.price,
+            total: itemTotal,
+            license_key: it.license_key || null,
+          }).eq('id', it.id);
+          if (error) throw error;
+        } else {
+          const { error } = await supabase.from('order_items').insert({
+            order_id: order.id,
+            product_id: it.product_id || null,
+            product_name: it.product_name,
+            quantity: it.quantity,
+            price: it.price,
+            total: itemTotal,
+            license_key: it.license_key || null,
+          });
+          if (error) throw error;
+        }
+      }
+
+      toast.success('✅ অর্ডার আপডেট হয়েছে');
+      onSaved();
+      onClose();
+    } catch (e: any) {
+      toast.error(handleDbError(e));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
+      <div className="glass-card rounded-t-2xl sm:rounded-2xl w-full max-w-3xl max-h-[95vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border flex-shrink-0">
+          <div>
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2"><Edit2 size={16} className="text-primary" /> অর্ডার এডিট #{order.order_number}</h2>
+            <p className="text-[11px] text-muted-foreground mt-0.5">কাস্টমার তথ্য, পণ্য, দাম সব এডিট করতে পারবেন</p>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30"><X size={16} /></button>
+        </div>
+
+        <div className="overflow-y-auto flex-1 p-5 space-y-5">
+          {/* Customer */}
+          <div>
+            <p className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1.5"><User size={12} className="text-primary" /> কাস্টমার তথ্য</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input placeholder="নাম" value={form.customer_name} onChange={e => setForm(p => ({ ...p, customer_name: e.target.value }))} className={inputCls} />
+              <input placeholder="ইমেইল" value={form.customer_email} onChange={e => setForm(p => ({ ...p, customer_email: e.target.value }))} className={inputCls} />
+              <input placeholder="ফোন" value={form.customer_phone} onChange={e => setForm(p => ({ ...p, customer_phone: e.target.value }))} className={inputCls} />
+            </div>
+          </div>
+
+          {/* Items */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><Package size={12} className="text-primary" /> পণ্যসমূহ</p>
+              <button onClick={addItem} className="flex items-center gap-1 text-xs text-primary hover:underline"><Plus size={12} /> পণ্য যোগ</button>
+            </div>
+            <div className="space-y-2">
+              {items.map((it, idx) => (
+                <div key={idx} className="glass-card rounded-xl p-3 space-y-2">
+                  <div className="grid grid-cols-12 gap-2">
+                    <input placeholder="পণ্যের নাম"
+                      value={it.product_name}
+                      onChange={e => updateItem(idx, { product_name: e.target.value })}
+                      className={`${inputCls} col-span-12 sm:col-span-6`} />
+                    <input type="number" min={1} placeholder="পরিমাণ"
+                      value={it.quantity}
+                      onChange={e => updateItem(idx, { quantity: parseInt(e.target.value) || 0 })}
+                      className={`${inputCls} col-span-4 sm:col-span-2`} />
+                    <input type="number" min={0} step="0.01" placeholder="দাম"
+                      value={it.price}
+                      onChange={e => updateItem(idx, { price: parseFloat(e.target.value) || 0 })}
+                      className={`${inputCls} col-span-6 sm:col-span-3`} />
+                    <button onClick={() => removeItem(idx)} title="মুছুন"
+                      className="col-span-2 sm:col-span-1 flex items-center justify-center rounded-xl text-red-500 hover:bg-red-500/10 transition-colors">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                  <input placeholder="License Key (ঐচ্ছিক)"
+                    value={it.license_key || ''}
+                    onChange={e => updateItem(idx, { license_key: e.target.value })}
+                    className={`${inputCls} font-mono text-xs`} />
+                  <div className="text-right text-xs text-muted-foreground">
+                    Subtotal: <span className="font-bold text-primary">৳{((Number(it.price) || 0) * (Number(it.quantity) || 0)).toLocaleString()}</span>
+                  </div>
+                </div>
+              ))}
+              {items.length === 0 && (
+                <p className="text-xs text-muted-foreground text-center py-4">কোন পণ্য নেই — Add বাটনে ক্লিক করুন</p>
+              )}
+            </div>
+          </div>
+
+          {/* Payment & Status */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Payment Method</label>
+              <select value={form.payment_method} onChange={e => setForm(p => ({ ...p, payment_method: e.target.value }))} className={inputCls}>
+                {Object.entries(PM_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Transaction ID</label>
+              <input value={form.transaction_id} onChange={e => setForm(p => ({ ...p, transaction_id: e.target.value }))} className={inputCls} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Order Status</label>
+              <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value }))} className={inputCls}>
+                {ALL_STATUSES.map(s => <option key={s} value={s}>{STATUS_CONFIG[s]?.label || s}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Payment Status</label>
+              <select value={form.payment_status} onChange={e => setForm(p => ({ ...p, payment_status: e.target.value }))} className={inputCls}>
+                <option value="pending">Pending</option>
+                <option value="verified">Verified</option>
+                <option value="paid">Paid</option>
+                <option value="failed">Failed</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">ছাড় (Discount)</label>
+              <input type="number" min={0} step="0.01" value={form.discount_amount}
+                onChange={e => setForm(p => ({ ...p, discount_amount: parseFloat(e.target.value) || 0 }))}
+                className={inputCls} />
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Customer Note</label>
+              <textarea rows={2} value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} className={`${inputCls} resize-none`} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Admin Note</label>
+              <textarea rows={2} value={form.admin_notes} onChange={e => setForm(p => ({ ...p, admin_notes: e.target.value }))} className={`${inputCls} resize-none`} />
+            </div>
+          </div>
+
+          {/* Totals preview */}
+          <div className="glass-card rounded-xl p-4 bg-primary/5">
+            <div className="flex justify-between text-xs text-muted-foreground mb-1">
+              <span>Subtotal:</span><span>৳{subtotal.toLocaleString()}</span>
+            </div>
+            {Number(form.discount_amount) > 0 && (
+              <div className="flex justify-between text-xs text-emerald-500 mb-1">
+                <span>Discount:</span><span>-৳{Number(form.discount_amount).toLocaleString()}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-base font-bold border-t border-border pt-2 mt-2">
+              <span className="text-foreground">মোট:</span><span className="text-primary">৳{total.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-border flex-shrink-0">
+          <button onClick={onClose} disabled={saving}
+            className="px-4 py-2 rounded-xl text-xs font-semibold glass-card border border-border text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50">
+            বাতিল
+          </button>
+          <button onClick={handleSave} disabled={saving}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold btn-glow disabled:opacity-50">
+            {saving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+            সেভ করুন
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ─── Main AdminOrders Component ─────────────────────────────────────────────
 const AdminOrders = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -719,6 +981,7 @@ const AdminOrders = () => {
   const [dateTo, setDateTo] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [editingOrder, setEditingOrder] = useState<any>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [copiedTrx, setCopiedTrx] = useState<string | null>(null);
   const [adminWhatsapp, setAdminWhatsapp] = useState('');
@@ -900,6 +1163,17 @@ const AdminOrders = () => {
         setSelectedOrder((prev: any) => prev ? { ...prev, ...updates } : prev);
       }
     }
+  };
+
+  const deleteOrder = async (order: any) => {
+    if (!confirm(`অর্ডার #${order.order_number} সম্পূর্ণভাবে মুছে ফেলবেন? এটি undo করা যাবে না।`)) return;
+    const tid = toast.loading('মুছে ফেলা হচ্ছে...');
+    const { error } = await supabase.from('orders').delete().eq('id', order.id);
+    if (error) { toast.error(handleDbError(error), { id: tid }); return; }
+    toast.success('🗑️ অর্ডার মুছে ফেলা হয়েছে', { id: tid });
+    if (selectedOrder?.id === order.id) setSelectedOrder(null);
+    if (editingOrder?.id === order.id) setEditingOrder(null);
+    fetchOrders();
   };
 
   const copyTrx = (trxId: string, orderId: string) => {
@@ -1175,6 +1449,12 @@ const AdminOrders = () => {
                       <button onClick={() => setSelectedOrder(order)} className="p-2 text-primary bg-primary/10 rounded-lg">
                         <Eye size={16} />
                       </button>
+                      <button onClick={() => setEditingOrder(order)} title="এডিট" className="p-2 text-amber-500 bg-amber-500/10 rounded-lg">
+                        <Edit2 size={16} />
+                      </button>
+                      <button onClick={() => deleteOrder(order)} title="মুছুন" className="p-2 text-red-500 bg-red-500/10 rounded-lg">
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                 );
@@ -1284,8 +1564,21 @@ const AdminOrders = () => {
                           </button>
                           <button
                             onClick={() => setSelectedOrder(order)}
+                            title="বিস্তারিত দেখুন"
                             className="p-1.5 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
                             <Eye size={14} />
+                          </button>
+                          <button
+                            onClick={() => setEditingOrder(order)}
+                            title="এডিট করুন"
+                            className="p-1.5 text-muted-foreground hover:text-amber-500 transition-colors rounded-lg hover:bg-amber-500/10">
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={() => deleteOrder(order)}
+                            title="মুছে ফেলুন"
+                            className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10">
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       </td>
@@ -1321,6 +1614,13 @@ const AdminOrders = () => {
         <CreateOrderModal
           onClose={() => setShowCreateModal(false)}
           onSuccess={fetchOrders}
+        />
+      )}
+      {editingOrder && (
+        <EditOrderModal
+          order={editingOrder}
+          onClose={() => setEditingOrder(null)}
+          onSaved={fetchOrders}
         />
       )}
     </div>
