@@ -487,10 +487,28 @@ export default function AdminCustomerLicenses() {
                       ) : (
                         <p className="text-xs text-amber-600 mt-1">No license assigned</p>
                       )}
+                      {(() => {
+                        if (!item.expires_at) {
+                          return <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1"><CalendarClock size={11} /> Lifetime / no expiry</p>;
+                        }
+                        const exp = new Date(item.expires_at);
+                        const days = Math.ceil((exp.getTime() - Date.now()) / 86400000);
+                        const expired = days < 0;
+                        const soon = !expired && days <= 14;
+                        return (
+                          <p className={`text-[11px] mt-1 flex items-center gap-1 font-medium ${expired ? 'text-red-500' : soon ? 'text-amber-600' : 'text-emerald-600'}`}>
+                            <CalendarClock size={11} />
+                            Expires: {exp.toLocaleDateString()} {expired ? `(expired ${-days}d ago)` : `(${days}d left)`}
+                          </p>
+                        );
+                      })()}
                     </div>
                     <div className="flex gap-1 flex-shrink-0 flex-wrap">
                       <Button size="sm" variant="outline" onClick={() => openEdit(o.id, item)}>
                         <KeyRound size={13} /><span className="ml-1 hidden sm:inline">Edit Key</span>
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => openRenew(o.id, item)} title="Renew / extend license expiry">
+                        <CalendarPlus size={13} /><span className="ml-1 hidden sm:inline">Renew</span>
                       </Button>
                       <Button
                         size="sm"
