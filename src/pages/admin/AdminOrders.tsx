@@ -1616,6 +1616,13 @@ const AdminOrders = () => {
           onSuccess={fetchOrders}
         />
       )}
+      {editingOrder && (
+        <EditOrderModal
+          order={editingOrder}
+          onClose={() => setEditingOrder(null)}
+          onSaved={fetchOrders}
+        />
+      )}
     </div>
   );
 };
