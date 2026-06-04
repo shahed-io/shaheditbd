@@ -285,6 +285,79 @@ export default function AdminCustomerLicenses() {
     }
   };
 
+  // ===== Renew / Extend license expiry =====
+  const openRenew = (orderId: string, item: OrderItem) => {
+    setRenewItem({ orderId, item });
+    setRenewMode('extend');
+    setRenewBase(item.expires_at && new Date(item.expires_at) > new Date() ? 'current' : 'today');
+    setRenewAmount(1);
+    setRenewUnit('years');
+    setRenewDate(item.expires_at ? item.expires_at.slice(0, 10) : '');
+  };
+
+  const computeNewExpiry = (): Date | null => {
+    if (!renewItem) return null;
+    if (renewMode === 'set') {
+      if (!renewDate) return null;
+      return new Date(renewDate + 'T23:59:59');
+    }
+    const baseDate =
+      renewBase === 'current' && renewItem.item.expires_at
+        ? new Date(renewItem.item.expires_at)
+        : new Date();
+    const d = new Date(baseDate);
+    const amt = Number(renewAmount) || 0;
+    if (renewUnit === 'days') d.setDate(d.getDate() + amt);
+    else if (renewUnit === 'months') d.setMonth(d.getMonth() + amt);
+    else d.setFullYear(d.getFullYear() + amt);
+    return d;
+  };
+
+  const saveRenew = async () => {
+    if (!renewItem) return;
+    const newExp = computeNewExpiry();
+    if (!newExp || isNaN(newExp.getTime())) {
+      toast.error('Please pick a valid date / amount');
+      return;
+    }
+    setRenewSaving(true);
+    try {
+      const { error } = await supabase
+        .from('order_items')
+        .update({ expires_at: newExp.toISOString(), last_reminder_sent_at: null })
+        .eq('id', renewItem.item.id);
+      if (error) throw error;
+      toast.success(`Expiry updated → ${newExp.toLocaleDateString()}`);
+      setRenewItem(null);
+      refresh();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update expiry');
+    } finally {
+      setRenewSaving(false);
+    }
+  };
+
+  const clearExpiry = async () => {
+    if (!renewItem) return;
+    if (!confirm('Remove expiry date (mark as lifetime / no expiry)?')) return;
+    setRenewSaving(true);
+    try {
+      const { error } = await supabase
+        .from('order_items')
+        .update({ expires_at: null, last_reminder_sent_at: null })
+        .eq('id', renewItem.item.id);
+      if (error) throw error;
+      toast.success('Expiry cleared');
+      setRenewItem(null);
+      refresh();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed');
+    } finally {
+      setRenewSaving(false);
+    }
+  };
+
+
   return (
     <div className="space-y-6 p-4 md:p-6">
       <div>
