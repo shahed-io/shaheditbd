@@ -601,6 +601,106 @@ export default function AdminCustomerLicenses() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Renew / Extend License Dialog */}
+      <Dialog open={!!renewItem} onOpenChange={(o) => !o && setRenewItem(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><CalendarPlus size={18} /> Renew / Extend License</DialogTitle>
+          </DialogHeader>
+          {renewItem && (
+            <div className="space-y-4">
+              <div className="p-3 rounded-lg bg-muted/40 border text-sm">
+                <p className="font-medium">{renewItem.item.product_name}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Current expiry: <strong>{renewItem.item.expires_at ? new Date(renewItem.item.expires_at).toLocaleString() : 'No expiry (lifetime)'}</strong>
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button type="button" size="sm" variant={renewMode === 'extend' ? 'default' : 'outline'} onClick={() => setRenewMode('extend')} className="flex-1">
+                  Extend by duration
+                </Button>
+                <Button type="button" size="sm" variant={renewMode === 'set' ? 'default' : 'outline'} onClick={() => setRenewMode('set')} className="flex-1">
+                  Set exact date
+                </Button>
+              </div>
+
+              {renewMode === 'extend' ? (
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-medium mb-1 block">Add from</label>
+                    <Select value={renewBase} onValueChange={(v) => setRenewBase(v as any)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="current" disabled={!renewItem.item.expires_at}>Current expiry date</SelectItem>
+                        <SelectItem value="today">Today</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-medium mb-1 block">Amount</label>
+                      <Input type="number" min={1} value={renewAmount} onChange={(e) => setRenewAmount(Math.max(1, +e.target.value))} />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium mb-1 block">Unit</label>
+                      <Select value={renewUnit} onValueChange={(v) => setRenewUnit(v as any)}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="days">Days</SelectItem>
+                          <SelectItem value="months">Months</SelectItem>
+                          <SelectItem value="years">Years</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: '+1 month', a: 1, u: 'months' as const },
+                      { label: '+3 months', a: 3, u: 'months' as const },
+                      { label: '+6 months', a: 6, u: 'months' as const },
+                      { label: '+1 year', a: 1, u: 'years' as const },
+                      { label: '+2 years', a: 2, u: 'years' as const },
+                    ].map((p) => (
+                      <Button key={p.label} type="button" size="sm" variant="outline" onClick={() => { setRenewAmount(p.a); setRenewUnit(p.u); }}>
+                        {p.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label className="text-xs font-medium mb-1 block">New expiry date</label>
+                  <Input type="date" value={renewDate} onChange={(e) => setRenewDate(e.target.value)} />
+                </div>
+              )}
+
+              {(() => {
+                const d = computeNewExpiry();
+                return d && !isNaN(d.getTime()) ? (
+                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/30 text-sm">
+                    New expiry: <strong>{d.toLocaleDateString()}</strong>{' '}
+                    <span className="text-xs text-muted-foreground">({Math.ceil((d.getTime() - Date.now()) / 86400000)} days from today)</span>
+                  </div>
+                ) : null;
+              })()}
+            </div>
+          )}
+          <DialogFooter className="flex-wrap gap-2">
+            {renewItem?.item.expires_at && (
+              <Button variant="outline" onClick={clearExpiry} disabled={renewSaving} className="text-destructive hover:text-destructive mr-auto">
+                <CalendarX size={14} /><span className="ml-2">Clear expiry</span>
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => setRenewItem(null)}>Cancel</Button>
+            <Button onClick={saveRenew} disabled={renewSaving}>
+              {renewSaving ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} />}
+              <span className="ml-2">Save new expiry</span>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
