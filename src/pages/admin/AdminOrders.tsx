@@ -6,7 +6,7 @@ import {
   Filter, X, Calendar, Phone, Mail, User, AlertTriangle,
   CreditCard, Package, MessageCircle, Copy, Check, SlidersHorizontal,
   Plus, FileText, Download, Clock, ChevronRight, Send, Printer,
-  Ban, CheckCircle2, Loader2, Bell
+  Ban, CheckCircle2, Loader2, Bell, Edit2, Trash2, Save, Minus
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
