@@ -70,6 +70,15 @@ export default function AdminCustomerLicenses() {
   const [emailingItemId, setEmailingItemId] = useState<string | null>(null);
   const [emailingOrderId, setEmailingOrderId] = useState<string | null>(null);
 
+  // Renewal / extension dialog state
+  const [renewItem, setRenewItem] = useState<{ orderId: string; item: OrderItem } | null>(null);
+  const [renewMode, setRenewMode] = useState<'extend' | 'set'>('extend');
+  const [renewBase, setRenewBase] = useState<'current' | 'today'>('current');
+  const [renewAmount, setRenewAmount] = useState<number>(1);
+  const [renewUnit, setRenewUnit] = useState<'days' | 'months' | 'years'>('years');
+  const [renewDate, setRenewDate] = useState<string>('');
+  const [renewSaving, setRenewSaving] = useState(false);
+
   // ===== Email license(s) =====
   const sendLicenseEmail = async (
     order: OrderRow,
