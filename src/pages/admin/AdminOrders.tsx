@@ -6,7 +6,8 @@ import {
   Filter, X, Calendar, Phone, Mail, User, AlertTriangle,
   CreditCard, Package, MessageCircle, Copy, Check, SlidersHorizontal,
   Plus, FileText, Download, Clock, ChevronRight, Send, Printer,
-  Ban, CheckCircle2, Loader2, Bell, Edit2, Trash2, Save, Minus
+  Ban, CheckCircle2, Loader2, Bell, Edit2, Trash2, Save, Minus,
+  ArchiveRestore, Inbox
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
@@ -989,6 +990,8 @@ const AdminOrders = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkAction, setBulkAction] = useState('');
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [viewTrash, setViewTrash] = useState(false);
+  const [trashCount, setTrashCount] = useState(0);
 
   // Apply query param filters on mount
   useEffect(() => {
@@ -1032,10 +1035,16 @@ const AdminOrders = () => {
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
+    let query = supabase
       .from('orders')
       .select('*, order_items(*)')
       .order('created_at', { ascending: false });
+    if (viewTrash) {
+      query = query.not('deleted_at', 'is', null);
+    } else {
+      query = query.is('deleted_at', null);
+    }
+    const { data } = await query;
     // Hide bKash Online orders where payment is not completed (pending/failed/cancelled).
     // Those incomplete attempts are visible in the bKash Transactions panel instead,
     // so they don't pollute the Orders list with payments the customer never finished.
@@ -1045,7 +1054,14 @@ const AdminOrders = () => {
     });
     setOrders(visible);
     setLoading(false);
-  }, []);
+
+    // Refresh trash count badge
+    const { count } = await supabase
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .not('deleted_at', 'is', null);
+    setTrashCount(count || 0);
+  }, [viewTrash]);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
@@ -1165,14 +1181,52 @@ const AdminOrders = () => {
     }
   };
 
+  // Soft delete — moves order to Trash. Can be restored later.
   const deleteOrder = async (order: any) => {
-    if (!confirm(`অর্ডার #${order.order_number} সম্পূর্ণভাবে মুছে ফেলবেন? এটি undo করা যাবে না।`)) return;
-    const tid = toast.loading('মুছে ফেলা হচ্ছে...');
-    const { error } = await supabase.from('orders').delete().eq('id', order.id);
+    if (!confirm(`অর্ডার #${order.order_number} ট্র্যাশে পাঠাবেন? পরে ট্র্যাশ থেকে পুনরুদ্ধার করা যাবে।`)) return;
+    const tid = toast.loading('ট্র্যাশে পাঠানো হচ্ছে...');
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase
+      .from('orders')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
+      .eq('id', order.id);
     if (error) { toast.error(handleDbError(error), { id: tid }); return; }
-    toast.success('🗑️ অর্ডার মুছে ফেলা হয়েছে', { id: tid });
+    toast.success('🗑️ অর্ডার ট্র্যাশে পাঠানো হয়েছে', { id: tid });
     if (selectedOrder?.id === order.id) setSelectedOrder(null);
     if (editingOrder?.id === order.id) setEditingOrder(null);
+    fetchOrders();
+  };
+
+  // Restore from trash
+  const restoreOrder = async (order: any) => {
+    const tid = toast.loading('পুনরুদ্ধার হচ্ছে...');
+    const { error } = await supabase
+      .from('orders')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', order.id);
+    if (error) { toast.error(handleDbError(error), { id: tid }); return; }
+    toast.success('♻️ অর্ডার পুনরুদ্ধার হয়েছে', { id: tid });
+    fetchOrders();
+  };
+
+  // Permanent delete — only from trash view
+  const permanentDeleteOrder = async (order: any) => {
+    if (!confirm(`অর্ডার #${order.order_number} স্থায়ীভাবে মুছে ফেলবেন? এটি undo করা যাবে না।`)) return;
+    const tid = toast.loading('স্থায়ীভাবে মুছে ফেলা হচ্ছে...');
+    const { error } = await supabase.from('orders').delete().eq('id', order.id);
+    if (error) { toast.error(handleDbError(error), { id: tid }); return; }
+    toast.success('❌ অর্ডার স্থায়ীভাবে মুছে ফেলা হয়েছে', { id: tid });
+    if (selectedOrder?.id === order.id) setSelectedOrder(null);
+    fetchOrders();
+  };
+
+  const emptyTrash = async () => {
+    if (trashCount === 0) return;
+    if (!confirm(`ট্র্যাশের ${trashCount}টি অর্ডার স্থায়ীভাবে মুছে ফেলবেন? এটি undo করা যাবে না।`)) return;
+    const tid = toast.loading('ট্র্যাশ খালি করা হচ্ছে...');
+    const { error } = await supabase.from('orders').delete().not('deleted_at', 'is', null);
+    if (error) { toast.error(handleDbError(error), { id: tid }); return; }
+    toast.success('🧹 ট্র্যাশ খালি করা হয়েছে', { id: tid });
     fetchOrders();
   };
 
@@ -1250,13 +1304,36 @@ const AdminOrders = () => {
             </span>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold"
+            onClick={() => { setViewTrash(v => !v); setSelectedIds(new Set()); }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${viewTrash ? 'btn-glow border-transparent' : 'glass-card border-border text-muted-foreground hover:text-foreground'}`}
+            title={viewTrash ? 'সক্রিয় অর্ডারে ফিরুন' : 'ট্র্যাশ দেখুন'}
           >
-            <Plus size={14} /> নতুন অর্ডার
+            {viewTrash ? <Inbox size={14} /> : <Trash2 size={14} />}
+            {viewTrash ? 'সক্রিয় অর্ডার' : 'ট্র্যাশ'}
+            {trashCount > 0 && (
+              <span className={`min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center ${viewTrash ? 'bg-white/20' : 'bg-red-500/15 text-red-500'}`}>
+                {trashCount}
+              </span>
+            )}
           </button>
+          {viewTrash && trashCount > 0 && (
+            <button
+              onClick={emptyTrash}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold glass-card border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors"
+            >
+              <Trash2 size={14} /> ট্র্যাশ খালি করুন
+            </button>
+          )}
+          {!viewTrash && (
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold"
+            >
+              <Plus size={14} /> নতুন অর্ডার
+            </button>
+          )}
           <button onClick={fetchOrders} className="glass-card px-4 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors">
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
             Refresh
@@ -1452,9 +1529,20 @@ const AdminOrders = () => {
                       <button onClick={() => setEditingOrder(order)} title="এডিট" className="p-2 text-amber-500 bg-amber-500/10 rounded-lg">
                         <Edit2 size={16} />
                       </button>
-                      <button onClick={() => deleteOrder(order)} title="মুছুন" className="p-2 text-red-500 bg-red-500/10 rounded-lg">
-                        <Trash2 size={16} />
-                      </button>
+                      {viewTrash ? (
+                        <>
+                          <button onClick={() => restoreOrder(order)} title="পুনরুদ্ধার" className="p-2 text-emerald-500 bg-emerald-500/10 rounded-lg">
+                            <ArchiveRestore size={16} />
+                          </button>
+                          <button onClick={() => permanentDeleteOrder(order)} title="স্থায়ীভাবে মুছুন" className="p-2 text-red-500 bg-red-500/10 rounded-lg">
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      ) : (
+                        <button onClick={() => deleteOrder(order)} title="ট্র্যাশে পাঠান" className="p-2 text-red-500 bg-red-500/10 rounded-lg">
+                          <Trash2 size={16} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -1574,12 +1662,29 @@ const AdminOrders = () => {
                             className="p-1.5 text-muted-foreground hover:text-amber-500 transition-colors rounded-lg hover:bg-amber-500/10">
                             <Edit2 size={14} />
                           </button>
-                          <button
-                            onClick={() => deleteOrder(order)}
-                            title="মুছে ফেলুন"
-                            className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10">
-                            <Trash2 size={14} />
-                          </button>
+                          {viewTrash ? (
+                            <>
+                              <button
+                                onClick={() => restoreOrder(order)}
+                                title="পুনরুদ্ধার"
+                                className="p-1.5 text-muted-foreground hover:text-emerald-500 transition-colors rounded-lg hover:bg-emerald-500/10">
+                                <ArchiveRestore size={14} />
+                              </button>
+                              <button
+                                onClick={() => permanentDeleteOrder(order)}
+                                title="স্থায়ীভাবে মুছুন"
+                                className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10">
+                                <Trash2 size={14} />
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              onClick={() => deleteOrder(order)}
+                              title="ট্র্যাশে পাঠান"
+                              className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10">
+                              <Trash2 size={14} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
