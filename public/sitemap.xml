@@ -91,6 +91,16 @@
     <priority>0.4</priority>
   </url>
   <url>
+    <loc>https://shahedstore.com.bd/product/le0nardo-ai-price-in-bangladesh</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774556650977-oiyj8rcr.png</image:loc>
+      <image:title>Le0nardo AI Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://shahedstore.com.bd/product/cnva-pro-price-in-bangladesh</loc>
     <lastmod>2026-06-04</lastmod>
     <changefreq>weekly</changefreq>
@@ -361,16 +371,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/figma-premium-price-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773860402535-5adb1jh6.png</image:loc>
-      <image:title>Figma Premium Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/product/grammarly-premium-price-in-bangladesh</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
@@ -508,16 +508,6 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774196837537-x7xpihc1.png</image:loc>
       <image:title>Hoichoi Premium Subscription Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/leonardo-ai-price-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774556650977-oiyj8rcr.png</image:loc>
-      <image:title>Leonardo AI Price in Bangladesh</image:title>
     </image:image>
   </url>
   <url>
@@ -878,6 +868,16 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1777990908138-vhcd7qac.png</image:loc>
       <image:title>Windows Server 2019 Standard Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/figma-premium-price-in-bangladesh</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773860402535-5adb1jh6.png</image:loc>
+      <image:title>Figma Premium Price in Bangladesh</image:title>
     </image:image>
   </url>
   <url>
