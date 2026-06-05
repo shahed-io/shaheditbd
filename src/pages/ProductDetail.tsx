@@ -593,10 +593,10 @@ const ProductDetail = () => {
                     background: '#ffffff',
                     // double gradient border using padding trick
                     boxShadow:
-                      '0 1px 0 #ffffff inset, 0 0 0 1px rgba(255,255,255,0.9) inset, 0 8px 28px rgba(234,88,12,0.10), 0 2px 6px rgba(234,88,12,0.06)',
+                      '0 1px 0 #ffffff inset, 0 0 0 1px rgba(255,255,255,0.9) inset, 0 8px 28px rgba(124,58,237,0.12), 0 2px 6px rgba(168,85,247,0.08)',
                     border: '2px solid transparent',
                     backgroundImage:
-                      'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, #f97316 0%, #ef4444 50%, #f59e0b 100%)',
+                      'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, hsl(280,85%,65%) 0%, hsl(258,90%,55%) 50%, hsl(300,75%,60%) 100%)',
                     backgroundOrigin: 'border-box',
                     backgroundClip: 'padding-box, border-box',
                   }}
