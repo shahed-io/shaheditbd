@@ -21,7 +21,8 @@ import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
 import dbidLogo from '@/assets/dbid-logo.png';
-import brandIcon from '@/assets/logo-icon.webp';
+import brandIconAsset from '@/assets/dbid-d-logo.png.asset.json';
+const brandIcon = brandIconAsset.url;
 import certifiedBadge from '@/assets/certified-badge.png.asset.json';
 
 import { useAuth } from '@/hooks/useAuth';
