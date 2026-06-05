@@ -11,9 +11,24 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://shahedstore.com.bd/checkout</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://shahedstore.com.bd/blog</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/link</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/reset-password</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.2</priority>
   </url>
   <url>
     <loc>https://shahedstore.com.bd/about</loc>
@@ -89,6 +104,16 @@
     <loc>https://shahedstore.com.bd/refund-request</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/windows-11-home-license-key-price-in-bd</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774123357131-zy0mpdre.png</image:loc>
+      <image:title>Windows 11 Home License Key Price in BD</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://shahedstore.com.bd/product/le0nardo-ai-price-in-bangladesh</loc>
@@ -368,26 +393,6 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774191973761-0eyv67ap.png</image:loc>
       <image:title>Microsoft Office 365 Personal Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/grammarly-premium-price-in-bangladesh</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774553527188-3ik0gw9t.png</image:loc>
-      <image:title>Grammarly Premium Price in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/google-drive-storage-price-in-bd</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774387127612-awrsurf7.png</image:loc>
-      <image:title>Google Drive Storage Price in BD</image:title>
     </image:image>
   </url>
   <url>
@@ -731,16 +736,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://shahedstore.com.bd/product/windows-11-home-license-key-price-in-bd</loc>
-    <lastmod>2026-05-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774123357131-zy0mpdre.png</image:loc>
-      <image:title>Windows 11 Home License Key Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://shahedstore.com.bd/product/windows-11-pro-for-workstations-key-price-in-bd</loc>
     <lastmod>2026-05-18</lastmod>
     <changefreq>weekly</changefreq>
@@ -878,6 +873,26 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773860402535-5adb1jh6.png</image:loc>
       <image:title>Figma Premium Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/grammarly-premium-price-in-bangladesh</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774553527188-3ik0gw9t.png</image:loc>
+      <image:title>Grammarly Premium Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/product/google-drive-storage-price-in-bd</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774387127612-awrsurf7.png</image:loc>
+      <image:title>Google Drive Storage Price in BD</image:title>
     </image:image>
   </url>
   <url>
@@ -1203,5 +1218,41 @@
     <lastmod>2026-03-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/pay/pay-mpzqjw2d-xxh3ct</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/pay/pay-mpz1hucr-wsshpj</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/pay/pay-mpz1ho6u-dtw0ti</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/pay/pay-mpz1himo-hwf5d3</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/pay/pay-mpz1e5lz-az8es5</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://shahedstore.com.bd/pay/pay-mphxj6rs-b1y0ti</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

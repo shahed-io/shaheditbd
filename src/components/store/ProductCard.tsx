@@ -100,6 +100,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
             <button
               onClick={() => setShowPreview(false)}
+              aria-label="Close product preview"
               className="absolute top-4 right-4 z-10 w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:scale-110"
               style={{ background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.3)', color: 'hsl(271,91%,75%)' }}
             >
@@ -353,6 +354,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
               e.stopPropagation();
               toggleWishlist({ id: String(product.id), name: product.name, price: product.price, image: product.image });
             }}
+            aria-label={wishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
             className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center transition-all z-10"
             style={{
               opacity: isHovered ? 1 : 0,

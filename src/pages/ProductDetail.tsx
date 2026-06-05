@@ -373,7 +373,7 @@ const ProductDetail = () => {
     : `${product.name} কিনুন বাংলাদেশ | ৳${displayPrice.toLocaleString()} | Shahed Store`;
 
   const seoDescription = (() => {
-    if (dbSeoDesc) return dbSeoDesc;
+    if (dbSeoDesc) return dbSeoDesc.substring(0, 160);
     // Auto-generate rich Bangladesh-targeted description
     const base = product.short_description || product.description || '';
     const clean = base.replace(/[#*_`[\]]/g, '').substring(0, 100).trim();

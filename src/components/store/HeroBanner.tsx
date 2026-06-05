@@ -180,9 +180,8 @@ const HeroBanner = () => {
             <div>
               <h1 className="font-sora font-black leading-[1.0] tracking-tight"
                 style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)', color: 'hsl(226,35%,12%)' }}>
-                {slide.title}
-              </h1>
-              <h1 className="font-sora font-black leading-[1.0] tracking-tight"
+                <span className="block">{slide.title}</span>
+                <span className="block"
                 style={{
                   fontSize: 'clamp(3rem, 8vw, 5.5rem)',
                   background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
@@ -191,6 +190,7 @@ const HeroBanner = () => {
                   backgroundClip: 'text',
                 }}>
                 {slide.titleAccent}
+                </span>
               </h1>
               <p className="text-base lg:text-lg font-semibold mt-3"
                 style={{ color: 'hsl(226,22%,44%)' }}>
@@ -493,6 +493,7 @@ const HeroBanner = () => {
         {/* ── Slider Controls ── */}
         <div className="flex items-center justify-center gap-4 pb-8">
           <button onClick={() => advance(-1)}
+            aria-label="Previous hero slide"
             className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
             style={{
               background: 'rgba(255,255,255,0.88)',
@@ -507,6 +508,7 @@ const HeroBanner = () => {
           <div className="flex items-center gap-2">
             {SLIDES.map((_, i) => (
               <button key={i}
+                aria-label={`Show hero slide ${i + 1}`}
                 onClick={() => { setDir('out'); setTimeout(() => { setActive(i); setDir('in'); }, 260); }}
                 className="rounded-full transition-all duration-300"
                 style={{
@@ -521,6 +523,7 @@ const HeroBanner = () => {
           </div>
 
           <button onClick={() => advance(1)}
+            aria-label="Next hero slide"
             className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
             style={{
               background: 'rgba(255,255,255,0.88)',

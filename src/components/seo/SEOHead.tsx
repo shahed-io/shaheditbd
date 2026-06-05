@@ -28,7 +28,7 @@ interface SEOHeadProps {
 
 const SITE_NAME = 'Shahed Store';
 const SITE_URL = 'https://shahedstore.com.bd';
-const DEFAULT_DESC = 'Shahed Store – Bangladesh\'s most trusted digital software shop. Buy Windows 11, Microsoft Office 365, Adobe Creative Cloud, Antivirus, VPN & subscriptions at the lowest price. 100% genuine. Instant delivery.';
+const DEFAULT_DESC = 'Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store.';
 const DEFAULT_OG = '/og-image.jpg';
 const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, shahed store';
 
@@ -94,7 +94,10 @@ const SEOHead = ({
   // Pagination / filter params keep index but still canonical points to clean URL
   const shouldNoIndex = noIndex || hasTrackingParams;
 
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} – Buy Digital Software at Best Price in Bangladesh`;
+  const truncate = (value: string, max: number) => value.length > max ? `${value.slice(0, max - 1).trimEnd()}…` : value;
+  const pageTitle = title || `${SITE_NAME} – Digital Software Shop BD`;
+  const fullTitle = truncate(pageTitle.includes(SITE_NAME) ? pageTitle : `${pageTitle} | ${SITE_NAME}`, 60);
+  const metaDescription = truncate(description, 160);
   const canonicalUrl = canonical || `${SITE_URL}${cleanPath}`;
   const ogImageFull = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`;
   const gaInjected = useRef(false);
@@ -180,7 +183,7 @@ const SEOHead = ({
     };
 
     // Basic meta
-    setMeta('meta[name="description"]', description);
+    setMeta('meta[name="description"]', metaDescription);
     setMeta('meta[name="robots"]', shouldNoIndex ? 'noindex,follow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
     setMeta('meta[name="googlebot"]', shouldNoIndex ? 'noindex,follow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1');
     setMeta('meta[name="keywords"]', keywords || DEFAULT_KEYWORDS);
@@ -207,7 +210,7 @@ const SEOHead = ({
 
     // Open Graph
     setMeta('meta[property="og:title"]', fullTitle);
-    setMeta('meta[property="og:description"]', description);
+    setMeta('meta[property="og:description"]', metaDescription);
     setMeta('meta[property="og:type"]', ogType);
     setMeta('meta[property="og:url"]', canonicalUrl);
     setMeta('meta[property="og:image"]', ogImageFull);
@@ -234,7 +237,7 @@ const SEOHead = ({
     // Twitter Card
     setMeta('meta[name="twitter:card"]', 'summary_large_image');
     setMeta('meta[name="twitter:title"]', fullTitle);
-    setMeta('meta[name="twitter:description"]', description);
+    setMeta('meta[name="twitter:description"]', metaDescription);
     setMeta('meta[name="twitter:image"]', ogImageFull);
     if (ogImageAlt) setMeta('meta[name="twitter:image:alt"]', ogImageAlt);
     if (ogImageAlt) setMeta('meta[property="og:image:alt"]', ogImageAlt);
@@ -303,7 +306,7 @@ const SEOHead = ({
       document.querySelectorAll('meta[data-article-meta]').forEach(el => el.remove());
       document.querySelectorAll('link[rel="prev"], link[rel="next"]').forEach(el => el.remove());
     };
-  }, [fullTitle, description, ogType, canonicalUrl, ogImageFull, shouldNoIndex, schema, keywords, ogImages, ogImageAlt, prevUrl, nextUrl, article]);
+  }, [fullTitle, metaDescription, ogType, canonicalUrl, ogImageFull, shouldNoIndex, schema, keywords, ogImages, ogImageAlt, prevUrl, nextUrl, article]);
 
   return null;
 };

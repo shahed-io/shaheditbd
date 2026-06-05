@@ -174,6 +174,7 @@ const Footer = () => {
             { icon: <Send size={17} />,          href: settings.telegram_url,  label: 'Telegram',  color: 'hsl(200,80%,50%)' },
           ].map((s, i) => (
             <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
+              aria-label={`Visit Shahed Store on ${s.label}`}
               className="w-11 h-11 rounded-xl flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5"
               style={{
                 background: 'hsla(0,0%,100%,0.65)',
