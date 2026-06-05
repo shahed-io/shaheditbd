@@ -21,7 +21,7 @@ import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
 import { useAuth } from '@/hooks/useAuth';
-import govtCertifiedBanner from '@/assets/govt-certified-banner.webp.asset.json';
+import dbidLogo from '@/assets/dbid-logo.png';
 
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
@@ -569,11 +569,11 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              {/* Government Certified Trust Banner */}
-              <a
-                href="/about-us"
-                className="block rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform"
+              {/* Government Certified Trust Banner — HTML/CSS (matches reference) */}
+              <div
+                className="relative rounded-2xl overflow-hidden"
                 style={{
+                  background: 'linear-gradient(135deg, hsl(258,90%,96%) 0%, hsl(255,80%,93%) 50%, hsl(265,85%,95%) 100%)',
                   boxShadow: '0 8px 28px hsla(258,78%,55%,0.18)',
                   border: '1px solid hsla(258,78%,60%,0.22)',
                   opacity: entered ? 1 : 0,
@@ -581,13 +581,81 @@ const ProductDetail = () => {
                   transition: 'opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s',
                 }}
               >
-                <img
-                  src={govtCertifiedBanner.url}
-                  alt="We're Govt. Certified Digital Business Provider — Secure & Verified, Buy with Confidence"
-                  className="w-full h-auto block"
-                  loading="lazy"
-                />
-              </a>
+                {/* Decorative purple waves — left & right */}
+                <svg className="absolute left-0 top-0 h-full pointer-events-none" viewBox="0 0 80 100" preserveAspectRatio="none" style={{ width: '12%' }}>
+                  <path d="M0,0 Q40,30 20,55 Q0,80 30,100 L0,100 Z" fill="hsl(258,75%,55%)" opacity="0.85" />
+                  <path d="M0,0 Q20,25 10,50 Q-5,75 15,100 L0,100 Z" fill="hsl(265,80%,45%)" opacity="0.6" />
+                </svg>
+                <svg className="absolute right-0 top-0 h-full pointer-events-none" viewBox="0 0 80 100" preserveAspectRatio="none" style={{ width: '12%' }}>
+                  <path d="M80,0 Q40,30 60,55 Q80,80 50,100 L80,100 Z" fill="hsl(258,75%,55%)" opacity="0.85" />
+                  <path d="M80,0 Q60,25 70,50 Q85,75 65,100 L80,100 Z" fill="hsl(265,80%,45%)" opacity="0.6" />
+                </svg>
+
+                <div className="relative flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4">
+
+                  {/* Shield with check */}
+                  <div className="relative flex-shrink-0 flex items-center justify-center"
+                    style={{ width: 48, height: 56 }}>
+                    <svg viewBox="0 0 56 64" className="absolute inset-0 w-full h-full"
+                      style={{ filter: 'drop-shadow(0 4px 10px hsla(258,78%,40%,0.35))' }}>
+                      <path d="M28 2 L52 10 L52 34 Q52 52 28 62 Q4 52 4 34 L4 10 Z"
+                        fill="url(#shieldGrad)" stroke="hsl(258,80%,40%)" strokeWidth="0.8" />
+                      <defs>
+                        <linearGradient id="shieldGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="hsl(258,80%,62%)" />
+                          <stop offset="100%" stopColor="hsl(268,75%,42%)" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M16 32 L25 41 L40 22" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                    </svg>
+                  </div>
+
+                  {/* Title block */}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-extrabold leading-tight text-[15px] sm:text-[18px]"
+                      style={{ color: 'hsl(258,80%,30%)', fontFamily: 'Sora, sans-serif', letterSpacing: '-0.01em' }}>
+                      We're Govt. Certified
+                    </div>
+                    <div className="font-semibold tracking-wide text-[10px] sm:text-[12px] mt-0.5"
+                      style={{ color: 'hsl(258,50%,40%)' }}>
+                      Digital Business Provider
+                    </div>
+                    {/* Credential icons */}
+                    <div className="flex items-center gap-2 mt-1.5">
+                      {/* BD Govt seal */}
+                      <svg viewBox="0 0 32 32" className="w-5 h-5" aria-label="Government of Bangladesh">
+                        <circle cx="16" cy="16" r="14" fill="hsl(150,65%,32%)" />
+                        <circle cx="16" cy="16" r="8" fill="hsl(0,75%,48%)" />
+                        <text x="16" y="19" textAnchor="middle" fontSize="6" fontWeight="900" fill="white" fontFamily="serif">BD</text>
+                      </svg>
+                      {/* DBID logo */}
+                      <img src={dbidLogo} alt="DBID" className="h-5 w-auto object-contain" loading="lazy" />
+                      {/* Certificate ribbon */}
+                      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+                        <rect x="3" y="3" width="18" height="14" rx="2" fill="hsl(42,95%,92%)" stroke="hsl(35,85%,45%)" strokeWidth="1.2"/>
+                        <circle cx="12" cy="10" r="3" fill="hsl(42,95%,55%)" stroke="hsl(35,85%,40%)" strokeWidth="0.8"/>
+                        <path d="M9 13 L8 21 L12 19 L16 21 L15 13" fill="hsl(0,75%,52%)" stroke="hsl(0,75%,40%)" strokeWidth="0.6" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Vertical divider */}
+                  <div className="w-px self-stretch flex-shrink-0 hidden xs:block sm:block"
+                    style={{ background: 'linear-gradient(180deg, transparent, hsl(258,78%,50%), transparent)' }} />
+
+                  {/* Right tagline */}
+                  <div className="flex flex-col text-right flex-shrink-0">
+                    <div className="font-extrabold leading-tight text-[13px] sm:text-[16px]"
+                      style={{ color: 'hsl(258,80%,30%)', fontFamily: 'Sora, sans-serif', letterSpacing: '-0.01em' }}>
+                      Secure &amp; Verified
+                    </div>
+                    <div className="font-bold leading-tight text-[12px] sm:text-[15px] mt-0.5"
+                      style={{ color: 'hsl(258,75%,38%)' }}>
+                      Buy with Confidence
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* ═══ RIGHT: Product Info ═══ */}
