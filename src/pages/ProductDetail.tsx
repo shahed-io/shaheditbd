@@ -731,19 +731,10 @@ const ProductDetail = () => {
                     <img
                       src={brandIcon}
                       alt="Shahed Store — DBID Verified Merchant"
-                      className="w-[62%] h-[62%] object-contain"
-                      style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.12))' }}
+                      className="w-[78%] h-[78%] object-contain"
+                      style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.14))' }}
                     />
-                    {/* SHAHED STORE micro label */}
-                    <div className="absolute bottom-1 left-0 right-0 text-center">
-                      <span
-                        className="text-[6px] sm:text-[7px] font-extrabold tracking-[0.12em]"
-                        style={{ fontFamily: 'Sora, sans-serif' }}
-                      >
-                        <span style={{ color: '#374151' }}>SHAHED </span>
-                        <span style={{ color: '#f97316' }}>STORE</span>
-                      </span>
-                    </div>
+
                   </div>
                 </div>
               </div>
