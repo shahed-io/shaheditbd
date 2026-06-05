@@ -6,7 +6,8 @@ import {
   Filter, X, Calendar, Phone, Mail, User, AlertTriangle,
   CreditCard, Package, MessageCircle, Copy, Check, SlidersHorizontal,
   Plus, FileText, Download, Clock, ChevronRight, Send, Printer,
-  Ban, CheckCircle2, Loader2, Bell, Edit2, Trash2, Save, Minus
+  Ban, CheckCircle2, Loader2, Bell, Edit2, Trash2, Save, Minus,
+  ArchiveRestore, Inbox
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleDbError } from '@/lib/errorHandler';
@@ -989,6 +990,8 @@ const AdminOrders = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkAction, setBulkAction] = useState('');
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [viewTrash, setViewTrash] = useState(false);
+  const [trashCount, setTrashCount] = useState(0);
 
   // Apply query param filters on mount
   useEffect(() => {
@@ -1032,10 +1035,16 @@ const AdminOrders = () => {
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
+    let query = supabase
       .from('orders')
       .select('*, order_items(*)')
       .order('created_at', { ascending: false });
+    if (viewTrash) {
+      query = query.not('deleted_at', 'is', null);
+    } else {
+      query = query.is('deleted_at', null);
+    }
+    const { data } = await query;
     // Hide bKash Online orders where payment is not completed (pending/failed/cancelled).
     // Those incomplete attempts are visible in the bKash Transactions panel instead,
     // so they don't pollute the Orders list with payments the customer never finished.
@@ -1045,7 +1054,14 @@ const AdminOrders = () => {
     });
     setOrders(visible);
     setLoading(false);
-  }, []);
+
+    // Refresh trash count badge
+    const { count } = await supabase
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .not('deleted_at', 'is', null);
+    setTrashCount(count || 0);
+  }, [viewTrash]);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
@@ -1165,14 +1181,52 @@ const AdminOrders = () => {
     }
   };
 
+  // Soft delete — moves order to Trash. Can be restored later.
   const deleteOrder = async (order: any) => {
-    if (!confirm(`অর্ডার #${order.order_number} সম্পূর্ণভাবে মুছে ফেলবেন? এটি undo করা যাবে না।`)) return;
-    const tid = toast.loading('মুছে ফেলা হচ্ছে...');
-    const { error } = await supabase.from('orders').delete().eq('id', order.id);
+    if (!confirm(`অর্ডার #${order.order_number} ট্র্যাশে পাঠাবেন? পরে ট্র্যাশ থেকে পুনরুদ্ধার করা যাবে।`)) return;
+    const tid = toast.loading('ট্র্যাশে পাঠানো হচ্ছে...');
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase
+      .from('orders')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
+      .eq('id', order.id);
     if (error) { toast.error(handleDbError(error), { id: tid }); return; }
-    toast.success('🗑️ অর্ডার মুছে ফেলা হয়েছে', { id: tid });
+    toast.success('🗑️ অর্ডার ট্র্যাশে পাঠানো হয়েছে', { id: tid });
     if (selectedOrder?.id === order.id) setSelectedOrder(null);
     if (editingOrder?.id === order.id) setEditingOrder(null);
+    fetchOrders();
+  };
+
+  // Restore from trash
+  const restoreOrder = async (order: any) => {
+    const tid = toast.loading('পুনরুদ্ধার হচ্ছে...');
+    const { error } = await supabase
+      .from('orders')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', order.id);
+    if (error) { toast.error(handleDbError(error), { id: tid }); return; }
+    toast.success('♻️ অর্ডার পুনরুদ্ধার হয়েছে', { id: tid });
+    fetchOrders();
+  };
+
+  // Permanent delete — only from trash view
+  const permanentDeleteOrder = async (order: any) => {
+    if (!confirm(`অর্ডার #${order.order_number} স্থায়ীভাবে মুছে ফেলবেন? এটি undo করা যাবে না।`)) return;
+    const tid = toast.loading('স্থায়ীভাবে মুছে ফেলা হচ্ছে...');
+    const { error } = await supabase.from('orders').delete().eq('id', order.id);
+    if (error) { toast.error(handleDbError(error), { id: tid }); return; }
+    toast.success('❌ অর্ডার স্থায়ীভাবে মুছে ফেলা হয়েছে', { id: tid });
+    if (selectedOrder?.id === order.id) setSelectedOrder(null);
+    fetchOrders();
+  };
+
+  const emptyTrash = async () => {
+    if (trashCount === 0) return;
+    if (!confirm(`ট্র্যাশের ${trashCount}টি অর্ডার স্থায়ীভাবে মুছে ফেলবেন? এটি undo করা যাবে না।`)) return;
+    const tid = toast.loading('ট্র্যাশ খালি করা হচ্ছে...');
+    const { error } = await supabase.from('orders').delete().not('deleted_at', 'is', null);
+    if (error) { toast.error(handleDbError(error), { id: tid }); return; }
+    toast.success('🧹 ট্র্যাশ খালি করা হয়েছে', { id: tid });
     fetchOrders();
   };
 
