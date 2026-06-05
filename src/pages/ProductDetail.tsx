@@ -570,113 +570,159 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              {/* Government Certified Trust Banner — DBID style, site-themed (violet) */}
-              <a
-                href="https://dbid.gov.bd/verify/586772174"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Verify our DBID certification"
-                className="group relative block rounded-2xl overflow-hidden"
+              {/* Government Certified Trust Banner — Official Authority Seal */}
+              <div
+                className="group relative w-full"
                 style={{
-                  background: 'linear-gradient(120deg, #ffffff 0%, hsla(258,90%,98%,0.98) 50%, #ffffff 100%)',
-                  border: '2px solid transparent',
-                  backgroundImage: `
-                    linear-gradient(120deg, #ffffff 0%, hsla(258,90%,98%,0.98) 50%, #ffffff 100%),
-                    linear-gradient(135deg, hsl(258,85%,60%) 0%, hsl(280,80%,55%) 50%, hsl(190,90%,50%) 100%)
-                  `,
-                  backgroundOrigin: 'border-box',
-                  backgroundClip: 'padding-box, border-box',
-                  boxShadow: '0 10px 30px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,0.95) inset',
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'translateY(0)' : 'translateY(16px)',
-                  transition: 'opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s, box-shadow 0.3s ease',
+                  transition: 'opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s',
                 }}
               >
-                <div className="relative flex items-stretch gap-2 sm:gap-4 p-2.5 sm:p-3.5">
+                {/* Decorative outer glow */}
+                <div
+                  className="absolute -inset-1 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition duration-500 pointer-events-none"
+                  style={{ background: 'linear-gradient(90deg, hsla(258,85%,55%,0.20), hsla(290,80%,60%,0.20))' }}
+                />
 
-                  {/* ── LEFT: Ribbon + Certified by DBID + ID ── */}
-                  <div className="flex items-center gap-2.5 sm:gap-3.5 flex-[1.1] min-w-0">
-                    {/* Ribbon medal */}
-                    <div className="relative flex-shrink-0 w-10 h-12 sm:w-12 sm:h-14 flex items-center justify-center">
-                      <svg viewBox="0 0 48 56" className="absolute inset-0 w-full h-full"
-                        style={{ filter: 'drop-shadow(0 4px 10px hsla(258,78%,50%,0.35))' }}>
-                        {/* Ribbon tails */}
-                        <path d="M14 36 L10 54 L18 48 L24 52 L24 40 Z" fill="hsl(258,80%,58%)" />
-                        <path d="M34 36 L38 54 L30 48 L24 52 L24 40 Z" fill="hsl(280,75%,52%)" />
-                        {/* Scalloped badge */}
-                        <circle cx="24" cy="22" r="18" fill="url(#dbidGrad)" />
-                        <circle cx="24" cy="22" r="14" fill="white" />
-                        <defs>
-                          <linearGradient id="dbidGrad" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stopColor="hsl(258,85%,60%)" />
-                            <stop offset="100%" stopColor="hsl(280,80%,52%)" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                      <svg viewBox="0 0 24 24" fill="none" className="relative z-10 w-5 h-5 sm:w-6 sm:h-6 -mt-2">
-                        <path d="M5 12.5l4.5 4.5L19 7.5" stroke="hsl(258,80%,50%)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[13px] sm:text-[17px] font-extrabold leading-tight whitespace-nowrap"
-                        style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.01em' }}>
-                        <span style={{ color: 'hsl(258,82%,42%)' }}>Certified</span>
-                        <span className="italic font-bold ml-1" style={{ color: 'hsl(220,15%,30%)' }}>by DBID</span>
-                      </div>
-                      <div className="text-[10px] sm:text-[12px] font-bold mt-0.5 tabular-nums"
-                        style={{ color: 'hsl(220,15%,40%)' }}>
-                        ID: <span className="font-extrabold" style={{ color: 'hsl(280,78%,48%)' }}>586772174</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Vertical divider */}
-                  <div className="w-px self-stretch flex-shrink-0 my-1"
-                    style={{ background: 'linear-gradient(180deg, transparent, hsla(258,78%,55%,0.45), transparent)' }} />
-
-                  {/* ── MIDDLE: Digital Business Identification Number + verify ── */}
-                  <div className="flex flex-col justify-center flex-[1.4] min-w-0">
-                    <div className="text-[12px] sm:text-[15px] font-extrabold leading-tight"
-                      style={{
-                        fontFamily: 'Sora, sans-serif',
-                        background: 'linear-gradient(90deg, hsl(258,85%,52%), hsl(280,80%,50%))',
-                        WebkitBackgroundClip: 'text',
-                        backgroundClip: 'text',
-                        color: 'transparent',
-                        letterSpacing: '-0.01em',
-                      }}>
-                      Digital Business
-                    </div>
-                    <div className="text-[11px] sm:text-[13px] font-bold leading-tight"
-                      style={{ color: 'hsl(220,15%,28%)' }}>
-                      Identification Number
-                    </div>
-                    <div className="flex items-center gap-1 mt-1 text-[10px] sm:text-[11px] font-semibold"
-                      style={{ color: 'hsl(220,15%,40%)' }}>
-                      <span className="group-hover:underline">Click here to verify</span>
-                      <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 sm:w-3.5 sm:h-3.5 transition-transform group-hover:translate-x-0.5">
-                        <path d="M5 12h14M13 6l6 6-6 6" stroke="hsl(258,85%,55%)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                  </div>
-
-                  {/* ── RIGHT: Brand logo card (Shahed Store + DBID stamp) ── */}
-                  <div className="relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center overflow-hidden"
+                <a
+                  href="https://dbid.gov.bd/verify/586772174"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Verify our DBID certification with Government of Bangladesh"
+                  className="relative flex items-stretch rounded-xl overflow-hidden"
+                  style={{
+                    background: 'rgba(255,255,255,0.88)',
+                    backdropFilter: 'blur(24px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                    border: '1px solid hsla(258,80%,90%,0.9)',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+                  }}
+                >
+                  {/* ── LEFT: Seal + watermark ── */}
+                  <div
+                    className="relative flex flex-col items-center justify-center px-3 py-4 sm:px-5 sm:py-5 overflow-hidden flex-shrink-0"
                     style={{
-                      background: 'linear-gradient(135deg, #ffffff 0%, hsla(258,90%,97%,1) 100%)',
-                      border: '1.5px solid hsla(258,78%,55%,0.35)',
-                      boxShadow: '0 6px 18px hsla(258,78%,55%,0.25), inset 0 1px 0 rgba(255,255,255,0.95)',
-                    }}>
-                    <img src={brandIcon} alt="Shahed Store" className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-sm" />
-                    {/* DBID stamp */}
-                    <span className="absolute -bottom-0.5 -right-0.5 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white flex items-center justify-center"
-                      style={{ boxShadow: '0 2px 6px hsla(258,78%,40%,0.35), 0 0 0 1.5px hsl(0,0%,100%)' }}>
-                      <img src={dbidLogo} alt="DBID" className="w-4 h-4 sm:w-5 sm:h-5 object-contain" />
+                      background: 'linear-gradient(135deg, hsla(258,90%,97%,0.6) 0%, #ffffff 100%)',
+                      borderRight: '1px solid hsla(258,80%,92%,0.7)',
+                    }}
+                  >
+                    {/* Guilloché security pattern */}
+                    <svg className="absolute inset-0 w-full h-full opacity-[0.05] pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id="dbidGuilloche" width="10" height="10" patternUnits="userSpaceOnUse">
+                          <path d="M0 10c2-2 3-5 10-10M-2 2c2-2 3-5 10-10M8 12c2-2 3-5 10-10" stroke="hsl(258,80%,40%)" strokeWidth="0.5" fill="none" />
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#dbidGuilloche)" />
+                    </svg>
+
+                    {/* Seal with soft halo */}
+                    <div className="relative">
+                      <div className="absolute inset-0 blur-xl rounded-full" style={{ background: 'hsla(258,80%,55%,0.18)' }} />
+                      <div
+                        className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center overflow-hidden"
+                        style={{
+                          boxShadow: '0 4px 12px hsla(258,78%,40%,0.18), 0 0 0 3px #ffffff, 0 0 0 4px hsla(258,80%,80%,0.6)',
+                        }}
+                      >
+                        <img src={dbidLogo} alt="DBID Seal" className="w-9 h-9 sm:w-11 sm:h-11 object-contain" />
+                      </div>
+                    </div>
+                    <p
+                      className="relative mt-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] uppercase"
+                      style={{ color: 'hsla(258,40%,30%,0.55)', fontFamily: 'Sora, sans-serif' }}
+                    >
+                      Authenticated
+                    </p>
+                  </div>
+
+                  {/* ── MIDDLE: Official identity ── */}
+                  <div className="flex-1 px-3 py-3 sm:px-5 sm:py-4 flex flex-col justify-center min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="h-px w-3 sm:w-4 flex-shrink-0" style={{ background: 'hsl(258,80%,88%)' }} />
+                      <p
+                        className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase truncate"
+                        style={{ color: 'hsl(258,78%,50%)', fontFamily: 'Sora, sans-serif' }}
+                      >
+                        Government of Bangladesh
+                      </p>
+                    </div>
+
+                    <h3
+                      className="text-[14px] sm:text-[17px] leading-tight mb-2 text-slate-900"
+                      style={{ fontFamily: '"Playfair Display", Georgia, serif', fontWeight: 600 }}
+                    >
+                      Ministry of Commerce{' '}
+                      <span className="text-slate-400 italic font-normal block sm:inline text-[12px] sm:text-[14px]">
+                        Digital Business ID
+                      </span>
+                    </h3>
+
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <div
+                        className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-md"
+                        style={{ background: 'hsl(222,28%,12%)', boxShadow: '0 2px 6px hsla(222,28%,12%,0.25)' }}
+                      >
+                        <span className="text-[9px] sm:text-[10px] text-slate-400 font-medium uppercase tracking-tight">ID</span>
+                        <span
+                          className="text-[11px] sm:text-xs font-bold text-white tracking-wider tabular-nums"
+                          style={{ fontFamily: 'Sora, sans-serif' }}
+                        >
+                          586772174
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'hsl(142,76%,45%)' }} />
+                        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600">Verified</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── RIGHT: Merchant trust ── */}
+                  <div
+                    className="px-3 py-3 sm:px-4 sm:py-4 flex flex-col items-center justify-center gap-1.5 flex-shrink-0"
+                    style={{ background: 'hsla(258,80%,55%,0.02)', borderLeft: '1px solid hsla(258,80%,92%,0.7)' }}
+                  >
+                    <div className="relative">
+                      <div
+                        className="p-1.5 sm:p-2 bg-white rounded-lg flex items-center justify-center"
+                        style={{ border: '1px solid hsl(258,80%,93%)', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}
+                      >
+                        <img src={brandIcon} alt="Shahed Store" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+                      </div>
+                      <div className="absolute -bottom-1 -right-1">
+                        <div
+                          className="rounded-full p-0.5 sm:p-1 flex items-center justify-center"
+                          style={{ background: 'hsl(258,80%,55%)', boxShadow: '0 2px 6px hsla(258,78%,40%,0.45), 0 0 0 2px #ffffff' }}
+                        >
+                          <svg className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-center"
+                      style={{ color: 'hsla(258,78%,40%,0.7)', fontFamily: 'Sora, sans-serif' }}
+                    >
+                      Verify
                     </span>
                   </div>
-                </div>
-              </a>
+
+                  {/* Micro-hologram stripe */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none"
+                    style={{ background: 'linear-gradient(90deg, transparent, hsla(258,80%,55%,0.4), hsla(290,80%,60%,0.4), transparent)' }}
+                  />
+                </a>
+
+                {/* Corner security marks */}
+                <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l pointer-events-none" style={{ borderColor: 'hsla(258,80%,75%,0.6)' }} />
+                <div className="absolute -top-1 -right-1 w-3 h-3 border-t border-r pointer-events-none" style={{ borderColor: 'hsla(258,80%,75%,0.6)' }} />
+                <div className="absolute -bottom-1 -left-1 w-3 h-3 border-b border-l pointer-events-none" style={{ borderColor: 'hsla(258,80%,75%,0.6)' }} />
+                <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r pointer-events-none" style={{ borderColor: 'hsla(258,80%,75%,0.6)' }} />
+              </div>
             </div>
 
 
