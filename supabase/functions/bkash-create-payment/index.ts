@@ -65,6 +65,28 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
+    // ── Require authenticated caller ─────────────────────────────────────
+    const authHeader = req.headers.get('Authorization') || '';
+    if (!authHeader.toLowerCase().startsWith('bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const jwt = authHeader.slice(7).trim();
+
+    const authClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(jwt);
+    if (claimsErr || !claimsData?.claims?.sub) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const authUserId = claimsData.claims.sub as string;
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -84,15 +106,11 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
-    const { orderId, amount, orderNumber, payerReference, customerPhone } = body;
+    const { orderId, orderNumber, payerReference, customerPhone } = body;
     const purpose: string = body.purpose === 'wallet_topup' ? 'wallet_topup' : 'order';
-    const userId: string | undefined = body.userId;
-
-    if (!amount) {
-      return new Response(JSON.stringify({ error: 'amount required' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    // Caller-supplied amount is only trusted for wallet_topup (still bounded);
+    // for orders we always use the server-side order.total.
+    let amount: number = Number(body.amount) || 0;
 
     let order: any = null;
     let topupRequestId: string | null = null;
@@ -114,20 +132,36 @@ Deno.serve(async (req) => {
           status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
+      // Ownership check — caller must own the order (or be admin)
+      if (o.user_id && o.user_id !== authUserId) {
+        const { data: roleRow } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', authUserId)
+          .eq('role', 'admin')
+          .maybeSingle();
+        if (!roleRow) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      }
       if (o.payment_status === 'paid') {
         return new Response(JSON.stringify({ error: 'Order already paid' }), {
           status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
       order = o;
+      // Authoritative amount comes from server-side order total
+      amount = Number(o.total);
     } else {
-      // wallet_topup
-      if (!userId) {
-        return new Response(JSON.stringify({ error: 'userId required for wallet topup' }), {
+      // wallet_topup — bind to authenticated user, validate amount range
+      if (!Number.isFinite(amount) || amount < 10 || amount > 100000) {
+        return new Response(JSON.stringify({ error: 'Invalid topup amount' }), {
           status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-      // Create a pending top-up request placeholder; TrxID will be updated after bKash success
+      const userId = authUserId;
       const { data: topup, error: topupErr } = await supabase
         .from('wallet_topup_requests')
         .insert({
@@ -147,6 +181,8 @@ Deno.serve(async (req) => {
       topupRequestId = topup.id;
       merchantInvoiceBase = `TOPUP-${topup.id.slice(0, 8).toUpperCase()}`;
     }
+
+    const userId = order?.user_id || authUserId;
 
     const token = await grantToken(cfg);
 
