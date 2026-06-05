@@ -698,48 +698,29 @@ const ProductDetail = () => {
                 {/* ── RIGHT: Floating Shahed Store logo card (overhangs right) ── */}
                 <div
                   className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[18%] sm:translate-x-[22%]"
-                  style={{ filter: 'drop-shadow(0 8px 20px rgba(124,58,237,0.35)) drop-shadow(0 2px 6px rgba(168,85,247,0.20))' }}
+                  style={{ filter: 'drop-shadow(0 4px 10px rgba(124,58,237,0.18))' }}
                 >
-                  {/* Rotating conic glow ring */}
-                  <div
-                    className="absolute inset-[-6px] rounded-[22px] opacity-70 pointer-events-none"
-                    style={{
-                      background: 'conic-gradient(from 0deg, hsl(280,85%,60%), hsl(258,90%,55%), hsl(300,75%,65%), hsl(258,90%,55%), hsl(280,85%,60%))',
-                      filter: 'blur(10px)',
-                      animation: 'spin 6s linear infinite',
-                    }}
-                  />
                   <div
                     className="relative w-[72px] h-[72px] sm:w-[88px] sm:h-[88px] rounded-2xl flex items-center justify-center overflow-hidden"
                     style={{
                       background: '#ffffff',
                       border: '2px solid transparent',
                       backgroundImage:
-                        'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, hsl(280,85%,65%) 0%, hsl(258,90%,55%) 50%, hsl(300,75%,55%) 100%)',
+                        'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, hsl(280,85%,65%) 0%, hsl(258,90%,55%) 50%, hsl(300,75%,60%) 100%)',
                       backgroundOrigin: 'border-box',
                       backgroundClip: 'padding-box, border-box',
-                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 16px rgba(124,58,237,0.15)',
+                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(124,58,237,0.10)',
                     }}
                   >
-                    {/* Shimmer sweep */}
-                    <div
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        background: 'linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%)',
-                        animation: 'shimmer-sweep 3.2s ease-in-out infinite',
-                      }}
-                    />
-
                     <img
                       src={brandIcon}
                       alt="Shahed Store — DBID Verified Merchant"
                       className="w-[82%] h-[82%] object-contain relative z-10"
                       style={{
-                        filter: 'drop-shadow(0 3px 6px rgba(124,58,237,0.30))',
+                        filter: 'drop-shadow(0 2px 4px rgba(124,58,237,0.20))',
                         animation: 'gentle-float 3.5s ease-in-out infinite',
                       }}
                     />
-
                   </div>
                 </div>
               </div>
