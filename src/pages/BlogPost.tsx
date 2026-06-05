@@ -244,7 +244,11 @@ const BlogPost = () => {
   );
 
   const toc = generateTOC(post.content || '');
-  const htmlContent = renderMarkdown(post.content || '');
+  const htmlContent = DOMPurify.sanitize(renderMarkdown(post.content || ''), {
+    ADD_ATTR: ['target', 'rel'],
+    FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],
+    FORBID_ATTR: ['onerror', 'onload', 'onclick'],
+  });
 
   const seoSchemas = [
     articleSchema({
