@@ -67,11 +67,10 @@ serve(async (req) => {
         discount = Math.round(orderTotal * wc.discount_percent / 100);
       }
 
-      // Mark as used
-      await supabase
-        .from('welcome_coupons')
-        .update({ is_used: true })
-        .eq('id', wc.id);
+      // NOTE: Welcome coupon is marked as used only when an order using it is
+      // successfully created (see trg_mark_welcome_coupon_used on public.orders).
+      // Burning at validation time enables unauthenticated callers to invalidate
+      // coupons before the rightful owner can use them.
 
       return new Response(JSON.stringify({
         valid: true,
