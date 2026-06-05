@@ -20,6 +20,8 @@ import { productSchema, breadcrumbSchema, faqSchema, softwareApplicationSchema, 
 import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
+import dbidLogo from '@/assets/dbid-logo.png';
+import brandIcon from '@/assets/logo-icon.webp';
 import { useAuth } from '@/hooks/useAuth';
 
 const WA = '8801840099853';
