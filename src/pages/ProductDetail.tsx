@@ -19,6 +19,8 @@ import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import { productSchema, breadcrumbSchema, faqSchema, softwareApplicationSchema, speakableSchema, reviewSchema } from '@/components/seo/schemas';
 import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
+import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
+import { useAuth } from '@/hooks/useAuth';
 
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
@@ -98,6 +100,7 @@ const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isWishlisted, isInCart } = useCart();
+  const { user } = useAuth();
 
   const [product,       setProduct]      = useState<ProductFull | null>(null);
   const [loading,       setLoading]      = useState(true);
@@ -226,6 +229,18 @@ const ProductDetail = () => {
     load();
     return () => { cancelled = true; };
   }, [slug]);
+
+  // Track recently viewed
+  useEffect(() => {
+    if (!product) return;
+    trackRecentlyViewed({
+      product_id: product.id,
+      product_name: product.name,
+      product_price: Number((product as any).price) || 0,
+      product_image: (product as any).image_url || null,
+      product_slug: product.slug || null,
+    }, user?.id);
+  }, [product?.id, user?.id]);
 
   if (loading) return (
     <div className="min-h-screen bg-background">
@@ -1104,6 +1119,9 @@ const ProductDetail = () => {
 
         {/* ── Related Products ── */}
         <RelatedProducts categoryId={product.category_id} currentProductId={product.id} />
+
+        {/* ── Recently Viewed ── */}
+        <RecentlyViewed currentProductId={product.id} />
 
         <Footer />
       </div>
