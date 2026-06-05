@@ -133,7 +133,27 @@ Deno.serve(async (req) => {
     });
     const execData = await execRes.json();
 
-    const ok = execData?.statusCode === '0000' && execData?.transactionStatus === 'Completed';
+    // ── Server-side amount integrity check ───────────────────────────────
+    // The expected amount was stored when the payment was created (server-side,
+    // sourced from order.total for orders or validated topup amount). Refuse
+    // to mark anything as paid if the bKash-reported amount is less than that.
+    const expectedAmount = Number((bkTx as any)?.amount || order?.total || 0);
+    const paidAmount = Number(execData?.amount || 0);
+    const amountOk = expectedAmount > 0 && paidAmount + 0.01 >= expectedAmount;
+
+    const ok = execData?.statusCode === '0000'
+      && execData?.transactionStatus === 'Completed'
+      && amountOk;
+
+    if (execData?.statusCode === '0000' && !amountOk) {
+      console.error('[bkash-callback] amount mismatch', { expectedAmount, paidAmount, paymentID });
+      await supabase.from('bkash_transactions').update({
+        status: 'failed',
+        status_code: execData?.statusCode || null,
+        status_message: `Amount mismatch: expected ${expectedAmount}, paid ${paidAmount}`,
+        raw_execute: execData,
+      }).eq('payment_id', paymentID);
+    }
 
     if (ok) {
       // Log success on bkash_transactions
