@@ -21,6 +21,7 @@ import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
 import { useAuth } from '@/hooks/useAuth';
+import dbidLogo from '@/assets/dbid-logo.png';
 
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
@@ -613,20 +614,28 @@ const ProductDetail = () => {
                         style={{ color: 'hsl(258,40%,45%)' }}>
                         Digital Business Provider
                       </div>
-                      {/* Mini credential badges */}
-                      <div className="flex items-center gap-1.5 mt-1.5">
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md"
-                          style={{ background: 'hsla(0,75%,55%,0.12)', color: 'hsl(0,75%,40%)', border: '1px solid hsla(0,75%,55%,0.25)' }}>
-                          🇧🇩 BD Govt
-                        </span>
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md"
-                          style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,40%)', border: '1px solid hsla(258,78%,55%,0.3)' }}>
-                          DBID
-                        </span>
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md hidden sm:inline-block"
-                          style={{ background: 'hsla(42,90%,55%,0.15)', color: 'hsl(35,85%,38%)', border: '1px solid hsla(42,90%,55%,0.3)' }}>
-                          ✓ Licensed
-                        </span>
+                      {/* Credential icons row — matching reference */}
+                      <div className="flex items-center gap-2 mt-2">
+                        {/* BD Government Seal */}
+                        <div className="flex items-center justify-center w-7 h-7 rounded-full bg-white shadow-sm" title="Government of Bangladesh"
+                          style={{ border: '1px solid hsla(0,70%,45%,0.25)' }}>
+                          <svg viewBox="0 0 32 32" className="w-5 h-5">
+                            <circle cx="16" cy="16" r="14" fill="hsl(150,65%,32%)" />
+                            <circle cx="16" cy="16" r="8" fill="hsl(0,75%,48%)" />
+                            <text x="16" y="19" textAnchor="middle" fontSize="6" fontWeight="900" fill="white" fontFamily="serif">BD</text>
+                          </svg>
+                        </div>
+                        {/* DBID logo */}
+                        <img src={dbidLogo} alt="DBID — Digital Business Identity" className="w-auto h-6 object-contain" loading="lazy" />
+                        {/* Certificate ribbon icon */}
+                        <div className="flex items-center justify-center w-7 h-7 rounded-md bg-white shadow-sm" title="Licensed Certificate"
+                          style={{ border: '1px solid hsla(42,90%,50%,0.3)' }}>
+                          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+                            <rect x="3" y="3" width="18" height="14" rx="2" fill="hsl(42,95%,92%)" stroke="hsl(35,85%,45%)" strokeWidth="1.2"/>
+                            <circle cx="12" cy="10" r="3" fill="hsl(42,95%,55%)" stroke="hsl(35,85%,40%)" strokeWidth="0.8"/>
+                            <path d="M9 13 L8 21 L12 19 L16 21 L15 13" fill="hsl(0,75%,52%)" stroke="hsl(0,75%,40%)" strokeWidth="0.6" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
                       </div>
                     </div>
                   </div>
