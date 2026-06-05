@@ -588,6 +588,7 @@ const ProductDetail = () => {
                   loading="lazy"
                 />
               </a>
+            </div>
 
             {/* ═══ RIGHT: Product Info ═══ */}
             <div className="flex flex-col gap-5">
