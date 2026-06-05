@@ -1304,13 +1304,36 @@ const AdminOrders = () => {
             </span>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold"
+            onClick={() => { setViewTrash(v => !v); setSelectedIds(new Set()); }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${viewTrash ? 'btn-glow border-transparent' : 'glass-card border-border text-muted-foreground hover:text-foreground'}`}
+            title={viewTrash ? 'সক্রিয় অর্ডারে ফিরুন' : 'ট্র্যাশ দেখুন'}
           >
-            <Plus size={14} /> নতুন অর্ডার
+            {viewTrash ? <Inbox size={14} /> : <Trash2 size={14} />}
+            {viewTrash ? 'সক্রিয় অর্ডার' : 'ট্র্যাশ'}
+            {trashCount > 0 && (
+              <span className={`min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center ${viewTrash ? 'bg-white/20' : 'bg-red-500/15 text-red-500'}`}>
+                {trashCount}
+              </span>
+            )}
           </button>
+          {viewTrash && trashCount > 0 && (
+            <button
+              onClick={emptyTrash}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold glass-card border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors"
+            >
+              <Trash2 size={14} /> ট্র্যাশ খালি করুন
+            </button>
+          )}
+          {!viewTrash && (
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl btn-glow text-sm font-semibold"
+            >
+              <Plus size={14} /> নতুন অর্ডার
+            </button>
+          )}
           <button onClick={fetchOrders} className="glass-card px-4 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors">
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
             Refresh
