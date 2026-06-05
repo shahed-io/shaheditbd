@@ -20,10 +20,36 @@ class RootErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     console.error("[RootErrorBoundary]", error, info);
+    // Prevent search engines from indexing error-state pages
+    try {
+      const existing = document.querySelector('meta[name="robots"]');
+      if (existing) existing.setAttribute("content", "noindex, nofollow");
+      else {
+        const m = document.createElement("meta");
+        m.name = "robots";
+        m.content = "noindex, nofollow";
+        document.head.appendChild(m);
+      }
+    } catch {}
   }
 
   render() {
     if (this.state.hasError) {
+      // Detect crawlers / SSR-like environments — render brand content instead of error UI
+      const ua = typeof navigator !== "undefined" ? navigator.userAgent || "" : "";
+      const isBot = /bot|crawler|spider|crawling|googlebot|bingbot|yandex|baiduspider|duckduckbot|facebookexternalhit|twitterbot|slurp|lighthouse|headlesschrome/i.test(ua);
+
+      if (isBot) {
+        // Serve brand-aligned static content to crawlers so search snippets stay clean
+        return (
+          <div style={{ maxWidth: 900, margin: "40px auto", padding: 24, fontFamily: "system-ui, sans-serif", lineHeight: 1.6, color: "#111" }}>
+            <h1 style={{ fontSize: "2rem", marginBottom: 8 }}>Shahed Store – Bangladesh's #1 Trusted Digital Software Shop</h1>
+            <p><strong>বাংলাদেশের সবচেয়ে বিশ্বস্ত ডিজিটাল সফটওয়্যার শপ।</strong> Windows 11, Microsoft Office 365, Adobe Creative Cloud, Netflix, Spotify, NordVPN, Antivirus সর্বনিম্ন মূল্যে। ১০০% অরিজিনাল লাইসেন্স, ইনস্ট্যান্ট ডেলিভারি ২৪/৭।</p>
+            <p>Buy genuine Windows 11 Pro keys, Microsoft Office 365, Adobe Creative Cloud, Netflix Premium, Spotify Premium, NordVPN, ESET, Bitdefender at the lowest price in Bangladesh — instant email delivery, bKash / Nagad / Bank payment supported.</p>
+          </div>
+        );
+      }
+
       return (
         <div style={{
           minHeight: "100vh",
@@ -36,7 +62,7 @@ class RootErrorBoundary extends React.Component<
           fontFamily: "sans-serif",
           textAlign: "center",
         }}>
-          <div style={{ fontSize: "48px", marginBottom: "16px" }}>⚠️</div>
+          <div style={{ fontSize: "48px", marginBottom: "16px" }} aria-hidden="true">⚠️</div>
           <h2 style={{ fontSize: "20px", fontWeight: 700, color: "#1e293b", marginBottom: "8px" }}>
             কিছু একটা সমস্যা হয়েছে
           </h2>
