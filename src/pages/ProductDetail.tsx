@@ -21,7 +21,6 @@ import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
 import { useAuth } from '@/hooks/useAuth';
-import govtCertifiedBanner from '@/assets/govt-certified-banner.webp.asset.json';
 
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
@@ -570,24 +569,85 @@ const ProductDetail = () => {
               )}
 
               {/* Government Certified Trust Banner */}
-              <a
-                href="/about-us"
-                className="block rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform"
+              <div
+                className="relative rounded-2xl overflow-hidden"
                 style={{
-                  boxShadow: '0 8px 28px hsla(258,78%,55%,0.18)',
-                  border: '1px solid hsla(258,78%,60%,0.22)',
+                  background: 'linear-gradient(120deg, hsla(258,90%,97%,0.95) 0%, hsla(255,80%,94%,0.92) 50%, hsla(265,85%,96%,0.95) 100%)',
+                  backdropFilter: 'blur(24px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                  border: '1px solid hsla(258,78%,60%,0.28)',
+                  boxShadow: '0 8px 32px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,0.95) inset',
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'translateY(0)' : 'translateY(16px)',
                   transition: 'opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s',
                 }}
               >
-                <img
-                  src={govtCertifiedBanner.url}
-                  alt="We're Govt. Certified Digital Business Provider — Secure & Verified, Buy with Confidence"
-                  className="w-full h-auto block"
-                  loading="lazy"
-                />
-              </a>
+                {/* Decorative left blob */}
+                <div className="absolute -left-8 -top-8 w-32 h-32 rounded-full pointer-events-none"
+                  style={{ background: 'radial-gradient(circle, hsla(258,90%,65%,0.22), transparent 70%)' }} />
+                <div className="absolute -right-10 -bottom-10 w-36 h-36 rounded-full pointer-events-none"
+                  style={{ background: 'radial-gradient(circle, hsla(265,85%,70%,0.18), transparent 70%)' }} />
+
+                <div className="relative flex items-stretch gap-3 p-3.5 sm:gap-4 sm:p-4">
+
+                  {/* ── LEFT: Shield + Title + Badges ── */}
+                  <div className="flex items-center gap-3 sm:gap-3.5 flex-1 min-w-0">
+                    {/* Shield with check */}
+                    <div className="relative flex-shrink-0 w-12 h-14 sm:w-14 sm:h-16 flex items-center justify-center"
+                      style={{
+                        background: 'linear-gradient(160deg, hsl(258,80%,58%) 0%, hsl(268,75%,48%) 100%)',
+                        clipPath: 'path("M28 0 L56 8 L56 36 Q56 56 28 64 Q0 56 0 36 L0 8 Z")',
+                        filter: 'drop-shadow(0 4px 12px hsla(258,78%,50%,0.4))',
+                      }}>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 sm:w-7 sm:h-7 relative z-10">
+                        <path d="M5 12.5l4.5 4.5L19 7.5" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[13px] sm:text-[15px] font-extrabold leading-tight"
+                        style={{ color: 'hsl(258,78%,32%)', fontFamily: 'Sora, sans-serif', letterSpacing: '-0.01em' }}>
+                        We're Govt. Certified
+                      </div>
+                      <div className="text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase mt-0.5"
+                        style={{ color: 'hsl(258,40%,45%)' }}>
+                        Digital Business Provider
+                      </div>
+                      {/* Mini credential badges */}
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md"
+                          style={{ background: 'hsla(0,75%,55%,0.12)', color: 'hsl(0,75%,40%)', border: '1px solid hsla(0,75%,55%,0.25)' }}>
+                          🇧🇩 BD Govt
+                        </span>
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md"
+                          style={{ background: 'hsla(258,78%,55%,0.12)', color: 'hsl(258,78%,40%)', border: '1px solid hsla(258,78%,55%,0.3)' }}>
+                          DBID
+                        </span>
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md hidden sm:inline-block"
+                          style={{ background: 'hsla(42,90%,55%,0.15)', color: 'hsl(35,85%,38%)', border: '1px solid hsla(42,90%,55%,0.3)' }}>
+                          ✓ Licensed
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="w-px self-stretch flex-shrink-0"
+                    style={{ background: 'linear-gradient(180deg, transparent, hsla(258,78%,55%,0.4), transparent)' }} />
+
+                  {/* ── RIGHT: Tagline ── */}
+                  <div className="flex flex-col justify-center text-right pr-1 flex-shrink-0">
+                    <div className="text-[13px] sm:text-[15px] font-extrabold leading-tight"
+                      style={{ color: 'hsl(258,78%,32%)', fontFamily: 'Sora, sans-serif', letterSpacing: '-0.01em' }}>
+                      Secure &amp; Verified
+                    </div>
+                    <div className="text-[11px] sm:text-[13px] font-bold leading-tight mt-0.5"
+                      style={{ color: 'hsl(258,70%,42%)' }}>
+                      Buy with Confidence
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* ═══ RIGHT: Product Info ═══ */}
