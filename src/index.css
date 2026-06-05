@@ -2475,3 +2475,64 @@ body.admin-page main > .admin-page-header + div > div.flex:first-child:has(> div
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* ── DBID Certified D-logo badge effects ── */
+.dbid-badge-wrap {
+  width: 3.5rem; height: 3.5rem;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+@media (min-width: 640px) {
+  .dbid-badge-wrap { width: 4rem; height: 4rem; }
+}
+.dbid-badge-img {
+  filter:
+    drop-shadow(0 4px 10px rgba(139,92,246,0.45))
+    drop-shadow(0 2px 4px rgba(168,85,247,0.35));
+  animation: dbid-float 3.6s ease-in-out infinite;
+}
+.dbid-badge-halo {
+  position: absolute; inset: -6px; border-radius: 9999px;
+  background: radial-gradient(closest-side, rgba(168,85,247,0.55), rgba(139,92,246,0.18) 60%, transparent 75%);
+  filter: blur(6px);
+  animation: dbid-pulse 2.4s ease-in-out infinite;
+  z-index: 0;
+}
+.dbid-badge-ring {
+  position: absolute; inset: -3px; border-radius: 9999px;
+  padding: 2px;
+  background: conic-gradient(from 0deg,
+    #a855f7, #d946ef, #8b5cf6, #c084fc, #a855f7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: dbid-spin 4s linear infinite;
+  opacity: 0.85;
+  z-index: 1;
+}
+.dbid-badge-shine {
+  position: absolute; inset: 0; border-radius: 9999px;
+  overflow: hidden; pointer-events: none; z-index: 2;
+}
+.dbid-badge-shine::after {
+  content: ""; position: absolute; top: -50%; left: -60%;
+  width: 60%; height: 200%;
+  background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.55) 50%, transparent 60%);
+  transform: rotate(20deg);
+  animation: dbid-shine 3.2s ease-in-out infinite;
+}
+@keyframes dbid-float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-3px); }
+}
+@keyframes dbid-pulse {
+  0%,100% { transform: scale(1);   opacity: 0.85; }
+  50%     { transform: scale(1.12); opacity: 1;    }
+}
+@keyframes dbid-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes dbid-shine {
+  0%   { left: -60%; }
+  60%  { left: 120%; }
+  100% { left: 120%; }
+}
