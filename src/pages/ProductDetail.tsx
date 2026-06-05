@@ -623,7 +623,7 @@ const ProductDetail = () => {
                     {/* Credential icons */}
                     <div className="flex items-center gap-2 mt-1.5">
                       {/* BD Govt seal */}
-                      <svg viewBox="0 0 32 32" className="w-5 h-5" title="Government of Bangladesh">
+                      <svg viewBox="0 0 32 32" className="w-5 h-5" aria-label="Government of Bangladesh">
                         <circle cx="16" cy="16" r="14" fill="hsl(150,65%,32%)" />
                         <circle cx="16" cy="16" r="8" fill="hsl(0,75%,48%)" />
                         <text x="16" y="19" textAnchor="middle" fontSize="6" fontWeight="900" fill="white" fontFamily="serif">BD</text>
