@@ -570,158 +570,182 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              {/* Government Certified Trust Banner — Official Authority Seal */}
+              {/* ═══ DBID Premium Trust Banner ═══ */}
               <div
-                className="group relative w-full"
+                className="relative w-full"
                 style={{
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'translateY(0)' : 'translateY(16px)',
                   transition: 'opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s',
+                  paddingRight: '18px', // room for floating logo card overhang
                 }}
               >
-                {/* Decorative outer glow */}
-                <div
-                  className="absolute -inset-1 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition duration-500 pointer-events-none"
-                  style={{ background: 'linear-gradient(90deg, hsla(258,85%,55%,0.20), hsla(290,80%,60%,0.20))' }}
-                />
-
                 <a
                   href="https://dbid.gov.bd/verify/586772174"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Verify our DBID certification with Government of Bangladesh"
-                  className="relative flex items-stretch rounded-xl overflow-hidden"
+                  aria-label="Verify DBID 586772174 — Government of Bangladesh"
+                  className="group relative flex items-stretch rounded-[18px] overflow-visible"
                   style={{
-                    background: 'rgba(255,255,255,0.88)',
-                    backdropFilter: 'blur(24px) saturate(180%)',
-                    WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-                    border: '1px solid hsla(258,80%,90%,0.9)',
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+                    background: '#ffffff',
+                    // double gradient border using padding trick
+                    boxShadow:
+                      '0 1px 0 #ffffff inset, 0 0 0 1px rgba(255,255,255,0.9) inset, 0 8px 28px rgba(234,88,12,0.10), 0 2px 6px rgba(234,88,12,0.06)',
+                    border: '2px solid transparent',
+                    backgroundImage:
+                      'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, #f97316 0%, #ef4444 50%, #f59e0b 100%)',
+                    backgroundOrigin: 'border-box',
+                    backgroundClip: 'padding-box, border-box',
                   }}
                 >
-                  {/* ── LEFT: Seal + watermark ── */}
-                  <div
-                    className="relative flex flex-col items-center justify-center px-3 py-4 sm:px-5 sm:py-5 overflow-hidden flex-shrink-0"
-                    style={{
-                      background: 'linear-gradient(135deg, hsla(258,90%,97%,0.6) 0%, #ffffff 100%)',
-                      borderRight: '1px solid hsla(258,80%,92%,0.7)',
-                    }}
-                  >
-                    {/* Guilloché security pattern */}
-                    <svg className="absolute inset-0 w-full h-full opacity-[0.05] pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-                      <defs>
-                        <pattern id="dbidGuilloche" width="10" height="10" patternUnits="userSpaceOnUse">
-                          <path d="M0 10c2-2 3-5 10-10M-2 2c2-2 3-5 10-10M8 12c2-2 3-5 10-10" stroke="hsl(258,80%,40%)" strokeWidth="0.5" fill="none" />
-                        </pattern>
-                      </defs>
-                      <rect width="100%" height="100%" fill="url(#dbidGuilloche)" />
-                    </svg>
-
-                    {/* Seal with soft halo */}
-                    <div className="relative">
-                      <div className="absolute inset-0 blur-xl rounded-full" style={{ background: 'hsla(258,80%,55%,0.18)' }} />
-                      <div
-                        className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center overflow-hidden"
-                        style={{
-                          boxShadow: '0 4px 12px hsla(258,78%,40%,0.18), 0 0 0 3px #ffffff, 0 0 0 4px hsla(258,80%,80%,0.6)',
-                        }}
-                      >
-                        <img src={dbidLogo} alt="DBID Seal" className="w-9 h-9 sm:w-11 sm:h-11 object-contain" />
-                      </div>
-                    </div>
-                    <p
-                      className="relative mt-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] uppercase"
-                      style={{ color: 'hsla(258,40%,30%,0.55)', fontFamily: 'Sora, sans-serif' }}
-                    >
-                      Authenticated
-                    </p>
-                  </div>
-
-                  {/* ── MIDDLE: Official identity ── */}
-                  <div className="flex-1 px-3 py-3 sm:px-5 sm:py-4 flex flex-col justify-center min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="h-px w-3 sm:w-4 flex-shrink-0" style={{ background: 'hsl(258,80%,88%)' }} />
-                      <p
-                        className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase truncate"
-                        style={{ color: 'hsl(258,78%,50%)', fontFamily: 'Sora, sans-serif' }}
-                      >
-                        Government of Bangladesh
-                      </p>
+                  {/* ── LEFT: Ribbon medal + Certified text ── */}
+                  <div className="flex items-center gap-3 sm:gap-4 pl-3 sm:pl-5 pr-3 sm:pr-5 py-3 sm:py-4 flex-1 min-w-0">
+                    {/* Ribbon medal SVG */}
+                    <div className="relative flex-shrink-0">
+                      <svg viewBox="0 0 64 80" className="w-10 h-12 sm:w-12 sm:h-14 drop-shadow-[0_2px_4px_rgba(234,88,12,0.25)]" aria-hidden>
+                        <defs>
+                          <linearGradient id="medalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#fb923c" />
+                            <stop offset="55%" stopColor="#f97316" />
+                            <stop offset="100%" stopColor="#ea580c" />
+                          </linearGradient>
+                        </defs>
+                        {/* Ribbon tails */}
+                        <path d="M18 48 L10 78 L20 72 L26 64 Z" fill="#f97316" />
+                        <path d="M46 48 L54 78 L44 72 L38 64 Z" fill="#ea580c" />
+                        {/* Star/scalloped medal */}
+                        <g transform="translate(32 32)">
+                          {Array.from({ length: 12 }).map((_, i) => (
+                            <circle
+                              key={i}
+                              cx={Math.cos((i * Math.PI) / 6) * 22}
+                              cy={Math.sin((i * Math.PI) / 6) * 22}
+                              r="6"
+                              fill="url(#medalGrad)"
+                            />
+                          ))}
+                          <circle r="22" fill="url(#medalGrad)" />
+                          <circle r="16" fill="#ffffff" />
+                          <path d="M-7 1 L-2 6 L8 -5" stroke="#f97316" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                        </g>
+                      </svg>
                     </div>
 
-                    <h3
-                      className="text-[14px] sm:text-[17px] leading-tight mb-2 text-slate-900"
-                      style={{ fontFamily: '"Playfair Display", Georgia, serif', fontWeight: 600 }}
-                    >
-                      Ministry of Commerce{' '}
-                      <span className="text-slate-400 italic font-normal block sm:inline text-[12px] sm:text-[14px]">
-                        Digital Business ID
-                      </span>
-                    </h3>
-
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <div
-                        className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-md"
-                        style={{ background: 'hsl(222,28%,12%)', boxShadow: '0 2px 6px hsla(222,28%,12%,0.25)' }}
-                      >
-                        <span className="text-[9px] sm:text-[10px] text-slate-400 font-medium uppercase tracking-tight">ID</span>
+                    {/* Certified text */}
+                    <div className="flex flex-col leading-tight min-w-0">
+                      <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
                         <span
-                          className="text-[11px] sm:text-xs font-bold text-white tracking-wider tabular-nums"
-                          style={{ fontFamily: 'Sora, sans-serif' }}
+                          className="text-[15px] sm:text-[19px] font-extrabold tracking-tight"
+                          style={{ color: '#ea580c', fontFamily: 'Sora, sans-serif' }}
+                        >
+                          Certified
+                        </span>
+                        <span
+                          className="text-[14px] sm:text-[18px] font-bold italic"
+                          style={{ color: '#1f2937', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
+                        >
+                          by DBID
+                        </span>
+                      </div>
+                      <div className="flex items-baseline gap-1.5 mt-1">
+                        <span
+                          className="text-[11px] sm:text-[13px] font-semibold"
+                          style={{ color: '#374151', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
+                        >
+                          ID:
+                        </span>
+                        <span
+                          className="text-[12px] sm:text-[14px] font-extrabold tabular-nums tracking-wide"
+                          style={{ color: '#f97316', fontFamily: 'Sora, sans-serif' }}
                         >
                           586772174
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'hsl(142,76%,45%)' }} />
-                        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600">Verified</span>
-                      </div>
                     </div>
                   </div>
 
-                  {/* ── RIGHT: Merchant trust ── */}
+                  {/* ── Vertical separator ── */}
                   <div
-                    className="px-3 py-3 sm:px-4 sm:py-4 flex flex-col items-center justify-center gap-1.5 flex-shrink-0"
-                    style={{ background: 'hsla(258,80%,55%,0.02)', borderLeft: '1px solid hsla(258,80%,92%,0.7)' }}
-                  >
-                    <div className="relative">
-                      <div
-                        className="p-1.5 sm:p-2 bg-white rounded-lg flex items-center justify-center"
-                        style={{ border: '1px solid hsl(258,80%,93%)', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}
-                      >
-                        <img src={brandIcon} alt="Shahed Store" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
-                      </div>
-                      <div className="absolute -bottom-1 -right-1">
-                        <div
-                          className="rounded-full p-0.5 sm:p-1 flex items-center justify-center"
-                          style={{ background: 'hsl(258,80%,55%)', boxShadow: '0 2px 6px hsla(258,78%,40%,0.45), 0 0 0 2px #ffffff' }}
-                        >
-                          <svg className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <span
-                      className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-center"
-                      style={{ color: 'hsla(258,78%,40%,0.7)', fontFamily: 'Sora, sans-serif' }}
-                    >
-                      Verify
-                    </span>
-                  </div>
-
-                  {/* Micro-hologram stripe */}
-                  <div
-                    className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none"
-                    style={{ background: 'linear-gradient(90deg, transparent, hsla(258,80%,55%,0.4), hsla(290,80%,60%,0.4), transparent)' }}
+                    className="w-px my-3 sm:my-4 flex-shrink-0"
+                    style={{ background: 'linear-gradient(180deg, transparent, #fdba74 30%, #fdba74 70%, transparent)' }}
                   />
+
+                  {/* ── MIDDLE: Digital Business + Verify CTA ── */}
+                  <div className="flex flex-col justify-center px-3 sm:px-5 py-3 sm:py-4 flex-[1.1] min-w-0">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <span
+                        className="text-[13px] sm:text-[15px] font-extrabold leading-tight"
+                        style={{
+                          background: 'linear-gradient(90deg, #ef4444 0%, #f97316 100%)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                          fontFamily: 'Sora, sans-serif',
+                        }}
+                      >
+                        Digital Business
+                      </span>
+                    </div>
+                    <div
+                      className="text-[11px] sm:text-[13px] font-bold leading-tight mt-0.5"
+                      style={{ color: '#1f2937', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
+                    >
+                      Identification Number
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-1.5 sm:mt-2">
+                      <span
+                        className="text-[10px] sm:text-[12px] font-semibold underline-offset-2 group-hover:underline decoration-orange-400"
+                        style={{ color: '#4b5563', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
+                      >
+                        Click here to verify
+                      </span>
+                      {/* Cursor + spark icon */}
+                      <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <path d="M5 3 L5 17 L9 13 L12 20 L14 19 L11 12 L17 12 Z" fill="#f97316" stroke="#ea580c" strokeWidth="0.6" strokeLinejoin="round" />
+                        <g stroke="#fb923c" strokeWidth="1.2" strokeLinecap="round">
+                          <line x1="19" y1="5" x2="22" y2="3" />
+                          <line x1="20" y1="9" x2="23" y2="9" />
+                          <line x1="17" y1="6" x2="18" y2="3" />
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
                 </a>
 
-                {/* Corner security marks */}
-                <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l pointer-events-none" style={{ borderColor: 'hsla(258,80%,75%,0.6)' }} />
-                <div className="absolute -top-1 -right-1 w-3 h-3 border-t border-r pointer-events-none" style={{ borderColor: 'hsla(258,80%,75%,0.6)' }} />
-                <div className="absolute -bottom-1 -left-1 w-3 h-3 border-b border-l pointer-events-none" style={{ borderColor: 'hsla(258,80%,75%,0.6)' }} />
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r pointer-events-none" style={{ borderColor: 'hsla(258,80%,75%,0.6)' }} />
+                {/* ── RIGHT: Floating Shahed Store logo card (overhangs right) ── */}
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[18%] sm:translate-x-[22%]"
+                  style={{ filter: 'drop-shadow(0 6px 14px rgba(234,88,12,0.18)) drop-shadow(0 2px 4px rgba(0,0,0,0.06))' }}
+                >
+                  <div
+                    className="relative w-[72px] h-[72px] sm:w-[88px] sm:h-[88px] rounded-2xl flex items-center justify-center"
+                    style={{
+                      background: '#ffffff',
+                      border: '2px solid transparent',
+                      backgroundImage:
+                        'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, #f97316 0%, #ef4444 50%, #f59e0b 100%)',
+                      backgroundOrigin: 'border-box',
+                      backgroundClip: 'padding-box, border-box',
+                    }}
+                  >
+                    <img
+                      src={brandIcon}
+                      alt="Shahed Store — DBID Verified Merchant"
+                      className="w-[62%] h-[62%] object-contain"
+                      style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.12))' }}
+                    />
+                    {/* SHAHED STORE micro label */}
+                    <div className="absolute bottom-1 left-0 right-0 text-center">
+                      <span
+                        className="text-[6px] sm:text-[7px] font-extrabold tracking-[0.12em]"
+                        style={{ fontFamily: 'Sora, sans-serif' }}
+                      >
+                        <span style={{ color: '#374151' }}>SHAHED </span>
+                        <span style={{ color: '#f97316' }}>STORE</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
