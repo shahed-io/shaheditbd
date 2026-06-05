@@ -1662,12 +1662,29 @@ const AdminOrders = () => {
                             className="p-1.5 text-muted-foreground hover:text-amber-500 transition-colors rounded-lg hover:bg-amber-500/10">
                             <Edit2 size={14} />
                           </button>
-                          <button
-                            onClick={() => deleteOrder(order)}
-                            title="মুছে ফেলুন"
-                            className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10">
-                            <Trash2 size={14} />
-                          </button>
+                          {viewTrash ? (
+                            <>
+                              <button
+                                onClick={() => restoreOrder(order)}
+                                title="পুনরুদ্ধার"
+                                className="p-1.5 text-muted-foreground hover:text-emerald-500 transition-colors rounded-lg hover:bg-emerald-500/10">
+                                <ArchiveRestore size={14} />
+                              </button>
+                              <button
+                                onClick={() => permanentDeleteOrder(order)}
+                                title="স্থায়ীভাবে মুছুন"
+                                className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10">
+                                <Trash2 size={14} />
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              onClick={() => deleteOrder(order)}
+                              title="ট্র্যাশে পাঠান"
+                              className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded-lg hover:bg-red-500/10">
+                              <Trash2 size={14} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
