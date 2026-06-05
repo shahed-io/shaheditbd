@@ -1,6 +1,6 @@
 import { Phone, Mail, MapPin, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Zap, Package, Info, FileText, Send, Download, Heart, Star, Gift, Tag, Globe, ShoppingBag, Sparkles, BookOpen, HelpCircle, type LucideIcon } from 'lucide-react';
 import BrandLogo from './BrandLogo';
-import dbidLogo from '@/assets/dbid-logo.png';
+import dbidLogo from '@/assets/dbid-logo.png.asset.json';
 import { useFooterSettings } from '@/hooks/useFooterSettings';
 import { useFooterMenu } from '@/hooks/useFooterMenu';
 
