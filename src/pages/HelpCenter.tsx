@@ -160,7 +160,7 @@ const HelpCenter = () => {
                 )}
 
                 {/* Content */}
-                <div dangerouslySetInnerHTML={{ __html: renderMarkdown(currentArticle.content || '') }} />
+                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderMarkdown(currentArticle.content || ''), { ADD_ATTR: ['target', 'rel'], FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'], FORBID_ATTR: ['onerror', 'onload', 'onclick'] }) }} />
 
                 {/* Tags */}
                 {currentArticle.tags?.length > 0 && (
