@@ -22,7 +22,7 @@ import VerifiedBadge from '@/components/store/VerifiedBadge';
 import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
 import dbidLogo from '@/assets/dbid-logo.png';
 import brandIcon from '@/assets/logo-icon.webp';
-import certifiedBadge from '@/assets/d-badge.png.asset.json';
+import certifiedBadge from '@/assets/certified-badge.png.asset.json';
 
 import { useAuth } from '@/hooks/useAuth';
 
@@ -603,12 +603,12 @@ const ProductDetail = () => {
                   {/* ── LEFT: Ribbon medal + Certified text ── */}
                   <div className="flex items-center gap-3 sm:gap-4 pl-3 sm:pl-5 pr-3 sm:pr-5 py-3 sm:py-4 flex-1 min-w-0">
                     {/* Gold Certified ribbon badge */}
-                    <div className="relative flex-shrink-0 dbid-badge-wrap">
-                      <span aria-hidden className="dbid-badge-glow" />
+                    <div className="relative flex-shrink-0">
                       <img
                         src={certifiedBadge.url}
                         alt="DBID Certified Badge"
-                        className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 object-contain dbid-badge-img"
+                        className="w-12 h-14 sm:w-14 sm:h-16 object-contain"
+                        style={{ filter: 'drop-shadow(0 3px 6px rgba(220,38,38,0.28)) drop-shadow(0 1px 2px rgba(0,0,0,0.12))' }}
                       />
                     </div>
 
