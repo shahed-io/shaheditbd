@@ -523,6 +523,7 @@ const HeroBanner = () => {
           </div>
 
           <button onClick={() => advance(1)}
+            aria-label="Next hero slide"
             className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
             style={{
               background: 'rgba(255,255,255,0.88)',
