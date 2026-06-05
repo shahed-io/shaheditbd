@@ -1529,9 +1529,20 @@ const AdminOrders = () => {
                       <button onClick={() => setEditingOrder(order)} title="এডিট" className="p-2 text-amber-500 bg-amber-500/10 rounded-lg">
                         <Edit2 size={16} />
                       </button>
-                      <button onClick={() => deleteOrder(order)} title="মুছুন" className="p-2 text-red-500 bg-red-500/10 rounded-lg">
-                        <Trash2 size={16} />
-                      </button>
+                      {viewTrash ? (
+                        <>
+                          <button onClick={() => restoreOrder(order)} title="পুনরুদ্ধার" className="p-2 text-emerald-500 bg-emerald-500/10 rounded-lg">
+                            <ArchiveRestore size={16} />
+                          </button>
+                          <button onClick={() => permanentDeleteOrder(order)} title="স্থায়ীভাবে মুছুন" className="p-2 text-red-500 bg-red-500/10 rounded-lg">
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      ) : (
+                        <button onClick={() => deleteOrder(order)} title="ট্র্যাশে পাঠান" className="p-2 text-red-500 bg-red-500/10 rounded-lg">
+                          <Trash2 size={16} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
