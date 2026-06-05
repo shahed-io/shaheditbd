@@ -1,6 +1,6 @@
 import { Phone, Mail, MapPin, Facebook, Instagram, MessageCircle, Shield, ExternalLink, ArrowUpRight, Zap, Package, Info, FileText, Send, Download, Heart, Star, Gift, Tag, Globe, ShoppingBag, Sparkles, BookOpen, HelpCircle, type LucideIcon } from 'lucide-react';
 import BrandLogo from './BrandLogo';
-import dbidLogo from '@/assets/dbid-logo.png.asset.json';
+import dbidLogo from '@/assets/dbid-logo.png';
 import { useFooterSettings } from '@/hooks/useFooterSettings';
 import { useFooterMenu } from '@/hooks/useFooterMenu';
 
@@ -295,7 +295,7 @@ const Footer = () => {
                 background: 'linear-gradient(135deg, hsl(0,0%,100%) 0%, hsla(258,78%,98%,1) 100%)',
                 boxShadow: '0 6px 18px hsla(258,78%,55%,0.22), inset 0 1px 0 hsla(0,0%,100%,0.9)',
               }}>
-              <img src={dbidLogo.url} alt="DBID Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
+              <img src={dbidLogo} alt="DBID Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
               {/* subtle shine */}
               <span aria-hidden className="absolute inset-0 pointer-events-none"
                 style={{ background: 'linear-gradient(135deg, hsla(0,0%,100%,0.6) 0%, transparent 45%)' }} />
