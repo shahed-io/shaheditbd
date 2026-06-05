@@ -715,7 +715,7 @@ const ProductDetail = () => {
                 {/* ── RIGHT: Floating Shahed Store logo card (overhangs right) ── */}
                 <div
                   className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[18%] sm:translate-x-[22%]"
-                  style={{ filter: 'drop-shadow(0 6px 14px rgba(234,88,12,0.18)) drop-shadow(0 2px 4px rgba(0,0,0,0.06))' }}
+                  style={{ filter: 'drop-shadow(0 6px 14px rgba(124,58,237,0.20)) drop-shadow(0 2px 4px rgba(0,0,0,0.06))' }}
                 >
                   <div
                     className="relative w-[72px] h-[72px] sm:w-[88px] sm:h-[88px] rounded-2xl flex items-center justify-center"
@@ -723,11 +723,12 @@ const ProductDetail = () => {
                       background: '#ffffff',
                       border: '2px solid transparent',
                       backgroundImage:
-                        'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, #f97316 0%, #ef4444 50%, #f59e0b 100%)',
+                        'linear-gradient(#ffffff,#ffffff), linear-gradient(135deg, hsl(42,96%,58%) 0%, hsl(25,100%,55%) 30%, hsl(0,85%,60%) 55%, hsl(258,78%,60%) 80%, hsl(210,90%,60%) 100%)',
                       backgroundOrigin: 'border-box',
                       backgroundClip: 'padding-box, border-box',
                     }}
                   >
+
                     <img
                       src={brandIcon}
                       alt="Shahed Store — DBID Verified Merchant"
