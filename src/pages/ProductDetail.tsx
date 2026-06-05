@@ -678,8 +678,7 @@ const ProductDetail = () => {
                 </div>
               </a>
             </div>
-              </div>
-            </div>
+
 
             {/* ═══ RIGHT: Product Info ═══ */}
             <div className="flex flex-col gap-5">
