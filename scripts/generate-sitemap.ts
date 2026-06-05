@@ -42,7 +42,10 @@ interface Entry {
 const STATIC_ROUTES: Entry[] = [
   { loc: "/", changefreq: "daily", priority: "1.0" },
   { loc: "/shop", changefreq: "daily", priority: "0.9" },
+  { loc: "/checkout", changefreq: "monthly", priority: "0.3" },
   { loc: "/blog", changefreq: "daily", priority: "0.8" },
+  { loc: "/link", changefreq: "weekly", priority: "0.6" },
+  { loc: "/reset-password", changefreq: "monthly", priority: "0.2" },
   { loc: "/about", changefreq: "monthly", priority: "0.6" },
   { loc: "/contact-us", changefreq: "monthly", priority: "0.6" },
   { loc: "/faqs", changefreq: "monthly", priority: "0.7" },
@@ -181,6 +184,36 @@ async function main() {
     });
   }
 
+  // ─── 5. Published help-center articles (/link/:slug) ─────────────
+  const helpArticles = await fetchTable<{ slug: string; updated_at: string }>(
+    "help_articles",
+    "select=slug,updated_at&status=eq.published&order=updated_at.desc&limit=1000",
+  );
+  for (const article of helpArticles) {
+    if (!article.slug) continue;
+    entries.push({
+      loc: `/link/${article.slug}`,
+      lastmod: article.updated_at?.slice(0, 10),
+      changefreq: "monthly",
+      priority: "0.6",
+    });
+  }
+
+  // ─── 6. Active payment links (/pay/:slug) ────────────────────────
+  const paymentLinks = await fetchTable<{ slug: string; updated_at: string }>(
+    "payment_links",
+    "select=slug,updated_at&status=eq.active&order=updated_at.desc&limit=1000",
+  );
+  for (const link of paymentLinks) {
+    if (!link.slug) continue;
+    entries.push({
+      loc: `/pay/${link.slug}`,
+      lastmod: link.updated_at?.slice(0, 10),
+      changefreq: "monthly",
+      priority: "0.3",
+    });
+  }
+
   // ─── Build XML ─────────────────────────────────────────────────
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
@@ -193,7 +226,8 @@ async function main() {
   console.log(
     `[sitemap] wrote public/sitemap.xml — ${entries.length} URLs ` +
       `(${STATIC_ROUTES.length} static, ${products.length} products, ` +
-      `${categories.length} categories, ${posts.length} blog posts)`,
+      `${categories.length} categories, ${posts.length} blog posts, ` +
+      `${helpArticles.length} help articles, ${paymentLinks.length} payment links)`,
   );
 }
 

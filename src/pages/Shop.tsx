@@ -101,6 +101,7 @@ const ShopProductCard = ({ product }: { product: Product }) => {
               e.stopPropagation();
               addToCart({ id: product.id, name: product.name, price: product.price, category: '', image: product.image_url || '' });
             }}
+            aria-label={`Add ${product.name} to cart`}
             className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 flex-shrink-0"
             style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
             <ShoppingCart size={14} />
@@ -469,7 +470,7 @@ const Shop = () => {
                   style={{ background: (CAT_META[activeCategory.name] || CAT_META.default).accent }}>
                   {(CAT_META[activeCategory.name] || CAT_META.default).icon}
                   <span className="ml-1">{activeCategory.name}</span>
-                  <button onClick={() => setCategory('')} className="ml-0.5 hover:opacity-70"><X size={11} /></button>
+                  <button onClick={() => setCategory('')} className="ml-0.5 hover:opacity-70" aria-label="Clear selected category"><X size={11} /></button>
                 </div>
               )}
             </div>
