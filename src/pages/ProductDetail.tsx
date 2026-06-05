@@ -22,6 +22,8 @@ import VerifiedBadge from '@/components/store/VerifiedBadge';
 import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
 import dbidLogo from '@/assets/dbid-logo.png';
 import brandIcon from '@/assets/logo-icon.webp';
+import certifiedBadge from '@/assets/certified-badge.png.asset.json';
+
 import { useAuth } from '@/hooks/useAuth';
 
 const WA = '8801840099853';
@@ -600,36 +602,16 @@ const ProductDetail = () => {
                 >
                   {/* ── LEFT: Ribbon medal + Certified text ── */}
                   <div className="flex items-center gap-3 sm:gap-4 pl-3 sm:pl-5 pr-3 sm:pr-5 py-3 sm:py-4 flex-1 min-w-0">
-                    {/* Ribbon medal SVG */}
+                    {/* Gold Certified ribbon badge */}
                     <div className="relative flex-shrink-0">
-                      <svg viewBox="0 0 64 80" className="w-10 h-12 sm:w-12 sm:h-14 drop-shadow-[0_2px_4px_rgba(234,88,12,0.25)]" aria-hidden>
-                        <defs>
-                          <linearGradient id="medalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#fb923c" />
-                            <stop offset="55%" stopColor="#f97316" />
-                            <stop offset="100%" stopColor="#ea580c" />
-                          </linearGradient>
-                        </defs>
-                        {/* Ribbon tails */}
-                        <path d="M18 48 L10 78 L20 72 L26 64 Z" fill="#f97316" />
-                        <path d="M46 48 L54 78 L44 72 L38 64 Z" fill="#ea580c" />
-                        {/* Star/scalloped medal */}
-                        <g transform="translate(32 32)">
-                          {Array.from({ length: 12 }).map((_, i) => (
-                            <circle
-                              key={i}
-                              cx={Math.cos((i * Math.PI) / 6) * 22}
-                              cy={Math.sin((i * Math.PI) / 6) * 22}
-                              r="6"
-                              fill="url(#medalGrad)"
-                            />
-                          ))}
-                          <circle r="22" fill="url(#medalGrad)" />
-                          <circle r="16" fill="#ffffff" />
-                          <path d="M-7 1 L-2 6 L8 -5" stroke="#f97316" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                        </g>
-                      </svg>
+                      <img
+                        src={certifiedBadge.url}
+                        alt="DBID Certified Badge"
+                        className="w-12 h-14 sm:w-14 sm:h-16 object-contain"
+                        style={{ filter: 'drop-shadow(0 3px 6px rgba(220,38,38,0.28)) drop-shadow(0 1px 2px rgba(0,0,0,0.12))' }}
+                      />
                     </div>
+
 
                     {/* Certified text */}
                     <div className="flex flex-col leading-tight min-w-0">
