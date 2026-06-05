@@ -21,6 +21,7 @@ import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
 import { useAuth } from '@/hooks/useAuth';
+import dbidLogo from '@/assets/dbid-logo.png';
 
 const WA = '8801840099853';
 const PLACEHOLDER = 'https://placehold.co/600x600/0d1117/a855f7?text=Product';
