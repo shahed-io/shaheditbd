@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
@@ -243,7 +244,11 @@ const BlogPost = () => {
   );
 
   const toc = generateTOC(post.content || '');
-  const htmlContent = renderMarkdown(post.content || '');
+  const htmlContent = DOMPurify.sanitize(renderMarkdown(post.content || ''), {
+    ADD_ATTR: ['target', 'rel'],
+    FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form'],
+    FORBID_ATTR: ['onerror', 'onload', 'onclick'],
+  });
 
   const seoSchemas = [
     articleSchema({
