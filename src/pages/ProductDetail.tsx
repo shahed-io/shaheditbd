@@ -1120,6 +1120,9 @@ const ProductDetail = () => {
         {/* ── Related Products ── */}
         <RelatedProducts categoryId={product.category_id} currentProductId={product.id} />
 
+        {/* ── Recently Viewed ── */}
+        <RecentlyViewed currentProductId={product.id} />
+
         <Footer />
       </div>
 
