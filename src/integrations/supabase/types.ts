@@ -1731,6 +1731,8 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           discount_amount: number | null
           id: string
           notes: string | null
@@ -1754,6 +1756,8 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           discount_amount?: number | null
           id?: string
           notes?: string | null
@@ -1777,6 +1781,8 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           customer_phone?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           discount_amount?: number | null
           id?: string
           notes?: string | null
