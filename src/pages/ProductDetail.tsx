@@ -230,6 +230,18 @@ const ProductDetail = () => {
     return () => { cancelled = true; };
   }, [slug]);
 
+  // Track recently viewed
+  useEffect(() => {
+    if (!product) return;
+    trackRecentlyViewed({
+      product_id: product.id,
+      product_name: product.name,
+      product_price: Number((product as any).price) || 0,
+      product_image: (product as any).image_url || null,
+      product_slug: product.slug || null,
+    }, user?.id);
+  }, [product?.id, user?.id]);
+
   if (loading) return (
     <div className="min-h-screen bg-background">
       <Navbar />
