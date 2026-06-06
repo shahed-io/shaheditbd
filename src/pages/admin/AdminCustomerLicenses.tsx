@@ -38,13 +38,19 @@ interface OrderRow {
   status: string;
   payment_status: string;
   total: number;
+  subtotal?: number | null;
+  discount_amount?: number | null;
+  payment_method?: string | null;
+  transaction_id?: string | null;
+  notes?: string | null;
   created_at: string;
   customer_email: string | null;
   customer_name: string | null;
   customer_phone: string | null;
   user_id: string | null;
-  order_items: OrderItem[];
+  order_items: (OrderItem & { price?: number; total?: number })[];
 }
+
 
 const ORDER_STATUSES = ['pending', 'processing', 'completed', 'delivered', 'cancelled', 'refunded', 'failed'];
 
