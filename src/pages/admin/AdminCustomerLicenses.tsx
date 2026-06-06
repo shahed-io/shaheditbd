@@ -12,7 +12,9 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw, Send, CalendarClock, CalendarPlus, CalendarX } from 'lucide-react';
+import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw, Send, CalendarClock, CalendarPlus, CalendarX, FileText, Download, X } from 'lucide-react';
+import { downloadInvoicePdf, buildInvoiceHtmlString, type InvoiceData } from '@/lib/invoicePdf';
+
 
 interface CustomerHit {
   user_id: string | null;
@@ -36,13 +38,19 @@ interface OrderRow {
   status: string;
   payment_status: string;
   total: number;
+  subtotal?: number | null;
+  discount_amount?: number | null;
+  payment_method?: string | null;
+  transaction_id?: string | null;
+  notes?: string | null;
   created_at: string;
   customer_email: string | null;
   customer_name: string | null;
   customer_phone: string | null;
   user_id: string | null;
-  order_items: OrderItem[];
+  order_items: (OrderItem & { price?: number; total?: number })[];
 }
+
 
 const ORDER_STATUSES = ['pending', 'processing', 'completed', 'delivered', 'cancelled', 'refunded', 'failed'];
 
@@ -78,6 +86,61 @@ export default function AdminCustomerLicenses() {
   const [renewUnit, setRenewUnit] = useState<'days' | 'months' | 'years'>('years');
   const [renewDate, setRenewDate] = useState<string>('');
   const [renewSaving, setRenewSaving] = useState(false);
+
+  // Invoice preview / download state
+  const [invoicePreview, setInvoicePreview] = useState<{ html: string; order: OrderRow } | null>(null);
+  const [invoiceLoadingId, setInvoiceLoadingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const orderToInvoiceData = (o: OrderRow): InvoiceData => ({
+    invoiceNumber: o.order_number,
+    date: o.created_at,
+    customer: {
+      name: o.customer_name || activeCustomer?.display_name || 'Customer',
+      phone: o.customer_phone || activeCustomer?.phone || '',
+      email: o.customer_email || activeCustomer?.email || '',
+    },
+    items: (o.order_items || []).map((i: any) => ({
+      name: i.product_name,
+      quantity: Number(i.quantity) || 1,
+      price: Number(i.price) || 0,
+      total: Number(i.total) || (Number(i.price) || 0) * (Number(i.quantity) || 1),
+      license_key: i.license_key,
+    })),
+    subtotal: Number(o.subtotal) || undefined,
+    discount: Number(o.discount_amount) || 0,
+    total: Number(o.total) || 0,
+    paymentMethod: o.payment_method || undefined,
+    transactionId: o.transaction_id || undefined,
+    status: o.status,
+    notes: o.notes || undefined,
+  });
+
+  const openInvoicePreview = async (o: OrderRow) => {
+    setInvoiceLoadingId(o.id);
+    try {
+      const html = await buildInvoiceHtmlString(orderToInvoiceData(o));
+      setInvoicePreview({ html, order: o });
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to build preview');
+    } finally {
+      setInvoiceLoadingId(null);
+    }
+  };
+
+  const downloadInvoice = async (o: OrderRow) => {
+    setDownloadingId(o.id);
+    const tid = toast.loading('PDF তৈরি হচ্ছে...');
+    try {
+      await downloadInvoicePdf(orderToInvoiceData(o));
+      toast.success('PDF ডাউনলোড হয়েছে', { id: tid });
+    } catch (err: any) {
+      toast.error(err.message || 'PDF তৈরি ব্যর্থ', { id: tid });
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
 
   // ===== Email license(s) =====
   const sendLicenseEmail = async (
@@ -187,8 +250,9 @@ export default function AdminCustomerLicenses() {
     try {
       let q = supabase
         .from('orders')
-        .select('id, order_number, status, payment_status, total, created_at, customer_email, customer_name, customer_phone, user_id, order_items(id, product_id, product_name, quantity, license_key, expires_at)')
+        .select('id, order_number, status, payment_status, total, subtotal, discount_amount, payment_method, transaction_id, notes, created_at, customer_email, customer_name, customer_phone, user_id, order_items(id, product_id, product_name, quantity, price, total, license_key, expires_at)')
         .order('created_at', { ascending: false });
+
 
       // Match by user_id OR by email/phone (handles guest orders too)
       const orFilters: string[] = [];
@@ -467,6 +531,33 @@ export default function AdminCustomerLicenses() {
                       : <Send size={13} />}
                     <span className="ml-1 hidden sm:inline">Email All Licenses</span>
                   </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openInvoicePreview(o)}
+                    disabled={invoiceLoadingId === o.id}
+                    title="Preview invoice"
+                  >
+                    {invoiceLoadingId === o.id
+                      ? <Loader2 size={13} className="animate-spin" />
+                      : <FileText size={13} />}
+                    <span className="ml-1 hidden sm:inline">Preview</span>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => downloadInvoice(o)}
+                    disabled={downloadingId === o.id}
+                    title="Download invoice PDF"
+                  >
+                    {downloadingId === o.id
+                      ? <Loader2 size={13} className="animate-spin" />
+                      : <Download size={13} />}
+                    <span className="ml-1 hidden sm:inline">Invoice PDF</span>
+                  </Button>
+
+
+
                 </div>
               </div>
 
@@ -537,7 +628,41 @@ export default function AdminCustomerLicenses() {
         </div>
       )}
 
+      {/* Invoice Preview Dialog */}
+      <Dialog open={!!invoicePreview} onOpenChange={(o) => !o && setInvoicePreview(null)}>
+        <DialogContent className="max-w-4xl max-h-[92vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="px-5 py-3 border-b flex-row items-center justify-between space-y-0">
+            <DialogTitle className="text-sm">
+              Invoice Preview {invoicePreview ? `— #${invoicePreview.order.order_number}` : ''}
+            </DialogTitle>
+            <div className="flex gap-2">
+              {invoicePreview && (
+                <Button
+                  size="sm"
+                  onClick={() => downloadInvoice(invoicePreview.order)}
+                  disabled={downloadingId === invoicePreview.order.id}
+                >
+                  {downloadingId === invoicePreview.order.id
+                    ? <Loader2 size={13} className="animate-spin" />
+                    : <Download size={13} />}
+                  <span className="ml-1">Download PDF</span>
+                </Button>
+              )}
+            </div>
+          </DialogHeader>
+          {invoicePreview && (
+            <iframe
+              title="Invoice preview"
+              srcDoc={invoicePreview.html}
+              className="flex-1 w-full border-0 bg-muted"
+              style={{ minHeight: '70vh' }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Edit License Dialog */}
+
       <Dialog open={!!editItem} onOpenChange={(o) => !o && setEditItem(null)}>
         <DialogContent>
           <DialogHeader>
