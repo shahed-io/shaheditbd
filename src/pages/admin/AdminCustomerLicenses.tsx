@@ -12,7 +12,9 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw, Send, CalendarClock, CalendarPlus, CalendarX } from 'lucide-react';
+import { Search, KeyRound, Plus, Trash2, Save, User, Mail, Phone, Package, Loader2, RefreshCw, Send, CalendarClock, CalendarPlus, CalendarX, FileText, Download, X } from 'lucide-react';
+import { downloadInvoicePdf, buildInvoiceHtmlString, type InvoiceData } from '@/lib/invoicePdf';
+
 
 interface CustomerHit {
   user_id: string | null;
