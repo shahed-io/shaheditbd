@@ -285,8 +285,9 @@ const HeroBanner = () => {
           {/* ══════════════════════════════════
                RIGHT — Modern floating card
           ══════════════════════════════════ */}
-          <div className="relative hidden lg:flex items-center justify-center w-[480px] flex-shrink-0"
+          <div className="relative hidden lg:flex items-center justify-center w-[420px] xl:w-[460px] flex-shrink-0"
             style={{ minHeight: '580px' }}>
+
 
             {/* Ambient glow behind card */}
             <div className="absolute inset-0 pointer-events-none"
