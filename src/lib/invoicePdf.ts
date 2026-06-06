@@ -318,6 +318,21 @@ export async function downloadInvoicePdf(data: InvoiceData): Promise<void> {
 }
 
 /**
+ * Build a self-contained HTML string for previewing the invoice in an iframe.
+ */
+export async function buildInvoiceHtmlString(data: InvoiceData): Promise<string> {
+  const el = await buildInvoiceHtml(data);
+  // Strip off-screen positioning so it renders normally inside the iframe.
+  el.style.position = 'static';
+  el.style.left = 'auto';
+  el.style.top = 'auto';
+  el.style.margin = '0 auto';
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:16px;background:#f5f5f7;font-family:'Segoe UI','Noto Sans Bengali',Arial,sans-serif}</style></head><body>${el.outerHTML}</body></html>`;
+}
+
+
+
+/**
  * Normalize Bangladeshi phone to wa.me format (8801XXXXXXXXX).
  */
 export function normalizeWaPhone(raw?: string | null): string {
