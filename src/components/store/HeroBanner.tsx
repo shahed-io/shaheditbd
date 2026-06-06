@@ -574,6 +574,7 @@ const HeroBanner = () => {
           ))}
         </div>
       </div>
+      </div>
     </section>
   );
 };
