@@ -531,6 +531,30 @@ export default function AdminCustomerLicenses() {
                       : <Send size={13} />}
                     <span className="ml-1 hidden sm:inline">Email All Licenses</span>
                   </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openInvoicePreview(o)}
+                    disabled={invoiceLoadingId === o.id}
+                    title="Preview invoice"
+                  >
+                    {invoiceLoadingId === o.id
+                      ? <Loader2 size={13} className="animate-spin" />
+                      : <FileText size={13} />}
+                    <span className="ml-1 hidden sm:inline">Preview</span>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => downloadInvoice(o)}
+                    disabled={downloadingId === o.id}
+                    title="Download invoice PDF"
+                  >
+                    {downloadingId === o.id
+                      ? <Loader2 size={13} className="animate-spin" />
+                      : <Download size={13} />}
+                    <span className="ml-1 hidden sm:inline">Invoice PDF</span>
+
                 </div>
               </div>
 
