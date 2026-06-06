@@ -195,8 +195,9 @@ export default function AdminCustomerLicenses() {
     try {
       let q = supabase
         .from('orders')
-        .select('id, order_number, status, payment_status, total, created_at, customer_email, customer_name, customer_phone, user_id, order_items(id, product_id, product_name, quantity, license_key, expires_at)')
+        .select('id, order_number, status, payment_status, total, subtotal, discount_amount, payment_method, transaction_id, notes, created_at, customer_email, customer_name, customer_phone, user_id, order_items(id, product_id, product_name, quantity, price, total, license_key, expires_at)')
         .order('created_at', { ascending: false });
+
 
       // Match by user_id OR by email/phone (handles guest orders too)
       const orFilters: string[] = [];
