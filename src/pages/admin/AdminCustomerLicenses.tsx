@@ -628,7 +628,41 @@ export default function AdminCustomerLicenses() {
         </div>
       )}
 
+      {/* Invoice Preview Dialog */}
+      <Dialog open={!!invoicePreview} onOpenChange={(o) => !o && setInvoicePreview(null)}>
+        <DialogContent className="max-w-4xl max-h-[92vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="px-5 py-3 border-b flex-row items-center justify-between space-y-0">
+            <DialogTitle className="text-sm">
+              Invoice Preview {invoicePreview ? `— #${invoicePreview.order.order_number}` : ''}
+            </DialogTitle>
+            <div className="flex gap-2">
+              {invoicePreview && (
+                <Button
+                  size="sm"
+                  onClick={() => downloadInvoice(invoicePreview.order)}
+                  disabled={downloadingId === invoicePreview.order.id}
+                >
+                  {downloadingId === invoicePreview.order.id
+                    ? <Loader2 size={13} className="animate-spin" />
+                    : <Download size={13} />}
+                  <span className="ml-1">Download PDF</span>
+                </Button>
+              )}
+            </div>
+          </DialogHeader>
+          {invoicePreview && (
+            <iframe
+              title="Invoice preview"
+              srcDoc={invoicePreview.html}
+              className="flex-1 w-full border-0 bg-muted"
+              style={{ minHeight: '70vh' }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Edit License Dialog */}
+
       <Dialog open={!!editItem} onOpenChange={(o) => !o && setEditItem(null)}>
         <DialogContent>
           <DialogHeader>
