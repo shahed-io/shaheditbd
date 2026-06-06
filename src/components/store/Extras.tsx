@@ -107,58 +107,60 @@ const TickerBanner = () => {
   const speed = Math.max(20, Math.min(300, settings.speedSeconds || 60));
 
   return (
-    <div className="relative overflow-hidden"
-      style={{
-        background: `linear-gradient(135deg, ${settings.bgFrom} 0%, ${settings.bgTo} 50%, ${settings.bgFrom} 100%)`,
-        borderTop: `1px solid ${settings.accentColor}26`,
-        borderBottom: `1px solid ${settings.accentColor}26`,
-        boxShadow: `0 2px 12px ${settings.accentColor}14`,
-      }}>
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: `radial-gradient(ellipse at 50% 0%, ${settings.accentColor}0d 0%, transparent 65%)` }} />
-
-      <div className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-        style={{ background: `linear-gradient(to right, ${settings.bgFrom} 0%, transparent 100%)` }} />
-      <div className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
-        style={{ background: `linear-gradient(to left, ${settings.bgFrom} 0%, transparent 100%)` }} />
-
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-full"
+    <div className="container-fluid pt-2 pb-6">
+      <div className="relative overflow-hidden rounded-2xl mx-auto max-w-[1400px]"
         style={{
-          background: settings.accentColor,
-          color: 'white',
-          boxShadow: `0 2px 10px ${settings.accentColor}59`,
+          background: `linear-gradient(135deg, ${settings.bgFrom} 0%, ${settings.bgTo} 50%, ${settings.bgFrom} 100%)`,
+          border: `1px solid ${settings.accentColor}26`,
+          boxShadow: `0 8px 24px ${settings.accentColor}1f, inset 0 1px 0 rgba(255,255,255,0.5)`,
         }}>
-        <Zap size={9} fill="white" />
-        <span>{settings.liveLabel}</span>
-        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-      </div>
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ backgroundImage: `radial-gradient(ellipse at 50% 0%, ${settings.accentColor}0d 0%, transparent 65%)` }} />
 
-      <div
-        className="ticker-track whitespace-nowrap py-3"
-        style={{ paddingLeft: '110px', animationDuration: `${speed}s` }}
-      >
-        {items.map((item, i) => {
-          const inner = (
-            <span className="inline-flex items-center gap-2 px-5 text-[12.5px] hover:opacity-80 transition-opacity">
-              <span className="font-semibold" style={{ color: settings.textColor }}>{item.label}</span>
-              <span className="font-bold" style={{ color: settings.accentColor }}>{item.price}</span>
-              {item.off && (
-                <span className="font-bold text-[11px] px-2.5 py-0.5 rounded-full"
-                  style={{ background: settings.accentColor, color: 'white' }}>{item.off}</span>
-              )}
-            </span>
-          );
-          return (
-            <span key={i} className="inline-flex items-center flex-shrink-0">
-              {item.slug ? <Link to={`/product/${item.slug}`}>{inner}</Link> : inner}
-              <span className="text-[18px]" style={{ color: `${settings.accentColor}33` }}>|</span>
-            </span>
-          );
-        })}
+        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+          style={{ background: `linear-gradient(to right, ${settings.bgFrom} 0%, transparent 100%)` }} />
+        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+          style={{ background: `linear-gradient(to left, ${settings.bgFrom} 0%, transparent 100%)` }} />
+
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-full"
+          style={{
+            background: settings.accentColor,
+            color: 'white',
+            boxShadow: `0 2px 10px ${settings.accentColor}59`,
+          }}>
+          <Zap size={9} fill="white" />
+          <span>{settings.liveLabel}</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+        </div>
+
+        <div
+          className="ticker-track whitespace-nowrap py-3"
+          style={{ paddingLeft: '100px', animationDuration: `${speed}s` }}
+        >
+          {items.map((item, i) => {
+            const inner = (
+              <span className="inline-flex items-center gap-2 px-5 text-[12.5px] hover:opacity-80 transition-opacity">
+                <span className="font-semibold" style={{ color: settings.textColor }}>{item.label}</span>
+                <span className="font-bold" style={{ color: settings.accentColor }}>{item.price}</span>
+                {item.off && (
+                  <span className="font-bold text-[11px] px-2.5 py-0.5 rounded-full"
+                    style={{ background: settings.accentColor, color: 'white' }}>{item.off}</span>
+                )}
+              </span>
+            );
+            return (
+              <span key={i} className="inline-flex items-center flex-shrink-0">
+                {item.slug ? <Link to={`/product/${item.slug}`}>{inner}</Link> : inner}
+                <span className="text-[18px]" style={{ color: `${settings.accentColor}33` }}>|</span>
+              </span>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 };
+
 
 // FloatingSupport is now mounted globally in App.tsx, so this is a no-op to avoid duplicates.
 const FloatingButtons = () => null;
