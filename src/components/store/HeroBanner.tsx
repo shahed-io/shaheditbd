@@ -116,34 +116,35 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden" style={{ background: bgStyle }}>
+    <section className="relative overflow-hidden px-3 sm:px-5 lg:px-8 py-4 lg:py-6" style={{ background: bgStyle }}>
 
-      {/* ── Ambient background ── */}
+      {/* ── Luminous ambient orbs (page-level) ── */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Large gradient sphere top-right */}
-        <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full"
-          style={{
-            background: 'radial-gradient(circle, hsla(258,78%,62%,0.09) 0%, hsla(200,90%,55%,0.05) 40%, transparent 70%)',
-            filter: 'blur(1px)',
-          }} />
-        {/* Bottom-left soft sphere */}
-        <div className="absolute bottom-0 -left-32 w-[500px] h-[500px] rounded-full"
-          style={{
-            background: 'radial-gradient(circle, hsla(200,90%,55%,0.07) 0%, transparent 65%)',
-            filter: 'blur(1px)',
-          }} />
-        {/* Subtle dot pattern */}
-        <div className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage: 'radial-gradient(circle, hsla(258,60%,55%,0.06) 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
-          }} />
+        <div className="absolute -top-[10%] -right-[5%] w-[500px] h-[500px] rounded-full"
+          style={{ background: 'hsla(258,78%,62%,0.22)', filter: 'blur(120px)' }} />
+        <div className="absolute -bottom-[10%] -left-[5%] w-[600px] h-[600px] rounded-full"
+          style={{ background: 'hsla(230,80%,70%,0.18)', filter: 'blur(140px)' }} />
+        <div className="absolute top-[25%] left-[33%] w-[300px] h-[300px] rounded-full"
+          style={{ background: 'hsla(270,70%,72%,0.16)', filter: 'blur(100px)' }} />
         {/* Top shimmer */}
         <div className="absolute top-0 left-0 right-0 h-px"
           style={{ background: 'linear-gradient(90deg, transparent 0%, hsla(258,78%,62%,0.4) 40%, hsla(200,90%,55%,0.4) 60%, transparent 100%)' }} />
       </div>
 
-      <div className="relative container-fluid">
+      {/* ── Glass card frame around hero content ── */}
+      <div className="relative mx-auto max-w-[1400px] rounded-[28px] lg:rounded-[40px] overflow-hidden"
+        style={{
+          background: 'rgba(255,255,255,0.42)',
+          backdropFilter: 'blur(32px)',
+          WebkitBackdropFilter: 'blur(32px)',
+          border: '1px solid rgba(255,255,255,0.6)',
+          boxShadow: '0 32px 64px -16px hsla(258,78%,55%,0.12), inset 0 1px 0 rgba(255,255,255,0.9)',
+        }}>
+        {/* Soft inner accent */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, hsla(258,78%,60%,0.10), transparent 70%)' }} />
+
+        <div className="relative container-fluid">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0 pt-10 pb-8 md:pt-14 md:pb-10 lg:pt-20 lg:pb-14">
 
           {/* ══════════════════════════════════
