@@ -87,6 +87,61 @@ export default function AdminCustomerLicenses() {
   const [renewDate, setRenewDate] = useState<string>('');
   const [renewSaving, setRenewSaving] = useState(false);
 
+  // Invoice preview / download state
+  const [invoicePreview, setInvoicePreview] = useState<{ html: string; order: OrderRow } | null>(null);
+  const [invoiceLoadingId, setInvoiceLoadingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const orderToInvoiceData = (o: OrderRow): InvoiceData => ({
+    invoiceNumber: o.order_number,
+    date: o.created_at,
+    customer: {
+      name: o.customer_name || activeCustomer?.display_name || 'Customer',
+      phone: o.customer_phone || activeCustomer?.phone || '',
+      email: o.customer_email || activeCustomer?.email || '',
+    },
+    items: (o.order_items || []).map((i: any) => ({
+      name: i.product_name,
+      quantity: Number(i.quantity) || 1,
+      price: Number(i.price) || 0,
+      total: Number(i.total) || (Number(i.price) || 0) * (Number(i.quantity) || 1),
+      license_key: i.license_key,
+    })),
+    subtotal: Number(o.subtotal) || undefined,
+    discount: Number(o.discount_amount) || 0,
+    total: Number(o.total) || 0,
+    paymentMethod: o.payment_method || undefined,
+    transactionId: o.transaction_id || undefined,
+    status: o.status,
+    notes: o.notes || undefined,
+  });
+
+  const openInvoicePreview = async (o: OrderRow) => {
+    setInvoiceLoadingId(o.id);
+    try {
+      const html = await buildInvoiceHtmlString(orderToInvoiceData(o));
+      setInvoicePreview({ html, order: o });
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to build preview');
+    } finally {
+      setInvoiceLoadingId(null);
+    }
+  };
+
+  const downloadInvoice = async (o: OrderRow) => {
+    setDownloadingId(o.id);
+    const tid = toast.loading('PDF তৈরি হচ্ছে...');
+    try {
+      await downloadInvoicePdf(orderToInvoiceData(o));
+      toast.success('PDF ডাউনলোড হয়েছে', { id: tid });
+    } catch (err: any) {
+      toast.error(err.message || 'PDF তৈরি ব্যর্থ', { id: tid });
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+
   // ===== Email license(s) =====
   const sendLicenseEmail = async (
     order: OrderRow,
