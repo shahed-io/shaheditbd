@@ -450,9 +450,9 @@ const HeroBanner = () => {
 
             {/* ── Floating stat cards ── */}
             {[
-              { label: FLOATING[0]?.label ?? 'Orders Today', value: FLOATING[0]?.value ?? '248+', icon: FLOATING[0]?.icon ?? '📦', style: { top: '8%',  left: '-15%' }, delay: '0s'   },
-              { label: FLOATING[1]?.label ?? 'Happy Users',  value: FLOATING[1]?.value ?? '12K+', icon: FLOATING[1]?.icon ?? '😊', style: { top: '45%', right: '-16%' }, delay: '1.8s' },
-              { label: FLOATING[2]?.label ?? 'Avg Rating',   value: FLOATING[2]?.value ?? '4.9★', icon: FLOATING[2]?.icon ?? '⭐', style: { bottom: '10%', left: '-14%' }, delay: '3.2s' },
+              { label: FLOATING[0]?.label ?? 'Orders Today', value: FLOATING[0]?.value ?? '248+', icon: FLOATING[0]?.icon ?? '📦', style: { top: '6%',  left: '-4%' }, delay: '0s'   },
+              { label: FLOATING[1]?.label ?? 'Happy Users',  value: FLOATING[1]?.value ?? '12K+', icon: FLOATING[1]?.icon ?? '😊', style: { top: '45%', right: '-6%' }, delay: '1.8s' },
+              { label: FLOATING[2]?.label ?? 'Avg Rating',   value: FLOATING[2]?.value ?? '4.9★', icon: FLOATING[2]?.icon ?? '⭐', style: { bottom: '8%', left: '-4%' }, delay: '3.2s' },
             ].map((card, i) => (
               <div key={i}
                 className="absolute anim-float"
