@@ -58,6 +58,7 @@ const AdminWallet = () => {
   const [processingReqId, setProcessingReqId] = useState<string | null>(null);
   const [adminNote, setAdminNote] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<'requests' | 'customers' | 'transactions'>('requests');
+  const [detailCustomer, setDetailCustomer] = useState<Customer | null>(null);
 
   useEffect(() => { fetchCustomers(); fetchAllTransactions(); fetchTopupRequests(); }, []);
 
