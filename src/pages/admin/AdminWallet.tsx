@@ -387,22 +387,29 @@ const AdminWallet = () => {
                   <div className="p-8 text-center text-muted-foreground text-sm">No customers found</div>
                 ) : (
                   filtered.map(c => (
-                    <div key={c.user_id} onClick={() => setSelectedUser(c)}
-                      className={`flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-muted/30 transition-colors ${selectedUser?.user_id === c.user_id ? 'bg-primary/10 border-l-2 border-primary' : ''}`}>
-                      <div className="flex items-center gap-3">
+                    <div key={c.user_id}
+                      className={`flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors ${selectedUser?.user_id === c.user_id ? 'bg-primary/10 border-l-2 border-primary' : ''}`}>
+                      <div onClick={() => setSelectedUser(c)} className="flex items-center gap-3 cursor-pointer flex-1 min-w-0">
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-xs font-bold text-primary">
                           {(c.display_name || c.email || '?')[0].toUpperCase()}
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-foreground">{c.display_name || 'Unknown'}</p>
-                          <p className="text-xs text-muted-foreground">{c.email}</p>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{c.display_name || 'Unknown'}</p>
+                          <p className="text-xs text-muted-foreground truncate">{c.email}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className={`text-sm font-bold ${c.wallet_balance > 0 ? 'text-green-500' : 'text-muted-foreground'}`}>
-                          ৳{(c.wallet_balance || 0).toLocaleString()}
-                        </p>
-                        <p className="text-xs text-muted-foreground">Balance</p>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="text-right">
+                          <p className={`text-sm font-bold ${c.wallet_balance > 0 ? 'text-green-500' : 'text-muted-foreground'}`}>
+                            ৳{(c.wallet_balance || 0).toLocaleString()}
+                          </p>
+                          <p className="text-xs text-muted-foreground">Balance</p>
+                        </div>
+                        <button onClick={(e) => { e.stopPropagation(); setDetailCustomer(c); }}
+                          className="p-2 rounded-lg border border-border text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition"
+                          title="View full wallet history">
+                          <Eye size={14} />
+                        </button>
                       </div>
                     </div>
                   ))
