@@ -165,6 +165,7 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'AI Tools',
     items: [
       { icon: Brain, label: 'AI Assistant', path: '/ceo/ai-assistant', badge: 'new' },
+      { icon: Sparkles, label: 'AI FAQ Generator', path: '/ceo/ai-faq-generator', badge: 'new' },
       { icon: Sparkles, label: 'AI API Config', path: '/ceo/ai-config' },
     ],
   },
