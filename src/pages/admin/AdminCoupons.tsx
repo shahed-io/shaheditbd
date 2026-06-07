@@ -47,8 +47,8 @@ const AdminCoupons = () => {
 
   const fetchCoupons = async () => {
     setLoading(true);
-    const { data } = await supabase.from('coupons').select('*').order('created_at', { ascending: false });
-    setCoupons(data || []);
+    const { data } = await supabase.rpc('admin_list_coupons_with_email' as any);
+    setCoupons((data as any[]) || []);
     setLoading(false);
   };
 
