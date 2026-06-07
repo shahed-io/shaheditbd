@@ -570,13 +570,21 @@ const AdminProducts = () => {
 
   const fetchProducts = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('products')
-      .select('*, category:category_id(name)')
-      .order('created_at', { ascending: false });
-    setProducts((data as any) || []);
+    // Use admin RPC to include cost_price (which is hidden from regular SELECT for security).
+    const { data: rows } = await supabase.rpc('admin_list_products_with_cost');
+    let merged: any[] = (rows as any[]) || [];
+    if (merged.length) {
+      const catIds = Array.from(new Set(merged.map(p => p.category_id).filter(Boolean)));
+      if (catIds.length) {
+        const { data: cats } = await supabase.from('categories').select('id, name').in('id', catIds);
+        const map = new Map((cats || []).map((c: any) => [c.id, c.name]));
+        merged = merged.map(p => ({ ...p, category: p.category_id ? { name: map.get(p.category_id) } : null }));
+      }
+    }
+    setProducts(merged);
     setLoading(false);
   };
+
 
   const fetchCategories = async () => {
     const { data } = await supabase.from('categories').select('id, name, parent_id').eq('is_active', true).order('sort_order');
