@@ -6,6 +6,7 @@ import {
   Wallet, Plus, Minus, Search, RefreshCw, TrendingUp, TrendingDown,
   History, Users, CheckCircle, X, Clock, Eye
 } from 'lucide-react';
+import WalletCustomerDetailModal from '@/components/admin/WalletCustomerDetailModal';
 
 interface Customer {
   user_id: string;
@@ -57,6 +58,7 @@ const AdminWallet = () => {
   const [processingReqId, setProcessingReqId] = useState<string | null>(null);
   const [adminNote, setAdminNote] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<'requests' | 'customers' | 'transactions'>('requests');
+  const [detailCustomer, setDetailCustomer] = useState<Customer | null>(null);
 
   useEffect(() => { fetchCustomers(); fetchAllTransactions(); fetchTopupRequests(); }, []);
 
@@ -385,22 +387,29 @@ const AdminWallet = () => {
                   <div className="p-8 text-center text-muted-foreground text-sm">No customers found</div>
                 ) : (
                   filtered.map(c => (
-                    <div key={c.user_id} onClick={() => setSelectedUser(c)}
-                      className={`flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-muted/30 transition-colors ${selectedUser?.user_id === c.user_id ? 'bg-primary/10 border-l-2 border-primary' : ''}`}>
-                      <div className="flex items-center gap-3">
+                    <div key={c.user_id}
+                      className={`flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors ${selectedUser?.user_id === c.user_id ? 'bg-primary/10 border-l-2 border-primary' : ''}`}>
+                      <div onClick={() => setSelectedUser(c)} className="flex items-center gap-3 cursor-pointer flex-1 min-w-0">
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-xs font-bold text-primary">
                           {(c.display_name || c.email || '?')[0].toUpperCase()}
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-foreground">{c.display_name || 'Unknown'}</p>
-                          <p className="text-xs text-muted-foreground">{c.email}</p>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{c.display_name || 'Unknown'}</p>
+                          <p className="text-xs text-muted-foreground truncate">{c.email}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className={`text-sm font-bold ${c.wallet_balance > 0 ? 'text-green-500' : 'text-muted-foreground'}`}>
-                          ৳{(c.wallet_balance || 0).toLocaleString()}
-                        </p>
-                        <p className="text-xs text-muted-foreground">Balance</p>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="text-right">
+                          <p className={`text-sm font-bold ${c.wallet_balance > 0 ? 'text-green-500' : 'text-muted-foreground'}`}>
+                            ৳{(c.wallet_balance || 0).toLocaleString()}
+                          </p>
+                          <p className="text-xs text-muted-foreground">Balance</p>
+                        </div>
+                        <button onClick={(e) => { e.stopPropagation(); setDetailCustomer(c); }}
+                          className="p-2 rounded-lg border border-border text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition"
+                          title="View full wallet history">
+                          <Eye size={14} />
+                        </button>
                       </div>
                     </div>
                   ))
@@ -418,29 +427,44 @@ const AdminWallet = () => {
                 ) : transactions.length === 0 ? (
                   <div className="p-8 text-center text-muted-foreground text-sm">No transactions</div>
                 ) : (
-                  transactions.map(tx => (
-                    <div key={tx.id} className="flex items-center justify-between px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
+                  transactions.map(tx => {
+                    const cust: Customer = {
+                      user_id: tx.user_id,
+                      display_name: tx.profiles?.display_name || null,
+                      email: tx.profiles?.email || null,
+                      wallet_balance: customers.find(c => c.user_id === tx.user_id)?.wallet_balance || 0,
+                    };
+                    return (
+                    <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
                           {tx.type === 'credit'
                             ? <TrendingUp size={14} className="text-green-500" />
                             : <TrendingDown size={14} className="text-destructive" />}
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
                             {(tx as any).profiles?.display_name || (tx as any).profiles?.email || tx.user_id.slice(0, 8)}
                           </p>
-                          <p className="text-xs text-muted-foreground">{tx.note || '—'} · {new Date(tx.created_at).toLocaleDateString()}</p>
+                          <p className="text-xs text-muted-foreground truncate">{tx.note || '—'} · {new Date(tx.created_at).toLocaleString()}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-500' : 'text-destructive'}`}>
-                          {tx.type === 'credit' ? '+' : '-'}৳{tx.amount.toLocaleString()}
-                        </p>
-                        <p className="text-xs text-muted-foreground">Bal: ৳{tx.balance_after.toLocaleString()}</p>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="text-right">
+                          <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-500' : 'text-destructive'}`}>
+                            {tx.type === 'credit' ? '+' : '-'}৳{tx.amount.toLocaleString()}
+                          </p>
+                          <p className="text-xs text-muted-foreground">Bal: ৳{tx.balance_after.toLocaleString()}</p>
+                        </div>
+                        <button onClick={() => setDetailCustomer(cust)}
+                          className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-primary hover:border-primary/50 transition"
+                          title="View user's full wallet history">
+                          <Eye size={13} />
+                        </button>
                       </div>
                     </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -521,6 +545,10 @@ const AdminWallet = () => {
           </button>
         </div>
       </div>
+
+      {detailCustomer && (
+        <WalletCustomerDetailModal customer={detailCustomer} onClose={() => setDetailCustomer(null)} />
+      )}
     </div>
   );
 };
