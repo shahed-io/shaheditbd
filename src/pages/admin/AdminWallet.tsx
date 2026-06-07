@@ -545,6 +545,10 @@ const AdminWallet = () => {
           </button>
         </div>
       </div>
+
+      {detailCustomer && (
+        <WalletCustomerDetailModal customer={detailCustomer} onClose={() => setDetailCustomer(null)} />
+      )}
     </div>
   );
 };
