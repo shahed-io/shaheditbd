@@ -6,6 +6,7 @@ import {
   Wallet, Plus, Minus, Search, RefreshCw, TrendingUp, TrendingDown,
   History, Users, CheckCircle, X, Clock, Eye
 } from 'lucide-react';
+import WalletCustomerDetailModal from '@/components/admin/WalletCustomerDetailModal';
 
 interface Customer {
   user_id: string;
