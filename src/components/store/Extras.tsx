@@ -108,7 +108,7 @@ const TickerBanner = () => {
 
   return (
     <div className="px-3 sm:px-5 lg:px-8 pt-2 pb-6">
-      <div className="relative overflow-hidden rounded-2xl mx-auto max-w-[1400px]"
+      <div className="relative overflow-hidden rounded-2xl mx-auto w-full max-w-[1800px]"
         style={{
           background: `linear-gradient(135deg, ${settings.bgFrom} 0%, ${settings.bgTo} 50%, ${settings.bgFrom} 100%)`,
           border: `1px solid ${settings.accentColor}26`,
