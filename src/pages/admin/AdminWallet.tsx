@@ -427,29 +427,44 @@ const AdminWallet = () => {
                 ) : transactions.length === 0 ? (
                   <div className="p-8 text-center text-muted-foreground text-sm">No transactions</div>
                 ) : (
-                  transactions.map(tx => (
-                    <div key={tx.id} className="flex items-center justify-between px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
+                  transactions.map(tx => {
+                    const cust: Customer = {
+                      user_id: tx.user_id,
+                      display_name: tx.profiles?.display_name || null,
+                      email: tx.profiles?.email || null,
+                      wallet_balance: customers.find(c => c.user_id === tx.user_id)?.wallet_balance || 0,
+                    };
+                    return (
+                    <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-destructive/10'}`}>
                           {tx.type === 'credit'
                             ? <TrendingUp size={14} className="text-green-500" />
                             : <TrendingDown size={14} className="text-destructive" />}
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
                             {(tx as any).profiles?.display_name || (tx as any).profiles?.email || tx.user_id.slice(0, 8)}
                           </p>
-                          <p className="text-xs text-muted-foreground">{tx.note || '—'} · {new Date(tx.created_at).toLocaleDateString()}</p>
+                          <p className="text-xs text-muted-foreground truncate">{tx.note || '—'} · {new Date(tx.created_at).toLocaleString()}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-500' : 'text-destructive'}`}>
-                          {tx.type === 'credit' ? '+' : '-'}৳{tx.amount.toLocaleString()}
-                        </p>
-                        <p className="text-xs text-muted-foreground">Bal: ৳{tx.balance_after.toLocaleString()}</p>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="text-right">
+                          <p className={`text-sm font-bold ${tx.type === 'credit' ? 'text-green-500' : 'text-destructive'}`}>
+                            {tx.type === 'credit' ? '+' : '-'}৳{tx.amount.toLocaleString()}
+                          </p>
+                          <p className="text-xs text-muted-foreground">Bal: ৳{tx.balance_after.toLocaleString()}</p>
+                        </div>
+                        <button onClick={() => setDetailCustomer(cust)}
+                          className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-primary hover:border-primary/50 transition"
+                          title="View user's full wallet history">
+                          <Eye size={13} />
+                        </button>
                       </div>
                     </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
