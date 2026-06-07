@@ -3476,6 +3476,58 @@ export type Database = {
           user_id: string
         }[]
       }
+      admin_list_products_with_cost: {
+        Args: never
+        Returns: {
+          attributes: Json | null
+          badge: string | null
+          brand: string | null
+          category_id: string | null
+          cost_price: number | null
+          created_at: string
+          custom_fields: Json | null
+          delivery_time: string | null
+          delivery_type: string | null
+          demo_url: string | null
+          description: string | null
+          discount_percent: number | null
+          download_link: string | null
+          faq: Json | null
+          id: string
+          image_url: string | null
+          images: string[] | null
+          is_digital: boolean | null
+          is_featured: boolean | null
+          name: string
+          original_price: number | null
+          price: number
+          product_type: string | null
+          refund_note: string | null
+          seo_description: string | null
+          seo_title: string | null
+          short_description: string | null
+          sku: string | null
+          slug: string
+          sort_order: number | null
+          status: Database["public"]["Enums"]["product_status"]
+          stock_quantity: number | null
+          subcategory_id: string | null
+          tags: string[] | null
+          total_sales: number | null
+          total_views: number | null
+          updated_at: string
+          variants: Json | null
+          video_url: string | null
+          warranty_note: string | null
+          what_you_get: string[] | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "products"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       approve_affiliate_conversion: {
         Args: { p_conversion_id: string }
         Returns: Json
