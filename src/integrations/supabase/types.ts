@@ -3476,6 +3476,32 @@ export type Database = {
           user_id: string
         }[]
       }
+      admin_list_coupons_with_email: {
+        Args: never
+        Returns: {
+          code: string
+          created_at: string
+          customer_email: string | null
+          description: string | null
+          discount_type: string
+          discount_value: number
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          max_uses: number | null
+          min_order_amount: number | null
+          product_id: string | null
+          source: string | null
+          updated_at: string
+          uses_count: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "coupons"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       admin_list_products_with_cost: {
         Args: never
         Returns: {
