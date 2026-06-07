@@ -107,7 +107,7 @@ const TickerBanner = () => {
   const speed = Math.max(20, Math.min(300, settings.speedSeconds || 60));
 
   return (
-    <div className="container-fluid pt-2 pb-6">
+    <div className="px-3 sm:px-5 lg:px-8 pt-2 pb-6">
       <div className="relative overflow-hidden rounded-2xl mx-auto max-w-[1400px]"
         style={{
           background: `linear-gradient(135deg, ${settings.bgFrom} 0%, ${settings.bgTo} 50%, ${settings.bgFrom} 100%)`,
