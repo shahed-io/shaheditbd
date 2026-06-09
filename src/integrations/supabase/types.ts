@@ -2669,7 +2669,6 @@ export type Database = {
           email: string | null
           id: string
           is_suspended: boolean
-          personal_discount_percent: number
           phone: string | null
           points_balance: number
           referral_code: string | null
@@ -2695,7 +2694,6 @@ export type Database = {
           email?: string | null
           id?: string
           is_suspended?: boolean
-          personal_discount_percent?: number
           phone?: string | null
           points_balance?: number
           referral_code?: string | null
@@ -2721,7 +2719,6 @@ export type Database = {
           email?: string | null
           id?: string
           is_suspended?: boolean
-          personal_discount_percent?: number
           phone?: string | null
           points_balance?: number
           referral_code?: string | null
