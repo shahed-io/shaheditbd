@@ -953,20 +953,20 @@ const Checkout = () => {
 
             {/* Wallet balance display */}
             {paymentMethod === 'wallet' && (
-              <div className={`rounded-xl p-4 space-y-2 border ${walletBalance >= finalTotal ? 'bg-green-500/10 border-green-500/30' : 'bg-destructive/10 border-destructive/30'}`}>
+              <div className={`rounded-xl p-4 space-y-2 border ${walletBalance >= payableTotal ? 'bg-green-500/10 border-green-500/30' : 'bg-destructive/10 border-destructive/30'}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                     <Wallet size={16} className="text-primary" />
                     <span>ওয়ালেট ব্যালেন্স</span>
                   </div>
-                  <span className={`font-bold text-lg ${walletBalance >= finalTotal ? 'text-green-500' : 'text-destructive'}`}>
+                  <span className={`font-bold text-lg ${walletBalance >= payableTotal ? 'text-green-500' : 'text-destructive'}`}>
                     ৳{walletBalance.toLocaleString()}
                   </span>
                 </div>
-                {walletBalance >= finalTotal ? (
+                {walletBalance >= payableTotal ? (
                   <p className="text-xs text-green-500">✅ পর্যাপ্ত ব্যালেন্স আছে। কোনো Transaction ID দরকার নেই।</p>
                 ) : (
-                  <p className="text-xs text-destructive">❌ ব্যালেন্স কম। আরও ৳{(finalTotal - walletBalance).toLocaleString()} দরকার। Dashboard থেকে টপ-আপ করুন।</p>
+                  <p className="text-xs text-destructive">❌ ব্যালেন্স কম। আরও ৳{(payableTotal - walletBalance).toLocaleString()} দরকার। Dashboard থেকে টপ-আপ করুন।</p>
                 )}
                 {!user && <p className="text-xs text-destructive">⚠️ Wallet পেমেন্টের জন্য লগইন করতে হবে</p>}
               </div>
