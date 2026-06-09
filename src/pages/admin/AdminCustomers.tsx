@@ -290,10 +290,12 @@ export default function AdminCustomers() {
 
   const saveCustomerEdit = async () => {
     if (!selected) return;
+    const pct = Math.max(0, Math.min(20, Math.floor(Number(editForm.personal_discount_percent) || 0)));
     const { error } = await supabase.from('profiles').update({
       display_name: editForm.display_name.trim() || null,
       email: editForm.email.trim() || null,
       phone: editForm.phone.trim() || null,
+      personal_discount_percent: pct,
     }).eq('id', selected.id);
     if (error) { toast.error('আপডেট ব্যর্থ'); return; }
     setSelected({
@@ -301,6 +303,7 @@ export default function AdminCustomers() {
       display_name: editForm.display_name.trim() || null,
       email: editForm.email.trim() || null,
       phone: editForm.phone.trim() || null,
+      personal_discount_percent: pct,
     });
     setEditingCustomer(false);
     toast.success('কাস্টমার তথ্য আপডেট হয়েছে!');
