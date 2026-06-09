@@ -283,6 +283,7 @@ export default function AdminCustomers() {
       display_name: selected.display_name ?? '',
       email: selected.email ?? '',
       phone: selected.phone ?? '',
+      personal_discount_percent: Number(selected.personal_discount_percent ?? 0),
     });
     setEditingCustomer(true);
   };
