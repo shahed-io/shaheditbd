@@ -489,7 +489,7 @@ const Checkout = () => {
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
           user_id: user?.id || null,
-          notes: (orderNotes.trim() || '') + (refCreditApplied > 0 ? `\n[Referral credit applied: ৳${refCreditApplied}]` : ''),
+          notes: (orderNotes.trim() || '') + (refCreditApplied > 0 ? `\n[Referral credit applied: ৳${refCreditApplied}]` : '') + (personalDiscountAmount > 0 ? `\n[Personal discount: ${personalDiscountPct}% (-৳${personalDiscountAmount})]` : ''),
           affiliate_referral_code: affRef?.code || null,
         })
         .select()
