@@ -395,8 +395,10 @@ const Checkout = () => {
     }
   };
 
-  // Final payable after referral credit
-  const payableTotal = Math.max(0, finalTotal - refCreditApplied);
+  // Personal discount (admin-set, 0-20%, stacks with coupon)
+  const personalDiscountAmount = Math.round((subtotal * personalDiscountPct) / 100);
+  // Final payable after referral credit + personal discount
+  const payableTotal = Math.max(0, finalTotal - refCreditApplied - personalDiscountAmount);
 
   const handleApplyRefCredit = () => {
     setRefCreditError('');
