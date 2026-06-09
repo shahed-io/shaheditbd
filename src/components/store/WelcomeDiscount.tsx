@@ -84,7 +84,7 @@ export default function WelcomeDiscount() {
   const [previewMode, setPreviewMode] = useState(false);
   const wheelRef = useRef<HTMLDivElement>(null);
 
-  const loadInitial = useCallback(async (forcePreview = false) => {
+  const loadInitial = useCallback(async (forcePreview = false, forceOpen = false) => {
     // In preview mode, skip all storage checks and load fresh settings
     if (forcePreview) {
       try {
@@ -117,14 +117,22 @@ export default function WelcomeDiscount() {
       return;
     }
 
-    if (sessionStorage.getItem(WELCOME_SESSION_KEY) || localStorage.getItem(WELCOME_CLAIMED_KEY)) return;
+    // Skip storage gating when user explicitly clicked "Claim" button
+    if (!forceOpen && (sessionStorage.getItem(WELCOME_SESSION_KEY) || localStorage.getItem(WELCOME_CLAIMED_KEY))) return;
 
     const visitorId = getOrCreateVisitorId();
     try {
       const { data, error } = await supabase.functions.invoke('generate-welcome-coupon', {
         body: { visitorId, action: 'check' },
       });
-      if (error || !data || data.disabled || data.error) return;
+      if (error || !data || data.error) {
+        if (forceOpen) toast.error('Welcome offer লোড করা যায়নি, আবার চেষ্টা করুন');
+        return;
+      }
+      if (data.disabled) {
+        if (forceOpen) toast.info('এই মুহূর্তে কোনো Welcome offer চালু নেই');
+        return;
+      }
 
       if (data.alreadyHas) {
         setCoupon({
@@ -143,6 +151,7 @@ export default function WelcomeDiscount() {
 
       if (data.alreadyClaimed) {
         localStorage.setItem(WELCOME_CLAIMED_KEY, '1');
+        if (forceOpen) toast.info('আপনি ইতিমধ্যে এই Welcome offer দাবি করেছেন বা মেয়াদ শেষ হয়েছে');
         return;
       }
 
@@ -156,17 +165,23 @@ export default function WelcomeDiscount() {
         setSettings(s);
         setShow(true);
         sessionStorage.setItem(WELCOME_SESSION_KEY, '1');
+      } else if (forceOpen) {
+        toast.info('এই মুহূর্তে কোনো Welcome offer পাওয়া যায়নি');
       }
-    } catch { /* silent */ }
+    } catch {
+      if (forceOpen) toast.error('Welcome offer লোড করা যায়নি');
+    }
   }, []);
 
   // Listen for admin "test" trigger and user-initiated open event
   useEffect(() => {
     const handleTest = () => loadInitial(true);
     const handleOpen = () => {
-      // User-initiated claim from dashboard — clear session block & open real flow
-      try { sessionStorage.removeItem(WELCOME_SESSION_KEY); } catch { /* silent */ }
-      loadInitial(false);
+      // User-initiated claim from dashboard — bypass storage gates, force open
+      try {
+        sessionStorage.removeItem(WELCOME_SESSION_KEY);
+      } catch { /* silent */ }
+      loadInitial(false, true);
     };
     window.addEventListener('ss:welcome-test', handleTest);
     window.addEventListener('ss:welcome-open', handleOpen);
