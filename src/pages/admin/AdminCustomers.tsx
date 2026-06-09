@@ -603,7 +603,7 @@ export default function AdminCustomers() {
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <Edit3 size={14} className="text-primary" /> কাস্টমার তথ্য এডিট করুন
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
               <div>
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">নাম</label>
                 <Input value={editForm.display_name} onChange={e => setEditForm(p => ({ ...p, display_name: e.target.value }))}
@@ -618,6 +618,17 @@ export default function AdminCustomers() {
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">ফোন</label>
                 <Input value={editForm.phone} onChange={e => setEditForm(p => ({ ...p, phone: e.target.value }))}
                   placeholder="01XXXXXXXXX" className="bg-muted/30 text-sm" />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase mb-1 block">
+                  Personal Discount % (0-20)
+                </label>
+                <Input
+                  type="number" min={0} max={20} step={1}
+                  value={editForm.personal_discount_percent}
+                  onChange={e => setEditForm(p => ({ ...p, personal_discount_percent: Math.max(0, Math.min(20, Math.floor(Number(e.target.value) || 0))) }))}
+                  placeholder="0" className="bg-muted/30 text-sm" />
+                <p className="text-[10px] text-muted-foreground mt-1">সাধারণত সর্বোচ্চ 10% রাখুন। Checkout-এ auto apply হবে।</p>
               </div>
             </div>
             <div className="flex gap-2 justify-end">
