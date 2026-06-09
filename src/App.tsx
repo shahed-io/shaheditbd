@@ -52,6 +52,7 @@ const AdminRoles            = lazy(() => import("./pages/admin/AdminRoles"));
 const AdminBackup           = lazy(() => import("./pages/admin/AdminBackup"));
 const AdminAiConfig         = lazy(() => import("./pages/admin/AdminAiConfig"));
 const AdminAiFaqGenerator   = lazy(() => import("./pages/admin/AdminAiFaqGenerator"));
+const AdminAiReviewGenerator = lazy(() => import("./pages/admin/AdminAiReviewGenerator"));
 const AdminReferrals        = lazy(() => import("./pages/admin/AdminReferrals"));
 const UserDashboard         = lazy(() => import("./pages/UserDashboard"));
 const ResetPassword         = lazy(() => import("./pages/ResetPassword"));
@@ -268,6 +269,7 @@ const AppContent = () => {
             <Route path="settings" element={<AdminSuspense><AdminSettings /></AdminSuspense>} />
             <Route path="ai-config" element={<AdminSuspense><AdminAiConfig /></AdminSuspense>} />
             <Route path="ai-faq-generator" element={<AdminSuspense><AdminAiFaqGenerator /></AdminSuspense>} />
+            <Route path="ai-review-generator" element={<AdminSuspense><AdminAiReviewGenerator /></AdminSuspense>} />
             <Route path="customers" element={<AdminSuspense><AdminCustomers /></AdminSuspense>} />
             <Route path="payments" element={<AdminSuspense><AdminPayments /></AdminSuspense>} />
             <Route path="bkash-pgw" element={<AdminSuspense><AdminBkashPGW /></AdminSuspense>} />

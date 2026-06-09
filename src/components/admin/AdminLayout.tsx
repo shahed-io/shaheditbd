@@ -166,6 +166,7 @@ const MENU_SECTIONS: MenuSection[] = [
     items: [
       { icon: Brain, label: 'AI Assistant', path: '/ceo/ai-assistant', badge: 'new' },
       { icon: Sparkles, label: 'AI FAQ Generator', path: '/ceo/ai-faq-generator', badge: 'new' },
+      { icon: Sparkles, label: 'AI Review Generator', path: '/ceo/ai-review-generator', badge: 'new' },
       { icon: Sparkles, label: 'AI API Config', path: '/ceo/ai-config' },
     ],
   },
