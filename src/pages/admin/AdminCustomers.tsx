@@ -653,6 +653,7 @@ export default function AdminCustomers() {
             { icon: Award, label: 'পয়েন্ট', value: `${(selected.points_balance ?? 0).toLocaleString()}` },
             { icon: Star, label: 'অর্জিত পয়েন্ট', value: `${(selected.total_points_earned ?? 0).toLocaleString()}` },
             { icon: TrendingDown, label: 'ওয়ালেট', value: `৳${(selected.wallet_balance ?? 0).toLocaleString()}` },
+            { icon: Award, label: 'Personal Discount', value: `${selected.personal_discount_percent ?? 0}%` },
           ].map(item => (
             <div key={item.label} className="bg-card rounded-xl border border-border p-3">
               <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground uppercase font-semibold mb-1">
