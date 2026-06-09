@@ -133,6 +133,7 @@ const Checkout = () => {
   const [walletBalance, setWalletBalance] = useState(0);
   const [refCreditBalance, setRefCreditBalance] = useState(0);
   const [refCreditApplied, setRefCreditApplied] = useState(0);
+  const [personalDiscountPct, setPersonalDiscountPct] = useState(0);
   const [refCreditInput, setRefCreditInput] = useState('');
   const [refCreditError, setRefCreditError] = useState('');
   const pendingSubmitRef = useRef(false);
@@ -200,7 +201,7 @@ const Checkout = () => {
       email: prev.email || user.email || '',
       phone: prev.phone || metaPhone,
     }));
-    supabase.from('profiles').select('display_name, email, phone, wallet_balance, referral_credit_balance').eq('user_id', user.id).single()
+    supabase.from('profiles').select('display_name, email, phone, wallet_balance, referral_credit_balance, personal_discount_percent').eq('user_id', user.id).single()
       .then(({ data }) => {
         if (data) {
           setForm(prev => ({
@@ -210,6 +211,7 @@ const Checkout = () => {
           }));
           setWalletBalance((data as any).wallet_balance || 0);
           setRefCreditBalance(Number((data as any).referral_credit_balance || 0));
+          setPersonalDiscountPct(Math.max(0, Math.min(20, Number((data as any).personal_discount_percent || 0))));
         }
       });
   }, [user?.id]);
@@ -393,8 +395,10 @@ const Checkout = () => {
     }
   };
 
-  // Final payable after referral credit
-  const payableTotal = Math.max(0, finalTotal - refCreditApplied);
+  // Personal discount (admin-set, 0-20%, stacks with coupon)
+  const personalDiscountAmount = Math.round((subtotal * personalDiscountPct) / 100);
+  // Final payable after referral credit + personal discount
+  const payableTotal = Math.max(0, finalTotal - refCreditApplied - personalDiscountAmount);
 
   const handleApplyRefCredit = () => {
     setRefCreditError('');
@@ -473,7 +477,7 @@ const Checkout = () => {
           customer_email: form.email,
           customer_phone: form.phone,
           subtotal,
-          discount_amount: discountAmount + refCreditApplied,
+          discount_amount: discountAmount + refCreditApplied + personalDiscountAmount,
           total: payableTotal,
           payment_method: paymentMethod,
           transaction_id:
@@ -485,7 +489,7 @@ const Checkout = () => {
           status: paymentMethod === 'wallet' ? 'processing' : 'pending',
           payment_status: paymentMethod === 'wallet' ? 'paid' : 'pending',
           user_id: user?.id || null,
-          notes: (orderNotes.trim() || '') + (refCreditApplied > 0 ? `\n[Referral credit applied: ৳${refCreditApplied}]` : ''),
+          notes: (orderNotes.trim() || '') + (refCreditApplied > 0 ? `\n[Referral credit applied: ৳${refCreditApplied}]` : '') + (personalDiscountAmount > 0 ? `\n[Personal discount: ${personalDiscountPct}% (-৳${personalDiscountAmount})]` : ''),
           affiliate_referral_code: affRef?.code || null,
         })
         .select()
@@ -949,20 +953,20 @@ const Checkout = () => {
 
             {/* Wallet balance display */}
             {paymentMethod === 'wallet' && (
-              <div className={`rounded-xl p-4 space-y-2 border ${walletBalance >= finalTotal ? 'bg-green-500/10 border-green-500/30' : 'bg-destructive/10 border-destructive/30'}`}>
+              <div className={`rounded-xl p-4 space-y-2 border ${walletBalance >= payableTotal ? 'bg-green-500/10 border-green-500/30' : 'bg-destructive/10 border-destructive/30'}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                     <Wallet size={16} className="text-primary" />
                     <span>ওয়ালেট ব্যালেন্স</span>
                   </div>
-                  <span className={`font-bold text-lg ${walletBalance >= finalTotal ? 'text-green-500' : 'text-destructive'}`}>
+                  <span className={`font-bold text-lg ${walletBalance >= payableTotal ? 'text-green-500' : 'text-destructive'}`}>
                     ৳{walletBalance.toLocaleString()}
                   </span>
                 </div>
-                {walletBalance >= finalTotal ? (
+                {walletBalance >= payableTotal ? (
                   <p className="text-xs text-green-500">✅ পর্যাপ্ত ব্যালেন্স আছে। কোনো Transaction ID দরকার নেই।</p>
                 ) : (
-                  <p className="text-xs text-destructive">❌ ব্যালেন্স কম। আরও ৳{(finalTotal - walletBalance).toLocaleString()} দরকার। Dashboard থেকে টপ-আপ করুন।</p>
+                  <p className="text-xs text-destructive">❌ ব্যালেন্স কম। আরও ৳{(payableTotal - walletBalance).toLocaleString()} দরকার। Dashboard থেকে টপ-আপ করুন।</p>
                 )}
                 {!user && <p className="text-xs text-destructive">⚠️ Wallet পেমেন্টের জন্য লগইন করতে হবে</p>}
               </div>
@@ -994,7 +998,7 @@ const Checkout = () => {
               <>
                 <PaymentInstructions
                   paymentMethodId={paymentMethod as PMId}
-                  amount={finalTotal}
+                  amount={payableTotal}
                   amountLabel="মোট পরিমাণ"
                 />
 
@@ -1177,7 +1181,7 @@ const Checkout = () => {
                         {isWallet ? 'ওয়ালেট দিয়ে পরিশোধ করুন' : 'অর্ডার কনফার্ম করুন'}
                       </span>
                       <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">
-                        ৳{(isWallet ? finalTotal : payableTotal).toLocaleString()}
+                        ৳{payableTotal.toLocaleString()}
                       </span>
                     </>
                   )}
@@ -1303,6 +1307,17 @@ const Checkout = () => {
                       <span>Coupon ({coupon.code})</span><span>-৳{discountAmount.toLocaleString()}</span>
                     </div>
                   )}
+                  {personalDiscountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-400">
+                      <span>🎁 Personal Discount ({personalDiscountPct}%)</span>
+                      <span>-৳{personalDiscountAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {refCreditApplied > 0 && (
+                    <div className="flex justify-between text-cyan-400">
+                      <span>Referral Credit</span><span>-৳{refCreditApplied.toLocaleString()}</span>
+                    </div>
+                  )}
                   {taxAmount > 0 && (
                     <div className="flex justify-between text-muted-foreground">
                       <span>Tax</span><span>৳{taxAmount.toLocaleString()}</span>
@@ -1315,7 +1330,7 @@ const Checkout = () => {
                   )}
                   <div className="flex justify-between font-bold text-foreground text-base border-t border-border pt-2">
                     <span>Total</span>
-                    <span className="text-primary text-lg">৳{finalTotal.toLocaleString()}</span>
+                    <span className="text-primary text-lg">৳{payableTotal.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
