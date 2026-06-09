@@ -998,7 +998,7 @@ const Checkout = () => {
               <>
                 <PaymentInstructions
                   paymentMethodId={paymentMethod as PMId}
-                  amount={finalTotal}
+                  amount={payableTotal}
                   amountLabel="মোট পরিমাণ"
                 />
 
@@ -1181,7 +1181,7 @@ const Checkout = () => {
                         {isWallet ? 'ওয়ালেট দিয়ে পরিশোধ করুন' : 'অর্ডার কনফার্ম করুন'}
                       </span>
                       <span className="ml-1 rounded-full bg-white/20 px-3 py-1 text-sm font-extrabold backdrop-blur-sm">
-                        ৳{(isWallet ? finalTotal : payableTotal).toLocaleString()}
+                        ৳{payableTotal.toLocaleString()}
                       </span>
                     </>
                   )}
