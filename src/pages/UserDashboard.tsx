@@ -29,8 +29,9 @@ import {
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
   History, BellRing, BellOff, ExternalLink, Wallet, Globe,
   ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle,
-  Download, Share2, PlusSquare, Smartphone, AtSign, Check, Loader2
+  Download, Share2, PlusSquare, Smartphone, AtSign, Check, Loader2, Sparkles
 } from 'lucide-react';
+import WelcomeDiscount from '@/components/store/WelcomeDiscount';
 import BrandLogo from '@/components/store/BrandLogo';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
@@ -1088,10 +1089,48 @@ const UserDashboard = () => {
                     </div>
                   ))}
                 </div>
+
+                {/* Welcome Offer CTA — claim spin-wheel discount */}
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('ss:welcome-open'))}
+                  className="group mt-4 w-full flex items-center gap-3 p-3.5 lg:p-4 rounded-2xl text-left transition-all hover:-translate-y-0.5 active:scale-[0.99] overflow-hidden relative"
+                  style={{
+                    background: 'linear-gradient(135deg, hsla(258,80%,60%,0.10) 0%, hsla(340,82%,60%,0.08) 50%, hsla(38,95%,55%,0.10) 100%)',
+                    border: '1px solid hsla(258,78%,65%,0.30)',
+                    boxShadow: '0 6px 20px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,0.85) inset',
+                  }}
+                  aria-label="Claim welcome offer"
+                >
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:rotate-12 group-hover:scale-110"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(258,80%,60%), hsl(340,82%,55%))',
+                      boxShadow: '0 6px 16px hsla(258,78%,55%,0.45), inset 0 1px 0 rgba(255,255,255,0.4)',
+                    }}>
+                    <Gift size={20} color="#ffffff" strokeWidth={2.4} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <Sparkles size={11} className="text-primary" />
+                      <span className="text-[10px] font-black uppercase tracking-[0.14em] text-primary">Welcome Gift</span>
+                    </div>
+                    <p className="text-sm font-bold text-foreground leading-snug truncate">
+                      🎁 আপনার বিশেষ ছাড় দাবি করুন
+                    </p>
+                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5 truncate">
+                      Lucky Spin ঘুরিয়ে ৳100–৳150 অথবা 5%–20% পর্যন্ত ছাড় জিতে নিন
+                    </p>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold text-white flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg, hsl(258,80%,60%), hsl(340,82%,55%))', boxShadow: '0 4px 12px hsla(258,78%,55%,0.4)' }}>
+                    Claim Now <ChevronRight size={13} />
+                  </div>
+                </button>
               </div>
             </div>
           </div>
         </div>
+
 
         {/* Body */}
         <div className="grid md:grid-cols-[280px_1fr] gap-6 lg:gap-7">
@@ -2778,6 +2817,7 @@ const UserDashboard = () => {
         </div>
       </main>
       </div>{/* end relative z-10 wrapper */}
+      <WelcomeDiscount />
     </div>
   );
 };

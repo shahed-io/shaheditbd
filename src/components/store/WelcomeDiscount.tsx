@@ -160,22 +160,30 @@ export default function WelcomeDiscount() {
     } catch { /* silent */ }
   }, []);
 
-  // Listen for admin "test" trigger (event + URL query)
+  // Listen for admin "test" trigger and user-initiated open event
   useEffect(() => {
     const handleTest = () => loadInitial(true);
+    const handleOpen = () => {
+      // User-initiated claim from dashboard — clear session block & open real flow
+      try { sessionStorage.removeItem(WELCOME_SESSION_KEY); } catch { /* silent */ }
+      loadInitial(false);
+    };
     window.addEventListener('ss:welcome-test', handleTest);
+    window.addEventListener('ss:welcome-open', handleOpen);
 
     // URL trigger: ?welcome_test=1 (admin uses this to preview from new tab)
     try {
       const params = new URLSearchParams(window.location.search);
       if (params.get('welcome_test') === '1') {
-        // Clear blocks and force preview
         sessionStorage.removeItem(WELCOME_SESSION_KEY);
         setTimeout(() => loadInitial(true), 500);
       }
     } catch { /* silent */ }
 
-    return () => window.removeEventListener('ss:welcome-test', handleTest);
+    return () => {
+      window.removeEventListener('ss:welcome-test', handleTest);
+      window.removeEventListener('ss:welcome-open', handleOpen);
+    };
   }, [loadInitial]);
 
   // Trigger: show 5–10 seconds after landing
