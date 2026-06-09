@@ -2817,6 +2817,7 @@ const UserDashboard = () => {
         </div>
       </main>
       </div>{/* end relative z-10 wrapper */}
+      <WelcomeDiscount />
     </div>
   );
 };
