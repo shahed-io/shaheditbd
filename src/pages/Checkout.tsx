@@ -201,7 +201,7 @@ const Checkout = () => {
       email: prev.email || user.email || '',
       phone: prev.phone || metaPhone,
     }));
-    supabase.from('profiles').select('display_name, email, phone, wallet_balance, referral_credit_balance').eq('user_id', user.id).single()
+    supabase.from('profiles').select('display_name, email, phone, wallet_balance, referral_credit_balance, personal_discount_percent').eq('user_id', user.id).single()
       .then(({ data }) => {
         if (data) {
           setForm(prev => ({
@@ -211,6 +211,7 @@ const Checkout = () => {
           }));
           setWalletBalance((data as any).wallet_balance || 0);
           setRefCreditBalance(Number((data as any).referral_credit_balance || 0));
+          setPersonalDiscountPct(Math.max(0, Math.min(20, Number((data as any).personal_discount_percent || 0))));
         }
       });
   }, [user?.id]);
