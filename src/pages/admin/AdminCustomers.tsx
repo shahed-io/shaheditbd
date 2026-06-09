@@ -36,6 +36,7 @@ type Customer = {
   is_suspended?: boolean;
   suspended_at?: string | null;
   suspended_reason?: string | null;
+  personal_discount_percent?: number;
 };
 
 type OrderItem = {
