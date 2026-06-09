@@ -117,7 +117,7 @@ export default function AdminCustomers() {
   // Add/Edit/Delete customer states
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(false);
-  const [editForm, setEditForm] = useState({ display_name: '', email: '', phone: '' });
+  const [editForm, setEditForm] = useState({ display_name: '', email: '', phone: '', personal_discount_percent: 0 });
   const [addForm, setAddForm] = useState({ display_name: '', email: '', phone: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [resetPasswordModal, setResetPasswordModal] = useState<string | null>(null);
