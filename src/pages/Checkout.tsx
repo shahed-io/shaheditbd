@@ -133,6 +133,7 @@ const Checkout = () => {
   const [walletBalance, setWalletBalance] = useState(0);
   const [refCreditBalance, setRefCreditBalance] = useState(0);
   const [refCreditApplied, setRefCreditApplied] = useState(0);
+  const [personalDiscountPct, setPersonalDiscountPct] = useState(0);
   const [refCreditInput, setRefCreditInput] = useState('');
   const [refCreditError, setRefCreditError] = useState('');
   const pendingSubmitRef = useRef(false);
