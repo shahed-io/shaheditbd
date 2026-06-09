@@ -477,7 +477,7 @@ const Checkout = () => {
           customer_email: form.email,
           customer_phone: form.phone,
           subtotal,
-          discount_amount: discountAmount + refCreditApplied,
+          discount_amount: discountAmount + refCreditApplied + personalDiscountAmount,
           total: payableTotal,
           payment_method: paymentMethod,
           transaction_id:
