@@ -1307,6 +1307,17 @@ const Checkout = () => {
                       <span>Coupon ({coupon.code})</span><span>-৳{discountAmount.toLocaleString()}</span>
                     </div>
                   )}
+                  {personalDiscountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-400">
+                      <span>🎁 Personal Discount ({personalDiscountPct}%)</span>
+                      <span>-৳{personalDiscountAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {refCreditApplied > 0 && (
+                    <div className="flex justify-between text-cyan-400">
+                      <span>Referral Credit</span><span>-৳{refCreditApplied.toLocaleString()}</span>
+                    </div>
+                  )}
                   {taxAmount > 0 && (
                     <div className="flex justify-between text-muted-foreground">
                       <span>Tax</span><span>৳{taxAmount.toLocaleString()}</span>
@@ -1319,7 +1330,7 @@ const Checkout = () => {
                   )}
                   <div className="flex justify-between font-bold text-foreground text-base border-t border-border pt-2">
                     <span>Total</span>
-                    <span className="text-primary text-lg">৳{finalTotal.toLocaleString()}</span>
+                    <span className="text-primary text-lg">৳{payableTotal.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
