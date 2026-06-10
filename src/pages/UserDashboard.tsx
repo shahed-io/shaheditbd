@@ -101,12 +101,13 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'licenses' | 'subscriptions' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language' | 'install';
+type TabId = 'profile' | 'orders' | 'licenses' | 'downloads' | 'subscriptions' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language' | 'install';
 
 const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'profile',       key: 'tab_profile',       icon: User },
   { id: 'orders',        key: 'tab_orders',        icon: Package },
   { id: 'licenses',      key: 'tab_licenses',      icon: Key },
+  { id: 'downloads',     key: 'tab_downloads',     icon: Download },
   { id: 'subscriptions', key: 'tab_subscriptions', icon: Clock },
   { id: 'wallet',        key: 'tab_wallet',        icon: Wallet },
   { id: 'points',        key: 'tab_points',        icon: Award },
@@ -116,7 +117,7 @@ const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'referral',      key: 'tab_referral',      icon: Gift },
   { id: 'security',      key: 'tab_security',      icon: Lock },
   { id: 'language',      key: 'tab_language',      icon: Globe },
-  { id: 'install',       key: 'tab_install',       icon: Download },
+  { id: 'install',       key: 'tab_install',       icon: Smartphone },
 ];
 
 // Glassmorphism card style helper
