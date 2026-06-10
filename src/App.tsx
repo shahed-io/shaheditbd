@@ -347,6 +347,7 @@ const AppContent = () => {
 
             <Route path="getcid-tools" element={<AdminSuspense><AdminGetCIDTools /></AdminSuspense>} />
             <Route path="cid-credits" element={<AdminSuspense><AdminCidCredits /></AdminSuspense>} />
+            <Route path="cid-product-credits" element={<AdminSuspense><AdminCidProductCredits /></AdminSuspense>} />
             <Route path="security" element={<AdminSuspense><AdminSecurity2FA /></AdminSuspense>} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
