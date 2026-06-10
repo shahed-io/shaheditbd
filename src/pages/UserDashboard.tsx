@@ -318,6 +318,9 @@ const UserDashboard = () => {
   // Subscriptions state
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [subsLoading, setSubsLoading] = useState(false);
+  // Downloads state
+  const [myDownloads, setMyDownloads] = useState<any[]>([]);
+  const [downloadsLoading, setDownloadsLoading] = useState(false);
 
   // Mobile-friendly tab switch: also show content panel
   const handleTabSwitch = (tab: TabId) => {
