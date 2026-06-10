@@ -101,12 +101,13 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: React.Rea
   failed:     { label: 'Failed',     color: 'text-destructive bg-destructive/10 border-destructive/30', icon: <X size={11} /> },
 };
 
-type TabId = 'profile' | 'orders' | 'licenses' | 'subscriptions' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language' | 'install';
+type TabId = 'profile' | 'orders' | 'licenses' | 'downloads' | 'subscriptions' | 'wallet' | 'points' | 'wishlist' | 'addresses' | 'notifications' | 'referral' | 'security' | 'language' | 'install';
 
 const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'profile',       key: 'tab_profile',       icon: User },
   { id: 'orders',        key: 'tab_orders',        icon: Package },
   { id: 'licenses',      key: 'tab_licenses',      icon: Key },
+  { id: 'downloads',     key: 'tab_downloads',     icon: Download },
   { id: 'subscriptions', key: 'tab_subscriptions', icon: Clock },
   { id: 'wallet',        key: 'tab_wallet',        icon: Wallet },
   { id: 'points',        key: 'tab_points',        icon: Award },
@@ -116,7 +117,7 @@ const TAB_IDS: { id: TabId; key: string; icon: any }[] = [
   { id: 'referral',      key: 'tab_referral',      icon: Gift },
   { id: 'security',      key: 'tab_security',      icon: Lock },
   { id: 'language',      key: 'tab_language',      icon: Globe },
-  { id: 'install',       key: 'tab_install',       icon: Download },
+  { id: 'install',       key: 'tab_install',       icon: Smartphone },
 ];
 
 // Glassmorphism card style helper
@@ -317,6 +318,9 @@ const UserDashboard = () => {
   // Subscriptions state
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [subsLoading, setSubsLoading] = useState(false);
+  // Downloads state
+  const [myDownloads, setMyDownloads] = useState<any[]>([]);
+  const [downloadsLoading, setDownloadsLoading] = useState(false);
 
   // Mobile-friendly tab switch: also show content panel
   const handleTabSwitch = (tab: TabId) => {
@@ -338,6 +342,7 @@ const UserDashboard = () => {
     if (activeTab === 'points') fetchPoints();
     if (activeTab === 'licenses') fetchLicenses();
     if (activeTab === 'subscriptions') fetchSubscriptions();
+    if (activeTab === 'downloads') fetchDownloads();
   };
 
   useEffect(() => { if (user) fetchProfile(); }, [user]);
@@ -351,6 +356,7 @@ const UserDashboard = () => {
     if (activeTab === 'points') fetchPoints();
     if (activeTab === 'licenses') fetchLicenses();
     if (activeTab === 'subscriptions') fetchSubscriptions();
+    if (activeTab === 'downloads') fetchDownloads();
   }, [activeTab, user]);
 
   // Refetch when tab/window regains focus or comes back online — fixes "data missing after sleep/switch"
@@ -430,6 +436,28 @@ const UserDashboard = () => {
       .order('expires_at', { ascending: true });
     setSubscriptions(data || []);
     setSubsLoading(false);
+  };
+
+  const fetchDownloads = async () => {
+    if (!user) return;
+    setDownloadsLoading(true);
+    const { data } = await supabase
+      .from('order_items')
+      .select('id, product_name, product_id, created_at, orders!inner(user_id, order_number, status, created_at), products!inner(id, name, image_url, download_link)')
+      .eq('orders.user_id', user.id)
+      .eq('orders.status', 'completed')
+      .not('products.download_link', 'is', null)
+      .order('created_at', { ascending: false });
+    // dedupe by product_id keeping latest order
+    const seen = new Set<string>();
+    const unique = (data || []).filter((it: any) => {
+      const pid = it.products?.id || it.product_id;
+      if (!pid || seen.has(pid)) return false;
+      seen.add(pid);
+      return !!it.products?.download_link;
+    });
+    setMyDownloads(unique);
+    setDownloadsLoading(false);
   };
 
   const fetchProfile = async () => {
@@ -1140,7 +1168,7 @@ const UserDashboard = () => {
             {(() => {
               const SECTIONS: { title: string; ids: TabId[] }[] = [
                 { title: 'Account', ids: ['profile', 'security', 'addresses'] },
-                { title: 'Activity', ids: ['orders', 'licenses', 'subscriptions', 'wishlist', 'notifications'] },
+                { title: 'Activity', ids: ['orders', 'licenses', 'downloads', 'subscriptions', 'wishlist', 'notifications'] },
                 { title: 'Rewards', ids: ['wallet', 'points', 'referral'] },
                 { title: 'Preferences', ids: ['language', 'install'] },
               ];
@@ -1272,7 +1300,7 @@ const UserDashboard = () => {
                     {t(selectedLang, `tab_${activeTab}`)}
                   </h2>
                   <p className="text-xs mt-0.5 text-muted-foreground truncate">
-                    {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `${t(selectedLang, 'points_balance_label')} ${pointsBalance} pts` : activeTab === 'profile' ? 'Manage your personal information' : activeTab === 'wallet' ? 'Top-up & transactions' : activeTab === 'addresses' ? 'Saved delivery locations' : activeTab === 'security' ? 'Password & account safety' : activeTab === 'referral' ? 'Earn rewards by inviting friends' : activeTab === 'licenses' ? 'Your purchased licenses' : activeTab === 'subscriptions' ? 'Track expiry & renewal reminders' : ''}
+                    {activeTab === 'orders' ? `${orders.length} ${t(selectedLang, 'order')}` : activeTab === 'wishlist' ? `${wishlistItems.length} items` : activeTab === 'notifications' ? `${unreadCount} ${t(selectedLang, 'unread')}` : activeTab === 'points' ? `${t(selectedLang, 'points_balance_label')} ${pointsBalance} pts` : activeTab === 'profile' ? 'Manage your personal information' : activeTab === 'wallet' ? 'Top-up & transactions' : activeTab === 'addresses' ? 'Saved delivery locations' : activeTab === 'security' ? 'Password & account safety' : activeTab === 'referral' ? 'Earn rewards by inviting friends' : activeTab === 'licenses' ? 'Your purchased licenses' : activeTab === 'downloads' ? 'Download links for your purchases' : activeTab === 'subscriptions' ? 'Track expiry & renewal reminders' : ''}
                   </p>
                 </div>
               </div>
@@ -2804,6 +2832,76 @@ const UserDashboard = () => {
                       {t(selectedLang, 'language_note')}
                     </p>
                   </div>
+                </div>
+              )}
+
+              {/* ── Downloads Tab ── */}
+              {activeTab === 'downloads' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-foreground flex items-center gap-2">
+                      <Download size={16} className="text-primary" />
+                      My Downloads
+                    </h3>
+                    <button onClick={fetchDownloads} className="p-2 rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all">
+                      <RefreshCw size={14} />
+                    </button>
+                  </div>
+
+                  {downloadsLoading ? (
+                    <div className="flex items-center justify-center py-16">
+                      <RefreshCw size={20} className="animate-spin text-primary" />
+                    </div>
+                  ) : myDownloads.length === 0 ? (
+                    <div className="text-center py-16 text-muted-foreground rounded-2xl border border-dashed border-border">
+                      <Download size={40} className="mx-auto mb-3 opacity-20" />
+                      <p className="font-medium text-sm">কোনো ডাউনলোড পাওয়া যায়নি</p>
+                      <p className="text-xs mt-1">আপনার কেনা প্রোডাক্টের ডাউনলোড লিংক এখানে অটোমেটিক যোগ হবে</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {myDownloads.map((item: any) => {
+                        const product = item.products;
+                        const order = item.orders;
+                        const url = product?.download_link;
+                        return (
+                          <div key={item.id} className="rounded-2xl border overflow-hidden transition-all hover:border-primary/40"
+                            style={{ background: 'hsl(var(--card))', borderColor: 'hsla(258,78%,55%,0.20)' }}>
+                            <div className="flex items-center gap-3 p-3">
+                              <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+                                style={{ background: 'hsla(258,78%,55%,0.08)' }}>
+                                {product?.image_url ? (
+                                  <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <Download size={20} className="text-primary" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-bold text-sm text-foreground truncate">{product?.name || item.product_name}</p>
+                                <p className="text-[10px] text-muted-foreground truncate">
+                                  অর্ডার #{order?.order_number}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="px-3 pb-3 flex items-center gap-2">
+                              <a href={url} target="_blank" rel="noopener noreferrer"
+                                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
+                                style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.30)' }}>
+                                <Download size={13} /> ডাউনলোড করুন
+                              </a>
+                              <button
+                                onClick={() => { navigator.clipboard.writeText(url); toast.success('Link copied!'); }}
+                                className="p-2 rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all"
+                                title="Copy link"
+                              >
+                                <Copy size={13} />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 
