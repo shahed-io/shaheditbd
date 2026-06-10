@@ -1168,7 +1168,7 @@ const UserDashboard = () => {
             {(() => {
               const SECTIONS: { title: string; ids: TabId[] }[] = [
                 { title: 'Account', ids: ['profile', 'security', 'addresses'] },
-                { title: 'Activity', ids: ['orders', 'licenses', 'subscriptions', 'wishlist', 'notifications'] },
+                { title: 'Activity', ids: ['orders', 'licenses', 'downloads', 'subscriptions', 'wishlist', 'notifications'] },
                 { title: 'Rewards', ids: ['wallet', 'points', 'referral'] },
                 { title: 'Preferences', ids: ['language', 'install'] },
               ];
