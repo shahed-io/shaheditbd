@@ -140,6 +140,7 @@ const AdminContentSeo            = lazy(() => import("./pages/admin/seo/AdminCon
 const Affiliate                  = lazy(() => import("./pages/Affiliate"));
 const AdminGetCIDTools           = lazy(() => import("./pages/admin/AdminGetCIDTools"));
 const AdminCidCredits            = lazy(() => import("./pages/admin/AdminCidCredits"));
+const AdminCidProductCredits     = lazy(() => import("./pages/admin/AdminCidProductCredits"));
 const GetCID                     = lazy(() => import("./pages/GetCID"));
 const CheckKey                   = lazy(() => import("./pages/CheckKey"));
 const AdminSecurity2FA           = lazy(() => import("./pages/admin/AdminSecurity2FA"));
