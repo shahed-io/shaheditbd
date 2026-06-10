@@ -342,6 +342,7 @@ const UserDashboard = () => {
     if (activeTab === 'points') fetchPoints();
     if (activeTab === 'licenses') fetchLicenses();
     if (activeTab === 'subscriptions') fetchSubscriptions();
+    if (activeTab === 'downloads') fetchDownloads();
   };
 
   useEffect(() => { if (user) fetchProfile(); }, [user]);
@@ -355,6 +356,7 @@ const UserDashboard = () => {
     if (activeTab === 'points') fetchPoints();
     if (activeTab === 'licenses') fetchLicenses();
     if (activeTab === 'subscriptions') fetchSubscriptions();
+    if (activeTab === 'downloads') fetchDownloads();
   }, [activeTab, user]);
 
   // Refetch when tab/window regains focus or comes back online — fixes "data missing after sleep/switch"
