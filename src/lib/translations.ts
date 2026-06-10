@@ -254,6 +254,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: 'প্রোফাইল',
     tab_orders: 'আমার অর্ডার',
     tab_licenses: 'আমার লাইসেন্স',
+    tab_downloads: 'ডাউনলোডস',
     tab_subscriptions: 'সাবস্ক্রিপশন',
     tab_wallet: 'ওয়ালেট',
     tab_points: 'পয়েন্ট',
