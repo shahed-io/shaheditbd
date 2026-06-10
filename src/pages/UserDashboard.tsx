@@ -2835,6 +2835,76 @@ const UserDashboard = () => {
                 </div>
               )}
 
+              {/* ── Downloads Tab ── */}
+              {activeTab === 'downloads' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-foreground flex items-center gap-2">
+                      <Download size={16} className="text-primary" />
+                      My Downloads
+                    </h3>
+                    <button onClick={fetchDownloads} className="p-2 rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all">
+                      <RefreshCw size={14} />
+                    </button>
+                  </div>
+
+                  {downloadsLoading ? (
+                    <div className="flex items-center justify-center py-16">
+                      <RefreshCw size={20} className="animate-spin text-primary" />
+                    </div>
+                  ) : myDownloads.length === 0 ? (
+                    <div className="text-center py-16 text-muted-foreground rounded-2xl border border-dashed border-border">
+                      <Download size={40} className="mx-auto mb-3 opacity-20" />
+                      <p className="font-medium text-sm">কোনো ডাউনলোড পাওয়া যায়নি</p>
+                      <p className="text-xs mt-1">আপনার কেনা প্রোডাক্টের ডাউনলোড লিংক এখানে অটোমেটিক যোগ হবে</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {myDownloads.map((item: any) => {
+                        const product = item.products;
+                        const order = item.orders;
+                        const url = product?.download_link;
+                        return (
+                          <div key={item.id} className="rounded-2xl border overflow-hidden transition-all hover:border-primary/40"
+                            style={{ background: 'hsl(var(--card))', borderColor: 'hsla(258,78%,55%,0.20)' }}>
+                            <div className="flex items-center gap-3 p-3">
+                              <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+                                style={{ background: 'hsla(258,78%,55%,0.08)' }}>
+                                {product?.image_url ? (
+                                  <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <Download size={20} className="text-primary" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-bold text-sm text-foreground truncate">{product?.name || item.product_name}</p>
+                                <p className="text-[10px] text-muted-foreground truncate">
+                                  অর্ডার #{order?.order_number}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="px-3 pb-3 flex items-center gap-2">
+                              <a href={url} target="_blank" rel="noopener noreferrer"
+                                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
+                                style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 14px hsla(258,78%,55%,0.30)' }}>
+                                <Download size={13} /> ডাউনলোড করুন
+                              </a>
+                              <button
+                                onClick={() => { navigator.clipboard.writeText(url); toast.success('Link copied!'); }}
+                                className="p-2 rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all"
+                                title="Copy link"
+                              >
+                                <Copy size={13} />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* ── Install App Tab ── */}
               {activeTab === 'install' && (
                 <InstallAppTab />
