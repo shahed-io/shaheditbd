@@ -25,6 +25,7 @@ const translations: Record<LangCode, Record<string, string>> = {
     tab_profile: 'Profile',
     tab_orders: 'My Orders',
     tab_licenses: 'My Licenses',
+    tab_downloads: 'Downloads',
     tab_subscriptions: 'Subscriptions',
     tab_wallet: 'Wallet',
     tab_points: 'Points',
