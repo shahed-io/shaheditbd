@@ -438,6 +438,28 @@ const UserDashboard = () => {
     setSubsLoading(false);
   };
 
+  const fetchDownloads = async () => {
+    if (!user) return;
+    setDownloadsLoading(true);
+    const { data } = await supabase
+      .from('order_items')
+      .select('id, product_name, product_id, created_at, orders!inner(user_id, order_number, status, created_at), products!inner(id, name, image_url, download_link)')
+      .eq('orders.user_id', user.id)
+      .eq('orders.status', 'completed')
+      .not('products.download_link', 'is', null)
+      .order('created_at', { ascending: false });
+    // dedupe by product_id keeping latest order
+    const seen = new Set<string>();
+    const unique = (data || []).filter((it: any) => {
+      const pid = it.products?.id || it.product_id;
+      if (!pid || seen.has(pid)) return false;
+      seen.add(pid);
+      return !!it.products?.download_link;
+    });
+    setMyDownloads(unique);
+    setDownloadsLoading(false);
+  };
+
   const fetchProfile = async () => {
     if (!user) return;
     let data: any = null;
