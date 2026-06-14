@@ -3377,6 +3377,146 @@ export type Database = {
           },
         ]
       }
+      whatsapp_bot_config: {
+        Row: {
+          away_enabled: boolean
+          away_message: string
+          business_hours_end: number
+          business_hours_start: number
+          created_at: string
+          enabled: boolean
+          fallback_message: string
+          greeting_cooldown_hours: number
+          greeting_enabled: boolean
+          greeting_message: string
+          id: number
+          order_status_enabled: boolean
+          product_reply_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          away_enabled?: boolean
+          away_message?: string
+          business_hours_end?: number
+          business_hours_start?: number
+          created_at?: string
+          enabled?: boolean
+          fallback_message?: string
+          greeting_cooldown_hours?: number
+          greeting_enabled?: boolean
+          greeting_message?: string
+          id?: number
+          order_status_enabled?: boolean
+          product_reply_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          away_enabled?: boolean
+          away_message?: string
+          business_hours_end?: number
+          business_hours_start?: number
+          created_at?: string
+          enabled?: boolean
+          fallback_message?: string
+          greeting_cooldown_hours?: number
+          greeting_enabled?: boolean
+          greeting_message?: string
+          id?: number
+          order_status_enabled?: boolean
+          product_reply_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_contacts: {
+        Row: {
+          created_at: string
+          first_seen_at: string
+          id: string
+          is_blocked: boolean
+          last_greeted_at: string | null
+          last_message_at: string
+          notes: string | null
+          total_messages: number
+          updated_at: string
+          wa_name: string | null
+          wa_phone: string
+        }
+        Insert: {
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          is_blocked?: boolean
+          last_greeted_at?: string | null
+          last_message_at?: string
+          notes?: string | null
+          total_messages?: number
+          updated_at?: string
+          wa_name?: string | null
+          wa_phone: string
+        }
+        Update: {
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          is_blocked?: boolean
+          last_greeted_at?: string | null
+          last_message_at?: string
+          notes?: string | null
+          total_messages?: number
+          updated_at?: string
+          wa_name?: string | null
+          wa_phone?: string
+        }
+        Relationships: []
+      }
+      whatsapp_messages: {
+        Row: {
+          body: string | null
+          created_at: string
+          direction: string
+          id: string
+          matched_product_id: string | null
+          message_type: string
+          raw: Json | null
+          reply_type: string | null
+          wa_message_id: string | null
+          wa_phone: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          direction: string
+          id?: string
+          matched_product_id?: string | null
+          message_type?: string
+          raw?: Json | null
+          reply_type?: string | null
+          wa_message_id?: string | null
+          wa_phone: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          direction?: string
+          id?: string
+          matched_product_id?: string | null
+          message_type?: string
+          raw?: Json | null
+          reply_type?: string | null
+          wa_message_id?: string | null
+          wa_phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_messages_matched_product_id_fkey"
+            columns: ["matched_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wishlists: {
         Row: {
           created_at: string
