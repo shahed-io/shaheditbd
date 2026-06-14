@@ -309,7 +309,7 @@ serve(async (req) => {
       .map((_, i) => i)
       .sort(() => Math.random() - 0.5);
 
-    outer: for (const ki of shuffledKeyIndices) {
+    outer: for (const ki of (data ? [] : shuffledKeyIndices)) {
       const apiKey = USER_GEMINI_KEYS[ki];
       let keyExhausted = false;
 
