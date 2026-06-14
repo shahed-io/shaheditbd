@@ -38,12 +38,30 @@ Deno.serve(async (req) => {
 
     const verifyToken = Deno.env.get("WHATSAPP_VERIFY_TOKEN") || "";
     const phoneNumberId = Deno.env.get("WHATSAPP_PHONE_NUMBER_ID") || "";
-    const accessTokenSet = !!Deno.env.get("WHATSAPP_ACCESS_TOKEN");
+    const accessToken = Deno.env.get("WHATSAPP_ACCESS_TOKEN") || "";
+    const accessTokenSet = !!accessToken;
+
+    let phone_number: Record<string, unknown> | null = null;
+    let phone_number_error: unknown = null;
+    if (phoneNumberId && accessToken) {
+      try {
+        const phoneRes = await fetch(
+          `https://graph.facebook.com/v21.0/${phoneNumberId}?fields=id,display_phone_number,verified_name,quality_rating,platform_type,code_verification_status,name_status&access_token=${accessToken}`,
+        );
+        const phoneData = await phoneRes.json().catch(() => ({}));
+        if (phoneRes.ok) phone_number = phoneData;
+        else phone_number_error = phoneData;
+      } catch (err) {
+        phone_number_error = String(err);
+      }
+    }
 
     return new Response(JSON.stringify({
       verify_token: verifyToken,
       phone_number_id: phoneNumberId,
       access_token_set: accessTokenSet,
+      phone_number,
+      phone_number_error,
     }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
