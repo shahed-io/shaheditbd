@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { generateReplicateImage } from "../_shared/replicate-image.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -248,6 +249,26 @@ serve(async (req) => {
 
     let data: any = null;
 
+    // ── Phase 0: Replicate (PRIMARY — user-connected Replicate account) ──────
+    try {
+      console.log("Replicate primary — flux", imageUrl ? "kontext-pro (img2img)" : "schnell (txt2img)");
+      const { base64, mimeType } = await generateReplicateImage({
+        prompt: promptText,
+        imageUrl: imageUrl || undefined,
+        aspectRatio: "1:1",
+      });
+      data = {
+        choices: [{
+          message: {
+            images: [{ image_url: { url: `data:${mimeType};base64,${base64}` } }]
+          }
+        }]
+      };
+      console.log("✅ Replicate success");
+    } catch (e) {
+      console.warn(`Replicate failed, falling back to Gemini/OpenAI: ${e instanceof Error ? e.message : e}`);
+    }
+
     // ── Phase 1: Direct Gemini API with USER-PROVIDED keys (FREE — no Lovable credits) ──
     // We support both the legacy sequential secret names and indexed names so
     // existing configured keys are all picked up reliably.
@@ -288,7 +309,7 @@ serve(async (req) => {
       .map((_, i) => i)
       .sort(() => Math.random() - 0.5);
 
-    outer: for (const ki of shuffledKeyIndices) {
+    outer: for (const ki of (data ? [] : shuffledKeyIndices)) {
       const apiKey = USER_GEMINI_KEYS[ki];
       let keyExhausted = false;
 
