@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
-import { Copy, Send, MessageSquare, Settings, History, Loader2 } from "lucide-react";
+import { Copy, Send, MessageSquare, Settings, History, Loader2, Eye } from "lucide-react";
 
 type Config = {
   enabled: boolean;
@@ -36,6 +36,9 @@ export default function AdminWhatsAppBot() {
   const [sending, setSending] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
   const [contacts, setContacts] = useState<any[]>([]);
+  const [verifyToken, setVerifyToken] = useState<string>("");
+  const [tokenRevealed, setTokenRevealed] = useState(false);
+  const [revealLoading, setRevealLoading] = useState(false);
 
   useEffect(() => {
     load();
@@ -142,8 +145,53 @@ export default function AdminWhatsAppBot() {
               </Button>
             </div>
           </div>
-          <p>Verify Token: use the exact value of <code className="px-1 py-0.5 bg-muted rounded">WHATSAPP_VERIFY_TOKEN</code> secret.</p>
-          <p>Subscribe to webhook field: <b>messages</b></p>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <Label>Verify Token (paste this in Meta Console):</Label>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={async () => {
+                  setRevealLoading(true);
+                  const { data: sess } = await supabase.auth.getSession();
+                  const res = await supabase.functions.invoke("get-whatsapp-config", {
+                    headers: sess.session ? { Authorization: `Bearer ${sess.session.access_token}` } : undefined,
+                  });
+                  setRevealLoading(false);
+                  if (res.error || (res.data as any)?.error) {
+                    toast({ title: "Failed", description: (res.data as any)?.error || res.error?.message, variant: "destructive" });
+                    return;
+                  }
+                  setVerifyToken((res.data as any)?.verify_token || "");
+                  setTokenRevealed(true);
+                }}
+                disabled={revealLoading}
+              >
+                {revealLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Eye className="w-3 h-3 mr-1" />}
+                {tokenRevealed ? "Refresh" : "Show Token"}
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              <Input
+                value={tokenRevealed ? verifyToken : "•••••••••••• (click Show Token)"}
+                readOnly
+                className="font-mono text-xs"
+                type={tokenRevealed ? "text" : "password"}
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={!tokenRevealed || !verifyToken}
+                onClick={() => {
+                  navigator.clipboard.writeText(verifyToken);
+                  toast({ title: "Copied", description: "Verify token copied to clipboard." });
+                }}
+              >
+                <Copy className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+          <p>After saving the webhook, subscribe to webhook field: <b>messages</b></p>
         </CardContent>
       </Card>
 
