@@ -58,6 +58,31 @@ async function logMessage(row: Record<string, any>) {
   await supabase.from("whatsapp_messages").insert(row);
 }
 
+async function sendAndLogText(to: string, body: string, replyType: string) {
+  const result = await sendText(to, body);
+  await logMessage({
+    wa_phone: to,
+    direction: "outbound",
+    body,
+    reply_type: result.ok ? replyType : `${replyType}_failed`,
+    raw: result,
+  });
+  return result;
+}
+
+async function sendAndLogImage(to: string, imageUrl: string, caption: string, replyType: string, matchedProductId?: string) {
+  const result = await sendImage(to, imageUrl, caption);
+  await logMessage({
+    wa_phone: to,
+    direction: "outbound",
+    body: caption,
+    matched_product_id: matchedProductId || null,
+    reply_type: result.ok ? replyType : `${replyType}_failed`,
+    raw: result,
+  });
+  return result;
+}
+
 // ---------- Matching Logic ----------
 function normalize(t: string) {
   return (t || "").toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/g, " ").trim();
@@ -193,8 +218,7 @@ async function handleIncomingMessage(msg: any, contactName?: string) {
     const cooldownMs = (cfg.greeting_cooldown_hours || 24) * 60 * 60 * 1000;
     const shouldGreet = !existing || (Date.now() - lastGreeted > cooldownMs) || isGreeting(text);
     if (shouldGreet) {
-      await sendText(from, cfg.greeting_message);
-      await logMessage({ wa_phone: from, direction: "outbound", body: cfg.greeting_message, reply_type: "greeting" });
+      await sendAndLogText(from, cfg.greeting_message, "greeting");
       await supabase.from("whatsapp_contacts").update({ last_greeted_at: new Date().toISOString() }).eq("wa_phone", from);
       if (isGreeting(text)) return; // pure greeting, stop here
     }
@@ -216,8 +240,7 @@ async function handleIncomingMessage(msg: any, contactName?: string) {
     } else {
       reply = `আপনার এই WhatsApp নম্বরে কোনো অর্ডার খুঁজে পাইনি 🔍\n\nযদি অন্য নম্বর দিয়ে অর্ডার করে থাকেন, আমাদের সরাসরি বলুন। অথবা ওয়েবসাইট থেকে দেখুন:\n${SITE_URL}/dashboard`;
     }
-    await sendText(from, reply);
-    await logMessage({ wa_phone: from, direction: "outbound", body: reply, reply_type: "order_status" });
+    await sendAndLogText(from, reply, "order_status");
     return;
   }
   
@@ -238,31 +261,22 @@ async function handleIncomingMessage(msg: any, contactName?: string) {
         `🔒 ১০০% অরিজিনাল প্রোডাক্ট`;
       
       if (product.image_url) {
-        await sendImage(from, product.image_url, caption);
+        await sendAndLogImage(from, product.image_url, caption, "product_match", product.id);
       } else {
-        await sendText(from, caption);
+        await sendAndLogText(from, caption, "product_match");
       }
-      await logMessage({
-        wa_phone: from,
-        direction: "outbound",
-        body: caption,
-        matched_product_id: product.id,
-        reply_type: "product_match",
-      });
       return;
     }
   }
   
   // Away message check
   if (cfg.away_enabled && !isWithinBusinessHours(cfg.business_hours_start, cfg.business_hours_end)) {
-    await sendText(from, cfg.away_message);
-    await logMessage({ wa_phone: from, direction: "outbound", body: cfg.away_message, reply_type: "away" });
+    await sendAndLogText(from, cfg.away_message, "away");
     return;
   }
   
   // Fallback
-  await sendText(from, cfg.fallback_message);
-  await logMessage({ wa_phone: from, direction: "outbound", body: cfg.fallback_message, reply_type: "fallback" });
+  await sendAndLogText(from, cfg.fallback_message, "fallback");
 }
 
 Deno.serve(async (req) => {
