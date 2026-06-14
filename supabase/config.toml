@@ -1,5 +1,11 @@
 project_id = "dpvdavjwqyviredzoorj"
 
+[functions.whatsapp-webhook]
+verify_jwt = false
+
+[functions.whatsapp-send-test]
+verify_jwt = false
+
 [functions]
   [functions.ai-support-chat]
     verify_jwt = false

@@ -141,6 +141,7 @@ const Affiliate                  = lazy(() => import("./pages/Affiliate"));
 const AdminGetCIDTools           = lazy(() => import("./pages/admin/AdminGetCIDTools"));
 const AdminCidCredits            = lazy(() => import("./pages/admin/AdminCidCredits"));
 const AdminCidProductCredits     = lazy(() => import("./pages/admin/AdminCidProductCredits"));
+const AdminWhatsAppBot           = lazy(() => import("./pages/admin/AdminWhatsAppBot"));
 const GetCID                     = lazy(() => import("./pages/GetCID"));
 const CheckKey                   = lazy(() => import("./pages/CheckKey"));
 const AdminSecurity2FA           = lazy(() => import("./pages/admin/AdminSecurity2FA"));
@@ -348,6 +349,7 @@ const AppContent = () => {
             <Route path="getcid-tools" element={<AdminSuspense><AdminGetCIDTools /></AdminSuspense>} />
             <Route path="cid-credits" element={<AdminSuspense><AdminCidCredits /></AdminSuspense>} />
             <Route path="cid-product-credits" element={<AdminSuspense><AdminCidProductCredits /></AdminSuspense>} />
+            <Route path="whatsapp-bot" element={<AdminSuspense><AdminWhatsAppBot /></AdminSuspense>} />
             <Route path="security" element={<AdminSuspense><AdminSecurity2FA /></AdminSuspense>} />
           </Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

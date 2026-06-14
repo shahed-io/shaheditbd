@@ -160,6 +160,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: KeyRound, label: 'GetCID API Tools', path: '/ceo/getcid-tools', badge: 'new' },
       { icon: CreditIcon, label: 'CID Credits', path: '/ceo/cid-credits', badge: 'new' },
       { icon: CreditIcon, label: 'Product Credit Mapping', path: '/ceo/cid-product-credits', badge: 'new' },
+      { icon: Bot, label: 'WhatsApp Bot', path: '/ceo/whatsapp-bot', badge: 'new' },
     ],
   },
   {
