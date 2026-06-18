@@ -106,6 +106,16 @@
     <priority>0.4</priority>
   </url>
   <url>
+    <loc>https://shahedstore.com.bd/product/amazon-prme-video-premium-price-in-bb</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774199430550-gu3qhzf6.png</image:loc>
+      <image:title>Amazon Pr!me Video Premium Price in BB</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://shahedstore.com.bd/product/quillbot-subscription-price-in-bangladesh</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>weekly</changefreq>
@@ -573,16 +583,6 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774198884859-7vn5xgga.png</image:loc>
       <image:title>Netflix Subscription in Bangladesh</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/amazon-prme-video-premium-price-in-bb</loc>
-    <lastmod>2026-06-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774199430550-gu3qhzf6.png</image:loc>
-      <image:title>Amazon Pr!me Video Premium Price in BB</image:title>
     </image:image>
   </url>
   <url>
