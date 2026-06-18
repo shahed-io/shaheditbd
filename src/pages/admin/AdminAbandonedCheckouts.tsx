@@ -218,18 +218,6 @@ export default function AdminAbandonedCheckouts() {
   // ── UI ────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="rounded-3xl bg-gradient-to-br from-primary/10 via-background to-background border border-border/50 p-6 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
-            <ShoppingCart className="text-white" size={26} />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Abandoned Checkouts</h1>
-            <p className="text-sm text-muted-foreground">Customers who filled checkout but didn't complete payment</p>
-          </div>
-        </div>
-      </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
