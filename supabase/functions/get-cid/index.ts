@@ -69,6 +69,13 @@ function mapUpstreamError(rawText: string): MappedError | null {
   if (/invalid installation|iid invalid|installation id/i.test(lower)) {
     return { code: 'IID_INVALID', message: 'Invalid Installation ID. Please re-check and try again.' };
   }
+  // Upstream provider account/auth/billing issues — never blame the customer
+  if (/insufficient\s*balance|low\s*balance|no\s*balance|out of credit/i.test(lower)) {
+    return { code: 'UPSTREAM_BALANCE', message: 'CID service is temporarily unavailable. Your credits are safe — please try again later or contact support.' };
+  }
+  if (/invalid\s*api[_-]?token|invalid\s*token|unauthor|forbidden|access\s*denied/i.test(lower)) {
+    return { code: 'UPSTREAM_AUTH', message: 'CID service is temporarily unavailable. Your credits are safe — please try again later or contact support.' };
+  }
   if (code) {
     return { code, message: `Upstream error: ${code}` };
   }
