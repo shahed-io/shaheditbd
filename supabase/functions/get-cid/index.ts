@@ -533,15 +533,27 @@ Deno.serve(async (req) => {
         // Try to detect a Microsoft / upstream error code from any provider response
         const mapped = mapUpstreamError(joined);
 
+        // Sanitize: never leak upstream provider names — even to admins
+        const sanitizeChannel = (s: string) => s
+          .replace(/\(\s*getcid\s*\)/gi, '')
+          .replace(/\(\s*grahok\s*\)/gi, '')
+          .replace(/getcid|grahok/gi, 'channel')
+          .replace(/api[_-]?token/gi, 'authentication')
+          .replace(/https?:\/\/\S+/gi, '')
+          .replace(/\s{2,}/g, ' ')
+          .trim();
+
         if (isAdmin) {
-          const detail = errs.length ? ` (${joined})` : '';
+          const cleanedDebug = errs.map(sanitizeChannel);
+          const detail = cleanedDebug.length ? ` (${cleanedDebug.join(' • ')})` : '';
           return json({
             ok: false,
             error: mapped ? mapped.message : `CID generation failed${detail}`,
             code: mapped?.code,
-            debug: errs,
+            debug: cleanedDebug,
           }, 502);
         }
+
 
         // Regular users — show clean upstream error if detected, else generic
         // Sanitize: never leak provider names, internal labels, URLs, or tokens
