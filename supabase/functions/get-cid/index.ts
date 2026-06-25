@@ -180,7 +180,8 @@ async function callGrahok(token: string, apiUrl: string, iid: string): Promise<{
       return { ok: false, error: 'Invalid JSON from Grahok', raw: text };
     }
     if (data['cid']) return { ok: true, cid: String(data['cid']) };
-    return { ok: false, error: (data['error'] as string) || 'No CID returned', raw: text };
+    const errMsg = (data['error'] as string) || (data['result'] as string) || (data['message'] as string) || 'No CID returned';
+    return { ok: false, error: String(errMsg), raw: text };
   } catch (e) {
     return { ok: false, error: `Grahok network error: ${String(e)}` };
   }
