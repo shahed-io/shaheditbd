@@ -69,6 +69,13 @@ function mapUpstreamError(rawText: string): MappedError | null {
   if (/invalid installation|iid invalid|installation id/i.test(lower)) {
     return { code: 'IID_INVALID', message: 'Invalid Installation ID. Please re-check and try again.' };
   }
+  // Upstream provider account/auth/billing issues — never blame the customer
+  if (/insufficient\s*balance|low\s*balance|no\s*balance|out of credit/i.test(lower)) {
+    return { code: 'UPSTREAM_BALANCE', message: 'CID service is temporarily unavailable. Your credits are safe — please try again later or contact support.' };
+  }
+  if (/invalid\s*api[_-]?token|invalid\s*token|unauthor|forbidden|access\s*denied/i.test(lower)) {
+    return { code: 'UPSTREAM_AUTH', message: 'CID service is temporarily unavailable. Your credits are safe — please try again later or contact support.' };
+  }
   if (code) {
     return { code, message: `Upstream error: ${code}` };
   }
@@ -173,7 +180,8 @@ async function callGrahok(token: string, apiUrl: string, iid: string): Promise<{
       return { ok: false, error: 'Invalid JSON from Grahok', raw: text };
     }
     if (data['cid']) return { ok: true, cid: String(data['cid']) };
-    return { ok: false, error: (data['error'] as string) || 'No CID returned', raw: text };
+    const errMsg = (data['error'] as string) || (data['result'] as string) || (data['message'] as string) || 'No CID returned';
+    return { ok: false, error: String(errMsg), raw: text };
   } catch (e) {
     return { ok: false, error: `Grahok network error: ${String(e)}` };
   }
@@ -525,15 +533,27 @@ Deno.serve(async (req) => {
         // Try to detect a Microsoft / upstream error code from any provider response
         const mapped = mapUpstreamError(joined);
 
+        // Sanitize: never leak upstream provider names — even to admins
+        const sanitizeChannel = (s: string) => s
+          .replace(/\(\s*getcid\s*\)/gi, '')
+          .replace(/\(\s*grahok\s*\)/gi, '')
+          .replace(/getcid|grahok/gi, 'channel')
+          .replace(/api[_-]?token/gi, 'authentication')
+          .replace(/https?:\/\/\S+/gi, '')
+          .replace(/\s{2,}/g, ' ')
+          .trim();
+
         if (isAdmin) {
-          const detail = errs.length ? ` (${joined})` : '';
+          const cleanedDebug = errs.map(sanitizeChannel);
+          const detail = cleanedDebug.length ? ` (${cleanedDebug.join(' • ')})` : '';
           return json({
             ok: false,
             error: mapped ? mapped.message : `CID generation failed${detail}`,
             code: mapped?.code,
-            debug: errs,
+            debug: cleanedDebug,
           }, 502);
         }
+
 
         // Regular users — show clean upstream error if detected, else generic
         // Sanitize: never leak provider names, internal labels, URLs, or tokens
