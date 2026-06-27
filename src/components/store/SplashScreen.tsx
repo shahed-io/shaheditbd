@@ -92,7 +92,8 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
           transform: phase === 'text' || phase === 'fade' ? 'translateY(0)' : 'translateY(12px)',
         }}
       >
-        <h1
+        <p
+          aria-label="Shahed Store"
           className="text-[22px] font-black tracking-tight text-center"
           style={{
             fontFamily: 'Sora, sans-serif',
@@ -102,7 +103,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
           }}
         >
           Shahed Store
-        </h1>
+        </p>
         <p className="text-center text-[10px] mt-1.5 tracking-[0.25em] uppercase"
           style={{ color: 'hsla(0, 0%, 100%, 0.45)' }}>
           Your Trusted Digital Shop
