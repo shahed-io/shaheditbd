@@ -1096,7 +1096,7 @@ const Checkout = () => {
               />
               <span className="text-sm text-muted-foreground leading-relaxed">
                 আমি{' '}
-                <button type="button" onClick={() => navigate('/terms')} className="text-primary hover:underline">Terms & Conditions</button>
+                <a href="https://shahedstore.com.bd/terms-conditions" className="text-primary hover:underline">Terms & Conditions</a>
                 {' '}এবং{' '}
                 <button type="button" onClick={() => navigate('/refund-policy')} className="text-primary hover:underline">Refund Policy</button>
                 {' '}পড়েছি এবং সম্মত আছি।
