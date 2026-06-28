@@ -149,6 +149,10 @@ const AdminSecurity2FA           = lazy(() => import("./pages/admin/AdminSecurit
 const AdminPaymentLinks          = lazy(() => import("./pages/admin/AdminPaymentLinks"));
 const PaymentLink                = lazy(() => import("./pages/PaymentLink"));
 const PaymentLinkTrack           = lazy(() => import("./pages/PaymentLinkTrack"));
+const AdminOffers                = lazy(() => import("./pages/admin/AdminOffers"));
+const AdminOfferEditor           = lazy(() => import("./pages/admin/AdminOfferEditor"));
+const OfferPage                  = lazy(() => import("./pages/OfferPage"));
+
 
 
 const queryClient = new QueryClient({
