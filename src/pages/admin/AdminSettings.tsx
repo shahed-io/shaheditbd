@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Save, Globe, DollarSign, MessageCircle, TestTube, Send, Mail, Brain, Eye, EyeOff, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Save, Globe, DollarSign, MessageCircle, TestTube, Send, Mail, Brain, Eye, EyeOff, CheckCircle, XCircle, Loader2, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AdminSettings = () => {
