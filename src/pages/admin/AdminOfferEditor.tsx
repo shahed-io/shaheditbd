@@ -92,6 +92,9 @@ export default function AdminOfferEditor() {
   const [prizesText, setPrizesText] = useState('');
   const [picking, setPicking] = useState(false);
 
+  // Active tab (controlled so AI build can auto-switch to Settings)
+  const [activeTab, setActiveTab] = useState<string>('ai');
+
   // AI Builder state
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiBuilding, setAiBuilding] = useState(false);
