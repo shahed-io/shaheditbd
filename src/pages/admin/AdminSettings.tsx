@@ -417,6 +417,59 @@ const AdminSettings = () => {
             </div>
           </div>
 
+          {/* Copy Protection Toggle */}
+          <div className="glass-card rounded-2xl p-6 border border-amber-500/20">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                <Shield size={18} className="text-amber-500" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">🛡️ Copy Protection System</h3>
+                <p className="text-xs text-muted-foreground">Block right-click, text copy, drag, DevTools shortcuts & scraper bots site-wide</p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between bg-muted/20 rounded-xl p-4">
+              <div>
+                <div className="text-sm font-semibold text-foreground">
+                  Copy Protection {settings['copy_protection_enabled'] !== 'false' ? 'চালু আছে' : 'বন্ধ আছে'}
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  {settings['copy_protection_enabled'] !== 'false'
+                    ? '✅ ভিজিটররা কনটেন্ট কপি / রাইট-ক্লিক / ড্র্যাগ করতে পারবে না, স্ক্র‍্যাপার বটও ব্লক হবে'
+                    : '⚠️ সব প্রোটেকশন বন্ধ — ভিজিটররা স্বাভাবিকভাবে কপি ও রাইট-ক্লিক করতে পারবে'}
+                </p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={settings['copy_protection_enabled'] !== 'false'}
+                onClick={() => setSettings({
+                  ...settings,
+                  copy_protection_enabled: settings['copy_protection_enabled'] === 'false' ? 'true' : 'false',
+                })}
+                className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors ${
+                  settings['copy_protection_enabled'] !== 'false' ? 'bg-amber-500' : 'bg-muted-foreground/30'
+                }`}
+              >
+                <span
+                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform ${
+                    settings['copy_protection_enabled'] !== 'false' ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+
+            <div className="mt-4 bg-amber-500/5 border border-amber-500/20 rounded-xl p-4">
+              <p className="text-xs text-foreground font-semibold mb-2">ℹ️ মনে রাখবেন:</p>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>✅ পরিবর্তন সেভ করার পর সাইট রিফ্রেশ করলে কার্যকর হবে</li>
+                <li>✅ Admin panel (/ceo) ও admin ইউজাররা সবসময় বাইপাস করে</li>
+                <li>✅ Googlebot, Bingbot, GPTBot ইত্যাদি SEO বট কখনও ব্লক হয় না</li>
+              </ul>
+            </div>
+          </div>
+
           {/* Admin Setup Section */}
           <div className="glass-card rounded-2xl p-6 border-primary/30">
             <h3 className="font-bold text-foreground mb-1">🔐 Admin Account</h3>
