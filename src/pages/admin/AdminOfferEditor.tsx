@@ -313,17 +313,56 @@ export default function AdminOfferEditor() {
           <h1 className="text-xl font-bold">{offer.title}</h1>
           <Badge>{offer.status}</Badge>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button variant="outline" asChild>
             <a href={`/offer/${offer.slug}`} target="_blank" rel="noopener noreferrer">
               <Eye className="w-4 h-4 mr-1" /> Preview
             </a>
           </Button>
+          {offer.status !== 'active' ? (
+            <Button
+              className="bg-green-600 hover:bg-green-700 text-white"
+              disabled={saving}
+              onClick={async () => {
+                setOffer({ ...offer, status: 'active' });
+                setSaving(true);
+                const { error } = await supabase.from('offers').update({ status: 'active' }).eq('id', offer.id);
+                setSaving(false);
+                if (error) return toast.error(error.message);
+                toast.success('Offer is now LIVE 🎉 — public link is active');
+              }}
+            >
+              🚀 Publish (Go Live)
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              disabled={saving}
+              onClick={async () => {
+                setOffer({ ...offer, status: 'draft' });
+                setSaving(true);
+                const { error } = await supabase.from('offers').update({ status: 'draft' }).eq('id', offer.id);
+                setSaving(false);
+                if (error) return toast.error(error.message);
+                toast.success('Offer unpublished (Draft)');
+              }}
+            >
+              Unpublish
+            </Button>
+          )}
           <Button onClick={saveOffer} disabled={saving}>
             <Save className="w-4 h-4 mr-1" /> {saving ? 'Saving...' : 'Save'}
           </Button>
         </div>
       </div>
+
+      {offer.status === 'draft' && (
+        <div className="rounded-lg border border-amber-400/40 bg-amber-50 dark:bg-amber-950/20 p-3 text-sm flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            ⚠️ এই offer এখনো <b>Draft</b> অবস্থায় আছে — public link এ "অফার পাওয়া যায়নি" দেখাবে। উপরের <b>🚀 Publish</b> বাটনে ক্লিক করে Live করুন।
+          </div>
+        </div>
+      )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto">
