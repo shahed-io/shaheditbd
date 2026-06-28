@@ -9,10 +9,30 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
   const [blocked, setBlocked] = useState(false);
+  const [enabled, setEnabled] = useState<boolean | null>(null);
   const { isAdmin } = useAuth();
   const [pathname, setPathname] = useState(
     typeof window !== 'undefined' ? window.location.pathname : '/'
   );
+
+  // Load on/off toggle from site_settings (default = enabled).
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'copy_protection_enabled')
+          .maybeSingle();
+        if (cancelled) return;
+        setEnabled(data?.value !== 'false');
+      } catch {
+        if (!cancelled) setEnabled(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // Track SPA route changes (pushState/replaceState don't fire popstate).
   useEffect(() => {
