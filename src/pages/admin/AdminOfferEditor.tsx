@@ -259,6 +259,43 @@ export default function AdminOfferEditor() {
     a.click();
   };
 
+  const exportWinnersCSV = () => {
+    if (winners.length === 0) return;
+    const allKeys = new Set<string>();
+    winners.forEach((w) => {
+      const sub = submissions.find((s) => s.id === w.submission_id);
+      if (sub) Object.keys(sub.data || {}).forEach((k) => allKeys.add(k));
+    });
+    const keys = Array.from(allKeys);
+    const header = ['Rank', 'Prize', 'Name', 'Email', 'Phone', 'Selected By', 'AI Reason', 'Submitted At', ...keys];
+    const rows = winners
+      .slice()
+      .sort((a, b) => a.rank - b.rank)
+      .map((w) => {
+        const sub = submissions.find((s) => s.id === w.submission_id);
+        return [
+          w.rank,
+          w.prize || '',
+          sub?.participant_name || '',
+          sub?.participant_email || '',
+          sub?.participant_phone || '',
+          w.selected_by,
+          w.ai_reason || '',
+          sub ? new Date(sub.created_at).toLocaleString() : '',
+          ...keys.map((k) => String(sub?.data?.[k] ?? '')),
+        ];
+      });
+    const csv = [header, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${offer?.slug}-winners.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`${winners.length} winner(s) exported`);
+  };
+
   if (loading || !offer) return <div className="py-12 text-center text-muted-foreground">Loading...</div>;
 
   return (
@@ -622,7 +659,12 @@ export default function AdminOfferEditor() {
 
           {winners.length > 0 && (
             <Card>
-              <CardHeader><CardTitle>Current Winners</CardTitle></CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <CardTitle>Current Winners ({winners.length})</CardTitle>
+                <Button variant="outline" size="sm" onClick={exportWinnersCSV}>
+                  <Download className="w-4 h-4 mr-1" /> Export Winners CSV
+                </Button>
+              </CardHeader>
               <CardContent className="space-y-2">
                 {winners.map((w) => {
                   const sub = submissions.find((s) => s.id === w.submission_id);
