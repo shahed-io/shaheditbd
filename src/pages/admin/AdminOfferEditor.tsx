@@ -325,7 +325,7 @@ export default function AdminOfferEditor() {
         </div>
       </div>
 
-      <Tabs defaultValue="ai">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="ai"><Wand2 className="w-3.5 h-3.5 mr-1" /> AI Builder</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
