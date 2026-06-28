@@ -11,6 +11,12 @@ const CP_KEYS = [
   'cp_drag',
   'cp_devtools',
   'cp_scraper_block',
+  'cp_print',
+  'cp_devtools_detect',
+  'cp_iframe_block',
+  'cp_console_warn',
+  'cp_blur_on_hide',
+  'cp_mobile_longpress',
 ] as const;
 
 type CpSettings = Record<(typeof CP_KEYS)[number], boolean>;
@@ -23,6 +29,12 @@ const DEFAULTS: CpSettings = {
   cp_drag: true,
   cp_devtools: true,
   cp_scraper_block: true,
+  cp_print: false,
+  cp_devtools_detect: false,
+  cp_iframe_block: false,
+  cp_console_warn: false,
+  cp_blur_on_hide: false,
+  cp_mobile_longpress: false,
 };
 
 /**
