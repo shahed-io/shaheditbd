@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Shield, Loader2, MousePointerClick, Copy, Move, Bot, Keyboard, TextCursor, Info } from 'lucide-react';
+import { Shield, Loader2, MousePointerClick, Copy, Move, Bot, Keyboard, TextCursor, Info, Printer, ScanEye, Frame, Terminal, EyeOff, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
 
 type Key =
@@ -10,29 +10,27 @@ type Key =
   | 'cp_selection'
   | 'cp_drag'
   | 'cp_devtools'
-  | 'cp_scraper_block';
+  | 'cp_scraper_block'
+  | 'cp_print'
+  | 'cp_devtools_detect'
+  | 'cp_iframe_block'
+  | 'cp_console_warn'
+  | 'cp_blur_on_hide'
+  | 'cp_mobile_longpress';
 
 const ALL_KEYS: Key[] = [
   'copy_protection_enabled',
-  'cp_right_click',
-  'cp_copy',
-  'cp_selection',
-  'cp_drag',
-  'cp_devtools',
-  'cp_scraper_block',
+  'cp_right_click', 'cp_copy', 'cp_selection', 'cp_drag', 'cp_devtools', 'cp_scraper_block',
+  'cp_print', 'cp_devtools_detect', 'cp_iframe_block', 'cp_console_warn', 'cp_blur_on_hide', 'cp_mobile_longpress',
 ];
 
 const DEFAULTS: Record<Key, boolean> = {
   copy_protection_enabled: true,
-  cp_right_click: true,
-  cp_copy: true,
-  cp_selection: true,
-  cp_drag: true,
-  cp_devtools: true,
-  cp_scraper_block: true,
+  cp_right_click: true, cp_copy: true, cp_selection: true, cp_drag: true, cp_devtools: true, cp_scraper_block: true,
+  cp_print: false, cp_devtools_detect: false, cp_iframe_block: false, cp_console_warn: false, cp_blur_on_hide: false, cp_mobile_longpress: false,
 };
 
-const FEATURES: { key: Key; icon: any; title: string; desc: string }[] = [
+const BASIC_FEATURES: { key: Key; icon: any; title: string; desc: string }[] = [
   { key: 'cp_right_click', icon: MousePointerClick, title: 'Right-click Block', desc: 'ভিজিটর রাইট-ক্লিক মেনু খুলতে পারবে না' },
   { key: 'cp_copy', icon: Copy, title: 'Copy / Cut Block', desc: 'Ctrl+C / Ctrl+X দিয়ে কনটেন্ট কপি করা যাবে না' },
   { key: 'cp_selection', icon: TextCursor, title: 'Text Selection Block', desc: 'মাউস দিয়ে টেক্সট সিলেক্ট করা যাবে না' },
@@ -40,6 +38,17 @@ const FEATURES: { key: Key; icon: any; title: string; desc: string }[] = [
   { key: 'cp_devtools', icon: Keyboard, title: 'DevTools Shortcuts Block', desc: 'F12, Ctrl+Shift+I/J/C, Ctrl+U/S, PrintScreen ব্লক হবে' },
   { key: 'cp_scraper_block', icon: Bot, title: 'Scraper Bot Block', desc: 'Firecrawl, Puppeteer, wget, curl ইত্যাদি স্ক্র‍্যাপার ব্লক হবে' },
 ];
+
+const ADVANCED_FEATURES: { key: Key; icon: any; title: string; desc: string }[] = [
+  { key: 'cp_print', icon: Printer, title: 'Print Block', desc: 'Ctrl+P ও window.print() ব্লক হবে — পেইজ প্রিন্ট করা যাবে না' },
+  { key: 'cp_devtools_detect', icon: ScanEye, title: 'DevTools Open Detection', desc: 'কেউ DevTools খুললে পেইজ ব্লার করে ওভারলে দেখাবে' },
+  { key: 'cp_iframe_block', icon: Frame, title: 'Iframe / Clickjacking Block', desc: 'অন্য সাইট iframe দিয়ে আমাদের সাইট embed করতে পারবে না' },
+  { key: 'cp_console_warn', icon: Terminal, title: 'Console Warning', desc: 'DevTools console খুললে বড় copyright warning দেখাবে' },
+  { key: 'cp_blur_on_hide', icon: EyeOff, title: 'Blur on Tab Hide', desc: 'ভিজিটর ট্যাব সুইচ করলে পেইজ ব্লার হয়ে যাবে (anti-screenshot)' },
+  { key: 'cp_mobile_longpress', icon: Smartphone, title: 'Mobile Long-press Block', desc: 'মোবাইলে ছবি/ভিডিও লং-প্রেস করে save করা যাবে না' },
+];
+
+const ALL_FEATURES = [...BASIC_FEATURES, ...ADVANCED_FEATURES];
 
 const AdminCopyProtection = () => {
   const [settings, setSettings] = useState<Record<Key, boolean>>(DEFAULTS);
