@@ -211,7 +211,7 @@ export default function OfferPage() {
     <>
       <SEOHead title={offer.title} description={offer.description?.slice(0, 160) || `${offer.title} - Shahed Store offer`} />
       <Navbar />
-      <main className="min-h-screen container max-w-3xl mx-auto px-4 py-6 md:py-8 space-y-6">
+      <main className="min-h-screen container max-w-3xl mx-auto px-4 pt-24 md:pt-32 pb-6 md:pb-8 space-y-6">
         {offer.banner_url && (
           <img src={offer.banner_url} alt={offer.title} className="w-full rounded-2xl object-cover max-h-72" />
         )}
