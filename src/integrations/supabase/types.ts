@@ -1714,6 +1714,7 @@ export type Database = {
           created_at: string
           id: string
           offer_id: string
+          participant_name: string | null
           prize: string | null
           rank: number
           selected_by: string
@@ -1725,6 +1726,7 @@ export type Database = {
           created_at?: string
           id?: string
           offer_id: string
+          participant_name?: string | null
           prize?: string | null
           rank: number
           selected_by?: string
@@ -1736,6 +1738,7 @@ export type Database = {
           created_at?: string
           id?: string
           offer_id?: string
+          participant_name?: string | null
           prize?: string | null
           rank?: number
           selected_by?: string
