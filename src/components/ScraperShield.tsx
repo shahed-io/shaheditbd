@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { evaluateClientProtection, installCopyDeterrents } from '@/lib/antiScraping';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * ScraperShield — mounts once at app root.
