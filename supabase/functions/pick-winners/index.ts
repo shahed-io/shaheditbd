@@ -112,6 +112,7 @@ ${JSON.stringify(compact).slice(0, 30000)}`;
     }
 
     // Insert winners
+    const subById = new Map(subs.map((s) => [s.id, s]));
     const winnerRows = picked.map(p => ({
       offer_id,
       submission_id: p.submission_id,
@@ -119,6 +120,7 @@ ${JSON.stringify(compact).slice(0, 30000)}`;
       prize: p.prize,
       selected_by: mode,
       ai_reason: p.reason || null,
+      participant_name: subById.get(p.submission_id)?.participant_name || null,
     }));
 
     const { error: insErr } = await supabase.from('offer_winners').insert(winnerRows);
