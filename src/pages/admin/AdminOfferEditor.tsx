@@ -659,7 +659,12 @@ export default function AdminOfferEditor() {
 
           {winners.length > 0 && (
             <Card>
-              <CardHeader><CardTitle>Current Winners</CardTitle></CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <CardTitle>Current Winners ({winners.length})</CardTitle>
+                <Button variant="outline" size="sm" onClick={exportWinnersCSV}>
+                  <Download className="w-4 h-4 mr-1" /> Export Winners CSV
+                </Button>
+              </CardHeader>
               <CardContent className="space-y-2">
                 {winners.map((w) => {
                   const sub = submissions.find((s) => s.id === w.submission_id);
