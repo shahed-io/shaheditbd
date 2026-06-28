@@ -68,14 +68,11 @@ export default function OfferPage() {
       setOffer(o as Offer);
       const [{ data: f }, { data: w }] = await Promise.all([
         supabase.from('offer_fields').select('*').eq('offer_id', o.id).order('sort_order'),
-        supabase.from('offer_winners').select('id, rank, prize, submission_id').eq('offer_id', o.id).order('rank'),
+        supabase.from('offer_winners').select('id, rank, prize, participant_name').eq('offer_id', o.id).order('rank'),
       ]);
       setFields((f as Field[]) || []);
       if (w && w.length > 0) {
-        const subIds = w.map((x: any) => x.submission_id);
-        const { data: subs } = await supabase.from('offer_submissions').select('id, participant_name').in('id', subIds);
-        const subMap = new Map((subs || []).map((s: any) => [s.id, s.participant_name]));
-        setWinners(w.map((x: any) => ({ id: x.id, rank: x.rank, prize: x.prize, name: subMap.get(x.submission_id) || 'Winner' })));
+        setWinners(w.map((x: any) => ({ id: x.id, rank: x.rank, prize: x.prize, name: x.participant_name || 'Winner' })));
       }
       setLoading(false);
     })();
