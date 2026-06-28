@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Trophy, Calendar, Users, Gift, CheckCircle2 } from 'lucide-react';
 import Navbar from '@/components/store/Navbar';
-import { Footer } from '@/components/store/Footer';
+import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
 import { useAuth } from '@/hooks/useAuth';
 import ReactMarkdown from 'react-markdown';
