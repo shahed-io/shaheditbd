@@ -149,6 +149,10 @@ const AdminSecurity2FA           = lazy(() => import("./pages/admin/AdminSecurit
 const AdminPaymentLinks          = lazy(() => import("./pages/admin/AdminPaymentLinks"));
 const PaymentLink                = lazy(() => import("./pages/PaymentLink"));
 const PaymentLinkTrack           = lazy(() => import("./pages/PaymentLinkTrack"));
+const AdminOffers                = lazy(() => import("./pages/admin/AdminOffers"));
+const AdminOfferEditor           = lazy(() => import("./pages/admin/AdminOfferEditor"));
+const OfferPage                  = lazy(() => import("./pages/OfferPage"));
+
 
 
 const queryClient = new QueryClient({
@@ -353,8 +357,12 @@ const AppContent = () => {
             <Route path="cid-product-credits" element={<AdminSuspense><AdminCidProductCredits /></AdminSuspense>} />
             <Route path="whatsapp-bot" element={<AdminSuspense><AdminWhatsAppBot /></AdminSuspense>} />
             <Route path="security" element={<AdminSuspense><AdminSecurity2FA /></AdminSuspense>} />
+            <Route path="offers" element={<AdminSuspense><AdminOffers /></AdminSuspense>} />
+            <Route path="offers/:id" element={<AdminSuspense><AdminOfferEditor /></AdminSuspense>} />
           </Route>
+          <Route path="/offer/:slug" element={<OfferPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/order-policy" element={<OrderPolicy />} />
