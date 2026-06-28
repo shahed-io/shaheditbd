@@ -98,7 +98,7 @@ const HelpCenter = () => {
     setHelpfulVoted(type);
     const field = type === 'yes' ? 'helpful_yes' : 'helpful_no';
     const newVal = (currentArticle[field] || 0) + 1;
-    await supabase.from('help_articles').update({ [field]: newVal }).eq('id', currentArticle.id);
+    await supabase.from('help_articles').update({ [field]: newVal } as any).eq('id', currentArticle.id);
     setCurrentArticle((prev: any) => ({ ...prev, [field]: newVal }));
     toast.success(type === 'yes' ? '😊 ধন্যবাদ!' : '😕 আমরা উন্নত করার চেষ্টা করব!');
   };
