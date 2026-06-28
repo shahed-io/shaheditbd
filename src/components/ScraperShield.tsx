@@ -11,6 +11,12 @@ const CP_KEYS = [
   'cp_drag',
   'cp_devtools',
   'cp_scraper_block',
+  'cp_print',
+  'cp_devtools_detect',
+  'cp_iframe_block',
+  'cp_console_warn',
+  'cp_blur_on_hide',
+  'cp_mobile_longpress',
 ] as const;
 
 type CpSettings = Record<(typeof CP_KEYS)[number], boolean>;
@@ -23,6 +29,12 @@ const DEFAULTS: CpSettings = {
   cp_drag: true,
   cp_devtools: true,
   cp_scraper_block: true,
+  cp_print: false,
+  cp_devtools_detect: false,
+  cp_iframe_block: false,
+  cp_console_warn: false,
+  cp_blur_on_hide: false,
+  cp_mobile_longpress: false,
 };
 
 /**
@@ -107,7 +119,10 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
     if (isAdmin) return;
 
     if (decision.classification === 'human') {
-      const anyDeterrent = cp.cp_right_click || cp.cp_copy || cp.cp_selection || cp.cp_drag || cp.cp_devtools;
+      const anyDeterrent =
+        cp.cp_right_click || cp.cp_copy || cp.cp_selection || cp.cp_drag || cp.cp_devtools ||
+        cp.cp_print || cp.cp_devtools_detect || cp.cp_iframe_block || cp.cp_console_warn ||
+        cp.cp_blur_on_hide || cp.cp_mobile_longpress;
       if (!anyDeterrent) return;
       const cleanup = installCopyDeterrents({
         rightClick: cp.cp_right_click,
@@ -115,6 +130,12 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
         textSelection: cp.cp_selection,
         imageDrag: cp.cp_drag,
         devtoolsShortcuts: cp.cp_devtools,
+        printBlock: cp.cp_print,
+        devtoolsDetect: cp.cp_devtools_detect,
+        iframeBlock: cp.cp_iframe_block,
+        consoleWarn: cp.cp_console_warn,
+        blurOnHide: cp.cp_blur_on_hide,
+        mobileLongPress: cp.cp_mobile_longpress,
       });
       return cleanup;
     }

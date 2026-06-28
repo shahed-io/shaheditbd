@@ -169,6 +169,20 @@ export interface CopyDeterrentOptions {
   devtoolsShortcuts?: boolean;
 }
 
+export interface CopyDeterrentOptions {
+  rightClick?: boolean;
+  copyCut?: boolean;
+  textSelection?: boolean;
+  imageDrag?: boolean;
+  devtoolsShortcuts?: boolean;
+  printBlock?: boolean;
+  devtoolsDetect?: boolean;
+  iframeBlock?: boolean;
+  consoleWarn?: boolean;
+  blurOnHide?: boolean;
+  mobileLongPress?: boolean;
+}
+
 export function installCopyDeterrents(opts: CopyDeterrentOptions = {}): () => void {
   const {
     rightClick = true,
@@ -176,6 +190,12 @@ export function installCopyDeterrents(opts: CopyDeterrentOptions = {}): () => vo
     textSelection = true,
     imageDrag = true,
     devtoolsShortcuts = true,
+    printBlock = false,
+    devtoolsDetect = false,
+    iframeBlock = false,
+    consoleWarn = false,
+    blurOnHide = false,
+    mobileLongPress = false,
   } = opts;
   if (typeof document === 'undefined') return () => {};
 
@@ -299,6 +319,94 @@ export function installCopyDeterrents(opts: CopyDeterrentOptions = {}): () => vo
     }
   };
 
+  // Block print (Ctrl+P + window.print)
+  const onBeforePrint = (e: Event) => { e.preventDefault?.(); warn(); };
+  const onPrintKey = (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key?.toLowerCase() === 'p') {
+      e.preventDefault(); warn();
+    }
+  };
+  let origPrint: typeof window.print | null = null;
+  if (printBlock && typeof window !== 'undefined') {
+    origPrint = window.print;
+    window.print = () => { warn(); };
+    window.addEventListener('beforeprint', onBeforePrint);
+    document.addEventListener('keydown', onPrintKey);
+  }
+
+  // DevTools open detection (window outer/inner size diff)
+  let devToolsInterval: number | null = null;
+  const devToolsOverlayId = '__devtools_overlay__';
+  if (devtoolsDetect && typeof window !== 'undefined') {
+    const check = () => {
+      const w = window.outerWidth - window.innerWidth;
+      const h = window.outerHeight - window.innerHeight;
+      const open = w > 200 || h > 200;
+      let overlay = document.getElementById(devToolsOverlayId);
+      if (open && !overlay) {
+        overlay = document.createElement('div');
+        overlay.id = devToolsOverlayId;
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:2147483646;background:rgba(15,23,42,.98);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:system-ui,sans-serif;padding:24px;text-align:center;';
+        overlay.innerHTML = '<div style="font-size:56px;margin-bottom:12px">🛡️</div><h2 style="font-size:22px;font-weight:800;margin:0 0 8px">DevTools Detected</h2><p style="opacity:.8;max-width:480px">Please close DevTools to continue browsing. এই সাইটে DevTools ব্যবহার অনুমোদিত নয়।</p>';
+        document.body.appendChild(overlay);
+      } else if (!open && overlay) {
+        overlay.remove();
+      }
+    };
+    devToolsInterval = window.setInterval(check, 800);
+  }
+
+  // Iframe / clickjacking protection — break out if framed
+  if (iframeBlock && typeof window !== 'undefined') {
+    try {
+      if (window.top && window.self !== window.top) {
+        window.top.location.href = window.self.location.href;
+      }
+    } catch {
+      try { document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:system-ui">🛡️ This site cannot be embedded.</div>'; } catch { /* ignore */ }
+    }
+  }
+
+  // Console warning
+  if (consoleWarn && typeof console !== 'undefined') {
+    try {
+      console.log('%c⛔ STOP!', 'color:#dc2626;font-size:48px;font-weight:900;text-shadow:2px 2px 0 #000;');
+      console.log('%cThis is a browser feature intended for developers. Pasting or running code here can compromise your account.\n\n© Shahed Store — All content is copyright protected.', 'color:#0f172a;font-size:14px;font-weight:600;');
+    } catch { /* ignore */ }
+  }
+
+  // Blur content when window/tab loses focus (anti-screenshot helper)
+  const blurStyleId = '__cp_blur_style__';
+  const onVisibility = () => {
+    const hidden = document.hidden;
+    let style = document.getElementById(blurStyleId) as HTMLStyleElement | null;
+    if (hidden) {
+      if (!style) {
+        style = document.createElement('style');
+        style.id = blurStyleId;
+        style.textContent = 'body{filter:blur(18px)!important;transition:filter .15s ease;}';
+        document.head.appendChild(style);
+      }
+    } else if (style) {
+      style.remove();
+    }
+  };
+  if (blurOnHide && typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', onVisibility);
+  }
+
+  // Mobile long-press block (touch context menu on images / non-interactive)
+  const onTouchStart = (e: TouchEvent) => {
+    if (isInteractive(e.target)) return;
+    const t = e.target as HTMLElement;
+    if (t && (t.tagName === 'IMG' || t.tagName === 'VIDEO')) {
+      e.preventDefault();
+    }
+  };
+  if (mobileLongPress && typeof document !== 'undefined') {
+    document.addEventListener('touchstart', onTouchStart, { passive: false });
+  }
+
   if (rightClick) document.addEventListener('contextmenu', onContextMenu);
   if (copyCut) {
     document.addEventListener('copy', onCopy);
@@ -315,5 +423,15 @@ export function installCopyDeterrents(opts: CopyDeterrentOptions = {}): () => vo
     document.removeEventListener('dragstart', onDragStart);
     document.removeEventListener('selectstart', onSelectStart);
     document.removeEventListener('keydown', onKeyDown);
+    document.removeEventListener('keydown', onPrintKey);
+    document.removeEventListener('visibilitychange', onVisibility);
+    document.removeEventListener('touchstart', onTouchStart);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('beforeprint', onBeforePrint);
+      if (origPrint) window.print = origPrint;
+    }
+    if (devToolsInterval !== null) clearInterval(devToolsInterval);
+    document.getElementById(devToolsOverlayId)?.remove();
+    document.getElementById(blurStyleId)?.remove();
   };
 }

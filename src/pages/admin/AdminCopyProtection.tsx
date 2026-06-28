@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Shield, Loader2, MousePointerClick, Copy, Move, Bot, Keyboard, TextCursor, Info } from 'lucide-react';
+import { Shield, Loader2, MousePointerClick, Copy, Move, Bot, Keyboard, TextCursor, Info, Printer, ScanEye, Frame, Terminal, EyeOff, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
 
 type Key =
@@ -10,29 +10,27 @@ type Key =
   | 'cp_selection'
   | 'cp_drag'
   | 'cp_devtools'
-  | 'cp_scraper_block';
+  | 'cp_scraper_block'
+  | 'cp_print'
+  | 'cp_devtools_detect'
+  | 'cp_iframe_block'
+  | 'cp_console_warn'
+  | 'cp_blur_on_hide'
+  | 'cp_mobile_longpress';
 
 const ALL_KEYS: Key[] = [
   'copy_protection_enabled',
-  'cp_right_click',
-  'cp_copy',
-  'cp_selection',
-  'cp_drag',
-  'cp_devtools',
-  'cp_scraper_block',
+  'cp_right_click', 'cp_copy', 'cp_selection', 'cp_drag', 'cp_devtools', 'cp_scraper_block',
+  'cp_print', 'cp_devtools_detect', 'cp_iframe_block', 'cp_console_warn', 'cp_blur_on_hide', 'cp_mobile_longpress',
 ];
 
 const DEFAULTS: Record<Key, boolean> = {
   copy_protection_enabled: true,
-  cp_right_click: true,
-  cp_copy: true,
-  cp_selection: true,
-  cp_drag: true,
-  cp_devtools: true,
-  cp_scraper_block: true,
+  cp_right_click: true, cp_copy: true, cp_selection: true, cp_drag: true, cp_devtools: true, cp_scraper_block: true,
+  cp_print: false, cp_devtools_detect: false, cp_iframe_block: false, cp_console_warn: false, cp_blur_on_hide: false, cp_mobile_longpress: false,
 };
 
-const FEATURES: { key: Key; icon: any; title: string; desc: string }[] = [
+const BASIC_FEATURES: { key: Key; icon: any; title: string; desc: string }[] = [
   { key: 'cp_right_click', icon: MousePointerClick, title: 'Right-click Block', desc: 'ভিজিটর রাইট-ক্লিক মেনু খুলতে পারবে না' },
   { key: 'cp_copy', icon: Copy, title: 'Copy / Cut Block', desc: 'Ctrl+C / Ctrl+X দিয়ে কনটেন্ট কপি করা যাবে না' },
   { key: 'cp_selection', icon: TextCursor, title: 'Text Selection Block', desc: 'মাউস দিয়ে টেক্সট সিলেক্ট করা যাবে না' },
@@ -40,6 +38,17 @@ const FEATURES: { key: Key; icon: any; title: string; desc: string }[] = [
   { key: 'cp_devtools', icon: Keyboard, title: 'DevTools Shortcuts Block', desc: 'F12, Ctrl+Shift+I/J/C, Ctrl+U/S, PrintScreen ব্লক হবে' },
   { key: 'cp_scraper_block', icon: Bot, title: 'Scraper Bot Block', desc: 'Firecrawl, Puppeteer, wget, curl ইত্যাদি স্ক্র‍্যাপার ব্লক হবে' },
 ];
+
+const ADVANCED_FEATURES: { key: Key; icon: any; title: string; desc: string }[] = [
+  { key: 'cp_print', icon: Printer, title: 'Print Block', desc: 'Ctrl+P ও window.print() ব্লক হবে — পেইজ প্রিন্ট করা যাবে না' },
+  { key: 'cp_devtools_detect', icon: ScanEye, title: 'DevTools Open Detection', desc: 'কেউ DevTools খুললে পেইজ ব্লার করে ওভারলে দেখাবে' },
+  { key: 'cp_iframe_block', icon: Frame, title: 'Iframe / Clickjacking Block', desc: 'অন্য সাইট iframe দিয়ে আমাদের সাইট embed করতে পারবে না' },
+  { key: 'cp_console_warn', icon: Terminal, title: 'Console Warning', desc: 'DevTools console খুললে বড় copyright warning দেখাবে' },
+  { key: 'cp_blur_on_hide', icon: EyeOff, title: 'Blur on Tab Hide', desc: 'ভিজিটর ট্যাব সুইচ করলে পেইজ ব্লার হয়ে যাবে (anti-screenshot)' },
+  { key: 'cp_mobile_longpress', icon: Smartphone, title: 'Mobile Long-press Block', desc: 'মোবাইলে ছবি/ভিডিও লং-প্রেস করে save করা যাবে না' },
+];
+
+const ALL_FEATURES = [...BASIC_FEATURES, ...ADVANCED_FEATURES];
 
 const AdminCopyProtection = () => {
   const [settings, setSettings] = useState<Record<Key, boolean>>(DEFAULTS);
@@ -165,34 +174,60 @@ const AdminCopyProtection = () => {
             </div>
           </div>
 
-          {/* Individual feature toggles */}
-          <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity ${masterOn ? '' : 'opacity-60'}`}>
-            {FEATURES.map(f => {
-              const on = settings[f.key];
-              return (
-                <div key={f.key} className={`glass-card rounded-2xl p-5 border transition-colors ${on && masterOn ? 'border-amber-500/30' : 'border-border/40'}`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3 flex-1">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${on && masterOn ? 'bg-amber-500/20' : 'bg-muted/30'}`}>
-                        <f.icon size={18} className={on && masterOn ? 'text-amber-500' : 'text-muted-foreground'} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-bold text-foreground">{f.title}</div>
-                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{f.desc}</p>
-                        <div className={`text-[11px] mt-2 font-semibold ${on ? 'text-amber-500' : 'text-muted-foreground'}`}>
-                          {on ? '● চালু' : '○ বন্ধ'}
+          {/* Basic protections */}
+          <div>
+            <h2 className="text-sm font-bold text-foreground/80 mb-3 uppercase tracking-wider">Basic Protections</h2>
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity ${masterOn ? '' : 'opacity-60'}`}>
+              {BASIC_FEATURES.map(f => {
+                const on = settings[f.key];
+                return (
+                  <div key={f.key} className={`glass-card rounded-2xl p-5 border transition-colors ${on && masterOn ? 'border-amber-500/30' : 'border-border/40'}`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 flex-1">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${on && masterOn ? 'bg-amber-500/20' : 'bg-muted/30'}`}>
+                          <f.icon size={18} className={on && masterOn ? 'text-amber-500' : 'text-muted-foreground'} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-bold text-foreground">{f.title}</div>
+                          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{f.desc}</p>
+                          <div className={`text-[11px] mt-2 font-semibold ${on ? 'text-amber-500' : 'text-muted-foreground'}`}>{on ? '● চালু' : '○ বন্ধ'}</div>
                         </div>
                       </div>
+                      <Toggle checked={on} disabled={savingKey === f.key} onChange={() => save(f.key, !on)} />
                     </div>
-                    <Toggle
-                      checked={on}
-                      disabled={savingKey === f.key}
-                      onChange={() => save(f.key, !on)}
-                    />
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Advanced protections */}
+          <div>
+            <h2 className="text-sm font-bold text-foreground/80 mb-3 uppercase tracking-wider flex items-center gap-2">
+              Advanced Protections <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-500 normal-case">Pro</span>
+            </h2>
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity ${masterOn ? '' : 'opacity-60'}`}>
+              {ADVANCED_FEATURES.map(f => {
+                const on = settings[f.key];
+                return (
+                  <div key={f.key} className={`glass-card rounded-2xl p-5 border transition-colors ${on && masterOn ? 'border-purple-500/30' : 'border-border/40'}`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 flex-1">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${on && masterOn ? 'bg-purple-500/20' : 'bg-muted/30'}`}>
+                          <f.icon size={18} className={on && masterOn ? 'text-purple-500' : 'text-muted-foreground'} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-bold text-foreground">{f.title}</div>
+                          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{f.desc}</p>
+                          <div className={`text-[11px] mt-2 font-semibold ${on ? 'text-purple-500' : 'text-muted-foreground'}`}>{on ? '● চালু' : '○ বন্ধ'}</div>
+                        </div>
+                      </div>
+                      <Toggle checked={on} disabled={savingKey === f.key} onChange={() => save(f.key, !on)} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Info */}
