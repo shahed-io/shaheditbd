@@ -48,6 +48,12 @@ interface WinnerRow {
   prize: string | null;
 }
 
+const formatBanglaDateTime = (value: string) =>
+  new Date(value).toLocaleString('bn-BD', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+
 export default function OfferPage() {
   const { slug } = useParams();
   const { user } = useAuth();
@@ -199,18 +205,19 @@ export default function OfferPage() {
   const ended = offer.status === 'closed' || (offer.end_at && new Date(offer.end_at) < now);
   const maxReached = offer.max_submissions && offer.submission_count >= offer.max_submissions;
   const canSubmit = !notStarted && !ended && !maxReached;
+  const hasCustomForm = fields.length > 0;
 
   return (
     <>
       <SEOHead title={offer.title} description={offer.description?.slice(0, 160) || `${offer.title} - Shahed Store offer`} />
       <Navbar />
-      <main className="min-h-screen container max-w-3xl mx-auto px-4 py-8 space-y-6">
+      <main className="min-h-screen container max-w-3xl mx-auto px-4 py-6 md:py-8 space-y-6">
         {offer.banner_url && (
           <img src={offer.banner_url} alt={offer.title} className="w-full rounded-2xl object-cover max-h-72" />
         )}
 
         <div className="text-center space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold">{offer.title}</h1>
+          <h1 className="mx-auto max-w-3xl text-[clamp(1.65rem,3.2vw,2.65rem)] leading-tight font-bold break-words [text-wrap:balance]">{offer.title}</h1>
           <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground flex-wrap">
             <span className="flex items-center gap-1"><Users className="w-4 h-4" /> {offer.submission_count} জন অংশগ্রহণ করেছেন</span>
             {offer.end_at && <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> শেষ: {new Date(offer.end_at).toLocaleDateString('bn-BD')}</span>}
@@ -258,18 +265,12 @@ export default function OfferPage() {
         ) : !canSubmit ? (
           <Card><CardContent className="p-6 text-center">
             <p className="text-muted-foreground">
-              {notStarted ? `অফার শুরু হবে: ${new Date(offer.start_at!).toLocaleString('bn-BD')}` :
+              {notStarted ? `ফর্ম খুলবে: ${formatBanglaDateTime(offer.start_at!)}` :
                maxReached ? 'অংশগ্রহণের সীমা পূর্ণ হয়েছে।' :
                'এই অফারের সময়সীমা শেষ হয়েছে।'}
             </p>
           </CardContent></Card>
-        ) : offer.google_form_url ? (
-          <Card><CardContent className="p-3">
-            <iframe src={offer.google_form_url} className="w-full" style={{ height: '900px', border: 0 }} title={offer.title} />
-          </CardContent></Card>
-        ) : fields.length === 0 ? (
-          <Card><CardContent className="p-6 text-center text-muted-foreground">এই অফারে এখনো কোনো ফর্ম তৈরি করা হয়নি।</CardContent></Card>
-        ) : (
+        ) : hasCustomForm ? (
           <Card><CardContent className="p-5">
             <h2 className="font-bold mb-4">অংশগ্রহণ করুন</h2>
             {offer.require_login && !user && (
@@ -287,7 +288,21 @@ export default function OfferPage() {
                 {submitting ? 'জমা দেওয়া হচ্ছে...' : 'জমা দিন'}
               </Button>
             </form>
+            {offer.google_form_url && (
+              <div className="mt-4 rounded-lg border border-border p-3 text-sm text-muted-foreground">
+                সমস্যা হলে বিকল্প Google Form ব্যবহার করুন:{' '}
+                <a href={offer.google_form_url} target="_blank" rel="noopener noreferrer" className="font-medium text-primary underline underline-offset-4">
+                  ফর্ম খুলুন
+                </a>
+              </div>
+            )}
           </CardContent></Card>
+        ) : offer.google_form_url ? (
+          <Card><CardContent className="p-3">
+            <iframe src={offer.google_form_url} className="w-full" style={{ height: '900px', border: 0 }} title={offer.title} />
+          </CardContent></Card>
+        ) : (
+          <Card><CardContent className="p-6 text-center text-muted-foreground">এই অফারে এখনো কোনো ফর্ম তৈরি করা হয়নি।</CardContent></Card>
         )}
 
         {offer.terms && (

@@ -76,6 +76,8 @@ OUTPUT ONLY VALID JSON with this exact shape:
 RULES:
 - Always include Name (text) and Phone (phone) fields. Add Email (email) if useful.
 - Add 2-6 thoughtful custom fields based on the offer's nature (e.g. for a creativity contest add a textarea for the entry).
+- Set require_login to false unless the admin explicitly says participants must log in.
+- max_submissions is the total campaign submission cap. Set it to null unless the admin explicitly gives a total maximum number of entries.
 - field_type must be one of: ${FIELD_TYPES.join(', ')}.
 - options array required for select/radio/checkbox.
 - Use AI mode for winners when quality matters (essays, designs); random when fair luck draw.
