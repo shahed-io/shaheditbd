@@ -161,7 +161,22 @@ export function evaluateClientProtection(): ProtectionDecision {
  * is unaffected. Form fields, inputs, and `.allow-select` regions
  * stay fully usable for real users.
  */
-export function installCopyDeterrents(): () => void {
+export interface CopyDeterrentOptions {
+  rightClick?: boolean;
+  copyCut?: boolean;
+  textSelection?: boolean;
+  imageDrag?: boolean;
+  devtoolsShortcuts?: boolean;
+}
+
+export function installCopyDeterrents(opts: CopyDeterrentOptions = {}): () => void {
+  const {
+    rightClick = true,
+    copyCut = true,
+    textSelection = true,
+    imageDrag = true,
+    devtoolsShortcuts = true,
+  } = opts;
   if (typeof document === 'undefined') return () => {};
 
   const isInteractive = (el: EventTarget | null): boolean => {
@@ -284,12 +299,14 @@ export function installCopyDeterrents(): () => void {
     }
   };
 
-  document.addEventListener('contextmenu', onContextMenu);
-  document.addEventListener('copy', onCopy);
-  document.addEventListener('cut', onCopy);
-  document.addEventListener('dragstart', onDragStart);
-  document.addEventListener('selectstart', onSelectStart);
-  document.addEventListener('keydown', onKeyDown);
+  if (rightClick) document.addEventListener('contextmenu', onContextMenu);
+  if (copyCut) {
+    document.addEventListener('copy', onCopy);
+    document.addEventListener('cut', onCopy);
+  }
+  if (imageDrag) document.addEventListener('dragstart', onDragStart);
+  if (textSelection) document.addEventListener('selectstart', onSelectStart);
+  if (devtoolsShortcuts) document.addEventListener('keydown', onKeyDown);
 
   return () => {
     document.removeEventListener('contextmenu', onContextMenu);
