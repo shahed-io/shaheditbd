@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2 } from 'lucide-react';
 
 interface Offer {
   id: string;
@@ -91,6 +91,44 @@ export default function AdminOfferEditor() {
   const [winnerMode, setWinnerMode] = useState<'random' | 'ai'>('random');
   const [prizesText, setPrizesText] = useState('');
   const [picking, setPicking] = useState(false);
+
+  // AI Builder state
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiBuilding, setAiBuilding] = useState(false);
+  const [aiPreview, setAiPreview] = useState<any>(null);
+
+  const runAiBuild = async (apply: boolean) => {
+    if (!offer) return;
+    if (aiPrompt.trim().length < 10) return toast.error('Please describe the offer in more detail');
+    setAiBuilding(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session?.session?.access_token;
+      const resp = await supabase.functions.invoke('ai-build-offer', {
+        body: { offer_id: offer.id, prompt: aiPrompt, apply },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      if (resp.error) throw resp.error;
+      setAiPreview(resp.data?.plan);
+      if (apply) {
+        toast.success('AI built the offer! Loading…');
+        // Apply winner plan to local state
+        const wp = resp.data?.plan?.winner_plan;
+        if (wp) {
+          setWinnerCount(Math.max(1, Math.min(100, wp.count || 1)));
+          setWinnerMode(wp.mode === 'ai' ? 'ai' : 'random');
+          setPrizesText(Array.isArray(wp.prizes) ? wp.prizes.join('\n') : '');
+        }
+        await load();
+      } else {
+        toast.success('Preview ready — review below, then Apply');
+      }
+    } catch (e: any) {
+      toast.error(e.message || 'AI build failed');
+    } finally {
+      setAiBuilding(false);
+    }
+  };
 
   const load = async () => {
     if (!id) return;
@@ -245,13 +283,109 @@ export default function AdminOfferEditor() {
         </div>
       </div>
 
-      <Tabs defaultValue="settings">
+      <Tabs defaultValue="ai">
         <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="ai"><Wand2 className="w-3.5 h-3.5 mr-1" /> AI Builder</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
           <TabsTrigger value="fields">Form Fields ({fields.length})</TabsTrigger>
           <TabsTrigger value="submissions">Submissions ({submissions.length})</TabsTrigger>
           <TabsTrigger value="winners">Winners ({winners.length})</TabsTrigger>
         </TabsList>
+
+        {/* AI BUILDER */}
+        <TabsContent value="ai" className="space-y-4">
+          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-purple-500/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wand2 className="w-5 h-5 text-primary" /> AI Offer Builder (Gemini)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Describe your offer in plain language (Bengali or English). The AI will design the title, description, prize list, terms, form fields, and winner-selection plan automatically.
+              </p>
+              <div>
+                <Label>Offer Description / Brief</Label>
+                <Textarea
+                  rows={6}
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  placeholder={'উদাহরণ: ঈদ উপলক্ষে আমরা একটি Windows 11 Pro Key giveaway করতে চাই। ৩ জন winner থাকবে। প্রথম জন পাবে Windows 11 Pro + Office 2021, দ্বিতীয় জন Windows 11 Pro, তৃতীয় জন Office 365 1 বছর। যারা আমাদের page follow করে এবং একটি creative caption লিখে পাঠাবে তারা অংশ নিতে পারবে।'}
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => runAiBuild(false)} disabled={aiBuilding} variant="outline">
+                  {aiBuilding ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Eye className="w-4 h-4 mr-1" />}
+                  Preview
+                </Button>
+                <Button onClick={() => runAiBuild(true)} disabled={aiBuilding}>
+                  {aiBuilding ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />}
+                  Build & Apply
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                ⚠️ "Build & Apply" will replace current form fields and offer text. Submissions are preserved.
+              </p>
+            </CardContent>
+          </Card>
+
+          {aiPreview && (
+            <Card>
+              <CardHeader><CardTitle>AI Plan Preview</CardTitle></CardHeader>
+              <CardContent className="space-y-4 text-sm">
+                <div>
+                  <div className="font-semibold mb-1">Title</div>
+                  <div>{aiPreview.offer?.title}</div>
+                </div>
+                {aiPreview.offer?.slug && (
+                  <div>
+                    <div className="font-semibold mb-1">Slug</div>
+                    <code className="text-xs bg-muted px-2 py-1 rounded">/offer/{aiPreview.offer.slug}</code>
+                  </div>
+                )}
+                <div>
+                  <div className="font-semibold mb-1">Description</div>
+                  <pre className="whitespace-pre-wrap text-xs bg-muted p-2 rounded">{aiPreview.offer?.description}</pre>
+                </div>
+                <div>
+                  <div className="font-semibold mb-1">Prizes</div>
+                  <pre className="whitespace-pre-wrap text-xs bg-muted p-2 rounded">{aiPreview.offer?.prize_details}</pre>
+                </div>
+                <div>
+                  <div className="font-semibold mb-1">Terms</div>
+                  <pre className="whitespace-pre-wrap text-xs bg-muted p-2 rounded">{aiPreview.offer?.terms}</pre>
+                </div>
+                <div>
+                  <div className="font-semibold mb-1">Form Fields ({aiPreview.fields?.length || 0})</div>
+                  <div className="space-y-1">
+                    {aiPreview.fields?.map((f: any, i: number) => (
+                      <div key={i} className="border rounded p-2 text-xs">
+                        <Badge variant="outline" className="mr-2">{f.field_type}</Badge>
+                        <strong>{f.label}</strong>{f.required && <span className="text-red-500"> *</span>}
+                        {f.options && <div className="mt-1 text-muted-foreground">Options: {f.options.join(', ')}</div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-semibold mb-1">Winner Plan</div>
+                  <div className="text-xs bg-muted p-2 rounded">
+                    {aiPreview.winner_plan?.count} winner(s) • Mode: <Badge variant="outline">{aiPreview.winner_plan?.mode}</Badge>
+                    {aiPreview.winner_plan?.prizes?.length > 0 && (
+                      <ul className="mt-1 ml-4 list-disc">
+                        {aiPreview.winner_plan.prizes.map((p: string, i: number) => <li key={i}>#{i + 1}: {p}</li>)}
+                      </ul>
+                    )}
+                    {aiPreview.winner_plan?.reasoning && <div className="mt-1 italic text-muted-foreground">{aiPreview.winner_plan.reasoning}</div>}
+                  </div>
+                </div>
+                <Button onClick={() => runAiBuild(true)} disabled={aiBuilding} className="w-full">
+                  <Sparkles className="w-4 h-4 mr-1" /> Apply This Plan
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
 
         {/* SETTINGS */}
         <TabsContent value="settings" className="space-y-4">
