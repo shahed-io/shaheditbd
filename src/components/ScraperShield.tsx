@@ -3,32 +3,57 @@ import { evaluateClientProtection, installCopyDeterrents } from '@/lib/antiScrap
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
+const CP_KEYS = [
+  'copy_protection_enabled',
+  'cp_right_click',
+  'cp_copy',
+  'cp_selection',
+  'cp_drag',
+  'cp_devtools',
+  'cp_scraper_block',
+] as const;
+
+type CpSettings = Record<(typeof CP_KEYS)[number], boolean>;
+
+const DEFAULTS: CpSettings = {
+  copy_protection_enabled: true,
+  cp_right_click: true,
+  cp_copy: true,
+  cp_selection: true,
+  cp_drag: true,
+  cp_devtools: true,
+  cp_scraper_block: true,
+};
+
 /**
  * ScraperShield — mounts once at app root.
- * Admin panel routes (/ceo/*) and admin users always bypass copy deterrents.
+ * Admin panel routes (/ceo/*) and admin users always bypass deterrents.
  */
 export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
   const [blocked, setBlocked] = useState(false);
-  const [enabled, setEnabled] = useState<boolean | null>(null);
+  const [cp, setCp] = useState<CpSettings | null>(null);
   const { isAdmin } = useAuth();
   const [pathname, setPathname] = useState(
     typeof window !== 'undefined' ? window.location.pathname : '/'
   );
 
-  // Load on/off toggle from site_settings (default = enabled).
+  // Load all toggles from site_settings.
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         const { data } = await supabase
           .from('site_settings')
-          .select('value')
-          .eq('key', 'copy_protection_enabled')
-          .maybeSingle();
+          .select('key, value')
+          .in('key', CP_KEYS as unknown as string[]);
         if (cancelled) return;
-        setEnabled(data?.value !== 'false');
+        const map: CpSettings = { ...DEFAULTS };
+        (data || []).forEach((r: any) => {
+          if (r.key in map) (map as any)[r.key] = r.value !== 'false';
+        });
+        setCp(map);
       } catch {
-        if (!cancelled) setEnabled(true);
+        if (!cancelled) setCp(DEFAULTS);
       }
     })();
     return () => { cancelled = true; };
@@ -38,7 +63,6 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const update = () => setPathname(window.location.pathname);
-
     const origPush = window.history.pushState;
     const origReplace = window.history.replaceState;
     window.history.pushState = function (...args) {
@@ -62,34 +86,39 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // Wait until toggle is loaded; if disabled by admin, do nothing.
-    if (enabled === null) return;
-    if (enabled === false) {
+    if (!cp) return;
+    // Master switch off → no deterrents, no scraper block.
+    if (!cp.copy_protection_enabled) {
       setBlocked(false);
       return;
     }
 
     const decision = evaluateClientProtection();
 
-    if (decision.shouldBlock) {
+    if (cp.cp_scraper_block && decision.shouldBlock) {
       setBlocked(true);
-      try {
-        document.title = 'Protected Content – Shahed Store';
-      } catch { /* ignore */ }
+      try { document.title = 'Protected Content – Shahed Store'; } catch { /* ignore */ }
       return;
     }
 
     // Admin panel routes — never install deterrents.
     if (pathname.startsWith('/ceo')) return;
-
     // Admin users — bypass everywhere.
     if (isAdmin) return;
 
     if (decision.classification === 'human') {
-      const cleanup = installCopyDeterrents();
+      const anyDeterrent = cp.cp_right_click || cp.cp_copy || cp.cp_selection || cp.cp_drag || cp.cp_devtools;
+      if (!anyDeterrent) return;
+      const cleanup = installCopyDeterrents({
+        rightClick: cp.cp_right_click,
+        copyCut: cp.cp_copy,
+        textSelection: cp.cp_selection,
+        imageDrag: cp.cp_drag,
+        devtoolsShortcuts: cp.cp_devtools,
+      });
       return cleanup;
     }
-  }, [isAdmin, pathname, enabled]);
+  }, [isAdmin, pathname, cp]);
 
   if (blocked) {
     return (
@@ -118,9 +147,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
         </p>
         <p style={{ fontSize: '14px', opacity: 0.7, maxWidth: 560, lineHeight: 1.6 }}>
           আমাদের ওয়েবসাইটের ডিজাইন কপিরাইট-সুরক্ষিত। স্বয়ংক্রিয় টুল
-          দিয়ে এই সাইট স্ক্যান বা কপি করার অনুমতি নেই। যদি আপনি একজন
-          সাধারণ ভিজিটর হন, দয়া করে স্ট্যান্ডার্ড ব্রাউজার ব্যবহার করে
-          আবার চেষ্টা করুন।
+          দিয়ে এই সাইট স্ক্যান বা কপি করার অনুমতি নেই।
         </p>
         <a
           href="https://shahedstore.com.bd"
@@ -137,9 +164,6 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
         >
           Visit Shahed Store
         </a>
-        <p style={{ marginTop: '24px', fontSize: '12px', opacity: 0.5 }}>
-          © Shahed Store · All designs are proprietary.
-        </p>
       </div>
     );
   }
