@@ -100,6 +100,16 @@ export default function AdminOfferEditor() {
   const [aiBuilding, setAiBuilding] = useState(false);
   const [aiPreview, setAiPreview] = useState<any>(null);
 
+  const hasFutureStart = Boolean(offer?.start_at && new Date(offer.start_at) > new Date());
+  const hasEnded = Boolean(offer?.end_at && new Date(offer.end_at) < new Date());
+  const formReady = fields.length > 0 || Boolean(offer?.google_form_url);
+
+  const fieldPayload = (f: Field) => {
+    const { id: _id, offer_id: _offerId, created_at: _createdAt, ...payload } = f as any;
+    if (!['select', 'radio', 'checkbox'].includes(payload.field_type)) payload.options = null;
+    return payload;
+  };
+
   const runAiBuild = async (apply: boolean) => {
     if (!offer) return;
     if (aiPrompt.trim().length < 10) return toast.error('Please describe the offer in more detail');
@@ -160,9 +170,44 @@ export default function AdminOfferEditor() {
     setSaving(true);
     const { id: _, submission_count: __, ...payload } = offer as any;
     const { error } = await supabase.from('offers').update(payload).eq('id', offer.id);
+    if (!error && fields.length > 0) {
+      const fieldResults = await Promise.all(fields.map((f) => supabase.from('offer_fields').update(fieldPayload(f)).eq('id', f.id)));
+      const fieldError = fieldResults.find((r) => r.error)?.error;
+      if (fieldError) {
+        setSaving(false);
+        return toast.error(fieldError.message);
+      }
+    }
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success('Saved');
+  };
+
+  const publishOffer = async (openNow = false) => {
+    if (!offer) return;
+    if (!formReady) {
+      toast.error('Add form fields or a Google Form URL before publishing');
+      setActiveTab('fields');
+      return;
+    }
+    setSaving(true);
+    const patch: Partial<Offer> = { status: 'active' };
+    if (openNow || hasFutureStart) patch.start_at = null;
+    const { error } = await supabase.from('offers').update(patch).eq('id', offer.id);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    setOffer({ ...offer, ...patch });
+    toast.success(openNow || hasFutureStart ? 'Offer is LIVE now — form is open' : 'Offer is now LIVE 🎉 — public link is active');
+  };
+
+  const unpublishOffer = async () => {
+    if (!offer) return;
+    setSaving(true);
+    const { error } = await supabase.from('offers').update({ status: 'draft' }).eq('id', offer.id);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    setOffer({ ...offer, status: 'draft' });
+    toast.success('Offer unpublished (Draft)');
   };
 
   const addField = async () => {
@@ -323,14 +368,7 @@ export default function AdminOfferEditor() {
             <Button
               className="bg-green-600 hover:bg-green-700 text-white"
               disabled={saving}
-              onClick={async () => {
-                setOffer({ ...offer, status: 'active' });
-                setSaving(true);
-                const { error } = await supabase.from('offers').update({ status: 'active' }).eq('id', offer.id);
-                setSaving(false);
-                if (error) return toast.error(error.message);
-                toast.success('Offer is now LIVE 🎉 — public link is active');
-              }}
+              onClick={() => publishOffer(true)}
             >
               🚀 Publish (Go Live)
             </Button>
@@ -338,14 +376,7 @@ export default function AdminOfferEditor() {
             <Button
               variant="outline"
               disabled={saving}
-              onClick={async () => {
-                setOffer({ ...offer, status: 'draft' });
-                setSaving(true);
-                const { error } = await supabase.from('offers').update({ status: 'draft' }).eq('id', offer.id);
-                setSaving(false);
-                if (error) return toast.error(error.message);
-                toast.success('Offer unpublished (Draft)');
-              }}
+              onClick={unpublishOffer}
             >
               Unpublish
             </Button>
@@ -361,6 +392,22 @@ export default function AdminOfferEditor() {
           <div>
             ⚠️ এই offer এখনো <b>Draft</b> অবস্থায় আছে — public link এ "অফার পাওয়া যায়নি" দেখাবে। উপরের <b>🚀 Publish</b> বাটনে ক্লিক করে Live করুন।
           </div>
+        </div>
+      )}
+
+      {offer.status === 'active' && hasFutureStart && (
+        <div className="rounded-lg border border-amber-400/40 bg-amber-50 dark:bg-amber-950/20 p-3 text-sm flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            ⚠️ এই offer Active, কিন্তু Start Date ভবিষ্যতে দেওয়া আছে — public page এ এখন form দেখাবে না।
+          </div>
+          <Button size="sm" onClick={() => publishOffer(true)} disabled={saving}>Open Form Now</Button>
+        </div>
+      )}
+
+      {offer.status === 'active' && !formReady && (
+        <div className="rounded-lg border border-red-400/40 bg-red-50 dark:bg-red-950/20 p-3 text-sm flex items-center justify-between gap-3 flex-wrap">
+          <div>⚠️ এই offer Active, কিন্তু কোনো custom form field বা Google Form URL নেই — public page এ submission form দেখাবে না।</div>
+          <Button size="sm" variant="outline" onClick={() => setActiveTab('fields')}>Add Fields</Button>
         </div>
       )}
 
@@ -517,6 +564,19 @@ export default function AdminOfferEditor() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="rounded-lg border p-3 text-sm space-y-2">
+                <div className="font-medium">Public form readiness</div>
+                <div className="grid gap-1 text-muted-foreground">
+                  <div>{offer.status === 'active' ? '✅ Published' : '⚠️ Draft: public link hidden'}</div>
+                  <div>{hasFutureStart ? '⚠️ Start Date is in future: form hidden until then' : '✅ Form can open now'}</div>
+                  <div>{hasEnded ? '⚠️ End Date already passed' : '✅ Not expired'}</div>
+                  <div>{formReady ? '✅ Form source exists' : '⚠️ Add custom fields or Google Form URL'}</div>
+                  <div>{offer.require_login ? 'ℹ️ Login required before submit' : '✅ Public visitors can submit without login'}</div>
+                </div>
+                {(offer.status !== 'active' || hasFutureStart) && formReady && (
+                  <Button size="sm" onClick={() => publishOffer(true)} disabled={saving}>Open Public Form Now</Button>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label>Start Date</Label>
@@ -558,7 +618,7 @@ export default function AdminOfferEditor() {
               <div>
                 <Label>Google Form URL (optional fallback)</Label>
                 <Input value={offer.google_form_url || ''} onChange={(e) => setOffer({ ...offer, google_form_url: e.target.value })} placeholder="https://forms.gle/... (if set, embeds Google Form instead)" />
-                <p className="text-xs text-muted-foreground mt-1">If filled, the public page embeds this Google Form instead of the custom form — but the URL stays on your domain.</p>
+                <p className="text-xs text-muted-foreground mt-1">If custom fields exist, this is shown as a backup link. If no custom fields exist, it embeds the Google Form on your domain.</p>
               </div>
             </CardContent>
           </Card>

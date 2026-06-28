@@ -43,10 +43,15 @@ export default function AdminOffers() {
     const slug = `offer-${Date.now().toString(36)}`;
     const { data, error } = await supabase
       .from('offers')
-      .insert({ slug, title: 'New Offer', status: 'draft' })
+      .insert({ slug, title: 'New Offer', status: 'draft', require_login: false, max_submissions: null })
       .select()
       .single();
     if (error) return toast.error(error.message);
+    await supabase.from('offer_fields').insert([
+      { offer_id: data.id, field_type: 'text', label: 'আপনার পূর্ণ নাম', required: true, sort_order: 0 },
+      { offer_id: data.id, field_type: 'phone', label: 'আপনার ফোন নম্বর', required: true, sort_order: 1 },
+      { offer_id: data.id, field_type: 'email', label: 'আপনার ইমেইল ঠিকানা', required: false, sort_order: 2 },
+    ]);
     navigate(`/ceo/offers/${data.id}`);
   };
 
