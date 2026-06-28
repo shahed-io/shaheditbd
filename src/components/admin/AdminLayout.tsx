@@ -178,6 +178,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Users, label: 'Staff Management', path: '/ceo/staff' },
       { icon: Shield, label: 'Admin Roles', path: '/ceo/roles' },
       { icon: ShieldCheck, label: '2FA Security', path: '/ceo/security', badge: 'new' },
+      { icon: Shield, label: 'Copy Protection', path: '/ceo/copy-protection', badge: 'new' },
       { icon: Database, label: 'Backup', path: '/ceo/backup' },
       { icon: Settings, label: 'General Settings', path: '/ceo/settings' },
     ],

@@ -41,6 +41,7 @@ const AdminOrders           = lazy(() => import("./pages/admin/AdminOrders"));
 const AdminAbandonedCheckouts = lazy(() => import("./pages/admin/AdminAbandonedCheckouts"));
 const AdminCoupons          = lazy(() => import("./pages/admin/AdminCoupons"));
 const AdminSettings         = lazy(() => import("./pages/admin/AdminSettings"));
+const AdminCopyProtection   = lazy(() => import("./pages/admin/AdminCopyProtection"));
 const AdminTickets          = lazy(() => import("./pages/admin/AdminTickets"));
 const AdminPayments         = lazy(() => import("./pages/admin/AdminPayments"));
 const AdminBkashPGW         = lazy(() => import("./pages/admin/AdminBkashPGW"));
@@ -269,6 +270,7 @@ const AppContent = () => {
             <Route path="abandoned-checkouts" element={<AdminSuspense><AdminAbandonedCheckouts /></AdminSuspense>} />
             <Route path="coupons" element={<AdminSuspense><AdminCoupons /></AdminSuspense>} />
             <Route path="settings" element={<AdminSuspense><AdminSettings /></AdminSuspense>} />
+            <Route path="copy-protection" element={<AdminSuspense><AdminCopyProtection /></AdminSuspense>} />
             <Route path="ai-config" element={<AdminSuspense><AdminAiConfig /></AdminSuspense>} />
             <Route path="ai-faq-generator" element={<AdminSuspense><AdminAiFaqGenerator /></AdminSuspense>} />
             <Route path="ai-review-generator" element={<AdminSuspense><AdminAiReviewGenerator /></AdminSuspense>} />
