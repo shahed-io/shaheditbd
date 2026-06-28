@@ -92,6 +92,9 @@ export default function AdminOfferEditor() {
   const [prizesText, setPrizesText] = useState('');
   const [picking, setPicking] = useState(false);
 
+  // Active tab (controlled so AI build can auto-switch to Settings)
+  const [activeTab, setActiveTab] = useState<string>('ai');
+
   // AI Builder state
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiBuilding, setAiBuilding] = useState(false);
@@ -111,7 +114,7 @@ export default function AdminOfferEditor() {
       if (resp.error) throw resp.error;
       setAiPreview(resp.data?.plan);
       if (apply) {
-        toast.success('AI built the offer! Loading…');
+        toast.success('AI built the offer! You can now edit anything in the tabs below.');
         // Apply winner plan to local state
         const wp = resp.data?.plan?.winner_plan;
         if (wp) {
@@ -120,6 +123,8 @@ export default function AdminOfferEditor() {
           setPrizesText(Array.isArray(wp.prizes) ? wp.prizes.join('\n') : '');
         }
         await load();
+        // Auto-switch to Settings so admin sees editable content immediately
+        setActiveTab('settings');
       } else {
         toast.success('Preview ready — review below, then Apply');
       }
@@ -320,7 +325,7 @@ export default function AdminOfferEditor() {
         </div>
       </div>
 
-      <Tabs defaultValue="ai">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="ai"><Wand2 className="w-3.5 h-3.5 mr-1" /> AI Builder</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
