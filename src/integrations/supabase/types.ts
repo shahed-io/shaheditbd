@@ -1601,6 +1601,229 @@ export type Database = {
         }
         Relationships: []
       }
+      offer_fields: {
+        Row: {
+          created_at: string
+          field_type: string
+          help_text: string | null
+          id: string
+          label: string
+          offer_id: string
+          options: Json | null
+          placeholder: string | null
+          required: boolean
+          sort_order: number
+          validation: Json | null
+        }
+        Insert: {
+          created_at?: string
+          field_type: string
+          help_text?: string | null
+          id?: string
+          label: string
+          offer_id: string
+          options?: Json | null
+          placeholder?: string | null
+          required?: boolean
+          sort_order?: number
+          validation?: Json | null
+        }
+        Update: {
+          created_at?: string
+          field_type?: string
+          help_text?: string | null
+          id?: string
+          label?: string
+          offer_id?: string
+          options?: Json | null
+          placeholder?: string | null
+          required?: boolean
+          sort_order?: number
+          validation?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_fields_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offer_submissions: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          ip: string | null
+          is_winner: boolean
+          offer_id: string
+          participant_email: string | null
+          participant_name: string | null
+          participant_phone: string | null
+          prize_won: string | null
+          user_agent: string | null
+          user_id: string | null
+          winner_rank: number | null
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          ip?: string | null
+          is_winner?: boolean
+          offer_id: string
+          participant_email?: string | null
+          participant_name?: string | null
+          participant_phone?: string | null
+          prize_won?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          winner_rank?: number | null
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          ip?: string | null
+          is_winner?: boolean
+          offer_id?: string
+          participant_email?: string | null
+          participant_name?: string | null
+          participant_phone?: string | null
+          prize_won?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          winner_rank?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_submissions_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offer_winners: {
+        Row: {
+          ai_reason: string | null
+          announced: boolean
+          created_at: string
+          id: string
+          offer_id: string
+          prize: string | null
+          rank: number
+          selected_by: string
+          submission_id: string
+        }
+        Insert: {
+          ai_reason?: string | null
+          announced?: boolean
+          created_at?: string
+          id?: string
+          offer_id: string
+          prize?: string | null
+          rank: number
+          selected_by?: string
+          submission_id: string
+        }
+        Update: {
+          ai_reason?: string | null
+          announced?: boolean
+          created_at?: string
+          id?: string
+          offer_id?: string
+          prize?: string | null
+          rank?: number
+          selected_by?: string
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_winners_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_winners_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "offer_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offers: {
+        Row: {
+          banner_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_at: string | null
+          google_form_url: string | null
+          id: string
+          max_submissions: number | null
+          prize_details: string | null
+          require_login: boolean
+          show_winners: boolean
+          slug: string
+          start_at: string | null
+          status: string
+          submission_count: number
+          success_message: string | null
+          terms: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          banner_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_at?: string | null
+          google_form_url?: string | null
+          id?: string
+          max_submissions?: number | null
+          prize_details?: string | null
+          require_login?: boolean
+          show_winners?: boolean
+          slug: string
+          start_at?: string | null
+          status?: string
+          submission_count?: number
+          success_message?: string | null
+          terms?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          banner_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_at?: string | null
+          google_form_url?: string | null
+          id?: string
+          max_submissions?: number | null
+          prize_details?: string | null
+          require_login?: boolean
+          show_winners?: boolean
+          slug?: string
+          start_at?: string | null
+          status?: string
+          submission_count?: number
+          success_message?: string | null
+          terms?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       office365_check_history: {
         Row: {
           checked_at: string
