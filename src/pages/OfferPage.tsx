@@ -211,13 +211,13 @@ export default function OfferPage() {
     <>
       <SEOHead title={offer.title} description={offer.description?.slice(0, 160) || `${offer.title} - Shahed Store offer`} />
       <Navbar />
-      <main className="min-h-screen container max-w-3xl mx-auto px-4 py-6 md:py-8 space-y-6">
+      <main className="min-h-screen container max-w-3xl mx-auto px-4 pt-24 md:pt-32 pb-6 md:pb-8 space-y-6">
         {offer.banner_url && (
           <img src={offer.banner_url} alt={offer.title} className="w-full rounded-2xl object-cover max-h-72" />
         )}
 
         <div className="text-center space-y-2">
-          <h1 className="mx-auto max-w-3xl text-[clamp(1.65rem,3.2vw,2.65rem)] leading-tight font-bold break-words [text-wrap:balance]">{offer.title}</h1>
+          <h1 className="mx-auto max-w-3xl text-[clamp(1.85rem,3.5vw,2.85rem)] leading-snug font-bold break-words [text-wrap:balance]">{offer.title}</h1>
           <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground flex-wrap">
             <span className="flex items-center gap-1"><Users className="w-4 h-4" /> {offer.submission_count} জন অংশগ্রহণ করেছেন</span>
             {offer.end_at && <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> শেষ: {new Date(offer.end_at).toLocaleDateString('bn-BD')}</span>}
