@@ -114,7 +114,7 @@ export default function AdminOfferEditor() {
       if (resp.error) throw resp.error;
       setAiPreview(resp.data?.plan);
       if (apply) {
-        toast.success('AI built the offer! Loading…');
+        toast.success('AI built the offer! You can now edit anything in the tabs below.');
         // Apply winner plan to local state
         const wp = resp.data?.plan?.winner_plan;
         if (wp) {
@@ -123,6 +123,8 @@ export default function AdminOfferEditor() {
           setPrizesText(Array.isArray(wp.prizes) ? wp.prizes.join('\n') : '');
         }
         await load();
+        // Auto-switch to Settings so admin sees editable content immediately
+        setActiveTab('settings');
       } else {
         toast.success('Preview ready — review below, then Apply');
       }
