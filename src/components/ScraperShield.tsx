@@ -62,6 +62,13 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    // Wait until toggle is loaded; if disabled by admin, do nothing.
+    if (enabled === null) return;
+    if (enabled === false) {
+      setBlocked(false);
+      return;
+    }
+
     const decision = evaluateClientProtection();
 
     if (decision.shouldBlock) {
@@ -82,7 +89,7 @@ export const ScraperShield = ({ children }: { children: React.ReactNode }) => {
       const cleanup = installCopyDeterrents();
       return cleanup;
     }
-  }, [isAdmin, pathname]);
+  }, [isAdmin, pathname, enabled]);
 
   if (blocked) {
     return (
