@@ -14,6 +14,8 @@ import { toast } from 'sonner';
 import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw } from 'lucide-react';
 import NoticeTemplate, { NoticeData } from '@/components/notices/NoticeTemplate';
 import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
+import NoticeSignatureManager from '@/components/admin/NoticeSignatureManager';
+import { loadNoticeSignature, type NoticeSignature, DEFAULT_NOTICE_SIGNATURE } from '@/lib/noticeSignature';
 
 interface Notice extends NoticeData {
   id: string;
@@ -30,7 +32,7 @@ const slugify = (s: string) =>
    .replace(/-+/g, '-')
    .slice(0, 80) || `notice-${Date.now()}`;
 
-const blank = (): Partial<Notice> => ({
+const blank = (sig?: { signedBy?: string; signedRole?: string }): Partial<Notice> => ({
   title: '',
   slug: '',
   summary: '',
@@ -39,8 +41,8 @@ const blank = (): Partial<Notice> => ({
   audience: 'public',
   status: 'draft',
   pinned: false,
-  signed_by: 'Shahed Store Authority',
-  signed_role: 'Management',
+  signed_by: sig?.signedBy || 'Shahed Store Authority',
+  signed_role: sig?.signedRole || 'Management',
   effective_date: new Date().toISOString().slice(0, 10),
 });
 
@@ -54,6 +56,9 @@ export default function AdminNotices() {
   const [aiLang, setAiLang] = useState<'bn' | 'en'>('bn');
   const [aiBusy, setAiBusy] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [signature, setSignature] = useState<NoticeSignature>(DEFAULT_NOTICE_SIGNATURE);
+
+  useEffect(() => { loadNoticeSignature().then(setSignature); }, []);
 
   const voice = useVoiceRecognition({ lang: aiLang === 'bn' ? 'bn-BD' : 'en-US' });
 
@@ -79,7 +84,7 @@ export default function AdminNotices() {
 
   useEffect(() => { load(); }, []);
 
-  const openNew = () => { setEditing(blank()); setAiPrompt(''); };
+  const openNew = () => { setEditing(blank({ signedBy: signature.signedBy, signedRole: signature.signedRole })); setAiPrompt(''); };
   const openEdit = (n: Notice) => { setEditing({ ...n }); setAiPrompt(''); };
 
   const runAI = async () => {
@@ -199,6 +204,10 @@ export default function AdminNotices() {
         <Button onClick={openNew} className="gap-2">
           <Plus className="w-4 h-4" /> New Notice
         </Button>
+      </div>
+
+      <div className="mb-6">
+        <NoticeSignatureManager onChanged={setSignature} />
       </div>
 
       <Card>
@@ -420,7 +429,7 @@ export default function AdminNotices() {
             <TabsContent value="preview" className="pt-4">
               {previewNotice ? (
                 <div className="bg-gray-100 p-4 rounded-lg">
-                  <NoticeTemplate notice={previewNotice} brand={{ name: 'Shahed Store' }} />
+                  <NoticeTemplate notice={previewNotice} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
                 </div>
               ) : <div className="text-center text-muted-foreground py-10">কিছু তথ্য দিন তারপর preview দেখুন</div>}
             </TabsContent>
@@ -451,7 +460,7 @@ export default function AdminNotices() {
           </DialogHeader>
           {previewing && (
             <div className="bg-gray-100 p-4 rounded-lg print:bg-white print:p-0">
-              <NoticeTemplate notice={previewing} brand={{ name: 'Shahed Store' }} />
+              <NoticeTemplate notice={previewing} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
             </div>
           )}
         </DialogContent>
