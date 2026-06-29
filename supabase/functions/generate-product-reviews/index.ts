@@ -14,14 +14,19 @@ serve(async (req) => {
       product,
       count = 8,
       language = "bn",
-      storeName = "Shahed Store",
       ratingMin = 4,
       ratingMax = 5,
     } = await req.json();
     if (!product?.name) throw new Error("product.name required");
 
+    const storeName = language === "en" ? "Shahed Store" : "শাহেদ স্টোর";
     const lang = language === "en" ? "English" : "Bengali (বাংলা)";
+    const nameRule = language === "en"
+      ? `The store name must be exactly "Shahed Store". Never write Shahid Store, Sahed Store, or ShahedStore.`
+      : `দোকানের নাম সবসময় হুবহু "শাহেদ স্টোর" লিখবে। কখনো "Shahed Store", "ShahedStore", "Shahid Store", "শাহিদ স্টোর", "সাহেদ স্টোর" বা অন্য কোনো ভুল বানান লিখবে না।`;
     const prompt = `You are writing authentic customer reviews for "${storeName}", a digital software store in Bangladesh.
+
+${nameRule}
 
 Generate exactly ${count} realistic, diverse, Google-ranking-friendly customer reviews for the product below.
 
@@ -69,13 +74,28 @@ Return ONLY a valid JSON array, no prose, no code fences. Schema:
       throw new Error("AI did not return valid JSON");
     }
 
+    const sanitizeStoreName = (value: string) => {
+      let out = value;
+      if (language !== "en") {
+        out = out
+          .replace(/Shahed\s+Store(?:'|’)s/gi, "শাহেদ স্টোর-এর")
+          .replace(/Shahed\s+Store/gi, "শাহেদ স্টোর")
+          .replace(/ShahedStore/g, "শাহেদ স্টোর");
+      } else {
+        out = out.replace(/ShahedStore/g, "Shahed Store");
+      }
+      return out
+        .replace(/Shahid\s*Store|Sahed\s*Store|Shawon\s*Store/gi, storeName)
+        .replace(/শাহিদ স্টোর|শাওন স্টোর|শায়েদ স্টোর|শায়েদ স্টোর|সাহেদ স্টোর|সাহিদ স্টোর|শাহীদ স্টোর|শহীদ স্টোর|শাহেদ ষ্টোর|শাহেদ ইস্টোর/g, storeName);
+    };
+
     reviews = (reviews || [])
       .filter((r) => r && typeof r.name === "string" && typeof r.body === "string" && r.name.trim() && r.body.trim())
       .map((r) => ({
         name: r.name.trim().slice(0, 80),
         rating: Math.max(1, Math.min(5, Math.round(Number(r.rating) || 5))),
-        title: (r.title || "").toString().trim().slice(0, 120),
-        body: r.body.trim().slice(0, 1000),
+        title: sanitizeStoreName((r.title || "").toString().trim()).slice(0, 120),
+        body: sanitizeStoreName(r.body.trim()).slice(0, 1000),
       }));
 
     if (!reviews.length) throw new Error("No reviews generated");

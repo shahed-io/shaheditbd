@@ -47,7 +47,7 @@ const AdminTelegramBot = () => {
     // Set defaults
     if (!map['telegram_shop_bot_enabled']) map['telegram_shop_bot_enabled'] = 'true';
     if (!map['telegram_shop_bot_username']) map['telegram_shop_bot_username'] = '@Shahed_Store_bot';
-    if (!map['telegram_shop_bot_welcome']) map['telegram_shop_bot_welcome'] = '🛍️ Shahed Store এ স্বাগতম! আমাদের টেলিগ্রাম বট দিয়ে সরাসরি শপিং করুন।';
+    if (!map['telegram_shop_bot_welcome']) map['telegram_shop_bot_welcome'] = '🛍️ শাহেদ স্টোর এ স্বাগতম! আমাদের টেলিগ্রাম বট দিয়ে সরাসরি শপিং করুন।';
     if (!map['telegram_shop_bot_footer']) map['telegram_shop_bot_footer'] = '📞 সমস্যা? /start দিয়ে শুরু করুন।';
     
     setSettings(map);
@@ -279,7 +279,7 @@ const AdminTelegramBot = () => {
               value={settings.telegram_shop_bot_welcome || ''}
               onChange={e => setSettings(s => ({ ...s, telegram_shop_bot_welcome: e.target.value }))}
               rows={3}
-              placeholder="🛍️ Shahed Store এ স্বাগতম!"
+              placeholder="🛍️ শাহেদ স্টোর এ স্বাগতম!"
               className={inputCls + " resize-none"}
             />
           </div>

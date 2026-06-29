@@ -118,7 +118,7 @@ const HelpCenter = () => {
       <div className="min-h-screen bg-background text-foreground">
         <SEOHead
           title={`${currentArticle.seo_title || currentArticle.title} – Help Center`}
-          description={currentArticle.seo_description || currentArticle.excerpt || `${currentArticle.title} — Shahed Store Help Center`}
+          description={currentArticle.seo_description || currentArticle.excerpt || `${currentArticle.title} — শাহেদ স্টোর হেল্প সেন্টার`}
           canonical={`https://shahedstore.com.bd/link/${currentArticle.slug}`}
           keywords={`shahed store help, ${currentArticle.title}, ${(currentArticle.tags || []).join(', ')}`}
           schema={schema}
@@ -247,7 +247,7 @@ const HelpCenter = () => {
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
         title="Help Center – Software Guide & Support"
-        description="Shahed Store Help Center — সফটওয়্যার ব্যবহারের গাইড, অর্ডার সহায়তা, পেমেন্ট ও রিফান্ড সংক্রান্ত সকল সমাধান পান।"
+        description="শাহেদ স্টোর হেল্প সেন্টার — সফটওয়্যার ব্যবহারের গাইড, অর্ডার সহায়তা, পেমেন্ট ও রিফান্ড সংক্রান্ত সকল সমাধান পান।"
         canonical="https://shahedstore.com.bd/link"
         keywords="shahed store help center, software guide bangladesh, digital software support, order help"
       />

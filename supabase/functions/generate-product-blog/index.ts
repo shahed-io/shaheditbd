@@ -150,7 +150,7 @@ serve(async (req) => {
         ? Math.round(((originalPrice - price) / originalPrice) * 100)
         : 0;
 
-      const prompt = `Write a detailed, SEO-optimized blog post in ENGLISH about the digital product "${product.name}" for a Bangladeshi digital software store called "Shahed Store" (website: shahedstore.com.bd).
+      const prompt = `Write a detailed, SEO-optimized blog post in ENGLISH about the digital product "${product.name}" for a Bangladeshi digital software store called "শাহেদ স্টোর" (website: shahedstore.com.bd).
 
 Product Details:
 - Name: ${product.name}
@@ -164,10 +164,11 @@ Requirements for the blog post:
 1. Title: Engaging, SEO-friendly (include product name + benefit keyword)
 2. Length: 800-1200 words
 3. Structure with markdown headings (##, ###)
-4. Include: Introduction, Features/Benefits, Why Buy From Shahed Store, How to Activate, FAQ section, Conclusion with CTA
+4. Include: Introduction, Features/Benefits, Why Buy From শাহেদ স্টোর, How to Activate, FAQ section, Conclusion with CTA
 5. Mention the affordable price in BDT
 6. Include keywords naturally: license key, Bangladesh, genuine, instant delivery, affordable
-7. Mention Shahed Store website: shahedstore.com.bd
+7. Mention শাহেদ স্টোর website: shahedstore.com.bd
+9. Store name rule: always write the store name exactly as "শাহেদ স্টোর". Never output "Shahed Store", "ShahedStore", "Shahid Store", "সাহেদ স্টোর", or "শাহিদ স্টোর".
 8. Write in a professional, helpful tone
 
 Also provide:
@@ -190,7 +191,19 @@ Respond ONLY with this JSON (no markdown, no explanation):
 
       try {
         const rawContent = await callLovableAI(prompt);
-        const blogData = parseAIJson(rawContent);
+        const sanitizeStoreName = (value: string) => value
+          .replace(/Shahed\s+Store(?:'|’)s/gi, "শাহেদ স্টোর-এর")
+          .replace(/Shahed\s+Store/gi, "শাহেদ স্টোর")
+          .replace(/ShahedStore/g, "শাহেদ স্টোর")
+          .replace(/Shahid\s*Store|Sahed\s*Store|Shawon\s*Store/gi, "শাহেদ স্টোর")
+          .replace(/শাহিদ স্টোর|শাওন স্টোর|শায়েদ স্টোর|শায়েদ স্টোর|সাহেদ স্টোর|সাহিদ স্টোর|শাহীদ স্টোর|শহীদ স্টোর|শাহেদ ষ্টোর|শাহেদ ইস্টোর/g, "শাহেদ স্টোর");
+        const sanitizeDeep = (value: any): any => {
+          if (typeof value === "string") return sanitizeStoreName(value);
+          if (Array.isArray(value)) return value.map(sanitizeDeep);
+          if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitizeDeep(v)]));
+          return value;
+        };
+        const blogData = sanitizeDeep(parseAIJson(rawContent));
 
         const blogSlug = `${product.slug}-review-buy-bangladesh`;
 
@@ -203,7 +216,7 @@ Respond ONLY with this JSON (no markdown, no explanation):
             content: blogData.content || "",
             status: auto_publish ? "published" : "draft",
             published_at: auto_publish ? new Date().toISOString() : null,
-            author_name: "Shahed Store",
+            author_name: "শাহেদ স্টোর",
             featured_image: product.image_url || null,
             tags: blogData.tags || product.tags || [],
             reading_time: blogData.reading_time || 5,

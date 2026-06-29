@@ -10,7 +10,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { product, count = 8, language = "bn", storeName: rawStoreName = "শাহেদ স্টোর" } = await req.json();
+    const { product, count = 8, language = "bn" } = await req.json();
     if (!product?.name) throw new Error("product.name required");
 
     // Enforce correct store name based on language — never let AI invent variants
@@ -18,7 +18,7 @@ serve(async (req) => {
     const lang = language === "en" ? "English" : "Bengali (বাংলা)";
     const nameRule = language === "en"
       ? `CRITICAL: The store name is EXACTLY "Shahed Store" (English spelling). Never write it in Bengali, never use variants like "Shahid", "Sahed", "Shawon", etc.`
-      : `গুরুত্বপূর্ণ নিয়ম: দোকানের নাম সবসময় হুবহু "শাহেদ স্টোর" লিখতে হবে। কখনোই "Shahed Store" (ইংরেজি), "শাহিদ স্টোর", "শাওন স্টোর", "শায়েদ স্টোর", "সাহেদ স্টোর" বা অন্য কোনো রূপ ব্যবহার করা যাবে না।`;
+      : `গুরুত্বপূর্ণ নিয়ম: দোকানের নাম সবসময় হুবহু "শাহেদ স্টোর" লিখতে হবে। কখনোই "Shahed Store" (ইংরেজি), "ShahedStore", "Shahid Store", "Sahed Store", "শাহিদ স্টোর", "শাওন স্টোর", "শায়েদ স্টোর", "সাহেদ স্টোর", "সাহিদ স্টোর", "শাহেদ ষ্টোর" বা অন্য কোনো রূপ ব্যবহার করা যাবে না।`;
     const prompt = `You are an expert SEO copywriter for "${storeName}", a digital software store in Bangladesh.
 
 ${nameRule}
@@ -61,14 +61,27 @@ Return ONLY a valid JSON array, no prose, no code fences. Schema:
     }
     const sanitizeName = (s: string) => {
       let out = s;
+      if (language !== "en") {
+        out = out
+          .replace(/Shahed\s+Store(?:'|’)s/gi, "শাহেদ স্টোর-এর")
+          .replace(/Shahed\s+Store\s+Bangladesh/gi, "শাহেদ স্টোর বাংলাদেশ")
+          .replace(/Shahed\s+Store\s+BD/gi, "শাহেদ স্টোর BD")
+          .replace(/Shahed\s+Store/gi, "শাহেদ স্টোর")
+          .replace(/ShahedStore/g, "শাহেদ স্টোর")
+          .replace(/Shahid\s*Store/gi, "শাহেদ স্টোর")
+          .replace(/Sahed\s*Store/gi, "শাহেদ স্টোর")
+          .replace(/Shawon\s*Store/gi, "শাহেদ স্টোর");
+      } else {
+        out = out
+          .replace(/Shahid\s*Store/gi, storeName)
+          .replace(/Sahed\s*Store/gi, storeName)
+          .replace(/Shawon\s*Store/gi, storeName);
+      }
       const wrongVariants = [
-        "শাহিদ স্টোর", "শাওন স্টোর", "শায়েদ স্টোর", "সাহেদ স্টোর",
-        "সাহিদ স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর",
+        "শাহিদ স্টোর", "শাওন স্টোর", "শায়েদ স্টোর", "শায়েদ স্টোর", "সাহেদ স্টোর",
+        "সাহিদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর",
       ];
       for (const v of wrongVariants) out = out.split(v).join(storeName);
-      if (language !== "en") {
-        out = out.replace(/Shahed\s*Store/gi, storeName);
-      }
       return out;
     };
     faqs = (faqs || [])

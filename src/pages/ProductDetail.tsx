@@ -375,7 +375,7 @@ const ProductDetail = () => {
 
   const seoTitle = dbSeoTitle
     ? dbSeoTitle
-    : `${product.name} কিনুন বাংলাদেশ | ৳${displayPrice.toLocaleString()} | Shahed Store`;
+    : `${product.name} কিনুন বাংলাদেশ | ৳${displayPrice.toLocaleString()} | শাহেদ স্টোর`;
 
   const seoDescription = (() => {
     if (dbSeoDesc) return dbSeoDesc.substring(0, 160);
@@ -385,7 +385,7 @@ const ProductDetail = () => {
     const priceStr = `৳${displayPrice.toLocaleString()}`;
     const discountStr = product.discount_percent ? ` | ${product.discount_percent}% ছাড়` : '';
     const catStr = product.categories?.name ? ` | ${product.categories.name}` : '';
-    const suffix = `${product.name} কিনুন ${priceStr}${discountStr}${catStr}. ১০০% genuine license. Instant delivery. Shahed Store বাংলাদেশ।`;
+    const suffix = `${product.name} কিনুন ${priceStr}${discountStr}${catStr}. ১০০% genuine license. Instant delivery. শাহেদ স্টোর বাংলাদেশ।`;
     return clean ? `${clean}. ${suffix}`.substring(0, 160) : suffix.substring(0, 160);
   })();
 
@@ -399,7 +399,7 @@ const ProductDetail = () => {
     `buy ${product.name} bangladesh`,
     `${product.name} cheap price bangladesh`,
     product.categories?.name ? `${product.categories.name} বাংলাদেশ` : '',
-    'shahed store',
+    'শাহেদ স্টোর',
     'digital software bangladesh',
   ].filter(Boolean).join(', ');
 
@@ -501,8 +501,8 @@ const ProductDetail = () => {
                 <img
                   key={images[activeImg]}
                   src={images[activeImg]}
-                  alt={`Buy ${product.name} at best price in Bangladesh - Shahed Store`}
-                  title={`${product.name} - ৳${displayPrice.toLocaleString()} | Shahed Store Bangladesh`}
+                  alt={`Buy ${product.name} at best price in Bangladesh - শাহেদ স্টোর`}
+                  title={`${product.name} - ৳${displayPrice.toLocaleString()} | শাহেদ স্টোর Bangladesh`}
                   onLoad={() => setImgLoaded(true)}
                   onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
@@ -695,7 +695,7 @@ const ProductDetail = () => {
                   </div>
                 </a>
 
-                {/* ── RIGHT: Floating Shahed Store logo card (overhangs right) ── */}
+                {/* ── RIGHT: Floating শাহেদ স্টোর logo card (overhangs right) ── */}
                 <div
                   className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[18%] sm:translate-x-[22%]"
                   style={{ filter: 'drop-shadow(0 4px 10px rgba(124,58,237,0.18))' }}
@@ -714,7 +714,7 @@ const ProductDetail = () => {
                   >
                     <img
                       src={brandIcon}
-                      alt="Shahed Store — DBID Verified Merchant"
+                      alt="শাহেদ স্টোর — DBID Verified Merchant"
                       className="w-[82%] h-[82%] object-contain relative z-10"
                       style={{
                         filter: 'drop-shadow(0 2px 4px rgba(124,58,237,0.20))',
