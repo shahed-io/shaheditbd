@@ -429,7 +429,7 @@ export default function AdminNotices() {
             <TabsContent value="preview" className="pt-4">
               {previewNotice ? (
                 <div className="bg-gray-100 p-4 rounded-lg">
-                  <NoticeTemplate notice={previewNotice} brand={{ name: 'Shahed Store' }} />
+                  <NoticeTemplate notice={previewNotice} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
                 </div>
               ) : <div className="text-center text-muted-foreground py-10">কিছু তথ্য দিন তারপর preview দেখুন</div>}
             </TabsContent>
@@ -460,7 +460,7 @@ export default function AdminNotices() {
           </DialogHeader>
           {previewing && (
             <div className="bg-gray-100 p-4 rounded-lg print:bg-white print:p-0">
-              <NoticeTemplate notice={previewing} brand={{ name: 'Shahed Store' }} />
+              <NoticeTemplate notice={previewing} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
             </div>
           )}
         </DialogContent>

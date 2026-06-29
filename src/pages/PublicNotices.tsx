@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import NoticeTemplate, { NoticeData } from '@/components/notices/NoticeTemplate';
 import SEOHead from '@/components/seo/SEOHead';
 import { Megaphone, ArrowLeft, Calendar } from 'lucide-react';
+import { loadNoticeSignature, type NoticeSignature, DEFAULT_NOTICE_SIGNATURE } from '@/lib/noticeSignature';
 
 interface NoticeRow extends NoticeData {
   id: string;
@@ -18,6 +19,9 @@ export default function PublicNotices() {
   const [list, setList] = useState<NoticeRow[]>([]);
   const [one, setOne] = useState<NoticeRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const [signature, setSignature] = useState<NoticeSignature>(DEFAULT_NOTICE_SIGNATURE);
+
+  useEffect(() => { loadNoticeSignature().then(setSignature); }, []);
 
   useEffect(() => {
     let canceled = false;
@@ -53,7 +57,7 @@ export default function PublicNotices() {
         ) : !one ? (
           <div className="text-center py-20 text-muted-foreground">Notice পাওয়া যায়নি।</div>
         ) : (
-          <NoticeTemplate notice={one} brand={{ name: 'Shahed Store' }} />
+          <NoticeTemplate notice={one} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
         )}
       </div>
     );
