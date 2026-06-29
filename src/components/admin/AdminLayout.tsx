@@ -110,6 +110,7 @@ const MENU_SECTIONS: MenuSection[] = [
       { icon: Star, label: 'Testimonials', path: '/ceo/testimonials' },
       { icon: Megaphone, label: 'Announcement Bar', path: '/ceo/announcement-bar' },
       { icon: Layers, label: 'Popup Banner', path: '/ceo/popup-banner' },
+      { icon: Megaphone, label: 'Notices', path: '/ceo/notices', badge: 'new' },
       { icon: Layout, label: 'Pages', path: '/ceo/pages' },
       { icon: Layout, label: 'Footer Settings', path: '/ceo/footer-settings' },
       { icon: FileText, label: 'Text Manager', path: '/ceo/text-manager' },
