@@ -10,11 +10,18 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { product, count = 8, language = "bn", storeName = "Shahed Store" } = await req.json();
+    const { product, count = 8, language = "bn", storeName: rawStoreName = "শাহেদ স্টোর" } = await req.json();
     if (!product?.name) throw new Error("product.name required");
 
+    // Enforce correct store name based on language — never let AI invent variants
+    const storeName = language === "en" ? "Shahed Store" : "শাহেদ স্টোর";
     const lang = language === "en" ? "English" : "Bengali (বাংলা)";
+    const nameRule = language === "en"
+      ? `CRITICAL: The store name is EXACTLY "Shahed Store" (English spelling). Never write it in Bengali, never use variants like "Shahid", "Sahed", "Shawon", etc.`
+      : `গুরুত্বপূর্ণ নিয়ম: দোকানের নাম সবসময় হুবহু "শাহেদ স্টোর" লিখতে হবে। কখনোই "Shahed Store" (ইংরেজি), "শাহিদ স্টোর", "শাওন স্টোর", "শায়েদ স্টোর", "সাহেদ স্টোর" বা অন্য কোনো রূপ ব্যবহার করা যাবে না।`;
     const prompt = `You are an expert SEO copywriter for "${storeName}", a digital software store in Bangladesh.
+
+${nameRule}
 
 Generate exactly ${count} high-quality, Google-ranking-friendly FAQs for the product below. Mix product-specific questions (features, activation, devices, delivery, warranty, refund) and store-trust questions (about ${storeName}, payment safety, support).
 
@@ -52,9 +59,21 @@ Return ONLY a valid JSON array, no prose, no code fences. Schema:
     } catch {
       throw new Error("AI did not return valid JSON");
     }
+    const sanitizeName = (s: string) => {
+      let out = s;
+      const wrongVariants = [
+        "শাহিদ স্টোর", "শাওন স্টোর", "শায়েদ স্টোর", "সাহেদ স্টোর",
+        "সাহিদ স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর",
+      ];
+      for (const v of wrongVariants) out = out.split(v).join(storeName);
+      if (language !== "en") {
+        out = out.replace(/Shahed\s*Store/gi, storeName);
+      }
+      return out;
+    };
     faqs = (faqs || [])
       .filter((f) => f && typeof f.q === "string" && typeof f.a === "string" && f.q.trim() && f.a.trim())
-      .map((f) => ({ q: f.q.trim(), a: f.a.trim() }));
+      .map((f) => ({ q: sanitizeName(f.q.trim()), a: sanitizeName(f.a.trim()) }));
 
     if (!faqs.length) throw new Error("No FAQs generated");
 
