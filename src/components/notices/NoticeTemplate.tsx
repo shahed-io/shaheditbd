@@ -70,10 +70,11 @@ export default function NoticeTemplate({ notice, brand = {}, signatureUrl, class
         <div className="flex items-center" style={{ gap: 14 }}>
           <img src={logo} alt={brandName} crossOrigin="anonymous"
                style={{ height: 54, width: 'auto', objectFit: 'contain' }} />
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: accentText, lineHeight: 1.1 }}>{brandName}</div>
-            {brand.tagline && <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>{brand.tagline}</div>}
-          </div>
+          {brand.tagline && (
+            <div>
+              <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>{brand.tagline}</div>
+            </div>
+          )}
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 32, fontWeight: 800, color: brandColor, letterSpacing: 2, lineHeight: 1 }}>
