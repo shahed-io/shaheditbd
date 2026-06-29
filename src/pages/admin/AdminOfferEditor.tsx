@@ -855,13 +855,36 @@ export default function AdminOfferEditor() {
                 </div>
               </div>
               <div>
-                <Label>Prizes (one per line, in order — leave blank to skip)</Label>
+                <div className="flex items-center justify-between mb-1">
+                  <Label>Prizes (one per line, in order — leave blank to skip)</Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => {
+                      const parsed = parsePrizesFromDetails(offer?.prize_details);
+                      if (parsed.length === 0) {
+                        toast.error('No prizes found in the offer\'s "Prize Details" field.');
+                        return;
+                      }
+                      setPrizesText(parsed.join('\n'));
+                      setWinnerCount(Math.max(1, Math.min(100, parsed.length)));
+                      toast.success(`Loaded ${parsed.length} prize(s) from Prize Details`);
+                    }}
+                  >
+                    <Wand2 className="w-3.5 h-3.5 mr-1" /> Auto-fill from Prize Details
+                  </Button>
+                </div>
                 <Textarea
-                  rows={Math.min(winnerCount, 5)}
+                  rows={Math.min(Math.max(winnerCount, 3), 8)}
                   value={prizesText}
                   onChange={(e) => setPrizesText(e.target.value)}
                   placeholder={'1st Prize: iPhone 15\n2nd Prize: ৳5000\n3rd Prize: T-shirt'}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Prizes auto-load from the offer's "Prize Details" field. Edit freely — your changes here are used when picking winners.
+                </p>
               </div>
               <Button onClick={pickWinners} disabled={picking || submissions.length === 0} className="w-full">
                 {picking ? 'Picking...' : winnerMode === 'ai' ? <><Sparkles className="w-4 h-4 mr-1" /> Pick {winnerCount} Winner(s) with AI</> : <><Shuffle className="w-4 h-4 mr-1" /> Pick {winnerCount} Random Winner(s)</>}
