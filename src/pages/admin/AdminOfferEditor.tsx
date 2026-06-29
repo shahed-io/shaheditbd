@@ -184,6 +184,21 @@ export default function AdminOfferEditor() {
     }
   };
 
+  const parsePrizesFromDetails = (text: string | null | undefined): string[] => {
+    if (!text) return [];
+    return text
+      .split('\n')
+      .map((l) => {
+        let s = l.trim();
+        if (!s) return '';
+        // strip markdown bullets / numbering prefixes
+        s = s.replace(/^[-*•]\s*/, '').replace(/^\d+[\.\)]\s*/, '');
+        const idx = s.indexOf(':');
+        return (idx >= 0 ? s.slice(idx + 1) : s).trim();
+      })
+      .filter(Boolean);
+  };
+
   const load = async () => {
     if (!id) return;
     setLoading(true);
@@ -197,6 +212,12 @@ export default function AdminOfferEditor() {
     setFields((f as Field[]) || []);
     setSubmissions((s as Submission[]) || []);
     setWinners((w as Winner[]) || []);
+    // Auto-fill prizes from offer.prize_details on first load (only if admin hasn't typed yet)
+    const parsed = parsePrizesFromDetails((o as Offer | null)?.prize_details);
+    if (parsed.length > 0) {
+      setPrizesText((prev) => (prev && prev.trim() ? prev : parsed.join('\n')));
+      setWinnerCount((prev) => (prev && prev !== 1 ? prev : Math.max(1, Math.min(100, parsed.length))));
+    }
     setLoading(false);
   };
 
