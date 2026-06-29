@@ -54,6 +54,9 @@ interface Submission {
   winner_rank: number | null;
   prize_won: string | null;
   created_at: string;
+  converted_to_customer?: boolean;
+  customer_user_id?: string | null;
+  converted_at?: string | null;
 }
 
 interface Winner {
