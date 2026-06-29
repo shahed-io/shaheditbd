@@ -206,6 +206,10 @@ export default function AdminNotices() {
         </Button>
       </div>
 
+      <div className="mb-6">
+        <NoticeSignatureManager onChanged={setSignature} />
+      </div>
+
       <Card>
         <CardHeader><CardTitle className="text-base">All Notices ({list.length})</CardTitle></CardHeader>
         <CardContent>
