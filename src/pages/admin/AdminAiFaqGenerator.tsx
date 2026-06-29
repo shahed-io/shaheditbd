@@ -17,6 +17,41 @@ interface ProductRow {
 
 interface FaqItem { q: string; a: string }
 
+const sanitizeStoreName = (text: string, language: 'bn' | 'en') => {
+  const target = language === 'bn' ? 'শাহেদ স্টোর' : 'Shahed Store';
+  let out = text;
+  if (language === 'bn') {
+    out = out
+      .replace(/Shahed\s+Store(?:'|’)s/gi, 'শাহেদ স্টোর-এর')
+      .replace(/Shahed\s+Store\s+Bangladesh/gi, 'শাহেদ স্টোর বাংলাদেশ')
+      .replace(/Shahed\s+Store\s+BD/gi, 'শাহেদ স্টোর BD')
+      .replace(/Shahed\s+Store/gi, target)
+      .replace(/ShahedStore/g, target)
+      .replace(/Shahid\s*Store/gi, target)
+      .replace(/Sahed\s*Store/gi, target)
+      .replace(/Shawon\s*Store/gi, target);
+  } else {
+    out = out
+      .replace(/Shahid\s*Store/gi, target)
+      .replace(/Sahed\s*Store/gi, target)
+      .replace(/Shawon\s*Store/gi, target)
+      .replace(/ShahedStore/g, target);
+  }
+  [
+    'শাহিদ স্টোর', 'শাওন স্টোর', 'শায়েদ স্টোর', 'শায়েদ স্টোর', 'সাহেদ স্টোর',
+    'সাহিদ স্টোর', 'শাহীদ স্টোর', 'শহীদ স্টোর', 'শাহেদ ষ্টোর', 'শাহেদ ইস্টোর',
+  ].forEach((variant) => {
+    out = out.split(variant).join(target);
+  });
+  return out;
+};
+
+const sanitizeFaqs = (faqs: FaqItem[], language: 'bn' | 'en') =>
+  faqs.map((f) => ({
+    q: sanitizeStoreName(f.q, language),
+    a: sanitizeStoreName(f.a, language),
+  }));
+
 const AdminAiFaqGenerator = () => {
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,11 +121,11 @@ const AdminAiFaqGenerator = () => {
     });
     if (error) throw new Error(error.message);
     if ((data as any)?.error) throw new Error((data as any).error);
-    return ((data as any)?.faqs || []) as FaqItem[];
+    return sanitizeFaqs(((data as any)?.faqs || []) as FaqItem[], language);
   };
 
   const saveFaqs = async (productId: string, faqs: FaqItem[], merge: 'replace' | 'append') => {
-    let finalFaqs = faqs;
+    let finalFaqs = sanitizeFaqs(faqs, language);
     if (merge === 'append') {
       const existing = products.find(p => p.id === productId)?.faq || [];
       finalFaqs = [...(existing as FaqItem[]), ...faqs];
