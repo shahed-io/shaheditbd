@@ -105,6 +105,7 @@ export default function AdminOfferEditor() {
 
   // Convert submissions -> customers state
   const [converting, setConverting] = useState(false);
+  const [viewingSubmission, setViewingSubmission] = useState<Submission | null>(null);
 
   const convertSubmissions = async (ids?: string[]) => {
     if (!offer) return;
