@@ -782,16 +782,25 @@ export default function AdminOfferEditor() {
                         )}
                       </td>
                       <td className="p-2">
-                        {!s.converted_to_customer && s.participant_email && (
+                        <div className="flex gap-1.5 flex-wrap">
                           <Button
                             size="sm"
                             variant="outline"
-                            disabled={converting}
-                            onClick={() => convertSubmissions([s.id])}
+                            onClick={() => setViewingSubmission(s)}
                           >
-                            Invite
+                            <Eye className="w-3.5 h-3.5 mr-1" /> View
                           </Button>
-                        )}
+                          {!s.converted_to_customer && s.participant_email && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={converting}
+                              onClick={() => convertSubmissions([s.id])}
+                            >
+                              Invite
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
