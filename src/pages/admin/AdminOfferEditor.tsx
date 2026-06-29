@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2 } from 'lucide-react';
 
@@ -105,6 +106,7 @@ export default function AdminOfferEditor() {
 
   // Convert submissions -> customers state
   const [converting, setConverting] = useState(false);
+  const [viewingSubmission, setViewingSubmission] = useState<Submission | null>(null);
 
   const convertSubmissions = async (ids?: string[]) => {
     if (!offer) return;
@@ -782,16 +784,25 @@ export default function AdminOfferEditor() {
                         )}
                       </td>
                       <td className="p-2">
-                        {!s.converted_to_customer && s.participant_email && (
+                        <div className="flex gap-1.5 flex-wrap">
                           <Button
                             size="sm"
                             variant="outline"
-                            disabled={converting}
-                            onClick={() => convertSubmissions([s.id])}
+                            onClick={() => setViewingSubmission(s)}
                           >
-                            Invite
+                            <Eye className="w-3.5 h-3.5 mr-1" /> View
                           </Button>
-                        )}
+                          {!s.converted_to_customer && s.participant_email && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={converting}
+                              onClick={() => convertSubmissions([s.id])}
+                            >
+                              Invite
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -871,6 +882,92 @@ export default function AdminOfferEditor() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Submission Detail Modal */}
+      <Dialog open={!!viewingSubmission} onOpenChange={(o) => !o && setViewingSubmission(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="w-5 h-5" /> Submission Details
+            </DialogTitle>
+            <DialogDescription>
+              {viewingSubmission && new Date(viewingSubmission.created_at).toLocaleString()}
+            </DialogDescription>
+          </DialogHeader>
+          {viewingSubmission && (
+            <div className="space-y-4">
+              {/* Status badges */}
+              <div className="flex flex-wrap gap-2">
+                {viewingSubmission.is_winner && (
+                  <Badge className="bg-yellow-500/20 text-yellow-700">🏆 Winner #{viewingSubmission.winner_rank}</Badge>
+                )}
+                {viewingSubmission.converted_to_customer && (
+                  <Badge className="bg-green-500/20 text-green-700">✓ Customer</Badge>
+                )}
+                {viewingSubmission.prize_won && (
+                  <Badge className="bg-violet-500/20 text-violet-700">🎁 {viewingSubmission.prize_won}</Badge>
+                )}
+              </div>
+
+              {/* Participant info */}
+              <div className="border rounded-lg p-4 bg-muted/30 space-y-2">
+                <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Participant</h4>
+                <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                  <div><span className="text-muted-foreground">Name:</span> <span className="font-medium">{viewingSubmission.participant_name || '—'}</span></div>
+                  <div><span className="text-muted-foreground">Email:</span> <span className="font-medium break-all">{viewingSubmission.participant_email || '—'}</span></div>
+                  <div><span className="text-muted-foreground">Phone:</span> <span className="font-medium">{viewingSubmission.participant_phone || '—'}</span></div>
+                </div>
+              </div>
+
+              {/* All form answers */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Form Answers</h4>
+                {viewingSubmission.data && Object.keys(viewingSubmission.data).length > 0 ? (
+                  <div className="space-y-2">
+                    {Object.entries(viewingSubmission.data).map(([key, value]) => {
+                      // Try to find matching field label
+                      const field = fields.find((f) => f.id === key || f.label === key);
+                      const label = field?.label || key;
+                      const displayVal = Array.isArray(value)
+                        ? value.join(', ')
+                        : typeof value === 'object' && value !== null
+                          ? JSON.stringify(value, null, 2)
+                          : String(value ?? '—');
+                      return (
+                        <div key={key} className="border rounded-lg p-3">
+                          <div className="text-xs text-muted-foreground mb-1">{label}</div>
+                          <div className="text-sm font-medium whitespace-pre-wrap break-words">{displayVal || '—'}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">No additional form data.</p>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-2 border-t flex-wrap">
+                {!viewingSubmission.converted_to_customer && viewingSubmission.participant_email && (
+                  <Button
+                    size="sm"
+                    disabled={converting}
+                    onClick={() => {
+                      const id = viewingSubmission.id;
+                      setViewingSubmission(null);
+                      convertSubmissions([id]);
+                    }}
+                    className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white"
+                  >
+                    👥 Invite as Customer
+                  </Button>
+                )}
+                <Button size="sm" variant="outline" onClick={() => setViewingSubmission(null)}>Close</Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
