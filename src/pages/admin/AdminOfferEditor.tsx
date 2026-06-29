@@ -723,12 +723,33 @@ export default function AdminOfferEditor() {
 
         {/* SUBMISSIONS */}
         <TabsContent value="submissions" className="space-y-3">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">{submissions.length} total entries</p>
-            <Button variant="outline" size="sm" onClick={exportCSV} disabled={submissions.length === 0}>
-              <Download className="w-4 h-4 mr-1" /> Export CSV
-            </Button>
+          <div className="flex justify-between items-center flex-wrap gap-2">
+            <p className="text-sm text-muted-foreground">
+              {submissions.length} total ·{' '}
+              <span className="text-green-600 font-medium">
+                {submissions.filter((s) => s.converted_to_customer).length} converted
+              </span>
+            </p>
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                size="sm"
+                onClick={() => convertSubmissions()}
+                disabled={converting || submissions.length === 0}
+                className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white"
+              >
+                {converting ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : '👥 '}
+                Convert All to Customers
+              </Button>
+              <Button variant="outline" size="sm" onClick={exportCSV} disabled={submissions.length === 0}>
+                <Download className="w-4 h-4 mr-1" /> Export CSV
+              </Button>
+            </div>
           </div>
+          <Card className="bg-violet-50 dark:bg-violet-950/20 border-violet-200 dark:border-violet-900">
+            <CardContent className="py-3 text-xs text-muted-foreground">
+              💡 "Convert to Customer" সব submission এর email-এ account invite পাঠাবে। তারা link এ click করে password set করলেই customer হয়ে যাবে — এক click এ সবাই!
+            </CardContent>
+          </Card>
           {submissions.length === 0 ? (
             <Card><CardContent className="py-10 text-center text-muted-foreground">No submissions yet.</CardContent></Card>
           ) : (
@@ -741,6 +762,8 @@ export default function AdminOfferEditor() {
                     <th className="p-2 text-left">Email</th>
                     <th className="p-2 text-left">Phone</th>
                     <th className="p-2 text-left">Winner</th>
+                    <th className="p-2 text-left">Customer</th>
+                    <th className="p-2 text-left">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -751,6 +774,25 @@ export default function AdminOfferEditor() {
                       <td className="p-2">{s.participant_email || '—'}</td>
                       <td className="p-2">{s.participant_phone || '—'}</td>
                       <td className="p-2">{s.is_winner && <Badge className="bg-yellow-500/20 text-yellow-700">🏆 #{s.winner_rank}</Badge>}</td>
+                      <td className="p-2">
+                        {s.converted_to_customer ? (
+                          <Badge className="bg-green-500/20 text-green-700">✓ Customer</Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">—</span>
+                        )}
+                      </td>
+                      <td className="p-2">
+                        {!s.converted_to_customer && s.participant_email && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={converting}
+                            onClick={() => convertSubmissions([s.id])}
+                          >
+                            Invite
+                          </Button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
