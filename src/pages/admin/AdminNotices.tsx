@@ -474,9 +474,20 @@ export default function AdminNotices() {
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle>Notice Preview</DialogTitle>
-              <Button size="sm" variant="outline" onClick={printPreview} className="gap-1">
-                <Printer className="w-4 h-4" /> Print
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => previewing && downloadNotice(previewing)}
+                  disabled={!previewing || downloadingId !== null}
+                  className="gap-1"
+                >
+                  {downloadingId ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />} Download PDF
+                </Button>
+                <Button size="sm" variant="outline" onClick={printPreview} className="gap-1">
+                  <Printer className="w-4 h-4" /> Print
+                </Button>
+              </div>
             </div>
           </DialogHeader>
           {previewing && (
