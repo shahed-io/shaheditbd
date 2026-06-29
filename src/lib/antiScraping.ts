@@ -208,9 +208,9 @@ export function installCopyDeterrents(opts: CopyDeterrentOptions = {}): () => vo
 
   const FUN_MESSAGES = [
     { icon: '🕵️‍♂️', title: 'ধরা পড়ে গেছেন!', sub: 'এই ডিজাইন কপিরাইট-সুরক্ষিত — চুরি করার চেষ্টা বৃথা 😉' },
-    { icon: '🚫', title: 'উঁহু, এটা করা যাবে না!', sub: 'Shahed Store এর কনটেন্ট কপি করা নিষিদ্ধ।' },
+    { icon: '🚫', title: 'উঁহু, এটা করা যাবে না!', sub: 'শাহেদ স্টোর এর কনটেন্ট কপি করা নিষিদ্ধ।' },
     { icon: '🛡️', title: 'কনটেন্ট লক করা আছে', sub: 'কপি করতে চাইলে আমাদের সাথে যোগাযোগ করুন — আমরা friendly! 💜' },
-    { icon: '🎯', title: 'নাইস ট্রাই!', sub: 'কিন্তু এই ওয়েবসাইটের ডিজাইন © Shahed Store এর সম্পত্তি।' },
+    { icon: '🎯', title: 'নাইস ট্রাই!', sub: 'কিন্তু এই ওয়েবসাইটের ডিজাইন © শাহেদ স্টোর এর সম্পত্তি।' },
     { icon: '✨', title: 'কপি না করে কিনে নিন!', sub: 'আসল প্রোডাক্ট পেতে অর্ডার করুন shahedstore.com.bd তে।' },
     { icon: '🔐', title: 'অ্যাক্সেস ডিনাইড', sub: 'এই পেজটি কপিরাইট আইন দ্বারা সুরক্ষিত।' },
   ];
@@ -286,7 +286,7 @@ export function installCopyDeterrents(opts: CopyDeterrentOptions = {}): () => vo
   const onCopy = (e: ClipboardEvent) => {
     if (isInteractive(e.target)) return;
     e.preventDefault();
-    try { e.clipboardData?.setData('text/plain', '© Shahed Store — Content protected. https://shahedstore.com.bd'); } catch { /* ignore */ }
+    try { e.clipboardData?.setData('text/plain', '© শাহেদ স্টোর — Content protected. https://shahedstore.com.bd'); } catch { /* ignore */ }
     warn();
   };
 
@@ -371,7 +371,7 @@ export function installCopyDeterrents(opts: CopyDeterrentOptions = {}): () => vo
   if (consoleWarn && typeof console !== 'undefined') {
     try {
       console.log('%c⛔ STOP!', 'color:#dc2626;font-size:48px;font-weight:900;text-shadow:2px 2px 0 #000;');
-      console.log('%cThis is a browser feature intended for developers. Pasting or running code here can compromise your account.\n\n© Shahed Store — All content is copyright protected.', 'color:#0f172a;font-size:14px;font-weight:600;');
+      console.log('%cThis is a browser feature intended for developers. Pasting or running code here can compromise your account.\n\n© শাহেদ স্টোর — All content is copyright protected.', 'color:#0f172a;font-size:14px;font-weight:600;');
     } catch { /* ignore */ }
   }
 

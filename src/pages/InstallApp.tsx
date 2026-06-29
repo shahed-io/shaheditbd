@@ -65,7 +65,7 @@ const InstallApp = () => {
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
         title="Install Shahed Store App – PWA"
-        description="Shahed Store অ্যাপটি আপনার ফোনে ইনস্টল করুন। দ্রুত লোডিং, অফলাইন সাপোর্ট এবং নেটিভ অ্যাপের মতো অভিজ্ঞতা পান।"
+        description="শাহেদ স্টোর অ্যাপটি আপনার ফোনে ইনস্টল করুন। দ্রুত লোডিং, অফলাইন সাপোর্ট এবং নেটিভ অ্যাপের মতো অভিজ্ঞতা পান।"
         canonical="https://shahedstore.com.bd/install"
         keywords="shahed store app install, pwa bangladesh, digital store app download"
       />
@@ -99,7 +99,7 @@ const InstallApp = () => {
           </div>
 
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Shahed Store অ্যাপ
+            শাহেদ স্টোর অ্যাপ
           </h1>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto mb-8">
             আপনার মোবাইলের হোম স্ক্রিনে ইনস্টল করুন এবং যেকোনো সময় সহজে কেনাকাটা করুন।

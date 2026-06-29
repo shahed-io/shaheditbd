@@ -1874,7 +1874,7 @@ const AdminProducts = () => {
                                   PREMIUM
                                 </span>
                               </div>
-                              <p className="text-[11.5px] text-muted-foreground mt-1">Shahed Store ব্র্যান্ডিংসহ প্রিমিয়াম প্রোডাক্ট কার্ড তৈরি করুন</p>
+                              <p className="text-[11.5px] text-muted-foreground mt-1">শাহেদ স্টোর ব্র্যান্ডিংসহ প্রিমিয়াম প্রোডাক্ট কার্ড তৈরি করুন</p>
                             </div>
                           </div>
 
@@ -1941,9 +1941,9 @@ const AdminProducts = () => {
                           >
                             <span className="text-base leading-none mt-0.5">💡</span>
                             <span className="text-foreground/80 leading-snug">
-                              {cardStyle === 'dark_neon' && 'গাঢ় ব্যাকগ্রাউন্ড + নিয়ন গ্লোয়িং বর্ডার, Shahed Store ব্র্যান্ডিং সহ'}
+                              {cardStyle === 'dark_neon' && 'গাঢ় ব্যাকগ্রাউন্ড + নিয়ন গ্লোয়িং বর্ডার, শাহেদ স্টোর ব্র্যান্ডিং সহ'}
                               {cardStyle === 'light_glass' && 'পাস্টেল কালার গ্রেডিয়েন্ট + ফ্রস্টেড গ্লাস কার্ড'}
-                              {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল Shahed Store ব্যাজ'}
+                              {cardStyle === 'clean_light' && 'ক্লিন হোয়াইট + বোকে বলস + লাল শাহেদ স্টোর ব্যাজ'}
                               {cardStyle === 'vibrant_promo' && 'সফট অরোরা গ্রেডিয়েন্ট + হোয়াইট গ্লাস কার্ড, লাইট প্রিমিয়াম'}
                               {cardStyle === 'glass_gradient' && 'ডার্ক ব্যাকগ্রাউন্ড + মাল্টি-কালার গ্লোয়িং গ্রেডিয়েন্ট বর্ডার'}
                               {cardStyle === 'glassmorphism_ui' && 'প্রিমিয়াম হোয়াইট গ্লাস কার্ড + অ্যাম্বার-ইন্ডিগো অ্যাকসেন্ট'}

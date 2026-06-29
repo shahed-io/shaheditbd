@@ -7,7 +7,7 @@ const B = 'hsl(200,90%,45%)';
 const DeliveryInfo = () => (
   <PolicyLayout
     seoTitle="Delivery Info — Shahed Store"
-    seoDesc="Shahed Store-এর ডেলিভারি প্রক্রিয়া, সময়সীমা ও পদ্ধতি জানুন। ১–২৪ ঘণ্টার মধ্যে ডিজিটাল ডেলিভারি।"
+    seoDesc="শাহেদ স্টোর-এর ডেলিভারি প্রক্রিয়া, সময়সীমা ও পদ্ধতি জানুন। ১–২৪ ঘণ্টার মধ্যে ডিজিটাল ডেলিভারি।"
     badge="Digital Delivery"
     badgeIcon={<Zap size={13} />}
     title="Delivery Info"

@@ -7,7 +7,7 @@ const B = 'hsl(200,90%,45%)';
 const TermsConditions = () => (
   <PolicyLayout
     seoTitle="Terms & Conditions — Shahed Store"
-    seoDesc="Shahed Store ব্যবহারের শর্তাবলী পড়ুন।"
+    seoDesc="শাহেদ স্টোর ব্যবহারের শর্তাবলী পড়ুন।"
     badge="Legal Document"
     badgeIcon={<FileText size={13} />}
     title="Terms & Conditions"
@@ -17,11 +17,11 @@ const TermsConditions = () => (
   >
     <div className="rounded-2xl p-4 mb-6 text-[13px] leading-relaxed"
       style={{ background: `linear-gradient(135deg, ${A}0d, ${B}08)`, border: `1px solid ${A}25`, color: 'hsl(226,35%,28%)' }}>
-      এই Terms & Conditions Shahed Store এবং আপনার মধ্যে একটি আইনি চুক্তি। <strong>shahedstore.com.bd</strong>-এ প্রবেশ বা যেকোনো পরিষেবা ব্যবহারের মাধ্যমে আপনি এই শর্তগুলো মেনে নিচ্ছেন।
+      এই Terms & Conditions শাহেদ স্টোর এবং আপনার মধ্যে একটি আইনি চুক্তি। <strong>shahedstore.com.bd</strong>-এ প্রবেশ বা যেকোনো পরিষেবা ব্যবহারের মাধ্যমে আপনি এই শর্তগুলো মেনে নিচ্ছেন।
     </div>
 
     <SectionCard icon={<ShoppingCart size={15} />} title="১. পরিষেবার বিবরণ" accentFrom={A} accentTo={B}>
-      <p className="mb-2">Shahed Store একটি ডিজিটাল পণ্য বিক্রয় প্ল্যাটফর্ম। আমরা বিক্রি করি:</p>
+      <p className="mb-2">শাহেদ স্টোর একটি ডিজিটাল পণ্য বিক্রয় প্ল্যাটফর্ম। আমরা বিক্রি করি:</p>
       <ul className="space-y-1.5">
         <Bullet>Windows, Office, Adobe ও অন্যান্য সফটওয়্যার লাইসেন্স কী</Bullet>
         <Bullet>Netflix, Spotify, YouTube Premium, Canva সহ সাবস্ক্রিপশন</Bullet>
