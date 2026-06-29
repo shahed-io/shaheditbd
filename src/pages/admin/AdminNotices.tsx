@@ -11,11 +11,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw } from 'lucide-react';
+import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw, Download } from 'lucide-react';
 import NoticeTemplate, { NoticeData } from '@/components/notices/NoticeTemplate';
 import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 import NoticeSignatureManager from '@/components/admin/NoticeSignatureManager';
 import { loadNoticeSignature, type NoticeSignature, DEFAULT_NOTICE_SIGNATURE } from '@/lib/noticeSignature';
+import { downloadNoticePdf } from '@/lib/noticePdf';
 
 interface Notice extends NoticeData {
   id: string;
