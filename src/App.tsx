@@ -359,8 +359,11 @@ const AppContent = () => {
             <Route path="security" element={<AdminSuspense><AdminSecurity2FA /></AdminSuspense>} />
             <Route path="offers" element={<AdminSuspense><AdminOffers /></AdminSuspense>} />
             <Route path="offers/:id" element={<AdminSuspense><AdminOfferEditor /></AdminSuspense>} />
+            <Route path="notices" element={<AdminSuspense><AdminNotices /></AdminSuspense>} />
           </Route>
           <Route path="/offer/:slug" element={<OfferPage />} />
+          <Route path="/notices" element={<PublicNotices />} />
+          <Route path="/notices/:slug" element={<PublicNotices />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           <Route path="/terms-conditions" element={<TermsConditions />} />
