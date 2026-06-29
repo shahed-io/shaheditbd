@@ -34,6 +34,7 @@ import {
 import WelcomeDiscount from '@/components/store/WelcomeDiscount';
 import BrandLogo from '@/components/store/BrandLogo';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
+import CustomerNoticesWidget from '@/components/store/CustomerNoticesWidget';
 import { LANGUAGES, LangCode, getStoredLang, setStoredLang, t, translateDbText, getLangLocale } from '@/lib/translations';
 import { downloadInvoicePdf, type InvoiceData } from '@/lib/invoicePdf';
 
@@ -1159,6 +1160,10 @@ const UserDashboard = () => {
           </div>
         </div>
 
+        {/* Latest Notices */}
+        <div className="mt-6">
+          <CustomerNoticesWidget />
+        </div>
 
         {/* Body */}
         <div className="grid md:grid-cols-[280px_1fr] gap-6 lg:gap-7">

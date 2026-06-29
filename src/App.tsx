@@ -123,6 +123,8 @@ const AdminQuickSale             = lazy(() => import("./pages/admin/AdminQuickSa
 const AdminPopupBanner           = lazy(() => import("./pages/admin/AdminPopupBanner"));
 const AdminInvoiceGenerator      = lazy(() => import("./pages/admin/AdminInvoiceGenerator"));
 const AdminInvoiceDesign         = lazy(() => import("./pages/admin/AdminInvoiceDesign"));
+const AdminNotices               = lazy(() => import("./pages/admin/AdminNotices"));
+const PublicNotices              = lazy(() => import("./pages/PublicNotices"));
 const AdminFooterSettings        = lazy(() => import("./pages/admin/AdminFooterSettings"));
 const AdminTextManager           = lazy(() => import("./pages/admin/AdminTextManager"));
 const AdminLiveChat              = lazy(() => import("./pages/admin/AdminLiveChat"));
@@ -359,8 +361,11 @@ const AppContent = () => {
             <Route path="security" element={<AdminSuspense><AdminSecurity2FA /></AdminSuspense>} />
             <Route path="offers" element={<AdminSuspense><AdminOffers /></AdminSuspense>} />
             <Route path="offers/:id" element={<AdminSuspense><AdminOfferEditor /></AdminSuspense>} />
+            <Route path="notices" element={<AdminSuspense><AdminNotices /></AdminSuspense>} />
           </Route>
           <Route path="/offer/:slug" element={<OfferPage />} />
+          <Route path="/notices" element={<PublicNotices />} />
+          <Route path="/notices/:slug" element={<PublicNotices />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           <Route path="/terms-conditions" element={<TermsConditions />} />

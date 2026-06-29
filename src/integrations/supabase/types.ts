@@ -1568,6 +1568,63 @@ export type Database = {
         }
         Relationships: []
       }
+      notices: {
+        Row: {
+          audience: string
+          body: string
+          created_at: string
+          created_by: string | null
+          effective_date: string | null
+          id: string
+          pinned: boolean
+          published_at: string | null
+          reference_no: string | null
+          signed_by: string | null
+          signed_role: string | null
+          slug: string
+          status: string
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          effective_date?: string | null
+          id?: string
+          pinned?: boolean
+          published_at?: string | null
+          reference_no?: string | null
+          signed_by?: string | null
+          signed_role?: string | null
+          slug: string
+          status?: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          effective_date?: string | null
+          id?: string
+          pinned?: boolean
+          published_at?: string | null
+          reference_no?: string | null
+          signed_by?: string | null
+          signed_role?: string | null
+          slug?: string
+          status?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
