@@ -11,11 +11,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw } from 'lucide-react';
+import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw, Download } from 'lucide-react';
 import NoticeTemplate, { NoticeData } from '@/components/notices/NoticeTemplate';
 import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 import NoticeSignatureManager from '@/components/admin/NoticeSignatureManager';
 import { loadNoticeSignature, type NoticeSignature, DEFAULT_NOTICE_SIGNATURE } from '@/lib/noticeSignature';
+import { downloadNoticePdf } from '@/lib/noticePdf';
 
 interface Notice extends NoticeData {
   id: string;
@@ -56,6 +57,7 @@ export default function AdminNotices() {
   const [aiLang, setAiLang] = useState<'bn' | 'en'>('bn');
   const [aiBusy, setAiBusy] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [signature, setSignature] = useState<NoticeSignature>(DEFAULT_NOTICE_SIGNATURE);
 
   useEffect(() => { loadNoticeSignature().then(setSignature); }, []);
@@ -179,6 +181,22 @@ export default function AdminNotices() {
     window.print();
   };
 
+  const downloadNotice = async (n: NoticeData & { id?: string; slug?: string }) => {
+    try {
+      setDownloadingId((n as any).id || 'preview');
+      toast.info('PDF তৈরি হচ্ছে...');
+      await downloadNoticePdf(n, {
+        brand: { name: 'Shahed Store' },
+        signatureUrl: signature.imageDataUrl || undefined,
+      });
+      toast.success('Notice download হয়েছে');
+    } catch (e: any) {
+      toast.error(e?.message || 'Download ব্যর্থ');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   const previewNotice: NoticeData | null = useMemo(() => editing ? {
     title: editing.title || 'Untitled Notice',
     summary: editing.summary || '',
@@ -248,6 +266,9 @@ export default function AdminNotices() {
                       <td className="py-2 px-2 text-right">
                         <div className="inline-flex gap-1">
                           <Button size="sm" variant="ghost" onClick={() => setPreviewing(n)} title="Preview"><Eye className="w-4 h-4" /></Button>
+                          <Button size="sm" variant="ghost" onClick={() => downloadNotice(n)} disabled={downloadingId === n.id} title="Download PDF">
+                            {downloadingId === n.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                          </Button>
                           <Button size="sm" variant="ghost" onClick={() => openEdit(n)} title="Edit"><Edit3 className="w-4 h-4" /></Button>
                           <Button size="sm" variant="ghost" onClick={() => togglePublish(n)} title="Toggle publish">
                             <Send className={`w-4 h-4 ${n.status === 'published' ? 'text-emerald-600' : ''}`} />
@@ -453,9 +474,20 @@ export default function AdminNotices() {
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle>Notice Preview</DialogTitle>
-              <Button size="sm" variant="outline" onClick={printPreview} className="gap-1">
-                <Printer className="w-4 h-4" /> Print
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => previewing && downloadNotice(previewing)}
+                  disabled={!previewing || downloadingId !== null}
+                  className="gap-1"
+                >
+                  {downloadingId ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />} Download PDF
+                </Button>
+                <Button size="sm" variant="outline" onClick={printPreview} className="gap-1">
+                  <Printer className="w-4 h-4" /> Print
+                </Button>
+              </div>
             </div>
           </DialogHeader>
           {previewing && (
