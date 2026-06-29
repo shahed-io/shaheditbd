@@ -1,6 +1,6 @@
 // AI Signature generator — returns a base64 PNG signature image
+// Uses Lovable AI Gateway (Gemini image model) so it works without Replicate credits.
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { generateReplicateImage } from '../_shared/replicate-image.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,11 +24,33 @@ Deno.serve(async (req) => {
     const { name = 'Shahed Store Authority', style = 'elegant cursive' } =
       (await req.json().catch(() => ({}))) as { name?: string; style?: string };
 
-    const prompt = `A realistic hand-written signature of the name "${name}" in ${style} style, black ink on a pure plain white background, isolated, no watermarks, no text labels, no decorations, just the signature stroke, high-resolution, looks like a real pen signature scanned from paper. Clean. Wide aspect.`;
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) return j({ error: 'LOVABLE_API_KEY not configured' }, 500);
 
-    const { base64, mimeType } = await generateReplicateImage({ prompt, aspectRatio: '16:9' });
-    const dataUrl = `data:${mimeType};base64,${base64}`;
-    return j({ success: true, dataUrl });
+    const prompt = `A realistic hand-written signature of the name "${name}" in ${style} style. Black ink on a pure plain white background, isolated, no watermarks, no printed text, no decorations — just the signature stroke. Looks like a real pen signature scanned from paper. Clean, wide aspect.`;
+
+    const r = await fetch('https://ai.gateway.lovable.dev/v1/images/generations', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash-image',
+        messages: [{ role: 'user', content: prompt }],
+        modalities: ['image', 'text'],
+      }),
+    });
+
+    if (!r.ok) {
+      const t = await r.text().catch(() => '');
+      if (r.status === 402) return j({ error: 'AI credits exhausted. Please add credits to the workspace.' }, 402);
+      if (r.status === 429) return j({ error: 'Rate limited. Please try again in a moment.' }, 429);
+      return j({ error: `AI image failed ${r.status}: ${t.slice(0, 200)}` }, 500);
+    }
+
+    const data = await r.json();
+    const b64 = data?.data?.[0]?.b64_json;
+    if (!b64) return j({ error: 'AI did not return image data' }, 500);
+
+    return j({ success: true, dataUrl: `data:image/png;base64,${b64}` });
   } catch (e) {
     console.error('ai-generate-signature error:', e);
     return j({ error: e instanceof Error ? e.message : String(e) }, 500);
