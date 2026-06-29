@@ -184,6 +184,21 @@ export default function AdminOfferEditor() {
     }
   };
 
+  const parsePrizesFromDetails = (text: string | null | undefined): string[] => {
+    if (!text) return [];
+    return text
+      .split('\n')
+      .map((l) => {
+        let s = l.trim();
+        if (!s) return '';
+        // strip markdown bullets / numbering prefixes
+        s = s.replace(/^[-*•]\s*/, '').replace(/^\d+[\.\)]\s*/, '');
+        const idx = s.indexOf(':');
+        return (idx >= 0 ? s.slice(idx + 1) : s).trim();
+      })
+      .filter(Boolean);
+  };
+
   const load = async () => {
     if (!id) return;
     setLoading(true);
@@ -197,6 +212,12 @@ export default function AdminOfferEditor() {
     setFields((f as Field[]) || []);
     setSubmissions((s as Submission[]) || []);
     setWinners((w as Winner[]) || []);
+    // Auto-fill prizes from offer.prize_details on first load (only if admin hasn't typed yet)
+    const parsed = parsePrizesFromDetails((o as Offer | null)?.prize_details);
+    if (parsed.length > 0) {
+      setPrizesText((prev) => (prev && prev.trim() ? prev : parsed.join('\n')));
+      setWinnerCount((prev) => (prev && prev !== 1 ? prev : Math.max(1, Math.min(100, parsed.length))));
+    }
     setLoading(false);
   };
 
@@ -834,13 +855,36 @@ export default function AdminOfferEditor() {
                 </div>
               </div>
               <div>
-                <Label>Prizes (one per line, in order — leave blank to skip)</Label>
+                <div className="flex items-center justify-between mb-1">
+                  <Label>Prizes (one per line, in order — leave blank to skip)</Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => {
+                      const parsed = parsePrizesFromDetails(offer?.prize_details);
+                      if (parsed.length === 0) {
+                        toast.error('No prizes found in the offer\'s "Prize Details" field.');
+                        return;
+                      }
+                      setPrizesText(parsed.join('\n'));
+                      setWinnerCount(Math.max(1, Math.min(100, parsed.length)));
+                      toast.success(`Loaded ${parsed.length} prize(s) from Prize Details`);
+                    }}
+                  >
+                    <Wand2 className="w-3.5 h-3.5 mr-1" /> Auto-fill from Prize Details
+                  </Button>
+                </div>
                 <Textarea
-                  rows={Math.min(winnerCount, 5)}
+                  rows={Math.min(Math.max(winnerCount, 3), 8)}
                   value={prizesText}
                   onChange={(e) => setPrizesText(e.target.value)}
                   placeholder={'1st Prize: iPhone 15\n2nd Prize: ৳5000\n3rd Prize: T-shirt'}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Prizes auto-load from the offer's "Prize Details" field. Edit freely — your changes here are used when picking winners.
+                </p>
               </div>
               <Button onClick={pickWinners} disabled={picking || submissions.length === 0} className="w-full">
                 {picking ? 'Picking...' : winnerMode === 'ai' ? <><Sparkles className="w-4 h-4 mr-1" /> Pick {winnerCount} Winner(s) with AI</> : <><Shuffle className="w-4 h-4 mr-1" /> Pick {winnerCount} Random Winner(s)</>}
