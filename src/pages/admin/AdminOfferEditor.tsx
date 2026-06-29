@@ -103,6 +103,40 @@ export default function AdminOfferEditor() {
   const [aiBuilding, setAiBuilding] = useState(false);
   const [aiPreview, setAiPreview] = useState<any>(null);
 
+  // Convert submissions -> customers state
+  const [converting, setConverting] = useState(false);
+
+  const convertSubmissions = async (ids?: string[]) => {
+    if (!offer) return;
+    const eligible = (ids
+      ? submissions.filter((s) => ids.includes(s.id))
+      : submissions
+    ).filter((s) => s.participant_email && !s.converted_to_customer);
+    if (eligible.length === 0) {
+      toast.error('No eligible submissions (need email & not already converted)');
+      return;
+    }
+    if (!confirm(`Send account invite email to ${eligible.length} participant(s)? They'll receive a link to set their password and become customers.`)) return;
+    setConverting(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session?.session?.access_token;
+      const resp = await supabase.functions.invoke('convert-submissions-to-customers', {
+        body: { offer_id: offer.id, submission_ids: ids },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      if (resp.error) throw resp.error;
+      const r = resp.data?.results;
+      toast.success(`✅ ${r?.invited || 0} invited, ${r?.linked_existing || 0} linked, ${r?.skipped || 0} skipped, ${r?.failed || 0} failed`);
+      if (r?.errors?.length) console.warn('Convert errors:', r.errors);
+      await load();
+    } catch (e: any) {
+      toast.error(e.message || 'Conversion failed');
+    } finally {
+      setConverting(false);
+    }
+  };
+
   const hasFutureStart = Boolean(offer?.start_at && new Date(offer.start_at) > new Date());
   const hasEnded = Boolean(offer?.end_at && new Date(offer.end_at) < new Date());
   const formReady = fields.length > 0 || Boolean(offer?.google_form_url);
