@@ -11,7 +11,7 @@ const TermsConditions = () => (
     badge="Legal Document"
     badgeIcon={<FileText size={13} />}
     title="Terms & Conditions"
-    subtitle="Shahed Store ব্যবহার করার আগে এই শর্তাবলী মনোযোগ দিয়ে পড়ুন। সাইট ব্যবহার করলে আপনি এই শর্তগুলো মেনে নিচ্ছেন বলে ধরা হবে।"
+    subtitle="শাহেদ স্টোর ব্যবহার করার আগে এই শর্তাবলী মনোযোগ দিয়ে পড়ুন। সাইট ব্যবহার করলে আপনি এই শর্তগুলো মেনে নিচ্ছেন বলে ধরা হবে।"
     accentFrom={A}
     accentTo={B}
   >
