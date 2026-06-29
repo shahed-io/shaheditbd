@@ -1653,7 +1653,10 @@ export type Database = {
       }
       offer_submissions: {
         Row: {
+          converted_at: string | null
+          converted_to_customer: boolean
           created_at: string
+          customer_user_id: string | null
           data: Json
           id: string
           ip: string | null
@@ -1668,7 +1671,10 @@ export type Database = {
           winner_rank: number | null
         }
         Insert: {
+          converted_at?: string | null
+          converted_to_customer?: boolean
           created_at?: string
+          customer_user_id?: string | null
           data?: Json
           id?: string
           ip?: string | null
@@ -1683,7 +1689,10 @@ export type Database = {
           winner_rank?: number | null
         }
         Update: {
+          converted_at?: string | null
+          converted_to_customer?: boolean
           created_at?: string
+          customer_user_id?: string | null
           data?: Json
           id?: string
           ip?: string | null
