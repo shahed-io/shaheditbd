@@ -14,7 +14,6 @@ serve(async (req) => {
       product,
       count = 8,
       language = "bn",
-      storeName: rawStoreName = "শাহেদ স্টোর",
       ratingMin = 4,
       ratingMax = 5,
     } = await req.json();
