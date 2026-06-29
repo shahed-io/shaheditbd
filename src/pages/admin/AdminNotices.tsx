@@ -57,6 +57,7 @@ export default function AdminNotices() {
   const [aiLang, setAiLang] = useState<'bn' | 'en'>('bn');
   const [aiBusy, setAiBusy] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [signature, setSignature] = useState<NoticeSignature>(DEFAULT_NOTICE_SIGNATURE);
 
   useEffect(() => { loadNoticeSignature().then(setSignature); }, []);
