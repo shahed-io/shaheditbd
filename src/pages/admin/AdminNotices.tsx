@@ -266,6 +266,9 @@ export default function AdminNotices() {
                       <td className="py-2 px-2 text-right">
                         <div className="inline-flex gap-1">
                           <Button size="sm" variant="ghost" onClick={() => setPreviewing(n)} title="Preview"><Eye className="w-4 h-4" /></Button>
+                          <Button size="sm" variant="ghost" onClick={() => downloadNotice(n)} disabled={downloadingId === n.id} title="Download PDF">
+                            {downloadingId === n.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                          </Button>
                           <Button size="sm" variant="ghost" onClick={() => openEdit(n)} title="Edit"><Edit3 className="w-4 h-4" /></Button>
                           <Button size="sm" variant="ghost" onClick={() => togglePublish(n)} title="Toggle publish">
                             <Send className={`w-4 h-4 ${n.status === 'published' ? 'text-emerald-600' : ''}`} />
