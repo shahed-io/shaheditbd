@@ -54,6 +54,9 @@ interface Submission {
   winner_rank: number | null;
   prize_won: string | null;
   created_at: string;
+  converted_to_customer?: boolean;
+  customer_user_id?: string | null;
+  converted_at?: string | null;
 }
 
 interface Winner {
@@ -99,6 +102,40 @@ export default function AdminOfferEditor() {
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiBuilding, setAiBuilding] = useState(false);
   const [aiPreview, setAiPreview] = useState<any>(null);
+
+  // Convert submissions -> customers state
+  const [converting, setConverting] = useState(false);
+
+  const convertSubmissions = async (ids?: string[]) => {
+    if (!offer) return;
+    const eligible = (ids
+      ? submissions.filter((s) => ids.includes(s.id))
+      : submissions
+    ).filter((s) => s.participant_email && !s.converted_to_customer);
+    if (eligible.length === 0) {
+      toast.error('No eligible submissions (need email & not already converted)');
+      return;
+    }
+    if (!confirm(`Send account invite email to ${eligible.length} participant(s)? They'll receive a link to set their password and become customers.`)) return;
+    setConverting(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session?.session?.access_token;
+      const resp = await supabase.functions.invoke('convert-submissions-to-customers', {
+        body: { offer_id: offer.id, submission_ids: ids },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      if (resp.error) throw resp.error;
+      const r = resp.data?.results;
+      toast.success(`✅ ${r?.invited || 0} invited, ${r?.linked_existing || 0} linked, ${r?.skipped || 0} skipped, ${r?.failed || 0} failed`);
+      if (r?.errors?.length) console.warn('Convert errors:', r.errors);
+      await load();
+    } catch (e: any) {
+      toast.error(e.message || 'Conversion failed');
+    } finally {
+      setConverting(false);
+    }
+  };
 
   const hasFutureStart = Boolean(offer?.start_at && new Date(offer.start_at) > new Date());
   const hasEnded = Boolean(offer?.end_at && new Date(offer.end_at) < new Date());
@@ -686,12 +723,33 @@ export default function AdminOfferEditor() {
 
         {/* SUBMISSIONS */}
         <TabsContent value="submissions" className="space-y-3">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">{submissions.length} total entries</p>
-            <Button variant="outline" size="sm" onClick={exportCSV} disabled={submissions.length === 0}>
-              <Download className="w-4 h-4 mr-1" /> Export CSV
-            </Button>
+          <div className="flex justify-between items-center flex-wrap gap-2">
+            <p className="text-sm text-muted-foreground">
+              {submissions.length} total ·{' '}
+              <span className="text-green-600 font-medium">
+                {submissions.filter((s) => s.converted_to_customer).length} converted
+              </span>
+            </p>
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                size="sm"
+                onClick={() => convertSubmissions()}
+                disabled={converting || submissions.length === 0}
+                className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white"
+              >
+                {converting ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : '👥 '}
+                Convert All to Customers
+              </Button>
+              <Button variant="outline" size="sm" onClick={exportCSV} disabled={submissions.length === 0}>
+                <Download className="w-4 h-4 mr-1" /> Export CSV
+              </Button>
+            </div>
           </div>
+          <Card className="bg-violet-50 dark:bg-violet-950/20 border-violet-200 dark:border-violet-900">
+            <CardContent className="py-3 text-xs text-muted-foreground">
+              💡 "Convert to Customer" সব submission এর email-এ account invite পাঠাবে। তারা link এ click করে password set করলেই customer হয়ে যাবে — এক click এ সবাই!
+            </CardContent>
+          </Card>
           {submissions.length === 0 ? (
             <Card><CardContent className="py-10 text-center text-muted-foreground">No submissions yet.</CardContent></Card>
           ) : (
@@ -704,6 +762,8 @@ export default function AdminOfferEditor() {
                     <th className="p-2 text-left">Email</th>
                     <th className="p-2 text-left">Phone</th>
                     <th className="p-2 text-left">Winner</th>
+                    <th className="p-2 text-left">Customer</th>
+                    <th className="p-2 text-left">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -714,6 +774,25 @@ export default function AdminOfferEditor() {
                       <td className="p-2">{s.participant_email || '—'}</td>
                       <td className="p-2">{s.participant_phone || '—'}</td>
                       <td className="p-2">{s.is_winner && <Badge className="bg-yellow-500/20 text-yellow-700">🏆 #{s.winner_rank}</Badge>}</td>
+                      <td className="p-2">
+                        {s.converted_to_customer ? (
+                          <Badge className="bg-green-500/20 text-green-700">✓ Customer</Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">—</span>
+                        )}
+                      </td>
+                      <td className="p-2">
+                        {!s.converted_to_customer && s.participant_email && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={converting}
+                            onClick={() => convertSubmissions([s.id])}
+                          >
+                            Invite
+                          </Button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
