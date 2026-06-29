@@ -181,6 +181,22 @@ export default function AdminNotices() {
     window.print();
   };
 
+  const downloadNotice = async (n: NoticeData & { id?: string; slug?: string }) => {
+    try {
+      setDownloadingId((n as any).id || 'preview');
+      toast.info('PDF তৈরি হচ্ছে...');
+      await downloadNoticePdf(n, {
+        brand: { name: 'Shahed Store' },
+        signatureUrl: signature.imageDataUrl || undefined,
+      });
+      toast.success('Notice download হয়েছে');
+    } catch (e: any) {
+      toast.error(e?.message || 'Download ব্যর্থ');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   const previewNotice: NoticeData | null = useMemo(() => editing ? {
     title: editing.title || 'Untitled Notice',
     summary: editing.summary || '',
