@@ -636,6 +636,7 @@ const Navbar = () => {
 
               {/* Cart Button — hidden on mobile, visible on sm+ */}
               <button onClick={() => setCartOpen(true)}
+                aria-label={cartCount > 0 ? `Open cart (${cartCount} items)` : 'Open cart'}
                 className="hidden sm:relative sm:flex items-center gap-2 px-3 lg:px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))',
@@ -653,9 +654,13 @@ const Navbar = () => {
 
               <button className="md:hidden p-2.5 rounded-xl transition-colors"
                 style={{ color: 'hsl(226,35%,30%)' }}
+                aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                aria-expanded={mobileOpen}
+                aria-controls="mobile-navigation-menu"
                 onClick={() => { setMobileOpen(!mobileOpen); setMobileSearch(false); }}>
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
+
             </div>
           </div>
         </div>
