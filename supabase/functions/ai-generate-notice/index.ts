@@ -109,22 +109,30 @@ Write the body as a real corporate notice with these sections, in this order:
     });
 
 
-    const match = ai.text.match(/\{[\s\S]*\}/);
+    // Strip code fences if model added them despite instructions
+    let raw = ai.text.trim();
+    raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+    const match = raw.match(/\{[\s\S]*\}/);
     if (!match) throw new Error('AI did not return JSON');
     let plan: any;
     try { plan = JSON.parse(match[0]); } catch { throw new Error('AI returned invalid JSON'); }
 
-    // sanitize
+    // Normalize store name to English everywhere
+    const fixStoreName = (s: string) => String(s || '')
+      .replace(/শাহেদ\s*স্টোর|শাহিদ\s*স্টোর|সাহেদ\s*স্টোর|শায়েদ\s*স্টোর|সাহিদ\s*স্টোর|শাহীদ\s*স্টোর/g, 'Shahed Store')
+      .replace(/Shahed\s*Store-?(এর|কে|তে|এ)/g, 'Shahed Store $1');
+
     const out = {
-      title: String(plan.title || '').slice(0, 200),
-      summary: String(plan.summary || '').slice(0, 300),
-      reference_no: String(plan.reference_no || '').slice(0, 50),
-      body_markdown: String(plan.body_markdown || ''),
-      signed_by: String(plan.signed_by || 'Shahed Store Authority').slice(0, 120),
+      title: fixStoreName(plan.title).slice(0, 200),
+      summary: fixStoreName(plan.summary).slice(0, 300),
+      reference_no: String(plan.reference_no || `NTC-${new Date().getFullYear()}-${refSuffix}`).slice(0, 50),
+      body_markdown: fixStoreName(plan.body_markdown),
+      signed_by: fixStoreName(plan.signed_by || 'Shahed Store Authority').slice(0, 120),
       signed_role: String(plan.signed_role || 'Management').slice(0, 120),
       effective_date: typeof plan.effective_date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(plan.effective_date)
-        ? plan.effective_date : null,
+        ? plan.effective_date : today,
     };
+
 
     return j({ success: true, notice: out, provider: ai.provider });
   } catch (e) {
