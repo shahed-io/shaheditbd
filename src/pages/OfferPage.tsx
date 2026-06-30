@@ -14,6 +14,7 @@ import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
 import { useAuth } from '@/hooks/useAuth';
 import ReactMarkdown from 'react-markdown';
+import { parsePrizeItems } from '@/lib/offerPrizes';
 
 interface Offer {
   id: string;
