@@ -296,7 +296,10 @@ const Blog = () => {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <>
+                <h2 className="sr-only">সকল ব্লগ পোস্ট</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
                 {filtered.map((post, idx) => (
                   <Link
                     key={post.id}
