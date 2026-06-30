@@ -440,7 +440,7 @@ export default function AdminNotices() {
                 {!voice.supported && <p className="text-xs text-muted-foreground mt-1">Voice input এই browser-এ সাপোর্ট নেই (Chrome/Edge ব্যবহার করুন)।</p>}
               </div>
 
-              <Button onClick={runAI} disabled={aiBusy || !aiPrompt.trim()} className="w-full gap-2">
+              <Button onClick={runAI} disabled={aiBusy || !aiPrompt.trim()} className="w-full gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white shadow-lg shadow-violet-500/30">
                 {aiBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                 {aiBusy ? 'তৈরি করছি...' : 'AI দিয়ে Notice তৈরি করো'}
               </Button>
