@@ -213,9 +213,10 @@ const Blog = () => {
                         {post.blog_categories.name}
                       </span>
                     )}
-                    <h3 className={`font-bold text-foreground line-clamp-2 mb-3 group-hover:text-primary transition-colors ${i === 0 ? 'text-base' : 'text-sm'}`}>
+                    <h2 className={`font-bold text-foreground line-clamp-2 mb-3 group-hover:text-primary transition-colors ${i === 0 ? 'text-base' : 'text-sm'}`}>
                       {post.title}
-                    </h3>
+                    </h2>
+
                     {i === 0 && post.excerpt && (
                       <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{post.excerpt}</p>
                     )}
@@ -295,7 +296,10 @@ const Blog = () => {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <>
+                <h2 className="sr-only">সকল ব্লগ পোস্ট</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
                 {filtered.map((post, idx) => (
                   <Link
                     key={post.id}
@@ -375,8 +379,10 @@ const Blog = () => {
                     </div>
                   </Link>
                 ))}
-              </div>
+                </div>
+              </>
             )}
+
           </main>
 
           {/* Sidebar */}
