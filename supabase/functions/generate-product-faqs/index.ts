@@ -63,8 +63,8 @@ Return ONLY a valid JSON array, no prose, no code fences. Schema:
       let out = s;
       if (language !== "en") {
         out = out
-          .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store-এর")
-          .replace(/Shahed\s+Store\s+Bangladesh/gi, "Shahed Store বাংলাদেশ")
+          .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store")
+          .replace(/Shahed\s+Store\s+Bangladesh/gi, "Shahed Store Bangladesh")
           .replace(/Shahed\s+Store\s+BD/gi, "Shahed Store BD")
           .replace(/Shahed\s+Store/gi, "Shahed Store")
           .replace(/ShahedStore/g, "Shahed Store")

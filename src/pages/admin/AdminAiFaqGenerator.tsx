@@ -22,8 +22,8 @@ const sanitizeStoreName = (text: string, language: 'bn' | 'en') => {
   let out = text;
   if (language === 'bn') {
     out = out
-      .replace(/Shahed\s+Store(?:'|’)s/gi, 'Shahed Store-এর')
-      .replace(/Shahed\s+Store\s+Bangladesh/gi, 'Shahed Store বাংলাদেশ')
+      .replace(/Shahed\s+Store(?:'|’)s/gi, 'Shahed Store')
+      .replace(/Shahed\s+Store\s+Bangladesh/gi, 'Shahed Store Bangladesh')
       .replace(/Shahed\s+Store\s+BD/gi, 'Shahed Store BD')
       .replace(/Shahed\s+Store/gi, target)
       .replace(/ShahedStore/g, target)

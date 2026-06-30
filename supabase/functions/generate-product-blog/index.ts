@@ -192,7 +192,7 @@ Respond ONLY with this JSON (no markdown, no explanation):
       try {
         const rawContent = await callLovableAI(prompt);
         const sanitizeStoreName = (value: string) => value
-          .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store-এর")
+          .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store")
           .replace(/Shahed\s+Store/gi, "Shahed Store")
           .replace(/ShahedStore/g, "Shahed Store")
           .replace(/Shahid\s*Store|Sahed\s*Store|Shawon\s*Store/gi, "Shahed Store")

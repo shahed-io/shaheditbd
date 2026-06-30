@@ -385,7 +385,7 @@ const ProductDetail = () => {
     const priceStr = `৳${displayPrice.toLocaleString()}`;
     const discountStr = product.discount_percent ? ` | ${product.discount_percent}% ছাড়` : '';
     const catStr = product.categories?.name ? ` | ${product.categories.name}` : '';
-    const suffix = `${product.name} কিনুন ${priceStr}${discountStr}${catStr}. ১০০% genuine license. Instant delivery. Shahed Store বাংলাদেশ।`;
+    const suffix = `${product.name} কিনুন ${priceStr}${discountStr}${catStr}. ১০০% genuine license. Instant delivery. Shahed Store Bangladesh।`;
     return clean ? `${clean}. ${suffix}`.substring(0, 160) : suffix.substring(0, 160);
   })();
 

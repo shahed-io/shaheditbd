@@ -11,7 +11,7 @@ const STORE_NAME_BN = "Shahed Store";
 
 function sanitizeStoreName(value: string): string {
   return value
-    .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store-এর")
+    .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store")
     .replace(/Shahed\s+Store\s+Bangladesh/gi, "Shahed Store Bangladesh")
     .replace(/Shahed\s+Store\s+BD/gi, "Shahed Store BD")
     .replace(/Shahed\s+Store/gi, STORE_NAME_BN)
