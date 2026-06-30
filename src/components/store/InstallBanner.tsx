@@ -84,7 +84,7 @@ const InstallBanner = () => {
         {/* Text */}
         <div className="flex-1 min-w-0">
           <p className="text-white text-[13px] font-semibold leading-tight truncate">
-            শাহেদ স্টোর অ্যাপ ইন্সটল করুন
+            Shahed Store অ্যাপ ইন্সটল করুন
           </p>
           <p className="text-white/55 text-[11px] mt-0.5 leading-tight">
             দ্রুত অ্যাক্সেস ও অর্ডার নোটিফিকেশন পান

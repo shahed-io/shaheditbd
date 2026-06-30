@@ -19,11 +19,9 @@ serve(async (req) => {
     } = await req.json();
     if (!product?.name) throw new Error("product.name required");
 
-    const storeName = language === "en" ? "Shahed Store" : "শাহেদ স্টোর";
+    const storeName = "Shahed Store";
     const lang = language === "en" ? "English" : "Bengali (বাংলা)";
-    const nameRule = language === "en"
-      ? `The store name must be exactly "Shahed Store". Never write Shahid Store, Sahed Store, or ShahedStore.`
-      : `দোকানের নাম সবসময় হুবহু "শাহেদ স্টোর" লিখবে। কখনো "Shahed Store", "ShahedStore", "Shahid Store", "শাহিদ স্টোর", "সাহেদ স্টোর" বা অন্য কোনো ভুল বানান লিখবে না।`;
+    const nameRule = `STORE NAME RULE: Write the store name ALWAYS in English as exactly "Shahed Store" — even inside Bengali reviews. Never use Bengali script for the name (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর") and never use "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences keep the name as "Shahed Store" verbatim.`;
     const prompt = `You are writing authentic customer reviews for "${storeName}", a digital software store in Bangladesh.
 
 ${nameRule}
@@ -78,9 +76,9 @@ Return ONLY a valid JSON array, no prose, no code fences. Schema:
       let out = value;
       if (language !== "en") {
         out = out
-          .replace(/Shahed\s+Store(?:'|’)s/gi, "শাহেদ স্টোর-এর")
-          .replace(/Shahed\s+Store/gi, "শাহেদ স্টোর")
-          .replace(/ShahedStore/g, "শাহেদ স্টোর");
+          .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store")
+          .replace(/Shahed\s+Store/gi, "Shahed Store")
+          .replace(/ShahedStore/g, "Shahed Store");
       } else {
         out = out.replace(/ShahedStore/g, "Shahed Store");
       }

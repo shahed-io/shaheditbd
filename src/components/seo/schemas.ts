@@ -158,7 +158,7 @@ export const organizationSchema = () => ({
   '@context': 'https://schema.org',
   '@type': ['Organization', 'OnlineStore'],
   name: SITE_NAME,
-  alternateName: ['শাহেদ স্টোর BD', 'Shahed Store'],
+  alternateName: ['Shahed Store BD', 'Shahed Store'],
   url: SITE_URL,
   logo: {
     '@type': 'ImageObject',
@@ -216,7 +216,7 @@ export const websiteSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: SITE_NAME,
-  alternateName: 'শাহেদ স্টোর BD',
+  alternateName: 'Shahed Store BD',
   url: SITE_URL,
   inLanguage: ['bn-BD', 'en'],
   potentialAction: {

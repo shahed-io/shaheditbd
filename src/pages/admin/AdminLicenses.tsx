@@ -1841,7 +1841,7 @@ const AdminLicenses = () => {
                   🔐 Key: {waModal.license.key_value}{'\n'}
                   {waModal.license.extra_info && <>🔒 Password: {waModal.license.extra_info}{'\n'}</>}
                   ━━━━━━━━━━━━{'\n\n'}
-                  ✅ ধন্যবাদ! — শাহেদ স্টোর
+                  ✅ ধন্যবাদ! — Shahed Store
                 </div>
               </div>
             </div>

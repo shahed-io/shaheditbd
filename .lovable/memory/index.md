@@ -5,6 +5,7 @@ React, Supabase Edge Functions. Database is the single source of truth. No WooCo
 Storefront design: 'Gradient Glassmorphism' (24-28px blur), dynamic HSL (`--brand-h`). White glass for PWA/Cards.
 Admin design: Purple Glassmorphism Dashboard — soft lavender canvas, white-glass cards, violet accents (258 78% 55%), floating active pills, big violet icon page-header card. Matches user dashboard.
 Language: Admin panel strictly English. Frontend in Bengali. Emails in English (`lang="en"`).
+Brand name "Shahed Store" — always English everywhere (incl. inside Bengali text + AI output). Never use Bengali script variants. See [store-name-english](mem://constraints/store-name-english).
 AI Card Generator: pale-blue/white bg + sky-blue/mint bubbles, WHITE pill with RED inner SHAHED STORE badge, white brand pill, contact line inside card. NEVER pastel pink/peach/lavender bg.
 
 ## Memories

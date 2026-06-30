@@ -18,13 +18,13 @@ interface ProductRow {
 interface FaqItem { q: string; a: string }
 
 const sanitizeStoreName = (text: string, language: 'bn' | 'en') => {
-  const target = language === 'bn' ? 'শাহেদ স্টোর' : 'Shahed Store';
+  const target = language === 'bn' ? 'Shahed Store' : 'Shahed Store';
   let out = text;
   if (language === 'bn') {
     out = out
-      .replace(/Shahed\s+Store(?:'|’)s/gi, 'শাহেদ স্টোর-এর')
-      .replace(/Shahed\s+Store\s+Bangladesh/gi, 'শাহেদ স্টোর বাংলাদেশ')
-      .replace(/Shahed\s+Store\s+BD/gi, 'শাহেদ স্টোর BD')
+      .replace(/Shahed\s+Store(?:'|’)s/gi, 'Shahed Store')
+      .replace(/Shahed\s+Store\s+Bangladesh/gi, 'Shahed Store Bangladesh')
+      .replace(/Shahed\s+Store\s+BD/gi, 'Shahed Store BD')
       .replace(/Shahed\s+Store/gi, target)
       .replace(/ShahedStore/g, target)
       .replace(/Shahid\s*Store/gi, target)
@@ -116,7 +116,7 @@ const AdminAiFaqGenerator = () => {
         },
         count,
         language,
-        storeName: language === 'bn' ? 'শাহেদ স্টোর' : 'Shahed Store',
+        storeName: language === 'bn' ? 'Shahed Store' : 'Shahed Store',
       },
     });
     if (error) throw new Error(error.message);

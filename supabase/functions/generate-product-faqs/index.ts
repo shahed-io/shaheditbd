@@ -14,11 +14,9 @@ serve(async (req) => {
     if (!product?.name) throw new Error("product.name required");
 
     // Enforce correct store name based on language — never let AI invent variants
-    const storeName = language === "en" ? "Shahed Store" : "শাহেদ স্টোর";
+    const storeName = "Shahed Store";
     const lang = language === "en" ? "English" : "Bengali (বাংলা)";
-    const nameRule = language === "en"
-      ? `CRITICAL: The store name is EXACTLY "Shahed Store" (English spelling). Never write it in Bengali, never use variants like "Shahid", "Sahed", "Shawon", etc.`
-      : `গুরুত্বপূর্ণ নিয়ম: দোকানের নাম সবসময় হুবহু "শাহেদ স্টোর" লিখতে হবে। কখনোই "Shahed Store" (ইংরেজি), "ShahedStore", "Shahid Store", "Sahed Store", "শাহিদ স্টোর", "শাওন স্টোর", "শায়েদ স্টোর", "সাহেদ স্টোর", "সাহিদ স্টোর", "শাহেদ ষ্টোর" বা অন্য কোনো রূপ ব্যবহার করা যাবে না।`;
+    const nameRule = `CRITICAL STORE NAME RULE: The store name must ALWAYS be written in English as exactly "Shahed Store" — even when the surrounding text is Bengali. Never use Bengali script for the name (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর", etc.) and never use variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences write it as "Shahed Store" verbatim (e.g. "Shahed Store থেকে").`;
     const prompt = `You are an expert SEO copywriter for "${storeName}", a digital software store in Bangladesh.
 
 ${nameRule}
@@ -63,14 +61,14 @@ Return ONLY a valid JSON array, no prose, no code fences. Schema:
       let out = s;
       if (language !== "en") {
         out = out
-          .replace(/Shahed\s+Store(?:'|’)s/gi, "শাহেদ স্টোর-এর")
-          .replace(/Shahed\s+Store\s+Bangladesh/gi, "শাহেদ স্টোর বাংলাদেশ")
-          .replace(/Shahed\s+Store\s+BD/gi, "শাহেদ স্টোর BD")
-          .replace(/Shahed\s+Store/gi, "শাহেদ স্টোর")
-          .replace(/ShahedStore/g, "শাহেদ স্টোর")
-          .replace(/Shahid\s*Store/gi, "শাহেদ স্টোর")
-          .replace(/Sahed\s*Store/gi, "শাহেদ স্টোর")
-          .replace(/Shawon\s*Store/gi, "শাহেদ স্টোর");
+          .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store")
+          .replace(/Shahed\s+Store\s+Bangladesh/gi, "Shahed Store Bangladesh")
+          .replace(/Shahed\s+Store\s+BD/gi, "Shahed Store BD")
+          .replace(/Shahed\s+Store/gi, "Shahed Store")
+          .replace(/ShahedStore/g, "Shahed Store")
+          .replace(/Shahid\s*Store/gi, "Shahed Store")
+          .replace(/Sahed\s*Store/gi, "Shahed Store")
+          .replace(/Shawon\s*Store/gi, "Shahed Store");
       } else {
         out = out
           .replace(/Shahid\s*Store/gi, storeName)

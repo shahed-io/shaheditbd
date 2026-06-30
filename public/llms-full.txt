@@ -13,7 +13,7 @@ Social: https://www.facebook.com/Shahed.Store365
 
 ## About Shahed Store
 
-Shahed Store (শাহেদ স্টোর) is Bangladesh's most trusted online shop for genuine digital software, license keys, and premium subscriptions. We sell only 100% original products sourced directly or through authorized channels. Every purchase comes with instant delivery to the customer dashboard and email, full activation support, and a published refund policy.
+Shahed Store (Shahed Store) is Bangladesh's most trusted online shop for genuine digital software, license keys, and premium subscriptions. We sell only 100% original products sourced directly or through authorized channels. Every purchase comes with instant delivery to the customer dashboard and email, full activation support, and a published refund policy.
 
 ## What we sell
 
@@ -113,7 +113,7 @@ A: Shahed Store is a PWA — install it from the browser via /install or the mob
 ## Brand & entity
 
 - Legal / brand name: Shahed Store
-- Bengali name: শাহেদ স্টোর
+- Bengali name: Shahed Store
 - Aliases: Shahed Store BD, Shahed Store Bangladesh, Shahedstore
 - Domain: shahedstore.com.bd
 - Logo: https://shahedstore.com.bd/favicon.png
