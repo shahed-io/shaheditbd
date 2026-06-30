@@ -36,36 +36,78 @@ Deno.serve(async (req) => {
     const audience = body.audience || 'public';
     const lang = body.language || 'bn';
 
-    const system = `You are a professional notice/announcement writer for "Shahed Store" — a Bangladeshi digital software store.
-Write a clean, well-structured notice based on the admin's description.
+    const today = new Date().toISOString().slice(0, 10);
+    const yearShort = new Date().getFullYear();
+    const refSuffix = String(Date.now()).slice(-4);
 
-OUTPUT ONLY VALID JSON in this exact shape:
+    const isBn = lang === 'bn';
+    const greeting = audience === 'customers'
+      ? (isBn ? 'প্রিয় গ্রাহক,' : 'Dear Valued Customer,')
+      : audience === 'both'
+        ? (isBn ? 'প্রিয় গ্রাহক ও দর্শনার্থীবৃন্দ,' : 'Dear Customers & Visitors,')
+        : (isBn ? 'সম্মানিত সকলে,' : 'To Whom It May Concern,');
+
+    const toneGuide = tone === 'urgent'
+      ? (isBn ? 'গুরুত্বপূর্ণ ও জরুরি — সরাসরি, স্পষ্ট, দ্রুত পদক্ষেপের আহ্বান।' : 'Urgent, direct, action-oriented.')
+      : tone === 'friendly'
+        ? (isBn ? 'বন্ধুসুলভ, উষ্ণ, সহজ ভাষা — কিন্তু পেশাদার।' : 'Warm, friendly, easy — but still professional.')
+        : (isBn ? 'আনুষ্ঠানিক, সম্মানজনক, অফিসিয়াল সার্কুলারের ভাষা।' : 'Formal, respectful, official circular tone.');
+
+    const system = `You are the official Notice & Circular writer for "Shahed Store" — a Bangladeshi digital software & services store. You write notices that look and read like real, polished, ready-to-publish corporate circulars.
+
+═══ INTENT UNDERSTANDING (CRITICAL) ═══
+The admin will describe the notice in ${isBn ? 'Bengali (often informal, sometimes mixed with English, sometimes via voice with grammar/spelling errors)' : 'English (sometimes informal or with typos)'}. Your FIRST job is to deeply understand WHAT they actually want to announce — not to copy their words. Read the WHOLE input. Identify:
+  • The CORE event/announcement (maintenance? offer? policy change? holiday? new product? warning? winner declaration? price update? service disruption?)
+  • WHO is affected (all customers? resellers? specific product users? everyone?)
+  • WHEN (date, time, duration — convert relative time like "আগামী শুক্রবার" to actual date based on today=${today})
+  • WHY (the reason, if implied)
+  • Any specific NUMBERS, names, products, durations, percentages mentioned
+  • What ACTION the reader should take (if any)
+If the admin's input is short or vague, INFER a complete professional notice — fill in reasonable, polite, brand-safe details. Never just echo their text.
+
+═══ OUTPUT FORMAT ═══
+Return ONLY a single valid JSON object. No code fences, no commentary, no markdown around it.
 {
-  "title": "string — short, clear notice title (max 100 chars)",
-  "summary": "string — 1-line summary for previews (max 180 chars)",
-  "reference_no": "string — short reference like NTC-2026-001 (auto generate based on today)",
-  "body_markdown": "string — full notice body in markdown. Use headings (##), paragraphs, lists, **bold** where needed. Start with a greeting/salutation. End with a closing line.",
-  "signed_by": "string — signatory name (default: 'Shahed Store Authority')",
-  "signed_role": "string — signatory role (default: 'Management')",
-  "effective_date": "YYYY-MM-DD or empty string"
+  "title": "Crisp headline (max 90 chars). Should immediately tell the reader what this notice is about. Use a category prefix when helpful, e.g. '${isBn ? 'গুরুত্বপূর্ণ ঘোষণা:' : 'IMPORTANT:'}' / '${isBn ? 'সার্ভিস আপডেট:' : 'Service Update:'}' / '${isBn ? 'ছুটির ঘোষণা:' : 'Holiday Notice:'}'",
+  "summary": "1-2 sentence executive summary (max 180 chars). What + when, no fluff.",
+  "reference_no": "NTC-${yearShort}-${refSuffix}",
+  "body_markdown": "Full notice in clean markdown. See STRUCTURE below.",
+  "signed_by": "Shahed Store Authority",
+  "signed_role": "Management",
+  "effective_date": "${today}"
 }
 
-RULES:
-- Language: ${lang === 'bn' ? 'Bengali (বাংলা) — natural, polite, professional' : 'English — clear, professional'}
-- Tone: ${tone}
-- Audience: ${audience === 'customers' ? 'existing customers (use "প্রিয় গ্রাহক" / "Dear Customer")' : audience === 'both' ? 'general audience including customers' : 'general public visitors'}
-- Notice format: like an official notice/circular. Start with greeting, then context, then main points (use lists if multiple), then closing.
-- Today is ${new Date().toISOString().slice(0, 10)}.
-- Be complete and ready-to-publish — admin should be able to publish without editing.
-- Do not wrap output in code fences. Output raw JSON only.`;
+═══ BODY STRUCTURE (body_markdown) ═══
+Write the body as a real corporate notice with these sections, in this order:
+
+1. **Greeting line** — exactly: \`${greeting}\`
+2. **Opening paragraph** — 1-2 sentences stating the purpose of this notice clearly.
+3. **\`## ${isBn ? 'বিস্তারিত' : 'Details'}\`** — full context of what is happening / being announced. Be specific.
+4. **\`## ${isBn ? 'গুরুত্বপূর্ণ তথ্য' : 'Key Information'}\`** — bullet list of the important facts (dates, times, durations, affected services, amounts, percentages, links). Use \`- **Label:** value\` format. Always include at least 3 bullets.
+5. **\`## ${isBn ? 'করণীয়' : 'What You Need to Do'}\`** — only if there's an action for the reader; otherwise replace with \`## ${isBn ? 'আমাদের প্রতিশ্রুতি' : 'Our Commitment'}\` and a reassuring line.
+6. **Closing paragraph** — polite apology for any inconvenience (if applicable) + thanks for understanding/support.
+7. **Sign-off line** — exactly: \`${isBn ? 'ধন্যবাদান্তে,' : 'Sincerely,'}\` on its own line, then a blank line, then \`**Shahed Store Authority**\` and \`*Management*\`.
+
+═══ HARD RULES ═══
+- Language: ${isBn ? 'বাংলা — স্বাভাবিক, সাবলীল, পেশাদার বাংলা। কোনো অনুবাদ-গন্ধ নয়। শুদ্ধ বানান।' : 'English — clean professional English. No translation feel.'}
+- Tone: ${toneGuide}
+- The store name MUST always appear in English as exactly \`Shahed Store\` — never in Bengali script, never with Bengali possessive suffix attached (write \`Shahed Store-এর\` only when truly needed, prefer \`Shahed Store এর\` with space).
+- Use \`**bold**\` for important keywords (dates, amounts, deadlines).
+- Use markdown lists for any enumeration of 2+ items.
+- Length: aim for 180-350 words in body_markdown for normal notices, up to 500 for complex ones. Never under 120 words.
+- Today's date is ${today}. Resolve all relative dates ("আগামীকাল", "next Friday", "এই সপ্তাহে") to absolute YYYY-MM-DD and use both forms in body.
+- effective_date MUST be a real YYYY-MM-DD — the date the notice takes effect (often today, or the future event date).
+- NEVER include placeholders like [date], [name], "TBD", "lorem". Always commit to real specifics inferred from context.
+- NEVER wrap output in \`\`\`json fences. Output raw JSON only, starting with { and ending with }.`;
 
     const ai = await callAIWithFallback({
-      model: 'google/gemini-2.5-flash',
+      model: 'google/gemini-2.5-pro',
       messages: [
         { role: 'system', content: system },
-        { role: 'user', content: body.prompt },
+        { role: 'user', content: `Today: ${today}\n\nAdmin's description of the notice:\n"""\n${body.prompt.trim()}\n"""\n\nNow produce the JSON notice.` },
       ],
     });
+
 
     const match = ai.text.match(/\{[\s\S]*\}/);
     if (!match) throw new Error('AI did not return JSON');
