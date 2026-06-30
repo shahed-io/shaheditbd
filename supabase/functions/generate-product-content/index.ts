@@ -111,7 +111,7 @@ KEYWORD INTENT TYPES to include naturally:
   - Local: "[product] ঢাকা", "[product] bangladesh online shop"
 PRICE FORMAT: Always write price as ৳[amount] (Taka symbol)
 TRUST SIGNALS: "১০০% genuine", "instant delivery", "official license", "নিরাপদ পেমেন্ট"
-STORE NAME RULE: Public Bengali/product content must write the store name exactly as "Shahed Store". Never output "Shahed Store", "ShahedStore", "Shahid Store", "শাহিদ স্টোর", "সাহেদ স্টোর", or any other variant.`;
+STORE NAME RULE: The store name must ALWAYS be written in English as exactly "Shahed Store" — even inside Bengali sentences. Never translate, transliterate, or render it in Bengali script (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর", etc.) and never use variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". Inside Bengali prose, write it as "Shahed Store" verbatim (e.g. "Shahed Store থেকে কিনুন").`;
 
     if (type === "short_description") {
       const numOptions = count && count > 1 ? count : 1;
