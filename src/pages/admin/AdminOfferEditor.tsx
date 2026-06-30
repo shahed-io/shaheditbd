@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2 } from 'lucide-react';
+import PrizesEditor from '@/components/admin/PrizesEditor';
 
 interface Offer {
   id: string;
