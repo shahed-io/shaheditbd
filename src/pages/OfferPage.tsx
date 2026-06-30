@@ -230,12 +230,29 @@ export default function OfferPage() {
           </CardContent></Card>
         )}
 
-        {offer.prize_details && (
-          <Card><CardContent className="p-5">
-            <h2 className="font-bold mb-2 flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> পুরস্কার</h2>
-            <div className="whitespace-pre-wrap text-sm">{offer.prize_details}</div>
-          </CardContent></Card>
-        )}
+        {offer.prize_details && (() => {
+          const items = parsePrizeItems(offer.prize_details);
+          return (
+            <Card><CardContent className="p-5">
+              <h2 className="font-bold mb-3 flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> পুরস্কার</h2>
+              {items.length > 0 ? (
+                <div className="space-y-2">
+                  {items.map((p, i) => (
+                    <div key={i} className="flex items-start gap-3 rounded-lg border border-border bg-card/50 p-3">
+                      <Badge className="bg-yellow-500/20 text-yellow-700 shrink-0">#{i + 1}</Badge>
+                      <div className="flex-1 min-w-0">
+                        {p.title && <div className="font-semibold text-sm">{p.title}</div>}
+                        {p.description && <div className="text-sm text-muted-foreground whitespace-pre-wrap">{p.description}</div>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="whitespace-pre-wrap text-sm">{offer.prize_details}</div>
+              )}
+            </CardContent></Card>
+          );
+        })()}
 
         {/* Winners */}
         {offer.show_winners && winners.length > 0 && (
