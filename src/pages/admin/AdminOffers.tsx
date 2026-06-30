@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Copy, ExternalLink, Gift, Users, Calendar } from 'lucide-react';
+import { Plus, Edit, Trash2, Copy, ExternalLink, Gift, Users, Calendar, Sparkles, Trophy, Megaphone } from 'lucide-react';
 
 interface Offer {
   id: string;
