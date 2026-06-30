@@ -379,8 +379,10 @@ const Blog = () => {
                     </div>
                   </Link>
                 ))}
-              </div>
+                </div>
+              </>
             )}
+
           </main>
 
           {/* Sidebar */}
