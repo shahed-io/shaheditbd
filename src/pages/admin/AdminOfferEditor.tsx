@@ -601,7 +601,13 @@ export default function AdminOfferEditor() {
               </div>
               <div>
                 <Label>Prize Details</Label>
-                <Textarea rows={3} value={offer.prize_details || ''} onChange={(e) => setOffer({ ...offer, prize_details: e.target.value })} placeholder="1st: iPhone 15&#10;2nd: ৳5000&#10;3rd: T-shirt" />
+                <p className="text-xs text-muted-foreground mb-2">
+                  প্রতিটি পুরস্কার আলাদা box-এ যোগ করুন। ইচ্ছামত পুরস্কার add/remove/reorder করতে পারবেন।
+                </p>
+                <PrizesEditor
+                  value={offer.prize_details}
+                  onChange={(next) => setOffer({ ...offer, prize_details: next })}
+                />
               </div>
               <div>
                 <Label>Terms & Conditions</Label>
