@@ -914,17 +914,35 @@ export default function AdminOfferEditor() {
                 {winners.map((w) => {
                   const sub = submissions.find((s) => s.id === w.submission_id);
                   return (
-                    <div key={w.id} className="flex items-center justify-between border rounded-lg p-3">
-                      <div>
-                        <div className="font-semibold flex items-center gap-2">
+                    <div
+                      key={w.id}
+                      className="flex items-center justify-between border rounded-lg p-3 gap-3 hover:bg-accent/40 transition-colors"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="font-semibold flex items-center gap-2 flex-wrap">
                           <Badge className="bg-yellow-500/20 text-yellow-700">🏆 Rank #{w.rank}</Badge>
-                          {sub?.participant_name || 'Unknown'}
+                          <span>{sub?.participant_name || w.participant_name || 'Unknown'}</span>
                         </div>
-                        <div className="text-xs text-muted-foreground">{sub?.participant_email} • {sub?.participant_phone}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5 break-all">
+                          {sub?.participant_email || '—'} • {sub?.participant_phone || '—'}
+                        </div>
                         {w.prize && <div className="text-sm mt-1">🎁 {w.prize}</div>}
                         {w.ai_reason && <div className="text-xs text-muted-foreground italic mt-1">AI: {w.ai_reason}</div>}
                       </div>
-                      <Badge variant="outline">{w.selected_by}</Badge>
+                      <div className="flex flex-col items-end gap-2 shrink-0">
+                        <Badge variant="outline">{w.selected_by}</Badge>
+                        {sub ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setViewingSubmission(sub)}
+                          >
+                            <Eye className="w-3.5 h-3.5 mr-1" /> View Details
+                          </Button>
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground italic">submission removed</span>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
