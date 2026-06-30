@@ -213,9 +213,10 @@ const Blog = () => {
                         {post.blog_categories.name}
                       </span>
                     )}
-                    <h3 className={`font-bold text-foreground line-clamp-2 mb-3 group-hover:text-primary transition-colors ${i === 0 ? 'text-base' : 'text-sm'}`}>
+                    <h2 className={`font-bold text-foreground line-clamp-2 mb-3 group-hover:text-primary transition-colors ${i === 0 ? 'text-base' : 'text-sm'}`}>
                       {post.title}
-                    </h3>
+                    </h2>
+
                     {i === 0 && post.excerpt && (
                       <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{post.excerpt}</p>
                     )}
