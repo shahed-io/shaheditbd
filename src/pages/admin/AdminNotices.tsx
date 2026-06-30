@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw, Download } from 'lucide-react';
+import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw, Download, Megaphone, Pin, Users, CheckCircle2, FileEdit } from 'lucide-react';
 import NoticeTemplate, { NoticeData } from '@/components/notices/NoticeTemplate';
 import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 import NoticeSignatureManager from '@/components/admin/NoticeSignatureManager';
@@ -208,82 +208,152 @@ export default function AdminNotices() {
     audience: editing.audience || 'public',
   } : null, [editing]);
 
+  const publishedCount = list.filter((n) => n.status === 'published').length;
+  const draftCount = list.filter((n) => n.status === 'draft').length;
+  const pinnedCount = list.filter((n) => n.pinned).length;
+
+  const audienceStyle: Record<string, string> = {
+    public: 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30',
+    customers: 'bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-500/30',
+    both: 'bg-fuchsia-500/15 text-fuchsia-700 dark:text-fuchsia-300 border-fuchsia-500/30',
+  };
+  const statusStyle: Record<string, string> = {
+    published: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30',
+    draft: 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-500/30',
+    archived: 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30',
+  };
+
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <FileText className="w-6 h-6" /> Notice System
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            AI দিয়ে notice তৈরি করুন (text বা voice) — invoice-style design, public/customer audience সমর্থিত।
-          </p>
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
+      {/* Gradient glassmorphism hero */}
+      <div className="relative overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 dark:from-violet-950/40 dark:via-slate-950 dark:to-fuchsia-950/40 shadow-[0_10px_40px_-15px_rgba(139,92,246,0.35)]">
+        <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-fuchsia-400/30 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-violet-400/30 blur-3xl pointer-events-none" />
+        <div className="relative p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white flex items-center justify-center shadow-lg shadow-violet-500/30">
+              <Megaphone className="w-7 h-7" />
+            </div>
+            <div className="space-y-1">
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                Notice System
+              </h1>
+              <p className="text-sm text-muted-foreground max-w-lg">
+                Compose polished, ready-to-publish circulars with AI (text or voice). Invoice-style layout, PDF export, public/customer audience.
+              </p>
+              <div className="flex flex-wrap gap-2 pt-2 text-xs">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/70 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur">
+                  <FileText className="w-3 h-3 text-violet-600" /> {list.length} total
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/70 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600" /> {publishedCount} published
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/70 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur">
+                  <FileEdit className="w-3 h-3 text-slate-600" /> {draftCount} draft
+                </span>
+                {pinnedCount > 0 && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/70 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur">
+                    <Pin className="w-3 h-3 text-fuchsia-600" /> {pinnedCount} pinned
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <Button
+            onClick={openNew}
+            size="lg"
+            className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white shadow-lg shadow-violet-500/30 rounded-xl gap-2"
+          >
+            <Plus className="w-4 h-4" /> New Notice
+          </Button>
         </div>
-        <Button onClick={openNew} className="gap-2">
-          <Plus className="w-4 h-4" /> New Notice
-        </Button>
       </div>
 
-      <div className="mb-6">
+      {/* Signature manager — wrapped in glass card */}
+      <div className="rounded-2xl border border-white/50 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_30px_-12px_rgba(139,92,246,0.2)] p-1">
         <NoticeSignatureManager onChanged={setSignature} />
       </div>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">All Notices ({list.length})</CardTitle></CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="py-10 text-center text-muted-foreground">Loading...</div>
-          ) : list.length === 0 ? (
-            <div className="py-10 text-center text-muted-foreground">
-              কোনো notice নেই। উপরে "New Notice" ক্লিক করে শুরু করুন।
+      {/* All notices — glass card */}
+      <div className="relative overflow-hidden rounded-2xl border border-white/50 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_30px_-12px_rgba(139,92,246,0.2)]">
+        <div className="px-5 py-4 border-b border-white/40 dark:border-white/10 flex items-center justify-between">
+          <h2 className="font-semibold flex items-center gap-2">
+            <FileText className="w-4 h-4 text-violet-600" /> All Notices
+            <span className="text-xs font-normal text-muted-foreground">({list.length})</span>
+          </h2>
+        </div>
+
+        {loading ? (
+          <div className="p-6 space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-16 rounded-xl bg-gradient-to-br from-white/60 to-white/20 dark:from-white/5 dark:to-white/0 animate-pulse" />
+            ))}
+          </div>
+        ) : list.length === 0 ? (
+          <div className="p-12 text-center">
+            <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center mb-4">
+              <Megaphone className="w-10 h-10 text-violet-600" />
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="text-xs uppercase text-muted-foreground border-b">
-                  <tr>
-                    <th className="py-2 px-2 text-left">Title</th>
-                    <th className="py-2 px-2 text-left">Ref</th>
-                    <th className="py-2 px-2 text-left">Audience</th>
-                    <th className="py-2 px-2 text-left">Status</th>
-                    <th className="py-2 px-2 text-left">Updated</th>
-                    <th className="py-2 px-2 text-right">Actions</th>
+            <h3 className="text-lg font-semibold mb-1">No notices yet</h3>
+            <p className="text-sm text-muted-foreground mb-5">Click "New Notice" to compose your first announcement with AI.</p>
+            <Button onClick={openNew} className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl gap-2">
+              <Plus className="w-4 h-4" /> Create Notice
+            </Button>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="text-[11px] uppercase tracking-wider text-muted-foreground bg-gradient-to-r from-violet-500/5 to-fuchsia-500/5">
+                <tr>
+                  <th className="py-3 px-4 text-left font-semibold">Title</th>
+                  <th className="py-3 px-4 text-left font-semibold">Ref</th>
+                  <th className="py-3 px-4 text-left font-semibold">Audience</th>
+                  <th className="py-3 px-4 text-left font-semibold">Status</th>
+                  <th className="py-3 px-4 text-left font-semibold">Updated</th>
+                  <th className="py-3 px-4 text-right font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {list.map((n) => (
+                  <tr key={n.id} className="border-t border-white/40 dark:border-white/5 hover:bg-violet-500/[0.04] transition-colors">
+                    <td className="py-3 px-4">
+                      <div className="font-medium flex items-center gap-1.5">
+                        {n.pinned && <Pin className="w-3.5 h-3.5 text-fuchsia-600 fill-fuchsia-600" />}
+                        <span className="line-clamp-1">{n.title}</span>
+                      </div>
+                      {n.summary && <div className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{n.summary}</div>}
+                    </td>
+                    <td className="py-3 px-4 text-xs font-mono text-muted-foreground whitespace-nowrap">{n.reference_no || '—'}</td>
+                    <td className="py-3 px-4">
+                      <Badge className={`capitalize border ${audienceStyle[n.audience] || audienceStyle.public}`}>
+                        <Users className="w-3 h-3 mr-1" />{n.audience}
+                      </Badge>
+                    </td>
+                    <td className="py-3 px-4">
+                      <Badge className={`capitalize border ${statusStyle[n.status] || statusStyle.draft}`}>{n.status}</Badge>
+                    </td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground whitespace-nowrap">{new Date(n.updated_at).toLocaleDateString()}</td>
+                    <td className="py-3 px-4 text-right">
+                      <div className="inline-flex gap-0.5">
+                        <Button size="sm" variant="ghost" onClick={() => setPreviewing(n)} title="Preview" className="hover:bg-violet-500/10 hover:text-violet-700"><Eye className="w-4 h-4" /></Button>
+                        <Button size="sm" variant="ghost" onClick={() => downloadNotice(n)} disabled={downloadingId === n.id} title="Download PDF" className="hover:bg-violet-500/10 hover:text-violet-700">
+                          {downloadingId === n.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => openEdit(n)} title="Edit" className="hover:bg-violet-500/10 hover:text-violet-700"><Edit3 className="w-4 h-4" /></Button>
+                        <Button size="sm" variant="ghost" onClick={() => togglePublish(n)} title="Toggle publish" className="hover:bg-emerald-500/10">
+                          <Send className={`w-4 h-4 ${n.status === 'published' ? 'text-emerald-600' : ''}`} />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => remove(n)} title="Delete" className="hover:bg-rose-500/10"><Trash2 className="w-4 h-4 text-rose-600" /></Button>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {list.map((n) => (
-                    <tr key={n.id} className="border-b hover:bg-muted/40">
-                      <td className="py-2 px-2">
-                        <div className="font-medium">{n.pinned && '📌 '}{n.title}</div>
-                        {n.summary && <div className="text-xs text-muted-foreground line-clamp-1">{n.summary}</div>}
-                      </td>
-                      <td className="py-2 px-2 text-xs text-muted-foreground">{n.reference_no || '—'}</td>
-                      <td className="py-2 px-2"><Badge variant="outline" className="capitalize">{n.audience}</Badge></td>
-                      <td className="py-2 px-2">
-                        <Badge variant={n.status === 'published' ? 'default' : 'secondary'} className="capitalize">{n.status}</Badge>
-                      </td>
-                      <td className="py-2 px-2 text-xs text-muted-foreground">{new Date(n.updated_at).toLocaleDateString()}</td>
-                      <td className="py-2 px-2 text-right">
-                        <div className="inline-flex gap-1">
-                          <Button size="sm" variant="ghost" onClick={() => setPreviewing(n)} title="Preview"><Eye className="w-4 h-4" /></Button>
-                          <Button size="sm" variant="ghost" onClick={() => downloadNotice(n)} disabled={downloadingId === n.id} title="Download PDF">
-                            {downloadingId === n.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => openEdit(n)} title="Edit"><Edit3 className="w-4 h-4" /></Button>
-                          <Button size="sm" variant="ghost" onClick={() => togglePublish(n)} title="Toggle publish">
-                            <Send className={`w-4 h-4 ${n.status === 'published' ? 'text-emerald-600' : ''}`} />
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => remove(n)} title="Delete"><Trash2 className="w-4 h-4 text-red-600" /></Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
 
       {/* Editor Dialog */}
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
@@ -370,7 +440,7 @@ export default function AdminNotices() {
                 {!voice.supported && <p className="text-xs text-muted-foreground mt-1">Voice input এই browser-এ সাপোর্ট নেই (Chrome/Edge ব্যবহার করুন)।</p>}
               </div>
 
-              <Button onClick={runAI} disabled={aiBusy || !aiPrompt.trim()} className="w-full gap-2">
+              <Button onClick={runAI} disabled={aiBusy || !aiPrompt.trim()} className="w-full gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white shadow-lg shadow-violet-500/30">
                 {aiBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                 {aiBusy ? 'তৈরি করছি...' : 'AI দিয়ে Notice তৈরি করো'}
               </Button>
