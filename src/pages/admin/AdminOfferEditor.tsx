@@ -68,6 +68,7 @@ interface Winner {
   prize: string | null;
   selected_by: string;
   ai_reason: string | null;
+  participant_name: string | null;
 }
 
 const FIELD_TYPES = [
