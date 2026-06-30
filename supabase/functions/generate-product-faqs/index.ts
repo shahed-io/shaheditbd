@@ -14,11 +14,9 @@ serve(async (req) => {
     if (!product?.name) throw new Error("product.name required");
 
     // Enforce correct store name based on language — never let AI invent variants
-    const storeName = language === "en" ? "Shahed Store" : "Shahed Store";
+    const storeName = "Shahed Store";
     const lang = language === "en" ? "English" : "Bengali (বাংলা)";
-    const nameRule = language === "en"
-      ? `CRITICAL: The store name is EXACTLY "Shahed Store" (English spelling). Never write it in Bengali, never use variants like "Shahid", "Sahed", "Shawon", etc.`
-      : `গুরুত্বপূর্ণ নিয়ম: দোকানের নাম সবসময় হুবহু "Shahed Store" লিখতে হবে। কখনোই "Shahed Store" (ইংরেজি), "ShahedStore", "Shahid Store", "Sahed Store", "শাহিদ স্টোর", "শাওন স্টোর", "শায়েদ স্টোর", "সাহেদ স্টোর", "সাহিদ স্টোর", "শাহেদ ষ্টোর" বা অন্য কোনো রূপ ব্যবহার করা যাবে না।`;
+    const nameRule = `CRITICAL STORE NAME RULE: The store name must ALWAYS be written in English as exactly "Shahed Store" — even when the surrounding text is Bengali. Never use Bengali script for the name (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর", etc.) and never use variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences write it as "Shahed Store" verbatim (e.g. "Shahed Store থেকে").`;
     const prompt = `You are an expert SEO copywriter for "${storeName}", a digital software store in Bangladesh.
 
 ${nameRule}
