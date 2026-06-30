@@ -726,7 +726,7 @@ const ImageBlurTool = () => {
 // ═══════════════════════════════════════════════════════════════════════════
 const WatermarkTool = () => {
   const [imgSrc, setImgSrc] = useState('');
-  const [text, setText] = useState('© শাহেদ স্টোর');
+  const [text, setText] = useState('© Shahed Store');
   const [position, setPosition] = useState<'center' | 'bottom-right' | 'bottom-left' | 'top-right'>('bottom-right');
   const [opacity, setOpacity] = useState(70);
   const [fontSize, setFontSize] = useState(36);

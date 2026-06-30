@@ -34,7 +34,7 @@ export const TEXT_REGISTRY: TextRegistryEntry[] = [
   { key: 'home.testimonials.title', category: 'Testimonials',    defaultValue: 'গ্রাহকদের মতামত',                  description: 'Testimonial section heading' },
 
   // ---------- Footer ----------
-  { key: 'footer.copyright',      category: 'Footer',            defaultValue: '© শাহেদ স্টোর. All rights reserved.', description: 'Footer copyright text' },
+  { key: 'footer.copyright',      category: 'Footer',            defaultValue: '© Shahed Store. All rights reserved.', description: 'Footer copyright text' },
   { key: 'footer.newsletter.title',  category: 'Footer',         defaultValue: 'আপডেট পেতে সাবস্ক্রাইব করুন',     description: 'Newsletter heading' },
   { key: 'footer.newsletter.placeholder', category: 'Footer',    defaultValue: 'আপনার ইমেইল লিখুন',                description: 'Newsletter input placeholder' },
   { key: 'footer.newsletter.button', category: 'Footer',         defaultValue: 'সাবস্ক্রাইব',                      description: 'Newsletter button label' },

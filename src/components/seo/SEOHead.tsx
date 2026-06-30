@@ -26,11 +26,11 @@ interface SEOHeadProps {
   };
 }
 
-const SITE_NAME = 'শাহেদ স্টোর';
+const SITE_NAME = 'Shahed Store';
 const SITE_URL = 'https://shahedstore.com.bd';
-const DEFAULT_DESC = 'Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from শাহেদ স্টোর.';
+const DEFAULT_DESC = 'Buy genuine Windows, Office, Adobe, antivirus, VPN and digital subscriptions in Bangladesh with instant delivery from Shahed Store.';
 const DEFAULT_OG = '/og-image.jpg';
-const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, শাহেদ স্টোর';
+const DEFAULT_KEYWORDS = 'windows 11 key bangladesh, microsoft office 365 bangladesh, adobe creative cloud bangladesh, antivirus cheap, buy digital software bangladesh, digital license key, Shahed Store';
 
 // Cache for GA/GSC settings so we only fetch once per session
 let _seoCache: { ga?: string; gsc?: string; verification?: Record<string, string>; loaded?: boolean } = {};

@@ -7,7 +7,7 @@ const B = 'hsl(200,90%,45%)';
 const PrivacyPolicy = () =>
 <PolicyLayout
   seoTitle="Privacy Policy — Shahed Store"
-  seoDesc="শাহেদ স্টোর আপনার ব্যক্তিগত তথ্য কীভাবে সংগ্রহ ও সুরক্ষিত রাখে জানুন।"
+  seoDesc="Shahed Store আপনার ব্যক্তিগত তথ্য কীভাবে সংগ্রহ ও সুরক্ষিত রাখে জানুন।"
   badge="Legal Document"
   badgeIcon={<Shield size={13} />}
   title="Privacy Policy"
@@ -17,8 +17,8 @@ const PrivacyPolicy = () =>
   
     {/* Intro highlight */}
     <div className="rounded-2xl p-4 mb-6 text-[13px] leading-relaxed"
-  style={{ background: `linear-gradient(135deg, ${A}0d, ${B}08)`, border: `1px solid ${A}25`, color: 'hsl(226,35%,28%)' }}>শাহেদ স্টোর আপনার গোপনীয়তাকে অত্যন্ত গুরুত্বের সাথে বিবেচনা করি। এই Policy-তে বিবরণ দেওয়া হয়েছে যে আমরা shahedstore.com.bd ব্যবহারের সময় কোন তথ্য সংগ্রহ করি, কীভাবে ব্যবহার করি এবং আপনার অধিকার কী।
-    <strong>শাহেদ স্টোর</strong> ("আমরা", "আমাদের") আপনার গোপনীয়তাকে অত্যন্ত গুরুত্বের সাথে বিবেচনা করি। এই Policy-তে বিবরণ দেওয়া হয়েছে যে আমরা <strong>shahedstore.com.bd</strong> ব্যবহারের সময় কোন তথ্য সংগ্রহ করি, কীভাবে ব্যবহার করি এবং আপনার অধিকার কী।
+  style={{ background: `linear-gradient(135deg, ${A}0d, ${B}08)`, border: `1px solid ${A}25`, color: 'hsl(226,35%,28%)' }}>Shahed Store আপনার গোপনীয়তাকে অত্যন্ত গুরুত্বের সাথে বিবেচনা করি। এই Policy-তে বিবরণ দেওয়া হয়েছে যে আমরা shahedstore.com.bd ব্যবহারের সময় কোন তথ্য সংগ্রহ করি, কীভাবে ব্যবহার করি এবং আপনার অধিকার কী।
+    <strong>Shahed Store</strong> ("আমরা", "আমাদের") আপনার গোপনীয়তাকে অত্যন্ত গুরুত্বের সাথে বিবেচনা করি। এই Policy-তে বিবরণ দেওয়া হয়েছে যে আমরা <strong>shahedstore.com.bd</strong> ব্যবহারের সময় কোন তথ্য সংগ্রহ করি, কীভাবে ব্যবহার করি এবং আপনার অধিকার কী।
     </div>
 
     <SectionCard icon={<Database size={15} />} title="১. আমরা কী তথ্য সংগ্রহ করি" accentFrom={A} accentTo={B}>

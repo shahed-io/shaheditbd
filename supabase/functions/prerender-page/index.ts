@@ -107,7 +107,7 @@ const orgSchema = {
   '@context': 'https://schema.org',
   '@type': ['Organization', 'OnlineStore'],
   name: SITE_NAME,
-  alternateName: ['Shahed Store BD', 'শাহেদ স্টোর'],
+  alternateName: ['Shahed Store BD', 'Shahed Store'],
   url: SITE_URL,
   logo: `${SITE_URL}/favicon.png`,
   sameAs: [
