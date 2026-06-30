@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAIWithFallback } from "../_shared/ai-fallback.ts";
+import { normalizeBrandNameText } from "../_shared/brand-name.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -21,7 +22,7 @@ serve(async (req) => {
 
     const storeName = "Shahed Store";
     const lang = language === "en" ? "English" : "Bengali (বাংলা)";
-    const nameRule = `STORE NAME RULE: Write the store name ALWAYS in English as exactly "Shahed Store" — even inside Bengali reviews. Never use Bengali script for the name (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর") and never use "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences keep the name as "Shahed Store" verbatim.`;
+    const nameRule = `STORE NAME RULE: Write the store name ALWAYS in English as exactly "Shahed Store" — even inside Bengali reviews. Never use Bengali script for the name (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর") and never use "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". Do not attach Bengali case markers/suffixes immediately after the brand (avoid "Shahed Store-এর", "Shahed Store এর", "Shahed Store কে", "Shahed Store-এ", "Shahed Storeএ"); rephrase so the visible brand stays exactly "Shahed Store".`;
     const prompt = `You are writing authentic customer reviews for "${storeName}", a digital software store in Bangladesh.
 
 ${nameRule}
@@ -72,28 +73,13 @@ Return ONLY a valid JSON array, no prose, no code fences. Schema:
       throw new Error("AI did not return valid JSON");
     }
 
-    const sanitizeStoreName = (value: string) => {
-      let out = value;
-      if (language !== "en") {
-        out = out
-          .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store")
-          .replace(/Shahed\s+Store/gi, "Shahed Store")
-          .replace(/ShahedStore/g, "Shahed Store");
-      } else {
-        out = out.replace(/ShahedStore/g, "Shahed Store");
-      }
-      return out
-        .replace(/Shahid\s*Store|Sahed\s*Store|Shawon\s*Store/gi, storeName)
-        .replace(/শাহিদ স্টোর|শাওন স্টোর|শায়েদ স্টোর|শায়েদ স্টোর|সাহেদ স্টোর|সাহিদ স্টোর|শাহীদ স্টোর|শহীদ স্টোর|শাহেদ ষ্টোর|শাহেদ ইস্টোর/g, storeName);
-    };
-
     reviews = (reviews || [])
       .filter((r) => r && typeof r.name === "string" && typeof r.body === "string" && r.name.trim() && r.body.trim())
       .map((r) => ({
         name: r.name.trim().slice(0, 80),
         rating: Math.max(1, Math.min(5, Math.round(Number(r.rating) || 5))),
-        title: sanitizeStoreName((r.title || "").toString().trim()).slice(0, 120),
-        body: sanitizeStoreName(r.body.trim()).slice(0, 1000),
+        title: normalizeBrandNameText((r.title || "").toString().trim()).slice(0, 120),
+        body: normalizeBrandNameText(r.body.trim()).slice(0, 1000),
       }));
 
     if (!reviews.length) throw new Error("No reviews generated");

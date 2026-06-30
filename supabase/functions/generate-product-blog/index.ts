@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { normalizeBrandNameDeep } from "../_shared/brand-name.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -168,7 +169,7 @@ Requirements for the blog post:
 5. Mention the affordable price in BDT
 6. Include keywords naturally: license key, Bangladesh, genuine, instant delivery, affordable
 7. Mention Shahed Store website: shahedstore.com.bd
-9. Store name rule: always write the store name exactly as "Shahed Store". Never output "Shahed Store", "ShahedStore", "Shahid Store", "সাহেদ স্টোর", or "শাহিদ স্টোর".
+9. Store name rule: always write the store name exactly as "Shahed Store". Never output Bengali script variants, "ShahedStore", "Shahid Store", "Sahed Store", or "Shawon Store". Do not attach Bengali case markers/suffixes immediately after the brand (avoid "Shahed Store-এর", "Shahed Store এর", "Shahed Store কে", "Shahed Store-এ", "Shahed Storeএ").
 8. Write in a professional, helpful tone
 
 Also provide:
@@ -191,19 +192,7 @@ Respond ONLY with this JSON (no markdown, no explanation):
 
       try {
         const rawContent = await callLovableAI(prompt);
-        const sanitizeStoreName = (value: string) => value
-          .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store")
-          .replace(/Shahed\s+Store/gi, "Shahed Store")
-          .replace(/ShahedStore/g, "Shahed Store")
-          .replace(/Shahid\s*Store|Sahed\s*Store|Shawon\s*Store/gi, "Shahed Store")
-          .replace(/শাহিদ স্টোর|শাওন স্টোর|শায়েদ স্টোর|শায়েদ স্টোর|সাহেদ স্টোর|সাহিদ স্টোর|শাহীদ স্টোর|শহীদ স্টোর|শাহেদ ষ্টোর|শাহেদ ইস্টোর/g, "Shahed Store");
-        const sanitizeDeep = (value: any): any => {
-          if (typeof value === "string") return sanitizeStoreName(value);
-          if (Array.isArray(value)) return value.map(sanitizeDeep);
-          if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitizeDeep(v)]));
-          return value;
-        };
-        const blogData = sanitizeDeep(parseAIJson(rawContent));
+        const blogData = normalizeBrandNameDeep(parseAIJson(rawContent));
 
         const blogSlug = `${product.slug}-review-buy-bangladesh`;
 

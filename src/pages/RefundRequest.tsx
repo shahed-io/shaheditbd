@@ -278,7 +278,7 @@ ${isChangeOfMind ? `⚠️ মন পরিবর্তনের কারণে
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(145deg, hsl(258,55%,97%) 0%, hsl(220,40%,96%) 40%, hsl(200,50%,96%) 100%)' }}>
-      <SEOHead title="Refund Request — Shahed Store" description="রিফান্ড রিকোয়েস্ট করুন। Shahed Store এর রিফান্ড পলিসি দেখুন এবং আবেদন ফর্ম পূরণ করুন।" />
+      <SEOHead title="Refund Request — Shahed Store" description="রিফান্ড রিকোয়েস্ট করুন। Shahed Store রিফান্ড পলিসি দেখুন এবং আবেদন ফর্ম পূরণ করুন।" />
       <Navbar />
 
       {/* Hero */}

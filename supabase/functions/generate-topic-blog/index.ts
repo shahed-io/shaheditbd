@@ -2,6 +2,7 @@
 // Target: 1500-2500 words, deeply optimized for Google Bangladesh + AI search (ChatGPT/Perplexity/AI Overview).
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { normalizeBrandNameDeep } from "../_shared/brand-name.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -119,6 +120,7 @@ CITIES: ${bdCities}
 INTENT: ${intent || "informational"}
 LANGUAGE: Bangla + English mix — exactly how Bangladeshi users search Google.
 PRICE FORMAT: ৳[amount] (Taka symbol)
+STORE NAME RULE: Always write the brand exactly as "Shahed Store". Never use Bengali script variants, "ShahedStore", "Shahid Store", "Sahed Store", or "Shawon Store". Do not attach Bengali case markers/suffixes immediately after the brand (avoid "Shahed Store-এর", "Shahed Store এর", "Shahed Store কে", "Shahed Store-এ", "Shahed Storeএ").
 
 Return ONLY valid JSON in this EXACT shape:
 {
@@ -188,7 +190,7 @@ Make it the BEST result on Google Bangladesh for anyone searching this topic. In
 Return ONLY the JSON object specified.`;
 
     const raw = await callAI(systemPrompt, userPrompt, 6000);
-    const blog = parseJson(raw);
+    const blog = normalizeBrandNameDeep(parseJson(raw));
 
     if (!blog.content || blog.content.trim().split(/\s+/).length < 800) {
       throw new Error("AI returned blog content shorter than 800 words; retry shortly.");

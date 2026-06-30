@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Sparkles, Search, Loader2, CheckCircle2, RefreshCw, Save, Eye, X, Languages, Hash, HelpCircle } from 'lucide-react';
+import { normalizeBrandNameFaqs, normalizeBrandNameText } from '@/lib/brandName';
 
 interface ProductRow {
   id: string;
@@ -17,40 +18,8 @@ interface ProductRow {
 
 interface FaqItem { q: string; a: string }
 
-const sanitizeStoreName = (text: string, language: 'bn' | 'en') => {
-  const target = language === 'bn' ? 'Shahed Store' : 'Shahed Store';
-  let out = text;
-  if (language === 'bn') {
-    out = out
-      .replace(/Shahed\s+Store(?:'|’)s/gi, 'Shahed Store')
-      .replace(/Shahed\s+Store\s+Bangladesh/gi, 'Shahed Store Bangladesh')
-      .replace(/Shahed\s+Store\s+BD/gi, 'Shahed Store BD')
-      .replace(/Shahed\s+Store/gi, target)
-      .replace(/ShahedStore/g, target)
-      .replace(/Shahid\s*Store/gi, target)
-      .replace(/Sahed\s*Store/gi, target)
-      .replace(/Shawon\s*Store/gi, target);
-  } else {
-    out = out
-      .replace(/Shahid\s*Store/gi, target)
-      .replace(/Sahed\s*Store/gi, target)
-      .replace(/Shawon\s*Store/gi, target)
-      .replace(/ShahedStore/g, target);
-  }
-  [
-    'শাহিদ স্টোর', 'শাওন স্টোর', 'শায়েদ স্টোর', 'শায়েদ স্টোর', 'সাহেদ স্টোর',
-    'সাহিদ স্টোর', 'শাহীদ স্টোর', 'শহীদ স্টোর', 'শাহেদ ষ্টোর', 'শাহেদ ইস্টোর',
-  ].forEach((variant) => {
-    out = out.split(variant).join(target);
-  });
-  return out;
-};
-
 const sanitizeFaqs = (faqs: FaqItem[], language: 'bn' | 'en') =>
-  faqs.map((f) => ({
-    q: sanitizeStoreName(f.q, language),
-    a: sanitizeStoreName(f.a, language),
-  }));
+  normalizeBrandNameFaqs(faqs).map((f) => ({ q: normalizeBrandNameText(f.q), a: normalizeBrandNameText(f.a) }));
 
 const AdminAiFaqGenerator = () => {
   const [products, setProducts] = useState<ProductRow[]>([]);
