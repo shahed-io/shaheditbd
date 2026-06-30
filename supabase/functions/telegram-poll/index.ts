@@ -36,7 +36,7 @@ const STATUS_EMOJI: Record<string, string> = {
 type Lang = 'bn' | 'en';
 const T = {
   bn: {
-    welcome_title: '🛍️ *Shahed Store* এ স্বাগতম!',
+    welcome_title: '🛍️ *Shahed Store* আপনাকে স্বাগতম জানাচ্ছে!',
     welcome_sub: 'বাংলাদেশের #১ ডিজিটাল প্রোডাক্ট স্টোর। আপনার চাহিদা মতো সাবস্ক্রিপশন, লাইসেন্স কী, সফটওয়্যার — সব এক জায়গায়।',
     quick_actions: '⚡ দ্রুত অ্যাকশন বেছে নিন:',
     btn_shop: '🛍️ শপিং শুরু', btn_deals: '🔥 ডিল ও অফার',

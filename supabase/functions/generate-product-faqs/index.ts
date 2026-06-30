@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAIWithFallback } from "../_shared/ai-fallback.ts";
+import { normalizeBrandNameText } from "../_shared/brand-name.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,7 +17,7 @@ serve(async (req) => {
     // Enforce correct store name based on language — never let AI invent variants
     const storeName = "Shahed Store";
     const lang = language === "en" ? "English" : "Bengali (বাংলা)";
-    const nameRule = `CRITICAL STORE NAME RULE: The store name must ALWAYS be written in English as exactly "Shahed Store" — even when the surrounding text is Bengali. Never use Bengali script for the name (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর", etc.) and never use variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences write it as "Shahed Store" verbatim (e.g. "Shahed Store থেকে").`;
+    const nameRule = `CRITICAL STORE NAME RULE: The store name must ALWAYS be written in English as exactly "Shahed Store" — even when the surrounding text is Bengali. Never use Bengali script for the name (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর", etc.) and never use variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". Do not attach Bengali case markers/suffixes immediately after the brand (avoid "Shahed Store-এর", "Shahed Store এর", "Shahed Store কে", "Shahed Store-এ", "Shahed Storeএ"); rephrase so the visible brand stays exactly "Shahed Store".`;
     const prompt = `You are an expert SEO copywriter for "${storeName}", a digital software store in Bangladesh.
 
 ${nameRule}
@@ -57,34 +58,9 @@ Return ONLY a valid JSON array, no prose, no code fences. Schema:
     } catch {
       throw new Error("AI did not return valid JSON");
     }
-    const sanitizeName = (s: string) => {
-      let out = s;
-      if (language !== "en") {
-        out = out
-          .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store")
-          .replace(/Shahed\s+Store\s+Bangladesh/gi, "Shahed Store Bangladesh")
-          .replace(/Shahed\s+Store\s+BD/gi, "Shahed Store BD")
-          .replace(/Shahed\s+Store/gi, "Shahed Store")
-          .replace(/ShahedStore/g, "Shahed Store")
-          .replace(/Shahid\s*Store/gi, "Shahed Store")
-          .replace(/Sahed\s*Store/gi, "Shahed Store")
-          .replace(/Shawon\s*Store/gi, "Shahed Store");
-      } else {
-        out = out
-          .replace(/Shahid\s*Store/gi, storeName)
-          .replace(/Sahed\s*Store/gi, storeName)
-          .replace(/Shawon\s*Store/gi, storeName);
-      }
-      const wrongVariants = [
-        "শাহিদ স্টোর", "শাওন স্টোর", "শায়েদ স্টোর", "শায়েদ স্টোর", "সাহেদ স্টোর",
-        "সাহিদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর",
-      ];
-      for (const v of wrongVariants) out = out.split(v).join(storeName);
-      return out;
-    };
     faqs = (faqs || [])
       .filter((f) => f && typeof f.q === "string" && typeof f.a === "string" && f.q.trim() && f.a.trim())
-      .map((f) => ({ q: sanitizeName(f.q.trim()), a: sanitizeName(f.a.trim()) }));
+      .map((f) => ({ q: normalizeBrandNameText(f.q.trim()), a: normalizeBrandNameText(f.a.trim()) }));
 
     if (!faqs.length) throw new Error("No FAQs generated");
 

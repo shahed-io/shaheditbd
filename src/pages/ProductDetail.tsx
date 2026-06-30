@@ -20,6 +20,7 @@ import { productSchema, breadcrumbSchema, faqSchema, softwareApplicationSchema, 
 import { SITE_URL } from '@/components/seo/SEOHead';
 import VerifiedBadge from '@/components/store/VerifiedBadge';
 import RecentlyViewed, { trackRecentlyViewed } from '@/components/RecentlyViewed';
+import { normalizeBrandNameFaqs, normalizeBrandNameText } from '@/lib/brandName';
 import dbidLogo from '@/assets/dbid-logo.png';
 import brandIconAsset from '@/assets/dbid-d-logo.png.asset.json';
 const brandIcon = brandIconAsset.url;
@@ -287,7 +288,10 @@ const ProductDetail = () => {
       ? v.options.map((o: any) => typeof o === 'string' ? { label: o } : { label: o.label, price: o.price ? parseFloat(o.price) : undefined })
       : [],
   })).filter((v: VariantGroup) => v.options.length > 0);
-  const faqs: { q: string; a: string }[] = Array.isArray(product.faq) ? product.faq : [];
+  const productDisplayName = normalizeBrandNameText(product.name);
+  const shortDescription = product.short_description ? normalizeBrandNameText(product.short_description) : '';
+  const description = product.description ? normalizeBrandNameText(product.description) : '';
+  const faqs: { q: string; a: string }[] = Array.isArray(product.faq) ? normalizeBrandNameFaqs(product.faq) : [];
 
   const wishlisted = isWishlisted(product.id);
   const inCart     = isInCart(product.id);
@@ -346,7 +350,7 @@ const ProductDetail = () => {
 
   const cartItem = {
     id: product.id,
-    name: product.name,
+    name: productDisplayName,
     category: product.categories?.name || '',
     price: displayPrice,
     originalPrice: displayOriginalPrice || undefined,
@@ -355,7 +359,7 @@ const ProductDetail = () => {
   };
 
   const waOrder = () => {
-    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}${selectedOptsStr ? `\n⚙️ ${selectedOptsStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}`);
+    const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${productDisplayName}${selectedOptsStr ? `\n⚙️ ${selectedOptsStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
@@ -370,34 +374,34 @@ const ProductDetail = () => {
 
   // ── SEO: DB values take priority, then smart auto-generation ───────────────
   // DB seo_title/seo_description are set via Admin Product SEO panel or AI generation
-  const dbSeoTitle = (product as any).seo_title;
-  const dbSeoDesc = (product as any).seo_description;
+  const dbSeoTitle = normalizeBrandNameText((product as any).seo_title || '');
+  const dbSeoDesc = normalizeBrandNameText((product as any).seo_description || '');
 
   const seoTitle = dbSeoTitle
     ? dbSeoTitle
-    : `${product.name} কিনুন বাংলাদেশ | ৳${displayPrice.toLocaleString()} | Shahed Store`;
+    : `${productDisplayName} কিনুন বাংলাদেশ | ৳${displayPrice.toLocaleString()} | Shahed Store`;
 
   const seoDescription = (() => {
     if (dbSeoDesc) return dbSeoDesc.substring(0, 160);
     // Auto-generate rich Bangladesh-targeted description
-    const base = product.short_description || product.description || '';
+    const base = shortDescription || description || '';
     const clean = base.replace(/[#*_`[\]]/g, '').substring(0, 100).trim();
     const priceStr = `৳${displayPrice.toLocaleString()}`;
     const discountStr = product.discount_percent ? ` | ${product.discount_percent}% ছাড়` : '';
     const catStr = product.categories?.name ? ` | ${product.categories.name}` : '';
-    const suffix = `${product.name} কিনুন ${priceStr}${discountStr}${catStr}. ১০০% genuine license. Instant delivery. Shahed Store Bangladesh।`;
+    const suffix = `${productDisplayName} কিনুন ${priceStr}${discountStr}${catStr}. ১০০% genuine license. Instant delivery. Shahed Store Bangladesh.`;
     return clean ? `${clean}. ${suffix}`.substring(0, 160) : suffix.substring(0, 160);
   })();
 
   // Keywords for meta tag — Bangladesh-targeted long-tail
   const seoKeywords = [
-    `${product.name} বাংলাদেশ`,
-    `${product.name} কিনুন`,
-    `${product.name} price in bangladesh`,
-    `${product.name} bd`,
-    `${product.name} সেরা দাম`,
-    `buy ${product.name} bangladesh`,
-    `${product.name} cheap price bangladesh`,
+    `${productDisplayName} বাংলাদেশ`,
+    `${productDisplayName} কিনুন`,
+    `${productDisplayName} price in bangladesh`,
+    `${productDisplayName} bd`,
+    `${productDisplayName} সেরা দাম`,
+    `buy ${productDisplayName} bangladesh`,
+    `${productDisplayName} cheap price bangladesh`,
     product.categories?.name ? `${product.categories.name} বাংলাদেশ` : '',
     'Shahed Store',
     'digital software bangladesh',
@@ -406,7 +410,7 @@ const ProductDetail = () => {
   // Build SEO schemas — enhanced for Bangladesh ranking
   const seoSchemas = [
     productSchema({
-      name: product.name,
+      name: productDisplayName,
       description: seoDescription,
       image: product.image_url,
       images: (product.images || []).filter(Boolean),
@@ -422,10 +426,10 @@ const ProductDetail = () => {
       { name: 'Home', url: '/' },
       { name: 'Shop', url: '/shop' },
       ...(product.categories ? [{ name: product.categories.name, url: `/shop?category=${product.categories.slug}` }] : []),
-      { name: product.name, url: `/product/${product.slug}` },
+      { name: productDisplayName, url: `/product/${product.slug}` },
     ]),
     softwareApplicationSchema({
-      name: product.name,
+      name: productDisplayName,
       description: seoDescription,
       image: product.image_url,
       slug: product.slug,
@@ -440,7 +444,7 @@ const ProductDetail = () => {
   const breadcrumbItems = [
     { label: 'Shop', href: '/shop' },
     ...(product.categories ? [{ label: product.categories.name, href: `/shop?category=${product.categories.slug}` }] : []),
-    { label: product.name },
+    { label: productDisplayName },
   ];
 
   return (
@@ -501,8 +505,8 @@ const ProductDetail = () => {
                 <img
                   key={images[activeImg]}
                   src={images[activeImg]}
-                  alt={`Buy ${product.name} at best price in Bangladesh - Shahed Store`}
-                  title={`${product.name} - ৳${displayPrice.toLocaleString()} | Shahed Store Bangladesh`}
+                  alt={`Buy ${productDisplayName} at best price in Bangladesh - Shahed Store`}
+                  title={`${productDisplayName} - ৳${displayPrice.toLocaleString()} | Shahed Store Bangladesh`}
                   onLoad={() => setImgLoaded(true)}
                   onError={e => { (e.target as HTMLImageElement).src = PLACEHOLDER; }}
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
@@ -567,7 +571,7 @@ const ProductDetail = () => {
                   {images.map((img, i) => (
                     <button key={i} onClick={() => { setActiveImg(i); setImgLoaded(false); }}
                       className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 ${activeImg === i ? 'border-primary shadow-[0_0_16px_hsla(271,91%,65%,0.5)]' : 'border-border hover:border-primary/50'}`}>
-                      <img src={img} alt={`${product.name} — Product Image ${i + 1} | Buy in Bangladesh`} title={`${product.name} gallery image ${i + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                      <img src={img} alt={`${productDisplayName} — Product Image ${i + 1} | Buy in Bangladesh`} title={`${productDisplayName} gallery image ${i + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -765,12 +769,12 @@ const ProductDetail = () => {
                   {/* Title */}
                   <h1 className="font-sora font-black text-2xl sm:text-3xl leading-tight mb-2"
                     style={{ color: 'hsl(226,35%,14%)' }}>
-                    {product.name}
+                    {productDisplayName}
                   </h1>
 
                   {/* Short Description — bullet list */}
-                  {product.short_description && (() => {
-                    const lines = product.short_description
+                  {shortDescription && (() => {
+                    const lines = shortDescription
                       .split('\n')
                       .map(l => l.replace(/^[-•*]\s*/, '').trim())
                       .filter(Boolean);
@@ -788,7 +792,7 @@ const ProductDetail = () => {
                       </ul>
                     ) : (
                       <p className="text-sm leading-relaxed mb-3" style={{ color: 'hsl(226,25%,42%)' }}>
-                        {product.short_description}
+                        {shortDescription}
                       </p>
                     );
                   })()}
@@ -1174,7 +1178,7 @@ const ProductDetail = () => {
             >
               <h2 className="font-sora font-bold text-xl text-foreground flex items-center gap-2 mb-5">
                 <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
-                {product.description ? 'Product Description' : 'Why Choose This Product?'}
+                {description ? 'Product Description' : 'Why Choose This Product?'}
               </h2>
               <div
                 className="rounded-2xl p-6 text-sm leading-relaxed"
@@ -1187,7 +1191,7 @@ const ProductDetail = () => {
                   color: 'hsl(226,25%,40%)',
                 }}
               >
-                {product.description ? (
+                {description ? (
                   <div className="prose prose-sm max-w-none
                     prose-headings:text-foreground prose-headings:font-bold prose-headings:mt-4 prose-headings:mb-2
                     prose-h2:text-base prose-h3:text-sm
@@ -1197,7 +1201,7 @@ const ProductDetail = () => {
                     prose-li:text-[hsl(226,25%,40%)] prose-li:leading-relaxed
                     prose-a:text-primary">
                   <Suspense fallback={<div className="h-20 shimmer rounded-xl" />}>
-                      <ReactMarkdown>{fixPunctuation(product.description)}</ReactMarkdown>
+                      <ReactMarkdown>{fixPunctuation(description)}</ReactMarkdown>
                     </Suspense>
                   </div>
                 ) : (
@@ -1258,7 +1262,7 @@ const ProductDetail = () => {
 
       {showModal && (
         <QuickOrderModal
-          product={{ id: product.id, name: product.name, price: displayPrice, originalPrice: displayOriginalPrice || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '', customFields: Array.isArray((product as any).custom_fields) ? (product as any).custom_fields : [] }}
+          product={{ id: product.id, name: productDisplayName, price: displayPrice, originalPrice: displayOriginalPrice || undefined, image: product.image_url || PLACEHOLDER, category: product.categories?.name || '', customFields: Array.isArray((product as any).custom_fields) ? (product as any).custom_fields : [] }}
           onClose={() => setShowModal(false)}
           quantity={quantity}
         />
@@ -1568,7 +1572,11 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
       .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .limit(20);
-    setReviews((data as Review[]) || []);
+    setReviews(((data as Review[]) || []).map((review) => ({
+      ...review,
+      title: review.title ? normalizeBrandNameText(review.title) : review.title,
+      body: normalizeBrandNameText(review.body),
+    })));
     setLoading(false);
   };
 

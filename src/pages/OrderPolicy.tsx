@@ -7,7 +7,7 @@ const B = 'hsl(200,90%,45%)';
 const OrderPolicy = () => (
   <PolicyLayout
     seoTitle="Order Policy — Shahed Store"
-    seoDesc="Shahed Store-এ অর্ডার করার নিয়মকানুন ও প্রক্রিয়া জানুন।"
+    seoDesc="Shahed Store অর্ডার করার নিয়মকানুন ও প্রক্রিয়া জানুন।"
     badge="Order Guidelines"
     badgeIcon={<ShoppingCart size={13} />}
     title="Order & Cancellation Policy"

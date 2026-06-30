@@ -1,35 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { normalizeBrandNameDeep, normalizeBrandNameText } from "../_shared/brand-name.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
-
-const STORE_NAME_BN = "Shahed Store";
-
-function sanitizeStoreName(value: string): string {
-  return value
-    .replace(/Shahed\s+Store(?:'|’)s/gi, "Shahed Store")
-    .replace(/Shahed\s+Store\s+Bangladesh/gi, "Shahed Store Bangladesh")
-    .replace(/Shahed\s+Store\s+BD/gi, "Shahed Store BD")
-    .replace(/Shahed\s+Store/gi, STORE_NAME_BN)
-    .replace(/ShahedStore/g, STORE_NAME_BN)
-    .replace(/Shahid\s*Store/gi, STORE_NAME_BN)
-    .replace(/Sahed\s*Store/gi, STORE_NAME_BN)
-    .replace(/Shawon\s*Store/gi, STORE_NAME_BN)
-    .replace(/শাহিদ স্টোর|শাওন স্টোর|শায়েদ স্টোর|শায়েদ স্টোর|সাহেদ স্টোর|সাহিদ স্টোর|শাহীদ স্টোর|শহীদ স্টোর|শাহেদ ষ্টোর|শাহেদ ইস্টোর/g, STORE_NAME_BN);
-}
-
-function sanitizeDeep<T>(value: T): T {
-  if (typeof value === "string") return sanitizeStoreName(value) as T;
-  if (Array.isArray(value)) return value.map((item) => sanitizeDeep(item)) as T;
-  if (value && typeof value === "object") {
-    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, sanitizeDeep(item)])) as T;
-  }
-  return value;
-}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -111,7 +88,7 @@ KEYWORD INTENT TYPES to include naturally:
   - Local: "[product] ঢাকা", "[product] bangladesh online shop"
 PRICE FORMAT: Always write price as ৳[amount] (Taka symbol)
 TRUST SIGNALS: "১০০% genuine", "instant delivery", "official license", "নিরাপদ পেমেন্ট"
-STORE NAME RULE: The store name must ALWAYS be written in English as exactly "Shahed Store" — even inside Bengali sentences. Never translate, transliterate, or render it in Bengali script (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর", etc.) and never use variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". Inside Bengali prose, write it as "Shahed Store" verbatim (e.g. "Shahed Store থেকে কিনুন").`;
+STORE NAME RULE: The store name must ALWAYS be written in English as exactly "Shahed Store" — even inside Bengali sentences. Never translate, transliterate, or render it in Bengali script (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর", etc.) and never use variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". Do not attach Bengali case markers/suffixes immediately after the brand (avoid "Shahed Store-এর", "Shahed Store এর", "Shahed Store কে", "Shahed Store-এ", "Shahed Storeএ"); rephrase so the visible brand stays exactly "Shahed Store".`;
 
     if (type === "short_description") {
       const numOptions = count && count > 1 ? count : 1;
@@ -490,7 +467,7 @@ Return ONLY the JSON object with 6–8 FAQ items.`;
     }
 
     if (type === "short_description" || type === "description" || type === "demo_style") {
-      return new Response(JSON.stringify({ result: sanitizeStoreName(content.trim()) }), {
+      return new Response(JSON.stringify({ result: normalizeBrandNameText(content.trim()) }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -547,7 +524,7 @@ Return ONLY the JSON object with 6–8 FAQ items.`;
       }
     }
 
-    return new Response(JSON.stringify({ result: sanitizeDeep(parsed) }), {
+    return new Response(JSON.stringify({ result: normalizeBrandNameDeep(parsed) }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err: any) {

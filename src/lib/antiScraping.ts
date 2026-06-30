@@ -208,9 +208,9 @@ export function installCopyDeterrents(opts: CopyDeterrentOptions = {}): () => vo
 
   const FUN_MESSAGES = [
     { icon: '🕵️‍♂️', title: 'ধরা পড়ে গেছেন!', sub: 'এই ডিজাইন কপিরাইট-সুরক্ষিত — চুরি করার চেষ্টা বৃথা 😉' },
-    { icon: '🚫', title: 'উঁহু, এটা করা যাবে না!', sub: 'Shahed Store এর কনটেন্ট কপি করা নিষিদ্ধ।' },
+    { icon: '🚫', title: 'উঁহু, এটা করা যাবে না!', sub: 'Shahed Store কনটেন্ট কপি করা নিষিদ্ধ।' },
     { icon: '🛡️', title: 'কনটেন্ট লক করা আছে', sub: 'কপি করতে চাইলে আমাদের সাথে যোগাযোগ করুন — আমরা friendly! 💜' },
-    { icon: '🎯', title: 'নাইস ট্রাই!', sub: 'কিন্তু এই ওয়েবসাইটের ডিজাইন © Shahed Store এর সম্পত্তি।' },
+    { icon: '🎯', title: 'নাইস ট্রাই!', sub: 'কিন্তু এই ওয়েবসাইটের ডিজাইন © Shahed Store সম্পত্তি।' },
     { icon: '✨', title: 'কপি না করে কিনে নিন!', sub: 'আসল প্রোডাক্ট পেতে অর্ডার করুন shahedstore.com.bd তে।' },
     { icon: '🔐', title: 'অ্যাক্সেস ডিনাইড', sub: 'এই পেজটি কপিরাইট আইন দ্বারা সুরক্ষিত।' },
   ];
