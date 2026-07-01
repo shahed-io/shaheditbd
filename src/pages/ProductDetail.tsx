@@ -367,7 +367,14 @@ const ProductDetail = () => {
     ...(selectedPlan ? [`মেয়াদ: ${selectedPlan.duration}`] : []),
     ...(customGroups.length > 0
       ? customGroups.map(g => {
-          const selId = selectedOpts[g.id];
+          if (g.allow_multiple) {
+            const selIds = Array.isArray(selectedOpts[g.id]) ? (selectedOpts[g.id] as string[]) : [];
+            const labels = selIds
+              .map(id => g.values.find(v => v.id === id)?.label)
+              .filter(Boolean);
+            return labels.length ? `${g.name}: ${labels.join(' + ')}` : null;
+          }
+          const selId = selectedOpts[g.id] as string | undefined;
           const val = selId ? g.values.find(v => v.id === selId) : g.values.find(v => v.is_default) || g.values[0];
           return val ? `${g.name}: ${val.label}` : null;
         }).filter(Boolean)
