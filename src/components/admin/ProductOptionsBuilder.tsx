@@ -64,6 +64,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
         name: g.name,
         display_type: g.display_type,
         is_required: g.is_required,
+        allow_multiple: !!g.allow_multiple,
         sort_order: g.sort_order,
         values: (g.product_option_values || [])
           .sort((a: any, b: any) => a.sort_order - b.sort_order)
