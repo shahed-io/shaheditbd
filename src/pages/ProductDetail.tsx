@@ -181,6 +181,7 @@ const ProductDetail = () => {
             name: g.name,
             display_type: g.display_type,
             is_required: g.is_required,
+            allow_multiple: !!g.allow_multiple,
             sort_order: g.sort_order,
             values: (g.product_option_values || [])
               .sort((a: any, b: any) => a.sort_order - b.sort_order)
@@ -194,10 +195,14 @@ const ProductDetail = () => {
           }));
           setCustomGroups(groups);
           // Initialize default selections
-          const defaults: Record<string, string> = {};
+          const defaults: Record<string, string | string[]> = {};
           for (const g of groups) {
-            const def = g.values.find(v => v.is_default) || g.values[0];
-            if (def) defaults[g.id] = def.id;
+            if (g.allow_multiple) {
+              defaults[g.id] = g.values.filter(v => v.is_default).map(v => v.id);
+            } else {
+              const def = g.values.find(v => v.is_default) || g.values[0];
+              if (def) defaults[g.id] = def.id;
+            }
           }
           setSelectedOpts(defaults);
         }
