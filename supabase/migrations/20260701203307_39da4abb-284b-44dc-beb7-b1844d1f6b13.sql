@@ -1,0 +1,1 @@
+ALTER TABLE public.product_option_groups ADD COLUMN IF NOT EXISTS allow_multiple boolean NOT NULL DEFAULT false;

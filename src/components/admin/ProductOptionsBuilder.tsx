@@ -19,6 +19,7 @@ interface OptionGroup {
   name: string;
   display_type: 'button' | 'radio' | 'dropdown';
   is_required: boolean;
+  allow_multiple: boolean;
   sort_order: number;
   values: OptionValue[];
   _deleted?: boolean;
@@ -63,6 +64,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
         name: g.name,
         display_type: g.display_type,
         is_required: g.is_required,
+        allow_multiple: !!g.allow_multiple,
         sort_order: g.sort_order,
         values: (g.product_option_values || [])
           .sort((a: any, b: any) => a.sort_order - b.sort_order)
@@ -87,6 +89,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
       name: '',
       display_type: 'button',
       is_required: true,
+      allow_multiple: false,
       sort_order: prev.length,
       values: [{ _tempId: genTempId(), label: '', price_adjustment: 0, is_default: true, sort_order: 0 }],
     }]);
@@ -119,8 +122,8 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
     setGroups(prev => prev.map((g, i) => {
       if (i !== gi) return g;
       const values = g.values.map((v, j) => j === vi ? { ...v, ...patch } : v);
-      // Only one default per group
-      if (patch.is_default) {
+      // Only one default per group when single-select; multiple allowed when multi-select
+      if (patch.is_default && !g.allow_multiple) {
         return { ...g, values: values.map((v, j) => ({ ...v, is_default: j === vi })) };
       }
       return { ...g, values };
@@ -158,7 +161,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
           // Insert new group
           const { data, error } = await supabase
             .from('product_option_groups' as any)
-            .insert({ product_id: productId, name: g.name.trim(), display_type: g.display_type, is_required: g.is_required, sort_order: gi })
+            .insert({ product_id: productId, name: g.name.trim(), display_type: g.display_type, is_required: g.is_required, allow_multiple: g.allow_multiple, sort_order: gi })
             .select('id')
             .single();
           if (error) throw error;
@@ -166,7 +169,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
         } else {
           // Update existing group
           await supabase.from('product_option_groups' as any)
-            .update({ name: g.name.trim(), display_type: g.display_type, is_required: g.is_required, sort_order: gi })
+            .update({ name: g.name.trim(), display_type: g.display_type, is_required: g.is_required, allow_multiple: g.allow_multiple, sort_order: gi })
             .eq('id', groupId);
         }
 
@@ -262,14 +265,14 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
               {/* Group header row */}
               <div className="flex items-start gap-2">
                 <GripVertical size={14} className="text-muted-foreground mt-2.5 flex-shrink-0 cursor-grab" />
-                <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-4 gap-2">
                   {/* Group name */}
                   <div className="sm:col-span-1">
                     <label className={lc}>Group Name *</label>
                     <input
                       value={group.name}
                       onChange={e => updateGroup(gi, { name: e.target.value })}
-                      placeholder="e.g. Duration, Plan, Type"
+                      placeholder="e.g. Duration, Account Type"
                       className={ic}
                     />
                   </div>
@@ -310,6 +313,22 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
                       {group.is_required ? '✅ Required' : '⬜ Optional'}
                     </button>
                   </div>
+                  {/* Multi-select toggle */}
+                  <div>
+                    <label className={lc}>Selection Mode</label>
+                    <button
+                      type="button"
+                      onClick={() => updateGroup(gi, { allow_multiple: !group.allow_multiple })}
+                      className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-colors ${
+                        group.allow_multiple
+                          ? 'border-violet-500/40 bg-violet-500/10 text-violet-300'
+                          : 'border-border bg-muted/20 text-muted-foreground'
+                      }`}
+                      title={group.allow_multiple ? 'Customers can select multiple options — prices add up' : 'Only one option can be selected'}
+                    >
+                      {group.allow_multiple ? '☑️ Multiple (adds price)' : '◉ Single choice'}
+                    </button>
+                  </div>
                 </div>
                 <button type="button" onClick={() => removeGroup(gi)} className="text-muted-foreground hover:text-destructive transition-colors mt-1 flex-shrink-0">
                   <Trash2 size={14} />
@@ -326,12 +345,12 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
                   if (val._deleted) return null;
                   return (
                     <div key={val.id || val._tempId} className="flex items-center gap-2">
-                      {/* Default radio */}
+                      {/* Default marker (radio for single, checkbox for multi) */}
                       <button
                         type="button"
-                        onClick={() => updateValue(gi, vi, { is_default: true })}
-                        title="Set as default"
-                        className={`w-4 h-4 flex-shrink-0 rounded-full border-2 transition-colors ${
+                        onClick={() => updateValue(gi, vi, { is_default: group.allow_multiple ? !val.is_default : true })}
+                        title={group.allow_multiple ? 'Pre-selected by default (multi)' : 'Set as default'}
+                        className={`w-4 h-4 flex-shrink-0 border-2 transition-colors ${group.allow_multiple ? 'rounded-[4px]' : 'rounded-full'} ${
                           val.is_default ? 'border-primary bg-primary' : 'border-border bg-transparent hover:border-primary/50'
                         }`}
                       />
