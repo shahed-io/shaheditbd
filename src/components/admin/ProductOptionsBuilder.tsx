@@ -161,7 +161,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
           // Insert new group
           const { data, error } = await supabase
             .from('product_option_groups' as any)
-            .insert({ product_id: productId, name: g.name.trim(), display_type: g.display_type, is_required: g.is_required, sort_order: gi })
+            .insert({ product_id: productId, name: g.name.trim(), display_type: g.display_type, is_required: g.is_required, allow_multiple: g.allow_multiple, sort_order: gi })
             .select('id')
             .single();
           if (error) throw error;
@@ -169,7 +169,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
         } else {
           // Update existing group
           await supabase.from('product_option_groups' as any)
-            .update({ name: g.name.trim(), display_type: g.display_type, is_required: g.is_required, sort_order: gi })
+            .update({ name: g.name.trim(), display_type: g.display_type, is_required: g.is_required, allow_multiple: g.allow_multiple, sort_order: gi })
             .eq('id', groupId);
         }
 
