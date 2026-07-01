@@ -265,14 +265,14 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
               {/* Group header row */}
               <div className="flex items-start gap-2">
                 <GripVertical size={14} className="text-muted-foreground mt-2.5 flex-shrink-0 cursor-grab" />
-                <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-4 gap-2">
                   {/* Group name */}
                   <div className="sm:col-span-1">
                     <label className={lc}>Group Name *</label>
                     <input
                       value={group.name}
                       onChange={e => updateGroup(gi, { name: e.target.value })}
-                      placeholder="e.g. Duration, Plan, Type"
+                      placeholder="e.g. Duration, Account Type"
                       className={ic}
                     />
                   </div>
@@ -311,6 +311,22 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
                       }`}
                     >
                       {group.is_required ? '✅ Required' : '⬜ Optional'}
+                    </button>
+                  </div>
+                  {/* Multi-select toggle */}
+                  <div>
+                    <label className={lc}>Selection Mode</label>
+                    <button
+                      type="button"
+                      onClick={() => updateGroup(gi, { allow_multiple: !group.allow_multiple })}
+                      className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-colors ${
+                        group.allow_multiple
+                          ? 'border-violet-500/40 bg-violet-500/10 text-violet-300'
+                          : 'border-border bg-muted/20 text-muted-foreground'
+                      }`}
+                      title={group.allow_multiple ? 'Customers can select multiple options — prices add up' : 'Only one option can be selected'}
+                    >
+                      {group.allow_multiple ? '☑️ Multiple (adds price)' : '◉ Single choice'}
                     </button>
                   </div>
                 </div>
