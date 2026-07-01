@@ -19,6 +19,7 @@ interface OptionGroup {
   name: string;
   display_type: 'button' | 'radio' | 'dropdown';
   is_required: boolean;
+  allow_multiple: boolean;
   sort_order: number;
   values: OptionValue[];
   _deleted?: boolean;
