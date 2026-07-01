@@ -660,7 +660,7 @@ const FloatingSupport = () => {
             {!chatOpen && !menuOpen && <span className="fab-gloss" />}
             {(chatOpen || menuOpen)
               ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(258,78%,45%)' }} />
-              : <MessageCircle size={22} className="relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]" style={{ color: config.fab_icon_color || '#ffffff' }} />
+              : <MessageCircleMore size={24} strokeWidth={2.25} className="relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.28)]" style={{ color: config.fab_icon_color || '#ffffff' }} />
             }
           </button>
         </div>
