@@ -943,10 +943,23 @@ const ProductDetail = () => {
                 </div>
               )}
               {customGroups.map((group, gi) => {
-                const selValueId = selectedOpts[group.id];
-                const currentVal = selValueId
-                  ? group.values.find(v => v.id === selValueId)
-                  : group.values.find(v => v.is_default) || group.values[0];
+                const rawSel = selectedOpts[group.id];
+                const isMulti = group.allow_multiple;
+                const selIds: string[] = isMulti
+                  ? (Array.isArray(rawSel) ? rawSel : [])
+                  : (typeof rawSel === 'string' && rawSel
+                      ? [rawSel]
+                      : [(group.values.find(x => x.is_default) || group.values[0])?.id].filter(Boolean) as string[]);
+                const isValueSelected = (vid: string) => selIds.includes(vid);
+
+                const toggleMulti = (vid: string) => {
+                  setSelectedOpts(p => {
+                    const cur = Array.isArray(p[group.id]) ? (p[group.id] as string[]) : [];
+                    const next = cur.includes(vid) ? cur.filter(x => x !== vid) : [...cur, vid];
+                    return { ...p, [group.id]: next };
+                  });
+                };
+                const pickSingle = (vid: string) => setSelectedOpts(p => ({ ...p, [group.id]: vid }));
 
                 return (
                   <div
@@ -958,30 +971,36 @@ const ProductDetail = () => {
                     }}
                   >
                     {/* Group label */}
-                    <p className="text-sm font-medium text-muted-foreground mb-2.5">
-                      {group.name}
+                    <p className="text-sm font-medium text-muted-foreground mb-2.5 flex items-center gap-2">
+                      <span>{group.name}</span>
+                      {isMulti && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          style={{ background: 'hsla(258,78%,55%,0.10)', color: 'hsl(258,78%,55%)', border: '1px solid hsla(258,78%,55%,0.25)' }}>
+                          একাধিক নির্বাচন করা যাবে
+                        </span>
+                      )}
                     </p>
 
-                    {/* Dropdown display */}
-                    {group.display_type === 'dropdown' && (
+                    {/* Dropdown display — single-select only */}
+                    {group.display_type === 'dropdown' && !isMulti && (
                       <select
-                        value={selValueId || ''}
-                        onChange={e => setSelectedOpts(p => ({ ...p, [group.id]: e.target.value }))}
+                        value={(typeof rawSel === 'string' ? rawSel : '') || ''}
+                        onChange={e => pickSingle(e.target.value)}
                         className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                       >
                         {group.values.map(v => (
                           <option key={v.id} value={v.id}>
-                            {v.label}
+                            {v.label}{v.price_adjustment > 0 ? ` — ৳${v.price_adjustment.toLocaleString()}` : ''}
                           </option>
                         ))}
                       </select>
                     )}
 
-                    {/* Radio display */}
-                    {group.display_type === 'radio' && (
+                    {/* Radio / checkbox list display */}
+                    {(group.display_type === 'radio' || (group.display_type === 'dropdown' && isMulti)) && (
                       <div className="space-y-2">
                         {group.values.map(v => {
-                          const isSel = (selValueId || (group.values.find(x => x.is_default) || group.values[0])?.id) === v.id;
+                          const isSel = isValueSelected(v.id);
                           return (
                             <label
                               key={v.id}
@@ -990,34 +1009,43 @@ const ProductDetail = () => {
                                 borderColor: isSel ? 'hsl(var(--foreground))' : 'hsl(var(--border))',
                                 background: isSel ? 'hsla(var(--foreground) / 0.06)' : 'transparent',
                               }}
+                              onClick={(e) => { e.preventDefault(); isMulti ? toggleMulti(v.id) : pickSingle(v.id); }}
                             >
-                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${isSel ? 'border-foreground' : 'border-border'}`}>
-                                {isSel && <div className="w-2 h-2 rounded-full bg-foreground" />}
+                              <div className={`w-4 h-4 border-2 flex items-center justify-center flex-shrink-0 transition-colors ${isMulti ? 'rounded-[4px]' : 'rounded-full'} ${isSel ? 'border-foreground' : 'border-border'}`}>
+                                {isSel && (isMulti
+                                  ? <Check size={11} strokeWidth={3} className="text-foreground" />
+                                  : <div className="w-2 h-2 rounded-full bg-foreground" />)}
                               </div>
-                              <input type="radio" className="sr-only" checked={isSel} onChange={() => setSelectedOpts(p => ({ ...p, [group.id]: v.id }))} />
                               <span className="text-sm font-semibold text-foreground flex-1">{v.label}</span>
+                              {v.price_adjustment > 0 && (
+                                <span className="text-xs font-semibold text-muted-foreground">+৳{v.price_adjustment.toLocaleString()}</span>
+                              )}
                             </label>
                           );
                         })}
                       </div>
                     )}
 
-                    {/* Button display (default) — FanFlix style */}
+                    {/* Button/chip display (default) */}
                     {group.display_type === 'button' && (
                       <div className="flex flex-wrap gap-2">
                         {group.values.map(v => {
-                          const isSel = (selValueId || (group.values.find(x => x.is_default) || group.values[0])?.id) === v.id;
+                          const isSel = isValueSelected(v.id);
                           return (
                             <button
                               key={v.id}
-                              onClick={() => setSelectedOpts(p => ({ ...p, [group.id]: v.id }))}
-                              className="px-5 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-[1.03] active:scale-95"
+                              onClick={() => isMulti ? toggleMulti(v.id) : pickSingle(v.id)}
+                              className="px-5 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all hover:scale-[1.03] active:scale-95 flex items-center gap-1.5"
                               style={isSel
                                 ? { borderColor: 'hsl(var(--foreground))', color: 'hsl(var(--background))', background: 'hsl(var(--foreground))' }
                                 : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))', background: 'transparent' }
                               }
                             >
-                              {v.label}
+                              {isMulti && isSel && <Check size={13} strokeWidth={3} />}
+                              <span>{v.label}</span>
+                              {v.price_adjustment > 0 && (
+                                <span className="text-[11px] font-bold opacity-80">+৳{v.price_adjustment.toLocaleString()}</span>
+                              )}
                             </button>
                           );
                         })}
