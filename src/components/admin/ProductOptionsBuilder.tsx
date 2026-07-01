@@ -89,6 +89,7 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
       name: '',
       display_type: 'button',
       is_required: true,
+      allow_multiple: false,
       sort_order: prev.length,
       values: [{ _tempId: genTempId(), label: '', price_adjustment: 0, is_default: true, sort_order: 0 }],
     }]);
