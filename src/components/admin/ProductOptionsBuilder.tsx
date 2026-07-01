@@ -122,8 +122,8 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
     setGroups(prev => prev.map((g, i) => {
       if (i !== gi) return g;
       const values = g.values.map((v, j) => j === vi ? { ...v, ...patch } : v);
-      // Only one default per group
-      if (patch.is_default) {
+      // Only one default per group when single-select; multiple allowed when multi-select
+      if (patch.is_default && !g.allow_multiple) {
         return { ...g, values: values.map((v, j) => ({ ...v, is_default: j === vi })) };
       }
       return { ...g, values };
