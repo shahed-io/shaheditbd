@@ -98,6 +98,7 @@ interface CustomOptionGroup {
   name: string;
   display_type: 'button' | 'radio' | 'dropdown';
   is_required: boolean;
+  allow_multiple: boolean;
   sort_order: number;
   values: CustomOptionValue[];
 }
