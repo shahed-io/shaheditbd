@@ -345,12 +345,12 @@ const ProductOptionsBuilder = ({ productId, basePrice }: Props) => {
                   if (val._deleted) return null;
                   return (
                     <div key={val.id || val._tempId} className="flex items-center gap-2">
-                      {/* Default radio */}
+                      {/* Default marker (radio for single, checkbox for multi) */}
                       <button
                         type="button"
-                        onClick={() => updateValue(gi, vi, { is_default: true })}
-                        title="Set as default"
-                        className={`w-4 h-4 flex-shrink-0 rounded-full border-2 transition-colors ${
+                        onClick={() => updateValue(gi, vi, { is_default: group.allow_multiple ? !val.is_default : true })}
+                        title={group.allow_multiple ? 'Pre-selected by default (multi)' : 'Set as default'}
+                        className={`w-4 h-4 flex-shrink-0 border-2 transition-colors ${group.allow_multiple ? 'rounded-[4px]' : 'rounded-full'} ${
                           val.is_default ? 'border-primary bg-primary' : 'border-border bg-transparent hover:border-primary/50'
                         }`}
                       />
