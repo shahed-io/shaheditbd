@@ -316,13 +316,33 @@ const ProductDetail = () => {
     }
     // New system: custom option groups
     if (customGroups.length > 0) {
+      // Single-select groups: first non-zero price_adjustment REPLACES base price
+      let basePrice = product.price;
+      let replaced = false;
       for (const group of customGroups) {
-        const selValueId = selectedOpts[group.id];
+        if (group.allow_multiple) continue;
+        const selValueId = selectedOpts[group.id] as string | undefined;
         const val = selValueId
           ? group.values.find(v => v.id === selValueId)
           : group.values.find(v => v.is_default) || group.values[0];
-        if (val && val.price_adjustment > 0) return val.price_adjustment;
+        if (!replaced && val && val.price_adjustment > 0) {
+          basePrice = val.price_adjustment;
+          replaced = true;
+        }
       }
+      // Multi-select groups: ADD every selected value's price_adjustment
+      let extras = 0;
+      for (const group of customGroups) {
+        if (!group.allow_multiple) continue;
+        const selIds = Array.isArray(selectedOpts[group.id])
+          ? (selectedOpts[group.id] as string[])
+          : [];
+        for (const id of selIds) {
+          const val = group.values.find(v => v.id === id);
+          if (val) extras += val.price_adjustment;
+        }
+      }
+      return basePrice + extras;
     }
     // Legacy variant system
     for (const group of legacyVariants) {
