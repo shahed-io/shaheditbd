@@ -2657,6 +2657,7 @@ export type Database = {
       }
       product_option_groups: {
         Row: {
+          allow_multiple: boolean
           created_at: string
           display_type: string
           id: string
@@ -2667,6 +2668,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          allow_multiple?: boolean
           created_at?: string
           display_type?: string
           id?: string
@@ -2677,6 +2679,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          allow_multiple?: boolean
           created_at?: string
           display_type?: string
           id?: string
