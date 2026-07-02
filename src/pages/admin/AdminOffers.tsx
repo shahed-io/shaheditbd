@@ -198,6 +198,30 @@ export default function AdminOffers() {
 
                 <div className="p-4 space-y-3">
                   <h3 className="font-semibold leading-snug line-clamp-2 min-h-[2.75rem]">{o.title}</h3>
+                  {(() => {
+                    const now = Date.now();
+                    const startTs = o.start_at ? new Date(o.start_at).getTime() : null;
+                    const endTs = o.end_at ? new Date(o.end_at).getTime() : null;
+                    const fmt = (ms: number) => {
+                      const s = Math.max(0, Math.floor(ms / 1000));
+                      const d = Math.floor(s / 86400);
+                      const h = Math.floor((s % 86400) / 3600);
+                      const m = Math.floor((s % 3600) / 60);
+                      if (d > 0) return `${d}d ${h}h`;
+                      if (h > 0) return `${h}h ${m}m`;
+                      return `${m}m`;
+                    };
+                    if (startTs && now < startTs) {
+                      return <div className="text-[11px] px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 w-fit">⏳ Starts in {fmt(startTs - now)}</div>;
+                    }
+                    if (endTs && now < endTs && o.status === 'active') {
+                      return <div className="text-[11px] px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 w-fit">⏱ Ends in {fmt(endTs - now)}</div>;
+                    }
+                    if (endTs && now >= endTs) {
+                      return <div className="text-[11px] px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 w-fit">Ended</div>;
+                    }
+                    return null;
+                  })()}
 
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-violet-500/10 text-violet-700 dark:text-violet-300">

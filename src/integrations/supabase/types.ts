@@ -1829,6 +1829,9 @@ export type Database = {
       }
       offers: {
         Row: {
+          auto_close: boolean
+          auto_notify_winners: boolean
+          auto_publish: boolean
           banner_url: string | null
           created_at: string
           created_by: string | null
@@ -1836,9 +1839,12 @@ export type Database = {
           end_at: string | null
           google_form_url: string | null
           id: string
+          max_entries_per_user: number
           max_submissions: number | null
+          min_purchase_amount: number | null
           notice: string | null
           prize_details: string | null
+          referral_bonus_entries: number
           require_login: boolean
           show_notice: boolean
           show_winners: boolean
@@ -1850,8 +1856,13 @@ export type Database = {
           terms: string | null
           title: string
           updated_at: string
+          winner_count: number
+          winner_selection_mode: string
         }
         Insert: {
+          auto_close?: boolean
+          auto_notify_winners?: boolean
+          auto_publish?: boolean
           banner_url?: string | null
           created_at?: string
           created_by?: string | null
@@ -1859,9 +1870,12 @@ export type Database = {
           end_at?: string | null
           google_form_url?: string | null
           id?: string
+          max_entries_per_user?: number
           max_submissions?: number | null
+          min_purchase_amount?: number | null
           notice?: string | null
           prize_details?: string | null
+          referral_bonus_entries?: number
           require_login?: boolean
           show_notice?: boolean
           show_winners?: boolean
@@ -1873,8 +1887,13 @@ export type Database = {
           terms?: string | null
           title: string
           updated_at?: string
+          winner_count?: number
+          winner_selection_mode?: string
         }
         Update: {
+          auto_close?: boolean
+          auto_notify_winners?: boolean
+          auto_publish?: boolean
           banner_url?: string | null
           created_at?: string
           created_by?: string | null
@@ -1882,9 +1901,12 @@ export type Database = {
           end_at?: string | null
           google_form_url?: string | null
           id?: string
+          max_entries_per_user?: number
           max_submissions?: number | null
+          min_purchase_amount?: number | null
           notice?: string | null
           prize_details?: string | null
+          referral_bonus_entries?: number
           require_login?: boolean
           show_notice?: boolean
           show_winners?: boolean
@@ -1896,6 +1918,8 @@ export type Database = {
           terms?: string | null
           title?: string
           updated_at?: string
+          winner_count?: number
+          winner_selection_mode?: string
         }
         Relationships: []
       }
@@ -3902,6 +3926,23 @@ export type Database = {
           },
         ]
       }
+      offer_analytics_daily: {
+        Row: {
+          day: string | null
+          entries: number | null
+          offer_id: string | null
+          unique_users: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_submissions_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       admin_adjust_cid_balance: {
@@ -4066,6 +4107,7 @@ export type Database = {
         }
         Returns: number
       }
+      offers_auto_status_tick: { Args: never; Returns: undefined }
       process_affiliate_withdrawal: {
         Args: {
           p_action: string

@@ -12,10 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2 } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2, BarChart3, Zap } from 'lucide-react';
 import PrizesEditor from '@/components/admin/PrizesEditor';
 import AiPolishButton from '@/components/admin/AiPolishButton';
 import { parsePrizeItems } from '@/lib/offerPrizes';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 interface Offer {
   id: string;
@@ -36,6 +37,14 @@ interface Offer {
   submission_count: number;
   notice: string | null;
   show_notice: boolean;
+  auto_publish: boolean;
+  auto_close: boolean;
+  max_entries_per_user: number;
+  min_purchase_amount: number | null;
+  referral_bonus_entries: number;
+  winner_count: number;
+  winner_selection_mode: string;
+  auto_notify_winners: boolean;
 }
 
 interface Field {
@@ -205,7 +214,18 @@ export default function AdminOfferEditor() {
       supabase.from('offer_submissions').select('*').eq('offer_id', id).order('created_at', { ascending: false }),
       supabase.from('offer_winners').select('*').eq('offer_id', id).order('rank'),
     ]);
-    setOffer(o as Offer);
+    const offerData = o as any;
+    if (offerData) {
+      offerData.auto_publish = offerData.auto_publish ?? false;
+      offerData.auto_close = offerData.auto_close ?? false;
+      offerData.max_entries_per_user = offerData.max_entries_per_user ?? 1;
+      offerData.min_purchase_amount = offerData.min_purchase_amount ?? null;
+      offerData.referral_bonus_entries = offerData.referral_bonus_entries ?? 0;
+      offerData.winner_count = offerData.winner_count ?? 1;
+      offerData.winner_selection_mode = offerData.winner_selection_mode ?? 'manual';
+      offerData.auto_notify_winners = offerData.auto_notify_winners ?? true;
+    }
+    setOffer(offerData as Offer);
     setFields((f as Field[]) || []);
     setSubmissions((s as Submission[]) || []);
     setWinners((w as Winner[]) || []);
@@ -338,6 +358,60 @@ export default function AdminOfferEditor() {
       toast.error(e.message || 'Failed to pick winners');
     } finally {
       setPicking(false);
+    }
+  };
+
+  const autoPickWinners = async () => {
+    if (!offer) return;
+    if (submissions.length === 0) return toast.error('No submissions to pick from');
+    if (offer.winner_selection_mode === 'manual') {
+      return toast.error('Selection mode is set to Manual. Change it in Settings → Winner Automation, or use the manual picker below.');
+    }
+    if (!confirm(`Auto-pick ${offer.winner_count} winner(s) using "${offer.winner_selection_mode}" mode?`)) return;
+    setPicking(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session?.session?.access_token;
+      const resp = await supabase.functions.invoke('offer-auto-winner', {
+        body: { offer_id: offer.id },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      if (resp.error) throw resp.error;
+      toast.success(`${resp.data?.winners || 0} winner(s) selected!`);
+      load();
+    } catch (e: any) {
+      toast.error(e.message || 'Auto-pick failed');
+    } finally {
+      setPicking(false);
+    }
+  };
+
+  const downloadFullCSV = async () => {
+    if (!offer) return;
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session?.session?.access_token;
+      const resp = await fetch(
+        `https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/offer-export-csv`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ offer_id: offer.id }),
+        }
+      );
+      if (!resp.ok) throw new Error(await resp.text());
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${offer.slug}-full-export.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e: any) {
+      toast.error(e.message || 'Export failed');
     }
   };
 
@@ -475,6 +549,7 @@ export default function AdminOfferEditor() {
           <TabsTrigger value="fields">Form Fields ({fields.length})</TabsTrigger>
           <TabsTrigger value="submissions">Submissions ({submissions.length})</TabsTrigger>
           <TabsTrigger value="winners">Winners ({winners.length})</TabsTrigger>
+          <TabsTrigger value="analytics"><BarChart3 className="w-3.5 h-3.5 mr-1" /> Analytics</TabsTrigger>
         </TabsList>
 
         {/* AI BUILDER */}
@@ -734,6 +809,109 @@ export default function AdminOfferEditor() {
             </CardContent>
           </Card>
 
+          {/* SCHEDULE AUTOMATION */}
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><Zap className="w-5 h-5 text-primary" /> Schedule Automation</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-xs text-muted-foreground">Start এবং End Date-এ পৌঁছালে giveaway automatically publish/close হবে। Cron প্রতি ৫ মিনিটে চেক করে।</p>
+              <div className="flex items-center justify-between border rounded-lg p-3">
+                <div>
+                  <div className="font-medium">Auto-Publish at Start Date</div>
+                  <div className="text-xs text-muted-foreground">Draft giveaway automatically Active হবে যখন Start Date-এ পৌঁছাবে</div>
+                </div>
+                <Switch checked={offer.auto_publish} onCheckedChange={(v) => setOffer({ ...offer, auto_publish: v })} />
+              </div>
+              <div className="flex items-center justify-between border rounded-lg p-3">
+                <div>
+                  <div className="font-medium">Auto-Close at End Date</div>
+                  <div className="text-xs text-muted-foreground">End Date পার হলে giveaway automatically Closed হবে</div>
+                </div>
+                <Switch checked={offer.auto_close} onCheckedChange={(v) => setOffer({ ...offer, auto_close: v })} />
+              </div>
+              {(offer.auto_publish || offer.auto_close) && !offer.start_at && !offer.end_at && (
+                <div className="text-xs text-amber-600 border border-amber-400/40 bg-amber-50 dark:bg-amber-950/20 p-2 rounded">
+                  ⚠️ Automation on আছে কিন্তু Start/End Date সেট করা হয়নি। উপরে "Status & Limits" এ set করুন।
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* ENTRY RULES */}
+          <Card>
+            <CardHeader><CardTitle>Entry Rules</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <Label>Maximum Entries per User</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={offer.max_entries_per_user}
+                  onChange={(e) => setOffer({ ...offer, max_entries_per_user: Math.max(1, +e.target.value || 1) })}
+                />
+                <p className="text-xs text-muted-foreground mt-1">প্রতি user সর্বোচ্চ কতবার এন্ট্রি দিতে পারবে</p>
+              </div>
+              <div>
+                <Label>Minimum Purchase Amount (৳)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={offer.min_purchase_amount ?? ''}
+                  onChange={(e) => setOffer({ ...offer, min_purchase_amount: e.target.value ? +e.target.value : null })}
+                  placeholder="0 = কোনো শর্ত নেই"
+                />
+                <p className="text-xs text-muted-foreground mt-1">এই amount-এর কেনাকাটা থাকলেই কেবল অংশ নিতে পারবে (completed orders)</p>
+              </div>
+              <div>
+                <Label>Bonus Entries per Referral</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={offer.referral_bonus_entries}
+                  onChange={(e) => setOffer({ ...offer, referral_bonus_entries: Math.max(0, +e.target.value || 0) })}
+                />
+                <p className="text-xs text-muted-foreground mt-1">প্রতিটি referral এর জন্য অতিরিক্ত এন্ট্রি (weighted winner selection-এ কাজ করে)</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* WINNER AUTOMATION */}
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> Winner Automation</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <Label>Number of Winners</Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={offer.winner_count}
+                    onChange={(e) => setOffer({ ...offer, winner_count: Math.max(1, Math.min(100, +e.target.value || 1)) })}
+                  />
+                </div>
+                <div>
+                  <Label>Selection Mode</Label>
+                  <Select value={offer.winner_selection_mode} onValueChange={(v) => setOffer({ ...offer, winner_selection_mode: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="manual">✋ Manual (admin picks)</SelectItem>
+                      <SelectItem value="random">🎲 Random (fair lottery)</SelectItem>
+                      <SelectItem value="weighted_referral">⚖️ Weighted by Referrals</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex items-center justify-between border rounded-lg p-3">
+                <div>
+                  <div className="font-medium">Auto-Notify Winners</div>
+                  <div className="text-xs text-muted-foreground">Winner select হওয়ার সাথে সাথে dashboard notification + email পাঠাবে</div>
+                </div>
+                <Switch checked={offer.auto_notify_winners} onCheckedChange={(v) => setOffer({ ...offer, auto_notify_winners: v })} />
+              </div>
+            </CardContent>
+          </Card>
+
+
           <Card>
             <CardHeader><CardTitle>Submission & Integration</CardTitle></CardHeader>
             <CardContent className="space-y-3">
@@ -945,6 +1123,28 @@ export default function AdminOfferEditor() {
 
         {/* WINNERS */}
         <TabsContent value="winners" className="space-y-3">
+          {/* One-click auto-pick using Settings → Winner Automation config */}
+          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-fuchsia-500/5">
+            <CardContent className="p-4 flex items-center justify-between gap-3 flex-wrap">
+              <div className="text-sm">
+                <div className="font-semibold flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" /> Auto Pick from Settings
+                </div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  Uses: <b>{offer.winner_count}</b> winner(s), mode <Badge variant="outline">{offer.winner_selection_mode}</Badge>
+                  {offer.auto_notify_winners && <span className="ml-2">🔔 Auto-notify ON</span>}
+                </div>
+              </div>
+              <Button
+                onClick={autoPickWinners}
+                disabled={picking || submissions.length === 0 || offer.winner_selection_mode === 'manual'}
+                className="bg-gradient-to-r from-primary to-fuchsia-600 text-white"
+              >
+                {picking ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />}
+                Auto Pick Winners
+              </Button>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader><CardTitle className="flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> Pick Winners</CardTitle></CardHeader>
             <CardContent className="space-y-3">
@@ -1062,6 +1262,63 @@ export default function AdminOfferEditor() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        {/* ANALYTICS */}
+        <TabsContent value="analytics" className="space-y-4">
+          {(() => {
+            const total = submissions.length;
+            const uniqueUsers = new Set(submissions.filter((s) => (s as any).user_id).map((s: any) => s.user_id)).size;
+            const converted = submissions.filter((s) => s.converted_to_customer).length;
+            const winnerCountVal = winners.length;
+            const conversionPct = total > 0 ? Math.round((converted / total) * 100) : 0;
+
+            const byDay = new Map<string, number>();
+            submissions.forEach((s) => {
+              const d = new Date(s.created_at).toISOString().slice(0, 10);
+              byDay.set(d, (byDay.get(d) ?? 0) + 1);
+            });
+            const chart = Array.from(byDay.entries())
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([day, entries]) => ({ day: day.slice(5), entries }));
+
+            return (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Total Entries</div><div className="text-2xl font-bold">{total}</div></CardContent></Card>
+                  <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Unique Users</div><div className="text-2xl font-bold">{uniqueUsers}</div></CardContent></Card>
+                  <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Converted to Customer</div><div className="text-2xl font-bold">{converted} <span className="text-sm text-muted-foreground">({conversionPct}%)</span></div></CardContent></Card>
+                  <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Winners Selected</div><div className="text-2xl font-bold">{winnerCountVal}</div></CardContent></Card>
+                </div>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                    <CardTitle className="text-base">Daily Entries</CardTitle>
+                    <Button variant="outline" size="sm" onClick={downloadFullCSV} disabled={total === 0}>
+                      <Download className="w-4 h-4 mr-1" /> Full Export (CSV)
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    {chart.length === 0 ? (
+                      <div className="text-center py-10 text-muted-foreground text-sm">No entries yet.</div>
+                    ) : (
+                      <div className="w-full h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={chart}>
+                            <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                            <XAxis dataKey="day" fontSize={12} />
+                            <YAxis fontSize={12} allowDecimals={false} />
+                            <Tooltip />
+                            <Line type="monotone" dataKey="entries" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            );
+          })()}
         </TabsContent>
       </Tabs>
 

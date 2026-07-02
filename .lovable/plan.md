@@ -1,92 +1,89 @@
-# Custom Offer Forms & AI Winner System
 
-Google Form-এর পরিবর্তে আমাদের নিজস্ব domain-এ (`shahedstore.com.bd/offer/<slug>`) সম্পূর্ণ custom form system তৈরি হবে — admin panel থেকে fully controllable.
+## Giveaway System v2 — Professional Upgrade
 
-## Admin এ যা করা যাবে (`/ceo/offers`)
-
-**Offer Management**
-- নতুন offer তৈরি / edit / delete / duplicate
-- Title, description (markdown), banner image, prize details, terms
-- Custom slug → public URL: `shahedstore.com.bd/offer/your-slug`
-- Status: draft / active / closed
-- Start date, end date (auto-close)
-- Max submissions limit (optional)
-- Login required toggle
-- Success message customization
-
-**Form Builder (Drag & Drop ছাড়া simple list)**
-- Field types: text, email, phone, number, textarea, select (dropdown), radio, checkbox, date, file upload
-- প্রতিটি field-এ: label, placeholder, required toggle, validation, help text
-- Field reorder (up/down arrow)
-- যেকোন সংখ্যক field add করা যাবে
-
-**Google Form Hybrid (optional)**
-- চাইলে Google Form URL embed করা যাবে fallback হিসেবে
-- কিন্তু public link সবসময় আমাদের domain-এ থাকবে (proxy/embed)
-
-**Submissions View**
-- সব entries table view-এ
-- Search, filter, CSV export
-- Individual submission detail modal
-
-**AI Winner Picker** ⭐
-- "Pick Winners" button
-- Number of winners select (1-100)
-- Prize names list (Winner 1: X, Winner 2: Y...)
-- Selection mode:
-  - Random (fair random)
-  - AI Smart Pick (Gemini analyzes submissions — quality, engagement, completeness)
-- Winners auto-saved, displayed with badge
-- Optional: auto-email winners
-- Re-pick / manual override
-
-## Public Side
-
-- `/offer/<slug>` page — branded with site theme, glassmorphism design
-- Form renders dynamically from builder config
-- Validation client + server side
-- Success page with custom message
-- Closed/expired offer shows "Offer ended" state
-- Optional winners announcement section
-
-## Technical
-
-**Database tables (4 new):**
-```
-offers
-  id, slug (unique), title, description, banner_url, prize_details,
-  terms, status, start_at, end_at, max_submissions, require_login,
-  success_message, google_form_url, show_winners, created_at
-
-offer_fields
-  id, offer_id, field_type, label, placeholder, required, options (jsonb),
-  validation (jsonb), help_text, sort_order
-
-offer_submissions
-  id, offer_id, user_id (nullable), data (jsonb), ip, user_agent,
-  is_winner, winner_rank, prize_won, created_at
-
-offer_winners (denormalized for display)
-  id, offer_id, submission_id, rank, prize, selected_by (ai/random/manual),
-  announced, created_at
-```
-All with RLS + GRANTs (public read on active offers/fields, public insert on submissions, admin-only writes).
-
-**Edge function:** `pick-winners` — receives offer_id, count, mode, prizes → if AI mode, calls Lovable AI Gateway (Gemini) with submission data to score & rank → writes to `offer_winners`.
-
-**Files:**
-- New: `src/pages/admin/AdminOffers.tsx` (list), `AdminOfferEditor.tsx` (form builder + settings + submissions + winner picker)
-- New: `src/pages/OfferPage.tsx` (public)
-- New route `/offer/:slug` in `App.tsx`
-- Sidebar menu item "Offers" with Gift icon in `AdminLayout.tsx`
-- Edge function `supabase/functions/pick-winners/index.ts`
-
-## Default settings
-- Login NOT required (anyone can join)
-- AI winner pick uses Gemini 2.5 Flash
-- Admin UI: English (per project rule)
-- Public offer page: Bengali
+Admin panel-focused overhaul. Public giveaway page remains as-is; only a new public **Winner Showcase** page is added.
 
 ---
 
-এটা approve করলেই full system build করে দিচ্ছি। কোনো adjustment লাগবে কি?
+### 1. Database (migration)
+
+Extend `public.offers` with:
+- `auto_publish` (bool) — activate automatically at `start_at`
+- `auto_close` (bool) — close automatically at `end_at`
+- `max_entries_per_user` (int, default 1)
+- `min_purchase_amount` (numeric, nullable) — user must have spent this much
+- `referral_bonus_entries` (int, default 0) — extra entries per referral
+- `winner_count` (int, default 1)
+- `winner_selection_mode` (text: `manual` | `random` | `weighted_referral`)
+- `auto_notify_winners` (bool, default true) — dashboard notification + email
+
+New table `public.offer_analytics_daily` (aggregated on the fly via view) — implemented as a SQL view over `offer_submissions` grouped by day.
+
+Add pg_cron job (every 5 min) that:
+- flips `status` to `active` when `auto_publish` AND `start_at <= now()`
+- flips to `closed` when `auto_close` AND `end_at <= now()`
+
+Trigger on `offer_winners INSERT` → if the parent offer has `auto_notify_winners`, insert a row into `notifications` for the winner's `user_id` and enqueue an email via existing `send-transactional-email`.
+
+### 2. New Edge Functions
+
+- `offer-auto-winner` — POST `{ offer_id }`. Picks N winners:
+  - `random` → SQL `ORDER BY random()`
+  - `weighted_referral` → weight = 1 + referral count
+  - Skips already-selected. Inserts into `offer_winners` and updates `offer_submissions.is_winner`.
+- `offer-export-csv` — POST `{ offer_id }`. Returns CSV of all submissions (dynamic form fields flattened).
+
+### 3. New Email Template
+
+`giveaway-winner.tsx` — congratulations email with prize name and CTA to dashboard.
+
+### 4. Admin UI (`AdminOfferEditor.tsx`)
+
+Add sections:
+- **Schedule** — start/end datetime, auto-publish/close toggles, live countdown preview
+- **Entry Rules** — max per user, min purchase, referral bonus, login required
+- **Winner Selection** — mode picker, winner count, "🎲 Auto Pick Winners" button (calls edge fn), auto-notify toggle
+
+New **Analytics tab** on the editor:
+- Total entries, unique users, conversion %, daily entries chart (recharts)
+- "Download CSV" button
+
+### 5. Admin List (`AdminOffers.tsx`)
+
+- Countdown badges (live), status pills for scheduled/active/closed
+- Quick actions: Auto-Pick Winners, Export CSV, Notify Winners
+
+### 6. Public Winner Showcase
+
+New route `/winners` — public page listing past giveaways and their winners (name + rank + prize). Uses existing `show_winners` flag on offers.
+
+### 7. Frontend Enforcement
+
+On the existing giveaway submission flow:
+- Check `max_entries_per_user` against user's prior submissions
+- Check `min_purchase_amount` against user's completed orders
+- Referral bonus recorded as duplicate submissions with `data.bonus=true`
+
+---
+
+### Files Created / Changed
+
+**New:**
+- `supabase/functions/offer-auto-winner/index.ts`
+- `supabase/functions/offer-export-csv/index.ts`
+- `supabase/functions/_shared/transactional-email-templates/giveaway-winner.tsx`
+- `src/pages/Winners.tsx` (public route)
+- `src/components/admin/OfferAnalytics.tsx`
+- `src/components/admin/OfferScheduleSection.tsx`
+- `src/components/admin/OfferEntryRulesSection.tsx`
+- `src/components/admin/OfferWinnerSelectionSection.tsx`
+
+**Modified:**
+- `src/pages/admin/AdminOfferEditor.tsx` — integrate new sections + Analytics tab
+- `src/pages/admin/AdminOffers.tsx` — countdowns + quick actions
+- `src/App.tsx` — add `/winners` route
+- Existing giveaway submission page — enforce new rules
+
+Migration adds all columns, view, trigger, and cron job in one call. Email template registered in registry.
+
+Confirm to proceed?
