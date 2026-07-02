@@ -214,7 +214,18 @@ export default function AdminOfferEditor() {
       supabase.from('offer_submissions').select('*').eq('offer_id', id).order('created_at', { ascending: false }),
       supabase.from('offer_winners').select('*').eq('offer_id', id).order('rank'),
     ]);
-    setOffer(o as Offer);
+    const offerData = o as any;
+    if (offerData) {
+      offerData.auto_publish = offerData.auto_publish ?? false;
+      offerData.auto_close = offerData.auto_close ?? false;
+      offerData.max_entries_per_user = offerData.max_entries_per_user ?? 1;
+      offerData.min_purchase_amount = offerData.min_purchase_amount ?? null;
+      offerData.referral_bonus_entries = offerData.referral_bonus_entries ?? 0;
+      offerData.winner_count = offerData.winner_count ?? 1;
+      offerData.winner_selection_mode = offerData.winner_selection_mode ?? 'manual';
+      offerData.auto_notify_winners = offerData.auto_notify_winners ?? true;
+    }
+    setOffer(offerData as Offer);
     setFields((f as Field[]) || []);
     setSubmissions((s as Submission[]) || []);
     setWinners((w as Winner[]) || []);
