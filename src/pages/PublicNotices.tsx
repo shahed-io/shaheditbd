@@ -1,11 +1,13 @@
 // Public notice list + detail
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import NoticeTemplate, { NoticeData } from '@/components/notices/NoticeTemplate';
 import SEOHead from '@/components/seo/SEOHead';
-import { Megaphone, ArrowLeft, Calendar } from 'lucide-react';
+import { Megaphone, ArrowLeft, Calendar, Download, Share2, Loader2 } from 'lucide-react';
 import { loadNoticeSignature, type NoticeSignature, DEFAULT_NOTICE_SIGNATURE } from '@/lib/noticeSignature';
+import html2canvas from 'html2canvas';
+import { toast } from 'sonner';
 
 interface NoticeRow extends NoticeData {
   id: string;
