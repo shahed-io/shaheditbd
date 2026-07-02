@@ -1112,6 +1112,28 @@ export default function AdminOfferEditor() {
 
         {/* WINNERS */}
         <TabsContent value="winners" className="space-y-3">
+          {/* One-click auto-pick using Settings → Winner Automation config */}
+          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-fuchsia-500/5">
+            <CardContent className="p-4 flex items-center justify-between gap-3 flex-wrap">
+              <div className="text-sm">
+                <div className="font-semibold flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" /> Auto Pick from Settings
+                </div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  Uses: <b>{offer.winner_count}</b> winner(s), mode <Badge variant="outline">{offer.winner_selection_mode}</Badge>
+                  {offer.auto_notify_winners && <span className="ml-2">🔔 Auto-notify ON</span>}
+                </div>
+              </div>
+              <Button
+                onClick={autoPickWinners}
+                disabled={picking || submissions.length === 0 || offer.winner_selection_mode === 'manual'}
+                className="bg-gradient-to-r from-primary to-fuchsia-600 text-white"
+              >
+                {picking ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />}
+                Auto Pick Winners
+              </Button>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader><CardTitle className="flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> Pick Winners</CardTitle></CardHeader>
             <CardContent className="space-y-3">
