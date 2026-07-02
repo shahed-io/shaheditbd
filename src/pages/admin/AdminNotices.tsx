@@ -616,6 +616,16 @@ export default function AdminNotices() {
           )}
         </DialogContent>
       </Dialog>
+
+      <SendToNotificationsDialog
+        open={!!notifyNotice}
+        onOpenChange={(o) => !o && setNotifyNotice(null)}
+        defaultTitle={notifyNotice ? `📢 ${notifyNotice.title}` : ''}
+        defaultMessage={notifyNotice ? (notifyNotice.summary || notifyNotice.title || '') : ''}
+        defaultLink={notifyNotice ? `/notices/${notifyNotice.slug}` : ''}
+        type="notice"
+        sourceLabel={notifyNotice ? 'Notice' : undefined}
+      />
     </div>
   );
 }
