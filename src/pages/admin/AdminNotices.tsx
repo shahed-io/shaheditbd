@@ -197,6 +197,24 @@ export default function AdminNotices() {
     }
   };
 
+  const noticeUrl = (slug: string) => `${window.location.origin}/notices/${slug}`;
+
+  const copyLink = async (slug: string) => {
+    const url = noticeUrl(slug);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied — ' + url);
+    } catch {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = url; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); toast.success('Link copied'); }
+      catch { toast.error('Copy failed'); }
+      ta.remove();
+    }
+  };
+
+
   const previewNotice: NoticeData | null = useMemo(() => editing ? {
     title: editing.title || 'Untitled Notice',
     summary: editing.summary || '',
