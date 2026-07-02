@@ -23,6 +23,7 @@ import { template as paymentSuccess } from './payment-success.tsx'
 import { template as paymentFailed } from './payment-failed.tsx'
 import { template as subscriptionCancelled } from './subscription-cancelled.tsx'
 import { template as refundProcessed } from './refund-processed.tsx'
+import { template as giveawayWinner } from './giveaway-winner.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'order-confirmation': orderConfirmation,
@@ -40,4 +41,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'payment-failed': paymentFailed,
   'subscription-cancelled': subscriptionCancelled,
   'refund-processed': refundProcessed,
+  'giveaway-winner': giveawayWinner,
 };
