@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { toast } from 'sonner';
 import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2 } from 'lucide-react';
 import PrizesEditor from '@/components/admin/PrizesEditor';
+import AiPolishButton from '@/components/admin/AiPolishButton';
 
 interface Offer {
   id: string;
@@ -32,6 +33,8 @@ interface Offer {
   google_form_url: string | null;
   show_winners: boolean;
   submission_count: number;
+  notice: string | null;
+  show_notice: boolean;
 }
 
 interface Field {
@@ -583,7 +586,15 @@ export default function AdminOfferEditor() {
             <CardHeader><CardTitle>Basic Info</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <Label>Title</Label>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <Label>Title</Label>
+                  <AiPolishButton
+                    value={offer.title}
+                    onChange={(next) => setOffer({ ...offer, title: next })}
+                    kind="offer_title"
+                    maxChars={120}
+                  />
+                </div>
                 <Input value={offer.title} onChange={(e) => setOffer({ ...offer, title: e.target.value })} />
               </div>
               <div>
@@ -594,7 +605,15 @@ export default function AdminOfferEditor() {
                 </div>
               </div>
               <div>
-                <Label>Description (Markdown supported)</Label>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <Label>Description (Markdown supported)</Label>
+                  <AiPolishButton
+                    value={offer.description || ''}
+                    onChange={(next) => setOffer({ ...offer, description: next })}
+                    kind="offer_description"
+                    maxChars={1500}
+                  />
+                </div>
                 <Textarea rows={5} value={offer.description || ''} onChange={(e) => setOffer({ ...offer, description: e.target.value })} />
               </div>
               <div>
@@ -604,7 +623,7 @@ export default function AdminOfferEditor() {
               <div>
                 <Label>Prize Details</Label>
                 <p className="text-xs text-muted-foreground mb-2">
-                  প্রতিটি পুরস্কার আলাদা box-এ যোগ করুন। ইচ্ছামত পুরস্কার add/remove/reorder করতে পারবেন।
+                  প্রতিটি পুরস্কার আলাদা box-এ যোগ করুন। ইচ্ছামত পুরস্কার add/remove/reorder করতে পারবেন। প্রতিটা field-এ AI দিয়ে সুন্দর করে লিখতে পারবেন ✨।
                 </p>
                 <PrizesEditor
                   value={offer.prize_details}
@@ -612,9 +631,56 @@ export default function AdminOfferEditor() {
                 />
               </div>
               <div>
-                <Label>Terms & Conditions</Label>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <Label>Terms & Conditions</Label>
+                  <AiPolishButton
+                    value={offer.terms || ''}
+                    onChange={(next) => setOffer({ ...offer, terms: next })}
+                    kind="terms"
+                    maxChars={1500}
+                  />
+                </div>
                 <Textarea rows={3} value={offer.terms || ''} onChange={(e) => setOffer({ ...offer, terms: e.target.value })} />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Optional notice / announcement banner shown at the top of the public offer page */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between gap-2">
+                <span>Announcement / Notice (optional)</span>
+                <Switch
+                  checked={offer.show_notice}
+                  onCheckedChange={(v) => setOffer({ ...offer, show_notice: v })}
+                />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-xs text-muted-foreground">
+                Giveaway page-এর একদম উপরে একটা notice দেখাতে চাইলে এখানে লিখুন এবং toggle অন করুন। না চাইলে toggle বন্ধ রাখুন — notice hidden থাকবে।
+              </p>
+              <div className="flex items-center justify-between gap-2">
+                <Label className="text-xs">Notice text</Label>
+                <AiPolishButton
+                  value={offer.notice || ''}
+                  onChange={(next) => setOffer({ ...offer, notice: next, show_notice: true })}
+                  kind="notice"
+                  maxChars={500}
+                />
+              </div>
+              <Textarea
+                rows={3}
+                value={offer.notice || ''}
+                onChange={(e) => setOffer({ ...offer, notice: e.target.value })}
+                placeholder="উদাহরণ: শেষ ২৪ ঘন্টা! এন্ট্রি জমা দিতে ভুলবেন না।"
+                disabled={!offer.show_notice}
+              />
+              {!offer.show_notice && (
+                <p className="text-xs text-muted-foreground italic">
+                  Toggle বন্ধ — notice public page-এ দেখানো হবে না।
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -680,7 +746,15 @@ export default function AdminOfferEditor() {
             <CardHeader><CardTitle>Submission & Integration</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <Label>Success Message (after submit)</Label>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <Label>Success Message (after submit)</Label>
+                  <AiPolishButton
+                    value={offer.success_message || ''}
+                    onChange={(next) => setOffer({ ...offer, success_message: next })}
+                    kind="success_message"
+                    maxChars={400}
+                  />
+                </div>
                 <Textarea rows={2} value={offer.success_message || ''} onChange={(e) => setOffer({ ...offer, success_message: e.target.value })} />
               </div>
               <div>
