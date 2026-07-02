@@ -340,6 +340,15 @@ export default function AdminNotices() {
                         <span className="line-clamp-1">{n.title}</span>
                       </div>
                       {n.summary && <div className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{n.summary}</div>}
+                      <button
+                        type="button"
+                        onClick={() => copyLink(n.slug)}
+                        title="Click to copy link"
+                        className="mt-1 inline-flex items-center gap-1 text-[11px] font-mono text-violet-600 hover:text-violet-800 hover:underline max-w-full"
+                      >
+                        <Link2 className="w-3 h-3 shrink-0" />
+                        <span className="truncate">/notices/{n.slug}</span>
+                      </button>
                     </td>
                     <td className="py-3 px-4 text-xs font-mono text-muted-foreground whitespace-nowrap">{n.reference_no || '—'}</td>
                     <td className="py-3 px-4">
@@ -347,6 +356,7 @@ export default function AdminNotices() {
                         <Users className="w-3 h-3 mr-1" />{n.audience}
                       </Badge>
                     </td>
+
                     <td className="py-3 px-4">
                       <Badge className={`capitalize border ${statusStyle[n.status] || statusStyle.draft}`}>{n.status}</Badge>
                     </td>
