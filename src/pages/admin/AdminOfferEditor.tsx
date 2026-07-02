@@ -350,6 +350,60 @@ export default function AdminOfferEditor() {
     }
   };
 
+  const autoPickWinners = async () => {
+    if (!offer) return;
+    if (submissions.length === 0) return toast.error('No submissions to pick from');
+    if (offer.winner_selection_mode === 'manual') {
+      return toast.error('Selection mode is set to Manual. Change it in Settings → Winner Automation, or use the manual picker below.');
+    }
+    if (!confirm(`Auto-pick ${offer.winner_count} winner(s) using "${offer.winner_selection_mode}" mode?`)) return;
+    setPicking(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session?.session?.access_token;
+      const resp = await supabase.functions.invoke('offer-auto-winner', {
+        body: { offer_id: offer.id },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      if (resp.error) throw resp.error;
+      toast.success(`${resp.data?.winners || 0} winner(s) selected!`);
+      load();
+    } catch (e: any) {
+      toast.error(e.message || 'Auto-pick failed');
+    } finally {
+      setPicking(false);
+    }
+  };
+
+  const downloadFullCSV = async () => {
+    if (!offer) return;
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session?.session?.access_token;
+      const resp = await fetch(
+        `https://dpvdavjwqyviredzoorj.supabase.co/functions/v1/offer-export-csv`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ offer_id: offer.id }),
+        }
+      );
+      if (!resp.ok) throw new Error(await resp.text());
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${offer.slug}-full-export.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e: any) {
+      toast.error(e.message || 'Export failed');
+    }
+  };
+
   const exportCSV = () => {
     if (submissions.length === 0) return;
     const allKeys = new Set<string>();
