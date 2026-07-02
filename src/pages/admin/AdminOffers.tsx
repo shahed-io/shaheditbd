@@ -23,6 +23,7 @@ interface Offer {
 export default function AdminOffers() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notifyOffer, setNotifyOffer] = useState<Offer | null>(null);
   const navigate = useNavigate();
 
   const load = async () => {
