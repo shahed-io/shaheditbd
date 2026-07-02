@@ -32,6 +32,8 @@ interface Offer {
   google_form_url: string | null;
   show_winners: boolean;
   submission_count: number;
+  notice: string | null;
+  show_notice: boolean;
 }
 
 interface Field {
