@@ -744,6 +744,109 @@ export default function AdminOfferEditor() {
             </CardContent>
           </Card>
 
+          {/* SCHEDULE AUTOMATION */}
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><Zap className="w-5 h-5 text-primary" /> Schedule Automation</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-xs text-muted-foreground">Start এবং End Date-এ পৌঁছালে giveaway automatically publish/close হবে। Cron প্রতি ৫ মিনিটে চেক করে।</p>
+              <div className="flex items-center justify-between border rounded-lg p-3">
+                <div>
+                  <div className="font-medium">Auto-Publish at Start Date</div>
+                  <div className="text-xs text-muted-foreground">Draft giveaway automatically Active হবে যখন Start Date-এ পৌঁছাবে</div>
+                </div>
+                <Switch checked={offer.auto_publish} onCheckedChange={(v) => setOffer({ ...offer, auto_publish: v })} />
+              </div>
+              <div className="flex items-center justify-between border rounded-lg p-3">
+                <div>
+                  <div className="font-medium">Auto-Close at End Date</div>
+                  <div className="text-xs text-muted-foreground">End Date পার হলে giveaway automatically Closed হবে</div>
+                </div>
+                <Switch checked={offer.auto_close} onCheckedChange={(v) => setOffer({ ...offer, auto_close: v })} />
+              </div>
+              {(offer.auto_publish || offer.auto_close) && !offer.start_at && !offer.end_at && (
+                <div className="text-xs text-amber-600 border border-amber-400/40 bg-amber-50 dark:bg-amber-950/20 p-2 rounded">
+                  ⚠️ Automation on আছে কিন্তু Start/End Date সেট করা হয়নি। উপরে "Status & Limits" এ set করুন।
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* ENTRY RULES */}
+          <Card>
+            <CardHeader><CardTitle>Entry Rules</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <Label>Maximum Entries per User</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={offer.max_entries_per_user}
+                  onChange={(e) => setOffer({ ...offer, max_entries_per_user: Math.max(1, +e.target.value || 1) })}
+                />
+                <p className="text-xs text-muted-foreground mt-1">প্রতি user সর্বোচ্চ কতবার এন্ট্রি দিতে পারবে</p>
+              </div>
+              <div>
+                <Label>Minimum Purchase Amount (৳)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={offer.min_purchase_amount ?? ''}
+                  onChange={(e) => setOffer({ ...offer, min_purchase_amount: e.target.value ? +e.target.value : null })}
+                  placeholder="0 = কোনো শর্ত নেই"
+                />
+                <p className="text-xs text-muted-foreground mt-1">এই amount-এর কেনাকাটা থাকলেই কেবল অংশ নিতে পারবে (completed orders)</p>
+              </div>
+              <div>
+                <Label>Bonus Entries per Referral</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={offer.referral_bonus_entries}
+                  onChange={(e) => setOffer({ ...offer, referral_bonus_entries: Math.max(0, +e.target.value || 0) })}
+                />
+                <p className="text-xs text-muted-foreground mt-1">প্রতিটি referral এর জন্য অতিরিক্ত এন্ট্রি (weighted winner selection-এ কাজ করে)</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* WINNER AUTOMATION */}
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> Winner Automation</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <Label>Number of Winners</Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={offer.winner_count}
+                    onChange={(e) => setOffer({ ...offer, winner_count: Math.max(1, Math.min(100, +e.target.value || 1)) })}
+                  />
+                </div>
+                <div>
+                  <Label>Selection Mode</Label>
+                  <Select value={offer.winner_selection_mode} onValueChange={(v) => setOffer({ ...offer, winner_selection_mode: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="manual">✋ Manual (admin picks)</SelectItem>
+                      <SelectItem value="random">🎲 Random (fair lottery)</SelectItem>
+                      <SelectItem value="weighted_referral">⚖️ Weighted by Referrals</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex items-center justify-between border rounded-lg p-3">
+                <div>
+                  <div className="font-medium">Auto-Notify Winners</div>
+                  <div className="text-xs text-muted-foreground">Winner select হওয়ার সাথে সাথে dashboard notification + email পাঠাবে</div>
+                </div>
+                <Switch checked={offer.auto_notify_winners} onCheckedChange={(v) => setOffer({ ...offer, auto_notify_winners: v })} />
+              </div>
+            </CardContent>
+          </Card>
+
+
           <Card>
             <CardHeader><CardTitle>Submission & Integration</CardTitle></CardHeader>
             <CardContent className="space-y-3">
