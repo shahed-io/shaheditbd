@@ -230,6 +230,9 @@ export default function AdminOffers() {
                     <Button size="sm" variant="outline" onClick={() => duplicate(o)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-violet-500/10 hover:border-violet-500/40" title="Duplicate">
                       <Copy className="w-3 h-3" />
                     </Button>
+                    <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-violet-500/10 hover:border-violet-500/40 text-violet-700" title="Send to user notifications">
+                      <BellRing className="w-3 h-3 mr-1" /> Notify
+                    </Button>
                     <Button size="sm" variant="outline" onClick={() => remove(o.id)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-rose-500/10 hover:border-rose-500/40 text-rose-600 ml-auto" title="Delete">
                       <Trash2 className="w-3 h-3" />
                     </Button>
