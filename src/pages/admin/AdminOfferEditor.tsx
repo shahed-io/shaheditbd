@@ -746,7 +746,15 @@ export default function AdminOfferEditor() {
             <CardHeader><CardTitle>Submission & Integration</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <Label>Success Message (after submit)</Label>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <Label>Success Message (after submit)</Label>
+                  <AiPolishButton
+                    value={offer.success_message || ''}
+                    onChange={(next) => setOffer({ ...offer, success_message: next })}
+                    kind="success_message"
+                    maxChars={400}
+                  />
+                </div>
                 <Textarea rows={2} value={offer.success_message || ''} onChange={(e) => setOffer({ ...offer, success_message: e.target.value })} />
               </div>
               <div>
