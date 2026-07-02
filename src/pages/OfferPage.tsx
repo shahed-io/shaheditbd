@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Trophy, Calendar, Users, Gift, CheckCircle2 } from 'lucide-react';
+import { Trophy, Calendar, Users, Gift, CheckCircle2, Megaphone } from 'lucide-react';
 import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
