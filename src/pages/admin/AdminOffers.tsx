@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Copy, ExternalLink, Gift, Users, Calendar, Sparkles, Trophy, Megaphone } from 'lucide-react';
+import { Plus, Edit, Trash2, Copy, ExternalLink, Gift, Users, Calendar, Sparkles, Trophy, Megaphone, BellRing } from 'lucide-react';
+import SendToNotificationsDialog from '@/components/admin/SendToNotificationsDialog';
 
 interface Offer {
   id: string;
