@@ -215,6 +215,17 @@ export default function OfferPage() {
       <SEOHead title={offer.title} description={offer.description?.slice(0, 160) || `${offer.title} - Shahed Store offer`} />
       <Navbar />
       <main className="min-h-screen container max-w-3xl mx-auto px-4 pt-24 md:pt-32 pb-6 md:pb-8 space-y-6">
+        {offer.show_notice && offer.notice && offer.notice.trim() && (
+          <div className="rounded-2xl border border-violet-200 dark:border-violet-900 bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-violet-950/40 dark:to-fuchsia-950/40 p-4 flex items-start gap-3 shadow-sm">
+            <div className="shrink-0 rounded-full bg-violet-500/10 p-2">
+              <Megaphone className="w-5 h-5 text-violet-600 dark:text-violet-300" />
+            </div>
+            <div className="flex-1 min-w-0 text-sm leading-relaxed whitespace-pre-wrap text-violet-900 dark:text-violet-100">
+              {offer.notice}
+            </div>
+          </div>
+        )}
+
         {offer.banner_url && (
           <img src={offer.banner_url} alt={offer.title} className="w-full rounded-2xl object-cover max-h-72" />
         )}
