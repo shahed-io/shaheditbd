@@ -91,7 +91,7 @@ Write the body as a real corporate notice with these sections, in this order:
 ═══ HARD RULES ═══
 - Language: ${isBn ? 'বাংলা — স্বাভাবিক, সাবলীল, পেশাদার বাংলা। কোনো অনুবাদ-গন্ধ নয়। শুদ্ধ বানান।' : 'English — clean professional English. No translation feel.'}
 - Tone: ${toneGuide}
-- The store name MUST always appear in English as exactly \`Shahed Store\` — never in Bengali script, never with Bengali possessive suffix attached (write \`Shahed Store-এর\` only when truly needed, prefer \`Shahed Store এর\` with space).
+- Store name spelling by language: in English text write exactly \`Shahed Store\`; in Bengali text write exactly \`শাহেদ স্টোর\` (correct spelling — শা-হে-দ, "হে"-তে এ-কার). NEVER use misspelled variants: শাহিদ স্টোর, সাহেদ স্টোর, শায়েদ স্টোর, শাহীদ স্টোর, শহীদ স্টোর, শাওন স্টোর, ShahedStore, Shahid Store. In Bengali sentences attach case markers to the Bengali form (শাহেদ স্টোরের / শাহেদ স্টোরে / শাহেদ স্টোরকে) — do NOT mix "Shahed Store-এর".
 - Use \`**bold**\` for important keywords (dates, amounts, deadlines).
 - Use markdown lists for any enumeration of 2+ items.
 - Length: aim for 180-350 words in body_markdown for normal notices, up to 500 for complex ones. Never under 120 words.
@@ -117,10 +117,9 @@ Write the body as a real corporate notice with these sections, in this order:
     let plan: any;
     try { plan = JSON.parse(match[0]); } catch { throw new Error('AI returned invalid JSON'); }
 
-    // Normalize store name to English everywhere
-    const fixStoreName = (s: string) => String(s || '')
-      .replace(/শাহেদ\s*স্টোর|শাহিদ\s*স্টোর|সাহেদ\s*স্টোর|শায়েদ\s*স্টোর|সাহিদ\s*স্টোর|শাহীদ\s*স্টোর/g, 'Shahed Store')
-      .replace(/Shahed\s*Store-?(এর|কে|তে|এ)/g, 'Shahed Store $1');
+    // Normalize store name — language-aware (English → "Shahed Store", Bengali → "শাহেদ স্টোর")
+    const { normalizeBrandNameText } = await import('../_shared/brand-name.ts');
+    const fixStoreName = (s: string) => normalizeBrandNameText(String(s || ''));
 
     const out = {
       title: fixStoreName(plan.title).slice(0, 200),

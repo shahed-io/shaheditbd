@@ -120,7 +120,7 @@ CITIES: ${bdCities}
 INTENT: ${intent || "informational"}
 LANGUAGE: Bangla + English mix — exactly how Bangladeshi users search Google.
 PRICE FORMAT: ৳[amount] (Taka symbol)
-STORE NAME RULE: Always write the brand exactly as "Shahed Store". Never use Bengali script variants, "ShahedStore", "Shahid Store", "Sahed Store", or "Shawon Store". Do not attach Bengali case markers/suffixes immediately after the brand (avoid "Shahed Store-এর", "Shahed Store এর", "Shahed Store কে", "Shahed Store-এ", "Shahed Storeএ").
+STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed Store". In Bengali text write exactly "শাহেদ স্টোর" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (শাহেদ স্টোরের, শাহেদ স্টোরে, শাহেদ স্টোরকে) — do not mix English name with Bengali suffix ("Shahed Store-এর" is wrong).
 
 Return ONLY valid JSON in this EXACT shape:
 {

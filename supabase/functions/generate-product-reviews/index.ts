@@ -22,7 +22,7 @@ serve(async (req) => {
 
     const storeName = "Shahed Store";
     const lang = language === "en" ? "English" : "Bengali (বাংলা)";
-    const nameRule = `STORE NAME RULE: Write the store name ALWAYS in English as exactly "Shahed Store" — even inside Bengali reviews. Never use Bengali script for the name (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর") and never use "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". Do not attach Bengali case markers/suffixes immediately after the brand (avoid "Shahed Store-এর", "Shahed Store এর", "Shahed Store কে", "Shahed Store-এ", "Shahed Storeএ"); rephrase so the visible brand stays exactly "Shahed Store".`;
+    const nameRule = `STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed Store". In Bengali text write exactly "শাহেদ স্টোর" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (শাহেদ স্টোরের, শাহেদ স্টোরে, শাহেদ স্টোরকে) — do not mix English name with Bengali suffix ("Shahed Store-এর" is wrong).`;
     const prompt = `You are writing authentic customer reviews for "${storeName}", a digital software store in Bangladesh.
 
 ${nameRule}
