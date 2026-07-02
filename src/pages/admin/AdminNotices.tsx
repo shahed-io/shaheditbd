@@ -363,6 +363,10 @@ export default function AdminNotices() {
                     <td className="py-3 px-4 text-xs text-muted-foreground whitespace-nowrap">{new Date(n.updated_at).toLocaleDateString()}</td>
                     <td className="py-3 px-4 text-right">
                       <div className="inline-flex gap-0.5">
+                        <Button size="sm" variant="ghost" onClick={() => copyLink(n.slug)} title="Copy public link" className="hover:bg-violet-500/10 hover:text-violet-700"><Copy className="w-4 h-4" /></Button>
+                        <Button size="sm" variant="ghost" asChild title="Open public notice in new tab" className="hover:bg-violet-500/10 hover:text-violet-700">
+                          <a href={`/notices/${n.slug}`} target="_blank" rel="noopener noreferrer"><ExternalLink className="w-4 h-4" /></a>
+                        </Button>
                         <Button size="sm" variant="ghost" onClick={() => setPreviewing(n)} title="Preview" className="hover:bg-violet-500/10 hover:text-violet-700"><Eye className="w-4 h-4" /></Button>
                         <Button size="sm" variant="ghost" onClick={() => downloadNotice(n)} disabled={downloadingId === n.id} title="Download PDF" className="hover:bg-violet-500/10 hover:text-violet-700">
                           {downloadingId === n.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
