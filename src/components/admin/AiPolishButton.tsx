@@ -14,6 +14,10 @@ type Kind =
   | 'terms'
   | 'success_message'
   | 'notice'
+  | 'field_label'
+  | 'field_help'
+  | 'field_options'
+  | 'winner_prizes'
   | 'generic';
 
 interface Props {

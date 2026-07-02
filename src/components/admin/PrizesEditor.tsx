@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,31 +14,62 @@ interface Props {
   onChange: (next: string) => void;
 }
 
+type EditablePrizeItem = PrizeItem & { id: string };
+
+const createPrizeId = () =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+const withStableIds = (items: PrizeItem[]): EditablePrizeItem[] =>
+  items.map((item) => ({ ...item, id: createPrizeId() }));
+
+const getDefaultTitle = (position: number) => {
+  const ordinals = ['১ম', '২য়', '৩য়', '৪র্থ', '৫ম', '৬ষ্ঠ', '৭ম', '৮ম', '৯ম', '১০ম'];
+  const ord = ordinals[position - 1] || `${position}তম`;
+  return `${ord} পুরস্কার`;
+};
+
 /**
  * Box-style prize editor — admin can add any number of prizes (1st, 2nd, ...),
  * each with a free-form title and description, and reorder/remove them.
  * The list is serialized back to a markdown string stored on `offers.prize_details`.
  */
 export default function PrizesEditor({ value, onChange }: Props) {
-  const items = parsePrizeItems(value);
+  const [items, setItems] = useState<EditablePrizeItem[]>(() => withStableIds(parsePrizeItems(value)));
 
-  const commit = (next: PrizeItem[]) => onChange(serializePrizeItems(next));
+  useEffect(() => {
+    const incoming = serializePrizeItems(parsePrizeItems(value));
+    const local = serializePrizeItems(items);
 
-  const update = (idx: number, patch: Partial<PrizeItem>) => {
-    const next = items.map((it, i) => (i === idx ? { ...it, ...patch } : it));
+    // Do not re-hydrate the list after every keystroke that we already emitted
+    // to the parent. Re-hydrating creates new React keys, which was the root of
+    // the “editing one prize changes/jumps to another” feeling.
+    if (incoming !== local) {
+      setItems(withStableIds(parsePrizeItems(value)));
+    }
+    // We intentionally only react to external value changes here. Including
+    // `items` would make the effect run after each local keystroke.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  const commit = (next: EditablePrizeItem[]) => {
+    setItems(next);
+    onChange(serializePrizeItems(next));
+  };
+
+  const update = (id: string, patch: Partial<PrizeItem>) => {
+    const next = items.map((it) => (it.id === id ? { ...it, ...patch } : it));
     commit(next);
   };
 
   const add = () => {
-    const n = items.length + 1;
-    const ordinals = ['১ম', '২য়', '৩য়', '৪র্থ', '৫ম', '৬ষ্ঠ', '৭ম', '৮ম', '৯ম', '১০ম'];
-    const ord = ordinals[n - 1] || `${n}তম`;
-    commit([...items, { title: `${ord} পুরস্কার`, description: '' }]);
+    commit([...items, { id: createPrizeId(), title: getDefaultTitle(items.length + 1), description: '' }]);
   };
 
-  const remove = (idx: number) => {
+  const remove = (id: string) => {
     if (!confirm('এই পুরস্কারটি মুছে ফেলবেন?')) return;
-    commit(items.filter((_, i) => i !== idx));
+    commit(items.filter((item) => item.id !== id));
   };
 
   const move = (idx: number, dir: -1 | 1) => {
@@ -59,7 +91,7 @@ export default function PrizesEditor({ value, onChange }: Props) {
       <div className="space-y-2">
         {items.map((item, idx) => (
           <div
-            key={idx}
+            key={item.id}
             className="rounded-lg border border-border bg-card/50 p-3 space-y-2"
           >
             <div className="flex items-center justify-between gap-2">
@@ -95,7 +127,7 @@ export default function PrizesEditor({ value, onChange }: Props) {
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7 text-destructive hover:text-destructive"
-                  onClick={() => remove(idx)}
+                  onClick={() => remove(item.id)}
                   title="Delete prize"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -109,14 +141,14 @@ export default function PrizesEditor({ value, onChange }: Props) {
                   <Label className="text-xs">Title</Label>
                   <AiPolishButton
                     value={item.title}
-                    onChange={(next) => update(idx, { title: next })}
+                    onChange={(next) => update(item.id, { title: next })}
                     kind="prize_title"
                     size="icon"
                   />
                 </div>
                 <Input
                   value={item.title}
-                  onChange={(e) => update(idx, { title: e.target.value })}
+                  onChange={(e) => update(item.id, { title: e.target.value })}
                   placeholder="১ম পুরস্কার"
                 />
               </div>
@@ -125,7 +157,7 @@ export default function PrizesEditor({ value, onChange }: Props) {
                   <Label className="text-xs">Description</Label>
                   <AiPolishButton
                     value={item.description}
-                    onChange={(next) => update(idx, { description: next })}
+                    onChange={(next) => update(item.id, { description: next })}
                     kind="prize_description"
                     size="icon"
                   />
@@ -133,7 +165,7 @@ export default function PrizesEditor({ value, onChange }: Props) {
                 <Textarea
                   rows={2}
                   value={item.description}
-                  onChange={(e) => update(idx, { description: e.target.value })}
+                  onChange={(e) => update(item.id, { description: e.target.value })}
                   placeholder="অফিস ৩৬৫ ফ্যামিলি সাবস্ক্রিপশন + একটি চমৎকার Hide গিফট"
                 />
               </div>
