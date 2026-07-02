@@ -36,6 +36,14 @@ interface Offer {
   submission_count: number;
   notice: string | null;
   show_notice: boolean;
+  auto_publish: boolean;
+  auto_close: boolean;
+  max_entries_per_user: number;
+  min_purchase_amount: number | null;
+  referral_bonus_entries: number;
+  winner_count: number;
+  winner_selection_mode: string;
+  auto_notify_winners: boolean;
 }
 
 interface Field {
