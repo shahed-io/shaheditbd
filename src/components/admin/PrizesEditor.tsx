@@ -105,7 +105,15 @@ export default function PrizesEditor({ value, onChange }: Props) {
 
             <div className="grid gap-2 sm:grid-cols-[1fr_2fr]">
               <div>
-                <Label className="text-xs">Title</Label>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <Label className="text-xs">Title</Label>
+                  <AiPolishButton
+                    value={item.title}
+                    onChange={(next) => update(idx, { title: next })}
+                    kind="prize_title"
+                    size="icon"
+                  />
+                </div>
                 <Input
                   value={item.title}
                   onChange={(e) => update(idx, { title: e.target.value })}
@@ -113,7 +121,15 @@ export default function PrizesEditor({ value, onChange }: Props) {
                 />
               </div>
               <div>
-                <Label className="text-xs">Description</Label>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <Label className="text-xs">Description</Label>
+                  <AiPolishButton
+                    value={item.description}
+                    onChange={(next) => update(idx, { description: next })}
+                    kind="prize_description"
+                    size="icon"
+                  />
+                </div>
                 <Textarea
                   rows={2}
                   value={item.description}
