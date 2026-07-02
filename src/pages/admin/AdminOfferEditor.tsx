@@ -191,17 +191,8 @@ export default function AdminOfferEditor() {
   };
 
   const parsePrizesFromDetails = (text: string | null | undefined): string[] => {
-    if (!text) return [];
-    return text
-      .split('\n')
-      .map((l) => {
-        let s = l.trim();
-        if (!s) return '';
-        // strip markdown bullets / numbering prefixes
-        s = s.replace(/^[-*•]\s*/, '').replace(/^\d+[\.\)]\s*/, '');
-        const idx = s.indexOf(':');
-        return (idx >= 0 ? s.slice(idx + 1) : s).trim();
-      })
+    return parsePrizeItems(text)
+      .map((item) => [item.title, item.description].filter(Boolean).join(' — ').trim())
       .filter(Boolean);
   };
 
