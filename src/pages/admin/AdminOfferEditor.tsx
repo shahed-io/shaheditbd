@@ -484,6 +484,7 @@ export default function AdminOfferEditor() {
           <TabsTrigger value="fields">Form Fields ({fields.length})</TabsTrigger>
           <TabsTrigger value="submissions">Submissions ({submissions.length})</TabsTrigger>
           <TabsTrigger value="winners">Winners ({winners.length})</TabsTrigger>
+          <TabsTrigger value="analytics"><BarChart3 className="w-3.5 h-3.5 mr-1" /> Analytics</TabsTrigger>
         </TabsList>
 
         {/* AI BUILDER */}
