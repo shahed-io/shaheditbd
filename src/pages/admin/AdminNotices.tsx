@@ -576,7 +576,19 @@ export default function AdminNotices() {
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle>Notice Preview</DialogTitle>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                {previewing && (
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => copyLink(previewing.slug)} className="gap-1">
+                      <Copy className="w-4 h-4" /> Copy Link
+                    </Button>
+                    <Button size="sm" variant="outline" asChild className="gap-1">
+                      <a href={`/notices/${previewing.slug}`} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4" /> Open
+                      </a>
+                    </Button>
+                  </>
+                )}
                 <Button
                   size="sm"
                   variant="outline"
