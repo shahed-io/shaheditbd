@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { toast } from 'sonner';
 import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2 } from 'lucide-react';
 import PrizesEditor from '@/components/admin/PrizesEditor';
+import AiPolishButton from '@/components/admin/AiPolishButton';
 
 interface Offer {
   id: string;
