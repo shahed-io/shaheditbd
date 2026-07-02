@@ -114,3 +114,105 @@ export default function PublicNotices() {
     </div>
   );
 }
+
+function NoticeActions({ targetRef, notice }: { targetRef: React.RefObject<HTMLDivElement>; notice: { title: string; slug: string } }) {
+  const [busy, setBusy] = useState<'save' | 'share' | null>(null);
+
+  const capture = async (): Promise<Blob | null> => {
+    const node = targetRef.current;
+    if (!node) return null;
+    // Render at a fixed comfortable width so the exported image is consistent on all devices
+    const originalWidth = node.style.width;
+    const originalMaxWidth = node.style.maxWidth;
+    const isSmall = window.innerWidth < 768;
+    if (isSmall) {
+      node.style.width = '760px';
+      node.style.maxWidth = 'none';
+    }
+    try {
+      const canvas = await html2canvas(node, {
+        backgroundColor: '#ffffff',
+        scale: Math.min(2, window.devicePixelRatio || 2),
+        useCORS: true,
+        logging: false,
+        windowWidth: isSmall ? 800 : undefined,
+      });
+      return await new Promise<Blob | null>((resolve) => canvas.toBlob((b) => resolve(b), 'image/png', 0.95));
+    } finally {
+      node.style.width = originalWidth;
+      node.style.maxWidth = originalMaxWidth;
+    }
+  };
+
+  const filename = () => {
+    const slug = (notice.slug || 'notice').replace(/[^a-z0-9-_]/gi, '-').slice(0, 60);
+    return `shahed-store-notice-${slug}.png`;
+  };
+
+  const handleSave = async () => {
+    setBusy('save');
+    try {
+      const blob = await capture();
+      if (!blob) throw new Error('capture failed');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename();
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      toast.success('গ্যালারিতে সেভ হয়েছে (Downloads ফোল্ডার দেখুন)');
+    } catch (e) {
+      toast.error('সেভ করতে সমস্যা হয়েছে');
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const handleShare = async () => {
+    setBusy('share');
+    try {
+      const blob = await capture();
+      if (!blob) throw new Error('capture failed');
+      const file = new File([blob], filename(), { type: 'image/png' });
+      const nav: any = navigator;
+      if (nav.canShare && nav.canShare({ files: [file] })) {
+        await nav.share({ files: [file], title: notice.title, text: notice.title });
+      } else {
+        // Fallback: download
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename();
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        toast.success('ইমেজ ডাউনলোড হয়েছে — শেয়ার করে দিন');
+      }
+    } catch (e: any) {
+      if (e?.name !== 'AbortError') toast.error('শেয়ার করতে সমস্যা হয়েছে');
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={handleShare}
+        disabled={!!busy}
+        className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-white/80 backdrop-blur px-3 py-1.5 text-xs font-medium text-violet-700 hover:bg-violet-50 disabled:opacity-60"
+      >
+        {busy === 'share' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />}
+        <span>শেয়ার</span>
+      </button>
+      <button
+        onClick={handleSave}
+        disabled={!!busy}
+        className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-violet-500/30 hover:shadow-lg hover:shadow-violet-500/40 disabled:opacity-60"
+      >
+        {busy === 'save' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+        <span>গ্যালারিতে সেভ</span>
+      </button>
+    </div>
+  );
+}
