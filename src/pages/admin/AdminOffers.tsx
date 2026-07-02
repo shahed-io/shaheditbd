@@ -243,6 +243,16 @@ export default function AdminOffers() {
           ))}
         </div>
       )}
+
+      <SendToNotificationsDialog
+        open={!!notifyOffer}
+        onOpenChange={(o) => !o && setNotifyOffer(null)}
+        defaultTitle={notifyOffer ? `🎁 ${notifyOffer.title}` : ''}
+        defaultMessage={notifyOffer ? `New giveaway: "${notifyOffer.title}" — অংশ নিতে link-এ tap করুন।` : ''}
+        defaultLink={notifyOffer ? `/offer/${notifyOffer.slug}` : ''}
+        type="offer"
+        sourceLabel={notifyOffer ? 'Offer' : undefined}
+      />
     </div>
   );
 }
