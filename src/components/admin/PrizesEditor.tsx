@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, ArrowUp, ArrowDown, Trophy } from 'lucide-react';
 import { parsePrizeItems, serializePrizeItems, type PrizeItem } from '@/lib/offerPrizes';
+import AiPolishButton from './AiPolishButton';
 
 interface Props {
   /** Raw `prize_details` string from the offer. */
