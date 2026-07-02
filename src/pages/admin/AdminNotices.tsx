@@ -377,6 +377,9 @@ export default function AdminNotices() {
                         <Button size="sm" variant="ghost" onClick={() => togglePublish(n)} title="Toggle publish" className="hover:bg-emerald-500/10">
                           <Send className={`w-4 h-4 ${n.status === 'published' ? 'text-emerald-600' : ''}`} />
                         </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setNotifyNotice(n)} title="Send to user notifications" className="hover:bg-violet-500/10 text-violet-700">
+                          <BellRing className="w-4 h-4" />
+                        </Button>
                         <Button size="sm" variant="ghost" onClick={() => remove(n)} title="Delete" className="hover:bg-rose-500/10"><Trash2 className="w-4 h-4 text-rose-600" /></Button>
                       </div>
                     </td>
