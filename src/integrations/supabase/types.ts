@@ -1837,8 +1837,10 @@ export type Database = {
           google_form_url: string | null
           id: string
           max_submissions: number | null
+          notice: string | null
           prize_details: string | null
           require_login: boolean
+          show_notice: boolean
           show_winners: boolean
           slug: string
           start_at: string | null
@@ -1858,8 +1860,10 @@ export type Database = {
           google_form_url?: string | null
           id?: string
           max_submissions?: number | null
+          notice?: string | null
           prize_details?: string | null
           require_login?: boolean
+          show_notice?: boolean
           show_winners?: boolean
           slug: string
           start_at?: string | null
@@ -1879,8 +1883,10 @@ export type Database = {
           google_form_url?: string | null
           id?: string
           max_submissions?: number | null
+          notice?: string | null
           prize_details?: string | null
           require_login?: boolean
+          show_notice?: boolean
           show_winners?: boolean
           slug?: string
           start_at?: string | null
