@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Copy, ExternalLink, Gift, Users, Calendar, Sparkles, Trophy, Megaphone } from 'lucide-react';
+import { Plus, Edit, Trash2, Copy, ExternalLink, Gift, Users, Calendar, Sparkles, Trophy, Megaphone, BellRing } from 'lucide-react';
+import SendToNotificationsDialog from '@/components/admin/SendToNotificationsDialog';
 
 interface Offer {
   id: string;
@@ -22,6 +23,7 @@ interface Offer {
 export default function AdminOffers() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notifyOffer, setNotifyOffer] = useState<Offer | null>(null);
   const navigate = useNavigate();
 
   const load = async () => {
@@ -228,6 +230,9 @@ export default function AdminOffers() {
                     <Button size="sm" variant="outline" onClick={() => duplicate(o)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-violet-500/10 hover:border-violet-500/40" title="Duplicate">
                       <Copy className="w-3 h-3" />
                     </Button>
+                    <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-violet-500/10 hover:border-violet-500/40 text-violet-700" title="Send to user notifications">
+                      <BellRing className="w-3 h-3 mr-1" /> Notify
+                    </Button>
                     <Button size="sm" variant="outline" onClick={() => remove(o.id)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-rose-500/10 hover:border-rose-500/40 text-rose-600 ml-auto" title="Delete">
                       <Trash2 className="w-3 h-3" />
                     </Button>
@@ -238,6 +243,16 @@ export default function AdminOffers() {
           ))}
         </div>
       )}
+
+      <SendToNotificationsDialog
+        open={!!notifyOffer}
+        onOpenChange={(o) => !o && setNotifyOffer(null)}
+        defaultTitle={notifyOffer ? `🎁 ${notifyOffer.title}` : ''}
+        defaultMessage={notifyOffer ? `New giveaway: "${notifyOffer.title}" — অংশ নিতে link-এ tap করুন।` : ''}
+        defaultLink={notifyOffer ? `/offer/${notifyOffer.slug}` : ''}
+        type="offer"
+        sourceLabel={notifyOffer ? 'Offer' : undefined}
+      />
     </div>
   );
 }

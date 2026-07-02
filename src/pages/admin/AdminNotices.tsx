@@ -11,12 +11,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw, Download, Megaphone, Pin, Users, CheckCircle2, FileEdit, Link2, Copy, ExternalLink } from 'lucide-react';
+import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw, Download, Megaphone, Pin, Users, CheckCircle2, FileEdit, Link2, Copy, ExternalLink, BellRing } from 'lucide-react';
 import NoticeTemplate, { NoticeData } from '@/components/notices/NoticeTemplate';
 import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 import NoticeSignatureManager from '@/components/admin/NoticeSignatureManager';
 import { loadNoticeSignature, type NoticeSignature, DEFAULT_NOTICE_SIGNATURE } from '@/lib/noticeSignature';
 import { downloadNoticePdf } from '@/lib/noticePdf';
+import SendToNotificationsDialog from '@/components/admin/SendToNotificationsDialog';
 
 interface Notice extends NoticeData {
   id: string;
@@ -58,6 +59,7 @@ export default function AdminNotices() {
   const [aiBusy, setAiBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [notifyNotice, setNotifyNotice] = useState<Notice | null>(null);
   const [signature, setSignature] = useState<NoticeSignature>(DEFAULT_NOTICE_SIGNATURE);
 
   useEffect(() => { loadNoticeSignature().then(setSignature); }, []);
@@ -375,6 +377,9 @@ export default function AdminNotices() {
                         <Button size="sm" variant="ghost" onClick={() => togglePublish(n)} title="Toggle publish" className="hover:bg-emerald-500/10">
                           <Send className={`w-4 h-4 ${n.status === 'published' ? 'text-emerald-600' : ''}`} />
                         </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setNotifyNotice(n)} title="Send to user notifications" className="hover:bg-violet-500/10 text-violet-700">
+                          <BellRing className="w-4 h-4" />
+                        </Button>
                         <Button size="sm" variant="ghost" onClick={() => remove(n)} title="Delete" className="hover:bg-rose-500/10"><Trash2 className="w-4 h-4 text-rose-600" /></Button>
                       </div>
                     </td>
@@ -611,6 +616,16 @@ export default function AdminNotices() {
           )}
         </DialogContent>
       </Dialog>
+
+      <SendToNotificationsDialog
+        open={!!notifyNotice}
+        onOpenChange={(o) => !o && setNotifyNotice(null)}
+        defaultTitle={notifyNotice ? `📢 ${notifyNotice.title}` : ''}
+        defaultMessage={notifyNotice ? (notifyNotice.summary || notifyNotice.title || '') : ''}
+        defaultLink={notifyNotice ? `/notices/${notifyNotice.slug}` : ''}
+        type="notice"
+        sourceLabel={notifyNotice ? 'Notice' : undefined}
+      />
     </div>
   );
 }
