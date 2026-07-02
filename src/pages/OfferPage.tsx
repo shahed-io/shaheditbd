@@ -35,6 +35,8 @@ interface Offer {
   submission_count: number;
   notice: string | null;
   show_notice: boolean;
+  max_entries_per_user?: number | null;
+  min_purchase_amount?: number | null;
 }
 interface Field {
   id: string;
@@ -105,6 +107,37 @@ export default function OfferPage() {
       }
     }
     setSubmitting(true);
+
+    // Enforce max entries per user
+    const maxPerUser = offer.max_entries_per_user ?? 1;
+    if (user && maxPerUser > 0) {
+      const { count } = await supabase
+        .from('offer_submissions')
+        .select('*', { count: 'exact', head: true })
+        .eq('offer_id', offer.id)
+        .eq('user_id', user.id);
+      if ((count ?? 0) >= maxPerUser) {
+        setSubmitting(false);
+        toast.error(`আপনি এই giveaway-তে সর্বোচ্চ ${maxPerUser} বার এন্ট্রি দিতে পারবেন।`);
+        return;
+      }
+    }
+
+    // Enforce minimum purchase amount
+    const minPurchase = Number(offer.min_purchase_amount ?? 0);
+    if (user && minPurchase > 0) {
+      const { data: orders } = await supabase
+        .from('orders')
+        .select('total')
+        .eq('user_id', user.id)
+        .eq('status', 'completed');
+      const spent = (orders ?? []).reduce((acc: number, o: any) => acc + Number(o.total || 0), 0);
+      if (spent < minPurchase) {
+        setSubmitting(false);
+        toast.error(`এই giveaway তে অংশ নিতে ন্যূনতম ৳${minPurchase} এর কেনাকাটা প্রয়োজন। আপনার মোট: ৳${spent.toFixed(0)}`);
+        return;
+      }
+    }
 
     // Extract name/email/phone from common labels
     const nameKey = fields.find((f) => /name|নাম/i.test(f.label))?.label;
