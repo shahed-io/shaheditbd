@@ -88,7 +88,7 @@ KEYWORD INTENT TYPES to include naturally:
   - Local: "[product] ঢাকা", "[product] bangladesh online shop"
 PRICE FORMAT: Always write price as ৳[amount] (Taka symbol)
 TRUST SIGNALS: "১০০% genuine", "instant delivery", "official license", "নিরাপদ পেমেন্ট"
-STORE NAME RULE: The store name must ALWAYS be written in English as exactly "Shahed Store" — even inside Bengali sentences. Never translate, transliterate, or render it in Bengali script (no "শাহেদ স্টোর", "শাহিদ স্টোর", "সাহেদ স্টোর", etc.) and never use variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". Do not attach Bengali case markers/suffixes immediately after the brand (avoid "Shahed Store-এর", "Shahed Store এর", "Shahed Store কে", "Shahed Store-এ", "Shahed Storeএ"); rephrase so the visible brand stays exactly "Shahed Store".`;
+STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed Store". In Bengali text write exactly "শাহেদ স্টোর" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (শাহেদ স্টোরের, শাহেদ স্টোরে, শাহেদ স্টোরকে) — do not mix English name with Bengali suffix ("Shahed Store-এর" is wrong).`;
 
     if (type === "short_description") {
       const numOptions = count && count > 1 ? count : 1;

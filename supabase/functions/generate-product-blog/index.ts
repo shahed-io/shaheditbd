@@ -169,7 +169,7 @@ Requirements for the blog post:
 5. Mention the affordable price in BDT
 6. Include keywords naturally: license key, Bangladesh, genuine, instant delivery, affordable
 7. Mention Shahed Store website: shahedstore.com.bd
-9. Store name rule: always write the store name exactly as "Shahed Store". Never output Bengali script variants, "ShahedStore", "Shahid Store", "Sahed Store", or "Shawon Store". Do not attach Bengali case markers/suffixes immediately after the brand (avoid "Shahed Store-এর", "Shahed Store এর", "Shahed Store কে", "Shahed Store-এ", "Shahed Storeএ").
+STORE NAME RULE: Use the correct spelling based on language. In English text write exactly "Shahed Store". In Bengali text write exactly "শাহেদ স্টোর" (শা-হে-দ, "হে"-তে এ-কার) — this is the correct Bengali spelling. NEVER use misspelled Bengali variants like "শাহিদ স্টোর", "সাহেদ স্টোর", "শায়েদ স্টোর", "শাহীদ স্টোর", "শহীদ স্টোর", "শাওন স্টোর", "শাহেদ ষ্টোর", "শাহেদ ইস্টোর". NEVER use English variants like "ShahedStore", "Shahid Store", "Sahed Store", "Shawon Store". In Bengali sentences use Bengali case markers naturally (শাহেদ স্টোরের, শাহেদ স্টোরে, শাহেদ স্টোরকে) — do not mix English name with Bengali suffix ("Shahed Store-এর" is wrong).
 8. Write in a professional, helpful tone
 
 Also provide:
