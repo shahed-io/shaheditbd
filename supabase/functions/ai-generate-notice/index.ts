@@ -117,10 +117,9 @@ Write the body as a real corporate notice with these sections, in this order:
     let plan: any;
     try { plan = JSON.parse(match[0]); } catch { throw new Error('AI returned invalid JSON'); }
 
-    // Normalize store name to English everywhere
-    const fixStoreName = (s: string) => String(s || '')
-      .replace(/শাহেদ\s*স্টোর|শাহিদ\s*স্টোর|সাহেদ\s*স্টোর|শায়েদ\s*স্টোর|সাহিদ\s*স্টোর|শাহীদ\s*স্টোর/g, 'Shahed Store')
-      .replace(/Shahed\s*Store-?(এর|কে|তে|এ)/g, 'Shahed Store $1');
+    // Normalize store name — language-aware (English → "Shahed Store", Bengali → "শাহেদ স্টোর")
+    const { normalizeBrandNameText } = await import('../_shared/brand-name.ts');
+    const fixStoreName = (s: string) => normalizeBrandNameText(String(s || ''));
 
     const out = {
       title: fixStoreName(plan.title).slice(0, 200),
