@@ -1252,6 +1252,63 @@ export default function AdminOfferEditor() {
             </Card>
           )}
         </TabsContent>
+
+        {/* ANALYTICS */}
+        <TabsContent value="analytics" className="space-y-4">
+          {(() => {
+            const total = submissions.length;
+            const uniqueUsers = new Set(submissions.filter((s) => (s as any).user_id).map((s: any) => s.user_id)).size;
+            const converted = submissions.filter((s) => s.converted_to_customer).length;
+            const winnerCountVal = winners.length;
+            const conversionPct = total > 0 ? Math.round((converted / total) * 100) : 0;
+
+            const byDay = new Map<string, number>();
+            submissions.forEach((s) => {
+              const d = new Date(s.created_at).toISOString().slice(0, 10);
+              byDay.set(d, (byDay.get(d) ?? 0) + 1);
+            });
+            const chart = Array.from(byDay.entries())
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([day, entries]) => ({ day: day.slice(5), entries }));
+
+            return (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Total Entries</div><div className="text-2xl font-bold">{total}</div></CardContent></Card>
+                  <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Unique Users</div><div className="text-2xl font-bold">{uniqueUsers}</div></CardContent></Card>
+                  <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Converted to Customer</div><div className="text-2xl font-bold">{converted} <span className="text-sm text-muted-foreground">({conversionPct}%)</span></div></CardContent></Card>
+                  <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Winners Selected</div><div className="text-2xl font-bold">{winnerCountVal}</div></CardContent></Card>
+                </div>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                    <CardTitle className="text-base">Daily Entries</CardTitle>
+                    <Button variant="outline" size="sm" onClick={downloadFullCSV} disabled={total === 0}>
+                      <Download className="w-4 h-4 mr-1" /> Full Export (CSV)
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    {chart.length === 0 ? (
+                      <div className="text-center py-10 text-muted-foreground text-sm">No entries yet.</div>
+                    ) : (
+                      <div className="w-full h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={chart}>
+                            <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                            <XAxis dataKey="day" fontSize={12} />
+                            <YAxis fontSize={12} allowDecimals={false} />
+                            <Tooltip />
+                            <Line type="monotone" dataKey="entries" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            );
+          })()}
+        </TabsContent>
       </Tabs>
 
       {/* Submission Detail Modal */}
