@@ -47,19 +47,22 @@ export default function PublicNotices() {
 
   if (slug) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-10 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-6 sm:py-10 px-2 sm:px-4">
         <SEOHead title={one?.title || 'Notice'} description={one?.summary || undefined} />
-        <div className="max-w-3xl mx-auto mb-4">
+        <div className="max-w-3xl mx-auto mb-4 flex items-center justify-between gap-2 px-1">
           <Link to="/notices" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4" /> All Notices
           </Link>
+          {one && <NoticeActions targetRef={noticeRef} notice={one} />}
         </div>
         {loading ? (
           <div className="text-center py-20 text-muted-foreground">Loading...</div>
         ) : !one ? (
           <div className="text-center py-20 text-muted-foreground">Notice পাওয়া যায়নি।</div>
         ) : (
-          <NoticeTemplate notice={one} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
+          <div ref={noticeRef}>
+            <NoticeTemplate notice={one} brand={{ name: 'Shahed Store' }} signatureUrl={signature.imageDataUrl || undefined} />
+          </div>
         )}
       </div>
     );
