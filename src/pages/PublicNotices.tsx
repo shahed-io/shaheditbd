@@ -22,6 +22,7 @@ export default function PublicNotices() {
   const [one, setOne] = useState<NoticeRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [signature, setSignature] = useState<NoticeSignature>(DEFAULT_NOTICE_SIGNATURE);
+  const noticeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { loadNoticeSignature().then(setSignature); }, []);
 
