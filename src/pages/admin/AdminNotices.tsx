@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw, Download, Megaphone, Pin, Users, CheckCircle2, FileEdit } from 'lucide-react';
+import { Plus, Edit3, Trash2, Eye, Sparkles, Mic, MicOff, Loader2, Send, FileText, Printer, RotateCcw, Download, Megaphone, Pin, Users, CheckCircle2, FileEdit, Link2, Copy, ExternalLink } from 'lucide-react';
 import NoticeTemplate, { NoticeData } from '@/components/notices/NoticeTemplate';
 import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 import NoticeSignatureManager from '@/components/admin/NoticeSignatureManager';
@@ -197,6 +197,24 @@ export default function AdminNotices() {
     }
   };
 
+  const noticeUrl = (slug: string) => `${window.location.origin}/notices/${slug}`;
+
+  const copyLink = async (slug: string) => {
+    const url = noticeUrl(slug);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied — ' + url);
+    } catch {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = url; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); toast.success('Link copied'); }
+      catch { toast.error('Copy failed'); }
+      ta.remove();
+    }
+  };
+
+
   const previewNotice: NoticeData | null = useMemo(() => editing ? {
     title: editing.title || 'Untitled Notice',
     summary: editing.summary || '',
@@ -322,6 +340,15 @@ export default function AdminNotices() {
                         <span className="line-clamp-1">{n.title}</span>
                       </div>
                       {n.summary && <div className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{n.summary}</div>}
+                      <button
+                        type="button"
+                        onClick={() => copyLink(n.slug)}
+                        title="Click to copy link"
+                        className="mt-1 inline-flex items-center gap-1 text-[11px] font-mono text-violet-600 hover:text-violet-800 hover:underline max-w-full"
+                      >
+                        <Link2 className="w-3 h-3 shrink-0" />
+                        <span className="truncate">/notices/{n.slug}</span>
+                      </button>
                     </td>
                     <td className="py-3 px-4 text-xs font-mono text-muted-foreground whitespace-nowrap">{n.reference_no || '—'}</td>
                     <td className="py-3 px-4">
@@ -329,12 +356,17 @@ export default function AdminNotices() {
                         <Users className="w-3 h-3 mr-1" />{n.audience}
                       </Badge>
                     </td>
+
                     <td className="py-3 px-4">
                       <Badge className={`capitalize border ${statusStyle[n.status] || statusStyle.draft}`}>{n.status}</Badge>
                     </td>
                     <td className="py-3 px-4 text-xs text-muted-foreground whitespace-nowrap">{new Date(n.updated_at).toLocaleDateString()}</td>
                     <td className="py-3 px-4 text-right">
                       <div className="inline-flex gap-0.5">
+                        <Button size="sm" variant="ghost" onClick={() => copyLink(n.slug)} title="Copy public link" className="hover:bg-violet-500/10 hover:text-violet-700"><Copy className="w-4 h-4" /></Button>
+                        <Button size="sm" variant="ghost" asChild title="Open public notice in new tab" className="hover:bg-violet-500/10 hover:text-violet-700">
+                          <a href={`/notices/${n.slug}`} target="_blank" rel="noopener noreferrer"><ExternalLink className="w-4 h-4" /></a>
+                        </Button>
                         <Button size="sm" variant="ghost" onClick={() => setPreviewing(n)} title="Preview" className="hover:bg-violet-500/10 hover:text-violet-700"><Eye className="w-4 h-4" /></Button>
                         <Button size="sm" variant="ghost" onClick={() => downloadNotice(n)} disabled={downloadingId === n.id} title="Download PDF" className="hover:bg-violet-500/10 hover:text-violet-700">
                           {downloadingId === n.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
@@ -544,7 +576,19 @@ export default function AdminNotices() {
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle>Notice Preview</DialogTitle>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                {previewing && (
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => copyLink(previewing.slug)} className="gap-1">
+                      <Copy className="w-4 h-4" /> Copy Link
+                    </Button>
+                    <Button size="sm" variant="outline" asChild className="gap-1">
+                      <a href={`/notices/${previewing.slug}`} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4" /> Open
+                      </a>
+                    </Button>
+                  </>
+                )}
                 <Button
                   size="sm"
                   variant="outline"
