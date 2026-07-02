@@ -14,7 +14,7 @@ const corsHeaders = {
 interface Body {
   text?: string;                // current text to improve (optional)
   instruction?: string;         // extra guidance from the admin (optional)
-  kind?: string;                // e.g. "offer_title", "offer_description", "prize_title", "prize_description", "terms", "success_message", "notice", "generic"
+  kind?: string;                // e.g. "offer_title", "offer_description", "prize_title", "prize_description", "terms", "success_message", "notice", "field_label", "field_help", "field_options", "winner_prizes", "generic"
   language?: 'bn' | 'en' | 'auto';
   maxChars?: number;
 }
@@ -27,6 +27,10 @@ const KIND_GUIDE: Record<string, string> = {
   terms: 'Clear terms & conditions as a short bullet list (use "- " for each). Keep it professional and easy to read.',
   success_message: 'A short, warm thank-you message shown after a user submits the giveaway form (1-3 sentences).',
   notice: 'A short public announcement/notice banner (1-3 sentences). Direct, informative, warm tone.',
+  field_label: 'A short giveaway form field label. Keep it clear, user-friendly, and plain text only.',
+  field_help: 'Helpful microcopy for a giveaway form field. One short sentence, plain text only.',
+  field_options: 'Giveaway form choices/options. Return one option per line only; no bullets, no numbering, no explanations.',
+  winner_prizes: 'Winner prize labels for a giveaway winner-picking list. Return one prize per line in rank order only; no bullets, no numbering, no explanations.',
   generic: 'Improve grammar, clarity, and tone. Keep the meaning and length similar.',
 };
 
@@ -94,6 +98,27 @@ Deno.serve(async (req) => {
     out = out.replace(/^```[a-zA-Z]*\n?/, '').replace(/\n?```$/, '').trim();
     if ((out.startsWith('"') && out.endsWith('"')) || (out.startsWith('\u201C') && out.endsWith('\u201D'))) {
       out = out.slice(1, -1).trim();
+    }
+    if (kind === 'prize_title') {
+      out = out
+        .replace(/^[-*•]\s+|^\d+[\.)]\s+/, '')
+        .replace(/\*+/g, '')
+        .replace(/[\s:：]+$/g, '')
+        .trim();
+    }
+    if (kind === 'prize_description') {
+      out = out
+        .replace(/^[-*•]\s+|^\d+[\.)]\s+/, '')
+        .replace(/^[:：\s]+/g, '')
+        .replace(/\*+/g, '')
+        .trim();
+    }
+    if (kind === 'field_options' || kind === 'winner_prizes') {
+      out = out
+        .split('\n')
+        .map((line) => line.replace(/^[-*•]\s+|^\d+[\.)]\s+/, '').trim())
+        .filter(Boolean)
+        .join('\n');
     }
     if (out.length > maxChars) out = out.slice(0, maxChars).trim();
     out = normalizeBrandNameText(out);

@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2 } from 'lucide-react';
 import PrizesEditor from '@/components/admin/PrizesEditor';
 import AiPolishButton from '@/components/admin/AiPolishButton';
+import { parsePrizeItems } from '@/lib/offerPrizes';
 
 interface Offer {
   id: string;
@@ -190,17 +191,8 @@ export default function AdminOfferEditor() {
   };
 
   const parsePrizesFromDetails = (text: string | null | undefined): string[] => {
-    if (!text) return [];
-    return text
-      .split('\n')
-      .map((l) => {
-        let s = l.trim();
-        if (!s) return '';
-        // strip markdown bullets / numbering prefixes
-        s = s.replace(/^[-*•]\s*/, '').replace(/^\d+[\.\)]\s*/, '');
-        const idx = s.indexOf(':');
-        return (idx >= 0 ? s.slice(idx + 1) : s).trim();
-      })
+    return parsePrizeItems(text)
+      .map((item) => [item.title, item.description].filter(Boolean).join(' — ').trim())
       .filter(Boolean);
   };
 
@@ -795,21 +787,57 @@ export default function AdminOfferEditor() {
                     </Select>
                   </div>
                   <div>
-                    <Label>Label</Label>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <Label>Label</Label>
+                      <AiPolishButton
+                        value={f.label || ''}
+                        onChange={(next) => updateField(idx, { label: next })}
+                        kind="field_label"
+                        maxChars={80}
+                        size="icon"
+                      />
+                    </div>
                     <Input value={f.label} onChange={(e) => updateField(idx, { label: e.target.value })} />
                   </div>
                   <div>
-                    <Label>Placeholder</Label>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <Label>Placeholder</Label>
+                      <AiPolishButton
+                        value={f.placeholder || ''}
+                        onChange={(next) => updateField(idx, { placeholder: next })}
+                        kind="field_help"
+                        maxChars={100}
+                        size="icon"
+                      />
+                    </div>
                     <Input value={f.placeholder || ''} onChange={(e) => updateField(idx, { placeholder: e.target.value })} />
                   </div>
                   <div>
-                    <Label>Help Text</Label>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <Label>Help Text</Label>
+                      <AiPolishButton
+                        value={f.help_text || ''}
+                        onChange={(next) => updateField(idx, { help_text: next })}
+                        kind="field_help"
+                        maxChars={160}
+                        size="icon"
+                      />
+                    </div>
                     <Input value={f.help_text || ''} onChange={(e) => updateField(idx, { help_text: e.target.value })} />
                   </div>
                 </div>
                 {(f.field_type === 'select' || f.field_type === 'radio' || f.field_type === 'checkbox') && (
                   <div>
-                    <Label>Options (one per line)</Label>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <Label>Options (one per line)</Label>
+                      <AiPolishButton
+                        value={Array.isArray(f.options) ? f.options.join('\n') : ''}
+                        onChange={(next) => updateField(idx, { options: next.split('\n').map((s) => s.trim()).filter(Boolean) })}
+                        kind="field_options"
+                        maxChars={600}
+                        size="sm"
+                      />
+                    </div>
                     <Textarea
                       rows={3}
                       value={Array.isArray(f.options) ? f.options.join('\n') : ''}
@@ -937,26 +965,36 @@ export default function AdminOfferEditor() {
                 </div>
               </div>
               <div>
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
                   <Label>Prizes (one per line, in order — leave blank to skip)</Label>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 text-xs"
-                    onClick={() => {
-                      const parsed = parsePrizesFromDetails(offer?.prize_details);
-                      if (parsed.length === 0) {
-                        toast.error('No prizes found in the offer\'s "Prize Details" field.');
-                        return;
-                      }
-                      setPrizesText(parsed.join('\n'));
-                      setWinnerCount(Math.max(1, Math.min(100, parsed.length)));
-                      toast.success(`Loaded ${parsed.length} prize(s) from Prize Details`);
-                    }}
-                  >
-                    <Wand2 className="w-3.5 h-3.5 mr-1" /> Auto-fill from Prize Details
-                  </Button>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <AiPolishButton
+                      value={prizesText}
+                      onChange={setPrizesText}
+                      kind="winner_prizes"
+                      label="AI Improve"
+                      maxChars={800}
+                      size="sm"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => {
+                        const parsed = parsePrizesFromDetails(offer?.prize_details);
+                        if (parsed.length === 0) {
+                          toast.error('No prizes found in the offer\'s "Prize Details" field.');
+                          return;
+                        }
+                        setPrizesText(parsed.join('\n'));
+                        setWinnerCount(Math.max(1, Math.min(100, parsed.length)));
+                        toast.success(`Loaded ${parsed.length} prize(s) from Prize Details`);
+                      }}
+                    >
+                      <Wand2 className="w-3.5 h-3.5 mr-1" /> Auto-fill from Prize Details
+                    </Button>
+                  </div>
                 </div>
                 <Textarea
                   rows={Math.min(Math.max(winnerCount, 3), 8)}
