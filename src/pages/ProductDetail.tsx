@@ -616,7 +616,7 @@ const ProductDetail = () => {
                   opacity: entered ? 1 : 0,
                   transform: entered ? 'translateY(0)' : 'translateY(16px)',
                   transition: 'opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.9s',
-                  paddingRight: '18px', // room for floating logo card overhang
+                  paddingRight: '14px', // room for floating logo card overhang
                 }}
               >
                 <a
@@ -638,43 +638,43 @@ const ProductDetail = () => {
                   }}
                 >
                   {/* ── LEFT: Ribbon medal + Certified text ── */}
-                  <div className="flex items-center gap-3 lg:gap-4 pl-3 lg:pl-5 pr-3 lg:pr-5 py-3 lg:py-4 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 lg:gap-3 pl-2.5 lg:pl-4 pr-2 lg:pr-4 py-2.5 lg:py-3.5 flex-1 min-w-0">
                     {/* Gold Certified ribbon badge */}
                     <div className="relative flex-shrink-0">
                       <img
                         src={certifiedBadge.url}
                         alt="DBID Certified Badge"
-                        className="w-12 h-14 lg:w-14 lg:h-16 object-contain"
+                         className="w-10 h-12 lg:w-13 lg:h-15 object-contain"
                         style={{ filter: 'drop-shadow(0 3px 6px rgba(220,38,38,0.28)) drop-shadow(0 1px 2px rgba(0,0,0,0.12))' }}
                       />
                     </div>
 
 
                     {/* Certified text */}
-                    <div className="flex flex-col leading-tight min-w-0">
-                      <div className="flex items-baseline gap-1.5 lg:gap-2 flex-wrap">
+                     <div className="flex flex-col leading-tight min-w-0">
+                       <div className="flex items-baseline gap-1 lg:gap-1.5 flex-nowrap min-w-0">
                         <span
-                          className="text-[15px] lg:text-[19px] font-extrabold tracking-tight"
+                          className="text-[12px] lg:text-[16px] font-extrabold tracking-normal whitespace-nowrap"
                           style={{ color: '#ea580c', fontFamily: 'Sora, sans-serif' }}
                         >
                           Certified
                         </span>
                         <span
-                          className="text-[14px] lg:text-[18px] font-bold italic whitespace-nowrap"
+                          className="text-[11px] lg:text-[15px] font-bold italic whitespace-nowrap"
                           style={{ color: '#1f2937', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
                         >
                           by DBID
                         </span>
                       </div>
-                      <div className="flex items-baseline gap-1.5 mt-1 whitespace-nowrap">
+                      <div className="flex items-baseline gap-1 mt-0.5 whitespace-nowrap">
                         <span
-                          className="text-[11px] lg:text-[13px] font-semibold"
+                          className="text-[9px] lg:text-[11px] font-semibold"
                           style={{ color: '#374151', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
                         >
                           ID:
                         </span>
                         <span
-                          className="text-[12px] lg:text-[14px] font-extrabold tabular-nums tracking-wide"
+                          className="text-[10px] lg:text-[12px] font-extrabold tabular-nums tracking-normal"
                           style={{ color: '#f97316', fontFamily: 'Sora, sans-serif' }}
                         >
                           586772174
@@ -685,16 +685,16 @@ const ProductDetail = () => {
 
                   {/* ── Vertical separator ── */}
                   <div
-                    className="w-px my-3 lg:my-4 flex-shrink-0"
+                    className="w-px my-2.5 lg:my-3.5 flex-shrink-0"
                     style={{ background: 'linear-gradient(180deg, transparent, #fdba74 30%, #fdba74 70%, transparent)' }}
                   />
 
 
                   {/* ── MIDDLE: Digital Business + Verify CTA ── */}
-                  <div className="flex flex-col justify-center px-3 lg:px-5 py-3 lg:py-4 flex-[1.1] min-w-0">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                  <div className="flex flex-col justify-center px-2 lg:px-4 py-2.5 lg:py-3.5 flex-[1.1] min-w-0">
+                    <div className="flex items-baseline gap-1 flex-nowrap min-w-0">
                       <span
-                        className="text-[13px] lg:text-[15px] font-extrabold leading-tight"
+                        className="text-[10px] lg:text-[13px] font-extrabold leading-tight whitespace-nowrap"
                         style={{
                           background: 'linear-gradient(90deg, #ef4444 0%, #f97316 100%)',
                           WebkitBackgroundClip: 'text',
@@ -707,20 +707,20 @@ const ProductDetail = () => {
                       </span>
                     </div>
                     <div
-                      className="text-[11px] lg:text-[13px] font-bold leading-tight mt-0.5"
+                      className="text-[9px] lg:text-[11px] font-bold leading-tight mt-0.5 whitespace-nowrap"
                       style={{ color: '#1f2937', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
                     >
                       Identification Number
                     </div>
-                    <div className="flex items-center gap-1.5 mt-1.5 lg:mt-2">
+                    <div className="flex items-center gap-1 mt-1 lg:mt-1.5">
                       <span
-                        className="text-[10px] lg:text-[12px] font-semibold underline-offset-2 group-hover:underline decoration-orange-400 whitespace-nowrap"
+                        className="text-[8px] lg:text-[10px] font-semibold underline-offset-2 group-hover:underline decoration-orange-400 whitespace-nowrap"
                         style={{ color: '#4b5563', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
                       >
                         Click here to verify
                       </span>
                       {/* Cursor + spark icon */}
-                      <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <svg className="w-3 h-3 lg:w-3.5 lg:h-3.5 flex-shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" viewBox="0 0 24 24" fill="none" aria-hidden>
                         <path d="M5 3 L5 17 L9 13 L12 20 L14 19 L11 12 L17 12 Z" fill="#f97316" stroke="#ea580c" strokeWidth="0.6" strokeLinejoin="round" />
                         <g stroke="#fb923c" strokeWidth="1.2" strokeLinecap="round">
                           <line x1="19" y1="5" x2="22" y2="3" />
@@ -735,11 +735,11 @@ const ProductDetail = () => {
 
                 {/* ── RIGHT: Floating Shahed Store logo card (overhangs right) ── */}
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[18%] lg:translate-x-[22%]"
+                  className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[16%] lg:translate-x-[20%]"
                   style={{ filter: 'drop-shadow(0 4px 10px rgba(124,58,237,0.18))' }}
                 >
                   <div
-                    className="relative w-[64px] h-[64px] lg:w-[88px] lg:h-[88px] rounded-2xl flex items-center justify-center overflow-hidden"
+                    className="relative w-[56px] h-[56px] lg:w-[80px] lg:h-[80px] rounded-2xl flex items-center justify-center overflow-hidden"
 
                     style={{
                       background: '#ffffff',
