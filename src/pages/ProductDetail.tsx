@@ -14,6 +14,8 @@ import {
   ThumbsUp, Send, User
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
+import NotFoundScreen from '@/components/store/NotFoundScreen';
+
 import SEOHead from '@/components/seo/SEOHead';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import { productSchema, breadcrumbSchema, faqSchema, softwareApplicationSchema, speakableSchema, reviewSchema } from '@/components/seo/schemas';
