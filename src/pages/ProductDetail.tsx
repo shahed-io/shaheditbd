@@ -127,7 +127,6 @@ const ProductDetail = () => {
   const [selectedPlanIdx, setSelectedPlanIdx] = useState(0);
   // Review stats for schema
   const [reviewStats, setReviewStats] = useState<{ avg: number; count: number } | null>(null);
-  const [descOpen, setDescOpen] = useState(false);
 
   // Section reveals
   const descReveal   = useReveal({ threshold: 0.05 });
@@ -901,7 +900,7 @@ const ProductDetail = () => {
                           key={idx}
                           type="button"
                           onClick={() => setSelectedPlanIdx(idx)}
-                          className="w-full flex items-center justify-between gap-2 px-3 sm:px-4 py-3 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] active:scale-[0.99]"
+                          className="w-full flex items-center justify-between px-4 py-3 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] active:scale-[0.99]"
                           style={isSel ? {
                             borderColor: 'hsl(258,78%,55%)',
                             background: 'linear-gradient(135deg, hsla(258,78%,55%,0.10) 0%, hsla(185,90%,52%,0.07) 100%)',
@@ -913,31 +912,30 @@ const ProductDetail = () => {
                           }}
                         >
                           {/* Left: duration + check */}
-                          <div className="flex items-center gap-2 min-w-0 flex-shrink">
+                          <div className="flex items-center gap-2.5">
                             <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors"
                               style={{ borderColor: isSel ? 'hsl(258,78%,55%)' : 'hsl(220,20%,75%)' }}>
                               {isSel && <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />}
                             </div>
-                            <span className="font-bold text-[13px] sm:text-sm whitespace-nowrap truncate" style={{ color: isSel ? 'hsl(258,78%,42%)' : 'hsl(226,35%,22%)' }}>
+                            <span className="font-bold text-sm" style={{ color: isSel ? 'hsl(258,78%,42%)' : 'hsl(226,35%,22%)' }}>
                               {plan.duration}
                             </span>
                           </div>
                           {/* Right: price */}
-                          <div className="flex items-center gap-1.5 sm:gap-2 text-right flex-shrink-0 whitespace-nowrap">
+                          <div className="flex items-center gap-2 text-right">
                             {planOriginal && planOriginal > planPrice && (
-                              <span className="text-[11px] sm:text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>৳{planOriginal.toLocaleString()}</span>
+                              <span className="text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>৳{planOriginal.toLocaleString()}</span>
                             )}
-                            <span className="font-black text-sm sm:text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
+                            <span className="font-black text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
                               ৳{planPrice.toLocaleString()}
                             </span>
                             {planDiscount > 0 && (
-                              <span className="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
                                 style={{ color: 'hsl(0,85%,52%)', background: 'hsla(0,85%,55%,0.10)', border: '1px solid hsla(0,85%,55%,0.20)' }}>
                                 -{planDiscount}%
                               </span>
                             )}
                           </div>
-
                         </button>
                       );
                     })}
@@ -1243,86 +1241,53 @@ const ProductDetail = () => {
                 <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(271,91%,65%), hsl(185,90%,52%))' }} />
                 {description ? 'Product Description' : 'Why Choose This Product?'}
               </h2>
-
-              {!descOpen ? (
-                <button
-                  type="button"
-                  onClick={() => setDescOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl text-sm font-semibold transition-all hover:scale-[1.01]"
-                  style={{
-                    background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
-                    backdropFilter: 'blur(24px)',
-                    WebkitBackdropFilter: 'blur(24px)',
-                    border: '1px solid hsla(258,78%,60%,0.28)',
-                    boxShadow: '0 4px 24px hsla(258,78%,55%,0.10), 0 1px 0 rgba(255,255,255,0.9) inset',
-                    color: 'hsl(258,78%,45%)',
-                  }}
-                  aria-expanded={false}
-                  aria-controls="product-description-body"
-                >
-                  <span>বিস্তারিত বিবরণ দেখুন / View Full Description</span>
-                  <ChevronDown size={16} />
-                </button>
-              ) : (
-                <div
-                  id="product-description-body"
-                  className="rounded-2xl p-6 text-sm leading-relaxed animate-fade-in"
-                  style={{
-                    background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
-                    backdropFilter: 'blur(24px)',
-                    WebkitBackdropFilter: 'blur(24px)',
-                    border: '1px solid hsla(258,78%,75%,0.22)',
-                    boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
-                    color: 'hsl(226,25%,40%)',
-                  }}
-                >
-                  {description ? (
-                    <div className="prose prose-sm max-w-none
-                      prose-headings:text-foreground prose-headings:font-bold prose-headings:mt-4 prose-headings:mb-2
-                      prose-h2:text-base prose-h3:text-sm
-                      prose-p:text-[hsl(226,25%,40%)] prose-p:mb-2 prose-p:leading-relaxed
-                      prose-strong:text-foreground prose-strong:font-semibold
-                      prose-ul:pl-4 prose-ul:space-y-1
-                      prose-li:text-[hsl(226,25%,40%)] prose-li:leading-relaxed
-                      prose-a:text-primary">
-                    <Suspense fallback={<div className="h-20 shimmer rounded-xl" />}>
-                        <ReactMarkdown>{fixPunctuation(description)}</ReactMarkdown>
-                      </Suspense>
-                    </div>
-                  ) : (
-                    <ul className="space-y-3">
-                      {[
-                        { icon: '✅', text: '100% Genuine & Original License — directly from official source' },
-                        { icon: '⚡', text: 'Instant Digital Delivery — received within 5–30 minutes after payment' },
-                        { icon: '🔒', text: 'Lifetime Activation — one-time purchase, no subscription needed' },
-                        { icon: '🛡️', text: 'After-sales Support — our team is available 24/7 to help you activate' },
-                        { icon: '💳', text: 'Easy Payment — BKash, Nagad, Rocket, Card & more options available' },
-                      ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <span className="text-base">{item.icon}</span>
-                          <span>{item.text}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => setDescOpen(false)}
-                    className="mt-5 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-all hover:scale-[1.01]"
-                    style={{
-                      background: 'rgba(255,255,255,0.75)',
-                      border: '1px solid hsla(258,78%,60%,0.22)',
-                      color: 'hsl(258,78%,45%)',
-                    }}
-                  >
-                    <ChevronDown size={14} className="rotate-180" />
-                    কম দেখান / Show Less
-                  </button>
-                </div>
-              )}
+              <div
+                className="rounded-2xl p-6 text-sm leading-relaxed"
+                style={{
+                  background: 'linear-gradient(155deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.58) 100%)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
+                  border: '1px solid hsla(258,78%,75%,0.22)',
+                  boxShadow: '0 4px 24px hsla(258,78%,55%,0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
+                  color: 'hsl(226,25%,40%)',
+                }}
+              >
+                {description ? (
+                  <div className="prose prose-sm max-w-none
+                    prose-headings:text-foreground prose-headings:font-bold prose-headings:mt-4 prose-headings:mb-2
+                    prose-h2:text-base prose-h3:text-sm
+                    prose-p:text-[hsl(226,25%,40%)] prose-p:mb-2 prose-p:leading-relaxed
+                    prose-strong:text-foreground prose-strong:font-semibold
+                    prose-ul:pl-4 prose-ul:space-y-1
+                    prose-li:text-[hsl(226,25%,40%)] prose-li:leading-relaxed
+                    prose-a:text-primary">
+                  <Suspense fallback={<div className="h-20 shimmer rounded-xl" />}>
+                      <ReactMarkdown>{fixPunctuation(description)}</ReactMarkdown>
+                    </Suspense>
+                  </div>
+                ) : (
+                  <ul className="space-y-3">
+                    {[
+                      { icon: '✅', text: '100% Genuine & Original License — directly from official source' },
+                      { icon: '⚡', text: 'Instant Digital Delivery — received within 5–30 minutes after payment' },
+                      { icon: '🔒', text: 'Lifetime Activation — one-time purchase, no subscription needed' },
+                      { icon: '🛡️', text: 'After-sales Support — our team is available 24/7 to help you activate' },
+                      { icon: '💳', text: 'Easy Payment — BKash, Nagad, Rocket, Card & more options available' },
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3"
+                        style={{
+                          opacity: descReveal.visible ? 1 : 0,
+                          transform: descReveal.visible ? 'none' : 'translateX(-12px)',
+                          transition: `all 0.5s cubic-bezier(0.22,1,0.36,1) ${0.1 + i * 0.08}s`,
+                        }}>
+                        <span className="text-base">{item.icon}</span>
+                        <span>{item.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
-
 
             {/* FAQ — full width, below description */}
             {faqs.length > 0 && (
