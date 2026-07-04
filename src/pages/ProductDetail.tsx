@@ -735,11 +735,12 @@ const ProductDetail = () => {
 
                 {/* ── RIGHT: Floating Shahed Store logo card (overhangs right) ── */}
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[18%] sm:translate-x-[22%]"
+                  className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[18%] lg:translate-x-[22%]"
                   style={{ filter: 'drop-shadow(0 4px 10px rgba(124,58,237,0.18))' }}
                 >
                   <div
-                    className="relative w-[72px] h-[72px] sm:w-[88px] sm:h-[88px] rounded-2xl flex items-center justify-center overflow-hidden"
+                    className="relative w-[64px] h-[64px] lg:w-[88px] lg:h-[88px] rounded-2xl flex items-center justify-center overflow-hidden"
+
                     style={{
                       background: '#ffffff',
                       border: '2px solid transparent',
