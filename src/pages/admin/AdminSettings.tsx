@@ -212,6 +212,35 @@ const AdminSettings = () => {
             </div>
           ))}
 
+          {/* Product Grid Display */}
+          <div className="glass-card rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Globe size={18} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">Product Grid Display</h3>
+                <p className="text-xs text-muted-foreground">Control how product rows are trimmed on mobile, tablet, and desktop.</p>
+              </div>
+            </div>
+
+            <label className="flex items-start gap-3 p-4 rounded-xl border border-border bg-muted/20 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={(settings['hide_orphan_products'] ?? 'true') !== 'false'}
+                onChange={e => setSettings({ ...settings, hide_orphan_products: e.target.checked ? 'true' : 'false' })}
+                className="mt-1 h-4 w-4 rounded border-border accent-primary"
+              />
+              <div>
+                <div className="text-sm font-semibold text-foreground">Hide orphan products (partial last row)</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  When enabled, if a category has extra 1-2 products that don't fill a full row on the current device, they are hidden. Small categories that only have 1-2 products in total are always fully shown.
+                </p>
+              </div>
+            </label>
+          </div>
+
+
           {/* AI API Configuration */}
           <div className="glass-card rounded-2xl p-6 border border-purple-500/20">
             <div className="flex items-center gap-3 mb-5">
