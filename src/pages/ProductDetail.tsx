@@ -644,7 +644,7 @@ const ProductDetail = () => {
                       <img
                         src={certifiedBadge.url}
                         alt="DBID Certified Badge"
-                         className="w-10 h-12 lg:w-13 lg:h-15 object-contain"
+                         className="w-10 h-12 lg:w-[52px] lg:h-[60px] object-contain"
                         style={{ filter: 'drop-shadow(0 3px 6px rgba(220,38,38,0.28)) drop-shadow(0 1px 2px rgba(0,0,0,0.12))' }}
                       />
                     </div>
