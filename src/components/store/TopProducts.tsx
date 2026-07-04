@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useReveal } from '@/hooks/useReveal';
+import { useHideOrphans } from '@/hooks/useHideOrphans';
 import ProductCard from './ProductCard';
 import { Product } from '@/data/products';
 import { ArrowRight, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+
 
 const mapProduct = (p: any): Product => ({
   id:            p.id,
@@ -49,6 +51,8 @@ const TopProducts = () => {
   const [activeTab,    setActiveTab]    = useState('All');
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
   const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.05 });
+  const hideOrphans = useHideOrphans();
+
 
   const { data, isLoading: loading, isError: error, refetch } = useQuery({
     queryKey: ['top-products'],
@@ -145,25 +149,26 @@ const TopProducts = () => {
                       View all <ArrowRight size={13} />
                     </button>
                   </div>
-                  {/* Mobile: 2 columns */}
-                  <div className="grid grid-cols-2 gap-3 md:hidden">
+                  {/* Mobile: 2 columns — trim orphans so no partial row shows */}
+                  <div className={`grid grid-cols-2 gap-3 md:hidden ${hideOrphans ? 'grid-fill-rows' : ''}`}>
                     {(isExpanded ? items : items.slice(0, LIMIT)).map((p, i) => (
                       <ProductCard key={p.id} product={p} delay={Math.min(i * 0.04, 0.3)} />
                     ))}
-                    {hasMore && (
-                      <div className="col-span-2 flex justify-center mt-2">
-                        <button onClick={() => toggleCat(cat)}
-                          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-card border border-border shadow-soft text-foreground">
-                          {isExpanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
-                        </button>
-                      </div>
-                    )}
                   </div>
-                  {/* Tablet (4 cols) & desktop (5 cols) grid — only hide orphans in collapsed preview */}
-                  <div className={`hidden md:grid grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 ${!isExpanded && hasMore ? 'grid-fill-rows' : ''}`}>
+                  {hasMore && (
+                    <div className="md:hidden flex justify-center mt-2">
+                      <button onClick={() => toggleCat(cat)}
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-card border border-border shadow-soft text-foreground">
+                        {isExpanded ? <><ChevronUp size={14} /> Show less</> : <><ChevronDown size={14} /> Load more ({items.length - LIMIT})</>}
+                      </button>
+                    </div>
+                  )}
+                  {/* Tablet (4 cols) & desktop (5 cols) grid — always trim orphans */}
+                  <div className={`hidden md:grid grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 ${hideOrphans ? 'grid-fill-rows' : ''}`}>
                     {shown.map((p, i) => <ProductCard key={p.id} product={p} delay={i * 0.05} priority={catIdx === 0 && i < 4} />)}
                   </div>
                   {hasMore && (
+
                     <div className="hidden md:flex justify-center mt-6">
                       <button onClick={() => toggleCat(cat)}
                         className="flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-semibold bg-card border border-border shadow-soft hover:shadow-medium transition-all text-foreground">
@@ -181,9 +186,10 @@ const TopProducts = () => {
         {!error && !loading && activeTab !== 'All' && (
           <div>
             <p className="text-sm text-muted-foreground mb-6 font-fira">{filtered.length} products in "{activeTab}"</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+            <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 ${hideOrphans ? 'grid-fill-rows' : ''}`}>
               {filtered.map((p, i) => <ProductCard key={p.id} product={p} delay={Math.min(i * 0.04, 0.4)} />)}
             </div>
+
           </div>
         )}
       </div>

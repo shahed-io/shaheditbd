@@ -8,6 +8,8 @@ import SEOHead from '@/components/seo/SEOHead';
 import { itemListSchema, breadcrumbSchema } from '@/components/seo/schemas';
 import { Search, X, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
+import { useHideOrphans } from '@/hooks/useHideOrphans';
+
 
 interface Product {
   id: string;
@@ -121,6 +123,8 @@ const Shop = () => {
   const [sort, setSort]             = useState('newest');
   const [didYouMean, setDidYouMean] = useState<string>('');
   const [aiAssisted, setAiAssisted] = useState(false);
+  const hideOrphans = useHideOrphans();
+
 
   const activeCatSlug = searchParams.get('category') || '';
   const urlQ = searchParams.get('q') || '';
@@ -518,9 +522,10 @@ const Shop = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 3xl:grid-cols-5 4xl:grid-cols-6 gap-3 md:gap-4">
+              <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 3xl:grid-cols-5 4xl:grid-cols-6 gap-3 md:gap-4 ${hideOrphans ? 'grid-fill-rows-shop' : ''}`}>
                 {products.map(p => <ShopProductCard key={p.id} product={p} />)}
               </div>
+
             )}
           </div>
         </div>
