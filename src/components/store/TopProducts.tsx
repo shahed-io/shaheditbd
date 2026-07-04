@@ -51,6 +51,8 @@ const TopProducts = () => {
   const [activeTab,    setActiveTab]    = useState('All');
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
   const { ref: sectionRef, visible: sectionVisible } = useReveal({ threshold: 0.05 });
+  const hideOrphans = useHideOrphans();
+
 
   const { data, isLoading: loading, isError: error, refetch } = useQuery({
     queryKey: ['top-products'],
