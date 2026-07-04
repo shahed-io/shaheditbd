@@ -14,6 +14,8 @@ import {
   ThumbsUp, Send, User
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
+import NotFoundScreen from '@/components/store/NotFoundScreen';
+
 import SEOHead from '@/components/seo/SEOHead';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import { productSchema, breadcrumbSchema, faqSchema, softwareApplicationSchema, speakableSchema, reviewSchema } from '@/components/seo/schemas';
@@ -264,18 +266,15 @@ const ProductDetail = () => {
   );
 
   if (notFound || !product) return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 py-20">
-        <div className="text-7xl">😕</div>
-        <h2 className="text-2xl font-sora font-bold text-foreground">Product Not Found</h2>
-        <p className="text-muted-foreground">This product doesn't exist or has been removed.</p>
-        <button onClick={() => navigate('/')} className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white btn-primary-new">
-          <ArrowLeft size={16} /> Back to Store
-        </button>
-      </div>
-    </div>
+    <NotFoundScreen
+      code="404"
+      title="Product Not Found"
+      message="This product doesn't exist or has been unplugged from our digital cave."
+      ctaLabel="Back to Store"
+      ctaHref="/"
+    />
   );
+
 
   const images = [
     product.image_url || PLACEHOLDER,
