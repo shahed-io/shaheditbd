@@ -691,10 +691,10 @@ const ProductDetail = () => {
 
 
                   {/* ── MIDDLE: Digital Business + Verify CTA ── */}
-                  <div className="flex flex-col justify-center px-3 sm:px-5 py-3 sm:py-4 flex-[1.1] min-w-0">
+                  <div className="flex flex-col justify-center px-3 lg:px-5 py-3 lg:py-4 flex-[1.1] min-w-0">
                     <div className="flex items-baseline gap-1.5 flex-wrap">
                       <span
-                        className="text-[13px] sm:text-[15px] font-extrabold leading-tight"
+                        className="text-[13px] lg:text-[15px] font-extrabold leading-tight"
                         style={{
                           background: 'linear-gradient(90deg, #ef4444 0%, #f97316 100%)',
                           WebkitBackgroundClip: 'text',
@@ -707,20 +707,20 @@ const ProductDetail = () => {
                       </span>
                     </div>
                     <div
-                      className="text-[11px] sm:text-[13px] font-bold leading-tight mt-0.5"
+                      className="text-[11px] lg:text-[13px] font-bold leading-tight mt-0.5"
                       style={{ color: '#1f2937', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
                     >
                       Identification Number
                     </div>
-                    <div className="flex items-center gap-1.5 mt-1.5 sm:mt-2">
+                    <div className="flex items-center gap-1.5 mt-1.5 lg:mt-2">
                       <span
-                        className="text-[10px] sm:text-[12px] font-semibold underline-offset-2 group-hover:underline decoration-orange-400"
+                        className="text-[10px] lg:text-[12px] font-semibold underline-offset-2 group-hover:underline decoration-orange-400 whitespace-nowrap"
                         style={{ color: '#4b5563', fontFamily: '"Plus Jakarta Sans", sans-serif' }}
                       >
                         Click here to verify
                       </span>
                       {/* Cursor + spark icon */}
-                      <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" viewBox="0 0 24 24" fill="none" aria-hidden>
                         <path d="M5 3 L5 17 L9 13 L12 20 L14 19 L11 12 L17 12 Z" fill="#f97316" stroke="#ea580c" strokeWidth="0.6" strokeLinejoin="round" />
                         <g stroke="#fb923c" strokeWidth="1.2" strokeLinecap="round">
                           <line x1="19" y1="5" x2="22" y2="3" />
@@ -730,6 +730,7 @@ const ProductDetail = () => {
                       </svg>
                     </div>
                   </div>
+
                 </a>
 
                 {/* ── RIGHT: Floating Shahed Store logo card (overhangs right) ── */}
