@@ -901,7 +901,7 @@ const ProductDetail = () => {
                           key={idx}
                           type="button"
                           onClick={() => setSelectedPlanIdx(idx)}
-                          className="w-full flex items-center justify-between px-4 py-3 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] active:scale-[0.99]"
+                          className="w-full flex items-center justify-between gap-2 px-3 sm:px-4 py-3 rounded-2xl border-2 text-left transition-all hover:scale-[1.01] active:scale-[0.99]"
                           style={isSel ? {
                             borderColor: 'hsl(258,78%,55%)',
                             background: 'linear-gradient(135deg, hsla(258,78%,55%,0.10) 0%, hsla(185,90%,52%,0.07) 100%)',
@@ -913,30 +913,31 @@ const ProductDetail = () => {
                           }}
                         >
                           {/* Left: duration + check */}
-                          <div className="flex items-center gap-2.5">
+                          <div className="flex items-center gap-2 min-w-0 flex-shrink">
                             <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors"
                               style={{ borderColor: isSel ? 'hsl(258,78%,55%)' : 'hsl(220,20%,75%)' }}>
                               {isSel && <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />}
                             </div>
-                            <span className="font-bold text-sm" style={{ color: isSel ? 'hsl(258,78%,42%)' : 'hsl(226,35%,22%)' }}>
+                            <span className="font-bold text-[13px] sm:text-sm whitespace-nowrap truncate" style={{ color: isSel ? 'hsl(258,78%,42%)' : 'hsl(226,35%,22%)' }}>
                               {plan.duration}
                             </span>
                           </div>
                           {/* Right: price */}
-                          <div className="flex items-center gap-2 text-right">
+                          <div className="flex items-center gap-1.5 sm:gap-2 text-right flex-shrink-0 whitespace-nowrap">
                             {planOriginal && planOriginal > planPrice && (
-                              <span className="text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>৳{planOriginal.toLocaleString()}</span>
+                              <span className="text-[11px] sm:text-xs line-through" style={{ color: 'hsl(226,25%,65%)' }}>৳{planOriginal.toLocaleString()}</span>
                             )}
-                            <span className="font-black text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
+                            <span className="font-black text-sm sm:text-base font-sora" style={{ color: 'hsl(258,78%,42%)' }}>
                               ৳{planPrice.toLocaleString()}
                             </span>
                             {planDiscount > 0 && (
-                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                              <span className="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full"
                                 style={{ color: 'hsl(0,85%,52%)', background: 'hsla(0,85%,55%,0.10)', border: '1px solid hsla(0,85%,55%,0.20)' }}>
                                 -{planDiscount}%
                               </span>
                             )}
                           </div>
+
                         </button>
                       );
                     })}
