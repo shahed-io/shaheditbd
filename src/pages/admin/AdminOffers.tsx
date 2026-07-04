@@ -1,11 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Copy, ExternalLink, Gift, Users, Calendar, Sparkles, Trophy, Megaphone, BellRing } from 'lucide-react';
+import {
+  Plus, Edit, Trash2, Copy, ExternalLink, Gift, Users, Calendar,
+  Sparkles, Trophy, BellRing, RefreshCw, Search, Filter, CircleDot,
+  FileEdit, CheckCircle2, XCircle, Clock, Eye,
+} from 'lucide-react';
 import SendToNotificationsDialog from '@/components/admin/SendToNotificationsDialog';
 
 interface Offer {
@@ -20,10 +27,29 @@ interface Offer {
   created_at: string;
 }
 
+const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
+  active: { label: 'Active', color: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30', icon: CheckCircle2 },
+  draft: { label: 'Draft', color: 'bg-slate-500/15 text-slate-600 border-slate-500/30', icon: FileEdit },
+  closed: { label: 'Closed', color: 'bg-rose-500/15 text-rose-600 border-rose-500/30', icon: XCircle },
+};
+
+const fmtCountdown = (ms: number) => {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  if (d > 0) return `${d}d ${h}h`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+};
+
 export default function AdminOffers() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [notifyOffer, setNotifyOffer] = useState<Offer | null>(null);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [sort, setSort] = useState<string>('newest');
   const navigate = useNavigate();
 
   const load = async () => {
@@ -37,9 +63,7 @@ export default function AdminOffers() {
     setLoading(false);
   };
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   const createNew = async () => {
     const slug = `offer-${Date.now().toString(36)}`;
@@ -94,179 +118,269 @@ export default function AdminOffers() {
     toast.success('Public link copied');
   };
 
-  const statusStyle: Record<string, string> = {
-    active: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30',
-    draft: 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-500/30',
-    closed: 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30',
-  };
+  const counts = useMemo(() => ({
+    all: offers.length,
+    active: offers.filter(o => o.status === 'active').length,
+    draft: offers.filter(o => o.status === 'draft').length,
+    closed: offers.filter(o => o.status === 'closed').length,
+    entries: offers.reduce((s, o) => s + (o.submission_count || 0), 0),
+  }), [offers]);
 
-  const totalEntries = offers.reduce((s, o) => s + (o.submission_count || 0), 0);
-  const activeCount = offers.filter((o) => o.status === 'active').length;
+  const filtered = useMemo(() => {
+    let list = offers.filter(o => {
+      const matchStatus = statusFilter === 'all' || o.status === statusFilter;
+      const q = search.trim().toLowerCase();
+      const matchSearch = !q || o.title.toLowerCase().includes(q) || o.slug.toLowerCase().includes(q);
+      return matchStatus && matchSearch;
+    });
+    if (sort === 'newest') list = [...list].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
+    if (sort === 'oldest') list = [...list].sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at));
+    if (sort === 'most_entries') list = [...list].sort((a, b) => (b.submission_count || 0) - (a.submission_count || 0));
+    if (sort === 'ending_soon') list = [...list].sort((a, b) => {
+      const ea = a.end_at ? +new Date(a.end_at) : Infinity;
+      const eb = b.end_at ? +new Date(b.end_at) : Infinity;
+      return ea - eb;
+    });
+    return list;
+  }, [offers, statusFilter, search, sort]);
+
+  const statCards: Array<{ key: string; label: string; value: number; icon: React.ElementType; color: string; bg: string }> = [
+    { key: 'all', label: 'All Offers', value: counts.all, icon: Gift, color: 'text-primary', bg: 'bg-primary/10' },
+    { key: 'active', label: 'Active', value: counts.active, icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { key: 'draft', label: 'Draft', value: counts.draft, icon: FileEdit, color: 'text-slate-500', bg: 'bg-slate-500/10' },
+    { key: 'closed', label: 'Ended', value: counts.closed, icon: XCircle, color: 'text-rose-500', bg: 'bg-rose-500/10' },
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Hero header — gradient glassmorphism matching site */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 dark:from-violet-950/40 dark:via-slate-950 dark:to-fuchsia-950/40 shadow-[0_10px_40px_-15px_rgba(139,92,246,0.35)]">
-        <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-fuchsia-400/30 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-violet-400/30 blur-3xl pointer-events-none" />
-        <div className="relative p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white flex items-center justify-center shadow-lg shadow-violet-500/30">
-              <Gift className="w-7 h-7" />
-            </div>
-            <div className="space-y-1">
-              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                Offers & Giveaways
-              </h1>
-              <p className="text-sm text-muted-foreground max-w-lg">
-                Create custom offer forms hosted on your own domain. Pick winners with AI.
-              </p>
-              <div className="flex flex-wrap gap-2 pt-2 text-xs">
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/70 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur">
-                  <Megaphone className="w-3 h-3 text-violet-600" /> {offers.length} offers
-                </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/70 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur">
-                  <Sparkles className="w-3 h-3 text-emerald-600" /> {activeCount} active
-                </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/70 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur">
-                  <Users className="w-3 h-3 text-fuchsia-600" /> {totalEntries} entries
-                </span>
-              </div>
-            </div>
-          </div>
-          <Button
-            onClick={createNew}
-            size="lg"
-            className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white shadow-lg shadow-violet-500/30 rounded-xl"
-          >
-            <Plus className="w-4 h-4 mr-1" /> New Offer
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Gift size={24} className="text-primary" />
+            Offers &amp; Giveaways
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Manage giveaway campaigns, entries, winners &amp; automation</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={load} className="gap-2">
+            <RefreshCw size={14} /> Refresh
+          </Button>
+          <Button size="sm" onClick={createNew} className="gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white">
+            <Plus size={14} /> New Offer
           </Button>
         </div>
       </div>
 
-      {loading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-56 rounded-2xl bg-gradient-to-br from-white/60 to-white/20 dark:from-white/5 dark:to-white/0 border border-white/40 dark:border-white/10 backdrop-blur-xl animate-pulse" />
-          ))}
-        </div>
-      ) : offers.length === 0 ? (
-        <div className="relative overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl p-12 text-center">
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center mb-4">
-            <Gift className="w-10 h-10 text-violet-600" />
-          </div>
-          <h3 className="text-lg font-semibold mb-1">No offers yet</h3>
-          <p className="text-sm text-muted-foreground mb-5">Launch your first giveaway and pick winners with AI.</p>
-          <Button
-            onClick={createNew}
-            className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl"
-          >
-            <Plus className="w-4 h-4 mr-1" /> Create Offer
-          </Button>
-        </div>
-      ) : (
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {offers.map((o) => (
-            <div
-              key={o.id}
-              className="group relative overflow-hidden rounded-2xl border border-white/50 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_30px_-12px_rgba(139,92,246,0.25)] hover:shadow-[0_20px_50px_-15px_rgba(139,92,246,0.45)] hover:-translate-y-0.5 transition-all duration-300"
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {statCards.map(s => {
+          const Icon = s.icon;
+          const active = statusFilter === s.key;
+          return (
+            <button
+              key={s.key}
+              onClick={() => setStatusFilter(s.key)}
+              className={`glass-card rounded-xl p-4 text-left transition-all border ${
+                active ? 'border-primary/50 bg-primary/5' : 'border-border/50 hover:border-primary/30'
+              }`}
             >
-              {/* Animated gradient border glow on hover */}
-              <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-violet-500/40 via-fuchsia-500/40 to-violet-500/40 blur-md" />
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-2 ${s.bg}`}>
+                <Icon size={18} className={s.color} />
               </div>
+              <div className="text-2xl font-bold text-foreground">{s.value}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{s.label}</div>
+            </button>
+          );
+        })}
+      </div>
 
-              <div className="relative">
-                {o.banner_url ? (
-                  <div className="relative h-32 overflow-hidden">
-                    <img src={o.banner_url} alt={o.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    <Badge className={`absolute top-3 right-3 border ${statusStyle[o.status] || statusStyle.draft} backdrop-blur-md capitalize`}>
-                      {o.status}
-                    </Badge>
-                  </div>
-                ) : (
-                  <div className="relative h-32 bg-gradient-to-br from-violet-500/20 via-fuchsia-500/15 to-purple-500/20 flex items-center justify-center overflow-hidden">
-                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-fuchsia-400/30 blur-2xl" />
-                    <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-violet-400/30 blur-2xl" />
-                    <Trophy className="relative w-12 h-12 text-violet-600/70" />
-                    <Badge className={`absolute top-3 right-3 border ${statusStyle[o.status] || statusStyle.draft} backdrop-blur-md capitalize`}>
-                      {o.status}
-                    </Badge>
-                  </div>
-                )}
-
-                <div className="p-4 space-y-3">
-                  <h3 className="font-semibold leading-snug line-clamp-2 min-h-[2.75rem]">{o.title}</h3>
-                  {(() => {
-                    const now = Date.now();
-                    const startTs = o.start_at ? new Date(o.start_at).getTime() : null;
-                    const endTs = o.end_at ? new Date(o.end_at).getTime() : null;
-                    const fmt = (ms: number) => {
-                      const s = Math.max(0, Math.floor(ms / 1000));
-                      const d = Math.floor(s / 86400);
-                      const h = Math.floor((s % 86400) / 3600);
-                      const m = Math.floor((s % 3600) / 60);
-                      if (d > 0) return `${d}d ${h}h`;
-                      if (h > 0) return `${h}h ${m}m`;
-                      return `${m}m`;
-                    };
-                    if (startTs && now < startTs) {
-                      return <div className="text-[11px] px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 w-fit">⏳ Starts in {fmt(startTs - now)}</div>;
-                    }
-                    if (endTs && now < endTs && o.status === 'active') {
-                      return <div className="text-[11px] px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 w-fit">⏱ Ends in {fmt(endTs - now)}</div>;
-                    }
-                    if (endTs && now >= endTs) {
-                      return <div className="text-[11px] px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 w-fit">Ended</div>;
-                    }
-                    return null;
-                  })()}
-
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-violet-500/10 text-violet-700 dark:text-violet-300">
-                      <Users className="w-3.5 h-3.5" /> {o.submission_count} entries
-                    </div>
-                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-300">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {o.end_at ? new Date(o.end_at).toLocaleDateString() : 'No end'}
-                    </div>
-                  </div>
-
-                  <div className="font-mono text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-500/10 text-muted-foreground break-all">
-                    /offer/{o.slug}
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    <Button size="sm" variant="outline" asChild className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-violet-500/10 hover:border-violet-500/40">
-                      <Link to={`/ceo/offers/${o.id}`}>
-                        <Edit className="w-3 h-3 mr-1" /> Edit
-                      </Link>
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => copyLink(o.slug)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-violet-500/10 hover:border-violet-500/40">
-                      <Copy className="w-3 h-3 mr-1" /> Link
-                    </Button>
-                    <Button size="sm" variant="outline" asChild className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-violet-500/10 hover:border-violet-500/40">
-                      <a href={`/offer/${o.slug}`} target="_blank" rel="noopener noreferrer" title="Open public page">
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => duplicate(o)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-violet-500/10 hover:border-violet-500/40" title="Duplicate">
-                      <Copy className="w-3 h-3" />
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-violet-500/10 hover:border-violet-500/40 text-violet-700" title="Send to user notifications">
-                      <BellRing className="w-3 h-3 mr-1" /> Notify
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => remove(o.id)} className="rounded-lg bg-white/60 dark:bg-white/5 backdrop-blur border-white/60 dark:border-white/10 hover:bg-rose-500/10 hover:border-rose-500/40 text-rose-600 ml-auto" title="Delete">
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+      {/* Secondary metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="glass-card rounded-xl border border-border/50 p-3 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-fuchsia-500/10 flex items-center justify-center">
+            <Users size={16} className="text-fuchsia-500" />
+          </div>
+          <div>
+            <div className="text-lg font-bold">{counts.entries}</div>
+            <div className="text-[11px] text-muted-foreground">Total Entries</div>
+          </div>
         </div>
-      )}
+        <div className="glass-card rounded-xl border border-border/50 p-3 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center">
+            <Trophy size={16} className="text-amber-500" />
+          </div>
+          <div>
+            <div className="text-lg font-bold">
+              {offers.filter(o => o.end_at && new Date(o.end_at) < new Date()).length}
+            </div>
+            <div className="text-[11px] text-muted-foreground">Completed Giveaways</div>
+          </div>
+        </div>
+        <div className="glass-card rounded-xl border border-border/50 p-3 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center">
+            <Sparkles size={16} className="text-violet-500" />
+          </div>
+          <div>
+            <div className="text-lg font-bold">
+              {offers.filter(o => o.status === 'active' && o.end_at && new Date(o.end_at) > new Date()).length}
+            </div>
+            <div className="text-[11px] text-muted-foreground">Live Now</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search by title or slug..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-10 bg-muted/30"
+          />
+        </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-40 bg-muted/30">
+            <Filter size={14} className="mr-2 text-muted-foreground" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="closed">Closed</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={sort} onValueChange={setSort}>
+          <SelectTrigger className="w-44 bg-muted/30">
+            <CircleDot size={14} className="mr-2 text-muted-foreground" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest first</SelectItem>
+            <SelectItem value="oldest">Oldest first</SelectItem>
+            <SelectItem value="most_entries">Most entries</SelectItem>
+            <SelectItem value="ending_soon">Ending soon</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Table */}
+      <div className="glass-card rounded-xl border border-border/50 overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center py-20 text-muted-foreground">
+            <RefreshCw size={20} className="animate-spin mr-2" /> Loading offers...
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <Gift size={26} className="text-primary" />
+            </div>
+            <p className="text-muted-foreground text-sm">No offers found</p>
+            <Button size="sm" onClick={createNew} className="gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">
+              <Plus size={14} /> Create your first offer
+            </Button>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border/50 bg-muted/20">
+                  {['Offer', 'Status', 'Entries', 'Schedule', 'Timing', 'Public Link', 'Actions'].map(h => (
+                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((o, i) => {
+                  const cfg = statusConfig[o.status] ?? statusConfig.draft;
+                  const StatusIcon = cfg.icon;
+                  const now = Date.now();
+                  const startTs = o.start_at ? new Date(o.start_at).getTime() : null;
+                  const endTs = o.end_at ? new Date(o.end_at).getTime() : null;
+                  let timing: React.ReactNode = <span className="text-muted-foreground text-xs">—</span>;
+                  if (startTs && now < startTs) {
+                    timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-600 border-amber-500/30"><Clock size={10} />Starts in {fmtCountdown(startTs - now)}</span>;
+                  } else if (endTs && now < endTs && o.status === 'active') {
+                    timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-emerald-500/10 text-emerald-600 border-emerald-500/30"><Clock size={10} />Ends in {fmtCountdown(endTs - now)}</span>;
+                  } else if (endTs && now >= endTs) {
+                    timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-rose-500/10 text-rose-600 border-rose-500/30">Ended</span>;
+                  }
+                  return (
+                    <tr key={o.id} className={`border-b border-border/30 transition-colors hover:bg-muted/20 ${i % 2 === 0 ? '' : 'bg-muted/10'}`}>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3 min-w-[220px]">
+                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center shrink-0">
+                            {o.banner_url ? (
+                              <img src={o.banner_url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                            ) : (
+                              <Trophy size={16} className="text-violet-600" />
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-sm font-semibold text-foreground truncate max-w-[240px]">{o.title}</div>
+                            <div className="text-[11px] text-muted-foreground">
+                              {new Date(o.created_at).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.color}`}>
+                          <StatusIcon size={11} />{cfg.label}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold">
+                          <Users size={12} className="text-fuchsia-500" /> {o.submission_count}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                        <div className="flex items-center gap-1"><Calendar size={11} />{o.start_at ? new Date(o.start_at).toLocaleDateString() : '—'}</div>
+                        <div className="flex items-center gap-1"><Calendar size={11} />{o.end_at ? new Date(o.end_at).toLocaleDateString() : '—'}</div>
+                      </td>
+                      <td className="px-4 py-3">{timing}</td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => copyLink(o.slug)}
+                          className="font-mono text-[11px] px-2 py-1 rounded-md bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition truncate max-w-[180px] block text-left"
+                          title="Click to copy"
+                        >
+                          /offer/{o.slug}
+                        </button>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
+                          <Button size="sm" variant="outline" asChild className="h-7 w-7 p-0" title="Edit">
+                            <Link to={`/ceo/offers/${o.id}`}><Edit size={12} /></Link>
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => copyLink(o.slug)} className="h-7 w-7 p-0" title="Copy link">
+                            <Copy size={12} />
+                          </Button>
+                          <Button size="sm" variant="outline" asChild className="h-7 w-7 p-0" title="Open public page">
+                            <a href={`/offer/${o.slug}`} target="_blank" rel="noopener noreferrer"><ExternalLink size={12} /></a>
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => duplicate(o)} className="h-7 w-7 p-0" title="Duplicate">
+                            <Eye size={12} />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="h-7 w-7 p-0 text-violet-600" title="Send notification">
+                            <BellRing size={12} />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => remove(o.id)} className="h-7 w-7 p-0 text-rose-600 hover:bg-rose-500/10" title="Delete">
+                            <Trash2 size={12} />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       <SendToNotificationsDialog
         open={!!notifyOffer}
