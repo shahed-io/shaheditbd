@@ -286,101 +286,188 @@ export default function AdminOffers() {
             </Button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/50 bg-muted/20">
-                  {['Offer', 'Status', 'Entries', 'Schedule', 'Timing', 'Public Link', 'Actions'].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((o, i) => {
-                  const cfg = statusConfig[o.status] ?? statusConfig.draft;
-                  const StatusIcon = cfg.icon;
-                  const now = Date.now();
-                  const startTs = o.start_at ? new Date(o.start_at).getTime() : null;
-                  const endTs = o.end_at ? new Date(o.end_at).getTime() : null;
-                  let timing: React.ReactNode = <span className="text-muted-foreground text-xs">—</span>;
-                  if (startTs && now < startTs) {
-                    timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-600 border-amber-500/30"><Clock size={10} />Starts in {fmtCountdown(startTs - now)}</span>;
-                  } else if (endTs && now < endTs && o.status === 'active') {
-                    timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-emerald-500/10 text-emerald-600 border-emerald-500/30"><Clock size={10} />Ends in {fmtCountdown(endTs - now)}</span>;
-                  } else if (endTs && now >= endTs) {
-                    timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-rose-500/10 text-rose-600 border-rose-500/30">Ended</span>;
-                  }
-                  return (
-                    <tr key={o.id} className={`border-b border-border/30 transition-colors hover:bg-muted/20 ${i % 2 === 0 ? '' : 'bg-muted/10'}`}>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3 min-w-[220px]">
-                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center shrink-0">
-                            {o.banner_url ? (
-                              <img src={o.banner_url} alt="" className="w-full h-full object-cover" loading="lazy" />
-                            ) : (
-                              <Trophy size={16} className="text-violet-600" />
-                            )}
-                          </div>
-                          <div className="min-w-0">
-                            <div className="text-sm font-semibold text-foreground truncate max-w-[240px]">{o.title}</div>
-                            <div className="text-[11px] text-muted-foreground">
-                              {new Date(o.created_at).toLocaleDateString()}
+          <>
+            {/* Desktop table */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border/50 bg-muted/20">
+                    {['Offer', 'Status', 'Entries', 'Schedule', 'Timing', 'Public Link', 'Actions'].map(h => (
+                      <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((o, i) => {
+                    const cfg = statusConfig[o.status] ?? statusConfig.draft;
+                    const StatusIcon = cfg.icon;
+                    const now = Date.now();
+                    const startTs = o.start_at ? new Date(o.start_at).getTime() : null;
+                    const endTs = o.end_at ? new Date(o.end_at).getTime() : null;
+                    let timing: React.ReactNode = <span className="text-muted-foreground text-xs">—</span>;
+                    if (startTs && now < startTs) {
+                      timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-600 border-amber-500/30"><Clock size={10} />Starts in {fmtCountdown(startTs - now)}</span>;
+                    } else if (endTs && now < endTs && o.status === 'active') {
+                      timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-emerald-500/10 text-emerald-600 border-emerald-500/30"><Clock size={10} />Ends in {fmtCountdown(endTs - now)}</span>;
+                    } else if (endTs && now >= endTs) {
+                      timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-rose-500/10 text-rose-600 border-rose-500/30">Ended</span>;
+                    }
+                    return (
+                      <tr key={o.id} className={`border-b border-border/30 transition-colors hover:bg-muted/20 ${i % 2 === 0 ? '' : 'bg-muted/10'}`}>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3 min-w-[220px] max-w-[320px]">
+                            <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center shrink-0">
+                              {o.banner_url ? (
+                                <img src={o.banner_url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                              ) : (
+                                <Trophy size={16} className="text-violet-600" />
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm font-semibold text-foreground line-clamp-2 break-words">{o.title}</div>
+                              <div className="text-[11px] text-muted-foreground">
+                                {new Date(o.created_at).toLocaleDateString()}
+                              </div>
                             </div>
                           </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.color}`}>
+                            <StatusIcon size={11} />{cfg.label}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold">
+                            <Users size={12} className="text-fuchsia-500" /> {o.submission_count}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                          <div className="flex items-center gap-1"><Calendar size={11} />{o.start_at ? new Date(o.start_at).toLocaleDateString() : '—'}</div>
+                          <div className="flex items-center gap-1"><Calendar size={11} />{o.end_at ? new Date(o.end_at).toLocaleDateString() : '—'}</div>
+                        </td>
+                        <td className="px-4 py-3">{timing}</td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => copyLink(o.slug)}
+                            className="font-mono text-[11px] px-2 py-1 rounded-md bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition truncate max-w-[180px] block text-left"
+                            title="Click to copy"
+                          >
+                            /offer/{o.slug}
+                          </button>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-1">
+                            <Button size="sm" variant="outline" asChild className="h-7 w-7 p-0" title="Edit">
+                              <Link to={`/ceo/offers/${o.id}`}><Edit size={12} /></Link>
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => copyLink(o.slug)} className="h-7 w-7 p-0" title="Copy link">
+                              <Copy size={12} />
+                            </Button>
+                            <Button size="sm" variant="outline" asChild className="h-7 w-7 p-0" title="Open public page">
+                              <a href={`/offer/${o.slug}`} target="_blank" rel="noopener noreferrer"><ExternalLink size={12} /></a>
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => duplicate(o)} className="h-7 w-7 p-0" title="Duplicate">
+                              <Eye size={12} />
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="h-7 w-7 p-0 text-violet-600" title="Send notification">
+                              <BellRing size={12} />
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => remove(o.id)} className="h-7 w-7 p-0 text-rose-600 hover:bg-rose-500/10" title="Delete">
+                              <Trash2 size={12} />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile / tablet card list */}
+            <div className="lg:hidden divide-y divide-border/40">
+              {filtered.map((o) => {
+                const cfg = statusConfig[o.status] ?? statusConfig.draft;
+                const StatusIcon = cfg.icon;
+                const now = Date.now();
+                const startTs = o.start_at ? new Date(o.start_at).getTime() : null;
+                const endTs = o.end_at ? new Date(o.end_at).getTime() : null;
+                let timing: React.ReactNode = null;
+                if (startTs && now < startTs) {
+                  timing = <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-600 border-amber-500/30"><Clock size={10} />Starts in {fmtCountdown(startTs - now)}</span>;
+                } else if (endTs && now < endTs && o.status === 'active') {
+                  timing = <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border bg-emerald-500/10 text-emerald-600 border-emerald-500/30"><Clock size={10} />Ends in {fmtCountdown(endTs - now)}</span>;
+                } else if (endTs && now >= endTs) {
+                  timing = <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border bg-rose-500/10 text-rose-600 border-rose-500/30">Ended</span>;
+                }
+                return (
+                  <div key={o.id} className="p-3 sm:p-4 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-11 h-11 rounded-lg overflow-hidden bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center shrink-0">
+                        {o.banner_url ? (
+                          <img src={o.banner_url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                        ) : (
+                          <Trophy size={18} className="text-violet-600" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-foreground break-words line-clamp-2">{o.title}</div>
+                        <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${cfg.color}`}>
+                            <StatusIcon size={10} />{cfg.label}
+                          </span>
+                          {timing}
+                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-fuchsia-500/10 text-fuchsia-600 border border-fuchsia-500/20">
+                            <Users size={10} /> {o.submission_count}
+                          </span>
                         </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.color}`}>
-                          <StatusIcon size={11} />{cfg.label}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold">
-                          <Users size={12} className="text-fuchsia-500" /> {o.submission_count}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
-                        <div className="flex items-center gap-1"><Calendar size={11} />{o.start_at ? new Date(o.start_at).toLocaleDateString() : '—'}</div>
-                        <div className="flex items-center gap-1"><Calendar size={11} />{o.end_at ? new Date(o.end_at).toLocaleDateString() : '—'}</div>
-                      </td>
-                      <td className="px-4 py-3">{timing}</td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => copyLink(o.slug)}
-                          className="font-mono text-[11px] px-2 py-1 rounded-md bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition truncate max-w-[180px] block text-left"
-                          title="Click to copy"
-                        >
-                          /offer/{o.slug}
-                        </button>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-1">
-                          <Button size="sm" variant="outline" asChild className="h-7 w-7 p-0" title="Edit">
-                            <Link to={`/ceo/offers/${o.id}`}><Edit size={12} /></Link>
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => copyLink(o.slug)} className="h-7 w-7 p-0" title="Copy link">
-                            <Copy size={12} />
-                          </Button>
-                          <Button size="sm" variant="outline" asChild className="h-7 w-7 p-0" title="Open public page">
-                            <a href={`/offer/${o.slug}`} target="_blank" rel="noopener noreferrer"><ExternalLink size={12} /></a>
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => duplicate(o)} className="h-7 w-7 p-0" title="Duplicate">
-                            <Eye size={12} />
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="h-7 w-7 p-0 text-violet-600" title="Send notification">
-                            <BellRing size={12} />
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => remove(o.id)} className="h-7 w-7 p-0 text-rose-600 hover:bg-rose-500/10" title="Delete">
-                            <Trash2 size={12} />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
+                      <div className="flex items-center gap-1 min-w-0">
+                        <Calendar size={11} className="shrink-0" />
+                        <span className="truncate">Start: {o.start_at ? new Date(o.start_at).toLocaleDateString() : '—'}</span>
+                      </div>
+                      <div className="flex items-center gap-1 min-w-0">
+                        <Calendar size={11} className="shrink-0" />
+                        <span className="truncate">End: {o.end_at ? new Date(o.end_at).toLocaleDateString() : '—'}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => copyLink(o.slug)}
+                      className="font-mono text-[10px] px-2 py-1.5 rounded-md bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition truncate w-full text-left block"
+                      title="Tap to copy"
+                    >
+                      /offer/{o.slug}
+                    </button>
+
+                    <div className="grid grid-cols-3 gap-1.5">
+                      <Button size="sm" variant="outline" asChild className="h-8 text-[11px] gap-1">
+                        <Link to={`/ceo/offers/${o.id}`}><Edit size={12} /> Edit</Link>
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => copyLink(o.slug)} className="h-8 text-[11px] gap-1">
+                        <Copy size={12} /> Link
+                      </Button>
+                      <Button size="sm" variant="outline" asChild className="h-8 text-[11px] gap-1">
+                        <a href={`/offer/${o.slug}`} target="_blank" rel="noopener noreferrer"><ExternalLink size={12} /> Open</a>
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => duplicate(o)} className="h-8 text-[11px] gap-1">
+                        <Eye size={12} /> Copy
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setNotifyOffer(o)} className="h-8 text-[11px] gap-1 text-violet-600">
+                        <BellRing size={12} /> Notify
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => remove(o.id)} className="h-8 text-[11px] gap-1 text-rose-600 hover:bg-rose-500/10">
+                        <Trash2 size={12} /> Delete
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
 
