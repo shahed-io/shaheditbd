@@ -1,146 +1,92 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useMemo } from "react";
-import { Home, Search, ArrowLeft, Sparkles, Compass, ShoppingBag, LifeBuoy } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import SEOHead from "@/components/seo/SEOHead";
-import { Button } from "@/components/ui/button";
-
-const FUN_LINES = [
-  {
-    title: "ইশ! পেজটা মনে হয় ছুটিতে গেছে 🌴",
-    sub: "আমরা সব কোণায় খুঁজলাম — কিন্তু এই পেজটা এখন কোথাও নেই। হয়তো লিংকটা পুরোনো, অথবা টাইপিং-এ একটু এদিক-সেদিক হয়ে গেছে।",
-  },
-  {
-    title: "এই পেজটা হারিয়ে গেছে ডিজিটাল মহাকাশে 🚀",
-    sub: "চিন্তার কিছু নেই — নিচের যেকোনো বাটনে ক্লিক করে আপনি ঠিক জায়গায় ফিরে যেতে পারবেন।",
-  },
-  {
-    title: "আরে! এখানে তো কিছু নেই 👀",
-    sub: "মনে হচ্ছে আপনি এমন এক ঠিকানায় এসেছেন যেটা আমাদের ম্যাপে নেই। চলুন আপনাকে সঠিক পথে ফিরিয়ে নিয়ে যাই।",
-  },
-  {
-    title: "৪০৪ — পেজটা চা খেতে গেছে ☕",
-    sub: "ফিরে আসতে একটু দেরি হবে। ততক্ষণে চলুন আমাদের জনপ্রিয় প্রোডাক্টগুলো একবার দেখে আসি।",
-  },
-];
 
 const NotFound = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
   }, [location.pathname]);
 
-  const line = useMemo(() => FUN_LINES[Math.floor(Math.random() * FUN_LINES.length)], []);
-
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-16">
-      <SEOHead title="Page Not Found (404)" description="The page you are looking for does not exist on Shahed Store." noIndex />
+    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 p-6">
+      <SEOHead
+        title="Page Not Found (404)"
+        description="The page you are looking for does not exist on Shahed Store."
+        noIndex
+      />
 
-      {/* Ambient gradient blobs */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-32 -left-32 h-[28rem] w-[28rem] rounded-full bg-primary/30 blur-[120px]" />
-        <div className="absolute -bottom-32 -right-32 h-[28rem] w-[28rem] rounded-full bg-accent/30 blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 h-[20rem] w-[20rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[100px]" />
-      </div>
+      <style>{`
+        @keyframes nf-character-sway {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-5px) rotate(1deg); }
+        }
+        @keyframes nf-cable-swing {
+          0%, 100% { transform: rotate(-5deg); }
+          50% { transform: rotate(12deg); }
+        }
+        @keyframes nf-card-in {
+          from { opacity: 0; transform: translateY(16px) scale(0.97); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .nf-sway { animation: nf-character-sway 4s ease-in-out infinite; }
+        .nf-swing { animation: nf-cable-swing 3s ease-in-out infinite; transform-origin: top center; }
+        .nf-card { animation: nf-card-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .nf-arvo { font-family: 'Arvo', serif; }
+        .nf-bengali { font-family: 'Hind Siliguri', sans-serif; }
+      `}</style>
 
-      <div className="relative w-full max-w-2xl">
-        {/* Glass card */}
-        <div className="relative rounded-3xl border border-white/40 bg-white/60 p-8 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-white/5 sm:p-12">
-          {/* Floating sparkle badge */}
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full border border-white/40 bg-white/70 px-4 py-1.5 text-xs font-semibold text-primary shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
-            <span className="inline-flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5" />
-              Shahed Store
-            </span>
-          </div>
+      <div className="nf-card max-w-[340px] w-full bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.08)] p-8 sm:p-10 flex flex-col items-center text-center border border-slate-100">
+        <h1 className="nf-arvo text-7xl font-bold text-slate-800 tracking-tight mb-2">
+          404
+        </h1>
 
-          {/* Big gradient 404 */}
-          <div className="text-center">
-            <h1
-              className="select-none bg-gradient-to-br from-primary via-primary/70 to-accent bg-clip-text text-[6rem] font-black leading-none tracking-tighter text-transparent drop-shadow-sm sm:text-[9rem]"
-              aria-label="404"
-            >
-              4<span className="inline-block animate-pulse">0</span>4
-            </h1>
+        <div className="relative w-full h-44 flex items-center justify-center my-4">
+          <div className="absolute bottom-4 w-4/5 h-2 bg-slate-100 rounded-full" />
 
-            <h2 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">
-              {line.title}
-            </h2>
-            <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground sm:text-base">
-              {line.sub}
-            </p>
+          <div className="nf-sway flex flex-col items-center relative z-10">
+            <svg width="80" height="100" viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20 30C20 15 35 5 45 10C55 5 70 15 70 30L75 45H15L20 30Z" fill="#4A3728" />
+              <circle cx="45" cy="45" r="20" fill="#FFDBAC" />
+              <circle cx="38" cy="42" r="2" fill="#333" />
+              <circle cx="52" cy="42" r="2" fill="#333" />
+              <path d="M30 65L20 95H70L60 65H30Z" fill="#FFA500" />
+              <circle cx="40" cy="75" r="2" fill="#4A3728" />
+              <circle cx="55" cy="85" r="2" fill="#4A3728" />
+              <circle cx="35" cy="88" r="2" fill="#4A3728" />
+              <path d="M30 75L15 85" stroke="#FFDBAC" strokeWidth="4" strokeLinecap="round" />
+              <path d="M60 75L75 85" stroke="#FFDBAC" strokeWidth="4" strokeLinecap="round" />
+            </svg>
 
-            {/* Path display */}
-            <div className="mx-auto mt-5 inline-flex max-w-full items-center gap-2 rounded-full border border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
-              <Compass className="h-3.5 w-3.5 shrink-0" />
-              <code className="truncate font-mono">{location.pathname}</code>
-            </div>
-
-            {/* Primary actions */}
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-              <Button
-                size="lg"
-                onClick={() => navigate(-1)}
-                variant="outline"
-                className="rounded-full"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                পিছনে যাই
-              </Button>
-              <Button asChild size="lg" className="rounded-full shadow-lg shadow-primary/30">
-                <Link to="/">
-                  <Home className="mr-2 h-4 w-4" />
-                  হোমে ফিরে যান
-                </Link>
-              </Button>
-            </div>
-
-            {/* Quick links */}
-            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <Link
-                to="/shop"
-                className="group flex items-center gap-3 rounded-2xl border border-border/60 bg-background/60 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:bg-background hover:shadow-lg"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary/15">
-                  <ShoppingBag className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-foreground">শপ দেখুন</div>
-                  <div className="text-xs text-muted-foreground">সব প্রোডাক্ট</div>
-                </div>
-              </Link>
-              <Link
-                to="/search"
-                className="group flex items-center gap-3 rounded-2xl border border-border/60 bg-background/60 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:bg-background hover:shadow-lg"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary/15">
-                  <Search className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-foreground">খুঁজে দেখুন</div>
-                  <div className="text-xs text-muted-foreground">প্রোডাক্ট সার্চ</div>
-                </div>
-              </Link>
-              <Link
-                to="/help"
-                className="group flex items-center gap-3 rounded-2xl border border-border/60 bg-background/60 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:bg-background hover:shadow-lg"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary/15">
-                  <LifeBuoy className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-foreground">সাহায্য চাই</div>
-                  <div className="text-xs text-muted-foreground">২৪/৭ সাপোর্ট</div>
-                </div>
-              </Link>
+            <div className="nf-swing absolute top-[78px] right-[-5px]">
+              <svg width="30" height="40" viewBox="0 0 30 40" fill="none" aria-hidden="true">
+                <path d="M2 2C2 2 15 5 15 25V35" stroke="#333" strokeWidth="2" strokeLinecap="round" />
+                <rect x="10" y="32" width="10" height="6" rx="1" fill="#666" />
+                <path d="M13 38V42M17 38V42" stroke="#999" strokeWidth="1" />
+              </svg>
             </div>
           </div>
+
+          <div className="absolute left-4 bottom-8 w-6 h-10 bg-slate-200 rounded-t-full opacity-60" />
+          <div className="absolute right-6 bottom-6 w-8 h-12 bg-slate-200 rounded-t-full opacity-60" />
         </div>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          লিংকে ভুল মনে হলে আমাদের জানান — আমরা ঠিক করে দেব ✨
-        </p>
+        <div className="nf-bengali">
+          <h2 className="text-[22px] font-bold text-slate-900 leading-tight mb-3">
+            মনে হচ্ছে আপনি হারিয়ে গেছেন
+          </h2>
+          <p className="text-sm text-slate-500 leading-relaxed mb-8 px-2">
+            আপনি যে পাতাটি খুঁজছেন তা সম্ভবত এখানে নেই অথবা সরানো হয়েছে।
+          </p>
+        </div>
+
+        <Link
+          to="/"
+          className="nf-bengali block w-full py-3.5 bg-[#39ac31] hover:bg-[#2e8b28] text-white rounded-xl font-semibold text-base transition-all duration-300 shadow-[0_8px_20px_rgba(57,172,49,0.25)] active:scale-[0.98]"
+        >
+          হোমে ফিরে যান
+        </Link>
       </div>
     </div>
   );

@@ -1,6 +1,11 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import "@fontsource/arvo/400.css";
+import "@fontsource/arvo/700.css";
+import "@fontsource/hind-siliguri/400.css";
+import "@fontsource/hind-siliguri/600.css";
+import "@fontsource/hind-siliguri/700.css";
 import React from "react";
 import { ScraperShield } from "./components/ScraperShield";
 
