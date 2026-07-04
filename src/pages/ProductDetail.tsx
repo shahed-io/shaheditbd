@@ -127,6 +127,7 @@ const ProductDetail = () => {
   const [selectedPlanIdx, setSelectedPlanIdx] = useState(0);
   // Review stats for schema
   const [reviewStats, setReviewStats] = useState<{ avg: number; count: number } | null>(null);
+  const [descOpen, setDescOpen] = useState(false);
 
   // Section reveals
   const descReveal   = useReveal({ threshold: 0.05 });
