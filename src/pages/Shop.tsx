@@ -123,6 +123,8 @@ const Shop = () => {
   const [sort, setSort]             = useState('newest');
   const [didYouMean, setDidYouMean] = useState<string>('');
   const [aiAssisted, setAiAssisted] = useState(false);
+  const hideOrphans = useHideOrphans();
+
 
   const activeCatSlug = searchParams.get('category') || '';
   const urlQ = searchParams.get('q') || '';
