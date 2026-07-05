@@ -27,7 +27,7 @@ const AdminAiFaqGenerator = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'missing' | 'has'>('all');
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [count, setCount] = useState(8);
+  const [count, setCount] = useState(5);
   const [language, setLanguage] = useState<'bn' | 'en'>('bn');
   const [bulkRunning, setBulkRunning] = useState(false);
   const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0 });
