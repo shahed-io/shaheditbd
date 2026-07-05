@@ -353,7 +353,16 @@ Deno.serve(async (req) => {
       });
 
       const data = await res.json();
-      if (!res.ok || !data.ok) { console.error('getUpdates failed:', data); break; }
+      if (!res.ok || !data.ok) {
+        // 409 = another invocation of this function is already long-polling this bot.
+        // Expected when cron ticks overlap the 55s poll window; exit quietly.
+        if (data?.error_code === 409) {
+          return new Response(JSON.stringify({ ok: true, skipped: 'another_poller_active', processed: totalProcessed }), {
+            status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        console.error('getUpdates failed:', data); break;
+      }
 
       const updates = data.result ?? [];
       if (updates.length === 0) continue;
