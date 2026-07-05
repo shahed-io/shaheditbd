@@ -11,7 +11,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { product, count = 8, language = "bn" } = await req.json();
+    const { product, count = 5, language = "bn" } = await req.json();
     if (!product?.name) throw new Error("product.name required");
 
     // Enforce correct store name based on language — never let AI invent variants
