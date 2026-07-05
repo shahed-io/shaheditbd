@@ -176,7 +176,7 @@ const AdminAiFaqGenerator = () => {
       <div className="glass-card rounded-2xl p-5 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 mb-2"><Hash size={12} /> FAQ Count</label>
-          <input type="number" min={3} max={15} value={count} onChange={e => setCount(Math.max(3, Math.min(15, Number(e.target.value) || 8)))}
+          <input type="number" min={1} max={20} value={count} onChange={e => setCount(Math.max(1, Math.min(20, Number(e.target.value) || 5)))}
             className="w-full px-3 py-2 rounded-xl bg-muted/30 border border-border text-foreground text-sm" />
         </div>
         <div>
