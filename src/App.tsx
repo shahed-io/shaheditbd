@@ -45,6 +45,7 @@ const AdminCopyProtection   = lazy(() => import("./pages/admin/AdminCopyProtecti
 const AdminTickets          = lazy(() => import("./pages/admin/AdminTickets"));
 const AdminPayments         = lazy(() => import("./pages/admin/AdminPayments"));
 const AdminBkashPGW         = lazy(() => import("./pages/admin/AdminBkashPGW"));
+const AdminEpsGateway       = lazy(() => import("./pages/admin/AdminEpsGateway"));
 const AdminBkashTransactions = lazy(() => import("./pages/admin/AdminBkashTransactions"));
 const AdminCustomers        = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminReports          = lazy(() => import("./pages/admin/AdminReports"));
