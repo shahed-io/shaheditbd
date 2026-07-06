@@ -1824,14 +1824,17 @@ const UserDashboard = () => {
                   ) : (
                     <div className="space-y-2">
                       {notifications.map(n => (
-                        <div key={n.id} onClick={() => !n.is_read && handleMarkRead(n.id)}
+                        <div key={n.id} onClick={() => {
+                            if (!n.is_read) handleMarkRead(n.id);
+                            if (n.link) navigate(n.link);
+                          }}
                           className="p-4 rounded-2xl transition-all cursor-pointer"
                           style={!n.is_read
                             ? { background: 'rgba(99,82,234,0.07)', border: '1px solid hsla(258,78%,65%,0.28)', backdropFilter: 'blur(8px)' }
                             : { background: 'rgba(255,255,255,0.55)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
                           <div className="flex items-start gap-3">
-                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${!n.is_read ? '' : 'opacity-50'}`} style={{ background: n.type === 'order' ? 'hsl(243,75%,97%)' : n.type === 'promo' ? 'hsl(38,100%,95%)' : 'rgba(255,255,255,0.7)' }}>
-                              {n.type === 'order' ? <Package size={14} style={{ color: 'hsl(var(--primary))' }} /> : n.type === 'promo' ? <Gift size={14} style={{ color: 'hsl(38,80%,50%)' }} /> : <BellRing size={14} className="text-muted-foreground" />}
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${!n.is_read ? '' : 'opacity-50'}`} style={{ background: n.type === 'order' ? 'hsl(243,75%,97%)' : n.type === 'promo' ? 'hsl(38,100%,95%)' : n.type === 'notice' ? 'hsl(258,78%,96%)' : 'rgba(255,255,255,0.7)' }}>
+                              {n.type === 'order' ? <Package size={14} style={{ color: 'hsl(var(--primary))' }} /> : n.type === 'promo' ? <Gift size={14} style={{ color: 'hsl(38,80%,50%)' }} /> : n.type === 'notice' ? <Megaphone size={14} style={{ color: 'hsl(258,78%,55%)' }} /> : <BellRing size={14} className="text-muted-foreground" />}
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center justify-between">
