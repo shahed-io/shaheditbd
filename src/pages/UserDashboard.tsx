@@ -956,13 +956,26 @@ const UserDashboard = () => {
   const handleMarkAllRead = async () => {
     if (!user) return;
     await supabase.from('notifications').update({ is_read: true }).eq('user_id', user.id);
+    // Persist all currently-shown notice ids as read locally.
+    const readIds = getReadNoticeIds();
+    notifications.forEach(n => {
+      if (n.id.startsWith('notice:')) readIds.add(n.id.slice('notice:'.length));
+    });
+    saveReadNoticeIds(readIds);
     setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
   };
 
   const handleMarkRead = async (id: string) => {
-    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+    if (id.startsWith('notice:')) {
+      const readIds = getReadNoticeIds();
+      readIds.add(id.slice('notice:'.length));
+      saveReadNoticeIds(readIds);
+    } else {
+      await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+    }
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
   };
+
 
   const copyReferralCode = () => {
     const code = profile.referral_code;
