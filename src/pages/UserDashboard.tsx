@@ -1160,10 +1160,8 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Latest Notices */}
-        <div className="mt-6">
-          <CustomerNoticesWidget />
-        </div>
+        {/* Notices are now merged into the Notifications tab */}
+
 
         {/* Body */}
         <div className="grid md:grid-cols-[280px_1fr] gap-6 lg:gap-7">
