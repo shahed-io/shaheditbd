@@ -27,7 +27,7 @@ import {
   ChevronRight, ShieldCheck, Home, Camera, Lock, Eye, EyeOff,
   Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
-  History, BellRing, BellOff, ExternalLink, Wallet, Globe,
+  History, BellRing, BellOff, ExternalLink, Wallet, Globe, Megaphone,
   ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle,
   Download, Share2, PlusSquare, Smartphone, AtSign, Check, Loader2, Sparkles
 } from 'lucide-react';
