@@ -79,7 +79,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    supabase.from('blog_comments').select('*').eq('post_id', postId).eq('status', 'approved')
+    supabase.from('blog_comments_public').select('*').eq('post_id', postId).eq('status', 'approved')
       .order('created_at', { ascending: true })
       .then(({ data }) => setComments(data || []));
   }, [postId]);
