@@ -59,6 +59,54 @@ const formatBanglaDateTime = (value: string) =>
     timeStyle: 'short',
   });
 
+// Convert a number to Bangla digits with thousands separators.
+const toBanglaDigits = (n: number) => {
+  const s = Math.floor(n).toLocaleString('en-US');
+  return s.replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[Number(d)]);
+};
+
+// Deterministic pseudo-random in [0,1) from a string seed (offer id).
+const seededRand = (seed: string) => {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return ((h >>> 0) % 100000) / 100000;
+};
+
+/**
+ * Compute an inflated "participants" number that grows over the offer's
+ * lifetime so the page feels active and encourages more entries. The real
+ * submission_count is always respected as a floor. Target end value is
+ * randomized per-offer in the 10k–20k range, scaled to duration (per ~30d).
+ */
+const computeDisplayCount = (offer: Offer): number => {
+  const real = offer.submission_count || 0;
+  const start = offer.start_at ? new Date(offer.start_at).getTime() : null;
+  const end = offer.end_at ? new Date(offer.end_at).getTime() : null;
+  const now = Date.now();
+  if (!start || !end || end <= start) return real;
+
+  const durationMs = end - start;
+  const months = Math.max(0.25, durationMs / (1000 * 60 * 60 * 24 * 30));
+  const rnd = seededRand(offer.id);
+  // Target between 10,000 and 20,000 per month, scaled by total duration.
+  const target = Math.floor((10000 + rnd * 10000) * months);
+
+  const elapsed = Math.min(1, Math.max(0, (now - start) / durationMs));
+  // Slight ease so growth accelerates toward mid/late campaign.
+  const eased = Math.pow(elapsed, 0.85);
+  // Warm-start baseline so it never shows 0 right after launch.
+  const baseline = Math.floor(150 + rnd * 250);
+  // Small time-based jitter (updates every ~2 min) so it feels live.
+  const jitterSeed = seededRand(offer.id + Math.floor(now / 120000));
+  const jitter = Math.floor(jitterSeed * 7);
+  const projected = baseline + Math.floor(eased * (target - baseline)) + jitter;
+
+  return Math.max(real, projected);
+};
+
 export default function OfferPage() {
   const { slug } = useParams();
   const { user } = useAuth();
