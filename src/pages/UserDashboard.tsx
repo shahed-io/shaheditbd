@@ -27,7 +27,7 @@ import {
   ChevronRight, ShieldCheck, Home, Camera, Lock, Eye, EyeOff,
   Star, Clock, TrendingUp, TrendingDown, CheckCircle2, AlertCircle,
   RefreshCw, Upload, Heart, MapPin, Bell, Gift, Copy, Plus,
-  History, BellRing, BellOff, ExternalLink, Wallet, Globe,
+  History, BellRing, BellOff, ExternalLink, Wallet, Globe, Megaphone,
   ChevronDown, Key, CreditCard, Receipt, Info, Award, Zap, ArrowDownCircle,
   Download, Share2, PlusSquare, Smartphone, AtSign, Check, Loader2, Sparkles
 } from 'lucide-react';
@@ -583,11 +583,42 @@ const UserDashboard = () => {
     setAddresses((data || []) as Address[]); setAddressLoading(false);
   };
 
+  const READ_NOTICES_KEY = 'dashboard_read_notices_v1';
+  const getReadNoticeIds = (): Set<string> => {
+    try { return new Set(JSON.parse(localStorage.getItem(READ_NOTICES_KEY) || '[]')); }
+    catch { return new Set(); }
+  };
+  const saveReadNoticeIds = (ids: Set<string>) => {
+    try { localStorage.setItem(READ_NOTICES_KEY, JSON.stringify(Array.from(ids))); } catch { /* ignore */ }
+  };
+
   const fetchNotifications = async () => {
     if (!user) return; setNotiLoading(true);
-    const { data } = await supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30);
-    setNotifications((data || []) as Notification[]); setNotiLoading(false);
+    const [notiRes, noticeRes] = await Promise.all([
+      supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30),
+      supabase.from('notices')
+        .select('id, slug, title, summary, published_at, pinned')
+        .eq('status', 'published')
+        .in('audience', ['public', 'customers', 'both'])
+        .order('pinned', { ascending: false })
+        .order('published_at', { ascending: false })
+        .limit(10),
+    ]);
+    const readIds = getReadNoticeIds();
+    const noticeAsNoti: Notification[] = ((noticeRes.data as any[]) || []).map((n) => ({
+      id: `notice:${n.id}`,
+      title: (n.pinned ? '📌 ' : '📢 ') + n.title,
+      message: n.summary || '',
+      type: 'notice',
+      is_read: readIds.has(n.id),
+      link: `/notices/${n.slug}`,
+      created_at: n.published_at || new Date().toISOString(),
+    }));
+    const merged = [...((notiRes.data as Notification[]) || []), ...noticeAsNoti]
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    setNotifications(merged); setNotiLoading(false);
   };
+
 
   const fetchReferrals = async () => {
     if (!user) return; setReferralLoading(true);
@@ -925,13 +956,26 @@ const UserDashboard = () => {
   const handleMarkAllRead = async () => {
     if (!user) return;
     await supabase.from('notifications').update({ is_read: true }).eq('user_id', user.id);
+    // Persist all currently-shown notice ids as read locally.
+    const readIds = getReadNoticeIds();
+    notifications.forEach(n => {
+      if (n.id.startsWith('notice:')) readIds.add(n.id.slice('notice:'.length));
+    });
+    saveReadNoticeIds(readIds);
     setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
   };
 
   const handleMarkRead = async (id: string) => {
-    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+    if (id.startsWith('notice:')) {
+      const readIds = getReadNoticeIds();
+      readIds.add(id.slice('notice:'.length));
+      saveReadNoticeIds(readIds);
+    } else {
+      await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+    }
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
   };
+
 
   const copyReferralCode = () => {
     const code = profile.referral_code;
@@ -1160,10 +1204,8 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Latest Notices */}
-        <div className="mt-6">
-          <CustomerNoticesWidget />
-        </div>
+        {/* Notices are now merged into the Notifications tab */}
+
 
         {/* Body */}
         <div className="grid md:grid-cols-[280px_1fr] gap-6 lg:gap-7">
@@ -1782,14 +1824,17 @@ const UserDashboard = () => {
                   ) : (
                     <div className="space-y-2">
                       {notifications.map(n => (
-                        <div key={n.id} onClick={() => !n.is_read && handleMarkRead(n.id)}
+                        <div key={n.id} onClick={() => {
+                            if (!n.is_read) handleMarkRead(n.id);
+                            if (n.link) navigate(n.link);
+                          }}
                           className="p-4 rounded-2xl transition-all cursor-pointer"
                           style={!n.is_read
                             ? { background: 'rgba(99,82,234,0.07)', border: '1px solid hsla(258,78%,65%,0.28)', backdropFilter: 'blur(8px)' }
                             : { background: 'rgba(255,255,255,0.55)', border: '1px solid hsla(258,78%,75%,0.18)', backdropFilter: 'blur(8px)' }}>
                           <div className="flex items-start gap-3">
-                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${!n.is_read ? '' : 'opacity-50'}`} style={{ background: n.type === 'order' ? 'hsl(243,75%,97%)' : n.type === 'promo' ? 'hsl(38,100%,95%)' : 'rgba(255,255,255,0.7)' }}>
-                              {n.type === 'order' ? <Package size={14} style={{ color: 'hsl(var(--primary))' }} /> : n.type === 'promo' ? <Gift size={14} style={{ color: 'hsl(38,80%,50%)' }} /> : <BellRing size={14} className="text-muted-foreground" />}
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${!n.is_read ? '' : 'opacity-50'}`} style={{ background: n.type === 'order' ? 'hsl(243,75%,97%)' : n.type === 'promo' ? 'hsl(38,100%,95%)' : n.type === 'notice' ? 'hsl(258,78%,96%)' : 'rgba(255,255,255,0.7)' }}>
+                              {n.type === 'order' ? <Package size={14} style={{ color: 'hsl(var(--primary))' }} /> : n.type === 'promo' ? <Gift size={14} style={{ color: 'hsl(38,80%,50%)' }} /> : n.type === 'notice' ? <Megaphone size={14} style={{ color: 'hsl(258,78%,55%)' }} /> : <BellRing size={14} className="text-muted-foreground" />}
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center justify-between">
