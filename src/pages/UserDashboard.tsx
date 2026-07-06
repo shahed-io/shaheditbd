@@ -583,11 +583,42 @@ const UserDashboard = () => {
     setAddresses((data || []) as Address[]); setAddressLoading(false);
   };
 
+  const READ_NOTICES_KEY = 'dashboard_read_notices_v1';
+  const getReadNoticeIds = (): Set<string> => {
+    try { return new Set(JSON.parse(localStorage.getItem(READ_NOTICES_KEY) || '[]')); }
+    catch { return new Set(); }
+  };
+  const saveReadNoticeIds = (ids: Set<string>) => {
+    try { localStorage.setItem(READ_NOTICES_KEY, JSON.stringify(Array.from(ids))); } catch { /* ignore */ }
+  };
+
   const fetchNotifications = async () => {
     if (!user) return; setNotiLoading(true);
-    const { data } = await supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30);
-    setNotifications((data || []) as Notification[]); setNotiLoading(false);
+    const [notiRes, noticeRes] = await Promise.all([
+      supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30),
+      supabase.from('notices')
+        .select('id, slug, title, summary, published_at, pinned')
+        .eq('status', 'published')
+        .in('audience', ['public', 'customers', 'both'])
+        .order('pinned', { ascending: false })
+        .order('published_at', { ascending: false })
+        .limit(10),
+    ]);
+    const readIds = getReadNoticeIds();
+    const noticeAsNoti: Notification[] = ((noticeRes.data as any[]) || []).map((n) => ({
+      id: `notice:${n.id}`,
+      title: (n.pinned ? '📌 ' : '📢 ') + n.title,
+      message: n.summary || '',
+      type: 'notice',
+      is_read: readIds.has(n.id),
+      link: `/notices/${n.slug}`,
+      created_at: n.published_at || new Date().toISOString(),
+    }));
+    const merged = [...((notiRes.data as Notification[]) || []), ...noticeAsNoti]
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    setNotifications(merged); setNotiLoading(false);
   };
+
 
   const fetchReferrals = async () => {
     if (!user) return; setReferralLoading(true);
