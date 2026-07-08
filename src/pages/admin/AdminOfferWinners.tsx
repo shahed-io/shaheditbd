@@ -239,9 +239,26 @@ export default function AdminOfferWinners() {
 
   return (
     <div className="space-y-6">
+      {/* Mode toggle: Offer-based winners vs Custom events */}
+      <div className="flex flex-wrap gap-2 p-1 rounded-xl bg-muted/40 w-fit">
+        <button
+          type="button"
+          onClick={() => setMode('offer')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${mode === 'offer' ? 'bg-background shadow text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          <Gift className="w-4 h-4" />Offer Winners
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode('custom')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${mode === 'custom' ? 'bg-background shadow text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          <Wand2 className="w-4 h-4" />Custom Events
+        </button>
+      </div>
 
-
-
+      {mode === 'custom' ? <CustomEventsManager /> : (
+      <>
       {/* Offer selector + stats */}
       <Card>
         <CardContent className="p-4 flex flex-wrap items-center gap-3">
