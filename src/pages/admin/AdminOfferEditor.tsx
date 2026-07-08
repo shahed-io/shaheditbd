@@ -1181,6 +1181,15 @@ export default function AdminOfferEditor() {
                               Invite
                             </Button>
                           )}
+                          <Button size="sm" variant="outline" onClick={() => setEditingSubmission({ ...s, data: s.data || {} })} title="Edit submission">
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => banParticipant(s)} className="text-amber-600 border-amber-500/30 hover:bg-amber-500/10" title="Ban from this offer">
+                            <Ban className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => deleteSubmission(s)} className="text-rose-600 border-rose-500/30 hover:bg-rose-500/10" title="Delete submission">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
                         </div>
                       </td>
                     </tr>
