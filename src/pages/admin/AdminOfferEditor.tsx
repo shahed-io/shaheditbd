@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2, BarChart3, Zap, Pencil, Ban, Mail } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2, BarChart3, Zap, Pencil, Ban, Mail, Search, X } from 'lucide-react';
 import PrizesEditor from '@/components/admin/PrizesEditor';
 import AiPolishButton from '@/components/admin/AiPolishButton';
 import { parsePrizeItems } from '@/lib/offerPrizes';
@@ -102,6 +102,7 @@ export default function AdminOfferEditor() {
   const [offer, setOffer] = useState<Offer | null>(null);
   const [fields, setFields] = useState<Field[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [submissionSearch, setSubmissionSearch] = useState('');
   const [winners, setWinners] = useState<Winner[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -1179,12 +1180,56 @@ export default function AdminOfferEditor() {
               💡 "Convert to Customer" সব submission এর email-এ account invite পাঠাবে। তারা link এ click করে password set করলেই customer হয়ে যাবে — এক click এ সবাই!
             </CardContent>
           </Card>
-          {submissions.length === 0 ? (
+          {submissions.length > 0 && (
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
+                value={submissionSearch}
+                onChange={(e) => setSubmissionSearch(e.target.value)}
+                placeholder="Search by phone number, name, or email…"
+                className="pl-9 pr-9"
+              />
+              {submissionSearch && (
+                <button
+                  type="button"
+                  onClick={() => setSubmissionSearch('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted"
+                  aria-label="Clear search"
+                >
+                  <X className="w-3.5 h-3.5 text-muted-foreground" />
+                </button>
+              )}
+            </div>
+          )}
+          {(() => {
+            const q = submissionSearch.trim().toLowerCase();
+            const qDigits = q.replace(/\D/g, '');
+            const filteredSubmissions = q
+              ? submissions.filter((s) => {
+                  const hay = [
+                    s.participant_name,
+                    s.participant_email,
+                    s.participant_phone,
+                    ...Object.values(s.data || {}).map((v) => (v == null ? '' : String(v))),
+                  ].join(' ').toLowerCase();
+                  if (hay.includes(q)) return true;
+                  if (qDigits) {
+                    const phoneDigits = (s.participant_phone || '').replace(/\D/g, '');
+                    if (phoneDigits.includes(qDigits)) return true;
+                  }
+                  return false;
+                })
+              : submissions;
+            return submissions.length === 0 ? (
             <Card><CardContent className="py-10 text-center text-muted-foreground space-y-3">
               <div>No submissions yet.</div>
               <Button variant="outline" size="sm" onClick={openAddSubmission} className="border-violet-500/40 text-violet-700 hover:bg-violet-500/10">
                 <Plus className="w-4 h-4 mr-1" /> Add first submission
               </Button>
+            </CardContent></Card>
+          ) : filteredSubmissions.length === 0 ? (
+            <Card><CardContent className="py-8 text-center text-sm text-muted-foreground">
+              No submissions match "<span className="font-medium">{submissionSearch}</span>".
             </CardContent></Card>
           ) : (
             <>
@@ -1213,7 +1258,7 @@ export default function AdminOfferEditor() {
                       </tr>
                     </thead>
                     <tbody>
-                      {submissions.map((s) => (
+                      {filteredSubmissions.map((s) => (
                         <tr key={s.id} className="border-t align-middle hover:bg-muted/40">
                           <td className="px-3 py-2.5 whitespace-nowrap text-xs text-muted-foreground">{new Date(s.created_at).toLocaleString()}</td>
                           <td className="px-3 py-2.5 truncate" title={s.participant_name || ''}>{s.participant_name || '—'}</td>
@@ -1257,7 +1302,7 @@ export default function AdminOfferEditor() {
 
               {/* Mobile — stacked cards */}
               <div className="md:hidden space-y-2.5">
-                {submissions.map((s) => (
+                {filteredSubmissions.map((s) => (
                   <Card key={s.id} className="overflow-hidden">
                     <CardContent className="p-3 space-y-2.5">
                       <div className="flex items-start justify-between gap-2">
@@ -1300,7 +1345,8 @@ export default function AdminOfferEditor() {
                 ))}
               </div>
             </>
-          )}
+          );
+          })()}
         </TabsContent>
 
         {/* WINNERS */}
