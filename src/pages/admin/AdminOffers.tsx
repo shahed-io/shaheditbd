@@ -306,11 +306,11 @@ export default function AdminOffers() {
                     const endTs = o.end_at ? new Date(o.end_at).getTime() : null;
                     let timing: React.ReactNode = <span className="text-muted-foreground text-xs">—</span>;
                     if (startTs && now < startTs) {
-                      timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-600 border-amber-500/30"><Clock size={10} />Starts in {fmtCountdown(startTs - now)}</span>;
+                      timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-600 border-amber-500/30 whitespace-nowrap"><Clock size={10} />Starts in {fmtCountdown(startTs - now)}</span>;
                     } else if (endTs && now < endTs && o.status === 'active') {
-                      timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-emerald-500/10 text-emerald-600 border-emerald-500/30"><Clock size={10} />Ends in {fmtCountdown(endTs - now)}</span>;
+                      timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-emerald-500/10 text-emerald-600 border-emerald-500/30 whitespace-nowrap"><Clock size={10} />Ends in {fmtCountdown(endTs - now)}</span>;
                     } else if (endTs && now >= endTs) {
-                      timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-rose-500/10 text-rose-600 border-rose-500/30">Ended</span>;
+                      timing = <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border bg-rose-500/10 text-rose-600 border-rose-500/30 whitespace-nowrap">Ended</span>;
                     }
                     return (
                       <tr key={o.id} className={`border-b border-border/30 transition-colors hover:bg-muted/20 ${i % 2 === 0 ? '' : 'bg-muted/10'}`}>
@@ -331,8 +331,8 @@ export default function AdminOffers() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.color}`}>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border whitespace-nowrap ${cfg.color}`}>
                             <StatusIcon size={11} />{cfg.label}
                           </span>
                         </td>
@@ -345,7 +345,7 @@ export default function AdminOffers() {
                           <div className="flex items-center gap-1"><Calendar size={11} />{o.start_at ? new Date(o.start_at).toLocaleDateString() : '—'}</div>
                           <div className="flex items-center gap-1"><Calendar size={11} />{o.end_at ? new Date(o.end_at).toLocaleDateString() : '—'}</div>
                         </td>
-                        <td className="px-4 py-3">{timing}</td>
+                        <td className="px-4 py-3 whitespace-nowrap">{timing}</td>
                         <td className="px-4 py-3">
                           <button
                             onClick={() => copyLink(o.slug)}
@@ -355,8 +355,8 @@ export default function AdminOffers() {
                             /offer/{o.slug}
                           </button>
                         </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-1">
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <div className="flex items-center gap-1 flex-nowrap">
                             <Button size="sm" variant="outline" asChild className="h-7 w-7 p-0" title="Edit">
                               <Link to={`/ceo/offers/${o.id}`}><Edit size={12} /></Link>
                             </Button>
