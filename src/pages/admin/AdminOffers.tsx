@@ -360,6 +360,9 @@ export default function AdminOffers() {
                             <Button size="sm" variant="outline" asChild className="h-7 w-7 p-0" title="Edit">
                               <Link to={`/ceo/offers/${o.id}`}><Edit size={12} /></Link>
                             </Button>
+                            <Button size="sm" variant="outline" asChild className="h-7 px-2 gap-1 text-amber-600 border-amber-500/30 hover:bg-amber-500/10" title="Pick winner from this offer">
+                              <Link to={`/ceo/offer-winners?offer=${o.id}`}><Trophy size={12} /><span className="text-[11px] font-semibold hidden xl:inline">Winner</span></Link>
+                            </Button>
                             <Button size="sm" variant="outline" onClick={() => copyLink(o.slug)} className="h-7 w-7 p-0" title="Copy link">
                               <Copy size={12} />
                             </Button>
