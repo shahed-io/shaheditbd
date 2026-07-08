@@ -35,6 +35,7 @@ type Blocked = { id: string; offer_id: string | null; kind: string; identifier: 
 const emptyPost = { post_url: '' };
 
 export default function AdminOfferWinners() {
+  const [mode, setMode] = useState<'offer' | 'custom'>('offer');
   const [offers, setOffers] = useState<Offer[]>([]);
   const [offerId, setOfferId] = useState<string>('');
   const [subs, setSubs] = useState<Submission[]>([]);
