@@ -1154,6 +1154,14 @@ export default function AdminOfferEditor() {
             <div className="flex gap-2 flex-wrap">
               <Button
                 size="sm"
+                variant="outline"
+                onClick={openAddSubmission}
+                className="border-violet-500/40 text-violet-700 hover:bg-violet-500/10"
+              >
+                <Plus className="w-4 h-4 mr-1" /> Add Submission
+              </Button>
+              <Button
+                size="sm"
                 onClick={() => convertSubmissions()}
                 disabled={converting || submissions.length === 0}
                 className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white"
