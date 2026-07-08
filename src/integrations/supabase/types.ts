@@ -4053,6 +4053,110 @@ export type Database = {
           },
         ]
       }
+      offer_winners_public: {
+        Row: {
+          announced: boolean | null
+          created_at: string | null
+          id: string | null
+          offer_id: string | null
+          participant_name: string | null
+          prize: string | null
+          rank: number | null
+          selected_by: string | null
+          source: string | null
+          submission_id: string | null
+        }
+        Insert: {
+          announced?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          offer_id?: string | null
+          participant_name?: string | null
+          prize?: string | null
+          rank?: number | null
+          selected_by?: string | null
+          source?: string | null
+          submission_id?: string | null
+        }
+        Update: {
+          announced?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          offer_id?: string | null
+          participant_name?: string | null
+          prize?: string | null
+          rank?: number | null
+          selected_by?: string | null
+          source?: string | null
+          submission_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_winners_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_winners_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "offer_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_reviews_public: {
+        Row: {
+          author_name: string | null
+          body: string | null
+          created_at: string | null
+          helpful_count: number | null
+          id: string | null
+          is_verified: boolean | null
+          product_id: string | null
+          product_slug: string | null
+          rating: number | null
+          status: string | null
+          title: string | null
+        }
+        Insert: {
+          author_name?: string | null
+          body?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string | null
+          is_verified?: boolean | null
+          product_id?: string | null
+          product_slug?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+        }
+        Update: {
+          author_name?: string | null
+          body?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string | null
+          is_verified?: boolean | null
+          product_id?: string | null
+          product_slug?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       admin_adjust_cid_balance: {
