@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import AdminHeroHeader from '@/components/admin/AdminHeroHeader';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -237,11 +237,8 @@ export default function AdminOfferWinners() {
 
   return (
     <div className="space-y-6">
-      <AdminHeroHeader
-        Icon={Trophy}
-        title="Winners Manager"
-        section="Marketing"
-      />
+
+
 
       {/* Offer selector + stats */}
       <Card>
