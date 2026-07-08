@@ -18,6 +18,7 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import logoIcon from '@/assets/logo.png';
+import { sanitizeBengaliDeep } from './bengaliSanitizer';
 
 export interface InvoiceItem {
   name: string;
@@ -104,7 +105,8 @@ function fmtDate(d: string | Date): string {
 /**
  * Build the canonical invoice HTML — identical look to the preview modal.
  */
-async function buildInvoiceHtml(data: InvoiceData): Promise<HTMLElement> {
+async function buildInvoiceHtml(rawData: InvoiceData): Promise<HTMLElement> {
+  const data = sanitizeBengaliDeep(rawData);
   const logo = (await loadLogoBase64()) || '';
   const { loadInvoiceDesign, resolveHeaderTheme, resolveTotalColor } = await import('./invoiceSettings');
   const design = await loadInvoiceDesign();
