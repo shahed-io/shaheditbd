@@ -11,8 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Trophy, Facebook, UserPlus, Ban, RefreshCw, Sparkles, Trash2, Edit3, Download, ShieldOff, Users } from 'lucide-react';
+import { Trophy, Facebook, UserPlus, Ban, RefreshCw, Sparkles, Trash2, Edit3, Download, ShieldOff, Users, Gift, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
+import CustomEventsManager from '@/components/admin/CustomEventsManager';
 
 type Offer = { id: string; title: string; slug: string; status: string; winner_count: number };
 type Submission = {
