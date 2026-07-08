@@ -18,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { InvoiceData } from './invoicePdf';
+import { sanitizeBengaliDeep } from './bengaliSanitizer';
 
 const PM_LABELS: Record<string, string> = {
   bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়',
@@ -78,10 +79,11 @@ export interface SendInvoiceEmailOptions {
 /**
  * Generate PDF, upload to storage, then send email with HTML body + PDF link.
  */
-export async function sendInvoiceEmail({ data, recipientEmail, element }: SendInvoiceEmailOptions): Promise<void> {
+export async function sendInvoiceEmail({ data: rawData, recipientEmail, element }: SendInvoiceEmailOptions): Promise<void> {
   if (!recipientEmail || !recipientEmail.includes('@')) {
     throw new Error('Invalid recipient email');
   }
+  const data = sanitizeBengaliDeep(rawData);
 
   // 1. Build PDF blob
   let pdfBlob: Blob;
