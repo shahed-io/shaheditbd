@@ -355,8 +355,8 @@ export default function AdminOffers() {
                             /offer/{o.slug}
                           </button>
                         </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-1">
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <div className="flex items-center gap-1 flex-nowrap">
                             <Button size="sm" variant="outline" asChild className="h-7 w-7 p-0" title="Edit">
                               <Link to={`/ceo/offers/${o.id}`}><Edit size={12} /></Link>
                             </Button>
