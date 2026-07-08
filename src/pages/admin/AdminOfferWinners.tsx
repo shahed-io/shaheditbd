@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -67,8 +68,17 @@ export default function AdminOfferWinners() {
   // Block
   const [blockForm, setBlockForm] = useState({ kind: 'email', identifier: '', reason: '', global: false });
 
+  const [searchParams] = useSearchParams();
+  const preselectOfferId = searchParams.get('offer');
+
   useEffect(() => { loadOffers(); }, []);
   useEffect(() => { if (offerId) loadAll(); }, [offerId]);
+  useEffect(() => {
+    if (preselectOfferId) {
+      setMode('offer');
+      setOfferId(preselectOfferId);
+    }
+  }, [preselectOfferId]);
 
   async function loadOffers() {
     const { data } = await supabase
@@ -77,7 +87,7 @@ export default function AdminOfferWinners() {
       .in('status', ['active', 'closed', 'draft'])
       .order('created_at', { ascending: false });
     setOffers((data as Offer[]) || []);
-    if (data && data.length && !offerId) setOfferId(data[0].id);
+    if (data && data.length && !offerId) setOfferId(preselectOfferId || data[0].id);
   }
 
   async function loadAll() {
