@@ -1180,7 +1180,12 @@ export default function AdminOfferEditor() {
             </CardContent>
           </Card>
           {submissions.length === 0 ? (
-            <Card><CardContent className="py-10 text-center text-muted-foreground">No submissions yet.</CardContent></Card>
+            <Card><CardContent className="py-10 text-center text-muted-foreground space-y-3">
+              <div>No submissions yet.</div>
+              <Button variant="outline" size="sm" onClick={openAddSubmission} className="border-violet-500/40 text-violet-700 hover:bg-violet-500/10">
+                <Plus className="w-4 h-4 mr-1" /> Add first submission
+              </Button>
+            </CardContent></Card>
           ) : (
             <>
               {/* Desktop / tablet — uniform table */}
