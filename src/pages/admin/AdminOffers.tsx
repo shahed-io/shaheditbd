@@ -331,8 +331,8 @@ export default function AdminOffers() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.color}`}>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border whitespace-nowrap ${cfg.color}`}>
                             <StatusIcon size={11} />{cfg.label}
                           </span>
                         </td>
