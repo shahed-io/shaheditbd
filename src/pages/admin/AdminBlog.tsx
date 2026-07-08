@@ -45,7 +45,7 @@ const AdminBlog = () => {
     const [{ data: p }, { data: c }, { data: cm }, { data: prods }] = await Promise.all([
       supabase.from('blog_posts').select('*, blog_categories(name, color)').order('created_at', { ascending: false }),
       supabase.from('blog_categories').select('*').order('sort_order'),
-      supabase.from('blog_comments').select('*, blog_posts(title)').order('created_at', { ascending: false }),
+      (supabase as any).from('admin_blog_comments').select('*').order('created_at', { ascending: false }),
       supabase.from('products').select('id, name, slug, image_url, categories(name)').eq('status', 'active').order('sort_order'),
     ]);
     setPosts(p || []);
