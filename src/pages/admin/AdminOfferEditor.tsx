@@ -1497,6 +1497,55 @@ export default function AdminOfferEditor() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* EDIT SUBMISSION DIALOG */}
+      <Dialog open={!!editingSubmission} onOpenChange={(o) => !o && setEditingSubmission(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Submission</DialogTitle>
+            <DialogDescription>Update participant info or their custom field answers.</DialogDescription>
+          </DialogHeader>
+          {editingSubmission && (
+            <div className="space-y-3 pt-2">
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <Label>Name</Label>
+                  <Input value={editingSubmission.participant_name || ''} onChange={(e) => setEditingSubmission({ ...editingSubmission, participant_name: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input type="email" value={editingSubmission.participant_email || ''} onChange={(e) => setEditingSubmission({ ...editingSubmission, participant_email: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Phone</Label>
+                  <Input value={editingSubmission.participant_phone || ''} onChange={(e) => setEditingSubmission({ ...editingSubmission, participant_phone: e.target.value })} />
+                </div>
+              </div>
+              {editingSubmission.data && Object.keys(editingSubmission.data).length > 0 && (
+                <div className="space-y-2 border-t pt-3">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase">Custom Field Answers</div>
+                  {Object.entries(editingSubmission.data).map(([key, value]) => (
+                    <div key={key}>
+                      <Label className="text-xs">{key}</Label>
+                      <Input
+                        value={typeof value === 'string' ? value : JSON.stringify(value)}
+                        onChange={(e) => setEditingSubmission({ ...editingSubmission, data: { ...editingSubmission.data, [key]: e.target.value } })}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="outline" onClick={() => setEditingSubmission(null)}>Cancel</Button>
+                <Button onClick={saveSubmissionEdit} disabled={savingEdit}>
+                  {savingEdit ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
