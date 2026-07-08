@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2, BarChart3, Zap } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2, BarChart3, Zap, Pencil, Ban, Mail } from 'lucide-react';
 import PrizesEditor from '@/components/admin/PrizesEditor';
 import AiPolishButton from '@/components/admin/AiPolishButton';
 import { parsePrizeItems } from '@/lib/offerPrizes';
@@ -123,6 +123,74 @@ export default function AdminOfferEditor() {
   // Convert submissions -> customers state
   const [converting, setConverting] = useState(false);
   const [viewingSubmission, setViewingSubmission] = useState<Submission | null>(null);
+  const [editingSubmission, setEditingSubmission] = useState<Submission | null>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [sendingWinnerEmail, setSendingWinnerEmail] = useState<string | null>(null);
+
+  const deleteSubmission = async (s: Submission) => {
+    if (!confirm(`Delete submission from ${s.participant_name || s.participant_email || 'this participant'}? This cannot be undone.`)) return;
+    const { error } = await supabase.from('offer_submissions').delete().eq('id', s.id);
+    if (error) return toast.error(error.message);
+    toast.success('Submission deleted');
+    setSubmissions((prev) => prev.filter((x) => x.id !== s.id));
+  };
+
+  const banParticipant = async (s: Submission) => {
+    if (!offer) return;
+    const identifier = s.participant_email || s.participant_phone;
+    const kind = s.participant_email ? 'email' : (s.participant_phone ? 'phone' : null);
+    if (!identifier || !kind) return toast.error('No email or phone to ban');
+    const reason = prompt(`Ban ${identifier} from this offer? (optional reason)`, '');
+    if (reason === null) return;
+    const { error } = await supabase.from('offer_blocked_participants').insert({
+      offer_id: offer.id, kind, identifier: identifier.toLowerCase().trim(), reason: reason || null,
+    });
+    if (error) return toast.error(error.message);
+    toast.success(`${identifier} banned from this offer`);
+  };
+
+  const saveSubmissionEdit = async () => {
+    if (!editingSubmission) return;
+    setSavingEdit(true);
+    const { id: sid, participant_name, participant_email, participant_phone, data } = editingSubmission;
+    const { error } = await supabase.from('offer_submissions')
+      .update({ participant_name, participant_email, participant_phone, data })
+      .eq('id', sid);
+    setSavingEdit(false);
+    if (error) return toast.error(error.message);
+    toast.success('Submission updated');
+    setSubmissions((prev) => prev.map((x) => x.id === sid ? { ...x, participant_name, participant_email, participant_phone, data } : x));
+    setEditingSubmission(null);
+  };
+
+  const sendWinnerEmail = async (w: Winner) => {
+    const sub = submissions.find((s) => s.id === w.submission_id);
+    if (!sub?.participant_email) return toast.error('Winner has no email address');
+    if (!offer) return;
+    if (!confirm(`Send winner notification email to ${sub.participant_email}?`)) return;
+    setSendingWinnerEmail(w.id);
+    try {
+      const { error } = await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'giveaway-winner',
+          recipientEmail: sub.participant_email,
+          idempotencyKey: `giveaway-winner-manual-${w.id}-${Date.now()}`,
+          templateData: {
+            name: sub.participant_name || 'Winner',
+            offerTitle: offer.title,
+            rank: w.rank,
+            prize: w.prize,
+          },
+        },
+      });
+      if (error) throw error;
+      toast.success(`Email sent to ${sub.participant_email}`);
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to send email');
+    } finally {
+      setSendingWinnerEmail(null);
+    }
+  };
 
   const convertSubmissions = async (ids?: string[]) => {
     if (!offer) return;
@@ -1113,6 +1181,15 @@ export default function AdminOfferEditor() {
                               Invite
                             </Button>
                           )}
+                          <Button size="sm" variant="outline" onClick={() => setEditingSubmission({ ...s, data: s.data || {} })} title="Edit submission">
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => banParticipant(s)} className="text-amber-600 border-amber-500/30 hover:bg-amber-500/10" title="Ban from this offer">
+                            <Ban className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => deleteSubmission(s)} className="text-rose-600 border-rose-500/30 hover:bg-rose-500/10" title="Delete submission">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
                         </div>
                       </td>
                     </tr>
@@ -1247,13 +1324,24 @@ export default function AdminOfferEditor() {
                       <div className="flex flex-col items-end gap-2 shrink-0">
                         <Badge variant="outline">{w.selected_by}</Badge>
                         {sub ? (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setViewingSubmission(sub)}
-                          >
-                            <Eye className="w-3.5 h-3.5 mr-1" /> View Details
-                          </Button>
+                          <div className="flex flex-col gap-1.5 items-end">
+                            <Button size="sm" variant="outline" onClick={() => setViewingSubmission(sub)}>
+                              <Eye className="w-3.5 h-3.5 mr-1" /> View Details
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={!sub.participant_email || sendingWinnerEmail === w.id}
+                              onClick={() => sendWinnerEmail(w)}
+                              className="text-violet-600 border-violet-500/30 hover:bg-violet-500/10"
+                              title={sub.participant_email ? 'Send winner notification email' : 'No email on file'}
+                            >
+                              {sendingWinnerEmail === w.id
+                                ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                                : <Mail className="w-3.5 h-3.5 mr-1" />}
+                              Send Email
+                            </Button>
+                          </div>
                         ) : (
                           <span className="text-[10px] text-muted-foreground italic">submission removed</span>
                         )}
@@ -1404,6 +1492,55 @@ export default function AdminOfferEditor() {
                   </Button>
                 )}
                 <Button size="sm" variant="outline" onClick={() => setViewingSubmission(null)}>Close</Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* EDIT SUBMISSION DIALOG */}
+      <Dialog open={!!editingSubmission} onOpenChange={(o) => !o && setEditingSubmission(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Submission</DialogTitle>
+            <DialogDescription>Update participant info or their custom field answers.</DialogDescription>
+          </DialogHeader>
+          {editingSubmission && (
+            <div className="space-y-3 pt-2">
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <Label>Name</Label>
+                  <Input value={editingSubmission.participant_name || ''} onChange={(e) => setEditingSubmission({ ...editingSubmission, participant_name: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input type="email" value={editingSubmission.participant_email || ''} onChange={(e) => setEditingSubmission({ ...editingSubmission, participant_email: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Phone</Label>
+                  <Input value={editingSubmission.participant_phone || ''} onChange={(e) => setEditingSubmission({ ...editingSubmission, participant_phone: e.target.value })} />
+                </div>
+              </div>
+              {editingSubmission.data && Object.keys(editingSubmission.data).length > 0 && (
+                <div className="space-y-2 border-t pt-3">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase">Custom Field Answers</div>
+                  {Object.entries(editingSubmission.data).map(([key, value]) => (
+                    <div key={key}>
+                      <Label className="text-xs">{key}</Label>
+                      <Input
+                        value={typeof value === 'string' ? value : JSON.stringify(value)}
+                        onChange={(e) => setEditingSubmission({ ...editingSubmission, data: { ...editingSubmission.data, [key]: e.target.value } })}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="outline" onClick={() => setEditingSubmission(null)}>Cancel</Button>
+                <Button onClick={saveSubmissionEdit} disabled={savingEdit}>
+                  {savingEdit ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
+                  Save Changes
+                </Button>
               </div>
             </div>
           )}
