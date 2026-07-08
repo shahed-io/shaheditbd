@@ -238,9 +238,8 @@ export default function AdminOfferWinners() {
   return (
     <div className="space-y-6">
       <AdminHeroHeader
-        icon={Trophy}
+        Icon={Trophy}
         title="Winners Manager"
-        subtitle="Pick, edit, block & import Facebook comments — one hub for every giveaway"
         section="Marketing"
       />
 
