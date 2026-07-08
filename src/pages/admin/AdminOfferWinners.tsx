@@ -534,6 +534,8 @@ export default function AdminOfferWinners() {
           <DialogFooter><Button onClick={saveWinnerEdit}>Save</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+      </>
+      )}
     </div>
   );
 }
