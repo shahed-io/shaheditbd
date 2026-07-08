@@ -1134,69 +1134,119 @@ export default function AdminOfferEditor() {
           {submissions.length === 0 ? (
             <Card><CardContent className="py-10 text-center text-muted-foreground">No submissions yet.</CardContent></Card>
           ) : (
-            <div className="overflow-x-auto border rounded-lg">
-              <table className="w-full text-sm">
-                <thead className="bg-muted">
-                  <tr>
-                    <th className="p-2 text-left">Date</th>
-                    <th className="p-2 text-left">Name</th>
-                    <th className="p-2 text-left">Email</th>
-                    <th className="p-2 text-left">Phone</th>
-                    <th className="p-2 text-left">Winner</th>
-                    <th className="p-2 text-left">Customer</th>
-                    <th className="p-2 text-left">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {submissions.map((s) => (
-                    <tr key={s.id} className="border-t">
-                      <td className="p-2 whitespace-nowrap">{new Date(s.created_at).toLocaleString()}</td>
-                      <td className="p-2">{s.participant_name || '—'}</td>
-                      <td className="p-2">{s.participant_email || '—'}</td>
-                      <td className="p-2">{s.participant_phone || '—'}</td>
-                      <td className="p-2">{s.is_winner && <Badge className="bg-yellow-500/20 text-yellow-700">🏆 #{s.winner_rank}</Badge>}</td>
-                      <td className="p-2">
-                        {s.converted_to_customer ? (
-                          <Badge className="bg-green-500/20 text-green-700">✓ Customer</Badge>
-                        ) : (
-                          <span className="text-muted-foreground text-xs">—</span>
-                        )}
-                      </td>
-                      <td className="p-2">
-                        <div className="flex gap-1.5 flex-wrap">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setViewingSubmission(s)}
-                          >
-                            <Eye className="w-3.5 h-3.5 mr-1" /> View
-                          </Button>
-                          {!s.converted_to_customer && s.participant_email && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              disabled={converting}
-                              onClick={() => convertSubmissions([s.id])}
-                            >
-                              Invite
-                            </Button>
+            <>
+              {/* Desktop / tablet — uniform table */}
+              <div className="hidden md:block border rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm table-fixed min-w-[880px]">
+                    <colgroup>
+                      <col className="w-[150px]" />
+                      <col className="w-[140px]" />
+                      <col />
+                      <col className="w-[130px]" />
+                      <col className="w-[90px]" />
+                      <col className="w-[110px]" />
+                      <col className="w-[240px]" />
+                    </colgroup>
+                    <thead className="bg-muted">
+                      <tr className="text-xs uppercase tracking-wide text-muted-foreground">
+                        <th className="px-3 py-2.5 text-left font-medium">Date</th>
+                        <th className="px-3 py-2.5 text-left font-medium">Name</th>
+                        <th className="px-3 py-2.5 text-left font-medium">Email</th>
+                        <th className="px-3 py-2.5 text-left font-medium">Phone</th>
+                        <th className="px-3 py-2.5 text-left font-medium">Winner</th>
+                        <th className="px-3 py-2.5 text-left font-medium">Customer</th>
+                        <th className="px-3 py-2.5 text-left font-medium">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {submissions.map((s) => (
+                        <tr key={s.id} className="border-t align-middle hover:bg-muted/40">
+                          <td className="px-3 py-2.5 whitespace-nowrap text-xs text-muted-foreground">{new Date(s.created_at).toLocaleString()}</td>
+                          <td className="px-3 py-2.5 truncate" title={s.participant_name || ''}>{s.participant_name || '—'}</td>
+                          <td className="px-3 py-2.5 truncate" title={s.participant_email || ''}>{s.participant_email || '—'}</td>
+                          <td className="px-3 py-2.5 whitespace-nowrap">{s.participant_phone || '—'}</td>
+                          <td className="px-3 py-2.5">{s.is_winner ? <Badge className="bg-yellow-500/20 text-yellow-700">🏆 #{s.winner_rank}</Badge> : <span className="text-muted-foreground text-xs">—</span>}</td>
+                          <td className="px-3 py-2.5">
+                            {s.converted_to_customer ? (
+                              <Badge className="bg-green-500/20 text-green-700">✓ Customer</Badge>
+                            ) : (
+                              <span className="text-muted-foreground text-xs">—</span>
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => setViewingSubmission(s)}>
+                                <Eye className="w-3.5 h-3.5 mr-1" /> View
+                              </Button>
+                              {!s.converted_to_customer && s.participant_email && (
+                                <Button size="sm" variant="outline" className="h-8 px-2" disabled={converting} onClick={() => convertSubmissions([s.id])}>
+                                  Invite
+                                </Button>
+                              )}
+                              <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => setEditingSubmission({ ...s, data: s.data || {} })} title="Edit submission">
+                                <Pencil className="w-3.5 h-3.5" />
+                              </Button>
+                              <Button size="sm" variant="outline" className="h-8 w-8 p-0 text-amber-600 border-amber-500/30 hover:bg-amber-500/10" onClick={() => banParticipant(s)} title="Ban from this offer">
+                                <Ban className="w-3.5 h-3.5" />
+                              </Button>
+                              <Button size="sm" variant="outline" className="h-8 w-8 p-0 text-rose-600 border-rose-500/30 hover:bg-rose-500/10" onClick={() => deleteSubmission(s)} title="Delete submission">
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Mobile — stacked cards */}
+              <div className="md:hidden space-y-2.5">
+                {submissions.map((s) => (
+                  <Card key={s.id} className="overflow-hidden">
+                    <CardContent className="p-3 space-y-2.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="font-medium text-sm truncate">{s.participant_name || '—'}</div>
+                          <div className="text-xs text-muted-foreground break-all">{s.participant_email || '—'}</div>
+                          {s.participant_phone && (
+                            <div className="text-xs text-muted-foreground mt-0.5">{s.participant_phone}</div>
                           )}
-                          <Button size="sm" variant="outline" onClick={() => setEditingSubmission({ ...s, data: s.data || {} })} title="Edit submission">
-                            <Pencil className="w-3.5 h-3.5" />
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => banParticipant(s)} className="text-amber-600 border-amber-500/30 hover:bg-amber-500/10" title="Ban from this offer">
-                            <Ban className="w-3.5 h-3.5" />
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => deleteSubmission(s)} className="text-rose-600 border-rose-500/30 hover:bg-rose-500/10" title="Delete submission">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </Button>
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        <div className="flex flex-col items-end gap-1 shrink-0">
+                          {s.is_winner && <Badge className="bg-yellow-500/20 text-yellow-700 text-[10px]">🏆 #{s.winner_rank}</Badge>}
+                          {s.converted_to_customer && <Badge className="bg-green-500/20 text-green-700 text-[10px]">✓ Customer</Badge>}
+                        </div>
+                      </div>
+                      <div className="text-[11px] text-muted-foreground">
+                        {new Date(s.created_at).toLocaleString()}
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 pt-1 border-t">
+                        <Button size="sm" variant="outline" className="h-8 px-2 flex-1 min-w-[70px]" onClick={() => setViewingSubmission(s)}>
+                          <Eye className="w-3.5 h-3.5 mr-1" /> View
+                        </Button>
+                        {!s.converted_to_customer && s.participant_email && (
+                          <Button size="sm" variant="outline" className="h-8 px-2 flex-1 min-w-[70px]" disabled={converting} onClick={() => convertSubmissions([s.id])}>
+                            Invite
+                          </Button>
+                        )}
+                        <Button size="sm" variant="outline" className="h-8 w-9 p-0" onClick={() => setEditingSubmission({ ...s, data: s.data || {} })} title="Edit">
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button size="sm" variant="outline" className="h-8 w-9 p-0 text-amber-600 border-amber-500/30 hover:bg-amber-500/10" onClick={() => banParticipant(s)} title="Ban">
+                          <Ban className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button size="sm" variant="outline" className="h-8 w-9 p-0 text-rose-600 border-rose-500/30 hover:bg-rose-500/10" onClick={() => deleteSubmission(s)} title="Delete">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
         </TabsContent>
 
