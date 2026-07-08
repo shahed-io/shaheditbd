@@ -11,8 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Trophy, Facebook, UserPlus, Ban, RefreshCw, Sparkles, Trash2, Edit3, Download, ShieldOff, Users } from 'lucide-react';
+import { Trophy, Facebook, UserPlus, Ban, RefreshCw, Sparkles, Trash2, Edit3, Download, ShieldOff, Users, Gift, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
+import CustomEventsManager from '@/components/admin/CustomEventsManager';
 
 type Offer = { id: string; title: string; slug: string; status: string; winner_count: number };
 type Submission = {
@@ -34,6 +35,7 @@ type Blocked = { id: string; offer_id: string | null; kind: string; identifier: 
 const emptyPost = { post_url: '' };
 
 export default function AdminOfferWinners() {
+  const [mode, setMode] = useState<'offer' | 'custom'>('offer');
   const [offers, setOffers] = useState<Offer[]>([]);
   const [offerId, setOfferId] = useState<string>('');
   const [subs, setSubs] = useState<Submission[]>([]);
@@ -237,9 +239,26 @@ export default function AdminOfferWinners() {
 
   return (
     <div className="space-y-6">
+      {/* Mode toggle: Offer-based winners vs Custom events */}
+      <div className="flex flex-wrap gap-2 p-1 rounded-xl bg-muted/40 w-fit">
+        <button
+          type="button"
+          onClick={() => setMode('offer')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${mode === 'offer' ? 'bg-background shadow text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          <Gift className="w-4 h-4" />Offer Winners
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode('custom')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${mode === 'custom' ? 'bg-background shadow text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          <Wand2 className="w-4 h-4" />Custom Events
+        </button>
+      </div>
 
-
-
+      {mode === 'custom' ? <CustomEventsManager /> : (
+      <>
       {/* Offer selector + stats */}
       <Card>
         <CardContent className="p-4 flex flex-wrap items-center gap-3">
@@ -515,6 +534,8 @@ export default function AdminOfferWinners() {
           <DialogFooter><Button onClick={saveWinnerEdit}>Save</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+      </>
+      )}
     </div>
   );
 }
