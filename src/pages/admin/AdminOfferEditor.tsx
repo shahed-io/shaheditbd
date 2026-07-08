@@ -321,7 +321,7 @@ export default function AdminOfferEditor() {
       supabase.from('offers').select('*').eq('id', id).single(),
       supabase.from('offer_fields').select('*').eq('offer_id', id).order('sort_order'),
       supabase.from('offer_submissions').select('*').eq('offer_id', id).order('created_at', { ascending: false }),
-      supabase.from('offer_winners').select('*').eq('offer_id', id).order('rank'),
+      (supabase as any).from('admin_offer_winners').select('*').eq('offer_id', id).order('rank'),
     ]);
     const offerData = o as any;
     if (offerData) {

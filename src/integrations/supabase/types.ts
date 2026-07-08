@@ -792,6 +792,13 @@ export type Database = {
             foreignKeyName: "blog_comments_parent_id_fkey"
             columns: ["parent_id"]
             isOneToOne: false
+            referencedRelation: "admin_blog_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
             referencedRelation: "blog_comments"
             referencedColumns: ["id"]
           },
@@ -3984,6 +3991,182 @@ export type Database = {
       }
     }
     Views: {
+      admin_blog_comments: {
+        Row: {
+          author_email: string | null
+          author_name: string | null
+          blog_posts: Json | null
+          content: string | null
+          created_at: string | null
+          id: string | null
+          parent_id: string | null
+          post_id: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "admin_blog_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "blog_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "blog_comments_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_offer_winners: {
+        Row: {
+          ai_reason: string | null
+          announced: boolean | null
+          created_at: string | null
+          fb_comment_id: string | null
+          id: string | null
+          notes: string | null
+          offer_id: string | null
+          participant_contact: string | null
+          participant_name: string | null
+          prize: string | null
+          rank: number | null
+          selected_by: string | null
+          source: string | null
+          submission_id: string | null
+        }
+        Insert: {
+          ai_reason?: string | null
+          announced?: boolean | null
+          created_at?: string | null
+          fb_comment_id?: string | null
+          id?: string | null
+          notes?: string | null
+          offer_id?: string | null
+          participant_contact?: string | null
+          participant_name?: string | null
+          prize?: string | null
+          rank?: number | null
+          selected_by?: string | null
+          source?: string | null
+          submission_id?: string | null
+        }
+        Update: {
+          ai_reason?: string | null
+          announced?: boolean | null
+          created_at?: string | null
+          fb_comment_id?: string | null
+          id?: string | null
+          notes?: string | null
+          offer_id?: string | null
+          participant_contact?: string | null
+          participant_name?: string | null
+          prize?: string | null
+          rank?: number | null
+          selected_by?: string | null
+          source?: string | null
+          submission_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_winners_fb_comment_id_fkey"
+            columns: ["fb_comment_id"]
+            isOneToOne: false
+            referencedRelation: "offer_facebook_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_winners_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_winners_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "offer_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_product_reviews: {
+        Row: {
+          author_email: string | null
+          author_name: string | null
+          body: string | null
+          created_at: string | null
+          helpful_count: number | null
+          id: string | null
+          is_verified: boolean | null
+          product_id: string | null
+          product_slug: string | null
+          rating: number | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          author_email?: string | null
+          author_name?: string | null
+          body?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string | null
+          is_verified?: boolean | null
+          product_id?: string | null
+          product_slug?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          author_email?: string | null
+          author_name?: string | null
+          body?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string | null
+          is_verified?: boolean | null
+          product_id?: string | null
+          product_slug?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_comments_public: {
         Row: {
           author_name: string | null
@@ -4013,6 +4196,13 @@ export type Database = {
           status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "blog_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "admin_blog_comments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "blog_comments_parent_id_fkey"
             columns: ["parent_id"]
@@ -4049,6 +4239,110 @@ export type Database = {
             columns: ["offer_id"]
             isOneToOne: false
             referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offer_winners_public: {
+        Row: {
+          announced: boolean | null
+          created_at: string | null
+          id: string | null
+          offer_id: string | null
+          participant_name: string | null
+          prize: string | null
+          rank: number | null
+          selected_by: string | null
+          source: string | null
+          submission_id: string | null
+        }
+        Insert: {
+          announced?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          offer_id?: string | null
+          participant_name?: string | null
+          prize?: string | null
+          rank?: number | null
+          selected_by?: string | null
+          source?: string | null
+          submission_id?: string | null
+        }
+        Update: {
+          announced?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          offer_id?: string | null
+          participant_name?: string | null
+          prize?: string | null
+          rank?: number | null
+          selected_by?: string | null
+          source?: string | null
+          submission_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_winners_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_winners_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "offer_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_reviews_public: {
+        Row: {
+          author_name: string | null
+          body: string | null
+          created_at: string | null
+          helpful_count: number | null
+          id: string | null
+          is_verified: boolean | null
+          product_id: string | null
+          product_slug: string | null
+          rating: number | null
+          status: string | null
+          title: string | null
+        }
+        Insert: {
+          author_name?: string | null
+          body?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string | null
+          is_verified?: boolean | null
+          product_id?: string | null
+          product_slug?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+        }
+        Update: {
+          author_name?: string | null
+          body?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string | null
+          is_verified?: boolean | null
+          product_id?: string | null
+          product_slug?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
