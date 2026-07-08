@@ -13,7 +13,7 @@ const AdminProductReviews = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    let q = (supabase as any).from('product_reviews').select('*').order('created_at', { ascending: false });
+    let q = (supabase as any).from('admin_product_reviews').select('*').order('created_at', { ascending: false });
     if (filter !== 'all') q = q.eq('status', filter);
     const { data } = await q;
     setReviews(data || []);
