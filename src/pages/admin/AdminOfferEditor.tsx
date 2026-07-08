@@ -1345,7 +1345,8 @@ export default function AdminOfferEditor() {
                 ))}
               </div>
             </>
-          )}
+          );
+          })()}
         </TabsContent>
 
         {/* WINNERS */}
