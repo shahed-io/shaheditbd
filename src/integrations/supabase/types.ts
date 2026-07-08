@@ -1658,6 +1658,97 @@ export type Database = {
         }
         Relationships: []
       }
+      offer_blocked_participants: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          identifier: string
+          kind: string
+          offer_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          identifier: string
+          kind: string
+          offer_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          identifier?: string
+          kind?: string
+          offer_id?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_blocked_participants_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offer_facebook_comments: {
+        Row: {
+          author_id: string | null
+          author_name: string | null
+          fb_comment_id: string
+          fb_created_time: string | null
+          id: string
+          imported_at: string
+          is_winner: boolean
+          like_count: number
+          message: string | null
+          offer_id: string
+          post_url: string | null
+          winner_rank: number | null
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string | null
+          fb_comment_id: string
+          fb_created_time?: string | null
+          id?: string
+          imported_at?: string
+          is_winner?: boolean
+          like_count?: number
+          message?: string | null
+          offer_id: string
+          post_url?: string | null
+          winner_rank?: number | null
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string | null
+          fb_comment_id?: string
+          fb_created_time?: string | null
+          id?: string
+          imported_at?: string
+          is_winner?: boolean
+          like_count?: number
+          message?: string | null
+          offer_id?: string
+          post_url?: string | null
+          winner_rank?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_facebook_comments_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offer_fields: {
         Row: {
           created_at: string
@@ -1778,39 +1869,58 @@ export type Database = {
           ai_reason: string | null
           announced: boolean
           created_at: string
+          fb_comment_id: string | null
           id: string
+          notes: string | null
           offer_id: string
+          participant_contact: string | null
           participant_name: string | null
           prize: string | null
           rank: number
           selected_by: string
-          submission_id: string
+          source: string
+          submission_id: string | null
         }
         Insert: {
           ai_reason?: string | null
           announced?: boolean
           created_at?: string
+          fb_comment_id?: string | null
           id?: string
+          notes?: string | null
           offer_id: string
+          participant_contact?: string | null
           participant_name?: string | null
           prize?: string | null
           rank: number
           selected_by?: string
-          submission_id: string
+          source?: string
+          submission_id?: string | null
         }
         Update: {
           ai_reason?: string | null
           announced?: boolean
           created_at?: string
+          fb_comment_id?: string | null
           id?: string
+          notes?: string | null
           offer_id?: string
+          participant_contact?: string | null
           participant_name?: string | null
           prize?: string | null
           rank?: number
           selected_by?: string
-          submission_id?: string
+          source?: string
+          submission_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "offer_winners_fb_comment_id_fkey"
+            columns: ["fb_comment_id"]
+            isOneToOne: false
+            referencedRelation: "offer_facebook_comments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "offer_winners_offer_id_fkey"
             columns: ["offer_id"]
