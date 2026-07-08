@@ -123,7 +123,7 @@ const MENU_SECTIONS: MenuSection[] = [
     items: [
       { icon: Percent, label: 'Coupons', path: '/ceo/coupons' },
       { icon: Gift, label: 'Offers & Giveaways', path: '/ceo/offers', badge: 'new' },
-      { icon: Trophy, label: 'Winners Manager', path: '/ceo/offer-winners', badge: 'new' },
+      
       { icon: Gift, label: 'Welcome Discount', path: '/ceo/welcome-discount' },
       { icon: Gift, label: 'Referrals', path: '/ceo/referrals' },
       { icon: TrendingUp, label: 'Affiliates', path: '/ceo/affiliates' },
