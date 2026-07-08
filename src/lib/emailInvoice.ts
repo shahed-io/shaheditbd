@@ -18,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { InvoiceData } from './invoicePdf';
+import { sanitizeBengaliDeep } from './bengaliSanitizer';
 
 const PM_LABELS: Record<string, string> = {
   bkash: 'BKash', nagad: 'Nagad', rocket: 'Rocket', upay: 'উপায়',
@@ -78,10 +79,11 @@ export interface SendInvoiceEmailOptions {
 /**
  * Generate PDF, upload to storage, then send email with HTML body + PDF link.
  */
-export async function sendInvoiceEmail({ data, recipientEmail, element }: SendInvoiceEmailOptions): Promise<void> {
+export async function sendInvoiceEmail({ data: rawData, recipientEmail, element }: SendInvoiceEmailOptions): Promise<void> {
   if (!recipientEmail || !recipientEmail.includes('@')) {
     throw new Error('Invalid recipient email');
   }
+  const data = sanitizeBengaliDeep(rawData);
 
   // 1. Build PDF blob
   let pdfBlob: Blob;
@@ -142,7 +144,8 @@ export async function sendInvoiceEmail({ data, recipientEmail, element }: SendIn
 }
 
 // Off-screen invoice builder (mirrors invoicePdf.ts buildInvoiceHtml)
-async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
+async function buildOffscreenInvoice(rawData: InvoiceData): Promise<HTMLElement> {
+  const data = sanitizeBengaliDeep(rawData);
   const logoIcon = (await import('@/assets/logo.png')).default;
   const cachedLogo = await loadLogoBase64(logoIcon);
   const brandColor = '#7c3aed';

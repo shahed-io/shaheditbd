@@ -16,6 +16,7 @@ import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, D
 import PrizesEditor from '@/components/admin/PrizesEditor';
 import AiPolishButton from '@/components/admin/AiPolishButton';
 import { parsePrizeItems } from '@/lib/offerPrizes';
+import { sanitizeBengaliDeep } from '@/lib/bengaliSanitizer';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 interface Offer {
@@ -245,10 +246,11 @@ export default function AdminOfferEditor() {
   const saveOffer = async () => {
     if (!offer) return;
     setSaving(true);
-    const { id: _, submission_count: __, ...payload } = offer as any;
+    const { id: _, submission_count: __, ...rest } = offer as any;
+    const payload = sanitizeBengaliDeep(rest);
     const { error } = await supabase.from('offers').update(payload).eq('id', offer.id);
     if (!error && fields.length > 0) {
-      const fieldResults = await Promise.all(fields.map((f) => supabase.from('offer_fields').update(fieldPayload(f)).eq('id', f.id)));
+      const fieldResults = await Promise.all(fields.map((f) => supabase.from('offer_fields').update(sanitizeBengaliDeep(fieldPayload(f))).eq('id', f.id)));
       const fieldError = fieldResults.find((r) => r.error)?.error;
       if (fieldError) {
         setSaving(false);
