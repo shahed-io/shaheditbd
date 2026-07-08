@@ -18,6 +18,7 @@ import { useCart } from "@/hooks/useCart";
 
 // Critical pages — eager load
 import Index from "./pages/Index";
+const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
 
 // Deferred non-critical components — lazy loaded
 const CartDrawer = lazy(() => import("@/components/store/CartDrawer"));
@@ -266,6 +267,7 @@ const AppContent = () => {
           <Route path="/link" element={<HelpCenter />} />
           <Route path="/link/:slug" element={<HelpCenter />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/.lovable/oauth/consent" element={<Suspense fallback={<PageLoader />}><OAuthConsent /></Suspense>} />
           <Route path="/pay/:slug" element={<PaymentLink />} />
           <Route path="/pay/track/:id" element={<PaymentLinkTrack />} />
           <Route path="/ceo/login" element={<AdminLogin />} />
