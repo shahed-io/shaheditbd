@@ -1180,12 +1180,56 @@ export default function AdminOfferEditor() {
               💡 "Convert to Customer" সব submission এর email-এ account invite পাঠাবে। তারা link এ click করে password set করলেই customer হয়ে যাবে — এক click এ সবাই!
             </CardContent>
           </Card>
-          {submissions.length === 0 ? (
+          {submissions.length > 0 && (
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
+                value={submissionSearch}
+                onChange={(e) => setSubmissionSearch(e.target.value)}
+                placeholder="Search by phone number, name, or email…"
+                className="pl-9 pr-9"
+              />
+              {submissionSearch && (
+                <button
+                  type="button"
+                  onClick={() => setSubmissionSearch('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted"
+                  aria-label="Clear search"
+                >
+                  <X className="w-3.5 h-3.5 text-muted-foreground" />
+                </button>
+              )}
+            </div>
+          )}
+          {(() => {
+            const q = submissionSearch.trim().toLowerCase();
+            const qDigits = q.replace(/\D/g, '');
+            const filteredSubmissions = q
+              ? submissions.filter((s) => {
+                  const hay = [
+                    s.participant_name,
+                    s.participant_email,
+                    s.participant_phone,
+                    ...Object.values(s.data || {}).map((v) => (v == null ? '' : String(v))),
+                  ].join(' ').toLowerCase();
+                  if (hay.includes(q)) return true;
+                  if (qDigits) {
+                    const phoneDigits = (s.participant_phone || '').replace(/\D/g, '');
+                    if (phoneDigits.includes(qDigits)) return true;
+                  }
+                  return false;
+                })
+              : submissions;
+            return submissions.length === 0 ? (
             <Card><CardContent className="py-10 text-center text-muted-foreground space-y-3">
               <div>No submissions yet.</div>
               <Button variant="outline" size="sm" onClick={openAddSubmission} className="border-violet-500/40 text-violet-700 hover:bg-violet-500/10">
                 <Plus className="w-4 h-4 mr-1" /> Add first submission
               </Button>
+            </CardContent></Card>
+          ) : filteredSubmissions.length === 0 ? (
+            <Card><CardContent className="py-8 text-center text-sm text-muted-foreground">
+              No submissions match "<span className="font-medium">{submissionSearch}</span>".
             </CardContent></Card>
           ) : (
             <>
