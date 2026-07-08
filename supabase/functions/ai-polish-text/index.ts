@@ -4,6 +4,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { callAIWithFallback } from '../_shared/ai-fallback.ts';
 import { normalizeBrandNameText } from '../_shared/brand-name.ts';
+import { sanitizeBengali } from '../_shared/bengali-sanitizer.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -122,6 +123,7 @@ Deno.serve(async (req) => {
     }
     if (out.length > maxChars) out = out.slice(0, maxChars).trim();
     out = normalizeBrandNameText(out);
+    out = sanitizeBengali(out);
 
     if (!out) return j({ error: 'AI returned empty text' }, 502);
     return j({ text: out });
