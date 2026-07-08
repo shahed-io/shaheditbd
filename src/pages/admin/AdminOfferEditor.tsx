@@ -102,6 +102,7 @@ export default function AdminOfferEditor() {
   const [offer, setOffer] = useState<Offer | null>(null);
   const [fields, setFields] = useState<Field[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [submissionSearch, setSubmissionSearch] = useState('');
   const [winners, setWinners] = useState<Winner[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
