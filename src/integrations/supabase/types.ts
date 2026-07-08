@@ -3995,6 +3995,7 @@ export type Database = {
         Row: {
           author_email: string | null
           author_name: string | null
+          blog_posts: Json | null
           content: string | null
           created_at: string | null
           id: string | null
@@ -4002,28 +4003,6 @@ export type Database = {
           post_id: string | null
           status: string | null
           user_id: string | null
-        }
-        Insert: {
-          author_email?: string | null
-          author_name?: string | null
-          content?: string | null
-          created_at?: string | null
-          id?: string | null
-          parent_id?: string | null
-          post_id?: string | null
-          status?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          author_email?: string | null
-          author_name?: string | null
-          content?: string | null
-          created_at?: string | null
-          id?: string | null
-          parent_id?: string | null
-          post_id?: string | null
-          status?: string | null
-          user_id?: string | null
         }
         Relationships: [
           {
