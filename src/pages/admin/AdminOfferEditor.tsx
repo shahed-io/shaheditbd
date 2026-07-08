@@ -126,6 +126,46 @@ export default function AdminOfferEditor() {
   const [editingSubmission, setEditingSubmission] = useState<Submission | null>(null);
   const [savingEdit, setSavingEdit] = useState(false);
   const [sendingWinnerEmail, setSendingWinnerEmail] = useState<string | null>(null);
+  const [addingSubmission, setAddingSubmission] = useState(false);
+  const [newSubmission, setNewSubmission] = useState<{ name: string; email: string; phone: string; data: Record<string, string> }>({ name: '', email: '', phone: '', data: {} });
+  const [savingNew, setSavingNew] = useState(false);
+
+  const openAddSubmission = () => {
+    const initialData: Record<string, string> = {};
+    fields.forEach((f) => { initialData[f.label] = ''; });
+    setNewSubmission({ name: '', email: '', phone: '', data: initialData });
+    setAddingSubmission(true);
+  };
+
+  const createSubmission = async () => {
+    if (!offer) return;
+    const name = newSubmission.name.trim();
+    const email = newSubmission.email.trim().toLowerCase();
+    const phone = newSubmission.phone.trim();
+    if (!name && !email && !phone) return toast.error('Name, email or phone required');
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast.error('Invalid email');
+    // Validate required custom fields
+    for (const f of fields) {
+      if (f.required) {
+        const v = (newSubmission.data[f.label] || '').trim();
+        if (!v) return toast.error(`"${f.label}" is required`);
+      }
+    }
+    setSavingNew(true);
+    const { data: inserted, error } = await supabase.from('offer_submissions').insert({
+      offer_id: offer.id,
+      participant_name: name || null,
+      participant_email: email || null,
+      participant_phone: phone || null,
+      data: newSubmission.data,
+      source: 'admin_manual',
+    } as any).select('*').single();
+    setSavingNew(false);
+    if (error) return toast.error(error.message);
+    toast.success('Submission added');
+    setSubmissions((prev) => [inserted as Submission, ...prev]);
+    setAddingSubmission(false);
+  };
 
   const deleteSubmission = async (s: Submission) => {
     if (!confirm(`Delete submission from ${s.participant_name || s.participant_email || 'this participant'}? This cannot be undone.`)) return;
@@ -1114,6 +1154,14 @@ export default function AdminOfferEditor() {
             <div className="flex gap-2 flex-wrap">
               <Button
                 size="sm"
+                variant="outline"
+                onClick={openAddSubmission}
+                className="border-violet-500/40 text-violet-700 hover:bg-violet-500/10"
+              >
+                <Plus className="w-4 h-4 mr-1" /> Add Submission
+              </Button>
+              <Button
+                size="sm"
                 onClick={() => convertSubmissions()}
                 disabled={converting || submissions.length === 0}
                 className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:opacity-90 text-white"
@@ -1132,7 +1180,12 @@ export default function AdminOfferEditor() {
             </CardContent>
           </Card>
           {submissions.length === 0 ? (
-            <Card><CardContent className="py-10 text-center text-muted-foreground">No submissions yet.</CardContent></Card>
+            <Card><CardContent className="py-10 text-center text-muted-foreground space-y-3">
+              <div>No submissions yet.</div>
+              <Button variant="outline" size="sm" onClick={openAddSubmission} className="border-violet-500/40 text-violet-700 hover:bg-violet-500/10">
+                <Plus className="w-4 h-4 mr-1" /> Add first submission
+              </Button>
+            </CardContent></Card>
           ) : (
             <>
               {/* Desktop / tablet — uniform table */}
@@ -1594,6 +1647,81 @@ export default function AdminOfferEditor() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ADD SUBMISSION DIALOG */}
+      <Dialog open={addingSubmission} onOpenChange={(o) => !o && setAddingSubmission(false)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add Submission Manually</DialogTitle>
+            <DialogDescription>
+              Admin manually add a participant. This creates a submission just like a public form entry.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 pt-2">
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label>Name</Label>
+                <Input value={newSubmission.name} onChange={(e) => setNewSubmission({ ...newSubmission, name: e.target.value })} placeholder="Full name" />
+              </div>
+              <div>
+                <Label>Email</Label>
+                <Input type="email" value={newSubmission.email} onChange={(e) => setNewSubmission({ ...newSubmission, email: e.target.value })} placeholder="name@example.com" />
+              </div>
+              <div className="sm:col-span-2">
+                <Label>Phone</Label>
+                <Input value={newSubmission.phone} onChange={(e) => setNewSubmission({ ...newSubmission, phone: e.target.value })} placeholder="01XXXXXXXXX" />
+              </div>
+            </div>
+            {fields.length > 0 && (
+              <div className="space-y-2 border-t pt-3">
+                <div className="text-xs font-semibold text-muted-foreground uppercase">Custom Form Fields</div>
+                {fields.map((f) => (
+                  <div key={f.id}>
+                    <Label className="text-xs">
+                      {f.label} {f.required && <span className="text-rose-500">*</span>}
+                    </Label>
+                    {f.field_type === 'textarea' ? (
+                      <Textarea
+                        value={newSubmission.data[f.label] || ''}
+                        placeholder={f.placeholder || ''}
+                        onChange={(e) => setNewSubmission({ ...newSubmission, data: { ...newSubmission.data, [f.label]: e.target.value } })}
+                      />
+                    ) : f.field_type === 'select' || f.field_type === 'radio' ? (
+                      <Select
+                        value={newSubmission.data[f.label] || ''}
+                        onValueChange={(v) => setNewSubmission({ ...newSubmission, data: { ...newSubmission.data, [f.label]: v } })}
+                      >
+                        <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                        <SelectContent>
+                          {(Array.isArray(f.options) ? f.options : (f.options?.choices || [])).map((opt: any, i: number) => {
+                            const val = typeof opt === 'string' ? opt : (opt?.value ?? opt?.label ?? '');
+                            return <SelectItem key={i} value={String(val)}>{String(val)}</SelectItem>;
+                          })}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        type={f.field_type === 'number' ? 'number' : f.field_type === 'email' ? 'email' : f.field_type === 'date' ? 'date' : 'text'}
+                        value={newSubmission.data[f.label] || ''}
+                        placeholder={f.placeholder || ''}
+                        onChange={(e) => setNewSubmission({ ...newSubmission, data: { ...newSubmission.data, [f.label]: e.target.value } })}
+                      />
+                    )}
+                    {f.help_text && <p className="text-[11px] text-muted-foreground mt-0.5">{f.help_text}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex justify-end gap-2 pt-2 border-t">
+              <Button variant="outline" onClick={() => setAddingSubmission(false)}>Cancel</Button>
+              <Button onClick={createSubmission} disabled={savingNew} className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">
+                {savingNew ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Plus className="w-4 h-4 mr-1" />}
+                Add Submission
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
