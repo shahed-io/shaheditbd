@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2, BarChart3, Zap } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Sparkles, Shuffle, Download, Trophy, Eye, Wand2, Loader2, BarChart3, Zap, Pencil, Ban, Mail } from 'lucide-react';
 import PrizesEditor from '@/components/admin/PrizesEditor';
 import AiPolishButton from '@/components/admin/AiPolishButton';
 import { parsePrizeItems } from '@/lib/offerPrizes';
@@ -123,6 +123,74 @@ export default function AdminOfferEditor() {
   // Convert submissions -> customers state
   const [converting, setConverting] = useState(false);
   const [viewingSubmission, setViewingSubmission] = useState<Submission | null>(null);
+  const [editingSubmission, setEditingSubmission] = useState<Submission | null>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [sendingWinnerEmail, setSendingWinnerEmail] = useState<string | null>(null);
+
+  const deleteSubmission = async (s: Submission) => {
+    if (!confirm(`Delete submission from ${s.participant_name || s.participant_email || 'this participant'}? This cannot be undone.`)) return;
+    const { error } = await supabase.from('offer_submissions').delete().eq('id', s.id);
+    if (error) return toast.error(error.message);
+    toast.success('Submission deleted');
+    setSubmissions((prev) => prev.filter((x) => x.id !== s.id));
+  };
+
+  const banParticipant = async (s: Submission) => {
+    if (!offer) return;
+    const identifier = s.participant_email || s.participant_phone;
+    const kind = s.participant_email ? 'email' : (s.participant_phone ? 'phone' : null);
+    if (!identifier || !kind) return toast.error('No email or phone to ban');
+    const reason = prompt(`Ban ${identifier} from this offer? (optional reason)`, '');
+    if (reason === null) return;
+    const { error } = await supabase.from('offer_blocked_participants').insert({
+      offer_id: offer.id, kind, identifier: identifier.toLowerCase().trim(), reason: reason || null,
+    });
+    if (error) return toast.error(error.message);
+    toast.success(`${identifier} banned from this offer`);
+  };
+
+  const saveSubmissionEdit = async () => {
+    if (!editingSubmission) return;
+    setSavingEdit(true);
+    const { id: sid, participant_name, participant_email, participant_phone, data } = editingSubmission;
+    const { error } = await supabase.from('offer_submissions')
+      .update({ participant_name, participant_email, participant_phone, data })
+      .eq('id', sid);
+    setSavingEdit(false);
+    if (error) return toast.error(error.message);
+    toast.success('Submission updated');
+    setSubmissions((prev) => prev.map((x) => x.id === sid ? { ...x, participant_name, participant_email, participant_phone, data } : x));
+    setEditingSubmission(null);
+  };
+
+  const sendWinnerEmail = async (w: Winner) => {
+    const sub = submissions.find((s) => s.id === w.submission_id);
+    if (!sub?.participant_email) return toast.error('Winner has no email address');
+    if (!offer) return;
+    if (!confirm(`Send winner notification email to ${sub.participant_email}?`)) return;
+    setSendingWinnerEmail(w.id);
+    try {
+      const { error } = await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'giveaway-winner',
+          recipientEmail: sub.participant_email,
+          idempotencyKey: `giveaway-winner-manual-${w.id}-${Date.now()}`,
+          templateData: {
+            name: sub.participant_name || 'Winner',
+            offerTitle: offer.title,
+            rank: w.rank,
+            prize: w.prize,
+          },
+        },
+      });
+      if (error) throw error;
+      toast.success(`Email sent to ${sub.participant_email}`);
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to send email');
+    } finally {
+      setSendingWinnerEmail(null);
+    }
+  };
 
   const convertSubmissions = async (ids?: string[]) => {
     if (!offer) return;
