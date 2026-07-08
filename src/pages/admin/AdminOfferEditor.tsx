@@ -1649,6 +1649,81 @@ export default function AdminOfferEditor() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* ADD SUBMISSION DIALOG */}
+      <Dialog open={addingSubmission} onOpenChange={(o) => !o && setAddingSubmission(false)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add Submission Manually</DialogTitle>
+            <DialogDescription>
+              Admin manually add a participant. This creates a submission just like a public form entry.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 pt-2">
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label>Name</Label>
+                <Input value={newSubmission.name} onChange={(e) => setNewSubmission({ ...newSubmission, name: e.target.value })} placeholder="Full name" />
+              </div>
+              <div>
+                <Label>Email</Label>
+                <Input type="email" value={newSubmission.email} onChange={(e) => setNewSubmission({ ...newSubmission, email: e.target.value })} placeholder="name@example.com" />
+              </div>
+              <div className="sm:col-span-2">
+                <Label>Phone</Label>
+                <Input value={newSubmission.phone} onChange={(e) => setNewSubmission({ ...newSubmission, phone: e.target.value })} placeholder="01XXXXXXXXX" />
+              </div>
+            </div>
+            {fields.length > 0 && (
+              <div className="space-y-2 border-t pt-3">
+                <div className="text-xs font-semibold text-muted-foreground uppercase">Custom Form Fields</div>
+                {fields.map((f) => (
+                  <div key={f.id}>
+                    <Label className="text-xs">
+                      {f.label} {f.required && <span className="text-rose-500">*</span>}
+                    </Label>
+                    {f.field_type === 'textarea' ? (
+                      <Textarea
+                        value={newSubmission.data[f.label] || ''}
+                        placeholder={f.placeholder || ''}
+                        onChange={(e) => setNewSubmission({ ...newSubmission, data: { ...newSubmission.data, [f.label]: e.target.value } })}
+                      />
+                    ) : f.field_type === 'select' || f.field_type === 'radio' ? (
+                      <Select
+                        value={newSubmission.data[f.label] || ''}
+                        onValueChange={(v) => setNewSubmission({ ...newSubmission, data: { ...newSubmission.data, [f.label]: v } })}
+                      >
+                        <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                        <SelectContent>
+                          {(Array.isArray(f.options) ? f.options : (f.options?.choices || [])).map((opt: any, i: number) => {
+                            const val = typeof opt === 'string' ? opt : (opt?.value ?? opt?.label ?? '');
+                            return <SelectItem key={i} value={String(val)}>{String(val)}</SelectItem>;
+                          })}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        type={f.field_type === 'number' ? 'number' : f.field_type === 'email' ? 'email' : f.field_type === 'date' ? 'date' : 'text'}
+                        value={newSubmission.data[f.label] || ''}
+                        placeholder={f.placeholder || ''}
+                        onChange={(e) => setNewSubmission({ ...newSubmission, data: { ...newSubmission.data, [f.label]: e.target.value } })}
+                      />
+                    )}
+                    {f.help_text && <p className="text-[11px] text-muted-foreground mt-0.5">{f.help_text}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex justify-end gap-2 pt-2 border-t">
+              <Button variant="outline" onClick={() => setAddingSubmission(false)}>Cancel</Button>
+              <Button onClick={createSubmission} disabled={savingNew} className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">
+                {savingNew ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Plus className="w-4 h-4 mr-1" />}
+                Add Submission
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
