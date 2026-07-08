@@ -237,11 +237,8 @@ export default function AdminOfferWinners() {
 
   return (
     <div className="space-y-6">
-      <AdminHeroHeader
-        Icon={Trophy}
-        title="Winners Manager"
-        section="Marketing"
-      />
+
+
 
       {/* Offer selector + stats */}
       <Card>
