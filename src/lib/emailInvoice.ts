@@ -144,7 +144,8 @@ export async function sendInvoiceEmail({ data: rawData, recipientEmail, element 
 }
 
 // Off-screen invoice builder (mirrors invoicePdf.ts buildInvoiceHtml)
-async function buildOffscreenInvoice(data: InvoiceData): Promise<HTMLElement> {
+async function buildOffscreenInvoice(rawData: InvoiceData): Promise<HTMLElement> {
+  const data = sanitizeBengaliDeep(rawData);
   const logoIcon = (await import('@/assets/logo.png')).default;
   const cachedLogo = await loadLogoBase64(logoIcon);
   const brandColor = '#7c3aed';
