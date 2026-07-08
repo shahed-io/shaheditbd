@@ -1302,7 +1302,7 @@ export default function AdminOfferEditor() {
 
               {/* Mobile — stacked cards */}
               <div className="md:hidden space-y-2.5">
-                {submissions.map((s) => (
+                {filteredSubmissions.map((s) => (
                   <Card key={s.id} className="overflow-hidden">
                     <CardContent className="p-3 space-y-2.5">
                       <div className="flex items-start justify-between gap-2">
