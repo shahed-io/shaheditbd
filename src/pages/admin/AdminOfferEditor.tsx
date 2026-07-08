@@ -1258,7 +1258,7 @@ export default function AdminOfferEditor() {
                       </tr>
                     </thead>
                     <tbody>
-                      {submissions.map((s) => (
+                      {filteredSubmissions.map((s) => (
                         <tr key={s.id} className="border-t align-middle hover:bg-muted/40">
                           <td className="px-3 py-2.5 whitespace-nowrap text-xs text-muted-foreground">{new Date(s.created_at).toLocaleString()}</td>
                           <td className="px-3 py-2.5 truncate" title={s.participant_name || ''}>{s.participant_name || '—'}</td>
