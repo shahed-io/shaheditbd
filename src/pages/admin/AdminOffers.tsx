@@ -345,7 +345,7 @@ export default function AdminOffers() {
                           <div className="flex items-center gap-1"><Calendar size={11} />{o.start_at ? new Date(o.start_at).toLocaleDateString() : '—'}</div>
                           <div className="flex items-center gap-1"><Calendar size={11} />{o.end_at ? new Date(o.end_at).toLocaleDateString() : '—'}</div>
                         </td>
-                        <td className="px-4 py-3">{timing}</td>
+                        <td className="px-4 py-3 whitespace-nowrap">{timing}</td>
                         <td className="px-4 py-3">
                           <button
                             onClick={() => copyLink(o.slug)}
