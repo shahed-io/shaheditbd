@@ -126,6 +126,46 @@ export default function AdminOfferEditor() {
   const [editingSubmission, setEditingSubmission] = useState<Submission | null>(null);
   const [savingEdit, setSavingEdit] = useState(false);
   const [sendingWinnerEmail, setSendingWinnerEmail] = useState<string | null>(null);
+  const [addingSubmission, setAddingSubmission] = useState(false);
+  const [newSubmission, setNewSubmission] = useState<{ name: string; email: string; phone: string; data: Record<string, string> }>({ name: '', email: '', phone: '', data: {} });
+  const [savingNew, setSavingNew] = useState(false);
+
+  const openAddSubmission = () => {
+    const initialData: Record<string, string> = {};
+    fields.forEach((f) => { initialData[f.label] = ''; });
+    setNewSubmission({ name: '', email: '', phone: '', data: initialData });
+    setAddingSubmission(true);
+  };
+
+  const createSubmission = async () => {
+    if (!offer) return;
+    const name = newSubmission.name.trim();
+    const email = newSubmission.email.trim().toLowerCase();
+    const phone = newSubmission.phone.trim();
+    if (!name && !email && !phone) return toast.error('Name, email or phone required');
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast.error('Invalid email');
+    // Validate required custom fields
+    for (const f of fields) {
+      if (f.required) {
+        const v = (newSubmission.data[f.label] || '').trim();
+        if (!v) return toast.error(`"${f.label}" is required`);
+      }
+    }
+    setSavingNew(true);
+    const { data: inserted, error } = await supabase.from('offer_submissions').insert({
+      offer_id: offer.id,
+      participant_name: name || null,
+      participant_email: email || null,
+      participant_phone: phone || null,
+      data: newSubmission.data,
+      source: 'admin_manual',
+    } as any).select('*').single();
+    setSavingNew(false);
+    if (error) return toast.error(error.message);
+    toast.success('Submission added');
+    setSubmissions((prev) => [inserted as Submission, ...prev]);
+    setAddingSubmission(false);
+  };
 
   const deleteSubmission = async (s: Submission) => {
     if (!confirm(`Delete submission from ${s.participant_name || s.participant_email || 'this participant'}? This cannot be undone.`)) return;
