@@ -1324,13 +1324,24 @@ export default function AdminOfferEditor() {
                       <div className="flex flex-col items-end gap-2 shrink-0">
                         <Badge variant="outline">{w.selected_by}</Badge>
                         {sub ? (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setViewingSubmission(sub)}
-                          >
-                            <Eye className="w-3.5 h-3.5 mr-1" /> View Details
-                          </Button>
+                          <div className="flex flex-col gap-1.5 items-end">
+                            <Button size="sm" variant="outline" onClick={() => setViewingSubmission(sub)}>
+                              <Eye className="w-3.5 h-3.5 mr-1" /> View Details
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={!sub.participant_email || sendingWinnerEmail === w.id}
+                              onClick={() => sendWinnerEmail(w)}
+                              className="text-violet-600 border-violet-500/30 hover:bg-violet-500/10"
+                              title={sub.participant_email ? 'Send winner notification email' : 'No email on file'}
+                            >
+                              {sendingWinnerEmail === w.id
+                                ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                                : <Mail className="w-3.5 h-3.5 mr-1" />}
+                              Send Email
+                            </Button>
+                          </div>
                         ) : (
                           <span className="text-[10px] text-muted-foreground italic">submission removed</span>
                         )}
