@@ -11,7 +11,7 @@ import {
   ShoppingCart, MessageCircle, CreditCard, Star, Zap, Shield, Clock,
   CheckCircle2, ChevronLeft, ChevronRight, Heart, Package, Tag,
   Truck, ArrowLeft, Share2, Copy, Check, ChevronDown, AlertCircle,
-  ThumbsUp, Send, User
+  ThumbsUp, Send, User, Download, ExternalLink
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
 import NotFoundScreen from '@/components/store/NotFoundScreen';
@@ -56,6 +56,7 @@ interface ProductFull {
   images: string[] | null;
   what_you_get: string[] | null;
   delivery_time: string | null;
+  download_link: string | null;
   is_featured: boolean | null;
   total_sales: number | null;
   variants: any;
@@ -1224,6 +1225,43 @@ const ProductDetail = () => {
                       </li>
                     ))}
                   </ul>
+                </div>
+              )}
+
+              {/* Free Download — visible to everyone when admin has set a download link */}
+              {product.download_link && (
+                <div
+                  className="rounded-2xl p-5"
+                  style={{
+                    background: 'linear-gradient(155deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.60) 100%)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    border: '1px solid hsla(158,80%,45%,0.30)',
+                    boxShadow: '0 4px 24px hsla(158,80%,45%,0.12), 0 1px 0 rgba(255,255,255,0.9) inset',
+                    opacity: entered ? 1 : 0,
+                    transform: entered ? 'none' : 'translateY(20px)',
+                    transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1) 0.72s',
+                  }}
+                >
+                  <h3 className="font-sora font-bold text-base flex items-center gap-2 mb-1.5" style={{ color: 'hsl(226,35%,18%)' }}>
+                    <Download size={16} style={{ color: 'hsl(158,80%,42%)' }} /> Software Download
+                  </h3>
+                  <p className="text-xs mb-4" style={{ color: 'hsl(226,20%,42%)' }}>
+                    Official setup file — free download। Purchase করার পর license key দিয়ে activate করুন।
+                  </p>
+                  <a
+                    href={product.download_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-white transition-all hover:opacity-95 hover:shadow-lg"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(158,80%,42%), hsl(178,75%,40%))',
+                      boxShadow: '0 6px 20px hsla(158,80%,42%,0.30)',
+                    }}
+                  >
+                    <Download size={15} /> Download Now
+                    <ExternalLink size={12} className="opacity-80" />
+                  </a>
                 </div>
               )}
             </div>
