@@ -1,412 +1,245 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
-  Plus, Pencil, Trash2, Download, Image as ImageIcon,
-  GripVertical, Eye, EyeOff, X, Save, Loader2, ExternalLink
+  Search, Download, Loader2, Save, Check, X, ExternalLink, Package, Link2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 
-interface SoftwareItem {
+interface ProductRow {
   id: string;
   name: string;
-  description: string | null;
   image_url: string | null;
-  download_url: string;
-  sort_order: number;
-  is_active: boolean;
-  created_at: string;
+  download_link: string | null;
+  status: string | null;
 }
 
-const emptyForm = {
-  name: '',
-  description: '',
-  download_url: '',
-  image_url: '',
-  is_active: true,
-  sort_order: 0,
-};
-
 const AdminSoftwareDownloads = () => {
-  const [items, setItems] = useState<SoftwareItem[]>([]);
+  const [products, setProducts] = useState<ProductRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [editing, setEditing] = useState<SoftwareItem | null>(null);
-  const [isNew, setIsNew] = useState(false);
-  const [form, setForm] = useState({ ...emptyForm });
-  const [uploading, setUploading] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<'all' | 'with' | 'without'>('all');
+  const [draft, setDraft] = useState<Record<string, string>>({});
+  const [savingId, setSavingId] = useState<string | null>(null);
 
-  const fetchItems = async () => {
+  const fetchProducts = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('software_downloads' as any)
-      .select('*')
-      .order('sort_order')
-      .order('created_at');
-    setItems((data as any) || []);
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, name, image_url, download_link, status')
+      .order('name');
+    if (error) toast.error('লোড ব্যর্থ: ' + error.message);
+    setProducts((data as any) || []);
     setLoading(false);
   };
 
-  useEffect(() => { fetchItems(); }, []);
+  useEffect(() => { fetchProducts(); }, []);
 
-  const openNew = () => {
-    setEditing(null);
-    setIsNew(true);
-    setForm({ ...emptyForm, sort_order: items.length });
-  };
-
-  const openEdit = (item: SoftwareItem) => {
-    setIsNew(false);
-    setEditing(item);
-    setForm({
-      name: item.name,
-      description: item.description || '',
-      download_url: item.download_url,
-      image_url: item.image_url || '',
-      is_active: item.is_active,
-      sort_order: item.sort_order,
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return products.filter(p => {
+      if (filter === 'with' && !p.download_link) return false;
+      if (filter === 'without' && p.download_link) return false;
+      if (!q) return true;
+      return p.name.toLowerCase().includes(q);
     });
+  }, [products, search, filter]);
+
+  const stats = useMemo(() => ({
+    total: products.length,
+    withLink: products.filter(p => !!p.download_link).length,
+    withoutLink: products.filter(p => !p.download_link).length,
+  }), [products]);
+
+  const currentValue = (p: ProductRow) =>
+    draft[p.id] !== undefined ? draft[p.id] : (p.download_link || '');
+
+  const isDirty = (p: ProductRow) =>
+    draft[p.id] !== undefined && draft[p.id] !== (p.download_link || '');
+
+  const save = async (p: ProductRow) => {
+    const value = (draft[p.id] ?? '').trim();
+    setSavingId(p.id);
+    const { error } = await supabase
+      .from('products')
+      .update({ download_link: value || null })
+      .eq('id', p.id);
+    setSavingId(null);
+    if (error) { toast.error('সেভ ব্যর্থ: ' + error.message); return; }
+    setProducts(prev => prev.map(x => x.id === p.id ? { ...x, download_link: value || null } : x));
+    setDraft(d => { const n = { ...d }; delete n[p.id]; return n; });
+    toast.success(value ? '✅ ডাউনলোড লিংক সেভ হয়েছে' : '🗑️ লিংক মুছে ফেলা হয়েছে');
   };
 
-  const closeForm = () => {
-    setEditing(null);
-    setIsNew(false);
-    setForm({ ...emptyForm });
-  };
-
-  const handleImageUpload = async (file: File) => {
-    setUploading(true);
-    try {
-      const ext = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage
-        .from('software-images')
-        .upload(fileName, file, { upsert: false });
-      if (error) throw error;
-      const { data: urlData } = supabase.storage
-        .from('software-images')
-        .getPublicUrl(fileName);
-      setForm(f => ({ ...f, image_url: urlData.publicUrl }));
-      toast.success('ছবি আপলোড হয়েছে!');
-    } catch (err: any) {
-      toast.error('আপলোড ব্যর্থ: ' + err.message);
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!form.name.trim()) { toast.error('নাম দিন'); return; }
-    if (!form.download_url.trim()) { toast.error('ডাউনলোড লিংক দিন'); return; }
-    setSaving(true);
-    try {
-      const payload = {
-        name: form.name.trim(),
-        description: form.description.trim() || null,
-        download_url: form.download_url.trim(),
-        image_url: form.image_url.trim() || null,
-        is_active: form.is_active,
-        sort_order: Number(form.sort_order),
-      };
-      if (isNew) {
-        const { error } = await supabase.from('software_downloads' as any).insert(payload);
-        if (error) throw error;
-        toast.success('যোগ করা হয়েছে!');
-      } else if (editing) {
-        const { error } = await supabase.from('software_downloads' as any)
-          .update(payload).eq('id', editing.id);
-        if (error) throw error;
-        toast.success('আপডেট হয়েছে!');
-      }
-      closeForm();
-      fetchItems();
-    } catch (err: any) {
-      toast.error('সমস্যা হয়েছে: ' + err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleToggleActive = async (item: SoftwareItem) => {
-    const { error } = await supabase.from('software_downloads' as any)
-      .update({ is_active: !item.is_active }).eq('id', item.id);
-    if (!error) {
-      setItems(prev => prev.map(i => i.id === item.id ? { ...i, is_active: !i.is_active } : i));
-      toast.success(item.is_active ? 'হাইড করা হয়েছে' : 'দেখানো হচ্ছে');
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('software_downloads' as any).delete().eq('id', id);
-    if (!error) {
-      setItems(prev => prev.filter(i => i.id !== id));
-      setDeleteConfirm(null);
-      toast.success('মুছে ফেলা হয়েছে');
-    }
-  };
-
-  const isFormOpen = isNew || !!editing;
+  const cancel = (id: string) =>
+    setDraft(d => { const n = { ...d }; delete n[id]; return n; });
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-foreground" style={{ fontFamily: 'Sora, sans-serif' }}>
-            Software Downloads
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            সফটওয়্যার ডাউনলোড লিংক ম্যানেজ করুন
-          </p>
-        </div>
-        <button
-          onClick={openNew}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-105"
-          style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))', boxShadow: '0 4px 16px hsla(258,78%,55%,0.30)' }}
-        >
-          <Plus size={16} /> নতুন যোগ করুন
-        </button>
+      <div>
+        <h1 className="text-2xl font-black text-foreground" style={{ fontFamily: 'Sora, sans-serif' }}>
+          Software Downloads
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          প্রতিটি প্রোডাক্টের ডাউনলোড লিংক সেট করুন — অর্ডার সম্পন্ন হওয়ার পর customer এর dashboard এ automatic দেখাবে
+        </p>
       </div>
 
-      {/* Add/Edit Form Modal */}
-      {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg glass-card rounded-3xl p-6 border border-border shadow-strong">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-black text-lg text-foreground" style={{ fontFamily: 'Sora, sans-serif' }}>
-                {isNew ? '➕ নতুন সফটওয়্যার যোগ' : '✏️ এডিট করুন'}
-              </h2>
-              <button onClick={closeForm} className="text-muted-foreground hover:text-foreground transition-colors">
-                <X size={20} />
-              </button>
-            </div>
+      {/* Info banner */}
+      <div className="glass-card rounded-2xl p-4 border border-primary/20 flex items-start gap-3"
+        style={{ background: 'linear-gradient(135deg, hsla(258,78%,55%,0.06), hsla(200,90%,45%,0.04))' }}>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+          <Link2 size={16} className="text-white" />
+        </div>
+        <div className="text-xs text-muted-foreground leading-relaxed">
+          <span className="font-bold text-foreground">কীভাবে কাজ করে:</span> প্রতিটি প্রোডাক্টের জন্য নিচে ডাউনলোড লিংক দিয়ে সেভ করুন।
+          যখন কোনো customer সেই প্রোডাক্ট কিনবে এবং অর্ডার <span className="font-semibold text-emerald-600">completed</span> হবে,
+          তখন তার dashboard-এর <span className="font-semibold">Downloads</span> tab-এ automatic লিংকটি চলে আসবে।
+        </div>
+      </div>
 
-            <div className="space-y-4">
-              {/* Image upload */}
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: 'মোট প্রোডাক্ট', value: stats.total, icon: Package, color: 'hsl(258,78%,55%)' },
+          { label: 'লিংক সেট আছে', value: stats.withLink, icon: CheckCircle2, color: 'hsl(160,70%,42%)' },
+          { label: 'লিংক নেই', value: stats.withoutLink, icon: AlertCircle, color: 'hsl(20,90%,55%)' },
+        ].map(s => (
+          <div key={s.label} className="glass-card rounded-2xl p-4 border border-border">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ background: `${s.color}15` }}>
+                <s.icon size={18} style={{ color: s.color }} />
+              </div>
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                  সফটওয়্যারের ছবি
-                </label>
-                <div className="flex items-start gap-3">
-                  {/* Preview */}
-                  <div
-                    className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden border border-border"
-                    style={{ background: 'hsla(258,78%,55%,0.06)' }}
-                  >
-                    {form.image_url ? (
-                      <img src={form.image_url} alt="" className="w-full h-full object-cover rounded-2xl" />
-                    ) : (
-                      <ImageIcon size={24} className="text-muted-foreground" />
-                    )}
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <input
-                      ref={fileRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={e => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
-                    />
-                    <button
-                      onClick={() => fileRef.current?.click()}
-                      disabled={uploading}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border border-border glass-card hover:border-primary/40 transition-all w-full justify-center"
-                    >
-                      {uploading ? <Loader2 size={13} className="animate-spin" /> : <ImageIcon size={13} />}
-                      {uploading ? 'আপলোড হচ্ছে...' : 'ছবি আপলোড করুন'}
-                    </button>
-                    <input
-                      type="text"
-                      placeholder="অথবা ছবির URL দিন"
-                      value={form.image_url}
-                      onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
-                      className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-                    />
-                  </div>
-                </div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{s.label}</p>
+                <p className="text-lg font-black text-foreground" style={{ fontFamily: 'Sora, sans-serif' }}>{s.value}</p>
               </div>
-
-              {/* Name */}
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
-                  সফটওয়্যারের নাম *
-                </label>
-                <input
-                  type="text"
-                  placeholder="যেমন: Adobe Photoshop 2024"
-                  value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
-                  সংক্ষিপ্ত বিবরণ
-                </label>
-                <input
-                  type="text"
-                  placeholder="যেমন: Windows 10/11 Compatible"
-                  value={form.description}
-                  onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-                />
-              </div>
-
-              {/* Download URL */}
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
-                  ডাউনলোড লিংক *
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://example.com/download/software.exe"
-                  value={form.download_url}
-                  onChange={e => setForm(f => ({ ...f, download_url: e.target.value }))}
-                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors font-fira"
-                />
-              </div>
-
-              {/* Sort order & active */}
-              <div className="flex gap-3">
-                <div className="flex-1">
-                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
-                    ক্রম নম্বর
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={form.sort_order}
-                    onChange={e => setForm(f => ({ ...f, sort_order: parseInt(e.target.value) || 0 }))}
-                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
-                  />
-                </div>
-                <div className="flex items-end pb-0.5">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <div
-                      onClick={() => setForm(f => ({ ...f, is_active: !f.is_active }))}
-                      className={`w-10 h-6 rounded-full transition-all flex items-center px-1 cursor-pointer ${form.is_active ? '' : 'bg-muted'}`}
-                      style={form.is_active ? { background: 'hsl(258,78%,55%)' } : {}}
-                    >
-                      <div className={`w-4 h-4 rounded-full bg-white transition-all ${form.is_active ? 'translate-x-4' : 'translate-x-0'}`} />
-                    </div>
-                    <span className="text-sm font-medium text-foreground">সক্রিয়</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={closeForm}
-                className="flex-1 py-2.5 rounded-xl text-sm font-semibold glass-card border border-border text-muted-foreground hover:text-foreground transition-all"
-              >
-                বাতিল
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all hover:opacity-90 disabled:opacity-60"
-                style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}
-              >
-                {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-                {saving ? 'সেভ হচ্ছে...' : 'সেভ করুন'}
-              </button>
             </div>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
 
-      {/* Items Grid */}
+      {/* Search & filter */}
+      <div className="glass-card rounded-2xl p-3 border border-border flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="প্রোডাক্ট নাম দিয়ে খুঁজুন…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-muted/30 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+          />
+          {search && (
+            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        <div className="flex gap-1.5 bg-muted/30 rounded-xl p-1">
+          {[
+            { k: 'all', label: 'All' },
+            { k: 'with', label: 'With Link' },
+            { k: 'without', label: 'No Link' },
+          ].map(f => (
+            <button
+              key={f.k}
+              onClick={() => setFilter(f.k as any)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                filter === f.k ? 'text-white' : 'text-muted-foreground hover:text-foreground'
+              }`}
+              style={filter === f.k ? { background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' } : {}}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 size={32} className="animate-spin text-primary" />
         </div>
-      ) : items.length === 0 ? (
-        <div className="glass-card rounded-3xl p-16 text-center">
+      ) : filtered.length === 0 ? (
+        <div className="glass-card rounded-3xl p-16 text-center border border-border">
           <Download size={40} className="text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground text-sm">এখনো কোনো সফটওয়্যার যোগ করা হয়নি</p>
-          <button onClick={openNew}
-            className="mt-4 px-5 py-2 rounded-xl text-sm font-bold text-white"
-            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
-            প্রথম সফটওয়্যার যোগ করুন
-          </button>
+          <p className="text-muted-foreground text-sm">কোনো প্রোডাক্ট পাওয়া যায়নি</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {items.map(item => (
-            <div key={item.id}
-              className={`glass-card rounded-2xl overflow-hidden border transition-all ${!item.is_active ? 'opacity-50' : 'hover:border-primary/30'}`}>
-              {/* Image */}
-              <div className="h-36 relative flex items-center justify-center"
-                style={{ background: 'hsla(258,78%,55%,0.05)' }}>
-                {item.image_url ? (
-                  <img src={item.image_url} alt={item.name} className="w-full h-full object-contain p-3" />
-                ) : (
-                  <div className="flex flex-col items-center gap-2">
-                    <Download size={32} className="text-muted-foreground" />
-                    <span className="text-[10px] text-muted-foreground">No Image</span>
+        <div className="space-y-2">
+          {filtered.map(p => {
+            const dirty = isDirty(p);
+            const value = currentValue(p);
+            const hasLink = !!p.download_link;
+            return (
+              <div key={p.id}
+                className="glass-card rounded-2xl border border-border p-3 flex flex-col sm:flex-row sm:items-center gap-3 transition-all hover:border-primary/30">
+                {/* Image + name */}
+                <div className="flex items-center gap-3 sm:w-72 flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border border-border flex items-center justify-center"
+                    style={{ background: 'hsla(258,78%,55%,0.06)' }}>
+                    {p.image_url
+                      ? <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                      : <Package size={18} className="text-muted-foreground" />}
                   </div>
-                )}
-                {/* Active badge */}
-                <div className={`absolute top-2 right-2 px-1.5 py-0.5 rounded-md text-[9px] font-bold ${item.is_active ? 'bg-emerald-500/10 text-emerald-600' : 'bg-muted text-muted-foreground'}`}>
-                  {item.is_active ? 'Active' : 'Hidden'}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-foreground truncate">{p.name}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
+                        hasLink ? 'bg-emerald-500/10 text-emerald-600' : 'bg-muted text-muted-foreground'
+                      }`}>
+                        {hasLink ? <><CheckCircle2 size={9} /> Link Set</> : <><AlertCircle size={9} /> No Link</>}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Input + actions */}
+                <div className="flex-1 flex flex-col sm:flex-row gap-2">
+                  <div className="relative flex-1">
+                    <Link2 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      type="url"
+                      placeholder="https://example.com/download.exe"
+                      value={value}
+                      onChange={e => setDraft(d => ({ ...d, [p.id]: e.target.value }))}
+                      className="w-full pl-8 pr-3 py-2 rounded-xl bg-muted/30 border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary font-fira"
+                    />
+                  </div>
+                  <div className="flex gap-1.5">
+                    {hasLink && !dirty && (
+                      <a href={p.download_link!} target="_blank" rel="noopener noreferrer"
+                        className="p-2 rounded-xl glass-card border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-all"
+                        title="Open link">
+                        <ExternalLink size={13} />
+                      </a>
+                    )}
+                    {dirty && (
+                      <button onClick={() => cancel(p.id)}
+                        className="p-2 rounded-xl glass-card border border-border text-muted-foreground hover:text-foreground"
+                        title="Cancel">
+                        <X size={13} />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => save(p)}
+                      disabled={!dirty || savingId === p.id}
+                      className="px-3 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90"
+                      style={{ background: dirty ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' : 'hsl(var(--muted))' }}
+                    >
+                      {savingId === p.id
+                        ? <Loader2 size={12} className="animate-spin" />
+                        : dirty ? <Save size={12} /> : <Check size={12} />}
+                      {savingId === p.id ? 'Saving' : dirty ? 'Save' : 'Saved'}
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              {/* Info */}
-              <div className="p-3 space-y-1">
-                <p className="font-bold text-foreground text-sm line-clamp-1">{item.name}</p>
-                {item.description && (
-                  <p className="text-[11px] text-muted-foreground line-clamp-1">{item.description}</p>
-                )}
-                <a href={item.download_url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-[10px] text-primary hover:underline font-fira line-clamp-1">
-                  <ExternalLink size={10} /> {item.download_url.replace(/^https?:\/\//, '').slice(0, 30)}...
-                </a>
-              </div>
-
-              {/* Actions */}
-              <div className="border-t border-border px-3 py-2 flex items-center gap-1.5">
-                <button
-                  onClick={() => openEdit(item)}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[11px] font-semibold glass-card hover:border-primary/30 transition-all text-muted-foreground hover:text-primary"
-                >
-                  <Pencil size={11} /> এডিট
-                </button>
-                <button
-                  onClick={() => handleToggleActive(item)}
-                  className="p-1.5 rounded-lg glass-card hover:border-primary/30 transition-all text-muted-foreground hover:text-foreground"
-                  title={item.is_active ? 'হাইড করুন' : 'দেখান'}
-                >
-                  {item.is_active ? <EyeOff size={13} /> : <Eye size={13} />}
-                </button>
-                {deleteConfirm === item.id ? (
-                  <>
-                    <button onClick={() => handleDelete(item.id)}
-                      className="p-1.5 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-[10px] font-bold transition-all">
-                      হ্যাঁ
-                    </button>
-                    <button onClick={() => setDeleteConfirm(null)}
-                      className="p-1.5 rounded-lg glass-card text-muted-foreground text-[10px] font-bold transition-all">
-                      না
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => setDeleteConfirm(item.id)}
-                    className="p-1.5 rounded-lg glass-card hover:border-destructive/30 transition-all text-muted-foreground hover:text-destructive"
-                    title="মুছুন"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
