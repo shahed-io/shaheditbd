@@ -11,7 +11,7 @@ import {
   ShoppingCart, MessageCircle, CreditCard, Star, Zap, Shield, Clock,
   CheckCircle2, ChevronLeft, ChevronRight, Heart, Package, Tag,
   Truck, ArrowLeft, Share2, Copy, Check, ChevronDown, AlertCircle,
-  ThumbsUp, Send, User
+  ThumbsUp, Send, User, Download, ExternalLink
 } from 'lucide-react';
 import QuickOrderModal from '@/components/store/QuickOrderModal';
 import NotFoundScreen from '@/components/store/NotFoundScreen';
