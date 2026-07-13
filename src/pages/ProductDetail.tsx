@@ -56,6 +56,7 @@ interface ProductFull {
   images: string[] | null;
   what_you_get: string[] | null;
   delivery_time: string | null;
+  download_link: string | null;
   is_featured: boolean | null;
   total_sales: number | null;
   variants: any;
