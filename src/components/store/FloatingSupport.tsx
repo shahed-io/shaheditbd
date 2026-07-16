@@ -676,6 +676,19 @@ const FloatingSupport = () => {
           to   { opacity: 1; }
         }
 
+        /* Luminous glass orb — breathing badge + gentle idle float */
+        @keyframes fabLumBadgePulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245,158,11,0.55); }
+          50%      { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+        }
+        .fab-lum-badge { animation: fabLumBadgePulse 2.2s ease-in-out infinite; }
+        @keyframes fabLumFloat {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-3px); }
+        }
+        .fab-luminous { animation: fabLumFloat 4s ease-in-out infinite; }
+        .fab-luminous:hover, .fab-luminous:active { animation: none; }
+
         /* Stacked violet-tinted glass pill buttons — premium glassmorphism */
         .fs-pill {
           position: relative;
