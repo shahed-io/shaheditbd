@@ -54,6 +54,36 @@ const MobileBottomNav = () => {
     };
   }, []);
 
+  // Show on scroll-up, hide on scroll-down. Always show near the top of the page.
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+    const SCROLL_THRESHOLD = 8; // ignore tiny wobbles
+    const TOP_ZONE = 80; // always show near the top
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const delta = currentY - lastY;
+
+        if (currentY < TOP_ZONE) {
+          setHidden(false);
+        } else if (Math.abs(delta) > SCROLL_THRESHOLD) {
+          // Scrolling down → hide; scrolling up → show
+          setHidden(delta > 0);
+        }
+
+        lastY = currentY;
+        ticking = false;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   // Fetch active orders count for the badge (pending / processing)
   useEffect(() => {
     if (!user) {
