@@ -24,7 +24,10 @@ interface Product {
   status: string;
   category_id: string | null;
   short_description: string | null;
+  stock_quantity?: number | null;
 }
+
+const SHOP_WA = '8801840099853';
 
 interface Category {
   id: string;
