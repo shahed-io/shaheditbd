@@ -846,7 +846,7 @@ const Checkout = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} oauthRedirectTo={typeof window !== 'undefined' ? window.location.href : undefined} />
 
       {/* Login Required Banner for guests */}
       {!user && (
@@ -882,7 +882,7 @@ const Checkout = () => {
                 <User size={11} /> {user.email?.split('@')[0]}
               </span>
             ) : (
-              <button onClick={() => navigate('/?auth=login')} className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors">
+              <button onClick={() => setShowAuthModal(true)} className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors">
                 <LogIn size={13} /> লগইন করুন
               </button>
             )}
