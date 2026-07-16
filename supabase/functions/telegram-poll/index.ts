@@ -1195,6 +1195,94 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ─── SET WEBHOOK ─────────────────────────────────────────────────────
+    // POST /telegram-poll?action=set-webhook → registers this function as Telegram webhook
+    // + registers slash commands + menu button. After this, updates arrive INSTANTLY
+    // (no more cron polling latency). Also computes/stores a secret token to
+    // authenticate incoming Telegram calls.
+    if (url.searchParams.get('action') === 'set-webhook') {
+      const supaUrl = Deno.env.get('SUPABASE_URL')!;
+      // Derive project ref from Supabase URL (works for both direct and proxied hosts)
+      const projectRef = new URL(supaUrl).host.split('.')[0];
+      const webhookUrl = `https://${projectRef}.supabase.co/functions/v1/telegram-poll`;
+
+      // Derive a deterministic secret from the bot token so both sides agree
+      const enc = new TextEncoder().encode(`tg-webhook-v1:${BOT_TOKEN}`);
+      const digest = await crypto.subtle.digest('SHA-256', enc);
+      const secretToken = btoa(String.fromCharCode(...new Uint8Array(digest)))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '').slice(0, 64);
+
+      const setRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/setWebhook`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: webhookUrl,
+          secret_token: secretToken,
+          max_connections: 40,
+          allowed_updates: ['message', 'callback_query'],
+          drop_pending_updates: false,
+        }),
+      });
+      const setData = await setRes.json();
+      // Also (re)register the slash-menu commands so BotFather-style suggestions show up
+      await registerBotCommands(BOT_TOKEN);
+
+      return new Response(JSON.stringify({
+        ok: setData.ok === true,
+        webhook: webhookUrl,
+        telegram_response: setData,
+        commands_registered: true,
+      }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    // ─── DELETE WEBHOOK (revert to polling) ──────────────────────────────
+    if (url.searchParams.get('action') === 'delete-webhook') {
+      const delRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/deleteWebhook`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ drop_pending_updates: false }),
+      });
+      return new Response(JSON.stringify(await delRes.json()), {
+        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // ─── WEBHOOK MODE (instant delivery from Telegram) ───────────────────
+    // Telegram POSTs update JSON directly. Detect by presence of `update_id`.
+    if (req.method === 'POST') {
+      let body: any = null;
+      try { body = await req.clone().json(); } catch { /* not JSON */ }
+
+      if (body && typeof body.update_id === 'number') {
+        // Verify Telegram's secret_token header
+        const enc = new TextEncoder().encode(`tg-webhook-v1:${BOT_TOKEN}`);
+        const digest = await crypto.subtle.digest('SHA-256', enc);
+        const expectedSecret = btoa(String.fromCharCode(...new Uint8Array(digest)))
+          .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '').slice(0, 64);
+        const gotSecret = req.headers.get('X-Telegram-Bot-Api-Secret-Token');
+        if (gotSecret !== expectedSecret) {
+          return new Response('unauthorized', { status: 401 });
+        }
+
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        );
+
+        // Ack Telegram immediately (<1s). Process asynchronously so heavy
+        // handlers (image uploads, multi-DB reads) don't delay the ack and
+        // trigger Telegram's aggressive retry storm.
+        (async () => {
+          try { await processUpdate(body, BOT_TOKEN, supabase); }
+          catch (e) { console.error('Webhook handler error:', e); }
+        })();
+
+        return new Response(JSON.stringify({ ok: true }), {
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
