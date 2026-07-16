@@ -206,9 +206,11 @@ interface FlashCardProps {
 const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) => {
   const [hovered, setHovered] = useState(false);
   const savings = product.original_price ? Math.round(product.original_price - product.price) : null;
+  const outOfStock = product.status === 'out_of_stock' || (typeof product.stock_quantity === 'number' && product.stock_quantity <= 0);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (outOfStock) return;
     onAddToCart({
       id: product.id,
       name: product.name,
@@ -217,6 +219,12 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
       image: product.image_url || '',
       category: 'Flash Sale',
     });
+  };
+
+  const handlePreOrder = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const msg = encodeURIComponent(`প্রি-অর্ডার করতে চাই (Stock Out):\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}\n\nকখন আবার stock আসবে জানাবেন please।`);
+    window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
   };
 
   return (
