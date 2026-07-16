@@ -365,6 +365,9 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             <div className="absolute inset-0 z-[5] pointer-events-none"
               style={{ background: 'linear-gradient(to top, hsla(0,0%,0%,0.35), hsla(0,0%,0%,0.05))' }} />
           )}
+
+          {/* Wishlist btn */}
+          <button
             onClick={e => {
               e.stopPropagation();
               toggleWishlist({ id: String(product.id), name: product.name, price: product.price, image: product.image });
