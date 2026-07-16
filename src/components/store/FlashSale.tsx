@@ -63,8 +63,8 @@ const FlashSale = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, slug, price, original_price, discount_percent, image_url, delivery_time, short_description')
-        .eq('status', 'active')
+        .select('id, name, slug, price, original_price, discount_percent, image_url, delivery_time, short_description, status, stock_quantity')
+        .in('status', ['active', 'out_of_stock'])
         .not('discount_percent', 'is', null)
         .order('discount_percent', { ascending: false })
         .limit(10);
