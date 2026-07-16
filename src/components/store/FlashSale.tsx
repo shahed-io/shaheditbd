@@ -259,7 +259,17 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
         />
         <div className="absolute inset-0 pointer-events-none transition-opacity duration-300"
           style={{ background: 'linear-gradient(to top, hsla(226,35%,8%,0.4), transparent)', opacity: hovered ? 1 : 0 }} />
-        {product.discount_percent && (
+        {outOfStock && (
+          <>
+            <div className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(to top, hsla(0,0%,0%,0.35), hsla(0,0%,0%,0.05))' }} />
+            <div className="absolute top-2.5 left-2.5 text-white text-[10px] font-black tracking-wider px-2.5 py-1 rounded-xl"
+              style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))', boxShadow: '0 2px 10px hsla(0,80%,55%,0.5)' }}>
+              STOCK OUT
+            </div>
+          </>
+        )}
+        {!outOfStock && product.discount_percent && (
           <div className="absolute top-2.5 left-2.5 text-white text-[11px] font-black px-2.5 py-1 rounded-xl flex items-center gap-1"
             style={{ background: 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,55%))', boxShadow: '0 2px 10px hsla(15,100%,60%,0.5)' }}>
             <Zap size={10} fill="white" />
@@ -267,17 +277,21 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
           </div>
         )}
         <button
-          onClick={handleAddToCart}
+          onClick={outOfStock ? handlePreOrder : handleAddToCart}
           className="absolute bottom-2.5 right-2.5 w-9 h-9 rounded-xl text-white flex items-center justify-center transition-all duration-200 hover:scale-110"
           style={{
-            background: 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,55%))',
+            background: outOfStock
+              ? 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))'
+              : 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,55%))',
             opacity: hovered ? 1 : 0,
             transform: hovered ? 'translateY(0)' : 'translateY(4px)',
-            boxShadow: '0 4px 12px hsla(15,100%,60%,0.5)',
+            boxShadow: outOfStock
+              ? '0 4px 12px hsla(0,80%,55%,0.5)'
+              : '0 4px 12px hsla(15,100%,60%,0.5)',
           }}
-          title="Add to cart"
+          title={outOfStock ? 'Pre-order via WhatsApp' : 'Add to cart'}
         >
-          <ShoppingCart size={15} />
+          {outOfStock ? <MessageCircle size={15} /> : <ShoppingCart size={15} />}
         </button>
       </div>
 
