@@ -1142,27 +1142,52 @@ const ProductDetail = () => {
                   <div className="h-px w-full rounded-full"
                     style={{ background: 'linear-gradient(90deg, transparent 0%, hsla(258,78%,65%,0.70) 30%, hsla(200,90%,65%,0.70) 70%, transparent 100%)' }} />
 
-                  {/* Buy Now — full-width primary */}
-                  <button
-                    onClick={() => setShowModal(true)}
-                    className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(245,243,255,0.82) 50%, rgba(235,245,255,0.88) 100%)',
-                      backdropFilter: 'blur(20px)',
-                      WebkitBackdropFilter: 'blur(20px)',
-                      border: '1.5px solid rgba(255,255,255,0.95)',
-                      boxShadow: '0 4px 24px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,1) inset, 0 -1px 0 hsla(258,78%,55%,0.08) inset',
-                      color: 'hsl(258,78%,48%)',
-                      letterSpacing: '0.02em',
-                    }}
-                  >
-                    <CreditCard size={18} strokeWidth={2.5} /> Buy Now
-                  </button>
+                  {outOfStock && (
+                    <div className="flex items-center justify-center gap-2 py-2.5 rounded-2xl text-sm font-black tracking-wide text-white"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))',
+                        boxShadow: '0 4px 16px hsla(0,80%,55%,0.35)',
+                        letterSpacing: '0.06em',
+                      }}>
+                      ⚠️ STOCK OUT — এখন কিনতে পারবেন না
+                    </div>
+                  )}
+
+                  {/* Buy Now — full-width primary (or Pre-order when out of stock) */}
+                  {outOfStock ? (
+                    <button
+                      onClick={waPreOrder}
+                      className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))',
+                        boxShadow: '0 4px 24px hsla(0,80%,55%,0.35), 0 1px 0 rgba(255,255,255,0.4) inset',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      <MessageCircle size={18} strokeWidth={2.5} /> Pre-order via WhatsApp
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowModal(true)}
+                      className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(245,243,255,0.82) 50%, rgba(235,245,255,0.88) 100%)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        border: '1.5px solid rgba(255,255,255,0.95)',
+                        boxShadow: '0 4px 24px hsla(258,78%,55%,0.18), 0 1px 0 rgba(255,255,255,1) inset, 0 -1px 0 hsla(258,78%,55%,0.08) inset',
+                        color: 'hsl(258,78%,48%)',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      <CreditCard size={18} strokeWidth={2.5} /> Buy Now
+                    </button>
+                  )}
 
                   {/* WhatsApp + Cart — row */}
                   <div className="grid grid-cols-2 gap-2.5">
-                    {/* WhatsApp */}
-                    <button onClick={waOrder}
+                    {/* WhatsApp — always active so customers can talk about the product */}
+                    <button onClick={outOfStock ? waPreOrder : waOrder}
                       className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(243,242,255,0.76) 100%)',
@@ -1175,10 +1200,11 @@ const ProductDetail = () => {
                       <MessageCircle size={15} strokeWidth={2.5} /> WhatsApp
                     </button>
 
-                    {/* Cart */}
+                    {/* Cart — disabled when out of stock */}
                     <button
-                      onClick={() => addToCart(cartItem, quantity)}
-                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                      disabled={outOfStock}
+                      onClick={() => { if (outOfStock) return; addToCart(cartItem, quantity); }}
+                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                       style={{
                         background: inCart
                           ? 'linear-gradient(135deg, rgba(240,255,248,0.88) 0%, rgba(230,250,255,0.82) 100%)'
@@ -1193,7 +1219,7 @@ const ProductDetail = () => {
                       }}
                     >
                       <ShoppingCart size={15} strokeWidth={2.5} />
-                      {inCart ? '✓ Added' : 'Cart'}
+                      {outOfStock ? 'Out of Stock' : (inCart ? '✓ Added' : 'Cart')}
                     </button>
                   </div>
                 </div>
