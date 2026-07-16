@@ -22,6 +22,8 @@ const mapProduct = (p: any): Product => ({
   isBestseller:  p.is_featured,
   isNew:         new Date(p.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
   customFields:  Array.isArray(p.custom_fields) ? p.custom_fields : [],
+  stockQuantity: p.stock_quantity ?? null,
+  status:        p.status,
 });
 
 const LIMIT = 10;
@@ -32,8 +34,8 @@ const trimToFullRows = (count: number, cols: number) => Math.floor(count / cols)
 const fetchProducts = async () => {
   const { data, error } = await supabase
     .from('products')
-    .select('id, slug, name, price, original_price, discount_percent, image_url, is_featured, total_sales, created_at, status, category:category_id(name, sort_order)')
-    .eq('status', 'active')
+    .select('id, slug, name, price, original_price, discount_percent, image_url, is_featured, total_sales, created_at, status, stock_quantity, category:category_id(name, sort_order)')
+    .in('status', ['active', 'out_of_stock'])
     .order('sort_order', { ascending: true })
     .limit(80);
   if (error) throw error;
