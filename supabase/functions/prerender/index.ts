@@ -43,10 +43,9 @@ Deno.serve(async (req) => {
 
     // Fetch reviews
     const { data: reviews } = await supabase
-      .from('product_reviews')
+      .from('product_reviews_public')
       .select('rating, author_name, body, created_at')
       .eq('product_slug', slug)
-      .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .limit(10);
 
