@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useReveal } from '@/hooks/useReveal';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Flame, Timer, ArrowRight, ShoppingCart, Zap, TrendingDown } from 'lucide-react';
+import { Flame, Timer, ArrowRight, ShoppingCart, Zap, TrendingDown, MessageCircle } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useQuery } from '@tanstack/react-query';
 
@@ -16,7 +16,11 @@ interface FlashProduct {
   image_url: string | null;
   delivery_time: string | null;
   short_description: string | null;
+  status: string | null;
+  stock_quantity: number | null;
 }
+
+const WA_NUMBER = '8801840099853';
 
 const getSaleEndTime = (): number => {
   const key = 'flash_sale_end';
@@ -59,8 +63,8 @@ const FlashSale = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, slug, price, original_price, discount_percent, image_url, delivery_time, short_description')
-        .eq('status', 'active')
+        .select('id, name, slug, price, original_price, discount_percent, image_url, delivery_time, short_description, status, stock_quantity')
+        .in('status', ['active', 'out_of_stock'])
         .not('discount_percent', 'is', null)
         .order('discount_percent', { ascending: false })
         .limit(10);
@@ -202,9 +206,11 @@ interface FlashCardProps {
 const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) => {
   const [hovered, setHovered] = useState(false);
   const savings = product.original_price ? Math.round(product.original_price - product.price) : null;
+  const outOfStock = product.status === 'out_of_stock' || (typeof product.stock_quantity === 'number' && product.stock_quantity <= 0);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (outOfStock) return;
     onAddToCart({
       id: product.id,
       name: product.name,
@@ -213,6 +219,12 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
       image: product.image_url || '',
       category: 'Flash Sale',
     });
+  };
+
+  const handlePreOrder = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const msg = encodeURIComponent(`প্রি-অর্ডার করতে চাই (Stock Out):\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}\n\nকখন আবার stock আসবে জানাবেন please।`);
+    window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
   };
 
   return (
@@ -247,7 +259,17 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
         />
         <div className="absolute inset-0 pointer-events-none transition-opacity duration-300"
           style={{ background: 'linear-gradient(to top, hsla(226,35%,8%,0.4), transparent)', opacity: hovered ? 1 : 0 }} />
-        {product.discount_percent && (
+        {outOfStock && (
+          <>
+            <div className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(to top, hsla(0,0%,0%,0.35), hsla(0,0%,0%,0.05))' }} />
+            <div className="absolute top-2.5 left-2.5 text-white text-[10px] font-black tracking-wider px-2.5 py-1 rounded-xl"
+              style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))', boxShadow: '0 2px 10px hsla(0,80%,55%,0.5)' }}>
+              STOCK OUT
+            </div>
+          </>
+        )}
+        {!outOfStock && product.discount_percent && (
           <div className="absolute top-2.5 left-2.5 text-white text-[11px] font-black px-2.5 py-1 rounded-xl flex items-center gap-1"
             style={{ background: 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,55%))', boxShadow: '0 2px 10px hsla(15,100%,60%,0.5)' }}>
             <Zap size={10} fill="white" />
@@ -255,17 +277,21 @@ const FlashCard = ({ product, delay, onAddToCart, onNavigate }: FlashCardProps) 
           </div>
         )}
         <button
-          onClick={handleAddToCart}
+          onClick={outOfStock ? handlePreOrder : handleAddToCart}
           className="absolute bottom-2.5 right-2.5 w-9 h-9 rounded-xl text-white flex items-center justify-center transition-all duration-200 hover:scale-110"
           style={{
-            background: 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,55%))',
+            background: outOfStock
+              ? 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))'
+              : 'linear-gradient(135deg, hsl(15,100%,62%), hsl(38,100%,55%))',
             opacity: hovered ? 1 : 0,
             transform: hovered ? 'translateY(0)' : 'translateY(4px)',
-            boxShadow: '0 4px 12px hsla(15,100%,60%,0.5)',
+            boxShadow: outOfStock
+              ? '0 4px 12px hsla(0,80%,55%,0.5)'
+              : '0 4px 12px hsla(15,100%,60%,0.5)',
           }}
-          title="Add to cart"
+          title={outOfStock ? 'Pre-order via WhatsApp' : 'Add to cart'}
         >
-          <ShoppingCart size={15} />
+          {outOfStock ? <MessageCircle size={15} /> : <ShoppingCart size={15} />}
         </button>
       </div>
 

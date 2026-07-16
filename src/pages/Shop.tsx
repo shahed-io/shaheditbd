@@ -6,7 +6,7 @@ import Navbar from '@/components/store/Navbar';
 import Footer from '@/components/store/Footer';
 import SEOHead from '@/components/seo/SEOHead';
 import { itemListSchema, breadcrumbSchema } from '@/components/seo/schemas';
-import { Search, X, ShoppingCart } from 'lucide-react';
+import { Search, X, ShoppingCart, MessageCircle } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useHideOrphans } from '@/hooks/useHideOrphans';
 
@@ -24,7 +24,10 @@ interface Product {
   status: string;
   category_id: string | null;
   short_description: string | null;
+  stock_quantity?: number | null;
 }
+
+const SHOP_WA = '8801840099853';
 
 interface Category {
   id: string;
@@ -56,11 +59,18 @@ const SORT_OPTIONS = [
 const ShopProductCard = ({ product }: { product: Product }) => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const outOfStock = product.status === 'out_of_stock' || (typeof product.stock_quantity === 'number' && product.stock_quantity <= 0);
   const discount = product.discount_percent ?? (
     product.original_price && product.original_price > product.price
       ? Math.round(100 - (product.price / product.original_price) * 100)
       : null
   );
+
+  const handlePreOrder = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const msg = encodeURIComponent(`প্রি-অর্ডার করতে চাই (Stock Out):\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}\n\nকখন আবার stock আসবে জানাবেন please।`);
+    window.open(`https://wa.me/${SHOP_WA}?text=${msg}`, '_blank');
+  };
 
   return (
     <div
@@ -77,7 +87,15 @@ const ShopProductCard = ({ product }: { product: Product }) => {
           ? <img src={product.image_url} alt={`${product.name} — Buy Online in Bangladesh at Shahed Store`} title={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
           : <div className="w-full h-full flex items-center justify-center text-4xl" style={{ background: 'hsla(258,78%,55%,0.06)' }}>🛒</div>
         }
-        {discount && (
+        {outOfStock && (
+          <>
+            <div className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(to top, hsla(0,0%,0%,0.35), hsla(0,0%,0%,0.05))' }} />
+            <span className="absolute top-2 left-2 text-[10px] font-black tracking-wider text-white px-2 py-1 rounded-full"
+              style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))' }}>STOCK OUT</span>
+          </>
+        )}
+        {!outOfStock && discount && (
           <span className="absolute top-2 left-2 text-[10px] font-bold text-white px-2 py-1 rounded-full"
             style={{ background: 'hsl(32,100%,52%)' }}>-{discount}%</span>
         )}
@@ -98,16 +116,27 @@ const ShopProductCard = ({ product }: { product: Product }) => {
               <div className="text-xs text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</div>
             )}
           </div>
-          <button
-            onClick={e => {
-              e.stopPropagation();
-              addToCart({ id: product.id, name: product.name, price: product.price, category: '', image: product.image_url || '' });
-            }}
-            aria-label={`Add ${product.name} to cart`}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
-            <ShoppingCart size={14} />
-          </button>
+          {outOfStock ? (
+            <button
+              onClick={handlePreOrder}
+              aria-label={`Pre-order ${product.name} via WhatsApp`}
+              title="Pre-order via WhatsApp"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))' }}>
+              <MessageCircle size={14} />
+            </button>
+          ) : (
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                addToCart({ id: product.id, name: product.name, price: product.price, category: '', image: product.image_url || '' });
+              }}
+              aria-label={`Add ${product.name} to cart`}
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,45%))' }}>
+              <ShoppingCart size={14} />
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -185,8 +214,8 @@ const Shop = () => {
       }
 
       let query = supabase.from('products')
-        .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description')
-        .eq('status', 'active');
+        .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description, stock_quantity')
+        .in('status', ['active', 'out_of_stock']);
 
       if (productIds !== null) query = query.in('id', productIds);
       if (search) {
@@ -235,9 +264,9 @@ const Shop = () => {
             const topIds = ids.slice(0, 6);
             if (topIds.length > 0) {
               let prodQuery = supabase.from('products')
-                .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description, total_sales, created_at')
+                .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description, stock_quantity, total_sales, created_at')
                 .in('id', topIds)
-                .eq('status', 'active');
+                .in('status', ['active', 'out_of_stock']);
               if (productIds !== null) prodQuery = prodQuery.in('id', productIds);
               const { data: prods } = await prodQuery;
               const relevance = new Map(topIds.map((id, i) => [id, i]));

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Heart, ShoppingCart, MessageCircle, CreditCard, Zap, Star, X, Clock, CheckCircle } from 'lucide-react';
-import { Product } from '@/data/products';
+import { Product, isProductOutOfStock } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import QuickOrderModal from './QuickOrderModal';
@@ -45,9 +45,15 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
   const wishlisted = isWishlisted(String(product.id));
   const inCart     = isInCart(product.id);
+  const outOfStock = isProductOutOfStock({ status: product.status, stockQuantity: product.stockQuantity });
 
   const waMsg = () => {
     const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}`);
+    window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
+  };
+
+  const waPreOrder = () => {
+    const msg = encodeURIComponent(`প্রি-অর্ডার করতে চাই (Stock Out):\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}\n\nকখন আবার stock আসবে জানাবেন please।`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
@@ -339,14 +345,26 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
           {/* Badges — bottom-left so they don't clash with the brand pills baked into the card image */}
           <div className="absolute bottom-2.5 left-2.5 flex flex-row gap-1.5 z-10">
-            {product.discount && (
+            {outOfStock && (
+              <span className="text-[9px] font-black tracking-wider px-2 py-1 rounded-lg text-white"
+                style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))', boxShadow: '0 2px 8px hsla(0,80%,55%,0.5)' }}>
+                STOCK OUT
+              </span>
+            )}
+            {!outOfStock && product.discount && (
               <span className="badge-sale">-{product.discount}%</span>
             )}
-            {product.isBestseller && (
+            {!outOfStock && product.isBestseller && (
               <span className="badge-hot-item flex items-center gap-0.5"><Zap size={8} fill="white" /> HOT</span>
             )}
-            {product.isNew && <span className="badge-new-item">NEW</span>}
+            {!outOfStock && product.isNew && <span className="badge-new-item">NEW</span>}
           </div>
+
+          {/* Out-of-stock veil over image */}
+          {outOfStock && (
+            <div className="absolute inset-0 z-[5] pointer-events-none"
+              style={{ background: 'linear-gradient(to top, hsla(0,0%,0%,0.35), hsla(0,0%,0%,0.05))' }} />
+          )}
 
           {/* Wishlist btn */}
           <button
@@ -408,15 +426,27 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
           </div>
 
           <div className="space-y-2">
-            <button
-              onClick={e => { e.stopPropagation(); setShowModal(true); }}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
-              style={{
-                background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-                boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
-              }}>
-              <CreditCard size={12} /> Buy Now
-            </button>
+            {outOfStock ? (
+              <button
+                onClick={e => { e.stopPropagation(); waPreOrder(); }}
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))',
+                  boxShadow: '0 4px 16px hsla(0,80%,55%,0.35)',
+                }}>
+                <Clock size={12} /> Pre-order
+              </button>
+            ) : (
+              <button
+                onClick={e => { e.stopPropagation(); setShowModal(true); }}
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
+                  boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
+                }}>
+                <CreditCard size={12} /> Buy Now
+              </button>
+            )}
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={e => { e.stopPropagation(); waMsg(); }}
@@ -429,14 +459,15 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
                 <MessageCircle size={11} /> WhatsApp
               </button>
               <button
-                onClick={e => { e.stopPropagation(); addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
-                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
+                disabled={outOfStock}
+                onClick={e => { e.stopPropagation(); if (outOfStock) return; addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
+                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 style={inCart
                   ? { background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.4)', color: 'hsl(271,91%,75%)' }
                   : { background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }
                 }>
                 <ShoppingCart size={11} />
-                {inCart ? '✓ Added' : 'Cart'}
+                {outOfStock ? 'Out' : (inCart ? '✓ Added' : 'Cart')}
               </button>
             </div>
           </div>
