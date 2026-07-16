@@ -165,35 +165,44 @@ const MobileBottomNav = () => {
     if (activeIndex < 0) return;
     if (e.pointerType === 'mouse') return; // mouse users click
     const pillWidth = (e.currentTarget.clientWidth - 12) / navItems.length;
-    setDrag({ startX: e.clientX, currentX: e.clientX, active: false, pillWidth });
+    // Use ref (no re-render) so button click events aren't disrupted
+    dragRef.current = { startX: e.clientX, pillWidth, active: false };
   };
 
   const onRailPointerMove = (e: React.PointerEvent<HTMLUListElement>) => {
-    if (!drag) return;
-    const delta = e.clientX - drag.startX;
-    if (!drag.active && Math.abs(delta) < SWIPE_START_THRESHOLD) return;
-    setDrag({ ...drag, currentX: e.clientX, active: true });
+    const d = dragRef.current;
+    if (!d) return;
+    const delta = e.clientX - d.startX;
+    if (!d.active) {
+      if (Math.abs(delta) < SWIPE_START_THRESHOLD) return;
+      d.active = true;
+      setIsDragging(true);
+    }
+    const clamped = Math.max(
+      -activeIndex * d.pillWidth,
+      Math.min((navItems.length - 1 - activeIndex) * d.pillWidth, delta)
+    );
+    setDragOffset(clamped);
   };
 
-  const onRailPointerUp = () => {
-    if (!drag) return;
-    if (!drag.active) { setDrag(null); return; }
-    const delta = drag.currentX - drag.startX;
-    const threshold = drag.pillWidth * 0.5;
+  const onRailPointerUp = (e: React.PointerEvent<HTMLUListElement>) => {
+    const d = dragRef.current;
+    dragRef.current = null;
+    if (!d || !d.active) {
+      setIsDragging(false);
+      setDragOffset(0);
+      return;
+    }
+    const delta = e.clientX - d.startX;
+    const threshold = d.pillWidth * 0.5;
     let nextIdx = activeIndex;
     if (delta > threshold) nextIdx = Math.min(navItems.length - 1, activeIndex + 1);
     else if (delta < -threshold) nextIdx = Math.max(0, activeIndex - 1);
-    setDrag(null);
+    setIsDragging(false);
+    setDragOffset(0);
     if (nextIdx !== activeIndex) navigateToIndex(nextIdx);
   };
 
-  // Live offset while dragging (clamped within rail)
-  const dragOffset = drag?.active
-    ? Math.max(
-        -activeIndex * drag.pillWidth,
-        Math.min((navItems.length - 1 - activeIndex) * drag.pillWidth, drag.currentX - drag.startX)
-      )
-    : 0;
 
   return (
     <>
