@@ -264,9 +264,9 @@ const Shop = () => {
             const topIds = ids.slice(0, 6);
             if (topIds.length > 0) {
               let prodQuery = supabase.from('products')
-                .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description, total_sales, created_at')
+                .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description, stock_quantity, total_sales, created_at')
                 .in('id', topIds)
-                .eq('status', 'active');
+                .in('status', ['active', 'out_of_stock']);
               if (productIds !== null) prodQuery = prodQuery.in('id', productIds);
               const { data: prods } = await prodQuery;
               const relevance = new Map(topIds.map((id, i) => [id, i]));
