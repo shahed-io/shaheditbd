@@ -984,7 +984,190 @@ async function handleWebCheckout(bot: string, chatId: number, supabase: any, lan
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// MAIN POLLING LOOP
+// UPDATE PROCESSOR — one entry point for both webhook + polling loop
+// ═══════════════════════════════════════════════════════════════════════════
+async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Promise<void> {
+  // ─── CALLBACK QUERY ──────────────────────────────────────────
+  if (update.callback_query) {
+    const cb = update.callback_query;
+    const chatId = cb.message.chat.id;
+    const msgId = cb.message.message_id;
+    const cbData = cb.data;
+    const lang = await getLang(supabase, chatId);
+
+    if (cbData === 'start') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleStart(BOT_TOKEN, chatId, supabase, lang);
+    } else if (cbData === 'shop') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleShop(BOT_TOKEN, chatId, supabase, lang, msgId);
+    } else if (cbData === 'deals') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleDeals(BOT_TOKEN, chatId, supabase, lang, msgId);
+    } else if (cbData === 'new') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleNewArrivals(BOT_TOKEN, chatId, supabase, lang, msgId);
+    } else if (cbData === 'orders') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleMyOrders(BOT_TOKEN, chatId, supabase, lang, msgId);
+    } else if (cbData === 'account') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleAccount(BOT_TOKEN, chatId, lang, msgId);
+    } else if (cbData === 'help') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleHelp(BOT_TOKEN, chatId, lang);
+    } else if (cbData === 'contact') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleContact(BOT_TOKEN, chatId, supabase, lang);
+    } else if (cbData === 'support') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleContact(BOT_TOKEN, chatId, supabase, lang);
+    } else if (cbData === 'lang') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleLanguagePicker(BOT_TOKEN, chatId, lang);
+    } else if (cbData.startsWith('setlang:')) {
+      const newLang = (cbData.substring(8) === 'en' ? 'en' : 'bn') as Lang;
+      await setLang(supabase, chatId, newLang);
+      await answerCb(BOT_TOKEN, cb.id, t(newLang, newLang === 'en' ? 'lang_set_en' : 'lang_set_bn'));
+      await handleStart(BOT_TOKEN, chatId, supabase, newLang);
+    } else if (cbData === 'search_hint') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await sendMsg(BOT_TOKEN, chatId, t(lang, 'search_prompt'));
+    } else if (cbData.startsWith('cat:')) {
+      await answerCb(BOT_TOKEN, cb.id);
+      const parts = cbData.split(':');
+      const catId = parts[1];
+      const page = parts[2] ? parseInt(parts[2]) : 0;
+      await handleCategory(BOT_TOKEN, chatId, catId, supabase, lang, msgId, page);
+    } else if (cbData.startsWith('prod:')) {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleProductDetail(BOT_TOKEN, chatId, cbData.substring(5), supabase, lang, msgId);
+    } else if (cbData.startsWith('add:')) {
+      await answerCb(BOT_TOKEN, cb.id, '✅ ' + t(lang, 'added_to_cart'));
+      await handleAddToCart(BOT_TOKEN, chatId, cbData.substring(4), supabase, lang);
+    } else if (cbData.startsWith('buy:')) {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleBuyNow(BOT_TOKEN, chatId, cbData.substring(4), supabase, lang);
+    } else if (cbData === 'cart') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleCart(BOT_TOKEN, chatId, supabase, lang, msgId);
+    } else if (cbData.startsWith('qty:')) {
+      await answerCb(BOT_TOKEN, cb.id);
+      const parts = cbData.split(':');
+      await handleQty(BOT_TOKEN, chatId, parts[1], parts[2], supabase);
+      await handleCart(BOT_TOKEN, chatId, supabase, lang, msgId);
+    } else if (cbData.startsWith('rm:')) {
+      await answerCb(BOT_TOKEN, cb.id, '🗑️');
+      await supabase.from('telegram_cart').delete()
+        .eq('chat_id', String(chatId)).eq('product_slug', cbData.substring(3));
+      await handleCart(BOT_TOKEN, chatId, supabase, lang, msgId);
+    } else if (cbData === 'clear_cart') {
+      await answerCb(BOT_TOKEN, cb.id, '🗑️');
+      await supabase.from('telegram_cart').delete().eq('chat_id', String(chatId));
+      await handleCart(BOT_TOKEN, chatId, supabase, lang, msgId);
+    } else if (cbData === 'co_tg') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await startTgCheckout(BOT_TOKEN, chatId, supabase, lang);
+    } else if (cbData === 'co_web') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleWebCheckout(BOT_TOKEN, chatId, supabase, lang);
+    } else if (cbData.startsWith('pay:')) {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handlePaymentSelect(BOT_TOKEN, chatId, cbData.substring(4), supabase, lang);
+    } else if (cbData === 'cancel_co') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await supabase.from('telegram_checkout_state').delete().eq('chat_id', String(chatId));
+      await sendMsg(BOT_TOKEN, chatId, t(lang, 'order_cancelled'), inlineKb([
+        [{ text: t(lang, 'btn_view_cart'), callback_data: 'cart' }],
+        [{ text: t(lang, 'btn_menu'), callback_data: 'start' }],
+      ]));
+    } else if (cbData.startsWith('trk:')) {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleTrack(BOT_TOKEN, chatId, cbData.substring(4), supabase, lang);
+    } else if (cbData === 'noop') {
+      await answerCb(BOT_TOKEN, cb.id);
+    }
+    return;
+  }
+
+  // ─── TEXT MESSAGE ────────────────────────────────────────────
+  const msg = update.message;
+  if (!msg || !msg.text) return;
+
+  const chatId = msg.chat.id;
+  const text = msg.text.trim();
+  let lang = await getLang(supabase, chatId);
+
+  // Auto-detect language preference from Telegram client on first interaction
+  if (text === '/start' || text.startsWith('/start ')) {
+    const tgLang = msg.from?.language_code;
+    const { data: pref } = await supabase
+      .from('telegram_user_prefs').select('chat_id').eq('chat_id', String(chatId)).maybeSingle();
+    if (!pref && tgLang) {
+      const detected: Lang = tgLang.startsWith('bn') ? 'bn' : 'en';
+      await setLang(supabase, chatId, detected);
+      lang = detected;
+    }
+  }
+
+  // Check checkout flow first
+  const handled = await handleCheckoutStep(BOT_TOKEN, chatId, text, supabase, lang);
+  if (handled) return;
+
+  // ─── COMMANDS ──────────────────────────────────────────────
+  if (text === '/start' || text.startsWith('/start ') || text === '/menu') {
+    await handleStart(BOT_TOKEN, chatId, supabase, lang);
+  } else if (text === '/shop' || text === '/products' || text === '/categories') {
+    await handleShop(BOT_TOKEN, chatId, supabase, lang);
+  } else if (text === '/deals' || text === '/offers' || text === '/sale') {
+    await handleDeals(BOT_TOKEN, chatId, supabase, lang);
+  } else if (text === '/new' || text === '/latest') {
+    await handleNewArrivals(BOT_TOKEN, chatId, supabase, lang);
+  } else if (text.startsWith('/search')) {
+    await handleSearch(BOT_TOKEN, chatId, text.replace(/^\/search\s*/i, ''), supabase, lang);
+  } else if (text === '/cart') {
+    await handleCart(BOT_TOKEN, chatId, supabase, lang);
+  } else if (text === '/orders' || text === '/myorders') {
+    await handleMyOrders(BOT_TOKEN, chatId, supabase, lang);
+  } else if (text.startsWith('/track')) {
+    await handleTrack(BOT_TOKEN, chatId, text.replace(/^\/track\s*/i, ''), supabase, lang);
+  } else if (text === '/account' || text === '/profile' || text === '/wallet' || text === '/points' || text === '/referral') {
+    await handleAccount(BOT_TOKEN, chatId, lang);
+  } else if (text === '/support' || text === '/contact') {
+    await handleContact(BOT_TOKEN, chatId, supabase, lang);
+  } else if (text === '/faq') {
+    await handleFaq(BOT_TOKEN, chatId, lang);
+  } else if (text === '/refund') {
+    await handleRefund(BOT_TOKEN, chatId, lang);
+  } else if (text === '/website' || text === '/site') {
+    await sendMsg(BOT_TOKEN, chatId, `🌐 ${getSiteUrl()}`, inlineKb([
+      [{ text: '🌐 ' + (lang === 'en' ? 'Open Website' : 'ওয়েবসাইট খুলুন'), url: getSiteUrl() }],
+      [{ text: t(lang, 'btn_menu'), callback_data: 'start' }],
+    ]));
+  } else if (text === '/language' || text === '/lang') {
+    await handleLanguagePicker(BOT_TOKEN, chatId, lang);
+  } else if (text === '/help') {
+    await handleHelp(BOT_TOKEN, chatId, lang);
+  } else if (text.startsWith('/')) {
+    await sendMsg(BOT_TOKEN, chatId,
+      `${t(lang, 'unknown_command')}\n\n💡 ${t(lang, 'cmd_list')}`,
+      inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]])
+    );
+  } else {
+    // Plain text → suggest search
+    await sendMsg(BOT_TOKEN, chatId,
+      `🤔 ${t(lang, 'unknown_command')}\n\n"${text}" — ${t(lang, 'suggest_search')}`,
+      inlineKb([
+        [{ text: `🔍 "${text}"`, callback_data: `noop` }],
+        [{ text: t(lang, 'btn_search'), callback_data: 'search_hint' }, { text: t(lang, 'btn_menu'), callback_data: 'start' }],
+      ])
+    );
+    await handleSearch(BOT_TOKEN, chatId, text, supabase, lang);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MAIN — webhook (instant) + fallback polling loop
 // ═══════════════════════════════════════════════════════════════════════════
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
@@ -1011,6 +1194,94 @@ Deno.serve(async (req) => {
         status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // ─── SET WEBHOOK ─────────────────────────────────────────────────────
+    // POST /telegram-poll?action=set-webhook → registers this function as Telegram webhook
+    // + registers slash commands + menu button. After this, updates arrive INSTANTLY
+    // (no more cron polling latency). Also computes/stores a secret token to
+    // authenticate incoming Telegram calls.
+    if (url.searchParams.get('action') === 'set-webhook') {
+      const supaUrl = Deno.env.get('SUPABASE_URL')!;
+      // Derive project ref from Supabase URL (works for both direct and proxied hosts)
+      const projectRef = new URL(supaUrl).host.split('.')[0];
+      const webhookUrl = `https://${projectRef}.supabase.co/functions/v1/telegram-poll`;
+
+      // Derive a deterministic secret from the bot token so both sides agree
+      const enc = new TextEncoder().encode(`tg-webhook-v1:${BOT_TOKEN}`);
+      const digest = await crypto.subtle.digest('SHA-256', enc);
+      const secretToken = btoa(String.fromCharCode(...new Uint8Array(digest)))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '').slice(0, 64);
+
+      const setRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/setWebhook`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: webhookUrl,
+          secret_token: secretToken,
+          max_connections: 40,
+          allowed_updates: ['message', 'callback_query'],
+          drop_pending_updates: false,
+        }),
+      });
+      const setData = await setRes.json();
+      // Also (re)register the slash-menu commands so BotFather-style suggestions show up
+      await registerBotCommands(BOT_TOKEN);
+
+      return new Response(JSON.stringify({
+        ok: setData.ok === true,
+        webhook: webhookUrl,
+        telegram_response: setData,
+        commands_registered: true,
+      }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    // ─── DELETE WEBHOOK (revert to polling) ──────────────────────────────
+    if (url.searchParams.get('action') === 'delete-webhook') {
+      const delRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/deleteWebhook`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ drop_pending_updates: false }),
+      });
+      return new Response(JSON.stringify(await delRes.json()), {
+        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // ─── WEBHOOK MODE (instant delivery from Telegram) ───────────────────
+    // Telegram POSTs update JSON directly. Detect by presence of `update_id`.
+    if (req.method === 'POST') {
+      let body: any = null;
+      try { body = await req.clone().json(); } catch { /* not JSON */ }
+
+      if (body && typeof body.update_id === 'number') {
+        // Verify Telegram's secret_token header
+        const enc = new TextEncoder().encode(`tg-webhook-v1:${BOT_TOKEN}`);
+        const digest = await crypto.subtle.digest('SHA-256', enc);
+        const expectedSecret = btoa(String.fromCharCode(...new Uint8Array(digest)))
+          .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '').slice(0, 64);
+        const gotSecret = req.headers.get('X-Telegram-Bot-Api-Secret-Token');
+        if (gotSecret !== expectedSecret) {
+          return new Response('unauthorized', { status: 401 });
+        }
+
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        );
+
+        // Ack Telegram immediately (<1s). Process asynchronously so heavy
+        // handlers (image uploads, multi-DB reads) don't delay the ack and
+        // trigger Telegram's aggressive retry storm.
+        (async () => {
+          try { await processUpdate(body, BOT_TOKEN, supabase); }
+          catch (e) { console.error('Webhook handler error:', e); }
+        })();
+
+        return new Response(JSON.stringify({ ok: true }), {
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -1059,189 +1330,7 @@ Deno.serve(async (req) => {
 
       for (const update of updates) {
         try {
-          // ─── CALLBACK QUERY ──────────────────────────────────────────
-          if (update.callback_query) {
-            const cb = update.callback_query;
-            const chatId = cb.message.chat.id;
-            const msgId = cb.message.message_id;
-            const cbData = cb.data;
-            const lang = await getLang(supabase, chatId);
-
-            if (cbData === 'start') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleStart(BOT_TOKEN, chatId, supabase, lang);
-            } else if (cbData === 'shop') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleShop(BOT_TOKEN, chatId, supabase, lang, msgId);
-            } else if (cbData === 'deals') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleDeals(BOT_TOKEN, chatId, supabase, lang, msgId);
-            } else if (cbData === 'new') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleNewArrivals(BOT_TOKEN, chatId, supabase, lang, msgId);
-            } else if (cbData === 'orders') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleMyOrders(BOT_TOKEN, chatId, supabase, lang, msgId);
-            } else if (cbData === 'account') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleAccount(BOT_TOKEN, chatId, lang, msgId);
-            } else if (cbData === 'help') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleHelp(BOT_TOKEN, chatId, lang);
-            } else if (cbData === 'contact') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleContact(BOT_TOKEN, chatId, supabase, lang);
-            } else if (cbData === 'support') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleContact(BOT_TOKEN, chatId, supabase, lang);
-            } else if (cbData === 'lang') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleLanguagePicker(BOT_TOKEN, chatId, lang);
-            } else if (cbData.startsWith('setlang:')) {
-              const newLang = (cbData.substring(8) === 'en' ? 'en' : 'bn') as Lang;
-              await setLang(supabase, chatId, newLang);
-              await answerCb(BOT_TOKEN, cb.id, t(newLang, newLang === 'en' ? 'lang_set_en' : 'lang_set_bn'));
-              await handleStart(BOT_TOKEN, chatId, supabase, newLang);
-            } else if (cbData === 'search_hint') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await sendMsg(BOT_TOKEN, chatId, t(lang, 'search_prompt'));
-            } else if (cbData.startsWith('cat:')) {
-              await answerCb(BOT_TOKEN, cb.id);
-              const parts = cbData.split(':');
-              const catId = parts[1];
-              const page = parts[2] ? parseInt(parts[2]) : 0;
-              await handleCategory(BOT_TOKEN, chatId, catId, supabase, lang, msgId, page);
-            } else if (cbData.startsWith('prod:')) {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleProductDetail(BOT_TOKEN, chatId, cbData.substring(5), supabase, lang, msgId);
-            } else if (cbData.startsWith('add:')) {
-              await answerCb(BOT_TOKEN, cb.id, '✅ ' + t(lang, 'added_to_cart'));
-              await handleAddToCart(BOT_TOKEN, chatId, cbData.substring(4), supabase, lang);
-            } else if (cbData.startsWith('buy:')) {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleBuyNow(BOT_TOKEN, chatId, cbData.substring(4), supabase, lang);
-            } else if (cbData === 'cart') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleCart(BOT_TOKEN, chatId, supabase, lang, msgId);
-            } else if (cbData.startsWith('qty:')) {
-              await answerCb(BOT_TOKEN, cb.id);
-              const parts = cbData.split(':');
-              await handleQty(BOT_TOKEN, chatId, parts[1], parts[2], supabase);
-              await handleCart(BOT_TOKEN, chatId, supabase, lang, msgId);
-            } else if (cbData.startsWith('rm:')) {
-              await answerCb(BOT_TOKEN, cb.id, '🗑️');
-              await supabase.from('telegram_cart').delete()
-                .eq('chat_id', String(chatId)).eq('product_slug', cbData.substring(3));
-              await handleCart(BOT_TOKEN, chatId, supabase, lang, msgId);
-            } else if (cbData === 'clear_cart') {
-              await answerCb(BOT_TOKEN, cb.id, '🗑️');
-              await supabase.from('telegram_cart').delete().eq('chat_id', String(chatId));
-              await handleCart(BOT_TOKEN, chatId, supabase, lang, msgId);
-            } else if (cbData === 'co_tg') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await startTgCheckout(BOT_TOKEN, chatId, supabase, lang);
-            } else if (cbData === 'co_web') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleWebCheckout(BOT_TOKEN, chatId, supabase, lang);
-            } else if (cbData.startsWith('pay:')) {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handlePaymentSelect(BOT_TOKEN, chatId, cbData.substring(4), supabase, lang);
-            } else if (cbData === 'cancel_co') {
-              await answerCb(BOT_TOKEN, cb.id);
-              await supabase.from('telegram_checkout_state').delete().eq('chat_id', String(chatId));
-              await sendMsg(BOT_TOKEN, chatId, t(lang, 'order_cancelled'), inlineKb([
-                [{ text: t(lang, 'btn_view_cart'), callback_data: 'cart' }],
-                [{ text: t(lang, 'btn_menu'), callback_data: 'start' }],
-              ]));
-            } else if (cbData.startsWith('trk:')) {
-              await answerCb(BOT_TOKEN, cb.id);
-              await handleTrack(BOT_TOKEN, chatId, cbData.substring(4), supabase, lang);
-            } else if (cbData === 'noop') {
-              await answerCb(BOT_TOKEN, cb.id);
-            }
-
-            totalProcessed++;
-            continue;
-          }
-
-          // ─── TEXT MESSAGE ────────────────────────────────────────────
-          const msg = update.message;
-          if (!msg || !msg.text) continue;
-
-          const chatId = msg.chat.id;
-          const text = msg.text.trim();
-          const lang = await getLang(supabase, chatId);
-
-          // Auto-detect language preference from Telegram client on first interaction
-          if (text === '/start' || text.startsWith('/start ')) {
-            const tgLang = msg.from?.language_code;
-            const { data: pref } = await supabase
-              .from('telegram_user_prefs').select('chat_id').eq('chat_id', String(chatId)).maybeSingle();
-            if (!pref && tgLang) {
-              const detected: Lang = tgLang.startsWith('bn') ? 'bn' : 'en';
-              await setLang(supabase, chatId, detected);
-            }
-          }
-
-          // Check checkout flow first
-          const handled = await handleCheckoutStep(BOT_TOKEN, chatId, text, supabase, lang);
-          if (handled) { totalProcessed++; continue; }
-
-          const finalLang = await getLang(supabase, chatId);
-
-          // ─── COMMANDS ──────────────────────────────────────────────
-          if (text === '/start' || text.startsWith('/start ') || text === '/menu') {
-            await handleStart(BOT_TOKEN, chatId, supabase, finalLang);
-          } else if (text === '/shop' || text === '/products' || text === '/categories') {
-            await handleShop(BOT_TOKEN, chatId, supabase, finalLang);
-          } else if (text === '/deals' || text === '/offers' || text === '/sale') {
-            await handleDeals(BOT_TOKEN, chatId, supabase, finalLang);
-          } else if (text === '/new' || text === '/latest') {
-            await handleNewArrivals(BOT_TOKEN, chatId, supabase, finalLang);
-          } else if (text.startsWith('/search')) {
-            await handleSearch(BOT_TOKEN, chatId, text.replace(/^\/search\s*/i, ''), supabase, finalLang);
-          } else if (text === '/cart') {
-            await handleCart(BOT_TOKEN, chatId, supabase, finalLang);
-          } else if (text === '/orders' || text === '/myorders') {
-            await handleMyOrders(BOT_TOKEN, chatId, supabase, finalLang);
-          } else if (text.startsWith('/track')) {
-            await handleTrack(BOT_TOKEN, chatId, text.replace(/^\/track\s*/i, ''), supabase, finalLang);
-          } else if (text === '/account' || text === '/profile' || text === '/wallet' || text === '/points' || text === '/referral') {
-            await handleAccount(BOT_TOKEN, chatId, finalLang);
-          } else if (text === '/support' || text === '/contact') {
-            await handleContact(BOT_TOKEN, chatId, supabase, finalLang);
-          } else if (text === '/faq') {
-            await handleFaq(BOT_TOKEN, chatId, finalLang);
-          } else if (text === '/refund') {
-            await handleRefund(BOT_TOKEN, chatId, finalLang);
-          } else if (text === '/website' || text === '/site') {
-            await sendMsg(BOT_TOKEN, chatId, `🌐 ${getSiteUrl()}`, inlineKb([
-              [{ text: '🌐 ' + (finalLang === 'en' ? 'Open Website' : 'ওয়েবসাইট খুলুন'), url: getSiteUrl() }],
-              [{ text: t(finalLang, 'btn_menu'), callback_data: 'start' }],
-            ]));
-          } else if (text === '/language' || text === '/lang') {
-            await handleLanguagePicker(BOT_TOKEN, chatId, finalLang);
-          } else if (text === '/help') {
-            await handleHelp(BOT_TOKEN, chatId, finalLang);
-          } else if (text.startsWith('/')) {
-            // Unknown slash command
-            await sendMsg(BOT_TOKEN, chatId,
-              `${t(finalLang, 'unknown_command')}\n\n💡 ${t(finalLang, 'cmd_list')}`,
-              inlineKb([[{ text: t(finalLang, 'btn_menu'), callback_data: 'start' }]])
-            );
-          } else {
-            // Plain text → suggest search
-            await sendMsg(BOT_TOKEN, chatId,
-              `🤔 ${t(finalLang, 'unknown_command')}\n\n"${text}" — ${t(finalLang, 'suggest_search')}`,
-              inlineKb([
-                [{ text: `🔍 "${text}"`, callback_data: `noop` }],
-                [{ text: t(finalLang, 'btn_search'), callback_data: 'search_hint' }, { text: t(finalLang, 'btn_menu'), callback_data: 'start' }],
-              ])
-            );
-            // Trigger actual search anyway
-            await handleSearch(BOT_TOKEN, chatId, text, supabase, finalLang);
-          }
-
+          await processUpdate(update, BOT_TOKEN, supabase);
           totalProcessed++;
         } catch (handlerErr) {
           console.error('Handler error:', handlerErr);
