@@ -163,7 +163,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
       localStorage.setItem('pending_google_referral', referralCode.trim().toUpperCase());
     }
     const { error } = await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: window.location.origin,
+      redirect_uri: oauthRedirectTo || window.location.origin,
     });
     if (error) {
       toast.error('Google লগইন ব্যর্থ হয়েছে');
@@ -177,7 +177,7 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
       localStorage.setItem('pending_google_referral', referralCode.trim().toUpperCase());
     }
     const { error } = await lovable.auth.signInWithOAuth('apple', {
-      redirect_uri: window.location.origin,
+      redirect_uri: oauthRedirectTo || window.location.origin,
     });
     if (error) {
       toast.error('Apple লগইন ব্যর্থ হয়েছে');
