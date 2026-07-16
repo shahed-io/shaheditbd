@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Home, Store, Wallet, Package, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -29,13 +29,6 @@ const MobileBottomNav = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [orderCount, setOrderCount] = useState(0);
-  const dragRef = useRef<{
-    startX: number;
-    pillWidth: number;
-    active: boolean;
-  } | null>(null);
-  const [dragOffset, setDragOffset] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
 
   // Auto-hide when keyboard opens on mobile
   useEffect(() => {
@@ -154,8 +147,8 @@ const MobileBottomNav = () => {
     {
       label: 'Account',
       icon: User,
-      path: '/dashboard',
-      match: (p) => p === '/dashboard' && !location.search.includes('tab=orders') && !location.search.includes('tab=wallet'),
+      path: '/dashboard?tab=profile',
+      match: (p) => p === '/dashboard' && (!location.search || location.search.includes('tab=profile')),
       requireAuth: true,
       gradient: 'linear-gradient(135deg, hsl(160 75% 45%), hsl(185 90% 52%))',
     },
@@ -169,68 +162,11 @@ const MobileBottomNav = () => {
       setAuthOpen(true);
       return;
     }
-    navigate(item.path);
-  };
-
-  // Apple-style swipe gesture on the indicator pill — drag left/right to switch tabs
-
-  const navigateToIndex = (idx: number) => {
-    const target = navItems[idx];
-    if (!target) return;
-    if (target.requireAuth && !user) {
-      setAuthOpen(true);
-      return;
-    }
-    navigate(target.path);
-    // Haptic feedback on supported devices
-    if ('vibrate' in navigator) {
-      try { navigator.vibrate(10); } catch {}
-    }
-  };
-
-  // Swipe handlers — never capture pointer & never preventDefault, so taps and
-  // vertical scroll always work. Only navigate when user clearly swipes horizontally.
-  const SWIPE_START_THRESHOLD = 28; // px — must be a deliberate horizontal swipe
-  const onRailPointerDown = (e: React.PointerEvent<HTMLUListElement>) => {
-    if (activeIndex < 0) return;
-    if (e.pointerType === 'mouse') return; // mouse users click
-    const pillWidth = (e.currentTarget.clientWidth - 12) / navItems.length;
-    // Use ref (no re-render) so button click events aren't disrupted
-    dragRef.current = { startX: e.clientX, pillWidth, active: false };
-  };
-
-  const onRailPointerMove = (e: React.PointerEvent<HTMLUListElement>) => {
-    const d = dragRef.current;
-    if (!d) return;
-    const delta = e.clientX - d.startX;
-    if (!d.active) {
-      if (Math.abs(delta) < SWIPE_START_THRESHOLD) return;
-      d.active = true;
-      setIsDragging(true);
-    }
-    const clamped = Math.max(
-      -activeIndex * d.pillWidth,
-      Math.min((navItems.length - 1 - activeIndex) * d.pillWidth, delta)
-    );
-    setDragOffset(clamped);
-  };
-
-  const onRailPointerUp = (e: React.PointerEvent<HTMLUListElement>) => {
-    const d = dragRef.current;
-    dragRef.current = null;
-    if (!d || !d.active) {
-      setIsDragging(false);
-      setDragOffset(0);
-      return;
-    }
-    const delta = e.clientX - d.startX;
-    const threshold = d.pillWidth * 0.5;
-    let nextIdx = activeIndex;
-    if (delta > threshold) nextIdx = Math.min(navItems.length - 1, activeIndex + 1);
-    else if (delta < -threshold) nextIdx = Math.max(0, activeIndex - 1);
-    setIsDragging(false);
-    setDragOffset(0);
-    if (nextIdx !== activeIndex) navigateToIndex(nextIdx);
+    setHidden(false);
+    navigate(item.path, {
+      replace: location.pathname === '/dashboard',
+      state: { mobileNavTap: Date.now() },
+    });
   };
 
 
@@ -272,15 +208,10 @@ const MobileBottomNav = () => {
             {/* Sliding active indicator (gradient blob) — purely visual, never blocks taps */}
             {activeIndex >= 0 && (
               <div
-                className={`absolute top-1.5 bottom-1.5 z-0 pointer-events-none ${
-                  isDragging
-                    ? 'transition-none'
-                    : 'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]'
-                }`}
+                className="absolute top-1.5 bottom-1.5 z-0 pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
                 style={{
                   width: `calc((100% - 12px) / ${navItems.length})`,
                   left: `calc(6px + ${activeIndex} * ((100% - 12px) / ${navItems.length}))`,
-                  transform: `translateX(${dragOffset}px)`,
                 }}
               >
                 <div
@@ -292,7 +223,7 @@ const MobileBottomNav = () => {
                         .match(/hsl\([^)]+\)/)?.[0] || 'hsla(258,78%,55%,0.55)'
                     }, 0 4px 12px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.12)`,
                     opacity: 1,
-                    transform: isDragging ? 'scale(0.96)' : 'scale(1)',
+                    transform: 'scale(1)',
                     transition: 'transform 0.2s',
                     border: '1.5px solid rgba(255,255,255,0.55)',
                   }}
@@ -302,10 +233,6 @@ const MobileBottomNav = () => {
 
             <ul
               className="relative z-10 grid grid-cols-5 px-1.5 py-1.5 touch-pan-y"
-              onPointerDown={onRailPointerDown}
-              onPointerMove={onRailPointerMove}
-              onPointerUp={onRailPointerUp}
-              onPointerCancel={onRailPointerUp}
             >
               {navItems.map((item, idx) => {
                 const isActive = idx === activeIndex;
