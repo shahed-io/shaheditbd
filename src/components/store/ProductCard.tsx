@@ -45,9 +45,15 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
   const wishlisted = isWishlisted(String(product.id));
   const inCart     = isInCart(product.id);
+  const outOfStock = isProductOutOfStock({ status: product.status, stockQuantity: product.stockQuantity });
 
   const waMsg = () => {
     const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}`);
+    window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
+  };
+
+  const waPreOrder = () => {
+    const msg = encodeURIComponent(`প্রি-অর্ডার করতে চাই (Stock Out):\n📦 ${product.name}\n💰 ৳${product.price.toLocaleString()}\n\nকখন আবার stock আসবে জানাবেন please।`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
