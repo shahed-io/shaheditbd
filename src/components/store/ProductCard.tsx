@@ -345,17 +345,26 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
 
           {/* Badges — bottom-left so they don't clash with the brand pills baked into the card image */}
           <div className="absolute bottom-2.5 left-2.5 flex flex-row gap-1.5 z-10">
-            {product.discount && (
+            {outOfStock && (
+              <span className="text-[9px] font-black tracking-wider px-2 py-1 rounded-lg text-white"
+                style={{ background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))', boxShadow: '0 2px 8px hsla(0,80%,55%,0.5)' }}>
+                STOCK OUT
+              </span>
+            )}
+            {!outOfStock && product.discount && (
               <span className="badge-sale">-{product.discount}%</span>
             )}
-            {product.isBestseller && (
+            {!outOfStock && product.isBestseller && (
               <span className="badge-hot-item flex items-center gap-0.5"><Zap size={8} fill="white" /> HOT</span>
             )}
-            {product.isNew && <span className="badge-new-item">NEW</span>}
+            {!outOfStock && product.isNew && <span className="badge-new-item">NEW</span>}
           </div>
 
-          {/* Wishlist btn */}
-          <button
+          {/* Out-of-stock veil over image */}
+          {outOfStock && (
+            <div className="absolute inset-0 z-[5] pointer-events-none"
+              style={{ background: 'linear-gradient(to top, hsla(0,0%,0%,0.35), hsla(0,0%,0%,0.05))' }} />
+          )}
             onClick={e => {
               e.stopPropagation();
               toggleWishlist({ id: String(product.id), name: product.name, price: product.price, image: product.image });
