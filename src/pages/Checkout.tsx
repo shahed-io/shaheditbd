@@ -846,7 +846,7 @@ const Checkout = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead title="Checkout" description="Complete your secure checkout at Shahed Store." noIndex />
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} redirectAfterLogin={false} oauthRedirectTo={typeof window !== 'undefined' ? window.location.href : undefined} />
 
       {/* Login Required Banner for guests */}
       {!user && (
