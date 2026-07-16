@@ -214,8 +214,8 @@ const Shop = () => {
       }
 
       let query = supabase.from('products')
-        .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description')
-        .eq('status', 'active');
+        .select('id, name, slug, price, original_price, discount_percent, image_url, badge, is_featured, status, category_id, short_description, stock_quantity')
+        .in('status', ['active', 'out_of_stock']);
 
       if (productIds !== null) query = query.in('id', productIds);
       if (search) {
