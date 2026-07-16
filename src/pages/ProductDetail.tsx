@@ -390,8 +390,16 @@ const ProductDetail = () => {
     variant: selectedPlan ? selectedPlan.duration : undefined,
   };
 
+  const outOfStock = (product as any).status === 'out_of_stock'
+    || (typeof (product as any).stock_quantity === 'number' && (product as any).stock_quantity <= 0);
+
   const waOrder = () => {
     const msg = encodeURIComponent(`অর্ডার করতে চাই:\n📦 ${productDisplayName}${selectedOptsStr ? `\n⚙️ ${selectedOptsStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}`);
+    window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
+  };
+
+  const waPreOrder = () => {
+    const msg = encodeURIComponent(`প্রি-অর্ডার করতে চাই (Stock Out):\n📦 ${productDisplayName}${selectedOptsStr ? `\n⚙️ ${selectedOptsStr}` : ''}\n💰 ৳${displayPrice.toLocaleString()}\n🔗 ${window.location.href}\n\nকখন আবার stock আসবে জানাবেন please।`);
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
 
