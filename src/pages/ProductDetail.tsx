@@ -226,10 +226,9 @@ const ProductDetail = () => {
             }).catch(() => { /* silent */ });
           }).catch(() => { /* silent */ });
           // Fetch review stats for Google rich snippet schema
-          (supabase as any).from('product_reviews')
+          (supabase as any).from('product_reviews_public')
             .select('rating')
             .eq('product_slug', row.slug)
-            .eq('status', 'approved')
             .then(({ data: rData }: { data: any[] | null }) => {
               if (rData && rData.length > 0) {
                 const avg = rData.reduce((s: number, r: any) => s + r.rating, 0) / rData.length;
