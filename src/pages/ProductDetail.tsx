@@ -226,10 +226,9 @@ const ProductDetail = () => {
             }).catch(() => { /* silent */ });
           }).catch(() => { /* silent */ });
           // Fetch review stats for Google rich snippet schema
-          (supabase as any).from('product_reviews')
+          (supabase as any).from('product_reviews_public')
             .select('rating')
             .eq('product_slug', row.slug)
-            .eq('status', 'approved')
             .then(({ data: rData }: { data: any[] | null }) => {
               if (rData && rData.length > 0) {
                 const avg = rData.reduce((s: number, r: any) => s + r.rating, 0) / rData.length;
@@ -1669,13 +1668,12 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
 
   const fetchReviews = async () => {
     const { data } = await supabase
-      .from('product_reviews')
+      .from('product_reviews_public' as any)
       .select('id, author_name, rating, title, body, is_verified, helpful_count, created_at')
       .eq('product_slug', productSlug)
-      .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .limit(20);
-    setReviews(((data as Review[]) || []).map((review) => ({
+    setReviews(((data as unknown as Review[]) || []).map((review) => ({
       ...review,
       title: review.title ? normalizeBrandNameText(review.title) : review.title,
       body: normalizeBrandNameText(review.body),
