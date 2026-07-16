@@ -3780,6 +3780,7 @@ export type Database = {
           id: string
           is_used: boolean
           prize_label: string | null
+          used_at: string | null
           used_by_order_id: string | null
           visitor_id: string
         }
@@ -3793,6 +3794,7 @@ export type Database = {
           id?: string
           is_used?: boolean
           prize_label?: string | null
+          used_at?: string | null
           used_by_order_id?: string | null
           visitor_id: string
         }
@@ -3806,6 +3808,7 @@ export type Database = {
           id?: string
           is_used?: boolean
           prize_label?: string | null
+          used_at?: string | null
           used_by_order_id?: string | null
           visitor_id?: string
         }
