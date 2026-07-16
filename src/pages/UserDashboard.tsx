@@ -17,7 +17,7 @@ const ASSET_LOGOS: Record<string, string> = {
   upay: upayLogo,
   bkash_merchant: bkashMerchantLogo,
 };
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -254,6 +254,7 @@ const InstallAppTab = () => {
 const UserDashboard = () => {
   const { user, signOut, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const dashboardLocation = useLocation();
   const [searchParams] = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { wishlistItems } = useWishlist();
@@ -336,7 +337,7 @@ const UserDashboard = () => {
     setActiveTab(nextTab);
     setMobileShowContent(!!searchParams.get('tab'));
     window.scrollTo({ top: 0 });
-  }, [searchParams]);
+  }, [searchParams, dashboardLocation.state]);
 
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
 
