@@ -1673,7 +1673,7 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
       .eq('product_slug', productSlug)
       .order('created_at', { ascending: false })
       .limit(20);
-    setReviews(((data as Review[]) || []).map((review) => ({
+    setReviews(((data as unknown as Review[]) || []).map((review) => ({
       ...review,
       title: review.title ? normalizeBrandNameText(review.title) : review.title,
       body: normalizeBrandNameText(review.body),
