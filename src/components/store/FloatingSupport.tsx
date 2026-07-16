@@ -627,43 +627,43 @@ const FloatingSupport = () => {
         className="fixed right-4 sm:right-6 z-50 flex flex-col items-end gap-2.5 bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+16px)]"
       >
 
-        <div className="relative flex items-center justify-center fab-float">
-          {!chatOpen && !menuOpen && (
-            <>
-              <span className="fab-soft-ring fab-soft-ring-1" />
-              <span className="fab-soft-ring fab-soft-ring-2" />
-              <span className="fab-soft-ring fab-soft-ring-3" />
-              <span className="fab-halo" />
-              <span className="fab-ring fab-ring-1" />
-              <span className="fab-ring fab-ring-2" />
-            </>
-          )}
+        <button
+          onClick={() => {
+            if (chatOpen) setChatOpen(false);
+            else setMenuOpen(o => !o);
+          }}
+          className="fab-luminous group relative flex items-center justify-center w-16 h-16 transition-all duration-300 hover:scale-110 active:scale-95"
+          title="সাপোর্ট"
+          aria-label="সাপোর্ট"
+        >
+          {/* Outer halo / glow */}
+          <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-[#7c3aed] to-[#ec4899] opacity-40 blur-xl group-hover:opacity-60 transition-opacity" />
 
-          <button
-            onClick={() => {
-              if (chatOpen) setChatOpen(false);
-              else setMenuOpen(o => !o);
-            }}
-            className="fab-btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
-            style={{
-              background: (chatOpen || menuOpen)
-                ? 'linear-gradient(135deg, hsla(258,80%,97%,0.94), hsla(271,75%,94%,0.9))'
-                : `linear-gradient(135deg, ${config.fab_color_from || '#8b5cf6'} 0%, ${config.fab_color_mid || '#7c3aed'} 50%, ${config.fab_color_to || '#6d28d9'} 100%)`,
-              boxShadow: (chatOpen || menuOpen)
-                ? '0 18px 44px -10px hsla(258,70%,40%,0.32), 0 0 26px -6px hsla(271,91%,60%,0.4), inset 0 1px 0 hsla(0,0%,100%,0.9)'
-                : 'inset 0 1.5px 0 hsla(0,0%,100%,0.6), inset 0 -3px 8px hsla(263,70%,25%,0.35), 0 10px 28px -4px hsla(263,85%,50%,0.55), 0 4px 14px -2px hsla(270,80%,45%,0.4)',
-              border: (chatOpen || menuOpen) ? '1.5px solid hsla(258,70%,72%,0.6)' : 'none',
-              backdropFilter: (chatOpen || menuOpen) ? 'blur(40px) saturate(200%)' : 'none',
-            }}
-            title="সাপোর্ট"
-          >
-            {!chatOpen && !menuOpen && <span className="fab-gloss" />}
+          {/* Main glass body */}
+          <span className="relative w-full h-full flex items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-xl shadow-[0_8px_32px_rgba(124,58,237,0.3)] overflow-hidden">
+            {/* Internal gradient mesh */}
+            <span
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: (chatOpen || menuOpen)
+                  ? 'linear-gradient(45deg, hsla(258,80%,97%,0.85), hsla(271,75%,94%,0.75))'
+                  : 'linear-gradient(45deg, rgba(124,58,237,0.60), rgba(6,182,212,0.40), rgba(236,72,153,0.60))'
+              }}
+            />
+            {/* Icon */}
             {(chatOpen || menuOpen)
-              ? <X size={22} className="fs-x-rotate" style={{ color: 'hsl(258,78%,45%)' }} />
-              : <MessageCircleMore size={24} strokeWidth={2.25} className="relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.28)]" style={{ color: config.fab_icon_color || '#ffffff' }} />
+              ? <X size={26} strokeWidth={2.4} className="fs-x-rotate relative z-10" style={{ color: 'hsl(258,78%,45%)' }} />
+              : <MessageCircleMore size={28} strokeWidth={2} className="relative z-10 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.28)]" />
             }
-          </button>
-        </div>
+            {/* Premium highlight rim */}
+            <span className="absolute inset-0 rounded-full border-t border-l border-white/50 pointer-events-none" />
+          </span>
+
+          {/* Gold notification accent */}
+          {!chatOpen && !menuOpen && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white shadow-lg bg-[#f59e0b] fab-lum-badge" />
+          )}
+        </button>
       </div>
 
       <style>{`
@@ -675,6 +675,19 @@ const FloatingSupport = () => {
           from { opacity: 0; }
           to   { opacity: 1; }
         }
+
+        /* Luminous glass orb — breathing badge + gentle idle float */
+        @keyframes fabLumBadgePulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245,158,11,0.55); }
+          50%      { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+        }
+        .fab-lum-badge { animation: fabLumBadgePulse 2.2s ease-in-out infinite; }
+        @keyframes fabLumFloat {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-3px); }
+        }
+        .fab-luminous { animation: fabLumFloat 4s ease-in-out infinite; }
+        .fab-luminous:hover, .fab-luminous:active { animation: none; }
 
         /* Stacked violet-tinted glass pill buttons — premium glassmorphism */
         .fs-pill {
