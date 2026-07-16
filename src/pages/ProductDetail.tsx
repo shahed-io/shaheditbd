@@ -854,10 +854,17 @@ const ProductDetail = () => {
                     <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(226,25%,75%)' }} />
                     <span className="text-sm" style={{ color: 'hsl(226,25%,48%)' }}>{(product.total_sales || 0) + 50}+ sold</span>
                     <span className="w-1 h-1 rounded-full" style={{ background: 'hsl(226,25%,75%)' }} />
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
-                      style={{ color: 'hsl(158,80%,38%)', background: 'hsla(158,80%,48%,0.12)', border: '1px solid hsla(158,80%,48%,0.28)' }}>
-                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> In Stock
-                    </span>
+                    {outOfStock ? (
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
+                        style={{ color: 'hsl(0,80%,42%)', background: 'hsla(0,80%,55%,0.12)', border: '1px solid hsla(0,80%,55%,0.28)' }}>
+                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'hsl(0,80%,55%)' }} /> Stock Out
+                      </span>
+                    ) : (
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
+                        style={{ color: 'hsl(158,80%,38%)', background: 'hsla(158,80%,48%,0.12)', border: '1px solid hsla(158,80%,48%,0.28)' }}>
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> In Stock
+                      </span>
+                    )}
                   </div>
 
                   {/* Price row — always single line on every device */}
