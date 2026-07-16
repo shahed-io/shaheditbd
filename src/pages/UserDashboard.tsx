@@ -330,6 +330,14 @@ const UserDashboard = () => {
     window.scrollTo({ top: 0 });
   };
 
+  useEffect(() => {
+    const tab = searchParams.get('tab') as TabId;
+    const nextTab = TAB_IDS.some(t => t.id === tab) ? tab : 'profile';
+    setActiveTab(nextTab);
+    setMobileShowContent(!!searchParams.get('tab'));
+    window.scrollTo({ top: 0 });
+  }, [searchParams]);
+
   useEffect(() => { if (!loading && !user) navigate('/'); }, [user, loading, navigate]);
 
   const refetchActiveTab = () => {
