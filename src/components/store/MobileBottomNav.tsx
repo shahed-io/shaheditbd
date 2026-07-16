@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Home, Store, Wallet, Package, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useWishlist } from '@/hooks/useWishlist';
