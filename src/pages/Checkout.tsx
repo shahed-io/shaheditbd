@@ -882,7 +882,7 @@ const Checkout = () => {
                 <User size={11} /> {user.email?.split('@')[0]}
               </span>
             ) : (
-              <button onClick={() => navigate('/?auth=login')} className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors">
+              <button onClick={() => setShowAuthModal(true)} className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors">
                 <LogIn size={13} /> লগইন করুন
               </button>
             )}
