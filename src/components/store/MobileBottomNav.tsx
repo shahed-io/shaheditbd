@@ -243,7 +243,7 @@ const MobileBottomNav = () => {
             {activeIndex >= 0 && (
               <div
                 className={`absolute top-1.5 bottom-1.5 z-0 pointer-events-none ${
-                  drag?.active
+                  isDragging
                     ? 'transition-none'
                     : 'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]'
                 }`}
@@ -262,7 +262,7 @@ const MobileBottomNav = () => {
                         .match(/hsl\([^)]+\)/)?.[0] || 'hsla(258,78%,55%,0.55)'
                     }, 0 4px 12px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.12)`,
                     opacity: 1,
-                    transform: drag?.active ? 'scale(0.96)' : 'scale(1)',
+                    transform: isDragging ? 'scale(0.96)' : 'scale(1)',
                     transition: 'transform 0.2s',
                     border: '1.5px solid rgba(255,255,255,0.55)',
                   }}
