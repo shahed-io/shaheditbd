@@ -31,12 +31,18 @@ export function sanitizeBengali(input: string | null | undefined): string {
   return out;
 }
 
-// Deep-sanitize any plain object/array — leaves numbers, booleans, dates alone.
+// Deep-sanitize any plain object/array — leaves numbers, booleans, dates and
+// other non-plain objects alone (Date, File, Blob, Map, Set, etc.).
 export function sanitizeBengaliDeep<T>(value: T): T {
   if (value == null) return value;
   if (typeof value === 'string') return sanitizeBengali(value) as unknown as T;
   if (Array.isArray(value)) return value.map((v) => sanitizeBengaliDeep(v)) as unknown as T;
   if (typeof value === 'object') {
+    // Preserve non-plain objects (Date, File, Blob, Map, Set, RegExp, etc.) as-is.
+    // Only walk plain objects — otherwise Object.entries() strips their internal
+    // slots (e.g. a Date becomes {}), which breaks downstream consumers.
+    const proto = Object.getPrototypeOf(value);
+    if (proto !== Object.prototype && proto !== null) return value;
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
       out[k] = sanitizeBengaliDeep(v);
@@ -45,3 +51,4 @@ export function sanitizeBengaliDeep<T>(value: T): T {
   }
   return value;
 }
+
