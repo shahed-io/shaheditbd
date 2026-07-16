@@ -1668,10 +1668,9 @@ const ProductReviews = ({ productId, productSlug }: { productId: string; product
 
   const fetchReviews = async () => {
     const { data } = await supabase
-      .from('product_reviews')
+      .from('product_reviews_public' as any)
       .select('id, author_name, rating, title, body, is_verified, helpful_count, created_at')
       .eq('product_slug', productSlug)
-      .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .limit(20);
     setReviews(((data as Review[]) || []).map((review) => ({
