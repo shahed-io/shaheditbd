@@ -566,6 +566,8 @@ async function registerBotCommands(botToken: string) {
     { command: 'orders', description: '📋 My orders' },
     { command: 'track', description: '📦 Track order — /track <number>' },
     { command: 'checkkey', description: '🔑 Check license key — /checkkey <key>' },
+    { command: 'getcid', description: '🆔 Send screenshot to get Confirmation ID' },
+
 
     { command: 'account', description: '👤 Account & wallet' },
     { command: 'wallet', description: '💰 Wallet balance' },
