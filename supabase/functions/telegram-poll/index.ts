@@ -1497,6 +1497,9 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
   } else if (text.startsWith('/checkkey') || text.startsWith('/check_key') || text.startsWith('/key')) {
     const arg = text.replace(/^\/(checkkey|check_key|key)\s*/i, '');
     await handleCheckKey(BOT_TOKEN, chatId, arg, lang);
+  } else if (text === '/getcid' || text === '/cid' || text === '/confirmation') {
+    await handleGetCidHint(BOT_TOKEN, chatId, lang);
+
   } else if (text.startsWith('/')) {
     await sendMsg(BOT_TOKEN, chatId,
       `${t(lang, 'unknown_command')}\n\n💡 ${t(lang, 'cmd_list')}`,
