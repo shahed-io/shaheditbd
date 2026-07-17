@@ -210,6 +210,138 @@ function getSiteUrl(): string {
   return 'https://shahedstore.com.bd';
 }
 
+// ─── LICENSE KEY CHECKER (PidMS) ──────────────────────────────────────────
+const PIDMS_URL = 'https://bs.getcid.xyz/webapi/pidms/';
+const KEY_STATUS_MAP: Record<string, { status: 'live' | 'dead'; meaning_en: string; meaning_bn: string }> = {
+  '0X00000000': { status: 'live', meaning_en: 'Valid — can be activated online', meaning_bn: 'বৈধ — অনলাইনে অ্যাক্টিভেট করা যাবে' },
+  '0XC004C008': { status: 'live', meaning_en: 'Valid, can be activated', meaning_bn: 'বৈধ, অ্যাক্টিভেট করা যাবে' },
+  '0XC004C020': { status: 'live', meaning_en: 'Requires phone/web activation', meaning_bn: 'ফোন/ওয়েব অ্যাক্টিভেশন প্রয়োজন' },
+  '0XC004C060': { status: 'dead', meaning_en: 'Key is blocked', meaning_bn: 'কী ব্লক করা হয়েছে' },
+  '0XC004C003': { status: 'dead', meaning_en: 'Invalid / blocked key', meaning_bn: 'অবৈধ / ব্লক কী' },
+  '0XC004C004': { status: 'dead', meaning_en: 'Activation limit reached / fake key', meaning_bn: 'অ্যাক্টিভেশন লিমিট শেষ / ফেক কী' },
+  '0XC004C001': { status: 'dead', meaning_en: 'Invalid product key', meaning_bn: 'অবৈধ প্রোডাক্ট কী' },
+  '0XC004C017': { status: 'dead', meaning_en: 'Key blocked', meaning_bn: 'কী ব্লক' },
+  '0XC004C032': { status: 'dead', meaning_en: 'Key blocked', meaning_bn: 'কী ব্লক' },
+  '0XC004C050': { status: 'dead', meaning_en: 'Key blocked', meaning_bn: 'কী ব্লক' },
+};
+
+const KEY_REGEX = /[A-Z0-9]{5}(?:-[A-Z0-9]{5}){4}/i;
+
+function normalizeLicenseKey(k: string): string {
+  return k.trim().toUpperCase().replace(/\s+/g, '');
+}
+
+async function checkLicenseKey(key: string, token: string, lang: Lang) {
+  const url = `${PIDMS_URL}?token=${encodeURIComponent(token)}&key=${encodeURIComponent(key)}&format=json`;
+  try {
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    const text = await res.text();
+    let parsed: any = null;
+    try { parsed = JSON.parse(text); } catch {
+      return { key, status: 'unknown' as const, meaning: lang === 'bn' ? 'সার্ভার সাড়া দেয়নি' : 'Provider returned invalid response', errorCode: null, product: null, edition: null };
+    }
+    const errorRaw: string | null = parsed?.error ?? null;
+    let cleanErrorCode: string | null = null;
+    if (errorRaw) {
+      const m = errorRaw.match(/0x[0-9A-Fa-f]+/);
+      cleanErrorCode = m ? m[0].toUpperCase() : errorRaw.replace(/\s*\[.*?\]\s*/g, '').trim();
+    }
+    const mapped = cleanErrorCode ? KEY_STATUS_MAP[cleanErrorCode] : null;
+    let status: 'live' | 'dead' | 'unknown' = 'unknown';
+    let meaning = lang === 'bn' ? `কোড ${cleanErrorCode || 'অজানা'}` : `Code ${cleanErrorCode || 'unknown'}`;
+    if (mapped) { status = mapped.status; meaning = lang === 'bn' ? mapped.meaning_bn : mapped.meaning_en; }
+    else if (errorRaw) {
+      const low = errorRaw.toLowerCase();
+      if (low.includes('online')) { status = 'live'; meaning = lang === 'bn' ? 'বৈধ — অনলাইনে অ্যাক্টিভেট হবে' : 'Online — valid key'; }
+      else if (low.includes('phone')) { status = 'live'; meaning = lang === 'bn' ? 'বৈধ — ফোন অ্যাক্টিভেশন' : 'Valid — phone activation'; }
+      else if (low.includes('block')) { status = 'dead'; meaning = lang === 'bn' ? 'ব্লক করা কী' : 'Key is blocked'; }
+      else if (low.includes('invalid') || low.includes('fake')) { status = 'dead'; meaning = lang === 'bn' ? 'অবৈধ / ফেক কী' : 'Invalid or fake key'; }
+    }
+    return {
+      key: parsed?.key || key,
+      status,
+      meaning,
+      errorCode: cleanErrorCode,
+      product: parsed?.description ?? null,
+      edition: parsed?.edition ?? null,
+    };
+  } catch {
+    return { key, status: 'unknown' as const, meaning: lang === 'bn' ? 'নেটওয়ার্ক ত্রুটি' : 'Network error', errorCode: null, product: null, edition: null };
+  }
+}
+
+async function handleCheckKey(botToken: string, chatId: string | number, rawInput: string, lang: Lang) {
+  const input = (rawInput || '').trim();
+  if (!input) {
+    await sendMsg(botToken, chatId,
+      lang === 'bn'
+        ? '🔑 *লাইসেন্স কী চেকার*\n\nআপনার Microsoft প্রোডাক্ট কী পাঠান, আমরা তাৎক্ষণিকভাবে চেক করে জানিয়ে দেব।\n\nফরম্যাট:\n`XXXXX-XXXXX-XXXXX-XXXXX-XXXXX`\n\nউদাহরণ:\n`/checkkey XXXXX-XXXXX-XXXXX-XXXXX-XXXXX`\n\n💡 যেকোনো মেসেজে কী পেস্ট করলেই স্বয়ংক্রিয়ভাবে চেক হবে।'
+        : '🔑 *License Key Checker*\n\nSend a Microsoft product key and we will check it instantly.\n\nFormat:\n`XXXXX-XXXXX-XXXXX-XXXXX-XXXXX`\n\nExample:\n`/checkkey XXXXX-XXXXX-XXXXX-XXXXX-XXXXX`\n\n💡 Paste a key in any message and it will be checked automatically.',
+      inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]]), undefined, 'Markdown');
+    return;
+  }
+
+  const matches = Array.from(input.matchAll(/[A-Z0-9]{5}(?:-[A-Z0-9]{5}){4}/gi))
+    .map(m => normalizeLicenseKey(m[0]));
+  const keys = Array.from(new Set(matches)).slice(0, 10);
+  if (keys.length === 0) {
+    await sendMsg(botToken, chatId,
+      lang === 'bn'
+        ? '❌ কী ফরম্যাট ভুল।\n\nসঠিক ফরম্যাট: `XXXXX-XXXXX-XXXXX-XXXXX-XXXXX`\n(৫টি অংশ, প্রতিটিতে ৫ অক্ষর, hyphen দিয়ে যুক্ত)'
+        : '❌ Invalid key format.\n\nCorrect format: `XXXXX-XXXXX-XXXXX-XXXXX-XXXXX`\n(5 groups of 5 characters, joined by hyphens)',
+      inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]]), undefined, 'Markdown');
+    return;
+  }
+
+  const pidmsToken = Deno.env.get('GETCID_PIDMS_TOKEN');
+  if (!pidmsToken) {
+    await sendMsg(botToken, chatId,
+      lang === 'bn' ? '⚠️ কী চেকার সাময়িকভাবে বন্ধ। পরে আবার চেষ্টা করুন।' : '⚠️ Key checker temporarily unavailable. Please try later.',
+      inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]]));
+    return;
+  }
+
+  const waiting = await sendMsg(botToken, chatId,
+    lang === 'bn' ? `🔎 ${keys.length}টি কী চেক করা হচ্ছে...` : `🔎 Checking ${keys.length} key(s)...`);
+  const waitingMsgId = waiting?.result?.message_id;
+
+  const results = await Promise.all(keys.map(k => checkLicenseKey(k, pidmsToken, lang)));
+
+  let out = lang === 'bn' ? '🔑 *লাইসেন্স কী চেক ফলাফল*\n\n' : '🔑 *License Key Check Result*\n\n';
+  results.forEach((r, i) => {
+    const emoji = r.status === 'live' ? '✅' : r.status === 'dead' ? '❌' : '⚠️';
+    const statusText = r.status === 'live'
+      ? (lang === 'bn' ? 'বৈধ (LIVE)' : 'VALID (LIVE)')
+      : r.status === 'dead' ? (lang === 'bn' ? 'অবৈধ (DEAD)' : 'INVALID (DEAD)')
+      : (lang === 'bn' ? 'অজানা' : 'UNKNOWN');
+    out += `${emoji} *${i + 1}. ${statusText}*\n`;
+    out += `\`${r.key}\`\n`;
+    if (r.product) out += `📦 ${r.product}\n`;
+    if (r.edition) out += `🏷️ ${r.edition}\n`;
+    out += `💬 ${r.meaning}\n`;
+    if (r.errorCode) out += `🔢 ${r.errorCode}\n`;
+    out += '\n';
+  });
+  const live = results.filter(r => r.status === 'live').length;
+  const dead = results.filter(r => r.status === 'dead').length;
+  const unk = results.filter(r => r.status === 'unknown').length;
+  out += lang === 'bn'
+    ? `━━━━━━━━━━━━━\n📊 সারাংশ: ✅ ${live} বৈধ • ❌ ${dead} অবৈধ • ⚠️ ${unk} অজানা`
+    : `━━━━━━━━━━━━━\n📊 Summary: ✅ ${live} live • ❌ ${dead} dead • ⚠️ ${unk} unknown`;
+
+  const kb = inlineKb([
+    [{ text: lang === 'bn' ? '🔑 আরেকটি কী চেক' : '🔑 Check Another Key', callback_data: 'checkkey_hint' }],
+    [{ text: t(lang, 'btn_menu'), callback_data: 'start' }],
+  ]);
+
+  if (waitingMsgId) {
+    await editMsg(botToken, chatId, waitingMsgId, out, kb, 'Markdown');
+  } else {
+    await sendMsg(botToken, chatId, out, kb, undefined, 'Markdown');
+  }
+}
+
+
 // ─── COMMAND REGISTRATION (setMyCommands) ─────────────────────────────────
 async function registerBotCommands(botToken: string) {
   const cmdsBn = [
@@ -222,6 +354,8 @@ async function registerBotCommands(botToken: string) {
     { command: 'cart', description: '🛒 কার্ট দেখুন' },
     { command: 'orders', description: '📋 আমার অর্ডারসমূহ' },
     { command: 'track', description: '📦 অর্ডার ট্র্যাক — /track <নম্বর>' },
+    { command: 'checkkey', description: '🔑 লাইসেন্স কী চেক — /checkkey <কী>' },
+
     { command: 'account', description: '👤 অ্যাকাউন্ট ও ওয়ালেট' },
     { command: 'wallet', description: '💰 ওয়ালেট ব্যালেন্স' },
     { command: 'points', description: '⭐ লয়্যালটি পয়েন্ট' },
@@ -244,6 +378,8 @@ async function registerBotCommands(botToken: string) {
     { command: 'cart', description: '🛒 View cart' },
     { command: 'orders', description: '📋 My orders' },
     { command: 'track', description: '📦 Track order — /track <number>' },
+    { command: 'checkkey', description: '🔑 Check license key — /checkkey <key>' },
+
     { command: 'account', description: '👤 Account & wallet' },
     { command: 'wallet', description: '💰 Wallet balance' },
     { command: 'points', description: '⭐ Loyalty points' },
@@ -1033,6 +1169,10 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     } else if (cbData === 'search_hint') {
       await answerCb(BOT_TOKEN, cb.id);
       await sendMsg(BOT_TOKEN, chatId, t(lang, 'search_prompt'));
+    } else if (cbData === 'checkkey_hint') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleCheckKey(BOT_TOKEN, chatId, '', lang);
+
     } else if (cbData.startsWith('cat:')) {
       await answerCb(BOT_TOKEN, cb.id);
       const parts = cbData.split(':');
@@ -1148,11 +1288,17 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     await handleLanguagePicker(BOT_TOKEN, chatId, lang);
   } else if (text === '/help') {
     await handleHelp(BOT_TOKEN, chatId, lang);
+  } else if (text.startsWith('/checkkey') || text.startsWith('/check_key') || text.startsWith('/key')) {
+    const arg = text.replace(/^\/(checkkey|check_key|key)\s*/i, '');
+    await handleCheckKey(BOT_TOKEN, chatId, arg, lang);
   } else if (text.startsWith('/')) {
     await sendMsg(BOT_TOKEN, chatId,
       `${t(lang, 'unknown_command')}\n\n💡 ${t(lang, 'cmd_list')}`,
       inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]])
     );
+  } else if (KEY_REGEX.test(text)) {
+    // Auto-detect: any plain message containing a license key format is checked automatically
+    await handleCheckKey(BOT_TOKEN, chatId, text, lang);
   } else {
     // Plain text → suggest search
     await sendMsg(BOT_TOKEN, chatId,
@@ -1165,6 +1311,7 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     await handleSearch(BOT_TOKEN, chatId, text, supabase, lang);
   }
 }
+
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN — webhook (instant) + fallback polling loop
