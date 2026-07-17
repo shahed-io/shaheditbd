@@ -1357,6 +1357,10 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     } else if (cbData === 'checkkey_hint') {
       await answerCb(BOT_TOKEN, cb.id);
       await handleCheckKey(BOT_TOKEN, chatId, '', lang);
+    } else if (cbData === 'getcid_hint') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleGetCidHint(BOT_TOKEN, chatId, lang);
+
 
     } else if (cbData.startsWith('cat:')) {
       await answerCb(BOT_TOKEN, cb.id);
