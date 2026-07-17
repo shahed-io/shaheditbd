@@ -354,6 +354,8 @@ async function registerBotCommands(botToken: string) {
     { command: 'cart', description: '🛒 কার্ট দেখুন' },
     { command: 'orders', description: '📋 আমার অর্ডারসমূহ' },
     { command: 'track', description: '📦 অর্ডার ট্র্যাক — /track <নম্বর>' },
+    { command: 'checkkey', description: '🔑 লাইসেন্স কী চেক — /checkkey <কী>' },
+
     { command: 'account', description: '👤 অ্যাকাউন্ট ও ওয়ালেট' },
     { command: 'wallet', description: '💰 ওয়ালেট ব্যালেন্স' },
     { command: 'points', description: '⭐ লয়্যালটি পয়েন্ট' },
