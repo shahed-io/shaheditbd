@@ -518,11 +518,12 @@ const Checkout = () => {
         if (!(walletResult as any)?.success) throw new Error('Wallet debit failed');
       }
 
-      // Insert order items with product_id if available
+      // Insert order items with product_id if available (strict UUID validation)
+      const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       const orderItems = items.map(item => ({
         order_id: order.id,
         product_name: item.name + (item.variant ? ` (${item.variant})` : ''),
-        product_id: typeof item.id === 'string' && item.id.includes('-') ? item.id : null,
+        product_id: typeof item.id === 'string' && UUID_RE.test(item.id) ? item.id : null,
         price: item.price,
         quantity: item.quantity,
         total: item.price * item.quantity,

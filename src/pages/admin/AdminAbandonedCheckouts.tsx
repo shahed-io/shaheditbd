@@ -172,14 +172,19 @@ export default function AdminAbandonedCheckouts() {
 
       if (orderErr || !order) throw orderErr || new Error('Order creation failed');
 
-      const itemsPayload = (row.cart_items || []).map((it: any) => ({
-        order_id: order.id,
-        product_id: it.id || it.product_id || null,
-        product_name: it.name + (it.variant ? ` (${it.variant})` : ''),
-        price: Number(it.price || 0),
-        quantity: Number(it.quantity || 1),
-        total: Number(it.price || 0) * Number(it.quantity || 1),
-      }));
+      const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const itemsPayload = (row.cart_items || []).map((it: any) => {
+        const rawId = it.product_id || it.id;
+        const pid = typeof rawId === 'string' && UUID_RE.test(rawId) ? rawId : null;
+        return {
+          order_id: order.id,
+          product_id: pid,
+          product_name: (it.name || 'Product') + (it.variant ? ` (${it.variant})` : ''),
+          price: Number(it.price || 0),
+          quantity: Number(it.quantity || 1),
+          total: Number(it.price || 0) * Number(it.quantity || 1),
+        };
+      });
       const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
       if (itemsErr) throw itemsErr;
 
