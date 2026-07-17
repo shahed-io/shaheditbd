@@ -378,6 +378,8 @@ async function registerBotCommands(botToken: string) {
     { command: 'cart', description: '🛒 View cart' },
     { command: 'orders', description: '📋 My orders' },
     { command: 'track', description: '📦 Track order — /track <number>' },
+    { command: 'checkkey', description: '🔑 Check license key — /checkkey <key>' },
+
     { command: 'account', description: '👤 Account & wallet' },
     { command: 'wallet', description: '💰 Wallet balance' },
     { command: 'points', description: '⭐ Loyalty points' },
