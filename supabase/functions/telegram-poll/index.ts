@@ -342,6 +342,191 @@ async function handleCheckKey(botToken: string, chatId: string | number, rawInpu
 }
 
 
+// ─── CONFIRMATION ID (CID) FROM SCREENSHOT ───────────────────────────────
+const GETCID_API_URL = 'https://panel.getcid.app/user-api/getcid';
+const GRAHOK_API_URL_DEFAULT = 'https://grahok.io/api/getcid.php';
+
+function normalizeIID(value: string): string {
+  const digits = value.replace(/\D/g, '');
+  if (digits.length === 63) return Array.from({ length: 9 }, (_, i) => digits.slice(i * 7, i * 7 + 7)).join('-');
+  if (digits.length === 54) return Array.from({ length: 9 }, (_, i) => digits.slice(i * 6, i * 6 + 6)).join('-');
+  return value.trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-');
+}
+
+function formatCID(cid: string): string {
+  const digits = cid.replace(/\D/g, '');
+  if (digits.length === 48) return Array.from({ length: 8 }, (_, i) => digits.slice(i * 6, i * 6 + 6)).join('-');
+  return cid;
+}
+
+async function getTelegramFileUrl(botToken: string, fileId: string): Promise<string | null> {
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${botToken}/getFile?file_id=${encodeURIComponent(fileId)}`);
+    const j = await r.json();
+    const path = j?.result?.file_path;
+    if (!path) return null;
+    return `https://api.telegram.org/file/bot${botToken}/${path}`;
+  } catch { return null; }
+}
+
+async function extractIIDFromImageUrl(imageUrl: string): Promise<string | null> {
+  const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+  if (!LOVABLE_API_KEY) return null;
+  try {
+    // Download and convert to data URL so provider can access
+    const imgRes = await fetch(imageUrl);
+    if (!imgRes.ok) return null;
+    const buf = new Uint8Array(await imgRes.arrayBuffer());
+    let bin = '';
+    for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
+    const b64 = btoa(bin);
+    const ct = imgRes.headers.get('content-type') || 'image/jpeg';
+    const dataUrl = `data:${ct};base64,${b64}`;
+
+    const callModel = async (model: string) => fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content:
+            'You are an OCR engine. Extract the Microsoft Installation ID from the screenshot. ' +
+            'It appears under labels like "Installation ID", "ইনস্টলেশন আইডি", "ステップ 2" and is a long number split into 9 numbered blocks (1-9 or A-I). ' +
+            'Each block has 6 OR 7 digits (total 54 or 63 digits). ' +
+            'Return ONLY the digits joined by dashes in 9 groups. If not found, return exactly: NONE' },
+          { role: 'user', content: [
+            { type: 'text', text: 'Extract the Installation ID. Output only 9 dash-separated numeric groups, or NONE.' },
+            { type: 'image_url', image_url: { url: dataUrl } },
+          ]},
+        ],
+      }),
+    });
+
+    let resp = await callModel('google/gemini-2.5-pro');
+    if (!resp.ok && resp.status !== 429 && resp.status !== 402) {
+      resp = await callModel('google/gemini-2.5-flash');
+    }
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const raw = String(data.choices?.[0]?.message?.content ?? '').trim();
+    if (/^none$/i.test(raw)) return null;
+    const digits = raw.replace(/\D/g, '');
+    let group = 0;
+    if (digits.length >= 62 && digits.length <= 64) group = 7;
+    else if (digits.length >= 53 && digits.length <= 55) group = 6;
+    else if (digits.length >= 50) group = Math.abs(digits.length - 63) < Math.abs(digits.length - 54) ? 7 : 6;
+    else return null;
+    const target = group * 9;
+    const trimmed = digits.slice(0, target);
+    const out: string[] = [];
+    for (let i = 0; i < trimmed.length; i += group) out.push(trimmed.substr(i, group));
+    return out.join('-');
+  } catch (e) { console.error('extractIID error', e); return null; }
+}
+
+async function callCidProvider(iid: string): Promise<{ ok: boolean; cid?: string; error?: string }> {
+  const normalized = normalizeIID(iid);
+  const GETCID = Deno.env.get('GETCID_API_TOKEN');
+  const GRAHOK = Deno.env.get('GRAHOK_API_TOKEN');
+  const GRAHOK_URL = Deno.env.get('GRAHOK_API_URL') || GRAHOK_API_URL_DEFAULT;
+
+  // Try GetCID first
+  if (GETCID) {
+    try {
+      const url = `${GETCID_API_URL}?token=${encodeURIComponent(GETCID)}&iid=${encodeURIComponent(normalized)}`;
+      const r = await fetch(url, { headers: { Accept: 'application/json' } });
+      const txt = await r.text();
+      try {
+        const j = JSON.parse(txt);
+        const cid = j.cid || j.confirmationid || j.confirmation_id || j.confirmationId;
+        if (cid) return { ok: true, cid: String(cid) };
+        if (j.error || j.message) return { ok: false, error: String(j.error || j.message) };
+      } catch { /* fall to grahok */ }
+    } catch (e) { console.error('getcid err', e); }
+  }
+  // Backup: Grahok
+  if (GRAHOK) {
+    try {
+      const fd = new FormData();
+      fd.append('token', GRAHOK);
+      fd.append('installation_id', normalized);
+      const r = await fetch(`${GRAHOK_URL}${GRAHOK_URL.includes('?') ? '&' : '?'}token=${encodeURIComponent(GRAHOK)}`, {
+        method: 'POST', headers: { 'X-API-TOKEN': GRAHOK, Accept: 'application/json' }, body: fd,
+      });
+      const txt = await r.text();
+      try {
+        const j = JSON.parse(txt);
+        if (j.cid) return { ok: true, cid: String(j.cid) };
+        if (j.error || j.message) return { ok: false, error: String(j.error || j.message) };
+      } catch { return { ok: false, error: 'Provider returned invalid response' }; }
+    } catch (e) { console.error('grahok err', e); }
+  }
+  return { ok: false, error: 'CID service is temporarily unavailable' };
+}
+
+async function handleGetCidFromPhoto(botToken: string, chatId: string | number, fileId: string, lang: Lang) {
+  const waiting = await sendMsg(botToken, chatId,
+    lang === 'bn' ? '🔎 স্ক্রিনশট থেকে Installation ID পড়া হচ্ছে...' : '🔎 Reading Installation ID from screenshot...');
+  const waitingMsgId = waiting?.result?.message_id;
+
+  const fileUrl = await getTelegramFileUrl(botToken, fileId);
+  if (!fileUrl) {
+    const err = lang === 'bn' ? '❌ ছবি ডাউনলোড করা যায়নি। আবার চেষ্টা করুন।' : '❌ Could not download image. Please try again.';
+    if (waitingMsgId) await editMsg(botToken, chatId, waitingMsgId, err); else await sendMsg(botToken, chatId, err);
+    return;
+  }
+
+  const iid = await extractIIDFromImageUrl(fileUrl);
+  if (!iid) {
+    const err = lang === 'bn'
+      ? '❌ স্ক্রিনশটে Installation ID পাওয়া যায়নি।\n\n💡 নিশ্চিত করুন সব ৯টি গ্রুপ (1-9) স্পষ্টভাবে দেখা যাচ্ছে এবং আবার পাঠান।'
+      : '❌ Could not find Installation ID in the screenshot.\n\n💡 Make sure all 9 groups (1-9) are clearly visible and send again.';
+    const kb = inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]]);
+    if (waitingMsgId) await editMsg(botToken, chatId, waitingMsgId, err, kb); else await sendMsg(botToken, chatId, err, kb);
+    return;
+  }
+
+  const step2 = lang === 'bn'
+    ? `✅ *Installation ID পাওয়া গেছে*\n\`${iid}\`\n\n⏳ Confirmation ID তৈরি হচ্ছে, একটু অপেক্ষা করুন...`
+    : `✅ *Installation ID detected*\n\`${iid}\`\n\n⏳ Generating Confirmation ID, please wait...`;
+  if (waitingMsgId) await editMsg(botToken, chatId, waitingMsgId, step2, undefined, 'Markdown');
+  else await sendMsg(botToken, chatId, step2, undefined, undefined, 'Markdown');
+
+  const result = await callCidProvider(iid);
+  if (!result.ok || !result.cid) {
+    const err = lang === 'bn'
+      ? `❌ Confirmation ID তৈরি করা যায়নি।\n\n💬 ${result.error || 'অজানা ত্রুটি'}\n\n💡 আবার চেষ্টা করুন বা সাপোর্টে যোগাযোগ করুন।`
+      : `❌ Could not generate Confirmation ID.\n\n💬 ${result.error || 'Unknown error'}\n\n💡 Please try again or contact support.`;
+    const kb = inlineKb([
+      [{ text: lang === 'bn' ? '🔄 আবার চেষ্টা করুন' : '🔄 Try Again', callback_data: 'getcid_hint' }],
+      [{ text: t(lang, 'btn_menu'), callback_data: 'start' }],
+    ]);
+    if (waitingMsgId) await editMsg(botToken, chatId, waitingMsgId, err, kb); else await sendMsg(botToken, chatId, err, kb);
+    return;
+  }
+
+  const cidFormatted = formatCID(result.cid);
+  const out = lang === 'bn'
+    ? `✅ *Confirmation ID তৈরি হয়েছে*\n\n📱 Installation ID:\n\`${iid}\`\n\n🔑 Confirmation ID:\n\`${cidFormatted}\`\n\n💡 উপরের CID ট্যাপ করে কপি করুন এবং Microsoft অ্যাক্টিভেশন উইন্ডোতে বসান।`
+    : `✅ *Confirmation ID generated*\n\n📱 Installation ID:\n\`${iid}\`\n\n🔑 Confirmation ID:\n\`${cidFormatted}\`\n\n💡 Tap the CID above to copy and paste it into the Microsoft activation window.`;
+  const kb = inlineKb([
+    [{ text: lang === 'bn' ? '🆕 নতুন CID' : '🆕 New CID', callback_data: 'getcid_hint' }],
+    [{ text: t(lang, 'btn_menu'), callback_data: 'start' }],
+  ]);
+  if (waitingMsgId) await editMsg(botToken, chatId, waitingMsgId, out, kb, 'Markdown');
+  else await sendMsg(botToken, chatId, out, kb, undefined, 'Markdown');
+}
+
+async function handleGetCidHint(botToken: string, chatId: string | number, lang: Lang) {
+  const msg = lang === 'bn'
+    ? '🔑 *Confirmation ID (CID) জেনারেটর*\n\nMicrosoft ফোন অ্যাক্টিভেশন স্ক্রিনের একটি স্ক্রিনশট পাঠান — যেখানে *Installation ID* এর ৯টি গ্রুপ (1-9) দেখা যাচ্ছে।\n\nAI স্বয়ংক্রিয়ভাবে ID পড়ে Confirmation ID তৈরি করে দেবে।\n\n📸 এখনই স্ক্রিনশটটি পাঠান।'
+    : '🔑 *Confirmation ID (CID) Generator*\n\nSend a screenshot of the Microsoft phone activation screen showing all 9 groups (1-9) of the *Installation ID*.\n\nAI will read the ID automatically and generate the Confirmation ID.\n\n📸 Send the screenshot now.';
+  await sendMsg(botToken, chatId, msg, inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]]), undefined, 'Markdown');
+}
+
+
+
+
 // ─── COMMAND REGISTRATION (setMyCommands) ─────────────────────────────────
 async function registerBotCommands(botToken: string) {
   const cmdsBn = [
@@ -355,6 +540,8 @@ async function registerBotCommands(botToken: string) {
     { command: 'orders', description: '📋 আমার অর্ডারসমূহ' },
     { command: 'track', description: '📦 অর্ডার ট্র্যাক — /track <নম্বর>' },
     { command: 'checkkey', description: '🔑 লাইসেন্স কী চেক — /checkkey <কী>' },
+    { command: 'getcid', description: '🆔 স্ক্রিনশট পাঠিয়ে Confirmation ID নিন' },
+
 
     { command: 'account', description: '👤 অ্যাকাউন্ট ও ওয়ালেট' },
     { command: 'wallet', description: '💰 ওয়ালেট ব্যালেন্স' },
@@ -379,6 +566,8 @@ async function registerBotCommands(botToken: string) {
     { command: 'orders', description: '📋 My orders' },
     { command: 'track', description: '📦 Track order — /track <number>' },
     { command: 'checkkey', description: '🔑 Check license key — /checkkey <key>' },
+    { command: 'getcid', description: '🆔 Send screenshot to get Confirmation ID' },
+
 
     { command: 'account', description: '👤 Account & wallet' },
     { command: 'wallet', description: '💰 Wallet balance' },
@@ -1172,6 +1361,10 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     } else if (cbData === 'checkkey_hint') {
       await answerCb(BOT_TOKEN, cb.id);
       await handleCheckKey(BOT_TOKEN, chatId, '', lang);
+    } else if (cbData === 'getcid_hint') {
+      await answerCb(BOT_TOKEN, cb.id);
+      await handleGetCidHint(BOT_TOKEN, chatId, lang);
+
 
     } else if (cbData.startsWith('cat:')) {
       await answerCb(BOT_TOKEN, cb.id);
@@ -1230,9 +1423,26 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     return;
   }
 
-  // ─── TEXT MESSAGE ────────────────────────────────────────────
+  // ─── PHOTO MESSAGE (Installation ID screenshot → auto CID) ─────────────
   const msg = update.message;
+  if (msg && Array.isArray(msg.photo) && msg.photo.length > 0) {
+    const chatId = msg.chat.id;
+    const lang = await getLang(supabase, chatId);
+    // Pick the largest photo size
+    const best = msg.photo.reduce((a: any, b: any) => (a.file_size ?? 0) > (b.file_size ?? 0) ? a : b);
+    await handleGetCidFromPhoto(BOT_TOKEN, chatId, best.file_id, lang);
+    return;
+  }
+  if (msg && msg.document && typeof msg.document.mime_type === 'string' && msg.document.mime_type.startsWith('image/')) {
+    const chatId = msg.chat.id;
+    const lang = await getLang(supabase, chatId);
+    await handleGetCidFromPhoto(BOT_TOKEN, chatId, msg.document.file_id, lang);
+    return;
+  }
+
+  // ─── TEXT MESSAGE ────────────────────────────────────────────
   if (!msg || !msg.text) return;
+
 
   const chatId = msg.chat.id;
   const text = msg.text.trim();
@@ -1291,6 +1501,9 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
   } else if (text.startsWith('/checkkey') || text.startsWith('/check_key') || text.startsWith('/key')) {
     const arg = text.replace(/^\/(checkkey|check_key|key)\s*/i, '');
     await handleCheckKey(BOT_TOKEN, chatId, arg, lang);
+  } else if (text === '/getcid' || text === '/cid' || text === '/confirmation') {
+    await handleGetCidHint(BOT_TOKEN, chatId, lang);
+
   } else if (text.startsWith('/')) {
     await sendMsg(BOT_TOKEN, chatId,
       `${t(lang, 'unknown_command')}\n\n💡 ${t(lang, 'cmd_list')}`,
