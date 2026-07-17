@@ -1280,11 +1280,17 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     await handleLanguagePicker(BOT_TOKEN, chatId, lang);
   } else if (text === '/help') {
     await handleHelp(BOT_TOKEN, chatId, lang);
+  } else if (text.startsWith('/checkkey') || text.startsWith('/check_key') || text.startsWith('/key')) {
+    const arg = text.replace(/^\/(checkkey|check_key|key)\s*/i, '');
+    await handleCheckKey(BOT_TOKEN, chatId, arg, lang);
   } else if (text.startsWith('/')) {
     await sendMsg(BOT_TOKEN, chatId,
       `${t(lang, 'unknown_command')}\n\n💡 ${t(lang, 'cmd_list')}`,
       inlineKb([[{ text: t(lang, 'btn_menu'), callback_data: 'start' }]])
     );
+  } else if (KEY_REGEX.test(text)) {
+    // Auto-detect: any plain message containing a license key format is checked automatically
+    await handleCheckKey(BOT_TOKEN, chatId, text, lang);
   } else {
     // Plain text → suggest search
     await sendMsg(BOT_TOKEN, chatId,
@@ -1297,6 +1303,7 @@ async function processUpdate(update: any, BOT_TOKEN: string, supabase: any): Pro
     await handleSearch(BOT_TOKEN, chatId, text, supabase, lang);
   }
 }
+
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN — webhook (instant) + fallback polling loop
