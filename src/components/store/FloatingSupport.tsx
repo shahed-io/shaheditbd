@@ -648,33 +648,32 @@ const FloatingSupport = () => {
             title="সাপোর্ট"
             aria-label="সাপোর্ট"
           >
-            {/* Outer halo / glow — royal violet + gold */}
-            <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-[#4C1D95] via-[#7C3AED] to-[#F59E0B] opacity-50 blur-xl group-hover:opacity-70 transition-opacity" />
+            {/* Outer halo / glow */}
+            <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-[#7c3aed] to-[#ec4899] opacity-40 blur-xl group-hover:opacity-60 transition-opacity" />
 
             {/* Main glass body */}
-            <span className="relative w-full h-full flex items-center justify-center rounded-full border border-[#F5D77A]/40 bg-white/10 backdrop-blur-xl shadow-[0_10px_36px_rgba(76,29,149,0.45)] overflow-hidden">
-              {/* Internal gradient mesh — Royal Violet + Gold */}
+            <span className="relative w-full h-full flex items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-xl shadow-[0_8px_32px_rgba(124,58,237,0.3)] overflow-hidden">
+              {/* Internal gradient mesh */}
               <span
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background: (chatOpen || menuOpen)
                     ? 'linear-gradient(45deg, hsla(258,80%,97%,0.85), hsla(271,75%,94%,0.75))'
-                    : 'linear-gradient(135deg, #4C1D95 0%, #7C3AED 45%, #A78BFA 75%, #F59E0B 100%)'
+                    : 'linear-gradient(45deg, rgba(124,58,237,0.60), rgba(6,182,212,0.40), rgba(236,72,153,0.60))'
                 }}
               />
               {/* Icon */}
               {(chatOpen || menuOpen)
                 ? <X size={26} strokeWidth={2.4} className="fs-x-rotate relative z-10" style={{ color: 'hsl(258,78%,45%)' }} />
-                : <MessageCircleMore size={28} strokeWidth={2} className="relative z-10 text-white drop-shadow-[0_2px_6px_rgba(76,29,149,0.55)]" />
+                : <MessageCircleMore size={28} strokeWidth={2} className="relative z-10 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.28)]" />
               }
-              {/* Premium gold highlight rim */}
-              <span className="absolute inset-0 rounded-full border-t border-l border-[#FDE68A]/55 pointer-events-none" />
-              <span className="absolute inset-0 rounded-full border-b border-r border-[#4C1D95]/30 pointer-events-none" />
+              {/* Premium highlight rim */}
+              <span className="absolute inset-0 rounded-full border-t border-l border-white/50 pointer-events-none" />
             </span>
 
             {/* Gold notification accent */}
             {!chatOpen && !menuOpen && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white shadow-lg bg-gradient-to-br from-[#FCD34D] to-[#F59E0B] fab-lum-badge z-20" />
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white shadow-lg bg-[#f59e0b] fab-lum-badge z-20" />
             )}
           </button>
         </div>
