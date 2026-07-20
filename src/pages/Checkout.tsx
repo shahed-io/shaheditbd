@@ -89,7 +89,27 @@ const Checkout = () => {
   // Filter payment methods: guests can't use wallet
   const availablePaymentMethods = paymentMethods.filter(pm => pm.id !== 'wallet' || !!user);
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const CHECKOUT_DRAFT_KEY = 'checkout_form_draft';
+  const [form, setForm] = useState(() => {
+    // Restore draft on mount so a checkout-page → OAuth login → back-to-checkout
+    // round-trip doesn't lose the customer's typed name/email/phone.
+    try {
+      const raw = localStorage.getItem(CHECKOUT_DRAFT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return {
+          name: typeof parsed.name === 'string' ? parsed.name : '',
+          email: typeof parsed.email === 'string' ? parsed.email : '',
+          phone: typeof parsed.phone === 'string' ? parsed.phone : '',
+        };
+      }
+    } catch { /* ignore */ }
+    return { name: '', email: '', phone: '' };
+  });
+  // Persist draft as the user types
+  useEffect(() => {
+    try { localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify(form)); } catch {}
+  }, [form.name, form.email, form.phone]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [transactionId, setTransactionId] = useState('');
