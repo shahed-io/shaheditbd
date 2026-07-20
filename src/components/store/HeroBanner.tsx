@@ -148,7 +148,7 @@ const HeroBanner = () => {
           {/* ══════════════════════════════════
                LEFT — Bold editorial content
           ══════════════════════════════════ */}
-          <div className="flex-1 lg:pr-12 space-y-4 text-center lg:text-left"
+          <div className="flex-1 lg:pr-6 space-y-4 text-center lg:text-left"
             style={{
               opacity: dir === 'in' ? 1 : 0,
               transform: dir === 'in' ? 'none' : 'translateX(-18px)',
@@ -275,10 +275,119 @@ const HeroBanner = () => {
           </div>
 
           {/* ══════════════════════════════════
+               MIDDLE — Product ecosystem cluster
+          ══════════════════════════════════ */}
+          <div className="hidden lg:flex relative items-center justify-center flex-shrink-0"
+            style={{ width: '260px', minHeight: '520px' }}
+            aria-hidden="true">
+
+            {/* Ambient glow */}
+            <div className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse at 50% 50%, hsla(258,78%,62%,0.14) 0%, hsla(200,90%,55%,0.08) 45%, transparent 72%)',
+                filter: 'blur(24px)',
+              }} />
+
+            {/* Concentric orbit rings */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+              style={{ width: '340px', height: '340px', border: '1px dashed hsla(258,78%,55%,0.18)' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+              style={{ width: '220px', height: '220px', border: '1px dashed hsla(200,90%,50%,0.20)' }} />
+
+            {/* Center license-key badge */}
+            <div className="relative z-20 anim-float"
+              style={{
+                width: '190px',
+                padding: '18px 16px',
+                borderRadius: '22px',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(245,240,255,0.92) 100%)',
+                border: '1.5px solid rgba(255,255,255,0.95)',
+                boxShadow: '0 22px 50px hsla(258,78%,55%,0.28), 0 6px 18px hsla(226,35%,12%,0.10), inset 0 1px 0 rgba(255,255,255,1)',
+              }}>
+              {/* Shimmer top line */}
+              <div className="absolute top-0 left-3 right-3 h-[1.5px]"
+                style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,64%,0.9), hsla(200,90%,58%,0.8), transparent)' }} />
+
+              <div className="flex items-center gap-2 mb-2.5">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))',
+                    boxShadow: '0 3px 10px hsla(258,78%,55%,0.35)',
+                  }}>
+                  <Shield size={13} className="text-white" />
+                </div>
+                <div>
+                  <div className="text-[8.5px] font-black uppercase tracking-[0.18em]" style={{ color: 'hsl(258,78%,50%)' }}>
+                    Genuine Key
+                  </div>
+                  <div className="text-[8px] font-medium" style={{ color: 'hsl(226,20%,52%)' }}>
+                    Verified License
+                  </div>
+                </div>
+              </div>
+
+              {/* Key serial mock */}
+              <div className="font-fira text-[10.5px] font-bold tracking-[0.14em] px-2.5 py-2 rounded-lg mb-2.5"
+                style={{
+                  background: 'linear-gradient(90deg, hsla(258,78%,55%,0.08), hsla(200,90%,55%,0.06))',
+                  border: '1px dashed hsla(258,78%,55%,0.25)',
+                  color: 'hsl(226,35%,20%)',
+                }}>
+                XXXXX-YYYYY-ZZZZZ
+              </div>
+
+              {/* Mini stats row */}
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { icon: <Zap size={9} />, l: 'Instant' },
+                  { icon: <CheckCircle2 size={9} />, l: '100%' },
+                  { icon: <Star size={9} />, l: '4.9★' },
+                ].map((s, i) => (
+                  <div key={i} className="flex flex-col items-center gap-0.5 py-1 rounded-lg"
+                    style={{ background: 'hsla(258,78%,55%,0.05)' }}>
+                    <span style={{ color: 'hsl(258,78%,55%)' }}>{s.icon}</span>
+                    <span className="text-[8.5px] font-bold" style={{ color: 'hsl(226,20%,42%)' }}>{s.l}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Floating logo chips — orbiting the key */}
+            {[
+              { img: winLogo, alt: 'Windows', style: { top: '4%', left: '10%' }, delay: '0s',   ring: 'hsl(215,82%,52%)' },
+              { img: ms365Logo, alt: 'Office 365', style: { top: '8%', right: '8%' }, delay: '1.4s', ring: 'hsl(15,90%,55%)' },
+              { img: idmLogo, alt: 'IDM', style: { bottom: '10%', left: '4%' }, delay: '2.6s', ring: 'hsl(258,78%,55%)' },
+              { emoji: '🎨', alt: 'Design', style: { bottom: '6%', right: '10%' }, delay: '3.4s', ring: 'hsl(320,70%,55%)' },
+            ].map((chip: any, i) => (
+              <div key={i} className="absolute anim-float z-10"
+                style={{ ...chip.style, animationDelay: chip.delay }}>
+                <div className="flex items-center justify-center rounded-2xl"
+                  style={{
+                    width: '52px',
+                    height: '52px',
+                    background: 'rgba(255,255,255,0.95)',
+                    backdropFilter: 'blur(14px)',
+                    border: `1.5px solid ${chip.ring}33`,
+                    boxShadow: `0 8px 22px ${chip.ring}30, inset 0 1px 0 rgba(255,255,255,1)`,
+                  }}>
+                  {chip.img
+                    ? <img src={chip.img} alt={chip.alt} className="w-8 h-8 object-contain" loading="lazy" decoding="async" />
+                    : <span className="text-[22px] leading-none">{chip.emoji}</span>}
+                </div>
+              </div>
+            ))}
+
+            {/* Sparkle accents */}
+            <Sparkles size={14} className="absolute top-[22%] right-[22%] anim-spin-slow" style={{ color: 'hsl(258,78%,55%)', opacity: 0.55 }} />
+            <Sparkles size={11} className="absolute bottom-[24%] left-[22%] anim-spin-slow" style={{ color: 'hsl(200,90%,50%)', opacity: 0.5, animationDirection: 'reverse' }} />
+          </div>
+
+          {/* ══════════════════════════════════
                RIGHT — Modern floating card
           ══════════════════════════════════ */}
           <div className="relative hidden lg:flex items-center justify-center w-[420px] xl:w-[460px] flex-shrink-0"
             style={{ minHeight: '580px' }}>
+
 
 
             {/* Ambient glow behind card */}
