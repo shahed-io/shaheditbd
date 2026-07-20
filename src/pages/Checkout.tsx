@@ -136,6 +136,7 @@ const Checkout = () => {
   const [refCreditInput, setRefCreditInput] = useState('');
   const [refCreditError, setRefCreditError] = useState('');
   const pendingSubmitRef = useRef(false);
+  const submittingRef = useRef(false); // blocks abandoned-checkout upsert during/after submission
 
   // Persistent session token for abandoned-checkout tracking
   const sessionTokenRef = useRef<string>('');
