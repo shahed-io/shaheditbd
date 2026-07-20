@@ -792,6 +792,8 @@ const Checkout = () => {
       }
     } finally {
       setLoading(false);
+      // Re-enable abandoned tracker only if order didn't succeed
+      if (!orderPlaced) submittingRef.current = false;
     }
   };
 
