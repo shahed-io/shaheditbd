@@ -526,42 +526,6 @@ const HeroBanner = () => {
           </button>
         </div>
 
-        {/* ── Stats row ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 py-8 mx-4"
-          style={{ borderTop: '1px solid hsla(258,78%,55%,0.08)' }}>
-          {STATS.map(s => (
-            <div key={s.label} className="group flex items-center gap-3 p-4 rounded-2xl transition-all duration-300 hover:scale-[1.03] cursor-default"
-              style={{
-                background: 'rgba(255,255,255,0.75)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid hsla(258,78%,55%,0.09)',
-                boxShadow: '0 2px 12px hsla(226,35%,12%,0.05)',
-              }}>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-[1.2rem]"
-                style={{
-                  background: 'linear-gradient(135deg, hsla(258,78%,55%,0.09), hsla(200,90%,55%,0.06))',
-                  border: '1px solid hsla(258,78%,55%,0.12)',
-                }}>
-                {s.icon}
-              </div>
-              <div>
-                <div className="font-sora font-black text-[1.25rem] leading-none"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,45%))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}>
-                  {s.value}
-                </div>
-                <div className="text-[10px] font-semibold uppercase tracking-wide mt-0.5"
-                  style={{ color: 'hsl(226,20%,54%)' }}>
-                  {s.label}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
       </div>
     </section>
