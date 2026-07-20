@@ -443,7 +443,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
               <button
                 onClick={e => { e.stopPropagation(); waMsg(); }}
                 className="btn-vision-whatsapp flex items-center justify-center gap-1 py-2 text-[11px]">
-                <MessageCircle size={11} color="#ffffff" /> WhatsApp
+                <MessageCircle size={11} /> WhatsApp
               </button>
               <button
                 disabled={outOfStock}
