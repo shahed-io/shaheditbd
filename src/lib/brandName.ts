@@ -65,7 +65,13 @@ export const normalizeBrandNameText = (value: string): string => {
     .replace(/Shahed Store\s*Bangladesh/gi, `${EN_NAME} Bangladesh`)
     .replace(/Shahed Store\s*BD/gi, `${EN_NAME} BD`);
 
-  // 5. Cleanup double spaces / spaces before Bengali punctuation
+  // 5. Ensure Bengali brand name has a space before non-suffix Bengali characters
+  out = out.replace(
+    /শাহেদ\s*স্টোর(?!\s|[\-এরকেতেএেরয়ে])([\u0980-\u09FF])/g,
+    `${BN_NAME} $1`
+  );
+
+  // 6. Cleanup double spaces / spaces before Bengali punctuation
   return out
     .replace(/\s+([।.,!?…])/g, '$1')
     .replace(/ {2,}/g, ' ');
