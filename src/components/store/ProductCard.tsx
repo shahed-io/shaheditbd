@@ -429,51 +429,34 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             {outOfStock ? (
               <button
                 onClick={e => { e.stopPropagation(); waPreOrder(); }}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-full text-[12px] font-semibold text-white transition-all active:scale-[0.98] hover:brightness-110"
-                style={{
-                  background: '#d70015',
-                  boxShadow: '0 1px 2px rgba(215,0,21,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
-                  letterSpacing: '0.01em',
-                }}>
+                className="btn-vision-danger w-full flex items-center justify-center gap-1.5 py-2.5 text-[12px]">
                 <Clock size={12} /> Pre-order
               </button>
             ) : (
               <button
                 onClick={e => { e.stopPropagation(); setShowModal(true); }}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-full text-[13px] font-semibold text-white transition-all active:scale-[0.98] hover:brightness-110"
-                style={{
-                  background: '#0071e3',
-                  boxShadow: '0 1px 2px rgba(0,113,227,0.35), inset 0 1px 0 rgba(255,255,255,0.18)',
-                  letterSpacing: '0.01em',
-                }}>
+                className="btn-vision-primary w-full flex items-center justify-center gap-1.5 py-2.5 text-[13px]">
                 <CreditCard size={13} /> Buy Now
               </button>
             )}
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={e => { e.stopPropagation(); waMsg(); }}
-                className="flex items-center justify-center gap-1 py-2 rounded-full text-[11px] font-semibold transition-all active:scale-[0.98] hover:brightness-95"
-                style={{
-                  background: '#f5f5f7',
-                  border: '1px solid rgba(0,0,0,0.08)',
-                  color: '#1d1d1f',
-                }}>
+                className="btn-vision-glass flex items-center justify-center gap-1 py-2 text-[11px]">
                 <MessageCircle size={11} color="#25D366" /> WhatsApp
               </button>
               <button
                 disabled={outOfStock}
                 onClick={e => { e.stopPropagation(); if (outOfStock) return; addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
-                className="flex items-center justify-center gap-1 py-2 rounded-full text-[11px] font-semibold transition-all active:scale-[0.98] hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={inCart
-                  ? { background: '#eaf4ff', border: '1px solid rgba(0,113,227,0.35)', color: '#0071e3' }
-                  : { background: '#f5f5f7', border: '1px solid rgba(0,0,0,0.08)', color: '#1d1d1f' }
-                }>
+                className="btn-vision-glass flex items-center justify-center gap-1 py-2 text-[11px] disabled:opacity-50 disabled:cursor-not-allowed"
+                style={inCart ? { color: 'hsl(215,82%,45%)' } : undefined}>
                 <ShoppingCart size={11} />
                 {outOfStock ? 'Out' : (inCart ? '✓ Added' : 'Cart')}
               </button>
             </div>
           </div>
         </div>
+
       </div>
 
       {showModal && (

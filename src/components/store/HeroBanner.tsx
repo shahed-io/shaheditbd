@@ -248,24 +248,15 @@ const HeroBanner = () => {
               {/* CTAs */}
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                 <a href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-[14px] font-bold text-white transition-all duration-200 hover:scale-[1.03] hover:brightness-105 active:scale-[0.97]"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%), hsl(200,90%,48%))',
-                    boxShadow: '0 8px 28px hsla(258,78%,55%,0.40), 0 1px 0 rgba(255,255,255,0.22) inset',
-                  }}>
+                  className="btn-vision-primary inline-flex items-center gap-2 px-7 py-3.5 text-[14px]">
                   <ShoppingBag size={15} /> Buy Now <ArrowRight size={13} />
                 </a>
                 <a href="/shop"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl text-[14px] font-semibold transition-all duration-200 hover:scale-[1.02]"
-                  style={{
-                    background: 'rgba(255,255,255,0.88)',
-                    backdropFilter: 'blur(16px)',
-                    border: '1.5px solid hsla(258,78%,55%,0.20)',
-                    boxShadow: '0 4px 16px hsla(258,78%,55%,0.08)',
-                    color: 'hsl(258,78%,50%)',
-                  }}>
+                  className="btn-vision-glass inline-flex items-center gap-2 px-6 py-3.5 text-[14px]"
+                  style={{ color: 'hsl(258,78%,45%)' }}>
                   <TrendingUp size={14} /> View All Deals
                 </a>
+
               </div>
             </div>
 
@@ -437,13 +428,10 @@ const HeroBanner = () => {
 
                   {/* Buy Now button */}
                   <a href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
-                    className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-bold text-[13.5px] text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-105 active:scale-[0.98]"
-                    style={{
-                      background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(215,82%,50%), hsl(200,90%,46%))',
-                      boxShadow: '0 10px 28px hsla(258,78%,55%,0.40), 0 1px 0 rgba(255,255,255,0.22) inset',
-                    }}>
+                    className="btn-vision-primary flex items-center justify-center gap-2 w-full py-4 text-[13.5px]">
                     <Package size={14} /> Buy Now <ArrowRight size={13} />
                   </a>
+
                 </div>
               </div>
             </div>
