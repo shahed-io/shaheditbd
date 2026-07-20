@@ -2547,6 +2547,22 @@ body.admin-page table th,
 body.admin-page table td,
 body.admin-page table th *,
 body.admin-page table td *,
+body.admin-page h1,
+body.admin-page h2,
+body.admin-page h3,
+body.admin-page h4,
+body.admin-page h5,
+body.admin-page h6,
+body.admin-page p,
+body.admin-page span,
+body.admin-page a,
+body.admin-page small,
+body.admin-page strong,
+body.admin-page em,
+body.admin-page li,
+body.admin-page dt,
+body.admin-page dd,
+body.admin-page label,
 body.admin-page button,
 body.admin-page button *,
 body.admin-page [role="button"],
@@ -2563,6 +2579,14 @@ body.admin-page [class*="rounded-full"] * {
   word-break: keep-all !important;
   overflow-wrap: normal !important;
   hyphens: none !important;
+}
+
+body.admin-page .whitespace-pre,
+body.admin-page .whitespace-pre-line,
+body.admin-page .whitespace-pre-wrap,
+body.admin-page pre,
+body.admin-page textarea {
+  white-space: pre-wrap !important;
 }
 
 body.admin-page .break-all,
