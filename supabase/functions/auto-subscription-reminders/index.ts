@@ -18,6 +18,10 @@ const daysBetween = (iso: string | null) => {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const authFail = requireServiceRole(req)
+  if (authFail) return authFail
+
+
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
