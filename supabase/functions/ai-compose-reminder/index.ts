@@ -1,5 +1,6 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { callAIWithFallback } from '../_shared/ai-fallback.ts';
+import { requireAdmin } from '../_shared/admin-auth.ts';
 
 interface Body {
   productName: string;
