@@ -48,6 +48,9 @@ async function getAccessToken(saJson: any): Promise<string> {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const authFail = await requireAdmin(req);
+  if (authFail) return authFail;
+
 
   try {
     const saRaw = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_JSON");
