@@ -450,6 +450,10 @@ const Checkout = () => {
     }
 
     setLoading(true);
+    // Freeze the abandoned-checkout tracker so the debounced upsert cannot
+    // re-create/overwrite the row while the order is being placed.
+    submittingRef.current = true;
+    clearTimeout(abandonedTimer.current);
     try {
       const orderNum = 'ORD-' + Array.from(crypto.getRandomValues(new Uint8Array(5))).map(b => b.toString(36)).join('').toUpperCase().slice(0, 8);
 
