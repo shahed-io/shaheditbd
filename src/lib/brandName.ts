@@ -47,13 +47,15 @@ export const normalizeBrandNameText = (value: string): string => {
   // 3. If "Shahed Store" appears inside a Bengali context, convert to Bengali form
   //    (handles case markers like "Shahed Store-এর" / "Shahed Storeে" too)
   out = out.replace(
-    /Shahed\s*Store(?:\s*-\s*|\s*)?(এর|কে|তে|এ|ের|য়|ে)?/g,
-    (match, suffix, offset, full) => {
+    /Shahed\s*Store(\s*-\s*|\s+)?(এর|কে|তে|এ|ের|য়|ে)?/g,
+    (match, separator, suffix, offset, full) => {
       if (isBengaliContext(full, offset, match.length)) {
-        return BN_NAME + (suffix || '');
+        // If there's a suffix like 'এর', we usually don't want a space before it in Bengali
+        const finalSeparator = suffix ? '' : (separator || ' ');
+        return BN_NAME + finalSeparator + (suffix || '');
       }
-      // English context — keep English, drop any stray Bengali suffix
-      return EN_NAME;
+      // English context — keep English
+      return EN_NAME + (separator || ' ') + (suffix || '');
     }
   );
 
