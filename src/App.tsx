@@ -23,6 +23,7 @@ const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
 // Deferred non-critical components — lazy loaded
 const CartDrawer = lazy(() => import("@/components/store/CartDrawer"));
 const RedirectEnforcer = lazy(() => import("@/components/seo/RedirectEnforcer"));
+const PostLoginRedirect = lazy(() => import("@/components/store/PostLoginRedirect"));
 const FacebookPixel = lazy(() => import("@/components/store/FacebookPixel"));
 const GoogleTracking = lazy(() => import("@/components/store/GoogleTracking"));
 const MarketingPixels = lazy(() => import("@/components/store/MarketingPixels"));
