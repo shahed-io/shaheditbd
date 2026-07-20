@@ -429,42 +429,44 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             {outOfStock ? (
               <button
                 onClick={e => { e.stopPropagation(); waPreOrder(); }}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-full text-[12px] font-semibold text-white transition-all active:scale-[0.98] hover:brightness-110"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(0,80%,55%), hsl(15,90%,55%))',
-                  boxShadow: '0 4px 16px hsla(0,80%,55%,0.35)',
+                  background: '#d70015',
+                  boxShadow: '0 1px 2px rgba(215,0,21,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+                  letterSpacing: '0.01em',
                 }}>
                 <Clock size={12} /> Pre-order
               </button>
             ) : (
               <button
                 onClick={e => { e.stopPropagation(); setShowModal(true); }}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all hover:scale-[1.02]"
+                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-full text-[13px] font-semibold text-white transition-all active:scale-[0.98] hover:brightness-110"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(271,91%,65%), hsl(185,90%,52%))',
-                  boxShadow: '0 4px 16px hsla(271,91%,65%,0.35)',
+                  background: '#0071e3',
+                  boxShadow: '0 1px 2px rgba(0,113,227,0.35), inset 0 1px 0 rgba(255,255,255,0.18)',
+                  letterSpacing: '0.01em',
                 }}>
-                <CreditCard size={12} /> Buy Now
+                <CreditCard size={13} /> Buy Now
               </button>
             )}
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={e => { e.stopPropagation(); waMsg(); }}
-                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02]"
+                className="flex items-center justify-center gap-1 py-2 rounded-full text-[11px] font-semibold transition-all active:scale-[0.98] hover:brightness-95"
                 style={{
-                  background: 'hsla(158,80%,48%,0.1)',
-                  border: '1px solid hsla(158,80%,48%,0.25)',
-                  color: 'hsl(158,80%,58%)',
+                  background: '#f5f5f7',
+                  border: '1px solid rgba(0,0,0,0.08)',
+                  color: '#1d1d1f',
                 }}>
-                <MessageCircle size={11} /> WhatsApp
+                <MessageCircle size={11} color="#25D366" /> WhatsApp
               </button>
               <button
                 disabled={outOfStock}
                 onClick={e => { e.stopPropagation(); if (outOfStock) return; addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
-                className="flex items-center justify-center gap-1 py-2 rounded-xl text-[11px] font-semibold transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="flex items-center justify-center gap-1 py-2 rounded-full text-[11px] font-semibold transition-all active:scale-[0.98] hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={inCart
-                  ? { background: 'hsla(271,91%,65%,0.15)', border: '1px solid hsla(271,91%,65%,0.4)', color: 'hsl(271,91%,75%)' }
-                  : { background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }
+                  ? { background: '#eaf4ff', border: '1px solid rgba(0,113,227,0.35)', color: '#0071e3' }
+                  : { background: '#f5f5f7', border: '1px solid rgba(0,0,0,0.08)', color: '#1d1d1f' }
                 }>
                 <ShoppingCart size={11} />
                 {outOfStock ? 'Out' : (inCart ? '✓ Added' : 'Cart')}
