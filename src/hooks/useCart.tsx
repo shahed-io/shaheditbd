@@ -208,7 +208,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           .order('created_at', { ascending: true });
         if (error) { console.warn('[cart] fetch error:', error.message); return; }
         if (!data) return;
-        const dbItems: CartItem[] = data.map((r: any) => ({
+        const rawDbItems = data.map((r: any) => ({
           id: r.product_id,
           name: r.name,
           category: r.category || '',
@@ -218,17 +218,23 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           originalPrice: r.original_price != null ? Number(r.original_price) : undefined,
           quantity: r.quantity || 1,
         }));
-        // Merge with any local items not yet on server (e.g. just added pre-login)
-        const merged = [...dbItems];
-        for (const it of local) {
-          if (!merged.find(d => String(d.id) === String(it.id) && (d.variant || '') === (it.variant || ''))) {
-            merged.push(it);
-          }
+        const dbItems = sanitizeItems(rawDbItems);
+
+        // Clean up any invalid rows lingering in the DB so the phantom count
+        // (e.g. "Cart 6" with no real items) can never come back on next login.
+        const invalidRows = rawDbItems.filter(it => !isValidCartItem(it));
+        if (invalidRows.length > 0) {
+          await dbDeleteItems(userId, invalidRows.map(r => ({
+            product_id: String(r.id), variant: r.variant || '',
+          })));
         }
-        if (merged.length > 0) {
-          setItems(merged);
-          setSelectedKeys(merged.map(itemKey));
-        }
+
+        // DB is the source of truth. Only merge local items when the user was
+        // a guest (DB empty) — otherwise stale local entries would re-appear
+        // as phantom cart items after login on another device.
+        const finalItems = dbItems.length > 0 ? dbItems : sanitizeItems(local);
+        setItems(finalItems);
+        setSelectedKeys(finalItems.map(itemKey));
       } catch (e) { console.warn('[cart] sync ex:', e); }
     })();
   }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
