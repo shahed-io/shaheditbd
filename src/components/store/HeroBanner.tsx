@@ -78,7 +78,7 @@ const dbSlideToSlide = (s: SlideData): Slide => ({
   off: s.off?.startsWith('-') ? s.off : `-${s.off}`,
   accentFrom: s.accentFrom || 'hsl(258,90%,68%)',
   accentTo: s.accentTo || 'hsl(210,95%,60%)',
-  heroImage: s.heroImage || HERO_MAP[s.id] || s.logoImg || '',
+  heroImage: s.heroImage || HERO_MAP[s.id] || '',
   productSlug: s.productSlug || '',
 });
 
@@ -170,7 +170,7 @@ const HeroBanner = () => {
             <span
               className="inline-block text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase"
               style={{
-                background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
+                backgroundImage: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -194,7 +194,7 @@ const HeroBanner = () => {
             {slide.title}{' '}
             <span
               style={{
-                background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
+                backgroundImage: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -243,7 +243,7 @@ const HeroBanner = () => {
                 alt={`${slide.title} ${slide.titleAccent}`}
                 width={480}
                 height={480}
-                fetchPriority="high"
+                
                 decoding="async"
                 className="anim-float relative object-contain"
                 style={{
