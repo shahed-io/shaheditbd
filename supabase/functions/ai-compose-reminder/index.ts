@@ -1,5 +1,6 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { callAIWithFallback } from '../_shared/ai-fallback.ts';
+import { requireAdmin } from '../_shared/admin-auth.ts';
 
 interface Body {
   productName: string;
@@ -18,6 +19,8 @@ interface Body {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const authFail = await requireAdmin(req);
+  if (authFail) return authFail;
   try {
     const body = (await req.json()) as Body;
     if (!body?.productName) {

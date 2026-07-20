@@ -35,7 +35,7 @@ export default function Winners() {
       }
       const ids = offers.map((o: any) => o.id);
       const { data: wins } = await supabase
-        .from('offer_winners')
+        .from('offer_winners_public')
         .select('id, offer_id, rank, prize, participant_name')
         .in('offer_id', ids)
         .order('rank');

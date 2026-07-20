@@ -1,5 +1,6 @@
 // Google Search Console Performance API - last 28 days
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
+import { requireAdmin } from "../_shared/admin-auth.ts";
 
 // Build a JWT signed with the service account RS256 key
 async function getAccessToken(saJson: any): Promise<string> {
@@ -47,6 +48,9 @@ async function getAccessToken(saJson: any): Promise<string> {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const authFail = await requireAdmin(req);
+  if (authFail) return authFail;
+
 
   try {
     const saRaw = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_JSON");

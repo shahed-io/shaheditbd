@@ -1,10 +1,13 @@
 // Google Search Console — Sitemaps & Indexing status (via connector gateway)
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { requireAdmin } from "../_shared/admin-auth.ts";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_search_console";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const authFail = await requireAdmin(req);
+  if (authFail) return authFail;
 
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

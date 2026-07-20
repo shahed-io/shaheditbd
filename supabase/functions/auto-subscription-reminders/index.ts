@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
+import { requireServiceRole } from '../_shared/admin-auth.ts'
 
 const SITE = Deno.env.get('PUBLIC_SITE_URL') || 'https://shahedstore.com.bd'
 
@@ -17,6 +18,10 @@ const daysBetween = (iso: string | null) => {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  const authFail = requireServiceRole(req)
+  if (authFail) return authFail
+
+
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
