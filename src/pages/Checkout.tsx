@@ -95,9 +95,12 @@ const Checkout = () => {
     } catch { /* ignore */ }
     return { name: '', email: '', phone: '' };
   });
-  // Persist draft as the user types
+  // Persist contact draft as the user types without removing payment/login-pending fields.
   useEffect(() => {
-    try { localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify(form)); } catch {}
+    try {
+      const existing = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
+      localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify({ ...existing, ...form }));
+    } catch {}
   }, [form.name, form.email, form.phone]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(() => {
