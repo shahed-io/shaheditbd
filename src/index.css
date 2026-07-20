@@ -656,27 +656,41 @@ html[data-theme="midnight-purple"] .cta-card-inner {
   border-radius: 1.25rem;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 2px 16px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.06), inset 0 1px 0 hsla(0,0%,100%,0.7);
+  box-shadow:
+    0 2px 16px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.06),
+    0 20px 40px -18px hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.10),
+    inset 0 1px 0 hsla(0,0%,100%,0.7);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   position: relative;
   cursor: pointer;
+  animation: card-float 6s ease-in-out infinite;
 }
 /* Dark themes */
 html[data-theme="dark-cyber"] .product-card-new,
 html[data-theme="midnight-purple"] .product-card-new {
   background: hsla(var(--brand-h), 40%, 10%, 0.65);
   border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.25);
-  box-shadow: 0 2px 16px hsla(var(--brand-h),var(--brand-s),55%,0.12), inset 0 1px 0 hsla(var(--brand-h),var(--brand-s),70%,0.1);
+  box-shadow:
+    0 2px 16px hsla(var(--brand-h),var(--brand-s),55%,0.12),
+    0 20px 40px -18px hsla(var(--brand-h),var(--brand-s),55%,0.18),
+    inset 0 1px 0 hsla(var(--brand-h),var(--brand-s),70%,0.1);
 }
 
+/* Soft ambient glow halo — pulses gently behind the card */
 .product-card-new::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, hsla(var(--brand-h),var(--brand-s),var(--brand-l),0.03) 0%, transparent 50%, hsla(var(--accent-h),var(--accent-s),50%,0.02) 100%);
+  inset: -14px;
+  border-radius: 1.6rem;
+  background:
+    radial-gradient(60% 55% at 20% 15%, hsla(var(--brand-h),var(--brand-s),65%,0.18) 0%, transparent 70%),
+    radial-gradient(60% 55% at 85% 90%, hsla(var(--accent-h),var(--accent-s),60%,0.14) 0%, transparent 70%);
+  filter: blur(22px);
+  opacity: 0.55;
+  z-index: -1;
   pointer-events: none;
-  z-index: 0;
+  animation: card-ambient-glow 5s ease-in-out infinite;
 }
 
 .product-card-new::after {
@@ -695,21 +709,41 @@ html[data-theme="midnight-purple"] .product-card-new {
 }
 
 .product-card-new:hover {
-  transform: translateY(-8px) scale(1.02);
+  animation-play-state: paused;
+  transform: translateY(-10px) scale(1.02);
   border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.35);
   box-shadow:
-    0 12px 32px hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.12),
-    0 0 0 1px hsla(var(--brand-h), var(--brand-s), 65%, 0.2),
-    inset 0 1px 0 hsla(0,0%,100%,0.8);
+    0 22px 48px hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.18),
+    0 0 0 1px hsla(var(--brand-h), var(--brand-s), 65%, 0.22),
+    inset 0 1px 0 hsla(0,0%,100%,0.85);
+}
+.product-card-new:hover::before {
+  opacity: 1;
+  filter: blur(28px);
 }
 html[data-theme="dark-cyber"] .product-card-new:hover,
 html[data-theme="midnight-purple"] .product-card-new:hover {
   border-color: hsla(var(--brand-h), var(--brand-s), 65%, 0.5);
-  box-shadow: 0 12px 32px hsla(var(--brand-h),var(--brand-s),55%,0.25), 0 0 0 1px hsla(var(--brand-h),var(--brand-s),65%,0.3), inset 0 1px 0 hsla(var(--brand-h),var(--brand-s),70%,0.15);
+  box-shadow: 0 22px 48px hsla(var(--brand-h),var(--brand-s),55%,0.32), 0 0 0 1px hsla(var(--brand-h),var(--brand-s),65%,0.3), inset 0 1px 0 hsla(var(--brand-h),var(--brand-s),70%,0.15);
 }
 
 .product-card-new:hover::after {
   background: linear-gradient(135deg, hsl(var(--brand-h),var(--brand-s),var(--brand-l)), hsl(var(--accent-h),var(--accent-s),var(--accent-l)));
+}
+
+@keyframes card-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+@keyframes card-ambient-glow {
+  0%, 100% { opacity: 0.45; filter: blur(22px); }
+  50%      { opacity: 0.75; filter: blur(28px); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .product-card-new,
+  .product-card-new::before { animation: none; }
 }
 
 /* 3D Tilt effect via JS */
