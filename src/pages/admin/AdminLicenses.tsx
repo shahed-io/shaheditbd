@@ -1546,7 +1546,7 @@ const AdminLicenses = () => {
 
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[1100px]">
               <thead>
                 <tr className="border-b border-border">
                   <th className="w-10 px-3 py-3">
@@ -1554,14 +1554,15 @@ const AdminLicenses = () => {
                       onChange={toggleSelectAll}
                       className="h-4 w-4 rounded border-border accent-primary cursor-pointer" />
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Type</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Key / Credentials</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">প্রোডাক্ট</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Status</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">কাস্টমার / অর্ডার</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">ডেলিভারি নম্বর</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground">Action</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Type</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Key / Credentials</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">প্রোডাক্ট</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Status</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">কাস্টমার / অর্ডার</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">ডেলিভারি নম্বর</th>
+                  <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground whitespace-nowrap">Action</th>
                 </tr>
+
               </thead>
               <tbody>
                 {filtered.map(lic => {
