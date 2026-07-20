@@ -78,6 +78,7 @@ const Checkout = () => {
   const availablePaymentMethods = paymentMethods.filter(pm => pm.id !== 'wallet' || !!user);
 
   const CHECKOUT_DRAFT_KEY = 'checkout_form_draft';
+  const CHECKOUT_PENDING_SUBMIT_KEY = 'checkout_pending_submit';
   const [form, setForm] = useState(() => {
     // Restore draft on mount so a checkout-page → OAuth login → back-to-checkout
     // round-trip doesn't lose the customer's typed name/email/phone.
@@ -94,13 +95,26 @@ const Checkout = () => {
     } catch { /* ignore */ }
     return { name: '', email: '', phone: '' };
   });
-  // Persist draft as the user types
+  // Persist contact draft as the user types without removing payment/login-pending fields.
   useEffect(() => {
-    try { localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify(form)); } catch {}
+    try {
+      const existing = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
+      localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify({ ...existing, ...form }));
+    } catch {}
   }, [form.name, form.email, form.phone]);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
-  const [transactionId, setTransactionId] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
+      return (typeof parsed.paymentMethod === 'string' ? parsed.paymentMethod : 'bkash') as PaymentMethod;
+    } catch { return 'bkash'; }
+  });
+  const [transactionId, setTransactionId] = useState(() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
+      return typeof parsed.transactionId === 'string' ? parsed.transactionId : '';
+    } catch { return ''; }
+  });
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const screenshotInputRef = useRef<HTMLInputElement>(null);
@@ -160,6 +174,31 @@ const Checkout = () => {
     sessionTokenRef.current = tok;
   }
 
+  const persistCheckoutState = (markPending = false) => {
+    try {
+      const currentPath = window.location.pathname + window.location.search;
+      localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        paymentMethod,
+        transactionId,
+        orderNotes,
+        termsAccepted,
+        refCreditApplied,
+        refCreditInput,
+        savedAt: new Date().toISOString(),
+      }));
+      if (markPending) {
+        pendingSubmitRef.current = true;
+        sessionStorage.setItem(CHECKOUT_PENDING_SUBMIT_KEY, 'true');
+        localStorage.setItem(CHECKOUT_PENDING_SUBMIT_KEY, 'true');
+        sessionStorage.setItem('post_login_redirect', currentPath);
+        localStorage.setItem('post_login_redirect', currentPath);
+      }
+    } catch { /* ignore storage errors */ }
+  };
+
   // If user logs out while wallet is selected, switch to bkash
   useEffect(() => {
     if (!user && paymentMethod === 'wallet') {
@@ -181,17 +220,45 @@ const Checkout = () => {
     }
   }, [availablePaymentMethods, paymentMethod]);
 
-  // Auto-submit after login if there was a pending submit
+  // Restore the full checkout state after an auth round-trip.
   useEffect(() => {
-    if (user && pendingSubmitRef.current) {
-      pendingSubmitRef.current = false;
-      // Small delay to let profile auto-fill complete
-      const timer = setTimeout(() => {
-        const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
-        handleSubmit(fakeEvent);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
+    try {
+      const parsed = JSON.parse(localStorage.getItem(CHECKOUT_DRAFT_KEY) || '{}');
+      if (typeof parsed.paymentMethod === 'string') setPaymentMethod(parsed.paymentMethod as PaymentMethod);
+      if (typeof parsed.transactionId === 'string') setTransactionId(parsed.transactionId);
+      if (typeof parsed.orderNotes === 'string') setOrderNotes(parsed.orderNotes);
+      if (typeof parsed.termsAccepted === 'boolean') setTermsAccepted(parsed.termsAccepted);
+      if (typeof parsed.refCreditApplied === 'number') setRefCreditApplied(parsed.refCreditApplied);
+      if (typeof parsed.refCreditInput === 'string') setRefCreditInput(parsed.refCreditInput);
+    } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist the complete checkout state as the user fills payment details.
+  useEffect(() => {
+    persistCheckoutState(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.name, form.email, form.phone, paymentMethod, transactionId, orderNotes, termsAccepted, refCreditApplied, refCreditInput]);
+
+  // Auto-submit after login if there was a pending submit, including after OAuth/full-page redirects.
+  useEffect(() => {
+    if (!user) return;
+    let hasPending = pendingSubmitRef.current;
+    try {
+      hasPending = hasPending || sessionStorage.getItem(CHECKOUT_PENDING_SUBMIT_KEY) === 'true' || localStorage.getItem(CHECKOUT_PENDING_SUBMIT_KEY) === 'true';
+    } catch { /* ignore */ }
+    if (!hasPending) return;
+    pendingSubmitRef.current = false;
+    setShowAuthModal(false);
+    try {
+      sessionStorage.removeItem(CHECKOUT_PENDING_SUBMIT_KEY);
+      localStorage.removeItem(CHECKOUT_PENDING_SUBMIT_KEY);
+    } catch { /* ignore */ }
+    const timer = setTimeout(() => {
+      const formEl = document.getElementById('checkout-form') as HTMLFormElement | null;
+      if (formEl && !submittingRef.current) formEl.requestSubmit();
+    }, 1200);
+    return () => clearTimeout(timer);
   }, [user]);
 
   // Auto-fill from logged-in user profile + fetch wallet balance
@@ -280,7 +347,13 @@ const Checkout = () => {
       setOrderNumber(ord);
       setPaymentMethod('bkash_online');
       setOrderPlaced(true);
-      try { localStorage.removeItem(CHECKOUT_DRAFT_KEY); } catch {}
+      try {
+        localStorage.removeItem(CHECKOUT_DRAFT_KEY);
+        sessionStorage.removeItem(CHECKOUT_PENDING_SUBMIT_KEY);
+        localStorage.removeItem(CHECKOUT_PENDING_SUBMIT_KEY);
+        sessionStorage.removeItem('post_login_redirect');
+        localStorage.removeItem('post_login_redirect');
+      } catch {}
       setInstantDelivered(null);
       toast.success('✅ bKash পেমেন্ট সফল!');
       // Check if licenses were auto-assigned (License Manager had stock)
@@ -426,13 +499,6 @@ const Checkout = () => {
     setSubmitError('');
     setErrors({});
 
-    if (!user) {
-      pendingSubmitRef.current = true;
-      setSubmitError('অর্ডার করতে প্রথমে লগইন করুন');
-      setShowAuthModal(true);
-      return;
-    }
-
     if (!termsAccepted) {
       setSubmitError('Terms & Conditions মেনে নিতে হবে');
       return;
@@ -448,6 +514,13 @@ const Checkout = () => {
 
     if (paymentMethod !== 'wallet' && paymentMethod !== 'bkash_online' && !transactionId.trim()) { setSubmitError('Transaction ID দিন'); return; }
     if (items.length === 0) { setSubmitError('Cart empty'); return; }
+
+    if (!user) {
+      persistCheckoutState(true);
+      setSubmitError('লগইন করুন — লগইনের পর আপনার অর্ডার নিজে থেকেই সাবমিট হবে');
+      setShowAuthModal(true);
+      return;
+    }
 
     // Wallet: check balance
     if (paymentMethod === 'wallet') {
@@ -769,7 +842,13 @@ const Checkout = () => {
       setOrderNumber(orderNum);
       if (paymentMethod === 'wallet') setInstantDelivered(walletInstantDelivered);
       setOrderPlaced(true);
-      try { localStorage.removeItem(CHECKOUT_DRAFT_KEY); } catch {}
+      try {
+        localStorage.removeItem(CHECKOUT_DRAFT_KEY);
+        sessionStorage.removeItem(CHECKOUT_PENDING_SUBMIT_KEY);
+        localStorage.removeItem(CHECKOUT_PENDING_SUBMIT_KEY);
+        sessionStorage.removeItem('post_login_redirect');
+        localStorage.removeItem('post_login_redirect');
+      } catch {}
 
       // Fire Google Ads + GA4 Purchase conversion (non-blocking, after success)
       gTrackPurchase({
@@ -929,7 +1008,7 @@ const Checkout = () => {
       <div className="max-w-4xl mx-auto px-4 py-6 grid md:grid-cols-[1fr_360px] gap-6 items-start">
 
         {/* ===== LEFT: FORM ===== */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form id="checkout-form" onSubmit={handleSubmit} className="space-y-5">
 
           {/* Customer Info */}
           <div className="glass-card p-5 rounded-2xl border border-border space-y-4">
