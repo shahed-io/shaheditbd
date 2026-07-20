@@ -464,9 +464,14 @@ const OrderDetailModal = ({
   const [updatingId, setUpdatingId] = useState(false);
   const [savingNote, setSavingNote] = useState(false);
   const [notifyWhatsApp, setNotifyWhatsApp] = useState(false);
+  const [proofs, setProofs] = useState<any[]>([]);
+  const [bkashTxns, setBkashTxns] = useState<any[]>([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(true);
+  const [previewImg, setPreviewImg] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTimeline();
+    fetchPayments();
   }, [order.id]);
 
   const fetchTimeline = async () => {
@@ -479,6 +484,18 @@ const OrderDetailModal = ({
     setTimeline(data || []);
     setTimelineLoading(false);
   };
+
+  const fetchPayments = async () => {
+    setPaymentsLoading(true);
+    const [proofRes, bkashRes] = await Promise.all([
+      supabase.from('payment_proofs').select('*').eq('order_id', order.id).order('submitted_at', { ascending: false }),
+      supabase.from('bkash_transactions').select('*').eq('order_id', order.id).order('created_at', { ascending: false }),
+    ]);
+    setProofs(proofRes.data || []);
+    setBkashTxns(bkashRes.data || []);
+    setPaymentsLoading(false);
+  };
+
 
   const doUpdate = async (updates: any, msg: string) => {
     setUpdatingId(true);
