@@ -145,7 +145,7 @@ const HeroBanner = () => {
           style={{ background: 'radial-gradient(circle, hsla(258,78%,60%,0.10), transparent 70%)' }} />
 
         <div className="relative container-fluid">
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0 pt-4 pb-10 md:pt-6 md:pb-12 lg:pt-8 lg:pb-16">
+        <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-0 pt-3 pb-5 md:pt-4 md:pb-6 lg:pt-5 lg:pb-6">
 
           {/* ══════════════════════════════════
                LEFT — Bold editorial content
