@@ -77,7 +77,11 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
         if (error) throw error;
         toast.success('সফলভাবে লগইন হয়েছে!');
         onClose();
-        if (redirectAfterLogin) navigate('/dashboard');
+        // If a post-login redirect target is set (e.g. checkout page), let the
+        // global PostLoginRedirect listener handle navigation instead of pushing /dashboard.
+        let hasRedirect = false;
+        try { hasRedirect = !!(sessionStorage.getItem('post_login_redirect') || localStorage.getItem('post_login_redirect')); } catch {}
+        if (redirectAfterLogin && !hasRedirect) navigate('/dashboard');
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
