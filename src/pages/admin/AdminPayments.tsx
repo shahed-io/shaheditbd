@@ -21,21 +21,8 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { usePaymentSettings, PaymentMethodConfig, DEFAULT_PAYMENT_CONFIGS } from '@/hooks/usePaymentSettings';
-
-// ── Asset logos (fallback) ──────────────────────────────────
-import bkashLogo from '@/assets/payment/bkash.png';
-import nagadLogo from '@/assets/payment/nagad.png';
-import rocketLogo from '@/assets/payment/rocket.png';
-import upayLogo from '@/assets/payment/upay.png';
-import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
-
-const ASSET_LOGOS: Record<string, string> = {
-  bkash: bkashLogo,
-  nagad: nagadLogo,
-  rocket: rocketLogo,
-  upay: upayLogo,
-  bkash_merchant: bkashMerchantLogo,
-};
+import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
+import { getPaymentLogo } from '@/lib/paymentLogos';
 
 // ── Payments list types ─────────────────────────────────────
 type PaymentProof = {
@@ -89,6 +76,7 @@ const MethodEditor = ({
   const [stepInput, setStepInput] = useState('');
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const bkashContent = useBkashPgwContent();
 
   const set = (key: keyof PaymentMethodConfig, val: any) =>
     setForm(f => ({ ...f, [key]: val }));
@@ -135,7 +123,7 @@ const MethodEditor = ({
     set('steps', arr);
   };
 
-  const logoSrc = form.logoUrl || ASSET_LOGOS[form.id] || '';
+  const logoSrc = getPaymentLogo(form.id, form.logoUrl, bkashContent.logo_url);
 
   return (
     <Dialog open onOpenChange={open => !open && onClose()}>
@@ -368,6 +356,7 @@ const MethodEditor = ({
 // ── Payment Settings Tab ────────────────────────────────────
 const PaymentSettingsTab = () => {
   const { configs, saveMutation } = usePaymentSettings();
+  const bkashContent = useBkashPgwContent();
   const [localConfigs, setLocalConfigs] = useState<PaymentMethodConfig[] | null>(null);
   const [editingMethod, setEditingMethod] = useState<PaymentMethodConfig | null>(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -455,7 +444,7 @@ const PaymentSettingsTab = () => {
       {/* Method cards */}
       <div className="space-y-3">
         {working.map((method, i) => {
-          const logoSrc = method.logoUrl || ASSET_LOGOS[method.id] || '';
+          const logoSrc = getPaymentLogo(method.id, method.logoUrl, bkashContent.logo_url);
           return (
             <div
               key={method.id}

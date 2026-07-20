@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export type BkashPgwContent = {
@@ -24,6 +25,20 @@ export const DEFAULT_BKASH_CONTENT: BkashPgwContent = {
 export const BKASH_CONTENT_KEY = 'bkash_pgw_content';
 
 export function useBkashPgwContent() {
+  const qc = useQueryClient();
+
+  useEffect(() => {
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('bkash-pgw-content-update');
+      bc.onmessage = () => {
+        qc.invalidateQueries({ queryKey: ['bkash-pgw-content'] });
+        qc.invalidateQueries({ queryKey: ['payment-settings'] });
+      };
+    } catch { /* BroadcastChannel may be unavailable */ }
+    return () => { bc?.close(); };
+  }, [qc]);
+
   const { data } = useQuery({
     queryKey: ['bkash-pgw-content'],
     queryFn: async (): Promise<BkashPgwContent> => {
@@ -42,7 +57,10 @@ export function useBkashPgwContent() {
       }
       return DEFAULT_BKASH_CONTENT;
     },
-    staleTime: 60_000,
+    staleTime: 0,
+    gcTime: 1000 * 60 * 2,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   });
   return data ?? DEFAULT_BKASH_CONTENT;
 }
