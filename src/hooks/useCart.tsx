@@ -113,10 +113,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const userId = user?.id;
 
   const [items, setItems] = useState<CartItem[]>(() => {
-    try { return JSON.parse(localStorage.getItem('cart') || '[]'); } catch { return []; }
+    try { return sanitizeItems(JSON.parse(localStorage.getItem('cart') || '[]')); } catch { return []; }
   });
   const [wishlist, setWishlist] = useState<CartItem[]>(() => {
-    try { return JSON.parse(localStorage.getItem('wishlist') || '[]'); } catch { return []; }
+    try { return sanitizeItems(JSON.parse(localStorage.getItem('wishlist') || '[]')); } catch { return []; }
   });
   const [cartOpen, setCartOpen] = useState(false);
   const [wishlistOpen, setWishlistOpen] = useState(false);
@@ -128,7 +128,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [serviceFee] = useState(DEFAULT_SERVICE_FEE);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem('cart') || '[]') as CartItem[];
+      const stored = sanitizeItems(JSON.parse(localStorage.getItem('cart') || '[]'));
       // Default: all items selected
       return stored.map(i => `${i.id}__${i.variant || ''}`);
     } catch { return []; }
