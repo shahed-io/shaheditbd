@@ -605,6 +605,15 @@ const Checkout = () => {
       // ── bKash Online (PGW) — redirect to bKash hosted checkout ──
       if (paymentMethod === 'bkash_online') {
         try {
+          // Mark abandoned checkout as converted BEFORE redirect, otherwise
+          // the row stays in "Abandoned Checkouts" even after a real order.
+          try {
+            await supabase.rpc('mark_abandoned_checkout_converted', {
+              p_session_token: sessionTokenRef.current,
+              p_order_id: order.id,
+            });
+          } catch { /* silent */ }
+
           const { data: bkData, error: bkErr } = await supabase.functions.invoke('bkash-create-payment', {
             body: {
               orderId: order.id,
@@ -617,8 +626,15 @@ const Checkout = () => {
             console.error('[Checkout] bkash-create error:', bkErr, bkData);
             setSubmitError('bKash পেমেন্ট শুরু করা যায়নি। আবার চেষ্টা করুন।');
             setLoading(false);
+            submittingRef.current = false;
             return;
           }
+          // Rotate session token so next checkout starts a fresh abandoned row
+          try {
+            const newTok = 'cs_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+            localStorage.setItem('checkout_session_token', newTok);
+            sessionTokenRef.current = newTok;
+          } catch {}
           // Redirect user to bKash hosted page
           window.location.href = bkData.bkashURL;
           return;
@@ -626,6 +642,7 @@ const Checkout = () => {
           console.error('[Checkout] bkash invoke failed:', e);
           setSubmitError('bKash পেমেন্ট গেটওয়ে কানেক্ট হয়নি। আবার চেষ্টা করুন।');
           setLoading(false);
+          submittingRef.current = false;
           return;
         }
       }
