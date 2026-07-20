@@ -68,12 +68,26 @@ const StarRating = ({ rating, color }: { rating: number; color: string }) => (
   </div>
 );
 
-const AvatarCircle = ({ initials, index }: { initials: string; index: number }) => {
+const AVATAR_STYLES = ['notionists', 'avataaars', 'adventurer', 'lorelei', 'personas', 'micah'];
+
+const AvatarCircle = ({ initials, index, seed }: { initials: string; index: number; seed: string }) => {
   const [a, b] = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length];
+  const [failed, setFailed] = useState(false);
+  const style = AVATAR_STYLES[index % AVATAR_STYLES.length];
+  const url = `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}&backgroundType=gradientLinear&radius=50`;
+
   return (
-    <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+    <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden"
       style={{ background: `linear-gradient(135deg, ${a}, ${b})`, boxShadow: `0 4px 12px ${a}45` }}>
-      {initials}
+      {failed ? initials : (
+        <img
+          src={url}
+          alt={initials}
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="w-full h-full object-cover"
+        />
+      )}
     </div>
   );
 };
@@ -136,7 +150,7 @@ const ReviewCard = ({ review, index }: { review: Review; index: number }) => {
           style={{ background: `linear-gradient(90deg, transparent, ${from.replace('hsl(','hsla(').replace(')',',0.18)')}, transparent)` }} />
 
         <div className="flex items-center gap-3">
-          <AvatarCircle initials={review.avatar || review.name?.slice(0,2).toUpperCase()} index={index} />
+          <AvatarCircle initials={review.avatar || review.name?.slice(0,2).toUpperCase()} index={index} seed={review.name || review.id} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <p className="text-[13px] font-bold truncate" style={{ color: 'hsl(226,35%,14%)' }}>
