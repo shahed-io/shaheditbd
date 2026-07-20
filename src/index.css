@@ -2635,37 +2635,46 @@ body.admin-page .flex-wrap:has(button) {
 }
 
 /* ============================================================
-   visionOS Frosted Crystal Buttons
+   visionOS Premium Glass Buttons v2
+   Shared: rim highlight, sheen sweep, click ripple, press feedback
    ============================================================ */
 .btn-vision-primary,
-.btn-vision-glass {
+.btn-vision-glass,
+.btn-vision-whatsapp,
+.btn-vision-cart,
+.btn-vision-danger {
   position: relative;
   isolation: isolate;
   overflow: hidden;
   border-radius: 9999px;
   font-weight: 600;
   letter-spacing: 0.01em;
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  backdrop-filter: blur(28px) saturate(180%);
-  transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1),
-              box-shadow 0.25s ease,
-              filter 0.25s ease;
+  color: #ffffff;
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  backdrop-filter: blur(30px) saturate(200%);
+  transition: transform 0.28s cubic-bezier(0.34,1.4,0.64,1),
+              box-shadow 0.28s ease,
+              filter 0.28s ease;
   will-change: transform;
+  cursor: pointer;
 }
 
-/* Top inner highlight (visionOS "lit-from-within" edge) */
+/* Luminous rim (top-lit glass edge) */
 .btn-vision-primary::before,
-.btn-vision-glass::before {
+.btn-vision-glass::before,
+.btn-vision-whatsapp::before,
+.btn-vision-cart::before,
+.btn-vision-danger::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 1.2px;
   background: linear-gradient(180deg,
-    rgba(255,255,255,0.75) 0%,
-    rgba(255,255,255,0.15) 40%,
-    rgba(255,255,255,0.05) 60%,
-    rgba(255,255,255,0.30) 100%);
+    rgba(255,255,255,0.85) 0%,
+    rgba(255,255,255,0.18) 42%,
+    rgba(255,255,255,0.05) 62%,
+    rgba(255,255,255,0.42) 100%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
           mask-composite: exclude;
@@ -2673,9 +2682,12 @@ body.admin-page .flex-wrap:has(button) {
   z-index: 2;
 }
 
-/* Specular sheen sweep on hover */
+/* Specular sheen sweep on hover + click ripple burst */
 .btn-vision-primary::after,
-.btn-vision-glass::after {
+.btn-vision-glass::after,
+.btn-vision-whatsapp::after,
+.btn-vision-cart::after,
+.btn-vision-danger::after {
   content: '';
   position: absolute;
   top: 0; bottom: 0;
@@ -2683,132 +2695,151 @@ body.admin-page .flex-wrap:has(button) {
   width: 45%;
   background: linear-gradient(105deg,
     transparent 0%,
-    rgba(255,255,255,0.35) 45%,
-    rgba(255,255,255,0.55) 50%,
-    rgba(255,255,255,0.35) 55%,
+    rgba(255,255,255,0.40) 45%,
+    rgba(255,255,255,0.65) 50%,
+    rgba(255,255,255,0.40) 55%,
     transparent 100%);
   transform: skewX(-18deg);
-  transition: left 0.7s cubic-bezier(0.22,1,0.36,1);
+  transition: left 0.75s cubic-bezier(0.22,1,0.36,1);
   pointer-events: none;
   z-index: 1;
   mix-blend-mode: overlay;
 }
 .btn-vision-primary:hover::after,
-.btn-vision-glass:hover::after {
-  left: 115%;
+.btn-vision-glass:hover::after,
+.btn-vision-whatsapp:hover::after,
+.btn-vision-cart:hover::after,
+.btn-vision-danger:hover::after { left: 115%; }
+
+/* Shared hover lift + active press */
+.btn-vision-primary:hover,
+.btn-vision-glass:hover,
+.btn-vision-whatsapp:hover,
+.btn-vision-cart:hover,
+.btn-vision-danger:hover { transform: translateY(-1.5px); filter: brightness(1.06); }
+
+.btn-vision-primary:active,
+.btn-vision-glass:active,
+.btn-vision-whatsapp:active,
+.btn-vision-cart:active,
+.btn-vision-danger:active {
+  transform: translateY(0) scale(0.965);
+  transition-duration: 0.08s;
+  filter: brightness(0.95) saturate(1.1);
+  animation: btnVisionPulse 0.45s cubic-bezier(0.22,1,0.36,1);
 }
 
-.btn-vision-primary:hover,
-.btn-vision-glass:hover { transform: translateY(-1px); }
-.btn-vision-primary:active,
-.btn-vision-glass:active { transform: translateY(0) scale(0.98); transition-duration: 0.1s; }
+@keyframes btnVisionPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.55) inset, 0 0 0 0 currentColor; }
+  60%  { box-shadow: 0 0 0 14px rgba(255,255,255,0) inset, 0 0 0 8px rgba(255,255,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0) inset, 0 0 0 0 rgba(255,255,255,0); }
+}
 
-/* Primary — purple → blue gradient (screenshot match) */
+/* Primary — vivid violet → indigo → blue (premium screenshot match) */
 .btn-vision-primary {
-  color: #ffffff;
   background:
-    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,0.32) 0%, transparent 55%),
-    linear-gradient(90deg, #a855f7 0%, #7c3aed 45%, #3b82f6 100%);
+    radial-gradient(140% 160% at 20% 0%, rgba(255,255,255,0.42) 0%, transparent 50%),
+    radial-gradient(120% 140% at 100% 100%, rgba(59,130,246,0.55) 0%, transparent 55%),
+    linear-gradient(95deg, #b06bff 0%, #8b5cf6 35%, #6366f1 65%, #3b82f6 100%);
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.40) inset,
-    0 -8px 20px rgba(59,130,246,0.35) inset,
-    0 10px 30px rgba(124,58,237,0.38),
-    0 2px 8px rgba(59,130,246,0.25);
-  text-shadow: 0 1px 1px rgba(0,0,0,0.18);
+    0 1px 0 rgba(255,255,255,0.55) inset,
+    0 -10px 24px rgba(59,130,246,0.40) inset,
+    0 12px 34px rgba(124,58,237,0.45),
+    0 4px 14px rgba(59,130,246,0.32),
+    0 0 0 0.5px rgba(255,255,255,0.15);
+  text-shadow: 0 1px 2px rgba(30,20,80,0.35);
 }
 .btn-vision-primary:hover {
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.55) inset,
-    0 -8px 22px rgba(59,130,246,0.42) inset,
-    0 14px 38px rgba(124,58,237,0.45),
-    0 2px 10px rgba(59,130,246,0.30);
+    0 1px 0 rgba(255,255,255,0.70) inset,
+    0 -10px 26px rgba(59,130,246,0.48) inset,
+    0 18px 44px rgba(124,58,237,0.55),
+    0 6px 18px rgba(59,130,246,0.38),
+    0 0 0 0.5px rgba(255,255,255,0.22);
 }
 
-/* Secondary — clear frosted glass (kept for other usages) */
+/* Neutral clear frosted glass (kept for legacy usage) */
 .btn-vision-glass {
   color: #1d1d1f;
   background:
-    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.35) 55%, rgba(255,255,255,0.55) 100%);
+    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,0.90) 0%, rgba(255,255,255,0.40) 55%, rgba(255,255,255,0.60) 100%);
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.9) inset,
-    0 -6px 16px rgba(255,255,255,0.4) inset,
-    0 8px 24px rgba(15,23,42,0.10),
+    0 1px 0 rgba(255,255,255,0.95) inset,
+    0 -6px 16px rgba(255,255,255,0.45) inset,
+    0 10px 26px rgba(15,23,42,0.12),
     0 1px 4px rgba(15,23,42,0.06);
 }
 .btn-vision-glass:hover {
   box-shadow:
     0 1px 0 rgba(255,255,255,1) inset,
-    0 -6px 18px rgba(255,255,255,0.5) inset,
-    0 12px 30px rgba(15,23,42,0.14),
+    0 -6px 18px rgba(255,255,255,0.55) inset,
+    0 14px 32px rgba(15,23,42,0.16),
     0 1px 6px rgba(15,23,42,0.08);
 }
 
-/* WhatsApp — green gradient (screenshot match) */
+/* WhatsApp — luminous emerald → jade glass */
 .btn-vision-whatsapp {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: 9999px;
-  color: #ffffff;
-  font-weight: 600;
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  backdrop-filter: blur(28px) saturate(180%);
   background:
-    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,0.30) 0%, transparent 55%),
-    linear-gradient(90deg, #34d399 0%, #10b981 55%, #059669 100%);
+    radial-gradient(140% 160% at 25% 0%, rgba(255,255,255,0.42) 0%, transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, rgba(4,120,87,0.55) 0%, transparent 55%),
+    linear-gradient(95deg, #4ade80 0%, #22c55e 40%, #10b981 75%, #059669 100%);
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.40) inset,
-    0 -8px 20px rgba(5,150,105,0.32) inset,
-    0 10px 28px rgba(16,185,129,0.38);
-  transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.25s ease;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    0 1px 0 rgba(255,255,255,0.55) inset,
+    0 -10px 22px rgba(5,150,105,0.40) inset,
+    0 12px 30px rgba(16,185,129,0.45),
+    0 4px 12px rgba(5,150,105,0.32),
+    0 0 0 0.5px rgba(255,255,255,0.15);
+  text-shadow: 0 1px 2px rgba(4,60,40,0.35);
 }
-.btn-vision-whatsapp:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(255,255,255,0.55) inset, 0 -8px 22px rgba(5,150,105,0.38) inset, 0 14px 34px rgba(16,185,129,0.45); }
-.btn-vision-whatsapp:active { transform: translateY(0) scale(0.98); }
+.btn-vision-whatsapp:hover {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.70) inset,
+    0 -10px 24px rgba(5,150,105,0.48) inset,
+    0 18px 40px rgba(16,185,129,0.55),
+    0 6px 16px rgba(5,150,105,0.38);
+}
 
-/* Cart — dark graphite pill (screenshot match) */
+/* Cart — obsidian graphite glass */
 .btn-vision-cart {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: 9999px;
-  color: #ffffff;
-  font-weight: 600;
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  backdrop-filter: blur(28px) saturate(180%);
   background:
-    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,0.20) 0%, transparent 55%),
-    linear-gradient(180deg, #2a2a2e 0%, #101014 100%);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.25) inset,
-    0 -8px 18px rgba(0,0,0,0.45) inset,
-    0 10px 26px rgba(0,0,0,0.35);
-  transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.25s ease;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.4);
-}
-.btn-vision-cart:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 -8px 20px rgba(0,0,0,0.5) inset, 0 14px 32px rgba(0,0,0,0.45); }
-.btn-vision-cart:active { transform: translateY(0) scale(0.98); }
-
-/* Danger variant (pre-order) — tinted red glass */
-.btn-vision-danger {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: 9999px;
-  color: #ffffff;
-  font-weight: 600;
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  backdrop-filter: blur(28px) saturate(180%);
-  background:
-    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,0.35) 0%, transparent 55%),
-    linear-gradient(180deg, hsla(6,85%,58%,0.78) 0%, hsla(355,80%,48%,0.82) 100%);
+    radial-gradient(140% 160% at 20% 0%, rgba(255,255,255,0.28) 0%, transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, rgba(80,80,100,0.55) 0%, transparent 60%),
+    linear-gradient(180deg, #3a3a42 0%, #1a1a1e 55%, #0a0a0d 100%);
   box-shadow:
     0 1px 0 rgba(255,255,255,0.35) inset,
-    0 -8px 20px hsla(0,80%,40%,0.25) inset,
-    0 10px 28px hsla(0,80%,45%,0.32);
-  transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.25s ease;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    0 -10px 22px rgba(0,0,0,0.55) inset,
+    0 12px 30px rgba(0,0,0,0.45),
+    0 4px 12px rgba(0,0,0,0.30),
+    0 0 0 0.5px rgba(255,255,255,0.10);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.55);
 }
-.btn-vision-danger:hover { transform: translateY(-1px); }
-.btn-vision-danger:active { transform: translateY(0) scale(0.98); }
+.btn-vision-cart:hover {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.45) inset,
+    0 -10px 24px rgba(0,0,0,0.60) inset,
+    0 18px 38px rgba(0,0,0,0.55),
+    0 6px 16px rgba(0,0,0,0.35);
+}
+
+/* Danger — molten rose → crimson glass (pre-order) */
+.btn-vision-danger {
+  background:
+    radial-gradient(140% 160% at 25% 0%, rgba(255,255,255,0.40) 0%, transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, rgba(190,18,60,0.55) 0%, transparent 55%),
+    linear-gradient(95deg, #fb7185 0%, #f43f5e 45%, #e11d48 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.55) inset,
+    0 -10px 22px rgba(190,18,60,0.40) inset,
+    0 12px 30px rgba(244,63,94,0.45),
+    0 4px 12px rgba(225,29,72,0.32);
+  text-shadow: 0 1px 2px rgba(90,10,30,0.35);
+}
+.btn-vision-danger:hover {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.70) inset,
+    0 -10px 24px rgba(190,18,60,0.48) inset,
+    0 18px 40px rgba(244,63,94,0.55),
+    0 6px 16px rgba(225,29,72,0.38);
+}
+
 
