@@ -325,27 +325,10 @@ async function handleCheckKey(botToken: string, chatId: string | number, rawInpu
 
   const results = await Promise.all(keys.map(k => checkLicenseKey(k, pidmsToken, lang)));
 
-  let out = lang === 'bn' ? '🔑 *লাইসেন্স কী চেক ফলাফল*\n\n' : '🔑 *License Key Check Result*\n\n';
-  results.forEach((r, i) => {
-    const emoji = r.status === 'live' ? '✅' : r.status === 'dead' ? '❌' : '⚠️';
-    const statusText = r.status === 'live'
-      ? (lang === 'bn' ? 'বৈধ (LIVE)' : 'VALID (LIVE)')
-      : r.status === 'dead' ? (lang === 'bn' ? 'অবৈধ (DEAD)' : 'INVALID (DEAD)')
-      : (lang === 'bn' ? 'অজানা' : 'UNKNOWN');
-    out += `${emoji} *${i + 1}. ${statusText}*\n`;
-    out += `\`${r.key}\`\n`;
-    if (r.product) out += `📦 ${r.product}\n`;
-    if (r.edition) out += `🏷️ ${r.edition}\n`;
-    out += `💬 ${r.meaning}\n`;
-    if (r.errorCode) out += `🔢 ${r.errorCode}\n`;
-    out += '\n';
-  });
   const live = results.filter(r => r.status === 'live').length;
   const dead = results.filter(r => r.status === 'dead').length;
   const unk = results.filter(r => r.status === 'unknown').length;
-  out += lang === 'bn'
-    ? `━━━━━━━━━━━━━\n📊 সারাংশ: ✅ ${live} বৈধ • ❌ ${dead} অবৈধ • ⚠️ ${unk} অজানা`
-    : `━━━━━━━━━━━━━\n📊 Summary: ✅ ${live} live • ❌ ${dead} dead • ⚠️ ${unk} unknown`;
+
 
   const kb = inlineKb([
     [{ text: lang === 'bn' ? '🔑 আরেকটি কী চেক' : '🔑 Check Another Key', callback_data: 'checkkey_hint' }],
