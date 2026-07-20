@@ -200,13 +200,11 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
         onClick={handleCardClick}
         style={{
           opacity:   visible ? 1 : 0,
-          transform: !visible
-            ? (isMobile ? 'none' : 'translateY(40px)')
-            : clicked
+          transform: visible
+            ? clicked
               ? 'translateY(-3px) scale(0.97)'
-              : (!isMobile && isHovered)
-                ? 'translateY(-10px) scale(1.02)'
-                : undefined,
+              : (!isMobile && isHovered) ? 'translateY(-6px) scale(1.015)' : 'translateY(0) scale(1)'
+            : isMobile ? 'none' : 'translateY(40px)',
           transition: clicked
             ? 'transform 0.1s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.1s ease'
             : (!isMobile && isHovered)
@@ -445,7 +443,7 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
               <button
                 onClick={e => { e.stopPropagation(); waMsg(); }}
                 className="btn-vision-whatsapp flex items-center justify-center gap-1 py-2 text-[11px]">
-                <MessageCircle size={11} /> WhatsApp
+                <MessageCircle size={11} color="#ffffff" /> WhatsApp
               </button>
               <button
                 disabled={outOfStock}
