@@ -295,70 +295,47 @@ const HeroBanner = () => {
                 filter: 'blur(48px)',
               }} />
 
-            {/* Centered prismatic glass ring */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
-              style={{
-                width: '200px', height: '200px',
-                border: '1px solid rgba(255,255,255,0.55)',
-                background: 'rgba(255,255,255,0.06)',
-                backdropFilter: 'blur(2px)',
-                boxShadow: 'inset 0 0 24px rgba(255,255,255,0.35), 0 8px 32px hsla(258,70%,60%,0.10)',
-              }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
-              style={{
-                width: '128px', height: '128px',
-                border: '1px solid rgba(255,255,255,0.4)',
-                background: 'rgba(255,255,255,0.04)',
-                boxShadow: 'inset 0 0 12px rgba(255,255,255,0.28)',
-              }} />
-
-            {/* Thin flowing gradient data-transfer paths (SVG) */}
-            <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              width="280" height="360" viewBox="0 0 280 360" fill="none">
-              <defs>
-                <linearGradient id="flow-a" x1="0" y1="0" x2="280" y2="0" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stopColor="hsl(215,90%,60%)" stopOpacity="0" />
-                  <stop offset="0.5" stopColor="hsl(215,90%,60%)" stopOpacity="0.55" />
-                  <stop offset="1" stopColor="hsl(215,90%,60%)" stopOpacity="0" />
-                </linearGradient>
-                <linearGradient id="flow-b" x1="0" y1="0" x2="280" y2="0" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stopColor="hsl(268,80%,62%)" stopOpacity="0" />
-                  <stop offset="0.5" stopColor="hsl(268,80%,62%)" stopOpacity="0.5" />
-                  <stop offset="1" stopColor="hsl(268,80%,62%)" stopOpacity="0" />
-                </linearGradient>
-                <linearGradient id="flow-c" x1="0" y1="0" x2="280" y2="0" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stopColor="hsl(180,80%,55%)" stopOpacity="0" />
-                  <stop offset="0.5" stopColor="hsl(180,80%,55%)" stopOpacity="0.35" />
-                  <stop offset="1" stopColor="hsl(180,80%,55%)" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <path d="M0 210 Q 140 60 280 150" stroke="url(#flow-a)" strokeWidth="1.2" fill="none" />
-              <path d="M0 150 Q 140 300 280 210" stroke="url(#flow-b)" strokeWidth="1.2" fill="none" />
-              <path d="M0 180 Q 140 180 280 180" stroke="url(#flow-c)" strokeWidth="0.8" fill="none" strokeDasharray="2 6" />
-              <path d="M0 120 Q 140 200 280 90" stroke="url(#flow-a)" strokeWidth="0.6" fill="none" opacity="0.5" />
-              <path d="M0 270 Q 140 190 280 300" stroke="url(#flow-b)" strokeWidth="0.6" fill="none" opacity="0.5" />
-            </svg>
-
-            {/* Refractive vertical glass slats */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-[10px] pointer-events-none">
-              <div className="rounded-full"
-                style={{ width: '2px', height: '120px',
-                  background: 'linear-gradient(to bottom, transparent, hsla(215,90%,60%,0.35), transparent)' }} />
-              <div className="rounded-full"
-                style={{ width: '2px', height: '180px', transform: 'translateY(6px)',
-                  background: 'linear-gradient(to bottom, transparent, hsla(258,78%,62%,0.5), transparent)' }} />
-              <div className="rounded-full"
-                style={{ width: '2px', height: '120px',
-                  background: 'linear-gradient(to bottom, transparent, hsla(200,88%,58%,0.35), transparent)' }} />
+            {/* Centered rotating Bangladesh map */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center"
+              style={{ width: '220px', height: '220px' }}>
+              {/* Soft halo behind map */}
+              <div className="absolute inset-0 rounded-full"
+                style={{
+                  background: 'radial-gradient(circle, hsla(258,78%,62%,0.18) 0%, hsla(215,90%,60%,0.10) 45%, transparent 72%)',
+                  filter: 'blur(14px)',
+                }} />
+              {/* Rotating ring accent */}
+              <div className="absolute inset-0 rounded-full"
+                style={{
+                  border: '1px dashed rgba(255,255,255,0.35)',
+                  animation: 'bd-spin 22s linear infinite',
+                }} />
+              {/* Bangladesh map — rotates continuously */}
+              <svg viewBox="0 0 512 512" width="180" height="180"
+                style={{ animation: 'bd-spin 26s linear infinite', filter: 'drop-shadow(0 8px 24px hsla(258,70%,55%,0.35))' }}>
+                <defs>
+                  <linearGradient id="bd-fill" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="hsl(215,90%,60%)" />
+                    <stop offset="55%" stopColor="hsl(258,78%,62%)" />
+                    <stop offset="100%" stopColor="hsl(180,80%,55%)" />
+                  </linearGradient>
+                </defs>
+                {/* Simplified Bangladesh silhouette */}
+                <path
+                  d="M226 40 L250 38 L272 46 L286 62 L302 72 L318 68 L332 78 L340 96 L336 116 L322 128 L332 144 L352 150 L370 164 L378 184 L372 202 L356 210 L362 228 L378 240 L384 260 L372 276 L354 282 L360 300 L378 314 L382 336 L370 352 L352 358 L340 350 L326 356 L318 374 L326 392 L318 410 L300 418 L282 412 L266 420 L248 432 L228 438 L210 430 L196 414 L184 396 L172 380 L156 372 L140 360 L134 342 L142 324 L156 314 L150 296 L138 282 L142 262 L156 250 L150 232 L138 218 L144 198 L158 188 L152 170 L142 154 L150 136 L164 126 L162 108 L152 92 L162 74 L180 66 L198 58 L212 48 Z"
+                  fill="url(#bd-fill)"
+                  stroke="rgba(255,255,255,0.6)"
+                  strokeWidth="2"
+                />
+              </svg>
             </div>
 
-            {/* Floating micro-accent nodes */}
-            <div className="absolute top-[26%] left-[22%] w-1.5 h-1.5 rounded-full anim-float"
-              style={{ background: 'hsl(215,90%,60%)', boxShadow: '0 0 10px hsla(215,90%,60%,0.85)', animationDelay: '0s' }} />
-            <div className="absolute top-[72%] right-[20%] w-1.5 h-1.5 rounded-full anim-float"
-              style={{ background: 'hsl(268,80%,62%)', boxShadow: '0 0 10px hsla(268,80%,62%,0.85)', animationDelay: '1.4s' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 rounded-full"
-              style={{ background: 'white', boxShadow: '0 0 10px rgba(255,255,255,0.9)' }} />
+            <style>{`
+              @keyframes bd-spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+              }
+            `}</style>
           </div>
 
 
