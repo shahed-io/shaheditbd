@@ -29,6 +29,34 @@ export const DEFAULT_SERVICE_FEE = 0;
 const itemKey = (i: { id: number | string; variant?: string }) =>
   `${i.id}__${i.variant || ''}`;
 
+// Guard against phantom / corrupt cart entries that occasionally sneak in from
+// stale localStorage or leftover DB rows (e.g. old test data). We only trust
+// items with real id, name, positive price and a sane quantity (1-99).
+const isValidCartItem = (i: any): i is CartItem => {
+  if (!i || typeof i !== 'object') return false;
+  if (i.id === undefined || i.id === null || i.id === '') return false;
+  if (typeof i.name !== 'string' || !i.name.trim()) return false;
+  const price = Number(i.price);
+  if (!Number.isFinite(price) || price <= 0) return false;
+  const qty = Number(i.quantity);
+  if (!Number.isFinite(qty) || qty < 1 || qty > 99) return false;
+  return true;
+};
+
+const sanitizeItems = (arr: any): CartItem[] => {
+  if (!Array.isArray(arr)) return [];
+  const seen = new Set<string>();
+  const out: CartItem[] = [];
+  for (const raw of arr) {
+    if (!isValidCartItem(raw)) continue;
+    const k = itemKey(raw);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push({ ...raw, quantity: Math.min(99, Math.max(1, Math.floor(Number(raw.quantity)))) });
+  }
+  return out;
+};
+
 interface CartContextType {
   items: CartItem[];
   wishlist: CartItem[];
@@ -85,10 +113,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const userId = user?.id;
 
   const [items, setItems] = useState<CartItem[]>(() => {
-    try { return JSON.parse(localStorage.getItem('cart') || '[]'); } catch { return []; }
+    try { return sanitizeItems(JSON.parse(localStorage.getItem('cart') || '[]')); } catch { return []; }
   });
   const [wishlist, setWishlist] = useState<CartItem[]>(() => {
-    try { return JSON.parse(localStorage.getItem('wishlist') || '[]'); } catch { return []; }
+    try { return sanitizeItems(JSON.parse(localStorage.getItem('wishlist') || '[]')); } catch { return []; }
   });
   const [cartOpen, setCartOpen] = useState(false);
   const [wishlistOpen, setWishlistOpen] = useState(false);
@@ -100,7 +128,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [serviceFee] = useState(DEFAULT_SERVICE_FEE);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem('cart') || '[]') as CartItem[];
+      const stored = sanitizeItems(JSON.parse(localStorage.getItem('cart') || '[]'));
       // Default: all items selected
       return stored.map(i => `${i.id}__${i.variant || ''}`);
     } catch { return []; }
@@ -180,7 +208,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           .order('created_at', { ascending: true });
         if (error) { console.warn('[cart] fetch error:', error.message); return; }
         if (!data) return;
-        const dbItems: CartItem[] = data.map((r: any) => ({
+        const rawDbItems = data.map((r: any) => ({
           id: r.product_id,
           name: r.name,
           category: r.category || '',
@@ -190,17 +218,23 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           originalPrice: r.original_price != null ? Number(r.original_price) : undefined,
           quantity: r.quantity || 1,
         }));
-        // Merge with any local items not yet on server (e.g. just added pre-login)
-        const merged = [...dbItems];
-        for (const it of local) {
-          if (!merged.find(d => String(d.id) === String(it.id) && (d.variant || '') === (it.variant || ''))) {
-            merged.push(it);
-          }
+        const dbItems = sanitizeItems(rawDbItems);
+
+        // Clean up any invalid rows lingering in the DB so the phantom count
+        // (e.g. "Cart 6" with no real items) can never come back on next login.
+        const invalidRows = rawDbItems.filter((it: any) => !isValidCartItem(it));
+        if (invalidRows.length > 0) {
+          await dbDeleteItems(userId, invalidRows.map((r: any) => ({
+            product_id: String(r.id), variant: r.variant || '',
+          })));
         }
-        if (merged.length > 0) {
-          setItems(merged);
-          setSelectedKeys(merged.map(itemKey));
-        }
+
+        // DB is the source of truth. Only merge local items when the user was
+        // a guest (DB empty) — otherwise stale local entries would re-appear
+        // as phantom cart items after login on another device.
+        const finalItems = dbItems.length > 0 ? dbItems : sanitizeItems(local);
+        setItems(finalItems);
+        setSelectedKeys(finalItems.map(itemKey));
       } catch (e) { console.warn('[cart] sync ex:', e); }
     })();
   }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
