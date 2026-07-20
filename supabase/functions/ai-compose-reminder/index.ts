@@ -19,6 +19,8 @@ interface Body {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const authFail = await requireAdmin(req);
+  if (authFail) return authFail;
   try {
     const body = (await req.json()) as Body;
     if (!body?.productName) {
