@@ -106,6 +106,16 @@
     <priority>0.4</priority>
   </url>
   <url>
+    <loc>https://shahedstore.com.bd/product/microsoft-office-365-personal-price-in-bangladesh</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774191973761-0eyv67ap.png</image:loc>
+      <image:title>Microsoft Office 365 Personal Price in Bangladesh</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://shahedstore.com.bd/product/windows-server-2019-standard-price-in-bangladesh</loc>
     <lastmod>2026-07-20</lastmod>
     <changefreq>weekly</changefreq>
@@ -163,16 +173,6 @@
     <image:image>
       <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1773862023072-xb9xm8xt.png</image:loc>
       <image:title>N@rdVPN Premium Subscription Price in BD</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://shahedstore.com.bd/product/microsoft-office-365-personal-price-in-bangladesh</loc>
-    <lastmod>2026-07-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://dpvdavjwqyviredzoorj.supabase.co/storage/v1/object/public/product-images/ai-card-1774191973761-0eyv67ap.png</image:loc>
-      <image:title>Microsoft Office 365 Personal Price in Bangladesh</image:title>
     </image:image>
   </url>
   <url>
