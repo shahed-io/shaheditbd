@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminPrefetch, prefetchAdminRoute } from '@/hooks/useAdminPrefetch';
 import AdminCommandPalette from '@/components/admin/AdminCommandPalette';
+import AdminScrollController from '@/components/admin/AdminScrollController';
 import { useAdminCopyAnywhere } from '@/hooks/useAdminCopyAnywhere';
 import AdminHeroHeader from '@/components/admin/AdminHeroHeader';
 import { useAdmin2FA, getStoredToken, setStoredToken } from '@/hooks/useAdmin2FA';
@@ -668,6 +669,9 @@ const AdminLayout = () => {
 
       {/* Global Command Palette */}
       <AdminCommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+
+      {/* Floating horizontal-scroll controller — helps small screens reach off-screen columns */}
+      <AdminScrollController />
     </div>
   );
 };
