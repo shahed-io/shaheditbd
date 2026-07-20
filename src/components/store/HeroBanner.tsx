@@ -116,7 +116,7 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden px-3 sm:px-5 lg:px-8 pt-16 pb-10 sm:pt-20 md:pt-24 md:pb-12 lg:pt-10 lg:pb-14" style={{ background: bgStyle }}>
+    <section className="relative overflow-hidden px-3 sm:px-5 lg:px-8 pt-16 pb-10 sm:pt-20 md:pt-24 md:pb-12 lg:pt-6 lg:pb-8" style={{ background: bgStyle }}>
 
       {/* ── Luminous ambient orbs (page-level) ── */}
       <div className="absolute inset-0 pointer-events-none">
@@ -132,7 +132,7 @@ const HeroBanner = () => {
       </div>
 
       {/* ── Glass card frame around hero content ── */}
-      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px]"
+      <div className="relative mx-auto w-full max-w-[1800px] lg:max-w-[1240px] xl:max-w-[1360px] rounded-[28px] lg:rounded-[32px]"
         style={{
           background: 'rgba(255,255,255,0.42)',
           backdropFilter: 'blur(32px)',
@@ -145,7 +145,7 @@ const HeroBanner = () => {
           style={{ background: 'radial-gradient(circle, hsla(258,78%,60%,0.10), transparent 70%)' }} />
 
         <div className="relative container-fluid">
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0 pt-4 pb-10 md:pt-6 md:pb-12 lg:pt-8 lg:pb-16">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0 pt-4 pb-10 md:pt-6 md:pb-12 lg:pt-6 lg:pb-8">
 
           {/* ══════════════════════════════════
                LEFT — Bold editorial content
