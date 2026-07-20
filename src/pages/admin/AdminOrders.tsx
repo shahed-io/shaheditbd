@@ -570,20 +570,13 @@ const OrderDetailModal = ({
                     {order.customer_phone && <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Phone size={11} />{order.customer_phone}</p>}
                 </div>
 
-                {/* Payment History */}
+                {/* Payment History — শুধু তখনই দেখাবো যখন সত্যিকারের payment record আছে */}
+                {!paymentsLoading && (proofs.length > 0 || bkashTxns.length > 0) && (
                 <div>
                   <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-2">
                     <CreditCard size={12} className="text-primary" /> পেমেন্ট ইতিহাস
                   </p>
-                  {paymentsLoading ? (
-                    <div className="h-16 bg-muted/30 rounded-xl animate-pulse" />
-                  ) : (proofs.length === 0 && bkashTxns.length === 0) ? (
-                    <div className="glass-card rounded-xl p-3 text-xs text-muted-foreground">
-                      কোনো পেমেন্ট রেকর্ড পাওয়া যায়নি। Order-এ থাকা payment method: <span className="font-medium text-foreground">{PM_LABELS[order.payment_method] || order.payment_method}</span>
-                      {order.transaction_id && <> · TrxID: <span className="font-mono">{order.transaction_id}</span></>}
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
+                  <div className="space-y-2">
                       {/* bKash online transactions */}
                       {bkashTxns.map(tx => (
                         <div key={tx.id} className="glass-card rounded-xl p-3 border border-pink-500/30 space-y-1.5">
@@ -663,8 +656,8 @@ const OrderDetailModal = ({
                         </div>
                       ))}
                     </div>
-                  )}
                 </div>
+                )}
 
                   <div className="glass-card rounded-xl p-4 space-y-2">
                     <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><CreditCard size={12} className="text-primary" /> পেমেন্ট</p>
