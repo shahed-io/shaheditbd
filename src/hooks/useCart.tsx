@@ -29,6 +29,34 @@ export const DEFAULT_SERVICE_FEE = 0;
 const itemKey = (i: { id: number | string; variant?: string }) =>
   `${i.id}__${i.variant || ''}`;
 
+// Guard against phantom / corrupt cart entries that occasionally sneak in from
+// stale localStorage or leftover DB rows (e.g. old test data). We only trust
+// items with real id, name, positive price and a sane quantity (1-99).
+const isValidCartItem = (i: any): i is CartItem => {
+  if (!i || typeof i !== 'object') return false;
+  if (i.id === undefined || i.id === null || i.id === '') return false;
+  if (typeof i.name !== 'string' || !i.name.trim()) return false;
+  const price = Number(i.price);
+  if (!Number.isFinite(price) || price <= 0) return false;
+  const qty = Number(i.quantity);
+  if (!Number.isFinite(qty) || qty < 1 || qty > 99) return false;
+  return true;
+};
+
+const sanitizeItems = (arr: any): CartItem[] => {
+  if (!Array.isArray(arr)) return [];
+  const seen = new Set<string>();
+  const out: CartItem[] = [];
+  for (const raw of arr) {
+    if (!isValidCartItem(raw)) continue;
+    const k = itemKey(raw);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push({ ...raw, quantity: Math.min(99, Math.max(1, Math.floor(Number(raw.quantity)))) });
+  }
+  return out;
+};
+
 interface CartContextType {
   items: CartItem[];
   wishlist: CartItem[];
