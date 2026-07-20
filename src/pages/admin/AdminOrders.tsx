@@ -575,108 +575,30 @@ const OrderDetailModal = ({
                     <p className="font-semibold text-foreground text-sm">{order.customer_name}</p>
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Mail size={11} />{order.customer_email}</p>
                     {order.customer_phone && <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Phone size={11} />{order.customer_phone}</p>}
-                </div>
-
-                {/* Payment History — শুধু তখনই দেখাবো যখন সত্যিকারের payment record আছে */}
-                {!paymentsLoading && (proofs.length > 0 || bkashTxns.length > 0) && (
-                <div>
-                  <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-2">
-                    <CreditCard size={12} className="text-primary" /> পেমেন্ট ইতিহাস
-                  </p>
-                  <div className="space-y-2">
-                      {/* bKash online transactions */}
-                      {bkashTxns.map(tx => (
-                        <div key={tx.id} className="glass-card rounded-xl p-3 border border-pink-500/30 space-y-1.5">
-                          <div className="flex items-center justify-between flex-wrap gap-1">
-                            <span className="text-[11px] font-semibold text-pink-500 flex items-center gap-1">
-                              💳 bKash Online · {tx.mode === 'live' ? 'Live' : 'Sandbox'}
-                            </span>
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                              tx.status === 'completed' ? 'bg-emerald-500/10 text-emerald-500' :
-                              tx.status === 'failed' || tx.status === 'cancelled' ? 'bg-red-500/10 text-red-500' :
-                              'bg-amber-500/10 text-amber-500'
-                            }`}>{tx.status}</span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-                            {tx.trx_id && <div className="col-span-2"><span className="text-muted-foreground">TrxID: </span><span className="font-mono">{tx.trx_id}</span></div>}
-                            {tx.payment_id && <div className="col-span-2 truncate"><span className="text-muted-foreground">Payment ID: </span><span className="font-mono">{tx.payment_id}</span></div>}
-                            {tx.payer_msisdn && <div><span className="text-muted-foreground">Payer: </span><span className="font-mono">{tx.payer_msisdn}</span></div>}
-                            <div><span className="text-muted-foreground">Amount: </span><span className="font-semibold text-primary">৳{Number(tx.amount).toLocaleString()}</span></div>
-                            {tx.paid_at && <div className="col-span-2"><span className="text-muted-foreground">Paid: </span>{new Date(tx.paid_at).toLocaleString('en-BD')}</div>}
-                            {tx.status_message && <div className="col-span-2 text-muted-foreground">{tx.status_message}</div>}
-                          </div>
-                        </div>
-                      ))}
-
-                      {/* Manual / screenshot proofs */}
-                      {proofs.map(pr => (
-                        <div key={pr.id} className={`glass-card rounded-xl p-3 border space-y-2 ${
-                          pr.status === 'approved' ? 'border-emerald-500/30' :
-                          pr.status === 'rejected' ? 'border-red-500/30' : 'border-amber-500/30'
-                        }`}>
-                          <div className="flex items-center justify-between flex-wrap gap-1">
-                            <span className="text-[11px] font-semibold text-foreground flex items-center gap-1">
-                              📄 Manual Proof · {PM_LABELS[pr.payment_method] || pr.payment_method}
-                            </span>
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                              pr.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500' :
-                              pr.status === 'rejected' ? 'bg-red-500/10 text-red-500' :
-                              'bg-amber-500/10 text-amber-500'
-                            }`}>{pr.status}</span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-                            <div className="col-span-2"><span className="text-muted-foreground">TrxID: </span><span className="font-mono">{pr.transaction_id}</span></div>
-                            {pr.amount != null && <div><span className="text-muted-foreground">Amount: </span><span className="font-semibold text-primary">৳{Number(pr.amount).toLocaleString()}</span></div>}
-                            <div className="col-span-2"><span className="text-muted-foreground">Submitted: </span>{new Date(pr.submitted_at).toLocaleString('en-BD')}</div>
-                            {pr.admin_notes && <div className="col-span-2 text-muted-foreground">📝 {pr.admin_notes}</div>}
-                          </div>
-                          {pr.screenshot_url && (
-                            <button onClick={() => setPreviewImg(pr.screenshot_url)} className="block w-full">
-                              <img src={pr.screenshot_url} alt="Payment screenshot" loading="lazy"
-                                className="w-full max-h-48 object-contain rounded-lg border border-border bg-muted/20 hover:opacity-90 transition-opacity" />
-                            </button>
-                          )}
-                          {pr.status === 'pending' && (
-                            <div className="flex gap-2 pt-1">
-                              <button
-                                onClick={async () => {
-                                  const { error } = await supabase.from('payment_proofs').update({ status: 'approved', reviewed_at: new Date().toISOString() }).eq('id', pr.id);
-                                  if (error) { toast.error(handleDbError(error)); return; }
-                                  toast.success('✅ Proof approved');
-                                  fetchPayments();
-                                }}
-                                className="flex-1 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 hover:bg-emerald-500/20 transition-colors">
-                                Approve
-                              </button>
-                              <button
-                                onClick={async () => {
-                                  const { error } = await supabase.from('payment_proofs').update({ status: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', pr.id);
-                                  if (error) { toast.error(handleDbError(error)); return; }
-                                  toast.success('❌ Proof rejected');
-                                  fetchPayments();
-                                }}
-                                className="flex-1 py-1.5 rounded-lg text-[11px] font-semibold bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500/20 transition-colors">
-                                Reject
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                </div>
-                )}
+                  </div>
 
                   <div className="glass-card rounded-xl p-4 space-y-2">
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><CreditCard size={12} className="text-primary" /> পেমেন্ট</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-semibold text-foreground flex items-center gap-1.5"><CreditCard size={12} className="text-primary" /> পেমেন্ট</p>
+                      <button
+                        onClick={() => setActiveTab('payment')}
+                        className="text-[10px] font-semibold text-primary hover:underline inline-flex items-center gap-0.5"
+                      >
+                        বিস্তারিত <ChevronRight size={10} />
+                      </button>
+                    </div>
                     <div className="text-xs space-y-1.5">
                       <div className="flex justify-between"><span className="text-muted-foreground">Method:</span><span className="font-medium">{PM_LABELS[order.payment_method] || order.payment_method}</span></div>
                       {order.transaction_id && (
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center gap-2">
                           <span className="text-muted-foreground">TrxID:</span>
-                          <span className="font-mono text-[11px]">{order.transaction_id}</span>
+                          <span className="font-mono text-[11px] truncate">{order.transaction_id}</span>
                         </div>
                       )}
                       <div className="flex justify-between"><span className="text-muted-foreground">Payment:</span><span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${PAYMENT_STATUS_COLORS[order.payment_status] || ''}`}>{order.payment_status || 'pending'}</span></div>
+                      {!paymentsLoading && (bkashTxns.length + proofs.length) > 0 && (
+                        <div className="flex justify-between"><span className="text-muted-foreground">রেকর্ড:</span><span className="font-medium text-primary">{bkashTxns.length + proofs.length}টি</span></div>
+                      )}
                       <div className="flex justify-between font-bold border-t border-border pt-1.5">
                         <span className="text-muted-foreground">মোট:</span>
                         <span className="text-primary">৳{Number(order.total).toLocaleString()}</span>
