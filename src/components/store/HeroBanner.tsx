@@ -116,7 +116,7 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden mt-[38px] px-3 sm:px-5 lg:px-8 pt-12 pb-5 sm:pt-14 md:pt-16 md:pb-6 lg:pt-6 lg:pb-8" style={{ background: bgStyle }}>
+    <section className="relative overflow-hidden mt-[114px] px-3 sm:px-5 lg:px-8 pt-12 pb-5 sm:pt-14 md:pt-16 md:pb-6 lg:pt-6 lg:pb-8" style={{ background: bgStyle }}>
 
       {/* ── Luminous ambient orbs (page-level) ── */}
       <div className="absolute inset-0 pointer-events-none">
@@ -126,19 +126,16 @@ const HeroBanner = () => {
           style={{ background: 'hsla(230,80%,70%,0.18)', filter: 'blur(140px)' }} />
         <div className="absolute top-[25%] left-[33%] w-[300px] h-[300px] rounded-full"
           style={{ background: 'hsla(270,70%,72%,0.16)', filter: 'blur(100px)' }} />
-        {/* Top shimmer */}
-        <div className="absolute top-0 left-0 right-0 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent 0%, hsla(258,78%,62%,0.4) 40%, hsla(200,90%,55%,0.4) 60%, transparent 100%)' }} />
       </div>
 
       {/* ── Glass card frame around hero content ── */}
-      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px] overflow-hidden"
+      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px] overflow-hidden isolate"
         style={{
           background: 'rgba(255,255,255,0.42)',
           backdropFilter: 'blur(32px)',
           WebkitBackdropFilter: 'blur(32px)',
-          border: '1px solid rgba(255,255,255,0.6)',
-          boxShadow: '0 32px 64px -16px hsla(258,78%,55%,0.12), inset 0 1px 0 rgba(255,255,255,0.9)',
+          border: '1.5px solid rgba(255,255,255,0.85)',
+          boxShadow: '0 32px 64px -16px hsla(258,78%,55%,0.12), inset 0 1px 0 rgba(255,255,255,0.95), inset 1px 0 0 rgba(255,255,255,0.6)',
         }}>
         {/* Soft inner accent (kept inside so it doesn't break the top curve) */}
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
