@@ -502,34 +502,57 @@ const AdminDashboard = () => {
 
       {/* ── Payment Breakdown + Recent Customers ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Payment Method Pie Chart */}
-        <div className="glass-card rounded-2xl p-5">
-          <h3 className="font-bold text-foreground mb-4 flex items-center gap-2"><Percent size={15} className="text-primary" /> Payment Method Breakdown</h3>
+        {/* Payment Method — Luxury Gradient Ranked List */}
+        <div className="glass-card rounded-2xl p-5 relative overflow-hidden">
+          {/* subtle brand glow */}
+          <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full opacity-30 blur-3xl" style={{ background: 'radial-gradient(circle, hsl(var(--primary)/0.6), transparent 70%)' }} />
+          <div className="flex items-center justify-between mb-4 relative">
+            <h3 className="font-bold text-foreground flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+                <Percent size={13} className="text-primary" />
+              </span>
+              Payment Method Breakdown
+            </h3>
+            {paymentBreakdown.length > 0 && (
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider bg-muted/40 px-2 py-1 rounded-md">
+                {paymentBreakdown.reduce((s: number, p: any) => s + p.value, 0)} txns
+              </span>
+            )}
+          </div>
+
           {paymentBreakdown.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">No payment data</p>
           ) : (
-            <div className="flex items-center gap-4">
-              <ResponsiveContainer width="50%" height={180}>
-                <PieChart>
-                  <Pie data={paymentBreakdown} dataKey="value" cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} strokeWidth={0}>
-                    {paymentBreakdown.map((entry: any, i: number) => (
-                      <Cell key={i} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={toastStyle} formatter={(v: any, name: string) => [v, name]} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="space-y-2 flex-1">
-                {paymentBreakdown.map((pm: any, i: number) => (
-                  <div key={i} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ background: pm.color }} />
-                      <span className="text-foreground font-medium">{pm.name}</span>
+            <div className="space-y-2.5 relative">
+              {paymentBreakdown.map((pm: any, i: number) => {
+                const isTop = i === 0;
+                return (
+                  <div key={pm.key} className="group relative rounded-xl p-3 bg-gradient-to-br from-background/40 to-background/10 border border-border/40 hover:border-primary/40 hover:-translate-y-0.5 transition-all overflow-hidden">
+                    {/* rank ribbon */}
+                    <div className="flex items-center justify-between mb-2 gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${isTop ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-sm' : 'bg-muted/60 text-muted-foreground'}`}>
+                          {isTop ? <Crown size={11} /> : `#${i + 1}`}
+                        </span>
+                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: pm.color, boxShadow: `0 0 8px ${pm.color}80` }} />
+                        <span className="text-sm font-semibold text-foreground truncate">{pm.name}</span>
+                        {isTop && <span className="text-[9px] font-bold text-amber-500 uppercase tracking-wider whitespace-nowrap">Leader</span>}
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="text-xs font-bold text-foreground tabular-nums">{pm.value}</span>
+                        <span className="text-[10px] font-semibold text-muted-foreground tabular-nums bg-muted/40 px-1.5 py-0.5 rounded">{pm.pct}%</span>
+                      </div>
                     </div>
-                    <span className="text-muted-foreground font-bold">{pm.value}</span>
+                    {/* gradient progress bar */}
+                    <div className="h-1.5 rounded-full bg-muted/30 overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-700 ease-out"
+                        style={{ width: `${Math.max(pm.pct, 3)}%`, background: pm.gradient, boxShadow: `0 0 12px ${pm.color}66` }}
+                      />
+                    </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
           )}
         </div>
