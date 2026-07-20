@@ -65,8 +65,11 @@ const ALL_STATUSES = ['pending', 'processing', 'delivered', 'completed', 'cancel
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
   pending:  'text-amber-500 bg-amber-500/10',
   verified: 'text-emerald-500 bg-emerald-500/10',
+  paid:     'text-emerald-500 bg-emerald-500/10',
   failed:   'text-red-500 bg-red-500/10',
 };
+
+const isPaymentVerified = (status?: string | null) => status === 'verified' || status === 'paid';
 
 const PM_LABELS: Record<string, string> = {
   bkash_online: 'bKash (Online)',
@@ -594,7 +597,7 @@ const OrderDetailModal = ({
                 <div>
                   <p className="text-xs font-semibold text-foreground mb-2">দ্রুত অ্যাকশন</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {order.payment_status !== 'verified' && !['cancelled', 'failed'].includes(order.status) && (
+                    {!isPaymentVerified(order.payment_status) && !['cancelled', 'failed'].includes(order.status) && (
                       <button onClick={() => doUpdate({ payment_status: 'verified', status: 'processing' }, '✅ পেমেন্ট ভেরিফাই হয়েছে!')}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold btn-glow disabled:opacity-50">
                         <CheckCircle size={12} /> পেমেন্ট ভেরিফাই
@@ -1050,7 +1053,7 @@ const AdminOrders = () => {
     // so they don't pollute the Orders list with payments the customer never finished.
     const visible = (data || []).filter((o: any) => {
       if (o.payment_method !== 'bkash_online') return true;
-      return o.payment_status === 'paid';
+      return isPaymentVerified(o.payment_status) || o.status === 'completed' || o.status === 'delivered';
     });
     setOrders(visible);
     setLoading(false);
@@ -1092,7 +1095,7 @@ const AdminOrders = () => {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
         const newOrder = payload.new as any;
         // Skip bKash Online orders that are still pending — they only count once the customer actually pays
-        if (newOrder.payment_method === 'bkash_online' && newOrder.payment_status !== 'paid') {
+        if (newOrder.payment_method === 'bkash_online' && !isPaymentVerified(newOrder.payment_status)) {
           return;
         }
         setNewOrderIds(prev => new Set(prev).add(newOrder.id));
@@ -1496,7 +1499,7 @@ const AdminOrders = () => {
                           <span className="font-bold text-foreground text-sm">৳{Number(order.total).toLocaleString()}</span>
                           <span className="text-[10px] text-muted-foreground">
                             {PM_LABELS[order.payment_method] || order.payment_method}
-                            {order.payment_status === 'verified' && <span className="text-emerald-500 ml-1">✓</span>}
+                            {isPaymentVerified(order.payment_status) && <span className="text-emerald-500 ml-1">✓</span>}
                           </span>
                           <span className="text-[10px] text-muted-foreground">
                             {new Date(order.created_at).toLocaleDateString('en-BD', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
@@ -1505,7 +1508,7 @@ const AdminOrders = () => {
                       </button>
                     </div>
                     <div className="flex items-center justify-end gap-1 mt-2 pt-2 border-t border-border/30">
-                      {order.payment_status !== 'verified' && order.status === 'pending' && (
+                      {!isPaymentVerified(order.payment_status) && order.status === 'pending' && (
                         <button onClick={() => updateOrder(order.id, { payment_status: 'verified', status: 'processing' }, '✅ Verified!')}
                           className="p-2 text-emerald-500 bg-emerald-500/10 rounded-lg">
                           <CheckCircle size={16} />
@@ -1579,7 +1582,7 @@ const AdminOrders = () => {
                       </td>
                       <td className="px-4 py-3">
                         <span className="font-mono font-bold text-primary text-xs">{order.order_number}</span>
-                        {order.payment_status === 'verified' && (
+                        {isPaymentVerified(order.payment_status) && (
                           <div className="flex items-center gap-0.5 mt-0.5">
                             <CheckCircle size={10} className="text-emerald-500" />
                             <span className="text-[10px] text-emerald-500">Verified</span>
@@ -1624,7 +1627,7 @@ const AdminOrders = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
-                          {order.payment_status !== 'verified' && order.status === 'pending' && (
+                          {!isPaymentVerified(order.payment_status) && order.status === 'pending' && (
                             <button onClick={() => updateOrder(order.id, { payment_status: 'verified', status: 'processing' }, '✅ Verified!')}
                               title="পেমেন্ট ভেরিফাই"
                               className="p-1.5 text-muted-foreground hover:text-emerald-500 transition-colors rounded-lg hover:bg-emerald-500/10">
@@ -1702,7 +1705,7 @@ const AdminOrders = () => {
         <div className="glass-card rounded-xl px-5 py-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
           <span>দেখাচ্ছে: <strong className="text-foreground">{filtered.length}</strong></span>
           <span>মোট মূল্য: <strong className="text-primary">৳{filtered.reduce((s, o) => s + Number(o.total), 0).toLocaleString()}</strong></span>
-          <span>ভেরিফাই বাকি: <strong className="text-amber-500">{filtered.filter(o => o.payment_status !== 'verified' && !['cancelled', 'failed'].includes(o.status)).length}</strong></span>
+          <span>ভেরিফাই বাকি: <strong className="text-amber-500">{filtered.filter(o => !isPaymentVerified(o.payment_status) && !['cancelled', 'failed'].includes(o.status)).length}</strong></span>
           <span>সম্পন্ন: <strong className="text-emerald-500">{filtered.filter(o => o.status === 'completed').length}</strong></span>
         </div>
       )}
