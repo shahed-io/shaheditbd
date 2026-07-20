@@ -635,7 +635,9 @@ export type Database = {
           order_number: string | null
           paid_at: string | null
           payer_msisdn: string | null
+          payer_msisdn_enc: string | null
           payer_reference: string | null
+          payer_reference_enc: string | null
           payment_id: string | null
           purpose: string
           raw_create: Json | null
@@ -645,6 +647,7 @@ export type Database = {
           status_message: string | null
           topup_request_id: string | null
           trx_id: string | null
+          trx_id_enc: string | null
           updated_at: string
           user_id: string | null
         }
@@ -661,7 +664,9 @@ export type Database = {
           order_number?: string | null
           paid_at?: string | null
           payer_msisdn?: string | null
+          payer_msisdn_enc?: string | null
           payer_reference?: string | null
+          payer_reference_enc?: string | null
           payment_id?: string | null
           purpose?: string
           raw_create?: Json | null
@@ -671,6 +676,7 @@ export type Database = {
           status_message?: string | null
           topup_request_id?: string | null
           trx_id?: string | null
+          trx_id_enc?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -687,7 +693,9 @@ export type Database = {
           order_number?: string | null
           paid_at?: string | null
           payer_msisdn?: string | null
+          payer_msisdn_enc?: string | null
           payer_reference?: string | null
+          payer_reference_enc?: string | null
           payment_id?: string | null
           purpose?: string
           raw_create?: Json | null
@@ -697,6 +705,7 @@ export type Database = {
           status_message?: string | null
           topup_request_id?: string | null
           trx_id?: string | null
+          trx_id_enc?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -1492,9 +1501,11 @@ export type Database = {
           delivered_to_phone: string | null
           delivery_batch_id: string | null
           extra_info: string | null
+          extra_info_enc: string | null
           id: string
           key_type: string
           key_value: string
+          key_value_enc: string | null
           order_item_id: string | null
           product_id: string | null
           status: string
@@ -1506,9 +1517,11 @@ export type Database = {
           delivered_to_phone?: string | null
           delivery_batch_id?: string | null
           extra_info?: string | null
+          extra_info_enc?: string | null
           id?: string
           key_type?: string
           key_value: string
+          key_value_enc?: string | null
           order_item_id?: string | null
           product_id?: string | null
           status?: string
@@ -1520,9 +1533,11 @@ export type Database = {
           delivered_to_phone?: string | null
           delivery_batch_id?: string | null
           extra_info?: string | null
+          extra_info_enc?: string | null
           id?: string
           key_type?: string
           key_value?: string
+          key_value_enc?: string | null
           order_item_id?: string | null
           product_id?: string | null
           status?: string
@@ -2072,6 +2087,7 @@ export type Database = {
           id: string
           last_reminder_sent_at: string | null
           license_key: string | null
+          license_key_enc: string | null
           order_id: string
           price: number
           product_id: string | null
@@ -2086,6 +2102,7 @@ export type Database = {
           id?: string
           last_reminder_sent_at?: string | null
           license_key?: string | null
+          license_key_enc?: string | null
           order_id: string
           price: number
           product_id?: string | null
@@ -2100,6 +2117,7 @@ export type Database = {
           id?: string
           last_reminder_sent_at?: string | null
           license_key?: string | null
+          license_key_enc?: string | null
           order_id?: string
           price?: number
           product_id?: string | null
@@ -2168,13 +2186,16 @@ export type Database = {
           coupon_id: string | null
           created_at: string
           customer_email: string
+          customer_email_enc: string | null
           customer_name: string
           customer_phone: string | null
+          customer_phone_enc: string | null
           deleted_at: string | null
           deleted_by: string | null
           discount_amount: number | null
           id: string
           notes: string | null
+          notes_enc: string | null
           order_number: string
           payment_method: string | null
           payment_status: string | null
@@ -2193,13 +2214,16 @@ export type Database = {
           coupon_id?: string | null
           created_at?: string
           customer_email: string
+          customer_email_enc?: string | null
           customer_name: string
           customer_phone?: string | null
+          customer_phone_enc?: string | null
           deleted_at?: string | null
           deleted_by?: string | null
           discount_amount?: number | null
           id?: string
           notes?: string | null
+          notes_enc?: string | null
           order_number: string
           payment_method?: string | null
           payment_status?: string | null
@@ -2218,13 +2242,16 @@ export type Database = {
           coupon_id?: string | null
           created_at?: string
           customer_email?: string
+          customer_email_enc?: string | null
           customer_name?: string
           customer_phone?: string | null
+          customer_phone_enc?: string | null
           deleted_at?: string | null
           deleted_by?: string | null
           discount_amount?: number | null
           id?: string
           notes?: string | null
+          notes_enc?: string | null
           order_number?: string
           payment_method?: string | null
           payment_status?: string | null
@@ -2547,6 +2574,7 @@ export type Database = {
           status: string
           submitted_at: string
           transaction_id: string
+          transaction_id_enc: string | null
           user_id: string | null
         }
         Insert: {
@@ -2561,6 +2589,7 @@ export type Database = {
           status?: string
           submitted_at?: string
           transaction_id: string
+          transaction_id_enc?: string | null
           user_id?: string | null
         }
         Update: {
@@ -2575,6 +2604,7 @@ export type Database = {
           status?: string
           submitted_at?: string
           transaction_id?: string
+          transaction_id_enc?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -2598,10 +2628,13 @@ export type Database = {
           expires_at: string | null
           id: string
           key_value: string | null
+          key_value_enc: string | null
           last_reminder_sent_at: string | null
           name: string
           note: string | null
+          note_enc: string | null
           password: string | null
+          password_enc: string | null
           password_type: string | null
           status: string
           updated_at: string
@@ -2616,10 +2649,13 @@ export type Database = {
           expires_at?: string | null
           id?: string
           key_value?: string | null
+          key_value_enc?: string | null
           last_reminder_sent_at?: string | null
           name: string
           note?: string | null
+          note_enc?: string | null
           password?: string | null
+          password_enc?: string | null
           password_type?: string | null
           status?: string
           updated_at?: string
@@ -2634,10 +2670,13 @@ export type Database = {
           expires_at?: string | null
           id?: string
           key_value?: string | null
+          key_value_enc?: string | null
           last_reminder_sent_at?: string | null
           name?: string
           note?: string | null
+          note_enc?: string | null
           password?: string | null
+          password_enc?: string | null
           password_type?: string | null
           status?: string
           updated_at?: string
@@ -3318,6 +3357,7 @@ export type Database = {
           id: string
           is_admin: boolean
           message: string
+          message_enc: string | null
           ticket_id: string
         }
         Insert: {
@@ -3327,6 +3367,7 @@ export type Database = {
           id?: string
           is_admin?: boolean
           message: string
+          message_enc?: string | null
           ticket_id: string
         }
         Update: {
@@ -3336,6 +3377,7 @@ export type Database = {
           id?: string
           is_admin?: boolean
           message?: string
+          message_enc?: string | null
           ticket_id?: string
         }
         Relationships: [
@@ -3356,10 +3398,12 @@ export type Database = {
           customer_phone: string | null
           id: string
           message: string
+          message_enc: string | null
           order_number: string | null
           priority: string
           status: string
           subject: string
+          subject_enc: string | null
           ticket_number: string
           updated_at: string
           user_id: string | null
@@ -3371,10 +3415,12 @@ export type Database = {
           customer_phone?: string | null
           id?: string
           message: string
+          message_enc?: string | null
           order_number?: string | null
           priority?: string
           status?: string
           subject: string
+          subject_enc?: string | null
           ticket_number: string
           updated_at?: string
           user_id?: string | null
@@ -3386,10 +3432,12 @@ export type Database = {
           customer_phone?: string | null
           id?: string
           message?: string
+          message_enc?: string | null
           order_number?: string | null
           priority?: string
           status?: string
           subject?: string
+          subject_enc?: string | null
           ticket_number?: string
           updated_at?: string
           user_id?: string | null
@@ -4358,6 +4406,9 @@ export type Database = {
       }
     }
     Functions: {
+      _dec: { Args: { p_cipher: string }; Returns: string }
+      _enc: { Args: { p_plain: string }; Returns: string }
+      _enc_key: { Args: never; Returns: string }
       admin_adjust_cid_balance: {
         Args: { p_delta: number; p_note?: string; p_user_id: string }
         Returns: Json
@@ -4372,6 +4423,31 @@ export type Database = {
           total_added: number
           total_used: number
           user_id: string
+        }[]
+      }
+      admin_get_bkash_transaction: {
+        Args: { p_id: string }
+        Returns: {
+          amount: number
+          created_at: string
+          id: string
+          payer_msisdn: string
+          payer_reference: string
+          payment_id: string
+          status: string
+          trx_id: string
+        }[]
+      }
+      admin_get_license_key: {
+        Args: { p_id: string }
+        Returns: {
+          created_at: string
+          extra_info: string
+          id: string
+          key_type: string
+          key_value: string
+          product_id: string
+          status: string
         }[]
       }
       admin_list_coupons_with_email: {
@@ -4479,6 +4555,38 @@ export type Database = {
         Returns: number
       }
       generate_affiliate_code: { Args: never; Returns: string }
+      get_my_personal_licenses: {
+        Args: { p_query?: string }
+        Returns: {
+          category: string
+          created_at: string
+          delivered_at: string
+          expires_at: string
+          id: string
+          key_value: string
+          name: string
+          note: string
+          password: string
+          password_type: string
+          status: string
+        }[]
+      }
+      get_order_contact_secure: {
+        Args: { p_order_id: string }
+        Returns: {
+          customer_email: string
+          customer_phone: string
+          notes: string
+        }[]
+      }
+      get_order_license_keys: {
+        Args: { p_order_id: string }
+        Returns: {
+          license_key: string
+          order_item_id: string
+          product_name: string
+        }[]
+      }
       get_payment_submission_public: {
         Args: { p_id: string }
         Returns: {
@@ -4496,6 +4604,10 @@ export type Database = {
         }[]
       }
       get_referral_tier: { Args: { referral_count: number }; Returns: Json }
+      get_support_thread_secure: {
+        Args: { p_ticket_id: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
