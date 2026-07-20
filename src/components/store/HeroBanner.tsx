@@ -132,7 +132,7 @@ const HeroBanner = () => {
       </div>
 
       {/* ── Glass card frame around hero content ── */}
-      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px]"
+      <div className="relative mx-auto w-full max-w-[1800px] lg:max-w-[1240px] xl:max-w-[1360px] rounded-[28px] lg:rounded-[32px]"
         style={{
           background: 'rgba(255,255,255,0.42)',
           backdropFilter: 'blur(32px)',
