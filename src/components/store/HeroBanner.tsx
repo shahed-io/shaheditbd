@@ -116,7 +116,7 @@ const HeroBanner = () => {
   const slide = SLIDES[active] ?? SLIDES[0];
 
   return (
-    <section className="relative overflow-hidden px-3 sm:px-5 lg:px-8 pt-16 pb-10 sm:pt-20 md:pt-24 md:pb-12 lg:pt-10 lg:pb-14" style={{ background: bgStyle }}>
+    <section className="relative overflow-hidden px-3 sm:px-5 lg:px-8 pt-16 pb-10 sm:pt-20 md:pt-24 md:pb-12 lg:pt-6 lg:pb-8" style={{ background: bgStyle }}>
 
       {/* ── Luminous ambient orbs (page-level) ── */}
       <div className="absolute inset-0 pointer-events-none">
