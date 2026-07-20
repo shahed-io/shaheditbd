@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   ShoppingCart, Package, Users, TrendingUp, DollarSign, Clock,
   CheckCircle, XCircle, ArrowUpRight, ArrowDownRight, Bell,
-  AlertTriangle, Ticket, CreditCard, RefreshCw, Activity, Percent
+  AlertTriangle, Ticket, CreditCard, RefreshCw, Activity, Percent, Crown, Wallet, Landmark, Smartphone
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
