@@ -821,6 +821,17 @@ const OrderDetailModal = ({
 
       {/* Invoice Modal */}
       {showInvoice && <OrderInvoice order={order} onClose={() => setShowInvoice(false)} />}
+
+      {/* Screenshot preview */}
+      {previewImg && (
+        <div className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4" onClick={() => setPreviewImg(null)}>
+          <button className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20" onClick={() => setPreviewImg(null)}><X size={20} /></button>
+          <img src={previewImg} alt="Screenshot" className="max-w-full max-h-full object-contain rounded-lg" onClick={e => e.stopPropagation()} />
+          <a href={previewImg} target="_blank" rel="noopener noreferrer" className="absolute bottom-4 right-4 px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20 flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+            <Download size={12} /> Open Original
+          </a>
+        </div>
+      )}
     </>
   );
 };
