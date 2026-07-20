@@ -1412,6 +1412,64 @@ const ProductDetail = () => {
           quantity={quantity}
         />
       )}
+
+      {/* ═══ Image Zoom Lightbox ═══ */}
+      {zoomOpen && (
+        <div
+          onClick={() => setZoomOpen(false)}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+          style={{ background: 'rgba(10,10,20,0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Product image zoom"
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); setZoomOpen(false); }}
+            aria-label="Close zoom"
+            className="absolute top-4 right-4 w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 z-10"
+            style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', color: 'white', backdropFilter: 'blur(12px)' }}
+          >
+            <X size={22} />
+          </button>
+
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prevImg(); }}
+                aria-label="Previous image"
+                className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 z-10"
+                style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', color: 'white', backdropFilter: 'blur(12px)' }}
+              >
+                <ChevronLeft size={22} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); nextImg(); }}
+                aria-label="Next image"
+                className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 z-10"
+                style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', color: 'white', backdropFilter: 'blur(12px)' }}
+              >
+                <ChevronRight size={22} />
+              </button>
+            </>
+          )}
+
+          <img
+            src={images[activeImg]}
+            alt={productDisplayName}
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl cursor-zoom-out animate-in zoom-in-95 duration-300"
+            style={{ boxShadow: '0 20px 80px rgba(0,0,0,0.5)' }}
+          />
+
+          {images.length > 1 && (
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-xs font-medium text-white"
+              style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)' }}
+            >
+              {activeImg + 1} / {images.length}
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };
