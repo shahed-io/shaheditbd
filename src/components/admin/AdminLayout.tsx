@@ -669,6 +669,9 @@ const AdminLayout = () => {
 
       {/* Global Command Palette */}
       <AdminCommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+
+      {/* Floating horizontal-scroll controller — helps small screens reach off-screen columns */}
+      <AdminScrollController />
     </div>
   );
 };
