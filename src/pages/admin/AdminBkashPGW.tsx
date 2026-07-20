@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Save, ShieldCheck, AlertTriangle, Loader2, Plus, Trash2, FileText, Upload, ImageIcon, X } from 'lucide-react';
 import { BKASH_CONTENT_KEY, DEFAULT_BKASH_CONTENT, type BkashPgwContent } from '@/hooks/useBkashPgwContent';
+import { PAYMENT_SETTINGS_KEY, type PaymentMethodConfig } from '@/hooks/usePaymentSettings';
 
 const KEY = 'bkash_pgw_config';
 
@@ -107,11 +108,46 @@ export default function AdminBkashPGW() {
         .from('site_settings')
         .upsert({ key: BKASH_CONTENT_KEY, value: JSON.stringify(cleaned), category: 'store' }, { onConflict: 'key' });
       if (error) throw error;
+
+      const { data: paymentSettingsRow } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', PAYMENT_SETTINGS_KEY)
+        .maybeSingle();
+
+      if (paymentSettingsRow?.value) {
+        try {
+          const configs = JSON.parse(paymentSettingsRow.value) as PaymentMethodConfig[];
+          const syncedConfigs = configs.map((method) => (
+            method.id === 'bkash' || method.id === 'bkash_merchant'
+              ? { ...method, logoUrl: cleaned.logo_url }
+              : method
+          ));
+          const changed = JSON.stringify(configs) !== JSON.stringify(syncedConfigs);
+          if (changed) {
+            const { error: paymentSyncError } = await supabase
+              .from('site_settings')
+              .upsert({ key: PAYMENT_SETTINGS_KEY, value: JSON.stringify(syncedConfigs), category: 'store' }, { onConflict: 'key' });
+            if (paymentSyncError) throw paymentSyncError;
+          }
+        } catch {
+          // Keep checkout content saved even if an older payment config value is malformed.
+        }
+      }
     },
     onSuccess: () => {
       toast.success('Checkout content saved');
       qc.invalidateQueries({ queryKey: ['bkash-pgw-content-admin'] });
       qc.invalidateQueries({ queryKey: ['bkash-pgw-content'] });
+      qc.invalidateQueries({ queryKey: ['payment-settings'] });
+      try {
+        const contentChannel = new BroadcastChannel('bkash-pgw-content-update');
+        contentChannel.postMessage('updated');
+        contentChannel.close();
+        const paymentChannel = new BroadcastChannel('payment-settings-update');
+        paymentChannel.postMessage('updated');
+        paymentChannel.close();
+      } catch { /* BroadcastChannel may be unavailable */ }
     },
     onError: (e: Error) => toast.error(e.message || 'Failed to save'),
   });
@@ -315,8 +351,10 @@ export default function AdminBkashPGW() {
                         const { data: { publicUrl } } = supabase.storage
                           .from('product-images')
                           .getPublicUrl(path);
-                        updateContent('logo_url', publicUrl);
-                        toast.success('Logo uploaded — click "Save Content" to apply');
+                        const nextContent = { ...content, logo_url: publicUrl };
+                        setContent(nextContent);
+                        saveContent.mutate(nextContent);
+                        toast.success('Logo uploaded — applying everywhere');
                       } catch (err: any) {
                         toast.error(err?.message || 'Upload failed');
                       }
@@ -328,7 +366,11 @@ export default function AdminBkashPGW() {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => updateContent('logo_url', '')}
+                    onClick={() => {
+                      const nextContent = { ...content, logo_url: '' };
+                      setContent(nextContent);
+                      saveContent.mutate(nextContent);
+                    }}
                   >
                     <X className="h-4 w-4 mr-1" /> Remove
                   </Button>

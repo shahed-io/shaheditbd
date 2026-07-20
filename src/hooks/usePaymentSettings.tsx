@@ -21,7 +21,7 @@ export interface PaymentMethodConfig {
   routingNumber?: string;
 }
 
-const SETTINGS_KEY = 'payment_methods_config';
+export const PAYMENT_SETTINGS_KEY = 'payment_methods_config';
 
 // Default configs (fallback when DB has no data)
 export const DEFAULT_PAYMENT_CONFIGS: PaymentMethodConfig[] = [
@@ -170,7 +170,7 @@ export const usePaymentSettings = () => {
       const { data } = await supabase
         .from('site_settings')
         .select('value')
-        .eq('key', SETTINGS_KEY)
+        .eq('key', PAYMENT_SETTINGS_KEY)
         .maybeSingle();
       if (data?.value) {
         try {
@@ -190,7 +190,7 @@ export const usePaymentSettings = () => {
       const value = JSON.stringify(newConfigs);
       const { error } = await supabase
         .from('site_settings')
-        .upsert({ key: SETTINGS_KEY, value, category: 'store' }, { onConflict: 'key' });
+        .upsert({ key: PAYMENT_SETTINGS_KEY, value, category: 'store' }, { onConflict: 'key' });
       if (error) throw error;
     },
     onSuccess: () => {

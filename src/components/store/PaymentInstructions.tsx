@@ -1,21 +1,8 @@
 import { useState } from 'react';
 import { Copy, CheckCheck, AlertCircle, Smartphone, Building2 } from 'lucide-react';
 import { usePaymentSettings } from '@/hooks/usePaymentSettings';
-
-// Fallback asset logos (when DB logoUrl is empty)
-import bkashLogo from '@/assets/payment/bkash.png';
-import nagadLogo from '@/assets/payment/nagad.png';
-import rocketLogo from '@/assets/payment/rocket.png';
-import upayLogo from '@/assets/payment/upay.png';
-import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
-
-const ASSET_LOGOS: Record<string, string> = {
-  bkash: bkashLogo,
-  nagad: nagadLogo,
-  rocket: rocketLogo,
-  upay: upayLogo,
-  bkash_merchant: bkashMerchantLogo,
-};
+import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
+import { getPaymentLogo } from '@/lib/paymentLogos';
 
 interface Props {
   paymentMethodId: string;
@@ -25,13 +12,14 @@ interface Props {
 
 const PaymentInstructions = ({ paymentMethodId, amount, amountLabel = 'মোট পরিমাণ' }: Props) => {
   const { configs } = usePaymentSettings();
+  const bkashContent = useBkashPgwContent();
   const [copied, setCopied] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const cfg = configs.find(c => c.id === paymentMethodId);
   if (!cfg) return null;
 
-  const logoSrc = cfg.logoUrl || ASSET_LOGOS[cfg.id] || '';
+  const logoSrc = getPaymentLogo(cfg.id, cfg.logoUrl, bkashContent.logo_url);
 
   const copyText = (text: string, field: string) => {
     navigator.clipboard.writeText(text).then(() => {

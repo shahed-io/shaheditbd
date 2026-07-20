@@ -9,21 +9,9 @@ import { z } from 'zod';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
 import type { PMId } from '@/components/store/PaymentInstructions';
 import { usePaymentSettings } from '@/hooks/usePaymentSettings';
-import bkashLogo from '@/assets/payment/bkash.png';
-import nagadLogo from '@/assets/payment/nagad.png';
-import rocketLogo from '@/assets/payment/rocket.png';
-import upayLogo from '@/assets/payment/upay.png';
-import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
 import type { CustomField } from '@/pages/admin/AdminProducts';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
-
-const ASSET_LOGOS: Record<string, string> = {
-  bkash: bkashLogo,
-  nagad: nagadLogo,
-  rocket: rocketLogo,
-  upay: upayLogo,
-  bkash_merchant: bkashMerchantLogo,
-};
+import { getPaymentLogo } from '@/lib/paymentLogos';
 
 interface Product {
   id: string | number;
@@ -64,7 +52,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
   const navigate = useNavigate();
   const { configs: paymentConfigs } = usePaymentSettings();
   const bkashContent = useBkashPgwContent();
-  const bkashLogoSrc = bkashContent.logo_url || bkashLogo;
+  const bkashLogoSrc = getPaymentLogo('bkash_online', '', bkashContent.logo_url);
 
   const [step, setStep] = useState<'info' | 'payment' | 'success'>('info');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
@@ -424,7 +412,7 @@ const QuickOrderModal = ({ product, onClose, quantity: initialQty = 1 }: QuickOr
       id: c.id as PaymentMethod,
       label: c.label,
       color: 'from-gray-600 to-gray-700',
-      logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
+      logo: getPaymentLogo(c.id, c.logoUrl, bkashContent.logo_url) || undefined,
       isWallet: false,
     }));
 

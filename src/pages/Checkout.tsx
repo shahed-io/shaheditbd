@@ -12,24 +12,12 @@ import {
 import AuthModal from '@/components/store/AuthModal';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { usePaymentSettings, DEFAULT_PAYMENT_CONFIGS } from '@/hooks/usePaymentSettings';
-import bkashLogo from '@/assets/payment/bkash.png';
-import nagadLogo from '@/assets/payment/nagad.png';
-import rocketLogo from '@/assets/payment/rocket.png';
-import upayLogo from '@/assets/payment/upay.png';
-import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
+import { usePaymentSettings } from '@/hooks/usePaymentSettings';
 import { getStoredAffiliateRef, clearStoredAffiliateRef } from '@/hooks/useAffiliateTracking';
 import { gTrackBeginCheckout, gTrackPurchase } from '@/components/store/GoogleTracking';
 import SEOHead from '@/components/seo/SEOHead';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
-
-const ASSET_LOGOS: Record<string, string> = {
-  bkash: bkashLogo,
-  nagad: nagadLogo,
-  rocket: rocketLogo,
-  upay: upayLogo,
-  bkash_merchant: bkashMerchantLogo,
-};
+import { getPaymentLogo } from '@/lib/paymentLogos';
 
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'নাম কমপক্ষে ২ অক্ষরের হতে হবে').max(100),
@@ -67,7 +55,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const { configs: paymentConfigs } = usePaymentSettings();
   const bkashContent = useBkashPgwContent();
-  const bkashLogoSrc = bkashContent.logo_url || bkashLogo;
+  const bkashLogoSrc = getPaymentLogo('bkash_online', '', bkashContent.logo_url);
 
   // Build dynamic payment methods from DB config
   const paymentMethods = [
@@ -81,7 +69,7 @@ const Checkout = () => {
         color: 'from-gray-600 to-gray-700',
         number: c.number,
         type: c.type,
-        logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
+        logo: getPaymentLogo(c.id, c.logoUrl, bkashContent.logo_url) || undefined,
       })),
     { id: 'wallet' as PaymentMethod, label: 'Wallet', color: 'from-violet-600 to-purple-700', number: '', type: 'Wallet Balance', logo: undefined as string | undefined },
   ];

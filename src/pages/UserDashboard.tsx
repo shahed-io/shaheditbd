@@ -4,19 +4,7 @@ import SEOHead from '@/components/seo/SEOHead';
 import PaymentInstructions from '@/components/store/PaymentInstructions';
 import { usePaymentSettings } from '@/hooks/usePaymentSettings';
 import { useBkashPgwContent } from '@/hooks/useBkashPgwContent';
-import bkashLogo from '@/assets/payment/bkash.png';
-import nagadLogo from '@/assets/payment/nagad.png';
-import rocketLogo from '@/assets/payment/rocket.png';
-import upayLogo from '@/assets/payment/upay.png';
-import bkashMerchantLogo from '@/assets/payment/bkash-merchant.png';
-
-const ASSET_LOGOS: Record<string, string> = {
-  bkash: bkashLogo,
-  nagad: nagadLogo,
-  rocket: rocketLogo,
-  upay: upayLogo,
-  bkash_merchant: bkashMerchantLogo,
-};
+import { getPaymentLogo } from '@/lib/paymentLogos';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -260,7 +248,7 @@ const UserDashboard = () => {
   const { wishlistItems } = useWishlist();
   const { configs: paymentConfigs } = usePaymentSettings();
   const bkashContent = useBkashPgwContent();
-  const bkashLogoSrc = bkashContent.logo_url || bkashLogo;
+  const bkashLogoSrc = getPaymentLogo('bkash_online', '', bkashContent.logo_url);
 
   const [activeTab, setActiveTab] = useState<TabId>(() => {
     const tab = searchParams.get('tab') as TabId;
@@ -743,7 +731,7 @@ const UserDashboard = () => {
         label: c.label,
         number: c.number,
         type: c.type,
-        logo: c.logoUrl || ASSET_LOGOS[c.id] || undefined,
+        logo: getPaymentLogo(c.id, c.logoUrl, bkashContent.logo_url) || undefined,
         color: 'from-gray-600 to-gray-700',
       })),
   ];
