@@ -304,28 +304,6 @@ const WhyChooseUs = () => {
           </div>
         </div>
 
-        {/* ══ HOW TO ORDER ══ */}
-        <div>
-          <SectionHeader
-            badge="Order Process"
-            from="15, 95%, 62%"
-            to="335, 85%, 65%"
-            title={
-              <>How to{' '}
-                <span style={{
-                  background: 'linear-gradient(135deg, hsl(15,95%,62%), hsl(335,85%,65%))',
-                  WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent',
-                }}>Order</span>
-              </>
-            }
-            subtitle="চার ধাপে আপনার product পান — সহজ, দ্রুত, নিরাপদ।"
-          />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-            {STEPS.map((step, i) => (
-              <StepCard key={i} step={step} index={i} />
-            ))}
-          </div>
-        </div>
 
       </div>
     </section>
