@@ -1,5 +1,6 @@
 // Semrush overview proxy via Lovable connector gateway
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { requireAdmin } from '../_shared/admin-auth.ts';
 
 const GATEWAY = 'https://connector-gateway.lovable.dev/semrush';
 
