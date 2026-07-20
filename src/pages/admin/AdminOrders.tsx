@@ -65,8 +65,11 @@ const ALL_STATUSES = ['pending', 'processing', 'delivered', 'completed', 'cancel
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
   pending:  'text-amber-500 bg-amber-500/10',
   verified: 'text-emerald-500 bg-emerald-500/10',
+  paid:     'text-emerald-500 bg-emerald-500/10',
   failed:   'text-red-500 bg-red-500/10',
 };
+
+const isPaymentVerified = (status?: string | null) => status === 'verified' || status === 'paid';
 
 const PM_LABELS: Record<string, string> = {
   bkash_online: 'bKash (Online)',
@@ -1050,7 +1053,7 @@ const AdminOrders = () => {
     // so they don't pollute the Orders list with payments the customer never finished.
     const visible = (data || []).filter((o: any) => {
       if (o.payment_method !== 'bkash_online') return true;
-      return o.payment_status === 'paid';
+      return isPaymentVerified(o.payment_status) || o.status === 'completed' || o.status === 'delivered';
     });
     setOrders(visible);
     setLoading(false);
@@ -1092,7 +1095,7 @@ const AdminOrders = () => {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
         const newOrder = payload.new as any;
         // Skip bKash Online orders that are still pending — they only count once the customer actually pays
-        if (newOrder.payment_method === 'bkash_online' && newOrder.payment_status !== 'paid') {
+        if (newOrder.payment_method === 'bkash_online' && !isPaymentVerified(newOrder.payment_status)) {
           return;
         }
         setNewOrderIds(prev => new Set(prev).add(newOrder.id));
@@ -1496,7 +1499,7 @@ const AdminOrders = () => {
                           <span className="font-bold text-foreground text-sm">৳{Number(order.total).toLocaleString()}</span>
                           <span className="text-[10px] text-muted-foreground">
                             {PM_LABELS[order.payment_method] || order.payment_method}
-                            {order.payment_status === 'verified' && <span className="text-emerald-500 ml-1">✓</span>}
+                            {isPaymentVerified(order.payment_status) && <span className="text-emerald-500 ml-1">✓</span>}
                           </span>
                           <span className="text-[10px] text-muted-foreground">
                             {new Date(order.created_at).toLocaleDateString('en-BD', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
@@ -1505,7 +1508,7 @@ const AdminOrders = () => {
                       </button>
                     </div>
                     <div className="flex items-center justify-end gap-1 mt-2 pt-2 border-t border-border/30">
-                      {order.payment_status !== 'verified' && order.status === 'pending' && (
+                      {!isPaymentVerified(order.payment_status) && order.status === 'pending' && (
                         <button onClick={() => updateOrder(order.id, { payment_status: 'verified', status: 'processing' }, '✅ Verified!')}
                           className="p-2 text-emerald-500 bg-emerald-500/10 rounded-lg">
                           <CheckCircle size={16} />
@@ -1579,7 +1582,7 @@ const AdminOrders = () => {
                       </td>
                       <td className="px-4 py-3">
                         <span className="font-mono font-bold text-primary text-xs">{order.order_number}</span>
-                        {order.payment_status === 'verified' && (
+                        {isPaymentVerified(order.payment_status) && (
                           <div className="flex items-center gap-0.5 mt-0.5">
                             <CheckCircle size={10} className="text-emerald-500" />
                             <span className="text-[10px] text-emerald-500">Verified</span>
