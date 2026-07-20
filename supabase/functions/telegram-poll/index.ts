@@ -1648,10 +1648,15 @@ Deno.serve(async (req) => {
         // Ack Telegram immediately (<1s). Process asynchronously so heavy
         // handlers (image uploads, multi-DB reads) don't delay the ack and
         // trigger Telegram's aggressive retry storm.
-        (async () => {
+        const bgTask = (async () => {
           try { await processUpdate(body, BOT_TOKEN, supabase); }
           catch (e) { console.error('Webhook handler error:', e); }
         })();
+        // Keep the isolate alive until background work finishes so long
+        // provider calls (license check, AI OCR, etc.) don't get killed
+        // when the ack response returns.
+        try { (globalThis as any).EdgeRuntime?.waitUntil?.(bgTask); } catch { /* noop */ }
+
 
         return new Response(JSON.stringify({ ok: true }), {
           status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
