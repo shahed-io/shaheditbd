@@ -1,86 +1,84 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ShoppingBag, TrendingUp, Zap, Shield, Clock, Star, ChevronLeft, ChevronRight, Sparkles, CheckCircle2, Package } from 'lucide-react';
+import idmLogo from '@/assets/idm.webp';
+import ms365Logo from '@/assets/ms365-logo.png';
+import winLogo from '@/assets/windows-logo.png';
 import { useHeroBanner, type SlideData } from '@/hooks/useHeroBanner';
-import heroWindowsAsset from '@/assets/hero-windows.png.asset.json';
-import heroOfficeAsset from '@/assets/hero-office.png.asset.json';
-import heroIdmAsset from '@/assets/hero-idm.png.asset.json';
 
 type Slide = {
-  tag: string;
-  title: string;
-  titleAccent: string;
-  subtitle: string;
-  price: string;
-  original: string;
-  off: string;
-  accentFrom: string;
-  accentTo: string;
-  heroImage: string;
-  productSlug?: string;
+  tag: string; tagIcon: string; title: string; titleAccent: string; subtitle: string; desc: string;
+  price: string; original: string; off: string; badge: string;
+  accentFrom: string; accentTo: string;
+  emoji: string; logoImg?: string; features: string[]; productSlug?: string;
 };
 
 const STATIC_SLIDES: Slide[] = [
   {
-    tag: 'New',
-    title: 'Windows 11',
-    titleAccent: 'Pro',
-    subtitle: 'Reimagine everything you do.',
-    price: '৳599',
-    original: '৳9,999',
-    off: '-94%',
-    accentFrom: 'hsl(258,90%,68%)',
-    accentTo: 'hsl(210,95%,60%)',
-    heroImage: heroWindowsAsset.url,
+    tag: 'Best Seller', tagIcon: '🔥',
+    title: 'Windows 11', titleAccent: 'Pro',
+    subtitle: 'Original License Key',
+    desc: 'Genuine Microsoft Windows 11 Pro — instant digital delivery to your inbox within minutes.',
+    price: '৳599', original: '৳9,999', off: '-94%', badge: 'MOST POPULAR',
+    accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
+    emoji: '🪟', features: ['Lifetime License', 'Instant Delivery', 'All Devices'],
     productSlug: 'windows-11-pro-licence-key-price-in-bd',
   },
   {
-    tag: 'Featured',
-    title: 'Microsoft',
-    titleAccent: '365',
-    subtitle: 'Everywhere you create.',
-    price: '৳1,999',
-    original: '৳16,500',
-    off: '-88%',
-    accentFrom: 'hsl(18,95%,58%)',
-    accentTo: 'hsl(335,85%,60%)',
-    heroImage: heroOfficeAsset.url,
+    tag: 'Flash Deal', tagIcon: '⚡',
+    title: 'Microsoft', titleAccent: '365',
+    subtitle: 'Personal — 1 Year',
+    desc: 'Full Office suite: Word, Excel, PowerPoint, OneDrive 1TB. Premium productivity tools.',
+    price: '৳1,999', original: '৳16,500', off: '-88%', badge: 'LIMITED TIME',
+    accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
+    emoji: '📦', logoImg: ms365Logo, features: ['1TB OneDrive', '5 Devices', '1 Year'],
     productSlug: 'microsoft-office-365-personal-subscription-price-in-bd',
   },
   {
-    tag: 'Official',
-    title: 'IDM',
-    titleAccent: 'Lifetime',
-    subtitle: 'Speed, refined forever.',
-    price: '৳2,650',
-    original: '৳6,500',
-    off: '-59%',
-    accentFrom: 'hsl(280,85%,65%)',
-    accentTo: 'hsl(190,95%,55%)',
-    heroImage: heroIdmAsset.url,
+    tag: 'Official Reseller', tagIcon: '🏆',
+    title: 'IDM', titleAccent: 'Lifetime',
+    subtitle: 'Internet Download Manager',
+    desc: 'আমরা IDM-এর অফিশিয়াল রিসেলার। একবার কিনুন, সারাজীবন ব্যবহার করুন।',
+    price: '৳2,650', original: '৳6,500', off: '-59%', badge: 'OFFICIAL RESELLER',
+    accentFrom: 'hsl(258,78%,55%)', accentTo: 'hsl(200,90%,48%)',
+    emoji: '⚡', logoImg: idmLogo, features: ['Official Reseller ✓', 'Lifetime License', 'Instant Delivery'],
     productSlug: 'internet-download-manager-idm-lifetime-key',
   },
 ];
 
-// Legacy default asset lookup by slide id (for previously-saved slides without heroImage)
-const HERO_MAP: Record<string, string> = {
-  'slide-win11': heroWindowsAsset.url,
-  'slide-ms365': heroOfficeAsset.url,
-  'slide-idm': heroIdmAsset.url,
+// Map known slide IDs to their bundled logo assets
+const LOGO_MAP: Record<string, string> = {
+  'slide-win11': winLogo,
+  'slide-ms365': ms365Logo,
+  'slide-idm': idmLogo,
 };
 
 const dbSlideToSlide = (s: SlideData): Slide => ({
-  tag: s.tag || 'Featured',
-  title: s.title,
-  titleAccent: s.titleAccent,
-  subtitle: s.subtitle,
-  price: s.price,
-  original: s.original,
-  off: s.off?.startsWith('-') ? s.off : `-${s.off}`,
-  accentFrom: s.accentFrom || 'hsl(258,90%,68%)',
-  accentTo: s.accentTo || 'hsl(210,95%,60%)',
-  heroImage: s.heroImage || HERO_MAP[s.id] || '',
-  productSlug: s.productSlug || '',
+  tag: s.tag, tagIcon: s.tagIcon || '', title: s.title, titleAccent: s.titleAccent,
+  subtitle: s.subtitle, desc: s.desc, price: s.price,
+  original: s.original, off: s.off.startsWith('-') ? s.off : `-${s.off}`, badge: s.badge,
+  accentFrom: s.accentFrom || 'hsl(258,78%,55%)', accentTo: s.accentTo || 'hsl(200,90%,48%)',
+  emoji: s.emoji, logoImg: LOGO_MAP[s.id] || s.logoImg || undefined, features: s.features, productSlug: s.productSlug || '',
 });
+
+const DEFAULT_STATS = [
+  { label: 'Products',         value: '500+', icon: '🛍️' },
+  { label: 'Orders Delivered', value: '25K+', icon: '✅' },
+  { label: 'Happy Customers',  value: '12K+', icon: '😊' },
+  { label: 'Support Rating',   value: '4.9★', icon: '⭐' },
+];
+
+const DEFAULT_FLOATING = [
+  { label: 'Orders Today', value: '248+', icon: '📦' },
+  { label: 'Happy Users',  value: '12K+', icon: '😊' },
+  { label: 'Avg Rating',   value: '4.9★', icon: '⭐' },
+];
+
+const DEFAULT_TRUST = [
+  { text: 'Instant Delivery', icon: <Zap size={12} /> },
+  { text: '100% Genuine',     icon: <Shield size={12} /> },
+  { text: '24/7 Support',     icon: <Clock size={12} /> },
+  { text: '4.9★ Rating',      icon: <Star size={12} /> },
+];
 
 const HeroBanner = () => {
   const [active, setActive] = useState(0);
@@ -91,8 +89,19 @@ const HeroBanner = () => {
     ? bannerData.slides.filter(s => s.enabled).map(dbSlideToSlide)
     : STATIC_SLIDES;
 
+  const STATS    = bannerData?.stats    ?? DEFAULT_STATS;
+  const FLOATING = bannerData?.floating ?? DEFAULT_FLOATING;
+
+  const bgStyle = (() => {
+    const bg = bannerData?.bg;
+    if (!bg || bg.bgType === 'default') return 'hsl(var(--background))';
+    if (bg.bgType === 'color') return bg.bgColor;
+    if (bg.bgType === 'gradient') return `linear-gradient(135deg, ${bg.bgGradientFrom}, ${bg.bgGradientTo})`;
+    return 'hsl(var(--background))';
+  })();
+
   useEffect(() => {
-    const timer = setInterval(() => advance(1), 6500);
+    const timer = setInterval(() => advance(1), 5500);
     return () => clearInterval(timer);
   }, [active, SLIDES.length]);
 
@@ -101,272 +110,533 @@ const HeroBanner = () => {
     setTimeout(() => {
       setActive(p => (p + delta + SLIDES.length) % SLIDES.length);
       setDir('in');
-    }, 320);
+    }, 260);
   };
 
   const slide = SLIDES[active] ?? SLIDES[0];
-  if (!slide) return null;
 
   return (
-    <section
-      className="relative overflow-hidden mt-[54px] px-3 sm:px-5 lg:px-8 pt-2 pb-6 sm:pt-3 md:pt-4 md:pb-8"
-      aria-label="Featured products"
-    >
-      {/* Cinematic dark frame */}
-      <div
-        className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px] overflow-hidden isolate"
+    <section className="relative overflow-hidden mt-[54px] px-3 sm:px-5 lg:px-8 pt-2 pb-5 sm:pt-3 md:pt-4 md:pb-6 lg:pt-4 lg:pb-8" style={{ background: bgStyle }}>
+
+      {/* ── Luminous ambient orbs (page-level) ── */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-[10%] -right-[5%] w-[500px] h-[500px] rounded-full"
+          style={{ background: 'hsla(258,78%,62%,0.22)', filter: 'blur(120px)' }} />
+        <div className="absolute -bottom-[10%] -left-[5%] w-[600px] h-[600px] rounded-full"
+          style={{ background: 'hsla(230,80%,70%,0.18)', filter: 'blur(140px)' }} />
+        <div className="absolute top-[25%] left-[33%] w-[300px] h-[300px] rounded-full"
+          style={{ background: 'hsla(270,70%,72%,0.16)', filter: 'blur(100px)' }} />
+      </div>
+
+      {/* ── Glass card frame around hero content ── */}
+      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px] overflow-hidden isolate"
         style={{
-          background: 'radial-gradient(ellipse at 30% 0%, hsl(258,60%,14%) 0%, hsl(240,50%,8%) 45%, hsl(230,45%,5%) 100%)',
-          border: '1px solid hsla(258,60%,50%,0.20)',
-          boxShadow: '0 30px 80px -20px hsla(258,78%,30%,0.45), inset 0 1px 0 hsla(258,60%,70%,0.10)',
-          minHeight: 'clamp(460px, 62vh, 640px)',
-        }}
-      >
-        {/* Aurora glows — dynamic per slide */}
-        <div
-          key={`aurora-${active}`}
-          className="absolute inset-0 pointer-events-none transition-opacity duration-700"
-          style={{
-            background: `
-              radial-gradient(ellipse 60% 50% at 15% 20%, ${slide.accentFrom}55 0%, transparent 60%),
-              radial-gradient(ellipse 55% 45% at 85% 80%, ${slide.accentTo}44 0%, transparent 60%),
-              radial-gradient(ellipse 40% 40% at 50% 100%, ${slide.accentFrom}33 0%, transparent 70%)
-            `,
-            filter: 'blur(60px)',
-          }}
-        />
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(245,243,255,0.55) 50%, rgba(235,240,255,0.6) 100%)',
+          backdropFilter: 'blur(32px)',
+          WebkitBackdropFilter: 'blur(32px)',
+          border: '1.5px solid hsla(258,60%,70%,0.45)',
+          boxShadow: '0 24px 60px -18px hsla(258,78%,55%,0.28), 0 4px 16px -4px hsla(258,60%,60%,0.18), inset 0 1.5px 0 rgba(255,255,255,1), inset 1.5px 0 0 rgba(255,255,255,0.9)',
+        }}>
+        {/* Soft inner accent (kept inside so it doesn't break the top curve) */}
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, hsla(258,78%,60%,0.10), transparent 70%)', transform: 'translate(30%,-30%)' }} />
 
-        {/* Subtle grid */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.06]"
-          style={{
-            backgroundImage: `linear-gradient(hsl(0,0%,100%) 1px, transparent 1px), linear-gradient(90deg, hsl(0,0%,100%) 1px, transparent 1px)`,
-            backgroundSize: '48px 48px',
-            maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
-          }}
-        />
 
-        {/* Fine top hairline */}
-        <div
-          className="absolute top-0 left-[10%] right-[10%] h-px pointer-events-none"
-          style={{ background: 'linear-gradient(90deg, transparent, hsla(0,0%,100%,0.35), transparent)' }}
-        />
+        <div className="relative container-fluid">
+        <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-0 pt-3 pb-5 md:pt-4 md:pb-6 lg:pt-5 lg:pb-6">
 
-        {/* ── Content ── */}
-        <div className="relative flex flex-col items-center justify-center text-center px-6 sm:px-10 lg:px-16 py-12 sm:py-14 lg:py-16"
-          style={{ minHeight: 'clamp(460px, 62vh, 640px)' }}>
-
-          {/* Eyebrow */}
-          <div
-            className="mb-4 sm:mb-5"
+          {/* ══════════════════════════════════
+               LEFT — Bold editorial content
+          ══════════════════════════════════ */}
+          <div className="flex-1 lg:pr-6 space-y-4 text-center lg:text-left"
             style={{
               opacity: dir === 'in' ? 1 : 0,
-              transform: dir === 'in' ? 'none' : 'translateY(-8px)',
-              transition: 'opacity 0.4s ease, transform 0.4s ease',
-              transitionDelay: dir === 'in' ? '0.05s' : '0s',
-            }}
-          >
-            <span
-              className="inline-block text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase"
-              style={{
-                backgroundImage: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              {slide.tag}
-            </span>
-          </div>
+              transform: dir === 'in' ? 'none' : 'translateX(-18px)',
+              transition: 'opacity 0.3s ease, transform 0.3s ease',
+            }}>
 
-          {/* Headline */}
-          <h1
-            className="font-sora font-semibold text-white leading-[0.98] tracking-[-0.03em] mb-3 sm:mb-4"
-            style={{
-              fontSize: 'clamp(2.2rem, 6.5vw, 5.25rem)',
-              opacity: dir === 'in' ? 1 : 0,
-              transform: dir === 'in' ? 'none' : 'translateY(14px)',
-              transition: 'opacity 0.5s ease, transform 0.5s ease',
-              transitionDelay: dir === 'in' ? '0.1s' : '0s',
-            }}
-          >
-            {slide.title}{' '}
-            <span
-              style={{
-                backgroundImage: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              {slide.titleAccent}
-            </span>
-          </h1>
-
-          {/* Subtitle — one line, whisper */}
-          <p
-            className="text-[15px] sm:text-[17px] lg:text-[19px] font-normal mb-6 sm:mb-8 max-w-xl"
-            style={{
-              color: 'hsla(0,0%,100%,0.62)',
-              opacity: dir === 'in' ? 1 : 0,
-              transform: dir === 'in' ? 'none' : 'translateY(10px)',
-              transition: 'opacity 0.5s ease, transform 0.5s ease',
-              transitionDelay: dir === 'in' ? '0.16s' : '0s',
-            }}
-          >
-            {slide.subtitle}
-          </p>
-
-          {/* Hero image — floating */}
-          {slide.heroImage && (
-            <div
-              className="relative mb-7 sm:mb-9"
-              style={{
-                opacity: dir === 'in' ? 1 : 0,
-                transform: dir === 'in' ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.96)',
-                transition: 'opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1)',
-                transitionDelay: dir === 'in' ? '0.22s' : '0s',
-              }}
-            >
-              {/* Glow */}
-              <div
-                className="absolute inset-0 -z-10 rounded-full"
+            {/* Category tag */}
+            <div className="inline-flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 text-[9.5px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full text-white"
                 style={{
-                  background: `radial-gradient(ellipse at 50% 55%, ${slide.accentFrom}66 0%, ${slide.accentTo}33 40%, transparent 70%)`,
-                  filter: 'blur(50px)',
-                  transform: 'scale(1.2)',
-                }}
-              />
-              <img
-                src={slide.heroImage}
-                alt={`${slide.title} ${slide.titleAccent}`}
-                width={480}
-                height={480}
-                
-                decoding="async"
-                className="anim-float relative object-contain"
-                style={{
-                  width: 'clamp(200px, 32vw, 340px)',
-                  height: 'clamp(200px, 32vw, 340px)',
-                  filter: `drop-shadow(0 24px 40px ${slide.accentFrom}44) drop-shadow(0 8px 16px hsla(0,0%,0%,0.4))`,
-                }}
-              />
-              {/* Reflection */}
-              <div
-                aria-hidden
-                className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-                style={{
-                  bottom: '-14px',
-                  width: 'clamp(160px, 24vw, 240px)',
-                  height: '14px',
-                  background: 'radial-gradient(ellipse, hsla(0,0%,0%,0.55) 0%, transparent 70%)',
-                  filter: 'blur(6px)',
-                }}
-              />
-            </div>
-          )}
-
-          {/* Price + CTA */}
-          <div
-            className="flex flex-col items-center gap-4 sm:gap-5"
-            style={{
-              opacity: dir === 'in' ? 1 : 0,
-              transform: dir === 'in' ? 'none' : 'translateY(10px)',
-              transition: 'opacity 0.5s ease, transform 0.5s ease',
-              transitionDelay: dir === 'in' ? '0.3s' : '0s',
-            }}
-          >
-            <div className="flex items-baseline gap-3">
-              <span
-                className="font-sora font-semibold text-white tracking-tight"
-                style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)' }}
-              >
-                From {slide.price}
+                  background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%))',
+                  boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
+                }}>
+                <span className="text-[11px]">{slide.tagIcon || '✦'}</span>
+                {slide.tag}
               </span>
-              <span
-                className="text-[13px] sm:text-[14px] line-through"
-                style={{ color: 'hsla(0,0%,100%,0.35)' }}
-              >
-                {slide.original}
+              <span className="text-[9px] font-bold tracking-widest uppercase px-2.5 py-1.5 rounded-full"
+                style={{
+                  background: 'hsla(258,78%,55%,0.07)',
+                  border: '1px solid hsla(258,78%,55%,0.18)',
+                  color: 'hsl(258,78%,50%)',
+                }}>
+                {slide.badge}
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <a
-                href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
-                className="group inline-flex items-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 rounded-full text-[13.5px] sm:text-[14px] font-semibold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
+
+            {/* Headline */}
+            <div>
+              <h1 className="font-sora font-black leading-[1.05] tracking-tight"
+                style={{ fontSize: 'clamp(1.9rem, 5vw, 3.4rem)', color: 'hsl(226,35%,12%)' }}>
+                <span className="block">{slide.title}</span>
+                <span className="block"
                 style={{
-                  background: `linear-gradient(135deg, ${slide.accentFrom}, ${slide.accentTo})`,
-                  boxShadow: `0 12px 34px -8px ${slide.accentFrom}88, 0 4px 12px -2px ${slide.accentTo}55, inset 0 1px 0 hsla(0,0%,100%,0.35)`,
-                }}
-              >
-                Buy now
-                <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-              </a>
-              <a
-                href="/shop"
-                className="inline-flex items-center gap-1.5 px-5 py-3 rounded-full text-[13.5px] font-medium transition-colors duration-200"
-                style={{
-                  color: 'hsla(0,0%,100%,0.85)',
-                }}
-              >
-                Learn more
-                <ArrowRight size={13} />
-              </a>
+                  fontSize: 'clamp(1.9rem, 5vw, 3.4rem)',
+                  background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}>
+                {slide.titleAccent}
+                </span>
+              </h1>
+              <p className="text-[13px] lg:text-[14px] font-semibold mt-2"
+                style={{ color: 'hsl(226,22%,44%)' }}>
+                {slide.subtitle}
+              </p>
             </div>
+
+            {/* Description */}
+            <p className="text-[12.5px] leading-relaxed max-w-[420px] mx-auto lg:mx-0"
+              style={{ color: 'hsl(226,18%,52%)' }}>
+              {slide.desc}
+            </p>
+
+            {/* Feature pills */}
+            <div className="flex flex-wrap gap-1.5 justify-center lg:justify-start">
+              {slide.features.map(f => (
+                <span key={f}
+                  className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-full"
+                  style={{
+                    background: 'rgba(255,255,255,0.85)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid hsla(258,78%,55%,0.18)',
+                    color: 'hsl(258,78%,50%)',
+                    boxShadow: '0 2px 8px hsla(258,78%,55%,0.08)',
+                  }}>
+                  <CheckCircle2 size={10} style={{ color: 'hsl(200,90%,46%)' }} />
+                  {f}
+                </span>
+              ))}
+            </div>
+
+            {/* Price + CTA */}
+            <div className="space-y-3">
+              {/* Price row */}
+              <div className="flex items-center gap-3 justify-center lg:justify-start">
+                <div>
+                  <div className="text-xs line-through font-medium" style={{ color: 'hsl(226,15%,58%)' }}>
+                    {slide.original}
+                  </div>
+                  <div className="font-sora font-black"
+                    style={{ fontSize: 'clamp(1.6rem, 3vw, 2.25rem)', color: 'hsl(226,35%,12%)', lineHeight: 1 }}>
+                    {slide.price}
+                  </div>
+                </div>
+                <span className="self-end mb-1 inline-flex items-center text-[10.5px] font-black text-white px-3 py-1.5 rounded-full"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))',
+                    boxShadow: '0 4px 14px hsla(258,78%,55%,0.40)',
+                  }}>
+                  {slide.off} OFF
+                </span>
+              </div>
+
+
+              {/* CTAs */}
+              <div className="flex flex-wrap gap-2.5 justify-center lg:justify-start">
+                <a href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
+                  className="btn-vision-primary inline-flex items-center gap-2 px-5 py-2.5 text-[12.5px]">
+                  <ShoppingBag size={13} /> Buy Now <ArrowRight size={12} />
+                </a>
+                <a href="/shop"
+                  className="btn-vision-glass inline-flex items-center gap-2 px-4 py-2.5 text-[12.5px]"
+                  style={{ color: 'hsl(258,78%,45%)' }}>
+                  <TrendingUp size={12} /> View All Deals
+                </a>
+
+              </div>
+            </div>
+
+            {/* Trust row */}
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start pt-0.5">
+              {DEFAULT_TRUST.map(t => (
+                <span key={t.text}
+                  className="flex items-center gap-1.5 text-[10.5px] font-semibold"
+                  style={{ color: 'hsl(226,20%,50%)' }}>
+                  <span style={{ color: 'hsl(258,78%,55%)' }}>{t.icon}</span>
+                  {t.text}
+                </span>
+              ))}
+            </div>
+
           </div>
 
-          {/* Slide indicators */}
-          {SLIDES.length > 1 && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3">
-              <button
-                onClick={() => advance(-1)}
-                aria-label="Previous slide"
-                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+          {/* ══════════════════════════════════
+               MIDDLE — Product ecosystem cluster
+          ══════════════════════════════════ */}
+          <div className="hidden lg:flex relative items-center justify-center flex-shrink-0"
+            style={{ width: '260px', minHeight: '520px' }}
+            aria-hidden="true">
+
+            {/* Ambient glow */}
+            <div className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse at 50% 50%, hsla(258,78%,62%,0.14) 0%, hsla(200,90%,55%,0.08) 45%, transparent 72%)',
+                filter: 'blur(24px)',
+              }} />
+
+            {/* Concentric orbit rings */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+              style={{ width: '340px', height: '340px', border: '1px dashed hsla(258,78%,55%,0.18)' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+              style={{ width: '220px', height: '220px', border: '1px dashed hsla(200,90%,50%,0.20)' }} />
+
+            {/* Center license-key badge */}
+            <div className="relative z-20 anim-float"
+              style={{
+                width: '190px',
+                padding: '18px 16px',
+                borderRadius: '22px',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(245,240,255,0.92) 100%)',
+                border: '1.5px solid rgba(255,255,255,0.95)',
+                boxShadow: '0 22px 50px hsla(258,78%,55%,0.28), 0 6px 18px hsla(226,35%,12%,0.10), inset 0 1px 0 rgba(255,255,255,1)',
+              }}>
+              {/* Shimmer top line */}
+              <div className="absolute top-0 left-3 right-3 h-[1.5px]"
+                style={{ background: 'linear-gradient(90deg, transparent, hsla(258,78%,64%,0.9), hsla(200,90%,58%,0.8), transparent)' }} />
+
+              <div className="flex items-center gap-2 mb-2.5">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))',
+                    boxShadow: '0 3px 10px hsla(258,78%,55%,0.35)',
+                  }}>
+                  <Shield size={13} className="text-white" />
+                </div>
+                <div>
+                  <div className="text-[8.5px] font-black uppercase tracking-[0.18em]" style={{ color: 'hsl(258,78%,50%)' }}>
+                    Genuine Key
+                  </div>
+                  <div className="text-[8px] font-medium" style={{ color: 'hsl(226,20%,52%)' }}>
+                    Verified License
+                  </div>
+                </div>
+              </div>
+
+              {/* Key serial mock */}
+              <div className="font-fira text-[10.5px] font-bold tracking-[0.14em] px-2.5 py-2 rounded-lg mb-2.5"
                 style={{
-                  background: 'hsla(0,0%,100%,0.06)',
-                  border: '1px solid hsla(0,0%,100%,0.12)',
-                  color: 'hsla(0,0%,100%,0.75)',
-                }}
-              >
-                <ChevronLeft size={14} />
-              </button>
-              <div className="flex items-center gap-1.5">
-                {SLIDES.map((_, i) => (
-                  <button
-                    key={i}
-                    aria-label={`Show slide ${i + 1}`}
-                    onClick={() => {
-                      setDir('out');
-                      setTimeout(() => { setActive(i); setDir('in'); }, 320);
-                    }}
-                    className="rounded-full transition-all duration-300"
-                    style={{
-                      width: i === active ? '22px' : '6px',
-                      height: '6px',
-                      background: i === active
-                        ? `linear-gradient(90deg, ${slide.accentFrom}, ${slide.accentTo})`
-                        : 'hsla(0,0%,100%,0.22)',
-                    }}
-                  />
+                  background: 'linear-gradient(90deg, hsla(258,78%,55%,0.08), hsla(200,90%,55%,0.06))',
+                  border: '1px dashed hsla(258,78%,55%,0.25)',
+                  color: 'hsl(226,35%,20%)',
+                }}>
+                XXXXX-YYYYY-ZZZZZ
+              </div>
+
+              {/* Mini stats row */}
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { icon: <Zap size={9} />, l: 'Instant' },
+                  { icon: <CheckCircle2 size={9} />, l: '100%' },
+                  { icon: <Star size={9} />, l: '4.9★' },
+                ].map((s, i) => (
+                  <div key={i} className="flex flex-col items-center gap-0.5 py-1 rounded-lg"
+                    style={{ background: 'hsla(258,78%,55%,0.05)' }}>
+                    <span style={{ color: 'hsl(258,78%,55%)' }}>{s.icon}</span>
+                    <span className="text-[8.5px] font-bold" style={{ color: 'hsl(226,20%,42%)' }}>{s.l}</span>
+                  </div>
                 ))}
               </div>
-              <button
-                onClick={() => advance(1)}
-                aria-label="Next slide"
-                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                style={{
-                  background: 'hsla(0,0%,100%,0.06)',
-                  border: '1px solid hsla(0,0%,100%,0.12)',
-                  color: 'hsla(0,0%,100%,0.75)',
-                }}
-              >
-                <ChevronRight size={14} />
-              </button>
             </div>
-          )}
+
+            {/* Floating logo chips — orbiting the key */}
+            {[
+              { img: winLogo, alt: 'Windows', style: { top: '4%', left: '10%' }, delay: '0s',   ring: 'hsl(215,82%,52%)' },
+              { img: ms365Logo, alt: 'Office 365', style: { top: '8%', right: '8%' }, delay: '1.4s', ring: 'hsl(15,90%,55%)' },
+              { img: idmLogo, alt: 'IDM', style: { bottom: '10%', left: '4%' }, delay: '2.6s', ring: 'hsl(258,78%,55%)' },
+              { emoji: '🎨', alt: 'Design', style: { bottom: '6%', right: '10%' }, delay: '3.4s', ring: 'hsl(320,70%,55%)' },
+            ].map((chip: any, i) => (
+              <div key={i} className="absolute anim-float z-10"
+                style={{ ...chip.style, animationDelay: chip.delay }}>
+                <div className="flex items-center justify-center rounded-2xl"
+                  style={{
+                    width: '52px',
+                    height: '52px',
+                    background: 'rgba(255,255,255,0.95)',
+                    backdropFilter: 'blur(14px)',
+                    border: `1.5px solid ${chip.ring}33`,
+                    boxShadow: `0 8px 22px ${chip.ring}30, inset 0 1px 0 rgba(255,255,255,1)`,
+                  }}>
+                  {chip.img
+                    ? <img src={chip.img} alt={chip.alt} className="w-8 h-8 object-contain" loading="lazy" decoding="async" />
+                    : <span className="text-[22px] leading-none">{chip.emoji}</span>}
+                </div>
+              </div>
+            ))}
+
+            {/* Sparkle accents */}
+            <Sparkles size={14} className="absolute top-[22%] right-[22%] anim-spin-slow" style={{ color: 'hsl(258,78%,55%)', opacity: 0.55 }} />
+            <Sparkles size={11} className="absolute bottom-[24%] left-[22%] anim-spin-slow" style={{ color: 'hsl(200,90%,50%)', opacity: 0.5, animationDirection: 'reverse' }} />
+          </div>
+
+          {/* ══════════════════════════════════
+               RIGHT — Modern floating card
+          ══════════════════════════════════ */}
+          <div className="relative hidden lg:flex items-center justify-center w-[420px] xl:w-[460px] flex-shrink-0"
+            style={{ minHeight: '580px' }}>
+
+
+
+            {/* Ambient glow behind card */}
+            <div className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse at 50% 50%, hsla(258,78%,62%,0.12) 0%, hsla(200,90%,55%,0.06) 50%, transparent 72%)',
+                filter: 'blur(20px)',
+              }} />
+
+            {/* ── Main product card ── */}
+            <div
+              className="relative anim-float"
+              style={{
+                width: '300px',
+                opacity: dir === 'in' ? 1 : 0,
+                transform: dir === 'in' ? 'translateY(0)' : 'translateY(16px)',
+                transition: 'opacity 0.32s ease, transform 0.32s ease',
+              }}>
+
+              {/* Outer glow ring */}
+              <div className="absolute inset-0 rounded-[28px]"
+                style={{
+                  background: 'linear-gradient(145deg, hsla(258,78%,62%,0.22), hsla(200,90%,55%,0.14))',
+                  filter: 'blur(18px)',
+                  transform: 'scale(1.08)',
+                }} />
+
+              {/* Corner accent dots */}
+              {[
+                { top: '-4px', left: '-4px', bg: 'hsl(258,78%,58%)' },
+                { top: '-4px', right: '-4px', bg: 'hsl(200,90%,52%)' },
+                { bottom: '-4px', left: '-4px', bg: 'hsl(200,90%,52%)' },
+                { bottom: '-4px', right: '-4px', bg: 'hsl(258,78%,58%)' },
+              ].map((dot, i) => (
+                <div key={i} className="absolute w-2.5 h-2.5 rounded-full z-20"
+                  style={{
+                    ...dot,
+                    boxShadow: `0 0 10px 4px ${dot.bg}88`,
+                  }} />
+              ))}
+
+              {/* Card surface */}
+              <div className="relative rounded-[24px] overflow-hidden z-10"
+                style={{
+                  background: 'linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(248,246,255,0.95) 55%, rgba(240,250,255,0.96) 100%)',
+                  border: '1.5px solid rgba(255,255,255,0.95)',
+                  boxShadow: '0 24px 64px hsla(226,35%,12%,0.10), 0 8px 24px hsla(258,78%,55%,0.09), inset 0 1px 0 rgba(255,255,255,1)',
+                }}>
+
+                {/* Shimmer top line */}
+                <div className="absolute top-0 left-0 right-0 h-[1.5px]"
+                  style={{ background: 'linear-gradient(90deg, transparent 5%, hsla(258,78%,64%,0.9) 35%, hsla(200,90%,58%,0.8) 65%, transparent 95%)' }} />
+
+                {/* Specular light */}
+                <div className="absolute inset-0 pointer-events-none"
+                  style={{ background: 'radial-gradient(ellipse at 15% 10%, rgba(255,255,255,0.95) 0%, transparent 45%)' }} />
+
+                <div className="relative p-7">
+
+                  {/* Top row: logo + sparkle */}
+                  <div className="flex items-start justify-between mb-5">
+                    <div className="w-14 h-14 rounded-[18px] flex items-center justify-center overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(145deg, hsl(220,30%,98%), hsl(220,20%,95%))',
+                        border: '1.5px solid hsla(258,78%,60%,0.16)',
+                        boxShadow: '0 4px 16px hsla(258,78%,55%,0.10), inset 0 1px 0 rgba(255,255,255,1)',
+                      }}>
+                      {slide.logoImg
+                        ? <img src={slide.logoImg} alt={`${slide.title || 'Featured Product'} — Buy Genuine License in Bangladesh`} title={slide.title} loading="eager" decoding="async" fetchPriority="high" className="w-9 h-9 object-contain" />
+                        : <span className="text-3xl leading-none">{slide.emoji}</span>}
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <Sparkles size={16} className="anim-spin-slow" style={{ color: 'hsl(258,78%,55%)' }} />
+                      {slide.logoImg && (
+                        <span className="text-[8.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full text-white"
+                          style={{ background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))' }}>
+                          OFFICIAL
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Featured label */}
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <div className="w-1 h-1 rounded-full" style={{ background: 'hsl(258,78%,55%)' }} />
+                    <span className="text-[9.5px] font-black uppercase tracking-[0.22em]"
+                      style={{ color: 'hsl(258,78%,55%)' }}>
+                      Featured Deal
+                    </span>
+                  </div>
+
+                  {/* Product name */}
+                  <div className="font-sora font-black text-[21px] leading-tight mb-0.5"
+                    style={{ color: 'hsl(226,35%,14%)' }}>
+                    {slide.title}{' '}
+                    <span style={{
+                      background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,46%))',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}>
+                      {slide.titleAccent}
+                    </span>
+                  </div>
+                  <div className="text-[11.5px] font-medium mb-4" style={{ color: 'hsl(226,20%,48%)' }}>
+                    {slide.subtitle}
+                  </div>
+
+                  {/* Feature chips */}
+                  <div className="flex flex-wrap gap-1.5 mb-5">
+                    {slide.features.map(f => (
+                      <span key={f}
+                        className="text-[10px] font-semibold px-2.5 py-1.5 rounded-full"
+                        style={{
+                          background: 'hsla(258,78%,55%,0.07)',
+                          border: '1px solid hsla(258,78%,60%,0.16)',
+                          color: 'hsl(258,78%,50%)',
+                        }}>
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Divider */}
+                  <div className="mb-4" style={{ borderTop: '1px solid hsla(258,78%,55%,0.09)' }} />
+
+                  {/* Price row */}
+                  <div className="flex items-center justify-between mb-5">
+                    <div>
+                      <div className="text-[10.5px] line-through mb-0.5" style={{ color: 'hsl(226,15%,60%)' }}>
+                        {slide.original}
+                      </div>
+                      <div className="font-sora font-black leading-none"
+                        style={{ fontSize: '2.1rem', color: 'hsl(226,35%,12%)' }}>
+                        {slide.price}
+                      </div>
+                    </div>
+                    {/* Circular off badge */}
+                    <div className="w-16 h-16 rounded-full flex flex-col items-center justify-center flex-shrink-0"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(215,82%,50%), hsl(200,90%,46%))',
+                        boxShadow: '0 8px 22px hsla(258,78%,55%,0.42)',
+                      }}>
+                      <span className="font-fira font-black text-[13px] text-white leading-none">{slide.off}</span>
+                      <span className="text-[7.5px] text-white/80 uppercase tracking-wider mt-0.5">OFF</span>
+                    </div>
+                  </div>
+
+                  {/* Buy Now button */}
+                  <a href={slide.productSlug ? `/product/${slide.productSlug}` : '/shop'}
+                    className="btn-vision-primary flex items-center justify-center gap-2 w-full py-4 text-[13.5px]">
+                    <Package size={14} /> Buy Now <ArrowRight size={13} />
+                  </a>
+
+                </div>
+              </div>
+            </div>
+
+            {/* ── Floating stat cards ── */}
+            {[
+              { label: FLOATING[0]?.label ?? 'Orders Today', value: FLOATING[0]?.value ?? '248+', icon: FLOATING[0]?.icon ?? '📦', style: { top: '6%',  left: '-4%' }, delay: '0s'   },
+              { label: FLOATING[1]?.label ?? 'Happy Users',  value: FLOATING[1]?.value ?? '12K+', icon: FLOATING[1]?.icon ?? '😊', style: { top: '45%', right: '-6%' }, delay: '1.8s' },
+              { label: FLOATING[2]?.label ?? 'Avg Rating',   value: FLOATING[2]?.value ?? '4.9★', icon: FLOATING[2]?.icon ?? '⭐', style: { bottom: '8%', left: '-4%' }, delay: '3.2s' },
+            ].map((card, i) => (
+              <div key={i}
+                className="absolute anim-float"
+                style={{ ...card.style, animationDelay: card.delay }}>
+                <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl"
+                  style={{
+                    background: 'rgba(255,255,255,0.90)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255,255,255,0.96)',
+                    boxShadow: '0 6px 22px hsla(226,35%,12%,0.09), 0 1px 0 rgba(255,255,255,1) inset',
+                    minWidth: '130px',
+                  }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: 'linear-gradient(135deg, hsla(258,78%,55%,0.10), hsla(200,90%,55%,0.07))',
+                      border: '1px solid hsla(258,78%,60%,0.15)',
+                    }}>
+                    <span className="text-[18px] leading-none">{card.icon}</span>
+                  </div>
+                  <div>
+                    <div className="font-sora font-black text-[14px] leading-none"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(258,78%,52%), hsl(200,90%,45%))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}>
+                      {card.value}
+                    </div>
+                    <div className="text-[10px] mt-0.5 font-medium" style={{ color: 'hsl(226,20%,52%)' }}>
+                      {card.label}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* ── Slider Controls ── */}
+        <div className="flex items-center justify-center gap-4 pb-8">
+          <button onClick={() => advance(-1)}
+            aria-label="Previous hero slide"
+            className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+            style={{
+              background: 'rgba(255,255,255,0.88)',
+              backdropFilter: 'blur(12px)',
+              border: '1.5px solid hsla(258,78%,55%,0.18)',
+              boxShadow: '0 2px 10px hsla(258,78%,55%,0.10)',
+              color: 'hsl(258,78%,52%)',
+            }}>
+            <ChevronLeft size={15} />
+          </button>
+
+          <div className="flex items-center gap-2">
+            {SLIDES.map((_, i) => (
+              <button key={i}
+                aria-label={`Show hero slide ${i + 1}`}
+                onClick={() => { setDir('out'); setTimeout(() => { setActive(i); setDir('in'); }, 260); }}
+                className="rounded-full transition-all duration-300"
+                style={{
+                  width: i === active ? '26px' : '7px',
+                  height: '7px',
+                  background: i === active
+                    ? 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))'
+                    : 'hsla(258,60%,60%,0.18)',
+                  boxShadow: i === active ? '0 0 8px hsla(258,78%,55%,0.65)' : 'none',
+                }} />
+            ))}
+          </div>
+
+          <button onClick={() => advance(1)}
+            aria-label="Next hero slide"
+            className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+            style={{
+              background: 'rgba(255,255,255,0.88)',
+              backdropFilter: 'blur(12px)',
+              border: '1.5px solid hsla(258,78%,55%,0.18)',
+              boxShadow: '0 2px 10px hsla(258,78%,55%,0.10)',
+              color: 'hsl(258,78%,52%)',
+            }}>
+            <ChevronRight size={15} />
+          </button>
+        </div>
+
+      </div>
       </div>
     </section>
   );

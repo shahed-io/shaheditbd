@@ -17,7 +17,6 @@ export type SlideData = {
   accentTo: string;
   emoji: string;
   logoImg: string;
-  heroImage?: string; // Apple-style big hero product visual (URL)
   features: string[];
   enabled: boolean;
   productSlug: string;

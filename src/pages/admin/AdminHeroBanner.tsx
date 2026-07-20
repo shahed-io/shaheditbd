@@ -26,7 +26,6 @@ type Slide = {
   accentTo: string;
   emoji: string;
   logoImg: string;
-  heroImage: string;
   features: SlideFeature[];
   enabled: boolean;
   productSlug: string;
@@ -65,11 +64,11 @@ const DEFAULT_TRUST: TrustItem[] = [
 
 const EMPTY_SLIDE = (): Slide => ({
   id: crypto.randomUUID(),
-  tag: 'Featured', tagIcon: '✨', title: 'Product', titleAccent: 'Name',
-  subtitle: 'One line that speaks.', desc: 'Describe the product briefly.',
+  tag: 'New Deal', tagIcon: '🔥', title: 'Product', titleAccent: 'Name',
+  subtitle: 'Short subtitle here', desc: 'Describe the product briefly.',
   price: '৳999', original: '৳2,999', off: '67%', badge: 'HOT DEAL',
-  accentFrom: 'hsl(258,90%,68%)', accentTo: 'hsl(210,95%,60%)',
-  emoji: '🛍️', logoImg: '', heroImage: '', features: ['Feature 1', 'Feature 2', 'Feature 3'],
+  accentFrom: 'hsl(243,75%,55%)', accentTo: 'hsl(263,70%,52%)',
+  emoji: '🛍️', logoImg: '', features: ['Feature 1', 'Feature 2', 'Feature 3'],
   enabled: true, productSlug: '',
 });
 
@@ -320,10 +319,10 @@ const AdminHeroBanner = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <SmartField label="ইমোজি আইকন (fallback)" value={selectedSlide.emoji} onChange={v => updateSlide(selectedSlide.id, 'emoji', v)} small />
+                  <SmartField label="ইমোজি আইকন" value={selectedSlide.emoji} onChange={v => updateSlide(selectedSlide.id, 'emoji', v)} small />
                   <div>
                     <label className="text-[11px] font-semibold text-muted-foreground mb-1 flex items-center gap-2 block">
-                      <ImageIcon size={10} /> ছোট লোগো URL <span className="text-[9px] text-muted-foreground/60">(ঐচ্ছিক)</span>
+                      <ImageIcon size={10} /> লোগো URL <span className="text-[9px] text-muted-foreground/60">(ঐচ্ছিক)</span>
                     </label>
                     <input value={selectedSlide.logoImg || ''} onChange={e => updateSlide(selectedSlide.id, 'logoImg', e.target.value)}
                       placeholder="https://..."
@@ -336,42 +335,6 @@ const AdminHeroBanner = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Hero image — Apple-style big product visual */}
-                <div className="rounded-xl border border-primary/25 bg-primary/[0.03] p-3 space-y-2">
-                  <label className="text-[11px] font-bold text-primary flex items-center gap-2">
-                    <ImageIcon size={11} /> Hero Image <span className="text-[9px] font-normal text-muted-foreground">(Apple-style বড় product visual — PNG transparent recommended)</span>
-                  </label>
-                  <div className="flex gap-2 items-start">
-                    <div className="w-20 h-20 rounded-xl border border-border bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center overflow-hidden shrink-0">
-                      {selectedSlide.heroImage
-                        ? <img src={selectedSlide.heroImage} alt="" className="w-full h-full object-contain" />
-                        : <ImageIcon size={22} className="text-muted-foreground/40" />}
-                    </div>
-                    <div className="flex-1 space-y-1.5">
-                      <input value={selectedSlide.heroImage || ''} onChange={e => updateSlide(selectedSlide.id, 'heroImage', e.target.value)}
-                        placeholder="https://... (image URL) or upload below"
-                        className="w-full bg-background border border-border rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                      <div className="flex items-center gap-2">
-                        <label className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-primary bg-primary/10 hover:bg-primary/20 transition-all cursor-pointer">
-                          <Plus size={10} /> Upload image
-                          <input type="file" accept="image/*" className="hidden" onChange={async e => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            if (file.size > 3 * 1024 * 1024) { toast.error('Image must be under 3MB'); return; }
-                            const reader = new FileReader();
-                            reader.onload = () => updateSlide(selectedSlide.id, 'heroImage', String(reader.result || ''));
-                            reader.readAsDataURL(file);
-                          }} />
-                        </label>
-                        {selectedSlide.heroImage && (
-                          <button onClick={() => updateSlide(selectedSlide.id, 'heroImage', '')} className="text-[10px] text-destructive hover:underline">রিমুভ</button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
 
                 <div>
                   <label className="text-[11px] font-semibold text-muted-foreground mb-1 flex items-center gap-2 block">
