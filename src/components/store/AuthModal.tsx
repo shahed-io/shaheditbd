@@ -77,7 +77,11 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
         if (error) throw error;
         toast.success('সফলভাবে লগইন হয়েছে!');
         onClose();
-        if (redirectAfterLogin) navigate('/dashboard');
+        // If a post-login redirect target is set (e.g. checkout page), let the
+        // global PostLoginRedirect listener handle navigation instead of pushing /dashboard.
+        let hasRedirect = false;
+        try { hasRedirect = !!(sessionStorage.getItem('post_login_redirect') || localStorage.getItem('post_login_redirect')); } catch {}
+        if (redirectAfterLogin && !hasRedirect) navigate('/dashboard');
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -156,14 +160,36 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
     }
   };
 
+  const saveIntendedPath = () => {
+    // Persist the current path so PostLoginRedirect can restore it after OAuth.
+    // Prefer explicit oauthRedirectTo (a full URL) → extract its pathname+search.
+    try {
+      let target = '';
+      if (oauthRedirectTo) {
+        try {
+          const u = new URL(oauthRedirectTo, window.location.origin);
+          if (u.origin === window.location.origin) target = u.pathname + u.search;
+        } catch { /* ignore */ }
+      }
+      if (!target) target = window.location.pathname + window.location.search;
+      if (target && target !== '/' && !target.startsWith('/reset-password')) {
+        sessionStorage.setItem('post_login_redirect', target);
+        localStorage.setItem('post_login_redirect', target);
+      }
+    } catch { /* ignore */ }
+  };
+
   const handleGoogle = async () => {
     setLoading(true);
-    // If there's a referral code, store it before redirecting so we can process after Google OAuth
     if (referralCode.trim()) {
       localStorage.setItem('pending_google_referral', referralCode.trim().toUpperCase());
     }
+    saveIntendedPath();
+    // IMPORTANT: use window.location.origin (public URL) as the OAuth broker
+    // rejects arbitrary same-origin paths and silently falls back to origin.
+    // The intended path is restored by PostLoginRedirect after the session lands.
     const { error } = await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: oauthRedirectTo || window.location.origin,
+      redirect_uri: window.location.origin,
     });
     if (error) {
       toast.error('Google লগইন ব্যর্থ হয়েছে');
@@ -176,8 +202,9 @@ const AuthModal = ({ isOpen, onClose, redirectAfterLogin = true, oauthRedirectTo
     if (referralCode.trim()) {
       localStorage.setItem('pending_google_referral', referralCode.trim().toUpperCase());
     }
+    saveIntendedPath();
     const { error } = await lovable.auth.signInWithOAuth('apple', {
-      redirect_uri: oauthRedirectTo || window.location.origin,
+      redirect_uri: window.location.origin,
     });
     if (error) {
       toast.error('Apple লগইন ব্যর্থ হয়েছে');
