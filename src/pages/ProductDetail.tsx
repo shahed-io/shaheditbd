@@ -119,6 +119,7 @@ const ProductDetail = () => {
   const [showModal,     setShowModal]    = useState(false);
   const [copied,        setCopied]       = useState(false);
   const [imgLoaded,     setImgLoaded]    = useState(false);
+  const [zoomOpen,      setZoomOpen]     = useState(false);
   const [selectedOpts,  setSelectedOpts] = useState<Record<string, string | string[]>>({});
   const [customGroups,  setCustomGroups] = useState<CustomOptionGroup[]>([]);
   const [entered,       setEntered]      = useState(false);
