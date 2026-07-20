@@ -160,15 +160,15 @@ const HeroBanner = () => {
 
             {/* Category tag */}
             <div className="inline-flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 text-[10.5px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full text-white"
+              <span className="inline-flex items-center gap-1.5 text-[9.5px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full text-white"
                 style={{
                   background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(215,82%,52%))',
                   boxShadow: '0 4px 16px hsla(258,78%,55%,0.35)',
                 }}>
-                <span className="text-[13px]">{slide.tagIcon || '✦'}</span>
+                <span className="text-[11px]">{slide.tagIcon || '✦'}</span>
                 {slide.tag}
               </span>
-              <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-2 rounded-full"
+              <span className="text-[9px] font-bold tracking-widest uppercase px-2.5 py-1.5 rounded-full"
                 style={{
                   background: 'hsla(258,78%,55%,0.07)',
                   border: '1px solid hsla(258,78%,55%,0.18)',
@@ -177,6 +177,7 @@ const HeroBanner = () => {
                 {slide.badge}
               </span>
             </div>
+
 
             {/* Headline */}
             <div>
