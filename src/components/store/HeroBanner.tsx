@@ -132,7 +132,7 @@ const HeroBanner = () => {
       </div>
 
       {/* ── Glass card frame around hero content ── */}
-      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px]"
+      <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px] overflow-hidden"
         style={{
           background: 'rgba(255,255,255,0.42)',
           backdropFilter: 'blur(32px)',
@@ -140,9 +140,10 @@ const HeroBanner = () => {
           border: '1px solid rgba(255,255,255,0.6)',
           boxShadow: '0 32px 64px -16px hsla(258,78%,55%,0.12), inset 0 1px 0 rgba(255,255,255,0.9)',
         }}>
-        {/* Soft inner accent */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, hsla(258,78%,60%,0.10), transparent 70%)' }} />
+        {/* Soft inner accent (kept inside so it doesn't break the top curve) */}
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, hsla(258,78%,60%,0.10), transparent 70%)', transform: 'translate(30%,-30%)' }} />
+
 
         <div className="relative container-fluid">
         <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-0 pt-3 pb-5 md:pt-4 md:pb-6 lg:pt-5 lg:pb-6">
