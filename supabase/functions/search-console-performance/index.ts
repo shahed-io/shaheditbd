@@ -1,5 +1,6 @@
 // Google Search Console Performance API - last 28 days
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
+import { requireAdmin } from "../_shared/admin-auth.ts";
 
 // Build a JWT signed with the service account RS256 key
 async function getAccessToken(saJson: any): Promise<string> {
