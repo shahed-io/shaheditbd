@@ -180,12 +180,12 @@ const HeroBanner = () => {
 
             {/* Headline */}
             <div>
-              <h1 className="font-sora font-black leading-[1.0] tracking-tight"
-                style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)', color: 'hsl(226,35%,12%)' }}>
+              <h1 className="font-sora font-black leading-[1.05] tracking-tight"
+                style={{ fontSize: 'clamp(1.9rem, 5vw, 3.4rem)', color: 'hsl(226,35%,12%)' }}>
                 <span className="block">{slide.title}</span>
                 <span className="block"
                 style={{
-                  fontSize: 'clamp(3rem, 8vw, 5.5rem)',
+                  fontSize: 'clamp(1.9rem, 5vw, 3.4rem)',
                   background: 'linear-gradient(135deg, hsl(258,78%,52%) 0%, hsl(215,82%,52%) 50%, hsl(200,90%,46%) 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
@@ -194,23 +194,23 @@ const HeroBanner = () => {
                 {slide.titleAccent}
                 </span>
               </h1>
-              <p className="text-base lg:text-lg font-semibold mt-3"
+              <p className="text-[13px] lg:text-[14px] font-semibold mt-2"
                 style={{ color: 'hsl(226,22%,44%)' }}>
                 {slide.subtitle}
               </p>
             </div>
 
             {/* Description */}
-            <p className="text-[14px] leading-relaxed max-w-[420px] mx-auto lg:mx-0"
+            <p className="text-[12.5px] leading-relaxed max-w-[420px] mx-auto lg:mx-0"
               style={{ color: 'hsl(226,18%,52%)' }}>
               {slide.desc}
             </p>
 
             {/* Feature pills */}
-            <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+            <div className="flex flex-wrap gap-1.5 justify-center lg:justify-start">
               {slide.features.map(f => (
                 <span key={f}
-                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-3.5 py-2 rounded-full"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-full"
                   style={{
                     background: 'rgba(255,255,255,0.85)',
                     backdropFilter: 'blur(12px)',
@@ -218,26 +218,26 @@ const HeroBanner = () => {
                     color: 'hsl(258,78%,50%)',
                     boxShadow: '0 2px 8px hsla(258,78%,55%,0.08)',
                   }}>
-                  <CheckCircle2 size={11} style={{ color: 'hsl(200,90%,46%)' }} />
+                  <CheckCircle2 size={10} style={{ color: 'hsl(200,90%,46%)' }} />
                   {f}
                 </span>
               ))}
             </div>
 
             {/* Price + CTA */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Price row */}
               <div className="flex items-center gap-3 justify-center lg:justify-start">
                 <div>
-                  <div className="text-sm line-through font-medium" style={{ color: 'hsl(226,15%,58%)' }}>
+                  <div className="text-xs line-through font-medium" style={{ color: 'hsl(226,15%,58%)' }}>
                     {slide.original}
                   </div>
                   <div className="font-sora font-black"
-                    style={{ fontSize: 'clamp(2.2rem, 4vw, 3rem)', color: 'hsl(226,35%,12%)', lineHeight: 1 }}>
+                    style={{ fontSize: 'clamp(1.6rem, 3vw, 2.25rem)', color: 'hsl(226,35%,12%)', lineHeight: 1 }}>
                     {slide.price}
                   </div>
                 </div>
-                <span className="self-end mb-1 inline-flex items-center text-[11.5px] font-black text-white px-3.5 py-2 rounded-full"
+                <span className="self-end mb-1 inline-flex items-center text-[10.5px] font-black text-white px-3 py-1.5 rounded-full"
                   style={{
                     background: 'linear-gradient(135deg, hsl(258,78%,55%), hsl(200,90%,48%))',
                     boxShadow: '0 4px 14px hsla(258,78%,55%,0.40)',
@@ -245,6 +245,7 @@ const HeroBanner = () => {
                   {slide.off} OFF
                 </span>
               </div>
+
 
               {/* CTAs */}
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
