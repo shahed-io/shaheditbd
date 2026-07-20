@@ -306,16 +306,28 @@ const AdminDashboard = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             {notifications.map(n => {
               const { icon: NIcon, color } = notifIcon[n.type];
+              const linkMap: Record<string, string> = {
+                order: '/ceo/orders?filter=today',
+                payment: '/ceo/orders?status=payment_pending',
+                ticket: '/ceo/tickets',
+                stock: '/ceo/inventory-alerts',
+              };
+              const to = linkMap[n.type] || '/ceo';
               return (
-                <div key={n.id} className={`flex items-start gap-2.5 rounded-xl p-3 ${color} bg-opacity-10`}>
+                <button
+                  key={n.id}
+                  type="button"
+                  onClick={() => navigate(to)}
+                  className={`w-full text-left flex items-start gap-2.5 rounded-xl p-3 ${color} bg-opacity-10 hover:bg-opacity-20 hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer`}
+                >
                   <div className={`w-7 h-7 rounded-lg ${color} flex items-center justify-center flex-shrink-0`}>
                     <NIcon size={13} />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-xs font-medium text-foreground leading-snug">{n.message}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{n.time}</p>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
