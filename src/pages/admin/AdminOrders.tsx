@@ -597,7 +597,7 @@ const OrderDetailModal = ({
                 <div>
                   <p className="text-xs font-semibold text-foreground mb-2">দ্রুত অ্যাকশন</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {order.payment_status !== 'verified' && !['cancelled', 'failed'].includes(order.status) && (
+                    {!isPaymentVerified(order.payment_status) && !['cancelled', 'failed'].includes(order.status) && (
                       <button onClick={() => doUpdate({ payment_status: 'verified', status: 'processing' }, '✅ পেমেন্ট ভেরিফাই হয়েছে!')}
                         disabled={updatingId} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold btn-glow disabled:opacity-50">
                         <CheckCircle size={12} /> পেমেন্ট ভেরিফাই
@@ -1627,7 +1627,7 @@ const AdminOrders = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
-                          {order.payment_status !== 'verified' && order.status === 'pending' && (
+                          {!isPaymentVerified(order.payment_status) && order.status === 'pending' && (
                             <button onClick={() => updateOrder(order.id, { payment_status: 'verified', status: 'processing' }, '✅ Verified!')}
                               title="পেমেন্ট ভেরিফাই"
                               className="p-1.5 text-muted-foreground hover:text-emerald-500 transition-colors rounded-lg hover:bg-emerald-500/10">
@@ -1705,7 +1705,7 @@ const AdminOrders = () => {
         <div className="glass-card rounded-xl px-5 py-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
           <span>দেখাচ্ছে: <strong className="text-foreground">{filtered.length}</strong></span>
           <span>মোট মূল্য: <strong className="text-primary">৳{filtered.reduce((s, o) => s + Number(o.total), 0).toLocaleString()}</strong></span>
-          <span>ভেরিফাই বাকি: <strong className="text-amber-500">{filtered.filter(o => o.payment_status !== 'verified' && !['cancelled', 'failed'].includes(o.status)).length}</strong></span>
+          <span>ভেরিফাই বাকি: <strong className="text-amber-500">{filtered.filter(o => !isPaymentVerified(o.payment_status) && !['cancelled', 'failed'].includes(o.status)).length}</strong></span>
           <span>সম্পন্ন: <strong className="text-emerald-500">{filtered.filter(o => o.status === 'completed').length}</strong></span>
         </div>
       )}
