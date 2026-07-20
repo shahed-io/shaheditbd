@@ -1128,8 +1128,15 @@ const AdminOrders = () => {
   const filtered = orders.filter(o => {
     if (statusFilter !== 'all' && o.status !== statusFilter) return false;
     if (paymentFilter !== 'all' && o.payment_method !== paymentFilter) return false;
-    if (dateFrom && o.created_at < dateFrom) return false;
-    if (dateTo && o.created_at > dateTo + 'T23:59:59') return false;
+    // Date filters are in Bangladesh local calendar; convert to UTC boundaries (BD = UTC+6)
+    if (dateFrom) {
+      const fromUtc = new Date(`${dateFrom}T00:00:00+06:00`).toISOString();
+      if (o.created_at < fromUtc) return false;
+    }
+    if (dateTo) {
+      const toUtc = new Date(`${dateTo}T23:59:59.999+06:00`).toISOString();
+      if (o.created_at > toUtc) return false;
+    }
     if (search) {
       const q = search.toLowerCase();
       return o.order_number?.toLowerCase().includes(q) ||
