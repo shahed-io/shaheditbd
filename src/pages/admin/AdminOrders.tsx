@@ -1011,19 +1011,22 @@ const AdminOrders = () => {
       setSearchParams(searchParams, { replace: true });
     }
     if (filter) {
-      const now = new Date();
+      // Use Bangladesh timezone (UTC+6) so "Today/Month/Year" match the local calendar day
+      const bdNow = new Date(Date.now() + 6 * 60 * 60 * 1000);
+      const y = bdNow.getUTCFullYear();
+      const m = bdNow.getUTCMonth();
+      const d = bdNow.getUTCDate();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const todayBD = `${y}-${pad(m + 1)}-${pad(d)}`;
       if (filter === 'today') {
-        const todayStr = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().slice(0, 10);
-        setDateFrom(todayStr);
-        setDateTo(now.toISOString().slice(0, 10));
+        setDateFrom(todayBD);
+        setDateTo(todayBD);
       } else if (filter === 'month') {
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
-        setDateFrom(monthStart);
-        setDateTo(now.toISOString().slice(0, 10));
+        setDateFrom(`${y}-${pad(m + 1)}-01`);
+        setDateTo(todayBD);
       } else if (filter === 'year') {
-        const yearStart = new Date(now.getFullYear(), 0, 1).toISOString().slice(0, 10);
-        setDateFrom(yearStart);
-        setDateTo(now.toISOString().slice(0, 10));
+        setDateFrom(`${y}-01-01`);
+        setDateTo(todayBD);
       }
       searchParams.delete('filter');
       setSearchParams(searchParams, { replace: true });
