@@ -277,93 +277,88 @@ const HeroBanner = () => {
           {/* ══════════════════════════════════
                MIDDLE — Premium light bridge
           ══════════════════════════════════ */}
-          <div className="hidden lg:flex relative items-center justify-center flex-shrink-0"
-            style={{ width: '120px', minHeight: '520px' }}
+          <div className="hidden lg:flex relative items-center justify-center flex-shrink-0 overflow-visible"
+            style={{ width: '140px', minHeight: '520px' }}
             aria-hidden="true">
 
-            {/* Ambient soft aurora glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            {/* Ambient dual aurora glows */}
+            <div className="absolute top-[22%] left-1/2 -translate-x-[70%] pointer-events-none rounded-full"
               style={{
-                width: '220px', height: '420px',
-                background: 'radial-gradient(ellipse at center, hsla(258,78%,62%,0.14) 0%, hsla(200,90%,55%,0.08) 45%, transparent 72%)',
-                filter: 'blur(24px)',
+                width: '260px', height: '260px',
+                background: 'radial-gradient(circle, hsla(215,90%,60%,0.14) 0%, transparent 65%)',
+                filter: 'blur(48px)',
+              }} />
+            <div className="absolute bottom-[18%] left-1/2 -translate-x-[30%] pointer-events-none rounded-full"
+              style={{
+                width: '260px', height: '260px',
+                background: 'radial-gradient(circle, hsla(268,80%,62%,0.14) 0%, transparent 65%)',
+                filter: 'blur(48px)',
               }} />
 
-            {/* Twin vertical light beams — gives depth like a channel of light */}
-            <div className="absolute top-[8%] bottom-[8%] left-1/2 pointer-events-none"
+            {/* Centered prismatic glass ring */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
               style={{
-                width: '1px',
-                transform: 'translateX(-3px)',
-                background: 'linear-gradient(to bottom, transparent 0%, hsla(258,78%,60%,0.32) 22%, hsla(200,90%,55%,0.32) 78%, transparent 100%)',
+                width: '200px', height: '200px',
+                border: '1px solid rgba(255,255,255,0.55)',
+                background: 'rgba(255,255,255,0.06)',
+                backdropFilter: 'blur(2px)',
+                boxShadow: 'inset 0 0 24px rgba(255,255,255,0.35), 0 8px 32px hsla(258,70%,60%,0.10)',
               }} />
-            <div className="absolute top-[8%] bottom-[8%] left-1/2 pointer-events-none"
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
               style={{
-                width: '1px',
-                transform: 'translateX(2px)',
-                background: 'linear-gradient(to bottom, transparent 0%, hsla(200,90%,55%,0.22) 22%, hsla(258,78%,60%,0.22) 78%, transparent 100%)',
+                width: '128px', height: '128px',
+                border: '1px solid rgba(255,255,255,0.4)',
+                background: 'rgba(255,255,255,0.04)',
+                boxShadow: 'inset 0 0 12px rgba(255,255,255,0.28)',
               }} />
 
-            {/* Delicate diamond caps at top & bottom of beam */}
-            {[{ top: '6%' }, { bottom: '6%' }].map((pos, i) => (
-              <div key={i} className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-                style={{
-                  ...pos,
-                  width: '6px', height: '6px',
-                  transform: 'translateX(-50%) rotate(45deg)',
-                  background: 'linear-gradient(135deg, hsl(258,78%,62%), hsl(200,90%,55%))',
-                  boxShadow: '0 0 12px hsla(258,78%,60%,0.6)',
-                }} />
-            ))}
+            {/* Thin flowing gradient data-transfer paths (SVG) */}
+            <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              width="280" height="360" viewBox="0 0 280 360" fill="none">
+              <defs>
+                <linearGradient id="flow-a" x1="0" y1="0" x2="280" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stopColor="hsl(215,90%,60%)" stopOpacity="0" />
+                  <stop offset="0.5" stopColor="hsl(215,90%,60%)" stopOpacity="0.55" />
+                  <stop offset="1" stopColor="hsl(215,90%,60%)" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="flow-b" x1="0" y1="0" x2="280" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stopColor="hsl(268,80%,62%)" stopOpacity="0" />
+                  <stop offset="0.5" stopColor="hsl(268,80%,62%)" stopOpacity="0.5" />
+                  <stop offset="1" stopColor="hsl(268,80%,62%)" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="flow-c" x1="0" y1="0" x2="280" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stopColor="hsl(180,80%,55%)" stopOpacity="0" />
+                  <stop offset="0.5" stopColor="hsl(180,80%,55%)" stopOpacity="0.35" />
+                  <stop offset="1" stopColor="hsl(180,80%,55%)" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M0 210 Q 140 60 280 150" stroke="url(#flow-a)" strokeWidth="1.2" fill="none" />
+              <path d="M0 150 Q 140 300 280 210" stroke="url(#flow-b)" strokeWidth="1.2" fill="none" />
+              <path d="M0 180 Q 140 180 280 180" stroke="url(#flow-c)" strokeWidth="0.8" fill="none" strokeDasharray="2 6" />
+              <path d="M0 120 Q 140 200 280 90" stroke="url(#flow-a)" strokeWidth="0.6" fill="none" opacity="0.5" />
+              <path d="M0 270 Q 140 190 280 300" stroke="url(#flow-b)" strokeWidth="0.6" fill="none" opacity="0.5" />
+            </svg>
 
-            {/* Three premium floating logo chips along the beam */}
-            {[
-              { img: winLogo, alt: 'Windows', top: '17%', ring: 'hsl(215,82%,52%)', delay: '0s' },
-              { img: ms365Logo, alt: 'Office 365', top: '46%', ring: 'hsl(15,90%,55%)', delay: '1.6s' },
-              { img: idmLogo, alt: 'IDM', top: '75%', ring: 'hsl(258,78%,55%)', delay: '3.2s' },
-            ].map((chip, i) => (
-              <div key={i} className="absolute left-1/2 -translate-x-1/2 anim-float"
-                style={{ top: chip.top, animationDelay: chip.delay }}>
+            {/* Refractive vertical glass slats */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-[10px] pointer-events-none">
+              <div className="rounded-full"
+                style={{ width: '2px', height: '120px',
+                  background: 'linear-gradient(to bottom, transparent, hsla(215,90%,60%,0.35), transparent)' }} />
+              <div className="rounded-full"
+                style={{ width: '2px', height: '180px', transform: 'translateY(6px)',
+                  background: 'linear-gradient(to bottom, transparent, hsla(258,78%,62%,0.5), transparent)' }} />
+              <div className="rounded-full"
+                style={{ width: '2px', height: '120px',
+                  background: 'linear-gradient(to bottom, transparent, hsla(200,88%,58%,0.35), transparent)' }} />
+            </div>
 
-                {/* Outer glow halo */}
-                <div className="absolute inset-0 rounded-[20px] pointer-events-none"
-                  style={{
-                    background: `radial-gradient(circle at center, ${chip.ring}33 0%, transparent 70%)`,
-                    filter: 'blur(10px)',
-                    transform: 'scale(1.6)',
-                  }} />
-
-                {/* Gradient ring wrapper */}
-                <div className="relative rounded-[20px] p-[1.5px]"
-                  style={{
-                    background: `linear-gradient(145deg, ${chip.ring}66, rgba(255,255,255,0.9) 45%, ${chip.ring}33)`,
-                    boxShadow: `0 10px 28px ${chip.ring}2e, 0 2px 6px hsla(226,35%,12%,0.08)`,
-                  }}>
-                  <div className="relative flex items-center justify-center rounded-[18px] overflow-hidden"
-                    style={{
-                      width: '54px', height: '54px',
-                      background: 'linear-gradient(155deg, rgba(255,255,255,0.98) 0%, rgba(248,246,255,0.94) 100%)',
-                      backdropFilter: 'blur(18px)',
-                    }}>
-                    {/* Specular highlight */}
-                    <div className="absolute inset-0 pointer-events-none"
-                      style={{ background: 'radial-gradient(ellipse at 25% 15%, rgba(255,255,255,0.95) 0%, transparent 55%)' }} />
-                    {/* Shimmer top line */}
-                    <div className="absolute top-0 left-2 right-2 h-[1px]"
-                      style={{ background: `linear-gradient(90deg, transparent, ${chip.ring}aa, transparent)` }} />
-                    <img src={chip.img} alt={chip.alt}
-                      className="relative w-8 h-8 object-contain"
-                      loading="lazy" decoding="async" />
-                  </div>
-                </div>
-
-                {/* Tiny orbit dot */}
-                <div className="absolute -right-1.5 -top-1 w-1.5 h-1.5 rounded-full"
-                  style={{
-                    background: chip.ring,
-                    boxShadow: `0 0 8px ${chip.ring}cc`,
-                  }} />
-              </div>
-            ))}
+            {/* Floating micro-accent nodes */}
+            <div className="absolute top-[26%] left-[22%] w-1.5 h-1.5 rounded-full anim-float"
+              style={{ background: 'hsl(215,90%,60%)', boxShadow: '0 0 10px hsla(215,90%,60%,0.85)', animationDelay: '0s' }} />
+            <div className="absolute top-[72%] right-[20%] w-1.5 h-1.5 rounded-full anim-float"
+              style={{ background: 'hsl(268,80%,62%)', boxShadow: '0 0 10px hsla(268,80%,62%,0.85)', animationDelay: '1.4s' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 rounded-full"
+              style={{ background: 'white', boxShadow: '0 0 10px rgba(255,255,255,0.9)' }} />
           </div>
 
 
