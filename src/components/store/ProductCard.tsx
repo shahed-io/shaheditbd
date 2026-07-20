@@ -442,18 +442,18 @@ const ProductCard = ({ product, delay = 0, priority = false }: ProductCardProps)
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={e => { e.stopPropagation(); waMsg(); }}
-                className="btn-vision-glass flex items-center justify-center gap-1 py-2 text-[11px]">
-                <MessageCircle size={11} color="#25D366" /> WhatsApp
+                className="btn-vision-whatsapp flex items-center justify-center gap-1 py-2 text-[11px]">
+                <MessageCircle size={11} color="#ffffff" /> WhatsApp
               </button>
               <button
                 disabled={outOfStock}
                 onClick={e => { e.stopPropagation(); if (outOfStock) return; addToCart({ id: product.id, name: product.name, category: product.category, price: product.price, originalPrice: product.originalPrice, image: product.image }); }}
-                className="btn-vision-glass flex items-center justify-center gap-1 py-2 text-[11px] disabled:opacity-50 disabled:cursor-not-allowed"
-                style={inCart ? { color: 'hsl(215,82%,45%)' } : undefined}>
+                className="btn-vision-cart flex items-center justify-center gap-1 py-2 text-[11px] disabled:opacity-50 disabled:cursor-not-allowed">
                 <ShoppingCart size={11} />
                 {outOfStock ? 'Out' : (inCart ? '✓ Added' : 'Cart')}
               </button>
             </div>
+
           </div>
         </div>
 
