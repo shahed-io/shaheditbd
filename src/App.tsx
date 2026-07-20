@@ -255,6 +255,9 @@ const AppContent = () => {
           <RedirectEnforcer />
         </Suspense>
       )}
+      <Suspense fallback={null}>
+        <PostLoginRedirect />
+      </Suspense>
       <ViewTransitions />
       <Suspense fallback={<PageLoader />}>
         <Routes>
