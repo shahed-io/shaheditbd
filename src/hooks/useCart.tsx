@@ -222,9 +222,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
         // Clean up any invalid rows lingering in the DB so the phantom count
         // (e.g. "Cart 6" with no real items) can never come back on next login.
-        const invalidRows = rawDbItems.filter(it => !isValidCartItem(it));
+        const invalidRows = rawDbItems.filter((it: any) => !isValidCartItem(it));
         if (invalidRows.length > 0) {
-          await dbDeleteItems(userId, invalidRows.map(r => ({
+          await dbDeleteItems(userId, invalidRows.map((r: any) => ({
             product_id: String(r.id), variant: r.variant || '',
           })));
         }
