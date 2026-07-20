@@ -10,6 +10,8 @@ const corsHeaders = {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const authFail = await requireAdmin(req);
+  if (authFail) return authFail;
 
   try {
     const {
