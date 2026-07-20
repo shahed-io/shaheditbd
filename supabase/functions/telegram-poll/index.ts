@@ -233,8 +233,13 @@ function normalizeLicenseKey(k: string): string {
 
 async function checkLicenseKey(key: string, token: string, lang: Lang) {
   const url = `${PIDMS_URL}?token=${encodeURIComponent(token)}&key=${encodeURIComponent(key)}&format=json`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000); // 12s hard cap per key
   try {
-    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    const res = await fetch(url, {
+      headers: { 'Accept': 'application/json' },
+      signal: controller.signal,
+    });
     const text = await res.text();
     let parsed: any = null;
     try { parsed = JSON.parse(text); } catch {
@@ -265,10 +270,23 @@ async function checkLicenseKey(key: string, token: string, lang: Lang) {
       product: parsed?.description ?? null,
       edition: parsed?.edition ?? null,
     };
-  } catch {
-    return { key, status: 'unknown' as const, meaning: lang === 'bn' ? 'নেটওয়ার্ক ত্রুটি' : 'Network error', errorCode: null, product: null, edition: null };
+  } catch (e: any) {
+    const timedOut = e?.name === 'AbortError';
+    return {
+      key,
+      status: 'unknown' as const,
+      meaning: timedOut
+        ? (lang === 'bn' ? 'সার্ভার সময়মতো সাড়া দেয়নি (টাইমআউট)' : 'Provider timed out')
+        : (lang === 'bn' ? 'নেটওয়ার্ক ত্রুটি' : 'Network error'),
+      errorCode: null,
+      product: null,
+      edition: null,
+    };
+  } finally {
+    clearTimeout(timeout);
   }
 }
+
 
 async function handleCheckKey(botToken: string, chatId: string | number, rawInput: string, lang: Lang) {
   const input = (rawInput || '').trim();
