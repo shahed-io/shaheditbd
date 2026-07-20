@@ -131,11 +131,11 @@ const HeroBanner = () => {
       {/* ── Glass card frame around hero content ── */}
       <div className="relative mx-auto w-full max-w-[1800px] rounded-[28px] lg:rounded-[40px] overflow-hidden isolate"
         style={{
-          background: 'rgba(255,255,255,0.42)',
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(245,243,255,0.55) 50%, rgba(235,240,255,0.6) 100%)',
           backdropFilter: 'blur(32px)',
           WebkitBackdropFilter: 'blur(32px)',
-          border: '1.5px solid rgba(255,255,255,0.85)',
-          boxShadow: '0 32px 64px -16px hsla(258,78%,55%,0.12), inset 0 1px 0 rgba(255,255,255,0.95), inset 1px 0 0 rgba(255,255,255,0.6)',
+          border: '1.5px solid hsla(258,60%,70%,0.45)',
+          boxShadow: '0 24px 60px -18px hsla(258,78%,55%,0.28), 0 4px 16px -4px hsla(258,60%,60%,0.18), inset 0 1.5px 0 rgba(255,255,255,1), inset 1.5px 0 0 rgba(255,255,255,0.9)',
         }}>
         {/* Soft inner accent (kept inside so it doesn't break the top curve) */}
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
