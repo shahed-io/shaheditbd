@@ -239,24 +239,24 @@ export default function AdminBkashTransactions() {
                           <div className="font-medium">{t.customer_name || '—'}</div>
                           <div className="text-xs text-muted-foreground">{t.customer_phone || t.customer_email || ''}</div>
                         </td>
-                        <td className="p-3 font-mono text-xs">
+                        <td className="p-3 font-mono text-xs whitespace-nowrap">
                           {t.payer_msisdn ? (
-                            <span className="inline-flex items-center gap-1 text-pink-600">
-                              <Smartphone className="h-3 w-3" /> {t.payer_msisdn}
+                            <span className="inline-flex items-center gap-1 text-pink-600 whitespace-nowrap">
+                              <Smartphone className="h-3 w-3 shrink-0" /> {t.payer_msisdn}
                             </span>
                           ) : <span className="text-muted-foreground">—</span>}
                         </td>
-                        <td className="p-3 font-mono text-xs">
+                        <td className="p-3 font-mono text-xs whitespace-nowrap">
                           {t.trx_id || <span className="text-muted-foreground">—</span>}
                         </td>
-                        <td className="p-3 text-right font-semibold">৳{Number(t.amount).toLocaleString()}</td>
-                        <td className="p-3">
-                          <Badge variant="outline" className={`${s.cls} gap-1`}>
-                            <SIcon className="h-3 w-3" /> {s.label}
+                        <td className="p-3 text-right font-semibold whitespace-nowrap">৳{Number(t.amount).toLocaleString()}</td>
+                        <td className="p-3 whitespace-nowrap">
+                          <Badge variant="outline" className={`${s.cls} gap-1 whitespace-nowrap`}>
+                            <SIcon className="h-3 w-3 shrink-0" /> {s.label}
                           </Badge>
                         </td>
-                        <td className="p-3 text-xs uppercase">
-                          <Badge variant={t.mode === 'live' ? 'destructive' : 'secondary'}>{t.mode}</Badge>
+                        <td className="p-3 text-xs uppercase whitespace-nowrap">
+                          <Badge variant={t.mode === 'live' ? 'destructive' : 'secondary'} className="whitespace-nowrap">{t.mode}</Badge>
                         </td>
                         <td className="p-3 text-right">
                           <Button variant="ghost" size="icon" onClick={() => setSelected(t)}>
