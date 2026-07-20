@@ -781,6 +781,7 @@ const Checkout = () => {
       setOrderNumber(orderNum);
       if (paymentMethod === 'wallet') setInstantDelivered(walletInstantDelivered);
       setOrderPlaced(true);
+      try { localStorage.removeItem(CHECKOUT_DRAFT_KEY); } catch {}
 
       // Fire Google Ads + GA4 Purchase conversion (non-blocking, after success)
       gTrackPurchase({
